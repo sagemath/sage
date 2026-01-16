@@ -53,7 +53,8 @@ from sage.misc.latex import latex
 from sage.rings.real_double import RDF
 from sage.functions.other import imag
 from sage.misc.functional import sqrt
-from sage.functions.all import arccosh, sign
+from sage.functions.hyperbolic import acosh as arccosh
+from sage.functions.generalized import sgn as sign
 
 from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
 from sage.geometry.hyperbolic_space.hyperbolic_geodesic import HyperbolicGeodesic

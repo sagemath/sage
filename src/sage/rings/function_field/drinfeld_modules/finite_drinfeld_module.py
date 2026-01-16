@@ -28,6 +28,7 @@ from sage.functions.other import ceil, sqrt
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.special import companion_matrix
+from sage.misc.functional import log
 from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
 from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
@@ -36,7 +37,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 class DrinfeldModule_finite(DrinfeldModule):
     r"""
-    This class implements finite Drinfeld `\mathbb{F}_q[T]`-modules.
+    This class implements finite Drinfeld `\GF{q}[T]`-modules.
 
     A *finite Drinfeld module* is a Drinfeld module whose base field is
     finite. In this case, the function field characteristic is a prime
@@ -57,7 +58,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         sage: K.<z6> = Fq.extension(2)
         sage: phi = DrinfeldModule(A, [z6, 0, 5])
         sage: phi
-        Drinfeld module defined by T |--> 5*t^2 + z6
+        Drinfeld module defined by T |--> 5*τ^2 + z6
 
     ::
 
@@ -84,8 +85,8 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         sage: frobenius_endomorphism = phi.frobenius_endomorphism()
         sage: frobenius_endomorphism
-        Endomorphism of Drinfeld module defined by T |--> 5*t^2 + z6
-          Defn: t^2
+        Endomorphism of Drinfeld module defined by T |--> 5*τ^2 + z6
+          Defn: τ^2
 
     Its characteristic polynomial can be computed::
 
@@ -123,7 +124,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         True
     """
 
-    def __init__(self, gen, category):
+    def __init__(self, gen, category) -> None:
         """
         Initialize ``self``.
 
@@ -138,8 +139,8 @@ class DrinfeldModule_finite(DrinfeldModule):
         - ``gen`` -- the generator of the Drinfeld module as a list of
           coefficients or an Ore polynomial
 
-        - ``name`` -- (default: ``'t'``) the name of the Ore polynomial
-          ring gen
+        - ``name`` -- (default: ``'τ'``) the name of the variable of
+          the Ore polynomial ring
 
         TESTS::
 
@@ -157,7 +158,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         # added one to ensure that DrinfeldModule_finite would always
         # have _frobenius_norm and _frobenius_trace attributes.
         super().__init__(gen, category)
-        self._base_degree_over_constants = self.base_over_constants_field().degree(self._Fq)
+        self._base_degree_over_constants = log(self._base.cardinality(), self._Fq.cardinality())
         self._frobenius_norm = None
         self._frobenius_trace = None
         self._frobenius_charpoly = None
@@ -200,15 +201,15 @@ class DrinfeldModule_finite(DrinfeldModule):
         drin_coeffs = self.coefficients(sparse=False)
         poly_K = PolynomialRing(K, name=str(A.gen()))
         matrix_poly_K = MatrixSpace(poly_K, r, r)
-        mu_coeffs = ((poly_K.gen() - drin_coeffs[0])**(n+1)) \
+        mu_coeffs = ((poly_K.gen() - drin_coeffs[0])**(n + 1)) \
                     .coefficients(sparse=False)
 
         def companion(order):
             # + [1] is required to satisfy formatting for companion matrix
-            M = matrix_poly_K(companion_matrix([(drin_coeffs[i]/drin_coeffs[r])
-                               .frobenius(qdeg*order)
+            M = matrix_poly_K(companion_matrix([(drin_coeffs[i] / drin_coeffs[r])
+                               .frobenius(qdeg * order)
                                for i in range(r)] + [1], format='top'))
-            M[0, r-1] += poly_K.gen() / drin_coeffs[r].frobenius(qdeg*order)
+            M[0, r - 1] += poly_K.gen() / drin_coeffs[r].frobenius(qdeg * order)
             return M
 
         companion_initial = prod([companion(i) for i in range(nrem, 0, -1)])
@@ -217,12 +218,12 @@ class DrinfeldModule_finite(DrinfeldModule):
         reduced_companions = []
         for k in range(nquo - 1, 0, -1):
             M = Matrix(poly_K, r, r)
-            modulus = poly_K([c.frobenius(qdeg*(-k*nstar % n))
+            modulus = poly_K([c.frobenius(qdeg * (-k * nstar % n))
                                                 for c in mu_coeffs])
             for i, row in enumerate(companion_step):
                 for j, entry in enumerate(row):
                     reduction = entry % modulus
-                    M[i, j] = poly_K([c.frobenius(qdeg*(k*nstar))
+                    M[i, j] = poly_K([c.frobenius(qdeg * (k * nstar))
                                      for c in reduction
                                               .coefficients(sparse=False)])
             reduced_companions.append(M)
@@ -230,12 +231,11 @@ class DrinfeldModule_finite(DrinfeldModule):
 
     def frobenius_endomorphism(self):
         r"""
-        Return the Frobenius endomorphism of the Drinfeld module as a
-        morphism object.
+        Return the Frobenius endomorphism of the Drinfeld module.
 
-        Let `q` be the order of the base field of the function ring. The
-        *Frobenius endomorphism* is defined as the endomorphism whose
-        defining Ore polynomial is `t^q`.
+        The *Frobenius endomorphism* is defined by the Ore polynomial
+        `tau^n`, where `n` is the degree of the base field `K` over
+        `\mathbb F_q`.
 
         EXAMPLES::
 
@@ -244,8 +244,8 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: phi.frobenius_endomorphism()
-            Endomorphism of Drinfeld module defined by T |--> z6*t^2 + 1
-              Defn: t^2
+            Endomorphism of Drinfeld module defined by T |--> z6*τ^2 + 1
+              Defn: τ^2
 
         TESTS::
 
@@ -254,7 +254,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             True
         """
         t = self.ore_polring().gen()
-        deg = self.base_over_constants_field().degree_over()
+        deg = self._base_degree_over_constants
         return self._Hom_(self, category=self.category())(t**deg)
 
     def frobenius_charpoly(self, var='X', algorithm=None):
@@ -262,7 +262,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Return the characteristic polynomial of the Frobenius
         endomorphism.
 
-        Let `\mathbb{F}_q` be the base field of the function ring. The
+        Let `\GF{q}` be the base field of the function ring. The
         *characteristic polynomial* `\chi` *of the Frobenius endomorphism*
         is defined in [Gek1991]_. An important feature of this
         polynomial is that it is monic, univariate, and has coefficients
@@ -273,14 +273,14 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         Let `\chi = X^r + \sum_{i=0}^{r-1} A_{i}(T)X^{i}` be the
         characteristic polynomial of the Frobenius endomorphism, and
-        let `t^n` be the Ore polynomial that defines the Frobenius
+        let `\tau^n` be the Ore polynomial that defines the Frobenius
         endomorphism of `\phi`; by definition, `n` is the degree of `K`
-        over the base field `\mathbb{F}_q`. Then we have
+        over the base field `\GF{q}`. Then we have
 
         .. MATH::
 
-            \chi(t^n)(\phi(T))
-            = t^{nr} + \sum_{i=1}^{r} \phi_{A_{i}}t^{n(i)}
+            \chi(\tau^n)(\phi(T))
+            = \tau^{nr} + \sum_{i=1}^{r} \phi_{A_{i}}\tau^{n(i)}
             = 0,
 
         with `\deg(A_i) \leq \frac{n(r-i)}{r}`.
@@ -299,8 +299,8 @@ class DrinfeldModule_finite(DrinfeldModule):
         Available algorithms are:
 
             - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
-              central simple algebra (CSA) over `\mathbb
-              F_q[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
+              central simple algebra (CSA) over
+              `\GF{q}[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
             - ``'crystalline'`` -- it uses the action of the Frobenius
               on the crystalline cohomology (see [MS2023]_).
             - ``'gekeler'`` -- it tries to identify coefficients by
@@ -340,7 +340,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: chi(frob_pol, phi(T))
             0
             sage: phi.frobenius_charpoly(algorithm='motive')(phi.frobenius_endomorphism())
-            Endomorphism of Drinfeld module defined by T |--> z6*t^2 + 1
+            Endomorphism of Drinfeld module defined by T |--> z6*τ^2 + 1
               Defn: 0
 
         ::
@@ -449,7 +449,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Return the characteristic polynomial of the Frobenius
         endomorphism using Crystalline cohomology.
 
-        The algorithm works for Drinfeld `\mathbb{F}_q[T]`-modules of
+        The algorithm works for Drinfeld `\GF{q}[T]`-modules of
         any rank.
 
         This method is private and should not be directly called.
@@ -471,7 +471,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         the reduced characteristic polynomial of the Ore polynomial
         `\phi_T`. This algorithm is particularly interesting when the
         rank of the Drinfeld module is large compared to the degree
-        of the extension `K/\mathbb F_q`. See [CL2023]_.
+        of the extension `K/\GF{q}`. See [CL2023]_.
         """
         E = self._base
         EZ = PolynomialRing(E, name='Z')
@@ -491,9 +491,9 @@ class DrinfeldModule_finite(DrinfeldModule):
         n = self._base_degree_over_constants
         r = self.rank()
         lc = chi[0][r]
-        coeffs = [A([K(chi[i][j]/lc).in_base()
-                     for i in range((r-j)*n // r + 1)])
-                  for j in range(r+1)]
+        coeffs = [A([K(chi[i][j] / lc).in_base()
+                     for i in range((r - j) * n // r + 1)])
+                  for j in range(r + 1)]
         return PolynomialRing(A, name='X')(coeffs)
 
     def _frobenius_charpoly_crystalline(self):
@@ -501,7 +501,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Return the characteristic polynomial of the Frobenius
         endomorphism using Crystalline cohomology.
 
-        The algorithm works for Drinfeld `\mathbb{F}_q[T]`-modules of
+        The algorithm works for Drinfeld `\GF{q}[T]`-modules of
         any rank.
 
         This method is private and should not be directly called.
@@ -563,7 +563,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Return the characteristic polynomial of the Frobenius
         endomorphism using Gekeler's algorithm.
 
-        The algorithm works for Drinfeld `\mathbb{F}_q[T]`-modules of
+        The algorithm works for Drinfeld `\GF{q}[T]`-modules of
         any rank, provided that the constant coefficient is a generator
         of the base field.
 
@@ -613,10 +613,10 @@ class DrinfeldModule_finite(DrinfeldModule):
         # linear system. The system is prepared such that the solution
         # vector has the form [a_0, a_1, ... a_{r-1}]^T with each a_i
         # corresponding to a block of length (n*(r - i))//r + 1
-        shifts = [(n*(r - i))//r + 1 for i in range(r)]
-        rows, cols = n*r + 1, sum(shifts)
+        shifts = [(n * (r - i)) // r + 1 for i in range(r)]
+        rows, cols = n * r + 1, sum(shifts)
         block_shifts = [0]
-        for i in range(r-1):
+        for i in range(r - 1):
             block_shifts.append(block_shifts[-1] + shifts[i])
         # Compute the images \phi_T^i for i = 0 .. n.
         gen_powers = [self(A.gen()**i).coefficients(sparse=False)
@@ -626,17 +626,16 @@ class DrinfeldModule_finite(DrinfeldModule):
         for j in range(r):
             for k in range(shifts[j]):
                 for i in range(len(gen_powers[k])):
-                    sys[i + n*j, block_shifts[j] + k] = gen_powers[k][i]
+                    sys[i + n * j, block_shifts[j] + k] = gen_powers[k][i]
         if sys.right_nullity() != 0:
             raise NotImplementedError("'gekeler' algorithm failed")
         sol = list(sys.solve_right(vec))
         # The system is solved over K, but the coefficients should all
         # be in Fq We project back into Fq here.
         sol_Fq = [K(x).vector()[0] for x in sol]
-        char_poly = []
-        for i in range(r):
-            char_poly.append([sol_Fq[block_shifts[i] + j]
-                              for j in range(shifts[i])])
+        char_poly = [[sol_Fq[block_shifts[i] + j]
+                      for j in range(shifts[i])]
+                     for i in range(r)]
         return PolynomialRing(A, name='X')(char_poly + [1])
 
     def _frobenius_charpoly_motive(self):
@@ -644,15 +643,16 @@ class DrinfeldModule_finite(DrinfeldModule):
         Return the characteristic polynomial of the Frobenius
         endomorphism using Motivic cohomology.
 
-        The algorithm works for Drinfeld `\mathbb{F}_q[T]`-modules of
+        The algorithm works for Drinfeld `\GF{q}[T]`-modules of
         any rank.
 
         This method is private and should not be directly called.
         Instead, use :meth:`frobenius_charpoly` with the option
         `algorithm='motive'`.
 
-        OUTPUT: a univariate polynomial with coefficients in the
-                function ring
+        OUTPUT:
+
+        a univariate polynomial with coefficients in the function ring
 
         EXAMPLES::
 
@@ -695,11 +695,11 @@ class DrinfeldModule_finite(DrinfeldModule):
         .. MATH::
 
             a_0 = (-1)^{nr - n -r}
-                  \mathrm{Norm}_{K/\mathbb F_q}(\Delta)^{-1}
+                  \mathrm{Norm}_{K/\GF{q}}(\Delta)^{-1}
                   p^{n / \mathrm{deg}(p)},
 
         where `K` is the ground field, which as degree `n` over
-        `\mathbb F_q`, `r` is the rank of the Drinfeld module,
+        `\GF{q}`, `r` is the rank of the Drinfeld module,
         and `\Delta` is the leading coefficient of the generator.
         This formula is given in Theorem~4.2.7 of [Pap2023]_.
 
@@ -752,9 +752,9 @@ class DrinfeldModule_finite(DrinfeldModule):
         r = self.rank()
         p = self.characteristic()
         norm = K(self.coefficients()[-1]).norm()
-        self._frobenius_norm = (-1) ** (n*r - n - r) \
+        self._frobenius_norm = (-1) ** (n * r - n - r) \
                                * norm**(-1) \
-                               * p ** (n//p.degree())
+                               * p ** (n // p.degree())
         return self._frobenius_norm
 
     def frobenius_trace(self, algorithm=None):
@@ -764,7 +764,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Let `C(X) = \sum_{i=0}^r a_iX^{i}` denote the characteristic
         polynomial of the Frobenius endomorphism. The Frobenius trace
         is `-a_{r-1}`. This is an element of the regular function ring
-        and if `n` is the degree of the base field over `\mathbb{F}_q`,
+        and if `n` is the degree of the base field over `\GF{q}`,
         then the Frobenius trace has degree at most `\frac{n}{r}`.
 
         INPUT:
@@ -777,8 +777,8 @@ class DrinfeldModule_finite(DrinfeldModule):
         Available algorithms are:
 
             - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
-              central simple algebra (CSA) over `\mathbb
-              F_q[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
+              central simple algebra (CSA) over
+              `\GF{q}[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
             - ``'crystalline'`` -- it uses the action of the Frobenius
               on the crystalline cohomology (see [MS2023]_).
 
@@ -935,15 +935,15 @@ class DrinfeldModule_finite(DrinfeldModule):
         When the input is not in the image of the Drinfeld module, an
         exception is raised::
 
-            sage: t = phi.ore_polring().gen()
-            sage: phi.invert(t + 1)
+            sage: tau = phi.ore_variable()
+            sage: phi.invert(tau + 1)
             Traceback (most recent call last):
             ...
             ValueError: input must be in the image of the Drinfeld module
 
         ::
 
-            sage: phi.invert(t^4 + t^2 + 1)
+            sage: phi.invert(tau^4 + tau^2 + 1)
             Traceback (most recent call last):
             ...
             ValueError: input must be in the image of the Drinfeld module
@@ -998,16 +998,16 @@ class DrinfeldModule_finite(DrinfeldModule):
         # Write the system and solve it
         k = deg // r
         A = self._function_ring
-        mat_rows = [[E.zero() for _ in range(k+1)] for _ in range(k+1)]
+        mat_rows = [[E.zero() for _ in range(k + 1)] for _ in range(k + 1)]
         mat_rows[0][0] = E.one()
         phiT = self.gen()
         phiTi = self.ore_polring().one()
-        for i in range(1, k+1):
+        for i in range(1, k + 1):
             phiTi *= phiT
-            for j in range(i+1):
-                mat_rows[j][i] = phiTi[r*j]
+            for j in range(i + 1):
+                mat_rows[j][i] = phiTi[r * j]
         mat = Matrix(mat_rows)
-        vec = vector([ore_pol[r*j] for j in range(k+1)])
+        vec = vector([ore_pol[r * j] for j in range(k + 1)])
         coeffs_K = list(mat.inverse() * vec)
         # Cast the coefficients to Fq
         try:
@@ -1091,7 +1091,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: phi.is_supersingular()
             True
             sage: phi(phi.characteristic())   # Purely inseparable
-            z6*t^2
+            z6*τ^2
 
         In rank two, a Drinfeld module is either ordinary or
         supersinguler. In higher ranks, it could be neither of

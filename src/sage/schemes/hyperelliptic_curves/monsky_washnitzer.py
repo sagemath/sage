@@ -668,16 +668,8 @@ def transpose_list(input) -> list[list]:
         sage: transpose_list(L)
         [[1, 3, 5], [2, 4, 6]]
     """
-    h = len(input)
     w = len(input[0])
-
-    output = []
-    for i in range(w):
-        row = []
-        for j in range(h):
-            row.append(input[j][i])
-        output.append(row)
-    return output
+    return [[input_j[i] for input_j in input] for i in range(w)]
 
 
 def helper_matrix(Q):

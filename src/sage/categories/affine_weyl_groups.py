@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Affine Weyl groups
 """
@@ -136,7 +135,7 @@ class AffineWeylGroups(Category_singleton):
                                                    post_process=select_length)
 
     class ElementMethods:
-        def is_affine_grassmannian(self):
+        def is_affine_grassmannian(self) -> bool:
             """
             Test whether ``self`` is affine Grassmannian.
 

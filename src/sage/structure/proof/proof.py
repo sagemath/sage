@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 "Global proof preferences"
 
 from sage.structure.sage_object import SageObject

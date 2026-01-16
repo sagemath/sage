@@ -4,11 +4,12 @@ py.install_sources(
   'non_negative_integer_semiring.py',
   'tropical_mpolynomial.py',
   'tropical_polynomial.py',
+  'tropical_semiring.pyx',
   'tropical_variety.py',
   subdir: 'sage/rings/semirings',
 )
 
-extension_data = {'tropical_semiring' : files('tropical_semiring.pyx')}
+extension_data = {'tropical_semiring': files('tropical_semiring.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

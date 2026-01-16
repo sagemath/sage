@@ -833,9 +833,9 @@ def label_list(label, n, math_mode, index_set=None):
         index_set = range(n)
     if math_mode:
         label = label.strip("$")
-        return list("$%s_{%d}$" % (label, i) for i in index_set)
+        return ["$%s_{%d}$" % (label, i) for i in index_set]
     else:
-        return list("%s_%d" % (label, i) for i in index_set)
+        return ["%s_%d" % (label, i) for i in index_set]
 
 
 def options(option=None, **kwds):
@@ -1077,7 +1077,8 @@ def sector(ray1, ray2, **extra_options):
         sage: sector((3,2,1), (1,2,3))                                                  # needs sage.plot
         Graphics3d Object
     """
-    from sage.functions.all import arccos, arctan2
+    from sage.functions.trig import acos as arccos
+    from sage.functions.trig import arctan2
 
     ray1 = vector(RDF, ray1)
     ray2 = vector(RDF, ray2)

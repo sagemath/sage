@@ -1045,7 +1045,7 @@ class Singular(ExtraTabCompletion, Expect):
             self.eval('matrix %s[%s][%s] = %s' % (name, nrows, ncols, entries))
         return SingularElement(self, None, name, True)
 
-    def ring(self, char=0, vars='(x)', order='lp', check=None):
+    def ring(self, char=0, vars='(x)', order='lp'):
         r"""
         Create a Singular ring and makes it the current ring.
 
@@ -1125,10 +1125,6 @@ class Singular(ExtraTabCompletion, Expect):
             s = '; '.join('if(defined(%s)>0){kill %s;};' % (x, x)
                           for x in vars[1:-1].split(','))
             self.eval(s)
-
-        if check is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(33319, 'The check= keyword argument does nothing.' + f'({check})')
 
         R = self('%s,%s,%s' % (char, vars, order), 'ring')
         self.eval('short=0')  # make output include *'s for multiplication for *THIS* ring.
@@ -2311,29 +2307,6 @@ class SingularFunctionElement(FunctionElement):
             True
         """
         return get_docstring(self._name, code=True)
-
-
-def is_SingularElement(x):
-    r"""
-    Return ``True`` if ``x`` is of type :class:`SingularElement`.
-
-    This function is deprecated; use :func:`isinstance`
-    (of :class:`sage.interfaces.abc.SingularElement`) instead.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.singular import is_SingularElement
-        sage: is_SingularElement(singular(2))
-        doctest:...: DeprecationWarning: the function is_SingularElement is deprecated; use isinstance(x, sage.interfaces.abc.SingularElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        True
-        sage: is_SingularElement(2)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_SingularElement is deprecated; use isinstance(x, sage.interfaces.abc.SingularElement) instead")
-
-    return isinstance(x, SingularElement)
 
 
 def get_docstring(name, prefix=False, code=False):

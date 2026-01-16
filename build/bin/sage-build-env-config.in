@@ -41,6 +41,9 @@ export SAGE_MPFR_PREFIX="@SAGE_MPFR_PREFIX@"
 
 export SAGE_MPC_PREFIX="@SAGE_MPC_PREFIX@"
 
+# empty if --disable-doc was passed
+export SAGE_DOCS="@SAGE_DOCS@"
+
 # Location of system crti.o, in case we build our own gcc
 export SAGE_CRTI_DIR="@SAGE_CRTI_DIR@"
 
@@ -57,6 +60,8 @@ export SAGE_PIP_INSTALL_FLAGS="@SAGE_PIP_INSTALL_FLAGS@"
 export SAGE_SUITESPARSE_PREFIX="@SAGE_SUITESPARSE_PREFIX@"
 
 export SAGE_CONFIGURE_FFLAS_FFPACK="@SAGE_CONFIGURE_FFLAS_FFPACK@"
+
+export SAGE_BOOST_PREFIX="@SAGE_BOOST_PREFIX@"
 
 export SAGE_HAVE_LIBJPEG="@SAGE_HAVE_LIBJPEG@"
 

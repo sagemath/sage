@@ -80,7 +80,7 @@ cdef boost_graph_from_sage_graph(BoostGenGraph *g, g_sage, vertex_to_int, revers
     if g.num_verts():
         raise AssertionError("the given Boost graph must be empty")
 
-    cdef int N = g_sage.num_verts()
+    cdef int N = g_sage.n_vertices()
     cdef int i
 
     for i in range(N):
@@ -136,7 +136,7 @@ cdef boost_weighted_graph_from_sage_graph(BoostWeightedGraph *g,
     if g.num_verts():
         raise AssertionError("the given Boost graph must be empty")
 
-    cdef int N = g_sage.num_verts()
+    cdef int N = g_sage.n_vertices()
     cdef int i
 
     for i in range(N):
@@ -273,7 +273,7 @@ cdef boost_clustering_coeff(BoostGenGraph *g, vertices):
             result_d = g[0].clustering_coeff(vi)
             sig_off()
             clust_of_v[v] = result_d
-        return ((sum(clust_of_v.itervalues()) / len(clust_of_v)), clust_of_v)
+        return ((sum(clust_of_v.values()) / len(clust_of_v)), clust_of_v)
 
 
 cpdef clustering_coeff(g, vertices=None):
@@ -342,7 +342,6 @@ cpdef clustering_coeff(g, vertices=None):
     return (average_clustering, clust_v_sage)
 
 
-@cython.binding(True)
 cpdef dominator_tree(g, root, return_dict=False, reverse=False):
     r"""
     Use Boost to compute the dominator tree of ``g``, rooted at ``root``.
@@ -1549,7 +1548,7 @@ cpdef min_cycle_basis(g_sage, weight_function=None, by_weight=False):
     """
     cdef Py_ssize_t u_int, v_int, i, j
     cdef object u, v
-    cdef Py_ssize_t n = g_sage.num_verts()
+    cdef Py_ssize_t n = g_sage.n_vertices()
     cdef list int_to_vertex = list(g_sage)
     cdef dict vertex_to_int = {u: u_int for u_int, u in enumerate(int_to_vertex)}
     cdef list edgelist

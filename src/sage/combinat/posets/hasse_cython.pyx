@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Some fast computations for finite posets
 """

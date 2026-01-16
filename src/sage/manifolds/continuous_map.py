@@ -2077,7 +2077,7 @@ class ContinuousMap(Morphism):
         Checking that applying successively the homeomorphism and its
         inverse results in the identity::
 
-            sage: (a, b) = var('a b')
+            sage: a, b = var('a b')
             sage: p = M.point((a,b)) # a generic point on M
             sage: q = rot(p)
             sage: p1 = rot.inverse()(q)

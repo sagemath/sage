@@ -153,7 +153,7 @@ cdef class Polynomial_template(Polynomial):
             celement_set_si(&self.x, 0, (<Polynomial_template>self)._cparent)
             celement_gen(gen, 0, (<Polynomial_template>self)._cparent)
 
-            for deg, coef in x.iteritems():
+            for deg, coef in x.items():
                 celement_pow(monomial, gen, deg, NULL, (<Polynomial_template>self)._cparent)
                 celement_mul(monomial, &(<Polynomial_template>self.__class__(parent, coef)).x, monomial, (<Polynomial_template>self)._cparent)
                 celement_add(&self.x, &self.x, monomial, (<Polynomial_template>self)._cparent)

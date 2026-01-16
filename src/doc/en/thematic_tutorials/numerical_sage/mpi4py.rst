@@ -45,9 +45,9 @@ example. Create a script with the following code in a file ``mpi_1.py``
 To run it you can do (from the command line in your Sage
 directory)
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
-    mpirun -np 5 ./sage -python mpi_1.py
+    $ mpirun -np 5 ./sage -python mpi_1.py
 
 The command ``mpirun -np 5`` starts 5 copies of a program under MPI. In
 this case we have 5 copies of Sage in pure Python mode running the

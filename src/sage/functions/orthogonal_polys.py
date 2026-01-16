@@ -396,13 +396,12 @@ Willis of the University of Nebraska at Kearney.
 import warnings
 
 import sage.rings.abc
-
 from sage.arith.misc import rising_factorial
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.symbolic.function import BuiltinFunction, GinacFunction
 from sage.structure.element import Expression, parent
+from sage.symbolic.function import BuiltinFunction, GinacFunction
 
 lazy_import('sage.functions.other', ['factorial', 'binomial'])
 
@@ -455,8 +454,8 @@ class OrthogonalFunction(BuiltinFunction):
             except KeyError:
                 pass
         super().__init__(name=name, nargs=nargs,
-                                                 latex_name=latex_name,
-                                                 conversions=conversions)
+                         latex_name=latex_name,
+                         conversions=conversions)
 
     def eval_formula(self, *args):
         """
@@ -1376,9 +1375,9 @@ class Func_legendre_Q(BuiltinFunction):
             -29113619535/131072*log(-(x + 1)/(x - 1))
         """
         BuiltinFunction.__init__(self, "legendre_Q", nargs=2, latex_name=r"Q",
-                conversions={'maxima': 'legendre_q',
-                             'mathematica': 'LegendreQ',
-                             'maple': 'LegendreQ'})
+                                 conversions={'maxima': 'legendre_q',
+                                              'mathematica': 'LegendreQ',
+                                              'maple': 'LegendreQ'})
 
     def _eval_(self, n, x, *args, **kwds):
         r"""
@@ -1883,9 +1882,6 @@ class Func_assoc_legendre_P(BuiltinFunction):
         ex2 = sum(b * arg**a for a, b in enumerate(p))
         return (-1)**(m+n)*ex1*ex2
 
-    from sage.misc.superseded import deprecated_function_alias
-    eval_poly = deprecated_function_alias(25034, eval_gen_poly)
-
     def _derivative_(self, n, m, x, *args, **kwds):
         """
         Return the derivative of ``gen_legendre_P(n,m,x)``.
@@ -2121,11 +2117,12 @@ class Func_hermite(GinacFunction):
             32 x  - 160 x  + 120 x
         """
         GinacFunction.__init__(self, "hermite", nargs=2, latex_name=r"H",
-                conversions={'maxima': 'hermite',
-                             'mathematica': 'HermiteH',
-                             'maple': 'HermiteH',
-                             'fricas': 'hermiteH',
-                             'sympy': 'hermite'}, preserved_arg=2)
+                               conversions={'maxima': 'hermite',
+                                            'mathematica': 'HermiteH',
+                                            'maple': 'HermiteH',
+                                            'fricas': 'hermiteH',
+                                            'sympy': 'hermite'},
+                               preserved_arg=2)
 
 
 hermite = Func_hermite()
@@ -2179,11 +2176,11 @@ class Func_jacobi_P(OrthogonalFunction):
                2
         """
         OrthogonalFunction.__init__(self, "jacobi_P", nargs=4, latex_name=r"P",
-                conversions={'maxima': 'jacobi_p',
-                             'mathematica': 'JacobiP',
-                             'maple': 'JacobiP',
-                             'fricas': 'jacobiP',
-                             'sympy': 'jacobi'})
+                                    conversions={'maxima': 'jacobi_p',
+                                                 'mathematica': 'JacobiP',
+                                                 'maple': 'JacobiP',
+                                                 'fricas': 'jacobiP',
+                                                 'sympy': 'jacobi'})
 
     def _eval_(self, n, a, b, x):
         """
@@ -2420,11 +2417,11 @@ class Func_laguerre(OrthogonalFunction):
             laguerre
         """
         OrthogonalFunction.__init__(self, "laguerre", nargs=2, latex_name=r"L",
-                conversions={'maxima': 'laguerre',
-                             'mathematica': 'LaguerreL',
-                             # 'fricas': 'laguerreL',  3 arguments ?
-                             'maple': 'LaguerreL',
-                             'sympy': 'laguerre'})
+                                    conversions={'maxima': 'laguerre',
+                                                 'mathematica': 'LaguerreL',
+                                                 # 'fricas': 'laguerreL',  3 arguments ?
+                                                 'maple': 'LaguerreL',
+                                                 'sympy': 'laguerre'})
 
     def _eval_(self, n, x, *args, **kwds):
         r"""
@@ -2446,8 +2443,8 @@ class Func_laguerre(OrthogonalFunction):
             sage: laguerre(-9,2)                                                        # needs sage.symbolic
             66769/315*e^2
         """
-        from sage.rings.integer import Integer
         from sage.functions.log import exp
+        from sage.rings.integer import Integer
         ret = self._eval_special_values_(n, x)
         if ret is not None:
             return ret
@@ -2560,6 +2557,7 @@ class Func_gen_laguerre(OrthogonalFunction):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: # needs sage.symbolic
             sage: a, n, x = var('a, n, x')
             sage: gen_laguerre(x, x, x)._sympy_()                                       # needs sympy
@@ -2567,7 +2565,7 @@ class Func_gen_laguerre(OrthogonalFunction):
             sage: maxima(gen_laguerre(1, 2, x, hold=True))
             3*(1-_SAGE_VAR_x/3)
             sage: maxima(gen_laguerre(n, a, gen_laguerre(n, a, x)))
-            gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a, gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,_SAGE_VAR_x))
+            gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,_SAGE_VAR_x))
 
         TESTS::
 
@@ -2916,8 +2914,8 @@ class Func_meixner(OrthogonalFunction):
         if kwds.get('hold', False):
             return None
         if n not in ZZ or n < 0:
-            from sage.functions.hypergeometric import hypergeometric
             from sage.functions.gamma import gamma
+            from sage.functions.hypergeometric import hypergeometric
             return gamma(b + n) / gamma(b) * hypergeometric([-n, -x], [b], 1 - 1/c)
         try:
             return self.eval_formula(n, x, b, c)

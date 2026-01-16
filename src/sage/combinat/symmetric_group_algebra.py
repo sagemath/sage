@@ -119,7 +119,7 @@ def SymmetricGroupAlgebra(R, W, category=None):
         Weyl Group of type ['A', 3] (as a matrix group acting
         on the ambient space)
         sage: SGA.an_element()
-        s1*s2*s3 + 3*s2*s3*s1*s2 + 2*s3*s1 + 1
+        s1*s2*s3 + ... + 1
 
     The preferred way to construct the symmetric group algebra is to
     go through the usual ``algebra`` method::
@@ -2176,7 +2176,6 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             ...
             NotImplementedError: not implemented when p|n!; dimension of invariant forms may be greater than one
         """
-        from sage.matrix.special import diagonal_matrix
         F = self.base_ring()
         G = self.group()
 
@@ -2209,9 +2208,9 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 return F.zero()
             z = F.multiplicative_generator()
             k = u.log(z)
-            if k % (q+1) != 0:
+            if k % (q + 1) != 0:
                 raise ValueError(f"unable to factor as {u} is not in base field GF({q})")
-            return z ** ((k//(q+1)) % (q-1))
+            return z ** ((k // (q + 1)) % (q - 1))
 
         dft_matrix = self.dft()
         n = dft_matrix.nrows()
@@ -2536,7 +2535,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         T = []
         total = 1  # make it 1-based
         for r in la:
-            T.append(list(range(total, total+r)))
+            T.append(list(range(total, total + r)))
             total += r
         T = Tableau(T)
         G = self.group()
@@ -2634,7 +2633,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             self._cellular_KL = KazhdanLusztigPolynomial(self._KLG, q)
             polyfunc = self._cellular_KL.P
         else:
-            self._cellular_KL = Coxeter3Group(['A', self.n+1])
+            self._cellular_KL = Coxeter3Group(['A', self.n + 1])
             self._KLG = self._cellular_KL
             polyfunc = self._cellular_KL.kazhdan_lusztig_polynomial
 
@@ -3565,9 +3564,9 @@ class HeckeAlgebraSymmetricGroup_generic(CombinatorialFreeModule):
         if x in Permutations():
             if len(x) < self.n:
                 return self.monomial(self._indices(
-                            list(x) + list(range(len(x) + 1, self.n + 1))
-                        ))
-            if all(x[i] == i+1 for i in range(self.n, len(x))):
+                    list(x) + list(range(len(x) + 1, self.n + 1))
+                ))
+            if all(x[i] == i + 1 for i in range(self.n, len(x))):
                 return self.monomial(self._indices(x[:self.n]))
 
         return self._indices(x)

@@ -18,15 +18,15 @@ AUTHORS:
 
 - Reimundo Heluani (2020-06-03): Initial implementation.
 """
-#******************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2020 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 
@@ -72,7 +72,7 @@ class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
         sage: R.structure_coefficients()
         Finite family {('a', 'c'): ((0, K),),  ('b', 'd'): ((0, K),),  ('c', 'a'): ((0, K),),  ('d', 'b'): ((0, K),)}
     """
-    def __init__(self, R, ngens=2, names=None, index_set=None):
+    def __init__(self, R, ngens=2, names=None, index_set=None) -> None:
         """
         Initialize ``self``.
 

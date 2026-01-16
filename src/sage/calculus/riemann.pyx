@@ -744,7 +744,7 @@ cdef class Riemann_Map:
             sage: m.plot_boundaries(plotjoined=False, rgbcolor=[0,0,1], thickness=6)    # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
 
         if rgbcolor is None:
             rgbcolor = [0, 0, 0]
@@ -942,7 +942,8 @@ cdef class Riemann_Map:
             ....:                      thickness=2.0, min_mag=0.1)
         """
         from sage.plot.complex_plot import ComplexPlot
-        from sage.plot.all import list_plot, Graphics
+        from sage.plot.plot import list_plot
+        from sage.plot.graphics import Graphics
 
         cdef int k, i
         if self.exterior:
@@ -1068,7 +1069,7 @@ cdef class Riemann_Map:
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.complex_plot import ComplexPlot
-        from sage.plot.all import Graphics
+        from sage.plot.graphics import Graphics
 
         if plot_range is None:
             plot_range = []

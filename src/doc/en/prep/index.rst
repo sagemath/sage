@@ -35,10 +35,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   Prelude - Getting Logged In <Logging-On>
-   Introductory Tutorial <Intro-Tutorial>
-   Basic Symbolics and Plotting <Symbolics-and-Basic-Plotting>
-   Calculus <Calculus>
-   Introductory Programming <Programming>
-   Advanced 2D Plotting <Advanced-2DPlotting>
+   Prelude - Getting Logged In <logging-on>
+   Introductory Tutorial <intro-tutorial>
+   Basic Symbolics and Plotting <symbolics-and-basic-plotting>
+   Calculus <calculus>
+   Introductory Programming <programming>
+   Advanced 2D Plotting <advanced-2D-plotting>
    Quickstart Tutorials <quickstart>

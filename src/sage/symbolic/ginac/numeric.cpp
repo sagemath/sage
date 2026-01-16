@@ -81,14 +81,14 @@
 
 #define Py_INCREF(op) (                         \
     _Py_INC_REFTOTAL  _Py_REF_DEBUG_COMMA       \
-    ((PyObject*)(op))->ob_refcnt++) ; \
+    Py_SET_REFCNT((PyObject*)(op), Py_REFCNT(op) + 1)) ; \
 std::cerr << "+ " << long(op) << ", " << Py_REFCNT(op) << ", " << Py_TYPE(op)->tp_name << std::endl; std::cerr.flush();
 
 #define Py_DECREF(op)                                   \
     do {                                                \
 std::cerr << "- " << long(op) << ", " << Py_REFCNT(op) << ", " << Py_TYPE(op)->tp_name << std::endl; std::cerr.flush(); \
         if (_Py_DEC_REFTOTAL  _Py_REF_DEBUG_COMMA       \
-        --((PyObject*)(op))->ob_refcnt != 0)            \
+        (Py_SET_REFCNT((PyObject*)(op), Py_REFCNT(op) - 1), Py_REFCNT(op) != 0))            \
             _Py_CHECK_REFCNT(op)                        \
         else                                            \
         _Py_Dealloc((PyObject *)(op));                  \
@@ -625,7 +625,7 @@ int numeric::compare_same_type(const numeric& right) const {
         }
 }
 
-#if PY_MAJOR_VERSION < 3 || defined(PYPY_VERSION)
+#if defined(PYPY_VERSION)
 #define hash_bits (8 * sizeof(void*))
 #else
 #define hash_bits _PyHASH_BITS
@@ -2854,7 +2854,7 @@ static void fill_small_powers()
 
 bool numeric::is_small_power(std::pair<int,int>& p) const
 {
-        int i;
+        long i;
         switch (t) {
         case LONG:
                 if (v._long < 2)

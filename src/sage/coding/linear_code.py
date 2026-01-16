@@ -80,17 +80,17 @@ A ``LinearCode`` is instantiated by providing a generator matrix::
     sage: G = MS([[1,1,1,0,0,0,0], [1,0,0,1,1,0,0], [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
     sage: C = LinearCode(G)
     sage: C.basis()
-    [(1, 1, 1, 0, 0, 0, 0),
-     (1, 0, 0, 1, 1, 0, 0),
-     (0, 1, 0, 1, 0, 1, 0),
-     (1, 1, 0, 1, 0, 0, 1)]
+    [(1, 0, 0, 0, 0, 1, 1),
+     (0, 1, 0, 0, 1, 0, 1),
+     (0, 0, 1, 0, 1, 1, 0),
+     (0, 0, 0, 1, 1, 1, 1)]
     sage: c = C.basis()[1]
     sage: c in C
     True
     sage: c.nonzero_positions()
-    [0, 3, 4]
+    [1, 4, 6]
     sage: c.support()
-    [0, 3, 4]
+    [1, 4, 6]
     sage: c.parent()
     Vector space of dimension 7 over Finite Field of size 2
 
@@ -231,7 +231,6 @@ from sage.rings.rational_field import QQ
 
 lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
-lazy_import('sage.interfaces.gap', 'gap')
 
 
 # *****************************************************************************
@@ -273,13 +272,11 @@ def _dump_code_in_leon_format(C):
     F = C.base_ring()
     p = F.order()  # must be prime and <11
     s = "LIBRARY code;\n" + "code=seq(%s,%s,%s,seq(\n" % (p, C.dimension(), C.length())
-    Gr = [str(r)[1:-1].replace(" ", "") for r in C.generator_matrix().rows()]
+    Gr = (str(r)[1:-1].replace(" ", "") for r in C.generator_matrix().rows())
     s += ",\n".join(Gr) + "\n));\nFINISH;"
     file_loc = tmp_filename()
-    f = open(file_loc, "w")
-    f.write(s)
-    f.close()
-
+    with open(file_loc, "w") as f:
+        f.write(s)
     return file_loc
 
 
@@ -345,7 +342,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, base_field, length, default_encoder_name, default_decoder_name):
+    def __init__(self, base_field, length,
+                 default_encoder_name, default_decoder_name) -> None:
         """
         Initialize mandatory parameters that any linear code shares.
 
@@ -435,7 +433,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         """
         return self.gens()[0]
 
-    def automorphism_group_gens(self, equivalence='semilinear'):
+    def automorphism_group_gens(self, equivalence='semilinear') -> tuple:
         r"""
         Return generators of the automorphism group of ``self``.
 
@@ -611,8 +609,9 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                 t={}, v={}, k={}, lambda={}. \nThere are {} block of this design.".format(
                     w, t, n, w, wts[w] * binomial(w, t) // binomial(n, t), wts[w]))
         wtsp = Cp.weight_distribution()
-        dp = min([i for i in range(1, len(wtsp)) if wtsp[i] != 0])
-        nonzerowtsp = [i for i in range(len(wtsp)) if wtsp[i] != 0 and i <= n-t and i >= dp]
+        dp = next(i for i in range(1, len(wtsp)) if wtsp[i] != 0)
+        nonzerowtsp = [i for i in range(len(wtsp))
+                       if wtsp[i] != 0 and i <= n-t and i >= dp]
         s = len([i for i in range(1, n) if wtsp[i] != 0 and 0 < i <= n-t])
         if mode == "verbose":
             for w in nonzerowtsp:
@@ -804,7 +803,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C.characteristic()
             2
         """
-        return (self.base_ring()).characteristic()
+        return self.base_ring().characteristic()
 
     def characteristic_polynomial(self):
         r"""
@@ -817,7 +816,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C.characteristic_polynomial()
             -4/3*x^3 + 64*x^2 - 2816/3*x + 4096
         """
-        R = PolynomialRing(QQ,"x")
+        R = PolynomialRing(QQ, "x")
         x = R.gen()
         C = self
         Cd = C.dual_code()
@@ -851,9 +850,9 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         from sage.misc.functional import sqrt
         C = self
         n = C.length()
-        RT = PolynomialRing(QQ,2,"Ts")
-        T,s = RT.fraction_field().gens()
-        t = PolynomialRing(QQ,"t").gen()
+        RT = PolynomialRing(QQ, 2, "Ts")
+        T, s = RT.fraction_field().gens()
+        t = PolynomialRing(QQ, "t").gen()
         Cd = C.dual_code()
         k = C.dimension()
         q = (C.base_ring()).characteristic()
@@ -869,8 +868,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             else:
                 Pd = s * q**(k-(n+1)//2) * RT(Cd.zeta_polynomial()) * T**(dperp - d)
             CP = P+Pd
-            f = CP/CP(1,s)
-            return f(t,sqrt(q))
+            f = CP/CP(1, s)
+            return f(t, sqrt(q))
         if dperp < d:
             P = RT(C.zeta_polynomial())*T**(d - dperp)
             if is_even(n):
@@ -878,8 +877,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             if not is_even(n):
                 Pd = s*q**(k-(n+1)/2)*RT(Cd.zeta_polynomial())
             CP = P+Pd
-            f = CP/CP(1,s)
-            return f(t,sqrt(q))
+            f = CP/CP(1, s)
+            return f(t, sqrt(q))
         if dperp == d:
             P = RT(C.zeta_polynomial())
             if is_even(n):
@@ -887,8 +886,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             if not is_even(n):
                 Pd = s*q**(k-(n+1)/2)*RT(Cd.zeta_polynomial())
             CP = P+Pd
-            f = CP/CP(1,s)
-            return f(t,sqrt(q))
+            f = CP/CP(1, s)
+            return f(t, sqrt(q))
 
     @cached_method
     def covering_radius(self):
@@ -950,14 +949,14 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         C = self
         A = C.weight_distribution()
         n = C.length()
-        V = VectorSpace(QQ,n+1)
+        V = VectorSpace(QQ, n+1)
         S = V(A).nonzero_positions()
-        S0 = [S[i] for i in range(1,len(S))]
+        S0 = [S[i] for i in range(1, len(S))]
         if len(S) > 1:
             return GCD(S0)
         return 1
 
-    def is_projective(self):
+    def is_projective(self) -> bool:
         r"""
         Test  whether the code is projective.
 
@@ -1024,8 +1023,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         k1 = len(G1.rows())
         n2 = len(G2.columns())
         k2 = len(G2.rows())
-        MS1 = MatrixSpace(F,k2,n1)
-        MS2 = MatrixSpace(F,k1,n2)
+        MS1 = MatrixSpace(F, k2, n1)
+        MS2 = MatrixSpace(F, k1, n2)
         Z1 = MS1(0)
         Z2 = MS2(0)
         top = G1.augment(Z2)
@@ -1073,7 +1072,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         G2 = other.generator_matrix()
         k2 = len(G2.rows())
         n2 = len(G2.columns())
-        MS = MatrixSpace(F,k2,n2)
+        MS = MatrixSpace(F, k2, n2)
         Z = MS(0)
         top = G1.augment(G1)
         bot = Z.augment(G2)
@@ -1167,7 +1166,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         ka = aux.dimension()
 
         F = self.base_field()
-        MS = MatrixSpace(F,k-ka,na)
+        MS = MatrixSpace(F, k-ka, na)
         Z = MS(0)
         right = Z.stack(Ga)
         G = left.augment(right)
@@ -1225,10 +1224,10 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         G0 = [[x**q0 for x in g.list()] for g in G.rows()]
         G1 = [list(g.list()) for g in G.rows()]
         G2 = G0+G1
-        MS = MatrixSpace(F,2*k,n)
+        MS = MatrixSpace(F, 2*k, n)
         G3 = MS(G2)
         r = G3.rank()
-        MS = MatrixSpace(F,r,n)
+        MS = MatrixSpace(F, r, n)
         Grref = G3.echelon_form()
         G = MS([Grref.row(i) for i in range(r)])
         return LinearCode(G)
@@ -1254,8 +1253,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         d = self.minimum_distance()
         n = self.length()
         k = self.dimension()
-        gammaC = n+1-k-d
-        return gammaC
+        return n + 1 - k - d
 
     def is_permutation_equivalent(self, other, algorithm=None):
         """
@@ -1294,7 +1292,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         if F != F_o or n != n_o:
             return False
         k = len(G.rows())
-        MS = MatrixSpace(F,q**k,n)
+        MS = MatrixSpace(F, q**k, n)
         CW1 = MS(self.list())
         CW2 = MS(other.list())
         B1 = NonlinearBinaryCodeStruct(CW1)
@@ -1307,7 +1305,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             return True
         return False
 
-    def is_galois_closed(self):
+    def is_galois_closed(self) -> bool:
         r"""
         Check if ``self`` is equal to its Galois closure.
 
@@ -1320,7 +1318,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         p = self.base_ring().characteristic()
         return self == self.galois_closure(GF(p))
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return a string representation in Magma of this linear code.
 
@@ -1441,7 +1439,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0], [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: C._minimum_weight_codeword()                                          # needs sage.libs.gap
-            (0, 1, 0, 1, 0, 1, 0)
+            (0, 0, 1, 0, 1, 1, 0)
 
         TESTS:
 
@@ -1474,7 +1472,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         dist_min = libgap(n + 1)
         K = libgap.GF(q)
         v0 = (K**n).Zero()
-        for i in range(1,k+1):
+        for i in range(1, k+1):
             v = Gmat.AClosestVectorCombinationsMatFFEVecFFECoords(K,v0,i,1)[0]
             dist = v.WeightVecFFE()
             if dist and dist < dist_min:
@@ -1647,7 +1645,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             if algorithm == "gap+verbose":
                 print("\n Minimum distance: %s \n Weight distribution: \n %s" % (nonzerowts[1], wts))
             stop = 0                                          # only stop if all gens are autos
-            for i in range(1,len(nonzerowts)):
+            for i in range(1, len(nonzerowts)):
                 if stop == 1:
                     break
                 wt = nonzerowts[i]
@@ -1851,10 +1849,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             True
         """
         if algorithm is None:
-            if self.base_ring().order() == 2:
-                algorithm = "binary"
-            else:
-                algorithm = "gap"
+            algorithm = "binary" if self.base_ring().order() == 2 else "gap"
         F = self.base_ring()
         n = self.length()
         if algorithm == "gap":
@@ -1862,7 +1857,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             Gmat = self.generator_matrix()
             q = self.base_ring().order()
             z = 0*libgap.Z(q)*([0]*self.length())     # GAP zero vector
-            w = libgap(Gmat).DistancesDistributionMatFFEVecFFE(libgap.GF(q),z)
+            w = libgap(Gmat).DistancesDistributionMatFFEVecFFE(libgap.GF(q), z)
             return w.sage()
         elif algorithm == "binary":
             from sage.coding.binary_code import weight_dist
@@ -1908,7 +1903,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         """
         n = self.length()
         F = self.base_ring()
-        V = VectorSpace(F,n+1)
+        V = VectorSpace(F, n+1)
         return V(self.weight_distribution()).support()
 
     def weight_enumerator(self, names=None, bivariate=True):
@@ -1953,18 +1948,15 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             24*x^11 + 110*x^9*y^2 + 330*x^8*y^3 + 132*x^6*y^5 + 132*x^5*y^6 + y^11
         """
         if names is None:
-            if bivariate:
-                names = "xy"
-            else:
-                names = "x"
+            names = "xy" if bivariate else "x"
         spec = self.weight_distribution()
         n = self.length()
         if bivariate:
-            R = PolynomialRing(ZZ,2,names)
-            x,y = R.gens()
+            R = PolynomialRing(ZZ, 2, names)
+            x, y = R.gens()
             return sum(spec[i]*x**i*y**(n-i) for i in range(n+1))
         else:
-            R = PolynomialRing(ZZ,names)
+            R = PolynomialRing(ZZ, names)
             x, = R.gens()
             return sum(spec[i]*x**i for i in range(n+1))
 
@@ -2260,7 +2252,7 @@ class LinearCode(AbstractLinearCode):
     - David Joyner (11-2005)
     - Charles Prior (03-2016): :issue:`20198`, LinearCode from a code
     """
-    def __init__(self, generator, d=None):
+    def __init__(self, generator, d=None) -> None:
         r"""
         See the docstring for :meth:`LinearCode`.
 
@@ -2310,47 +2302,64 @@ class LinearCode(AbstractLinearCode):
             sage: C = LinearCode(VS); C
             [3, 1] linear code over GF(2)
 
-        Forbid the zero vector space (see :issue:`17452` and :issue:`6486`)::
+        Constructing a zero code is allowed::
 
             sage: G = matrix(GF(2), [[0,0,0]])
             sage: C = LinearCode(G)
-            Traceback (most recent call last):
-            ...
-            ValueError: this linear code contains no nonzero vector
+            sage: C
+            [3, 0] linear code over GF(2)
+            sage: C.dimension()
+            0
+            sage: C_dual = C.dual_code()
+            sage: C_dual
+            [3, 3] linear code over GF(2)
+            sage: C_dual.dimension() == C_dual.length()
+            True
+            sage: C.encode(C.encoder().message_space().zero_vector())
+            (0, 0, 0)
+            sage: C.decode_to_code(vector(GF(2), [1,0,1]))
+            (0, 0, 0)
         """
 
-        base_ring = generator.base_ring()
+        from sage.matrix.constructor import matrix
+
+        if isinstance(generator, AbstractLinearCode):
+            generator = generator.generator_matrix()
+
+        if hasattr(generator, 'basis'):
+            if generator.dimension() == 0:
+                G = matrix(generator.base_ring(), 0, generator.ambient_space().dimension())
+            else:
+                G = matrix(generator.basis())
+        else:
+            G = generator
+
+        base_ring = G.base_ring()
         if not base_ring.is_field():
             raise ValueError("'generator' must be defined on a field (not a ring)")
 
-        try:
-            basis = None
-            if hasattr(generator, "nrows"):  # generator matrix case
-                if generator.rank() < generator.nrows():
-                    basis = generator.row_space().basis()
-            else:
-                basis = generator.basis()  # vector space etc. case
-            if basis is not None:
-                from sage.matrix.constructor import matrix
-                generator = matrix(base_ring, basis)
-                if generator.nrows() == 0:
-                    raise ValueError("this linear code contains no nonzero vector")
-        except AttributeError:
-            # Assume input is an AbstractLinearCode, extract its generator matrix
-            generator = generator.generator_matrix()
+        if G.is_zero() or G.nrows() == 0:
+            super().__init__(base_ring, G.ncols(), "GeneratorMatrix", "Syndrome")
+            self._dimension = 0
+            self._generator_matrix = matrix(base_ring, 0, self.length())
+            self._minimum_distance = d
+            return
 
-        super().__init__(base_ring, generator.ncols(),
+        G_echelon = G.echelon_form()
+        generator_matrix = G_echelon.matrix_from_rows([i for i, r in enumerate(G_echelon) if not r.is_zero()])
+
+        super().__init__(base_ring, generator_matrix.ncols(),
                          "GeneratorMatrix", "Syndrome")
-        self._generator_matrix = generator
-        self._dimension = generator.rank()
+        self._generator_matrix = generator_matrix
+        self._dimension = self._generator_matrix.rank()
         self._minimum_distance = d
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         Str = str(self)
         G = self.generator_matrix()
         return hash((Str, G))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         See the docstring for :meth:`LinearCode`.
 
@@ -2368,7 +2377,7 @@ class LinearCode(AbstractLinearCode):
         else:
             return "[%s, %s] linear code over %s" % (self.length(), self.dimension(), R)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -2383,6 +2392,59 @@ class LinearCode(AbstractLinearCode):
         return "[%s, %s]\\textnormal{ Linear code over }%s"\
             % (self.length(), self.dimension(), self.base_ring()._latex_())
 
+    def intersection(self, other):
+        """
+        Return the intersection of this linear code with another.
+
+        The intersection of two linear codes C1 and C2 is the set of all
+        codewords that are in both C1 and C2. It is also a linear code.
+
+        This is computed using the identity:
+        C1 ∩ C2 = (C1_dual + C2_dual)_dual
+
+        INPUT:
+        - ``other`` -- a linear code.
+
+        OUTPUT:
+        - a linear code, the intersection of self and other.
+
+        EXAMPLES::
+
+            sage: F = GF(2)
+            sage: G1 = matrix(F, [[1,1,0,0], [0,0,1,1]])
+            sage: C1 = LinearCode(G1)
+            sage: G2 = matrix(F, [[1,0,1,0], [0,1,0,1]])
+            sage: C2 = LinearCode(G2)
+            sage: C_int = C1.intersection(C2)
+            sage: C_int
+            [4, 1] linear code over GF(2)
+            sage: c = vector(F, (1,1,1,1))
+            sage: c in C_int
+            True
+
+        Test intersection with the zero code::
+
+                sage: C_zero = LinearCode(matrix(F, [[0,0,0,0]]))
+                sage: C1.intersection(C_zero)
+                [4, 0] linear code over GF(2)
+        """
+        if not isinstance(other, AbstractLinearCode):
+            raise TypeError("Intersection is only defined between linear codes.")
+        if self.base_field() != other.base_field():
+            raise TypeError("Codes must be over the same base field.")
+        if self.length() != other.length():
+            raise ValueError("Codes must have the same length.")
+
+        C1_dual = self.dual_code()
+        C2_dual = other.dual_code()
+
+        G1d = C1_dual.generator_matrix()
+        G2d = C2_dual.generator_matrix()
+        G_sum = G1d.stack(G2d)
+        sum_of_duals = LinearCode(G_sum)
+
+        return sum_of_duals.dual_code()
+
     def generator_matrix(self, encoder_name=None, **kwargs):
         r"""
         Return a generator matrix of ``self``.
@@ -2391,18 +2453,18 @@ class LinearCode(AbstractLinearCode):
 
         - ``encoder_name`` -- (default: ``None``) name of the encoder which will be
           used to compute the generator matrix. ``self._generator_matrix``
-          will be returned if default value is kept.
+          will be returned if the default value is kept.
 
-        - ``kwargs`` -- all additional arguments are forwarded to the construction of the
-          encoder that is used
+        - ``kwargs`` -- all additional arguments are forwarded to the construction
+          of the encoder that is used.
 
         EXAMPLES::
 
             sage: G = matrix(GF(3),2,[1,-1,1,-1,1,1])
             sage: code = LinearCode(G)
             sage: code.generator_matrix()
-            [1 2 1]
-            [2 1 1]
+            [1 2 0]
+            [0 0 1]
         """
         if encoder_name is None or encoder_name == 'GeneratorMatrix':
             g = self._generator_matrix
@@ -2426,7 +2488,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
     - ``code`` -- the associated :class:`LinearCode` of this encoder
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -2438,7 +2500,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
         """
         super().__init__(code)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between LinearCodeGeneratorMatrixEncoder objects.
 
@@ -2453,7 +2515,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
         return isinstance(other, LinearCodeGeneratorMatrixEncoder)\
             and self.code() == other.code()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2467,7 +2529,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
         """
         return "Generator matrix-based encoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -2493,10 +2555,10 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
             sage: C = LinearCode(G)
             sage: E = codes.encoders.LinearCodeGeneratorMatrixEncoder(C)
             sage: E.generator_matrix()
-            [1 1 1 0 0 0 0]
-            [1 0 0 1 1 0 0]
-            [0 1 0 1 0 1 0]
-            [1 1 0 1 0 0 1]
+            [1 0 0 0 0 1 1]
+            [0 1 0 0 1 0 1]
+            [0 0 1 0 1 1 0]
+            [0 0 0 1 1 1 1]
         """
         g = self.code().generator_matrix()
         g.set_immutable()
@@ -2634,7 +2696,7 @@ class LinearCodeSyndromeDecoder(Decoder):
     informative.
     """
 
-    def __init__(self, code, maximum_error_weight=None):
+    def __init__(self, code, maximum_error_weight=None) -> None:
         r"""
         TESTS:
 
@@ -2673,7 +2735,7 @@ class LinearCodeSyndromeDecoder(Decoder):
         super().__init__(code, code.ambient_space(), code._default_encoder_name)
         self._lookup_table = self._build_lookup_table()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between LinearCodeSyndromeDecoder objects.
 
@@ -2689,7 +2751,7 @@ class LinearCodeSyndromeDecoder(Decoder):
                 self.code() == other.code() and
                 self.maximum_error_weight() == other.maximum_error_weight())
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of ``self``.
 
@@ -2703,7 +2765,7 @@ class LinearCodeSyndromeDecoder(Decoder):
         """
         return hash((self.code(), self.maximum_error_weight()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2717,7 +2779,7 @@ class LinearCodeSyndromeDecoder(Decoder):
         """
         return "Syndrome decoder for %s handling errors of weight up to %s" % (self.code(), self.maximum_error_weight())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -2814,11 +2876,9 @@ class LinearCodeSyndromeDecoder(Decoder):
             basic = vector(F, n)
             for p in patterns:
                 for error in error_position_tables[i-1]:
-                    ind = 0
                     e = copy(basic)
-                    for pos in p:
+                    for ind, pos in enumerate(p):
                         e[pos] = error[ind]
-                        ind += 1
                     s = H * e
                     s.set_immutable()
                     try:
@@ -2957,7 +3017,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
     - ``code`` -- a code associated to this decoder
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -2969,7 +3029,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
         """
         super().__init__(code, code.ambient_space(), code._default_encoder_name)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between LinearCodeNearestNeighborDecoder objects.
 
@@ -2998,7 +3058,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
         """
         return "Nearest neighbor decoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -3036,8 +3096,8 @@ class LinearCodeNearestNeighborDecoder(Decoder):
         c_min = self.code().zero()
         h_min = r.hamming_weight()
         for c in self.code():
-            if (c-r).hamming_weight() < h_min:
-                h_min = (c-r).hamming_weight()
+            if (c - r).hamming_weight() < h_min:
+                h_min = (c - r).hamming_weight()
                 c_min = c
         c_min.set_immutable()
         return c_min
@@ -3055,7 +3115,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
             sage: D.decoding_radius()                                                   # needs sage.libs.gap
             1
         """
-        return (self.code().minimum_distance()-1) // 2
+        return (self.code().minimum_distance() - 1) // 2
 
 
 # ###################### registration ###############################

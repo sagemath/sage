@@ -348,7 +348,7 @@ def disk(point, radius, angle, **options):
 
         sage: D = disk((0, 0), 5, (0, pi/2), legend_label='test')
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     g = Graphics()
 
     # Reset aspect_ratio to 'automatic' in case scale is 'semilog[xy]'.

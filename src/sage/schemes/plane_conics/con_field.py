@@ -727,7 +727,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             return self.Hom(Y)(x, check=False)
         return super().hom(x, Y)
 
-    def is_diagonal(self):
+    def is_diagonal(self) -> bool:
         r"""
         Return ``True`` if and only if the conic has the form
         `a x^2 + b y^2 + c z^2`.
@@ -746,7 +746,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         """
         return all(self.coefficients()[i] == 0 for i in [1, 2, 4])
 
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Return ``True`` if and only if ``self`` is smooth.
 
@@ -908,7 +908,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: # needs sage.libs.pari
             sage: R.<x,y,z> = QQ[]
             sage: C = Curve(7*x^2 + 2*y*z + z^2)
-            sage: (p, i) = C.parametrization(morphism=False); (p, i)
+            sage: p, i = C.parametrization(morphism=False); (p, i)
             ([-2*x*y, x^2 + 7*y^2, -2*x^2], [-1/2*x, 1/7*y + 1/14*z])
             sage: C.defining_polynomial()(p)
             0

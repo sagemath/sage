@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Simplicial Sets
 """
@@ -536,7 +535,7 @@ class SimplicialSets(Category_singleton):
                     sage: S1_.n_cells(1)[0].rename("sigma_1'")
                     sage: W = S1.wedge(S1_)
                     sage: G = CyclicPermutationGroup(3)
-                    sage: (a, b) = W.n_cells(1)
+                    sage: a, b = W.n_cells(1)
                     sage: C = W.cover({a : G.gen(0), b : G.gen(0)^2})
                     sage: C.face_data()
                     {(*, ()): None,

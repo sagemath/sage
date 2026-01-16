@@ -280,7 +280,7 @@ cdef class GroebnerStrategy:
                    sparse=True)
         M.echelonize()  # Do this in place
         lead_supports = set((<GBElement> f).lsi for f in L)
-        return [GBElement(self.E.element_class(self.E, {self.int_to_bitset(r - Integer(j)): c for j, c in M[i].iteritems()}),
+        return [GBElement(self.E.element_class(self.E, {self.int_to_bitset(r - Integer(j)): c for j, c in M[i].items()}),
                           self.int_to_bitset(Integer(r - p)),
                           Integer(r - p))
                 for i, p in enumerate(M.pivots())

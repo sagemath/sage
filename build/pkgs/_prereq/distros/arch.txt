@@ -20,3 +20,6 @@ bzip2
 which
 patch
 pkgconf
+zlib
+boost
+libboost-devel

@@ -80,28 +80,28 @@ the same::
 #                  https://www.gnu.org/licenses/
 # **********************************************************************
 
+from sage.functions.hyperbolic import sinh, cosh, arcsinh
+from sage.functions.log import exp
+from sage.functions.other import real, imag
+from sage.functions.trig import arccos
+from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
+from sage.matrix.constructor import matrix
+from sage.misc.functional import sqrt
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
+from sage.modules.free_module_element import vector
+from sage.rings.cc import CC
+from sage.rings.infinity import infinity
+from sage.rings.real_mpfr import RR
 from sage.structure.sage_object import SageObject
 from sage.symbolic.constants import I
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.rings.infinity import infinity
-from sage.rings.cc import CC
-from sage.rings.real_mpfr import RR
-from sage.misc.lazy_import import lazy_import
+from sage.symbolic.constants import pi
+from sage.symbolic.ring import SR
+
 lazy_import("sage.plot.arc", "arc")
 lazy_import("sage.plot.line", "line")
 lazy_import("sage.plot.arc", "arc")
 lazy_import("sage.plot.bezier_path", "bezier_path")
-from sage.symbolic.constants import pi
-from sage.modules.free_module_element import vector
-from sage.matrix.constructor import matrix
-from sage.functions.other import real, imag
-from sage.misc.functional import sqrt
-from sage.functions.trig import arccos
-from sage.functions.log import exp
-from sage.functions.hyperbolic import sinh, cosh, arcsinh
-from sage.symbolic.ring import SR
-from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
-
 lazy_import('sage.geometry.hyperbolic_space.hyperbolic_isometry',
             'moebius_transform')
 
@@ -1073,7 +1073,6 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             [ 1  0]
             [ 0 -1]
         """
-
         x, y = (real(k.coordinates()) for k in self.ideal_endpoints())
         if x == infinity:
             M = matrix([[1, -2*y], [0, -1]])
@@ -2056,7 +2055,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             Full MatrixSpace of 2 by 2 dense matrices over Complex Field
             with 53 bits of precision
         """
-        s, e = [k.coordinates() for k in self.complete().endpoints()]
+        s, e = (k.coordinates() for k in self.complete().endpoints())
         B = HyperbolicGeodesicUHP._get_B(p)
         # outmat below will be returned after we normalize the determinant.
         outmat = B * HyperbolicGeodesicUHP._crossratio_matrix(s, p, e)

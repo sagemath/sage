@@ -495,6 +495,11 @@ cdef class Rational(sage.structure.element.FieldElement):
         1267650600228229401496703205376/515377520732011331036461129765621272702107522001
         sage: QQ((-2r^100r, -3r^100r))
         1267650600228229401496703205376/515377520732011331036461129765621272702107522001
+
+    Conversion from real number::
+
+        sage: QQ(RR(2^100))
+        1267650600228229401496703205376
     """
     def __cinit__(self):
         r"""
@@ -602,7 +607,10 @@ cdef class Rational(sage.structure.element.FieldElement):
                 mpq_set_si(self.value, 0, 1)
                 return
             if not base:
-                set_from_Rational(self, x.simplest_rational())
+                if x.is_integer():
+                    set_from_Rational(self, x.exact_rational())
+                else:
+                    set_from_Rational(self, x.simplest_rational())
             else:
                 # Truncate in base 10 to match repr(x).
                 # See https://github.com/sagemath/sage/issues/21124
@@ -1051,6 +1059,21 @@ cdef class Rational(sage.structure.element.FieldElement):
             '-485/82847'
         """
         return self.numerator()._magma_init_(magma) + '/' + self.denominator()._magma_init_(magma)
+
+    def _regina_(self, regina):
+        r"""
+        Return a Regina Rational.
+
+        EXAMPLES::
+
+            sage: r53 = regina(5/3); (r53, type(r53), type(r53._inst))  # optional regina
+            (5/3,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Rational'>)
+        """
+        num = self.numerator()
+        den = self.denominator()
+        return regina.Rational(num, den)
 
     @property
     def __array_interface__(self):
@@ -4072,7 +4095,6 @@ cdef double mpq_get_d_nearest(mpq_t x) except? -648555075988944.5:
     return ldexp(d, shift)
 
 
-@cython.binding(True)
 def make_rational(s):
     """
     Make a rational number from ``s`` (a string in base 32).

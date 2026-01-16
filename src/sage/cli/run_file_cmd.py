@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from sage.cli.options import CliOptions
 from sage.repl.preparse import preparse_file_named
@@ -23,7 +24,7 @@ class RunFileCmd:
         """
         parser.add_argument(
             "file",
-            nargs="?",
+            nargs="*",
             help="execute the given file as sage code",
         )
 
@@ -32,19 +33,19 @@ class RunFileCmd:
         Initialize the command.
         """
         self.options = options
+        # shift sys.argv for compatibility with the old sage bash script and python command when consuming arguments from the command line
+        del sys.argv[0]
 
     def run(self) -> int:
         r"""
         Execute the given command.
         """
-        input_file = preparse_file_named(self.options.file) if self.options.file.endswith('.sage') else self.options.file
-        try:
-            if self.options.file.endswith('.pyx') or self.options.file.endswith('.spyx'):
-                s = load_cython(input_file)
-                eval(compile(s, tmp_filename(), 'exec'), sage_globals())
-            else:
-                eval(compile(open(input_file, 'rb').read(), input_file, 'exec'), sage_globals())
-        except Exception as e:
-            print(f"An error occurred while executing the file: {e}")
-            return 1
+        input_file = self.options.file[0]
+        if input_file.endswith('.sage'):
+            input_file = str(preparse_file_named(input_file))
+        if input_file.endswith('.pyx') or input_file.endswith('.spyx'):
+            s = load_cython(input_file)
+            eval(compile(s, tmp_filename(), 'exec'), sage_globals())
+        else:
+            eval(compile(open(input_file, 'rb').read(), input_file, 'exec'), sage_globals())
         return 0

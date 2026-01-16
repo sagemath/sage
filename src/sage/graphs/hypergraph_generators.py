@@ -182,26 +182,26 @@ class HypergraphGenerators:
 
         nauty_input += " " + str(number_of_vertices) + " " + str(number_of_sets) + " "
 
-        sp = subprocess.Popen(shlex.quote(genbgL_path) + " {0}".format(nauty_input), shell=True,
+        with subprocess.Popen(shlex.quote(genbgL_path) + " {0}".format(nauty_input), shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, close_fds=True)
+                              stderr=subprocess.PIPE, close_fds=True) as sp:
 
-        if debug:
-            yield sp.stderr.readline()
+            if debug:
+                yield sp.stderr.readline()
 
-        gen = sp.stdout
-        total = number_of_sets + number_of_vertices
-        from sage.graphs.graph import Graph
-        while True:
-            try:
-                s = next(gen)
-            except StopIteration:
-                # Exhausted list of graphs from nauty geng
-                return
+            gen = sp.stdout
+            total = number_of_sets + number_of_vertices
+            from sage.graphs.graph import Graph
+            while True:
+                try:
+                    s = next(gen)
+                except StopIteration:
+                    # Exhausted list of graphs from nauty geng
+                    return
 
-            G = Graph(s[:-1], format='graph6')
+                G = Graph(s[:-1], format='graph6')
 
-            yield tuple(tuple(G.neighbor_iterator(v)) for v in range(number_of_vertices, total))
+                yield tuple(tuple(G.neighbor_iterator(v)) for v in range(number_of_vertices, total))
 
     def CompleteUniform(self, n, k):
         r"""
@@ -304,9 +304,9 @@ class HypergraphGenerators:
 
         EXAMPLES::
 
-            sage: hypergraphs.BinomialRandomUniform(50, 3, 1).num_blocks()              # needs numpy, long time
+            sage: hypergraphs.BinomialRandomUniform(50, 3, 1).n_blocks()              # needs numpy, long time
             19600
-            sage: hypergraphs.BinomialRandomUniform(50, 3, 0).num_blocks()              # needs numpy
+            sage: hypergraphs.BinomialRandomUniform(50, 3, 0).n_blocks()              # needs numpy
             0
 
         TESTS::

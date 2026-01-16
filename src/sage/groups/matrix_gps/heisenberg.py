@@ -7,15 +7,15 @@ AUTHORS:
 - Hilder Vitor Lima Pereira (2017-08): initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #    Copyright (C) 2017 Hilder Vitor Lima Pereira <hilder.vitor at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
 from sage.structure.unique_representation import UniqueRepresentation

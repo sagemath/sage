@@ -54,7 +54,7 @@ class FunctionFieldDerivation(RingDerivationWithoutTwist):
         sage: d
         d/dx
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         r"""
         Initialize a derivation.
 
