@@ -118,13 +118,14 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
     It is possible to create the Coxeter matrices associated to hyperbolic
     Coxeter groups, as refered in Humphrey's book [Reflection Groups and
     Coxeter Groups]::
+
         sage: C = CoxeterType(["Hyperbolic", (142, 1, 3)])
         sage: C.coxeter_matrix()
         [1 4 4 2]
         [4 1 2 4]
         [4 2 1 4]
         [2 4 4 1]
-        
+
         sage: C = CoxeterType(["Dh", 7])
         sage: C.coxeter_matrix()
         [1 2 3 2 2 2 2]

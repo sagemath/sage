@@ -2,12 +2,12 @@
 Hyperbolic Coxeter Matrices Database
 
 These matrices are defined by their position in the Humphrey's book:
-    "Reflection Groups and Coxeter Groups", 
+    "Reflection Groups and Coxeter Groups",
     Cambridge Studies in Advanced Mathematics, 29, 1990.
 
 "The Coxeter graphs are classified depending on their order and other
- features. To refer to a Coxeter graph in the book, we use 3 numbers: 
- the page number where the Coxeter graph is depicted and the column 
+ features. To refer to a Coxeter graph in the book, we use 3 numbers:
+ the page number where the Coxeter graph is depicted and the column
  and row where the Coxeter graph is placed in the page.
 """
 # ****************************************************************************
@@ -601,7 +601,7 @@ mcmullen_notation = {
     ("L", 534): (141, 1, 1),
     ("L", 54): (),                #No reference
     ("L", 633): (142, 2, 5),
-    ("L", 73): (),                #No reference 
+    ("L", 73): (),                #No reference
     ("Q", 3): (),                 #No reference
     ("Q", 4): (141, 2, 1),
     ("Q", 5): (141, 3, 5),
