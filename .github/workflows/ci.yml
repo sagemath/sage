@@ -105,7 +105,7 @@ jobs:
           sci-mathematics/lcalc pari
           sci-libs/brial png
           sci-libs/m4ri png
-          sci-mathematics/maxima ecl
+          sci-mathematics/maxima -sbcl ecl
           media-libs/qhull tools
           media-libs/libglvnd X
           EOF
