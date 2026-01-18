@@ -875,6 +875,34 @@ cdef class Matrix(Matrix1):
             sage: m = matrix.identity(ZZ, 250).stack(matrix.identity(ZZ, 250))*2
             sage: v = m.solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
             sage: m._solve_right_hermite_form(matrix(ZZ, [[2]]*500))  # not tested (slow)
+
+        Test method to solve over ring of integers which is not a PID.
+        (:issue:`40410`)
+            sage: R = QQ[sqrt(-5)]
+            sage: O = R.ring_of_integers()
+            sage: a = matrix([[O(2)], [O(1+sqrt(-5))]])
+            sage: a.solve_right(a, extend=False)
+            [1]
+
+            sage: A = matrix(O, 2, 2, [1, sqrt(-5), 0, 1])
+            sage: b = vector(O, [1+sqrt(-5), 2])
+            sage: c = A.solve_right(b, extend=False); c
+            (-a + 1, 2)
+            sage: A * c == b
+            True
+
+            sage: B = matrix(O, 2, 1, [1+sqrt(-5), 2])
+            sage: X = A.solve_right(B, extend=False)
+            sage: X
+            [-a + 1]
+            [     2]
+
+            sage: A = matrix(O, 1, 1, [2])
+            sage: b = vector(O, [1])
+            sage: A.solve_right(b, extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
         """
         try:
             L = B.base_ring()
@@ -939,6 +967,7 @@ cdef class Matrix(Matrix1):
                     return (K ** self.ncols())(ret)
             raise TypeError("base ring must be an integral domain or a ring of integers mod n")
 
+        C = B.column() if b_is_vec else B
         pid = False
         try:
             pid = P.is_pid()
@@ -950,9 +979,8 @@ cdef class Matrix(Matrix1):
             and not pid
             and not extend
         ):
-            return self._solve_right_finite_z(B)
-
-        C = B.column() if b_is_vec else B
+            X = self._solve_right_finite_z(C)
+            return X.column(0) if b_is_vec else X
 
         if P not in _Fields and not extend:
             if self.rank() == self.ncols():
@@ -1017,7 +1045,7 @@ cdef class Matrix(Matrix1):
                 Bint[i*d:(i+1)*d, j] = coeffs
 
         try:
-            Xint = Aint.solve_right(Bint)
+            Xint = Aint.solve_right(Bint, extend=False)
         except ValueError:
             raise ValueError("matrix equation has no solutions")
 
