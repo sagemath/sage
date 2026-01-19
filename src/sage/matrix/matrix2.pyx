@@ -1020,7 +1020,7 @@ cdef class Matrix(Matrix1):
         d = R.degree()
         nrows = self.nrows()
         ncols = self.ncols()
-        rhsCols = B.ncols()
+        rhs_ncols = B.ncols()
 
         basis = R.basis()
         basis_vec = vector(R, basis)
@@ -1029,6 +1029,7 @@ cdef class Matrix(Matrix1):
 
         Aint = matrix(ZZ, nrows * d, ncols * d)
 
+        # form the matrix to solve in integral domain, by expanding
         for i in range(nrows):
             row_start = i*d
             for j in range(ncols):
@@ -1037,10 +1038,11 @@ cdef class Matrix(Matrix1):
                 block = sum(coeffs[k] * mult_mat[k] for k in range(d))
                 Aint[row_start:row_start+d, col_start:col_start+d] = block
 
-        Bint = matrix(ZZ, nrows * d, rhsCols)
+        Bint = matrix(ZZ, nrows * d, rhs_ncols)
 
+        # need to map the right matrix, similar to left matrix
         for i in range(nrows):
-            for j in range(rhsCols):
+            for j in range(rhs_ncols):
                 coeffs = B[i, j].vector()
                 Bint[i*d:(i+1)*d, j] = coeffs
 
@@ -1051,6 +1053,7 @@ cdef class Matrix(Matrix1):
 
         sol_cols = []
 
+        # map the new solution to the older required form
         for j in range(Xint.ncols()):
             col = Xint.column(j)
             coeff_mat = matrix(ZZ, ncols, d, col)
