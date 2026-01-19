@@ -26,10 +26,9 @@ from sage.libs.singular.decl cimport rChangeCurrRing, rComplete, rDelete, idInit
 from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc
 from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_ip, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
 from sage.libs.singular.decl cimport prCopyR
-from sage.libs.singular.decl cimport n_unknown, n_algExt, n_transExt, n_Z, n_Zn,  n_Znm, n_Z2m
-from sage.libs.singular.decl cimport n_coeffType
+from sage.libs.singular.decl cimport n_unknown, n_R, n_algExt, n_transExt, n_long_C, n_Z, n_Zn, n_Znm, n_Z2m
+from sage.libs.singular.decl cimport n_coeffType, LongComplexInfo
 from sage.libs.singular.decl cimport rDefault, GFInfo, ZnmInfo, nInitChar, AlgExtInfo, TransExtInfo
-
 
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring cimport IntegerRing_class
@@ -327,6 +326,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     cdef AlgExtInfo extParam
     cdef TransExtInfo trextParam
     cdef n_coeffType _type = n_unknown
+    cdef LongComplexInfo info
 
     #cdef cfInitCharProc myfunctionptr;
 
@@ -509,6 +509,17 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     elif isinstance(base_ring, IntegerRing_class):
         _cf = nInitChar( n_Z, NULL) # integer coefficient ring
         _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+
+    elif isinstance(base_ring, sage.rings.abc.RealDoubleField):
+        _cf = nInitChar(n_R, NULL)
+        _ring = rDefault(_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+
+    elif isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
+        info.float_len = 15
+        info.float_len2 = 0
+        info.par_name = "I"
+        _cf = nInitChar(n_long_C, <void *>&info)
+        _ring = rDefault(_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, sage.rings.abc.IntegerModRing):
 

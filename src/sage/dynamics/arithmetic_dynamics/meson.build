@@ -14,7 +14,7 @@ py.install_sources(
   subdir: 'sage/dynamics/arithmetic_dynamics',
 )
 
-extension_data = {'projective_ds_helper' : files('projective_ds_helper.pyx')}
+extension_data = {'projective_ds_helper': files('projective_ds_helper.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

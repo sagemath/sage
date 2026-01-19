@@ -98,7 +98,7 @@ foreach name, pyx : extension_data
 endforeach
 
 extension_data_cpp = {
-  'numpy_util' : files('numpy_util.pyx'),
+  'numpy_util': files('numpy_util.pyx'),
   'vector_mod2_dense': files('vector_mod2_dense.pyx'),
 }
 
