@@ -270,9 +270,7 @@ def pytest_collect_file(
             return SageDoctestModule.from_parent(parent, path=file_path)
 
 
-def pytest_ignore_collect(
-    collection_path: Path, config: pytest.Config
-) -> None | bool:
+def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> None | bool:
     """
     This hook is called when collecting test files, and can be used to
     prevent considering this path for collection by returning ``True``.
@@ -363,7 +361,8 @@ def add_imports(doctest_namespace: dict[str, Any], pytestconfig: pytest.Config):
 
     See `pytest documentation <https://docs.pytest.org/en/stable/doctest.html#doctest-namespace-fixture>`.
     """
-    if not pytestconfig.getoption("doctest"):
+    if not pytestconfig.getoption("doctest") or pytestconfig.getoption("collectonly"):
+        # Do not add imports if doctests are not enabled or we only collect tests
         return
 
     # Inject sage.all into each doctest
