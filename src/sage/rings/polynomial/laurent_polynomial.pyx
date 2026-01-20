@@ -2273,6 +2273,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             False
         """
         if self.is_zero():
+            #avoiding ring construction for zero element
             return other.is_zero()
         R = self.parent().base_ring()
         if R.is_integral_domain():

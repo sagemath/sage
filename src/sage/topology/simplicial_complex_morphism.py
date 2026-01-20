@@ -114,36 +114,11 @@ from .simplicial_complex import Simplex, SimplicialComplex
 lazy_import('sage.matrix.constructor', ['matrix', 'zero_matrix'])
 
 
-def is_SimplicialComplexMorphism(x):
-    """
-    Return ``True`` if and only if ``x`` is a morphism of simplicial complexes.
-
-    EXAMPLES::
-
-        sage: from sage.topology.simplicial_complex_morphism import is_SimplicialComplexMorphism
-        sage: S = SimplicialComplex([[0,1],[3,4]], is_mutable=False)
-        sage: H = Hom(S,S)
-        sage: f = {0:0,1:1,3:3,4:4}
-        sage: x = H(f)
-        sage: is_SimplicialComplexMorphism(x)
-        doctest:warning...
-        DeprecationWarning: The function is_SimplicialComplexMorphism is deprecated;
-        use 'isinstance(..., SimplicialComplexMorphism)' instead.
-        See https://github.com/sagemath/sage/issues/38103 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38103,
-                "The function is_SimplicialComplexMorphism is deprecated; "
-                "use 'isinstance(..., SimplicialComplexMorphism)' instead.")
-    return isinstance(x, SimplicialComplexMorphism)
-
-
 class SimplicialComplexMorphism(Morphism):
     """
     An element of this class is a morphism of simplicial complexes.
     """
-    def __init__(self, f, X, Y):
+    def __init__(self, f, X, Y) -> None:
         """
         Input is a dictionary ``f``, the domain ``X``, and the codomain ``Y``.
 
@@ -181,7 +156,7 @@ class SimplicialComplexMorphism(Morphism):
         self._vertex_dictionary = f
         Morphism.__init__(self, Hom(X, Y, SimplicialComplexes()))
 
-    def __eq__(self, x):
+    def __eq__(self, x) -> bool:
         """
         Return ``True`` if and only if ``self == x``.
 
@@ -291,7 +266,7 @@ class SimplicialComplexMorphism(Morphism):
         else:
             return Simplex(set(fx))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         EXAMPLES::
 
@@ -304,7 +279,7 @@ class SimplicialComplexMorphism(Morphism):
         """
         return "Simplicial complex"
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         If there are fewer than 5 vertices, print the image of each vertex
         on a separate line. Otherwise, print the map as a single line.
@@ -502,7 +477,7 @@ class SimplicialComplexMorphism(Morphism):
         fa = [self(i) for i in self.domain().facets()]
         return SimplicialComplex(fa, maximality_check=True)
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         """
         Return ``True`` if and only if ``self`` is surjective.
 
@@ -529,7 +504,7 @@ class SimplicialComplexMorphism(Morphism):
         """
         return self.codomain() == self.image()
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return ``True`` if and only if ``self`` is injective.
 
@@ -550,7 +525,7 @@ class SimplicialComplexMorphism(Morphism):
             True
         """
         v = [self._vertex_dictionary[i[0]] for i in self.domain().faces()[0]]
-        return all(v.count(i) <= 1 for i in v)
+        return len(v) == len(set(v))
 
     def is_identity(self) -> bool:
         """

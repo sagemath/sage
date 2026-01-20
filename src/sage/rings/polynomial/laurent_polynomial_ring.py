@@ -430,9 +430,24 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
     def _poly_cover_ring(self):
         """
-        Return the polynomial cover ring with a single variable T.
+        Return the polynomial cover ring with a unique variable T
+
+        EXAMPLES::
+
+            sage: L.<T> = LaurentPolynomialRing(Zmod(4))
+            sage: S, relations = L._poly_cover_ring()
+            sage: S.variable_names()
+            ('T', 'T0')
+            sage: (T + 2).divides(T + 2)
+            True
         """
-        new_names = (self.variable_name(), 'T')
+        base_name = self.variable_name()
+        t_name = 'T'
+        i = 0
+        while t_name == base_name:
+            t_name = f'T{i}'
+            i += 1
+        new_names = (base_name, t_name)
         S = self.base_ring()[new_names]
         x, T = S.gens()
         return S, [x * T - 1]
@@ -592,14 +607,28 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
     def _poly_cover_ring(self):
         """
-        Return the polynomial cover ring with a single variable T.
+        Return the polynomial cover ring with a unique variable T.
+
+        EXAMPLES::
+
+            sage: R.<x, T, T0> = LaurentPolynomialRing(Zmod(9), 3)
+            sage: S, relations = R._poly_cover_ring()
+            sage: S.variable_names()
+            ('x', 'T', 'T0', 'T1')
+            sage: (x + T + T0).divides(x + T + T0)
+            True
         """
         base_names = self.variable_names()
-        new_names = base_names + ('T',)
+        t_name = 'T'
+        i = 0
+        while t_name in base_names:
+            t_name = f'T{i}'
+            i += 1
+        new_names = base_names + (t_name,)
         S = self.base_ring()[new_names]
         xs = S.gens()[:-1]
-        T = S.gens()[-1]
-        relation = T * prod(xs) - 1
+        T_gen = S.gens()[-1]
+        relation = T_gen * prod(xs) - 1
         return S, [relation]
 
     def _repr_(self):
