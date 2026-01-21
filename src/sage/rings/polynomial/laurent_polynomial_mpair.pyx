@@ -2098,24 +2098,6 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             return new_ring(ans)
         return ans
 
-    def _lift_to_poly_cover(self, S):
-        """
-        Lift to a polynomial cover ring by clearing denominators
-        """
-        p_part, m_inv = self.monomial_reduction()
-        powers = m_inv.exponents()[0]
-        max_p = max(powers) if powers else 0
-        T = S.gens()[-1]
-        xs = S.gens()[:-1]
-        lifted_p = S(p_part)
-        from sage.misc.misc_c import prod
-        multiplier = T**max_p
-        for i, p in enumerate(powers):
-            needed_power = max_p - p
-            if needed_power > 0:
-                multiplier *= xs[i]**needed_power
-        return lifted_p * multiplier
-
     @coerce_binop
     def divides(self, other):
         """
@@ -2154,27 +2136,13 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         TESTS:
 
-        Multivariate rings over non-integral domains work using a cover ring lift::
+        Multivariate Laurent polynomial rings require an integral domain base ring::
 
-            sage: R.<x,y> = LaurentPolynomialRing(Zmod(4), 2)
-            sage: f = 2*x + 2*y
-            sage: g = 2*x^2 + 2*y^2
-            sage: f.divides(g)
-            True
-            sage: h = x + y + 2
-            sage: f.divides(h)
-            False
+            sage: R.<x,y> = LaurentPolynomialRing(Zmod(4))
+            Traceback (most recent call last):
+            ...
+            ValueError: base ring must be an integral domain
         """
-        if self.is_zero():
-            return other.is_zero()
-        R = self.parent().base_ring()
-        if R.is_integral_domain():
-            p = self.monomial_reduction()[0]
-            q = other.monomial_reduction()[0]
-            return p.divides(q)
-        P = self.parent()
-        S, relations = P._poly_cover_ring()
-        f_s = self._lift_to_poly_cover(S)
-        g_s = other._lift_to_poly_cover(S)
-        I = S.ideal([f_s] + relations)
-        return g_s in I
+        p = self.monomial_reduction()[0]
+        q = other.monomial_reduction()[0]
+        return p.divides(q)
