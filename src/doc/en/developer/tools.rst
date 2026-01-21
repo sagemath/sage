@@ -14,7 +14,7 @@ uv
 `uv <https://docs.astral.sh/uv/>`_ is a versatile tool for
 managing and synchronizing project dependencies.
 
-The lockfile `uv.lock` in the root captures the exact package versions for
+The lockfile ``uv.lock`` in the root captures the exact package versions for
 all systems and ensures consistent, reproducible installations.
 It is automatically updated during ``uv`` operations like ``uv add``
 and ``uv run``, or explicitly with ``uv lock``.

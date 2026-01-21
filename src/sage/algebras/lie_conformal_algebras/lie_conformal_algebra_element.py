@@ -73,7 +73,7 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
                 return p.zero()
         return sum(mon.T(n) for mon in self.terms())
 
-    def is_monomial(self):
+    def is_monomial(self) -> bool:
         """
         Whether this element is a monomial.
 
