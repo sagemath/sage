@@ -1725,9 +1725,16 @@ cdef class CGraphBackend(GenericGraphBackend):
         retval = None
         if name is None:
             name = 0
-            while (name in self.vertex_ints or
-                   (name not in self.vertex_labels and
-                    bitset_in(self.cg().active_vertices, <mp_bitcnt_t> name))):
+            while (
+                name < self.cg().active_vertices.size and
+                (
+                    name in self.vertex_ints or
+                    (
+                        name not in self.vertex_labels and
+                        bitset_in(self.cg().active_vertices, <mp_bitcnt_t> name)
+                    )
+                )
+            ):
                 name += 1
             retval = name
 
