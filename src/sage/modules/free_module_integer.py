@@ -546,10 +546,6 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
     def shortest_vector(self, update_reduced_basis=True, algorithm='fplll', *args, **kwds):
         r"""
         Return a shortest vector.
-        
-        This method returns an exact solution to the Shortest Vector Problem (SVP)
-        when using the default algorithm. Approximate results are returned only
-        when explicitly requested via algorithm parameters.
 
         INPUT:
 
