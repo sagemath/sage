@@ -820,10 +820,9 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
     # Specialized implementations
     specialized = None
     if isinstance(base_ring, sage.rings.abc.IntegerModRing):
-        n = base_ring.order()
-        if n.is_prime():
+        if base_ring.is_field():
             specialized = polynomial_ring.PolynomialRing_dense_mod_p
-        elif n > 1:  # Specialized code breaks for n == 1
+        elif base_ring.order() > 1:  # Specialized code breaks for ord(K) == 1
             specialized = polynomial_ring.PolynomialRing_dense_mod_n
     elif isinstance(base_ring, FiniteField):
         specialized = polynomial_ring.PolynomialRing_dense_finite_field

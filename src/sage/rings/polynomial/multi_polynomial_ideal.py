@@ -2617,7 +2617,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I = Ideal([x^2 - 1, y^2 - 1])                                         # needs sage.rings.finite_rings
             sage: sorted(I.variety(algorithm='msolve',          # optional - msolve, needs sage.rings.finite_rings
             ....:                  proof=False),
-            ....:        key=lambda d: str(sorted(d.items()))
+            ....:        key=lambda d: str(sorted(d.items())))
             [{y: 1, x: 1},
              {y: 1, x: 536870908},
              {y: 536870908, x: 1},
@@ -3028,6 +3028,18 @@ class MPolynomialIdeal_singular_repr(
             (t^11 + t^8 - t^6 - t^5 - t^4 - t^3 - t^2 - t - 1)/(t^2 - 1)
             sage: K.hilbert_series(grading=[2,1])                                       # needs sage.libs.flint
             (2*t^7 - t^6 - t^4 - t^2 - 1)/(t - 1)
+
+        This also works for
+        :class:`~sage.rings.polynomial.plural.NCPolynomialRing_plural`::
+
+            sage: M = matroids.CompleteGraphic(4)
+            sage: OS = M.orlik_solomon_algebra(QQ)
+            sage: A = OS.as_gca()
+            sage: I = A.defining_ideal()
+            sage: HS = I.hilbert_series(); HS
+            6*t^3 + 11*t^2 + 6*t + 1
+            sage: HS.factor()
+            (t + 1) * (2*t + 1) * (3*t + 1)
 
         TESTS::
 
@@ -3613,6 +3625,34 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         return self.ring().ideal( self.__call_singular('std'), side=self.side())
 #        return self.__call_singular('std')
 
+    def groebner_basis(self):
+        r"""
+        Compute a Gröbner basis of the ideal.
+
+        The Gröbner basis is two-sided if and only if the ideal is two-sided.
+
+        OUTPUT:
+
+        :func:`~sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence`
+
+        ALGORITHM:
+
+        Uses the :meth:`std` method.
+
+        EXAMPLES::
+
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: H.inject_variables()
+            Defining x, y, z
+            sage: I = H.ideal([y^2, x^2, z^2 - H.one()], coerce=False)
+            sage: I.groebner_basis()
+            [z^2 - 1, y*z - y, x*z + x, y^2, 2*x*y - z - 1, x^2]
+        """
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        return PolynomialSequence(self.std())
+
     def elimination_ideal(self, variables):
         r"""
         Return the elimination ideal of this ideal with respect to the
@@ -3849,6 +3889,27 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         if self.side() == 'twosided':
             warn("The resulting resolution is one-sided (left)!")
         return self.__call_singular('res', length)
+
+    def is_homogeneous(self) -> bool:
+        r"""
+        Return ``True`` if this ideal is spanned by homogeneous
+        polynomials, i.e., if it is a homogeneous ideal.
+
+        EXAMPLES::
+
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: H.inject_variables()
+            Defining x, y, z
+            sage: I = H.ideal([y^2, x^2, z^2 - H.one()], coerce=False)
+            sage: I.is_homogeneous()
+            False
+            sage: J = H.ideal([y^2, x^2, z^2 - x*y], coerce=False)
+            sage: J.is_homogeneous()
+            True
+        """
+        return all(f.is_homogeneous() for f in self.gens())
 
 
 @richcmp_method
