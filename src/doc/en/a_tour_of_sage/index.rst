@@ -25,7 +25,7 @@ The caret symbol means "raise to a power".
     sage: 57.1^100
     4.60904368661396e175
 
-We compute the inverse of a $2 \\times 2$ matrix in Sage.
+We compute the inverse of a $2 \times 2$ matrix in Sage.
 
 ::
 
@@ -68,7 +68,7 @@ Sage can plot various useful functions, of course.
 .. image:: sin_plot.png
 
 
-Sage is a very powerful calculator. To experience it, first we create a $500 \\times 500$
+Sage is a very powerful calculator. To experience it, first we create a $500 \times 500$
 matrix of random numbers.
 
 ::
@@ -102,7 +102,7 @@ digits.
     sage: len(n.digits())
     5565709
 
-This computes at least 100 digits of $\\pi$.
+This computes at least 100 digits of $\pi$.
 
 ::
 
