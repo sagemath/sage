@@ -534,16 +534,29 @@ mathjax3_config = {
         # Add custom sage macros
         # http://docs.mathjax.org/en/latest/input/tex/macros.html
         "macros": sage_mathjax_macros(),
+        
         # Add $...$ as possible inline math
         # https://docs.mathjax.org/en/latest/input/tex/delimiters.html#tex-and-latex-math-delimiters
         "inlineMath": [["$", "$"], ["\\(", "\\)"]],
+        
+        # Allow $$...$$ and \[ ... \] if used
+        "displayMath": [["$$", "$$"], ["\\[", "\\]"]],
+        
         # Increase the limit the size of the string to be processed
         # https://docs.mathjax.org/en/latest/options/input/tex.html#option-descriptions
         "maxBuffer": 50 * 1024,
+        
         # Use colorv2 extension instead of built-in color extension
         # https://docs.mathjax.org/en/latest/input/tex/extensions/autoload.html#tex-autoload-options
         # https://docs.mathjax.org/en/latest/input/tex/extensions/colorv2.html#tex-colorv2
         "autoload": {"color": [], "colorv2": ["color"]},
+        
+        "processEscapes": True, #process escapes
+        "processEnvironments": True, #for multi-line envs 
+    },
+    "options": {
+        "skipHtmlTags": ["script", "noscript", "style", "textarea", "pre", "code"],
+        "ignoreHtmlClass": "no-mathjax",
     },
 }
 
