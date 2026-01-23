@@ -533,8 +533,17 @@ cpdef rectangular_box_points(list box_min, list box_max,
         sage: P = Polyhedron(ieqs=ieqs)
         sage: from sage.doctest.util import ensure_interruptible_after
         sage: with ensure_interruptible_after(0.5): P.integral_points()
+
+    Check that the following doesn't segmentation fault
+    (the error message could be improved)::
+
+        sage: rectangular_box_points([], [])
+        Traceback (most recent call last):
+        ...
+        AssertionError
     """
     assert len(box_min) == len(box_max)
+    assert box_min
     assert not (count_only and return_saturated)
     cdef int d = len(box_min)
     cdef int i, j

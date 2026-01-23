@@ -24,48 +24,15 @@ the optional ``names`` argument to the
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.integer import Integer
-from sage.structure.category_object import normalize_names
 from .free_monoid_element import FreeMonoidElement
-
 from .monoid import Monoid_class
 
+from sage.categories.monoids import Monoids
 from sage.combinat.words.finite_word import FiniteWord_class
-
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-
-
-def is_FreeMonoid(x):
-    """
-    Return ``True`` if `x` is a free monoid.
-
-    EXAMPLES::
-
-        sage: from sage.monoids.free_monoid import is_FreeMonoid
-        sage: is_FreeMonoid(5)
-        doctest:warning...
-        DeprecationWarning: the function is_FreeMonoid is deprecated;
-        use 'isinstance(..., (FreeMonoid, IndexedFreeMonoid))' instead
-        See https://github.com/sagemath/sage/issues/37897 for details.
-        False
-        sage: is_FreeMonoid(FreeMonoid(7,'a'))
-        True
-        sage: is_FreeMonoid(FreeAbelianMonoid(7,'a'))
-        False
-        sage: is_FreeMonoid(FreeAbelianMonoid(0,''))
-        False
-        sage: is_FreeMonoid(FreeMonoid(index_set=ZZ))
-        True
-        sage: is_FreeMonoid(FreeAbelianMonoid(index_set=ZZ))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37897, "the function is_FreeMonoid is deprecated; use 'isinstance(..., (FreeMonoid, IndexedFreeMonoid))' instead")
-    if isinstance(x, FreeMonoid):
-        return True
-    from sage.monoids.indexed_free_monoid import IndexedFreeMonoid
-    return isinstance(x, IndexedFreeMonoid)
+from sage.structure.category_object import normalize_names
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class FreeMonoid(Monoid_class, UniqueRepresentation):
@@ -197,7 +164,8 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
         if n < 0:
             raise ValueError("n (=%s) must be nonnegative" % n)
         self.__ngens = int(n)
-        Monoid_class.__init__(self, names)
+        cat = Monoids().Infinite() if names else None
+        Monoid_class.__init__(self, names, category=cat)
 
     def _repr_(self):
         return f"Free monoid on {self.__ngens} generators {self.gens()}"
@@ -271,7 +239,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
         raise TypeError("argument x (= %s) is of the wrong type" % x)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         return isinstance(x, FreeMonoidElement) and x.parent() == self
 
     def gen(self, i=0):
@@ -329,6 +297,6 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             1
         """
         if self.__ngens == 0:
-            return Integer(1)
+            return ZZ.one()
         from sage.rings.infinity import infinity
         return infinity

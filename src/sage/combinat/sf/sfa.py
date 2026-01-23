@@ -227,7 +227,6 @@ from sage.data_structures.blas_dict import convert_remove_zeroes, linear_combina
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
-from sage.misc.superseded import deprecated_function_alias
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -237,35 +236,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.structure.element import coerce_binop
 from sage.structure.factorization import Factorization
-
-
-def is_SymmetricFunctionAlgebra(x):
-    """
-    Check whether ``x`` is a symmetric function algebra.
-
-    EXAMPLES::
-
-        sage: from sage.combinat.sf.sfa import is_SymmetricFunctionAlgebra
-        sage: is_SymmetricFunctionAlgebra(5)
-        doctest:warning...
-        DeprecationWarning: the function is_SymmetricFunctionAlgebra is deprecated;
-        use 'isinstance(..., SymmetricFunctionAlgebra_generic)' instead
-        See https://github.com/sagemath/sage/issues/37896 for details.
-        False
-        sage: is_SymmetricFunctionAlgebra(ZZ)
-        False
-        sage: is_SymmetricFunctionAlgebra(SymmetricFunctions(ZZ).schur())
-        True
-        sage: is_SymmetricFunctionAlgebra(SymmetricFunctions(QQ).e())
-        True
-        sage: is_SymmetricFunctionAlgebra(SymmetricFunctions(QQ).macdonald(q=1,t=1).P())
-        True
-        sage: is_SymmetricFunctionAlgebra(SymmetricFunctions(FractionField(QQ['q','t'])).macdonald().P())
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37896, "the function is_SymmetricFunctionAlgebra is deprecated; use 'isinstance(..., SymmetricFunctionAlgebra_generic)' instead")
-    return isinstance(x, SymmetricFunctionAlgebra_generic)
 
 
 def zee(part) -> Integer:
@@ -295,32 +265,6 @@ def zee(part) -> Integer:
     if not isinstance(part, Partition):
         part = _Partitions(part)
     return part.centralizer_size()
-
-
-def is_SymmetricFunction(x):
-    r"""
-    Check whether ``x`` is a symmetric function.
-
-    EXAMPLES::
-
-        sage: from sage.combinat.sf.sfa import is_SymmetricFunction
-        sage: s = SymmetricFunctions(QQ).s()
-        sage: is_SymmetricFunction(2)
-        doctest:warning...
-        DeprecationWarning: The function is_SymmetricFunction is deprecated;
-        use 'isinstance(..., SymmetricFunctionAlgebra_generic.Element)' instead.
-        See https://github.com/sagemath/sage/issues/38279 for details.
-        False
-        sage: is_SymmetricFunction(s(2))
-        True
-        sage: is_SymmetricFunction(s([2,1]))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38279,
-                "The function is_SymmetricFunction is deprecated; "
-                "use 'isinstance(..., SymmetricFunctionAlgebra_generic.Element)' instead.")
-    return isinstance(x, SymmetricFunctionAlgebra_generic.Element)
 
 
 #####################################################################
@@ -3569,6 +3513,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: (1+p[2]).plethysm(p[2])
             p[] + p[4]
 
+        Fixed :issue:`41257`::
+
+            sage: s[[]](tensor([p[1], s[1]]))
+            p[] # s[]
+
         Check that degree one elements are treated in the correct way::
 
             sage: R.<a1,a2,a11,b1,b21,b111> = QQ[]
@@ -3646,11 +3595,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         if tensorflag:
             tparents = Px._sets
             lincomb = Px.linear_combination
-            elt = lincomb((prod(lincomb((tensor([p[r].plethysm(base(la))
+            elt = lincomb((prod((lincomb((tensor([p[r].plethysm(base(la))
                                                  for base, la in zip(tparents, trm)]),
                                          _raise_variables(c, r, degree_one))
                                         for trm, c in x)
-                                for r in mu),
+                                for r in mu), tensor([base.one() for base in tparents])),
                            d)
                           for mu, d in p(self))
             return Px(elt)
@@ -5451,8 +5400,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         dct = {lam.stretch(n): coeff for lam, coeff in m(self)}
         result_in_m_basis = m._from_dict(dct)
         return parent(result_in_m_basis)
-
-    frobenius = deprecated_function_alias(36396, adams_operator)
 
     def verschiebung(self, n):
         r"""

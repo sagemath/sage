@@ -242,35 +242,6 @@ lazy_import('ppl', ['ray', 'point'], as_=['PPL_ray', 'PPL_point'],
                     feature=PythonModule("ppl", spkg='pplpy', type='standard'))
 
 
-def is_Cone(x):
-    r"""
-    Check if ``x`` is a cone.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is a cone and ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.cone import is_Cone
-        sage: is_Cone(1)
-        doctest:warning...
-        DeprecationWarning: is_Cone is deprecated, use isinstance instead
-        See https://github.com/sagemath/sage/issues/34307 for details.
-        False
-        sage: quadrant = Cone([(1,0), (0,1)])
-        sage: quadrant
-        2-d cone in 2-d lattice N
-        sage: is_Cone(quadrant)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34307, "is_Cone is deprecated, use isinstance instead")
-    return isinstance(x, ConvexRationalPolyhedralCone)
-
-
 def Cone(rays, lattice=None, check=True, normalize=True):
     r"""
     Construct a (not necessarily strictly) convex rational polyhedral cone.
@@ -1560,7 +1531,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             self._PPL_C_Polyhedron = C_Polyhedron(gs)
         return self._PPL_C_Polyhedron
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check if ``point`` is contained in ``self``.
 
@@ -1599,7 +1570,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             False
         """
         state = copy(self.__dict__)
-        state.pop("_PPL_C_Polyhedron", None) # PPL is not picklable.
+        state.pop("_PPL_C_Polyhedron", None)  # PPL is not picklable.
 
         # TODO: do we want to keep the face lattice in the pickle?
         # Currently there is an unpickling loop if do:
@@ -1611,7 +1582,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         state.pop("_face_lattice", None)
         return state
 
-    def _contains(self, point, region='whole cone'):
+    def _contains(self, point, region='whole cone') -> bool:
         r"""
         Check if ``point`` is contained in ``self``.
 

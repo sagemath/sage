@@ -748,11 +748,12 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
 
         But not the enumerated set::
 
-            sage: loads(dumps(d.f()))
-            Traceback (most recent call last):
-            ...
-            _pickle.PicklingError: Can't pickle <function DummyExampleForPicklingTest.f at ...>:
-            it's not the same object as sage.sets.set_from_iterator.DummyExampleForPicklingTest.f
+            sage: from _pickle import PicklingError
+            sage: try:
+            ....:     loads(dumps(d.f()))
+            ....: except PicklingError as e:
+            ....:     print("PicklingError caught")
+            PicklingError caught
         """
         self.inst = inst
         self.f = f

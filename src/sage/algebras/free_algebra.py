@@ -159,7 +159,6 @@ Some tests for the category::
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-
 from sage.algebras.free_algebra_element import FreeAlgebraElement
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.categories.functor import Functor
@@ -376,34 +375,6 @@ class FreeAlgebraFactory(UniqueFactory):
 FreeAlgebra = FreeAlgebraFactory('FreeAlgebra')
 
 
-def is_FreeAlgebra(x) -> bool:
-    """
-    Return ``True`` if x is a free algebra; otherwise, return ``False``.
-
-    EXAMPLES::
-
-        sage: from sage.algebras.free_algebra import is_FreeAlgebra
-        sage: is_FreeAlgebra(5)
-        doctest:warning...
-        DeprecationWarning: the function is_FreeAlgebra is deprecated;
-        use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead
-        See https://github.com/sagemath/sage/issues/37896 for details.
-        False
-        sage: is_FreeAlgebra(ZZ)
-        False
-        sage: is_FreeAlgebra(FreeAlgebra(ZZ,100,'x'))
-        True
-        sage: is_FreeAlgebra(FreeAlgebra(ZZ,10,'x',implementation='letterplace'))
-        True
-        sage: is_FreeAlgebra(FreeAlgebra(ZZ,10,'x',implementation='letterplace',
-        ....:                            degrees=list(range(1,11))))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37896, "the function is_FreeAlgebra is deprecated; use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead")
-    return isinstance(x, (FreeAlgebra_generic, FreeAlgebra_letterplace))
-
-
 class FreeAlgebra_generic(CombinatorialFreeModule):
     """
     The free algebra on `n` generators over a base ring.
@@ -470,7 +441,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
     """
     Element = FreeAlgebraElement
 
-    def __init__(self, R, n, names, degrees=None):
+    def __init__(self, R, n, names, degrees=None) -> None:
         """
         The free algebra on `n` generators over a base ring.
 

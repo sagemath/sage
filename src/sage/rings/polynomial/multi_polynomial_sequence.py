@@ -168,8 +168,9 @@ from sage.misc.method_decorator import MethodDecorator
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.infinity import Infinity
-from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal, NCPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+from sage.rings.polynomial.plural import NCPolynomialRing_plural
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing_sparse
 from sage.rings.quotient_ring import QuotientRing_nc
@@ -316,6 +317,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     def is_ring(r):
         return (isinstance(r, (MPolynomialRing_base,
+                               NCPolynomialRing_plural,
                                BooleanMonomialMonoid,
                                InfinitePolynomialRing_sparse))
                 or (isinstance(r, QuotientRing_nc)
@@ -330,7 +332,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     elif isinstance(arg1, Matrix):
         ring, gens = arg1.base_ring(), arg1.list()
 
-    elif isinstance(arg1, MPolynomialIdeal):
+    elif isinstance(arg1, (MPolynomialIdeal, NCPolynomialIdeal)):
         ring, gens = arg1.ring(), arg1.gens()
     else:
         gens = list(arg1)
@@ -1313,7 +1315,7 @@ class PolynomialSequence_generic(Sequence_generic):
         if isinstance(right, PolynomialSequence_generic) and right.ring() == self.ring():
             return PolynomialSequence(self.ring(), self.parts() + right.parts())
 
-        elif isinstance(right, (tuple, list)) and all((x.parent() == self.ring() for x in right)):
+        elif isinstance(right, (tuple, list)) and all(x.parent() == self.ring() for x in right):
             return PolynomialSequence(self.ring(), self.parts() + (right,))
 
         elif isinstance(right, MPolynomialIdeal) and (right.ring() is self.ring() or right.ring() == self.ring()):

@@ -1126,7 +1126,7 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
             q = PolynomialRing(ZZ, 'q').gen(0)
         return prod(q + d - 1 for d in self.degrees())
 
-    def is_well_generated(self):
+    def is_well_generated(self) -> bool:
         r"""
         Return if ``self`` is a well-generated complex reflection group.
 
@@ -2619,7 +2619,7 @@ class SpechtModule(Representation_abstract, SubmoduleWithBasis):
         COB = matrix([b.lift().to_vector() for b in B]).T
         P, L, U = COB.LU()
         # Since U is upper triangular, the nonzero entriesm must be in the
-        #   upper square portiion of the matrix
+        #   upper square portion of the matrix
         n = len(B)
 
         Uinv = U.matrix_from_rows(range(n)).inverse()

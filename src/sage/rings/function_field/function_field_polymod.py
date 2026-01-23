@@ -19,6 +19,7 @@ Function Fields: extension
 #                     2019      Brent Baccala
 #                     2022      Frédéric Chapoton
 #                     2022      Gonzalo Tornaría
+#                     2025      Vincent Macri <vincent.macri@ucalgary.ca>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -1845,7 +1846,7 @@ class FunctionField_simple(FunctionField_polymod):
 
         return k_ext, embedding
 
-    @cached_method
+    @cached_method(do_pickle=True)
     def genus(self) -> Integer:
         """
         Return the genus of the function field.
@@ -2421,40 +2422,70 @@ class FunctionField_integral(FunctionField_simple):
     polynomial, which is integral over the maximal order of the base rational
     function field.
     """
-    def _maximal_order_basis(self):
+
+    def _maximal_order_basis(self) -> tuple[FunctionFieldElement]:
         """
         Return a basis of the maximal order of the function field.
 
-        EXAMPLES::
+        The basis of the maximal order *always* starts with 1. This is assumed
+        in some algorithms.
+
+        .. TODO::
+
+            This method is one of the main bottlenecks in setting up function
+            field computations, and should be optimized further. This method
+            should only be called once per function field, and so improving
+            worst-case performance is much more important than small gains.
+            The current implementation uses Singular and then performs some
+            post-processing. We should try minimize this post-processing.
+            The global function field over a prime finite field case calls
+            a Singular function to compute this directly, and does not need
+            to do any additional processing beyond converting types.
+
+        TESTS::
 
             sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: R.<t> = PolynomialRing(K)
             sage: F.<y> = K.extension(t^4 + x^12*t^2 + x^18*t + x^21 + x^18)
             sage: F._maximal_order_basis()
-            [1, 1/x^4*y, 1/x^11*y^2 + 1/x^2, 1/x^15*y^3 + 1/x^6*y]
+            (1, 1/x^4*y, 1/x^11*y^2 + 1/x^2, 1/x^15*y^3 + 1/x^6*y)
 
-        The basis of the maximal order *always* starts with 1. This is assumed
-        in some algorithms.
+        Test that computing maximal orders is reasonably fast::
+
+            sage: K = GF(7)
+            sage: Kx.<x> = FunctionField(K)
+            sage: t = polygen(Kx)
+            sage: F.<y> = Kx.extension(t^5 + (2*x + 5)*t^4 + (5*x^2 + 4)*t^3 + (4*x^3 + 2*x^2 + 2)*t^2 + (3*x^4 + 2*x^3 + 3*x^2 + 4*x + 6)*t + 6*x^5 + 6*x^4 + 5*x^3 + 3*x^2 + 6)
+            sage: F.maximal_order().basis()
+            (1, y, y^2, y^3, y^4)
+            sage: F.maximal_order_infinite().basis()
+            (1, 1/x*y, 1/x^2*y^2, 1/x^3*y^3, 1/x^4*y^4)
         """
-        from sage.matrix.constructor import matrix
-
-        from .hermite_form_polynomial import reversed_hermite_form
+        from sage.libs.singular.function import lib, singular_function
 
         k = self.constant_base_field()
         K = self.base_field()  # rational function field
-        n = self.degree()
 
         # Construct the defining polynomial of the function field as a
         # two-variate polynomial g in the ring k[y,x] where k is the constant
         # base field.
-        S, (y, x) = PolynomialRing(k, names='y,x', order='lex').objgens()
+        S, (y, x) = PolynomialRing(k, names='y, x', order='degrevlex').objgens()
         v = self.polynomial().list()
         g = sum([v[i].numerator().subs(x) * y**i for i in range(len(v))])
 
         if self.is_global():
+            # If the constant base field is a prime field then we can use
+            # Singular's integralBasis function, which is much faster.
+            if k.is_prime_field():
+                lib('integralbasis.lib')
+                integral_basis = singular_function('integralBasis')
+
+                singular_basis, s = integral_basis(g, 1, 'normal')
+                hom = S.hom([self.gen(), self(K.gen())])
+                return tuple(self(hom(b) / hom(s)) for b in singular_basis)
+
             from sage.env import SAGE_EXTCODE
-            from sage.libs.singular.function import lib, singular_function
             lib(SAGE_EXTCODE + '/singular/function_field/core.lib')
             normalize = singular_function('core_normalize')
 
@@ -2480,6 +2511,9 @@ class FunctionField_integral(FunctionField_simple):
             # of the integral closure of k(x,y)/(g) as a k[x,y]-module.
             pols_in_S = _singular_normal(S.ideal(g))[0]
 
+        from sage.matrix.constructor import matrix
+        from .hermite_form_polynomial import reversed_hermite_form
+
         # reconstruct the polynomials in the function field
         x = K.gen()
         y = self.gen()
@@ -2501,7 +2535,7 @@ class FunctionField_integral(FunctionField_simple):
         _basis = []
         for f in pols:
             b = d * f
-            for i in range(n):
+            for i in range(self.degree()):
                 _basis.append(b)
                 b *= y
 
@@ -2517,8 +2551,7 @@ class FunctionField_integral(FunctionField_simple):
         _mat = matrix([[coeff.numerator() for coeff in l * v] for v in basis_V])
         reversed_hermite_form(_mat)
 
-        basis = [fr_V(v) / l for v in _mat if not v.is_zero()]
-        return basis
+        return tuple(fr_V(v) / l for v in _mat if not v.is_zero())
 
     @cached_method
     def equation_order(self):

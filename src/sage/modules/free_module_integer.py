@@ -176,6 +176,18 @@ def IntegerLattice(basis, lll_reduce=True):
         [      0       0       0       0       0 1048576       0       0]
         [      0       0       0       0       0       0 1048576       0]
         [      0       0       0       0       0       0       0 1048576]
+
+    We construct a large lattice, this lattice will not be constructible
+    if echelon form was also being computed::
+
+        sage: n = 500
+        sage: q = 65537
+        sage: M = matrix.random(ZZ, n, x=0, y=q+1).augment(q*matrix.identity(n))
+        sage: from sage.modules.free_module_integer import IntegerLattice
+        sage: L = IntegerLattice(M, lll_reduce=False); L
+        Free module of degree 1000 and rank 500 over Integer Ring
+        User basis matrix:
+        500 x 1000 dense matrix over Integer Ring
     """
 
     if isinstance(basis, OrderElement_absolute):

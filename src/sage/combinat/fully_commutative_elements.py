@@ -156,7 +156,9 @@ class FullyCommutativeElement(NormalizedClonableList):
             False
         """
         word = list(self)
-        from sage.combinat.root_system.braid_orbit import is_fully_commutative as is_fully_comm
+        from sage.combinat.root_system.braid_orbit import (
+            is_fully_commutative as is_fully_comm,
+        )
 
         group = self.parent().coxeter_group()
         braid_rels = group.braid_relations()
@@ -710,9 +712,9 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         # Perform the coset decomposition on the specified side:
         if side == 'left':
-            (string, remaining) = self.coset_decomposition(J, side=side)
+            string, remaining = self.coset_decomposition(J, side=side)
         elif side == 'right':
-            (remaining, string) = self.coset_decomposition(J, side=side)
+            remaining, string = self.coset_decomposition(J, side=side)
 
         cur_string = list(string)
 
@@ -1009,7 +1011,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
         letters = self.coxeter_group().index_set()
 
         # To make the iterator deterministic, use a dictionary rather than a
-        # set, for the keys are then ordered by default by Python 3.7+:
+        # set, for the keys are then ordered by default:
         recent_words = {empty_word: True}
         yield empty_word
         while recent_words:

@@ -142,8 +142,9 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
             try:
                 assert (gram_matrix in MatrixSpace(R, ngens, ngens))
             except AssertionError:
-                raise ValueError("the Gram_matrix should be a skew-symmetric "
-                    "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
+                raise ValueError("the Gram_matrix should be a "
+                                 "skew-symmetric {0} x {0} matrix, got {1}"
+                                 .format(ngens, gram_matrix))
             if (not gram_matrix.is_skew_symmetric() or
                     gram_matrix.is_singular()):
                 raise ValueError("the Gram_matrix should be a non degenerate "
@@ -162,8 +163,8 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
             latex_names = tuple(r'\alpha_{%d}' % i
                                 for i in range(ngens)) + ('K',)
         names, index_set = standardize_names_index_set(names=names,
-                                                      index_set=index_set,
-                                                      ngens=ngens)
+                                                       index_set=index_set,
+                                                       ngens=ngens)
         weyldict = {(i, j): {0: {('K', 0): gram_matrix[index_set.rank(i),
                                                        index_set.rank(j)]}}
                     for i in index_set for j in index_set}

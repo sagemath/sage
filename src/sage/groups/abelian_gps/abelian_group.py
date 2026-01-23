@@ -457,29 +457,6 @@ def AbelianGroup(n, gens_orders=None, names='f'):
     return M
 
 
-def is_AbelianGroup(x):
-    """
-    Return ``True`` if ``x`` is an Abelian group.
-
-    EXAMPLES::
-
-        sage: from sage.groups.abelian_gps.abelian_group import is_AbelianGroup
-        sage: F = AbelianGroup(5,[5,5,7,8,9], names=list("abcde")); F
-        Multiplicative Abelian group isomorphic to C5 x C5 x C7 x C8 x C9
-        sage: is_AbelianGroup(F)
-        doctest:warning...
-        DeprecationWarning: the function is_AbelianGroup is deprecated;
-        use 'isinstance(..., AbelianGroup_class)' instead
-        See https://github.com/sagemath/sage/issues/37898 for details.
-        True
-        sage: is_AbelianGroup(AbelianGroup(7, [3]*7))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37898, "the function is_AbelianGroup is deprecated; use 'isinstance(..., AbelianGroup_class)' instead")
-    return isinstance(x, AbelianGroup_class)
-
-
 class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
     """
     The parent for Abelian groups with chosen generator orders.
@@ -1039,7 +1016,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         # TODO: deprecate
         return self.gens_orders()
 
-    def is_cyclic(self):
+    def is_cyclic(self) -> bool:
         """
         Return ``True`` if the group is a cyclic group.
 
@@ -1741,7 +1718,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             category = Groups().Commutative().Subobjects()
         AbelianGroup_class.__init__(self, invs, names, category=category)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Test whether ``x`` is an element of this subgroup.
 

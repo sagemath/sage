@@ -8,6 +8,7 @@ globally-available ``cones`` prefix, to create some common cones:
 - The nonnegative orthant,
 - The rearrangement cone of order ``p``,
 - The Schur cone,
+- The Barker-Foran cone,
 - The trivial cone.
 
 At the moment, only convex rational polyhedral cones are
@@ -159,6 +160,83 @@ def _preprocess_args(ambient_dim, lattice):
                          "are incompatible" % (lattice.rank(), ambient_dim))
 
     return (ambient_dim, lattice)
+
+
+def barker_foran(lattice=None):
+    r"""
+    The Barker-Foran cone, an example of a "self-dual" cone with
+    five extreme rays in three dimensions.
+
+    In Sage, every dual cone lives in a distinct dual lattice, but we
+    use the term "self-dual" loosely to indicate that the cone and its
+    dual are equal as sets under a canonical lattice isomorphism.
+
+    INPUT:
+
+    - ``lattice`` -- a toric lattice (default: ``None``) of rank
+      three; the lattice in which the cone will live
+
+    If the ``lattice`` is omitted, then the default lattice of rank
+    three will be used.
+
+    OUTPUT:
+
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` living
+    in ``lattice`` that is self-dual and has five extreme rays.
+
+    A :exc:`ValueError` is raised if the ``lattice`` is of an
+    incompatible rank.
+
+    REFERENCES:
+
+    - [BF1976]_
+
+    EXAMPLES:
+
+    Basic usage; confirm self-duality::
+
+        sage: K = cones.barker_foran()
+        sage: K.nrays()
+        5
+        sage: K.is_proper()  # should be implied by self-duality
+        True
+        sage: K_ext = K.rays().matrix().rows()
+        sage: K_dual_ext = K.dual().rays().matrix().rows()
+        sage: set(K_ext) == set(K_dual_ext)  #  self-dual
+        True
+
+    TESTS:
+
+    If a ``lattice`` was given, it is actually used::
+
+        sage: M = ToricLattice(3, 'M')
+        sage: cones.barker_foran(lattice=M)
+        3-d cone in 3-d lattice M
+
+    Unless it has the wrong rank::
+
+        sage: M = ToricLattice(2, 'M')
+        sage: cones.barker_foran(lattice=M)
+        Traceback (most recent call last):
+        ...
+        ValueError: lattice rank=2 and ambient_dim=3 are incompatible
+
+    """
+    from sage.geometry.cone import Cone
+    from sage.rings.integer_ring import ZZ
+
+    ambient_dim = 3
+    ambient_dim, lattice = _preprocess_args(ambient_dim, lattice)
+
+    one = ZZ.one()
+    zero = ZZ.zero()
+    ext = [( one,   one,  one),
+           ( zero,  one,  one),
+           (-one,   zero, one),
+           ( zero, -one,  one),
+           ( one,  -one,  one)]  # noqa: E221
+
+    return Cone(ext, lattice, check=False)
 
 
 def downward_monotone(ambient_dim=None, lattice=None):
@@ -707,7 +785,7 @@ def schur(ambient_dim=None, lattice=None):
         True
 
     The Schur cone induces the majorization preordering on the
-    downard-monotone cone, as in Iusem and Seeger's [IS2005]_ Example
+    downward-monotone cone, as in Iusem and Seeger's [IS2005]_ Example
     7.3 or Niezgoda's [Niez1998]_ Example 2.2::
 
         sage: ambient_dim = ZZ.random_element(10)
