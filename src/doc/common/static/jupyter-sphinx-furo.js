@@ -1,3 +1,30 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Fix double backslashes
+    const processText = (text) => {
+        return text.replace(
+            /(\$[^$]+\$)|(\\\([^)]+\\\))/g,
+            function(mathBlock) {
+                return mathBlock.replace(/\\\\/g, '\\');
+            }
+        );
+    };
+    
+    const walker = document.createTreeWalker(
+        document.body, 
+        NodeFilter.SHOW_TEXT, 
+        null, 
+        false
+    );
+    
+    let node;
+    while (node = walker.nextNode()) {
+        const newText = processText(node.textContent);
+        if (newText !== node.textContent) {
+            node.textContent = newText;
+        }
+    }
+});
+
 // Change the editor theme according to the furo light/dark/auto mode
 function changeTheme(editor, theme) {
   if (theme === 'dark') {
