@@ -1052,7 +1052,9 @@ class PolynomialRing_generic(Ring):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: R.an_element()  # indirect doctest
+            sage: R.an_element()
+            x
+            sage: R._an_element_()
             x
         """
         return self.gen()
