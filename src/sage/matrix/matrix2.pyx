@@ -877,7 +877,8 @@ cdef class Matrix(Matrix1):
             sage: m._solve_right_hermite_form(matrix(ZZ, [[2]]*500))  # not tested (slow)
 
         Test method to solve over ring of integers which is not a PID.
-        (:issue:`40410`)
+        (:issue:`40410`)::
+
             sage: R = QQ[sqrt(-5)]
             sage: O = R.ring_of_integers()
             sage: a = matrix([[O(2)], [O(1+sqrt(-5))]])
