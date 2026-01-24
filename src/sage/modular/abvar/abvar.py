@@ -4808,7 +4808,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
             sage: J0(43)[0].brandt_module(43).basis()
             ((0, 0, 1, -1),)
             sage: J0(35)[0].brandt_module(5).basis()
-            ((1, 0, -1, 0),)
+            ((0, 0, 1, -1),)
             sage: J0(35)[0].brandt_module(7).basis()
             ((1, -1, 1, -1),)
         """

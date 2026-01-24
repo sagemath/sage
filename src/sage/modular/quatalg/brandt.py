@@ -137,7 +137,7 @@ EXAMPLES::
     sage: B = BrandtModule(23)
 
     sage: B.maximal_order()
-    Order of Quaternion Algebra (-1, -23) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+    Order of Quaternion Algebra (-1, -23) with base ring Rational Field with basis (1, i, 1/2 + 1/2*j, 1/2*i + 1/2*k)
 
     sage: B.right_ideals()
     (Fractional ideal (4, 4*i, 2 + 2*j, 2*i + 2*k),
@@ -365,13 +365,14 @@ def maximal_order(A):
         sage: A = BrandtModule(17).quaternion_algebra()
 
         sage: sage.modular.quatalg.brandt.maximal_order(A)
-        doctest:...:  DeprecationWarning: The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras
+        doctest:warning...
+        DeprecationWarning: The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras
         See https://github.com/sagemath/sage/issues/37090 for details.
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
+        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k)
 
         sage: A = QuaternionAlgebra(17,names='i,j,k')
         sage: A.maximal_order()
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
+        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k)
     """
     from sage.misc.superseded import deprecation
     deprecation(37090, "The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras")
@@ -422,16 +423,17 @@ def right_order(R, basis):
 
         sage: B = BrandtModule(17); basis = B.maximal_order()._left_ideal_basis([1])
         sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
-        doctest:...:  DeprecationWarning: The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras
+        doctest:warning...
+        DeprecationWarning: The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras
         See https://github.com/sagemath/sage/issues/37090 for details.
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
+        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k)
         sage: basis
         [1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k]
 
         sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
         sage: basis = B.maximal_order()._left_ideal_basis([i*j - j])
         sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
+        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k)
     """
     from sage.misc.superseded import deprecation
     deprecation(37090, "The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras")
@@ -525,9 +527,9 @@ class BrandtModuleElement(HeckeModuleElement):
 
             sage: B = BrandtModule(5,13)
             sage: B.monodromy_weights()
-            (1, 3, 1, 1, 1, 3)
+            (1, 1, 1, 1, 3, 3)
             sage: (B.0 + B.1).monodromy_pairing(B.0 + B.1)
-            4
+            2
 
         TESTS:
 
@@ -553,13 +555,13 @@ class BrandtModuleElement(HeckeModuleElement):
 
             sage: B = BrandtModule(7,10)
             sage: B.monodromy_weights()
-            (1, 1, 1, 2, 1, 1, 2, 1, 1, 1)
+            (1, 1, 1, 1, 1, 1, 1, 2, 1, 2)
             sage: B.0 * B.0
             1
             sage: B.3 * B.3
-            2
+            1
             sage: (B.0+B.3) * (B.0 + B.1 + 2*B.3)
-            5
+            3
         """
         return self.monodromy_pairing(right)
 
@@ -757,7 +759,7 @@ class BrandtModule_class(AmbientHeckeModule):
         EXAMPLES::
 
             sage: BrandtModule(17).maximal_order()
-            Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
+            Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k)
             sage: BrandtModule(17).maximal_order() is BrandtModule(17).maximal_order()
             True
         """
@@ -772,11 +774,11 @@ class BrandtModule_class(AmbientHeckeModule):
         EXAMPLES::
 
             sage: BrandtModule(7).order_of_level_N()
-            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1, i, 1/2 + 1/2*j, 1/2*i + 1/2*k)
             sage: BrandtModule(7,13).order_of_level_N()
-            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j + 12*k, 1/2*i + 9/2*k, j + 11*k, 13*k)
+            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1, 13*i, 1/2 + 3*i + 1/2*j, 23/2*i + 1/2*k)
             sage: BrandtModule(7,3*17).order_of_level_N()
-            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j + 35*k, 1/2*i + 65/2*k, j + 19*k, 51*k)
+            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1, 51*i, 1/2 + 28*i + 1/2*j, 79/2*i + 1/2*k)
         """
         return self.quaternion_algebra().order_with_level(self.level())
 
@@ -1160,10 +1162,10 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: B = BrandtModule(5,11); B
             Brandt module of dimension 4 of level 5*11 of weight 2 over Rational Field
             sage: sorted(list(B._theta_dict(5).items()))
-            [((1, 0, 0, 4, 0), [3]),
-             ((1, 0, 0, 4, 2), [2]),
+            [((1, 0, 0, 4, 2), [3]),
+             ((1, 0, 2, 0, 4), [2]),
              ((1, 0, 2, 0, 6), [1]),
-             ((1, 2, 4, 0, 6), [0])]
+             ((1, 2, 2, 4, 2), [0])]
 
         In this example, the theta series does not determine the ideal class::
 
@@ -1199,15 +1201,15 @@ class BrandtModule_class(AmbientHeckeModule):
 
             sage: B = BrandtModule(3,17)
             sage: B._compute_hecke_matrix_brandt(3)
-            [0 1 0 0]
-            [1 0 0 0]
-            [0 0 0 1]
             [0 0 1 0]
+            [0 0 0 1]
+            [1 0 0 0]
+            [0 1 0 0]
             sage: B._compute_hecke_matrix_brandt(5)
-            [4 1 1 0]
-            [1 4 0 1]
-            [2 0 2 2]
+            [4 0 1 1]
             [0 2 2 2]
+            [1 1 4 0]
+            [2 2 0 2]
             sage: B._compute_hecke_matrix_brandt(5).fcp()
             (x - 6) * (x - 3) * (x^2 - 3*x - 2)
         """
@@ -1481,9 +1483,9 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: BrandtModule(3,11).eisenstein_subspace().basis()
             ((1, 1),)
             sage: BrandtModule(7,10).eisenstein_subspace().basis()
-            ((1, 1, 1, 1/2, 1, 1, 1/2, 1, 1, 1),)
+            ((1, 1, 1, 1, 1, 1, 1, 1/2, 1, 1/2),)
             sage: BrandtModule(7,10,base_ring=ZZ).eisenstein_subspace().basis()
-            ((2, 2, 2, 1, 2, 2, 1, 2, 2, 2),)
+            ((2, 2, 2, 2, 2, 2, 2, 1, 2, 1),)
         """
         if self.base_ring().characteristic():
             raise ValueError("characteristic must be 0")
@@ -1534,9 +1536,9 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: BrandtModule(43).monodromy_weights()
             (2, 1, 1, 1)
             sage: BrandtModule(7,10).monodromy_weights()
-            (1, 1, 1, 2, 1, 1, 2, 1, 1, 1)
+            (1, 1, 1, 1, 1, 1, 1, 2, 1, 2)
             sage: BrandtModule(5,13).monodromy_weights()
-            (1, 3, 1, 1, 1, 3)
+            (1, 1, 1, 1, 3, 3)
             sage: BrandtModule(2).monodromy_weights()
             (12,)
             sage: BrandtModule(2,7).monodromy_weights()

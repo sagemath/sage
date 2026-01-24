@@ -268,7 +268,7 @@ computations with the rational Chow group::
     sage: list(map(AA, P4_11133.fan(4)))  # long time (5s on sage.math, 2012)
     [( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ),
      ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 ), ( 1 | 0 | 0 | 0 | 0 )]
-    sage: AA(cone).intersection_with_divisor(D)  # long time (4s on sage.math, 2013)    # needs sage.libs.singular
+    sage: AA(cone).intersection_with_divisor(D)         # long time (4s on sage.math, 2013), needs sage.libs.singular
     ( 1 | 0 | 0 | 0 | 0 )
     sage: AA(cone).intersection_with_divisor(D).count_points()  # long time             # needs sage.libs.singular
     1
