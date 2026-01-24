@@ -1236,7 +1236,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             raise TypeError("mutable vectors are unhashable")
         return hash(tuple(self))
 
-    def _vector_(self, R=None):
+    def _vector_(self, R=None, *, order=None):
         r"""
         Return ``self`` as a vector.
 
@@ -1255,6 +1255,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: vector(vector(SR, (1, sqrt(2)) ) )                                    # needs sage.symbolic
             (1, sqrt(2))
         """
+        if order is not None:
+            # this parameter is for compatibility with FiniteDimensionalModulesWithBasis.ParentMethods.echelon_form
+            raise ValueError("order is not supported")
         if R is None:
             return self
         return self.change_ring(R)
