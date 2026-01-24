@@ -346,7 +346,7 @@ class TableauTuple(CombinatorialElement):
         sage: TableauTuple([[1],[2,3]])
         Traceback (most recent call last):
         ...
-        ValueError: a tableau must be a list of iterables
+        TypeError: 'sage.rings.integer.Integer' object is not iterable
 
         sage: TestSuite( TableauTuple([ [[1,2],[3,4]], [[1,2],[3,4]] ]) ).run()
         sage: TestSuite( TableauTuple([ [[1,2],[3,4]], [], [[1,2],[3,4]] ]) ).run()
