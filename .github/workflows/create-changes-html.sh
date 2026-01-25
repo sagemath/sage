@@ -58,36 +58,6 @@ diffParagraphs.forEach(paragraph => {
 });
 </script>
 EOF
-cat >> CHANGES.html << 'EOF'
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Normalize double backslashes 
-    const processText = (text) => {
-        return text.replace(
-            /(\$[^$]+\$)|(\\\([^)]+\\\))/g,
-            function(mathBlock) {
-                return mathBlock.replace(/\\\\/g, '\\');
-            }
-        );
-    };
-
-    const walker = document.createTreeWalker(
-        document.body,
-        NodeFilter.SHOW_TEXT,
-        null,
-        false
-    );
-
-    let node;
-    while ((node = walker.nextNode())) {
-        const newText = processText(node.textContent);
-        if (newText !== node.textContent) {
-            node.textContent = newText;
-        }
-    }
-});
-</script>
-EOF
 echo '</head>' >> CHANGES.html
 echo '<body>' >> CHANGES.html
 python3 - << EOF
