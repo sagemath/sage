@@ -183,8 +183,7 @@ included in one of the following places:
 
   If the file needs to be used outside of Python, then the
   preferred way is using the context manager
-  :func:`importlib.resources.as_file`. It should be imported in the
-  same way as shown above.
+  :func:`importlib.resources.as_file`.
 
 - In an appropriate subdirectory of :sage_root:`src/sage/ext_data/`.
   (At runtime, it is then available in the directory indicated by
@@ -195,11 +194,6 @@ included in one of the following places:
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')
 
   This practice is deprecated, see :issue:`33037`.
-
-In all cases, the files must be listed (explicitly or via wildcards) in
-the section ``options.package_data`` of the file
-:sage_root:`pkgs/sagemath-standard/setup.cfg.m4` (or the corresponding
-file of another distribution).
 
 Large data files should not be added to the Sage source tree. Instead, it
 is proposed to do the following:

@@ -307,45 +307,6 @@ class RequireField(MethodDecorator):
 require_field = RequireField
 
 
-def is_MPolynomialIdeal(x) -> bool:
-    """
-    Return ``True`` if the provided argument ``x`` is an ideal in a
-    multivariate polynomial ring.
-
-    INPUT:
-
-    - ``x`` -- an arbitrary object
-
-    EXAMPLES::
-
-        sage: from sage.rings.polynomial.multi_polynomial_ideal import is_MPolynomialIdeal
-        sage: P.<x,y,z> = PolynomialRing(QQ)
-        sage: I = [x + 2*y + 2*z - 1, x^2 + 2*y^2 + 2*z^2 - x, 2*x*y + 2*y*z - y]
-
-    Sage distinguishes between a list of generators for an ideal and
-    the ideal itself. This distinction is inconsistent with Singular
-    but matches Magma's behavior. ::
-
-        sage: is_MPolynomialIdeal(I)
-        doctest:warning...
-        DeprecationWarning: The function is_MPolynomialIdeal is deprecated;
-        use 'isinstance(..., MPolynomialIdeal)' instead.
-        See https://github.com/sagemath/sage/issues/38266 for details.
-        False
-
-    ::
-
-        sage: I = Ideal(I)
-        sage: is_MPolynomialIdeal(I)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38266,
-                "The function is_MPolynomialIdeal is deprecated; "
-                "use 'isinstance(..., MPolynomialIdeal)' instead.")
-    return isinstance(x, MPolynomialIdeal)
-
-
 class MPolynomialIdeal_magma_repr:
     def _magma_init_(self, magma):
         """
