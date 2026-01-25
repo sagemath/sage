@@ -876,7 +876,7 @@ cdef class Matrix(Matrix1):
             sage: v = m.solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
             sage: m._solve_right_hermite_form(matrix(ZZ, [[2]]*500))  # not tested (slow)
 
-        Test method to solve over ring of integers which is not a PID.
+        Test method to solve over ring of integers which is not a PID
         (:issue:`40410`)::
 
             sage: R = QQ[sqrt(-5)]
@@ -1011,7 +1011,7 @@ cdef class Matrix(Matrix1):
         from sage.modules.free_module_element import vector
 
         R = self.base_ring()
-        d = R.degree()
+        d = R.rank()
         nrows = self.nrows()
         ncols = self.ncols()
         rhs_ncols = B.ncols()
