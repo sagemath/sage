@@ -97,7 +97,7 @@ cdef class PolyDict:
     r"""
     Data structure for multivariate polynomials.
 
-    A PolyDict holds a dictionary all of whose keys are :class:`ETuple` and
+    A ``PolyDict`` holds a dictionary all of whose keys are :class:`ETuple` and
     whose values are coefficients on which it is implicitly assumed that
     arithmetic operations can be performed.
 
@@ -107,22 +107,12 @@ cdef class PolyDict:
     can use the method :meth:`remove_zeros` which can be parametrized by a zero
     test.
     """
-    def __init__(self, pdict, zero=None, remove_zero=None,
-                 force_int_exponents=None, force_etuples=None,
-                 bint check=True) -> None:
+    def __init__(self, pdict, bint check=True) -> None:
         """
         INPUT:
 
         - ``pdict`` -- dictionary or list, which represents a multi-variable
           polynomial with the distribute representation (a copy is made)
-
-        - ``zero`` -- deprecated
-
-        - ``remove_zero`` -- deprecated
-
-        - ``force_int_exponents`` -- deprecated
-
-        - ``force_etuples`` -- deprecated
 
         - ``check`` -- if set to ``False`` then assumes that the exponents are
           all valid ``ETuple``; in that case the construction is a bit faster
@@ -145,23 +135,7 @@ cdef class PolyDict:
             sage: f = PolyDict({(2, 3): 2, (1, 2): 3, (2, 1): 4})
             sage: len(f)
             3
-            sage: f = PolyDict({}, zero=3, force_int_exponents=True, force_etuples=True)
-            doctest:warning
-            ...
-            DeprecationWarning: the arguments "zero", "forced_int_exponents"
-            and "forced_etuples" of PolyDict constructor are deprecated
-            See https://github.com/sagemath/sage/issues/34000 for details.
-            sage: f = PolyDict({}, remove_zero=False)
-            doctest:warning
-            ...
-            DeprecationWarning: the argument "remove_zero" of PolyDict
-            constructor is deprecated; call the method remove_zeros
-            See https://github.com/sagemath/sage/issues/34000 for details.
         """
-        if zero is not None or force_int_exponents is not None or force_etuples is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(34000, 'the arguments "zero", "forced_int_exponents" and "forced_etuples" of PolyDict constructor are deprecated')
-
         self.__repn = {}
         cdef bint has_only_etuple = True
         if isinstance(pdict, (tuple, list)):
@@ -185,12 +159,6 @@ cdef class PolyDict:
                     self.__repn[exp] = coeff
         else:
             raise TypeError("pdict must be a dict or a list of pairs (coeff, exponent)")
-
-        if remove_zero is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(34000, 'the argument "remove_zero" of PolyDict constructor is deprecated; call the method remove_zeros')
-            if remove_zero:
-                self.remove_zeros()
 
     cdef PolyDict _new(self, dict pdict):
         cdef PolyDict ans = PolyDict.__new__(PolyDict)
@@ -275,28 +243,6 @@ cdef class PolyDict:
         """
         for k, v in self.__repn.items():
             self.__repn[k] = f(v)
-
-    def coerce_coefficients(self, A):
-        r"""
-        Coerce the coefficients in the parent ``A``.
-
-        EXAMPLES::
-
-            sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: f = PolyDict({(2, 3): 0})
-            sage: f
-            PolyDict with representation {(2, 3): 0}
-            sage: f.coerce_coefficients(QQ)
-            doctest:warning
-            ...
-            DeprecationWarning: coerce_cefficients is deprecated; use apply_map instead
-            See https://github.com/sagemath/sage/issues/34000 for details.
-            sage: f
-            PolyDict with representation {(2, 3): 0}
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(34000, 'coerce_cefficients is deprecated; use apply_map instead')
-        self.apply_map(A.coerce)
 
     def __hash__(self) -> int:
         """
@@ -581,32 +527,6 @@ cdef class PolyDict:
             return max((<ETuple> e).unweighted_degree() for e in self.__repn)
         else:
             return max((<ETuple> e).weighted_degree(w) for e in self.__repn)
-
-    def monomial_coefficient(self, mon):
-        """
-        Return the coefficient of the monomial ``mon``.
-
-        INPUT:
-
-        - ``mon`` -- a PolyDict with a single key
-
-        EXAMPLES::
-
-            sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
-            sage: f.monomial_coefficient(PolyDict({(2,1):1}).dict())
-            doctest:warning
-            ...
-            DeprecationWarning: PolyDict.monomial_coefficient is deprecated; use PolyDict.get instead
-            See https://github.com/sagemath/sage/issues/34000 for details.
-            4
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(34000, 'PolyDict.monomial_coefficient is deprecated; use PolyDict.get instead')
-        K, = mon.keys()
-        if K not in self.__repn:
-            return 0
-        return self.__repn[K]
 
     def polynomial_coefficient(self, degrees):
         """

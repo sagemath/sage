@@ -181,62 +181,7 @@ _CommutativeRings = categories.commutative_rings.CommutativeRings()
 import sage.interfaces.abc
 
 
-def is_PolynomialRing(x):
-    """
-    Return ``True`` if ``x`` is a *univariate* polynomial ring (and not a
-    sparse multivariate polynomial ring in one variable).
-
-    EXAMPLES::
-
-        sage: from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        sage: from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-        sage: is_PolynomialRing(2)
-        doctest:warning...
-        DeprecationWarning: The function is_PolynomialRing is deprecated;
-        use 'isinstance(..., PolynomialRing_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38266 for details.
-        False
-
-    This polynomial ring is not univariate.
-
-    ::
-
-        sage: is_PolynomialRing(ZZ['x,y,z'])
-        False
-        sage: is_MPolynomialRing(ZZ['x,y,z'])
-        doctest:warning...
-        DeprecationWarning: The function is_MPolynomialRing is deprecated;
-        use 'isinstance(..., MPolynomialRing_base)' instead.
-        See https://github.com/sagemath/sage/issues/38266 for details.
-        True
-
-    ::
-
-        sage: is_PolynomialRing(ZZ['w'])
-        True
-
-    Univariate means not only in one variable, but is a specific data
-    type. There is a multivariate (sparse) polynomial ring data type,
-    which supports a single variable as a special case.
-
-    ::
-
-        sage: # needs sage.libs.singular
-        sage: R.<w> = PolynomialRing(ZZ, implementation='singular'); R
-        Multivariate Polynomial Ring in w over Integer Ring
-        sage: is_PolynomialRing(R)
-        False
-        sage: type(R)
-        <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
-    """
-    deprecation(38266,
-                "The function is_PolynomialRing is deprecated; "
-                "use 'isinstance(..., PolynomialRing_generic)' instead.")
-    return isinstance(x, PolynomialRing_generic)
-
-
-#########################################################################################
-
+###########################################################
 class PolynomialRing_generic(Ring):
     """
     Univariate polynomial ring over a ring.

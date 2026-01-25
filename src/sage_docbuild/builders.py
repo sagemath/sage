@@ -1227,7 +1227,7 @@ def get_all_reference_documents(source: Path) -> list[Path]:
             n = len(list(directory.iterdir()))
             documents.append((-n, directory.relative_to(source)))
 
-    # Sort largest component (most subdirectory entries) first since 
+    # Sort largest component (most subdirectory entries) first since
     # they will take the longest to build
     docs = [doc[1] for doc in sorted(documents)]
     # Put the bibliography first, because it needs to be built first:

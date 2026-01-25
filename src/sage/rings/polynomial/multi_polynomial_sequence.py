@@ -185,32 +185,6 @@ except ImportError:
     singular_gb_standard_options = libsingular_gb_standard_options = MethodDecorator
 
 
-def is_PolynomialSequence(F):
-    """
-    Return ``True`` if ``F`` is a ``PolynomialSequence``.
-
-    INPUT:
-
-    - ``F`` -- anything
-
-    EXAMPLES::
-
-        sage: P.<x,y> = PolynomialRing(QQ)
-        sage: I = [[x^2 + y^2], [x^2 - y^2]]
-        sage: F = Sequence(I, P); F
-        [x^2 + y^2, x^2 - y^2]
-
-        sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
-        sage: isinstance(F, PolynomialSequence_generic)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38266,
-                "The function is_PolynomialSequence is deprecated; "
-                "use 'isinstance(..., PolynomialSequence_generic)' instead.")
-    return isinstance(F, PolynomialSequence_generic)
-
-
 def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     """
     Construct a new polynomial sequence object.
@@ -789,71 +763,6 @@ class PolynomialSequence_generic(Sequence_generic):
                 except KeyError:
                     raise ValueError("order argument does not contain all monomials")
         return A, vector(v)
-
-    def coefficient_matrix(self, sparse=True):
-        """
-        Return tuple ``(A,v)`` where ``A`` is the coefficient matrix
-        of this system and ``v`` the matching monomial vector.
-
-        Thus value of ``A[i,j]`` corresponds the coefficient of the
-        monomial ``v[j]`` in the ``i``-th polynomial in this system.
-
-        Monomials are order w.r.t. the term ordering of
-        ``self.ring()`` in reverse order, i.e. such that the smallest
-        entry comes last.
-
-        INPUT:
-
-        - ``sparse`` -- construct a sparse matrix (default: ``True``)
-
-        EXAMPLES::
-
-            sage: # needs sage.libs.singular
-            sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
-            sage: I = sage.rings.ideal.Katsura(P)
-            sage: I.gens()
-            [a + 2*b + 2*c + 2*d - 1,
-             a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
-             2*a*b + 2*b*c + 2*c*d - b,
-             b^2 + 2*a*c + 2*b*d - c]
-            sage: F = Sequence(I)
-            sage: A,v = F.coefficient_matrix()
-            doctest:warning...
-            DeprecationWarning: the function coefficient_matrix is deprecated; use coefficients_monomials instead
-            See https://github.com/sagemath/sage/issues/37035 for details.
-            sage: A
-            [  0   0   0   0   0   0   0   0   0   1   2   2   2 126]
-            [  1   0   2   0   0   2   0   0   2 126   0   0   0   0]
-            [  0   2   0   0   2   0   0   2   0   0 126   0   0   0]
-            [  0   0   1   2   0   0   2   0   0   0   0 126   0   0]
-            sage: v
-            [a^2]
-            [a*b]
-            [b^2]
-            [a*c]
-            [b*c]
-            [c^2]
-            [b*d]
-            [c*d]
-            [d^2]
-            [  a]
-            [  b]
-            [  c]
-            [  d]
-            [  1]
-            sage: A*v
-            [        a + 2*b + 2*c + 2*d - 1]
-            [a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a]
-            [      2*a*b + 2*b*c + 2*c*d - b]
-            [        b^2 + 2*a*c + 2*b*d - c]
-        """
-        from sage.matrix.constructor import matrix
-        from sage.misc.superseded import deprecation
-        deprecation(37035, "the function coefficient_matrix is deprecated; use coefficients_monomials instead")
-
-        R = self.ring()
-        A, v = self.coefficients_monomials(sparse=sparse)
-        return A, matrix(R, len(v), 1, v)
 
     def macaulay_matrix(self, degree,
                         homogeneous=False,
