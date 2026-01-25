@@ -1,28 +1,87 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Fix double backslashes
-    const processText = (text) => {
-        return text.replace(
-            /(\$[^$]+\$)|(\\\([^)]+\\\))/g,
-            function(mathBlock) {
-                return mathBlock.replace(/\\\\/g, '\\');
-            }
-        );
+  function fixMathContent(text) {
+    return text
+      .replace(/\\\[([\s\S]*?)\\\]/g, function(match, inner) {
+        let fixed = inner;
+        fixed = fixed.replace(/\\\\([a-zA-Z@])/g, '\\$1');
+        fixed = fixed.replace(/\\\\([\[\]{}()|_^])/g, '\\$1');
+        return '\\[' + fixed + '\\]';
+      })
+      .replace(/\$\$([\s\S]*?)\$\$/g, function(match, inner) {
+        let fixed = inner;
+        fixed = fixed.replace(/\\\\([a-zA-Z@])/g, '\\$1');
+        fixed = fixed.replace(/\\\\([\[\]{}()|_^])/g, '\\$1');
+        return '$$' + fixed + '$$';
+      })
+      .replace(/\\\(([\s\S]*?)\\\)/g, function(match, inner) {
+        const fixed = inner.replace(/\\\\/g, '\\');
+        return '\\(' + fixed + '\\)';
+      })
+      .replace(/\$([^$]+)\$/g, function(match, inner) {
+        const fixed = inner.replace(/\\\\/g, '\\');
+        return '$' + fixed + '$';
+      });
+  }
+  
+  // Process text nodes
+  const walker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_SKIP;
+        
+        const tag = parent.tagName;
+        if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'CODE', 'PRE', 'TEXTAREA'].includes(tag)) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        
+        if (parent.closest && parent.closest('.MathJax')) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    },
+    false
+  );
+  
+  let node;
+  const nodesToProcess = [];
+  
+  while ((node = walker.nextNode())) {
+    nodesToProcess.push(node);
+  }
+  
+  nodesToProcess.forEach(node => {
+    const newText = fixMathContent(node.textContent);
+    if (newText !== node.textContent) {
+      node.textContent = newText;
+    }
+  });
+
+  const hasMath = /(?:\$[^$\n]+\$|\\\([^]*?\\\)|\\\[[^]*?\\\]|\\begin\{[^}]*\})/.test(document.body.textContent);
+  
+  if (hasMath) {
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        ignoreHtmlClass: 'no-mathjax'
+      }
     };
     
-    const walker = document.createTreeWalker(
-        document.body, 
-        NodeFilter.SHOW_TEXT, 
-        null, 
-        false
-    );
-    
-    let node;
-    while (node = walker.nextNode()) {
-        const newText = processText(node.textContent);
-        if (newText !== node.textContent) {
-            node.textContent = newText;
-        }
-    }
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js'; // Using v4
+    script.async = true;
+    document.head.appendChild(script);
+  }
 });
 
 // Change the editor theme according to the furo light/dark/auto mode
