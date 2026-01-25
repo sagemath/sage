@@ -15,6 +15,7 @@ echo '<head>' >> CHANGES.html
 echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> CHANGES.html
 echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> CHANGES.html
 echo '<script>hljs.highlightAll();</script>' >> CHANGES.html
+echo '<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>' >> CHANGES.html
 cat >> CHANGES.html << EOF
 <style>
   p.diff a:first-child {
@@ -54,6 +55,36 @@ diffParagraphs.forEach(paragraph => {
     hunk.appendChild(anchor);
   });
 });
+});
+</script>
+EOF
+cat >> CHANGES.html << 'EOF'
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Normalize double backslashes 
+    const processText = (text) => {
+        return text.replace(
+            /(\$[^$]+\$)|(\\\([^)]+\\\))/g,
+            function(mathBlock) {
+                return mathBlock.replace(/\\\\/g, '\\');
+            }
+        );
+    };
+
+    const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+    );
+
+    let node;
+    while ((node = walker.nextNode())) {
+        const newText = processText(node.textContent);
+        if (newText !== node.textContent) {
+            node.textContent = newText;
+        }
+    }
 });
 </script>
 EOF
