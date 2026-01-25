@@ -65,7 +65,7 @@ Sage can plot various useful functions, of course.
 
     sage: show(plot(sin(x) + sin(1.6*x), 0, 40))
 
-.. image:: sin_plot.*
+.. image:: sin_plot.png
 
 
 Sage is a very powerful calculator. To experience it, first we create a :math:`500 \times 500`
@@ -85,7 +85,7 @@ It takes Sage a second to compute the eigenvalues of the matrix and plot them.
     sage: w = [(i, abs(e[i])) for i in range(len(e))]
     sage: show(points(w))
 
-.. image:: eigen_plot.*
+.. image:: eigen_plot.png
 
 
 Sage can handle very large numbers, even numbers with millions or billions of
