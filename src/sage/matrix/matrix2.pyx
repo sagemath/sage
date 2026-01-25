@@ -969,19 +969,12 @@ cdef class Matrix(Matrix1):
             raise TypeError("base ring must be an integral domain or a ring of integers mod n")
 
         C = B.column() if b_is_vec else B
-        pid = False
-        try:
-            pid = P.is_pid()
-        except Exception:
-            pid = False
-        if (
-            P.base_ring() is ZZ
-            and hasattr(P, "basis")
-            and not pid
-            and not extend
-        ):
-            X = self._solve_right_finite_z(C)
-            return X.column(0) if b_is_vec else X
+        from sage.rings.number_field.order import Order
+        if isinstance(P, Order) and not extend:
+            is_pid = P.is_maximal() and P.class_number() == 1
+            if not is_pid:
+                X = self._solve_right_finite_z(C)
+                return X.column(0) if b_is_vec else X
 
         if P not in _Fields and not extend:
             if self.rank() == self.ncols():
