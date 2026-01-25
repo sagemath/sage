@@ -34,8 +34,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .lie_conformal_algebra_with_structure_coefs import \
-    LieConformalAlgebraWithStructureCoefficients
+from sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefs import (
+    LieConformalAlgebraWithStructureCoefficients,
+)
 from sage.matrix.special import identity_matrix
 from sage.structure.indexed_generators import standardize_names_index_set
 
