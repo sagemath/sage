@@ -8,9 +8,10 @@ Sage can compute extensively with the standard congruence subgroups
 AUTHORS:
 
 - William Stein
-- David Loeffler (2009, 10) -- modifications to work with more general arithmetic subgroups
+- David Loeffler (2009, 10) -- modifications to work with more
+  general arithmetic subgroups
 """
-################################################################################
+# #############################################################################
 #
 #       Copyright (C) 2004, 2006 William Stein <wstein@gmail.com>
 #
@@ -20,7 +21,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 #
-################################################################################
+# #############################################################################
 
 from sage.arith.misc import gcd
 from sage.matrix.matrix_space import MatrixSpace
@@ -114,44 +115,9 @@ def CongruenceSubgroup_constructor(*args):
         return CongruenceSubgroupFromGroup(GG)
 
 
-def is_CongruenceSubgroup(x):
-    r"""
-    Return ``True`` if x is of type CongruenceSubgroup.
-
-    Note that this may be False even if `x` really is a congruence subgroup --
-    it tests whether `x` is "obviously" congruence, i.e.~whether it has a
-    congruence subgroup datatype. To test whether or not an arithmetic subgroup
-    of `SL(2, \ZZ)` is congruence, use the ``is_congruence()`` method instead.
-
-    EXAMPLES::
-
-        sage: from sage.modular.arithgroup.congroup_generic import is_CongruenceSubgroup
-        sage: is_CongruenceSubgroup(SL2Z)
-        doctest:warning...
-        DeprecationWarning: The function is_CongruenceSubgroup is deprecated; use 'isinstance(..., CongruenceSubgroupBase)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        True
-        sage: is_CongruenceSubgroup(Gamma0(13))
-        True
-        sage: is_CongruenceSubgroup(Gamma1(6))
-        True
-        sage: is_CongruenceSubgroup(GammaH(11, [3]))
-        True
-        sage: G = ArithmeticSubgroup_Permutation(L = "(1, 2)", R = "(1, 2)"); is_CongruenceSubgroup(G)
-        False
-        sage: G.is_congruence()
-        True
-        sage: is_CongruenceSubgroup(SymmetricGroup(3))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_CongruenceSubgroup is deprecated; use 'isinstance(..., CongruenceSubgroupBase)' instead.")
-    return isinstance(x, CongruenceSubgroupBase)
-
-
 class CongruenceSubgroupBase(ArithmeticSubgroup):
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         """
         Create a congruence subgroup with given level.
 

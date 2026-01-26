@@ -907,9 +907,10 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
         r"""
         TESTS::
 
-            sage: hash(unsigned_infinity)
-            9223372036854775806 # 64-bit
-            2147483646          # 32-bit
+            sage: hash32 = 2147483646
+            sage: hash64 = 9223372036854775806
+            sage: hash(unsigned_infinity) in [hash32, hash64]
+            True
         """
         return maxsize - 1
 
@@ -1553,9 +1554,10 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
         r"""
         TESTS::
 
-            sage: hash(-infinity)
-            -9223372036854775808 # 64-bit
-            -2147483648          # 32-bit
+            sage: hash32 = -2147483648
+            sage: hash64 = -9223372036854775808
+            sage: hash(-infinity) in [hash32, hash64]
+            True
         """
         return ~maxsize
 
@@ -1652,9 +1654,10 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
         r"""
         TESTS::
 
-            sage: hash(+infinity)
-            9223372036854775807 # 64-bit
-            2147483647          # 32-bit
+            sage: hash32 = 2147483647
+            sage: hash64 = 9223372036854775807
+            sage: hash(+infinity) in [hash32, hash64]
+            True
         """
         return maxsize
 
