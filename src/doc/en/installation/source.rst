@@ -168,17 +168,7 @@ To compile and install Sage in editable install, then just use:
 
   .. code-block:: console
 
-    $ uv venv
-    $ uv pip install \
-        meson-python \
-        "cypari2 >=2.2.1" \
-        "cython >=3.0, != 3.0.3, != 3.1.0" \
-        "gmpy2 >=2.1.5" \
-        memory_allocator \
-        "numpy >=1.25" \
-        "ninja >=1.8.2" \
-        jinja2 \
-        setuptools
+    $ uv sync --frozen --inexact --no-install-project
     $ uv sync --frozen --inexact --no-build-isolation
 
 You can then start Sage from the command line with ``./sage``

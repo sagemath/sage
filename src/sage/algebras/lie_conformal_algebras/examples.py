@@ -30,13 +30,33 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .abelian_lie_conformal_algebra import AbelianLieConformalAlgebra as Abelian
-from .affine_lie_conformal_algebra import AffineLieConformalAlgebra as Affine
-from .bosonic_ghosts_lie_conformal_algebra import BosonicGhostsLieConformalAlgebra as BosonicGhosts
-from .fermionic_ghosts_lie_conformal_algebra import FermionicGhostsLieConformalAlgebra as FermionicGhosts
-from .free_bosons_lie_conformal_algebra import FreeBosonsLieConformalAlgebra as FreeBosons
-from .free_fermions_lie_conformal_algebra import FreeFermionsLieConformalAlgebra as FreeFermions
-from .n2_lie_conformal_algebra import N2LieConformalAlgebra as N2
-from .neveu_schwarz_lie_conformal_algebra import NeveuSchwarzLieConformalAlgebra as NeveuSchwarz
-from .virasoro_lie_conformal_algebra import VirasoroLieConformalAlgebra as Virasoro
-from .weyl_lie_conformal_algebra import WeylLieConformalAlgebra as Weyl
+from sage.algebras.lie_conformal_algebras.abelian_lie_conformal_algebra import (
+    AbelianLieConformalAlgebra as Abelian,
+)
+from sage.algebras.lie_conformal_algebras.affine_lie_conformal_algebra import (
+    AffineLieConformalAlgebra as Affine,
+)
+from sage.algebras.lie_conformal_algebras.bosonic_ghosts_lie_conformal_algebra import (
+    BosonicGhostsLieConformalAlgebra as BosonicGhosts,
+)
+from sage.algebras.lie_conformal_algebras.fermionic_ghosts_lie_conformal_algebra import (
+    FermionicGhostsLieConformalAlgebra as FermionicGhosts,
+)
+from sage.algebras.lie_conformal_algebras.free_bosons_lie_conformal_algebra import (
+    FreeBosonsLieConformalAlgebra as FreeBosons,
+)
+from sage.algebras.lie_conformal_algebras.free_fermions_lie_conformal_algebra import (
+    FreeFermionsLieConformalAlgebra as FreeFermions,
+)
+from sage.algebras.lie_conformal_algebras.n2_lie_conformal_algebra import (
+    N2LieConformalAlgebra as N2,
+)
+from sage.algebras.lie_conformal_algebras.neveu_schwarz_lie_conformal_algebra import (
+    NeveuSchwarzLieConformalAlgebra as NeveuSchwarz,
+)
+from sage.algebras.lie_conformal_algebras.virasoro_lie_conformal_algebra import (
+    VirasoroLieConformalAlgebra as Virasoro,
+)
+from sage.algebras.lie_conformal_algebras.weyl_lie_conformal_algebra import (
+    WeylLieConformalAlgebra as Weyl,
+)

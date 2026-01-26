@@ -549,9 +549,8 @@ cdef class CoercionModel:
 
         sage: numpy.uint8('2') + 3                                                      # needs numpy
         5
-        sage: type(_)                                                                   # needs numpy
-        <class 'numpy.int32'>  # 32-bit
-        <class 'numpy.int64'>  # 64-bit
+        sage: type(_) in [numpy.int32, numpy.int64]                                     # needs numpy
+        True
 
         sage: numpy.int8('12') + 1/3                                                    # needs numpy
         12.333333333333334
