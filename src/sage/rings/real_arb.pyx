@@ -1133,11 +1133,14 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
 
         OUTPUT: integer
 
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: RBF.maximal_accuracy()
-            9223372036854775807 # 64-bit
-            2147483647          # 32-bit
+        The answer depends on the bitness of the machine::
+
+            sage: prec32 = 2147483647
+            sage: prec64 = 9223372036854775807
+            sage: RBF.maximal_accuracy() in [prec32, prec64]
+            True
 
         .. SEEALSO:: :meth:`RealBall.accuracy`
         """

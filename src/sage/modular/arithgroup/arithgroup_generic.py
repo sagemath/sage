@@ -31,26 +31,6 @@ from sage.modular.arithgroup.arithgroup_element import ArithmeticSubgroupElement
 from sage.structure.element import parent
 
 
-def is_ArithmeticSubgroup(x) -> bool:
-    r"""
-    Return ``True`` if ``x`` is of type :class:`ArithmeticSubgroup`.
-
-    EXAMPLES::
-
-        sage: from sage.modular.arithgroup.all import is_ArithmeticSubgroup
-        sage: is_ArithmeticSubgroup(GL(2, GF(7)))
-        doctest:warning...
-        DeprecationWarning: The function is_ArithmeticSubgroup is deprecated; use 'isinstance(..., ArithmeticSubgroup)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        False
-        sage: is_ArithmeticSubgroup(Gamma0(4))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_ArithmeticSubgroup is deprecated; use 'isinstance(..., ArithmeticSubgroup)' instead.")
-    return isinstance(x, ArithmeticSubgroup)
-
-
 class ArithmeticSubgroup(Group):
     r"""
     Base class for arithmetic subgroups of `\SL_2(\ZZ)`. Not

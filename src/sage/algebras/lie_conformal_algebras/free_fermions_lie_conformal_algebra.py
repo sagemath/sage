@@ -33,7 +33,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+from sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra import (
+    GradedLieConformalAlgebra,
+)
 
 
 class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
@@ -119,8 +121,7 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
             latex_names = tuple(r"\psi_{%d}" % i
                                 for i in range(ngens)) + ('K',)
 
-        from sage.structure.indexed_generators import \
-            standardize_names_index_set
+        from sage.structure.indexed_generators import standardize_names_index_set
         names, index_set = standardize_names_index_set(names=names,
                                                        index_set=index_set,
                                                        ngens=ngens)

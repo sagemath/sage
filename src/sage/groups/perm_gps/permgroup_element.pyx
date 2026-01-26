@@ -1533,9 +1533,10 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         EXAMPLES::
 
             sage: G = SymmetricGroup(5)
-            sage: hash(G([2,1,5,3,4]))
-            -1203337681           # 32-bit
-            -1527414595000039889  # 64-bit
+            sage: hash32 = -1203337681
+            sage: hash64 = -1527414595000039889
+            sage: hash(G([2,1,5,3,4])) in [hash32, hash64]
+            True
 
         Check that the hash looks reasonable::
 
