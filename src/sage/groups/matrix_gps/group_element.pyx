@@ -170,11 +170,13 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         r"""
         TESTS::
 
-            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # needs sage.graphs
-            sage: g = W.an_element()                                                    # needs sage.graphs
-            sage: hash(g)                                                               # needs sage.graphs
-            660522311176098153  # 64-bit
-            -606138007          # 32-bit
+            sage: # needs sage.graphs
+            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)
+            sage: g = W.an_element()
+            sage: hash32 = -606138007
+            sage: hash64 = 660522311176098153
+            sage: hash(g) in [hash32, hash64]
+            True
         """
         return hash(self._matrix)
 

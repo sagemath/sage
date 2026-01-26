@@ -191,8 +191,18 @@ foreach name, pyx : extension_data_cpp
     deps += [cypari2, flint]
   elif name == 'polynomial_integer_dense_flint'
     deps += [cypari2, flint, ntl]
-  else
-    deps += [cypari2, givaro, mpfi, mpfr, ntl, singular]
+  elif name == 'multi_polynomial_ideal_libsingular' or name == 'multi_polynomial_libsingular'
+    deps += [cypari2, singular]
+  elif name == 'plural'
+    deps += [singular]
+  elif name == 'polynomial_zz_pex'
+    deps += [cypari2]
+  elif name == 'polynomial_integer_dense_ntl' or name == 'polynomial_modn_dense_ntl'
+    deps += [cypari2]
+  elif name == 'polynomial_gf2x'
+    deps += [cypari2]
+  elif name == 'evaluation_ntl'
+    deps += [ntl, mpfr, mpfi]    # Runtime dependencies
   endif
   py.extension_module(
     name,

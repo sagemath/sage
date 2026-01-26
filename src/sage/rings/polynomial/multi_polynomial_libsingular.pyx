@@ -1404,9 +1404,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         EXAMPLES::
 
             sage: P.<x,y,z> = QQ[]
-            sage: hash(P)      # somewhat random output
-            967902441410893180 # 64-bit
-            -1767675994        # 32-bit
+            sage: hash(P) in ZZ  # result is inconsistent
+            True
         """
         return CategoryObject.__hash__(self)
 
