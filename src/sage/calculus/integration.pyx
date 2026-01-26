@@ -287,10 +287,13 @@ def numerical_integral(func, a, b=None,
         sage: def f(x):
         ....:     sleep(1r)
         ....:     return x
-        sage: with ensure_interruptible_after(0.5): numerical_integral(f, 0, 1)
+        sage: with ensure_interruptible_after(0.5) as data: numerical_integral(f, 0, 1)
         Traceback (most recent call last):
         ...
-        RuntimeError: Function is not interruptible within 0.5000 seconds, only after 1.0... seconds
+        RuntimeError: Function is not interruptible within 0.5000 seconds, only after 1... seconds
+        sage: # The elapsed time should be less than 1.1, but can sometimes take longer on CI
+        sage: 1 <= data['elapsed'] <= 1.5
+        True
 
     """
     cdef double abs_err  # step size

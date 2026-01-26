@@ -435,10 +435,10 @@ unlike for the other interfaces.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .expect import Expect, ExpectElement
-from sage.misc.instancedoc import instancedoc
 import os
 
+from sage.interfaces.expect import Expect, ExpectElement
+from sage.misc.instancedoc import instancedoc
 from sage.misc.sage_eval import sage_eval
 
 
