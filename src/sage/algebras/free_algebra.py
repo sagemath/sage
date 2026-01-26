@@ -162,9 +162,11 @@ Some tests for the category::
 from sage.algebras.free_algebra_element import FreeAlgebraElement
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.categories.functor import Functor
-from sage.categories.pushout import (ConstructionFunctor,
-                                     CompositeConstructionFunctor,
-                                     IdentityConstructionFunctor)
+from sage.categories.pushout import (
+    CompositeConstructionFunctor,
+    ConstructionFunctor,
+    IdentityConstructionFunctor,
+)
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.word import Word
@@ -362,10 +364,14 @@ class FreeAlgebraFactory(UniqueFactory):
             False
         """
         if len(key) == 1:
-            from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
+            from sage.algebras.letterplace.free_algebra_letterplace import (
+                FreeAlgebra_letterplace,
+            )
             return FreeAlgebra_letterplace(key[0])
         if isinstance(key[0], tuple):
-            from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
+            from sage.algebras.letterplace.free_algebra_letterplace import (
+                FreeAlgebra_letterplace,
+            )
             return FreeAlgebra_letterplace(key[1], degrees=key[0])
         if len(key) == 2:
             return FreeAlgebra_generic(key[0], len(key[1]), key[1])
@@ -878,7 +884,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
         """
         if mats is None:
             return super().quotient(mons, names)
-        from . import free_algebra_quotient
+        from sage.algebras import free_algebra_quotient
         return free_algebra_quotient.FreeAlgebraQuotient(self, mons, mats, names)
 
     quo = quotient

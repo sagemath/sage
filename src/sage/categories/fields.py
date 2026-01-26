@@ -146,11 +146,12 @@ class Fields(CategoryWithAxiom):
         TESTS::
 
             sage: # needs sage.libs.pari
-            sage: P.<x> = QQ[]
-            sage: Q = P.quotient(x^2 + 2)
+            sage: Q = Zmod(13)
             sage: Q.category()
-            Category of commutative no zero divisors quotients of algebras
-             over (number fields and quotient fields and metric spaces)
+            Join of Category of finite commutative rings
+             and Category of subquotients of monoids
+             and Category of quotients of semigroups
+             and Category of finite enumerated sets
             sage: F = Fields()
             sage: F._contains_helper(Q)
             False
