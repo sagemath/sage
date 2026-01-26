@@ -1388,7 +1388,7 @@ def _biseq_stresstest():
             L[randint(0, 99)] = L[randint(0, 99)] + L[randint(0, 99)]
         elif branch == 1:
             x = randint(0, 99)
-            if len(L[x]):
+            if L[x]:
                 y = randint(0, len(L[x]) - 1)
                 z = randint(y, len(L[x]) - 1)
                 L[randint(0, 99)] = L[x][y:z]
@@ -1400,7 +1400,7 @@ def _biseq_stresstest():
             t = L[randint(0, 99)].list()
         elif branch == 3:
             x = randint(0, 99)
-            if len(L[x]):
+            if L[x]:
                 y = randint(0, len(L[x])-1)
                 t = L[x][y]
                 try:

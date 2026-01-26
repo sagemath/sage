@@ -534,16 +534,15 @@ cdef class lazy_list_generic():
 
         EXAMPLES::
 
-            sage: from itertools import count
             sage: from sage.misc.lazy_list import lazy_list
-            sage: m = lazy_list(count())
+            sage: m = lazy_list(iter([0, 1, 4, 9, 16, 25, 36, 49, 64, 81]))
             sage: x = loads(dumps(m))
             sage: y = iter(x)
             sage: print("{} {} {}".format(next(y), next(y), next(y)))
-            0 1 2
+            0 1 4
             sage: m2 = m[3::2]
             sage: loads(dumps(m2))
-            lazy list [3, 5, 7, ...]
+            lazy list [9, 25, 49, ...]
         """
         if self.master is None:
             raise NotImplementedError
@@ -571,8 +570,7 @@ cdef class lazy_list_generic():
             sage: l._info()
             cache length 0
             start        2
-            stop         9223372036854775807    # 64-bit
-            stop         2147483647             # 32-bit
+            stop         ...
             step         3
             sage: l._fit(13)
             1
@@ -863,8 +861,7 @@ cdef class lazy_list_generic():
             sage: L._info()                                                             # needs sage.libs.pari
             cache length 5
             start        2
-            stop         9223372036854775807    # 64-bit
-            stop         2147483647             # 32-bit
+            stop         ...
             step         1
         """
         if self.master is not None:    # this is a slice
@@ -916,8 +913,9 @@ cdef class lazy_list_from_iterator(lazy_list_generic):
         [0, 1, 2]
         sage: [next(x), next(y)]
         [3, 3]
-        sage: loads(dumps(m))
-        lazy list [0, 1, 2, ...]
+        sage: m2 = lazy_list(iter([0, 1, 4, 9, 16]))
+        sage: loads(dumps(m2))
+        lazy list [0, 1, 4, ...]
     """
 
     def __init__(self, iterator, cache=None, stop=None):
@@ -969,8 +967,7 @@ cdef class lazy_list_from_iterator(lazy_list_generic):
             sage: L._info()                                                             # needs sage.libs.pari
             cache length 5
             start        2
-            stop         9223372036854775807    # 64-bit
-            stop         2147483647             # 32-bit
+            stop         ...
             step         1
         """
         while len(self.cache) <= i:
@@ -986,10 +983,9 @@ cdef class lazy_list_from_iterator(lazy_list_generic):
         TESTS::
 
             sage: from sage.misc.lazy_list import lazy_list_from_iterator
-            sage: from itertools import count
-            sage: loads(dumps(lazy_list_from_iterator(count())))
-            lazy list [0, 1, 2, ...]
-            sage: loads(dumps(lazy_list_from_iterator(count(), ['a'])))
+            sage: loads(dumps(lazy_list_from_iterator(iter([0, 1, 4, 9, 16]))))
+            lazy list [0, 1, 4, ...]
+            sage: loads(dumps(lazy_list_from_iterator(iter([0, 1, 4, 9, 16]), ['a'])))
             lazy list ['a', 0, 1, ...]
         """
         return lazy_list_from_iterator, (self.iterator, self.cache, self.stop)
@@ -1051,8 +1047,7 @@ cdef class lazy_list_from_function(lazy_list_generic):
             sage: L._info()
             cache length 5
             start        2
-            stop         9223372036854775807    # 64-bit
-            stop         2147483647             # 32-bit
+            stop         ...
             step         1
         """
         while len(self.cache) <= i:
@@ -1133,8 +1128,7 @@ cdef class lazy_list_from_update_function(lazy_list_generic):
             sage: L._info()
             cache length 7
             start        2
-            stop         9223372036854775807    # 64-bit
-            stop         2147483647             # 32-bit
+            stop         ...
             step         1
         """
         cdef Py_ssize_t l, ll

@@ -2,6 +2,11 @@
  Sage: Open Source Mathematics Software: Build system of the Sage documentation
 ================================================================================
 
+.. NOTE::
+
+   If you are a developer and want to build the SageMath documentation from source,
+   refer to `developer's guide <../../developer/sage_manuals.html>`_.
+
 About SageMath
 --------------
 

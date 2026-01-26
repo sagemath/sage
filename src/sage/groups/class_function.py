@@ -130,9 +130,10 @@ class ClassFunction_gap(SageObject):
         e = self._gap_classfunction.Conductor()
         self._base_ring = CyclotomicField(e)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return a string showing how to declare / initialize ``self`` in Gap.
+
         Stored in the \code{self._gap_string} attribute.
 
         EXAMPLES::
@@ -144,7 +145,7 @@ class ClassFunction_gap(SageObject):
         """
         return str(self._gap_classfunction)
 
-    def _gap_(self, *args):
+    def _gap_(self, gap=None):
         r"""
         Coerce ``self`` into a GAP element.
 
@@ -156,7 +157,7 @@ class ClassFunction_gap(SageObject):
             Character of Cyclic group of order 4 as a permutation group
             sage: type(_)
             <class 'sage.groups.class_function.ClassFunction_gap'>
-            sage: chi._gap_()
+            sage: gap(chi)
             ClassFunction( CharacterTable( Group( [ (1,2,3,4) ] ) ), [ 1, -1, 1, -1 ] )
             sage: type(_)
             <class 'sage.interfaces.gap.GapElement'>
@@ -744,11 +745,11 @@ class ClassFunction_gap(SageObject):
         EXAMPLES::
 
             sage: G = groups.permutation.Alternating(5)
-            sage: chars = G.irreducible_characters()
+            sage: chars = sorted(G.irreducible_characters(), key=lambda chi:str(chi.values()))
             sage: [chi.adams_operation(2).values() for chi in chars]
             [[1, 1, 1, 1, 1],
-             [3, 3, 0, -zeta5^3 - zeta5^2, zeta5^3 + zeta5^2 + 1],
              [3, 3, 0, zeta5^3 + zeta5^2 + 1, -zeta5^3 - zeta5^2],
+             [3, 3, 0, -zeta5^3 - zeta5^2, zeta5^3 + zeta5^2 + 1],
              [4, 4, 1, -1, -1],
              [5, 5, -1, 0, 0]]
             sage: chars[4].adams_operation(2).decompose()
@@ -832,7 +833,7 @@ class ClassFunction_libgap(SageObject):
         """
         return self._gap_classfunction
 
-    gap = _gap_ = _libgap_
+    gap = _libgap_
 
     def _repr_(self):
         r"""

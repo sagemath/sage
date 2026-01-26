@@ -236,8 +236,8 @@ def integral(f, *args, **kwds):
     `(1,1)`::
 
         sage: t = var('t')
-        sage: (x,y) = (t^4,t)
-        sage: (dx,dy) = (diff(x,t), diff(y,t))
+        sage: x, y = t^4, t
+        sage: dx, dy = diff(x,t), diff(y,t)
         sage: integral(sin(x)*dx, t,-1, 1)
         0
         sage: restore('x,y')   # restore the symbolic variables x and y

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 from sage.libs.gmp.types cimport gmp_randstate_t
 
 # The c_random() method on randstate objects gives a value

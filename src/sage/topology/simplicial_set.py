@@ -296,7 +296,7 @@ class AbstractSimplex_class(SageObject):
     """
 
     def __init__(self, dim, degeneracies=(), underlying=None, name=None,
-                 latex_name=None):
+                 latex_name=None) -> None:
         """
         A simplex of dimension ``dim``.
 
@@ -400,7 +400,7 @@ class AbstractSimplex_class(SageObject):
             self.rename(name)
         self._latex_name = latex_name
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         If nondegenerate: return the id of this simplex.
 
@@ -424,7 +424,7 @@ class AbstractSimplex_class(SageObject):
             return id(self)
         return hash(self.nondegenerate()) ^ hash(self._degens)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Two nondegenerate simplices are equal if they are identical.
         Two degenerate simplices are equal if their underlying
@@ -453,7 +453,7 @@ class AbstractSimplex_class(SageObject):
         return (self._degens == other._degens
                 and self.nondegenerate() is other.nondegenerate())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         This returns the negation of ``__eq__``.
 
@@ -471,7 +471,7 @@ class AbstractSimplex_class(SageObject):
         """
         return not self == other
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         """
         We implement sorting in the hopes that sorted lists of simplices,
         for example as defining data for a simplicial set, will be
@@ -580,7 +580,7 @@ class AbstractSimplex_class(SageObject):
             return False
         return id(self) < id(other)
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         """
         See :meth:`__lt__` for more doctests.
 
@@ -594,7 +594,7 @@ class AbstractSimplex_class(SageObject):
         """
         return not (self < other or self == other)
 
-    def __le__(self, other):
+    def __le__(self, other) -> bool:
         """
         See :meth:`__lt__` for more doctests.
 
@@ -608,7 +608,7 @@ class AbstractSimplex_class(SageObject):
         """
         return self < other or self == other
 
-    def __ge__(self, other):
+    def __ge__(self, other) -> bool:
         """
         See :meth:`__lt__` for more doctests.
 
@@ -916,7 +916,7 @@ class AbstractSimplex_class(SageObject):
 # __ge__, __le__. Inheriting from AbstractSimplex_class first seems to
 # be slightly faster.
 class NonDegenerateSimplex(AbstractSimplex_class, WithEqualityById):
-    def __init__(self, dim, name=None, latex_name=None):
+    def __init__(self, dim, name=None, latex_name=None) -> None:
         """
         A nondegenerate simplex.
 
@@ -1225,7 +1225,7 @@ class SimplicialSet_arbitrary(Parent):
             return self.faces(simplex)[i]
         return None
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is a simplex which is contained in this complex.
 
@@ -3204,7 +3204,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
     """
 
     def __init__(self, data, base_point=None, name=None, check=True,
-                 category=None, latex_name=None):
+                 category=None, latex_name=None) -> None:
         r"""
         TESTS::
 
@@ -3379,7 +3379,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             self.rename(name)
         self._latex_name = latex_name
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are equal as simplicial sets.
 
@@ -3413,7 +3413,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
                     and not other.is_pointed()
                     and sorted(self._data) == sorted(other._data))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are not equal as simplicial sets.
 
@@ -3439,7 +3439,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
     # computes their hash. If the tuple self._data is long, this can
     # take a long time.
     @cached_method
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         The hash is formed from that of the tuple ``self._data``.
 

@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 
 class binary_tree_node:
     key: int
@@ -39,7 +39,7 @@ LIST_INORDER: int
 LIST_KEYS: int
 LIST_VALUES: int
 
-def binary_tree_list(node: binary_tree_node, behavior: int) -> List[object]:
+def binary_tree_list(node: binary_tree_node, behavior: int) -> list[object]:
     ...
 
 class BinaryTree:
@@ -78,10 +78,10 @@ class BinaryTree:
     def is_empty(self) -> bool:
         ...
 
-    def keys(self, order: str = 'inorder') -> List[int]:
+    def keys(self, order: str = 'inorder') -> list[int]:
         ...
 
-    def values(self, order: str = 'inorder') -> List[object]:
+    def values(self, order: str = 'inorder') -> list[object]:
         ...
 
     def _headkey_(self) -> int:

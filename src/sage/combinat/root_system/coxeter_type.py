@@ -287,7 +287,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         """
 
     @abstract_method
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return whether ``self`` is finite.
 
@@ -300,7 +300,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         """
 
     @abstract_method
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return whether ``self`` is affine.
 
@@ -312,7 +312,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             True
         """
 
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         """
         Return whether ``self`` is crystallographic.
 
@@ -332,7 +332,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         """
         return False
 
-    def is_hyperbolic(self):
+    def is_hyperbolic(self) -> bool:
         """
         Return whether ``self`` is hyperbolic.
 
@@ -348,7 +348,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         """
         return False
 
-    def is_simply_laced(self):
+    def is_simply_laced(self) -> bool:
         """
         Return whether ``self`` is simply laced.
 
@@ -580,7 +580,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.index_set()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return if ``self`` is a finite type.
 
@@ -592,7 +592,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.is_finite()
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return if ``self`` is an affine type.
 
@@ -604,7 +604,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.is_affine()
 
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         """
         Return if ``self`` is crystallographic.
 
@@ -620,7 +620,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.is_crystallographic()
 
-    def is_simply_laced(self):
+    def is_simply_laced(self) -> bool:
         """
         Return if ``self`` is simply-laced.
 
@@ -636,7 +636,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.is_simply_laced()
 
-    def is_reducible(self):
+    def is_reducible(self) -> bool:
         """
         Return if ``self`` is reducible.
 
@@ -652,7 +652,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.is_reducible()
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         """
         Return if ``self`` is irreducible.
 

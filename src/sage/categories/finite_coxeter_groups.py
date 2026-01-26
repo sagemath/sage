@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Finite Coxeter Groups
@@ -17,6 +16,7 @@ from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
+from sage.categories.finite_lattice_posets import FiniteLatticePosets
 
 
 class FiniteCoxeterGroups(CategoryWithAxiom):
@@ -291,7 +291,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: W = CoxeterGroup(['A',3], base_ring=ZZ)
                 sage: P = W.bhz_poset(); P
                 Finite poset containing 24 elements
-                sage: P.relations_number()
+                sage: P.number_of_relations()
                 103
                 sage: P.chain_polynomial()
                 34*q^4 + 90*q^3 + 79*q^2 + 24*q + 1
@@ -483,8 +483,9 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 return Poset((self, covers), cover_relations=True,
                              facade=facade)
             covers = tuple([u, v] for u in self for v in u.upper_covers(side=side))
+            cat = FiniteLatticePosets().ChainGraded()
             return LatticePoset((self, covers), cover_relations=True,
-                                facade=facade)
+                                facade=facade, category=cat)
 
         weak_lattice = weak_poset
 

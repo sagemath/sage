@@ -187,7 +187,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
           y,
           x
     """
-    def __init__(self, parent, polys, check=True):
+    def __init__(self, parent, polys, check=True) -> None:
         """
         Initialize.
 
@@ -557,7 +557,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         return all(self._polys[i] * right._polys[j] == self._polys[j] * right._polys[i]
                    for i in range(n) for j in range(i + 1, n))
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Test the inequality of two projective morphisms.
 
@@ -961,7 +961,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
                 ideal = ZZ(ideal)
                 if self.base_ring() != QQ:
                     raise ValueError('ideal was an integer, but the base ring of this ' +
-                        'morphism is %s' % self.base_ring())
+                                     'morphism is %s' % self.base_ring())
                 if not ideal.is_prime():
                     raise ValueError('ideal must be a prime, not %s' % ideal)
                 uniformizer = ideal
@@ -980,7 +980,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
                 raise TypeError('valuation must be a valuation on a number field, not %s' % valuation)
             if valuation.domain() != self.base_ring():
                 raise ValueError('the domain of valuation must be the base ring of this morphism ' +
-                    'not %s' % valuation.domain())
+                                 'not %s' % valuation.domain())
             uniformizer = valuation.uniformizer()
             ramification_index = 1 / valuation(uniformizer)
             valuations = []
@@ -1805,7 +1805,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         for t in exps:
             G = 0
             for e in t:
-                G += C[j]*prod([R.gen(i)**e[i] for i in range(N+1)])
+                G += C[j] * prod([R.gen(i)**e[i] for i in range(N + 1)])
                 j += 1
             F.append(G)
         return H(F)
@@ -1888,8 +1888,6 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: H = End(P)
             sage: f = H([x^2, y^2, z^2])
             sage: f.indeterminacy_locus()                                               # needs sage.libs.singular
-            ... DeprecationWarning: The meaning of indeterminacy_locus() has changed.
-            Read the docstring. See https://github.com/sagemath/sage/issues/29145 for details.
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               z,
               y,
@@ -1905,7 +1903,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
               z,
               x^2 - y^2
 
-        There is related :meth:`base_indeterminacy_locus()` method. This
+        There is a related :meth:`base_indeterminacy_locus()` method. This
         computes the indeterminacy locus only from the defining polynomials of
         the map::
 
@@ -1918,11 +1916,9 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
               x^2 - y^2,
               z^2
         """
-        from sage.misc.superseded import deprecation
-        deprecation(29145, "The meaning of indeterminacy_locus() has changed. Read the docstring.")
         P = self.domain()
         X = P.subscheme(0)  # projective space as a subscheme
-        return (self*X.hom(P.gens(), P)).indeterminacy_locus()
+        return (self * X.hom(P.gens(), P)).indeterminacy_locus()
 
     def indeterminacy_points(self, F=None, base=False):
         r"""
@@ -1944,8 +1940,6 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: H = End(P)
             sage: f = H([x*z - y*z, x^2 - y^2, z^2])
             sage: f.indeterminacy_points()                                              # needs sage.libs.singular
-            ... DeprecationWarning: The meaning of indeterminacy_locus() has changed.
-            Read the docstring. See https://github.com/sagemath/sage/issues/29145 for details.
             [(-1 : 1 : 0), (1 : 1 : 0)]
 
         ::
@@ -2114,7 +2108,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         if K in NumberFields() or isinstance(K, sage.rings.abc.AlgebraicField):
             return self._number_field_from_algebraics()
         if K in FiniteFields():
-            #find the degree of the extension containing the coefficients
+            # find the degree of the extension containing the coefficients
             c = [v for g in self for v in g.coefficients()]
             d = lcm([a.minpoly().degree() for a in c])
             if d == 1:
@@ -2138,7 +2132,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                                          self.domain().variable_names())
             new_R = new_domain.coordinate_ring()
             u = phi(L.gen())  # gen of L in terms of gen of K
-            g = R(str(u).replace(K.variable_name(), R.variable_names()[0])) #converted to R
+            g = R(str(u).replace(K.variable_name(), R.variable_names()[0]))  # converted to R
             new_f = []
             for fi in self:
                 mon = fi.monomials()
@@ -2148,17 +2142,17 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                 for c in coef:
                     # for each coefficient do the elimination
                     w = R(str(c).replace(K.variable_name(), R.variable_names()[0]))
-                    I = R.ideal([b-g, w])
+                    I = R.ideal([b - g, w])
                     v = I.elimination_ideal([a]).gen(0)
                     # elimination can change scale the result, so correct the leading coefficient
                     # and convert back to L
-                    if v.subs({b:g}).lc() == w.lc():
+                    if v.subs({b: g}).lc() == w.lc():
                         new_c.append(L(str(v).replace(R.variable_names()[1], L.variable_name())))
                     else:
-                        new_c.append(L(str(w.lc()*v).replace(R.variable_names()[1], L.variable_name())))
+                        new_c.append(L(str(w.lc() * v).replace(R.variable_names()[1], L.variable_name())))
                 # reconstruct as a poly in the new domain
-                new_f.append(sum(new_c[i]*prod(new_R.gen(j)**mon_deg[i][j]
-                                               for j in range(new_R.ngens()))
+                new_f.append(sum(new_c[i] * prod(new_R.gen(j)**mon_deg[i][j]
+                                                 for j in range(new_R.ngens()))
                                  for i in range(len(mon))))
             # return the correct type of map
             if self.is_endomorphism():
@@ -2194,7 +2188,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                         if M.degree() == da:
                             break
                     c = M(str(c).replace(c.as_finite_field_element()[0].variable_name(),
-                                          M.variable_name()))
+                                         M.variable_name()))
                     new_c.append(M_to_L(c))
                 # reconstruct as a poly in the new domain
                 new_f.append(sum([new_c[i] * prod(new_R.gen(j)**mon_deg[i][j]
@@ -2238,7 +2232,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         """
         X = self.domain().subscheme(0)
         e = X.embedding_morphism()
-        return (self*e).image()
+        return (self * e).image()
 
 
 class SchemeMorphism_polynomial_projective_space_finite_field(SchemeMorphism_polynomial_projective_space_field):
@@ -2305,7 +2299,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
                 pass
         raise ValueError('the morphism is not defined at this point')
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         EXAMPLES::
 
@@ -2435,7 +2429,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             emb = Y.projective_embedding(0)
             hom = self.parent()
             reprs = []
-            for r in (emb*self).representatives():
+            for r in (emb * self).representatives():
                 f0 = r[0]
                 reprs.append(hom([f / f0 for f in r[1:]]))
             return reprs
@@ -2566,7 +2560,7 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
             components = X.irreducible_components()
 
             def self_with_domain(C):
-                return self*C.hom(Amb.gens(), X)
+                return self * C.hom(Amb.gens(), X)
 
             locus = self_with_domain(components[0]).indeterminacy_locus()
             for C in components[1:]:
@@ -2647,13 +2641,13 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
         D = PolynomialRing(k, names=dummy_names)
 
         names = list(S.variable_names()) + dummy_names  # this order of variables is important
-        R = PolynomialRing(k, names=names, order='degrevlex({}),degrevlex({})'.format(m,n))
+        R = PolynomialRing(k, names=names, order='degrevlex({}),degrevlex({})'.format(m, n))
 
         # compute the ideal of the image by elimination
         i = R.ideal(list(X.defining_ideal().gens()) + [self._polys[i] - R.gen(n + i) for i in range(m)])
         j = [g for g in i.groebner_basis() if g in D]
 
-        gens = [g.subs(dict(zip(R.gens()[n:],T.gens()))) for g in j]
+        gens = [g.subs(dict(zip(R.gens()[n:], T.gens()))) for g in j]
         return AY.subscheme(gens)
 
     @cached_method

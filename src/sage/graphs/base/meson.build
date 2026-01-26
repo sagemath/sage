@@ -2,23 +2,31 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'boost_graph.pxd',
+  'boost_graph.pyx',
   'c_graph.pxd',
+  'c_graph.pyx',
   'dense_graph.pxd',
+  'dense_graph.pyx',
   'graph_backends.pxd',
+  'graph_backends.pyx',
   'overview.py',
   'sparse_graph.pxd',
+  'sparse_graph.pyx',
   'static_dense_graph.pxd',
+  'static_dense_graph.pyx',
   'static_sparse_backend.pxd',
+  'static_sparse_backend.pyx',
   'static_sparse_graph.pxd',
+  'static_sparse_graph.pyx',
   subdir: 'sage/graphs/base',
 )
 
 extension_data = {
-  'dense_graph' : files('dense_graph.pyx'),
-  'graph_backends' : files('graph_backends.pyx'),
-  'sparse_graph' : files('sparse_graph.pyx'),
-  'static_dense_graph' : files('static_dense_graph.pyx'),
-  'static_sparse_backend' : files('static_sparse_backend.pyx'),
+  'dense_graph': files('dense_graph.pyx'),
+  'graph_backends': files('graph_backends.pyx'),
+  'sparse_graph': files('sparse_graph.pyx'),
+  'static_dense_graph': files('static_dense_graph.pyx'),
+  'static_sparse_backend': files('static_sparse_backend.pyx'),
 }
 
 foreach name, pyx : extension_data

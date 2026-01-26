@@ -2,16 +2,20 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'ext_impl.pxd',
+  'ext_impl.pyx',
+  'ext_libmp.pyx',
   'ext_main.pxd',
+  'ext_main.pyx',
   'utils.pxd',
+  'utils.pyx',
   subdir: 'sage/libs/mpmath',
 )
 
 extension_data = {
-  'ext_impl' : files('ext_impl.pyx'),
-  'ext_libmp' : files('ext_libmp.pyx'),
-  'ext_main' : files('ext_main.pyx'),
-  'utils' : files('utils.pyx'),
+  'ext_impl': files('ext_impl.pyx'),
+  'ext_libmp': files('ext_libmp.pyx'),
+  'ext_main': files('ext_main.pyx'),
+  'utils': files('utils.pyx'),
 }
 
 foreach name, pyx : extension_data

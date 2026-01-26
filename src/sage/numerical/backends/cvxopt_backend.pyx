@@ -534,7 +534,7 @@ cdef class CVXOPTBackend(GenericBackend):
 
         G = matrix(G)
 
-        #cvxopt minimizes on default
+        # cvxopt minimizes on default
         if self.is_maximize:
             c = [-1 * float(e) for e in self.objective_function]
         else:
@@ -544,12 +544,12 @@ cdef class CVXOPTBackend(GenericBackend):
         h = [float(e) for e in h]
         h = matrix(h)
 
-        #solvers comes from the cvxopt library
-        for k,v in self.param.iteritems():
+        # solvers comes from the cvxopt library
+        for k, v in self.param.items():
             solvers.options[k] = v
-        self.answer = solvers.lp(c,G,h)
+        self.answer = solvers.lp(c, G, h)
 
-        #possible outcomes
+        # possible outcomes
         if self.answer['status'] == 'optimized':
             pass
         elif self.answer['status'] == 'primal infeasible':

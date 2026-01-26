@@ -48,24 +48,30 @@ and library interfaces to Maxima.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import operator
 import os
 import re
-import sys
 import subprocess
-
-from sage.env import DOT_SAGE, MAXIMA
-COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
+import sys
+from itertools import islice
 
 from sage.cpython.string import bytes_to_str
-
-from sage.misc.cachefunc import cached_method
-from sage.misc.multireplace import multiple_replace
-from sage.structure.richcmp import richcmp, rich_to_bool
-
-from .interface import (Interface, InterfaceElement, InterfaceFunctionElement,
-                        InterfaceFunction, AsciiArtString)
+from sage.env import DOT_SAGE, MAXIMA
+from sage.interfaces.interface import (
+    AsciiArtString,
+    Interface,
+    InterfaceElement,
+    InterfaceFunction,
+    InterfaceFunctionElement,
+)
 from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.misc.cachefunc import cached_method
 from sage.misc.instancedoc import instancedoc
+from sage.misc.multireplace import multiple_replace
+from sage.structure.richcmp import rich_to_bool, richcmp
+
+COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
+
 
 # The Maxima "apropos" command, e.g., apropos(det) gives a list
 # of all identifiers that begin in a certain way.  This could
@@ -86,12 +92,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
     EXAMPLES:
 
     This class should not be instantiated directly,
-    but through its subclasses Maxima (Pexpect interface)
-    or MaximaLib (library interface)::
+    but should be used through its subclass MaximaLib (which is a singleton), or through
+    the Pexpect interface Maxima.
 
-        sage: m = Maxima()
         sage: from sage.interfaces.maxima_abstract import MaximaAbstract
-        sage: isinstance(m,MaximaAbstract)
+        sage: from sage.interfaces.maxima_lib import maxima
+        sage: isinstance(maxima, MaximaAbstract)
         True
     """
 
@@ -103,7 +109,8 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             sage: from sage.interfaces.maxima_abstract import MaximaAbstract
-            sage: isinstance(maxima,MaximaAbstract)
+            sage: from sage.interfaces.maxima_lib import maxima
+            sage: isinstance(maxima, MaximaAbstract)
             True
 
         TESTS::
@@ -113,25 +120,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             True
         """
         Interface.__init__(self, name)
-
-    ###########################################
-    # System -- change directory, etc.
-    ###########################################
-    def chdir(self, dir):
-        r"""
-        Change Maxima's current working directory.
-
-        INPUT:
-
-        - ``dir`` -- string
-
-        OUTPUT: none
-
-        EXAMPLES::
-
-            sage: maxima.chdir('/')
-        """
-        self.lisp('(ext::cd "%s")' % dir)
 
     ###########################################
     # Interactive help
@@ -159,6 +147,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima._command_runner('describe', 'gcd')
             -- Function: gcd (<p_1>, <p_2>, <x_1>, ...)
             ...
@@ -194,6 +183,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.help('gcd')
             -- Function: gcd (<p_1>, <p_2>, <x_1>, ...)
             ...
@@ -214,6 +204,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.example('arrays')
             a[n]:=n*a[n-1]
                                             a  := n a
@@ -246,6 +237,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.demo('cf') # not tested
             read and interpret file: .../share/maxima/5.34.1/demo/cf.dem
 
@@ -272,8 +264,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: sorted(maxima.completions('gc', verbose=False))
-            ['gcd', 'gcdex', 'gcfactor', 'gctime']
+            ['gc', 'gcd', 'gcdex', 'gcfactor', 'gctime']
         """
         if verbose:
             print(s, end="")
@@ -402,6 +395,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.console()             # not tested (since we can't)
             Maxima 5.46.0 https://maxima.sourceforge.io
             using Lisp ECL 21.2.1
@@ -413,6 +407,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.interact()     # not tested
               --> Switching to Maxima <--
             maxima: 2+2
@@ -435,6 +430,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: t = maxima.cputime()
             sage: _ = maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'], [1,1,1])
             sage: maxima.cputime(t) # output random
@@ -453,6 +449,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.version()  # random
             '5.41.0'
         """
@@ -470,6 +467,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima._assign_symbol()
             ':'
             sage: maxima.eval('t : 8')
@@ -487,6 +485,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima._true_symbol()
             'true'
             sage: maxima.eval('is(2 = 2)')
@@ -502,6 +501,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima._false_symbol()
             'false'
             sage: maxima.eval('is(2 = 4)')
@@ -517,12 +517,13 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-             sage: maxima._equality_symbol()
-             '='
-             sage: var('x y')
-             (x, y)
-             sage: maxima(x == y)
-             _SAGE_VAR_x = _SAGE_VAR_y
+            sage: from sage.interfaces.maxima_lib import maxima
+            sage: maxima._equality_symbol()
+            '='
+            sage: var('x y')
+            (x, y)
+            sage: maxima(x == y)
+            _SAGE_VAR_x = _SAGE_VAR_y
         """
         return '='
 
@@ -534,10 +535,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-             sage: maxima._inequality_symbol()
-             '#'
-             sage: maxima((x != 1))
-             _SAGE_VAR_x # 1
+            sage: from sage.interfaces.maxima_lib import maxima
+            sage: maxima._inequality_symbol()
+            '#'
+            sage: maxima((x != 1))
+            _SAGE_VAR_x # 1
         """
         return '#'
 
@@ -549,6 +551,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima._function_class()
             <class 'sage.interfaces.interface.InterfaceFunction'>
         """
@@ -562,8 +565,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima._object_class()
-            <class 'sage.interfaces.maxima.MaximaElement'>
+            <class 'sage.interfaces.maxima_lib.MaximaLibElement'>
         """
         return MaximaAbstractElement
 
@@ -588,8 +592,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima._object_function_class()
-            <class 'sage.interfaces.maxima.MaximaElementFunction'>
+            <class 'sage.interfaces.maxima_lib.MaximaLibElementFunction'>
         """
         return MaximaAbstractElementFunction
 
@@ -616,6 +621,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.function('x', 'sin(x)')
             sage: f(3.2)  # abs tol 2e-16
             -0.058374143427579909
@@ -702,6 +708,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.plot2d('sin(x)','[x,-5,5]')   # not tested
             sage: opts = '[gnuplot_term, ps], [gnuplot_out_file, "sin-plot.eps"]'
             sage: maxima.plot2d('sin(x)','[x,-5,5]',opts)    # not tested
@@ -732,6 +739,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.plot2d_parametric(["sin(t)","cos(t)"], "t",[-3.1,3.1])   # not tested
 
         ::
@@ -772,6 +780,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.plot3d('1 + x^3 - y^2', '[x,-2,2]', '[y,-2,2]', '[grid,12,12]')    # not tested
             sage: maxima.plot3d('sin(x)*cos(y)', '[x,-2,2]', '[y,-2,2]', '[grid,30,30]')   # not tested
             sage: opts = '[gnuplot_term, ps], [gnuplot_out_file, "sin-plot.eps"]'
@@ -805,6 +814,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.plot3d_parametric(["v*sin(u)","v*cos(u)","v"], ["u","v"],[-3.2,3.2],[0,3])     # not tested
             sage: opts = '[gnuplot_term, ps], [gnuplot_out_file, "sin-cos-plot.eps"]'
             sage: maxima.plot3d_parametric(["v*sin(u)","v*cos(u)","v"], ["u","v"],[-3.2,3.2],[0,3],opts)      # not tested
@@ -852,6 +862,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'], [1,1,1])
             y = 3*x-2*%e^(x-1)
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'])
@@ -896,6 +907,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima.clear('x'); maxima.clear('f')
             sage: maxima.de_solve_laplace("diff(f(x),x,2) = 2*diff(f(x),x)-f(x)", ["x","f"], [0,1,2])
             f(x) = x*%e^x+%e^x
@@ -942,6 +954,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: eqns = ["x + z = y","2*a*x - y = 2*a^2","y - 2*z = 2"]
             sage: vars = ["x","y","z"]
             sage: maxima.solve_linear(eqns, vars)
@@ -972,6 +985,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: u = maxima.unit_quadratic_integer(101); u
             a + 10
             sage: u.parent()
@@ -1022,6 +1036,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: zeta_ptsx = [(pari(1/2 + i*I/10).zeta().real()).precision(1)          # needs sage.libs.pari
             ....:              for i in range(70,150)]
             sage: zeta_ptsy = [(pari(1/2 + i*I/10).zeta().imag()).precision(1)          # needs sage.libs.pari
@@ -1060,6 +1075,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: xx = [i/10.0 for i in range(-10,10)]
             sage: yy = [i/10.0 for i in range(-10,10)]
             sage: x0 = [0 for i in range(-10,10)]
@@ -1101,12 +1117,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     Elements of this class should not be created directly.
     The targeted parent of a concrete inherited class should be used instead::
 
-        sage: from sage.interfaces.maxima_lib import maxima_lib
+        sage: from sage.interfaces.maxima_lib import maxima
         sage: xp = maxima(x)
         sage: type(xp)
-        <class 'sage.interfaces.maxima.MaximaElement'>
-        sage: xl = maxima_lib(x)
-        sage: type(xl)
         <class 'sage.interfaces.maxima_lib.MaximaLibElement'>
     """
     _cached_repr = True
@@ -1119,6 +1132,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima('1/(x-1)^3'); f
             1/(x-1)^3
             sage: print(f)
@@ -1137,6 +1151,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: bool(maxima(0))
             False
             sage: bool(maxima(1))
@@ -1164,6 +1179,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = maxima(1); b = maxima(2)
             sage: a == b
             False
@@ -1210,6 +1226,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = maxima('sqrt(2) + 2.5'); a
             sqrt(2)+2.5
             sage: b = a._sage_(); b
@@ -1250,10 +1267,11 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         Check conversion of Booleans (:issue:`28705`)::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima('true')._sage_(), maxima('false')._sage_()
             (True, False)
         """
-        import sage.calculus.calculus as calculus
+        from sage.calculus import calculus
         return calculus.symbolic_expression_from_maxima_string(self.name(),
                 maxima=self.parent())
 
@@ -1290,6 +1308,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: complex(maxima('sqrt(-2)+1'))
             (1+1.4142135623730951j)
         """
@@ -1307,6 +1326,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: CC(maxima('1+%i'))
              1.00000000000000 + 1.00000000000000*I
             sage: CC(maxima('2342.23482943872+234*%i'))
@@ -1334,6 +1354,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: RealField(100)(maxima('sqrt(2)+1'))
             2.4142135623730950488016887242
         """
@@ -1351,6 +1372,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: CDF(maxima('sqrt(2)+1'))
             2.414213562373095
         """
@@ -1368,6 +1390,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: RDF(maxima('sqrt(2)+1'))
             2.414213562373095
         """
@@ -1381,6 +1404,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima('2 + (2/3)*%i').real()
             2
         """
@@ -1394,6 +1418,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima('2 + (2/3)*%i').imag()
             2/3
         """
@@ -1407,10 +1432,11 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = maxima('sqrt(2)').numer(); a
             1.41421356237309...
             sage: type(a)
-            <class 'sage.interfaces.maxima.MaximaElement'>
+            <class 'sage.interfaces.maxima_lib.MaximaLibElement'>
         """
         return self.comma('numer')
 
@@ -1422,6 +1448,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima('sqrt(2) + 1/3').str()
             'sqrt(2)+1/3'
         """
@@ -1442,6 +1469,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima('x^2')
             sage: f.diff()
             2*x
@@ -1454,9 +1482,10 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         ::
 
-            sage: f = maxima('x^2 + 17*y^2')
+            sage: from sage.interfaces.maxima_lib import maxima
+            sage: f = maxima('x^3 + 17*y^2')
             sage: f.diff('x')
-            34*y*'diff(y,x,1)+2*x
+            3*x^2
             sage: f.diff('y')
             34*y
         """
@@ -1510,6 +1539,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima('exp(-sqrt(x))').nintegral('x',0,1)
             (0.5284822353142306, 4.163...e-11, 231, 0)
 
@@ -1545,6 +1575,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima('x^2+1').integral()
             x^3/3+x
             sage: maxima('x^2+ 1 + y^2').integral('y')
@@ -1584,6 +1615,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: float(maxima("3.14"))
             3.14
             sage: float(maxima("1.7e+17"))
@@ -1604,6 +1636,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: v = maxima('create_list(x^i,i,0,5)')
             sage: len(v)
             6
@@ -1623,6 +1656,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: A = maxima('matrix ([a1],[a2])')
             sage: B = maxima('matrix ([b1, b2])')
             sage: A.dot(B)
@@ -1632,13 +1666,13 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         Q = P(other)
         return P('%s . %s' % (self.name(), Q.name()))
 
-    def __getitem__(self, n):
+    def __getitem__(self, i):
         r"""
-        Return the `n`-th element of this list.
+        Return the `i`-th element of this list.
 
         INPUT:
 
-        - ``n`` -- integer
+        - ``i`` -- integer or slice
 
         OUTPUT: Maxima object
 
@@ -1649,6 +1683,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: v = maxima('create_list(i*x^i,i,0,5)'); v
             [0,x,2*x^2,3*x^3,4*x^4,5*x^5]
             sage: v[3]
@@ -1658,13 +1693,30 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: v[10]
             Traceback (most recent call last):
             ...
-            IndexError: n = (10) must be between 0 and 5
+            IndexError: i = (10) must be between 0 and 5
+            sage: v[2:]
+            [2*x^2, 3*x^3, 4*x^4, 5*x^5]
+            sage: v[:3]
+            [0, x, 2*x^2]
+            sage: v[1:4]
+            [x, 2*x^2, 3*x^3]
+            sage: v[3::-1]
+            [3*x^3, 2*x^2, x, 0]
         """
-        n = int(n)
-        if n < 0 or n >= len(self):
-            raise IndexError("n = (%s) must be between %s and %s" % (n, 0, len(self)-1))
-        # If you change the n+1 to n below, better change __iter__ as well.
-        return InterfaceElement.__getitem__(self, n+1)
+        # Handle slices as well
+        if isinstance(i, slice):
+            start, stop, step = i.start or 0, i.stop or len(self), i.step or 1
+            if start >= 0 and stop >= 0 and step >= 0:
+                return list(islice(self, start, stop, step))
+            else:
+                # Hard to tackle slices esp with negative step
+                return list(self)[i]
+        else:
+            i = operator.index(i)
+            if i < 0 or i >= len(self):
+                raise IndexError("i = (%s) must be between %s and %s" % (i, 0, len(self)-1))
+            # If you change the i+1 to i below, better change __iter__ as well.
+            return InterfaceElement.__getitem__(self, i+1)
 
     def __iter__(self):
         """
@@ -1674,13 +1726,15 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: v = maxima('create_list(i*x^i,i,0,5)')
             sage: L = list(v)
             sage: [e._sage_() for e in L]
             [0, x, 2*x^2, 3*x^3, 4*x^4, 5*x^5]
         """
-        for i in range(len(self)):
-            yield self[i]
+        z = self.copy()
+        for _ in range(len(z)):
+            yield z.pop()
 
     def subst(self, val):
         """
@@ -1694,6 +1748,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima('a^2 + 3*a + b').subst('b=2')
             a^2+3*a+2
             sage: maxima('a^2 + 3*a + b').subst('a=17')
@@ -1715,6 +1770,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima('sqrt(2) + I').comma('numer')
             I+1.41421356237309...
             sage: maxima('sqrt(2) + I*a').comma('a=5')
@@ -1735,6 +1791,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: maxima('sqrt(2) + 1/3 + asin(5)')._latex_()
             '\\sin^{-1}\\cdot5+\\sqrt{2}+{{1}\\over{3}}'
 
@@ -1749,18 +1806,33 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         self._check_valid()
         P = self.parent()
-        s = P._eval_line('tex(%s);' % self.name(), reformat=False)
-        if '$$' not in s:
-            raise RuntimeError("Error texing Maxima object.")
-        i = s.find('$$')
-        j = s.rfind('$$')
-        s = s[i+2:j]
-        s = multiple_replace({'\r\n': ' ',
-                              '\\%': '',
-                              '\\arcsin ': '\\sin^{-1} ',
-                              '\\arccos ': '\\cos^{-1} ',
-                              '\\arctan ': '\\tan^{-1} ',
-                              '\\_SAGE\\_VAR\\_': ''}, s)
+        s = P._eval_line(f"tex({self.name()}, false);", reformat=False)
+        if "$$" not in s:
+            raise RuntimeError(
+                f"Error texing Maxima object {self.name()}. Expected '$$' in output, got: {s!r}"
+            )
+        i = s.find("$$")
+        j = s.rfind("$$")
+        s = s[i + 2 : j]
+        s = multiple_replace(
+            {
+                "\r\n": " ",
+                "\\\\\\\\": "\\",
+                "\\\\\\": "\\",
+                "\\\\": "\\",
+            },
+            s,
+        )
+        s = multiple_replace(
+            {
+                "\\%": "",
+                "\\arcsin ": "\\sin^{-1} ",
+                "\\arccos ": "\\cos^{-1} ",
+                "\\arctan ": "\\tan^{-1} ",
+                "\\_SAGE\\_VAR\\_": "",
+            },
+            s,
+        )
 
         # Fix a maxima bug, which gives a latex representation of multiplying
         # two numbers as a single space. This was really bad when 2*17^(1/3)
@@ -1783,6 +1855,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: m = maxima(2)
             sage: 'gcd' in m._tab_completion()
             True
@@ -1806,6 +1879,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: _ = maxima.eval("f[i,j] := i/j")
             sage: A = maxima('genmatrix(f,4,4)'); A
             matrix([1,1/2,1/3,1/4],[2,1,2/3,1/2],[3,3/2,1,3/4],[4,2,4/3,1])
@@ -1850,6 +1924,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima('1/((1+x)*(x-1))')
             sage: f.partial_fraction_decomposition('x')
             1/(2*(x-1))-1/(2*(x+1))
@@ -1891,6 +1966,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.cos(x)
             sage: f._operation("+", f)
             2*cos(_SAGE_VAR_x)
@@ -1936,6 +2012,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
     EXAMPLES::
 
+        sage: from sage.interfaces.maxima_lib import maxima
         sage: maxima.function('x,y','e^cos(x)')
         e^cos(x)
     """
@@ -1947,6 +2024,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         TESTS::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: from sage.interfaces.maxima_abstract import MaximaAbstractElementFunction
             sage: MaximaAbstractElementFunction == loads(dumps(MaximaAbstractElementFunction))
             True
@@ -1971,6 +2049,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.function('x,y','sin(x+y)')
             sage: f.__reduce__()
             (<function reduce_load_MaximaAbstract_function at 0x...>,
@@ -1992,6 +2071,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.function('x,y','sin(x+y)')
             sage: f(1,2)
             sin(3)
@@ -2011,6 +2091,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.function('x,y','sin(x+y)')
             sage: repr(f)    # indirect doctest
             'sin(x+y)'
@@ -2025,6 +2106,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.function('x,y','sin(x+y)')
             sage: latex(f)
             \mathrm{sin(x+y)}
@@ -2049,6 +2131,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.function('x,y','sin(x+y)')
             sage: f.arguments()
             ['x', 'y']
@@ -2069,6 +2152,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.function('x,y','sin(x+y)')
             sage: f.definition()
             'sin(x+y)'
@@ -2089,6 +2173,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: x,y = var('x,y')
             sage: f = maxima.function('x','sin(x)')
             sage: f.integral(x)
@@ -2108,7 +2193,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
     integrate = integral
 
-    def _operation(self, operation, f=None):
+    def _operation(self, operation, other=None):
         r"""
         This is a utility function which factors out much of the
         commonality used in the arithmetic operations for
@@ -2119,12 +2204,13 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         - ``operation`` -- string representing the operation
           being performed. For example, '\*', or '1/'
 
-        - ``f`` -- the other operand; if ``f`` is
+        - ``other`` -- the other operand; if ``other`` is
           ``None``, then the operation is assumed to be unary
           rather than binary
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: f = maxima.function('x,y','sin(x+y)')
             sage: f._operation("+", f)
             2*sin(y+x)
@@ -2136,16 +2222,16 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
             1/sin(y+x)
         """
         P = self._check_valid()
-        if isinstance(f, P._object_function_class()):
-            tmp = sorted(set(self.arguments() + f.arguments()))
+        if isinstance(other, P._object_function_class()):
+            tmp = sorted(set(self.arguments() + other.arguments()))
             args = ','.join(tmp)
-            defn = "(%s)%s(%s)" % (self.definition(), operation, f.definition())
-        elif f is None:
+            defn = "(%s)%s(%s)" % (self.definition(), operation, other.definition())
+        elif other is None:
             args = self.arguments(split=False)
             defn = "%s(%s)" % (operation, self.definition())
         else:
             args = self.arguments(split=False)
-            defn = "(%s)%s(%s)" % (self.definition(), operation, repr(f))
+            defn = "(%s)%s(%s)" % (self.definition(), operation, repr(other))
 
         return P.function(args, P.eval(defn))
 
@@ -2156,6 +2242,7 @@ def reduce_load_MaximaAbstract_function(parent, defn, args, latex):
 
     EXAMPLES::
 
+        sage: from sage.interfaces.maxima_lib import maxima
         sage: from sage.interfaces.maxima_abstract import reduce_load_MaximaAbstract_function
         sage: f = maxima.function('x,y','sin(x+y)')
         sage: _,args = f.__reduce__()

@@ -648,7 +648,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
         UV = U & V  # the intersection
         A = self._ambient
         supp = self._support_order
-        return A.submodule([A.element_class(A, {supp[i]: c for i, c in vec.iteritems()})
+        return A.submodule([A.element_class(A, {supp[i]: c for i, c in vec.items()})
                             for vec in UV.basis()])
 
     intersection = __and__

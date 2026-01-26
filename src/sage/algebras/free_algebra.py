@@ -159,13 +159,14 @@ Some tests for the category::
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-
 from sage.algebras.free_algebra_element import FreeAlgebraElement
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.categories.functor import Functor
-from sage.categories.pushout import (ConstructionFunctor,
-                                     CompositeConstructionFunctor,
-                                     IdentityConstructionFunctor)
+from sage.categories.pushout import (
+    CompositeConstructionFunctor,
+    ConstructionFunctor,
+    IdentityConstructionFunctor,
+)
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.word import Word
@@ -363,10 +364,14 @@ class FreeAlgebraFactory(UniqueFactory):
             False
         """
         if len(key) == 1:
-            from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
+            from sage.algebras.letterplace.free_algebra_letterplace import (
+                FreeAlgebra_letterplace,
+            )
             return FreeAlgebra_letterplace(key[0])
         if isinstance(key[0], tuple):
-            from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
+            from sage.algebras.letterplace.free_algebra_letterplace import (
+                FreeAlgebra_letterplace,
+            )
             return FreeAlgebra_letterplace(key[1], degrees=key[0])
         if len(key) == 2:
             return FreeAlgebra_generic(key[0], len(key[1]), key[1])
@@ -374,34 +379,6 @@ class FreeAlgebraFactory(UniqueFactory):
 
 
 FreeAlgebra = FreeAlgebraFactory('FreeAlgebra')
-
-
-def is_FreeAlgebra(x) -> bool:
-    """
-    Return ``True`` if x is a free algebra; otherwise, return ``False``.
-
-    EXAMPLES::
-
-        sage: from sage.algebras.free_algebra import is_FreeAlgebra
-        sage: is_FreeAlgebra(5)
-        doctest:warning...
-        DeprecationWarning: the function is_FreeAlgebra is deprecated;
-        use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead
-        See https://github.com/sagemath/sage/issues/37896 for details.
-        False
-        sage: is_FreeAlgebra(ZZ)
-        False
-        sage: is_FreeAlgebra(FreeAlgebra(ZZ,100,'x'))
-        True
-        sage: is_FreeAlgebra(FreeAlgebra(ZZ,10,'x',implementation='letterplace'))
-        True
-        sage: is_FreeAlgebra(FreeAlgebra(ZZ,10,'x',implementation='letterplace',
-        ....:                            degrees=list(range(1,11))))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37896, "the function is_FreeAlgebra is deprecated; use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead")
-    return isinstance(x, (FreeAlgebra_generic, FreeAlgebra_letterplace))
 
 
 class FreeAlgebra_generic(CombinatorialFreeModule):
@@ -470,7 +447,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
     """
     Element = FreeAlgebraElement
 
-    def __init__(self, R, n, names, degrees=None):
+    def __init__(self, R, n, names, degrees=None) -> None:
         """
         The free algebra on `n` generators over a base ring.
 
@@ -907,7 +884,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
         """
         if mats is None:
             return super().quotient(mons, names)
-        from . import free_algebra_quotient
+        from sage.algebras import free_algebra_quotient
         return free_algebra_quotient.FreeAlgebraQuotient(self, mons, mats, names)
 
     quo = quotient

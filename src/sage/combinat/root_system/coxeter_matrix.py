@@ -734,13 +734,15 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: CM = CoxeterMatrix([[1, -2], [-2, 1]], ['a', 'b'])
-            sage: CM.__hash__()
-            -337812865737895661  # 64-bit
-            153276691            # 32-bit
+            sage: hash32 = 153276691
+            sage: hash64 = -337812865737895661
+            sage: CM.__hash__() in [hash32, hash64]
+            True
             sage: CM = CoxeterMatrix([[1, -3], [-3, 1]], ['1', '2'])
-            sage: CM.__hash__()
-            -506719298606843492  # 64-bit
-            -1917568612          # 32-bit
+            sage: hash32 = -1917568612
+            sage: hash64 = -506719298606843492
+            sage: CM.__hash__() in [hash32, hash64]
+            True
         """
         return hash(self._matrix)
 
@@ -965,7 +967,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         return self.coxeter_graph().is_connected()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return if ``self`` is a finite type or ``False`` if unknown.
 
@@ -983,7 +985,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         return self._is_finite
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return if ``self`` is an affine type or ``False`` if unknown.
 
@@ -1135,7 +1137,7 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
 
     types = []
     for S in G.connected_components_subgraphs():
-        r = S.num_verts()
+        r = S.n_vertices()
         # Handle the special cases first
         if r == 1:
             types.append(CoxeterType(['A', 1]).relabel({1: S.vertices(sort=True)[0]}))

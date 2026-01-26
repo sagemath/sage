@@ -88,27 +88,6 @@ sqrt = math.sqrt
 exp = math.exp
 
 
-def is_EllipticCurve(x):
-    r"""
-    Utility function to test if ``x`` is an instance of an Elliptic Curve class.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        sage: E = EllipticCurve([1,2,3/4,7,19])
-        sage: is_EllipticCurve(E)
-        doctest:warning...
-        DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_EllipticCurve(0)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
-    return isinstance(x, EllipticCurve_generic)
-
-
 class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
     r"""
     Elliptic curve over a generic base ring.
@@ -124,7 +103,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         sage: -5*P
         (179051/80089 : -91814227/22665187 : 1)
     """
-    def __init__(self, K, ainvs, category=None):
+    def __init__(self, K, ainvs, category=None) -> None:
         r"""
         Construct an elliptic curve from Weierstrass `a`-coefficients.
 
@@ -465,7 +444,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         x, y = SR.var('x, y')
         return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
 
-    def __contains__(self, P):
+    def __contains__(self, P) -> bool:
         """
         Return ``True`` if and only if P is a point on the elliptic curve.
 
@@ -1049,7 +1028,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         raise NotImplementedError("not implemented.")
 
-    def __is_over_RationalField(self):
+    def __is_over_RationalField(self) -> bool:
         r"""
         Internal function. Return true iff the base ring of this elliptic
         curve is the field of rational numbers.
@@ -1065,7 +1044,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         return isinstance(self.base_ring(), RationalField)
 
-    def is_on_curve(self, x, y):
+    def is_on_curve(self, x, y) -> bool:
         r"""
         Return ``True`` if `(x,y)` is an affine point on this curve.
 

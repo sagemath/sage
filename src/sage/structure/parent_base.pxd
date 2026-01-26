@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 ###############################################################################
 #   Sage: Open Source Mathematical Software
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>

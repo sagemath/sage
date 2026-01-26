@@ -1,13 +1,15 @@
 py.install_sources(
   '__init__.py',
   'all.py',
+  'autgroup_can_label.pyx',
   'codecan.pxd',
+  'codecan.pyx',
   subdir: 'sage/coding/codecan',
 )
 
 extension_data = {
-  'autgroup_can_label' : files('autgroup_can_label.pyx'),
-  'codecan' : files('codecan.pyx'),
+  'autgroup_can_label': files('autgroup_can_label.pyx'),
+  'codecan': files('codecan.pyx'),
 }
 
 foreach name, pyx : extension_data

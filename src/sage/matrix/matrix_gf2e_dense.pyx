@@ -126,7 +126,20 @@ cdef class M4RIE_finite_field:
         if self.ff:
             gf2e_free(self.ff)
 
-cdef m4ri_word poly_to_word(f) noexcept:
+cdef m4ri_word poly_to_word(f) except? -1:
+    """
+    Internal function to convert a finite field element to ``m4ri_word``.
+
+    TESTS:
+
+    If the user interrupts some long computation in the middle of the execution of
+    :func:`poly_to_word`, it will raise ``KeyboardInterrupt``. Make sure it is correctly
+    propagated::
+
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(0.5):
+        ....:     MatrixSpace(GF(2^8), 2^9).random_element().LU()
+    """
     return f.to_integer()
 
 
@@ -175,9 +188,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
                 _m4rie_finite_field_cache[poly] = FF
 
         # cache elements
-        self._zero = self._base_ring(0)
-        self._zero_word = poly_to_word(self._zero)
-        self._one = self._base_ring(1)
+        self._zero = self._base_ring.zero()
+        self._one = self._base_ring.one()
 
     def __dealloc__(self):
         """
@@ -337,7 +349,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [0 1]
             [1 0]
         """
-        return mzed_read_elem(self._entries, i, j) == self._zero_word
+        return mzed_read_elem(self._entries, i, j) == 0
 
     cpdef _add_(self, right):
         r"""
@@ -643,14 +655,35 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-             sage: K.<a> = GF(4)
-             sage: A = random_matrix(K,10,10)
-             sage: B = a*A  # indirect doctest
-             sage: all(B.list()[i] == a*A.list()[i] for i in range(100))
-             True
-        """
+            sage: K.<a> = GF(4)
+            sage: A = random_matrix(K,10,10)
+            sage: B = a*A  # indirect doctest
+            sage: all(B.list()[i] == a*A.list()[i] for i in range(100))
+            True
+
+        TESTS (see :issue:`40653`)::
+
+            sage: K = GF(4)
+            sage: M = Matrix(K, 0, 3)
+            sage: (2 * M).nrows()
+            0
+            sage: (2 * M).ncols()
+            3
+
+           sage: N = Matrix(K, 2, 3)
+           sage: zero = K(0)
+           sage: (zero * N).nrows()
+           2
+           sage: (zero * N).ncols()
+           3    
+        """    
         cdef m4ri_word a = poly_to_word(right)
-        cdef Matrix_gf2e_dense C = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, self._parent, 0, 0, 0)
+        cdef Matrix_gf2e_dense C = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, self._parent, self._nrows, self._ncols, 0)
+
+        # Handle zero scalar or zero-size matrices explicitly
+        if self._nrows == 0 or self._ncols == 0 or a == 0:
+            return C
+
         mzed_mul_scalar(C._entries, a, self._entries)
         return C
 
@@ -1010,7 +1043,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: m = Matrix(GL(2^8, GF(2^8)).random_element())
+            sage: m = Matrix(GL(2^6, GF(2^6)).random_element())
             sage: m.is_invertible()
             True
         """

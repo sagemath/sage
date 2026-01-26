@@ -83,7 +83,7 @@ def two_n(B):
         ....:         if not two_n(sqs).is_t_design(3,2*n,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
     Y = []
 
     # Line 1
@@ -121,7 +121,7 @@ def three_n_minus_two(B):
         ....:         if not three_n_minus_two(sqs).is_t_design(3,3*n-2,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
     A = n-1
     Y = []
     # relabel function
@@ -178,7 +178,7 @@ def three_n_minus_eight(B):
         ....:         if not three_n_minus_eight(sqs).is_t_design(3,3*n-8,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
 
     if (n % 12) != 2:
         raise ValueError("n must be equal to 2 mod 12")
@@ -240,7 +240,7 @@ def three_n_minus_four(B):
         ....:         if not three_n_minus_four(sqs).is_t_design(3,3*n-4,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
 
     if n % 12 != 10:
         raise ValueError("n must be equal to 10 mod 12")
@@ -305,7 +305,7 @@ def four_n_minus_six(B):
         ....:         if not four_n_minus_six(sqs).is_t_design(3,4*n-6,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
     f = n-2
     r = lambda i,ii,x : (2*(i % 2)+(ii % 2))*(n-2)+(x) % (n-2)
 
@@ -378,7 +378,7 @@ def twelve_n_minus_ten(B):
         ....:         if not twelve_n_minus_ten(sqs).is_t_design(3,12*n-10,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
     B14 = steiner_quadruple_system(14)
     r = lambda i,x : i % (n-1)+(x % 12)*(n-1)
 
@@ -474,7 +474,7 @@ def relabel_system(B):
         sage: relabel_system(SQS8)
         Incidence structure with 8 points and 14 blocks
     """
-    n = B.num_points()
+    n = B.n_points()
     B0 = B._blocks[0]
 
     label = {

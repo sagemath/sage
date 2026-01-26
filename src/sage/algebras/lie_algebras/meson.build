@@ -13,6 +13,7 @@ py.install_sources(
   'heisenberg.py',
   'lie_algebra.py',
   'lie_algebra_element.pxd',
+  'lie_algebra_element.pyx',
   'morphism.py',
   'nilpotent_lie_algebra.py',
   'onsager.py',
@@ -28,7 +29,7 @@ py.install_sources(
   subdir: 'sage/algebras/lie_algebras',
 )
 
-extension_data = {'lie_algebra_element' : files('lie_algebra_element.pyx')}
+extension_data = {'lie_algebra_element': files('lie_algebra_element.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

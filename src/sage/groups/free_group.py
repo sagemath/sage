@@ -398,7 +398,7 @@ class FreeGroupElement(ElementLibGAP):
 
         OUTPUT:
 
-        The fox derivative of ``self`` with respect to ``gen``
+        The Fox derivative of ``self`` with respect to ``gen``
         (induced by ``im_gens``).
         By default, it is an element of the group algebra with
         integer coefficients.
@@ -821,7 +821,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
         """
         return self.ngens()
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Return the string used to construct the object in gap.
 
@@ -831,9 +831,8 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
             sage: G._gap_init_()
             'FreeGroup(["x0", "x1", "x2"])'
         """
-        gap_names = ['"' + s + '"' for s in self._gen_names]
-        gen_str = ', '.join(gap_names)
-        return 'FreeGroup(['+gen_str+'])'
+        gap_names = ('"' + s + '"' for s in self._gen_names)
+        return 'FreeGroup([' + ', '.join(gap_names) + '])'
 
     def _regina_(self, regina):
         r"""
@@ -899,7 +898,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
         except AttributeError:
             return self.element_class(self, x, **kwds)
         if isinstance(P, FreeGroup_class):
-            names = {P._gen_names[abs(i)-1] for i in x.Tietze()}
+            names = {P._gen_names[abs(i) - 1] for i in x.Tietze()}
             if names.issubset(self._gen_names):
                 return self([i.sign()*(self._gen_names.index(P._gen_names[abs(i)-1])+1)
                              for i in x.Tietze()])

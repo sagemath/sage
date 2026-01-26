@@ -22,10 +22,10 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # ****************************************************************************
 
 from copy import copy
-from math import sin, cos, pi
-from sage.graphs.graph import Graph
 from itertools import combinations
-import subprocess
+from math import sin, cos, pi
+
+from sage.graphs.graph import Graph
 
 
 def JohnsonGraph(n, k):
@@ -415,7 +415,7 @@ def EgawaGraph(p, s):
     return g
 
 
-def HammingGraph(n, q, X=None):
+def HammingGraph(n, q, X=None, immutable=False):
     r"""
     Return the Hamming graph with parameters `n`, `q` over `X`.
 
@@ -438,6 +438,9 @@ def HammingGraph(n, q, X=None):
     - ``X`` -- list of labels representing the vertices of the underlying graph
       the Hamming graph will be based on; if ``None`` (or left unused), the
       list `[0, ... , q-1]` will be used
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -481,18 +484,23 @@ def HammingGraph(n, q, X=None):
         X = list(range(q))
     if q != len(X):
         raise ValueError("q must be the cardinality of X")
-    g = Graph(name=f"Hamming Graph with parameters {n},{q}", multiedges=False)
-    g.add_vertices(product(*repeat(X, n)))
-    for v in g:
-        for i in range(n):
-            prefix = v[:i]
-            suffix = v[i+1:]
-            for el in X:
-                if el == v[i]:
-                    continue
-                u = prefix + (el,) + suffix
-                g.add_edge(v, u)
-    return g
+
+    vertices = list(product(*repeat(X, n)))
+
+    def edges():
+        for v in vertices:
+            for i in range(n):
+                prefix = v[:i]
+                suffix = v[i+1:]
+                for el in X:
+                    if el == v[i]:
+                        continue
+                    u = prefix + (el,) + suffix
+                    yield (v, u)
+
+    return Graph([vertices, edges()], format="vertices_and_edges",
+                 name=f"Hamming Graph with parameters {n},{q}",
+                 multiedges=False, immutable=immutable)
 
 
 def BarbellGraph(n1, n2):
@@ -561,9 +569,9 @@ def BarbellGraph(n1, n2):
 
         sage: n1, n2 = randint(3, 10), randint(0, 10)
         sage: g = graphs.BarbellGraph(n1, n2)
-        sage: g.num_verts() == 2 * n1 + n2
+        sage: g.n_vertices() == 2 * n1 + n2
         True
-        sage: g.num_edges() == 2 * binomial(n1, 2) + n2 + 1                             # needs sage.symbolic
+        sage: g.n_edges() == 2 * binomial(n1, 2) + n2 + 1                               # needs sage.symbolic
         True
         sage: g.is_connected()
         True
@@ -638,9 +646,9 @@ def LollipopGraph(n1, n2):
 
         sage: n1, n2 = randint(3, 10), randint(0, 10)
         sage: g = graphs.LollipopGraph(n1, n2)
-        sage: g.num_verts() == n1 + n2
+        sage: g.n_vertices() == n1 + n2
         True
-        sage: g.num_edges() == binomial(n1, 2) + n2                                     # needs sage.symbolic
+        sage: g.n_edges() == binomial(n1, 2) + n2                                       # needs sage.symbolic
         True
         sage: g.is_connected()
         True
@@ -711,9 +719,9 @@ def TadpoleGraph(n1, n2):
 
         sage: n1, n2 = randint(3, 10), randint(0, 10)
         sage: g = graphs.TadpoleGraph(n1, n2)
-        sage: g.num_verts() == n1 + n2
+        sage: g.n_vertices() == n1 + n2
         True
-        sage: g.num_edges() == n1 + n2
+        sage: g.n_edges() == n1 + n2
         True
         sage: g.girth() == n1
         True
@@ -761,10 +769,10 @@ def AztecDiamondGraph(n):
         sage: graphs.AztecDiamondGraph(2)
         Aztec Diamond graph of order 2
 
-        sage: [graphs.AztecDiamondGraph(i).num_verts() for i in range(8)]
+        sage: [graphs.AztecDiamondGraph(i).n_vertices() for i in range(8)]
         [0, 4, 12, 24, 40, 60, 84, 112]
 
-        sage: [graphs.AztecDiamondGraph(i).num_edges() for i in range(8)]
+        sage: [graphs.AztecDiamondGraph(i).n_edges() for i in range(8)]
         [0, 4, 16, 36, 64, 100, 144, 196]
 
         sage: G = graphs.AztecDiamondGraph(3)
@@ -803,9 +811,9 @@ def DipoleGraph(n):
 
         sage: n = randint(0, 10)
         sage: g = graphs.DipoleGraph(n)
-        sage: g.num_verts() == 2
+        sage: g.n_vertices() == 2
         True
-        sage: g.num_edges() == n
+        sage: g.n_edges() == n
         True
         sage: g.is_connected() == (n > 0)
         True
@@ -2660,7 +2668,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
     A slightly larger instance. ::
 
         sage: H = graphs.HanoiTowerGraph(4, 6, labels=False, positions=False)
-        sage: H.num_verts()
+        sage: H.n_vertices()
         4096
         sage: H.distance(0, 4^6-1)
         17
@@ -3131,7 +3139,7 @@ def SierpinskiGasketGraph(n):
             resu += [(a, ab, ac), (ab, b, bc), (ac, bc, c)]
         return resu
 
-    tri_list = [list(vector(QQ, u) for u in [(0, 0), (0, 1), (1, 0)])]
+    tri_list = [[vector(QQ, u) for u in [(0, 0), (0, 1), (1, 0)]]]
     for k in range(n - 1):
         tri_list = next_step(tri_list)
     dg = Graph()

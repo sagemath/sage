@@ -64,10 +64,11 @@ def runsnake(command):
         - :class:`Profiler`
     """
     import cProfile
-    from sage.misc.temporary_file import tmp_filename
+
     from sage.misc.misc import get_main_globals
-    from sage.repl.preparse import preparse
     from sage.misc.superseded import deprecation
+    from sage.misc.temporary_file import tmp_filename
+    from sage.repl.preparse import preparse
 
     deprecation(39274, "just use the runsnake program directly")
 
@@ -165,19 +166,19 @@ def load_submodules(module=None, exclude_pattern=None):
     The second argument allows to exclude a pattern::
 
         sage: sage.misc.dev_tools.load_submodules(sage.geometry, "database$|lattice")
-        load sage.geometry.cone... succeeded
-        load sage.geometry.cone_catalog... succeeded
+        load sage.geometry...
+        ...
         load sage.geometry.fan_isomorphism... succeeded
         ...
-        load sage.geometry.riemannian_manifolds.surface3d_generators... succeeded
 
         sage: sage.misc.dev_tools.load_submodules(sage.geometry)
         load sage.geometry.polyhedron.lattice_euclidean_group_element... succeeded
         load sage.geometry.polyhedron.palp_database... succeeded
         load sage.geometry.polyhedron.ppl_lattice_polygon... succeeded
     """
-    from .package_dir import walk_packages
     import importlib
+
+    from .package_dir import walk_packages
 
     if module is None:
         import sage
@@ -275,8 +276,12 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     """
     from sage.misc.lazy_import import LazyImport
 
+    # Create a copy to avoid errors if the sys.modules dict changes
+    # while we are iterating over it.
+    mods = sys.modules.copy()
+
     obj = []
-    for smodule_name, smodule in sys.modules.items():
+    for smodule_name, smodule in mods.items():
         if module_name and not smodule_name.startswith(module_name):
             continue
         if hasattr(smodule, '__dict__') and name in smodule.__dict__:
@@ -462,8 +467,9 @@ def import_statements(*objects, **kwds):
         detect deprecated stuff). So, if you use it, double check the answer and
         report weird behaviors.
     """
-    import itertools
     import inspect
+    import itertools
+
     from sage.misc.lazy_import import LazyImport
 
     answer = defaultdict(list)

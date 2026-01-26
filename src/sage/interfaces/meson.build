@@ -41,9 +41,9 @@ py.install_sources(
   'polymake.py',
   'povray.py',
   'process.pxd',
+  'process.pyx',
   'psage.py',
   'qepcad.py',
-  'qsieve.py',
   'quit.py',
   'r.py',
   'read_data.py',
@@ -51,6 +51,7 @@ py.install_sources(
   'rubik.py',
   'sage-maxima.lisp',
   'sage0.py',
+  'sagespawn.pyx',
   'scilab.py',
   'singular.py',
   'sympy.py',
@@ -63,8 +64,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'process' : files('process.pyx'),
-  'sagespawn' : files('sagespawn.pyx'),
+  'process': files('process.pyx'),
+  'sagespawn': files('sagespawn.pyx'),
 }
 
 foreach name, pyx : extension_data

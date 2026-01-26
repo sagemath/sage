@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 Drinfeld modules over a base
@@ -213,8 +212,8 @@ class DrinfeldModules(Category_over_base_ring):
 
         INPUT:
 
-        - ``base_field`` -- the base field, which is a ring extension
-          over a base
+        - ``base_morphism`` -- the defining morphism of the
+          underlying `A`-field
 
         - ``name`` -- (default: ``'τ'``) the name of the Ore polynomial
           variable

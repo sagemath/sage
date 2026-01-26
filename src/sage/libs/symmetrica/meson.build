@@ -8,9 +8,14 @@ if not symmetrica.found()
   )
 endif
 
-py.install_sources('__init__.py', 'all.py', subdir: 'sage/libs/symmetrica')
+py.install_sources(
+  '__init__.py',
+  'all.py',
+  'symmetrica.pyx',
+  subdir: 'sage/libs/symmetrica',
+)
 
-extension_data = {'symmetrica' : files('symmetrica.pyx')}
+extension_data = {'symmetrica': files('symmetrica.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

@@ -273,7 +273,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
 
         sage: G = graphs.CycleGraph(4)
         sage: G += graphs.CycleGraph(6)
-        sage: G.connected_components_number()
+        sage: G.number_of_connected_components()
         2
         sage: G.is_bicritical()
         False
