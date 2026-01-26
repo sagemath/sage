@@ -692,6 +692,14 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         ...
         ArithmeticError: some image of the function is not in the codomain, because
         element [1, 0] is not in free module
+        
+        Linear transformations defined by matrices are not supported for vector spaces with combinatorial bases::
+
+        sage: V = VectorSpace(QQ, IntegerRange(3))
+        sage: linear_transformation(V, V, identity_matrix(3))
+        Traceback (most recent call last):
+        ...
+        TypeError: linear_transformation with a matrix is not supported for vector spaces with combinatorial bases
     """
     from sage.categories.homset import Hom
     from sage.matrix.constructor import matrix
@@ -737,6 +745,14 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     C = arg1
     H = Hom(D, C, category=None)
 
+    from sage.combinat.free_module import CombinatorialFreeModule
+    if isinstance(D, CombinatorialFreeModule) and isinstance(arg2, Matrix):
+        raise TypeError(
+            "linear_transformation with a matrix is not supported for "
+            "vector spaces with combinatorial bases (CombinatorialFreeModule). "
+            "Use images of basis elements instead."
+        )
+
     # Examine arg2 as the "rule" for the linear transformation
     # Pass on matrices, Python functions and lists to homspace call
     # Convert symbolic function here, to a matrix
@@ -776,8 +792,9 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
 
     # arg2 now compatible with homspace H call method
     # __init__ will check matrix sizes versus domain/codomain dimensions
+    D = arg0
+    C = arg1
     return H(arg2)
-
 
 class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
 
