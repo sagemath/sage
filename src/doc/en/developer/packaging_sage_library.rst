@@ -26,9 +26,7 @@ There is another notion of "package" in Python, the **distribution
 package** (also known as a "distribution" or a "pip-installable
 package").  Currently, the entire Sage library is provided by a
 single distribution,
-`sagemath-standard <https://pypi.org/project/sagemath-standard/>`_,
-which is generated from the directory
-:sage_root:`pkgs/sagemath-standard`.
+`sagemath <https://pypi.org/project/sagemath/>`_.
 
 Note that the distribution name is not required to be a Python
 identifier. In fact, using dashes (``-``) is preferred to underscores in

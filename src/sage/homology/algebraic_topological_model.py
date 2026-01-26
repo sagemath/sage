@@ -24,13 +24,13 @@ AUTHORS:
 
 # TODO: cythonize this.
 
-from sage.modules.free_module_element import vector
-from sage.modules.free_module import VectorSpace
+from sage.homology.chain_complex import ChainComplex
+from sage.homology.chain_complex_morphism import ChainComplexMorphism
+from sage.homology.chain_homotopy import ChainContraction
 from sage.matrix.constructor import matrix, zero_matrix
 from sage.matrix.matrix_space import MatrixSpace
-from .chain_complex import ChainComplex
-from .chain_complex_morphism import ChainComplexMorphism
-from .chain_homotopy import ChainContraction
+from sage.modules.free_module import VectorSpace
+from sage.modules.free_module_element import vector
 from sage.rings.rational_field import QQ
 
 
@@ -502,13 +502,12 @@ def algebraic_topological_model_delta_complex(K, base_ring=None):
             if not diff:
                 c_bar = c
                 pi_bdry_c_bar = False
+            elif base_ring == QQ:
+                c_bar = c - phi_old * (diff * c)
+                pi_bdry_c_bar = conditionally_sparse(pi_old) * (diff * c_bar)
             else:
-                if base_ring == QQ:
-                    c_bar = c - phi_old * (diff * c)
-                    pi_bdry_c_bar = conditionally_sparse(pi_old) * (diff * c_bar)
-                else:
-                    c_bar = c - phi_old * diff * c
-                    pi_bdry_c_bar = conditionally_sparse(pi_old) * diff * c_bar
+                c_bar = c - phi_old * diff * c
+                pi_bdry_c_bar = conditionally_sparse(pi_old) * diff * c_bar
 
             # One small typo in the published algorithm: it says
             # "if bdry(c_bar) == 0", but should say

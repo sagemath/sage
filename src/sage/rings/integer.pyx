@@ -2336,8 +2336,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 2 ^ 100000000000000000000000
             Traceback (most recent call last):
             ...
-            OverflowError: exponent must be at most 2147483647           # 32-bit
-            OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+            OverflowError: exponent must be at most ...
             sage: 1 ^ 100000000000000000000000
             1
             sage: 1 ^ -100000000000000000000000
@@ -4760,7 +4759,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             OverflowError: argument too large for multifactorial
         """
         if k <= 0:
-            raise ValueError("multifactorial only defined for nonpositive k")
+            raise ValueError("multifactorial only defined for positive k")
 
         if not mpz_fits_slong_p(self.value):
             raise OverflowError("argument too large for multifactorial")
@@ -6423,9 +6422,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: import numpy
             sage: numpy.array([1, 2, 3])
             array([1, 2, 3])
-            sage: numpy.array([1, 2, 3]).dtype
-            dtype('int32')                         # 32-bit
-            dtype('int64')                         # 64-bit
+            sage: d32 = numpy.dtype(numpy.int32)
+            sage: d64 = numpy.dtype(numpy.int64)
+            sage: numpy.array([1, 2, 3]).dtype in [d32, d64]
+            True
 
             sage: # needs numpy (this has to be repeated until #36099 is fixed)
             sage: import numpy
