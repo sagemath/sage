@@ -2289,17 +2289,19 @@ cdef class Rational(sage.structure.element.FieldElement):
 
             sage: QQ(42).__hash__()
             42
-            sage: QQ(1/42).__hash__()
-            1488680910            # 32-bit
-            -7658195599476688946  # 64-bit
+            sage: hash32 = 1488680910
+            sage: hash64 = -7658195599476688946
+            sage: QQ(1/42).__hash__() in [hash32, hash64]
+            True
             sage: n = ZZ.random_element(10^100)
             sage: hash(n) == hash(QQ(n)) or n
             True
             sage: hash(-n) == hash(-QQ(n)) or n
             True
-            sage: hash(-4/17)
-            -47583156            # 32-bit
-            8709371129873690700  # 64-bit
+            sage: hash32 = -47583156
+            sage: hash64 = 8709371129873690700
+            sage: hash(-4/17) in [hash32, hash64]
+            True
         """
         cdef Py_hash_t n = mpz_pythonhash(mpq_numref(self.value))
         cdef Py_hash_t d = mpz_pythonhash(mpq_denref(self.value))
@@ -2626,13 +2628,11 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (1/2)^(2^100)
             Traceback (most recent call last):
             ...
-            OverflowError: exponent must be at most 2147483647           # 32-bit
-            OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+            OverflowError: exponent must be at most ...
             sage: (1/2)^(-2^100)
             Traceback (most recent call last):
             ...
-            OverflowError: exponent must be at most 2147483647           # 32-bit
-            OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+            OverflowError: exponent must be at most ...
             sage: QQ(-1)^(2^100)                                                        # needs sage.symbolic
             1
         """
