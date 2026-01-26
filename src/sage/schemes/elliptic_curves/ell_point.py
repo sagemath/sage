@@ -2167,8 +2167,8 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             sage: # needs sage.rings.padics
             sage: K = Qp(5)
             sage: E = EllipticCurve(K, [0, 1])
-            sage: P = E.random_point()
-            sage: Q = E.random_point()
+            sage: P = E(0)
+            sage: Q = E(0)
             sage: P.weil_pairing(Q, 5)
             Traceback (most recent call last):
             ...
