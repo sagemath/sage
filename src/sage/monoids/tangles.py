@@ -35,11 +35,14 @@ from sage.combinat.diagram_algebras import BrauerDiagram
 ##############################################################################
 # Tangle element class
 ##############################################################################
+
 class KauffmanTangle(AutomaticSemigroup.Element):
     r"""
-    Element class for the semigroup of tangles that serves as monomials of the
-    Birman-Murakami-Wenzl algebra, which is considered as the Kauffman tangle
-    algebra in :class:`~sage.algebras.birman_murakami_wenzl_algebra.BirmanMurakamiWenzlAlgebra`.
+    Element in the semigroup of Kauffman tangles.
+
+    SEEALSO::
+
+        :class:`~sage.algebras.birman_murakami_wenzl_algebra.BirmanMurakamiWenzlAlgebra`.
 
     EXAMPLES::
 
@@ -163,18 +166,18 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         from sage.rings.integer_ring import ZZ
         BA = BrauerAlgebra(P._nstrands, polygen(ZZ))
         PA = BA.ambient()
-        con = BA.one().support()[0]
+        con = BA.one_basis()
         removed_loop = 0
         for i in self.defining_word():
             i = abs(i)
             if i < n:
-                bd = PA.s(i).support()[0]
+                bd, = PA.s(i).support()
             else:
                 i -= (n - 1)
-                bd = PA.a(i).support()[0]
+                bd, = PA.a(i).support()
             con, loops = con.compose(bd)
             removed_loop += loops
-        self._connector = con, removed_loop
+        self._connector = (con, removed_loop)
         return self._connector
 
     def defining_word(self) -> tuple:
@@ -255,10 +258,11 @@ class KauffmanTangle(AutomaticSemigroup.Element):
     def crossing_dict(self) -> dict:
         r"""
         Return a (possibly empty) dictionary containing as keys those strands
-        of ``self`` that intersect another strand. The values are lists of pairs
-        ``(st, word_position)``, where ``st`` is such another strand and
-        ``word_position`` specifies the position of the intersection in the
-        defining word of ``self`` as an integer.
+        of ``self`` that intersect another strand.
+
+        The values are lists of pairs `(st, word_position)``, where ``st`` is
+        such another strand and ``word_position`` specifies the position
+        of the intersection in the defining word of ``self`` as an integer.
 
         EXAMPLES::
 
@@ -313,7 +317,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         def add_crossings_to_dict(st, crossings):
             if st not in crossing_dict:
                 crossing_dict[st] = []
-            crossing_dict[st] = sorted(list(set(crossing_dict[st] + crossings)))
+            crossing_dict[st] = sorted(set(crossing_dict[st] + crossings))
 
         # first add crossings from left_tangle
         for lst1 in lcrossing_dict:
@@ -365,7 +369,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         INPUT:
 
         - ``pos`` -- an integer that indicates a position in the defining
-          word of ``self``.
+          word of ``self``
 
         OUTPUT:
 
@@ -684,8 +688,8 @@ class KauffmanTangle(AutomaticSemigroup.Element):
 
 class KauffmanTangles(AutomaticSemigroup):
     r"""
-    Class to work with the semigroup of tangles which are interpreted as
-    monomials in the Birman-Murakami-Wenzl algebra.
+    The semigroup of Kauffman tangles, which naturally index
+    a basis for the Birman-Murakami-Wenzl algebra.
 
     EXAMPLES::
 
@@ -728,7 +732,7 @@ class KauffmanTangles(AutomaticSemigroup):
         import operator
         from sage.categories.semigroups import Semigroups
         from sage.sets.family import Family
-        category = Semigroups().FinitelyGenerated().Unital().Infinite()
+        category = Monoids().FinitelyGenerated().Infinite()
         super().__init__(Family(gens), FG, FG.one(), operator.mul, category)
         self._nstrands = n + 1
         self._mwt_names = {}  # support for the names of the BMW-algebra basis
@@ -736,7 +740,7 @@ class KauffmanTangles(AutomaticSemigroup):
 
     def __repr__(self):
         r"""
-        Return a representation String for ``self``
+        Return a string representation of ``self``
 
         EXAMPLES::
 
@@ -827,18 +831,18 @@ class KauffmanTangles(AutomaticSemigroup):
             return self(A(x))
         elif isinstance(x, BrauerDiagram):
             return self.morton_wasserman_tangle(x)
-        else:
-            from sage.groups.braid import Braid
-            if isinstance(x, Braid):
-                if x.strands() == self._nstrands:
-                    return self(x.Tietze())
-            return super()._element_constructor_(x)
+        from sage.groups.braid import Braid
+        if isinstance(x, Braid):
+            if x.strands() == self._nstrands:
+                return self(x.Tietze())
+        return super()._element_constructor_(x)
 
     @cached_method
     def morton_wasserman_tangle(self, bd: BrauerDiagram, top_bottom: bool = True) -> KauffmanTangle:
         r"""
         Return a an element of ``self`` representing the diagram
         as a connector of a simple layered Morton Wasserman tangle.
+
         The defining word of the tangle consists of three parts
         ``wt``, ``we`` and ``wb``. In the case of the first and last
         part the tangle generators correspond to braid generators
@@ -862,15 +866,15 @@ class KauffmanTangles(AutomaticSemigroup):
 
         INPUT:
 
-        - ``bd`` -- instance of :class:`~sage.combinat.diagram_algebras.BrauerDiagramm`
+        - ``bd`` -- :class:`~sage.combinat.diagram_algebras.BrauerDiagramm`
 
-        - ``top_bottom`` -- boolean (default ``True``) multiplication from left to
-          right is interpreted from top to bottom in the tangle diagram. To
-          reverse the direction, set this keyword argument to ``False``.
+        - ``top_bottom`` -- boolean (default ``True``); multiplication from left to
+          right is interpreted from top to bottom in the tangle diagram; to
+          reverse the direction, set this keyword argument to ``False``
 
         OUTPUT:
 
-        An instance of the element class of ``self``.
+        A :class:`~sage.monoids.tangles.KauffmanTangle` of ``self``.
 
         EXAMPLES::
 
@@ -1032,10 +1036,10 @@ class Strand:
         """
         positive_tangle = tangle.positive_mutant()
         conn, loops = positive_tangle.connector()
-        if (start, end) not in conn:
-            if (end, start) not in conn:
-                if not (start == end and start in range(1, loops + 1)):
-                    raise ValueError('%s and %s do not describe a strand of %s' % (start, end, tangle))
+        if ((start, end) not in conn
+            and (end, start) not in conn
+            and not (start == end and start in range(1, loops + 1))):
+            raise ValueError('%s and %s do not describe a strand of %s' % (start, end, tangle))
         self.tangle = positive_tangle
         self.start = start
         self.end = end
@@ -1043,7 +1047,7 @@ class Strand:
             # strand is reversed propagating
             self.start = end
             self.end = start
-        elif start*end > 0 and abs(start) > abs(end):
+        elif start * end > 0 and abs(start) > abs(end):
             # inline strand is reversed
             self.start = end
             self.end = start
@@ -1060,8 +1064,7 @@ class Strand:
         elif self.start > 0 and self.start == self.end:
             # closed loop
             self.sort = (4, self.start)
-        else:
-            raise ValueError('No strand constructible')
+        raise ValueError('no strand constructible')
 
     def __repr__(self) -> str:
         r"""
@@ -1084,8 +1087,7 @@ class Strand:
             return 'Inline strand on top line from position %s to position %s' % (self.start, self.end)
         elif self.inline_bottom():
             return 'Inline strand on bottom line from position %s to position %s' % (self.start, self.end)
-        else:
-            return 'The %s-th closed loop on the way from top to bottom' % self.start
+        return 'The %s-th closed loop on the way from top to bottom' % self.start
 
     def propagating(self) -> bool:
         r"""
@@ -1199,8 +1201,9 @@ class Strand:
     def __lshift__(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` comes before ``other`` in the *closure*
-        order of the strands. Else return ``False``. More precisely ``self``
-        comes before ``other`` if they are parts of the same strand in the closure
+        order of the strands.
+
+        More precisely ``self`` comes before ``other`` if they are parts of the same strand in the closure
         of the tangle and ``self`` comes before ``other`` in the default
         order (i.e. ``self < other``) or if they belong to different strands
         in the closure and the one of ``self`` has a smaler first item.
@@ -1218,12 +1221,11 @@ class Strand:
         """
         scl = self.closure()
         ocl = other.closure()
-        scll = list(scl.keys())
+        scll = list(scl)
         if scl == ocl:
             return scll.index(self) < scll.index(other)
-        else:
-            ocll = list(ocl.keys())
-            return scll[0] < ocll[0]
+        ocll = list(ocl)
+        return scll[0] < ocll[0]
 
     @cached_method
     def overlap(self, other):
@@ -1365,9 +1367,11 @@ class Strand:
     def position_sequence(self):
         r"""
         Return the list of positions ``(x, y)`` along the way of ``self``
-        from start to end. Here ``x in 1, ..., n`` is the horizontal position
-        according to the connector frame where ``n`` is the number of strands.
-        ``y`` indicates the position of a generator in the word of the tangle
+        from start to end.
+
+        Here ``x in [1, ..., n]`` is the horizontal position according to
+        the connector frame where ``n`` is the number of strands. ``y``
+        indicates the position of a generator in the word of the tangle
         of ``self``. ``y = 0`` is on top of the first generator and ``y = 1``
         on the bottom of the first generator.
 
@@ -1433,15 +1437,20 @@ class Strand:
         gen_pair = (i, i + 1)
 
         def final_pos(x):
-            if x in gen_pair:
-                return [j for j in gen_pair if j != x][0]
-            else:
-                return x
+            return [j for j in gen_pair if j != x][0] if x in gen_pair else x
 
         def find_join_strand(x):
             assert x in gen_pair
-            join = [-j for j in gen_pair if j != x][0]
-            return [lst for lst in left_tangle.list_of_strands() if join in (lst.start, lst.end)][0]
+            join = None
+            for j in gen_pair:
+                if j != x:
+                    join = -j
+                    break
+            assert join is not None
+            for lst in left_tangle.list_of_strands():
+                if join == lst.start or join == lst.end:
+                    return lst
+            assert False
 
         def add_bottom(positions):
             xs, ys = positions[0]
@@ -1545,11 +1554,10 @@ class Strand:
         INPUT:
 
         - ``pos`` -- integer pointing at the position of the crossing in
-          the defining word of the tangle of ``self``.
-
-        - ``gen`` -- integer, the index of the braid generator. Note that
+          the defining word of the tangle of ``self``
+        - ``gen`` -- integer, the index of the braid generator; note that
           this may have a different sign as the braid generator at ``pos``
-          of the tangle of ``self`` because of usage of ``shared_memory``.
+          of the tangle of ``self`` because of usage of ``shared_memory``
 
         EXAMPLES::
 
@@ -1588,11 +1596,10 @@ class Strand:
         INPUT:
 
         - ``pos`` -- integer pointing at the position of the crossing in
-          the defining word of the tangle of ``self``.
-
-        - ``gen`` -- integer, the index of the braid generator. Note that
+          the defining word of the tangle of ``self``
+        - ``gen`` -- integer, the index of the braid generator; note that
           this may have a different sign as the braid generator at ``pos``
-          of the tangle of ``self`` because of usage of ``shared_memory``.
+          of the tangle of ``self`` because of usage of ``shared_memory``
 
         EXAMPLES::
 
@@ -1662,8 +1669,10 @@ class Strand:
     def neighbour(self, successor: bool = True):
         r"""
         Return the strand next to ``self`` in the extension of ``self``
-        in the closure of the tangle. Depending on ``successor``
-        this is the following or the preceeding one.
+        in the closure of the tangle.
+
+        Depending on ``successor`` this is the following or the
+        preceeding one.
 
         EXAMPLES::
 
@@ -1749,8 +1758,7 @@ class _GeneratorPlot:
     INPUT:
 
     - ``pos`` -- pair of integers to fix the position in `\ZZ^2`
-      lattice.
-
+      lattice
     - ``rotation`` -- integer, giving the rotation as a factor of `\pi/2`
 
     EXAMPLES::
@@ -1768,7 +1776,7 @@ class _GeneratorPlot:
 
     def __init__(self, pos=(0, 0), rotation=0):
         r"""
-        Python contsructor. It stores rotation and position.
+        Initialize ``self``.
 
         EXAMPLES::
 
@@ -1925,10 +1933,10 @@ class _CapCupGenPlot(_GeneratorPlot):
     INPUT:
 
     - ``col_top`` -- a valid color name for :meth:`~sage.plot.bezier_path`
-      and :meth:`~sage.plot.line` used for the top line strand.
+      and :meth:`~sage.plot.line` used for the top line strand
     - ``col_bottom`` -- a valid color name for :meth:`~sage.plot.bezier_path`
-      and :meth:`~sage.plot.line` used for the bottom line strand.
-    - ``pos`` -- see :class:`GeneratorPlot`.
+      and :meth:`~sage.plot.line` used for the bottom line strand
+    - ``pos`` -- see :class:`GeneratorPlot`
     - ``rotation`` -- integer, giving the rotation as a factor of ``pi/2``
     """
     def __init__(self, col_top, col_bot, pos=(0, 0), rotation=0):
@@ -1985,13 +1993,13 @@ class _BraidGenPlot(_GeneratorPlot):
     INPUT:
 
     - ``col_over`` -- a valid color name for :meth:`~sage.plot.bezier_path`
-      and :meth:`~sage.plot.line` used for the over-crossing strand.
+      and :meth:`~sage.plot.line` used for the over-crossing strand
     - ``col_under`` -- a valid color name for :meth:`~sage.plot.bezier_path`
-      and :meth:`~sage.plot.line` used for the under-crosing strand.
-    - ``positive`` -- boolean whether to plot a positive or negative crossing.
+      and :meth:`~sage.plot.line` used for the under-crosing strand
+    - ``positive`` -- boolean whether to plot a positive or negative crossing
     - ``gap`` -- floating point number (default: 0.05); see the description
-      in :meth:`plot`.
-    - ``pos`` -- see :class:`_GeneratorPlot`.
+      in :meth:`plot`
+    - ``pos`` -- see :class:`_GeneratorPlot`
     - ``rotation`` -- integer, giving the rotation as a factor of ``pi/2``
     """
     def __init__(self, col_over, col_under, positive=True, gap=0.05, pos=(0, 0), rotation=0):
@@ -2052,8 +2060,8 @@ class _LinePlot(_GeneratorPlot):
     INPUT:
 
     - ``col`` -- a valid color name for :meth:`~sage.plot.bezier_path`
-      and :meth:`~sage.plot.line` used for the straight strand.
-    - ``pos`` -- see :class:`_GeneratorPlot`.
+      and :meth:`~sage.plot.line` used for the straight strand
+    - ``pos`` -- see :class:`_GeneratorPlot`
     - ``rotation`` -- integer, giving the rotation as a factor of ``pi/2``
     """
     def __init__(self, col, pos=(0, 0), rotation=0):

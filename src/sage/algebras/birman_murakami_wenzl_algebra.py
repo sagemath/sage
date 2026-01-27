@@ -36,7 +36,7 @@ relation between these tangles and the relation in the last row to an untwist
 relation. All other relations are consequences of Reidemeister moves applied
 to the tangles.
 
-Let's verify the relations above for `n = 4`::
+Let us verify the relations above for `n = 4`::
 
     sage: BMW4.<G1, G2, G3, E1, E2, E3> = algebras.BirmanMurakamiWenzl(4)
     sage: G1*G3 == G3*G1, E1*E3 == E3*E1
@@ -126,11 +126,6 @@ from sage.modules.free_module_element import vector
 from sage.monoids.tangles import KauffmanTangle, KauffmanTangles
 
 
-##############################################################################
-#
-#                  Class BirmanMurakamiWenzlElement (for elements)
-#
-##############################################################################
 class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
     r"""
     An element of a :class:`BirmanMurakamiWenzlAlgebra`.
@@ -230,16 +225,14 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
                     # => skn2*e_i = ~m*(g_i + skn1*~g_i) - 1
                     # => e_i = skn2*(~m*(g_i + skn1*~g_i) - 1)
                     return skn2*bt*(~m*bep + skn1*~m*ben - o)*bb
-                else:
-                    we1 = (we[0],)
-                    we2 = tuple(we[1:])
-                    KT = tangle.parent()
-                    be1 = KT(we1).connector()[0]
-                    be2 = KT(we2).connector()[0]
-                    return bt*phi(be1)*phi(be2)*bb
-            else:
-                # in this case wb must be empty, too
-                return braid_group_algebra(braid_group(w))
+                we1 = (we[0],)
+                we2 = tuple(we[1:])
+                KT = tangle.parent()
+                be1 = KT(we1).connector()[0]
+                be2 = KT(we2).connector()[0]
+                return bt * phi(be1) * phi(be2) * bb
+            # in this case wb must be empty, too
+            return braid_group_algebra(braid_group(w))
 
         return bmw_algebra._apply_module_morphism(self, phi,
                                                   codomain=braid_group_algebra)
@@ -276,7 +269,7 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
             los = tangle.list_of_strands()
             locs = set(tuple(st.closure()) for st in los)
             num_closures = len(locs)
-            return l**(-skn3*w)*x**(num_closures - 1)
+            return l**(-skn3*w) * x**(num_closures-1)
 
         return bmw_algebra._apply_module_morphism(self, mtr,
                                                   codomain=base_ring)
@@ -284,7 +277,7 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
     @cached_method
     def to_iwahori_hecke_algebra(self):
         r"""
-        Return the image of ``self`` in the Iwahori Hecke algebra of Cartan type
+        Return the image of ``self`` in the Iwahori-Hecke algebra of Cartan type
         ``A`` under the natural epimorphism.
 
         OUTPUT:
@@ -344,12 +337,11 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
         basis = bmw_algebra.basis().keys()
         skn1, skn2, skn3 = bmw_algebra._skein_normalization
         n = bmw_algebra.strands()
-        ct = 'A%s' % n
         S = LaurentPolynomialRing(ZZ, 'q')
         q = S.gen(0)
         FS = S.fraction_field()
         fq = FS(q)
-        T = IwahoriHeckeAlgebra(ct, q**(-skn3), skn1*q**skn3).T()
+        T = IwahoriHeckeAlgebra(['A', n], q**(-skn3), skn1*q**skn3).T()
         Ti = T.algebra_generators()
         R = bmw_algebra.base_ring()
         rho = R.hom((fq**(-skn3), fq**(-skn3) + skn1*fq**skn3))
@@ -361,16 +353,19 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
                 return T.one()
             if max(w) >= n:
                 return T.zero()
-            return prod(Ti[abs(i)]**sgn(i) for i in w)
+            return T.prod(Ti[abs(i)]**sgn(i) for i in w)
 
-        return sum(phi(k)*S(rho(v)) for k, v in dict(self).items())
+        return T.linear_combination((phi(k), S(rho(v))) for k, v in dict(self).items())
 
     @cached_method
     def to_brauer_algebra(self):
         r"""
         Return the image of ``self`` in the Brauer algebra under the module
-        homomorphism according to the shared basis index set. Note, that this
-        is not a homomorphism of algebras.
+        homomorphism according to the shared basis index set.
+
+        .. NOTE::
+
+            This is not an algebra homomorphism.
 
         OUTPUT:
 
@@ -393,9 +388,7 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
         bmw_algebra = self.parent()
         brauer_algebra = bmw_algebra.brauer_algebra()
 
-        def phi(bas_ele):
-            return brauer_algebra(bas_ele)
-        return bmw_algebra._apply_module_morphism(self, phi, codomain=brauer_algebra)
+        return bmw_algebra._apply_module_morphism(self, brauer_algebra.__call__, codomain=brauer_algebra)
 
 
 class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
@@ -437,7 +430,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
       for this keyword. If the three signs are called `skn1, skn2` and `skn3`
       their meaning can be derived from the following modified relations:
 
-    .. MATH::
+      .. MATH::
 
         \begin{aligned}
         G_{i} + skn1*{G_{i}}^{-1} & = m(1 + skn2*E_{i}),\\
@@ -512,9 +505,6 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
     """
     Element = BirmanMurakamiWenzlElement
 
-    ############################################################################
-    # private methods
-    ############################################################################
     @staticmethod
     def __classcall_private__(
         cls, nstrands: int,
@@ -624,11 +614,6 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         # ----------------------------------------------------------------------
         self._birman_murakami_wenzl_subalgebra = None
 
-    ############################################################################
-    # --------------------------------------------------------------------------
-    # overloaded inherited methods
-    # --------------------------------------------------------------------------
-    ############################################################################
     def _repr_(self):
         r"""
         Return a string representation.
@@ -752,6 +737,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         """
         return 2*(self.strands() - 1)
 
+    @cached_method
     def algebra_generators(self):
         r"""
         Return the algebra generators of ``self``.
@@ -764,12 +750,8 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         """
         T = self._tangles
         d = {T(g).connector()[0]: self(T(g)) for g in T.ambient().gens()}
-
-        def f(g):
-            return d[g]
-
         from sage.sets.family import Family
-        return Family(d, f)
+        return Family(list(d), d.__getitem__)
 
     def gens(self) -> tuple:
         r"""
@@ -781,7 +763,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
             sage: BMW2.gens()
             (g, e)
         """
-        return tuple(self.monomial(g) for g in self.algebra_generators().keys())
+        return tuple(self.algebra_generators())
 
     def gen(self, i) -> BirmanMurakamiWenzlElement:
         r"""
@@ -878,10 +860,9 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
             g1, g2 = gs
             e1, e2 = es
             return g2*~g1*g2
-        else:
-            g1, g2, g3 = gs
-            e1, e2, e3 = es
-            return g1*~g2*g3
+        g1, g2, g3 = gs
+        e1, e2, e3 = es
+        return g1*~g2*g3
 
     @cached_method
     def _from_kauffman_tangle(self, tangle: KauffmanTangle, rec_count: int = 0) -> BirmanMurakamiWenzlElement:
@@ -909,7 +890,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         x = self._delta
         skn1, skn2, skn3 = self._skein_normalization
 
-        prefix = ' '*2*rec_count + '%s' % rec_count
+        prefix = ' '*2*rec_count + repr(rec_count)
         pos = tangle.find_unlayered_crossing()
         if pos is None:
             conn, loops = tangle.connector()
@@ -972,10 +953,10 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         # short way for multiplications with one
         # ----------------------------------------------------------------------
         if g1 == self.one_basis():
-            return self(g2)
+            return self.monomial(g2)
 
         if g2 == self.one_basis():
-            return self(g1)
+            return self.monomial(g1)
 
         bas = self.basis().keys()
         t1 = bas[g1]
@@ -1137,8 +1118,6 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         if nstrands >= n or nstrands <= 0:
             raise ValueError('nstrands must be positive and less than %s' % n)
 
-        if nstrands == n - 1 and self._birman_murakami_wenzl_subalgebra is not None:
-            return self._birman_murakami_wenzl_subalgebra
 
         names = [str(g) for g in self.gens()]
         names_g = tuple(g for g in names if names.index(g) < nstrands - 1)

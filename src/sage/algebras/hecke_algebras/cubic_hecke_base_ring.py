@@ -658,7 +658,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
         # make sure that all given cubic equation roots and their inverses
         # belong to image_ring
         # ----------------------------------------------------------------------
-        non_units = tuple(x for x in im_gens if not x.is_unit())
+        non_units = tuple([x for x in im_gens if not x.is_unit()])
         try:
             image_ring = image_ring.localization(non_units)
         except ValueError:

@@ -3387,16 +3387,16 @@ class Link(SageObject):
 
         .. MATH::
 
-            \Delta(O) = 1,\,\,\,   \Delta(L_+) +  \Delta(L_-) = z (\Delta(L_0 + \Delta(L_{\infty}))
+            \Delta(O) = 1, \qquad\qquad
+            \Delta(L_+) +  \Delta(L_-) = z (\Delta(L_0 + \Delta(L_{\infty})).
 
         Furthermore, removing a curl of sign `\epsilon` leads to a multiplication
         of `\Delta(L)` with `a^{\epsilon}`.
 
         INPUT:
 
-        - ``params`` -- string containing the variable names of the polynomial
-          separated by a comma. If this keyword is not given these names are
-          set to ``a, z``
+        - ``params`` -- string (default: ``"a,z"``); the variable names of the polynomial
+          separated by a comma
 
         - ``skein_normalization`` -- a triple of signs (given as integers ``1`` and
           ``-1``). This allows to switch to other conventions concerning the signs
@@ -3447,8 +3447,8 @@ class Link(SageObject):
             # trivial braid on two strands
             return R.one()
         w *= -skein_normalization[2]
-        a, z = R.gens()
-        return a**w*BMW(b).markov_trace()
+        a = R.gen(0)
+        return a**w * BMW(b).markov_trace()
 
     def links_gould_polynomial(self, varnames='t0, t1'):
         r"""
