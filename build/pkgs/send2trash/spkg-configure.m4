@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([send2trash], [SAGE_PYTHON_PACKAGE_CHECK([send2trash])])

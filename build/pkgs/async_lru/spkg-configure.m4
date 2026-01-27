@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([async_lru], [SAGE_PYTHON_PACKAGE_CHECK([async_lru])])

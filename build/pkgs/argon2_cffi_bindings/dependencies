@@ -1,4 +1,0 @@
-cffi | $(PYTHON_TOOLCHAIN) setuptools setuptools_scm $(PYTHON)
-
-----------
-All lines of this file are ignored except the first.
