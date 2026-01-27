@@ -486,6 +486,20 @@ class WittVector_phantom(WittVector):
             (1, 0, 0)
             sage: 7*e
             (0, 1, 0)
+
+            sage: W = WittVectorRing(GF(25), prec=3)
+            sage: e = W.one(); e
+            (1, 0, 0)
+            sage: 5*e + e*e
+            (1, 1, 0)
+
+            sage: K = GF(25)
+            sage: R.<x> = K[]
+            sage: W = WittVectorRing(R, prec=3)
+            sage: e = W.one(); e
+            (1, 0, 0)
+            sage: 5*W.teichmuller_lift(x) + e*e
+            (1, x^5, 0)
         """
         self._prec = parent.precision()
         R = parent.coefficient_ring()
@@ -493,9 +507,10 @@ class WittVector_phantom(WittVector):
         base = R
         if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
             base = R.base()
+        prefix = None if not hasattr(base, "_prefix") else base._prefix
         base_lift = QqFP(base.cardinality(), prec=self._prec,
                          modulus=base.modulus(), names=(base.variable_name(),),
-                         res_name=base.variable_name())
+                         res_name=base.variable_name(), prefix=prefix)
         lift = base_lift
         if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
             lift = R.change_ring(base_lift)

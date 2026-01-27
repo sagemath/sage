@@ -520,12 +520,14 @@ class FiniteFieldFactory(UniqueFactory):
         EXAMPLES::
 
             sage: GF.create_key_and_extra_args(9, 'a')                                  # needs sage.libs.linbox
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True),
+            {'check_irreducible': True, 'check_prime': True})
 
         The order `q` can also be given as a pair `(p,n)`::
 
             sage: GF.create_key_and_extra_args((3, 2), 'a')                             # needs sage.libs.linbox
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True),
+            {'check_irreducible': True, 'check_prime': True})
 
         We do not take invalid keyword arguments and raise a value error
         to better ensure uniqueness::
@@ -539,9 +541,11 @@ class FiniteFieldFactory(UniqueFactory):
         using givaro::
 
             sage: GF.create_key_and_extra_args(16, 'a', implementation='ntl', repr='poly')        # needs sage.libs.ntl
-            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None, True, True), {})
+            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None),
+            {'check_irreducible': True, 'check_prime': True})
             sage: GF.create_key_and_extra_args(16, 'a', implementation='ntl', elem_cache=False)   # needs sage.libs.ntl
-            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None, True, True), {})
+            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None),
+            {'check_irreducible': True, 'check_prime': True})
             sage: GF(16, implementation='ntl') is GF(16, implementation='ntl', repr='foo')                  # needs sage.libs.ntl
             True
 
@@ -560,15 +564,18 @@ class FiniteFieldFactory(UniqueFactory):
         but we ignore them as they are not used, see :issue:`21433`::
 
             sage: GF.create_key_and_extra_args(9, 'a', structure=None)                  # needs sage.libs.linbox
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True),
+            {'check_irreducible': True, 'check_prime': True})
 
         We do not allow giving both ``implementation`` and ``impl``,
         but we do allow ``impl`` for backwards compatibility::
 
             sage: GF.create_key_and_extra_args(9, 'a', implementation='givaro')          # needs sage.libs.linbox
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True),
+            {'check_irreducible': True, 'check_prime': True})
             sage: GF.create_key_and_extra_args(9, 'a', impl='givaro')                   # needs sage.libs.linbox
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True),
+            {'check_irreducible': True, 'check_prime': True})
             sage: GF.create_key_and_extra_args(9, 'a', implementation='givaro', impl='ntl')  # needs sage.libs.linbox
             Traceback (most recent call last):
             ...
@@ -756,7 +763,10 @@ class FiniteFieldFactory(UniqueFactory):
                 repr = None
                 elem_cache = None
 
-            return (order, name, modulus, implementation, p, n, proof, prefix, repr, elem_cache, check_prime, check_irreducible), {}
+            return ((order, name, modulus, implementation, p, n, proof, prefix,
+                     repr, elem_cache),
+                    {"check_irreducible": check_irreducible,
+                     "check_prime": check_prime})
 
     @rename_keyword(deprecation=30507, impl='implementation')
     def create_object(self, version, key, **kwds):
@@ -832,11 +842,10 @@ class FiniteFieldFactory(UniqueFactory):
             repr = kwds.get('repr', 'poly')
             elem_cache = kwds.get('elem_cache', (order < 500))
             check_prime = check_irreducible = False
-        elif len(key) == 10:
-            order, name, modulus, implementation, p, n, proof, prefix, repr, elem_cache = key
-            check_prime = check_irreducible = False
         else:
-            order, name, modulus, implementation, p, n, proof, prefix, repr, elem_cache, check_prime, check_irreducible = key
+            order, name, modulus, implementation, p, n, proof, prefix, repr, elem_cache = key
+            check_prime = kwds["check_prime"]
+            check_irreducible = kwds["check_irreducible"]
 
         from sage.structure.proof.proof import WithProof
         with WithProof('arithmetic', proof):
