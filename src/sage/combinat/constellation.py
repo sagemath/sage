@@ -716,6 +716,14 @@ class Constellation_class(Element):
 
         EXAMPLES::
 
+            sage: S = SymmetricGroup(3)
+            sage: c = Constellation([S((1,3,2)), S((1,2,3)), None])
+            sage: c.relabel(S((2,3)))
+            Constellation of length 3 and degree 3
+            g0 (1,2,3)
+            g1 (1,3,2)
+            g2 (1)(2)(3)
+
             sage: c = Constellation(['(0,1)(2,3,4)','(1,4)',None]); c
             Constellation of length 3 and degree 5
             g0 (0,1)(2,3,4)
@@ -764,7 +772,11 @@ class Constellation_class(Element):
         if perm is not None:
             perm_inv = perm.inverse()
             g = [perm_inv * g_k * perm for g_k in self._g]
-            return self.parent(g)
+            P = self.parent()
+            return P.element_class(P, g, self._connected, self._mutable, False)
+            return self.parent()(g,
+                                 check=False,
+                                 mutable=self._mutable)
 
         if return_map:
             try:
