@@ -29,7 +29,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
     r"""
     An unramified extension of `\QQ_p` or `\ZZ_p`.
     """
-    def __init__(self, poly, prec, print_mode, names, element_class):
+    def __init__(self, poly, prec, print_mode, names, element_class, prefix):
         """
         Initialize ``self``.
 
@@ -41,6 +41,8 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         - ``names`` -- a 4-tuple, (``variable_name``, ``residue_name``,
           ``unramified_subextension_variable_name``, ``uniformizer_name``)
         - ``element_class`` -- the class for elements of this unramified extension
+        - ``prefix`` -- string (default: None); argument to be passed to the
+          residue field
 
         EXAMPLES::
 
@@ -52,7 +54,9 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         #else:
         #    self._PQR = pqr.PolynomialQuotientRing_domain(poly.parent(), poly, name = names)
         pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
-        self._res_field = GF(self.prime_pow.pow_Integer_Integer(poly.degree()), name=names[1], modulus=poly.change_ring(poly.base_ring().residue_field()))
+        self._res_field = GF(self.prime_pow.pow_Integer_Integer(poly.degree()),
+                             name=names[1], prefix=prefix,
+                             modulus=poly.change_ring(poly.base_ring().residue_field()))
 
     def _extension_type(self):
         """

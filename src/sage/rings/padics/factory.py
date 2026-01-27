@@ -840,7 +840,8 @@ Qp = Qp_class("Qp")
 def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
           print_mode=None, ram_name=None, res_name=None, print_pos=None,
        print_sep=None, print_max_ram_terms=None,
-       print_max_unram_terms=None, print_max_terse_terms=None, show_prec=None, check=True, implementation='FLINT'):
+       print_max_unram_terms=None, print_max_terse_terms=None, show_prec=None,
+       check=True, implementation='FLINT', prefix=None):
     r"""
     Given a prime power `q = p^n`, return the unique unramified
     extension of `\QQ_p` of degree `n`.
@@ -898,7 +899,10 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
     - ``show_prec`` -- boolean (default: ``None``); whether to show the precision
       for elements.  See PRINTING below.
 
-    - ``check`` -- boolean (default: ``True``); whether to check inputs
+    - ``check`` -- boolean (default: ``True``); whether to check inputs.
+
+    - ``prefix`` -- string (default: None); argument to be passed to the
+      residue field.
 
     OUTPUT: the corresponding unramified `p`-adic field
 
@@ -1390,7 +1394,8 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
                             print_sep=print_sep, print_max_ram_terms=print_max_ram_terms,
                             print_max_unram_terms=print_max_unram_terms,
                             print_max_terse_terms=print_max_terse_terms, show_prec=show_prec, check=check,
-                            unram=True, implementation=implementation)
+                            unram=True, implementation=implementation,
+                            prefix=prefix)
 
 ######################################################
 # Short constructor names for different types
@@ -2059,7 +2064,8 @@ Zp = Zp_class("Zp")
 def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
           print_mode=None, ram_name=None, res_name=None, print_pos=None,
        print_sep=None, print_max_ram_terms=None,
-       print_max_unram_terms=None, print_max_terse_terms=None, show_prec=None, check=True, implementation='FLINT'):
+       print_max_unram_terms=None, print_max_terse_terms=None, show_prec=None,
+       check=True, implementation='FLINT', prefix=None):
     r"""
     Given a prime power `q = p^n`, return the unique unramified
     extension of `\ZZ_p` of degree `n`.
@@ -2117,10 +2123,13 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
     - ``show_prec`` -- boolean (default: ``None``); whether to show the
       precision for elements.  See PRINTING below.
 
-    - ``check`` -- boolean (default: ``True``) whether to check inputs
+    - ``check`` -- boolean (default: ``True``) whether to check inputs.
 
     - ``implementation`` -- string (default: ``'FLINT'``); which
       implementation to use.  ``'NTL'`` is the other option.
+
+    - ``prefix`` -- string (default: None); argument to be passed to the
+      residue field.
 
     OUTPUT: the corresponding unramified `p`-adic ring
 
@@ -2618,7 +2627,8 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
                             print_sep=print_sep, print_max_ram_terms=print_max_ram_terms,
                             print_max_unram_terms=print_max_unram_terms,
                             print_max_terse_terms=print_max_terse_terms, show_prec=show_prec, check=check,
-                            unram=True, implementation=implementation)
+                            unram=True, implementation=implementation,
+                            prefix=prefix)
 
 ######################################################
 # Short constructor names for different types
@@ -3268,7 +3278,8 @@ class pAdicExtension_class(UniqueFactory):
                                   unram_name=None, ram_name=None, print_pos=None,
                                   print_sep=None, print_alphabet=None, print_max_ram_terms=None,
                                   print_max_unram_terms=None, print_max_terse_terms=None,
-                                  show_prec=None, check=True, unram=False, implementation='FLINT'):
+                                  show_prec=None, check=True, unram=False,
+                                  implementation='FLINT', prefix=None):
         r"""
         Create a key from input parameters for :class:`pAdicExtension`.
 
@@ -3292,7 +3303,8 @@ class pAdicExtension_class(UniqueFactory):
               -1,
               -1,
               'bigoh',
-              'NTL'),
+              'NTL',
+              None),
              {'approx_modulus': (1 + O(5^3))*x^4 + O(5^4)*x^3 + O(5^4)*x^2 + O(5^4)*x + 2*5 + 4*5^2 + 4*5^3 + O(5^4)})
 
             sage: A = Qp(3,5)
@@ -3355,6 +3367,8 @@ class pAdicExtension_class(UniqueFactory):
                 names = names[0]
             if not isinstance(names, str):
                 names = str(names)
+            if prefix is not None and not isinstance(prefix, str):
+                prefix = str(prefix)
         else:
             exact_modulus = modulus
             approx_modulus = modulus.change_ring(base)
@@ -3410,7 +3424,7 @@ class pAdicExtension_class(UniqueFactory):
             implementation = "NTL" # for testing - FLINT ramified extensions not implemented yet
         key = (polytype, base, exact_modulus, names, prec, print_mode, print_pos,
                print_sep, tuple(print_alphabet), print_max_ram_terms, print_max_unram_terms,
-               print_max_terse_terms, show_prec, implementation)
+               print_max_terse_terms, show_prec, implementation, prefix)
         return key, {'approx_modulus': approx_modulus}
 
     def create_object(self, version, key, approx_modulus=None, shift_seed=None):
@@ -3423,7 +3437,13 @@ class pAdicExtension_class(UniqueFactory):
 
             sage: R = Zp(5,3)
             sage: S.<x> = R[]
-            sage: pAdicExtension.create_object(version = (6,4,2), key = ('e', R, x^4 - 15, x^4 - 15, ('w', None, None, 'w'), 12, None, 'series', True, '|', (),-1,-1,-1,'NTL'), shift_seed = S(3 + O(5^3)))
+            sage: pAdicExtension.create_object(version=(6,4,2),
+            ....:                              key=('e', R, x^4 - 15, x^4 - 15,
+            ....:                                   ('w', None, None, 'w'), 12,
+            ....:                                   None, 'series', True, '|',
+            ....:                                   (), -1, -1, -1, 'NTL',
+            ....:                                   None),
+            ....:                              shift_seed=S(3 + O(5^3)))
             5-adic Eisenstein Extension Ring in w defined by x^4 - 15
         """
         polytype = key[0]
@@ -3432,7 +3452,8 @@ class pAdicExtension_class(UniqueFactory):
             key.append('NTL')
         if version[0] < 8:
             (polytype, base, premodulus, approx_modulus, names, prec, halt, print_mode, print_pos, print_sep,
-             print_alphabet, print_max_ram_terms, print_max_unram_terms, print_max_terse_terms, implementation) = key
+             print_alphabet, print_max_ram_terms, print_max_unram_terms,
+             print_max_terse_terms, implementation, prefix) = key
             from sage.structure.element import Expression
             if isinstance(premodulus, Expression):
                 exact_modulus = premodulus.polynomial(base.exact_field())
@@ -3442,7 +3463,7 @@ class pAdicExtension_class(UniqueFactory):
         else:
             (polytype, base, exact_modulus, names, prec, print_mode, print_pos,
              print_sep, print_alphabet, print_max_ram_terms, print_max_unram_terms,
-             print_max_terse_terms, show_prec, implementation) = key
+             print_max_terse_terms, show_prec, implementation, prefix) = key
             if polytype in ('e', 're'):
                 unif = exact_modulus.base_ring()(base.uniformizer())
                 shift_seed = (-exact_modulus[:exact_modulus.degree()] / unif).change_ring(base)
@@ -3454,9 +3475,22 @@ class pAdicExtension_class(UniqueFactory):
         if polytype == 'p':
             raise NotImplementedError("Extensions by general polynomials not yet supported.  Please use an unramified or Eisenstein polynomial.")
         T = ext_table[polytype, type(base.ground_ring_of_tower()).__base__]
+        if polytype == 'u':
+            return T(exact_modulus, approx_modulus, prec,
+                     {'mode': print_mode, 'pos': print_pos, 'sep': print_sep,
+                      'alphabet': print_alphabet,
+                      'max_ram_terms': print_max_ram_terms,
+                      'max_unram_terms': print_max_unram_terms,
+                      'max_terse_terms': print_max_terse_terms,
+                      'show_prec': show_prec},
+                     shift_seed, names, implementation, prefix)
         return T(exact_modulus, approx_modulus, prec,
-                 {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                  'max_ram_terms': print_max_ram_terms, 'max_unram_terms': print_max_unram_terms, 'max_terse_terms': print_max_terse_terms, 'show_prec': show_prec},
+                 {'mode': print_mode, 'pos': print_pos, 'sep': print_sep,
+                  'alphabet': print_alphabet,
+                  'max_ram_terms': print_max_ram_terms,
+                  'max_unram_terms': print_max_unram_terms,
+                  'max_terse_terms': print_max_terse_terms,
+                  'show_prec': show_prec},
                  shift_seed, names, implementation)
 
 
