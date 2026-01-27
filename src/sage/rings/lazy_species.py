@@ -2089,12 +2089,8 @@ class ConstellationSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
 
         TESTS::
 
-            sage: TestSuite(C).run(skip=['_test_category', '_test_pickling', '_test_structures', '_test_isotypes'])
-            sage: C._test_structures(max_size=4)
-            sage: C._test_isotypes(max_size=4)
-            sage: TestSuite(Cc).run(skip=['_test_category', '_test_pickling', '_test_structures', '_test_isotypes'])
-            sage: Cc._test_structures(max_size=4)
-            sage: Cc._test_isotypes(max_size=4)
+            sage: TestSuite(C).run(skip=['_test_category', '_test_pickling'])
+            sage: TestSuite(Cc).run(skip=['_test_category', '_test_pickling'])
         """
         P = parent._laurent_poly_ring
         self._length = length
@@ -2106,7 +2102,7 @@ class ConstellationSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
                     return P.zero()
                 return P.one()
             X = Constellations(self._length, n, connected=self._connected)
-            return P((X, lambda c, pi: c.relabel(pi)), {0: range(1, n+1)})
+            return P((X, lambda c, pi: c.relabel(pi)), {0: range(1, n+1)}, check=False)
 
         S = parent(coefficient)
         super().__init__(parent, S._coeff_stream)
