@@ -461,7 +461,7 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
         """
         return self.parent().orientation_antiinvolution(self)
 
-    def formal_markov_trace(self, generic=False, extension_ring=False):
+    def formal_markov_trace(self, generic=False, extension_ring=False, extended=False, field_embedding=False):
         r"""
         Return a formal expression which can be specialized to Markov traces
         which factor through the cubic Hecke algebra.
@@ -564,6 +564,14 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
             sage: g == K3_1.link().links_gould_polynomial()
             True
         """
+        if extended:
+            from sage.misc.superseded import deprecation
+            deprecation(41513, "extended is deprecated, use arguments generic and extension_ring instead.")
+
+        if field_embedding:
+            from sage.misc.superseded import deprecation
+            deprecation(41513, "field_embedding is deprecated, use arguments generic and extension_ring instead.")
+
         cha = self.parent()
         vs = self.to_vector()
         mtcf = cha._markov_trace_coeffs(generic=generic, extension_ring=extension_ring)
@@ -781,7 +789,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
     # private methods
     ############################################################################
     @staticmethod
-    def __classcall_private__(cls, n=None, names='c', cubic_equation_parameters=None, cubic_equation_roots=None):
+    def __classcall_private__(cls, n=None, names='c', cubic_equation_parameters=None, cubic_equation_roots=None, warning=True):
         r"""
         Normalize input to ensure a unique representation.
 
@@ -822,9 +830,10 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         names = tuple(normalize_names(n, names))
         return super().__classcall__(cls, names,
                                      cubic_equation_parameters=cubic_equation_parameters,
-                                     cubic_equation_roots=cubic_equation_roots)
+                                     cubic_equation_roots=cubic_equation_roots,
+                                     warning=warning)
 
-    def __init__(self, names, cubic_equation_parameters=None, cubic_equation_roots=None):
+    def __init__(self, names, cubic_equation_parameters=None, cubic_equation_roots=None, warning=True):
         r"""
         Initialize ``self``.
 
@@ -967,7 +976,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
                 cubic_equation_roots = solve_with_extension(cubic_equation,
                                                             ext_ring_names,
                                                             var='S', flatten=True,
-                                                            warning=False)
+                                                            warning=warning)
 
         # ----------------------------------------------------------------------
         # interpreting user given cubic equation roots to define the

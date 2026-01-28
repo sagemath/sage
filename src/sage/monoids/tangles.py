@@ -82,10 +82,6 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         V = list(dict(BMW.basis().keys()).values())
         sphinx_plot(V[2].plot())
     """
-    _defining_word = None
-    _positive_word = None
-    _positive_mutant = None
-    _shared_memory = None
     _crossing_dict = None
     _crossing_info = None
     _connector = None
@@ -105,7 +101,8 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         """
         return self.parent().strands()
 
-    def shared_memory(self):
+    @cached_method
+    def _shared_memory(self):
         r"""
         Return another, previously defined mutant instance of the class
         of ``self``, which yields the same calculation result for some of
@@ -119,20 +116,18 @@ class KauffmanTangle(AutomaticSemigroup.Element):
             sage: from sage.monoids.tangles import KauffmanTangles
             sage: KT = KauffmanTangles('g0, g1, e0, e1')
             sage: t1 = KT((-1, 2, 3, 4))
-            sage: t1.shared_memory() == t1
+            sage: t1._shared_memory() == t1
             True
             sage: t2 = KT((1, -2, 3, 4))
-            sage: t2.shared_memory() == t1
+            sage: t2._shared_memory() == t1
             True
         """
-        if not self._shared_memory:
-            P = self.parent()
-            positive_word = self.positive_word()
-            sh_mem = P._shared_memory
-            if positive_word not in sh_mem:
-                sh_mem[positive_word] = self
-            self._shared_memory = sh_mem[positive_word]
-        return self._shared_memory
+        P = self.parent()
+        positive_word = self.positive_word()
+        sh_mem = P._shared_memory
+        if positive_word not in sh_mem:
+            sh_mem[positive_word] = self
+        return sh_mem[positive_word]
 
     def connector(self) -> tuple:
         r"""
@@ -140,9 +135,9 @@ class KauffmanTangle(AutomaticSemigroup.Element):
 
         OUTPUT:
 
-        A pair ``(bd, removed_loops)`` of an instance of
+        A pair ``(bd, num_removed_loops)`` of an instance of
         :class:`~sage.algebras.diagram_algebras.BrauerDiagram` ``bd`` and an
-        integer ``removed_loops`` giving the number of closed loops in ``self``.
+        integer ``num_removed_loops`` giving the number of closed loops in ``self``.
 
         EXAMPLES::
 
@@ -155,7 +150,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         """
         if self._connector:
             return self._connector
-        sh_mem = self.shared_memory()
+        sh_mem = self._shared_memory()
         if sh_mem != self:
             self._connector = sh_mem.connector()
             return self._connector
@@ -167,7 +162,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         BA = BrauerAlgebra(P._nstrands, polygen(ZZ))
         PA = BA.ambient()
         con = BA.one_basis()
-        removed_loop = 0
+        num_removed_loop = 0
         for i in self.defining_word():
             i = abs(i)
             if i < n:
@@ -176,10 +171,11 @@ class KauffmanTangle(AutomaticSemigroup.Element):
                 i -= (n - 1)
                 bd, = PA.a(i).support()
             con, loops = con.compose(bd)
-            removed_loop += loops
-        self._connector = (con, removed_loop)
+            num_removed_loop += loops
+        self._connector = (con, num_removed_loop)
         return self._connector
 
+    @cached_method
     def defining_word(self) -> tuple:
         r"""
         Return the word defining ``self``.
@@ -191,10 +187,9 @@ class KauffmanTangle(AutomaticSemigroup.Element):
             sage: KT((-1, 2, 3, 4)).defining_word()
             (-1, 2, 3, 4)
         """
-        if not self._defining_word:
-            self._defining_word = self.value.Tietze()
-        return self._defining_word
+        return self.value.Tietze()
 
+    @cached_method
     def positive_word(self) -> tuple:
         r"""
         Return a word for a mutant of ``self``, switching negative
@@ -207,10 +202,9 @@ class KauffmanTangle(AutomaticSemigroup.Element):
             sage: KT((-1, 2, 3, 4)).positive_word()
             (1, 2, 3, 4)
         """
-        if not self._positive_word:
-            self._positive_word = tuple([abs(i) for i in self.defining_word()])
-        return self._positive_word
+        return tuple([abs(i) for i in self.defining_word()])
 
+    @cached_method
     def positive_mutant(self):
         r"""
         Return a mutant of ``self`` with negative braid generators
@@ -223,9 +217,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
             sage: KT((-1, 2, 3, 4)).positive_mutant()
             g0*g1*e0*e1
         """
-        if not self._positive_mutant:
-            self._positive_mutant = self.parent()(self.positive_word())
-        return self._positive_mutant
+        return self.parent()(self.positive_word())
 
     @cached_method
     def list_of_strands(self) -> list:
@@ -286,7 +278,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         """
         if self._crossing_dict:
             return self._crossing_dict
-        sh_mem = self.shared_memory()
+        sh_mem = self._shared_memory()
         if sh_mem != self:
             self._crossing_dict = sh_mem.crossing_dict()
             return self._crossing_dict
@@ -431,7 +423,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
             self._crossing_info = {}
         if pos in self._crossing_info:
             return self._crossing_info[pos]
-        sh_mem = self.shared_memory()
+        sh_mem = self._shared_memory()
         if sh_mem != self:
             self._crossing_info[pos] = sh_mem.crossing_info(pos)
             return self._crossing_info[pos]
@@ -730,7 +722,7 @@ class KauffmanTangles(AutomaticSemigroup):
         n = len(FG.gens()) // 2
         gens = FG.semigroup_generators()[:-n]
         import operator
-        from sage.categories.semigroups import Semigroups
+        from sage.categories.monoids import Monoids
         from sage.sets.family import Family
         category = Monoids().FinitelyGenerated().Infinite()
         super().__init__(Family(gens), FG, FG.one(), operator.mul, category)
@@ -1027,12 +1019,10 @@ class Strand:
             sage: from sage.monoids.tangles import KauffmanTangles, Strand
             sage: KT = KauffmanTangles('g0, g1, e0, e1')
             sage: el = KT((-1, 2))
-            sage: Strand(el, 0,1)
+            sage: Strand(el, 0, 1)
             Traceback (most recent call last):
             ...
-            ValueError: No strand constructible
-            sage: Strand(el, 1,1)
-            The 1-th closed loop on the way from top to bottom
+            ValueError: 0 and 1 do not describe a strand of g0^-1*g1
         """
         positive_tangle = tangle.positive_mutant()
         conn, loops = positive_tangle.connector()
@@ -1064,7 +1054,8 @@ class Strand:
         elif self.start > 0 and self.start == self.end:
             # closed loop
             self.sort = (4, self.start)
-        raise ValueError('no strand constructible')
+        else:
+            raise ValueError('no strand constructible')
 
     def __repr__(self) -> str:
         r"""

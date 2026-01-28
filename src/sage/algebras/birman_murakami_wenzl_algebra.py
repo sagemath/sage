@@ -746,7 +746,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
 
             sage: BMW2 = algebras.BirmanMurakamiWenzl(2)
             sage: BMW2.algebra_generators()
-            Lazy family (f(i))_{i in {{{-2, 1}, {-1, 2}}: g, {{-2, -1}, {1, 2}}: e}}
+            Finite family {{{-2, 1}, {-1, 2}}: g, {{-2, -1}, {1, 2}}: e}
         """
         T = self._tangles
         d = {T(g).connector()[0]: self(T(g)) for g in T.ambient().gens()}
@@ -1082,7 +1082,8 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         cubic_equation_parameters = (m + ~l**skn3, ~l**skn3*m + skn1, ~l**skn3*skn1)
         from sage.algebras.hecke_algebras.cubic_hecke_algebra import CubicHeckeAlgebra
         CHA = CubicHeckeAlgebra(self.strands(),
-                                cubic_equation_parameters=cubic_equation_parameters)
+                                cubic_equation_parameters=cubic_equation_parameters,
+                                warning=False)
         # induce a map from the base ring of the Markov trace module to R
         MTR = CHA._markov_trace_module().base_ring()
         u, v, w = CHA.cubic_equation_parameters(generic=True)
