@@ -35,7 +35,6 @@ EXAMPLES::
     True
     sage: c.euler_characteristic()
     2
-    sage: TestSuite(C).run()
 """
 
 # ****************************************************************************
@@ -115,7 +114,8 @@ def Constellations(*data, **options):
     if profile:
         profile = tuple(map(Partition, profile))
         return Constellations_p(profile, domain, bool(connected))
-    elif degree is not None and length is not None:
+
+    if degree is not None and length is not None:
         if domain is None:
             sym = SymmetricGroup(degree)
         else:
@@ -125,8 +125,8 @@ def Constellations(*data, **options):
 
         return Constellations_ld(Integer(length), Integer(degree),
                                  sym, bool(connected))
-    else:
-        raise ValueError("you must either provide a profile or a pair (length, degree)")
+
+    raise ValueError("you must either provide a profile or a pair (length, degree)")
 
 
 def Constellation(g=None, mutable=False, connected=True, check=True):
@@ -386,7 +386,7 @@ class Constellation_class(Element):
         if prod(self._g, Sd.one()) != Sd.one():
             raise ValueError("the product is not identity")
 
-        if self._connected and not perms_are_connected(self._g, d):
+        if self._connected and not perms_are_connected(self._g):
             raise ValueError("not connected")
 
     def __copy__(self):
@@ -442,10 +442,7 @@ class Constellation_class(Element):
             sage: c.is_connected()
             True
         """
-        if self._connected:
-            return True
-        else:
-            return perms_are_connected(self._g, self.degree())
+        return self._connected or perms_are_connected(self._g)
 
     def connected_components(self):
         """
@@ -942,6 +939,8 @@ class Constellations_ld(UniqueRepresentation, Parent):
             sage: TestSuite(Constellations(2, 3, connected=False)).run()
 
             sage: TestSuite(Constellations(3, 4, domain='abcd')).run()
+
+            sage: TestSuite(Constellations(3, 0, connected=False)).run()
         """
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
         Parent.__init__(self, category=FiniteEnumeratedSets())
@@ -968,8 +967,10 @@ class Constellations_ld(UniqueRepresentation, Parent):
             True
             sage: Constellations(1, 2, connected=False).is_empty()
             False
+            sage: Constellations(1, 0).is_empty()
+            True
         """
-        return self._connected and self._length == 1 and self._degree > 1
+        return self._connected and self._length == 1 and self._degree != 1
 
     def __contains__(self, elt):
         r"""
@@ -1002,10 +1003,12 @@ class Constellations_ld(UniqueRepresentation, Parent):
                 self(elt, check=True)
             except (ValueError, TypeError):
                 return False
-            else:
-                return True
-        elif not isinstance(elt, Constellation_class):
+
+            return True
+
+        if not isinstance(elt, Constellation_class):
             return False
+
         return (elt.parent() is self or
                 (elt.length() == self._length and
                  elt.degree() == self._degree and
@@ -1034,21 +1037,30 @@ class Constellations_ld(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: const = Constellations(3,3); const
+            sage: const = Constellations(3, 3)
+            sage: const
             Connected constellations of length 3 and degree 3 on {1, 2, 3}
-            sage: len([v for v in const])
+            sage: len(const)
             26
+
+        TESTS::
+
+            sage: list(Constellations(3, 0, connected=False))
+            [Constellation of length 3 and degree 0
+             g0 ()
+             g1 ()
+             g2 ()]
         """
         from itertools import product
 
-        if self._length == 1:
-            if self._degree == 1:
-                yield self([[0]])
+        if not self._length:
+            if not self._connected:
+                yield self([])
             return
 
         S = self._sym
         for p in product(S, repeat=self._length - 1):
-            if self._connected and not perms_are_connected(p, self._degree):
+            if self._connected and not perms_are_connected(p):
                 continue
             yield self(list(p) + [None], check=False)
 
@@ -1074,6 +1086,9 @@ class Constellations_ld(UniqueRepresentation, Parent):
             return factorial(self._degree) ** (k-1)
 
         # recurrence from :oeis:`A220754`
+        if not self._degree:
+            return ZZ.zero()
+
         a = []
         for n in range(self._degree):
             n = ZZ(n)
@@ -1190,7 +1205,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
             g1 ('a','b','c','d','e')
             g2 ('a')('b')('c')('d')('e')
 
-            sage: Constellations(0, 0).an_element()
+            sage: Constellations(0, 0, connected=False).an_element()
             Constellation of length 0 and degree 0
 
             sage: Constellations(1, 1).an_element()
@@ -1202,18 +1217,16 @@ class Constellations_ld(UniqueRepresentation, Parent):
             ...
             EmptySetError
         """
+        from sage.categories.sets_cat import EmptySetError
         if self.is_empty():
-            from sage.categories.sets_cat import EmptySetError
             raise EmptySetError
 
-        if self._degree == 0 and self._length == 0:
-            return self([])
-        elif self._length == 1:
-            return self(self._sym.one())
-
-        d = self._degree
         domain = self._sym.domain().list()
         if self._connected:
+            if self._length == 1 and self._degree == 1:
+                return self([None])
+
+            d = self._degree
             g = [[domain[d - 1]] + domain[:d - 1], domain[1:] + [domain[0]]]
             g += [domain[:]] * (self._length - 2)
         else:
@@ -1453,7 +1466,7 @@ class Constellations_p(UniqueRepresentation, Parent):
         S = self._cd._sym
         profile = list(self._profile)[:-1]
         for p in product(*[S.conjugacy_class(pi) for pi in profile]):
-            if self._cd._connected and not perms_are_connected(p, self._cd._degree):
+            if self._cd._connected and not perms_are_connected(p):
                 continue
             c = self._cd(list(p) + [None], check=False)
             if c.profile() == self._profile:
@@ -1554,31 +1567,49 @@ def perms_sym_init(g, sym=None):
         return sym, None
 
 
-def perms_are_connected(g, n):
+def perms_are_connected(g):
     """
     Check that the action of the generated group is transitive.
 
     INPUT:
 
-    - ``g`` -- list of permutations of `[0, n-1]` (in a SymmetricGroup)
-
-    - ``n`` -- integer
+    - ``g`` -- list of permutations (in a SymmetricGroup)
 
     EXAMPLES::
 
         sage: from sage.combinat.constellation import perms_are_connected
         sage: S = SymmetricGroup(range(3))
-        sage: perms_are_connected([S([0,1,2]),S([0,2,1])],3)
+        sage: perms_are_connected([S([0,1,2]), S([0,2,1])])
         False
-        sage: perms_are_connected([S([0,1,2]),S([1,2,0])],3)
+        sage: perms_are_connected([S([0,1,2]), S([1,2,0])])
         True
+
+    Constellations of degree 0 are not connected::
+
+        sage: S = SymmetricGroup(0)
+        sage: perms_are_connected([S([]), S([])])
+        False
     """
-    G = Graph()
     if g:
-        G.add_vertices(g[0].domain())
-    for p in g:
-        G.add_edges(p.dict().items(), loops=False)
-    return G.is_connected()
+        if not g[0].domain():
+            return False
+
+        D = g[0].domain()
+        x0 = D[0]
+        todo = [x0]
+        orbit = {x0}
+
+        while todo:
+            x = todo.pop()
+            for p in g:
+                y = p(x)
+                if y not in orbit:
+                    orbit.add(y)
+                    todo.append(y)
+
+        return len(orbit) == len(D)
+
+    return True
 
 
 def perms_canonical_labels_from(x, y, j0, verbose=False):
