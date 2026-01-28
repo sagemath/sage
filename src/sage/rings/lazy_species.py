@@ -2097,10 +2097,6 @@ class ConstellationSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
         self._connected = connected
 
         def coefficient(n):
-            if not n:
-                if connected:
-                    return P.zero()
-                return P.one()
             X = Constellations(self._length, n, connected=self._connected)
             return P((X, lambda c, pi: c.relabel(pi)), {0: range(1, n+1)}, check=False)
 
@@ -2138,8 +2134,6 @@ class ConstellationSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
              g2 (1)(2)]
         """
         labels = _label_sets(self.parent()._arity, [labels])
-        if self._connected and not len(labels[0]):
-            return []
         yield from Constellations(length=self._length,
                                   degree=len(labels[0]),
                                   domain=labels[0],
@@ -2163,10 +2157,6 @@ class ConstellationSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
                                 P._laurent_poly_ring._indices._indices.variable_names())
-        if self._connected:
-            return L(lambda n: Constellations(self._length,
-                                              n,
-                                              connected=self._connected).cardinality() / factorial(n) if n else 0)
         return L(lambda n: Constellations(self._length,
                                           n,
                                           connected=self._connected).cardinality() / factorial(n))
