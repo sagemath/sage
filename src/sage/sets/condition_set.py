@@ -392,6 +392,24 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
                 return element
         raise NotImplementedError
 
+    def random_element(self):
+        """
+        Return a random element in this set.
+
+        .. WARNING::
+
+            This might run forever.
+
+        EXAMPLES::
+
+            sage: ConditionSet(Set(ZZ), lambda x: x == 0).random_element()
+            0
+        """
+        while True:
+            x = self._universe.random_element()
+            if x in self:
+                return x
+
     def ambient(self):
         r"""
         Return the universe of ``self``.

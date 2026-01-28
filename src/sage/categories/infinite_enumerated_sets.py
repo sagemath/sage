@@ -45,22 +45,6 @@ class InfiniteEnumeratedSets(CategoryWithAxiom):
 
     class ParentMethods:
 
-        def random_element(self):
-            """
-            Raise an error because ``self`` is an infinite enumerated set.
-
-            EXAMPLES::
-
-                sage: NN = InfiniteEnumeratedSets().example()
-                sage: NN.random_element()
-                Traceback (most recent call last):
-                ...
-                NotImplementedError: infinite set
-
-            TODO: should this be an optional abstract_method instead?
-            """
-            raise NotImplementedError("infinite set")
-
         def tuple(self):
             """
             Raise an error because ``self`` is an infinite enumerated set.

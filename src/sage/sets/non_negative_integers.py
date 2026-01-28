@@ -12,6 +12,7 @@ from sage.structure.parent import Parent
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 
 
 class NonNegativeIntegers(UniqueRepresentation, Parent):
@@ -194,6 +195,17 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             42
         """
         return self.from_integer(Integer(42))
+
+    def random_element(self):
+        """
+        Return a random element of ``self``.
+
+        EXAMPLES::
+
+            sage: NonNegativeIntegers().an_element()
+            42
+        """
+        return self.from_integer(ZZ.random_element().abs())
 
     def some_elements(self):
         """
