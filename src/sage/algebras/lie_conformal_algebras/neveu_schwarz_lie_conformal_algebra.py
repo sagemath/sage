@@ -15,17 +15,19 @@ AUTHORS:
 
 - Reimundo Heluani (2020-06-03): Initial implementation.
 """
-#******************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2020 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
-from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+from sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra import (
+    GradedLieConformalAlgebra,
+)
 
 
 class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
@@ -50,7 +52,7 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
         sage: G.degree()
         3/2
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -70,7 +72,8 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
         weights = (2, QQ((3, 2)))
         parity = (0, 1)
         GradedLieConformalAlgebra.__init__(self, R, nsdict, names=('L', 'G'),
-                    central_elements=('C',), weights=weights, parity=parity)
+                                           central_elements=('C',),
+                                           weights=weights, parity=parity)
 
     def _repr_(self) -> str:
         """
@@ -82,4 +85,4 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
             The Neveu-Schwarz super Lie conformal algebra over Finite Field of size 5
         """
         return "The Neveu-Schwarz super Lie conformal algebra over {}".\
-                format(self.base_ring())
+            format(self.base_ring())

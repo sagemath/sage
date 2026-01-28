@@ -42,6 +42,7 @@ import sage.rings.rational_field
 from sage.arith.misc import crt
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.fields import Fields
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial import polynomial_element
 from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
@@ -258,14 +259,6 @@ class PolynomialQuotientRingFactory(UniqueFactory):
 PolynomialQuotientRing = PolynomialQuotientRingFactory("PolynomialQuotientRing")
 
 
-def is_PolynomialQuotientRing(x):
-    from sage.misc.superseded import deprecation
-    deprecation(38266,
-                "The function is_PolynomialQuotientRing is deprecated; "
-                "use 'isinstance(..., PolynomialQuotientRing_generic)' instead.")
-    return isinstance(x, PolynomialQuotientRing_generic)
-
-
 class PolynomialQuotientRing_generic(QuotientRing_generic):
     """
     Quotient of a univariate polynomial ring by an ideal.
@@ -277,6 +270,21 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         sage: S.<xbar> = R.quotient(x^2 + 1); S
         Univariate Quotient Polynomial Ring in xbar over Ring of integers modulo 8
          with modulus x^2 + 1
+
+    Quotient rings isomorphic to fields are recognised, and an isomorphism can
+    be constructed as follows::
+
+        sage: K.<z> = GF(103^2, modulus=[1, 0, 1])
+        sage: R.<x> = K[]
+        sage: f = R([93, 86*z, 34*z + 95, 66*z + 5, 1])
+        sage: Rf = R.quotient_ring(f)
+        sage: Rf.category().is_subcategory(FiniteFields())
+        True
+        sage: phi_inv, phi, FF = Rf._isomorphic_ring()
+        sage: FF is GF(103^8)
+        True
+        sage: phi_inv(phi(a := Rf.random_element())) == a
+        True
 
     We demonstrate object persistence.
 
@@ -309,95 +317,13 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
     TESTS:
 
-    By :issue:`11900`, polynomial quotient rings use Sage's
-    category framework. They do so in an unusual way: During their
-    initialisation, they are declared to be objects in the category of
-    quotients of commutative algebras over a base ring. However, if it
-    is tested whether a quotient ring is actually a field, the
-    category might be refined, which also includes a change of the
-    class of the quotient ring and its newly created elements.
-
-    Thus, in order to document that this works fine, we go into some detail::
-
         sage: P.<x> = QQ[]
         sage: Q = P.quotient(x^2 + 2)
-        sage: Q.category()
-        Category of commutative no zero divisors quotients of algebras over
-         (number fields and quotient fields and metric spaces)
-
-    We verify that the elements belong to the correct element class.
-    Also, we list the attributes that are provided by the element
-    class of the category, and store the current class of the quotient
-    ring::
-
-        sage: isinstance(Q.an_element(), Q.element_class)
+        sage: a = Q.random_element()
+        sage: "sqrt" in dir(a)
         True
-        sage: [s for s in dir(Q.category().element_class) if not s.startswith('_')]
-        ['cartesian_product',
-         'inverse',
-         'inverse_of_unit',
-         'is_idempotent',
-         'is_one',
-         'is_square',
-         'is_unit',
-         'lift',
-         'powers',
-         'sqrt']
-        sage: first_class = Q.__class__
-
-    We try to find out whether `Q` is a field. Indeed it is, and thus its category,
-    including its class and element class, is changed accordingly::
-
-        sage: Q in Fields()
-        True
-        sage: Q.category()
-        Category of commutative division no zero divisors quotients of algebras
-         over (number fields and quotient fields and metric spaces)
-        sage: first_class == Q.__class__
-        False
-        sage: [s for s in dir(Q.category().element_class) if not s.startswith('_')]
-        ['cartesian_product',
-         'euclidean_degree',
-         'factor',
-         'gcd',
-         'inverse',
-         'inverse_of_unit',
-         'is_idempotent',
-         'is_one',
-         'is_square',
-         'is_unit',
-         'lcm',
-         'lift',
-         'powers',
-         'quo_rem',
-         'radical',
-         'sqrt',
-         'squarefree_part',
-         'xgcd']
-
-    As one can see, the elements are now inheriting additional
-    methods: lcm and gcd. Even though ``Q.an_element()`` belongs to
-    the old and not to the new element class, it still inherits the
-    new methods from the category of fields, thanks to
-    :meth:`Element.__getattr__`::
-
-        sage: e = Q.an_element()
-        sage: isinstance(e, Q.element_class)
-        False
-        sage: e.gcd(e + 1)
-        1
-
-    The test suite passes. However, we have to skip the test for its elements,
-    since ``an_element`` has been cached in the call above and its class does not
-    match the new category's element class anymore::
-
-        sage: TestSuite(Q).run(skip=['_test_elements'])                                 # needs sage.rings.number_field
-
-    Newly created elements are fine, though, and their test suite passes::
-
-        sage: TestSuite(Q(x)).run()
-        sage: isinstance(Q(x), Q.element_class)
-        True
+        sage: TestSuite(Q).run()                                 # needs sage.rings.number_field
+        sage: TestSuite(a).run()
     """
     Element = PolynomialQuotientRingElement
 
@@ -984,6 +910,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: S = R.quotient(x^2005 + 1)
             sage: S.degree()
             2005
+
+        .. SEEALSO::
+
+            :meth:`PolynomialQuotientRing_field.absolute_degree`
         """
         return self.modulus().degree()
 
@@ -1040,6 +970,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         """
         Return whether or not this quotient ring is a field.
 
+        INPUT:
+
+        - ``proof`` -- boolean (default: ``True``) require the
+          ``is_irreducible`` method of the modulus to be implemented
+
         EXAMPLES::
 
             sage: R.<z> = PolynomialRing(ZZ)
@@ -1051,8 +986,8 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: S.is_field()
             True
 
-        If proof is ``True``, requires the ``is_irreducible`` method of the
-        modulus to be implemented::
+        If proof is ``True``, an exception is raised when the
+        ``is_irreducible`` method of the modulus is not implemented::
 
             sage: # needs sage.rings.padics
             sage: R1.<x> = Qp(2)[]
@@ -2432,7 +2367,61 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
         True
     """
     def __init__(self, ring, polynomial, name=None, category=None):
+        r"""
+        Initialize ``self``.
+
+        TESTS:
+
+        The category is set correctly on initialization and member methods are
+        inherited correctly::
+
+            sage: R.<x> = GF(103)[]
+            sage: f = R.irreducible_element(3, algorithm="random")
+            sage: S = R.quo(f)
+            sage: S.category().is_subcategory(FiniteFields())
+            True
+            sage: a = S.random_element()^2
+            sage: (a.sqrt())^2 == a
+            True
+        """
+        category = CommutativeAlgebras(ring.base_ring().category()).Quotients() & Fields()
         PolynomialQuotientRing_domain.__init__(self, ring, polynomial, name, category)
+
+    def absolute_degree(self):
+        """
+        Return the degree of this quotient ring over the absolute base field.
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(9)
+            sage: R.<x> = PolynomialRing(K)
+            sage: S = R.quotient(x^2 + a*x + 1)
+            sage: S.absolute_degree()
+            4
+            sage: x = polygen(QQ, 'x')
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: R.<y> = PolynomialRing(K)
+            sage: S = R.quotient(y^3 + y + 1)
+            sage: S.absolute_degree()
+            6
+            sage: R.<x> = PolynomialRing(RR)
+            sage: S = R.quotient(x^2 + 1)
+            sage: S.absolute_degree()
+            2
+            sage: K = GF(4)
+            sage: A.<x> = K[]
+            sage: L = K.extension(x+1)
+            sage: L.absolute_degree()
+            2
+
+        .. SEEALSO::
+
+            :meth:`PolynomialQuotientRing_generic.degree`
+        """
+        base_field = self.base_field()
+        if hasattr(base_field, 'absolute_degree'):
+            return base_field.absolute_degree() * self.degree()
+        return self.degree()
 
     def base_field(self):
         r"""

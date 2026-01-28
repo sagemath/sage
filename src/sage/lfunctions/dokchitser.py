@@ -100,19 +100,19 @@ class Dokchitser(SageObject):
     We compute with the `L`-series of a rank `1` curve. ::
 
         sage: E = EllipticCurve('37a')
-        sage: L = E.lseries().dokchitser(algorithm='gp'); L
-        Dokchitser L-function associated to Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+        sage: L = E.lseries().dokchitser(algorithm='pari'); L
+        PARI L-function associated to Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
         sage: L(1)
         0.000000000000000
         sage: L.derivative(1)
         0.305999773834052
         sage: L.derivative(1,2)
         0.373095594536324
-        sage: L.num_coeffs()
-        48
+        sage: L.cost()
+        50
         sage: L.taylor_series(1,4)
         0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + O(z^4)
-        sage: L.check_functional_equation()  # abs tol 1e-19
+        sage: L.check_functional_equation()  # abs tol 1e-17
         6.04442711160669e-18
 
     RANK 2 ELLIPTIC CURVE:
@@ -121,14 +121,13 @@ class Dokchitser(SageObject):
     `L`-series of a rank `2` elliptic curve. ::
 
         sage: E = EllipticCurve('389a')
-        sage: L = E.lseries().dokchitser(algorithm='gp')
-        sage: L.num_coeffs()
-        156
+        sage: L = E.lseries().dokchitser(algorithm='pari')
+        sage: L.cost()
+        163
         sage: L.derivative(1,E.rank())
         1.51863300057685
         sage: L.taylor_series(1,4)
-        -1.27685190980159e-23 + (7.23588070754027e-24)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)  # 32-bit
-        -2.72911738151096e-23 + (1.54658247036311e-23)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)  # 64-bit
+        ...e-19 + (...e-19)*z + 0.759316500288427*z^2 - 0.430302337583362*z^3 + O(z^4)
 
     NUMBER FIELD:
 
@@ -139,8 +138,8 @@ class Dokchitser(SageObject):
         sage: L = K.zeta_function(algorithm='gp')
         sage: L.conductor
         400
-        sage: L.num_coeffs()
-        264
+        sage: L.cost()
+        313
         sage: L(2)
         1.10398438736918
         sage: L.taylor_series(2,3)
@@ -159,10 +158,10 @@ class Dokchitser(SageObject):
     coefgrow(n)= `(4n)^{11/2}` (by a factor 1024), so
     re-defining coefgrow() improves efficiency (slightly faster). ::
 
-        sage: L.num_coeffs()
+        sage: L.cost()
         12
         sage: L.set_coeff_growth('2*n^(11/2)')
-        sage: L.num_coeffs()
+        sage: L.cost()
         11
 
     Now we're ready to evaluate, etc. ::
@@ -202,7 +201,7 @@ class Dokchitser(SageObject):
         Initialization of Dokchitser calculator EXAMPLES::
 
             sage: L = Dokchitser(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], init='1')
-            sage: L.num_coeffs()
+            sage: L.cost()
             4
         """
         self.conductor = conductor
@@ -224,7 +223,7 @@ class Dokchitser(SageObject):
             del D['_Dokchitser__gp']
         return reduce_load_dokchitser, (D, )
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Dokchitser L-series of conductor %s and weight %s" % (
             self.conductor, self.weight)
 
@@ -235,15 +234,6 @@ class Dokchitser(SageObject):
         """
         Return the gp interpreter that is used to implement this Dokchitser
         `L`-function.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve('11a')
-            sage: L = E.lseries().dokchitser(algorithm='gp')
-            sage: L(2)
-            0.546048036215014
-            sage: L.gp()
-            PARI/GP interpreter
         """
         if self.__gp is None:
             self._instantiate_gp()
@@ -345,36 +335,38 @@ class Dokchitser(SageObject):
         if not self.__init:
             raise ValueError("you must call init_coeffs on the L-function first")
 
-    def num_coeffs(self, T=1):
+    def cost(self, T=1):
         """
-        Return number of coefficients `a_n` that are needed in
+        Return the number of coefficients `a_n` that are needed in
         order to perform most relevant `L`-function computations to
         the desired precision.
 
         EXAMPLES::
 
             sage: E = EllipticCurve('11a')
-            sage: L = E.lseries().dokchitser(algorithm='gp')
-            sage: L.num_coeffs()
-            26
+            sage: L = E.lseries().dokchitser(algorithm='pari')
+            sage: L.cost()
+            27
             sage: E = EllipticCurve('5077a')
-            sage: L = E.lseries().dokchitser(algorithm='gp')
-            sage: L.num_coeffs()
-            568
+            sage: L = E.lseries().dokchitser(algorithm='pari')
+            sage: L.cost()
+            591
             sage: L = Dokchitser(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], init='1')
-            sage: L.num_coeffs()
+            sage: L.cost()
             4
 
-        Verify that ``num_coeffs`` works with non-real spectral
+        Verify that ``cost`` works with non-real spectral
         parameters, e.g. for the `L`-function of the level 10 Maass form
         with eigenvalue 2.7341055592527126::
 
             sage: ev = 2.7341055592527126
             sage: L = Dokchitser(conductor=10, gammaV=[ev*i, -ev*i],weight=2,eps=1)
-            sage: L.num_coeffs()
+            sage: L.cost()
             26
         """
         return Integer(self._gp_call_inst('cflength', T))
+
+    num_coeffs = cost
 
     def init_coeffs(self, v, cutoff=1,
                     w=None,
@@ -501,20 +493,11 @@ class Dokchitser(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('5077a')
-            sage: L = E.lseries().dokchitser(100, algorithm='gp')
+            sage: L = E.lseries().dokchitser(100, algorithm='pari')
             sage: L(1)
             0.00000000000000000000000000000
             sage: L(1+I)
             -1.3085436607849493358323930438 + 0.81298000036784359634835412129*I
-            sage: L(1+I, 1.2)
-            -1.3085436607849493358323930438 + 0.81298000036784359634835412129*I
-
-        TESTS::
-
-            sage: L(1+I, 0)
-            Traceback (most recent call last):
-            ...
-            RuntimeError
         """
         self.__check_init()
         s = self.__CC(s)
@@ -558,7 +541,7 @@ class Dokchitser(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('389a')
-            sage: L = E.lseries().dokchitser(algorithm='gp')
+            sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.derivative(1,E.rank())
             1.51863300057685
         """
@@ -599,7 +582,7 @@ class Dokchitser(SageObject):
             sage: L.taylor_series(2, 3)
             1.64493406684823 - 0.937548254315844*z + 0.994640117149451*z^2 + O(z^3)
             sage: E = EllipticCurve('37a')
-            sage: L = E.lseries().dokchitser(algorithm='gp')
+            sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.taylor_series(1)
             0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + 0.0161066468496401*z^4 + 0.0185955175398802*z^5 + O(z^6)
 
@@ -607,9 +590,9 @@ class Dokchitser(SageObject):
         precision. ::
 
             sage: E = EllipticCurve('389a')
-            sage: L = E.lseries().dokchitser(200, algorithm='gp')
+            sage: L = E.lseries().dokchitser(200, algorithm='pari')
             sage: L.taylor_series(1,3)
-            ...e-82 + (...e-82)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
+            ...e-63 + (...e-63)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
 
         Check that :issue:`25402` is fixed::
 
@@ -673,7 +656,7 @@ class Dokchitser(SageObject):
           balance
 
         - if you don't have to verify the functional equation or the
-          L-values, call num_coeffs(1) and initLdata("a(k)",1), you need
+          L-values, call cost(1) and initLdata("a(k)",1), you need
           slightly less coefficients.
 
         EXAMPLES::

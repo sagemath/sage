@@ -96,9 +96,9 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
         sage: set_random_seed(0)
         sage: graphs.RandomGNP(50,.2, algorithm='Sage').size()
         243
-        sage: graphs.RandomGNP(50,.2, algorithm='networkx').size()                      # needs networkx
-        279     # 32-bit
-        209     # 64-bit
+        sage: s = graphs.RandomGNP(50,.2, algorithm='networkx').size()                  # needs networkx
+        sage: s in [279, 209]  # 32 and 64 bit, needs networkx
+        True
     """
     if n < 0:
         raise ValueError("The number of nodes must be positive or null.")
@@ -2237,8 +2237,8 @@ def blossoming_contour(t, shift=0, seed=None):
     t1, t2 = t
     leaf_xb = ('xb',)
     leaf_x = ('x',)
-    n1 = t1.node_number()
-    n = t.node_number()
+    n1 = t1.number_of_nodes()
+    n = t.number_of_nodes()
 
     # adding buds on edges in t1
     if not t1:

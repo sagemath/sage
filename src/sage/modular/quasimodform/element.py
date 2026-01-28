@@ -18,6 +18,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Self
 
 from sage.modular.arithgroup.congroup_sl2z import SL2Z_class
 from sage.modular.modform.constructor import EisensteinForms
@@ -95,7 +96,7 @@ class QuasiModularFormsElement(ModuleElement):
         sage: F.polynomial()
         -512*E2^4*E2_1^3 + E2^4*E3_0^2 + 48*E2^4*E3_1^2 + E3_0
     """
-    def __init__(self, parent, polynomial):
+    def __init__(self, parent, polynomial) -> None:
         r"""
         INPUT:
 
@@ -149,7 +150,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     qexp = q_expansion  # alias
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -165,7 +166,7 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return str(self.q_expansion())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -177,7 +178,7 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return self.q_expansion()._latex_()
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         Compare ``self`` with ``other``.
 
@@ -201,7 +202,7 @@ class QuasiModularFormsElement(ModuleElement):
             raise TypeError('invalid comparison between quasimodular forms ring elements')
         return richcmp(self._polynomial, other._polynomial, op)
 
-    def _add_(self, other):
+    def _add_(self, other) -> Self:
         r"""
         Addition of two ``QuasiModularFormElement``.
 
@@ -224,7 +225,7 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return self.__class__(self.parent(), self._polynomial + other._polynomial)
 
-    def __neg__(self):
+    def __neg__(self) -> Self:
         r"""
         The negation of ``self``.
 
@@ -239,7 +240,7 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return self.__class__(self.parent(), -self._polynomial)
 
-    def _mul_(self, other):
+    def _mul_(self, other) -> Self:
         r"""
         The multiplication of two ``QuasiModularFormElement``.
 
@@ -262,7 +263,7 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return self.__class__(self.parent(), self._polynomial * other._polynomial)
 
-    def _lmul_(self, c):
+    def _lmul_(self, c) -> Self:
         r"""
         The left action of the base ring on ``self``.
 
@@ -284,7 +285,7 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return self.__class__(self.parent(), c * self._polynomial)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return whether ``self`` is nonzero.
 
@@ -487,9 +488,9 @@ class QuasiModularFormsElement(ModuleElement):
             subs_dictionary[g] = poly_gens[idx]
         return sum(f.to_polynomial().subs(subs_dictionary) * E2 ** exp for exp, f in enumerate(self._polynomial.coefficients(sparse=False)))
 
-    to_polynomial = polynomial # alias
+    to_polynomial = polynomial  # alias
 
-    def weights_list(self):
+    def weights_list(self) -> list[Integer]:
         r"""
         Return the list of the weights of all the graded components of the given
         graded quasimodular form.
@@ -547,7 +548,7 @@ class QuasiModularFormsElement(ModuleElement):
                     return False
         return True
 
-    def weight(self):
+    def weight(self) -> Integer:
         r"""
         Return the weight of the given quasimodular form.
 
@@ -573,13 +574,12 @@ class QuasiModularFormsElement(ModuleElement):
         if self.is_homogeneous():
             return (self._polynomial.leading_coefficient().weight()
                     + 2*self._polynomial.degree())
-        else:
-            raise ValueError("the given graded quasiform is not an homogeneous \
-                             element")
+        raise ValueError("the given graded quasiform is not an homogeneous "
+                         "element")
 
     degree = weight  # alias
 
-    def homogeneous_components(self):
+    def homogeneous_components(self) -> dict[Integer, Self]:
         r"""
         Return a dictionary where the values are the homogeneous components of
         the given graded form and the keys are the weights of those components.
@@ -611,8 +611,8 @@ class QuasiModularFormsElement(ModuleElement):
         """
         QM = self.parent()
         if self.is_zero():
-            return {ZZ(0): self}
-        components = {}
+            return {ZZ.zero(): self}
+        components: dict[Integer, Self] = {}
         E2 = self.parent().weight_2_eisenstein_series()
         for i, c in enumerate(self._polynomial.coefficients(sparse=False)):
             if c:
@@ -624,7 +624,7 @@ class QuasiModularFormsElement(ModuleElement):
                         components[ZZ(k + 2*i)] = QM(forms[k]*(E2**i))
         return components
 
-    def __getitem__(self, weight):
+    def __getitem__(self, weight) -> Self | None:
         r"""
         Return the homogeneous component of the given quasimodular form ring
         element.
@@ -662,11 +662,12 @@ class QuasiModularFormsElement(ModuleElement):
             raise KeyError("the weight must be an integer")
         if weight < 0:
             raise ValueError("the weight must be nonnegative")
-        return self.homogeneous_components().get(weight, self.parent().zero())
+        return self.homogeneous_components().get(Integer(weight),
+                                                 self.parent().zero())
 
     homogeneous_component = __getitem__  # alias
 
-    def serre_derivative(self):
+    def serre_derivative(self) -> Self:
         r"""
         Return the Serre derivative of the given quasimodular form.
 
@@ -734,7 +735,7 @@ class QuasiModularFormsElement(ModuleElement):
                 der += QM(A + B - C)
         return der
 
-    def derivative(self):
+    def derivative(self) -> Self:
         r"""
         Return the derivative `q \frac{d}{dq}` of the given quasimodular form.
 
@@ -773,7 +774,7 @@ class QuasiModularFormsElement(ModuleElement):
 
         return sum(f.serre_derivative() + R(k) * u * f * E2 for k, f in hom_comp.items())
 
-    def _compute(self, X):
+    def _compute(self, X: list) -> list:
         r"""
         Compute the coefficients of `q^n` of the `q`-expansion of this,
         graded quasimodular form for `n` in the list `X`.

@@ -497,7 +497,10 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(p=5) is SteenrodAlgebra(p=5, generic=True)
             True
         """
-        from .steenrod_algebra_misc import get_basis_name, normalize_profile
+        from sage.algebras.steenrod.steenrod_algebra_misc import (
+            get_basis_name,
+            normalize_profile,
+        )
         profile = kwds.get('profile', None)
         precision = kwds.get('precision', None)
         truncation_type = kwds.get('truncation_type', 'auto')
@@ -587,15 +590,18 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: A1 == SteenrodAlgebra(2, profile=[2,1], basis='pst')
             False
         """
+        from functools import partial
+
+        from sage.algebras.steenrod.steenrod_algebra_bases import steenrod_algebra_basis
         from sage.arith.misc import is_prime
-        from sage.categories.super_hopf_algebras_with_basis import SuperHopfAlgebrasWithBasis
-        from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+        from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+        from sage.categories.super_hopf_algebras_with_basis import (
+            SuperHopfAlgebrasWithBasis,
+        )
+        from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.infinity import Infinity
         from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-        from functools import partial
-        from .steenrod_algebra_bases import steenrod_algebra_basis
-        from sage.rings.finite_rings.finite_field_constructor import GF
         profile = kwds.get('profile', None)
         truncation_type = kwds.get('truncation_type', 'auto')
         self._generic = kwds.get('generic')
@@ -637,7 +643,10 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                                          scalar_mult=' ')
 
         # For the graded modules
-        from sage.modules.fp_graded.steenrod.module import SteenrodFPModule, SteenrodFreeModule
+        from sage.modules.fp_graded.steenrod.module import (
+            SteenrodFPModule,
+            SteenrodFreeModule,
+        )
         self._fp_graded_module_class = SteenrodFPModule
         self._free_graded_module_class = SteenrodFreeModule
 
@@ -661,12 +670,13 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             >  9 (0, 2, 1)            P^2 beta
             > 10 (1, 2, 1)            beta P^2 beta
         """
-        from .steenrod_algebra_bases import steenrod_algebra_basis
-        from sage.sets.integer_range import IntegerRange
-        from sage.rings.integer import Integer
-        from sage.rings.infinity import Infinity
-        from functools import partial
         import itertools
+        from functools import partial
+
+        from sage.algebras.steenrod.steenrod_algebra_bases import steenrod_algebra_basis
+        from sage.rings.infinity import Infinity
+        from sage.rings.integer import Integer
+        from sage.sets.integer_range import IntegerRange
         if self.is_finite():
             maxdim = self.top_class().degree()
             Ir = IntegerRange(Integer(0), Integer(maxdim + 1))
@@ -869,12 +879,18 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(2, generic=True, basis='pst').P(0,0,2)
             P^1_3
         """
-        from .steenrod_algebra_misc import milnor_mono_to_string, \
-            serre_cartan_mono_to_string, wood_mono_to_string, \
-            wall_mono_to_string, wall_long_mono_to_string, \
-            arnonA_mono_to_string, arnonA_long_mono_to_string, \
-            pst_mono_to_string, \
-            comm_long_mono_to_string, comm_mono_to_string
+        from sage.algebras.steenrod.steenrod_algebra_misc import (
+            arnonA_long_mono_to_string,
+            arnonA_mono_to_string,
+            comm_long_mono_to_string,
+            comm_mono_to_string,
+            milnor_mono_to_string,
+            pst_mono_to_string,
+            serre_cartan_mono_to_string,
+            wall_long_mono_to_string,
+            wall_mono_to_string,
+            wood_mono_to_string,
+        )
         p = self.prime()
         basis = self.basis_name()
         if basis == 'milnor':
@@ -1188,14 +1204,20 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         basis = self.basis_name()
         if basis == 'milnor':
             if not self._generic:
-                from .steenrod_algebra_mult import milnor_multiplication
+                from sage.algebras.steenrod.steenrod_algebra_mult import (
+                    milnor_multiplication,
+                )
                 d = milnor_multiplication(t1, t2)
             else:
-                from .steenrod_algebra_mult import milnor_multiplication_odd
+                from sage.algebras.steenrod.steenrod_algebra_mult import (
+                    milnor_multiplication_odd,
+                )
                 d = milnor_multiplication_odd(t1, t2, p)
             return self._from_dict(d, coerce=True)
         elif basis == 'serre-cartan':
-            from .steenrod_algebra_mult import make_mono_admissible
+            from sage.algebras.steenrod.steenrod_algebra_mult import (
+                make_mono_admissible,
+            )
             if self._generic:
                 # make sure output has an odd number of terms.  if both t1
                 # and t2 have an odd number, concatenate them, adding the
@@ -1287,7 +1309,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 ans.extend([[i] + x for x in coprod_list(t[1:])])
             return ans
 
-        from .steenrod_algebra_misc import get_basis_name
+        from sage.algebras.steenrod.steenrod_algebra_misc import get_basis_name
         p = self.prime()
         basis = self.basis_name()
         if algorithm is None:
@@ -1318,8 +1340,10 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                     tens = dict.fromkeys(zip(left, right), 1)
                     return self.tensor_square()._from_dict(tens, coerce=True)
                 else:  # p odd
+                    from sage.algebras.steenrod.steenrod_algebra_misc import (
+                        convert_perm,
+                    )
                     from sage.combinat.permutation import Permutation
-                    from .steenrod_algebra_misc import convert_perm
                     from sage.sets.set import Set
                     left_p = coprod_list(t[1])
                     right_p = [[x - y for x, y in zip(t[1], m)] for m in left_p]
@@ -1789,11 +1813,13 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(generic=True).P(0,2).change_basis('serre-cartan')
             P^4 P^2 + P^5 P^1 + P^6
         """
+        from sage.algebras.steenrod.steenrod_algebra_bases import (
+            convert_from_milnor_matrix,
+            steenrod_algebra_basis,
+        )
+        from sage.algebras.steenrod.steenrod_algebra_misc import get_basis_name
         from sage.matrix.constructor import matrix
         from sage.rings.finite_rings.finite_field_constructor import GF
-        from .steenrod_algebra_bases import steenrod_algebra_basis, \
-            convert_from_milnor_matrix
-        from .steenrod_algebra_misc import get_basis_name
         basis = get_basis_name(basis, self.prime(), generic=self._generic)
         if basis == self.basis_name():
             return self({t: 1})
@@ -2046,9 +2072,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: B3._coerce_map_from_(A31)
             False
         """
-        from sage.rings.integer_ring import ZZ
         from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.infinity import Infinity
+        from sage.rings.integer_ring import ZZ
         p = self.prime()
         if S == ZZ or S == GF(p):
             return True
@@ -2067,7 +2093,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                             for i in range(1, max(self_prec, S_prec)+1)))
         if (isinstance(S, CombinatorialFreeModule)
                 and S.dimension() < Infinity and p == S.base_ring().characteristic()):
-            from .steenrod_algebra_misc import get_basis_name
+            from sage.algebras.steenrod.steenrod_algebra_misc import get_basis_name
             try:
                 get_basis_name(S.prefix(), S.base_ring().characteristic())
                 # return all(a in self for a in S.basis())
@@ -2109,8 +2135,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: A1({(2,): 1, (1,): 13})
             Sq(1) + Sq(2)
         """
-        from sage.rings.integer_ring import ZZ
         from sage.rings.finite_rings.finite_field_constructor import GF
+        from sage.rings.integer_ring import ZZ
         if x in GF(self.prime()) or x in ZZ:
             return self.from_base_ring_from_one_basis(x)
 
@@ -2129,7 +2155,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 return a.change_basis(self.basis_name())
         raise ValueError("element does not lie in this Steenrod algebra")
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``self`` contains `x`.
 
@@ -2678,8 +2704,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(p=5, profile=[[2,1], [2,2,2]]).algebra_generators()
             Family (Q_0, P(1), P(5))
         """
-        from sage.sets.non_negative_integers import NonNegativeIntegers
         from sage.rings.infinity import Infinity
+        from sage.sets.non_negative_integers import NonNegativeIntegers
         n = self.ngens()
         if n < Infinity:
             return Family([self.gen(i) for i in range(n)])

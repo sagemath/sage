@@ -24,7 +24,7 @@ py.install_sources(
   subdir: 'sage/functions',
 )
 
-extension_data = {'prime_pi' : files('prime_pi.pyx')}
+extension_data = {'prime_pi': files('prime_pi.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

@@ -426,7 +426,8 @@ import re
 from types import FunctionType
 
 from sage.arith.misc import algebraic_dependency
-from sage.interfaces.maxima_lib import maxima
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.interfaces.maxima_lib","maxima")
 from sage.misc.latex import latex
 from sage.misc.parser import LookupNameMaker, Parser
 from sage.rings.cc import CC
@@ -1822,8 +1823,8 @@ def laplace(ex, t, s, algorithm='maxima'):
         (a, s, t)
         sage: f = exp (2*t + a) * sin(t) * t; f
         t*e^(a + 2*t)*sin(t)
-        sage: L = laplace(f, t, s); L
-        2*(s - 2)*e^a/(s^2 - 4*s + 5)^2
+        sage: L = laplace(f, t, s); L.simplify_rational()
+        2*(s*e^a - 2*e^a)/(s^4 - 8*s^3 + 26*s^2 - 40*s + 25)
         sage: inverse_laplace(L, s, t)
         t*e^(a + 2*t)*sin(t)
 

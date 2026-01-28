@@ -3,10 +3,10 @@
 
 import argparse
 import subprocess
+import tomllib
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-import tomllib
 from grayskull.config import Configuration
 from grayskull.strategy.py_base import merge_setup_toml_metadata
 from grayskull.strategy.py_toml import get_all_toml_info
@@ -35,7 +35,7 @@ parser.add_argument(
     choices=platforms.keys(),
 )
 options = parser.parse_args()
-pythons = ["3.11", "3.12", "3.13"]
+pythons = ["3.12", "3.13"]
 tags = [""]
 
 
@@ -269,7 +269,11 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         normalize_requirements_list(list(all_requirements), grayskull_config)
     )
     # Specify concrete package for some virtual packages
-    all_requirements.add("blas=2.*=openblas")
+    if platform in ("osx-64", "osx-arm64"):
+        all_requirements.add("libblas=*=*_newaccelerate")
+    else:
+        all_requirements.add("openblas")
+        all_requirements.add("libblas=*=*_openblas")
     all_requirements.add("fortran-compiler")
     if platform == "win-64":
         all_requirements.add("vs2022_win-64")
@@ -323,5 +327,6 @@ def get_optional_dependencies(pyproject: dict) -> list[str]:
         optional_dependencies.extend(dependencies)
     # print(f"Optional dependencies: {optional_dependencies}")  # Uncommented for debugging
     return optional_dependencies
+
 
 update_conda(options.sourcedir, options.systems)

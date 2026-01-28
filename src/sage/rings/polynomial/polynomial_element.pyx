@@ -128,55 +128,9 @@ from sage.misc.cachefunc import cached_function
 from sage.categories.map cimport Map
 from sage.categories.morphism cimport Morphism
 
-from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
+from sage.misc.superseded import deprecation_cython as deprecation
 from sage.misc.cachefunc import cached_method
 
-cpdef is_Polynomial(f):
-    """
-    Return ``True`` if ``f`` is of type univariate polynomial.
-
-    This function is deprecated.
-
-    INPUT:
-
-    - ``f`` -- an object
-
-    EXAMPLES::
-
-        sage: from sage.rings.polynomial.polynomial_element import is_Polynomial
-        sage: R.<x> = ZZ[]
-        sage: is_Polynomial(x^3 + x + 1)
-        doctest:...: DeprecationWarning: the function is_Polynomial is deprecated;
-        use isinstance(x, sage.rings.polynomial.polynomial_element.Polynomial) instead
-        See https://github.com/sagemath/sage/issues/32709 for details.
-        True
-        sage: S.<y> = R[]
-        sage: f = y^3 + x*y - 3*x; f
-        y^3 + x*y - 3*x
-        sage: is_Polynomial(f)
-        True
-
-    However this function does not return ``True`` for genuine multivariate
-    polynomial type objects or symbolic polynomials, since those are
-    not of the same data type as univariate polynomials::
-
-        sage: R.<x,y> = QQ[]
-        sage: f = y^3 + x*y - 3*x; f
-        y^3 + x*y - 3*x
-        sage: is_Polynomial(f)
-        False
-
-        sage: # needs sage.symbolic
-        sage: var('x,y')
-        (x, y)
-        sage: f = y^3 + x*y - 3*x; f
-        y^3 + x*y - 3*x
-        sage: is_Polynomial(f)
-        False
-    """
-    deprecation(32709, "the function is_Polynomial is deprecated; use isinstance(x, sage.rings.polynomial.polynomial_element.Polynomial) instead")
-
-    return isinstance(f, Polynomial)
 
 from sage.rings.polynomial.polynomial_compiled cimport CompiledPolynomialFunction
 
@@ -1669,13 +1623,13 @@ cdef class Polynomial(CommutativePolynomial):
         """
         from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
         P = a.parent()
-        if can_convert_to_singular(P):
+        if P.is_exact() and can_convert_to_singular(P):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             try:
                 R = PolynomialRing(P.base_ring(), P.variable_names(), implementation="singular")
             except NotImplementedError:
-                # PolynomialRing over RDF/CDF etc. are still not implemented in libsingular
-                # (in particular singular_ring_new) even though they are implemented in _do_singular_init_
+                # singular(PolynomialRing(Frac(ZZ["u", "v", "w"]), "x")) works, but
+                # PolynomialRing(Frac(ZZ["u", "v", "w"]), "x", implementation="singular") fails
                 pass
             else:
                 return P(R(a).inverse_mod(R.ideal(m)))
@@ -2260,7 +2214,7 @@ cdef class Polynomial(CommutativePolynomial):
             else:
                 # Compute the trace of T with field of order 2^k
                 # sum T^(2^i) for i in range (degree * k)
-                # We use repeated squaring to avoid redundent multiplications
+                # We use repeated squaring to avoid redundant multiplications
                 C, TT = T, T
                 for _ in range(degree * self.base_ring().degree() - 1):
                     TT = TT * TT % self
@@ -7903,8 +7857,6 @@ cdef class Polynomial(CommutativePolynomial):
             R = R.monic()
         return R
 
-    adams_operator = deprecated_function_alias(36396, adams_operator_on_roots)
-
     def symmetric_power(self, k, monic=False):
         r"""
         Return the polynomial whose roots are products of `k`-th distinct
@@ -11588,6 +11540,12 @@ cdef class Polynomial(CommutativePolynomial):
             sage: q.divides(p * q)
             True
             sage: R.<x> = Zmod(6)[]
+            sage: f = x - 2
+            sage: g = 3
+            sage: R.ideal(f*g) <= R.ideal(f)
+            True
+            sage: f.divides(f*g)
+            True
             sage: p = 4*x + 3
             sage: q = 5*x**2 + x + 2
             sage: q.divides(p)
@@ -11620,9 +11578,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: p = 4*x + 3
             sage: q = 2*x**2 + x + 2
             sage: p.divides(q)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: divisibility test only implemented for polynomials over an integral domain unless obvious non divisibility of leading terms
+            False
         """
         if p.is_zero():
             return True          # everything divides 0
@@ -11642,7 +11598,17 @@ cdef class Polynomial(CommutativePolynomial):
             return False
 
         if not self.base_ring().is_integral_domain():
-            raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain unless obvious non divisibility of leading terms")
+            from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
+            P = self.parent()
+            if P.is_exact() and can_convert_to_singular(P):
+                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                try:
+                    R = PolynomialRing(P.base_ring(), P.variable_names(), implementation="singular")
+                except NotImplementedError:
+                    pass
+                else:
+                    return bool(R(self).divides(R(p)))
+            raise NotImplementedError("divisibility test only implemented for polynomials over an integral domain unless Singular can be used")
 
         try:
             return (p % self).is_zero()      # if quo_rem is defined

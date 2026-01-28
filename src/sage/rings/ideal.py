@@ -31,7 +31,7 @@ from types import GeneratorType
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 from sage.structure.element import MonoidElement
-from sage.structure.richcmp import rich_to_bool, richcmp, op_NE
+from sage.structure.richcmp import rich_to_bool, op_NE
 from sage.structure.sequence import Sequence
 
 
@@ -253,7 +253,7 @@ class Ideal_generic(MonoidElement):
 
     See :func:`Ideal()`.
     """
-    def __init__(self, ring, gens, coerce=True, **kwds):
+    def __init__(self, ring, gens, coerce=True, **kwds) -> None:
         """
         Initialize this ideal.
 
@@ -318,7 +318,7 @@ class Ideal_generic(MonoidElement):
             s = repr(x)
             if '\n' in s:
                 has_return = True
-                s = s.replace('\n','\n  ')
+                s = s.replace('\n', '\n  ')
             L.append(s)
         if has_return:
             return '\n(\n  %s\n)\n' % (',\n\n  '.join(L))
@@ -367,24 +367,29 @@ class Ideal_generic(MonoidElement):
             sage: I == J
             True
 
-        TESTS:
-
-        Check that the example from :issue:`37409` raises an error
-        rather than silently returning an incorrect result::
+        TESTS::
 
             sage: R.<x> = ZZ[]
             sage: I = R.ideal(1-2*x,2)
-            sage: I.is_trivial()  # not implemented -- see #37409
+            sage: I.is_trivial()  # needs sage.libs.singular
             True
-            sage: I.is_trivial()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: ideal comparison in Univariate Polynomial Ring in x over Integer Ring is not implemented
+            sage: R.ideal(x, 2) <= R.ideal(1)  # needs sage.libs.singular
+            True
         """
         if self.is_zero():
             return rich_to_bool(op, other.is_zero() - 1)
         if other.is_zero():
             return rich_to_bool(op, 1)  # self.is_zero() is already False
+
+        from sage.rings.integer_ring import ZZ
+        if self.ring().base_ring() is ZZ:
+            #assert self.ring().implementation() != "singular"
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            Rs = PolynomialRing(ZZ, self.ring().variable_names(), implementation="singular")
+            Is = Rs.ideal(self.gens())
+            Js = Rs.ideal(other.gens())
+            return Is.__richcmp__(Js, op)
+
         S = set(self.gens())
         T = set(other.gens())
         if S == T:
@@ -395,7 +400,7 @@ class Ideal_generic(MonoidElement):
             return rich_to_bool(op, +1)
         raise NotImplementedError(f'ideal comparison in {self.ring()} is not implemented')
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is in ``self``.
 
@@ -439,7 +444,7 @@ class Ideal_generic(MonoidElement):
         """
         raise NotImplementedError
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if this ideal is not `(0)`.
 
@@ -1081,7 +1086,7 @@ class Ideal_generic(MonoidElement):
             try:
                 if self.ring().has_coerce_map_from(other):
                     return self
-            except (TypeError,ArithmeticError,ValueError):
+            except (TypeError, ArithmeticError, ValueError):
                 pass
             other = self.ring().ideal(other)
         return self._mul_(other)
@@ -1107,7 +1112,8 @@ class Ideal_generic(MonoidElement):
             sage: I._mul_(J)
             Ideal (x^3*y, x^2*y^2, x^3*z, x^2*y*z, x^4, x^3*y) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """
-        return self.ring().ideal([z for z in [x*y for x in self.gens() for y in other.gens()] if z])
+        return self.ring().ideal([z for x in self.gens() for y in other.gens()
+                                  if (z := x * y)])
 
     def __rmul__(self, other):
         """
@@ -1124,10 +1130,11 @@ class Ideal_generic(MonoidElement):
             try:
                 if self.ring().has_coerce_map_from(other):
                     return self
-            except (TypeError,ArithmeticError,ValueError):
+            except (TypeError, ArithmeticError, ValueError):
                 pass
             other = self.ring().ideal(other)
-        return self.ring().ideal([z for z in [y*x for x in self.gens() for y in other.gens()] if z])
+        return self.ring().ideal([z for x in self.gens() for y in other.gens()
+                                  if (z := y * x)])
 
     def norm(self):
         """
@@ -1284,7 +1291,7 @@ class Ideal_principal(Ideal_generic):
     See :func:`Ideal()`.
     """
     # now Ideal_principal takes a list.
-    #def __init__(self, ring, gen):
+    # def __init__(self, ring, gen):
     #    Ideal_generic.__init__(self, ring, [gen])
 
     def _repr_(self):
@@ -1366,7 +1373,7 @@ class Ideal_principal(Ideal_generic):
             raise ValueError(f"i (={i}) must be 0")
         return self.gens()[0]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is in ``self``.
 
@@ -1388,7 +1395,7 @@ class Ideal_principal(Ideal_generic):
         except NotImplementedError:
             return self._contains_(self.ring()(x))
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Very stupid constant hash function!
 
@@ -1622,10 +1629,10 @@ class Ideal_pid(Ideal_principal):
             sage: RR.ideal(7).is_prime()
             False
         """
-        if self.is_zero(): # PIDs are integral domains by definition
+        if self.is_zero():  # PIDs are integral domains by definition
             return True
         g = self.gen()
-        if g.is_one():     # The ideal (1) is never prime
+        if g.is_one():      # The ideal (1) is never prime
             return False
         if hasattr(g, 'is_irreducible'):
             return g.is_irreducible()
@@ -1819,7 +1826,7 @@ def Cyclic(R, n=None, homog=False, singular=None):
     if not homog:
         I = singular.cyclic(n)
     else:
-        I = singular.cyclic(n).homog(R2.gen(n-1))
+        I = singular.cyclic(n).homog(R2.gen(n - 1))
     return R2.ideal(I).change_ring(R)
 
 
@@ -1870,7 +1877,7 @@ def Katsura(R, n=None, homog=False, singular=None):
     if not homog:
         I = singular.katsura(n)
     else:
-        I = singular.katsura(n).homog(R2.gen(n-1))
+        I = singular.katsura(n).homog(R2.gen(n - 1))
     return R2.ideal(I).change_ring(R)
 
 

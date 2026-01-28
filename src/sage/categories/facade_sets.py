@@ -180,7 +180,7 @@ class FacadeSets(CategoryWithAxiom):
             from sage.structure.element import parent
             return parent(element) in parents
 
-        def __contains__(self, element):
+        def __contains__(self, element) -> bool:
             """
             Membership testing.
 

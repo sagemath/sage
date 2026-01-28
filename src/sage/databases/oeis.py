@@ -133,7 +133,6 @@ AUTHORS:
 
 import re
 from collections import defaultdict
-from ssl import create_default_context as default_context
 from urllib.parse import urlencode
 # ****************************************************************************
 #       Copyright (C) 2012 Thierry Monteil <sage!lma.metelu.net>
@@ -163,7 +162,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 oeis_url = 'https://oeis.org/'
 
 
-def _fetch(url):
+def _fetch(url) -> str:
     r"""
     Fetch the given ``url``.
 
@@ -187,7 +186,7 @@ def _fetch(url):
         raise OSError("%s\nerror fetching %s" % (msg, url))
 
 
-def _urls(html_string):
+def _urls(html_string) -> list[str]:
     r"""
     Return the list of URLs contained in ``html_string``.
 
@@ -220,7 +219,7 @@ def _urls(html_string):
     return urls
 
 
-def to_tuple(string):
+def to_tuple(string: str) -> tuple:
     """
     Convert a string to a tuple of integers.
 
@@ -1316,7 +1315,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             for term in terms.split('\n'):
                 if not term or term[0] == '#':
                     continue
-                k, v = [Integer(e) for e in term.strip().split()]
+                k, v = (Integer(e) for e in term.strip().split())
                 if check is not None and k != check + 1:
                     raise ValueError(f"malformed b-file {url}: key {check} followed by {k}")
                 check = k

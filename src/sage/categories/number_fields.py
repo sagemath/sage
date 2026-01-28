@@ -68,7 +68,7 @@ class NumberFields(Category_singleton):
         """
         return [Fields().Infinite()]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is a number field.
 
@@ -124,7 +124,7 @@ class NumberFields(Category_singleton):
     class ParentMethods:
         def zeta_function(self, prec=53,
                           max_imaginary_part=0,
-                          max_asymp_coeffs=40, algorithm='pari'):
+                          algorithm='pari'):
             r"""
             Return the Dedekind zeta function of this number field.
 
@@ -137,17 +137,11 @@ class NumberFields(Category_singleton):
 
             - ``max_imaginary_part`` -- real (default: 0)
 
-            - ``max_asymp_coeffs`` -- integer (default: 40)
-
-            - ``algorithm`` -- (default: ``'pari'``) either ``'gp'`` or
-              ``'pari'``
+            - ``algorithm`` -- ignored
 
             OUTPUT: the zeta function of this number field
 
-            If algorithm is ``'gp'``, this returns an interface to Tim
-            Dokchitser's gp script for computing with `L`-functions.
-
-            If algorithm is ``'pari'``, this returns instead an interface to Pari's
+            This returns an interface to Pari's
             own general implementation of `L`-functions.
 
             EXAMPLES::
@@ -165,51 +159,16 @@ class NumberFields(Category_singleton):
                 sage: Z(5)                                                              # needs sage.rings.number_field sage.symbolic
                 1.00199015670185
 
-            Using the algorithm "pari"::
-
-                sage: K.<a> = NumberField(ZZ['x'].0^2 + ZZ['x'].0 - 1)                  # needs sage.rings.number_field
-                sage: Z = K.zeta_function(algorithm='pari')                             # needs sage.rings.number_field sage.symbolic
-                sage: Z(-1)                                                             # needs sage.rings.number_field sage.symbolic
-                0.0333333333333333
-
-                sage: x = polygen(QQ, 'x')
-                sage: L.<a, b, c> = NumberField([x^2 - 5, x^2 + 3, x^2 + 1])            # needs sage.rings.number_field
-                sage: Z = L.zeta_function(algorithm='pari')                             # needs sage.rings.number_field sage.symbolic
-                sage: Z(5)                                                              # needs sage.rings.number_field sage.symbolic
-                1.00199015670185
-
             TESTS::
 
                 sage: QQ.zeta_function()                                                # needs sage.symbolic
                 PARI zeta function associated to Rational Field
             """
-            if algorithm == 'gp':
-                from sage.lfunctions.dokchitser import Dokchitser
-                r1, r2 = self.signature()
-                zero = [0]
-                one = [1]
-                Z = Dokchitser(conductor=abs(self.absolute_discriminant()),
-                               gammaV=(r1 + r2) * zero + r2 * one,
-                               weight=1,
-                               eps=1,
-                               poles=[1],
-                               prec=prec)
-                s = 'nf = nfinit(%s);' % self.absolute_polynomial()
-                s += 'dzk = dirzetak(nf,cflength());'
-                Z.init_coeffs('dzk[k]', pari_precode=s,
-                              max_imaginary_part=max_imaginary_part,
-                              max_asymp_coeffs=max_asymp_coeffs)
-                Z.check_functional_equation()
-                Z.rename('Dokchitser Zeta function associated to %s' % self)
-                return Z
-
-            if algorithm == 'pari':
-                from sage.lfunctions.pari import lfun_number_field, LFunction
-                Z = LFunction(lfun_number_field(self), prec=prec)
-                Z.rename('PARI zeta function associated to %s' % self)
-                return Z
-
-            raise ValueError('algorithm must be "gp" or "pari"')
+            from sage.lfunctions.pari import lfun_number_field, LFunction
+            Z = LFunction(lfun_number_field(self), prec=prec,
+                          max_im=max_imaginary_part)
+            Z.rename(f'PARI zeta function associated to {self}')
+            return Z
 
         def _test_absolute_disc(self, **options):
             r"""

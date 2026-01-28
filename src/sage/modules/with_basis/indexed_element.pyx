@@ -47,7 +47,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         sage: isinstance(f, collections.abc.Collection)  # known bug - will be fixed by removing __contains__
         False
     """
-    def __init__(self, M, x):
+    def __init__(self, M, x) -> None:
         """
         Create a combinatorial module element.
 
@@ -84,7 +84,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         return iter(self._monomial_coefficients.items())
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return whether or not a combinatorial object ``x`` indexing a basis
         element is in the support of ``self``.
@@ -113,7 +113,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         deprecation(34509, "using 'index in vector' is deprecated; use 'index in vector.support()' instead")
         return x in self.support()
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash value for ``self``.
 
@@ -771,7 +771,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: a[[2,1]]
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'list'
+            TypeError: ...unhashable type: 'list'...
         """
         res = self._monomial_coefficients.get(m)
         if res is None:

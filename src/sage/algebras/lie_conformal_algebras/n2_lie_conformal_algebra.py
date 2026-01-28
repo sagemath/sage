@@ -30,7 +30,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+from sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra import (
+    GradedLieConformalAlgebra,
+)
 
 
 class N2LieConformalAlgebra(GradedLieConformalAlgebra):
@@ -73,7 +75,7 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
         sage: G.bracket(G)
         {0: 2*L, 2: 2/3*C}
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 

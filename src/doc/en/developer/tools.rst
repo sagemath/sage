@@ -14,7 +14,7 @@ uv
 `uv <https://docs.astral.sh/uv/>`_ is a versatile tool for
 managing and synchronizing project dependencies.
 
-The lockfile `uv.lock` in the root captures the exact package versions for
+The lockfile ``uv.lock`` in the root captures the exact package versions for
 all systems and ensures consistent, reproducible installations.
 It is automatically updated during ``uv`` operations like ``uv add``
 and ``uv run``, or explicitly with ``uv lock``.
@@ -64,7 +64,7 @@ available
     --tox [options] <files|dirs> -- general entry point for testing
                                     and linting of the Sage library
       -e <envlist>     -- run specific test environments; default:
-                          doctest,coverage,startuptime,pycodestyle-minimal,relint,codespell,rst,ruff-minimal
+                          doctest,coverage,startuptime,pycodestyle-minimal,relint,codespell,rst
           doctest                -- run the Sage doctester
                                     (same as "sage -t")
           coverage               -- give information about doctest coverage of files
@@ -75,13 +75,11 @@ available
           relint                 -- check whether some forbidden patterns appear
           codespell              -- check for misspelled words in source code
           rst                    -- validate Python docstrings markup as reStructuredText
-          ruff-minimal           -- check against Sage's minimal style conventions
           coverage.py            -- run the Sage doctester with Coverage.py
           coverage.py-html       -- run the Sage doctester with Coverage.py, generate HTML report
           pyright                -- run the static typing checker pyright
           pycodestyle            -- check against the Python style conventions of PEP8
           cython-lint            -- check Cython files for code style
-          ruff                   -- check against Python style conventions
       -p auto          -- run test environments in parallel
       --help           -- show tox help
 
@@ -310,20 +308,33 @@ for Python code, written in Rust.
 It comes with a large choice of possible checks, and has the capacity
 to fix some of the warnings it emits.
 
-Sage defines two configurations for ruff.  The command ``./sage -tox -e ruff-minimal`` uses
-ruff in a minimal configuration. As of Sage 10.3, the entire Sage library conforms to this
-configuration. When preparing a Sage PR, developers should verify that
-``./sage -tox -e ruff-minimal`` passes.
+Sage we have two configuration files for ruff. ``pyproject.toml`` in the root of the
+repository defines all rules we wish to follow. ``.github/workflows/ruff.toml`` takes
+the configuration in ``pyproject.toml`` and disables all rules that we do not already
+follow throughout the repository. Our lint GitHub Action workflow requires
+``ruff check --config .github/workflows/ruff.toml --preview`` to pass. To speed up the
+code review process, developers should verify that this passes locally before submitting a PR.
+To make sure you are running the same version of ``ruff`` locally as GitHub Actions, use the command
+``uv run --frozen --only-group lint -- ruff check --config .github/workflows/ruff.toml --preview``.
 
-The second configuration is used with the command ``./sage -tox -e ruff`` and runs a
-more thorough check.  When preparing a PR that adds new code,
-developers should verify that ``./sage -tox -e ruff`` does not
-issue warnings for the added code.  This will avoid later cleanup
-PRs as the Sage codebase is moving toward full PEP 8 compliance.
+Developers are encouraged to locally run ``ruff check [path to changed files]``
+to run the stricter configuration defined in ``pyproject.toml`` and fix any linter
+failures on their new code. This will help to avoid follow-up formatting PRs as
+Sage moves toward full PEP 8 compliance. Developers may also choose to fix existing
+linter failures on files that they modify, but use common sense when deciding whether
+or not to do so. A small bug fix PR should not include a large number of
+code-style changes as this makes it harder for reviewers to evaluate the important changes.
 
-On the other hand, it is usually not advisable to mix coding-style
-fixes with productive changes on the same PR because this would
-makes it harder for reviewers to evaluate the changes.
+When working on PRs to improve our alignment with our linter rules, the ``--statistics``
+option can be passed to ``ruff`` to print out a list of all rules that are enabled in
+``pyproject.toml`` but are not currently followed throughout the repository and how many
+times each rule is violated. This is useful for finding low-hanging fruit for formatting PRs.
+Developers can also use ``--select [RULE CODES]`` to override the list of rules enabled in
+``pyproject.toml`` when testing additional rules to add to ``pyproject.toml``, or
+``--select-extend [RULE CODES]`` to add new rules to the existing confirmation.
+See the `Ruff documentation <https://docs.astral.sh/ruff/>`_ to see all features and rules
+available.
+
 
 .. _section-tools-relint:
 

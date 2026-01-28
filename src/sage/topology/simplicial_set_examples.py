@@ -655,7 +655,7 @@ def simplicial_data_from_kenzo_output(filename) -> dict:
         sage: S4.homology(reduced=False)                                                # needs pyparsing
         {0: Z, 1: 0, 2: 0, 3: 0, 4: Z}
     """
-    from pyparsing import OneOrMore, nestedExpr
+    from pyparsing import OneOrMore, nested_expr
 
     with open(filename) as f:
         data = f.read()
@@ -675,7 +675,7 @@ def simplicial_data_from_kenzo_output(filename) -> dict:
             end = new_dim_idx
         if dim == 0:
             simplex_string = data[data.find('Vertices :') + len('Vertices :'):end]
-            vertices = OneOrMore(nestedExpr()).parseString(simplex_string).asList()[0]
+            vertices = OneOrMore(nested_expr()).parse_string(simplex_string).asList()[0]
             for v in vertices:
                 vertex = AbstractSimplex(0, name=v)
                 simplex_data[vertex] = None
@@ -683,9 +683,10 @@ def simplicial_data_from_kenzo_output(filename) -> dict:
         else:
             simplex_string = data[start:end].strip()
 
-            for s in [_.strip() for _ in simplex_string.split('Simplex : ')]:
+            for ns in simplex_string.split('Simplex : '):
+                s = ns.strip()
                 if s:
-                    name, face_str = (_.strip() for _ in s.split('Faces : '))
+                    name, face_str = (nf.strip() for nf in s.split('Faces : '))
                     face_str = face_str.strip('()')
                     face_str = face_str.split('<AbSm ')
                     faces = []

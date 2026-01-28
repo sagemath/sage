@@ -300,6 +300,16 @@ REFERENCES:
 .. [Ap1997] \T. Apostol, Modular functions and Dirichlet series in
             number theory, Springer, 1997 (2nd ed), section 3.7--3.9.
 
+.. [AP2010] Federico Ardila and Alexander Postnikov.
+            *Combinatorics and geometry of power ideals*.
+            Trans. Amer. Math. Soc. **362** no. 8 (2010), pp. 4357-4384.
+            :arxiv:`0809.2143`.
+
+.. [AP2015] Federico Ardila and Alexander Postnikov. *Correction to
+            "Combinatorics and geometry of power ideals": Two counterexamples
+            for power ideals of hyperplane arrangements*. Trans. Amer. Math.
+            Soc. **367** (2015). :doi:`10.1090/S0002-9947-2015-06071-1`.
+
 .. [AP2024] William Atherton, Dmitrii V. Pasechnik, *Decline and Fall of the
             ICALP 2008 Modular Decomposition algorithm*, 2024.
             :arxiv:`2404.14049`.
@@ -563,6 +573,11 @@ REFERENCES:
 .. [BCDGNPY2019] \Z. Bao, A. Chakraborti, N. Datta, J. Guo, M. Nandi, T. Peyrin, K. Yasuda.
                  "PHOTON-BeetleAuthenticated Encryption and Hash Family"
                  https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/PHOTON-Beetle-spec.pdf
+
+.. [BF1976] George Phillip Barker and James Foran.
+            *Self-Dual Cones in Euclidean Spaces*.
+            Linear Algebra and its Applications, 13(1-2):147-155, 1976.
+            :doi:`10.1016/0024-3795(76)90053-7`.
 
 .. [BH1965] \L. D. Baumert, M. Hall Jr.
             *A new construction for Hadamard matrices*.
@@ -910,7 +925,7 @@ REFERENCES:
               Ann. Math. (2) 192, No. 3, 821-891 (2020).
               :arxiv:`1902.03719`, :doi:`10.4007/annals.2020.192.3.4`.
 
-.. [Bru2014] Erwan Brugalle and Kristin Shaw. *A bit of tropical geometry*.
+.. [Bru2014] Erwan Brugallé and Kristin Shaw. *A bit of tropical geometry*.
              Amer. Math. Monthly, 121(7):563-589, 2014.
 
 .. [BHNR2004] \S. Brlek, S. Hamel, M. Nivat, C. Reutenauer, On the
@@ -1427,6 +1442,10 @@ REFERENCES:
              *Numerical Computation of Endomorphism Rings of Jacobians*,
              The Open Book Series, Vol. 2 (2019), No. 1, pp. 155-171,
              https://msp.org/obs/2019/2-1/p10.xhtml
+
+.. [BTTM2024] \L. Bossinger, M. L. Telek, H. Tillmann-Morris,
+              *Binary Geometries From Pellytopes*,
+              :arxiv:`2410.08002`
 
 .. [BUVO2007] Johannes Buchmann, Ullrich Vollmer: Binary Quadratic Forms,
               An Algorithmic Approach, Algorithms and Computation in Mathematics,
@@ -3570,6 +3589,10 @@ REFERENCES:
 .. [HR2005]  Tom Halverson and Arun Ram. *Partition algebras*.
              Euro. J. Combin. **26** (2005) 869--921.
 
+.. [HR2011]  Olga Holtz and Amos Ron. *Zonotopal algebra*.
+             Adv. Math. **227**, no. 2, (2011) 847--894.
+             doi:`10.1016/j.aim.2011.02.012`, :arxiv:`0708.2632`.
+
 .. [HR2016]  Clemens Heuberger and Roswitha Rissner, *Computing
              `J`-Ideals of a Matrix Over a Principal Ideal Domain*,
              :arxiv:`1611.10308`, 2016.
@@ -4431,6 +4454,9 @@ REFERENCES:
              *The Hopf algebra of diagonal rectangulations*,
              \J. Comb. Theory, Ser. A 119, No. 3, 788-824 (2012).
              :doi:`10.1016/j.jcta.2011.09.006`
+
+.. [Law2014] Shirley Law, *Combinatorial realization of the Hopf algebra
+             of sashes*, Proceedings of FPSAC 2014, DMTCS, :arxiv:`1407.4073`
 
 .. [Laz1992] Daniel Lazard, *Solving Zero-dimensional Algebraic
              Systems*, in Journal of Symbolic Computation (1992)

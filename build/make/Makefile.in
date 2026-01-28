@@ -130,15 +130,6 @@ PIP_PACKAGES = @SAGE_PIP_PACKAGES@
 # Packages that use the 'script' package build rules
 SCRIPT_PACKAGES = @SAGE_SCRIPT_PACKAGES@
 
-# Packages for which we build wheels for PyPI
-PYPI_WHEEL_PACKAGES = \
-	sagemath_bliss 				\
-	sagemath_mcqd 				\
-	sagemath_tdlib				\
-	sagemath_coxeter3 			\
-	sagemath_sirocco			\
-	sagemath_meataxe
-
 # sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib
 WHEEL_PACKAGES = $(PYPI_WHEEL_PACKAGES)		\
 	sagelib					\
@@ -319,7 +310,7 @@ all-toolchain: base-toolchain
 
 # Shorthand for a list of packages sufficient for building and installing
 # typical Python packages from source. Wheel packages only need pip.
-PYTHON_TOOLCHAIN = setuptools pip setuptools_scm wheel flit_core hatchling python_build
+PYTHON_TOOLCHAIN = setuptools pip setuptools_scm wheel flit_core hatchling python_build meson_python
 
 # Issue #32056: Avoid installed setuptools leaking into the build of python3 by uninstalling it.
 # It will have to be reinstalled anyway because of its dependency on $(PYTHON).
