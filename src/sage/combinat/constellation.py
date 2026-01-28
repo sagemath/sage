@@ -17,7 +17,7 @@ EXAMPLES::
     g0 (1,2)(3)
     g1 (1,3)(2)
     g2 (1,3,2)
-    sage: C = Constellations(3,4); C
+    sage: C = Constellations(3, 4); C
     Connected constellations of length 3 and degree 4 on {1, 2, 3, 4}
     sage: C.cardinality()
     426
@@ -941,6 +941,10 @@ class Constellations_ld(UniqueRepresentation, Parent):
             sage: TestSuite(Constellations(3, 4, domain='abcd')).run()
 
             sage: TestSuite(Constellations(3, 0, connected=False)).run()
+
+            sage: TestSuite(Constellations(0, 0)).run()
+
+            sage: TestSuite(Constellations(0, 0, connected=False)).run()
         """
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
         Parent.__init__(self, category=FiniteEnumeratedSets())
@@ -970,7 +974,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
             sage: Constellations(1, 0).is_empty()
             True
         """
-        return self._connected and self._length == 1 and self._degree != 1
+        return self._connected and self._length <= 1 and self._degree != 1
 
     def __contains__(self, elt) -> bool:
         r"""
@@ -1080,7 +1084,9 @@ class Constellations_ld(UniqueRepresentation, Parent):
         """
         k = self._length
         if not k:
-            return ZZ.one()
+            if not self._connected or self._degree == 1:
+                return ZZ.one()
+            return ZZ.zero()
 
         if not self._connected:
             return factorial(self._degree) ** (k-1)
@@ -1118,10 +1124,15 @@ class Constellations_ld(UniqueRepresentation, Parent):
             True
         """
         from sage.groups.perm_gps.permgroup import PermutationGroup
+        from sage.categories.sets_cat import EmptySetError
+        if self.is_empty():
+            raise EmptySetError
 
         l = self._length
-        Sd = self._sym
+        if not l:
+            return self([], mutable=mutable)
 
+        Sd = self._sym
         if self._connected:
             d = self._degree
             while True:
