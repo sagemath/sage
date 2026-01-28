@@ -379,9 +379,9 @@ class KauffmanTangle(AutomaticSemigroup.Element):
              Inline strand on top line from position 1 to position 3]
         """
         los = self.list_of_strands()
-        rg = range(self.strands())
-        res = list(rg)
-        for i in rg:
+        n = self.strands()
+        res = [None] * n
+        for i in range(n):
             for st in los:
                 p = st.position_sequence()
                 if (i + 1, pos) in p:
@@ -461,8 +461,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
             pos_list2 = tuple(positions(st2))
         if st1 > st2:
             return {pos_list2: st2, pos_list1: st1}
-        else:
-            return {pos_list1: st1, pos_list2: st2}
+        return {pos_list1: st1, pos_list2: st2}
 
     @cached_method
     def find_unlayered_crossing(self) -> int | None:
@@ -526,7 +525,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         if pos is None:
             return self
         w = list(self.defining_word())
-        w[pos] *= -1
+        w[pos] = -w[pos]
         w = tuple(w)
         return self.parent()(w).layered_copy()
 
@@ -1346,13 +1345,12 @@ class Strand:
             st = matches[0]
             free_st = free_pos(st)
             return Strand(pr, self.start, final_pos(free_st))
-        else:
-            # two matches are only possible if self is inline at bottom
-            m1 = matches[0]
-            m2 = matches[1]
-            free_m1 = free_pos(m1)
-            free_m2 = free_pos(m2)
-            return Strand(pr, final_pos(free_m1), final_pos(free_m2))
+        # two matches are only possible if self is inline at bottom
+        m1 = matches[0]
+        m2 = matches[1]
+        free_m1 = free_pos(m1)
+        free_m2 = free_pos(m2)
+        return Strand(pr, final_pos(free_m1), final_pos(free_m2))
 
     @cached_method
     def position_sequence(self):
