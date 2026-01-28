@@ -798,7 +798,7 @@ class KauffmanTangles(AutomaticSemigroup):
             the ``tuple`` with respect to the ``Tietze`` representation.
 
           * an instance of :class:`~sage.combinat.diagram_algebras.BrauerDiagram`. In
-            this case a Morton Wasserman tangle is constructed using :meth:`morton_wasserman_tangle`.
+            this case a Morton-Wasserman tangle is constructed using :meth:`morton_wasserman_tangle`.
 
         EXAMPLES::
 
@@ -832,7 +832,7 @@ class KauffmanTangles(AutomaticSemigroup):
     def morton_wasserman_tangle(self, bd: BrauerDiagram, top_bottom: bool = True) -> KauffmanTangle:
         r"""
         Return a an element of ``self`` representing the diagram
-        as a connector of a simple layered Morton Wasserman tangle.
+        as a connector of a simple layered Morton-Wasserman tangle.
 
         The defining word of the tangle consists of three parts
         ``wt``, ``we`` and ``wb``. In the case of the first and last
@@ -904,7 +904,6 @@ class KauffmanTangles(AutomaticSemigroup):
         # Note that the restriction of the construction to tangles with
         # one strand less (on the right) gives according results.
         from sage.misc.flatten import flatten
-        from copy import copy
 
         n = self.strands()
         nb = max(bd.base_set())
@@ -919,10 +918,10 @@ class KauffmanTangles(AutomaticSemigroup):
         one = list(range(1, n + 1))
         top_prop = sorted(i for i in one if i not in top_fixed)
         bottom_prop = sorted(i for i in one if -i not in bottom_fixed)
-        middle_prop = copy(one)
-        top_perm = copy(one)
-        bottom_perm = copy(one)
-        prop_perm = copy(one)
+        middle_prop = list(one)
+        top_perm = list(one)
+        bottom_perm = list(one)
+        prop_perm = list(one)
         we = []
         for m in range(num_e):
             ti, tj = t[m]
@@ -1509,28 +1508,24 @@ class Strand:
                         return join_positions(lst1, lst2)
                     else:
                         return join_positions(lst2, lst1)
-        else:
-            lst1 = lstrands[0]
-            positions = lst1.position_sequence()
-            xs, ys = positions[0]
-            xe, ye = positions[-1]
-            if ye < lw - 1 and ys < lw - 1:
-                # the way of this strand is not affected by last generator
-                return positions
-            if xe in gen_pair:
-                if e_gen:
-                    lst2 = find_join_strand(xe)
-                    return join_positions(lst1, lst2)
-                else:
-                    return add_bottom(positions)
-            if xe != xs and xs in gen_pair and ys == lw - 1:
-                if e_gen:
-                    lst2 = find_join_strand(xs)
-                    return join_positions(lst2, lst1)
-                else:
-                    return add_bottom(positions)
-            else:
-                return add_bottom(positions)
+        lst1 = lstrands[0]
+        positions = lst1.position_sequence()
+        xs, ys = positions[0]
+        xe, ye = positions[-1]
+        if ye < lw - 1 and ys < lw - 1:
+            # the way of this strand is not affected by last generator
+            return positions
+        if xe in gen_pair:
+            if e_gen:
+                lst2 = find_join_strand(xe)
+                return join_positions(lst1, lst2)
+            return add_bottom(positions)
+        if xe != xs and xs in gen_pair and ys == lw - 1:
+            if e_gen:
+                lst2 = find_join_strand(xs)
+                return join_positions(lst2, lst1)
+            return add_bottom(positions)
+        return add_bottom(positions)
 
     @cached_method
     def cross_over(self, pos: int, gen: int) -> bool:
