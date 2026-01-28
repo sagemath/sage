@@ -41,8 +41,8 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         - ``names`` -- a 4-tuple, (``variable_name``, ``residue_name``,
           ``unramified_subextension_variable_name``, ``uniformizer_name``)
         - ``element_class`` -- the class for elements of this unramified extension
-        - ``prefix`` -- string (default: None); argument to be passed to the
-          residue field
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field
 
         EXAMPLES::
 

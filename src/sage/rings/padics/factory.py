@@ -901,7 +901,7 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     - ``check`` -- boolean (default: ``True``); whether to check inputs.
 
-    - ``prefix`` -- string (default: None); argument to be passed to the
+    - ``prefix`` -- string (default: ``None``); argument to be passed to the
       residue field.
 
     OUTPUT: the corresponding unramified `p`-adic field
@@ -2128,7 +2128,7 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
     - ``implementation`` -- string (default: ``'FLINT'``); which
       implementation to use.  ``'NTL'`` is the other option.
 
-    - ``prefix`` -- string (default: None); argument to be passed to the
+    - ``prefix`` -- string (default: ``None``); argument to be passed to the
       residue field.
 
     OUTPUT: the corresponding unramified `p`-adic ring

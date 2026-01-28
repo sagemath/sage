@@ -126,8 +126,8 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
         - ``names`` -- a 4-tuple, ``(variable_name, residue_name,
           unramified_subextension_variable_name, uniformizer_name)``.
 
-        - ``prefix`` -- string (default: None); argument to be passed to the
-          residue field.
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field.
 
         EXAMPLES::
 
@@ -190,8 +190,8 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
         - ``names`` -- a 4-tuple, ``(variable_name, residue_name,
           unramified_subextension_variable_name, uniformizer_name)``.
 
-        - ``prefix`` -- string (default: None); argument to be passed to the
-          residue field.
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field.
 
         EXAMPLES::
 
@@ -281,8 +281,8 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
         - ``names`` -- a 4-tuple, ``(variable_name, residue_name,
           unramified_subextension_variable_name, uniformizer_name)``.
 
-        - ``prefix`` -- string (default: None); argument to be passed to the
-          residue field.
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field.
 
         EXAMPLES::
 
@@ -346,8 +346,8 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
         - ``names`` -- a 4-tuple,
           ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``.
 
-        - ``prefix`` -- string (default: None); argument to be passed to the
-          residue field.
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field.
 
         EXAMPLES::
 
@@ -415,8 +415,8 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
         - ``names`` -- a 4-tuple,
           ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``.
 
-        - ``prefix`` -- string (default: None); argument to be passed to the
-          residue field.
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field.
 
         EXAMPLES::
 
@@ -478,8 +478,8 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
         - ``names`` -- a 4-tuple,
           ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``.
 
-        - ``prefix`` -- string (default: None); argument to be passed to the
-          residue field.
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field.
 
         EXAMPLES::
 
