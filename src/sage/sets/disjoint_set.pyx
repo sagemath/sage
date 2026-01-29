@@ -734,6 +734,78 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
                 root_map[root] = i
         return P
 
+    cpdef move(self, int i, int j, inplace=False) except *:
+        r"""
+        Move element ``i`` to the set containing element ``j``.
+
+        INPUT:
+
+        - ``i`` -- element in ``self``
+        - ``j`` -- element in ``self``
+
+        EXAMPLES::
+
+            sage: d = DisjointSet(5)
+            sage: d.union(0, 1)
+            sage: d.union(2, 3)
+            sage: d
+            {{0, 1}, {2, 3}, {4}}
+            sage: d.move(1, 2)
+            sage: d
+            {{0}, {1, 2, 3}, {4}}
+            sage: d.move(4, 0)
+            sage: d
+            {{0, 4}, {1, 2, 3}}
+
+        With ``inplace=False`` (default), a copy is returned::
+
+            sage: d = DisjointSet(5)
+            sage: d.union(0, 1)
+            sage: d2 = d.move(1, 2, inplace=False)
+            sage: d
+            {{0, 1}, {2}, {3}, {4}}
+            sage: d2
+            {{0}, {1, 2}, {3}, {4}}
+        """
+        cdef int card = self._nodes.degree
+        if i < 0 or i >= card:
+            raise ValueError('i must be between 0 and %s (%s given)' % (card - 1, i))
+        if j < 0 or j >= card:
+            raise ValueError('j must be between 0 and %s (%s given)' % (card - 1, j))
+        
+        # Get current partition structure
+        cdef dict root_to_elems = self.root_to_elements_dict()
+        cdef int root_i = OP_find(self._nodes, i)
+        cdef int root_j = OP_find(self._nodes, j)
+        
+        # If already in same set, nothing to do
+        if root_i == root_j:
+            return self if inplace else self.copy()
+        
+        # Build new DisjointSet with i moved to j's set
+        cdef DisjointSet_of_integers ds = DisjointSet_of_integers(card)
+        cdef int elem
+        for root, elems in root_to_elems.items():
+            if root == root_i:
+                # Skip i from its original set
+                for elem in elems:
+                    if elem != i:
+                        ds.union(root, elem)
+            else:
+                for elem in elems:
+                    ds.union(root, elem)
+        # Add i to j's set
+        ds.union(i, j)
+        
+        if inplace:
+            # Copy the new structure back to self
+            for k in range(card):
+                self._nodes.parent[k] = ds._nodes.parent[k]
+            self._nodes.rank[k] = ds._nodes.rank[k]
+            self._nodes.num_cells = ds._nodes.num_cells
+            return self
+        return ds
+
 cdef class DisjointSet_of_hashables(DisjointSet_class):
     r"""
     Disjoint set of hashables.
@@ -1139,3 +1211,82 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             else:
                 root_map[root] = i
         return P
+
+    cpdef move(self, e, f, inplace=False) except *:
+        r"""
+        Move element ``e`` to the set containing element ``f``.
+
+        INPUT:
+
+        - ``e`` -- element in ``self``
+        - ``f`` -- element in ``self``
+        - ``inplace`` -- boolean (default: ``False``); if ``True``, modify
+          ``self`` in place, otherwise return a modified copy
+
+        EXAMPLES::
+
+            sage: d = DisjointSet('abcde')
+            sage: d.union('a', 'b')
+            sage: d.union('c', 'd')
+            sage: d
+            {{'a', 'b'}, {'c', 'd'}, {'e'}}
+            sage: d.move('b', 'c')
+            sage: d
+            {{'a'}, {'b', 'c', 'd'}, {'e'}}
+            sage: d.move('e', 'a')
+            sage: d
+            {{'a', 'e'}, {'b', 'c', 'd'}}
+
+        With ``inplace=False`` (default), a copy is returned::
+
+            sage: d = DisjointSet('abcde')
+            sage: d.union('a', 'b')
+            sage: d2 = d.move('b', 'c', inplace=False)
+            sage: d
+            {{'a', 'b'}, {'c'}, {'d'}, {'e'}}
+            sage: d2
+            {{'a'}, {'b', 'c'}, {'d'}, {'e'}}
+
+        TESTS::
+
+            sage: d = DisjointSet('abc')
+            sage: d.move('x', 'a')
+            Traceback (most recent call last):
+            ...
+            KeyError: 'x'
+        """
+        cdef int i = <int> self._el_to_int[e]
+        cdef int j = <int> self._el_to_int[f]
+        
+        # Get current partition structure
+        cdef dict root_to_elems = self.root_to_elements_dict()
+        root_e = self.find(e)
+        root_f = self.find(f)
+        
+        # If already in same set, nothing to do
+        if root_e == root_f:
+            return self if inplace else self.__copy__()
+        
+        # Build new DisjointSet with e moved to f's set
+        cdef int card = self._nodes.degree
+        ds = DisjointSet_of_hashables(self._int_to_el)
+        for root, elems in root_to_elems.items():
+            if root == root_e:
+                # Skip e from its original set
+                for elem in elems:
+                    if elem != e:
+                        ds.union(root, elem)
+            else:
+                for elem in elems:
+                    ds.union(root, elem)
+        # Add e to f's set
+        ds.union(e, f)
+        
+        if inplace:
+            # Copy the new structure back to self
+            for k in range(card):
+                self._nodes.parent[k] = ds._nodes.parent[k]
+                self._nodes.rank[k] = ds._nodes.rank[k]
+            self._nodes.num_cells = ds._nodes.num_cells
+            return self
+        return ds
