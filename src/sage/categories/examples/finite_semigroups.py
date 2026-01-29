@@ -1,12 +1,12 @@
 """
 Examples of finite semigroups
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
@@ -107,7 +107,7 @@ class LeftRegularBand(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self, alphabet=('a','b','c','d')):
+    def __init__(self, alphabet=('a', 'b', 'c', 'd')) -> None:
         r"""
         A left regular band.
 
@@ -123,7 +123,7 @@ class LeftRegularBand(UniqueRepresentation, Parent):
         Parent.__init__(self,
                         category=Semigroups().Finite().FinitelyGenerated())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -181,7 +181,7 @@ class LeftRegularBand(UniqueRepresentation, Parent):
             'b'
         """
 
-        return self(''.join(self.alphabet[2:]+self.alphabet[0:2]))
+        return self(''.join(self.alphabet[2:] + self.alphabet[0:2]))
 
     class Element (ElementWrapper):
         wrapped_class = str

@@ -1501,7 +1501,7 @@ def check_algos_are_equivalent(trials, graph_gen, verbose=False):
     - ``graph_gen`` -- function; a function that can be called without argument
       and returns a random graph.
 
-    - ``verbose`` -- boolean (defaul: ``False``); enable printing debug
+    - ``verbose`` -- boolean (default: ``False``); enable printing debug
       information.
 
     OUTPUT: ``None``. Raises an ``AssertionError`` on failure.

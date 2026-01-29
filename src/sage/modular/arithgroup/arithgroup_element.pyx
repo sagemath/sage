@@ -409,9 +409,10 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
         EXAMPLES::
 
-            sage: hash(SL2Z.0)
-            -8192788425652673914  # 64-bit
-            -1995808122           # 32-bit
+            sage: hash32 = -1995808122
+            sage: hash64 = -8192788425652673914
+            sage: hash(SL2Z.0) in [hash32, hash64]
+            True
         """
         return hash(self.__x)
 

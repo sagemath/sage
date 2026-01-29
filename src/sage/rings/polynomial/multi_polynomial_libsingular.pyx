@@ -170,8 +170,6 @@ AUTHORS:
 #   * pNext and pIter don't need currRing
 #   * p_Normalize apparently needs currRing
 
-from warnings import warn
-
 from libc.limits cimport INT_MAX
 
 from cpython.object cimport Py_NE
@@ -1406,9 +1404,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         EXAMPLES::
 
             sage: P.<x,y,z> = QQ[]
-            sage: hash(P)      # somewhat random output
-            967902441410893180 # 64-bit
-            -1767675994        # 32-bit
+            sage: hash(P) in ZZ  # result is inconsistent
+            True
         """
         return CategoryObject.__hash__(self)
 
@@ -4687,6 +4684,38 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         A :exc:`ValueError` exception is raised if ``g (== self)`` does not belong to ``I``.
 
+        .. WARNING::
+
+            This method is unreliable when the base ring is inexact::
+
+                sage: R.<x> = PolynomialRing(RDF, implementation="singular")
+                sage: g = 5*x^3 + x - 7; m = x^4 - 12*x + 13; R(1).lift((g, m))
+                Traceback (most recent call last):
+                ...
+                ValueError: polynomial is not in the ideal
+                sage: g.inverse_mod(m)
+                Traceback (most recent call last):
+                ...
+                ArithmeticError: element is non-invertible
+                sage: inverse_mod(g, m)
+                Traceback (most recent call last):
+                ...
+                ArithmeticError: element is non-invertible
+
+            While the generic implementation is fine::
+
+                sage: R.<x> = PolynomialRing(RDF)
+                sage: g = 5*x^3 + x - 7; m = x^4 - 12*x + 13; inverse_mod(g, m)  # abs tol 1e-14
+                -0.03196361250430942*x^3 - 0.03832697590106863*x^2 - 0.046305090023464945*x + 0.3464796877258926
+                sage: g.inverse_mod(m)  # abs tol 1e-14
+                -0.03196361250430942*x^3 - 0.03832697590106863*x^2 - 0.046305090023464945*x + 0.3464796877258926
+
+            But this is because of Singular:
+
+            .. code-block:: bash
+
+                Singular -q -c 'ring r = real,(x),lp; poly f = 5*x3 + x - 7; poly g = x4 - 12*x + 13; ideal M = f,g; ideal G = std(M); ideal SM = f; matrix T = lift(G,SM); T; quit;'
+
         INPUT:
 
         - ``I`` -- an ideal in ``self.parent()`` or tuple of generators of that ideal
@@ -4803,9 +4832,10 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             finally:
                 s = check_error()
             if s:
+                msg = "polynomial is not in the ideal"
                 if s != ('2nd module does not lie in the first',):
-                    warn(f'unexpected error from singular: {s}')
-                raise ValueError("polynomial is not in the ideal")
+                    msg += f'; unexpected error from singular: {s}'
+                raise ValueError(msg)
 
             l = [new_MP(parent, pTakeOutComp(&res.m[i], 1))
                  for i in range(IDELEMS(res)) for _ in range(IDELEMS(_I))]

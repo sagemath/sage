@@ -257,8 +257,7 @@ Interrupt the doctester::
     sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "interrupt.rst"], **kwds)
     Running doctests...
-    Doctesting 1 file.
-    Killing test interrupt.rst
+    Doctesting 1 file...
     ----------------------------------------------------------------------
     Doctests interrupted: 0/1 files tested
     ----------------------------------------------------------------------

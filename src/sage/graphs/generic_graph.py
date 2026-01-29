@@ -10169,6 +10169,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = Graph([('A', 1)])
             sage: G.feedback_vertex_set()
             []
+
+        Test an immutable graph (:issue:`41487`)::
+
+            sage: G = graphs.CycleGraph(3, immutable=True)
+            sage: G.feedback_vertex_set(value_only=True)
+            1
         """
         if not constraint_generation and not self.is_directed():
             raise ValueError("the only implementation available for "
@@ -10205,7 +10211,7 @@ class GenericGraph(GenericGraph_pyx):
 
                 # Building the graph without the vertices removed by the LP
                 b_val = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
-                h = self.subgraph([v for v in self if not b_val[v]])
+                h = self.subgraph([v for v in self if not b_val[v]], immutable=False)
 
                 # Is the graph acyclic ?
                 if self.is_directed():

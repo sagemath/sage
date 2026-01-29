@@ -1953,7 +1953,7 @@ class OreSubmodule(OreModule):
     def __classcall__(cls, ambient, gens, saturate, names):
         r"""
         Normalize the input before passing it to the init function
-        (useful to ensure the uniqueness assupmtion).
+        (useful to ensure the uniqueness assumption).
 
         INPUT:
 

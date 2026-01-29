@@ -135,69 +135,6 @@ from . import ambient_space
 from . import scheme
 
 
-def is_AlgebraicScheme(x):
-    """
-    Test whether ``x`` is an algebraic scheme.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    boolean; whether ``x`` is an algebraic scheme, that is, a
-    subscheme of an ambient space over a ring defined by polynomial
-    equations.
-
-    EXAMPLES::
-
-        sage: A2 = AffineSpace(2, QQ, 'x, y')
-        sage: A2.coordinate_ring().inject_variables()
-        Defining x, y
-        sage: V = A2.subscheme([x^2 + y^2]); V
-        Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-          x^2 + y^2
-        sage: from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
-        sage: is_AlgebraicScheme(V)
-        doctest:warning...
-        DeprecationWarning: The function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-
-    Affine space is itself not an algebraic scheme, though the closed
-    subscheme defined by no equations is::
-
-        sage: from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
-        sage: is_AlgebraicScheme(AffineSpace(10, QQ))
-        False
-        sage: V = AffineSpace(10, QQ).subscheme([]); V
-        Closed subscheme of Affine Space of dimension 10 over Rational Field defined by:
-          (no polynomials)
-        sage: is_AlgebraicScheme(V)
-        True
-
-    We create a more complicated closed subscheme::
-
-        sage: A,x = AffineSpace(10, QQ).objgens()
-        sage: X = A.subscheme([sum(x)]); X
-        Closed subscheme of Affine Space of dimension 10 over Rational Field defined by:
-          x0 + x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9
-        sage: is_AlgebraicScheme(X)
-        True
-
-    ::
-
-        sage: is_AlgebraicScheme(QQ)
-        False
-        sage: S = Spec(QQ)
-        sage: is_AlgebraicScheme(S)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead.")
-    return isinstance(x, AlgebraicScheme)
-
-
 # ****************************************************************************
 # A quick overview over the class hierarchy:
 #
@@ -219,7 +156,7 @@ class AlgebraicScheme(scheme.Scheme):
     defined by equations in affine, projective, or toric ambient
     spaces.
     """
-    def __init__(self, A, category=None):
+    def __init__(self, A, category=None) -> None:
         """
         TESTS::
 

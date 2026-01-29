@@ -191,13 +191,33 @@ fi
 # build/bin/sage-site. See #29111; but OTOH #34627.
 
 build_sage() {
-    ( cd "$SAGE_ROOT" && make sagelib-no-deps ) || exit $?
+    # Check for the expected editable meson build directory
+    SCRIPT=$(readlink -f "$0") # this shell script
+    SAGE_ROOT=$(dirname "$SCRIPT")/../..
+    if [ -f "$SAGE_ROOT/build/sage-distro/build.ninja" ]; then
+         echo "Building Sage with ninja..."
+       ninja -C $SAGE_ROOT/build/sage-distro || exit $?
+    else
+        echo "Error: 'sage -b' is for editable sage-distro developer builds." >&2
+        echo "Please use 'make' or 'meson' directly for other builds." >&2
+        exit 1
+    fi
 }
 
 # Check for '-i' etc. before sourcing sage-env: running "make"
 # should be run outside of the Sage shell.
 case "$1" in
     -i|-f|-p)
+        echo "\"sage -i\" is obsolete, and might not work." >&2
+        echo "Please use \"./configure --with-<package name>\" followed by \"make\" to update/install Sage's spkg," >&2
+        echo "and \"./sage --pip install <package name>\" to install external packages." >&2
+
+        if [ -n "$CONDA_PREFIX" ]; then
+            echo "Error: 'sage $1' is not supported in Conda environments." >&2
+            echo "Please use 'conda install' to install packages." >&2
+            exit 1
+        fi
+
         # Delegate further option handling to the non-installed sage-site script.
         # (These options become unavailable if the directory $SAGE_ROOT is removed.)
         if [ -d "$SAGE_ROOT" ]; then
@@ -212,8 +232,10 @@ case "$1" in
         exit 0
         ;;
     -br|--br)
+        echo "Warning: 'sage -br' is deprecated." >&2
+        echo "In an editable install, just run './sage' to use the latest built code." >&2
         build_sage
-        shift; set -- -r "$@"  # delegate to handling of "-r" below, after sourcing sage-env
+        shift; set -- -r "$@"
         ;;
     -bn|--build-and-notebook)
         build_sage
