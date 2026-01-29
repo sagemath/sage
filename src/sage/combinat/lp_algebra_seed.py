@@ -69,8 +69,7 @@ class LPASeed(SageObject):
     This example initialises a linear Laurent phenomenon algebra in two
     variables::
 
-        sage: var('x1,x2')
-        (x1, x2)
+        sage: x1, x2 = SR.var('x1,x2')
         sage: S = LPASeed({x1: 1 + x2, x2: 1 + x1})
         sage: S
         A seed with cluster variables [x1, x2] and exchange polynomials [x2 + 1, x1 + 1]
@@ -110,15 +109,13 @@ class LPASeed(SageObject):
         sage: S
         A seed with cluster variables [x1, x2] and exchange polynomials [x2 + 1, x1 + 1]
     """
-
     def __init__(self, data, coefficients=(), base_ring=ZZ) -> None:
         r"""
         Initialize an LP seed.
 
         EXAMPLES::
 
-            sage: var('x1, x2, x3')
-            (x1, x2, x3)
+            sage: x1, x2, x3 = SR.var('x1, x2, x3')
             sage: S = LPASeed({x1: 1 + x2 + x3, x2: 1 + x1 + x3, x3: 1 + x1 + x2})
             sage: TestSuite(S).run()
         """
@@ -293,8 +290,8 @@ class LPASeed(SageObject):
                     r = 1  # a generic value to run the loop
                     while r != 0:
                         counter += 1
-                        (q, r) = sub_poly.quo_rem(
-                            exchange_polys[j] ** (counter + 1))
+                        q, r = sub_poly.quo_rem(
+                            exchange_polys[j]**counter)
 
                     # divide exchange polynomial by this maximal power
                     laurent_polys[i] = laurent_polys[i] / (
@@ -410,8 +407,7 @@ class LPASeed(SageObject):
 
         A seed is mutation equivalent to any of its mutations::
 
-            sage: var('x1,x2,x3')
-            (x1, x2, x3)
+            sage: x1, x2, x3 = SR.var('x1,x2,x3')
             sage: S = LPASeed({x1: 1 + x2 + x3, x2: 1 + x1 + x3, x3: 1 + x1 + x2})
             sage: T = S.mutate(0, inplace=False)
             sage: S.is_mutation_equivalent(T)
@@ -454,8 +450,7 @@ class LPASeed(SageObject):
 
         We iterate over the mutation class for a rank two seed::
 
-            sage: var('x1,x2')
-            (x1, x2)
+            sage: x1, x2 = SR.var('x1,x2')
             sage: S = LPASeed({x1: 1 + x2, x2: 1 + x1})
             sage: t = S.mutation_class_iter()
             sage: for seed in t: print(seed.cluster())
@@ -468,8 +463,7 @@ class LPASeed(SageObject):
         Non finite-type works if we specify a fixed depth, but seeds can get big
         rather quickly::
 
-            sage: var('x1,x2')
-            (x1, x2)
+            sage: x1, x2 = SR.var('x1,x2')
             sage: S = LPASeed({x1: 1 + x2 + x2^2, x2: 1 + x1 + x1^2})
             sage: t = S.mutation_class_iter(depth=15,algorithm='DFS')
             sage: for seed in t: print(seed.cluster()[0].denominator()) # long time
@@ -723,8 +717,7 @@ class LPASeed(SageObject):
 
         We check a classic example::
 
-            sage: var('a,f,C')
-            (a, f, C)
+            sage: a,f,C = SR.var('a,f,C')
             sage: S = LPASeed({a: f + C, f: a + C}, coefficients=[C])
             sage: t = S.cluster_class_iter()
             sage: for cluster in t: print(cluster)
@@ -773,8 +766,7 @@ class LPASeed(SageObject):
 
         EXAMPLES::
 
-            sage: var('x1, x2, x3')
-            (x1, x2, x3)
+            sage: x1, x2, x3 = SR.var('x1, x2, x3')
             sage: LPASeed({x1: 2},base_ring=ZZ).cluster_class()
             [[x1], [2/x1]]
         """

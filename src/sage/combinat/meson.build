@@ -69,6 +69,7 @@ py.install_sources(
   'key_polynomial.py',
   'knutson_tao_puzzles.py',
   'lr_tableau.py',
+  'lp_algebra_seed.py',
   'misc.py',
   'multiset_partition_into_sets_ordered.py',
   'necklace.py',
