@@ -49,6 +49,7 @@ from sage.combinat.permutation import Permutation
 from sage.arith.misc import factorial
 from sage.misc.prandom import random, randint, sample
 from sage.sets.disjoint_set import DisjointSet
+from sage.functions.log import log
 
 lazy_import('sage.combinat.posets.hasse_diagram', 'HasseDiagram')
 lazy_import('sage.probability.probability_distribution', 'GeneralDiscreteDistribution')
@@ -1345,7 +1346,68 @@ class SetPartition(AbstractSetPartition,
             attacked_rows.append(i)
             rooks.append((i, j))
         return sorted(rooks)
+    
+    def entropy(self, base=2):
+        r"""
+        Return the entropy of the set partition.
 
+        The entropy is defined as
+
+        .. MATH::
+
+            - \sum_{B \in \pi} \frac{|B|}{n} \log_b\left(\frac{|B|}{n}\right)
+            
+        where `\pi` is the set partition, `n` is the size of the underlying set, and `b` is the logarithm base.
+        
+        INPUT:
+        - ``base`` -- (default: 2) the base of the logarithm
+        
+        EXAMPLES::
+            sage: p = SetPartition([[1,2,3],[4,5]])
+            sage: p.entropy()
+            0.9709505944546686
+            sage: p.entropy(base=math.e)
+            0.6730116670092565
+            sage: p.entropy(base=10)
+            0.2920296745425357
+        
+        TESTS::
+            sage: SetPartition([]).entropy()
+            0
+
+            sage: SetPartition([[1,2,3,4,5]]).entropy()
+            0
+
+            sage: abs(SetPartition([[1,2,3],[4,5,6]]).entropy() - 1.0) < 0.0001
+            True
+
+            sage: import math
+            sage: abs(SetPartition([[1,2],[3,4],[5,6]]).entropy() - math.log2(3)) < 0.0001
+            True
+
+            sage: SetPartition([[1],[2],[3],[4]]).entropy()
+            2.0
+
+            sage: p = SetPartition([[1,2,3],[4,5]])
+            sage: e = p.entropy(base=math.e)
+            sage: 0 < e < 1
+            True
+
+            sage: p = SetPartition([[1,2,3],[4,5]])
+            sage: e = p.entropy(base=10)
+            sage: 0 < e < 0.5
+            True
+
+            sage: abs(SetPartition([[i] for i in range(10)]).entropy() - math.log2(10)) < 0.0001
+            True
+        """
+        n = self.size()
+        ent = 0
+        for B in self:
+            p = Integer(len(B)) / Integer(n)
+            ent -= p * log(p, base)
+        return ent
+        
     def apply_permutation(self, p):
         r"""
         Apply ``p`` to the underlying set of ``self``.
