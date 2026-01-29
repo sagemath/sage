@@ -1408,7 +1408,7 @@ class SetPartition(AbstractSetPartition,
             ent -= p * log(p, base)
         return ent
         
-    def assoc(self):
+    def characteristic_vector(self):
         r"""
         Build a bit vector of binary associations between elements.
 
@@ -1427,37 +1427,37 @@ class SetPartition(AbstractSetPartition,
         EXAMPLES::
 
             sage: p = SetPartition([[0,1,4],[2,3]])
-            sage: p.assoc()
+            sage: p.characteristic_vector()
             [1, 0, 0, 1, 0, 0, 1, 1, 0, 0]
 
         The pairs marked with 1 are: (0,1), (0,4), (1,4), (2,3)::
 
             sage: p = SetPartition([[1,2,3]])
-            sage: p.assoc()
+            sage: p.characteristic_vector()
             [1, 1, 1]
 
         TESTS::
 
-            sage: SetPartition([]).assoc()
+            sage: SetPartition([]).characteristic_vector()
             []
 
-            sage: SetPartition([[0]]).assoc()
+            sage: SetPartition([[0]]).characteristic_vector()
             []
 
-            sage: SetPartition([[0,1]]).assoc()
+            sage: SetPartition([[0,1]]).characteristic_vector()
             [1]
 
-            sage: SetPartition([[0],[1]]).assoc()
+            sage: SetPartition([[0],[1]]).characteristic_vector()
             [0]
 
-            sage: SetPartition([[0,1],[2,3]]).assoc()
+            sage: SetPartition([[0,1],[2,3]]).characteristic_vector()
             [1, 0, 0, 0, 0, 1]
 
-            sage: SetPartition([[0],[1],[2],[3]]).assoc()
+            sage: SetPartition([[0],[1],[2],[3]]).characteristic_vector()
             [0, 0, 0, 0, 0, 0]
 
             sage: p = SetPartition([[0,1,2,3,4,5,6,7,8,9]])
-            sage: len(p.assoc()) == 45 and all(x == 1 for x in p.assoc())
+            sage: len(p.characteristic_vector()) == 45 and all(x == 1 for x in p.characteristic_vector())
             True
 
         ALGORITHM:
@@ -1474,7 +1474,7 @@ class SetPartition(AbstractSetPartition,
             return []
         
         m = n * (n - 1) // 2
-        assoc = [0] * m
+        characteristic_vector = [0] * m
         
         # Create a mapping from elements to indices 0, 1, 2, ..., n-1
         base_set_sorted = sorted(self.base_set())
@@ -1489,9 +1489,9 @@ class SetPartition(AbstractSetPartition,
                     
                     # Compute index for pair (a_idx, b_idx) in lexicographic order
                     index = a_idx * n - a_idx * (a_idx + 1) // 2 + (b_idx - a_idx - 1)
-                    assoc[index] = 1
+                    characteristic_vector[index] = 1
         
-        return assoc
+        return characteristic_vector
     
     def apply_permutation(self, p):
         r"""
