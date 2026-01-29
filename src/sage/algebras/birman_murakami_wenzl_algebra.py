@@ -163,7 +163,7 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
             ...
             NotImplementedError: Only braid images can be inverted
         """
-        b = self.braid_group_algebra_pre_image()
+        b = self.braid_group_algebra_preimage()
 
         if b is None or len(b.support()) > 1:
             raise NotImplementedError('Only braid images can be inverted')
@@ -173,7 +173,7 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
         return P(~br)
 
     @cached_method
-    def braid_group_algebra_pre_image(self):
+    def braid_group_algebra_preimage(self):
         r"""
         Return a pre image of ``self`` in the group algebra of the braid group.
 
@@ -188,7 +188,7 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
             sage: ele = BMW3.an_element(); ele
             (l^-1*m^2)*e1 + m^2*g1*e0*g1^-1*g0^-1 + (-m)*g1*e0*g1^-1 + (-m)*g0*g1*e0
              + g1^-1*g0*g1 + (-m)*g0*g1 + m^2*g1*e0 + m^2*g1 + (-m)*o1
-            sage: b_ele = ele.braid_group_algebra_pre_image(); b_ele
+            sage: b_ele = ele.braid_group_algebra_preimage(); b_ele
             (-l^-1*m^2) + (l^-1*m)*s1 + m*s1*s0 + m*s1*s0^-1*s1^-1*s0^-1
              + (-1)*s1*s0^-1*s1^-1 + m*s1*s0^-1 + (-m^2)*s0^-1 + m*s1*s0*s1^-1*s0^-1
              + (-1)*s1*s0*s1^-1 + (l^-1*m)*s1^-1 + (-1)*s0*s1*s0
@@ -469,7 +469,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         g0*g1^-1*e0*g0^-1*e1
         sage: bt == BMW3(tangle)
         True
-        sage: pre = bt.braid_group_algebra_pre_image(); pre
+        sage: pre = bt.braid_group_algebra_preimage(); pre
         (-l*m^2+l) + (l*m-l*m^-1)*s1 + (l*m+1)*s0^-1*s1^-1*s0^-1
          + (-l)*s1*s0^-1*s1^-1*s0^-1 + l*m*s0^-1 + (-l)*s1*s0*s1^-1*s0^-1
          + (-l*m^2-m)*s1^-1*s0^-1 + (l*m+1)*s0*s1^-1*s0^-1 + (l*m-l*m^-1)*s1^-1
