@@ -328,26 +328,15 @@ class KauffmanTangle(AutomaticSemigroup.Element):
             matches = [st for st in los if [st.start, st.end] == bot_transpos]
             if matches:
                 # self crossing
-                st1 = matches[0]
+                st1, = matches
                 add_crossings_to_dict(st1, [(st1, lw - 1)])
                 return crossing_dict
 
             matches = [st for st in los if st.start in bot_transpos or st.end in bot_transpos]
-            st1 = matches[0]
-            st2 = matches[1]
+            st1, st2  = matches
             # note that st1 < st2
             add_crossings_to_dict(st1, [(st2, lw - 1)])
             add_crossings_to_dict(st2, [(st1, lw - 1)])
-
-        # clear second insertion from glued strands
-        for st1 in crossing_dict:
-            crossings = crossing_dict[st1]
-            for cr1 in crossings:
-                st2, pos = cr1
-                cr2 = (st2, pos)
-                if cr2 in crossings:
-                    if crossings.index(cr1) < crossings.index(cr2):
-                        crossings.remove(cr2)
 
         return crossing_dict
 
