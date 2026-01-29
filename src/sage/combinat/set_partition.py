@@ -1835,6 +1835,151 @@ class SetPartition(AbstractSetPartition,
                 ret.append(newpart)
         return SetPartition(ret)
 
+    def diff(self, other):
+        """
+        Return the differential of ``self`` and ``other``.
+
+        The differential `P - Q` filters out blocks of `P` that are
+        contained in blocks of `Q`. Only blocks of `P` that are not
+        subsets of any block in `Q` are kept.
+
+        This operation is based on the work of Hugo DOMINGUEZ (Nantes University Polytechnic School, 2021-22)
+        and PhD Thesis of F. Dumonceaux (Nantes University).
+
+        INPUT:
+
+        - ``other`` -- a set partition of the same base set as ``self``
+
+        OUTPUT:
+
+        A set partition containing only the blocks of ``self`` that are
+        not contained in any block of ``other``.
+
+        EXAMPLES::
+
+            sage: A = SetPartition([[1,2], [3,4], [5]])
+            sage: B = SetPartition([[1,2,3], [4,5]])
+            sage: A.diff(B)
+            {{3, 4}}
+
+        The block ``[1,2]`` is contained in ``[1,2,3]``, and ``[5]`` is
+        contained in ``[4,5]``, so only ``[3,4]`` remains::
+
+            sage: A = SetPartition([[1], [2,3]])
+            sage: B = SetPartition([[1,2], [3]])
+            sage: A.diff(B)
+            {{2, 3}}
+
+        When a partition is diffed with itself, the result is empty::
+
+            sage: A = SetPartition([[1,2,3,4]])
+            sage: A.diff(A)
+            {}
+
+        Empty partitions::
+
+            sage: SetPartition([]).diff(SetPartition([]))
+            {}
+
+        More examples with various block configurations::
+
+            sage: A = SetPartition([[1,2,3], [4,5], [6]])
+            sage: B = SetPartition([[1,2,3,4,5,6]])
+            sage: A.diff(B)
+            {}
+
+            sage: A = SetPartition([[1], [2], [3], [4]])
+            sage: B = SetPartition([[1,2], [3,4]])
+            sage: A.diff(B)
+            {}
+
+            sage: A = SetPartition([[1,2,3], [4,5,6]])
+            sage: B = SetPartition([[1], [2], [3], [4], [5], [6]])
+            sage: A.diff(B)
+            {{1, 2, 3}, {4, 5, 6}}
+
+        TESTS::
+
+            sage: A = SetPartition([[1,2]])
+            sage: B = SetPartition([[3,4]])
+            sage: A.diff(B)
+            Traceback (most recent call last):
+            ...
+            ValueError: partitions must be defined on the same base set
+
+        Test with larger sets::
+
+            sage: A = SetPartition([[1,2,3,4,5,6,7,8,9,10]])
+            sage: B = SetPartition([[1,2], [3,4], [5,6], [7,8], [9,10]])
+            sage: A.diff(B)
+            {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}}
+
+            sage: A = SetPartition([[1,2], [3,4], [5,6], [7,8]])
+            sage: B = SetPartition([[1,2,3,4], [5,6,7,8]])
+            sage: A.diff(B)
+            {}
+
+        Test commutativity properties::
+
+            sage: A = SetPartition([[1,2], [3]])
+            sage: B = SetPartition([[1], [2,3]])
+            sage: A.diff(B)
+            {{1, 2}}
+            sage: B.diff(A)
+            {{2, 3}}
+
+        Test with SetPartitions parent::
+
+            sage: S = SetPartitions(4)
+            sage: A = S([[1,2], [3,4]])
+            sage: B = S([[1,2,3,4]])
+            sage: A.diff(B)
+            {}
+
+            sage: A = S([[1,2,3,4]])
+            sage: B = S([[1,2], [3,4]])
+            sage: A.diff(B)
+            {{1, 2, 3, 4}}
+
+        Test with a single singleton::
+
+            sage: A = SetPartition([[1]])
+            sage: A.diff(A)
+            {}
+
+        Test with very large sets::
+
+            sage: A = SetPartition([[1,2,3,4,5,6,7,8,9,10]])
+            sage: B = SetPartition([[1,2],[3,4],[5,6],[7,8],[9,10]])
+            sage: A.diff(B)
+            {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}}
+
+        Test with complex partial intersections::
+
+            sage: A = SetPartition([[1,2,3],[4,5],[6,7],[8]])
+            sage: B = SetPartition([[1,2],[3,4,5,6],[7,8]])
+            sage: A.diff(B)
+            {{1, 2, 3}, {6, 7}}
+        """
+        # Check that the base sets are the same
+        if self.base_set() != other.base_set():
+            raise ValueError("partitions must be defined on the same base set")
+
+        result = []
+        for block in self:
+            # Check if this block is contained in any block of other
+            is_contained = False
+            for other_block in other:
+                if block.issubset(other_block):
+                    is_contained = True
+                    break
+
+            # Keep the block only if it is not contained
+            if not is_contained:
+                result.append(block)
+
+        return SetPartition(result)
+
     def ordered_set_partition_action(self, s):
         r"""
         Return the action of an ordered set partition ``s`` on ``self``.
