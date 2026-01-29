@@ -1408,6 +1408,91 @@ class SetPartition(AbstractSetPartition,
             ent -= p * log(p, base)
         return ent
         
+    def assoc(self):
+        r"""
+        Build a bit vector of binary associations between elements.
+
+        This returns a list of 0s and 1s representing which pairs of
+        elements are in the same block. The size of the vector is
+        `n(n-1)/2` where `n` is the size of the base set.
+
+        Pairs are indexed in lexicographic order:
+        `(0,1), (0,2), \ldots, (0,n-1), (1,2), (1,3), \ldots, (1,n-1), \ldots, (n-2,n-1)`
+
+        A value of 1 at position corresponding to pair `(i,j)` indicates
+        that elements `i` and `j` are in the same block.
+
+        OUTPUT: list of integers (0 or 1)
+
+        EXAMPLES::
+
+            sage: p = SetPartition([[0,1,4],[2,3]])
+            sage: p.assoc()
+            [1, 0, 0, 1, 0, 0, 1, 1, 0, 0]
+
+        The pairs marked with 1 are: (0,1), (0,4), (1,4), (2,3)::
+
+            sage: p = SetPartition([[1,2,3]])
+            sage: p.assoc()
+            [1, 1, 1]
+
+        TESTS::
+
+            sage: SetPartition([]).assoc()
+            []
+
+            sage: SetPartition([[0]]).assoc()
+            []
+
+            sage: SetPartition([[0,1]]).assoc()
+            [1]
+
+            sage: SetPartition([[0],[1]]).assoc()
+            [0]
+
+            sage: SetPartition([[0,1],[2,3]]).assoc()
+            [1, 0, 0, 0, 0, 1]
+
+            sage: SetPartition([[0],[1],[2],[3]]).assoc()
+            [0, 0, 0, 0, 0, 0]
+
+            sage: p = SetPartition([[0,1,2,3,4,5,6,7,8,9]])
+            sage: len(p.assoc()) == 45 and all(x == 1 for x in p.assoc())
+            True
+
+        ALGORITHM:
+
+        For each pair of elements in the same block, compute the index
+        using the formula: `index = i \cdot n - i(i+1)/2 + (j - i - 1)`
+        which maps pair `(i,j)` with `i < j` to its position in the
+        lexicographic ordering.
+
+        Complexity: `O(n^2)` in the worst case (one block with all elements).
+        """
+        n = self.base_set_cardinality()
+        if n <= 1:
+            return []
+        
+        m = n * (n - 1) // 2
+        assoc = [0] * m
+        
+        # Create a mapping from elements to indices 0, 1, 2, ..., n-1
+        base_set_sorted = sorted(self.base_set())
+        element_to_index = {elem: idx for idx, elem in enumerate(base_set_sorted)}
+        
+        for bloc in self:
+            bloc_sorted = sorted(bloc)
+            for i in range(len(bloc_sorted)):
+                a_idx = element_to_index[bloc_sorted[i]]
+                for j in range(i + 1, len(bloc_sorted)):
+                    b_idx = element_to_index[bloc_sorted[j]]
+                    
+                    # Compute index for pair (a_idx, b_idx) in lexicographic order
+                    index = a_idx * n - a_idx * (a_idx + 1) // 2 + (b_idx - a_idx - 1)
+                    assoc[index] = 1
+        
+        return assoc
+    
     def apply_permutation(self, p):
         r"""
         Apply ``p`` to the underlying set of ``self``.
