@@ -93,16 +93,12 @@ jobs:
           - "src/sage/[p-z]*"
           - "src/doc src/sage_docbuild src/sage_setup"
     steps:
-      - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v10
+      - name: Maximize available disk space
+        uses: jlumbroso/free-disk-space@v1.3.1
         with:
-          # need space in /var for Docker images
-          root-reserve-mb:      50000
-          remove-dotnet:        true
-          remove-android:       true
-          remove-haskell:       true
-          remove-codeql:        true
-          remove-docker-images: true
+          # Remove pre-installed packages like Docker, Android, .NET, etc.
+          # We only keep the basic essentials (like compilers, etc.)
+          tool-cache: true
 
       - name: Checkout
         id: checkout
