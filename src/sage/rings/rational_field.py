@@ -18,9 +18,9 @@ function).
 
     sage: RealField(9).pi()                                                             # needs sage.rings.real_mpfr
     3.1
-    sage: QQ(RealField(9).pi())                                                         # needs sage.rings.real_interval_field sage.rings.real_mpfr
+    sage: QQ(RealField(9).pi())
     22/7
-    sage: QQ(RealField().pi())                                                          # needs sage.rings.real_interval_field sage.rings.real_mpfr
+    sage: QQ(RealField().pi())
     245850922/78256779
     sage: QQ(35)
     35
@@ -58,9 +58,8 @@ from sage.rings.rational import Rational
 
 ZZ = None
 
-import sage.rings.number_field.number_field_base as number_field_base
 from sage.misc.fast_methods import Singleton
-from sage.misc.superseded import deprecated_function_alias
+from sage.rings.number_field import number_field_base
 from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 
@@ -690,13 +689,12 @@ class RationalField(Singleton, number_field_base.NumberField):
                 from sage.rings.qqbar import QQbar as domain
             else:
                 from sage.rings.qqbar import AA as domain
+        elif all_complex:
+            from sage.rings.complex_mpfr import ComplexField
+            domain = ComplexField(prec)
         else:
-            if all_complex:
-                from sage.rings.complex_mpfr import ComplexField
-                domain = ComplexField(prec)
-            else:
-                from sage.rings.real_mpfr import RealField
-                domain = RealField(prec)
+            from sage.rings.real_mpfr import RealField
+            domain = RealField(prec)
         return [self.hom([domain(1)])]
 
     def complex_embedding(self, prec=53):
@@ -1583,8 +1581,9 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ._sympy_()                                                          # needs sympy
             Rationals
         """
-        from sage.interfaces.sympy import sympy_init
         from sympy import Rationals
+
+        from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Rationals
 
