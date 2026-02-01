@@ -35,9 +35,9 @@ def create_RealField(prec=53, type='MPFR', rnd='RNDN', sci_not=0):
         Real Field with 30 bits of precision
         sage: create_RealField(20, 'RDF')  # ignores precision
         Real Double Field
-        sage: create_RealField(60, 'Interval')                                          # needs sage.rings.real_interval_field
+        sage: create_RealField(60, 'Interval')
         Real Interval Field with 60 bits of precision
-        sage: create_RealField(40, 'RLF')  # ignores precision                          # needs sage.rings.real_interval_field
+        sage: create_RealField(40, 'RLF')  # ignores precision
         Real Lazy Field
     """
     if type == "RDF":

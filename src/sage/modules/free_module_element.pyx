@@ -135,26 +135,6 @@ __one__ = smallInteger(1)
 __two__ = smallInteger(2)
 
 
-def is_FreeModuleElement(x):
-    """
-    EXAMPLES::
-
-        sage: sage.modules.free_module_element.is_FreeModuleElement(0)
-        doctest:warning...
-        DeprecationWarning: The function is_FreeModuleElement is deprecated;
-        use 'isinstance(..., FreeModuleElement)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        False
-        sage: sage.modules.free_module_element.is_FreeModuleElement(vector([1,2,3]))
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38184,
-                       "The function is_FreeModuleElement is deprecated; "
-                       "use 'isinstance(..., FreeModuleElement)' instead.")
-    return isinstance(x, FreeModuleElement)
-
-
 def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     r"""
     Return a vector or free module element with specified entries.
@@ -4970,7 +4950,6 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
         Test that :issue:`17101` is fixed::
 
-            sage: # needs sage.rings.real_interval_field
             sage: v = vector([RIF(-1, 1)], sparse=True)
             sage: v.is_zero()
             False
