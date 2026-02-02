@@ -2574,7 +2574,7 @@ def surface(*args, KK=33331, ambient=None, nodes=None, virtual=False, class_surf
     I = ideal(R.one())
     for i in range(1,len(v)):
         for j in range(v[i]):
-            I = I.intersection((ideal([_random1(R), _random1(R)]) ** i))
+            I = I.intersection(ideal([_random1(R), _random1(R)]) ** i)
     I = _saturation(I)
     f = rational_map(projective_variety(I),v[0])
     if nodes is not None:
