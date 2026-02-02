@@ -495,8 +495,7 @@ class Embedded_projective_variety(AlgebraicScheme_subscheme_projective):
             p = j(L[0])
             assert p._is_point()
             return p
-        else:
-            raise RuntimeError("function _raw_point() failed: reached maximum number of 10 attempts to find rational point")
+        raise RuntimeError("function _raw_point() failed: reached maximum number of 10 attempts to find rational point")
 
     def point(self, verbose=None, algorithm='sage'):
         r"""
@@ -2100,8 +2099,7 @@ class Rational_map_between_embedded_projective_varieties(SchemeMorphism_polynomi
         for P in M.minors(2):
             if not P.is_zero():
                 return False
-        else:
-            return True
+        return True
 
     def __ne__(self,other):
         r"""Logical negation of :meth:`__eq__`."""
