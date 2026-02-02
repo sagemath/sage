@@ -1109,6 +1109,12 @@ class SQLDatabase(SageObject):
             raise RuntimeError('Cannot update skeleton of a read only '
                 + 'database.')
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        self.__connection__.close()
+
     def __repr__(self):
         """
         Override the print output to display useful info regarding the

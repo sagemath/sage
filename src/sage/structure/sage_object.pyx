@@ -664,11 +664,12 @@ cdef class SageObject:
         TESTS::
 
             sage: class Bla(SageObject): pass
-            sage: Bla()._test_pickling()
-            Traceback (most recent call last):
-            ...
-            PicklingError: Can't pickle <class '__main__.Bla'>: attribute
-            lookup ... failed
+            sage: from _pickle import PicklingError
+            sage: try:
+            ....:     Bla()._test_pickling()
+            ....: except PicklingError as e:
+            ....:     print("PicklingError caught")
+            PicklingError caught
 
         TODO: for a stronger test, this could send the object to a
         remote Sage session, and get it back.
@@ -768,7 +769,7 @@ cdef class SageObject:
             G = sage.interfaces.gap.gap
         return self._interface_(G)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Return a string that provides a representation of ``self`` in GAP.
 

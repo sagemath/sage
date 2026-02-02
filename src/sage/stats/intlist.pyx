@@ -79,8 +79,7 @@ cdef class IntList:
             sage: stats.IntList([1, 3, 2^32])
             Traceback (most recent call last):
             ...
-            OverflowError: ... too large to convert to C long  # 32-bit
-            OverflowError: ... too large to convert to int     # 64-bit
+            OverflowError: ... too large to convert to ...
 
         Printing omits entries::
 

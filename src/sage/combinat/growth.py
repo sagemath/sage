@@ -4293,7 +4293,7 @@ class RuleDomino(Rule):
             elif len(diff) == 1:
                 z = copy(x)
                 # diff is a single cell
-                (k,l) = diff.pop()
+                k, l = diff.pop()
                 # add (k+1, l+1) to x
                 # either (k, l+1) or (k+1, l) must also be added
                 if z[k] <= l + 1:

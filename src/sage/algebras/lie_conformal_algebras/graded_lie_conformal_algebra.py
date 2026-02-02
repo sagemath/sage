@@ -36,20 +36,21 @@ AUTHORS:
 """
 
 
-#******************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
+from sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefs import (
+    LieConformalAlgebraWithStructureCoefficients,
+)
 from sage.categories.lie_conformal_algebras import LieConformalAlgebras
-from .lie_conformal_algebra_with_structure_coefs import \
-                                LieConformalAlgebraWithStructureCoefficients
 
 
 class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
@@ -119,7 +120,8 @@ class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         else:
             category = default_category.or_subcategory(category)
 
-        LieConformalAlgebraWithStructureCoefficients.__init__(self, R,
+        LieConformalAlgebraWithStructureCoefficients.__init__(
+            self, R,
             s_coeff, index_set=index_set, central_elements=central_elements,
             category=category, prefix=prefix,
             names=names, latex_names=latex_names, parity=parity, **kwds)

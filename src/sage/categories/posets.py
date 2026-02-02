@@ -12,6 +12,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category import Category
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.sets_cat import Sets
 
 
@@ -719,3 +720,41 @@ class Posets(Category):
         #         sage: x <= y
         #     """
         #     return self.parent().le(self, other)
+
+    class SubcategoryMethods:
+        def Bounded(self):
+            r"""
+            A bounded poset is a poset with a unique maximal element
+            and a unique minimal element.
+
+            EXAMPLES::
+
+                sage: P = posets.DivisorLattice(24)
+                sage: P in Posets().Bounded()
+                True
+            """
+            return self._with_axiom("Bounded")
+
+    class Bounded(CategoryWithAxiom):
+        """
+        The category of bounded posets.
+
+        EXAMPLES::
+
+            sage: cat = Posets().Bounded(); cat
+            Category of bounded posets
+
+            sage: cat.super_categories()
+            [Category of posets]
+        """
+        class ParentMethods:
+            def is_bounded(self):
+                """
+                Return whether ``self`` is a bounded poset.
+
+                EXAMPLES::
+
+                    sage: posets.TamariLattice(4).is_bounded()
+                    True
+                """
+                return True

@@ -1154,24 +1154,6 @@ def FSMWordSymbol(word):
 # ****************************************************************************
 
 
-def is_FSMState(S):
-    """
-    Test whether or not ``S`` inherits from :class:`FSMState`.
-
-    TESTS::
-
-        sage: from sage.combinat.finite_state_machine import is_FSMState, FSMState
-        sage: is_FSMState(FSMState('A'))
-        doctest:warning...
-        DeprecationWarning: The function is_FSMState is deprecated; use 'isinstance(..., FSMState)' instead.
-        See https://github.com/sagemath/sage/issues/38032 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38032, "The function is_FSMState is deprecated; use 'isinstance(..., FSMState)' instead.")
-    return isinstance(S, FSMState)
-
-
 class FSMState(SageObject):
     """
     Class for a state of a finite state machine.
@@ -1299,7 +1281,7 @@ class FSMState(SageObject):
         sage: A.determinisation()
         Traceback (most recent call last):
         ...
-        TypeError: unhashable type: 'list'
+        TypeError: ...unhashable type: 'list'...
         sage: A.state(0).color = ()
         sage: A.determinisation()
         Automaton with 1 state
@@ -2114,24 +2096,6 @@ class FSMState(SageObject):
 # ****************************************************************************
 
 
-def is_FSMTransition(T):
-    """
-    Test whether or not ``T`` inherits from :class:`FSMTransition`.
-
-    TESTS::
-
-        sage: from sage.combinat.finite_state_machine import is_FSMTransition, FSMTransition
-        sage: is_FSMTransition(FSMTransition('A', 'B'))
-        doctest:warning...
-        DeprecationWarning: The function is_FSMTransition is deprecated; use 'isinstance(..., FSMTransition)' instead.
-        See https://github.com/sagemath/sage/issues/38032 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38032, "The function is_FSMTransition is deprecated; use 'isinstance(..., FSMTransition)' instead.")
-    return isinstance(T, FSMTransition)
-
-
 class FSMTransition(SageObject):
     """
     Class for a transition of a finite state machine.
@@ -2406,28 +2370,6 @@ class FSMTransition(SageObject):
 
 
 # ****************************************************************************
-
-
-def is_FiniteStateMachine(FSM):
-    """
-    Test whether or not ``FSM`` inherits from :class:`FiniteStateMachine`.
-
-    TESTS::
-
-        sage: from sage.combinat.finite_state_machine import is_FiniteStateMachine
-        sage: is_FiniteStateMachine(FiniteStateMachine())
-        doctest:warning...
-        DeprecationWarning: The function is_FiniteStateMachine is deprecated; use 'isinstance(..., FiniteStateMachine)' instead.
-        See https://github.com/sagemath/sage/issues/38032 for details.
-        True
-        sage: is_FiniteStateMachine(Automaton())
-        True
-        sage: is_FiniteStateMachine(Transducer())
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38032, "The function is_FiniteStateMachine is deprecated; use 'isinstance(..., FiniteStateMachine)' instead.")
-    return isinstance(FSM, FiniteStateMachine)
 
 
 def duplicate_transition_ignore(old_transition, new_transition):
@@ -6554,7 +6496,7 @@ class FiniteStateMachine(SageObject):
             sage: Transducer(transition, input_alphabet=[0], initial_states=[0])
             Traceback (most recent call last):
             ...
-            TypeError: mutable vectors are unhashable
+            TypeError: ...mutable vectors are unhashable...
         """
         if self.input_alphabet is None:
             raise ValueError("No input alphabet is given. "
@@ -7315,8 +7257,6 @@ class FiniteStateMachine(SageObject):
             [Transition from 0 to 1: 0|-,
              Transition from 2 to 0: -|-,
              Transition from 1 to 2: 1|-]
-            sage: from sage.combinat.finite_state_machine import (
-            ....:     is_Automaton, is_Transducer)
             sage: isinstance(B, Automaton)
             True
             sage: [w for w in ([], [0, 1], [0, 1, 0], [0, 1, 0, 1], [0, 1, 1, 1])
@@ -7860,8 +7800,6 @@ class FiniteStateMachine(SageObject):
 
         ::
 
-            sage: from sage.combinat.finite_state_machine import (
-            ....:     is_Automaton, is_Transducer)
             sage: T = Transducer([(0, 0, 0, 0)], initial_states=[0])
             sage: A = Automaton([(0, 0, 0)], initial_states=[0])
             sage: isinstance(T.composition(T, algorithm='direct'), Transducer)
@@ -8055,7 +7993,7 @@ class FiniteStateMachine(SageObject):
             Automaton with 1 state
         """
         def composition_transition(states, input):
-            (state1, state2) = states
+            state1, state2 = states
             return [((new_state1, new_state2), output_second)
                     for _, new_state1, output_first in
                     first.process([input],
@@ -8087,7 +8025,7 @@ class FiniteStateMachine(SageObject):
                                        initial_states=new_initial_states)
 
         for state in F.iter_states():
-            (state1, state2) = state.label()
+            state1, state2 = state.label()
             if state1.is_final:
                 final_output_second = second.process(
                     state1.final_word_out,
@@ -10089,7 +10027,7 @@ class FiniteStateMachine(SageObject):
 
         K = len(self.input_alphabet)
         R = PolynomialRing(QQ, ("x", "y", "z"))
-        (x, y, z) = R.gens()
+        x, y, z = R.gens()
         try:
             M = get_matrix(self, x, y)
         except (TypeError, ValueError):
@@ -10645,31 +10583,6 @@ class FiniteStateMachine(SageObject):
 # ****************************************************************************
 
 
-def is_Automaton(FSM):
-    """
-    Test whether or not ``FSM`` inherits from :class:`Automaton`.
-
-    TESTS::
-
-        sage: from sage.combinat.finite_state_machine import is_FiniteStateMachine, is_Automaton
-        sage: is_Automaton(FiniteStateMachine())
-        doctest:warning...
-        DeprecationWarning: The function is_Automaton is deprecated; use 'isinstance(..., Automaton)' instead.
-        See https://github.com/sagemath/sage/issues/38032 for details.
-        False
-        sage: is_Automaton(Automaton())
-        True
-        sage: is_FiniteStateMachine(Automaton())
-        doctest:warning...
-        DeprecationWarning: The function is_FiniteStateMachine is deprecated; use 'isinstance(..., FiniteStateMachine)' instead.
-        See https://github.com/sagemath/sage/issues/38032 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38032, "The function is_Automaton is deprecated; use 'isinstance(..., Automaton)' instead.")
-    return isinstance(FSM, Automaton)
-
-
 class Automaton(FiniteStateMachine):
     """
     This creates an automaton, which is a finite state machine, whose
@@ -10951,7 +10864,7 @@ class Automaton(FiniteStateMachine):
             sage: A.determinisation()
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'list'
+            TypeError: ...unhashable type: 'list'...
             sage: A.state(0).color = ()
             sage: A.determinisation()
             Automaton with 1 state
@@ -11832,31 +11745,6 @@ class Automaton(FiniteStateMachine):
 
 
 # ****************************************************************************
-
-
-def is_Transducer(FSM):
-    """
-    Test whether or not ``FSM`` inherits from :class:`Transducer`.
-
-    TESTS::
-
-        sage: from sage.combinat.finite_state_machine import is_FiniteStateMachine, is_Transducer
-        sage: is_Transducer(FiniteStateMachine())
-        doctest:warning...
-        DeprecationWarning: The function is_Transducer is deprecated; use 'isinstance(..., Transducer)' instead.
-        See https://github.com/sagemath/sage/issues/38032 for details.
-        False
-        sage: is_Transducer(Transducer())
-        True
-        sage: is_FiniteStateMachine(Transducer())
-        doctest:warning...
-        DeprecationWarning: The function is_FiniteStateMachine is deprecated; use 'isinstance(..., FiniteStateMachine)' instead.
-        See https://github.com/sagemath/sage/issues/38032 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38032, "The function is_Transducer is deprecated; use 'isinstance(..., Transducer)' instead.")
-    return isinstance(FSM, Transducer)
 
 
 class Transducer(FiniteStateMachine):
@@ -13535,27 +13423,6 @@ def wordoftuples_to_tupleofwords(wordoftuples):
         return [letter for letter in word if letter is not None]
     return tuple(remove_empty_letters(word)
                  for word in zip(*wordoftuples))
-
-
-# ****************************************************************************
-
-
-def is_FSMProcessIterator(PI):
-    """
-    Test whether or not ``PI`` inherits from :class:`FSMProcessIterator`.
-
-    TESTS::
-
-        sage: from sage.combinat.finite_state_machine import is_FSMProcessIterator, FSMProcessIterator
-        sage: is_FSMProcessIterator(FSMProcessIterator(FiniteStateMachine([[0, 0, 0, 0]], initial_states=[0]), []))
-        doctest:warning...
-        DeprecationWarning: The function is_FSMProcessIterator is deprecated; use 'isinstance(..., FSMProcessIterator)' instead.
-        See https://github.com/sagemath/sage/issues/38032 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38032, "The function is_FSMProcessIterator is deprecated; use 'isinstance(..., FSMProcessIterator)' instead.")
-    return isinstance(PI, FSMProcessIterator)
 
 
 # ****************************************************************************

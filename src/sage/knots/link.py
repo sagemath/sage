@@ -3589,7 +3589,7 @@ class Link(SageObject):
 
         OUTPUT:
 
-        a list of group homomporhisms from the fundamental group of ``self``
+        a list of group homomorphisms from the fundamental group of ``self``
         to the `n`-th dihedral group (represented according to the key
         argument ``finitely_presented``).
 

@@ -367,24 +367,29 @@ class Ideal_generic(MonoidElement):
             sage: I == J
             True
 
-        TESTS:
-
-        Check that the example from :issue:`37409` raises an error
-        rather than silently returning an incorrect result::
+        TESTS::
 
             sage: R.<x> = ZZ[]
             sage: I = R.ideal(1-2*x,2)
-            sage: I.is_trivial()  # not implemented -- see #37409
+            sage: I.is_trivial()  # needs sage.libs.singular
             True
-            sage: I.is_trivial()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: ideal comparison in Univariate Polynomial Ring in x over Integer Ring is not implemented
+            sage: R.ideal(x, 2) <= R.ideal(1)  # needs sage.libs.singular
+            True
         """
         if self.is_zero():
             return rich_to_bool(op, other.is_zero() - 1)
         if other.is_zero():
             return rich_to_bool(op, 1)  # self.is_zero() is already False
+
+        from sage.rings.integer_ring import ZZ
+        if self.ring().base_ring() is ZZ:
+            #assert self.ring().implementation() != "singular"
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            Rs = PolynomialRing(ZZ, self.ring().variable_names(), implementation="singular")
+            Is = Rs.ideal(self.gens())
+            Js = Rs.ideal(other.gens())
+            return Is.__richcmp__(Js, op)
+
         S = set(self.gens())
         T = set(other.gens())
         if S == T:

@@ -2540,7 +2540,7 @@ class MatchingCoveredGraph(Graph):
         The nonplanar `K_{3, 3}`-free brace Heawood graph is the unique cubic
         graph of girth six with the fewest number of vertices (that is 14).
         Note that by `K_{3, 3}`-free, it shows that the Heawood graph does not
-        contain a subgraph that is isomophic to a graph obtained by
+        contain a subgraph that is isomorphic to a graph obtained by
         bisubdivision of `K_{3, 3}`::
 
             sage: K = graphs.CompleteBipartiteGraph(3, 3)
