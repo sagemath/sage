@@ -112,22 +112,22 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with integer coefficients, for example,
-          while ``poly`` has coefficients in a `p`-adic ring.
+          while ``poly`` has coefficients in a `p`-adic ring
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
-          defining this extension.
+          defining this extension
 
-        - ``prec`` -- the precision cap of this ring.
+        - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- dictionary of print options.
+        - ``print_mode`` -- dictionary of print options
 
-        - ``shift_seed`` -- unused.
+        - ``shift_seed`` -- unused
 
         - ``names`` -- a 4-tuple, ``(variable_name, residue_name,
-          unramified_subextension_variable_name, uniformizer_name)``.
+          unramified_subextension_variable_name, uniformizer_name)``
 
         - ``prefix`` -- string (default: ``None``); argument to be passed to
-          the residue field.
+          the residue field
 
         EXAMPLES::
 
@@ -176,22 +176,22 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with rational coefficients, for example,
-          while ``poly`` has coefficients in a `p`-adic field.
+          while ``poly`` has coefficients in a `p`-adic field
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
-          defining this extension.
+          defining this extension
 
-        - ``prec`` -- the precision cap of this ring.
+        - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- dictionary of print options.
+        - ``print_mode`` -- dictionary of print options
 
-        - ``shift_seed`` -- unused.
+        - ``shift_seed`` -- unused
 
         - ``names`` -- a 4-tuple, ``(variable_name, residue_name,
-          unramified_subextension_variable_name, uniformizer_name)``.
+          unramified_subextension_variable_name, uniformizer_name)``
 
         - ``prefix`` -- string (default: ``None``); argument to be passed to
-          the residue field.
+          the residue field
 
         EXAMPLES::
 
@@ -267,22 +267,22 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with integer coefficients, for example,
-          while ``poly`` has coefficients in a `p`-adic ring.
+          while ``poly`` has coefficients in a `p`-adic ring
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
-          defining this extension.
+          defining this extension
 
-        - ``prec`` -- the precision cap of this ring.
+        - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- dictionary of print options.
+        - ``print_mode`` -- dictionary of print options
 
-        - ``shift_seed`` -- unused.
+        - ``shift_seed`` -- unused
 
         - ``names`` -- a 4-tuple, ``(variable_name, residue_name,
-          unramified_subextension_variable_name, uniformizer_name)``.
+          unramified_subextension_variable_name, uniformizer_name)``
 
         - ``prefix`` -- string (default: ``None``); argument to be passed to
-          the residue field.
+          the residue field
 
         EXAMPLES::
 
@@ -332,22 +332,22 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with integer coefficients, for example,
-          while ``poly`` has coefficients in a `p`-adic field.
+          while ``poly`` has coefficients in a `p`-adic field
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
-          defining this extension.
+          defining this extension
 
-        - ``prec`` -- the precision cap of this ring.
+        - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- dictionary of print options.
+        - ``print_mode`` -- dictionary of print options
 
-        - ``shift_seed`` -- unused.
+        - ``shift_seed`` -- unused
 
         - ``names`` -- a 4-tuple,
-          ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``.
+          ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``
 
         - ``prefix`` -- string (default: ``None``); argument to be passed to
-          the residue field.
+          the residue field
 
         EXAMPLES::
 
@@ -401,22 +401,22 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with integer coefficients, for example,
-          while ``poly`` has coefficients in `\ZZ_p`.
+          while ``poly`` has coefficients in `\ZZ_p`
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
-          defining this extension.
+          defining this extension
 
-        - ``prec`` -- the precision cap of this ring.
+        - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- dictionary of print options.
+        - ``print_mode`` -- dictionary of print options
 
-        - ``shift_seed`` -- unused.
+        - ``shift_seed`` -- unused
 
         - ``names`` -- a 4-tuple,
-          ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``.
+          ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``
 
         - ``prefix`` -- string (default: ``None``); argument to be passed to
-          the residue field.
+          the residue field
 
         EXAMPLES::
 
@@ -464,22 +464,22 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with rational coefficients, for example,
-          while ``poly`` has coefficients in a `p`-adic field.
+          while ``poly`` has coefficients in a `p`-adic field
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
-          defining this extension.
+          defining this extension
 
-        - ``prec`` -- the precision cap of this ring.
+        - ``prec`` -- the precision cap of this ring
 
-        - ``print_mode`` -- dictionary of print options.
+        - ``print_mode`` -- dictionary of print options
 
-        - ``shift_seed`` -- unused.
+        - ``shift_seed`` -- unused
 
         - ``names`` -- a 4-tuple,
-          ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``.
+          ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``
 
         - ``prefix`` -- string (default: ``None``); argument to be passed to
-          the residue field.
+          the residue field
 
         EXAMPLES::
 

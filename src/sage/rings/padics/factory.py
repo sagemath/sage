@@ -852,57 +852,57 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
       integer, it is the prime power `q` in `\QQ_q`. If ``q`` is a
       :class:`Factorization` object, it is the factorization of the prime power `q`.
       As a tuple it is the pair ``(p, n)``, and as a list it is a single
-      element list ``[(p, n)]``.
+      element list ``[(p, n)]``
 
     - ``prec`` -- integer (default: 20); the precision cap of the field.
       Individual elements keep track of their own precision.  See
-      TYPES and PRECISION below.
+      TYPES and PRECISION below
 
     - ``type`` -- string (default: ``'capped-rel'``); valid types are
       ``'capped-rel'``, ``'floating-point'``, ``'lattice-cap'``
-      and ``'lattice-float'``.  See TYPES and PRECISION below.
+      and ``'lattice-float'``.  See TYPES and PRECISION below
 
     - ``modulus`` -- polynomial (default: ``None``); a polynomial defining an
-      unramified extension of `\QQ_p`.  See MODULUS below.
+      unramified extension of `\QQ_p`.  See MODULUS below
 
     - ``names`` -- string or tuple (``None`` is only allowed when `q=p`); the
-      name of the generator, reducing to a generator of the residue field.
+      name of the generator, reducing to a generator of the residue field
 
     - ``print_mode`` -- string (default: ``None``); valid modes are ``'series'``,
-      ``'val-unit'``, ``'terse'``, and ``'bars'``. See PRINTING below.
+      ``'val-unit'``, ``'terse'``, and ``'bars'``. See PRINTING below
 
     - ``ram_name`` -- string (defaults to string representation of `p` if
       ``None``). ``ram_name`` controls how the prime is printed. See PRINTING
-      below.
+      below
 
     - ``res_name`` -- string (defaults to ``None``, which corresponds to
       adding a ``'0'`` to the end of the name).  Controls how elements of
-      the residue field print.
+      the residue field print
 
     - ``print_pos`` -- boolean (default: ``None``); whether to only use positive
-      integers in the representations of elements. See PRINTING below.
+      integers in the representations of elements. See PRINTING below
 
     - ``print_sep`` -- string (default: ``None``); the separator character used
-      in the ``'bars'`` mode. See PRINTING below.
+      in the ``'bars'`` mode. See PRINTING below
 
     - ``print_max_ram_terms`` -- integer (default: ``None``) the maximum number
-      of powers of `p` shown.  See PRINTING below.
+      of powers of `p` shown.  See PRINTING below
 
     - ``print_max_unram_terms`` -- integer (default: ``None``); the maximum
       number of entries shown in a coefficient of `p`.  See PRINTING
-      below.
+      below
 
     - ``print_max_terse_terms`` -- integer (default: ``None``); the maximum
       number of terms in the polynomial representation of an element
-      (using ``'terse'``).  See PRINTING below.
+      (using ``'terse'``).  See PRINTING below
 
     - ``show_prec`` -- boolean (default: ``None``); whether to show the precision
-      for elements.  See PRINTING below.
+      for elements.  See PRINTING below
 
-    - ``check`` -- boolean (default: ``True``); whether to check inputs.
+    - ``check`` -- boolean (default: ``True``); whether to check inputs
 
     - ``prefix`` -- string (default: ``None``); argument to be passed to the
-      residue field.
+      residue field
 
     OUTPUT: the corresponding unramified `p`-adic field
 
@@ -1334,6 +1334,17 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
         sage: K1 = F.extension(x^2-13,names = 'g')
         sage: K0 is K1
         True
+
+    We check that :issue:`39933` is fixed::
+
+        sage: K = GF(9)
+        sage: R = QqFP(K.cardinality(), prec=2, modulus=K.modulus(), names=K.variable_names(), res_name=K.variable_name(), prefix=K._prefix)
+        sage: R.convert_map_from(K)
+        Lifting morphism:
+          From: Finite Field in z2 of size 3^2
+          To:   3-adic Unramified Extension Field in z2 defined by x^2 + 2*x + 2
+        sage: R(K.zero())
+        0
     """
     if isinstance(q, Element):
         F = Integer(q).factor()
@@ -2074,62 +2085,62 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     - ``q`` -- integer, list or tuple: the prime power in `\QQ_q`.  Or a
       :class:`Factorization` object, single element list ``[(p, n)]`` where ``p`` is
-      a prime and ``n`` a positive integer, or the pair ``(p, n)``.
+      a prime and ``n`` a positive integer, or the pair ``(p, n)``
 
     - ``prec`` -- integer (default: 20); the precision cap of the
       field.  Individual elements keep track of their own precision.
-      See TYPES and PRECISION below.
+      See TYPES and PRECISION below
 
     - ``type`` -- string (default: ``'capped-rel'``); valid types are
       ``'capped-abs'``, ``'capped-rel'``, ``'fixed-mod'``, and
-      ``'floating-point'``.  See TYPES and PRECISION below.
+      ``'floating-point'``.  See TYPES and PRECISION below
 
     - ``modulus`` -- polynomial (default: ``None``); a polynomial defining an
-      unramified extension of `\ZZ_p`.  See MODULUS below.
+      unramified extension of `\ZZ_p`.  See MODULUS below
 
     - ``names`` -- string or tuple (``None`` is only allowed when
       `q=p`); the name of the generator, reducing to a generator of
       the residue field
 
     - ``print_mode`` -- string (default: ``None``); valid modes are ``'series'``,
-      ``'val-unit'``, ``'terse'``, and ``'bars'``. See PRINTING below.
+      ``'val-unit'``, ``'terse'``, and ``'bars'``. See PRINTING below
 
     - ``ram_name`` -- string (defaults to string representation of `p` if
       ``None``); ``ram_name`` controls how the prime is printed. See PRINTING
-      below.
+      below
 
     - ``res_name`` -- string (defaults to ``None``, which corresponds
       to adding a ``'0'`` to the end of the name); controls how
-      elements of the residue field print.
+      elements of the residue field print
 
     - ``print_pos`` -- boolean (default: ``None``); whether to only use
       positive integers in the representations of elements. See
-      PRINTING below.
+      PRINTING below
 
     - ``print_sep`` -- string (default: ``None``); the separator
-      character used in the ``'bars'`` mode. See PRINTING below.
+      character used in the ``'bars'`` mode. See PRINTING below
 
     - ``print_max_ram_terms`` -- integer (default: ``None``); the maximum
-      number of powers of `p` shown.  See PRINTING below.
+      number of powers of `p` shown.  See PRINTING below
 
     - ``print_max_unram_terms`` -- integer (default: ``None``) the
       maximum number of entries shown in a coefficient of `p`.  See
-      PRINTING below.
+      PRINTING below
 
     - ``print_max_terse_terms`` -- integer (default: ``None``); the maximum
       number of terms in the polynomial representation of an element
-      (using ``'terse'``).  See PRINTING below.
+      (using ``'terse'``).  See PRINTING below
 
     - ``show_prec`` -- boolean (default: ``None``); whether to show the
-      precision for elements.  See PRINTING below.
+      precision for elements.  See PRINTING below
 
-    - ``check`` -- boolean (default: ``True``) whether to check inputs.
+    - ``check`` -- boolean (default: ``True``) whether to check inputs
 
     - ``implementation`` -- string (default: ``'FLINT'``); which
-      implementation to use.  ``'NTL'`` is the other option.
+      implementation to use.  ``'NTL'`` is the other option
 
     - ``prefix`` -- string (default: ``None``); argument to be passed to the
-      residue field.
+      residue field
 
     OUTPUT: the corresponding unramified `p`-adic ring
 
