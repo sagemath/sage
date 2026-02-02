@@ -224,38 +224,12 @@ class MatrixPlot(GraphicPrimitive):
             extent = (lim['xmin'], lim['xmax'],
                       lim['ymax' if flip_y else 'ymin'],
                       lim['ymin' if flip_y else 'ymax'])
-            
-            # Handle large integer overflow: convert to float and check for inf values
-            import numpy as np
-            xy_data = np.asarray(self.xy_data_array, dtype=float)
-            
-            # Detect and handle infinite values from overflow
-            if not np.isfinite(xy_data).all():
-                finite_mask = np.isfinite(xy_data)
-                if not finite_mask.any():
-                    # All values are infinite - cannot plot safely
-                    raise ValueError("Matrix entries too large to plot safely")
-                
-                # Extract finite values to compute proper bounds
-                finite_vals = xy_data[finite_mask]
-                vmin_safe = float(finite_vals.min())
-                vmax_safe = float(finite_vals.max())
-                
-                # Clip infinite values to the range of finite values
-                xy_data = np.clip(xy_data, vmin_safe, vmax_safe)
-                
-                # If user didn't specify vmin/vmax, use the safe bounds
-                if options['vmin'] is None:
-                    options['vmin'] = vmin_safe
-                if options['vmax'] is None:
-                    options['vmax'] = vmax_safe
-            
             opts = {'cmap': cmap, 'interpolation': 'nearest',
                     'aspect': 'equal', 'norm': norm,
                     'vmin': options['vmin'], 'vmax': options['vmax'],
                     'origin': ('upper' if flip_y else 'lower'),
                     'extent': extent, 'zorder': options.get('zorder')}
-            image = subplot.imshow(xy_data, **opts)
+            image = subplot.imshow(self.xy_data_array, **opts)
 
             if options.get('colorbar', False):
                 colorbar_options = options['colorbar_options']
@@ -543,47 +517,6 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         sage: matrix_plot(identity_matrix(50), title='identity')
         Graphics object consisting of 1 graphics primitive
 
-    Large integer matrices are handled correctly without overflow errors.
-    The visualization preserves relative magnitude and sign patterns::
-
-        sage: a = matrix(2, [16, 0, 0, -16])
-        sage: p = matrix_plot(a)
-        sage: p
-        Graphics object consisting of 1 graphics primitive
-
-    ::
-
-        sage: b = matrix(2, [16^1000, 0, 0, -16^1000])
-        sage: q = matrix_plot(b)
-        sage: q
-        Graphics object consisting of 1 graphics primitive
-
-    Matrices where all entries overflow to infinity raise a clear error::
-
-        sage: c = matrix(2, [10^1000, 10^1001, 10^1002, 10^1003])
-        sage: matrix_plot(c)
-        Traceback (most recent call last):
-        ...
-        ValueError: Matrix entries too large to plot safely
-
-    Matrices with symbolic infinity are handled by clipping to finite bounds::
-
-        sage: m = matrix([[1, 2], [oo, 4]])     # needs sage.symbolic
-        sage: matrix_plot(m)                   # needs sage.symbolic
-        Graphics object consisting of 1 graphics primitive
-
-    Negative infinity is also supported::
-
-        sage: m = matrix([[1, -oo], [3, 4]])    # needs sage.symbolic
-        sage: matrix_plot(m)                   # needs sage.symbolic
-        Graphics object consisting of 1 graphics primitive
-
-    NaN values are replaced with zero for visualization::
-
-        sage: m = matrix([[1, 2], [NaN, 4]])    # needs sage.symbolic
-        sage: matrix_plot(m)                   # needs sage.symbolic
-        Graphics object consisting of 1 graphics primitive
-
     TESTS::
 
         sage: P.<t> = RR[]
@@ -682,12 +615,13 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
                 else:
                     vmin, vmax = 0.0, 1.0
                 mat = np.nan_to_num(mat, nan=0.0, posinf=vmax, neginf=vmin)
+
     elif hasattr(mat, 'tocoo'):
         sparse = True
     else:
         sparse = False
-
     try:
+
         if sparse:
             xy_data_array = mat
         else:
