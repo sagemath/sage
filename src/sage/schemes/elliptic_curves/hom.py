@@ -633,6 +633,11 @@ class EllipticCurveHom(Morphism):
             sage: f.inverse_image(f.codomain().zero())
             (0 : 1 : 0)
 
+        Make sure the inverse image of zero is returned on the correct curve (:issue:`41529`)::
+
+            sage: f.inverse_image(0).curve() is f.domain()
+            True
+
         You can give a tuple as input::
 
             sage: f.inverse_image((0, 2))  # random
@@ -666,7 +671,7 @@ class EllipticCurveHom(Morphism):
             if all:
                 return self.kernel_points()
             else:
-                return Q
+                return self.domain().zero()
         if all:
             try:
                 P = self.inverse_image(Q)
