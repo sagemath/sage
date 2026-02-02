@@ -28,7 +28,7 @@ from math import sin, cos, pi
 from sage.graphs.graph import Graph
 
 
-def JohnsonGraph(n, k):
+def JohnsonGraph(n, k, immutable=False):
     r"""
     Return the Johnson graph with parameters `n, k`.
 
@@ -37,6 +37,15 @@ def JohnsonGraph(n, k):
     subsets of an `n`-element set; two vertices are adjacent when they meet in a
     `(k-1)`-element set. See the :wikipedia:`Johnson_graph` for more
     information.
+
+    INPUT:
+
+    - ``n`` -- nonnegative integer; number of elements of the groundset
+
+    - ``k`` -- nonnegative integer; number of elements of each subset
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -60,25 +69,19 @@ def JohnsonGraph(n, k):
         sage: g.complement().is_isomorphic(graphs.PetersenGraph())
         True
     """
-
-    g = Graph(name=f"Johnson graph with parameters {n},{k}")
     from sage.combinat.subset import Set, Subsets
 
     S = Set(range(n))
-    g.add_vertices(Subsets(S, k))
+    edges = ((sub + Set([i]), sub + Set([j]))
+             for sub in Subsets(S, k - 1)
+             for i, j in combinations(S - sub, 2))
 
-    for sub in Subsets(S, k-1):
-        elem_left = S - sub
-        for i in elem_left:
-            for j in elem_left:
-                if j <= i:
-                    continue
-                g.add_edge(sub + Set([i]), sub + Set([j]))
-
-    return g
+    return Graph([Subsets(S, k), edges], format="vertices_and_edges",
+                 name=f"Johnson graph with parameters {n},{k}",
+                 immutable=immutable)
 
 
-def KneserGraph(n, k):
+def KneserGraph(n, k, immutable=False):
     r"""
     Return the Kneser Graph with parameters `n, k`.
 
@@ -89,6 +92,15 @@ def KneserGraph(n, k):
 
     For example, the Petersen Graph can be defined
     as the Kneser Graph with parameters `5,2`.
+
+    INPUT:
+
+    - ``n`` -- positive integer; number of elements of the groundset
+
+    - ``k`` -- positive integer; number of elements of each subset
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -111,28 +123,23 @@ def KneserGraph(n, k):
         ...
         ValueError: Parameter k should be a strictly positive integer inferior to n
     """
-
     if n <= 0:
         raise ValueError("Parameter n should be a strictly positive integer")
     if k <= 0 or k > n:
         raise ValueError("Parameter k should be a strictly positive integer inferior to n")
 
-    g = Graph(name=f"Kneser graph with parameters {n},{k}")
-
     from sage.combinat.subset import Subsets
+
     S = Subsets(n, k)
-    if 2 * k > n:
-        g.add_vertices(S)
-
     s0 = S.underlying_set()    # {1,2,...,n}
-    for s in S:
-        for t in Subsets(s0.difference(s), k):
-            g.add_edge(s, t)
+    edges = ((s, t) for s in S for t in Subsets(s0.difference(s), k))
 
-    return g
+    return Graph([S, edges], format="vertices_and_edges",
+                 name=f"Kneser graph with parameters {n},{k}",
+                 immutable=immutable)
 
 
-def FurerGadget(k, prefix=None):
+def FurerGadget(k, prefix=None, immutable=False):
     r"""
     Return a Furer gadget of order ``k`` and their coloring.
 
@@ -157,6 +164,9 @@ def FurerGadget(k, prefix=None):
     - ``prefix`` -- prefix of to be appended to each vertex label,
       so as to individualise the returned Furer gadget; must be comparable for
       equality and hashable
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -206,31 +216,32 @@ def FurerGadget(k, prefix=None):
     from itertools import repeat as rep, chain
     if k <= 0:
         raise ValueError("The order of the Furer gadget must be greater than zero")
-    G = Graph()
+
     V_a = list(enumerate(rep('a', k)))
     V_b = list(enumerate(rep('b', k)))
     if prefix is not None:
         V_a = list(zip(rep(prefix, k), V_a))
         V_b = list(zip(rep(prefix, k), V_b))
-    G.add_vertices(V_a)
-    G.add_vertices(V_b)
+
     powerset = list(chain.from_iterable(combinations(range(k), r) for r in range(0, k + 1, 2)))
     if prefix is not None:
-        G.add_edges(chain.from_iterable([((prefix, s), (prefix, (i, 'a'))) for i in s] for s in powerset))
-        G.add_edges(chain.from_iterable([((prefix, s), (prefix, (i, 'b'))) for i in range(k) if i not in s] for s in powerset))
+        E_a = chain.from_iterable([((prefix, s), (prefix, (i, 'a'))) for i in s] for s in powerset)
+        E_b = chain.from_iterable([((prefix, s), (prefix, (i, 'b'))) for i in range(k) if i not in s] for s in powerset)
     else:
-        G.add_edges(chain.from_iterable([(s, (i, 'a')) for i in s] for s in powerset))
-        G.add_edges(chain.from_iterable([(s, (i, 'b')) for i in range(k) if i not in s] for s in powerset))
-    partition = []
-    for i in range(k):
-        partition.append([V_a[i], V_b[i]])
+        E_a = chain.from_iterable([(s, (i, 'a')) for i in s] for s in powerset)
+        E_b = chain.from_iterable([(s, (i, 'b')) for i in range(k) if i not in s] for s in powerset)
+
+    G = Graph([chain(V_a, V_b), chain(E_a, E_b)], format="vertices_and_edges",
+              immutable=immutable)
+
+    partition = [[V_a[i], V_b[i]] for i in range(k)]
     if prefix is not None:
         powerset = [(prefix, s) for s in powerset]
     partition.append(powerset)
     return G, partition
 
 
-def CaiFurerImmermanGraph(G, twisted=False):
+def CaiFurerImmermanGraph(G, twisted=False, immutable=None):
     r"""
     Return the a Cai-Furer-Immerman graph from `G`, possibly a twisted
     one, and a partition of its nodes.
@@ -273,6 +284,10 @@ def CaiFurerImmermanGraph(G, twisted=False):
     - ``coloring`` -- list of list of vertices, representing the
       partition induced by the coloring on ``H``
 
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the input
+      graph `G` and the returned graph will behave the same way.
+
     EXAMPLES:
 
     CaiFurerImmerman graph with no balanced vertex separator smaller
@@ -311,16 +326,30 @@ def CaiFurerImmermanGraph(G, twisted=False):
          ((3, ()), (3, (1, 'b')), None),
          ((3, (0, 1)), (3, (0, 'a')), None),
          ((3, (0, 1)), (3, (1, 'a')), None)]
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: G = graphs.CycleGraph(4, immutable=False)
+        sage: graphs.CaiFurerImmermanGraph(G)[0].is_immutable()
+        False
+        sage: graphs.CaiFurerImmermanGraph(G, immutable=True)[0].is_immutable()
+        True
+        sage: G = graphs.CycleGraph(4, immutable=True)
+        sage: graphs.CaiFurerImmermanGraph(G)[0].is_immutable()
+        True
+        sage: graphs.CaiFurerImmermanGraph(G, immutable=False)[0].is_immutable()
+        False
     """
     isConnected = G.is_connected()
     newG = Graph()
     total_partition = []
-    edge_index = {}
+    edge_index = {v: 0 for v in G}
     for v in G:
         Fk, p = FurerGadget(G.degree(v), v)
         total_partition += p
         newG = newG.union(Fk)
-        edge_index[v] = 0
     for v, u in G.edge_iterator(labels=False):
         i = edge_index[v]
         edge_index[v] += 1
@@ -331,21 +360,23 @@ def CaiFurerImmermanGraph(G, twisted=False):
         edge_ua = (u, (j, 'a'))
         edge_ub = (u, (j, 'b'))
         if isConnected and twisted:
-            temp = edge_ua
-            edge_ua = edge_ub
-            edge_ub = temp
+            edge_ua, edge_ub = edge_ub, edge_ua
             isConnected = False
         newG.add_edge(edge_va, edge_ua)
         newG.add_edge(edge_vb, edge_ub)
-    if twisted and G.is_connected():
+    if twisted and isConnected:
         s = " twisted"
     else:
         s = ""
-    newG.name("CaiFurerImmerman" + s + " graph constructed from a " + G.name())
+    newG.name(f"CaiFurerImmerman{s} graph constructed from a {G.name()}")
+    if immutable is None:
+        immutable = G.is_immutable()
+    if immutable is True:
+        newG = newG.copy(immutable=True)
     return newG, total_partition
 
 
-def EgawaGraph(p, s):
+def EgawaGraph(p, s, immutable=False):
     r"""
     Return the Egawa graph with parameters `p`, `s`.
 
@@ -372,6 +403,9 @@ def EgawaGraph(p, s):
     - ``s`` -- power to which the graph named `X` in the reference
       provided above will be raised
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
+      or mutable graphs
+
     OUTPUT:
 
     - ``G`` -- the Egawa graph with parameters (p,s)
@@ -393,26 +427,30 @@ def EgawaGraph(p, s):
     """
     from sage.graphs.generators.basic import CompleteGraph
     from itertools import product, chain, repeat
-    g = Graph(name=f"Egawa Graph with parameters {p},{s}", multiedges=False)
     X = CompleteGraph(4)
     Y = Graph('O?Wse@UgqqT_LUebWkbT_')
-    g.add_vertices(product(*chain(repeat(Y, p), repeat(X, s))))
-    for v in g:
-        for i in range(p):
-            prefix = v[:i]
-            suffix = v[i+1:]
-            for el in Y.neighbor_iterator(v[i]):
-                u = prefix + (el,) + suffix
-                g.add_edge(v, u)
-        for i in range(p, s + p):
-            prefix = v[:i]
-            suffix = v[i+1:]
-            for el in X:
-                if el == v[i]:
-                    continue
-                u = prefix + (el,) + suffix
-                g.add_edge(v, u)
-    return g
+    vertices = list(product(*chain(repeat(Y, p), repeat(X, s))))
+
+    def edges():
+        for v in vertices:
+            for i in range(p):
+                prefix = v[:i]
+                suffix = v[i+1:]
+                for el in Y.neighbor_iterator(v[i]):
+                    u = prefix + (el,) + suffix
+                    yield (v, u)
+            for i in range(p, s + p):
+                prefix = v[:i]
+                suffix = v[i+1:]
+                for el in X:
+                    if el == v[i]:
+                        continue
+                    u = prefix + (el,) + suffix
+                    yield (v, u)
+
+    return Graph([vertices, edges()], format="vertices_and_edges",
+                 name=f"Egawa Graph with parameters {p},{s}",
+                 multiedges=False, immutable=immutable)
 
 
 def HammingGraph(n, q, X=None, immutable=False):
@@ -503,7 +541,7 @@ def HammingGraph(n, q, X=None, immutable=False):
                  multiedges=False, immutable=immutable)
 
 
-def BarbellGraph(n1, n2):
+def BarbellGraph(n1, n2, immutable=False):
     r"""
     Return a barbell graph with `2 n_1 + n_2` nodes.
 
@@ -519,6 +557,9 @@ def BarbellGraph(n1, n2):
 
     - ``n2`` -- nonnegative integer; the order of the path graph
       connecting the two complete graphs
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
+      or mutable graphs
 
     OUTPUT:
 
@@ -610,10 +651,12 @@ def BarbellGraph(n1, n2):
     if n2 < 0:
         raise ValueError("invalid graph description, n2 should be >= 0")
 
-    G = Graph(name="Barbell graph")
-    G.add_clique(list(range(n1)))
-    G.add_path(list(range(n1 - 1, n1 + n2 + 1)))
-    G.add_clique(list(range(n1 + n2, n1 + n2 + n1)))
+    from itertools import chain
+    K1 = ((i, j) for i, j in combinations(range(n1), 2))
+    P = zip(range(n1 - 1, n1 + n2), range(n1, n1 + n2 + 1))
+    K2 = ((i, j) for i, j in combinations(range(n1 + n2, 2*n1 + n2), 2))
+    G = Graph([range(2*n1 + n2), chain(K1, P, K2)], format="vertices_and_edges",
+              name="Barbell graph", immutable=immutable)
 
     G._circle_embedding(list(range(n1)), shift=1, angle=pi/4)
     G._line_embedding(list(range(n1, n1 + n2)), first=(2, 2), last=(n2 + 1, n2 + 1))
@@ -621,7 +664,7 @@ def BarbellGraph(n1, n2):
     return G
 
 
-def LollipopGraph(n1, n2):
+def LollipopGraph(n1, n2, immutable=False):
     r"""
     Return a lollipop graph with `n_1 + n_2` nodes.
 
@@ -633,6 +676,15 @@ def LollipopGraph(n1, n2):
     graph will be drawn in the lower-left corner with the `n_1`-th node
     at a 45 degree angle above the right horizontal center of the
     complete graph, leading directly into the path graph.
+
+    INPUT:
+
+    - ``n1`` -- integer `\geq 0`; the order of the complete graph
+
+    - ``n2`` -- integer `\geq 0`; the order of the path graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -681,11 +733,12 @@ def LollipopGraph(n1, n2):
     if n2 < 0:
         raise ValueError("invalid graph description, n2 should be >= 0")
 
-    G = Graph(n1 + n2, name="Lollipop graph")
-    G.add_clique(list(range(n1)))
-    G.add_path(list(range(n1, n1 + n2)))
-    if n1 * n2 > 0:
-        G.add_edge(n1 - 1, n1)
+    from itertools import chain
+    K = ((i, j) for i, j in combinations(range(n1), 2))
+    s = 1 if n1 * n2 > 0 else 0  # need edge connecting the clique and the path
+    P = zip(range(n1 - s, n1 + n2 - 1), range(n1 + 1 - s, n1 + n2))
+    G = Graph([range(n1 + n2), chain(K, P)], format="vertices_and_edges",
+              name="Lollipop graph", immutable=immutable)
     if n1 == 1:
         G.set_pos({0: (0, 0)})
     else:
@@ -694,7 +747,7 @@ def LollipopGraph(n1, n2):
     return G
 
 
-def TadpoleGraph(n1, n2):
+def TadpoleGraph(n1, n2, immutable=False):
     r"""
     Return a tadpole graph with `n_1 + n_2` nodes.
 
@@ -706,6 +759,15 @@ def TadpoleGraph(n1, n2):
     in the lower-left corner with the `n_1`-th node at a 45 degree angle above
     the right horizontal center of the cycle graph, leading directly into the
     path graph.
+
+    INPUT:
+
+    - ``n1`` -- integer `\geq 3`; the order of the cycle graph
+
+    - ``n2`` -- integer `\geq 0`; the order of the path graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -748,26 +810,35 @@ def TadpoleGraph(n1, n2):
     if n2 < 0:
         raise ValueError("invalid graph description, n2 should be >= 0")
 
-    G = Graph(n1 + n2, name="Tadpole graph")
-    G.add_cycle(list(range(n1)))
-    G.add_path(list(range(n1, n1 + n2)))
-    if n1 * n2 > 0:
-        G.add_edge(n1 - 1, n1)
+    from itertools import chain
+    C = ((i, i + 1) for i in range(n1 - 1))
+    e = ((0, n1 - 1),)
+    s = 1 if n2 else 0  # need edge connecting the cycle and the path
+    P = ((i, i + 1) for i in range(n1 - s, n1 + n2 - 1))
+    G = Graph([range(n1 + n2), chain(C, e, P)], format="vertices_and_edges",
+              name="Tadpole graph", immutable=immutable)
     G._circle_embedding(list(range(n1)), shift=1, angle=pi/4)
     G._line_embedding(list(range(n1, n1 + n2)), first=(2, 2), last=(n2 + 1, n2 + 1))
     return G
 
 
-def AztecDiamondGraph(n):
-    """
+def AztecDiamondGraph(n, immutable=False):
+    r"""
     Return the Aztec Diamond graph of order ``n``.
 
     See the :wikipedia:`Aztec_diamond` for more information.
 
+    INPUT:
+
+    - ``n`` -- integer `\geq 0`; the order Aztec Diamond graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: graphs.AztecDiamondGraph(2)
-        Aztec Diamond graph of order 2
+        Aztec Diamond graph of order 2: Graph on 12 vertices
 
         sage: [graphs.AztecDiamondGraph(i).n_vertices() for i in range(8)]
         [0, 4, 12, 24, 40, 60, 84, 112]
@@ -778,26 +849,42 @@ def AztecDiamondGraph(n):
         sage: G = graphs.AztecDiamondGraph(3)
         sage: sum(1 for p in G.perfect_matchings())
         64
+
+    TESTS::
+
+        sage: n = randint(0, 3)
+        sage: graphs.AztecDiamondGraph(n).is_immutable()
+        False
+        sage: graphs.AztecDiamondGraph(n, immutable=True).is_immutable()
+        True
     """
     from sage.graphs.generators.basic import Grid2dGraph
     if n:
         N = 2 * n
-        G = Grid2dGraph(N, N)
+        G = Grid2dGraph(N, N, immutable=immutable)
         H = G.subgraph([(i, j) for i in range(N) for j in range(N)
                         if i - n <= j <= n + i and
                         n - 1 - i <= j <= 3 * n - i - 1])
     else:
-        H = Graph()
-    H.rename('Aztec Diamond graph of order {}'.format(n))
+        H = Graph(immutable=immutable)
+    H._name = f"Aztec Diamond graph of order {n}"
     return H
 
 
-def DipoleGraph(n):
+def DipoleGraph(n, immutable=False):
     r"""
     Return a dipole graph with `n` edges.
 
     A dipole graph is a multigraph consisting of 2 vertices connected with `n`
     parallel edges.
+
+    INPUT:
+
+    - ``n`` -- integer `\geq 0`; the number of parallel edges connecting the 2
+      vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -826,15 +913,23 @@ def DipoleGraph(n):
         Traceback (most recent call last):
         ...
         ValueError: invalid graph description, n should be >= 0
+
+    Check the behavioir of parameter immutable::
+
+        sage: graphs.DipoleGraph(2, immutable=False).is_immutable()
+        False
+        sage: graphs.DipoleGraph(2, immutable=True).is_immutable()
+        True
     """
     # sanity checks
     if n < 0:
         raise ValueError("invalid graph description, n should be >= 0")
 
-    return Graph([[0, 1], [(0, 1)]*n], name="Dipole graph", multiedges=True)
+    return Graph([[0, 1], [(0, 1)]*n], name="Dipole graph",
+                 multiedges=True, immutable=immutable)
 
 
-def BubbleSortGraph(n):
+def BubbleSortGraph(n, immutable=False):
     r"""
     Return the bubble sort graph `B(n)`.
 
@@ -853,6 +948,9 @@ def BubbleSortGraph(n):
     INPUT:
 
     - ``n`` -- positive integer. The number of symbols to permute
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -905,7 +1003,7 @@ def BubbleSortGraph(n):
             "Invalid number of symbols to permute, n should be >= 1")
     if n == 1:
         from sage.graphs.generators.basic import CompleteGraph
-        return Graph(CompleteGraph(n), name="Bubble sort")
+        return Graph(CompleteGraph(n), name="Bubble sort", immutable=immutable)
     from sage.combinat.permutation import Permutations
     # create set from which to permute
     label_set = [str(i) for i in range(1, n + 1)]
@@ -913,22 +1011,23 @@ def BubbleSortGraph(n):
     # iterate through all vertices
     for v in Permutations(label_set):
         v = list(v)  # So we can easily mutate it
-        tmp_dict = {}
+        neighbors = []
         # add all adjacencies
         for i in range(n - 1):
             # swap entries
             v[i], v[i + 1] = v[i + 1], v[i]
             # add new vertex
             new_vert = ''.join(v)
-            tmp_dict[new_vert] = None
+            neighbors.append(new_vert)
             # swap back
             v[i], v[i + 1] = v[i + 1], v[i]
         # add adjacency dict
-        d[''.join(v)] = tmp_dict
-    return Graph(d, name="Bubble sort")
+        d[''.join(v)] = neighbors
+    return Graph(d, format="dict_of_lists", name="Bubble sort",
+                 immutable=immutable)
 
 
-def chang_graphs():
+def chang_graphs(immutable=False):
     r"""
     Return the three Chang graphs.
 
@@ -936,6 +1035,11 @@ def chang_graphs():
     called the Chang graphs. The fourth is the line graph of `K_8`. For more
     information about the Chang graphs, see the :wikipedia:`Chang_graphs` or
     https://www.win.tue.nl/~aeb/graphs/Chang.html.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return
+      immutable or mutable graphs
 
     EXAMPLES: check that we get 4 non-isomorphic s.r.g.'s with the
     same parameters::
@@ -966,15 +1070,15 @@ def chang_graphs():
         [True, True, True]
     """
     g1 = Graph("[}~~EebhkrRb_~SoLOIiAZ?LBBxDb?bQcggjHKEwoZFAaiZ?Yf[?dxb@@tdWGkwn",
-               loops=False, multiedges=False)
+               loops=False, multiedges=False, immutable=immutable)
     g2 = Graph("[~z^UipkkZPr_~Y_LOIiATOLBBxPR@`acoojBBSoWXTaabN?Yts?Yji_QyioClXZ",
-               loops=False, multiedges=False)
+               loops=False, multiedges=False, immutable=immutable)
     g3 = Graph(r"[~~vVMWdKFpV`^UGIaIERQ`\DBxpA@g`CbGRI`AxICNaFM[?fM\?Ytj@CxrGGlYt",
-               loops=False, multiedges=False)
+               loops=False, multiedges=False, immutable=immutable)
     return [g1, g2, g3]
 
 
-def CirculantGraph(n, adjacency):
+def CirculantGraph(n, adjacency, immutable=False):
     r"""
     Return a circulant graph with `n` nodes.
 
@@ -986,6 +1090,9 @@ def CirculantGraph(n, adjacency):
     -  ``n`` -- number of vertices in the graph
 
     -  ``adjacency`` -- the list of `j` values
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, each circulant
@@ -1072,16 +1179,15 @@ def CirculantGraph(n, adjacency):
     if not isinstance(adjacency, list):
         adjacency = [adjacency]
 
-    G = Graph(n, name=f"Circulant graph ({adjacency})")
+    edges = ((v, (v + j) % n) for v in range(n) for j in adjacency)
+    G = Graph([range(n), edges], format="vertices_and_edges",
+              name=f"Circulant graph ({adjacency})",
+              immutable=immutable)
     G._circle_embedding(list(range(n)))
-
-    for v in G:
-        G.add_edges([(v, (v + j) % n) for j in adjacency])
-
     return G
 
 
-def CubeGraph(n, embedding=1):
+def CubeGraph(n, embedding=1, immutable=False):
     r"""
     Return the `n`-cube graph, also called the hypercube in `n` dimensions.
 
@@ -1114,6 +1220,9 @@ def CubeGraph(n, embedding=1):
         plane, offering a geometrically consistent visualization.
 
       - ``None`` or ``O`` -- no embedding is provided
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1186,7 +1295,8 @@ def CubeGraph(n, embedding=1):
             p, pn = pn, {}
 
         # construct the graph
-        G = Graph(d, format='dict_of_lists', pos=p, name=f"{n}-Cube")
+        G = Graph(d, format='dict_of_lists', pos=p, name=f"{n}-Cube",
+                  immutable=immutable)
 
     else:
         # construct recursively the adjacency dict
@@ -1207,7 +1317,7 @@ def CubeGraph(n, embedding=1):
             d, dn = dn, {}
 
         # construct the graph
-        G = Graph(d, name=f"{n}-Cube", format='dict_of_lists')
+        G = Graph(d, name=f"{n}-Cube", format='dict_of_lists', immutable=immutable)
 
         if embedding == 2:
             # Orthogonal projection
@@ -1224,7 +1334,7 @@ def CubeGraph(n, embedding=1):
     return G
 
 
-def GoethalsSeidelGraph(k, r):
+def GoethalsSeidelGraph(k, r, immutable=False):
     r"""
     Return the graph `\text{Goethals-Seidel}(k,r)`.
 
@@ -1243,6 +1353,9 @@ def GoethalsSeidelGraph(k, r):
     INPUT:
 
     - ``k``, ``r`` -- integers
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -1286,14 +1399,22 @@ def GoethalsSeidelGraph(k, r):
     for i in range(n):
         PP[i, i] = 0
 
-    G = Graph(PP, format='seidel_adjacency_matrix')
-    return G
+    return Graph(PP, format='seidel_adjacency_matrix', immutable=immutable)
 
 
-def DorogovtsevGoltsevMendesGraph(n):
+def DorogovtsevGoltsevMendesGraph(n, immutable=False):
     """
     Construct the `n`-th generation of the Dorogovtsev-Goltsev-Mendes
     graph.
+
+    See [DGM2002]_ for more details.
+
+    INPUT:
+
+    - ``n`` -- nonnegative integer; index of the generation
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1301,18 +1422,31 @@ def DorogovtsevGoltsevMendesGraph(n):
         sage: G.size()                                                                  # needs networkx
         6561
 
-    REFERENCE:
+    TESTS::
 
-    - [1] Dorogovtsev, S. N., Goltsev, A. V., and Mendes, J.
-      F. F., Pseudofractal scale-free web, Phys. Rev. E 066122
-      (2002).
+        sage: # needs networkx
+        sage: G = graphs.DorogovtsevGoltsevMendesGraph(0)
+        sage: G.order(), G.size()
+        (2, 1)
+        sage: G.is_immutable()
+        False
+        sage: G = graphs.DorogovtsevGoltsevMendesGraph(0, immutable=True)
+        sage: G.is_immutable()
+        True
+        sage: graphs.DorogovtsevGoltsevMendesGraph(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be greater than or equal to 0
     """
+    if n < 0:
+        raise ValueError("n must be greater than or equal to 0")
     import networkx
     return Graph(networkx.dorogovtsev_goltsev_mendes_graph(n),
-                 name=f"Dorogovtsev-Goltsev-Mendes Graph, {n}-th generation")
+                 name=f"Dorogovtsev-Goltsev-Mendes Graph, {n}-th generation",
+                 immutable=immutable)
 
 
-def FoldedCubeGraph(n):
+def FoldedCubeGraph(n, immutable=False):
     r"""
     Return the folded cube graph of order `2^{n-1}`.
 
@@ -1324,6 +1458,13 @@ def FoldedCubeGraph(n):
 
     See the :wikipedia:`Folded_cube_graph` for more information.
 
+    INPUT:
+
+    - ``n`` -- integer `\geq 2`; the dimension of the folded cube
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES:
 
     The folded cube graph of order five is the Clebsch graph::
@@ -1333,11 +1474,8 @@ def FoldedCubeGraph(n):
         sage: fc.is_isomorphic(clebsch)
         True
     """
-    if n < 1:
-        raise ValueError("The value of n must be at least 2")
-
-    g = CubeGraph(n - 1)
-    g.name("Folded Cube Graph")
+    if n < 2:
+        raise ValueError("the value of n must be at least 2")
 
     # Complementing the binary word
     def complement(x):
@@ -1346,14 +1484,15 @@ def FoldedCubeGraph(n):
         x = x.replace('a', '1')
         return x
 
-    for x in g:
-        if x[0] == '0':
-            g.add_edge(x, complement(x))
+    from itertools import chain
+    H = CubeGraph(n - 1)
+    extra = ((x, complement(x)) for x in H if x[0] == '0')
+    return Graph([H, chain(H.edges(labels=False), extra)],
+                 format="vertices_and_edges", immutable=immutable,
+                 name="Folded Cube Graph")
 
-    return g
 
-
-def FriendshipGraph(n):
+def FriendshipGraph(n, immutable=False):
     r"""
     Return the friendship graph `F_n`.
 
@@ -1368,6 +1507,9 @@ def FriendshipGraph(n):
 
     - ``n`` -- positive integer; the number of copies of `C_3` to use in
       constructing `F_n`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -1450,21 +1592,23 @@ def FriendshipGraph(n):
     # construct the friendship graph
     if n == 1:
         from sage.graphs.generators.basic import CycleGraph
-        G = CycleGraph(3)
-        G.name("Friendship graph")
+        G = CycleGraph(3, immutable=immutable)
+        G._name = "Friendship graph"
         return G
     # build the edges and position dictionaries
     N = 2 * n + 1           # order of F_n
     center = 2 * n
-    G = Graph(N, name="Friendship graph")
-    for i in range(0, N - 1, 2):
-        G.add_cycle([center, i, i + 1])
+    edges = (e
+             for i in range(0, N - 1, 2)
+             for e in combinations([center, i, i + 1], 2))
+    G = Graph([range(N), edges], format="vertices_and_edges",
+              name="Friendship graph", immutable=immutable)
     G.set_pos({center: (0, 0)})
     G._circle_embedding(list(range(N - 1)), radius=1)
     return G
 
 
-def FuzzyBallGraph(partition, q):
+def FuzzyBallGraph(partition, q, immutable=False):
     r"""
     Construct a Fuzzy Ball graph with the integer partition
     ``partition`` and ``q`` extra vertices.
@@ -1480,9 +1624,19 @@ def FuzzyBallGraph(partition, q):
     all partitions `p` of `m` with `k` parts are cospectral with
     respect to the normalized Laplacian.
 
+    INPUT:
+
+    - ``partition`` -- non empty list of positive integers
+
+    - ``q`` -- nonnegative integer; number of extra vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: F = graphs.FuzzyBallGraph([3,1],2)
+        sage: F = graphs.FuzzyBallGraph([3,1],2); F
+        Fuzzy-Ball([3, 1], 2): Graph on 8 vertices
         sage: F.adjacency_matrix(vertices=list(F))                                      # needs sage.modules
         [0 0 1 1 1 0 0 0]
         [0 0 0 0 0 1 0 0]
@@ -1508,18 +1662,26 @@ def FuzzyBallGraph(partition, q):
           - 120877/3240*x^3 + 1351/100*x^2 - 931/450*x}
     """
     from sage.graphs.generators.basic import CompleteGraph
-    if len(partition) < 1:
+    if not partition or any(i <= 0 for i in partition):
         raise ValueError("partition must be a nonempty list of positive integers")
+    if q < 0:
+        raise ValueError("q must be larger or equal to 0")
     n = q + sum(partition)
-    g = CompleteGraph(n)
-    curr_vertex = 0
-    for e, p in enumerate(partition):
-        g.add_edges([(curr_vertex + i, 'a{0}'.format(e + 1)) for i in range(p)])
-        curr_vertex += p
-    return g
+
+    def edges():
+        yield from combinations(range(n), 2)
+        curr_vertex = 0
+        for e, p in enumerate(partition):
+            v = 'a{0}'.format(e + 1)
+            for u in range(curr_vertex, curr_vertex + p):
+                yield (u, v)
+            curr_vertex += p
+
+    return Graph(edges(), format="list_of_edges", immutable=immutable,
+                 name=f"Fuzzy-Ball({partition}, {q})")
 
 
-def GeneralizedPetersenGraph(n, k):
+def GeneralizedPetersenGraph(n, k, immutable=False):
     r"""
     Return a generalized Petersen graph with `2n` nodes. The variables
     `n`, `k` are integers such that `n>2` and `0<k\leq\lfloor(n-1)`/`2\rfloor`
@@ -1535,6 +1697,9 @@ def GeneralizedPetersenGraph(n, k):
 
     - ``k`` -- integer (`0<k\leq\lfloor(n-1)`/`2\rfloor`); decides
       how inner vertices are connected
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, the generalized
@@ -1567,6 +1732,13 @@ def GeneralizedPetersenGraph(n, k):
         sage: graphs.GeneralizedPetersenGraph(7, 2).name()
         'Generalized Petersen graph (n=7,k=2)'
 
+    Check the behavior of parameter immutable::
+
+        sage: graphs.GeneralizedPetersenGraph(7, 2).is_immutable()
+        False
+        sage: graphs.GeneralizedPetersenGraph(7, 2, immutable=True).is_immutable()
+        True
+
     AUTHORS:
 
     - Anders Jonsson (2009-10-15)
@@ -1575,17 +1747,19 @@ def GeneralizedPetersenGraph(n, k):
         raise ValueError("n must be larger than 2")
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1<= k <=floor((n-1)/2)")
-    G = Graph(2 * n, name=f"Generalized Petersen graph (n={n},k={k})")
-    for i in range(n):
-        G.add_edge(i, (i+1) % n)
-        G.add_edge(i, i+n)
-        G.add_edge(i+n, n + (i+k) % n)
+    from itertools import chain
+    E1 = ((i, (i + 1) % n) for i in range(n))
+    E2 = ((i, i + n) for i in range(n))
+    E3 = (( i + n, n + (i + k) % n) for i in range(n))
+    G = Graph([range(2*n), chain(E1, E2, E3)], format="vertices_and_edges",
+              name=f"Generalized Petersen graph (n={n},k={k})",
+              immutable=immutable)
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
     G._circle_embedding(list(range(n, 2*n)), radius=.5, angle=pi/2)
     return G
 
 
-def IGraph(n, j, k):
+def IGraph(n, j, k, immutable=False):
     r"""
     Return an I-graph with `2n` nodes.
 
@@ -1604,6 +1778,9 @@ def IGraph(n, j, k):
 
     - ``k`` -- integer such that `0 < k \leq \lfloor (n-1) / 2 \rfloor`
       determining how inner vertices are connected
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the I-graphs are displayed as an
@@ -1660,17 +1837,19 @@ def IGraph(n, j, k):
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1 <= k <= floor((n - 1) / 2)")
 
-    G = Graph(2 * n, name=f"I-graph (n={n}, j={j}, k={k})")
-    for i in range(n):
-        G.add_edge(i, (i + j) % n)
-        G.add_edge(i, i + n)
-        G.add_edge(i + n, n + (i + k) % n)
+    from itertools import chain
+    E1 = ((i, (i + j) % n) for i in range(n))
+    E2 = ((i, i + n) for i in range(n))
+    E3 = (( i + n, n + (i + k) % n) for i in range(n))
+    G = Graph([range(2*n), chain(E1, E2, E3)], format="vertices_and_edges",
+              name=f"I-graph (n={n}, j={j}, k={k})",
+              immutable=immutable)
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
     G._circle_embedding(list(range(n, 2 * n)), radius=.5, angle=pi/2)
     return G
 
 
-def DoubleGeneralizedPetersenGraph(n, k):
+def DoubleGeneralizedPetersenGraph(n, k, immutable=False):
     r"""
     Return a double generalized Petersen graph with `4n` nodes.
 
@@ -1685,6 +1864,9 @@ def DoubleGeneralizedPetersenGraph(n, k):
 
     - ``k`` -- integer such that `0 < k \leq \lfloor (n-1) / 2 \rfloor`
       determining how vertices on second and third inner rims are connected
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the double generalized Petersen
@@ -1726,14 +1908,16 @@ def DoubleGeneralizedPetersenGraph(n, k):
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1 <= k <= floor((n - 1) / 2)")
 
-    G = Graph(4 * n, name=f"Double generalized Petersen graph (n={n}, k={k})")
-    for i in range(n):
-        G.add_edge(i, (i + 1) % n)
-        G.add_edge(i + 3 * n, (i + 1) % n + 3 * n)
-        G.add_edge(i, i + n)
-        G.add_edge(i + 2 * n, i + 3 * n)
-        G.add_edge(i + n, (i + k) % n + 2 * n)
-        G.add_edge(i + 2 * n, (i + k) % n + n)
+    from itertools import chain
+    E1 = ((i, (i + 1) % n) for i in range(n))
+    E2 = ((i + 3 * n, (i + 1) % n + 3 * n) for i in range(n))
+    E3 = ((i, i + n) for i in range(n))
+    E4 = ((i + 2 * n, i + 3 * n) for i in range(n))
+    E5 = ((i + n, (i + k) % n + 2 * n) for i in range(n))
+    E6 = ((i + 2 * n, (i + k) % n + n) for i in range(n))
+    G = Graph([range(4*n), chain(E1, E2, E3, E4, E5, E6)],
+              format="vertices_and_edges", immutable=immutable,
+              name=f"Double generalized Petersen graph (n={n}, k={k})")
     G._circle_embedding(list(range(n)), radius=3, angle=pi/2)
     G._circle_embedding(list(range(n, 2 * n)), radius=2, angle=pi/2)
     G._circle_embedding(list(range(2 * n, 3 * n)), radius=1.5, angle=pi/2)
@@ -1741,7 +1925,7 @@ def DoubleGeneralizedPetersenGraph(n, k):
     return G
 
 
-def RoseWindowGraph(n, a, r):
+def RoseWindowGraph(n, a, r, immutable=False):
     r"""
     Return a rose window graph with `2n` nodes.
 
@@ -1757,6 +1941,9 @@ def RoseWindowGraph(n, a, r):
 
     - ``r`` -- integer such that `1 \leq r < n` and `r \neq n / 2` determining
       how inner vertices are connected
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the rose window graphs are
@@ -1819,18 +2006,20 @@ def RoseWindowGraph(n, a, r):
     if r == n / 2:
         raise ValueError("r must be different than n / 2")
 
-    G = Graph(2 * n, name=f"Rose window graph (n={n}, a={a}, r={r})")
-    for i in range(n):
-        G.add_edge(i, (i + 1) % n)
-        G.add_edge(i, i + n)
-        G.add_edge((i + a) % n, i + n)
-        G.add_edge(i + n, (i + r) % n + n)
+    from itertools import chain
+    E1 = ((i, (i + 1) % n) for i in range(n))
+    E2 = ((i, i + n) for i in range(n))
+    E3 = (((i + a) % n, i + n) for i in range(n))
+    E4 = ((i + n, (i + r) % n + n) for i in range(n))
+    G = Graph([range(2*n), chain(E1, E2, E3, E4)],
+              format="vertices_and_edges", immutable=immutable,
+              name=f"Rose window graph (n={n}, a={a}, r={r})")
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
     G._circle_embedding(list(range(n, 2 * n)), radius=0.5, angle=pi/2)
     return G
 
 
-def TabacjnGraph(n, a, b, r):
+def TabacjnGraph(n, a, b, r, immutable=False):
     r"""
     Return a Tabačjn graph with `2n` nodes.
 
@@ -1851,6 +2040,9 @@ def TabacjnGraph(n, a, b, r):
 
     - ``r`` -- integer such that `0 < r < n` and `r \neq n/2` determining how
       inner vertices are connected
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the rose window graphs are
@@ -1927,13 +2119,15 @@ def TabacjnGraph(n, a, b, r):
     if r == n/2:
         raise ValueError("r must be different than n / 2")
 
-    G = Graph(2 * n, name=f"Tabačjn graph (n={n}, a={a}, b={b}, r={r})")
-    for i in range(n):
-        G.add_edge(i, (i + 1) % n)
-        G.add_edge(i, i + n)
-        G.add_edge(i + n, n + (i + r) % n)
-        G.add_edge(i, (i + a) % n + n)
-        G.add_edge(i, (i + b) % n + n)
+    from itertools import chain
+    E1 = ((i, (i + 1) % n) for i in range(n))
+    E2 = ((i, i + n) for i in range(n))
+    E3 = ((i + n, n + (i + r) % n) for i in range(n))
+    E4 = ((i, (i + a) % n + n) for i in range(n))
+    E5 = ((i, (i + b) % n + n) for i in range(n))
+    G = Graph([range(2*n), chain(E1, E2, E3, E4, E5)],
+              format="vertices_and_edges", immutable=immutable,
+              name=f"Tabačjn graph (n={n}, a={a}, b={b}, r={r})")
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
     G._circle_embedding(list(range(n, 2 * n)), radius=0.5, angle=pi/2)
     return G
