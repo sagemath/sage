@@ -129,7 +129,7 @@ class CovectorOrientedMatroid(OrientedMatroid):
         except TypeError:
             rep = "Covector oriented matroid of rank 0"
         return rep
-    
+
     def is_valid(self, certificate=False) -> bool | tuple[bool, dict]:
         """
         Return whether our covectors satisfy the covector axioms.
