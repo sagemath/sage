@@ -168,7 +168,10 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         if (<RingExtension_generic>self._parent)._import_methods:
             output = self._backend(*to_backend(args), **to_backend(kwargs))
             if args:
-                return from_backend(output, args[0].parent())
+                E = args[0].parent()
+                if isinstance(E, RingExtension_generic):
+                    return from_backend(output, args[0].parent())
+                return output
             else:
                 return from_backend(output, self._parent)
         return TypeError("this element is not callable")

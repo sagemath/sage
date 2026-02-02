@@ -940,10 +940,22 @@ class WordMorphism(SageObject):
             sage: WordMorphism('')*m
             Traceback (most recent call last):
             ...
-            KeyError: 'b'
+            ValueError: codomain alphabet not in domain (same order required)
             sage: m * WordMorphism('')
             WordMorphism:
+            sage: s = WordMorphism('a->ba,b->a', domain=Words('ab'),
+            ....:                 codomain=Words('ba'))
+            sage: s * s
+            Traceback (most recent call last):
+            ...
+            ValueError: codomain alphabet not in domain (same order required)
         """
+        # Check that other's codomain alphabet is included in self's domain
+        # alphabet with the correct ordering.
+        if not self._is_alphabet_included_with_order(
+                other.codomain().alphabet(), self.domain().alphabet()):
+            raise ValueError(
+                "codomain alphabet not in domain (same order required)")
         return WordMorphism({key: self(w) for key, w in other._morph.items()},
                             codomain=self.codomain())
 
@@ -982,7 +994,7 @@ class WordMorphism(SageObject):
             sage: n^2
             Traceback (most recent call last):
             ...
-            KeyError: 'c'
+            ValueError: codomain alphabet not in domain (same order required)
         """
         # If exp is not an integer
         if not isinstance(exp, (int, Integer)):
@@ -1203,9 +1215,84 @@ class WordMorphism(SageObject):
         """
         return self.codomain() == self.domain()
 
+    def _is_alphabet_included_with_order(self, source_alphabet,
+                                         target_alphabet):
+        """Check if ``source_alphabet`` is included in ``target_alphabet``
+        with the correct ordering.
+
+        This is a helper function for checking composition validity.
+        For composition ``self * other`` to preserve the incidence matrix
+        property, we need ``other.codomain().alphabet()`` to be included
+        in ``self.domain().alphabet()`` with matching order.
+
+        INPUT:
+
+        - ``source_alphabet`` -- the alphabet to check for inclusion
+        - ``target_alphabet`` -- the alphabet to check inclusion into
+
+        OUTPUT:
+
+        ``True`` if all letters of ``source_alphabet`` appear in
+        ``target_alphabet`` in the same relative order, ``False`` otherwise.
+
+        EXAMPLES::
+
+            sage: m = WordMorphism('a->ab,b->a')
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('ab').alphabet(), Words('ab').alphabet())
+            True
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('ab').alphabet(), Words('abc').alphabet())
+            True
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('ba').alphabet(), Words('ab').alphabet())
+            False
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('ba').alphabet(), Words('abc').alphabet())
+            False
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('ac').alphabet(), Words('abc').alphabet())
+            True
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('abc').alphabet(), Words('abc').alphabet())
+            True
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('abc').alphabet(), Words('ab').alphabet())
+            False
+            sage: m._is_alphabet_included_with_order(
+            ....:     Words('').alphabet(), Words('ab').alphabet())
+            True
+        """
+        # Check if alphabets are equal first (fast path)
+        if source_alphabet == target_alphabet:
+            return True
+
+        # Check cardinality constraints
+        if target_alphabet.cardinality() < source_alphabet.cardinality():
+            return False
+
+        if target_alphabet.cardinality() == Infinity:
+            raise NotImplementedError(
+                "cannot check alphabet inclusion for infinite alphabets")
+
+        targets = list(target_alphabet)
+        n_targets = len(targets)
+        idx = 0
+        for a in source_alphabet:
+            while idx < n_targets and targets[idx] != a:
+                idx += 1
+            if idx == n_targets:
+                return False
+        return True
+
     def is_self_composable(self):
         r"""
-        Return whether the codomain of ``self`` is contained in the domain.
+        Return whether the codomain of ``self`` is contained in the domain
+        with the correct ordering.
+
+        For a morphism to be self-composable (i.e., ``self * self`` to be
+        valid), the codomain alphabet must be included in the domain alphabet
+        with the same relative ordering of letters.
 
         EXAMPLES::
 
@@ -1214,16 +1301,17 @@ class WordMorphism(SageObject):
             False
             sage: f.is_self_composable()
             True
+
+        Check that alphabet ordering matters::
+
+            sage: s = WordMorphism('a->ba,b->a', domain=Words('ab'),
+            ....:                 codomain=Words('ba'))
+            sage: s.is_self_composable()
+            False
         """
         Adom = self.domain().alphabet()
         Acodom = self.codomain().alphabet()
-        if Adom == Acodom:
-            return True
-        if Adom.cardinality() < Acodom.cardinality():
-            return False
-        if Adom.cardinality() == Infinity:
-            raise NotImplementedError
-        return all(a in Adom for a in Acodom)
+        return self._is_alphabet_included_with_order(Acodom, Adom)
 
     def image(self, letter):
         r"""

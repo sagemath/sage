@@ -791,7 +791,9 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
         Elliptic Curve defined by y^2 = x^3 + (4536*a+14148)*x + (-163728*a-474336)
          over Number Field in a with defining polynomial x^2 - 15
 
-    TESTS (see :issue:`17295`)::
+    TESTS:
+
+    See :issue:`17295`::
 
         sage: # needs sage.rings.number_field
         sage: K.<a> = NumberField(x^3 - 7*x - 5)
