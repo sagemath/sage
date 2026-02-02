@@ -520,14 +520,12 @@ class FiniteFieldFactory(UniqueFactory):
         EXAMPLES::
 
             sage: GF.create_key_and_extra_args(9, 'a')                                  # needs sage.libs.linbox
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True),
-            {'check_irreducible': True, 'check_prime': True})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
 
         The order `q` can also be given as a pair `(p,n)`::
 
             sage: GF.create_key_and_extra_args((3, 2), 'a')                             # needs sage.libs.linbox
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True),
-            {'check_irreducible': True, 'check_prime': True})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
 
         We do not take invalid keyword arguments and raise a value error
         to better ensure uniqueness::
@@ -541,11 +539,9 @@ class FiniteFieldFactory(UniqueFactory):
         using givaro::
 
             sage: GF.create_key_and_extra_args(16, 'a', implementation='ntl', repr='poly')        # needs sage.libs.ntl
-            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None),
-            {'check_irreducible': True, 'check_prime': True})
+            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None, True, True), {})
             sage: GF.create_key_and_extra_args(16, 'a', implementation='ntl', elem_cache=False)   # needs sage.libs.ntl
-            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None),
-            {'check_irreducible': True, 'check_prime': True})
+            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None, True, True), {})
             sage: GF(16, implementation='ntl') is GF(16, implementation='ntl', repr='foo')                  # needs sage.libs.ntl
             True
 
@@ -564,18 +560,15 @@ class FiniteFieldFactory(UniqueFactory):
         but we ignore them as they are not used, see :issue:`21433`::
 
             sage: GF.create_key_and_extra_args(9, 'a', structure=None)                  # needs sage.libs.linbox
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True),
-            {'check_irreducible': True, 'check_prime': True})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
 
         We do not allow giving both ``implementation`` and ``impl``,
         but we do allow ``impl`` for backwards compatibility::
 
             sage: GF.create_key_and_extra_args(9, 'a', implementation='givaro')          # needs sage.libs.linbox
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True),
-            {'check_irreducible': True, 'check_prime': True})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
             sage: GF.create_key_and_extra_args(9, 'a', impl='givaro')                   # needs sage.libs.linbox
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True),
-            {'check_irreducible': True, 'check_prime': True})
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
             sage: GF.create_key_and_extra_args(9, 'a', implementation='givaro', impl='ntl')  # needs sage.libs.linbox
             Traceback (most recent call last):
             ...
@@ -763,10 +756,7 @@ class FiniteFieldFactory(UniqueFactory):
                 repr = None
                 elem_cache = None
 
-            return ((order, name, modulus, implementation, p, n, proof, prefix,
-                     repr, elem_cache),
-                    {"check_irreducible": check_irreducible,
-                     "check_prime": check_prime})
+            return (order, name, modulus, implementation, p, n, proof, prefix, repr, elem_cache, check_prime, check_irreducible), {}
 
     @rename_keyword(deprecation=30507, impl='implementation')
     def create_object(self, version, key, **kwds):
@@ -842,10 +832,11 @@ class FiniteFieldFactory(UniqueFactory):
             repr = kwds.get('repr', 'poly')
             elem_cache = kwds.get('elem_cache', (order < 500))
             check_prime = check_irreducible = False
-        else:
+        elif len(key) == 10:
             order, name, modulus, implementation, p, n, proof, prefix, repr, elem_cache = key
-            check_prime = kwds["check_prime"]
-            check_irreducible = kwds["check_irreducible"]
+            check_prime = check_irreducible = False
+        else:
+            order, name, modulus, implementation, p, n, proof, prefix, repr, elem_cache, check_prime, check_irreducible = key
 
         from sage.structure.proof.proof import WithProof
         with WithProof('arithmetic', proof):
@@ -853,6 +844,14 @@ class FiniteFieldFactory(UniqueFactory):
                 raise ValueError("the order of a finite field must be a prime power")
             if check_irreducible and not modulus.is_irreducible():
                 raise ValueError("finite field modulus must be irreducible but it is not")
+
+        # We try to see if the ring has already been created without checks
+        try:
+            return self._cache[version, (order, name, modulus, implementation,
+                                         p, n, proof, prefix, repr, elem_cache,
+                                         False, False)]
+        except KeyError:
+            pass
 
         if implementation == 'modn':
             if n != 1:
@@ -886,6 +885,66 @@ class FiniteFieldFactory(UniqueFactory):
 
         return K
 
+    def other_keys(self, key, obj):
+        """
+        Return the other keys associated to the same object.
+
+        During object creation, the key generated by
+        :meth:`create_key_and_extra_args` depends on whether checks are
+        requested or not. In order to generate the same object whether these
+        checks are requested, this method lists the other keys one can get with
+        potentially less checks.
+
+        INPUT:
+
+        - ``key`` -- a tuple, generated by :meth:`create_key_and_extra_args`;
+
+        - ``obj`` -- a finite field.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: key_no_check, _ = GF.create_key_and_extra_args(25, name='t', modulus=x^2-x+1, check_irreducible=False)
+            sage: K = GF.get_object(sage.version.version, key_no_check, {})
+            sage: key_check, _ = GF.create_key_and_extra_args(25, name='t', modulus=x^2-x+1)
+            sage: L = GF.get_object(sage.version.version, key_check, {})
+            sage: key_no_check in GF.other_keys(key_check, L)
+            True
+            sage: K is L
+            True
+
+            sage: key_check, _ = GF.create_key_and_extra_args(23)
+            sage: K = GF.get_object(sage.version.version, key_check, {})
+            sage: key_no_check, _ = GF.create_key_and_extra_args(23, check_prime=False)
+            sage: L = GF.get_object(sage.version.version, key_no_check, {})
+            sage: key_no_check in GF.other_keys(key_check, L)
+            True
+            sage: K is L
+            True
+
+            sage: key_no_check, _ = GF.create_key_and_extra_args(9, name='t', modulus=x^2-x, check_irreducible=False, implementation="pari_ffelt")
+            sage: K = GF.get_object(sage.version.version, key_no_check, {})
+            sage: key_check, _ = GF.create_key_and_extra_args(9, name='t', modulus=x^2-x, implementation="pari_ffelt")
+            sage: L = GF.get_object(sage.version.version, key_check, {})
+            Traceback (most recent call last):
+            ...
+            ValueError: finite field modulus must be irreducible but it is not
+        """
+        other_keys = []
+
+        if len(key) <= 10:
+            return other_keys  # For backwards compatibility
+
+        if key[10]:
+            other_keys.append(key[:10] + (False, key[11]))
+
+            if key[11]:
+                other_keys.append(key[:10] + (False, False))
+
+        if key[11]:
+            other_keys.append(key[:10] + (key[10], False))
+
+        return other_keys
 
 GF = FiniteField = FiniteFieldFactory("FiniteField")
 
