@@ -496,7 +496,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
     """
 
     def __init__(self, base_ring, name=None, default_prec=None, sparse=False,
-                 implementation=None, category=None):
+                 implementation=None, category=None) -> None:
         """
         Initialize a power series ring.
 
@@ -1239,7 +1239,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             prec = self.default_prec()
         return self(self.__poly_ring.random_element(prec-1, *args, **kwds), prec)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if x is an element of this power series ring or
         canonically coerces to this ring.
@@ -1261,7 +1261,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return self.has_coerce_map_from(parent(x))
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``False`` since the ring of power series over any ring is never
         a field.
@@ -1274,7 +1274,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return False
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``False`` since the ring of power series over any ring is never
         finite.

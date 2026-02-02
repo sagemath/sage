@@ -175,8 +175,7 @@ class SkewTableau(ClonableList,
         """
         if isinstance(other, (Tableau, SkewTableau)):
             return list(self) == list(other)
-        else:
-            return list(self) == other or list(list(row) for row in self) == other
+        return list(self) == other or [list(row) for row in self] == other
 
     def __ne__(self, other):
         r"""

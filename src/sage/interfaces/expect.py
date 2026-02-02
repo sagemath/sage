@@ -13,7 +13,8 @@ AUTHORS:
 - William Stein (2006-03-01): got rid of infinite loop on startup if
   client system missing
 
-- Felix Lawrence (2009-08-21): edited ._sage_() to support lists and float exponents in foreign notation.
+- Felix Lawrence (2009-08-21): edited ._sage_() to support
+  lists and float exponents in foreign notation.
 
 - Simon King (2010-09-25): Expect._local_tmpfile() depends on
   Expect.pid() and is cached; Expect.quit() clears that cache,
@@ -37,31 +38,33 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+import gc
 import io
 import os
 import re
 import shlex
 import signal
 import sys
-import weakref
 import time
-import gc
-from . import quit
+import weakref
 from random import randrange
 
 import pexpect
 from pexpect import ExceptionPexpect
+
 import sage.interfaces.abc
-from sage.interfaces.interface import (Interface, InterfaceElement,
-            InterfaceFunction, InterfaceFunctionElement)
-
-from sage.structure.element import RingElement
-
-from sage.env import SAGE_EXTCODE, LOCAL_IDENTIFIER
-from sage.misc.object_multiplexer import Multiplex
+from sage.cpython.string import bytes_to_str, str_to_bytes
+from sage.env import LOCAL_IDENTIFIER, SAGE_EXTCODE
+from sage.interfaces import quit
+from sage.interfaces.interface import (
+    Interface,
+    InterfaceElement,
+    InterfaceFunction,
+    InterfaceFunctionElement,
+)
 from sage.misc.instancedoc import instancedoc
-
-from sage.cpython.string import str_to_bytes, bytes_to_str
+from sage.misc.object_multiplexer import Multiplex
+from sage.structure.element import RingElement
 
 BAD_SESSION = -2
 
@@ -496,7 +499,8 @@ If this all works, you can then make calls like:
         # See Issue #12221 and #13859.
         pexpect_env = dict(os.environ)
         pexpect_env.update(self._env)
-        pexpect_del_vars = ['TERM', 'COLUMNS']
+        pexpect_env['TERM'] = "dumb"
+        pexpect_del_vars = ['COLUMNS']
         for i in pexpect_del_vars:
             try:
                 del pexpect_env[i]
@@ -640,17 +644,17 @@ If this all works, you can then make calls like:
 
         EXAMPLES::
 
-            sage: a = maxima('y')
-            sage: maxima.quit(verbose=True)
-            Exiting Maxima with PID ... running ...maxima...
+            sage: a = gap('(1,2)(3,7)(4,6)(5,8)')
+            sage: gap.quit(verbose=True)
+            Exiting Gap with PID ... running ...gap...
             sage: a._check_valid()
             Traceback (most recent call last):
             ...
-            ValueError: The maxima session in which this object was defined is no longer running.
+            ValueError: The gap session in which this object was defined is no longer running.
 
         Calling ``quit()`` a second time does nothing::
 
-            sage: maxima.quit(verbose=True)
+            sage: gap.quit(verbose=True)
         """
         if self._expect is not None:
             if verbose:
@@ -668,18 +672,18 @@ If this all works, you can then make calls like:
 
         EXAMPLES::
 
-            sage: a = maxima('y')
-            sage: saved_expect = maxima._expect  # Save this to close later
-            sage: maxima.detach()
+            sage: a = gap('(1,2)(3,7)(4,6)(5,8)')
+            sage: saved_expect = gap._expect  # Save this to close later
+            sage: gap.detach()
             sage: a._check_valid()
             Traceback (most recent call last):
             ...
-            ValueError: The maxima session in which this object was defined is no longer running.
+            ValueError: The gap session in which this object was defined is no longer running.
             sage: saved_expect.close()  # Close child process
 
         Calling ``detach()`` a second time does nothing::
 
-            sage: maxima.detach()
+            sage: gap.detach()
         """
         try:
             self._expect._keep_alive()
@@ -688,15 +692,13 @@ If this all works, you can then make calls like:
         self._reset_expect()
 
     def _quit_string(self):
-        """
+        r"""
         Return the string which will be used to quit the application.
 
         EXAMPLES::
 
             sage: gp._quit_string()
             '\\q'
-            sage: maxima._quit_string()
-            'quit();'
         """
         return 'quit'
 
@@ -1047,11 +1049,10 @@ If this all works, you can then make calls like:
                     out = self._before()
                 else:
                     out = self._before().rstrip('\n\r')
+            elif self._terminal_echo:
+                out = '\n\r'
             else:
-                if self._terminal_echo:
-                    out = '\n\r'
-                else:
-                    out = ''
+                out = ''
         except KeyboardInterrupt:
             self._keyboard_interrupt()
             raise KeyboardInterrupt("Ctrl-c pressed while running %s" % self)
@@ -1432,7 +1433,7 @@ If this all works, you can then make calls like:
         EXAMPLES::
 
             sage: from sage.interfaces.expect import Expect
-            sage: Expect._object_class(maxima)
+            sage: Expect._object_class(gap)
             <class 'sage.interfaces.expect.ExpectElement'>
         """
         return ExpectElement
@@ -1442,7 +1443,7 @@ If this all works, you can then make calls like:
         EXAMPLES::
 
             sage: from sage.interfaces.expect import Expect
-            sage: Expect._function_class(maxima)
+            sage: Expect._function_class(gap)
             <class 'sage.interfaces.expect.ExpectFunction'>
         """
         return ExpectFunction
@@ -1452,7 +1453,7 @@ If this all works, you can then make calls like:
         EXAMPLES::
 
             sage: from sage.interfaces.expect import Expect
-            sage: Expect._function_element_class(maxima)
+            sage: Expect._function_element_class(gap)
             <class 'sage.interfaces.expect.FunctionElement'>
         """
         return FunctionElement
@@ -1472,27 +1473,6 @@ class FunctionElement(InterfaceFunctionElement):
     Expect function element.
     """
     pass
-
-
-def is_ExpectElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`ExpectElement`.
-
-    This function is deprecated; use :func:`isinstance`
-    (of :class:`sage.interfaces.abc.ExpectElement`) instead.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.expect import is_ExpectElement
-        sage: is_ExpectElement(2)
-        doctest:...: DeprecationWarning: the function is_ExpectElement is deprecated; use isinstance(x, sage.interfaces.abc.ExpectElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_ExpectElement is deprecated; use isinstance(x, sage.interfaces.abc.ExpectElement) instead")
-
-    return isinstance(x, ExpectElement)
 
 
 @instancedoc

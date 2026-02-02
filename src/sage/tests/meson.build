@@ -24,7 +24,7 @@ py.install_sources(
   subdir: 'sage/tests',
 )
 
-extension_data = {'cython' : files('cython.pyx')}
+extension_data = {'cython': files('cython.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

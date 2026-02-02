@@ -43,9 +43,11 @@ Configuration
 -------------
 
 You have to authenticate to your GitHub account to allow ``gh`` command to
-interact with GitHub. Typically the authorization proceeds as follows::
+interact with GitHub. Typically the authorization proceeds as follows
 
-    [alice@localhost sage]$ gh auth login
+.. code-block:: console
+
+    $ gh auth login
     ? What is your preferred protocol for Git operations? HTTPS
     ? Authenticate Git with your GitHub credentials? Yes
     ? How would you like to authenticate GitHub CLI? Login with a web browser
@@ -61,13 +63,17 @@ where a web browser is used to enter credentials. You can also use an
 authentication token instead, in which case you must first generate `a Personal
 Access Token here <https://github.com/settings/tokens>`_.
 
-Next set the default repo for the ``gh`` command::
+Next set the default repo for the ``gh`` command
 
-    [alice@localhost sage]$ gh repo set-default sagemath/sage
+.. code-block:: console
 
-and check::
+    $ gh repo set-default sagemath/sage
 
-    [alice@localhost sage]$ gh repo view
+and check
+
+.. code-block:: console
+
+    $ gh repo view
     sagemath/sage
     ...
 
@@ -78,9 +84,11 @@ which will show the default repo along with its readme, which is quite long.
 
 ``gh`` is extendable; e.g.  a useful extension to ``gh`` allows testing of
 Sage's GitHub Actions locally, using Docker. It is called ``act`` and can be
-installed by running::
+installed by running
 
-    [alice@localhost sage]$ gh extension install https://github.com/nektos/gh-act
+.. code-block:: console
+
+    $ gh extension install https://github.com/nektos/gh-act
 
 Append ``--force`` flag to the command above to force an upgrade of the extension.
 More details on configuring and using ``gh act`` are in :ref:`chapter-portability_testing`.
@@ -127,106 +135,108 @@ your fork
 
 .. tab:: By HTTPS protocol
 
-   ::
+   .. code-block:: console
 
-    [alice@localhost ~]$ git clone https://github.com/alice/sage.git
-    Cloning into 'sage'...
-    remote: Enumerating objects: 914565, done.
-    remote: Counting objects: 100% (2738/2738), done.
-    remote: Compressing objects: 100% (855/855), done.
-    remote: Total 914565 (delta 1950), reused 2493 (delta 1875), pack-reused 911827
-    Receiving objects: 100% (914565/914565), 331.09 MiB | 11.22 MiB/s, done.
-    Resolving deltas: 100% (725438/725438), done.
-    Updating files: 100% (9936/9936), done.
-    [alice@localhost ~]$ cd sage
-    [alice@localhost sage]$ git remote -v
-    origin  https://github.com/alice/sage.git (fetch)
-    origin  https://github.com/alice/sage.git (push)
+       $ git clone https://github.com/alice/sage.git
+       Cloning into 'sage'...
+       remote: Enumerating objects: 914565, done.
+       remote: Counting objects: 100% (2738/2738), done.
+       remote: Compressing objects: 100% (855/855), done.
+       remote: Total 914565 (delta 1950), reused 2493 (delta 1875), pack-reused 911827
+       Receiving objects: 100% (914565/914565), 331.09 MiB | 11.22 MiB/s, done.
+       Resolving deltas: 100% (725438/725438), done.
+       Updating files: 100% (9936/9936), done.
+       $ cd sage
+       $ git remote -v
+       origin  https://github.com/alice/sage.git (fetch)
+       origin  https://github.com/alice/sage.git (push)
 
 .. tab:: By SSH protocol
 
-   ::
+   .. code-block:: console
 
-    [alice@localhost ~]$ git clone git@github.com:alice/sage.git
-    Cloning into 'sage'...
-    remote: Enumerating objects: 914565, done.
-    remote: Counting objects: 100% (2738/2738), done.
-    remote: Compressing objects: 100% (855/855), done.
-    remote: Total 914565 (delta 1950), reused 2493 (delta 1875), pack-reused 911827
-    Receiving objects: 100% (914565/914565), 331.09 MiB | 11.22 MiB/s, done.
-    Resolving deltas: 100% (725438/725438), done.
-    Updating files: 100% (9936/9936), done.
-    [alice@localhost ~]$ cd sage
-    [alice@localhost sage]$ git remote -v
-    origin  git@github.com:alice/sage.git (fetch)
-    origin  git@github.com:alice/sage.git (push)
+       $ git clone git@github.com:alice/sage.git
+       Cloning into 'sage'...
+       remote: Enumerating objects: 914565, done.
+       remote: Counting objects: 100% (2738/2738), done.
+       remote: Compressing objects: 100% (855/855), done.
+       remote: Total 914565 (delta 1950), reused 2493 (delta 1875), pack-reused 911827
+       Receiving objects: 100% (914565/914565), 331.09 MiB | 11.22 MiB/s, done.
+       Resolving deltas: 100% (725438/725438), done.
+       Updating files: 100% (9936/9936), done.
+       $ cd sage
+       $ git remote -v
+       origin  git@github.com:alice/sage.git (fetch)
+       origin  git@github.com:alice/sage.git (push)
 
 
 If you already have a local Git repo and only want to link your fork as ``origin`` remote, then do:
 
 .. tab:: By HTTPS protocol
 
-   ::
+   .. code-block:: console
 
-    [alice@localhost sage]$ git remote add origin https://github.com/alice/sage.git
-    [alice@localhost sage]$ git remote -v
-    origin  https://github.com/alice/sage.git (fetch)
-    origin  https://github.com/alice/sage.git (push)
-    [alice@localhost sage]$ git fetch origin
-    remote: Enumerating objects: 1136, done.
-    remote: Counting objects: 100% (1084/1084), done.
-    remote: Compressing objects: 100% (308/308), done.
-    remote: Total 1136 (delta 825), reused 982 (delta 776), pack-reused 52
-    Receiving objects: 100% (1136/1136), 2.62 MiB | 5.30 MiB/s, done.
-    Resolving deltas: 100% (838/838), completed with 145 local objects.
-    From https://github.com/alice/sage
-     * [new branch]      develop     -> origin/develop
+       $ git remote add origin https://github.com/alice/sage.git
+       $ git remote -v
+       origin  https://github.com/alice/sage.git (fetch)
+       origin  https://github.com/alice/sage.git (push)
+       $ git fetch origin
+       remote: Enumerating objects: 1136, done.
+       remote: Counting objects: 100% (1084/1084), done.
+       remote: Compressing objects: 100% (308/308), done.
+       remote: Total 1136 (delta 825), reused 982 (delta 776), pack-reused 52
+       Receiving objects: 100% (1136/1136), 2.62 MiB | 5.30 MiB/s, done.
+       Resolving deltas: 100% (838/838), completed with 145 local objects.
+       From https://github.com/alice/sage
+        * [new branch]      develop     -> origin/develop
 
 .. tab:: By SSH protocol
 
-   ::
+   .. code-block:: console
 
-    [alice@localhost sage]$ git remote add origin git@github.com:alice/sage.git
-    [alice@localhost sage]$ git remote -v
-    origin  git@github.com:alice/sage.git (fetch)
-    origin  git@github.com:alice/sage.git (push)
-    [alice@localhost sage]$ git fetch origin
-    remote: Enumerating objects: 1136, done.
-    remote: Counting objects: 100% (1084/1084), done.
-    remote: Compressing objects: 100% (308/308), done.
-    remote: Total 1136 (delta 825), reused 982 (delta 776), pack-reused 52
-    Receiving objects: 100% (1136/1136), 2.62 MiB | 5.30 MiB/s, done.
-    Resolving deltas: 100% (838/838), completed with 145 local objects.
-    From git@github.com:alice/sage
-     * [new branch]      develop     -> origin/develop
+       $ git remote add origin git@github.com:alice/sage.git
+       $ git remote -v
+       origin  git@github.com:alice/sage.git (fetch)
+       origin  git@github.com:alice/sage.git (push)
+       $ git fetch origin
+       remote: Enumerating objects: 1136, done.
+       remote: Counting objects: 100% (1084/1084), done.
+       remote: Compressing objects: 100% (308/308), done.
+       remote: Total 1136 (delta 825), reused 982 (delta 776), pack-reused 52
+       Receiving objects: 100% (1136/1136), 2.62 MiB | 5.30 MiB/s, done.
+       Resolving deltas: 100% (838/838), completed with 145 local objects.
+       From git@github.com:alice/sage
+        * [new branch]      develop     -> origin/develop
 
 You also add the Sage repo ``sagemath/sage`` as your remote ``upstream``:
 
 .. tab:: By HTTPS protocol
 
-   ::
+   .. code-block:: console
 
-    [alice@localhost sage]$ git remote add upstream https://github.com/sagemath/sage.git
-    [alice@localhost sage]$ git remote -v
-    origin  https://github.com/alice/sage.git (fetch)
-    origin  https://github.com/alice/sage.git (push)
-    upstream    https://github.com/sagemath/sage.git (fetch)
-    upstream    https://github.com/sagemath/sage.git (push)
+       $ git remote add upstream https://github.com/sagemath/sage.git
+       $ git remote -v
+       origin  https://github.com/alice/sage.git (fetch)
+       origin  https://github.com/alice/sage.git (push)
+       upstream    https://github.com/sagemath/sage.git (fetch)
+       upstream    https://github.com/sagemath/sage.git (push)
 
 .. tab:: By SSH protocol
 
-   ::
+   .. code-block:: console
 
-    [alice@localhost sage]$ git remote add upstream git@github.com:sagemath/sage.git
-    [alice@localhost sage]$ git remote -v
-    origin  git@github.com:alice/sage.git (fetch)
-    origin  git@github.com:alice/sage.git (push)
-    upstream    git@github.com:sagemath/sage.git (fetch)
-    upstream    git@github.com:sagemath/sage.git (push)
+       $ git remote add upstream git@github.com:sagemath/sage.git
+       $ git remote -v
+       origin  git@github.com:alice/sage.git (fetch)
+       origin  git@github.com:alice/sage.git (push)
+       upstream    git@github.com:sagemath/sage.git (fetch)
+       upstream    git@github.com:sagemath/sage.git (push)
 
-To prevent accidental pushes to ``upstream`` (instead of ``origin``), you may want to disable it by running::
+To prevent accidental pushes to ``upstream`` (instead of ``origin``), you may want to disable it by running
 
-    [alice@localhost sage]$ git remote set-url --push upstream DISABLE
+.. code-block:: console
+
+    $ git remote set-url --push upstream DISABLE
 
 Of course, you can give arbitrary names to your Git remotes, but ``origin`` and
 ``upstream`` are the established defaults, which will make it easier to use tools
@@ -409,7 +419,7 @@ finally fixed.
 
 To produce the warning message, use code like the following:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     from sage.misc.stopgap import stopgap
     stopgap("This code contains bugs and may be mathematically unreliable.",

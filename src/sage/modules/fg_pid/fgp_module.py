@@ -222,7 +222,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.arith.functions import lcm
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecated_function_alias
 from sage.matrix.constructor import matrix
 
 import sage.misc.weak_dict
@@ -264,30 +263,6 @@ def FGP_Module(V, W, check=True):
     M = FGP_Module_class(V, W, check=check)
     _fgp_module[key] = M
     return M
-
-
-def is_FGP_Module(x):
-    """
-    Return ``True`` if x is an FGP module, i.e., a finitely generated
-    module over a PID represented as a quotient of finitely generated
-    free modules over a PID.
-
-    EXAMPLES::
-
-        sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
-        sage: W = V.span([2*V.0 + 4*V.1, 9*V.0 + 12*V.1, 4*V.2]); Q = V/W
-        sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(V)
-        doctest:warning...
-        DeprecationWarning: the function is_FGP_Module is deprecated;
-        use 'isinstance(..., FGP_Module_class)' instead
-        See https://github.com/sagemath/sage/issues/37924 for details.
-        False
-        sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(Q)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37924, "the function is_FGP_Module is deprecated; use 'isinstance(..., FGP_Module_class)' instead")
-    return isinstance(x, FGP_Module_class)
 
 
 class FGP_Module_class(Module):
@@ -336,7 +311,7 @@ class FGP_Module_class(Module):
     # module. Should be overridden in derived classes.
     Element = FGP_Element
 
-    def __init__(self, V, W, check=True):
+    def __init__(self, V, W, check=True) -> None:
         """
         INPUT:
 
@@ -470,7 +445,7 @@ class FGP_Module_class(Module):
         raise ValueError("Scalar multiplication of a module is only " +
                          "defined for an element of the base ring.")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this module.
 
@@ -507,9 +482,9 @@ class FGP_Module_class(Module):
                 raise TypeError("other must be an FGP module")
         if not other.is_submodule(self):
             raise ValueError("other must be a submodule of self")
-        return self._module_constructor(self._V, other._V+self._W)
+        return self._module_constructor(self._V, other._V + self._W)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         EXAMPLES::
 
@@ -529,7 +504,7 @@ class FGP_Module_class(Module):
             return False
         return self._V == other._V and self._W == other._W
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` iff ``self`` is not equal to ``other``.
 
@@ -569,7 +544,7 @@ class FGP_Module_class(Module):
 
     # __le__ is a synonym for `is_submodule`: see below
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         """
         Return ``True`` iff ``self`` is a proper submodule of ``other``.
 
@@ -587,7 +562,7 @@ class FGP_Module_class(Module):
         """
         return self <= other and not self == other
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         """
         Return ``True`` iff ``other`` is a proper submodule of ``self``.
 
@@ -605,7 +580,7 @@ class FGP_Module_class(Module):
         """
         return self >= other and not self == other
 
-    def __ge__(self, other):
+    def __ge__(self, other) -> bool:
         """
         Return ``True`` iff ``other`` is a submodule of ``self``.
 
@@ -675,7 +650,7 @@ class FGP_Module_class(Module):
             raise TypeError(msg)
         return self.element_class(self, self._V(x))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return true if ``x`` is contained in ``self``.
 
@@ -1940,7 +1915,7 @@ class FGP_Module_class(Module):
         """
         return len(self.gens())
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Calculate a hash for ``self``.
 
@@ -2074,6 +2049,3 @@ def _test_morphism_0(*args, **kwds):
     if len(I.smith_form_gens()) > 0:
         x = phi.lift(I.smith_form_gen(0))
         assert phi(x) == I.smith_form_gen(0)
-
-
-test_morphism_0 = deprecated_function_alias(33617, _test_morphism_0)

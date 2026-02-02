@@ -11,7 +11,7 @@ def test_shortened_000_111_extended_binary_Golay_code_graph():
     from sage.coding import codes_catalog
     from sage.coding.linear_code import LinearCode
     from sage.graphs.generators.distance_regular import (
-      shortened_000_111_extended_binary_Golay_code_graph
+        shortened_000_111_extended_binary_Golay_code_graph
     )
     from sage.matrix.constructor import matrix
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -23,7 +23,7 @@ def test_shortened_000_111_extended_binary_Golay_code_graph():
     v = C_basis[0] + C_basis[1] + C_basis[2]  # v has 111 at the start
     C_basis = C_basis[3:]
     C_basis.append(v)
-    C_basis = list(map(lambda x: x[3:], C_basis))
+    C_basis = [x[3:] for x in C_basis]
 
     code = LinearCode(matrix(FiniteField(2), C_basis))
     G = code.cosetGraph()

@@ -99,10 +99,12 @@ class ConjugacyClass(Parent):
             finite = False
         if finite:
             Parent.__init__(self, category=FiniteEnumeratedSets())
-        else: # If the group is not finite, then we do not know if we are finite or not
+        else:
+            # If the group is not finite, then we do not know if we
+            # are finite or not
             Parent.__init__(self, category=EnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -116,7 +118,7 @@ class ConjugacyClass(Parent):
         return "Conjugacy class of %s in %s" % (self._representative,
                                                 self._parent)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Equality of conjugacy classes is tested by comparing the
         underlying sets.
@@ -138,7 +140,7 @@ class ConjugacyClass(Parent):
             return False
         return self.set() == other.set()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Negation of equality.
 
@@ -159,7 +161,7 @@ class ConjugacyClass(Parent):
         """
         return not (self == other)
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         r"""
         Check if ``element`` belongs to the conjugacy class ``self``.
 
@@ -201,7 +203,10 @@ class ConjugacyClass(Parent):
             sage: a = G(a)
             sage: C = ConjugacyClass(G, a)
             sage: it = iter(C)
-            sage: [next(it) for _ in range(5)] # random (nothing guarantees enumeration order)
+
+        Nothing guarantees enumeration order::
+
+            sage: [next(it) for _ in range(5)] # random
             [
             [1 1]  [ 2  1]  [ 0  1]  [ 3  1]  [ 3  4]
             [0 1], [-1  0], [-1  2], [-4 -1], [-1 -1]
@@ -268,18 +273,18 @@ class ConjugacyClass(Parent):
             sage: C.set()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Listing the elements of conjugacy classes is not implemented for infinite groups! Use the iter function instead.
+            NotImplementedError: listing the elements of conjugacy classes is
+            not implemented for infinite groups; use the iter function instead
         """
         if self._parent.is_finite():
             from sage.sets.set import Set
             return Set(iter(self))
             # return Set(self) creates an infinite loop in __contains__
-        else:
-            raise NotImplementedError("Listing the elements of conjugacy "
-                    "classes is not implemented for infinite groups! Use the "
-                    "iter function instead.")
+        raise NotImplementedError("listing the elements of conjugacy classes "
+                                  "is not implemented for infinite groups; "
+                                  "use the iter function instead")
 
-    def list(self):
+    def list(self) -> list:
         r"""
         Return a list with all the elements of ``self``.
 
@@ -298,12 +303,12 @@ class ConjugacyClass(Parent):
             return list(iter(self))
             # return list(self) creates an infinite loop because list calls
             # __len__ which calls list...
-        else:
-            raise NotImplementedError("Listing the elements of conjugacy "
-                    "classes is not implemented for infinite groups! Use the "
-                    "iter function instead.")
 
-    def is_real(self):
+        raise NotImplementedError("listing the elements of conjugacy classes "
+                                  "is not implemented for infinite groups; "
+                                  "use the iter function instead")
+
+    def is_real(self) -> bool:
         """
         Check if ``self`` is real (closed for inverses).
 
@@ -317,7 +322,7 @@ class ConjugacyClass(Parent):
         """
         return self._representative**(-1) in self
 
-    def is_rational(self):
+    def is_rational(self) -> bool:
         """
         Check if ``self`` is rational (closed for powers).
 
@@ -369,7 +374,7 @@ class ConjugacyClassGAP(ConjugacyClass):
         Conjugacy class of (1,2,3,4) in Symmetric group of order 4! as a
         permutation group
     """
-    def __init__(self, group, element):
+    def __init__(self, group, element) -> None:
         r"""
         Constructor for the class.
 
@@ -380,7 +385,8 @@ class ConjugacyClassGAP(ConjugacyClass):
             sage: G = SymmetricGroup(4)
             sage: g = G((1,2,3,4))
             sage: ConjugacyClassGAP(G,g)
-            Conjugacy class of (1,2,3,4) in Symmetric group of order 4! as a permutation group
+            Conjugacy class of (1,2,3,4) in Symmetric group of order 4!
+            as a permutation group
 
         Conjugacy classes for groups of matrices::
 
@@ -390,27 +396,23 @@ class ConjugacyClassGAP(ConjugacyClass):
             sage: h = H(matrix(F,2,[1,2, -1, 1]))
             sage: ConjugacyClassGAP(H,h)
             Conjugacy class of [1 2]
-            [4 1] in Matrix group over Finite Field of size 5 with 2 generators (
+            [4 1] in Matrix group over Finite Field of size 5
+            with 2 generators (
             [1 2]  [1 1]
             [4 1], [0 1]
             )
         """
         try:
             # LibGAP
-            self._gap_group = group.gap()
-            self._gap_representative = element.gap()
+            self._gap_group = group._libgap_()
+            self._gap_representative = element._libgap_()
         except (AttributeError, TypeError):
-            # GAP interface
-            try:
-                self._gap_group = group._gap_()
-                self._gap_representative = element._gap_()
-            except (AttributeError, TypeError):
-                raise TypeError("The group %s cannot be defined as a GAP group" % group)
+            raise TypeError(f"the group {group} cannot be defined as a GAP group")
 
         self._gap_conjugacy_class = self._gap_group.ConjugacyClass(self._gap_representative)
         ConjugacyClass.__init__(self, group, element)
 
-    def _gap_(self):
+    def _libgap_(self):
         r"""
         Return the gap object corresponding to ``self``.
 
@@ -419,7 +421,7 @@ class ConjugacyClassGAP(ConjugacyClass):
             sage: G = SymmetricGroup(3)
             sage: g = G((1,2,3))
             sage: C = ConjugacyClassGAP(G,g)
-            sage: C._gap_()
+            sage: C._libgap_()
             (1,2,3)^G
         """
         return self._gap_conjugacy_class
@@ -438,9 +440,9 @@ class ConjugacyClassGAP(ConjugacyClass):
             sage: type(cc.cardinality())
             <class 'sage.rings.integer.Integer'>
         """
-        return self._gap_().Size().sage()
+        return self._libgap_().Size().sage()
 
-    def __contains__(self, g):
+    def __contains__(self, g) -> bool:
         r"""
         Containment test.
 
@@ -491,7 +493,7 @@ class ConjugacyClassGAP(ConjugacyClass):
         if not finite:
             raise NotImplementedError("only implemented for finite groups")
 
-        return G._gap_().IsConjugate(g0._gap_(), g._gap_()).sage()
+        return G._libgap_().IsConjugate(g0._libgap_(), g._libgap_()).sage()
 
     @cached_method
     def set(self):
@@ -513,7 +515,8 @@ class ConjugacyClassGAP(ConjugacyClass):
             sage: G = SymmetricGroup(4)
             sage: g = G((1,2,3,4))
             sage: C = ConjugacyClassGAP(G,g)
-            sage: S = [(1,3,2,4), (1,4,3,2), (1,3,4,2), (1,2,3,4), (1,4,2,3), (1,2,4,3)]
+            sage: S = [(1,3,2,4), (1,4,3,2), (1,3,4,2),
+            ....:      (1,2,3,4), (1,4,2,3), (1,2,4,3)]
             sage: C.set() == Set(G(x) for x in S)
             True
         """
@@ -521,5 +524,7 @@ class ConjugacyClassGAP(ConjugacyClass):
         try:
             cc = self._gap_conjugacy_class.AsList().sage()
             return Set([self._parent(x) for x in cc])
-        except NotImplementedError:    # If GAP doesn't work, fall back to naive method
-            return ConjugacyClass.set.f(self)  # Need the f because the base-class method is also cached
+        except NotImplementedError:
+            # If GAP doesn't work, fall back to naive method
+            # Need the f because the base-class method is also cached
+            return ConjugacyClass.set.f(self)

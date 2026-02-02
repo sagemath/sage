@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Lazy attributes
 
@@ -87,7 +86,7 @@ cdef class _lazy_attribute():
             sage: src[0]
             'def banner():\n'
             sage: lines
-            95
+            94
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)

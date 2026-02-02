@@ -201,7 +201,7 @@ class Jack(UniqueRepresentation):
         ::
 
             sage: Sym = SymmetricFunctions(QQ['a','b'].fraction_field())
-            sage: (a,b) = Sym.base_ring().gens()
+            sage: a, b = Sym.base_ring().gens()
             sage: Jacka = Sym.jack(t=a)
             sage: Jackb = Sym.jack(t=b)
             sage: m = Sym.monomial()

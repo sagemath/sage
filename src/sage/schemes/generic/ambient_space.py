@@ -8,36 +8,13 @@ Ambient spaces
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.categories.commutative_rings import CommutativeRings
 from sage.schemes.generic.scheme import Scheme
-
-
-def is_AmbientSpace(x):
-    """
-    Return ``True`` if `x` is an ambient space.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.generic.ambient_space import is_AmbientSpace
-        sage: is_AmbientSpace(ProjectiveSpace(3, ZZ))
-        doctest:warning...
-        DeprecationWarning: The function is_AmbientSpace is deprecated; use 'isinstance(..., AmbientSpace)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_AmbientSpace(AffineSpace(2, QQ))
-        True
-        sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
-        sage: is_AmbientSpace(P.subscheme([x + y + z]))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_AmbientSpace is deprecated; use 'isinstance(..., AmbientSpace)' instead.")
-    return isinstance(x, AmbientSpace)
 
 
 class AmbientSpace(Scheme):

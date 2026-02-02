@@ -224,7 +224,7 @@ def matching_polynomial(G, complement=True, name=None):
 
     cdef int i, j, d
     cdef fmpz_poly_t pol
-    cdef int nverts = G.num_verts()
+    cdef int nverts = G.n_vertices()
 
     # Using Godsil's duality theorem when the graph is dense
 
@@ -236,7 +236,7 @@ def matching_polynomial(G, complement=True, name=None):
             f += complete_poly(j) * f_comp[j] * (-1)**i
         return f
 
-    cdef int nedges = G.num_edges()
+    cdef int nedges = G.n_edges()
 
     # Relabelling the vertices of the graph as [0...n-1] so that they are sorted
     # in increasing order of degree

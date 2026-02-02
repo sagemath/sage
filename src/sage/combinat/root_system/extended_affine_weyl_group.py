@@ -1671,7 +1671,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 return self.coset_representative(index_set=self.parent().realization_of().cartan_type().classical().index_set())
 
-            def is_affine_grassmannian(self):
+            def is_affine_grassmannian(self) -> bool:
                 r"""
                 Return whether ``self`` is affine Grassmannian.
 

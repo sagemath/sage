@@ -49,23 +49,22 @@ AUTHORS:
 from copy import copy
 from functools import reduce
 
-from sage.structure.parent import Parent
-from sage.structure.element import ModuleElement, Vector, coercion_model
+from sage.homology.homology_group import HomologyGroup
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix0 import Matrix
 from sage.misc.cachefunc import cached_method
-
-from sage.rings.integer_ring import ZZ
+from sage.misc.latex import latex
+from sage.misc.persist import register_unpickle_override
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
-from sage.matrix.matrix0 import Matrix
-from sage.matrix.constructor import matrix
-from sage.misc.latex import latex
 from sage.rings.fast_arith import prime_range
-from sage.homology.homology_group import HomologyGroup
-from sage.misc.persist import register_unpickle_override
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import ModuleElement, Vector, coercion_model
+from sage.structure.parent import Parent
 
 
 def _latex_module(R, m):
-    """
+    r"""
     LaTeX string representing a free module over ``R`` of rank ``m``.
 
     INPUT:
@@ -317,7 +316,7 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
 
 class Chain_class(ModuleElement):
 
-    def __init__(self, parent, vectors, check=True):
+    def __init__(self, parent, vectors, check=True) -> None:
         r"""
         A Chain in a Chain Complex.
 
@@ -370,7 +369,7 @@ class Chain_class(ModuleElement):
         except KeyError:
             return self.parent().free_module(degree).zero()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -510,7 +509,7 @@ class Chain_class(ModuleElement):
             concatenated += UnicodeArt([' ... ']) + r
         return concatenated
 
-    def is_cycle(self):
+    def is_cycle(self) -> bool:
         """
         Return whether the chain is a cycle.
 
@@ -531,7 +530,7 @@ class Chain_class(ModuleElement):
                 return False
         return True
 
-    def is_boundary(self):
+    def is_boundary(self) -> bool:
         """
         Return whether the chain is a boundary.
 
@@ -607,7 +606,7 @@ class Chain_class(ModuleElement):
         parent = self.parent()
         return parent.element_class(parent, vectors)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``True`` if this chain is equal to ``other``.
 
@@ -624,7 +623,7 @@ class Chain_class(ModuleElement):
             return False
         return self._vec == other._vec
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` if this chain is not equal to ``other``.
 
@@ -666,7 +665,8 @@ class ChainComplex_class(Parent):
         sage: D
         Chain complex with at most 2 nonzero terms over Integer Ring
     """
-    def __init__(self, grading_group, degree_of_differential, base_ring, differentials):
+    def __init__(self, grading_group, degree_of_differential, base_ring,
+                 differentials) -> None:
         """
         Initialize ``self``.
 
@@ -690,7 +690,8 @@ class ChainComplex_class(Parent):
         if any(dim+degree_of_differential not in differentials and d.nrows() != 0
                for dim, d in differentials.items()):
             raise ValueError('invalid differentials')
-        if any(dim-degree_of_differential not in differentials and d.ncols() != 0
+        if any(dim - degree_of_differential not in differentials
+               and d.ncols() != 0
                for dim, d in differentials.items()):
             raise ValueError('invalid differentials')
         self._grading_group = grading_group
@@ -1059,7 +1060,7 @@ class ChainComplex_class(Parent):
             rank = self.free_module_rank(degree)
         return FreeModule(self.base_ring(), rank)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         The hash is formed by combining the hashes of.
 
@@ -1078,7 +1079,7 @@ class ChainComplex_class(Parent):
                 ^ hash(tuple(self.differential().items()))
                 ^ hash(self.degree_of_differential()))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``True`` iff this chain complex is the same as other: that
         is, if the base rings and the matrices of the two are the
@@ -1109,7 +1110,7 @@ class ChainComplex_class(Parent):
                 equal = equal and mat.ncols() == 0 and mat.nrows() == 0
         return equal
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` iff this chain complex is not the same as other.
 
@@ -1226,6 +1227,13 @@ class ChainComplex_class(Parent):
              1: [(C2, Chain(1:(0, 1, -1))), (Z, Chain(1:(0, 1, 0)))],
              2: []}
 
+        Check that zero homology groups are printed consistently for
+        dimensions not given when defining the chain complex (see
+        :issue:40469)::
+
+            sage: C_k.homology(3, generators=True)
+            []
+
         From a torus using a field::
 
             sage: T = simplicial_complexes.Torus()                                      # needs sage.graphs
@@ -1272,11 +1280,10 @@ class ChainComplex_class(Parent):
             True
         """
         if deg not in self.nonzero_degrees():
-            zero_homology = HomologyGroup(0, base_ring)
             if generators:
-                return (zero_homology, vector(base_ring, []))
+                return []
             else:
-                return zero_homology
+                return HomologyGroup(0, base_ring)
         if verbose:
             print('Computing homology of the chain complex in dimension %s...' % deg)
 
@@ -1297,44 +1304,50 @@ class ChainComplex_class(Parent):
 
         if d_in.is_zero():
             if generators:  # Include the generators of the nullspace
-                return [(HomologyGroup(1, base_ring), self({deg: gen}))
-                        for gen in d_out.right_kernel().basis()]
+                kernel_basis = d_out.right_kernel().basis()
+                if kernel_basis:
+                    return [(HomologyGroup(1, base_ring), self({deg: gen}))
+                            for gen in d_out.right_kernel().basis()]
+                else:
+                    return []
             else:
                 return HomologyGroup(d_out_nullity, base_ring)
 
         if generators:
             orders, gens = self._homology_generators_snf(d_in, d_out, d_out_rank)
-            answer = [(HomologyGroup(1, base_ring, [order]), self({deg: gen}))
-                      for order, gen in zip(orders, gens)]
-        else:
-            if base_ring.is_field():
-                d_in_rank = self.rank(deg-differential, ring=base_ring)
-                answer = HomologyGroup(d_out_nullity - d_in_rank, base_ring)
-            elif base_ring == ZZ:
-                if d_in.ncols() == 0:
-                    all_divs = [0] * d_out_nullity
-                else:
-                    if algorithm in ['auto', 'no_chomp']:
-                        if ((d_in.ncols() > 300 and d_in.nrows() > 300)
-                            or (min(d_in.ncols(), d_in.nrows()) > 100 and
-                                d_in.ncols() + d_in.nrows() > 600)):
-                            algorithm = 'dhsw'
-                        else:
-                            algorithm = 'pari'
-                    if algorithm == 'dhsw':
-                        from sage.homology.matrix_utils import dhsw_snf
-                        all_divs = dhsw_snf(d_in, verbose=verbose)
-                    elif algorithm == 'pari':
-                        all_divs = d_in.elementary_divisors(algorithm)
-                    else:
-                        raise ValueError('unsupported algorithm')
-                all_divs = all_divs[:d_out_nullity]
-                # divisors equal to 1 produce trivial
-                # summands, so filter them out
-                divisors = [x for x in all_divs if x != 1]
-                answer = HomologyGroup(len(divisors), base_ring, divisors)
+            if orders:
+                answer = [(HomologyGroup(1, base_ring, [order]), self({deg: gen}))
+                          for order, gen in zip(orders, gens)]
             else:
-                raise NotImplementedError('only base rings ZZ and fields are supported')
+                answer = []
+        elif base_ring.is_field():
+            d_in_rank = self.rank(deg-differential, ring=base_ring)
+            answer = HomologyGroup(d_out_nullity - d_in_rank, base_ring)
+        elif base_ring == ZZ:
+            if d_in.ncols() == 0:
+                all_divs = [0] * d_out_nullity
+            else:
+                if algorithm in ['auto', 'no_chomp']:
+                    if ((d_in.ncols() > 300 and d_in.nrows() > 300)
+                        or (min(d_in.ncols(), d_in.nrows()) > 100 and
+                            d_in.ncols() + d_in.nrows() > 600)):
+                        algorithm = 'dhsw'
+                    else:
+                        algorithm = 'pari'
+                if algorithm == 'dhsw':
+                    from sage.homology.matrix_utils import dhsw_snf
+                    all_divs = dhsw_snf(d_in, verbose=verbose)
+                elif algorithm == 'pari':
+                    all_divs = d_in.elementary_divisors(algorithm)
+                else:
+                    raise ValueError('unsupported algorithm')
+            all_divs = all_divs[:d_out_nullity]
+            # divisors equal to 1 produce trivial
+            # summands, so filter them out
+            divisors = [x for x in all_divs if x != 1]
+            answer = HomologyGroup(len(divisors), base_ring, divisors)
+        else:
+            raise NotImplementedError('only base rings ZZ and fields are supported')
         return answer
 
     def _homology_generators_snf(self, d_in, d_out, d_out_rank):
@@ -1348,6 +1361,14 @@ class ChainComplex_class(Parent):
             Z x C3
             sage: C._homology_generators_snf(C.differential(0), C.differential(1), 0)
             ([3, 0], [(1, 0), (0, 1)])
+
+        Check that :issue:`40469` is fixed::
+
+            sage: coeff = [1, -1, 2]
+            sage: for c in coeff:
+            ....:     differentials = {1: matrix(QQ, 1, 1, [[c]])}
+            ....:     C = ChainComplex(differentials, degree=-1)
+            ....:     assert(bool(C.homology(0, generators=True)) is False)
         """
         # Find the kernel of the out-going differential.
         K = d_out.right_kernel().matrix().transpose().change_ring(d_out.base_ring())
@@ -1359,15 +1380,15 @@ class ChainComplex_class(Parent):
 
         # Find the SNF of the induced matrix and appropriate generators
         (N, P, Q) = d_in_induced.smith_form()
-        all_divs = [0]*N.nrows()
+        all_divs = [self.base_ring().zero()]*N.nrows()
         non_triv = 0
-        for i in range(N.nrows()):
+        for i in range(0, N.nrows()):
             if i >= N.ncols():
                 break
             all_divs[i] = N[i][i]
-            if N[i][i] == 1:
+            if N[i][i].is_unit():
                 non_triv = non_triv + 1
-        divisors = [x for x in all_divs if x != 1]
+        divisors = [x for x in all_divs if not x.is_unit()]
         gens = (K * P.inverse().submatrix(col=non_triv)).columns()
         return divisors, gens
 
@@ -1607,7 +1628,7 @@ class ChainComplex_class(Parent):
         return ChainComplex({k-shift: sgn * self._diff[k] for k in self._diff},
                             degree_of_differential=deg)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -1622,7 +1643,7 @@ class ChainComplex_class(Parent):
             s = 'Trivial chain complex'
         else:
             s = 'Chain complex with at most {0} nonzero terms'.format(len(diffs)-1)
-        s += ' over {0}'.format(self.base_ring())
+        s += f' over {self.base_ring()}'
         return s
 
     def _ascii_art_(self):
@@ -1746,7 +1767,7 @@ class ChainComplex_class(Parent):
         return concatenated
 
     def _latex_(self):
-        """
+        r"""
         LaTeX print representation.
 
         EXAMPLES::

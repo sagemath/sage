@@ -6,18 +6,15 @@ extensive group theory, combinatorics, etc.
 
 The GAP interface will only work if GAP is installed on your
 computer; this should be the case, since GAP is included with Sage.
-The interface offers three pieces of functionality:
+The interface offers two pieces of functionality:
 
 
 #. ``gap_console()`` -- a function that dumps you into
    an interactive command-line GAP session.
 
-#. ``gap(expr)`` -- evaluation of arbitrary GAP
-   expressions, with the result returned as a string.
-
-#. ``gap.new(expr)`` -- creation of a Sage object that
+#. ``gap(expr)`` -- creation of a Sage object that
    wraps a GAP object. This provides a Pythonic interface to GAP. For
-   example, if ``f=gap.new(10)``, then
+   example, if ``f=gap(10)``, then
    ``f.Factors()`` returns the prime factorization of
    `10` computed using GAP.
 
@@ -158,7 +155,8 @@ If :envvar:`SAGE_GAP_COMMAND` is set, as well, then
     sage: gap.eval('GAPInfo.CommandLineOptions.s') # not tested
     '"42m"'
 
-After the GAP interface initialisation, setting :envvar:`SAGE_GAP_MEMORY` has no effect::
+After the GAP interface initialisation, setting :envvar:`SAGE_GAP_MEMORY`
+has no effect::
 
     sage: os.environ['SAGE_GAP_MEMORY'] = '24M'
     sage: gap.eval('GAPInfo.CommandLineOptions.s') # not tested
@@ -1633,28 +1631,6 @@ class GapFunction(ExpectFunction):
         M = self._parent
         help = M.help(self._name, pager=False)
         return help
-
-
-def is_GapElement(x):
-    """
-    Return ``True`` if ``x`` is a :class:`GapElement`.
-
-    This function is deprecated; use :func:`isinstance`
-    (of :class:`sage.interfaces.abc.GapElement`) instead.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.gap import is_GapElement
-        sage: is_GapElement(gap(2))
-        doctest:...: DeprecationWarning: the function is_GapElement is deprecated; use isinstance(x, sage.interfaces.abc.GapElement) instead
-        See https://github.com/sagemath/sage/issues/34823 for details.
-        True
-        sage: is_GapElement(2)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34823, "the function is_GapElement is deprecated; use isinstance(x, sage.interfaces.abc.GapElement) instead")
-    return isinstance(x, GapElement)
 
 
 def gfq_gap_to_sage(x, F):

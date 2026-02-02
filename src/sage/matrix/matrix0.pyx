@@ -475,7 +475,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: v = {A:1}
             Traceback (most recent call last):
             ...
-            TypeError: mutable matrices are unhashable
+            TypeError: ...mutable matrices are unhashable...
 
         If we make A immutable it suddenly is hashable.
 
@@ -6167,9 +6167,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
             sage: m = matrix(2, range(24), sparse=True)
             sage: m.set_immutable()
-            sage: hash(m)
-            3327233128576517516  # 64-bit
-            -373881460           # 32-bit
+            sage: hash32 = -373881460
+            sage: hash64 = 3327233128576517516
+            sage: hash(m) in [hash32, hash64]
+            True
 
         ::
 

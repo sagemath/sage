@@ -21,19 +21,13 @@ from sage.misc.misc_c import prod
 from sage.misc.superseded import deprecated_function_alias
 
 
-def is_MPolynomial(x):
-    from sage.misc.superseded import deprecation
-    deprecation(32709, "the function is_MPolynomial is deprecated; use isinstance(x, sage.rings.polynomial.multi_polynomial.MPolynomial) instead")
-
-    return isinstance(x, MPolynomial)
-
-
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.map cimport Map
 from sage.rings.rational_field import QQ
 
 from sage.rings.polynomial.polydict cimport ETuple
 from sage.rings.polynomial.polynomial_element cimport Polynomial
+
 
 cdef class MPolynomial(CommutativePolynomial):
 
@@ -2687,7 +2681,7 @@ cdef class MPolynomial(CommutativePolynomial):
         d.pop(zero_key, None)
         return all(d[k].is_nilpotent() for k in d)
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         r"""
         Return ``True`` if ``self`` is nilpotent, i.e., some power of ``self``
         is 0.

@@ -77,8 +77,9 @@ import subprocess
 import sys
 import time
 import warnings
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator, Literal
+from typing import Literal
 
 from . import build_options
 from .build_options import BuildOptions
@@ -1180,7 +1181,8 @@ def get_all_documents(source: Path) -> list[Path]:
     EXAMPLES::
 
         sage: from sage_docbuild.builders import get_all_documents
-        sage: documents = get_all_documents(Path('src/doc'))
+        sage: from sage.env import SAGE_DOC_SRC
+        sage: documents = get_all_documents(Path(SAGE_DOC_SRC))
         sage: Path('en/tutorial') in documents
         True
     """
@@ -1213,7 +1215,8 @@ def get_all_reference_documents(source: Path) -> list[Path]:
     EXAMPLES::
 
         sage: from sage_docbuild.builders import get_all_reference_documents
-        sage: documents = get_all_reference_documents(Path('src/doc/en'))
+        sage: from sage.env import SAGE_DOC_SRC
+        sage: documents = get_all_reference_documents(Path(SAGE_DOC_SRC) / 'en')
         sage: Path('reference/algebras') in documents
         True
     """
@@ -1224,7 +1227,7 @@ def get_all_reference_documents(source: Path) -> list[Path]:
             n = len(list(directory.iterdir()))
             documents.append((-n, directory.relative_to(source)))
 
-    # Sort largest component (most subdirectory entries) first since 
+    # Sort largest component (most subdirectory entries) first since
     # they will take the longest to build
     docs = [doc[1] for doc in sorted(documents)]
     # Put the bibliography first, because it needs to be built first:

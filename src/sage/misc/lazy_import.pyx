@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Lazy imports
 
@@ -1269,10 +1268,10 @@ def clean_namespace(namespace=None):
 
         sage: # needs sage.symbolic
         sage: from sage.misc.lazy_import import attributes, clean_namespace
-        sage: from sage.calculus.calculus import maxima as C
+        sage: from sage.misc.functional import CDF as C
         sage: attributes(C)['_as_name']
-        'maxima'
-        sage: attributes(C)['_namespace'] is sage.calculus.calculus.__dict__
+        'CDF'
+        sage: attributes(C)['_namespace'] is sage.misc.functional.__dict__
         True
         sage: clean_namespace(globals())
         sage: attributes(C)['_as_name']

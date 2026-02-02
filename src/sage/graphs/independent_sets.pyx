@@ -127,7 +127,7 @@ cdef class IndependentSets:
         ...
         ValueError: a is not a vertex of the graph
     """
-    def __init__(self, G, maximal=False, complement=False):
+    def __init__(self, G, maximal=False, complement=False) -> None:
         r"""
         Constructor for this class.
 
@@ -328,7 +328,7 @@ cdef class IndependentSets:
         from sage.rings.integer import Integer
         return Integer(i)
 
-    def __contains__(self, S):
+    def __contains__(self, S) -> bool:
         r"""
         Check whether the set is an independent set (possibly maximal).
 
