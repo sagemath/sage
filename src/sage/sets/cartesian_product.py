@@ -45,9 +45,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
         sage: G.random_element()    # random
         (1, [4, 7, 6, 5, 10, 1, 3, 2, 8, 9])
         sage: G.category()
-        Join of Category of finite monoids
-            and Category of Cartesian products of monoids
-            and Category of Cartesian products of finite enumerated sets
+        Join of Category of Cartesian products of finite monoids and Category of Cartesian products of finite enumerated sets
 
     .. automethod:: CartesianProduct._cartesian_product_of_elements
     """
@@ -241,6 +239,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
         Return the Cartesian product of the given ``elements``.
 
         This implements :meth:`Sets.CartesianProducts.ParentMethods._cartesian_product_of_elements`.
+
         INPUT:
 
         - ``elements`` -- an iterable (e.g. tuple, list) with one element of
