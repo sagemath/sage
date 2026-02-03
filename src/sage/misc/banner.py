@@ -11,33 +11,20 @@ SageMath version and banner info
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sys
+from typing import LiteralString, TypedDict
 
 from sage.env import SAGE_BANNER, SAGE_VERSION
 from sage.version import banner as sage_banner
 
 
-def version():
-    """
-    Return the version of Sage.
-
-    OUTPUT: string
-
-    EXAMPLES::
-
-       sage: version()
-       doctest:warning
-       ...
-       DeprecationWarning: Use sage.version.version instead.
-       ...
-       'SageMath version ..., Release Date: ...'
-    """
-    from sage.misc.superseded import deprecation
-
-    deprecation(39015, "Use sage.version.version instead.")
-    return sage_banner
+class VersionInfo(TypedDict):
+    major: int
+    minor: int
+    tiny: float
+    prerelease: bool
 
 
-def banner_text(full=True):
+def banner_text(full: bool = True) -> LiteralString:
     """
     Text for the Sage banner.
 
@@ -64,34 +51,28 @@ def banner_text(full=True):
         return sage_banner
 
     bars = "─" * 68
-    s = []
-    a = s.append
-    a('┌' + bars + '┐')
-    a("\n│ %-66s │\n" % sage_banner)
+    lines = []
+    lines.append(f"┌{bars}┐")
+    lines.append(f"\n│ {sage_banner:<66} │\n")
     python_version = sys.version_info[:3]
-    a("│ %-66s │\n" % 'Using Python {}.{}.{}. Type "help()" for help.'.format(*python_version))
-    a('└' + bars + '┘')
-    pre = version_dict()['prerelease']
-    try:
-        import sage.all
-        have_sage_all = True
-    except ImportError:
-        have_sage_all = False
-    if pre or not have_sage_all:
-        red_in = '\033[31m'
-        red_out = '\033[0m'
-        bars2 = bars.replace('─', '━')
-        a('\n')
-        a(red_in + '┏' + bars2 + '┓' + '\n')
-        if pre:
-            a("┃ %-66s ┃\n" % 'Warning: this is a prerelease version, and it may be unstable.')
-        if not have_sage_all:
-            a("┃ %-66s ┃\n" % 'Warning: sage.all is not available; this is a limited REPL.')
-        a('┗' + bars2 + '┛' + red_out)
-    return ''.join(s)
+    lines.append(
+        f"│ {'Using Python {}.{}.{}. Type "help()" for help.'.format(*python_version):<66} │\n"
+    )
+    lines.append(f"└{bars}┘")
+    if version_dict()["prerelease"]:
+        red_in = "\033[31m"
+        red_out = "\033[0m"
+        bars2 = bars.replace("─", "━")
+        lines.append("\n")
+        lines.append(f"{red_in}┏{bars2}┓\n")
+        lines.append(
+            f"┃ {'Warning: this is a prerelease version, and it may be unstable.':<66} ┃\n"
+        )
+        lines.append(f"┗{bars2}┛{red_out}")
+    return "".join(lines)
 
 
-def banner():
+def banner() -> None:
     """
     Print the Sage banner.
 
@@ -126,7 +107,7 @@ def banner():
     print(banner_text(full=False))
 
 
-def version_dict():
+def version_dict() -> VersionInfo:
     """
     A dictionary describing the version of Sage.
 
@@ -164,28 +145,34 @@ def version_dict():
         sage: version_dict()['major'] == int(sage.version.version.split('.')[0])
         True
     """
-    v = SAGE_VERSION.split('.')
-    dict = {}
-    dict['major'] = int(v[0])
-    dict['minor'] = int(v[1])
-    dict['tiny'] = 0
-    dict['prerelease'] = False
+    v = SAGE_VERSION.split(".")
+    dict: VersionInfo = {
+        "major": int(v[0]),
+        "minor": int(v[1]),
+        "tiny": 0,
+        "prerelease": False,
+    }
     try:
         int(v[-1])
     except ValueError:  # when last entry is not an integer
-        dict['prerelease'] = True
-    if (len(v) == 3 and not dict['prerelease']) or len(v) > 3:
-        dict['tiny'] = int(v[2])
+        dict["prerelease"] = True
+    if (len(v) == 3 and not dict["prerelease"]) or len(v) > 3:
+        dict["tiny"] = int(v[2])
     try:
         teeny = int(v[3])
-        dict['tiny'] += 0.1 * teeny
+        dict["tiny"] += 0.1 * teeny
     except (ValueError, IndexError):
         pass
     return dict
 
 
-def require_version(major, minor=0, tiny=0, prerelease=False,
-                    print_message=False):
+def require_version(
+    major: int,
+    minor: int = 0,
+    tiny: float = 0,
+    prerelease: bool = False,
+    print_message: bool = False,
+) -> bool:
     """
     Return ``True`` if Sage version is at least ``major.minor.tiny``.
 
@@ -226,13 +213,18 @@ def require_version(major, minor=0, tiny=0, prerelease=False,
         False
     """
     vers = version_dict()
-    prerelease_checked = (prerelease if vers['prerelease'] else True)
-    if (vers['major'] > major
-        or (vers['major'] == major and vers['minor'] > minor)
-        or (vers['major'] == major and vers['minor'] == minor
-            and vers['tiny'] > tiny)
-        or (vers['major'] == major and vers['minor'] == minor
-            and vers['tiny'] == tiny and prerelease_checked)):
+    prerelease_checked = prerelease if vers["prerelease"] else True
+    if (
+        vers["major"] > major
+        or (vers["major"] == major and vers["minor"] > minor)
+        or (vers["major"] == major and vers["minor"] == minor and vers["tiny"] > tiny)
+        or (
+            vers["major"] == major
+            and vers["minor"] == minor
+            and vers["tiny"] == tiny
+            and prerelease_checked
+        )
+    ):
         return True
     else:
         if print_message:
