@@ -223,6 +223,7 @@ dev = [
   "tqdm",
   "ty >=0.0.12",
   "uv",
+  'blas-devel', # Issue #41555: meson uses pkg-config to search for cblas whose .pc files are in blas-devel
   'cypari2 >=2.2.1; sys_platform != "win32"', # Duplicate build-system requirement to fix editable installs with uv
   'cysignals >=1.12.1', # Duplicate build-system requirement to fix editable installs with uv
   'cython >=3.1.0', # Duplicate build-system requirement to fix editable installs with uv
