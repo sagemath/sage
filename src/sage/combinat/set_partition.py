@@ -49,6 +49,7 @@ from sage.combinat.permutation import Permutation
 from sage.arith.misc import factorial
 from sage.misc.prandom import random, randint, sample
 from sage.sets.disjoint_set import DisjointSet
+from sage.functions.log import log
 
 lazy_import('sage.combinat.posets.hasse_diagram', 'HasseDiagram')
 lazy_import('sage.probability.probability_distribution', 'GeneralDiscreteDistribution')
@@ -1345,7 +1346,155 @@ class SetPartition(AbstractSetPartition,
             attacked_rows.append(i)
             rooks.append((i, j))
         return sorted(rooks)
+    
+    def entropy(self, base=2):
+        r"""
+        Return the entropy of the set partition.
 
+        The entropy is defined as
+
+        .. MATH::
+
+            - \sum_{B \in \pi} \frac{|B|}{n} \log_b\left(\frac{|B|}{n}\right)
+            
+        where `\pi` is the set partition, `n` is the size of the underlying set, and `b` is the logarithm base.
+        
+        INPUT:
+        - ``base`` -- (default: 2) the base of the logarithm
+        
+        EXAMPLES::
+
+            sage: p = SetPartition([[1,2,3],[4,5]])
+            sage: p.entropy()
+            0.9709505944546686
+            sage: p.entropy(base=math.e)
+            0.6730116670092565
+            sage: p.entropy(base=10)
+            0.2920296745425357
+        
+        TESTS::
+
+            sage: SetPartition([]).entropy()
+            0
+
+            sage: SetPartition([[1,2,3,4,5]]).entropy()
+            0
+
+            sage: abs(SetPartition([[1,2,3],[4,5,6]]).entropy() - 1.0) < 0.0001
+            True
+
+            sage: import math
+            sage: abs(SetPartition([[1,2],[3,4],[5,6]]).entropy() - math.log2(3)) < 0.0001
+            True
+
+            sage: SetPartition([[1],[2],[3],[4]]).entropy()
+            2.0
+
+            sage: p = SetPartition([[1,2,3],[4,5]])
+            sage: e = p.entropy(base=math.e)
+            sage: 0 < e < 1
+            True
+
+            sage: p = SetPartition([[1,2,3],[4,5]])
+            sage: e = p.entropy(base=10)
+            sage: 0 < e < 0.5
+            True
+
+            sage: abs(SetPartition([[i] for i in range(10)]).entropy() - math.log2(10)) < 0.0001
+            True
+        """
+        n = self.size()
+        ent = 0
+        for B in self:
+            p = Integer(len(B)) / Integer(n)
+            ent -= p * log(p, base)
+        return ent
+        
+    def characteristic_vector(self):
+        r"""
+        Build a bit vector of binary associations between elements.
+
+        This returns a list of 0s and 1s representing which pairs of
+        elements are in the same block. The size of the vector is
+        `n(n-1)/2` where `n` is the size of the base set.
+
+        Pairs are indexed in lexicographic order:
+        `(0,1), (0,2), \ldots, (0,n-1), (1,2), (1,3), \ldots, (1,n-1), \ldots, (n-2,n-1)`
+
+        A value of 1 at position corresponding to pair `(i,j)` indicates
+        that elements `i` and `j` are in the same block.
+
+        OUTPUT: list of integers (0 or 1)
+
+        EXAMPLES::
+
+            sage: p = SetPartition([[0,1,4],[2,3]])
+            sage: p.characteristic_vector()
+            [1, 0, 0, 1, 0, 0, 1, 1, 0, 0]
+
+        The pairs marked with 1 are: (0,1), (0,4), (1,4), (2,3)::
+
+            sage: p = SetPartition([[1,2,3]])
+            sage: p.characteristic_vector()
+            [1, 1, 1]
+
+        TESTS::
+
+            sage: SetPartition([]).characteristic_vector()
+            []
+
+            sage: SetPartition([[0]]).characteristic_vector()
+            []
+
+            sage: SetPartition([[0,1]]).characteristic_vector()
+            [1]
+
+            sage: SetPartition([[0],[1]]).characteristic_vector()
+            [0]
+
+            sage: SetPartition([[0,1],[2,3]]).characteristic_vector()
+            [1, 0, 0, 0, 0, 1]
+
+            sage: SetPartition([[0],[1],[2],[3]]).characteristic_vector()
+            [0, 0, 0, 0, 0, 0]
+
+            sage: p = SetPartition([[0,1,2,3,4,5,6,7,8,9]])
+            sage: len(p.characteristic_vector()) == 45 and all(x == 1 for x in p.characteristic_vector())
+            True
+
+        ALGORITHM:
+
+        For each pair of elements in the same block, compute the index
+        using the formula: `index = i \cdot n - i(i+1)/2 + (j - i - 1)`
+        which maps pair `(i,j)` with `i < j` to its position in the
+        lexicographic ordering.
+
+        Complexity: `O(n^2)` in the worst case (one block with all elements).
+        """
+        n = self.base_set_cardinality()
+        if n <= 1:
+            return []
+        
+        m = n * (n - 1) // 2
+        characteristic_vector = [0] * m
+        
+        # Create a mapping from elements to indices 0, 1, 2, ..., n-1
+        base_set_sorted = sorted(self.base_set())
+        element_to_index = {elem: idx for idx, elem in enumerate(base_set_sorted)}
+        
+        for bloc in self:
+            bloc_sorted = sorted(bloc)
+            for i in range(len(bloc_sorted)):
+                a_idx = element_to_index[bloc_sorted[i]]
+                for j in range(i + 1, len(bloc_sorted)):
+                    b_idx = element_to_index[bloc_sorted[j]]
+                    
+                    # Compute index for pair (a_idx, b_idx) in lexicographic order
+                    index = a_idx * n - a_idx * (a_idx + 1) // 2 + (b_idx - a_idx - 1)
+                    characteristic_vector[index] = 1
+        
+        return characteristic_vector
+    
     def apply_permutation(self, p):
         r"""
         Apply ``p`` to the underlying set of ``self``.
@@ -1687,6 +1836,151 @@ class SetPartition(AbstractSetPartition,
             if len(newpart) != 0:
                 ret.append(newpart)
         return SetPartition(ret)
+
+    def diff(self, other):
+        """
+        Return the differential of ``self`` and ``other``.
+
+        The differential `P - Q` filters out blocks of `P` that are
+        contained in blocks of `Q`. Only blocks of `P` that are not
+        subsets of any block in `Q` are kept.
+
+        This operation is based on the work of Hugo Dominguez (Nantes University Polytechnic School, 2021-22)
+        and PhD Thesis of F. Dumonceaux (Nantes University).
+
+        INPUT:
+
+        - ``other`` -- a set partition of the same base set as ``self``
+
+        OUTPUT:
+
+        A set partition containing only the blocks of ``self`` that are
+        not contained in any block of ``other``.
+
+        EXAMPLES::
+
+            sage: A = SetPartition([[1,2], [3,4], [5]])
+            sage: B = SetPartition([[1,2,3], [4,5]])
+            sage: A.diff(B)
+            {{3, 4}}
+
+        The block ``[1,2]`` is contained in ``[1,2,3]``, and ``[5]`` is
+        contained in ``[4,5]``, so only ``[3,4]`` remains::
+
+            sage: A = SetPartition([[1], [2,3]])
+            sage: B = SetPartition([[1,2], [3]])
+            sage: A.diff(B)
+            {{2, 3}}
+
+        When a partition is diffed with itself, the result is empty::
+
+            sage: A = SetPartition([[1,2,3,4]])
+            sage: A.diff(A)
+            {}
+
+        Empty partitions::
+
+            sage: SetPartition([]).diff(SetPartition([]))
+            {}
+
+        More examples with various block configurations::
+
+            sage: A = SetPartition([[1,2,3], [4,5], [6]])
+            sage: B = SetPartition([[1,2,3,4,5,6]])
+            sage: A.diff(B)
+            {}
+
+            sage: A = SetPartition([[1], [2], [3], [4]])
+            sage: B = SetPartition([[1,2], [3,4]])
+            sage: A.diff(B)
+            {}
+
+            sage: A = SetPartition([[1,2,3], [4,5,6]])
+            sage: B = SetPartition([[1], [2], [3], [4], [5], [6]])
+            sage: A.diff(B)
+            {{1, 2, 3}, {4, 5, 6}}
+
+        TESTS::
+
+            sage: A = SetPartition([[1,2]])
+            sage: B = SetPartition([[3,4]])
+            sage: A.diff(B)
+            Traceback (most recent call last):
+            ...
+            ValueError: partitions must be defined on the same base set
+
+        Test with larger sets::
+
+            sage: A = SetPartition([[1,2,3,4,5,6,7,8,9,10]])
+            sage: B = SetPartition([[1,2], [3,4], [5,6], [7,8], [9,10]])
+            sage: A.diff(B)
+            {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}}
+
+            sage: A = SetPartition([[1,2], [3,4], [5,6], [7,8]])
+            sage: B = SetPartition([[1,2,3,4], [5,6,7,8]])
+            sage: A.diff(B)
+            {}
+
+        Test commutativity properties::
+
+            sage: A = SetPartition([[1,2], [3]])
+            sage: B = SetPartition([[1], [2,3]])
+            sage: A.diff(B)
+            {{1, 2}}
+            sage: B.diff(A)
+            {{2, 3}}
+
+        Test with SetPartitions parent::
+
+            sage: S = SetPartitions(4)
+            sage: A = S([[1,2], [3,4]])
+            sage: B = S([[1,2,3,4]])
+            sage: A.diff(B)
+            {}
+
+            sage: A = S([[1,2,3,4]])
+            sage: B = S([[1,2], [3,4]])
+            sage: A.diff(B)
+            {{1, 2, 3, 4}}
+
+        Test with a single singleton::
+
+            sage: A = SetPartition([[1]])
+            sage: A.diff(A)
+            {}
+
+        Test with very large sets::
+
+            sage: A = SetPartition([[1,2,3,4,5,6,7,8,9,10]])
+            sage: B = SetPartition([[1,2],[3,4],[5,6],[7,8],[9,10]])
+            sage: A.diff(B)
+            {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}}
+
+        Test with complex partial intersections::
+
+            sage: A = SetPartition([[1,2,3],[4,5],[6,7],[8]])
+            sage: B = SetPartition([[1,2],[3,4,5,6],[7,8]])
+            sage: A.diff(B)
+            {{1, 2, 3}, {6, 7}}
+        """
+        # Check that the base sets are the same
+        if self.base_set() != other.base_set():
+            raise ValueError("partitions must be defined on the same base set")
+
+        result = []
+        for block in self:
+            # Check if this block is contained in any block of other
+            is_contained = False
+            for other_block in other:
+                if block.issubset(other_block):
+                    is_contained = True
+                    break
+
+            # Keep the block only if it is not contained
+            if not is_contained:
+                result.append(block)
+
+        return SetPartition(result)
 
     def ordered_set_partition_action(self, s):
         r"""
