@@ -85,28 +85,6 @@ from . import hecke_operator_on_qexp
 WARN = False
 
 
-def is_ModularFormsSpace(x):
-    r"""
-    Return ``True`` if x is a ``ModularFormsSpace``.
-
-    EXAMPLES::
-
-        sage: from sage.modular.modform.space import is_ModularFormsSpace
-        sage: is_ModularFormsSpace(ModularForms(11,2))
-        doctest:warning...
-        DeprecationWarning: The function is_ModularFormsSpace is deprecated; use 'isinstance(..., ModularFormsSpace)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        True
-        sage: is_ModularFormsSpace(CuspForms(11,2))
-        True
-        sage: is_ModularFormsSpace(3)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_ModularFormsSpace is deprecated; use 'isinstance(..., ModularFormsSpace)' instead.")
-    return isinstance(x, ModularFormsSpace)
-
-
 @richcmp_method
 class ModularFormsSpace(hecke.HeckeModule_generic):
     """
