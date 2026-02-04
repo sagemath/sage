@@ -1843,7 +1843,7 @@ class SetPartition(AbstractSetPartition,
         contained in blocks of `Q`. Only blocks of `P` that are not
         subsets of any block in `Q` are kept.
 
-        This operation is based on the work of Hugo DOMINGUEZ (Nantes University Polytechnic School, 2021-22)
+        This operation is based on the work of Hugo Dominguez (Nantes University Polytechnic School, 2021-22)
         and PhD Thesis of F. Dumonceaux (Nantes University).
 
         INPUT:
