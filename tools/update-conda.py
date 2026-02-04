@@ -274,6 +274,8 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     else:
         all_requirements.add("openblas")
         all_requirements.add("libblas=*=*_openblas")
+    # Issue #41555: meson uses pkg-config to search for cblas whose .pc files are in blas-devel
+    all_requirements.add("blas-devel")
     all_requirements.add("fortran-compiler")
     if platform == "win-64":
         all_requirements.add("vs2022_win-64")
