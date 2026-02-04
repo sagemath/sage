@@ -1363,6 +1363,7 @@ class SetPartition(AbstractSetPartition,
         - ``base`` -- (default: 2) the base of the logarithm
         
         EXAMPLES::
+
             sage: p = SetPartition([[1,2,3],[4,5]])
             sage: p.entropy()
             0.9709505944546686
