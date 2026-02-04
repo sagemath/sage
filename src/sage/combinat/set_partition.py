@@ -1372,6 +1372,7 @@ class SetPartition(AbstractSetPartition,
             0.2920296745425357
         
         TESTS::
+
             sage: SetPartition([]).entropy()
             0
 
