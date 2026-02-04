@@ -130,13 +130,13 @@ dependencies:
   - gap-defaults=4.15.1=ha770c72_2
   - gcc=14.3.0=h0dff253_16
   - gcc_impl_linux-64=14.3.0=he8b2097_16
-  - gcc_linux-64=14.3.0=h298d278_17
+  - gcc_linux-64=14.3.0=h298d278_18
   - gdk-pixbuf=2.44.5=h2b0a6b4_0
   - gf2x=1.3.0=h55551d5_3
   - gfan=0.6.2=hb86e20a_1003
   - gfortran=14.3.0=h76987e4_16
   - gfortran_impl_linux-64=14.3.0=h1a219da_16
-  - gfortran_linux-64=14.3.0=h9ce9316_17
+  - gfortran_linux-64=14.3.0=h6a1bf6d_18
   - gitdb=4.0.12=pyhd8ed1ab_0
   - gitpython=3.1.46=pyhd8ed1ab_0
   - givaro=4.2.0=h49654ea_3
@@ -152,7 +152,7 @@ dependencies:
   - gts=0.7.6=h977cf35_4
   - gxx=14.3.0=h76987e4_16
   - gxx_impl_linux-64=14.3.0=h2185e75_16
-  - gxx_linux-64=14.3.0=h310e576_17
+  - gxx_linux-64=14.3.0=h49ebd07_18
   - h2=4.3.0=pyhcf101f3_0
   - harfbuzz=12.2.0=h15599e2_0
   - hicolor-icon-theme=0.17=ha770c72_2
@@ -206,8 +206,8 @@ dependencies:
   - libbrotlidec=1.2.0=hb03c661_1
   - libbrotlienc=1.2.0=hb03c661_1
   - libcblas=3.11.0=5_h0358290_openblas
-  - libclang-cpp21.1=21.1.8=default_h99862b1_2
-  - libclang13=21.1.8=default_h746c552_2
+  - libclang-cpp21.1=21.1.8=default_h99862b1_3
+  - libclang13=21.1.8=default_h746c552_3
   - libcups=2.3.3=hb8b1518_5
   - libcurl=8.18.0=h4e3cde8_0
   - libdeflate=1.25=h17f619e_0
@@ -321,7 +321,7 @@ dependencies:
   - openssl=3.6.1=h35e630c_1
   - packaging=26.0=pyhcf101f3_0
   - palp=2.21=hb03c661_0
-  - pandoc=3.8.3=ha770c72_0
+  - pandoc=3.9=ha770c72_0
   - pandocfilters=1.5.0=pyhd8ed1ab_0
   - pango=1.56.4=hadf4263_0
   - pari=2.17.2=ha40142e_5_pthread
@@ -385,7 +385,7 @@ dependencies:
   - python-utils=3.9.1=pyhff2d567_1
   - python_abi=3.13=8_cp313
   - pytz=2025.2=pyhd8ed1ab_0
-  - pyyaml=6.0.3=py313h3dea7bd_0
+  - pyyaml=6.0.3=py313h3dea7bd_1
   - pyzmq=27.1.0=py312hfb55c3c_0
   - qd=2.3.22=h2cc385e_1004
   - qhull=2020.2=h434a139_5
@@ -504,6 +504,6 @@ dependencies:
   - zeromq=4.3.5=h387f397_9
   - zipp=3.23.0=pyhcf101f3_1
   - zlib=1.3.1=hb9d3cd8_2
-  - zlib-ng=2.3.2=hceb46e0_1
+  - zlib-ng=2.3.3=hceb46e0_1
   - zstandard=0.25.0=py313h54dd161_1
   - zstd=1.5.7=hb78ec9c_6

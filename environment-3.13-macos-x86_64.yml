@@ -204,7 +204,7 @@ dependencies:
   - libcblas=3.9.0=39_h27bf0f3_newaccelerate
   - libclang-cpp19.1=19.1.7=default_hd70426c_7
   - libcurl=8.18.0=h9348e2b_0
-  - libcxx=21.1.8=h3d58e20_1
+  - libcxx=21.1.8=h4fb565c_2
   - libcxx-devel=19.1.7=h7c275be_2
   - libcxx-headers=19.1.7=h707e725_2
   - libdeflate=1.25=h517ebb2_0
@@ -297,7 +297,7 @@ dependencies:
   - openssl=3.6.1=hb6871ef_1
   - packaging=26.0=pyhcf101f3_0
   - palp=2.21=h8616949_0
-  - pandoc=3.8.3=h694c41f_0
+  - pandoc=3.9=h694c41f_0
   - pandocfilters=1.5.0=pyhd8ed1ab_0
   - pango=1.56.4=h6ef8af8_0
   - pari=2.17.2=h1ed0f1a_5_pthread
@@ -360,7 +360,7 @@ dependencies:
   - python-utils=3.9.1=pyhff2d567_1
   - python_abi=3.13=8_cp313
   - pytz=2025.2=pyhd8ed1ab_0
-  - pyyaml=6.0.3=py313h0f4d31d_0
+  - pyyaml=6.0.3=py313h7c6a591_1
   - pyzmq=27.1.0=py312hb7d603e_0
   - qd=2.3.22=h2beb688_1004
   - qhull=2020.2=h3c5361c_5
@@ -455,6 +455,6 @@ dependencies:
   - zeromq=4.3.5=h6c33b1e_9
   - zipp=3.23.0=pyhcf101f3_1
   - zlib=1.3.1=hd23fc13_2
-  - zlib-ng=2.3.2=h8bce59a_1
+  - zlib-ng=2.3.3=h8bce59a_1
   - zstandard=0.25.0=py313hcb05632_1
   - zstd=1.5.7=h3eecb57_6

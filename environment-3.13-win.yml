@@ -162,7 +162,7 @@ dependencies:
   - libbrotlidec=1.2.0=hfd05255_1
   - libbrotlienc=1.2.0=hfd05255_1
   - libcblas=3.11.0=5_h2a8eebe_openblas
-  - libclang13=21.1.8=default_ha2db4b5_2
+  - libclang13=21.1.8=default_ha2db4b5_3
   - libcurl=8.18.0=h43ecb02_0
   - libdeflate=1.25=h51727cc_0
   - libexpat=2.7.3=hac47afa_0
@@ -250,7 +250,7 @@ dependencies:
   - openjpeg=2.5.4=h24db6dd_0
   - openssl=3.6.1=hf411b9b_1
   - packaging=26.0=pyhcf101f3_0
-  - pandoc=3.8.3=h57928b3_0
+  - pandoc=3.9=h57928b3_0
   - pandocfilters=1.5.0=pyhd8ed1ab_0
   - pango=1.56.4=h03d888a_0
   - pari=2.17.2=h637a547_5_pthread
@@ -310,7 +310,7 @@ dependencies:
   - pytz=2025.2=pyhd8ed1ab_0
   - pywin32=311=py313h40c08fc_1
   - pywin32-ctypes=0.2.3=py313hfa70ccb_3
-  - pyyaml=6.0.3=py313hd650c13_0
+  - pyyaml=6.0.3=py313hd650c13_1
   - pyzmq=27.1.0=py312hbb5da91_0
   - qhull=2020.2=hc790b64_5
   - qt6-main=6.10.1=hf1bda90_3
@@ -407,6 +407,6 @@ dependencies:
   - zeromq=4.3.5=h5bddc39_9
   - zipp=3.23.0=pyhcf101f3_1
   - zlib=1.3.1=h2466b09_2
-  - zlib-ng=2.3.2=h0261ad2_1
+  - zlib-ng=2.3.3=h0261ad2_1
   - zstandard=0.25.0=py313h5fd188c_1
   - zstd=1.5.7=h534d264_6
