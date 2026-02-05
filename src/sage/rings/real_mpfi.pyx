@@ -2615,20 +2615,13 @@ cdef class RealIntervalFieldElement(RingElement):
         TESTS::
 
             sage: RIF(1) + RR(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            2
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for +: ...
         """
         cdef RealIntervalFieldElement _left = (<RealIntervalFieldElement> left)
         if have_same_parent(left, right):
             return _left._add_(right)
-        if (type(right) is RealNumber
-                and _left._parent.prec() <= right.parent().prec()):
-            deprecation(15114, "automatic conversions from floating-point "
-                        "numbers to intervals are deprecated")
-            return left + _left._parent(right)
         elif isinstance(left, RealIntervalFieldElement):
             return Element.__add__(left, right)
         else:
@@ -2639,20 +2632,13 @@ cdef class RealIntervalFieldElement(RingElement):
         TESTS::
 
             sage: RIF(2) - RR(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            1
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for -: ...
         """
         cdef RealIntervalFieldElement _left = (<RealIntervalFieldElement> left)
         if have_same_parent(left, right):
             return _left._sub_(right)
-        if (type(right) is RealNumber
-                and _left._parent.prec() <= right.parent().prec()):
-            deprecation(15114, "automatic conversions from floating-point "
-                        "numbers to intervals are deprecated")
-            return left - _left._parent(right)
         elif isinstance(left, RealIntervalFieldElement):
             return Element.__sub__(left, right)
         else:
@@ -2663,20 +2649,13 @@ cdef class RealIntervalFieldElement(RingElement):
         TESTS::
 
             sage: RIF(1) * RR(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            1
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for *: ...
         """
         cdef RealIntervalFieldElement _left = (<RealIntervalFieldElement> left)
         if have_same_parent(left, right):
             return _left._mul_(right)
-        if (type(right) is RealNumber
-                and _left._parent.prec() <= right.parent().prec()):
-            deprecation(15114, "automatic conversions from floating-point "
-                        "numbers to intervals are deprecated")
-            return left * _left._parent(right)
         elif isinstance(left, RealIntervalFieldElement):
             return Element.__mul__(left, right)
         else:
@@ -2687,25 +2666,13 @@ cdef class RealIntervalFieldElement(RingElement):
         TESTS::
 
             sage: RIF(1) / RR(1/2)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            2
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for /: ...
         """
         cdef RealIntervalFieldElement _left = (<RealIntervalFieldElement> left)
         if have_same_parent(left, right):
             return _left._div_(right)
-        if (type(right) is RealNumber
-                and _left._parent.prec() <= right.parent().prec()):
-            deprecation(15114, "automatic conversions from floating-point "
-                        "numbers to intervals are deprecated")
-            return left / _left._parent(right)
-        elif (type(left) is RealNumber
-                and left.parent().prec() >= right.parent().prec()):
-            deprecation(15114, "automatic conversions from floating-point "
-                        "numbers to intervals are deprecated")
-            return right.parent()(left)/right
         elif isinstance(left, RealIntervalFieldElement):
             return Element.__truediv__(left, right)
         else:

@@ -456,10 +456,15 @@ def DoublyTruncatedWittGraph(immutable=False):
     return G.copy(immutable=True) if immutable else G
 
 
-def distance_3_doubly_truncated_Golay_code_graph():
+def distance_3_doubly_truncated_Golay_code_graph(immutable=False):
     r"""
     Return a distance-regular graph with intersection array
     `[9, 8, 6, 3; 1, 1, 3, 8]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -481,21 +486,21 @@ def distance_3_doubly_truncated_Golay_code_graph():
     Description and construction of this graph are taken from [BCN1989]_ p. 364.
     """
     G = codes.GolayCode(GF(2), extended=False).punctured([0, 1]).cosetGraph()
-    v = G.vertices(sort=False)[0]
+    v = next(G.vertex_iterator())
     it = G.breadth_first_search(v, distance=3, report_distance=True)
-    vertices = [w for (w, d) in it if d == 3]
-
-    edges = [(a, b) for a, b in itertools.combinations(vertices, 2)
-             if G.has_edge((a, b))]
-
-    H = Graph(edges, format='list_of_edges')
-    return H
+    return G.subgraph(vertices=[w for w, d in it if d == 3],
+                      immutable=immutable)
 
 
-def shortened_00_11_binary_Golay_code_graph():
+def shortened_00_11_binary_Golay_code_graph(immutable=False):
     r"""
     Return a distance-regular graph with intersection array
     `[21, 20, 16, 6, 2, 1; 1, 2, 6, 16, 20, 21]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -527,8 +532,8 @@ def shortened_00_11_binary_Golay_code_graph():
 
     code = LinearCode(Matrix(GF(2), C_basis))
 
-    G = code.cosetGraph()
-    G.name("Shortened 00 11 binary Golay code")
+    G = code.cosetGraph(immutable=immutable)
+    G._name = "Shortened 00 11 binary Golay code"
     return G
 
 
@@ -596,12 +601,17 @@ def shortened_000_111_extended_binary_Golay_code_graph():
     return G
 
 
-def vanLintSchrijverGraph():
+def vanLintSchrijverGraph(immutable=False):
     r"""
     Return the van Lint-Schrijver graph.
 
     The graph is distance-regular with intersection array
     `[6, 5, 5, 4; 1, 1, 2, 6]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -618,12 +628,9 @@ def vanLintSchrijverGraph():
     one = vector(GF(3), [1, 1, 1, 1, 1, 1])
     G = LinearCode(Matrix(GF(3), one)).cosetGraph()
 
-    vertices = [v for v in G.vertices(sort=False) if v.dot_product(one) in {1, 2}]
-    edges = [(v, w) for v, w in itertools.combinations(vertices, 2)
-             if G.has_edge((v, w))]
-
-    H = Graph(edges, format='list_of_edges')
-    H.name("Linst-Schrijver graph")
+    H = G.subgraph(vertices=[v for v in G if v.dot_product(one) in {1, 2}],
+                   immutable=immutable)
+    H._name = "Linst-Schrijver graph"
     return H
 
 

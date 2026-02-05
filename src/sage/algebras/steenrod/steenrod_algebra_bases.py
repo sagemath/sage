@@ -165,9 +165,9 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
         [0 1 0]
         [1 2 0]
     """
+    from sage.algebras.steenrod.steenrod_algebra import SteenrodAlgebra
     from sage.matrix.constructor import matrix
     from sage.rings.finite_rings.finite_field_constructor import GF
-    from .steenrod_algebra import SteenrodAlgebra
     if generic == 'auto':
         generic = p != 2
     if n == 0:
@@ -335,7 +335,7 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
         sage: steenrod_algebra_basis(5, 'pst-rlex')
         (((0, 1), (2, 1)), ((1, 1), (0, 2)))
     """
-    from .steenrod_algebra_misc import get_basis_name
+    from sage.algebras.steenrod.steenrod_algebra_misc import get_basis_name
     try:
         if n < 0 or int(n) != n:
             return ()
@@ -580,8 +580,8 @@ def milnor_basis(n, p=2, **kwds):
         else:
             return (((), ()),)
 
-    from sage.rings.infinity import Infinity
     from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
+    from sage.rings.infinity import Infinity
     profile = kwds.get("profile", None)
     trunc = kwds.get("truncation_type", None)
     if trunc is None:
@@ -715,42 +715,41 @@ def serre_cartan_basis(n, p=2, bound=1, **kwds):
 
     if n == 0:
         return ((),)
-    else:
-        if not generic:
-            # Build basis recursively.  last = last term.
-            # last is >= bound, and we will append (last,) to the end of
-            # elements from serre_cartan_basis (n - last, bound=2 * last).
-            # This means that 2 last <= n - last, or 3 last <= n.
-            result = [(n,)]
-            for last in range(bound, 1+n//3):
-                for vec in serre_cartan_basis(n - last, bound=2 * last):
-                    new = vec + (last,)
-                    result.append(new)
-        else:  # p odd
-            if n % (2 * (p-1)) == 0 and n//(2 * (p-1)) >= bound:
-                result = [(0, int(n//(2 * (p-1))), 0)]
-            elif n == 1:
-                result = [(1,)]
-            else:
-                result = []
-            # 2 cases: append P^{last}, or append P^{last} beta
-            # case 1: append P^{last}
-            for last in range(bound, 1+n//(2*(p - 1))):
-                if n - 2*(p-1)*last > 0:
-                    for vec in serre_cartan_basis(n - 2*(p-1)*last,
-                                                  p, p*last, generic=generic):
-                        result.append(vec + (last, 0))
-            # case 2: append P^{last} beta
-            if bound == 1:
-                bound = 0
-            for last in range(bound+1, 1+n//(2*(p - 1))):
-                basis = serre_cartan_basis(n - 2*(p-1)*last - 1,
-                                           p, p*last, generic=generic)
-                for vec in basis:
-                    if vec == ():
-                        vec = (0,)
-                    new = vec + (last, 1)
-                    result.append(new)
+    elif not generic:
+        # Build basis recursively.  last = last term.
+        # last is >= bound, and we will append (last,) to the end of
+        # elements from serre_cartan_basis (n - last, bound=2 * last).
+        # This means that 2 last <= n - last, or 3 last <= n.
+        result = [(n,)]
+        for last in range(bound, 1+n//3):
+            for vec in serre_cartan_basis(n - last, bound=2 * last):
+                new = vec + (last,)
+                result.append(new)
+    else:  # p odd
+        if n % (2 * (p-1)) == 0 and n//(2 * (p-1)) >= bound:
+            result = [(0, int(n//(2 * (p-1))), 0)]
+        elif n == 1:
+            result = [(1,)]
+        else:
+            result = []
+        # 2 cases: append P^{last}, or append P^{last} beta
+        # case 1: append P^{last}
+        for last in range(bound, 1+n//(2*(p - 1))):
+            if n - 2*(p-1)*last > 0:
+                for vec in serre_cartan_basis(n - 2*(p-1)*last,
+                                              p, p*last, generic=generic):
+                    result.append(vec + (last, 0))
+        # case 2: append P^{last} beta
+        if bound == 1:
+            bound = 0
+        for last in range(bound+1, 1+n//(2*(p - 1))):
+            basis = serre_cartan_basis(n - 2*(p-1)*last - 1,
+                                       p, p*last, generic=generic)
+            for vec in basis:
+                if vec == ():
+                    vec = (0,)
+                new = vec + (last, 1)
+                result.append(new)
     return tuple(result)
 
 
@@ -1046,9 +1045,9 @@ def atomic_basis_odd(n, basis, p, **kwds):
         else:
             return (((), ()),)
 
-    from sage.rings.integer import Integer
-    from sage.rings.infinity import Infinity
     from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
+    from sage.rings.infinity import Infinity
+    from sage.rings.integer import Integer
     profile = kwds.get("profile", None)
     trunc = kwds.get("truncation_type", 0)
 

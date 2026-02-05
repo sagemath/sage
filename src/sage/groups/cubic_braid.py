@@ -990,7 +990,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
 
             matrix_grpF7 = self.as_matrix_group(domain=GF(7))
             self._internal_test_attached_group(matrix_grpF7, tester)
-        return
 
     def _test_reflection_group(self, **options):
         r"""

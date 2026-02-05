@@ -207,7 +207,6 @@ AUTHORS:
 import numbers
 
 import sage.rings.abc
-
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
@@ -272,7 +271,7 @@ def rat_interval_cf_list(r1, r2):
         sage: from sage.rings.continued_fraction import rat_interval_cf_list
         sage: rat_interval_cf_list(257/113, 5224/2297)
         [2, 3, 1, 1, 1, 4]
-        sage: for prec in range(10,54):                                                 # needs sage.rings.real_interval_field
+        sage: for prec in range(10,54):
         ....:     R = RealIntervalField(prec)
         ....:     for _ in range(100):
         ....:         x = R.random_element() * R.random_element() + R.random_element() / 100
@@ -1016,9 +1015,9 @@ class ContinuedFraction_base(SageObject):
         """
         if self.length() == 1:
             return self.quotient(0)
-        return self.quotient(0)+1
+        return self.quotient(0) + 1
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``False`` if ``self`` is zero.
 
@@ -1035,7 +1034,7 @@ class ContinuedFraction_base(SageObject):
         """
         return bool(self.quotient(0)) or self.quotient(1) is not Infinity
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Test whether ``self`` is zero.
 
@@ -1052,7 +1051,7 @@ class ContinuedFraction_base(SageObject):
         """
         return self.quotient(0) == ZZ_0 and self.quotient(1) is Infinity
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Test whether ``self`` is one.
 
@@ -1069,7 +1068,7 @@ class ContinuedFraction_base(SageObject):
         """
         return self.quotient(0) == ZZ_1 and self.quotient(1) is Infinity
 
-    def is_minus_one(self):
+    def is_minus_one(self) -> bool:
         r"""
         Test whether ``self`` is minus one.
 

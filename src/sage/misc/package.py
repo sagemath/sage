@@ -349,27 +349,22 @@ def list_packages(*pkg_types: str, pkg_sources: list[str] = ['normal', 'pip', 's
     return pkgs
 
 
-def _spkg_inst_dirs():
+def _spkg_inst_dirs() -> Path | None:
     """
-    Generator for the installation manifest directories as resolved paths.
+    The installation manifest directory as resolved path.
 
-    It yields first ``SAGE_LOCAL_SPKG_INST``, then ``SAGE_VENV_SPKG_INST``,
-    if defined; but it both resolve to the same directory, it only yields
-    one element.
+    It yields ``SAGE_LOCAL_SPKG_INST`` if defined.
 
     EXAMPLES::
 
         sage: from sage.misc.package import _spkg_inst_dirs
-        sage: list(_spkg_inst_dirs())
-        [...]
+        sage: _spkg_inst_dirs()
+        ...
     """
-    last_inst_dir = None
-    for inst_dir in (sage.env.SAGE_LOCAL_SPKG_INST, sage.env.SAGE_VENV_SPKG_INST):
-        if inst_dir:
-            inst_dir = Path(inst_dir).resolve()
-            if inst_dir.is_dir() and inst_dir != last_inst_dir:
-                yield inst_dir
-                last_inst_dir = inst_dir
+    if sage.env.SAGE_LOCAL_SPKG_INST:
+        inst_dir = Path(sage.env.SAGE_LOCAL_SPKG_INST).resolve()
+        if inst_dir.is_dir():
+            return inst_dir
 
 
 def installed_packages(exclude_pip=True):
@@ -387,8 +382,7 @@ def installed_packages(exclude_pip=True):
     that should be installed in ``SAGE_LOCAL``. When Sage is installed by
     the Sage distribution (indicated by feature ``sage_spkg``), we should have
     the installation record for this package. (We do not test for installation
-    records of Python packages. Our ``SAGE_VENV`` is not necessarily the
-    main Sage venv; it could be a user-created venv or a venv created by tox.)::
+    records of Python packages.)::
 
         sage: # optional - sage_spkg
         sage: from sage.misc.package import installed_packages
@@ -406,7 +400,8 @@ def installed_packages(exclude_pip=True):
         installed.update(pip_installed_packages(normalization='spkg'))
     # Sage packages should override pip packages (Issue #23997)
 
-    for inst_dir in _spkg_inst_dirs():
+    inst_dir = _spkg_inst_dirs()
+    if inst_dir is not None:
         try:
             lp = os.listdir(inst_dir)
             installed.update(pkgname_split(pkgname) for pkgname in lp
@@ -542,7 +537,8 @@ def package_manifest(package):
         KeyError: 'dummy-package'
     """
     version = installed_packages()[package]
-    for inst_dir in _spkg_inst_dirs():
+    inst_dir = _spkg_inst_dirs()
+    if inst_dir is not None:
         stamp_file = os.path.join(inst_dir,
                                   '{}-{}'.format(package, version))
         try:

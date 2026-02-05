@@ -925,7 +925,7 @@ REFERENCES:
               Ann. Math. (2) 192, No. 3, 821-891 (2020).
               :arxiv:`1902.03719`, :doi:`10.4007/annals.2020.192.3.4`.
 
-.. [Bru2014] Erwan Brugalle and Kristin Shaw. *A bit of tropical geometry*.
+.. [Bru2014] Erwan Brugallé and Kristin Shaw. *A bit of tropical geometry*.
              Amer. Math. Monthly, 121(7):563-589, 2014.
 
 .. [BHNR2004] \S. Brlek, S. Hamel, M. Nivat, C. Reutenauer, On the
@@ -1442,6 +1442,10 @@ REFERENCES:
              *Numerical Computation of Endomorphism Rings of Jacobians*,
              The Open Book Series, Vol. 2 (2019), No. 1, pp. 155-171,
              https://msp.org/obs/2019/2-1/p10.xhtml
+
+.. [BTTM2024] \L. Bossinger, M. L. Telek, H. Tillmann-Morris,
+              *Binary Geometries From Pellytopes*,
+              :arxiv:`2410.08002`
 
 .. [BUVO2007] Johannes Buchmann, Ullrich Vollmer: Binary Quadratic Forms,
               An Algorithmic Approach, Algorithms and Computation in Mathematics,
@@ -2293,6 +2297,10 @@ REFERENCES:
             *Some New Orders of Hadamard and Skew-Hadamard Matrices*,
             Journal of Combinatorial Designs 22(6) (2014): 270-277.
             :doi:`10.1002/jcd.21358`
+
+.. [DGM2002] \S. N. Dorogovtsev, A. V. Goltsev and J. F. F. Mendes.
+             *Pseudofractal scale-free web*, Physical Review E 066122, 2002.
+             :doi:`10.1103/PhysRevE.65.066122`
 
 .. [DGMPPS2019] \N. Datta, A. Ghoshal, D. Mukhopadhyay, S. Patranabis,
                 S. Picek, R. Sashukhan. "TRIFLE"
@@ -4450,6 +4458,9 @@ REFERENCES:
              *The Hopf algebra of diagonal rectangulations*,
              \J. Comb. Theory, Ser. A 119, No. 3, 788-824 (2012).
              :doi:`10.1016/j.jcta.2011.09.006`
+
+.. [Law2014] Shirley Law, *Combinatorial realization of the Hopf algebra
+             of sashes*, Proceedings of FPSAC 2014, DMTCS, :arxiv:`1407.4073`
 
 .. [Laz1992] Daniel Lazard, *Solving Zero-dimensional Algebraic
              Systems*, in Journal of Symbolic Computation (1992)

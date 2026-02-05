@@ -437,38 +437,6 @@ def ReflexivePolytopes(dim):
     return _rp[dim]
 
 
-def is_LatticePolytope(x):
-    r"""
-    Check if ``x`` is a lattice polytope.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is a :class:`lattice polytope <LatticePolytopeClass>`,
-      ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.geometry.lattice_polytope import is_LatticePolytope
-        sage: is_LatticePolytope(1)
-        doctest:warning...
-        DeprecationWarning: is_LatticePolytope is deprecated, use isinstance instead
-        See https://github.com/sagemath/sage/issues/34307 for details.
-        False
-        sage: p = LatticePolytope([(1,0), (0,1), (-1,-1)])
-        sage: p                                                                         # needs palp
-        2-d reflexive polytope #0 in 2-d lattice M
-        sage: is_LatticePolytope(p)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34307, "is_LatticePolytope is deprecated, use isinstance instead")
-    return isinstance(x, LatticePolytopeClass)
-
-
 @richcmp_method
 class LatticePolytopeClass(Element, ConvexSet_compact,
                            sage.geometry.abc.LatticePolytope):
@@ -673,7 +641,9 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
     def __reduce__(self):
         r"""
-        Reduction function. Does not store data that can be relatively fast
+        Reduction function.
+
+        This does not store data that can be relatively fast
         recomputed.
 
         TESTS::
@@ -1074,7 +1044,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             return PointCollection(r, self._sublattice)
         if isinstance(data, Matrix):
             r = matrix([self._pullback(col)
-                    for col in data.columns(copy=False)]).transpose()
+                        for col in data.columns(copy=False)]).transpose()
             return r
         data = vector(QQ, data)
         return self._sublattice.coordinates(data - self._shift_vector)
@@ -1341,7 +1311,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         return faces
 
     @cached_method
-    def adjacent(self):
+    def adjacent(self) -> tuple:
         r"""
         Return faces adjacent to ``self`` in the ambient face lattice.
 
@@ -1355,7 +1325,9 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         * `F_1` and `F_2` are facets of some face of dimension `d+1`, unless
           `d` is the dimension of the ambient structure.
 
-        OUTPUT: :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`
+        OUTPUT:
+
+        :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`
 
         EXAMPLES::
 
@@ -1472,6 +1444,26 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         return r
 
     linear_transformation = affine_transform
+
+    def translation(self, v):
+        """
+        Return the translated polytope ``P+v``, where ``P`` is this lattice polytope.
+
+        INPUT:
+
+        - ``v`` -- integer or vector of integers
+
+        Integers are interpreted as vectors with the same components.
+
+        EXAMPLES::
+
+            sage: o = lattice_polytope.cross_polytope(2)
+            sage: o.translation((-1,-1))
+            2-d lattice polytope in 2-d lattice M
+            sage: o.translation(-1)
+            2-d lattice polytope in 2-d lattice M
+        """
+        return self.affine_transform(1, v)
 
     def ambient(self):
         r"""
@@ -2488,7 +2480,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         return LatticePolytopeClass._rp_dict[dim][self.normal_form().matrix()]
 
     @cached_method
-    def interior_point_indices(self):
+    def interior_point_indices(self) -> tuple[int, ...]:
         r"""
         Return indices of (relative) interior lattice points of this polytope.
 
@@ -2528,9 +2520,9 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
                      for i, c in enumerate(self.distances().columns(copy=False))
                      if len(c.nonzero_positions()) == self.n_facets())
 
-    def interior_points(self):
+    def interior_points(self) -> PointCollection:
         r"""
-        Return (relative) boundary lattice points of this polytope.
+        Return (relative) interior lattice points of this polytope.
 
         OUTPUT: a :class:`point collection <PointCollection>`
 
@@ -2553,7 +2545,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         return self.points(self.interior_point_indices())
 
     @cached_method
-    def is_reflexive(self):
+    def is_reflexive(self) -> bool:
         r"""
         Return ``True`` if this polytope is reflexive.
 
@@ -2799,12 +2791,12 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             sage: p.nef_partitions()                                                    # needs palp
             Traceback (most recent call last):
             ...
-            ValueError: The given polytope is not reflexive!
+            ValueError: the given polytope is not reflexive:
             Polytope: 3-d lattice polytope in 3-d lattice M
         """
         if not self.is_reflexive():
-            raise ValueError(("The given polytope is not reflexive!\n"
-                              + "Polytope: %s") % self)
+            raise ValueError("the given polytope is not reflexive:\n"
+                             f"Polytope: {self}")
         keys = "-N -V"
         if keep_symmetric:
             keys += " -s"
@@ -2862,7 +2854,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         """
         return self._palp("nef.x -f " + keys)
 
-    def n_facets(self):
+    def n_facets(self) -> int:
         r"""
         Return the number of facets of this polytope.
 
@@ -3404,11 +3396,29 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
     nvertices = n_vertices
 
     @cached_method
+    def ehrhart_polynomial(self, *args, **kwds):
+        """
+        Return the Ehrhart polynomial of ``self``.
+
+        See :meth:`~sage.geometry.base_ZZ.polyhedron_ZZ.ehrhart_polynomial`
+        for the possible arguments.
+
+        EXAMPLES::
+
+            sage: o = lattice_polytope.cross_polytope(3)
+            sage: o.ehrhart_polynomial()    # optional - latte_int
+            4/3*t^3 + 2*t^2 + 8/3*t + 1
+        """
+        return self.polyhedron().ehrhart_polynomial(*args, **kwds)
+
+    @cached_method
     def origin(self):
         r"""
         Return the index of the origin in the list of points of ``self``.
 
-        OUTPUT: integer if the origin belongs to this polytope, ``None`` otherwise
+        OUTPUT:
+
+        integer if the origin belongs to this polytope, ``None`` otherwise
 
         EXAMPLES::
 
@@ -3749,37 +3759,76 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             sage: p.points()
             M(1)
             in 1-d lattice M
+
+        Regression test:  ensure this method does not cache an incorrect answer
+        when an exception is raised.  This 6-dimensional polytope exceeds PALP's
+        internal limits and should raise RuntimeError, not returning wrong results
+        (:issue:`41400`)::
+
+            sage: V = [(-1, -1, 0, 0, 0, 0),
+            ....:      (-1, 0, 0, 0, 0, 0),
+            ....:      (-1, -1, -1, 0, 0, 0),
+            ....:      (-1, -1, -1, -1, 0, 0),
+            ....:      (-1, -1, -1, 0, -1, 0),
+            ....:      (-1, -1, -1, -1, -1, 0),
+            ....:      (-1, -1, -1, -1, -1, -1),
+            ....:      (-1, -1, -1, 0, -1, -1),
+            ....:      (0, 0, 0, 1, 0, 0),
+            ....:      (0, 1, 0, 0, 0, 0),
+            ....:      (1, 0, 0, 0, 0, 0),
+            ....:      (0, 0, 1, 0, 0, 0),
+            ....:      (0, 0, 0, 0, 1, 0),
+            ....:      (0, 0, 0, 0, 0, 1)]
+            sage: Q = LatticePolytope(V)
+            sage: Q.points()  # needs palp
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Error executing ...
+            Output:
+            ...Transpose_PM failed...
+            sage: Q.points()  # needs palp
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Error executing ...
+            Output:
+            ...Transpose_PM failed...
         """
-        if not hasattr(self, "_points"):
-            M = self.lattice()
-            nv = self.n_vertices()
-            self._points = points = self._vertices
-            if self.dim() == 1:
-                v = points[1] - points[0]
-                l_gcd = gcd(v)
-                if l_gcd > 1:
-                    v = M(v.base_extend(QQ) / l_gcd)
+        if hasattr(self, "_points"):
+            if args or kwds:
+                return self._points(*args, **kwds)
+            else:
+                return self._points
+        M = self.lattice()
+        nv = self.n_vertices()
+        points = self._vertices
+        if self.dim() == 1:
+            v = points[1] - points[0]
+            l_gcd = gcd(v)
+            if l_gcd > 1:
+                v = M(v.base_extend(QQ) / l_gcd)
+                points = list(points)
+                current = points[0]
+                for i in range(l_gcd - 1):
+                    current += v
+                    current.set_immutable()
+                    points.append(current)
+        if self.dim() > 1:
+            result = self.poly_x("p", reduce_dimension=True)
+            if self.dim() == self.lattice_dim():
+                points = read_palp_point_collection(StringIO(result), M)
+            else:
+                m = self._embed(read_palp_matrix(result))
+                if m.ncols() > nv:
                     points = list(points)
-                    current = points[0]
-                    for i in range(l_gcd - 1):
-                        current += v
+                    for j in range(nv, m.ncols()):
+                        current = M.element_class(
+                            M, [m[i, j] for i in range(M.rank())])
                         current.set_immutable()
                         points.append(current)
-            if self.dim() > 1:
-                result = self.poly_x("p", reduce_dimension=True)
-                if self.dim() == self.lattice_dim():
-                    points = read_palp_point_collection(StringIO(result), M)
-                else:
-                    m = self._embed(read_palp_matrix(result))
-                    if m.ncols() > nv:
-                        points = list(points)
-                        for j in range(nv, m.ncols()):
-                            current = M.element_class(
-                                M, [m[i, j] for i in range(M.rank())])
-                            current.set_immutable()
-                            points.append(current)
-            if len(points) > nv:
-                self._points = PointCollection(points, M)
+        if len(points) > nv:
+            self._points = PointCollection(points, M)
+        else:
+            self._points = points
         if args or kwds:
             return self._points(*args, **kwds)
         else:
@@ -4149,39 +4198,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         """
         if args or kwds:
             return self._vertices(*args, **kwds)
-        else:
-            return self._vertices
-
-
-def is_NefPartition(x):
-    r"""
-    Check if ``x`` is a nef-partition.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is a :class:`nef-partition <NefPartition>` and
-      ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.geometry.lattice_polytope import NefPartition
-        sage: isinstance(1, NefPartition)
-        False
-        sage: o = lattice_polytope.cross_polytope(3)
-        sage: np = o.nef_partitions()[0]; np                                            # needs palp
-        Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
-        sage: isinstance(np, NefPartition)                                              # needs palp
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38126,
-                "The function is_NefPartition is deprecated; "
-                "use 'isinstance(..., NefPartition)' instead.")
-    return isinstance(x, NefPartition)
+        return self._vertices
 
 
 class NefPartition(SageObject, Hashable):
@@ -5353,7 +5370,7 @@ def all_nef_partitions(polytopes, keep_symmetric=False):
     r"""
     Compute nef-partitions for all given ``polytopes``.
 
-    This functions does it MUCH faster than member functions of
+    This function does it MUCH faster than member functions of
     ``LatticePolytope`` during the first run. So it is recommended to
     use this functions if you work with big sets of data.
 
@@ -5408,7 +5425,7 @@ def all_points(polytopes):
 
     This functions does it MUCH faster than member functions of
     ``LatticePolytope`` during the first run. So it is recommended to
-    use this functions if you work with big sets of data.
+    use this function if you work with big sets of data.
 
     INPUT:
 
