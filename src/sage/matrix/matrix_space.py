@@ -1848,6 +1848,14 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         return self.__nrows * self.__ncols
 
+    def rank(self):
+        """
+        Return the rank of the matrix space.
+
+        This is equal to its dimension.
+        """
+        return self.dimension()
+
     def dims(self):
         """
         Return (m row, n col) representation of ``self`` dimension.
