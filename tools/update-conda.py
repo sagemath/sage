@@ -184,6 +184,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         "sagemath_giac",
         "pynormaliz",  # due to https://github.com/sagemath/sage/issues/40214
         "latte-integrale",  # due to https://github.com/sagemath/sage/issues/40216
+        "cibuildwheel",  # fails pip check since it claims to require the PyPI package patchelf which is not available on conda-forge yet (however, it just needs a patchelf which is installed from conda-forge already.)
     }
     if platform in ("linux-aarch64", "osx-arm64"):
         exclude_packages |= {
