@@ -371,7 +371,9 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         Returned value is a double precision floating point value
         in ``RDF`` (or an integer when ``p=0``).  The default value
-        of ``p = 2`` is the "usual" Euclidean norm.  For other values:
+        of ``p = 2`` is the "usual" Euclidean norm.  If the parent has a
+        nontrivial inner product matrix over ``RDF``, the ``p=2`` norm is
+        computed from that inner product.  For other values:
 
         - ``p = Infinity`` or ``p = oo``: the maximum of the
           absolute values of the entries, where the absolute value
@@ -455,9 +457,20 @@ cdef class Vector_double_dense(Vector_numpy_dense):
             Traceback (most recent call last):
             ...
             ValueError: vector norm 'p' must be +/- infinity or a real number, not junk
+
+        The 2-norm respects a nontrivial inner product matrix over ``RDF``::
+
+            sage: M = FreeModule(RDF, 2, inner_product_matrix=matrix(RDF, [[4, 0], [0, 1]]))
+            sage: v = M([1.0, 0.0])
+            sage: v.norm()
+            2.0
         """
         import sage.rings.infinity
         import sage.rings.integer
+        if p == 2 and self._sage_dtype is RDF:
+            M = self.parent()
+            if not M._inner_product_is_dot_product():
+                return self.inner_product(self).sqrt()
         if p == sage.rings.infinity.Infinity:
             p = numpy.inf
         elif p == -sage.rings.infinity.Infinity:

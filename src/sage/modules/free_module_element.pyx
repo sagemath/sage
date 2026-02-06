@@ -1800,7 +1800,16 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v = vector(QQ, [1,2])
             sage: v.norm(int(2))                                                        # needs sage.symbolic
             sqrt(5)
+
+        The 2-norm respects a nontrivial inner product matrix when present::
+
+            sage: M = FreeModule(ZZ, 2, inner_product_matrix=matrix([[4, 0], [0, 1]]))
+            sage: v = M([1, 0])
+            sage: v.norm()
+            2
         """
+        if p == __two__ and not self.parent()._inner_product_is_dot_product():
+            return self.inner_product(self)**(__one__/__two__)
         abs_self = [abs(x) for x in self]
         if p == Infinity:
             return max(abs_self)
@@ -5483,6 +5492,12 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             (1.000000000000000000000, 2.000000000000000000000, 3.000000000000000000000)
             sage: _.parent()
             Sparse vector space of dimension 3 over Real Field with 75 bits of precision
+
+            sage: L = IntegralLattice(matrix([[1000, 0], [0, 1]]))
+            sage: v = L.0
+            sage: v.norm()
+            sqrt(1000)
+
         """
         if prec is None:
             prec = digits_to_bits(digits)
