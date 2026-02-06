@@ -1784,6 +1784,11 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: numeric.parent()
             Real Field with 53 bits of precision
 
+            sage: L = IntegralLattice(matrix([[1000, 0], [0, 1]]))
+            sage: v = L.0
+            sage: v.norm()
+            sqrt(1000)
+
         TESTS:
 
         The value of ``p`` must be greater than, or
@@ -1801,6 +1806,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v.norm(int(2))                                                        # needs sage.symbolic
             sqrt(5)
         """
+        if p == __two__ and not self.parent()._inner_product_is_dot_product():
+            return self.inner_product(self)**(_one_ / __two__)
+
         abs_self = [abs(x) for x in self]
         if p == Infinity:
             return max(abs_self)
