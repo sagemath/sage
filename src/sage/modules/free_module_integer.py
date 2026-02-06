@@ -547,6 +547,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         r"""
         Return a shortest vector.
 
+        This method returns an exact solution to the Shortest Vector Problem (SVP) when using the default algorithm. Approximate results are returned only when explicitly requested via algorithm parameters.
         INPUT:
 
         - ``update_reduced_basis`` -- boolean (default: ``True``); set this
