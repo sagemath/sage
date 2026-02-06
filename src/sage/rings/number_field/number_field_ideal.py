@@ -977,7 +977,7 @@ class NumberFieldIdeal(Ideal_generic):
         I.__pari_hnf = hnf
         return I
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         """
         Return ``True`` if this ideal is integral.
 
@@ -997,10 +997,11 @@ class NumberFieldIdeal(Ideal_generic):
             self.__is_integral = all(a in one for a in self.integral_basis())
             return self.__is_integral
 
-    def is_maximal(self):
+    def is_maximal(self) -> bool:
         """
-        Return ``True`` if this ideal is maximal.  This is equivalent to
-        ``self`` being prime and nonzero.
+        Return ``True`` if this ideal is maximal.
+
+        This is equivalent to ``self`` being prime and nonzero.
 
         EXAMPLES::
 
@@ -1014,7 +1015,7 @@ class NumberFieldIdeal(Ideal_generic):
         """
         return self.is_prime() and not self.is_zero()
 
-    def is_prime(self):
+    def is_prime(self) -> bool:
         """
         Return ``True`` if this ideal is prime.
 
@@ -1161,7 +1162,7 @@ class NumberFieldIdeal(Ideal_generic):
                 # Non-principal ideal
                 self._reduced_generators = self.gens_two()
 
-    def is_principal(self, proof=None):
+    def is_principal(self, proof=None) -> bool:
         r"""
         Return ``True`` if this ideal is principal.
 
@@ -1272,7 +1273,7 @@ class NumberFieldIdeal(Ideal_generic):
             invs = [x[1] for x in D]
         return [Zmod(invs[i])(L[i]) for i in range(len(L))]
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` iff ``self`` is the zero ideal.
 

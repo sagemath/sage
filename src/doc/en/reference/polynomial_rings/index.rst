@@ -48,6 +48,8 @@ Laurent Polynomials
    sage/rings/polynomial/laurent_polynomial_ring_base
    sage/rings/polynomial/laurent_polynomial_ring
    sage/rings/polynomial/laurent_polynomial
+   sage/rings/polynomial/laurent_polynomial_mpair
+   sage/rings/polynomial/laurent_polynomial_ideal
    sage/rings/polynomial/omega
 
 Infinite Polynomial Rings

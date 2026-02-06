@@ -113,7 +113,7 @@ class AutomatonGenerators:
     - :meth:`~ContainsWord`
     """
 
-    def AnyLetter(self, input_alphabet):
+    def AnyLetter(self, input_alphabet) -> Automaton:
         r"""
         Return an automaton recognizing any letter of the given
         input alphabet.
@@ -140,13 +140,13 @@ class AutomatonGenerators:
 
             :meth:`AnyWord`
         """
-        z = ZZ(0)
-        o = ZZ(1)
+        z = ZZ.zero()
+        o = ZZ.one()
         return Automaton([(z, o, _) for _ in input_alphabet],
                          initial_states=[z],
                          final_states=[o])
 
-    def AnyWord(self, input_alphabet):
+    def AnyWord(self, input_alphabet) -> Automaton:
         r"""
         Return an automaton recognizing any word of the given
         input alphabet.
@@ -182,12 +182,12 @@ class AutomatonGenerators:
             :meth:`AnyLetter`,
             :meth:`Word`.
         """
-        z = ZZ(0)
+        z = ZZ.zero()
         return Automaton([(z, z, _) for _ in input_alphabet],
                          initial_states=[z],
                          final_states=[z])
 
-    def EmptyWord(self, input_alphabet=None):
+    def EmptyWord(self, input_alphabet=None) -> Automaton:
         r"""
         Return an automaton recognizing the empty word.
 
@@ -210,12 +210,12 @@ class AutomatonGenerators:
             :meth:`AnyLetter`,
             :meth:`AnyWord`.
         """
-        z = ZZ(0)
+        z = ZZ.zero()
         return Automaton(initial_states=[z],
                          final_states=[z],
                          input_alphabet=input_alphabet)
 
-    def Word(self, word, input_alphabet=None):
+    def Word(self, word, input_alphabet=None) -> Automaton:
         r"""
         Return an automaton recognizing the given word.
 
@@ -268,11 +268,11 @@ class AutomatonGenerators:
         from sage.rings.integer_ring import ZZ
         return Automaton([(ZZ(i), ZZ(i + 1), letter)
                           for i, letter in enumerate(letters)],
-                         initial_states=[ZZ(0)],
+                         initial_states=[ZZ.zero()],
                          final_states=[ZZ(length)],
                          input_alphabet=input_alphabet)
 
-    def ContainsWord(self, word, input_alphabet):
+    def ContainsWord(self, word, input_alphabet) -> Automaton:
         r"""
         Return an automaton recognizing the words containing
         the given word as a factor.
@@ -357,7 +357,7 @@ class TransducerGenerators:
     - :meth:`~Recursion`
     """
 
-    def Identity(self, input_alphabet):
+    def Identity(self, input_alphabet) -> Transducer:
         """
         Return the identity transducer realizing the identity map.
 
@@ -392,7 +392,7 @@ class TransducerGenerators:
             initial_states=[0],
             final_states=[0])
 
-    def CountSubblockOccurrences(self, block, input_alphabet):
+    def CountSubblockOccurrences(self, block, input_alphabet) -> Transducer:
         r"""
         Return a transducer counting the number of (possibly
         overlapping) occurrences of a block in the input.
@@ -512,7 +512,7 @@ class TransducerGenerators:
             s.is_final = True
         return T
 
-    def Wait(self, input_alphabet, threshold=1):
+    def Wait(self, input_alphabet, threshold=1) -> Transducer:
         r"""
         Writes ``False`` until reading the ``threshold``-th occurrence
         of a true input letter; then writes ``True``.
@@ -555,7 +555,7 @@ class TransducerGenerators:
 
         return T
 
-    def map(self, f, input_alphabet):
+    def map(self, f, input_alphabet) -> Transducer:
         r"""
         Return a transducer which realizes a function
         on the alphabet.
@@ -600,7 +600,8 @@ class TransducerGenerators:
                           initial_states=[0],
                           final_states=[0])
 
-    def operator(self, operator, input_alphabet, number_of_operands=2):
+    def operator(self, operator, input_alphabet,
+                 number_of_operands=2) -> Transducer:
         r"""
         Return a transducer which realizes an operation
         on tuples over the given input alphabet.
@@ -682,7 +683,7 @@ class TransducerGenerators:
                           initial_states=[0],
                           final_states=[0])
 
-    def all(self, input_alphabet, number_of_operands=2):
+    def all(self, input_alphabet, number_of_operands=2) -> Transducer:
         r"""
         Return a transducer which realizes logical ``and`` over the given
         input alphabet.
@@ -733,7 +734,7 @@ class TransducerGenerators:
         return self.operator(lambda *args: all(args),
                              input_alphabet, number_of_operands)
 
-    def any(self, input_alphabet, number_of_operands=2):
+    def any(self, input_alphabet, number_of_operands=2) -> Transducer:
         r"""
         Return a transducer which realizes logical ``or`` over the given
         input alphabet.
@@ -784,7 +785,7 @@ class TransducerGenerators:
         return self.operator(lambda *args: any(args),
                              input_alphabet, number_of_operands)
 
-    def add(self, input_alphabet, number_of_operands=2):
+    def add(self, input_alphabet, number_of_operands=2) -> Transducer:
         r"""
         Return a transducer which realizes addition on pairs over the
         given input alphabet.
@@ -838,7 +839,7 @@ class TransducerGenerators:
                              input_alphabet,
                              number_of_operands=number_of_operands)
 
-    def sub(self, input_alphabet):
+    def sub(self, input_alphabet) -> Transducer:
         r"""
         Return a transducer which realizes subtraction on pairs over
         the given input alphabet.
@@ -877,7 +878,7 @@ class TransducerGenerators:
         """
         return self.operator(operator.sub, input_alphabet)
 
-    def weight(self, input_alphabet, zero=0):
+    def weight(self, input_alphabet, zero=0) -> Transducer:
         r"""
         Return a transducer which realizes the Hamming weight of the input
         over the given input alphabet.
@@ -943,7 +944,7 @@ class TransducerGenerators:
                           initial_states=[0],
                           final_states=[0])
 
-    def abs(self, input_alphabet):
+    def abs(self, input_alphabet) -> Transducer:
         r"""
         Return a transducer which realizes the letter-wise
         absolute value of an input word over the given input alphabet.
@@ -976,7 +977,7 @@ class TransducerGenerators:
         """
         return self.map(abs, input_alphabet)
 
-    def GrayCode(self):
+    def GrayCode(self) -> Transducer:
         """
         Return a transducer converting the standard binary
         expansion to Gray code.
@@ -1010,8 +1011,8 @@ class TransducerGenerators:
         expansion to the Gray code. The result is the same as the one
         given here.
         """
-        z = ZZ(0)
-        o = ZZ(1)
+        z = ZZ.zero()
+        o = ZZ.one()
         return Transducer([[0, 1, z, None],
                            [0, 2, o, None],
                            [1, 1, z, z],
@@ -1339,7 +1340,7 @@ class TransducerGenerators:
 
     def Recursion(self, recursions, base, function=None, var=None,
                   input_alphabet=None, word_function=None,
-                  is_zero=None, output_rings=[ZZ, QQ]):
+                  is_zero=None, output_rings=[ZZ, QQ]) -> Transducer:
         r"""
         Return a transducer realizing the given recursion when reading
         the digit expansion with base ``base``.
@@ -1995,7 +1996,7 @@ class TransducerGenerators:
             if state.label()[0] >= 0:
                 state.final_word_out = f(state.label()[0])
             else:
-                state.final_word_out = ZZ(0)
+                state.final_word_out = ZZ.zero()
 
         return T
 

@@ -2678,7 +2678,7 @@ class CompletionFunctor(ConstructionFunctor):
 
         We check that :issue:`12353` has been resolved::
 
-            sage: RIF(1) > RR(1)                                                        # needs sage.rings.real_interval_field
+            sage: RIF(1) > RR(1)
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for >:
@@ -2686,7 +2686,6 @@ class CompletionFunctor(ConstructionFunctor):
 
         We check that various pushouts work::
 
-            sage: # needs sage.rings.real_interval_field sage.rings.real_mpfr
             sage: R0 = RealIntervalField(30)
             sage: R1 = RealIntervalField(30, sci_not=True)
             sage: R2 = RealIntervalField(53)

@@ -53,29 +53,6 @@ DEFAULT_DPI = 100
 do_verify = True
 
 
-def is_Graphics(x):
-    """
-    Return ``True`` if `x` is a Graphics object.
-
-    EXAMPLES::
-
-        sage: from sage.plot.graphics import is_Graphics
-        sage: is_Graphics(1)
-        doctest:warning...
-        DeprecationWarning: The function is_Graphics is deprecated;
-        use 'isinstance(..., Graphics)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        False
-        sage: is_Graphics(disk((0.0, 0.0), 1, (0, pi/2)))                               # needs sage.symbolic
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_Graphics is deprecated; "
-                "use 'isinstance(..., Graphics)' instead.")
-    return isinstance(x, Graphics)
-
-
 def _parse_figsize(figsize):
     r"""
     Helper function to get a figure size in matplotlib format.
