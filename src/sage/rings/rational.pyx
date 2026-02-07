@@ -234,7 +234,9 @@ cpdef Integer integer_rational_power(Integer a, Rational b):
         sage: integer_rational_power(-1, 9/8) is None
         True
 
-    TESTS (:issue:`11228`)::
+    TESTS:
+
+    Check for :issue:`11228`::
 
         sage: integer_rational_power(-10, QQ(2))
         100

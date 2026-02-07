@@ -38,10 +38,10 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
-from sage.rings.integer_ring import ZZ
-from sage.misc.lazy_import import lazy_import
 from sage.misc.functional import sqrt
+from sage.misc.lazy_import import lazy_import
 from sage.misc.superseded import deprecation
+from sage.rings.integer_ring import ZZ
 
 lazy_import("sage.symbolic.constants", "NaN")
 lazy_import("numpy", "ndarray", as_="numpy_ndarray")
@@ -76,7 +76,7 @@ def mean(v):
         NaN
         sage: mean([I, sqrt(2), 3/5])                                                   # needs sage.symbolic
         1/3*sqrt(2) + 1/3*I + 1/5
-        sage: mean([RIF(1.0103,1.0103), RIF(2)])                                        # needs sage.rings.real_interval_field
+        sage: mean([RIF(1.0103,1.0103), RIF(2)])
         1.5051500000000000?
         sage: mean(range(4))
         3/2
