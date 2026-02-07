@@ -341,7 +341,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
                 self.__reduced_generators = tuple([g])
             return self.__is_principal
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` if this is the zero ideal.
 

@@ -1231,7 +1231,7 @@ class LazyModuleElement(Element):
         v = self._coeff_stream._approximate_order
         return any(self[i] for i in range(v, v + prec))
 
-    def is_nonzero(self, proof=False):
+    def is_nonzero(self, proof=False) -> bool:
         r"""
         Return ``True`` if ``self`` is *known* to be nonzero.
 
@@ -1306,7 +1306,7 @@ class LazyModuleElement(Element):
             return bool(self)
         return False
 
-    def is_trivial_zero(self):
+    def is_trivial_zero(self) -> bool:
         r"""
         Return whether ``self`` is known to be trivially zero.
 
@@ -3983,7 +3983,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
                 return False, None
             return False
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         """
         Return whether this element is a unit in the ring.
 
@@ -5100,7 +5100,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         sage: g == f
         True
     """
-    def is_unit(self):
+    def is_unit(self) -> bool:
         """
         Return whether this element is a unit in the ring.
 

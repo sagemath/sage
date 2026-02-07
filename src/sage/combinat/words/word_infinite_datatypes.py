@@ -745,7 +745,9 @@ class WordDatatype_iter(WordDatatype):
             ...
             ValueError: Step for islice() must be a positive integer or None.
 
-        TESTS FOR INFINITE WORDS::
+        TESTS:
+
+        Check for infinite words::
 
             sage: from itertools import count
             sage: c = Word(count()); c
@@ -1075,7 +1077,9 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
             ...
             ValueError: Step for islice() must be a positive integer or None.
 
-        TESTS FOR INFINITE WORDS::
+        TESTS:
+
+        Check for infinite words::
 
             sage: from itertools import count
             sage: c = Word(count()); c
