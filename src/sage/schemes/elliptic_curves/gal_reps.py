@@ -453,7 +453,9 @@ class GaloisRepresentation(SageObject):
             sage: rho._is_surjective(7,100)
             True
 
-        TEST for :issue:`8451`::
+        TEST:
+
+        Test for :issue:`8451`::
 
             sage: E = EllipticCurve('648a1')
             sage: rho = E.galois_representation()
