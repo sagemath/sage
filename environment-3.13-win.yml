@@ -124,7 +124,7 @@ dependencies:
   - importlib-metadata=8.7.0=pyhe01879c_1
   - importlib_resources=6.5.2=pyhd8ed1ab_0
   - iniconfig=2.3.0=pyhd8ed1ab_0
-  - ipykernel=7.1.0=pyh6dadd2b_0
+  - ipykernel=7.2.0=pyh6dadd2b_0
   - ipython=9.10.0=pyhe2676ad_0
   - ipython_pygments_lexers=1.1.1=pyhd8ed1ab_0
   - ipywidgets=8.1.8=pyhd8ed1ab_0
@@ -266,7 +266,7 @@ dependencies:
   - planarity=4.0.1.0=hfd05255_0
   - platformdirs=4.5.1=pyhcf101f3_0
   - pluggy=1.6.0=pyhf9edf01_1
-  - primesieve=12.12=hac47afa_0
+  - primesieve=12.13=hac47afa_0
   - progressbar2=4.5.0=pyhd8ed1ab_1
   - prompt-toolkit=3.0.52=pyha770c72_0
   - psutil=7.2.2=py313h5fd188c_0
@@ -329,7 +329,7 @@ dependencies:
   - sagemath-db-polytopes=20170220=1
   - scipy=1.17.0=py313he51e9a2_1
   - semver=3.0.4=pyhcf101f3_1
-  - setuptools=80.10.2=pyh332efcf_0
+  - setuptools=81.0.0=pyh332efcf_0
   - shellingham=1.5.4=pyhd8ed1ab_2
   - simdjson=4.2.4=h49e36cd_0
   - six=1.17.0=pyhe01879c_1
