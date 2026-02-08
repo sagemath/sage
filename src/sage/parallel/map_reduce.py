@@ -1941,6 +1941,20 @@ class RESetParallelIterator(RESetMapReduce):
         ....:     lambda l: [l + [0], l + [1]] if len(l) < 15 else [])
         sage: sum(1 for _ in S)
         65535
+
+        Early termination with proper cleanup using a context manager::
+
+            sage: from sage.parallel.map_reduce import RESetParallelIterator
+            sage: from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
+            sage: def succ(x):
+            ....:     if x > 10:
+            ....:         return []
+            ....:     return [x + 1]
+            sage: R = RecursivelyEnumeratedSet(seeds=[0], successors=succ, structure='forest')
+            sage: with RESetParallelIterator(forest=R) as it:
+            ....:     for _ in it:
+            ....:         break
+
     """
     def map_function(self, z):
         r"""
@@ -1994,3 +2008,22 @@ class RESetParallelIterator(RESetMapReduce):
                 if active_proc == 0:
                     break
         self.finish()
+    def __enter__(self):
+        """
+        Enter the context manager.
+
+        This allows RESetParallelIterator to be used safely with a ``with``
+        statement so that worker processes are properly cleaned up on early
+        exit.
+        """
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        """
+        Ensure worker processes are terminated when leaving the context.
+        """
+        try:
+            self.abort()
+        finally:
+            self.finish()
+        return False
