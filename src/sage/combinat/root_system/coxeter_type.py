@@ -1,5 +1,6 @@
 """
 Coxeter types
+Coxeter types
 """
 # ****************************************************************************
 #       Copyright (C) 2015 Travis Scrimshaw <tscrim at ucdavis.edu>,
@@ -25,12 +26,14 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.matrix.args import SparseEntry
 from sage.matrix.constructor import Matrix
+from sage.misc.lazy_import import lazy_import
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicField')
+
 
 
 class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
@@ -48,8 +51,6 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             Coxeter type of ['A', 3]
         """
         hyperbolic_prefix = ("Hyperbolic", "Ah", "Bh", "Dh", "Eh", "K", "L", "Q", "X")
-        level2_prefix = ("K4", "K4dK2", "K23", "Cy", "T", "Ct", "Cktt", "Ckt2", "CC")
-
         if len(x) == 1:
             x = x[0]
 
@@ -60,6 +61,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             if x[0] in hyperbolic_prefix:
                 from sage.combinat.root_system.type_hyperbolic import CoxeterType_Hyperbolic
                 return CoxeterType_Hyperbolic(x)
+
         try:
             return CoxeterTypeFromCartanType(CartanType(x))
         except (ValueError, TypeError):
@@ -85,9 +87,10 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
 
         - ``hyperbolic`` -- boolean or ``None`` (default: ``None``)
 
-        The sample contains all the exceptional finite and affine
-        Coxeter types, as well as typical representatives of the
-        infinite families.
+        The sample contains the exceptional finite, affine and
+        crystallographic Coxeter types, together with some hyperbolic
+        types, and a few representatives of the classical infinite
+        families.
 
         EXAMPLES::
 
@@ -104,7 +107,14 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
              Coxeter type of ['D', 5, 1], Coxeter type of ['E', 6, 1],
              Coxeter type of ['E', 7, 1], Coxeter type of ['E', 8, 1],
              Coxeter type of ['F', 4, 1], Coxeter type of ['G', 2, 1],
-             Coxeter type of ['A', 1, 1]]
+             Coxeter type of ['A', 1, 1],
+             Coxeter type with Humphrey's datum (Page : 141, Column : 1, Row : 3),
+             Coxeter type with Humphrey's datum (Page : 141, Column : 1, Row : 4),
+             Coxeter type with Humphrey's datum (Page : 141, Column : 2, Row : 5),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 6),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 7),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 8),
+             Coxeter type with Humphrey's datum (Page : 144, Column : 1, Row : 3)]
 
         The finite, affine and crystallographic options allow
         respectively for restricting to (non) finite, (non) affine,
@@ -138,12 +148,20 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
              Coxeter type of ['C', 5, 1], Coxeter type of ['D', 5, 1],
              Coxeter type of ['E', 6, 1], Coxeter type of ['E', 7, 1],
              Coxeter type of ['E', 8, 1], Coxeter type of ['F', 4, 1],
-             Coxeter type of ['G', 2, 1], Coxeter type of ['A', 1, 1]]
+             Coxeter type of ['G', 2, 1], Coxeter type of ['A', 1, 1],
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 7),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 8),
+             Coxeter type with Humphrey's datum (Page : 144, Column : 1, Row : 3)]
 
             sage: CoxeterType.samples(crystallographic=False)
             [Coxeter type of ['H', 3],
              Coxeter type of ['H', 4],
-             Coxeter type of ['I', 10]]
+             Coxeter type of ['I', 10],
+             Coxeter type with Humphrey's datum (Page : 141, Column : 1, Row : 3),
+             Coxeter type with Humphrey's datum (Page : 141, Column : 1, Row : 4),
+             Coxeter type with Humphrey's datum (Page : 141, Column : 2, Row : 5),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 6)]
+
 
         .. TODO:: add some reducible Coxeter types (suggestions?)
 
@@ -186,7 +204,14 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
              Coxeter type of ['D', 5, 1], Coxeter type of ['E', 6, 1],
              Coxeter type of ['E', 7, 1], Coxeter type of ['E', 8, 1],
              Coxeter type of ['F', 4, 1], Coxeter type of ['G', 2, 1],
-             Coxeter type of ['A', 1, 1]]
+             Coxeter type of ['A', 1, 1],
+             Coxeter type with Humphrey's datum (Page : 141, Column : 1, Row : 3),
+             Coxeter type with Humphrey's datum (Page : 141, Column : 1, Row : 4),
+             Coxeter type with Humphrey's datum (Page : 141, Column : 2, Row : 5),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 6),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 7),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 8),
+             Coxeter type with Humphrey's datum (Page : 144, Column : 1, Row : 3)]
         """
         finite = [CoxeterType(t) for t in [['A', 1], ['A', 5], ['B', 1], ['B', 5],
                                            ['C', 1], ['C', 5], ['D', 4], ['D', 5],
@@ -340,10 +365,9 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         appropriately.
 
         EXAMPLES::
-
             sage: CoxeterType(['A', 3]).is_hyperbolic()
             False
-            sage: CoxeterType(['Hyp', (141, 1, 3)]).is_hyperbolic()
+            sage: CoxeterType(['Hyperbolic', (141, 1, 3)]).is_hyperbolic()
             True
         """
         return False

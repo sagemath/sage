@@ -1,10 +1,14 @@
 """
 Hyperbolic Coxeter Matrices Database
 
-These matrices are defined by their position in the Humphrey's book
-"Reflection groups and Coxeter groups".
-The first number in the parenthesis is the page,
-the second number is the column and the third number is the row.
+These matrices are defined by their position in the Humphrey's book:
+    "Reflection Groups and Coxeter Groups",
+    Cambridge Studies in Advanced Mathematics, 29, 1990.
+
+"The Coxeter graphs are classified depending on their order and other
+ features. To refer to a Coxeter graph in the book, we use 3 numbers:
+ the page number where the Coxeter graph is depicted and the column
+ and row where the Coxeter graph is placed in the page.
 """
 # ****************************************************************************
 #       Copyright (C) 2025 Samy Mekkati <samy.mekkati.1@ens.etsmtl.ca>
@@ -595,10 +599,10 @@ mcmullen_notation = {
     ("L", 443): (142, 2, 1),
     ("L", 5333): (141, 3, 2),
     ("L", 534): (141, 1, 1),
-    ("L", 54): (),
+    ("L", 54): (),                #No reference
     ("L", 633): (142, 2, 5),
-    ("L", 73): (),
-    ("Q", 3): (),
+    ("L", 73): (),                #No reference
+    ("Q", 3): (),                 #No reference
     ("Q", 4): (141, 2, 1),
     ("Q", 5): (141, 3, 5),
     ("X", 5): (142, 3, 7),

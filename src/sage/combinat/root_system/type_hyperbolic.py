@@ -31,12 +31,10 @@ class CoxeterType_Hyperbolic(CoxeterType):
         """
         EXAMPLES::
 
-            sage: C = CoxeterType(["Hyperbolic", (142, 1, 3)])
-            sage: C
+            sage: C = CoxeterType(["Hyperbolic", (142, 1, 3)]); C
             Coxeter type with Humphrey's datum
             (Page : 142, Column : 1, Row : 3)
-            sage: C = CoxeterType(["Dh", 8])
-            sage: C
+            sage: C = CoxeterType(["Dh", 8]); C
             Coxeter type of ['Dh', 8] with Humphrey's datum
             (Page : 144, Column : 1, Row : 2)
 
@@ -71,12 +69,10 @@ class CoxeterType_Hyperbolic(CoxeterType):
 
         EXAMPLES::
 
-            sage: C = CoxeterType(["Hyperbolic", (142, 1, 1)])
-            sage: C
+            sage: C = CoxeterType(["Hyperbolic", (142, 1, 1)]); C
             Coxeter type with Humphrey's datum
             (Page : 142, Column : 1, Row : 1)
-            sage: C2 = CoxeterType(["Ah", 6])
-            sage: C2
+            sage: C = CoxeterType(["Ah", 6]); C
             Coxeter type of ['Ah', 6] with Humphrey's datum
             (Page : 143, Column : 2, Row : 3)
         """
@@ -146,11 +142,11 @@ class CoxeterType_Hyperbolic(CoxeterType):
 
             sage: C = CoxeterType(["Hyperbolic", (142, 1, 3)])
             sage: C.humphreys_reference()
-            'Page : 142, Column : 1, Row : 3'
+            '(142, 1, 3)'
             sage: CoxeterType(["Dh", 8]).humphreys_reference()
-            'Page : 144, Column : 1, Row : 2'
+            '(144, 1, 2)'
         """
-        return 'Page : {}, Column : {}, Row : {}'.format(*self._position)
+        return '({}, {}, {})'.format(*self._position)
 
     def coxeter_graph(self):
         """
@@ -179,6 +175,8 @@ class CoxeterType_Hyperbolic(CoxeterType):
             True
             sage: CoxeterType(["Bh", 5]).is_hyperbolic()
             True
+            sage: CoxeterType(['A', 3]).is_hyperbolic()
+            False
         """
         return True
 
