@@ -283,11 +283,10 @@ class DirichletCharacter(MultiplicativeGroupElement):
                     raise ValueError("values (= {}) must have multiplicative orders dividing {}, respectively"
                                      .format(x, orders))
                 self.values_on_gens.set_cache(x)
+        elif isinstance(x, free_module_element.FreeModuleElement):
+            self.element.set_cache(x)
         else:
-            if isinstance(x, free_module_element.FreeModuleElement):
-                self.element.set_cache(x)
-            else:
-                self.values_on_gens.set_cache(x)
+            self.values_on_gens.set_cache(x)
 
     @cached_method
     def __eval_at_minus_one(self):
@@ -2569,28 +2568,6 @@ class DirichletGroupFactory(UniqueFactory):
 DirichletGroup = DirichletGroupFactory("DirichletGroup")
 
 
-def is_DirichletGroup(x) -> bool:
-    """
-    Return ``True`` if ``x`` is a Dirichlet group.
-
-    EXAMPLES::
-
-        sage: from sage.modular.dirichlet import is_DirichletGroup
-        sage: is_DirichletGroup(DirichletGroup(11))
-        doctest:warning...
-        DeprecationWarning: The function is_DirichletGroup is deprecated; use 'isinstance(..., DirichletGroup_class)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        True
-        sage: is_DirichletGroup(11)
-        False
-        sage: is_DirichletGroup(DirichletGroup(11).0)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_DirichletGroup is deprecated; use 'isinstance(..., DirichletGroup_class)' instead.")
-    return isinstance(x, DirichletGroup_class)
-
-
 class DirichletGroup_class(WithEqualityById, Parent):
     """
     Group of Dirichlet characters modulo `N` with values in a ring `R`.
@@ -3042,9 +3019,8 @@ class DirichletGroup_class(WithEqualityById, Parent):
         """
         if v is None:
             v = self.list()
-        else:
-            if check:
-                v = [self(x) for x in v]
+        elif check:
+            v = [self(x) for x in v]
 
         G = []
         seen_so_far = set()

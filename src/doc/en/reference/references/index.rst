@@ -2298,6 +2298,10 @@ REFERENCES:
             Journal of Combinatorial Designs 22(6) (2014): 270-277.
             :doi:`10.1002/jcd.21358`
 
+.. [DGM2002] \S. N. Dorogovtsev, A. V. Goltsev and J. F. F. Mendes.
+             *Pseudofractal scale-free web*, Physical Review E 066122, 2002.
+             :doi:`10.1103/PhysRevE.65.066122`
+
 .. [DGMPPS2019] \N. Datta, A. Ghoshal, D. Mukhopadhyay, S. Patranabis,
                 S. Picek, R. Sashukhan. "TRIFLE"
                 https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/trifle-spec.pdf
