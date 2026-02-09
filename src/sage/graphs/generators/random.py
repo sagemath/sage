@@ -96,9 +96,9 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
         sage: set_random_seed(0)
         sage: graphs.RandomGNP(50,.2, algorithm='Sage').size()
         243
-        sage: graphs.RandomGNP(50,.2, algorithm='networkx').size()                      # needs networkx
-        279     # 32-bit
-        209     # 64-bit
+        sage: s = graphs.RandomGNP(50,.2, algorithm='networkx').size()                  # needs networkx
+        sage: s in [279, 209]  # 32 and 64 bit, needs networkx
+        True
     """
     if n < 0:
         raise ValueError("The number of nodes must be positive or null.")

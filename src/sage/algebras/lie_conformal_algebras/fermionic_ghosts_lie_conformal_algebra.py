@@ -28,7 +28,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+from sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra import (
+    GradedLieConformalAlgebra,
+)
 
 
 class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
@@ -89,14 +91,13 @@ class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
         latex_names = None
         half = ngens // 2
         if (names is None) and (index_set is None):
-            from sage.misc.defaults import variable_names as varnames
             from sage.misc.defaults import latex_variable_names as laxnames
+            from sage.misc.defaults import variable_names as varnames
             names = varnames(half, 'b') + varnames(half, 'c')
             latex_names = tuple(laxnames(half, 'b') +
                                 laxnames(half, 'c')) + ('K',)
 
-        from sage.structure.indexed_generators import \
-            standardize_names_index_set
+        from sage.structure.indexed_generators import standardize_names_index_set
         names, index_set = standardize_names_index_set(names=names,
                                                        index_set=index_set,
                                                        ngens=ngens)

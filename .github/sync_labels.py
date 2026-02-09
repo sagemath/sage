@@ -170,7 +170,7 @@ class GhLabelSynchronizer:
 
     def reset_view(self):
         r"""
-        Reset cache of ``gh view`` results. 
+        Reset cache of ``gh view`` results.
         """
         self._labels = None
         self._author = None
@@ -187,7 +187,7 @@ class GhLabelSynchronizer:
         """
         meth = '-X GET'
         if method:
-            meth='-X %s' % method
+            meth = '-X %s' % method
         cmd = 'gh api %s -H \"Accept: application/vnd.github+json\" %s %s' % (meth, path_args, query)
         debug('Execute command: %s' % cmd)
         if method:
@@ -248,6 +248,7 @@ class GhLabelSynchronizer:
         outtxt = str(capt.stdout)
         debug('auth status err: %s' % errtxt)
         debug('auth status out: %s' % outtxt)
+
         def read_login(txt, position_mark):
             for t in txt:
                 for p in position_mark:
@@ -413,7 +414,7 @@ class GhLabelSynchronizer:
         date_commits = list(self._commits)
         if Status.positive_review.value not in self.get_labels():
             for com in self._commits:
-                message =  com['messageHeadline']
+                message = com['messageHeadline']
                 if message.startswith('Merge') and 'develop' in message:
                     debug('Ignore merge commit %s for commit_date' % com['oid'])
                     date_commits.remove(com)
@@ -796,7 +797,6 @@ class GhLabelSynchronizer:
         if item is Status.positive_review:
             self.add_warning('Label *%s* cannot be added by the author of the PR.' % item.value)
             self.remove_label(item.value)
-        return
 
     def warning_about_label_addition(self, item):
         r"""
@@ -808,7 +808,6 @@ class GhLabelSynchronizer:
             self.add_warning('Label *%s* may be incorrect, since there are unresolved reviews.' % item.value)
         else:
             self.add_warning('Label *%s* does not match the state of GitHub\'s review system.' % item.value)
-        return
 
     def hint_about_label_removal(self, item):
         r"""
@@ -819,7 +818,6 @@ class GhLabelSynchronizer:
         else:
             sel_list = 'priority'
         self.add_hint('You don\'t need to remove %s labels any more. You\'d better just add the label which replaces it.' % sel_list)
-        return
 
     # -------------------------------------------------------------------------
     # methods to act on events
@@ -942,7 +940,7 @@ class GhLabelSynchronizer:
                 info('Simulate label addition of %s for %s' % (label, self._issue))
                 self.select_label(status)
                 self.run(Action.labeled, label=status.value)
-            
+
     def remove_all_labels_of_sel_list(self, sel_list):
         r"""
         Remove all labels of given selection list.

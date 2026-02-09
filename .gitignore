@@ -120,6 +120,7 @@ build/temp.*/
 build/bin/sage-build-env-config
 
 # Generated files in build
+build/cp31[1-9]
 build/pkgs/cypari/version_requirements.txt
 build/pkgs/cysignals/version_requirements.txt
 build/pkgs/cython/version_requirements.txt
