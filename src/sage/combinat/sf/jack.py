@@ -820,6 +820,27 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
             return parent._normalize_coefficients(res)
 
+        def __pow__(self, n):
+            r"""
+            Return the naive powering of an instance of ``self``.
+
+            INPUT:
+
+            - ``n`` -- nonnegative integer
+
+            OUTPUT: the `n`-th power of ``self`` in the Jack basis
+
+            Binary exponentiation leads to an explosion in the number of terms
+            for Jack polynomials. Naive multiplication is significantly faster.
+
+            EXAMPLES::
+
+                sage: Jack = SymmetricFunctions(FractionField(QQ['t'])).jack().P()
+                sage: len(Jack([2,1])^6) # long time (~2 s)
+                247
+            """
+            return self._pow_naive(n)
+
 
 def part_scalar_jack(part1, part2, t):
     r"""

@@ -569,6 +569,24 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
         Methods for elements of a Hall-Littlewood basis that are common to all bases.
         """
 
+        def __pow__(self, n):
+            r"""
+            Return the naive powering of an instance of ``self``.
+
+            INPUT:
+
+            - ``n`` -- nonnegative integer
+
+            OUTPUT: the `n`-th power of ``self`` in the Hall-Littlewood basis
+
+            EXAMPLES::
+
+                sage: HLP = SymmetricFunctions(FractionField(QQ['t'])).hall_littlewood().P()
+                sage: len(HLP([2,1])^6) # long time (~1 s)
+                247
+            """
+            return self._pow_naive(n)
+
         def expand(self, n, alphabet='x'):
             r"""
             Expand the symmetric function as a symmetric polynomial in ``n`` variables.

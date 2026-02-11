@@ -518,6 +518,24 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             # elementary basis - using the powersum basis would
             # introduce singularities, because it is not a Z-basis
             return self.parent().realization_of().elementary()(self).exponential_specialization(t=t, q=q)
+        
+        def __pow__(self, n):
+            r"""
+            Return the naive powering of an instance of ``self``.
+
+            INPUT:
+
+            - ``n`` -- nonnegative integer
+
+            OUTPUT: the `n`-th power of ``self`` in the monomial basis
+
+            EXAMPLES::
+
+                sage: m = SymmetricFunctions(QQ).m()
+                sage: len(m([2,1])^6) # long time (~1 s)
+                292
+            """
+            return self._pow_naive(n)
 
 
 # Backward compatibility for unpickling

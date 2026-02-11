@@ -622,7 +622,23 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
                               to_other_function=self._to_m)
 
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
-        pass
+        def __pow__(self, n):
+            r"""
+            Return the naive powering of an instance of ``self``.
+
+            INPUT:
+
+            - ``n`` -- nonnegative integer
+
+            OUTPUT: the `n`-th power of ``self`` in the LLT basis
+
+            EXAMPLES::
+
+                sage: L = SymmetricFunctions(FractionField(QQ['t'])).llt(3).hspin()
+                sage: len(L([1,1])^4) # long time (~2 s)
+                18
+            """
+            return self._pow_naive(n)
 
 
 # the H-spin basis
