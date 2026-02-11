@@ -272,7 +272,6 @@ def HyperellipticCurve(f, h=None, names=None, PP=None, check_squarefree=True):
         from sage.rings.polynomial.multi_polynomial import MPolynomial
         if isinstance(f, MPolynomial) and len(f.parent().gens()) == 2:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            from sage.structure.element import get_coercion_model
             P = PolynomialRing(f.base_ring(), 'x')
             f, h = _parse_multivariate_defining_equation(f)
             f, h = P(f), P(h)

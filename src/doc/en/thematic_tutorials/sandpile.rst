@@ -1436,7 +1436,7 @@ EXAMPLES::
     all_k_config             -- The constant configuration with all values set to k.
     all_k_div                -- The divisor with all values set to k.
     avalanche_polynomial     -- The avalanche polynomial.
-    betti                    -- The Betti table for the homogeneous toppling ideal.
+    betti                    -- Return the Betti table for the homogeneous toppling ideal.
     betti_complexes          -- The support-complexes with non-trivial homology.
     ...
     unsaturated_ideal        -- The unsaturated, homogeneous toppling ideal.
@@ -3165,11 +3165,11 @@ EXAMPLES::
     enter "SandpileConfig.FOO?" or enter "c.FOO?" for any SandpileConfig c.
     <BLANKLINE>
     add_random             -- Add one grain of sand to a random vertex.
-    burst_size             -- The burst size of the configuration with respect to the given vertex.
+    burst_size             -- Return the burst size of the configuration with respect to the given vertex.
     deg                    -- The degree of the configuration.
     dualize                -- The difference with the maximal stable configuration.
-    equivalent_recurrent   -- The recurrent configuration equivalent to the given configuration.
-    equivalent_superstable -- The equivalent superstable configuration.
+    equivalent_recurrent   -- Return the recurrent configuration equivalent to the given configuration.
+    equivalent_superstable -- Return the equivalent superstable configuration.
     fire_script            -- Fire the given script.
     fire_unstable          -- Fire all unstable vertices.
     fire_vertex            -- Fire the given vertex.
@@ -3181,8 +3181,8 @@ EXAMPLES::
     order                  -- The order of the equivalent recurrent element.
     sandpile               -- The configuration's underlying sandpile.
     show                   -- Show the configuration.
-    stabilize              -- The stabilized configuration.
-    support                -- The vertices containing sand.
+    stabilize              -- Return the stabilized configuration.
+    support                -- Return the vertices containing sand.
     unstable               -- The unstable vertices.
     values                 -- The values of the configuration as a list.
 
@@ -3960,7 +3960,7 @@ EXAMPLES::
     betti                  -- The Betti numbers for the support-complex.
     deg                    -- The degree of the divisor.
     dualize                -- The difference with the maximal stable divisor.
-    effective_div          -- All linearly equivalent effective divisors.
+    effective_div          -- Return all linearly equivalent effective divisors.
     fire_script            -- Fire the given script.
     fire_unstable          -- Fire all unstable vertices.
     fire_vertex            -- Fire the given vertex.
@@ -3970,16 +3970,16 @@ EXAMPLES::
     is_q_reduced           -- Return whether the divisor is q-reduced.
     is_symmetric           -- Return whether the divisor is symmetric.
     is_weierstrass_pt      -- Return whether the given vertex is a Weierstrass point.
-    polytope               -- The polytope determining the complete linear system.
-    polytope_integer_pts   -- The integer points inside divisor's polytope.
-    q_reduced              -- The linearly equivalent q-reduced divisor.
-    rank                   -- The rank of the divisor.
+    polytope               -- Return the polytope determining the complete linear system.
+    polytope_integer_pts   -- Return the integer points inside divisor's polytope.
+    q_reduced              -- Return the linearly equivalent q-reduced divisor.
+    rank                   -- Return the rank of the divisor.
     sandpile               -- The divisor's underlying sandpile.
     show                   -- Show the divisor.
-    simulate_threshold     -- The first unstabilizable divisor in the closed Markov chain.
+    simulate_threshold     -- Return the first unstabilizable divisor in the closed Markov chain.
     stabilize              -- The stabilization of the divisor.
     support                -- List of vertices at which the divisor is nonzero.
-    unstable               -- The unstable vertices.
+    unstable               -- Return the unstable vertices.
     values                 -- The values of the divisor as a list.
     weierstrass_div        -- The Weierstrass divisor.
     weierstrass_gap_seq    -- The Weierstrass gap sequence at the given vertex.

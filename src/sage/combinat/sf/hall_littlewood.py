@@ -4,7 +4,7 @@ Hall-Littlewood polynomials
 
 Notation used in the definitions follows mainly [Mac1995]_.
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -16,8 +16,8 @@ Notation used in the definitions follows mainly [Mac1995]_.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 import sage.combinat.partition
 import sage.misc.persist

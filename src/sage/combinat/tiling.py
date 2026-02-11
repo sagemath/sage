@@ -2408,23 +2408,21 @@ class TilingSolver(SageObject):
             sage: a = T.animate('incremental', stop=13); a      # not tested            # needs sage.plot
             Animation with 13 frames
         """
+        from sage.plot.graphics import Graphics
+        from sage.plot.animate import Animation
         dimension = self._box._dimension
         if dimension == 2:
-            from sage.plot.graphics import Graphics
-            from sage.plot.animate import Animation
             it = self.solve(partial=partial)
             it = itertools.islice(it, stop)
-            L = [sum([piece.show2d(size)
-                      for piece in solution], Graphics()) for solution in it]
-            (xmin,ymin), (xmax,ymax) = self._box.bounding_box()
-            xmax = xmax+0.5
-            ymax = ymax+0.5
-            a = Animation(L, xmin=xmin-0.5, ymin=ymin-0.5,
-                          xmax=xmax, ymax=ymax, aspect_ratio=1, axes=axes)
-            return a
-        elif dimension == 3:
+            L = [sum([piece.show2d(size) for piece in solution], Graphics())
+                 for solution in it]
+            (xmin, ymin), (xmax, ymax) = self._box.bounding_box()
+            xmax = xmax + 0.5
+            ymax = ymax + 0.5
+            return Animation(L, xmin=xmin - 0.5, ymin=ymin - 0.5,
+                             xmax=xmax, ymax=ymax, aspect_ratio=1, axes=axes)
+        if dimension == 3:
             raise NotImplementedError("3d Animation must be implemented "
                                       "in Jmol first")
-        else:
-            raise NotImplementedError("Dimension must be 2 or 3 in order "
-                                      "to make an animation")
+        raise NotImplementedError("Dimension must be 2 or 3 in order "
+                                  "to make an animation")

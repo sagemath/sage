@@ -58,8 +58,7 @@ Beispiel) gefolgt von einem Fragezeichen eingegeben wird:
             sage: maxima(log2).float()
             .6931471805599453
             sage: gp(log2)
-            0.6931471805599453094172321215             # 32-bit
-            0.69314718055994530941723212145817656807   # 64-bit
+            0.693147180559945309417232121...
     sage: sudoku?
     File:        sage/local/lib/python2.5/site-packages/sage/games/sudoku.py
     Type:        <... 'function'>

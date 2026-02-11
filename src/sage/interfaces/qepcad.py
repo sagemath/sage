@@ -604,19 +604,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import os
-from sage.env import SAGE_LOCAL
-import pexpect
 import re
 import sys
 
+import pexpect
+
 from sage.cpython.string import bytes_to_str
+from sage.env import SAGE_LOCAL
+from sage.interfaces.expect import Expect, ExpectFunction
+from sage.interfaces.interface import AsciiArtString
+from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.flatten import flatten
+from sage.misc.instancedoc import instancedoc
 from sage.misc.sage_eval import sage_eval
 from sage.repl.preparse import implicit_mul
-from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.misc.instancedoc import instancedoc
-from .expect import Expect, ExpectFunction
-from sage.interfaces.interface import AsciiArtString
 
 
 def _qepcad_atoms(formula):
@@ -2336,10 +2337,10 @@ def _eval_qepcad_algebraic(text):
         sage: 8*x^2 - 8*x - 29 == 0
         True
     """
-    from sage.rings.rational_field import QQ
     from sage.rings.polynomial.polynomial_ring import polygen
-    from sage.rings.real_mpfi import RealIntervalField
     from sage.rings.qqbar import AA
+    from sage.rings.rational_field import QQ
+    from sage.rings.real_mpfi import RealIntervalField
 
     match = _qepcad_algebraic_re.match(text)
 

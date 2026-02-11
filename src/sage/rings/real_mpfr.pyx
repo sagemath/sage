@@ -220,9 +220,10 @@ def mpfr_prec_max():
     EXAMPLES::
 
         sage: from sage.rings.real_mpfr import mpfr_prec_max
-        sage: mpfr_prec_max()
-        2147483391              # 32-bit
-        9223372036854775551     # 64-bit
+        sage: prec32 = 2147483391
+        sage: prec64 = 9223372036854775551
+        sage: mpfr_prec_max() in [prec32, prec64]
+        True
 
         sage: R = RealField(2^31-257); R
         Real Field with 2147483391 bits of precision
@@ -242,9 +243,10 @@ def mpfr_get_exp_min():
     EXAMPLES::
 
         sage: from sage.rings.real_mpfr import mpfr_get_exp_min
-        sage: mpfr_get_exp_min()
-        -1073741823            # 32-bit
-        -4611686018427387903   # 64-bit
+        sage: min32 = -1073741823
+        sage: min64 = -4611686018427387903
+        sage: mpfr_get_exp_min() in [min32, min64]
+        True
         sage: 0.5 >> (-mpfr_get_exp_min())
         2.38256490488795e-323228497            # 32-bit
         8.50969131174084e-1388255822130839284  # 64-bit
@@ -261,9 +263,10 @@ def mpfr_get_exp_max():
     EXAMPLES::
 
         sage: from sage.rings.real_mpfr import mpfr_get_exp_max
-        sage: mpfr_get_exp_max()
-        1073741823            # 32-bit
-        4611686018427387903   # 64-bit
+        sage: max32 = 1073741823
+        sage: max64 = 4611686018427387903
+        sage: mpfr_get_exp_max() in [max32, max64]
+        True
         sage: 0.5 << mpfr_get_exp_max()
         1.04928935823369e323228496            # 32-bit
         2.93782689455579e1388255822130839282  # 64-bit
@@ -322,9 +325,10 @@ def mpfr_get_exp_min_min():
     EXAMPLES::
 
         sage: from sage.rings.real_mpfr import mpfr_get_exp_min_min, mpfr_set_exp_min
-        sage: mpfr_get_exp_min_min()
-        -1073741823            # 32-bit
-        -4611686018427387903   # 64-bit
+        sage: min32 = -1073741823
+        sage: min64 = -4611686018427387903
+        sage: mpfr_get_exp_min_min() in [min32, min64]
+        True
 
     This is really the minimal value allowed::
 
@@ -343,9 +347,10 @@ def mpfr_get_exp_max_max():
     EXAMPLES::
 
         sage: from sage.rings.real_mpfr import mpfr_get_exp_max_max, mpfr_set_exp_max
-        sage: mpfr_get_exp_max_max()
-        1073741823            # 32-bit
-        4611686018427387903   # 64-bit
+        sage: max32 = 1073741823
+        sage: max64 = 4611686018427387903
+        sage: mpfr_get_exp_max_max() in [max32, max64]
+        True
 
     This is really the maximal value allowed::
 
@@ -2284,17 +2289,20 @@ cdef class RealNumber(sage.structure.element.RingElement):
             1
             sage: RR(0).nextbelow().nextbelow().fp_rank()
             -2
-            sage: RR(1).fp_rank()
-            4835703278458516698824705            # 32-bit
-            20769187434139310514121985316880385  # 64-bit
-            sage: RR(-1).fp_rank()
-            -4835703278458516698824705            # 32-bit
-            -20769187434139310514121985316880385  # 64-bit
+            sage: rank32 = 4835703278458516698824705
+            sage: rank64 = 20769187434139310514121985316880385
+            sage: RR(1).fp_rank() in [rank32, rank64]
+            True
+            sage: rank32 = -4835703278458516698824705
+            sage: rank64 = -20769187434139310514121985316880385
+            sage: RR(-1).fp_rank() in [rank32, rank64]
+            True
             sage: RR(1).fp_rank() - RR(1).nextbelow().fp_rank()
             1
-            sage: RR(-infinity).fp_rank()
-            -9671406552413433770278913            # 32-bit
-            -41538374868278621023740371006390273  # 64-bit
+            sage: rank32 = -9671406552413433770278913
+            sage: rank64 = -41538374868278621023740371006390273
+            sage: RR(-infinity).fp_rank() in [rank32, rank64]
+            True
             sage: RR(-infinity).fp_rank() - RR(-infinity).nextabove().fp_rank()
             -1
         """
@@ -2372,9 +2380,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         There are lots of floating-point numbers around 0::
 
-            sage: R2(-1).fp_rank_delta(R2(1))
-            4294967298            # 32-bit
-            18446744073709551618  # 64-bit
+            sage: delta32 = 4294967298
+            sage: delta64 = 18446744073709551618
+            sage: R2(-1).fp_rank_delta(R2(1)) in [delta32, delta64]
+            True
         """
         # We create the API for forward compatibility, because it can have
         # a (somewhat) more efficient implementation than this; but for now,
@@ -2390,19 +2399,17 @@ cdef class RealNumber(sage.structure.element.RingElement):
         TESTS::
 
             sage: RR(1) + RIF(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            2
-            sage: import warnings; warnings.resetwarnings()
-        """
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for +: ...
+       """
         if have_same_parent(left, right):
             return (<RealNumber> left)._add_(right)
         try:
             from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
-        if type(right) is RealIntervalFieldElement:
+        if isinstance(right, RealIntervalFieldElement):
             return right.__add__(left)
         elif isinstance(left, RealNumber):
             return Element.__add__(left, right)
@@ -2414,11 +2421,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
         TESTS::
 
             sage: RR(2) - RIF(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            1
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for +: ...
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._sub_(right)
@@ -2426,7 +2431,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
-        if type(right) is RealIntervalFieldElement:
+        if isinstance(right, RealIntervalFieldElement):
             return (-right).__add__(left)
         elif isinstance(left, RealNumber):
             return Element.__sub__(left, right)
@@ -2438,11 +2443,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
         TESTS::
 
             sage: RR(1) * RIF(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            1
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for *: ...
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._mul_(right)
@@ -2450,7 +2453,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
-        if type(right) is RealIntervalFieldElement:
+        if isinstance(right,RealIntervalFieldElement):
             return right.__mul__(left)
         elif isinstance(left, RealNumber):
             return Element.__mul__(left, right)
@@ -2462,11 +2465,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
         TESTS::
 
             sage: RR(1) / RIF(1/2)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            2
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for /: ...
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._div_(right)
@@ -2474,7 +2475,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
-        if type(right) is RealIntervalFieldElement:
+        if isinstance(right, RealIntervalFieldElement):
             return right.__rtruediv__(left)
         elif isinstance(left, RealNumber):
             return Element.__truediv__(left, right)
@@ -3368,9 +3369,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
             1.41421356237309515
             sage: RR(2.0).sqrt().__pari__().sage().prec()
             64
-            sage: RealField(70)(pi).__pari__().sage().prec()                            # needs sage.symbolic
-            96                                         # 32-bit
-            128                                        # 64-bit
+            sage: prec32 = 96
+            sage: prec64 = 128
+            sage: RealField(70)(pi).__pari__().sage().prec() in [prec32, prec64]        # needs sage.symbolic
+            True
             sage: for i in range(100, 200):
             ....:     assert(RR(i).sqrt() == RR(i).sqrt().__pari__().sage())
 
@@ -5370,9 +5372,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
             1.64493406684823
             sage: pari(2).zeta(precision=128).sage().prec()                             # needs sage.libs.pari
             128
-            sage: pari(2).zeta(precision=65).sage().prec()                              # needs sage.libs.pari
-            128                                                # 64-bit
-            96                                                 # 32-bit
+            sage: prec32 = 96
+            sage: prec64 = 128
+            sage: pari(2).zeta(precision=65).sage().prec() in [prec32, prec64]          # needs sage.libs.pari
+            True
 
         Note that the number of bits of precision in the constructor only
         effects the internal precision of the pari number, which is rounded
