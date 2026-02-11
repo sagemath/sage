@@ -49,7 +49,8 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.sets.primes import Primes
 from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.sets.primes import Primes
+from sage.structure.factory import UniqueFactory
 
 
 def fast_char_p_power(x, n, p=None):
@@ -123,8 +124,61 @@ def fast_char_p_power(x, n, p=None):
 
     return xn
 
+class WittVectorRingFactory(UniqueFactory): 
+    def create_key(self, coefficient_ring, prec=1, p=None, algorithm=None):
+        if coefficient_ring not in CommutativeRings():
+            raise TypeError(f"{coefficient_ring} is not a commutative ring")
+        elif not isinstance(prec, (int, Integer)):
+            raise TypeError(f"{prec} is not an integer")
+        elif prec <= 0:
+            raise ValueError(f"{prec} must be positive")
 
-class WittVectorRing(Parent, UniqueRepresentation):
+        prec = Integer(prec)
+        char = coefficient_ring.characteristic()
+
+        if p is None:
+            if char not in Primes():
+                raise ValueError(f"{coefficient_ring} has non-prime "
+                                 "characteristic and no prime was supplied")
+            p = char
+        elif p not in Primes():
+            raise ValueError(f"p must be a prime number, here {p} was given")
+
+        match algorithm:
+            case None:
+                if p == char:
+                    if (coefficient_ring in Fields().Finite()
+                        or isinstance(coefficient_ring,
+                                      PolynomialRing_generic)
+                        and coefficient_ring.base()
+                            in Fields().Finite()):
+                        child = WittVectorRing_phantom
+                    else:
+                        child = WittVectorRing_finotti
+                elif coefficient_ring(p).is_unit():
+                    child = WittVectorRing_pinvertible
+                else:
+                    child = WittVectorRing_standard
+            case 'finotti':
+                child = WittVectorRing_finotti
+            case 'phantom':
+                child = WittVectorRing_phantom
+            case 'p_invertible':
+                child = WittVectorRing_pinvertible
+            case 'standard':
+                child = WittVectorRing_standard
+            case _:
+                raise ValueError("algorithm must be one of None, 'standard', "
+                                 "'p_invertible', 'finotti', 'phantom'")
+        return (coefficient_ring, prec, p, child)
+    
+    def create_object(self, version, key, **extra_args):
+        (coefficient_ring, prec, p, child) = key
+        return child(coefficient_ring, prec, p)
+
+WittVectorRing = WittVectorRingFactory("WittVectorRing")
+
+class WittVectorRingOjbect(Parent):
     r"""
     Return the appropriate `p`-typical truncated Witt vector ring.
 
@@ -245,64 +299,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
         sage: type(W)
         <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_finotti_with_category'>
     """
-    def __classcall_private__(cls, coefficient_ring, prec=1, p=None, algorithm=None):
-        r"""
-        Construct the ring of truncated Witt vectors from the parameters.
-
-        TESTS::
-
-            sage: W = WittVectorRing(QQ, p=5)
-            sage: W
-            Ring of truncated 5-typical Witt vectors of length 1 over Rational Field
-        """
-        if coefficient_ring not in CommutativeRings():
-            raise TypeError(f"{coefficient_ring} is not a commutative ring")
-        elif not isinstance(prec, (int, Integer)):
-            raise TypeError(f"{prec} is not an integer")
-        elif prec <= 0:
-            raise ValueError(f"{prec} must be positive")
-
-        prec = Integer(prec)
-        char = coefficient_ring.characteristic()
-
-        if p is None:
-            if char not in Primes():
-                raise ValueError(f"{coefficient_ring} has non-prime "
-                                 "characteristic and no prime was supplied")
-            p = char
-        elif p not in Primes():
-            raise ValueError(f"p must be a prime number, here {p} was given")
-
-        match algorithm:
-            case None:
-                if p == char:
-                    if (coefficient_ring in Fields().Finite()
-                        or isinstance(coefficient_ring,
-                                      PolynomialRing_generic)
-                        and coefficient_ring.base()
-                            in Fields().Finite()):
-                        child = WittVectorRing_phantom
-                    else:
-                        child = WittVectorRing_finotti
-                elif coefficient_ring(p).is_unit():
-                    child = WittVectorRing_pinvertible
-                else:
-                    child = WittVectorRing_standard
-            case 'finotti':
-                child = WittVectorRing_finotti
-            case 'phantom':
-                child = WittVectorRing_phantom
-            case 'p_invertible':
-                child = WittVectorRing_pinvertible
-            case 'standard':
-                child = WittVectorRing_standard
-            case _:
-                raise ValueError("algorithm must be one of None, 'standard', "
-                                 "'p_invertible', 'finotti', 'phantom'")
-
-        return child.__classcall__(child, coefficient_ring, prec, p)
-
-    def __init__(self, coefficient_ring, prec, prime, algorithm) -> None:
+    def __init__(self, coefficient_ring, prec, prime) -> None:
         r"""
         Initialise ``self``.
 
@@ -397,7 +394,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
             sage: W.has_coerce_map_from(WittVectorRing(ZZ, p=3, prec=3))  # indirect doctest
             False
         """
-        if (isinstance(S, WittVectorRing)
+        if (isinstance(S, WittVectorRingOjbect)
             and S.precision() >= self._prec and S.prime() == self._prime
             and self._coefficient_ring.has_coerce_map_from(
                 S.coefficient_ring())):
@@ -1157,7 +1154,7 @@ class WittVectorRing_finotti(WittVectorRing):
             return sum(scriptM[k])
 
 
-class WittVectorRing_phantom(WittVectorRing):
+class WittVectorRing_phantom(WittVectorRingOjbect):
     """
     Child class for truncated Witt vectors using the ``phantom`` algorithm.
 
@@ -1220,7 +1217,7 @@ class WittVectorRing_phantom(WittVectorRing):
         super().__init__(coefficient_ring, prec, prime, "phantom")
 
 
-class WittVectorRing_pinvertible(WittVectorRing):
+class WittVectorRing_pinvertible(WittVectorRingOjbect):
     """
     Child class for truncated Witt vectors using the ``p_invertible`` algorithm.
 
@@ -1267,7 +1264,7 @@ class WittVectorRing_pinvertible(WittVectorRing):
         super().__init__(coefficient_ring, prec, prime, "p_invertible")
 
 
-class WittVectorRing_standard(WittVectorRing):
+class WittVectorRing_standard(WittVectorRingOjbect):
     """
     Child class for truncated Witt vectors using the ``standard`` algorithm.
 
@@ -1299,7 +1296,7 @@ class WittVectorRing_standard(WittVectorRing):
             sage: TestSuite(W).run()
         """
         self._always_coerce = []
-        self._coerce_when_different = [WittVectorRing]
+        self._coerce_when_different = [WittVectorRingOjbect]
 
         self._generate_witt_polynomials(coefficient_ring, prec, prime)
 
