@@ -713,13 +713,15 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: CM = CoxeterMatrix([[1, -2], [-2, 1]], ['a', 'b'])
-            sage: CM.__hash__()
-            -337812865737895661  # 64-bit
-            153276691            # 32-bit
+            sage: hash32 = 153276691
+            sage: hash64 = -337812865737895661
+            sage: CM.__hash__() in [hash32, hash64]
+            True
             sage: CM = CoxeterMatrix([[1, -3], [-3, 1]], ['1', '2'])
-            sage: CM.__hash__()
-            -506719298606843492  # 64-bit
-            -1917568612          # 32-bit
+            sage: hash32 = -1917568612
+            sage: hash64 = -506719298606843492
+            sage: CM.__hash__() in [hash32, hash64]
+            True
         """
         return hash(self._matrix)
 

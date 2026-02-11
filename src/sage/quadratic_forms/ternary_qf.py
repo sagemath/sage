@@ -120,9 +120,10 @@ class TernaryQF(SageObject):
         EXAMPLES::
 
             sage: Q = TernaryQF([1, 2, 3, 4, 5, 6])
-            sage: Q.__hash__()
-            5881802312257552497  # 64-bit
-            1770036893           # 32-bit
+            sage: hash32 = 1770036893
+            sage: hash64 = 5881802312257552497
+            sage: Q.__hash__() in [hash32, hash64]
+            True
         """
         return hash(self.coefficients())
 

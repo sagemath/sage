@@ -1231,7 +1231,7 @@ class LazyModuleElement(Element):
         v = self._coeff_stream._approximate_order
         return any(self[i] for i in range(v, v + prec))
 
-    def is_nonzero(self, proof=False):
+    def is_nonzero(self, proof=False) -> bool:
         r"""
         Return ``True`` if ``self`` is *known* to be nonzero.
 
@@ -1306,7 +1306,7 @@ class LazyModuleElement(Element):
             return bool(self)
         return False
 
-    def is_trivial_zero(self):
+    def is_trivial_zero(self) -> bool:
         r"""
         Return whether ``self`` is known to be trivially zero.
 
@@ -3925,7 +3925,65 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
         sage: f = 1 / (1 - z - z^2)
         sage: TestSuite(f).run()
     """
-    def is_unit(self):
+    def is_square(self, root=False):
+        r"""
+        Return whether this lazy series is a square.
+
+        INPUT:
+
+        - ``root`` -- boolean (default: ``False``); if ``True``, return a pair
+          ``(True, sqrt)`` if this element is a square, and ``(False, None)``
+          otherwise
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: (z^2).is_square()
+            True
+            sage: (z^3).is_square()
+            False
+            sage: (1 + z).is_square()
+            True
+        """
+        if self.is_zero():
+            if root:
+                return True, self
+            return True
+
+        v = self.valuation()
+        if v % 2 != 0:
+            if root:
+                return False, None
+            return False
+
+        if v == 0:
+            unit_part = self
+        else:
+            P = self.parent()
+            z = P.gen()
+            unit_part = self * z**(-v)
+
+        if not unit_part.coefficient(0).is_square():
+            if root:
+                return False, None
+            return False
+
+        try:
+            sqrt_unit = unit_part.sqrt()
+
+            if root:
+                if v == 0:
+                    return True, sqrt_unit
+                else:
+                    return True, sqrt_unit * z**(v // 2)
+            return True
+
+        except (ValueError, ArithmeticError):
+            if root:
+                return False, None
+            return False
+
+    def is_unit(self) -> bool:
         """
         Return whether this element is a unit in the ring.
 
@@ -5042,7 +5100,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         sage: g == f
         True
     """
-    def is_unit(self):
+    def is_unit(self) -> bool:
         """
         Return whether this element is a unit in the ring.
 

@@ -176,7 +176,7 @@ TESTS::
     True
 """
 
-####################################################################################
+##############################################################################
 #       Copyright (C) 2011 Rob Beezer <beezer@ups.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -189,7 +189,7 @@ TESTS::
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-####################################################################################
+##############################################################################
 
 from sage.matrix.constructor import matrix
 import sage.modules.free_module_homspace
@@ -200,51 +200,6 @@ import sage.modules.free_module_homspace
 # consider adjusting the free module doctests, since many are written with
 # examples that are actually vector spaces and not so many use "pure" modules
 # for the examples.
-
-
-def is_VectorSpaceHomspace(x):
-    r"""
-    Return ``True`` if ``x`` is a vector space homspace.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    EXAMPLES:
-
-    To be a vector space morphism, the domain and codomain must both be
-    vector spaces, in other words, modules over fields.  If either
-    set is just a module, then the ``Hom()`` constructor will build a
-    space of free module morphisms.  ::
-
-        sage: H = Hom(QQ^3, QQ^2)
-        sage: type(H)
-        <class 'sage.modules.vector_space_homspace.VectorSpaceHomspace_with_category'>
-        sage: sage.modules.vector_space_homspace.is_VectorSpaceHomspace(H)
-        doctest:warning...
-        DeprecationWarning: the function is_VectorSpaceHomspace is deprecated;
-        use 'isinstance(..., VectorSpaceHomspace)' instead
-        See https://github.com/sagemath/sage/issues/37924 for details.
-        True
-
-        sage: K = Hom(QQ^3, ZZ^2)
-        sage: type(K)
-        <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
-        sage: sage.modules.vector_space_homspace.is_VectorSpaceHomspace(K)
-        False
-
-        sage: L = Hom(ZZ^3, QQ^2)
-        sage: type(L)
-        <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
-        sage: sage.modules.vector_space_homspace.is_VectorSpaceHomspace(L)
-        False
-
-        sage: sage.modules.vector_space_homspace.is_VectorSpaceHomspace('junk')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37924, "the function is_VectorSpaceHomspace is deprecated; use 'isinstance(..., VectorSpaceHomspace)' instead")
-    return isinstance(x, VectorSpaceHomspace)
 
 
 class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):

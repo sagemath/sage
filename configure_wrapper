@@ -10,4 +10,9 @@ set -e
 trap 'mv bak_conftest.py conftest.py; trap - EXIT; exit' EXIT INT HUP TERM
 
 cp conftest.py bak_conftest.py
-./real_configure $@
+./real_configure "$@"
+
+# Fix config.status to call ./configure instead of ./real_configure
+# so that --recheck also protects conftest.py
+sed -i.old "s|'./real_configure'|'./configure'|g" config.status
+rm -f config.status.old

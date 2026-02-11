@@ -22,11 +22,11 @@ py.install_sources(
 )
 
 extension_data = {
-  'dense_graph' : files('dense_graph.pyx'),
-  'graph_backends' : files('graph_backends.pyx'),
-  'sparse_graph' : files('sparse_graph.pyx'),
-  'static_dense_graph' : files('static_dense_graph.pyx'),
-  'static_sparse_backend' : files('static_sparse_backend.pyx'),
+  'dense_graph': files('dense_graph.pyx'),
+  'graph_backends': files('graph_backends.pyx'),
+  'sparse_graph': files('sparse_graph.pyx'),
+  'static_dense_graph': files('static_dense_graph.pyx'),
+  'static_sparse_backend': files('static_sparse_backend.pyx'),
 }
 
 foreach name, pyx : extension_data

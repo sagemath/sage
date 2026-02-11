@@ -127,7 +127,7 @@ AUTHORS:
 - Travis Scrimshaw (2013-02-11): Factored out ``CombinatorialClass``
 - Trevor K. Karn (2022-08-03): Add ``outside_corners``
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -139,8 +139,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent

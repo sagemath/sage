@@ -302,7 +302,7 @@ cdef class Ring(ParentWithGens):
         raise RuntimeError("use ** for exponentiation, not '^', which means xor "
               "in Python, and has the wrong precedence")
 
-    def base_extend(self, R):
+    def base_extend(self, X):
         """
         EXAMPLES::
 
@@ -313,8 +313,8 @@ cdef class Ring(ParentWithGens):
             sage: ZZ.base_extend(GF(7))
             Finite Field of size 7
         """
-        if R.has_coerce_map_from(self):
-            return R
+        if X.has_coerce_map_from(self):
+            return X
         raise TypeError('no base extension defined')
 
     def category(self):
