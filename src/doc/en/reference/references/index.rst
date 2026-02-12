@@ -1451,6 +1451,9 @@ REFERENCES:
               An Algorithmic Approach, Algorithms and Computation in Mathematics,
               Volume 20, Springer (2007)
 
+.. [But2010] Peter Butkovič, *Max-linear systems. Theory and algorithms.*
+             Springer Monographs in Mathematics. London: Springer. xvii, 272 p. (2010). 
+
 .. [Buell89] Duncan A. Buell.
              *Binary Quadratic Forms: Classical Theory and Modern Computations.*
              Springer, 1989.
@@ -1704,8 +1707,12 @@ REFERENCES:
 .. [Conr] Keith Conrad, *Artin-Hasse-Type Series and Roots of Unity*,
           http://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf
 
-.. [Coron2023] Basile Coron *Supersolvability of built lattices and Koszulness
+.. [Coron2023] Basile Coron. *Supersolvability of built lattices and Koszulness
                of generalized Chow rings*. Preprint, :arxiv:`2302.13072` (2023).
+
+.. [Cos2020] Craig Costello. *Supersingular Isogeny Key Exchange for Beginners*,
+             Selected Areas in Cryptography -- SAC 2019. Lecture Notes in Computer
+             Science, vol 11959. Springer, Cham. :doi:`10.1007/978-3-030-38471-5_2`.
 
 .. [CGMRV16] \A. Conte, R. Grossi, A. Marino, R. Rizzi, L. Versari,
              *Directing Road Networks by Listing Strong Orientations*,
@@ -2449,8 +2456,8 @@ REFERENCES:
 
 .. [DP2011] \B. Deconinck and M. S. Patterson, *Computing with plane algebraic
             curves and Riemann surfaces: The algorithms of the Maple package
-            "Algcurves"*, In: A. Bobenko and C. Klein (eds) Computational 
-            approach to Riemann surfaces. Lecture Notes in Mathematics 2013. 
+            "Algcurves"*, In: A. Bobenko and C. Klein (eds) Computational
+            approach to Riemann surfaces. Lecture Notes in Mathematics 2013.
             Springer, Berlin, Heidelberg. (2011).
             :doi:`10.1007/978-3-642-17413-1_2`
 
@@ -2607,7 +2614,7 @@ REFERENCES:
 
 .. [Eh2013] Ehrhardt, Wolfgang. *The AMath and DAMath Special
             Functions: Reference Manual and Implementation Notes*,
-            Version 1.3. 2013. 
+            Version 1.3. 2013.
             https://web.archive.org/web/20131210061646/http://www.wolfgang-ehrhardt.de/specialfunctions.pdf.
 
 .. [EL2002] Ekedahl, Torsten & Laksov, Dan. (2002). *Splitting algebras, Symmetric functions and
@@ -3801,6 +3808,15 @@ REFERENCES:
 
 .. [Ja1971] \N. Jacobson. *Exceptional Lie Algebras*. Marcel Dekker,
             Inc. New York. 1971. IBSN No. 0-8247-1326-5.
+
+.. [Jao2022] David Jao, Reza Azarderakhsh, Matthew Campagna, Craig Costello,
+             Luca De Feo, Basil Hess, Aaron Hutchinson, Amir Jalali,
+             Koray Karabina, Brian Koziel, Brian LaMacchia, Patrick Longa,
+             Michael Naehrig, Geovandro Pereira, Joost Renes,
+             Vladimir Soukharev, and David Urbanik.
+             *Supersingular Isogeny Key Encapsulation*.
+             Technical report, National Institute of Standards and Technology,
+             2022. https://sike.org/files/SIDH-spec.pdf
 
 .. [Jer2006] Mark Jerrum. *Two remarks concerning balanced matroids*.
              Combinatorica 26, no. 6 (2006): 733-742.
@@ -5138,6 +5154,11 @@ REFERENCES:
              of graphs*, Linear Algebra and its Applications 103 (1988),
              119-131.
 
+.. [MPSW25] Travis Morrison, Lorenz Panny, Jana Sotáková, and Michael Wills:
+            *The SEA algorithm for endomorphisms of supersingular elliptic curves*
+            (2025).
+            :arxiv:`2501.16321`
+
 .. [Most2019] Jacob Mostovoy.
               *The pure cactus group is residually nilpotent*.
               Archiv der Math., **113** (2019). pp. 229-235.
@@ -5287,7 +5308,7 @@ REFERENCES:
              Inventiones Mathematicae **84**, (1986), 1-48.
 
 .. [MT2001] B. Mojar and C. Thomassen. *Graphs on Surfaces*.
-             Johns Hopkins University Press, (2001).  ISBN 9780801866890. 
+             Johns Hopkins University Press, (2001).  ISBN 9780801866890.
 
 .. [Mu1997] Murty, M. Ram. *Congruences between modular forms*. In "Analytic
             Number Theory" (ed. Y. Motohashi), London Math. Soc. Lecture Notes
@@ -5300,7 +5321,7 @@ REFERENCES:
 .. [Mur1983] \G. E. Murphy. *The idempotents of the symmetric group
              and Nakayama's conjecture*. J. Algebra **81** (1983). 258-265.
 
-.. [Mus2023] Yossef Musleh. *Algorithms for Drinfeld Modules*. 
+.. [Mus2023] Yossef Musleh. *Algorithms for Drinfeld Modules*.
              PhD thesis, University of Waterloo, 2023.
 
 .. [Muth2019] Robert Muth. *Super RSK correspondence with symmetry*.
@@ -6459,6 +6480,9 @@ REFERENCES:
 .. [Sti2006] Douglas R. Stinson. *Cryptography: Theory and
              Practice*. 3rd edition, Chapman \& Hall/CRC, 2006.
 
+.. [Stokes1990] Timothy Stokes. *Gröbner bases in exterior algebra*.
+                J. Automat. Reason. **6** (1990) 233-250.
+
 .. [Sto1998] \A. Storjohann, An O(n^3) algorithm for Frobenius normal
              form. Proceedings of the International Symposium on
              Symbolic and Algebraic Computation (ISSAC'98), ACM Press,
@@ -6814,6 +6838,10 @@ REFERENCES:
 .. [Vai1994] \I. Vaisman, *Lectures on the Geometry of Poisson
              Manifolds*, Springer Basel AG (Basel) (1994);
              :doi:`10.1007/978-3-0348-8495-2`
+
+.. [VT2001] Adam Van Tuyl: *Computing the degree of the field of 𝑛‑torsion points*
+            (2001).
+            https://ms.mcmaster.ca/~vantuyl/papers/ntorsion_2001.pdf
 
 .. [Var1984] \V. S. Varadarajan. *Lie groups, Lie algebras, and their
              representations*. Reprint of the 1974 edition. Graduate Texts in

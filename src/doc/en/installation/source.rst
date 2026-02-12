@@ -112,6 +112,8 @@ Using Conda
 - You can then start Sage from the command line with ``./sage``
   or run the tests with ``./sage -t``.
 
+.. _system_package_manager:
+
 Using system package manager
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -127,7 +129,7 @@ Depending on your distribution, install the following packages:
 
 .. tab:: Debian/Ubuntu
 
-    Not yet supported.
+    Not yet (fully) supported.
 
 .. tab:: Fedora
 
@@ -151,6 +153,9 @@ Depending on your distribution, install the following packages:
    .. literalinclude:: void.txt
       :language: console
 
+.. tab:: Homebrew (macOS)
+
+    Not yet (fully) supported.
 
 In the case that you want to install some dependencies manually, set the
 correct environment variables to point to the installed libraries:

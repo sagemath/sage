@@ -63,9 +63,10 @@ incoherent with the data structure.
 """
 import itertools
 
-from sage.structure.list_clone import ClonableArray
-from sage.rings.integer import Integer
+from sage.misc.latex import latex
 from sage.misc.misc_c import prod
+from sage.rings.integer import Integer
+from sage.structure.list_clone import ClonableArray
 
 # Unfortunately Cython forbids multiple inheritance. Therefore, we do not
 # inherit from SageObject to be able to inherit from Element or a subclass
@@ -1649,7 +1650,6 @@ class AbstractTree:
         """
         #######################################################################
         # load tikz in the preamble for *view*
-        from sage.misc.latex import latex
         latex.add_package_to_preamble_if_available("tikz")
         #######################################################################
         # latex environment : TikZ
