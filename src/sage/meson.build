@@ -37,14 +37,14 @@ conf_data.set('SAGE_ARCHFLAGS', 'unset')
 conf_data.set('SAGE_PKG_CONFIG_PATH', '')
 openmp = dependency('openmp', required: false, disabler: true)
 if openmp.found()
-  if host_machine.system() == 'darwin'
+if host_machine.system() == 'darwin'
     conf_data.set('OPENMP_CFLAGS', '-Xpreprocessor -fopenmp')
     conf_data.set('OPENMP_CXXFLAGS', '-Xpreprocessor -fopenmp')
-  else
+else
     conf_data.set('OPENMP_CFLAGS', '-fopenmp')
     conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')
   endif
- endif
+endif
 gap_exe = find_program('gap', required: not is_windows, disabler: true)
 ecm_bin = find_program(
   ['ecm', 'gmp-ecm'],
