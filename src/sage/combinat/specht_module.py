@@ -24,17 +24,21 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.combinat.diagram import Diagram
-from sage.combinat.partition import _Partitions
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.modules.with_basis.representation import Representation_abstract
-from sage.sets.family import Family
-from sage.matrix.constructor import matrix
-from sage.rings.rational_field import QQ
-from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModuleWithBasis
 from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.combinat.diagram import Diagram
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.partition import _Partitions
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.modules.with_basis.representation import Representation_abstract
+from sage.modules.with_basis.subquotient import (
+    QuotientModuleWithBasis,
+    SubmoduleWithBasis,
+)
+from sage.rings.rational_field import QQ
+from sage.sets.family import Family
 
 
 class SymmetricGroupRepresentation(Representation_abstract):
@@ -284,7 +288,6 @@ class SpechtModule(SymmetricGroupRepresentation, SubmoduleWithBasis):
             \end{array}$}
             }}
         """
-        from sage.misc.latex import latex
         return f"S^{{{latex(self._diagram)}}}"
 
     def _ascii_art_(self):
@@ -496,7 +499,6 @@ class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
             \end{array}$}
             }}
         """
-        from sage.misc.latex import latex
         return "T^{{{}}}".format(latex(self._shape))
 
     def _ascii_art_term(self, T):
@@ -1064,7 +1066,6 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
             \end{array}$}
             }}
         """
-        from sage.misc.latex import latex
         return "U^{{{}}}".format(latex(self._ambient._diagram))
 
     Element = SpechtModule.Element
@@ -1173,7 +1174,6 @@ class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
             \end{array}$}
             }}
         """
-        from sage.misc.latex import latex
         return "D^{{{}}}".format(latex(self._diagram))
 
     Element = SpechtModule.Element

@@ -569,11 +569,17 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
             sage: phi.class_polynomial()
             1
 
-        Here is an example with a nontrivial class module::
+        Here are two examples with a nontrivial class module::
 
             sage: phi = DrinfeldModule(A, [T, 2*T^14 + 2*T^4])
             sage: phi.class_polynomial()
             T + 3
+
+        ::
+
+            sage: phi = DrinfeldModule(A, [T, -T^13])
+            sage: phi.class_polynomial()
+            T^2
 
         TESTS:
 
@@ -637,12 +643,14 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         # We compute the action of phi_T on H = M/V
         # as an Fq-linear map (encoded in the matrix N)
         dim = V.rank()
-        pivots = V.pivots()
-        j = 0
-        for ip, i in enumerate(range(dim, s)):
-            while ip < dim and j == pivots[ip]:
+        pivots = V.pivots() + (s,)
+        j = ip = 0
+        for i in range(dim, s):
+            while j == pivots[ip]:
                 j += 1
+                ip += 1
             V[i, j] = 1
+            j += 1
         N = (V * M * ~V).submatrix(dim, dim)
 
         # The class module is now H where the action of T

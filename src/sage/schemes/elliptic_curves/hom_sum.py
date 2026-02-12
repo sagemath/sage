@@ -250,6 +250,21 @@ class EllipticCurveHom_sum(EllipticCurveHom):
               To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
             sage: (m2 - m3).rational_maps()
             (x, -x - y)
+
+        TESTS:
+
+        This example used to take a long time (> 1min); now it is fast (< 1s)
+        thanks to the specialized
+        :meth:`sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.division_field()`
+        method::
+
+            sage: E = EllipticCurve(GF((419,2)), [1,0])
+            sage: i = E.automorphisms()[2]
+            sage: j = E.frobenius_isogeny()
+            sage: (1 + 3*j).to_isogeny_chain()
+            Composite morphism of degree 3772 = 1*2^2*23*41:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
+              To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
         """
         deg = self.degree()
         if deg.is_zero():

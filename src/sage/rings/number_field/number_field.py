@@ -1004,37 +1004,6 @@ def GaussianField():
     return QuadraticField(-1, 'I', latex_name='i')
 
 
-def is_AbsoluteNumberField(x):
-    r"""
-    Return ``True`` if ``x`` is an absolute number field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field import is_AbsoluteNumberField
-        sage: x = polygen(ZZ, 'x')
-        sage: is_AbsoluteNumberField(NumberField(x^2 + 1, 'a'))
-        doctest:warning...
-        DeprecationWarning: The function is_AbsoluteNumberField is deprecated; use 'isinstance(..., NumberField_absolute)' instead.
-        See https://github.com/sagemath/sage/issues/38124 for details.
-        True
-        sage: is_AbsoluteNumberField(NumberField([x^3 + 17, x^2 + 1], 'a'))
-        False
-
-    The rationals are a number field, but they're not of the absolute
-    number field class.
-
-    ::
-
-        sage: is_AbsoluteNumberField(QQ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38124,
-                "The function is_AbsoluteNumberField is deprecated; "
-                "use 'isinstance(..., NumberField_absolute)' instead.")
-    return isinstance(x, NumberField_absolute)
-
-
 class CyclotomicFieldFactory(UniqueFactory):
     r"""
     Return the `n`-th cyclotomic field, where `n` is a positive integer,
@@ -3295,6 +3264,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     def conductor(self, check_abelian=True):
         r"""
         Compute the conductor of the abelian field `K`.
+
         If ``check_abelian`` is set to ``False`` and the field is not an
         abelian extension of `\QQ`, the output is not meaningful.
 
@@ -4905,12 +4875,19 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             True
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:issue:`252`)::
+        polynomials are supported (:issue:`252`). The units returned
+        below differ slightly depending on the CPU::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
-            sage: K._S_class_group_and_units(tuple(K.primes_above(2) + K.primes_above(3)))
-            ([6*a + 2, -6*a + 3, -1, -12*a - 5], [])  # 64-bit
-            ([6*a + 2, -6*a - 3, -1, -12*a - 5], [])  # 32-bit
+            sage: ps = tuple(K.primes_above(2) + K.primes_above(3))
+            sage: units, gens = K._S_class_group_and_units(ps)
+            sage: gens
+            []
+            sage: units  # needs 32_bit
+            [6*a + 2, -6*a - 3, -1, -12*a - 5]
+            sage: units  # needs !32_bit
+            [6*a + 2, -6*a + 3, -1, -12*a - 5]
+
         """
         K_pari = self.pari_bnf(proof=proof)
         S_pari = [p.pari_prime() for p in sorted(set(S))]
