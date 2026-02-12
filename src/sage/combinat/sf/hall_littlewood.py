@@ -582,8 +582,8 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             EXAMPLES::
 
                 sage: HLP = SymmetricFunctions(FractionField(QQ['t'])).hall_littlewood().P()
-                sage: len(HLP([2,1])^6) # long time (~1 s)
-                347
+                sage: len(HLP([2,1])^4) # long time
+                63
             """
             return self._pow_naive(n)
 

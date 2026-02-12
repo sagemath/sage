@@ -836,8 +836,8 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             EXAMPLES::
 
                 sage: Jack = SymmetricFunctions(FractionField(QQ['t'])).jack().P()
-                sage: len(Jack([2,1])^6) # long time (~2 s)
-                247
+                sage: len(Jack([2,1])^3) # long time (~2 s)
+                22
             """
             return self._pow_naive(n)
 

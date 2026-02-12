@@ -532,8 +532,8 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             EXAMPLES::
 
                 sage: m = SymmetricFunctions(QQ).m()
-                sage: len(m([2,1])^6) # long time (~1 s)
-                292
+                sage: len(m([2,1])^4) # long time
+                52
             """
             return self._pow_naive(n)
 

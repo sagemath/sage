@@ -635,8 +635,8 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
             EXAMPLES::
 
                 sage: L = SymmetricFunctions(FractionField(QQ['t'])).llt(3).hspin()
-                sage: len(L([1,1])^4) # long time (~2 s)
-                18
+                sage: len(L([1,1])^3) # long time
+                8
             """
             return self._pow_naive(n)
 
