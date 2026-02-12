@@ -8,12 +8,12 @@ Root system data for relabelled Cartan types
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.combinat.root_system import ambient_space, cartan_type
+from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.sets.family import Family, FiniteFamily
-from sage.combinat.root_system import cartan_type
-from sage.combinat.root_system import ambient_space
-from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 
 
 class CartanType(cartan_type.CartanType_decorator):
@@ -261,7 +261,6 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: latex(CoxeterType(['I',5]).relabel({1:0,2:1}))
             I_2(5) \text{ relabelled by } \left\{1 : 0, 2 : 1\right\}
         """
-        from sage.misc.latex import latex
         # Special case for type D_4^{(3)}
         if (self._type.is_affine() and self._type.dual().type() == 'G'
                 and self.options("notation") == "Kac"):
