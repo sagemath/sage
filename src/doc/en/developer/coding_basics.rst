@@ -1357,6 +1357,15 @@ framework. Here is a comprehensive list:
        the doctests in this file will be skipped unless the
        appropriate conditions are met.
 
+  - **32-bit** or **64-bit:** for tests that behave differently on 32-bit or
+    64-bit machines, the ``32_bit`` feature can be used::
+
+        sage: h = hash(2^31 + 2^13)
+        sage: h  # needs 32_bit
+        8193
+        sage: h  # needs !32_bit
+        2147491840
+
 - **indirect doctest:** in the docstring of a function ``A(...)``, a line
   calling ``A`` and in which the name ``A`` does not appear should have this
   flag. This prevents ``sage --coverage <file>`` from reporting the docstring as
@@ -1371,16 +1380,8 @@ framework. Here is a comprehensive list:
       This is the docstring of an ``__add__`` method. The following
       example tests it, but ``__add__`` is not written anywhere::
 
-          sage: 1+1 # indirect doctest
+          sage: 1+1  # indirect doctest
           2
-
-- **32-bit** or **64-bit:** for tests that behave differently on 32-bit or
-  64-bit machines. Note that this particular flag is to be applied on the
-  **output** lines, not the input lines::
-
-      sage: hash(2^31 + 2^13)
-      8193                      # 32-bit
-      2147491840                # 64-bit
 
 Per coding style (:ref:`section-coding-python`), the magic comment
 should be separated by at least 2 spaces.

@@ -19,6 +19,7 @@ from sage.functions.log import exp
 from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
 from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module_element import vector
 from sage.rings.big_oh import O
@@ -27,7 +28,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring_element import LaurentSeries
 from sage.structure.element import CommutativeAlgebraElement
 from sage.structure.parent_gens import localvars
-from sage.structure.richcmp import op_NE, op_EQ
+from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import("sage.functions.log", "exp")
@@ -243,9 +244,6 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: latex(QuasiModularFormsRing(n=infinity)(x*(x-y^2)*z))                 # needs sage.symbolic
             -E_{4} f_{i}^{2} E_{2} + E_{4}^{2} E_{2}
         """
-
-        from sage.misc.latex import latex
-
         if (self.hecke_n() == infinity):
             with localvars(self.parent()._pol_ring, "E4, f_i, E2, d"):
                 latex_str = latex(self._rat)

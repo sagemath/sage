@@ -1772,14 +1772,23 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     which in both cases makes a maximal default exponent of
     2^16-1.
 
-    EXAMPLES::
+    EXAMPLES:
+
+    This overflows only on 32-bit systems::
 
         sage: P.<x,y> = QQ[]
-        sage: y^(2^30)
-        Traceback (most recent call last):             # 32-bit
-        ...                                            # 32-bit
-        OverflowError: exponent overflow (1073741824)  # 32-bit
-        y^1073741824  # 64-bit
+        sage: try:
+        ....:     result = y^(2^30)
+        ....: except OverflowError as e:
+        ....:     # 32 bit
+        ....:     result = e
+        sage: isinstance(result, OverflowError)  # needs 32_bit
+        True
+        sage: result  # needs !32_bit
+        y^1073741824
+
+    This one always overflows::
+
         sage: y^2^32
         Traceback (most recent call last):
         ...

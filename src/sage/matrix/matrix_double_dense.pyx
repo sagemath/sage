@@ -1052,8 +1052,8 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         self.cache('PLU_factors', PLU)
         return PLU
 
-    def eigenvalues(self, other=None, algorithm='default', tol=None, *,
-                    homogeneous=False):
+    def eigenvalues(self, other=None, *, algorithm='default',
+                    tol=None, homogeneous=False):
         r"""
         Return a list of ordinary or generalized eigenvalues.
 
@@ -1266,43 +1266,20 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             sage: A.eigenvalues(B, algorithm='hermitian', homogeneous=True)  # tol 1e-14
             [(0.25, 1.0), (1.0, 1.0)]
 
-        Test the deprecation::
+        Test keyword-only arguments::
 
             sage: # needs sage.graphs
             sage: A = graphs.PetersenGraph().adjacency_matrix().change_ring(RDF)
-            sage: ev = A.eigenvalues('symmetric', 1e-13)
-            doctest:...: DeprecationWarning: "algorithm" and "tol" should be used
-            as keyword argument only
-            See https://github.com/sagemath/sage/issues/29243 for details.
-            sage: ev  # tol 1e-13
-            [(-2.0, 4), (1.0, 5), (3.0, 1)]
-            sage: A.eigenvalues('symmetric', 1e-13, tol=1e-12)
+            sage: ev = A.eigenvalues('symmetric')
             Traceback (most recent call last):
             ...
-            TypeError: eigenvalues() got multiple values for keyword argument 'tol'
-            sage: A.eigenvalues('symmetric', algorithm='hermitian')
-            Traceback (most recent call last):
-            ...
-            TypeError: eigenvalues() got multiple values for keyword argument 'algorithm'
+            TypeError: other should be None or a square matrix
         """
         from sage.rings.real_double import RDF
         from sage.rings.complex_double import CDF
         if isinstance(other, str):
-            # for backward compatibility, allow algorithm to be passed as first
-            # positional argument and tol as second positional argument
-            from sage.misc.superseded import deprecation
-            deprecation(29243, '"algorithm" and "tol" should be used as '
-                               'keyword argument only')
-            if algorithm != 'default':
-                if isinstance(algorithm, str):
-                    raise TypeError("eigenvalues() got multiple values for "
-                                    "keyword argument 'algorithm'")
-                if tol is not None:
-                    raise TypeError("eigenvalues() got multiple values for "
-                                    "keyword argument 'tol'")
-                tol = algorithm
-            algorithm = other
-            other = None
+            raise TypeError("other should be None or a square matrix")
+
         if algorithm not in ['default', 'symmetric', 'hermitian']:
             msg = "algorithm must be 'default', 'symmetric', or 'hermitian', not {0}"
             raise ValueError(msg.format(algorithm))
