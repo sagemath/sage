@@ -17,6 +17,8 @@ AUTHORS:
 - Lorenz Panny (2023): ``special_supersingular_curve()``
 
 - Martin Grenouilloux, Gareth Ma (2024-09): ``EllipticCurve_with_prime_order()``
+
+- Lorenz Panny (2026): :meth:`EllipticCurve_finite_field.division_field()``
 """
 
 # ****************************************************************************
@@ -512,6 +514,155 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
 
     order = cardinality  # alias
 
+    def division_field(self, n, names='t', map=False, **kwds):
+        r"""
+        Construct the `n`-division field `F(E[n])` of this elliptic curve.
+
+        The `n`-division field is the smallest extension of `F` over which
+        all `n`-torsion points of `E` are defined.
+
+        INPUT:
+
+        - ``n`` -- positive integer
+        - ``names`` -- (default: ``'t'``) a variable name for the division field
+        - ``map`` -- boolean (default: ``False``); also return an embedding of the
+          :meth:`base_field` into the resulting field
+        - ``kwds`` -- additional keyword arguments passed to
+          :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.extension`
+
+        OUTPUT:
+
+        If ``map`` is ``False``, the (finite) division field `K`.
+        If ``map`` is ``True``, a tuple `(K, \phi)` where `\phi` is an
+        embedding of the base field into the division field `K`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(431^2), [1,0])                                   # needs sage.rings.finite_rings
+            sage: E.division_field(5, map=True)                                         # needs sage.rings.finite_rings
+            (Finite Field in t of size 431^4,
+             Ring morphism:
+               From: Finite Field in z2 of size 431^2
+               To:   Finite Field in t of size 431^4
+               Defn: z2 |--> 52*t^3 + 222*t^2 + 78*t + 105)
+
+        ::
+
+            sage: E = EllipticCurve(GF(433^2), [1,0])                                   # needs sage.rings.finite_rings
+            sage: K.<v> = E.division_field(7); K                                        # needs sage.rings.finite_rings
+            Finite Field in v of size 433^16
+
+        .. SEEALSO::
+
+            :meth:`EllipticCurve_field.division_field()`
+
+        ALGORITHM: For supersingular elliptic curves, this method uses a
+        combination of [MPSW25]_, Lemma 2.2, and [EPSV2023]_, Theorem 2.
+        For ordinary elliptic curves, it uses the algorithm of [VT2001]_.
+        In some cases (in particular: for ordinary curves, for square
+        factors of `n`), we defer to the general implementation
+        :meth:`EllipticCurve_field.division_field`.
+
+        TESTS:
+
+        Some random testing for prime orders::
+
+            sage: # needs sage.rings.finite_rings
+            sage: def check(E, l, K):
+            ....:     EE = E.change_ring(K)
+            ....:     cof = EE.order().prime_to_m_part(l)
+            ....:     pts = (cof * EE.random_point() for _ in iter(int, 1))
+            ....:     mul = lambda P: P if not l*P else mul(l*P)
+            ....:     pts = map(mul, filter(bool, pts))
+            ....:     if l == EE.base_field().characteristic():
+            ....:         if EE.is_supersingular():
+            ....:             Ps = ()
+            ....:         else:
+            ....:             assert l.divides(EE.order())
+            ....:             Ps = (next(pts),)
+            ....:     else:
+            ....:         assert l.divides(EE.order())
+            ....:         for _ in range(9999):
+            ....:             P,Q = next(pts), next(pts)
+            ....:             if P.weil_pairing(Q,l) != 1:
+            ....:                 Ps = (P,Q)
+            ....:                 break
+            ....:         else:
+            ....:             assert False
+            ....:     deg = lcm(el.minpoly().degree() for el in sum(map(list,Ps),[]))
+            ....:     assert max(deg, E.base_field().degree()) == K.degree()
+            sage: q = next_prime_power(randrange(1, 10^9))
+            sage: F.<a> = GF(q)
+            sage: while True:
+            ....:     try:
+            ....:         E = EllipticCurve([F.random_element() for _ in range(5)])
+            ....:     except ArithmeticError:
+            ....:         continue
+            ....:     break
+            sage: l = random_prime(8)
+            sage: K = E.division_field(l)
+            sage: n = E.cardinality(extension_degree=K.degree()//F.degree())
+            sage: (l^2 if q%l else 0 + E.is_ordinary()).divides(n)
+            True
+            sage: check(E, l, K)  # long time
+
+        Also check that it matches the generic implementation from :class:`EllipticCurve_field`::
+
+            sage: # needs sage.rings.finite_rings
+            sage: from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
+            sage: K.degree() == EllipticCurve_field.division_field(E, l).degree()  # long time
+            True
+        """
+        n = ZZ(n)
+        if n <= 0:
+            raise ValueError("n must be a positive integer")
+
+        F = self.base_field()
+
+        if self.is_supersingular():
+            n = n.prime_to_m_part(F.characteristic()) # p-torsion is trivial
+            if n.is_one():
+                ext = 1
+            elif n == 2:
+                ext = 3 if self.two_torsion_rank() == 0 else 2 if self.two_torsion_rank() == 1 else 1
+            else:
+                from sage.rings.finite_rings.integer_mod import Mod
+                if (pi := self.frobenius()) in ZZ:
+                    ext = Mod(pi, n).multiplicative_order()
+                else:
+                    m = next(m for m in range(1,7) if not (pi**m)[1] % n)
+                    ext = m * Mod((pi**m)[0], n).multiplicative_order()
+
+        else:
+            def van_tuyl(N):
+                if not N.is_prime():
+                    # currently not implemented here; defer to general implementation
+                    return EllipticCurve_field.division_field(self, N).degree() // F.degree()
+
+                chi = self.frobenius_polynomial()
+                chi_mod_N = chi.change_ring(GF(N))
+
+                if (roots := chi_mod_N.roots(multiplicities=False)):
+
+                    if len(roots) == 1:  # repeated root
+                        assert F(N)
+                        dstar = roots[0].multiplicative_order()
+                        from sage.rings.qqbar import QQbar
+                        gamma, delta = (r for r,m in chi.roots(ring=QQbar) for _ in range(m))
+                        if (N**2).divides(1 + F.cardinality()**dstar - gamma**dstar - delta**dstar):
+                            l = lcm(f.degree() for f,_ in self.division_polynomial(N).factor())
+                            if dstar in (l, 2*l):
+                                return dstar
+                        return N * dstar
+
+                    return lcm(r.multiplicative_order() for r in roots if r.is_unit())
+
+                return GF(N).extension(chi_mod_N, 'U').gen().multiplicative_order()
+
+            ext = lcm(van_tuyl(f**e) for f,e in n.factor())
+
+        return F.extension(ext, names=names, map=map, **kwds)
+
     @cached_method
     def multiplication_by_p_isogeny(self):
         r"""
@@ -600,7 +751,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
 
     def frobenius(self):
         r"""
-        Return the frobenius of ``self`` as an element of a quadratic order.
+        Return the Frobenius of ``self`` as an element of a quadratic order.
 
         .. NOTE::
 

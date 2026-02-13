@@ -1454,7 +1454,7 @@ class _sage_doc:
 
         sage: browse_sage_doc._open("reference", testing=True)[0]                       # needs sagemath_doc_html
         'http://localhost:8000/doc/live/reference/index.html'
-        sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]                         # needs sage.modules
+        sage: browse_sage_doc(identity_matrix, 'rst')[-374:-215]                        # needs sage.modules
         '...Full MatrixSpace of 3 by 3 sparse matrices...'
     """
     def __init__(self):
