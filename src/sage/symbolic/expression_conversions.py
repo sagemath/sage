@@ -15,16 +15,21 @@ overridden by subclasses.
 #                  https://www.gnu.org/licenses/
 ###############################################################################
 
-from operator import eq, ne, gt, lt, ge, le, mul, pow, neg, add, truediv
 from functools import reduce
+from operator import add, eq, mul, neg, pow, truediv
 
-from sage.misc.lazy_import import lazy_import
-from sage.symbolic.ring import SR
-from sage.structure.element import Expression, InfinityElement
 from sage.functions.log import exp
-from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
+from sage.misc.lazy_import import lazy_import
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+from sage.structure.element import Expression, InfinityElement
+from sage.symbolic.operators import (
+    FDerivativeOperator,
+    add_vararg,
+    arithmetic_operators,
+    mul_vararg,
+    relation_operators,
+)
+from sage.symbolic.ring import SR
 
 lazy_import('sage.symbolic.expression_conversion_sympy', ['SympyConverter', 'sympy_converter'])
 lazy_import('sage.symbolic.expression_conversion_algebraic', ['AlgebraicConverter', 'algebraic'])
@@ -444,7 +449,9 @@ class InterfaceInit(Converter):
             'Pi'
         """
         if (self.interface.name() in ['pari', 'gp'] and isinstance(obj, NumberFieldElement_base)):
-            from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
+            from sage.rings.number_field.number_field_element_quadratic import (
+                NumberFieldElement_gaussian,
+            )
             if isinstance(obj, NumberFieldElement_gaussian):
                 return repr(obj)
         try:
@@ -526,19 +533,21 @@ class InterfaceInit(Converter):
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = df.subs(x=exp(x)); a
             D[0](f)(e^x)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR__symbol0),_SAGE_VAR__symbol0,1), _SAGE_VAR__symbol0 = %e^_SAGE_VAR_x)
+            %at('diff('f(_SAGE_VAR__symbol0),_SAGE_VAR__symbol0,1),_SAGE_VAR__symbol0 = %e^_SAGE_VAR_x)
             sage: bool(b.sage() == a)
             True
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = df.subs(x=4); a
             D[0](f)(4)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR__symbol0),_SAGE_VAR__symbol0,1), _SAGE_VAR__symbol0 = 4)
+            %at('diff('f(_SAGE_VAR__symbol0),_SAGE_VAR__symbol0,1),_SAGE_VAR__symbol0 = 4)
             sage: bool(b.sage() == a)
             True
 
@@ -555,19 +564,21 @@ class InterfaceInit(Converter):
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = f_x.subs(x=4); a
             D[0](f)(4, y)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR__symbol0,_SAGE_VAR_y),_SAGE_VAR__symbol0,1), _SAGE_VAR__symbol0 = 4)
+            %at('diff('f(_SAGE_VAR__symbol0,_SAGE_VAR_y),_SAGE_VAR__symbol0,1),_SAGE_VAR__symbol0 = 4)
             sage: bool(b.sage() == a)
             True
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = f_x.subs(x=4).subs(y=8); a
             D[0](f)(4, 8)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR__symbol0,8),_SAGE_VAR__symbol0,1), _SAGE_VAR__symbol0 = 4)
+            %at('diff('f(_SAGE_VAR__symbol0,8),_SAGE_VAR__symbol0,1),_SAGE_VAR__symbol0 = 4)
             sage: bool(b.sage() == a)
             True
 
@@ -737,7 +748,9 @@ class FriCASConverter(InterfaceInit):
             result = repr(obj)
         else:
             if isinstance(obj, NumberFieldElement_base):
-                from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
+                from sage.rings.number_field.number_field_element_quadratic import (
+                    NumberFieldElement_gaussian,
+                )
                 if isinstance(obj, NumberFieldElement_gaussian):
                     return "((%s)::EXPR COMPLEX INT)" % result
             elif isinstance(obj, InfinityElement):
@@ -1108,7 +1121,9 @@ class LaurentPolynomialConverter(PolynomialConverter):
         super().__init__(ex, base_ring, ring)
 
         if ring is None and base_ring is not None:
-            from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+            from sage.rings.polynomial.laurent_polynomial_ring import (
+                LaurentPolynomialRing,
+            )
             self.ring = LaurentPolynomialRing(self.base_ring,
                                               names=self.varnames)
 
@@ -1656,10 +1671,10 @@ class Exponentialize(ExpressionTreeWalker):
     # reference in the code using it, therefore avoiding rebuilding
     # the same canned results dictionary at each call.
     from sage.calculus.var import function
-    from sage.functions.hyperbolic import sinh, cosh, sech, csch, tanh, coth
-    from sage.functions.trig import sin, cos, sec, csc, tan, cot
+    from sage.functions.hyperbolic import cosh, coth, csch, sech, sinh, tanh
+    from sage.functions.trig import cos, cot, csc, sec, sin, tan
     from sage.rings.integer import Integer
-    from sage.symbolic.constants import e, I
+    from sage.symbolic.constants import I, e
     from sage.symbolic.ring import SR
     half = Integer(1) / Integer(2)
     two = Integer(2)
@@ -1758,10 +1773,10 @@ class DeMoivre(ExpressionTreeWalker):
             # return super().composition(ex, op)
             return op(*[self(oper) for oper in ex.operands()])
 
+        from sage.functions.hyperbolic import cosh, sinh
+        from sage.functions.trig import cos, sin
         from sage.rings.imaginary_unit import I
         from sage.symbolic.ring import SR
-        from sage.functions.hyperbolic import sinh, cosh
-        from sage.functions.trig import sin, cos
         arg = self(ex.operands()[0])()
         w0, w1 = (SR.wild(u) for u in range(2))
         D = arg.match(w0 + I*w1)
@@ -1788,8 +1803,8 @@ class HalfAngle(ExpressionTreeWalker):
     """
     # Code executed once at first class reference: create canned formulae.
     from sage.calculus.var import function
-    from sage.functions.hyperbolic import sinh, cosh, sech, csch, tanh, coth
-    from sage.functions.trig import sin, cos, sec, csc, tan, cot
+    from sage.functions.hyperbolic import cosh, coth, csch, sech, sinh, tanh
+    from sage.functions.trig import cos, cot, csc, sec, sin, tan
     from sage.rings.integer import Integer
     from sage.symbolic.ring import SR
     x = SR.var("x")
@@ -1890,8 +1905,8 @@ class HoldRemover(ExpressionTreeWalker):
             sage: h()
             0
         """
-        from sage.calculus.calculus import symbolic_sum, symbolic_product
-        from sage.functions.other import Function_sum, Function_prod
+        from sage.calculus.calculus import symbolic_product, symbolic_sum
+        from sage.functions.other import Function_prod, Function_sum
         if not operator:
             return self
         if isinstance(operator, Function_sum):

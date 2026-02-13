@@ -835,7 +835,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             return sum(q**(c[0].energy_function()) * B.sum(B(weight(b)) for b in c) for c in C)
         return B.sum(q**(b.energy_function()) * B(weight(b)) for b in self)
 
-    def is_perfect(self, level=1):
+    def is_perfect(self, level=1) -> bool:
         r"""
         Check whether the crystal ``self`` is perfect (of level ``level``).
 

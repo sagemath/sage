@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Base class for parent objects
 
@@ -124,7 +123,7 @@ from sage.structure.category_object import CategoryObject
 from sage.structure.coerce cimport coercion_model
 from sage.structure.coerce cimport parent_is_integers
 from sage.structure.coerce_exceptions import CoercionException
-from sage.structure.coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
+from sage.structure.coerce_maps cimport (NamedConvertMap,
                            DefaultConvertMap_unique, CallableConvertMap)
 from sage.structure.element cimport parent
 
@@ -1084,7 +1083,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             True
             sage: I in RR                                                               # needs sage.rings.real_mpfr sage.symbolic
             False
-            sage: RIF(1, 2) in RIF                                                      # needs sage.rings.real_interval_field
+            sage: RIF(1, 2) in RIF
             True
 
             sage: # needs sage.symbolic
@@ -1107,31 +1106,31 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         ::
 
-            sage: 3/2 in RIF                                                            # needs sage.rings.real_interval_field
+            sage: 3/2 in RIF
             True
 
         because ``3/2`` has an exact representation in ``RIF`` (i.e. can be
         represented as an interval that contains exactly one value)::
 
-            sage: RIF(3/2).is_exact()                                                   # needs sage.rings.real_interval_field
+            sage: RIF(3/2).is_exact()
             True
 
         On the other hand, we have
 
         ::
 
-            sage: 2/3 in RIF                                                            # needs sage.rings.real_interval_field
+            sage: 2/3 in RIF
             False
 
         because ``2/3`` has no exact representation in ``RIF``. Since
         ``RIF(2/3)`` is a nontrivial interval, it cannot be equal to anything
         (not even itself)::
 
-            sage: RIF(2/3).is_exact()                                                   # needs sage.rings.real_interval_field
+            sage: RIF(2/3).is_exact()
             False
-            sage: RIF(2/3).endpoints()                                                  # needs sage.rings.real_interval_field
+            sage: RIF(2/3).endpoints()
             (0.666666666666666, 0.666666666666667)
-            sage: RIF(2/3) == RIF(2/3)                                                  # needs sage.rings.real_interval_field
+            sage: RIF(2/3) == RIF(2/3)
             False
 
         TESTS:
@@ -1939,8 +1938,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         If a ``convert_method_name`` is provided, it creates a
         ``NamedConvertMap``, otherwise it creates a
-        ``DefaultConvertMap`` or ``DefaultConvertMap_unique``
-        depending on whether or not init_no_parent is set.
+        ``DefaultConvertMap_unique``.
 
         EXAMPLES::
 
@@ -1969,11 +1967,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             f = self.convert_method_map(S, m)
             if f is not None:
                 return f
-        if self._element_init_pass_parent:
-            # deprecation(26879)
-            return DefaultConvertMap(S, self, category=category)
-        else:
-            return DefaultConvertMap_unique(S, self, category=category)
+        return DefaultConvertMap_unique(S, self, category=category)
 
     def _convert_method_map(self, S, method_name=None):
         """
@@ -2274,7 +2268,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         2. If ``self._coerce_map_from_(S)`` is not exactly one of
 
-           - DefaultConvertMap
            - DefaultConvertMap_unique
            - NamedConvertMap
 
@@ -2387,7 +2380,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             best_mor = None
         elif user_provided_mor is True:
             best_mor = self._generic_coerce_map(S)
-            if not isinstance(best_mor, DefaultConvertMap):
+            if not isinstance(best_mor, DefaultConvertMap_unique):
                 return best_mor
             # Continue searching for better maps.  If there is something
             # better in the list, return that instead.  This is so, for
@@ -2910,7 +2903,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             [False, False]
             sage: [R._is_numerical() for R in [RBF, CBF]]                               # needs sage.libs.flint
             [False, False]
-            sage: [R._is_numerical() for R in [RIF, CIF]]                               # needs sage.rings.real_interval_field
+            sage: [R._is_numerical() for R in [RIF, CIF]]
             [False, False]
         """
         try:

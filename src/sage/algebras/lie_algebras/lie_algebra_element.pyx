@@ -107,9 +107,6 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
             sage: L = LieAlgebra(QQ, 'x,y,z')
             sage: Lyn = L.Lyndon()
             sage: H = L.Hall()
-            doctest:warning...:
-            FutureWarning: The Hall basis has not been fully proven correct, but currently no bugs are known
-            See https://github.com/sagemath/sage/issues/16823 for details.
             sage: elt = Lyn.an_element()
             sage: elt._im_gens_(H, H.gens())
             x + y + z

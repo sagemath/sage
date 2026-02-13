@@ -55,30 +55,6 @@ from sage.modules.multi_filtered_vector_space import MultiFilteredVectorSpace
 import sage.geometry.abc
 
 
-def is_KlyachkoBundle(X):
-    """
-    Test whether ``X`` is a Klyachko bundle.
-
-    INPUT:
-
-    - ``X`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: from sage.schemes.toric.sheaf.klyachko import is_KlyachkoBundle
-        sage: is_KlyachkoBundle('test')
-        doctest:warning...
-        DeprecationWarning: The function is_KlyachkoBundle is deprecated; use 'isinstance(..., KlyachkoBundle_class)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_KlyachkoBundle is deprecated; use 'isinstance(..., KlyachkoBundle_class)' instead.")
-    return isinstance(X, KlyachkoBundle_class)
-
-
 def Bundle(toric_variety, multi_filtration, check=True):
     r"""
     Construct a Klyacho bundle.
@@ -739,7 +715,7 @@ class KlyachkoBundle_class(SageObject):
 
         return richcmp(self._filt, other._filt, op)
 
-    def is_isomorphic(self, other):
+    def is_isomorphic(self, other) -> bool:
         """
         Test whether two bundles are isomorphic.
 

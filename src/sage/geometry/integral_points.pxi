@@ -302,7 +302,7 @@ cpdef tuple simplex_points(vertices):
     origin.set_immutable()
     if not rays:
         return (origin,)
-    translate_points(rays, origin)
+    translate_points(rays, origin, False)
 
     # Find equation Ax<=b that cuts out simplex from parallelotope
     cdef MatrixClass Rt = matrix(ZZ, rays)
@@ -321,11 +321,11 @@ cpdef tuple simplex_points(vertices):
     e, d, VDinv = ray_matrix_normal_form(R)
     lattice = origin.parent()
     points = loop_over_parallelotope_points(e, d, VDinv, R, lattice, A, b) + tuple(rays)
-    translate_points(points, -origin)
+    translate_points(points, -origin, True)
     return points
 
 
-cdef translate_points(v_list, VectorClass delta):
+cdef translate_points(v_list, VectorClass delta, bint immutable):
     r"""
     Add ``delta`` to each vector in ``v_list``.
     """
@@ -334,7 +334,9 @@ cdef translate_points(v_list, VectorClass delta):
     for v in v_list:
         for i in range(dim):
             v[i] -= delta.get_unsafe(i)
-
+    if immutable:
+        for v in v_list:
+            v.set_immutable()
 
 ##############################################################################
 # For points with "small" coordinates (that is, fitting into a small
@@ -533,8 +535,17 @@ cpdef rectangular_box_points(list box_min, list box_max,
         sage: P = Polyhedron(ieqs=ieqs)
         sage: from sage.doctest.util import ensure_interruptible_after
         sage: with ensure_interruptible_after(0.5): P.integral_points()
+
+    Check that the following doesn't segmentation fault
+    (the error message could be improved)::
+
+        sage: rectangular_box_points([], [])
+        Traceback (most recent call last):
+        ...
+        AssertionError
     """
     assert len(box_min) == len(box_max)
+    assert box_min
     assert not (count_only and return_saturated)
     cdef int d = len(box_min)
     cdef int i, j

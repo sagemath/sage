@@ -3003,7 +3003,7 @@ class RuleSylvester(Rule):
             sage: Sylvester.rank(Sylvester.vertices(3)[0])
             3
         """
-        return v.node_number()
+        return v.number_of_nodes()
 
     def is_Q_edge(self, v, w):
         r"""
@@ -3147,7 +3147,7 @@ class RuleSylvester(Rule):
         """
         def add_label(L, S, T, m):
             if L.is_empty():
-                assert T.node_number() == 1
+                assert T.number_of_nodes() == 1
                 return LabelledBinaryTree([], m)
             l = L.label()
             if T[0] == S[0]:
@@ -4293,7 +4293,7 @@ class RuleDomino(Rule):
             elif len(diff) == 1:
                 z = copy(x)
                 # diff is a single cell
-                (k,l) = diff.pop()
+                k, l = diff.pop()
                 # add (k+1, l+1) to x
                 # either (k, l+1) or (k+1, l) must also be added
                 if z[k] <= l + 1:

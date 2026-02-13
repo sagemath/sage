@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Testing for features of the environment at runtime
 
@@ -72,7 +71,7 @@ import shutil
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
-from sage.env import SAGE_LOCAL, SAGE_SHARE, SAGE_VENV
+from sage.env import SAGE_LOCAL, sage_data_paths
 
 
 class TrivialClasscallMetaClass(type):
@@ -660,9 +659,7 @@ class Executable(FileFeature):
     r"""
     A feature describing an executable in the ``PATH``.
 
-    In an installation of Sage with ``SAGE_LOCAL`` different from ``SAGE_VENV``, the
-    executable is searched first in ``SAGE_VENV/bin``, then in ``SAGE_LOCAL/bin``,
-    then in ``PATH``.
+    The executable is searched first in ``SAGE_LOCAL/bin``, then in ``PATH``.
 
     .. NOTE::
 
@@ -745,15 +742,11 @@ class Executable(FileFeature):
             sage.features.FeatureNotPresentError: does-not-exist is not available.
             Executable 'does-not-exist-xxxxyxyyxyy' not found on PATH.
         """
-        if SAGE_LOCAL:
-            if Path(SAGE_VENV).resolve() != Path(SAGE_LOCAL).resolve():
-                # As sage.env currently gives SAGE_LOCAL a fallback value from SAGE_VENV,
-                # SAGE_LOCAL is never unset.  So we only use it if it differs from SAGE_VENV.
-                search_path = ':'.join([os.path.join(SAGE_VENV, 'bin'),
-                                        os.path.join(SAGE_LOCAL, 'bin')])
-                path = shutil.which(self.executable, path=search_path)
-                if path is not None:
-                    return path
+        if SAGE_LOCAL and Path(SAGE_LOCAL).resolve():
+            search_path = os.path.join(SAGE_LOCAL, 'bin')
+            path = shutil.which(self.executable, path=search_path)
+            if path is not None:
+                return path
         # Now look up in the regular PATH.
         path = shutil.which(self.executable)
         if path is not None:
@@ -798,7 +791,7 @@ class StaticFile(FileFeature):
         Feature.__init__(self, name, type=type, **kwds)
         self.filename = filename
         if search_path is None:
-            self.search_path = [SAGE_SHARE]
+            self.search_path = list(sage_data_paths())
         elif isinstance(search_path, str):
             self.search_path = [search_path]
         else:

@@ -144,8 +144,7 @@ class Cube(SageObject):
             data = tuple(data)
         new_data = []
         nondegenerate = []
-        i = 0
-        for x in data:
+        for i, x in enumerate(data):
             if len(x) == 2:
                 try:
                     Integer(x[0])
@@ -158,7 +157,7 @@ class Cube(SageObject):
                 new_data.append(tuple(x))
             elif len(x) == 1:
                 y = tuple(x)
-                new_data.append(y+y)
+                new_data.append(y + y)
             elif len(x) != 1:
                 raise ValueError("the interval %s is not of the correct form" % x)
             i += 1
@@ -178,7 +177,7 @@ class Cube(SageObject):
         """
         return self.__tuple
 
-    def is_face(self, other):
+    def is_face(self, other) -> bool:
         """
         Return ``True`` iff this cube is a face of other.
 
@@ -232,11 +231,9 @@ class Cube(SageObject):
         """
         t = self.__tuple
         embed = max(len(t), len(vec))
-        t = t + ((0, 0),) * (embed-len(t))
-        vec = tuple(vec) + (0,) * (embed-len(vec))
-        new = []
-        for (a, b) in zip(t, vec):
-            new.append([a[0] + b, a[1] + b])
+        t = t + ((0, 0),) * (embed - len(t))
+        vec = tuple(vec) + (0,) * (embed - len(vec))
+        new = [[a[0] + b, a[1] + b] for a, b in zip(t, vec)]
         return Cube(new)
 
     def __getitem__(self, n):
@@ -1018,7 +1015,7 @@ class CubicalComplex(GenericCellComplex):
         """
         return hash(frozenset(self._facets))
 
-    def is_subcomplex(self, other):
+    def is_subcomplex(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a subcomplex of ``other``.
 
@@ -1370,18 +1367,16 @@ class CubicalComplex(GenericCellComplex):
 
         data = {}
         vertex_dict = {}
-        i = 0
-        for vertex in self.n_cells(0):
+        for i, vertex in enumerate(self.n_cells(0)):
             vertex_dict[vertex] = i
             data[i] = []
-            i += 1
         for edge in self.n_cells(1):
             start = edge.face(0, False)
             end = edge.face(0, True)
             data[vertex_dict[start]].append(vertex_dict[end])
         return Graph(data)
 
-    def is_pure(self):
+    def is_pure(self) -> bool:
         """
         Return ``True`` iff this cubical complex is pure: that is,
         all of its maximal faces have the same dimension.

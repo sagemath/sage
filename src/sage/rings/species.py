@@ -267,7 +267,7 @@ class AtomicSpeciesElement(WithEqualityById,
         lookup.append(elm)
         return elm
 
-    def __init__(self, parent, dis, domain_partition):
+    def __init__(self, parent, dis, domain_partition) -> None:
         r"""
         Initialize an atomic species.
 
@@ -324,7 +324,7 @@ class AtomicSpeciesElement(WithEqualityById,
         S = self.parent().grading_set()
         return S(self._mc)
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         r"""
         Return whether ``self`` is less than ``other``.
 
@@ -379,7 +379,7 @@ class AtomicSpeciesElement(WithEqualityById,
         H = libgap.ConjugateGroup(other._dis, conj_other)
         return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
 
-    def __le__(self, other):
+    def __le__(self, other) -> bool:
         r"""
         Return whether ``self`` is less than or equal to ``other``.
 
@@ -488,13 +488,10 @@ class AtomicSpeciesElement(WithEqualityById,
                                  initial=0))
 
         # gens from self
-        gens = []
-        for gen in G.gens():
-            newgen = []
-            for cyc in gen.cycle_tuples():
-                for k in range(1, sum(Mlist[cyc[0] - 1].grade()) + 1):
-                    newgen.append(tuple([k + starts[i - 1] for i in cyc]))
-            gens.append(newgen)
+        gens = [[tuple([k + starts[i - 1] for i in cyc])
+                 for cyc in gen.cycle_tuples()
+                 for k in range(1, sum(Mlist[cyc[0] - 1].grade()) + 1)]
+                for gen in G.gens()]
 
         # gens from M_i and dompart
         P = args[0].parent()
@@ -503,9 +500,9 @@ class AtomicSpeciesElement(WithEqualityById,
             K, K_dompart = M.permutation_group()
             for i, v in enumerate(K_dompart):
                 pi[i].extend([start + k for k in v])
-            for gen in K.gens():
-                gens.append([tuple([start + k for k in cyc])
-                             for cyc in gen.cycle_tuples()])
+            gens.extend([tuple([start + k for k in cyc])
+                         for cyc in gen.cycle_tuples()]
+                        for gen in K.gens())
 
         H = PermutationGroup(gens, domain=range(1, starts[-1] + 1))
         return P._indices(H, pi, check=False)
@@ -540,7 +537,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         names = normalize_names(-1, names)
         return super().__classcall__(cls, names)
 
-    def __init__(self, names):
+    def __init__(self, names) -> None:
         r"""
         Initialize the class of atomic species.
 
@@ -756,7 +753,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         _atomic_set_like_species(n, self._names)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return whether ``x`` is in ``self``.
 
@@ -1033,7 +1030,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         names = normalize_names(-1, names)
         return UniqueRepresentation.__classcall__(cls, names)
 
-    def __init__(self, names):
+    def __init__(self, names) -> None:
         r"""
         Initialize the monoid of molecular species.
 
@@ -1355,7 +1352,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: M(DihedralGroup(4)) < M(CyclicPermutationGroup(4))
                 True
 
-            We create the lattice of molecular species of degree four::
+            We create the poset of molecular species of degree four::
 
                 sage: P = Poset([M.subset(4), lambda b, c: b <= c])
                 sage: len(P.cover_relations())
@@ -2407,7 +2404,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         names = normalize_names(-1, names)
         return super().__classcall__(cls, base_ring, names)
 
-    def __init__(self, base_ring, names):
+    def __init__(self, base_ring, names) -> None:
         r"""
         Initialize the ring of polynomial species.
 

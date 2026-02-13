@@ -2,6 +2,20 @@
 all.py -- much of sage is imported into this module, so you don't
           have to import everything individually.
 
+WARNING:
+
+Do not import from this module into other modules. Instead, import
+from the orginal location. The tool `import_statements` helps in
+figuring out where that location is. For instance::
+
+    sage: import_statements("TensorAlgebra")
+    from sage.algebras.tensor_algebra import TensorAlgebra
+
+tells you that `TensorAlgebra` should be imported from
+`sage.algebras.tensor_algebra`. While the binding is available in `sage.all`
+as a `LazyImport`, you should not use that because it can lead to unexpected
+results.
+
 TESTS:
 
 This is to test :issue:`10570`. If the number of stackframes at startup
@@ -59,18 +73,120 @@ import operator
 import math
 import sys
 
+# Set up warning filters before importing Sage stuff
+import warnings
+
+# This is a Python debug build (--with-pydebug)
+__with_pydebug = hasattr(sys, 'gettotalrefcount')
+if __with_pydebug:
+    # a debug build does not install the default warning filters. Sadly, this breaks doctests so we
+    # have to re-add them:
+    warnings.filterwarnings('ignore', category=PendingDeprecationWarning)
+    warnings.filterwarnings('ignore', category=ImportWarning)
+    warnings.filterwarnings('ignore', category=ResourceWarning)
+else:
+    deprecationWarning = ('ignore', None, DeprecationWarning, None, 0)
+    if deprecationWarning in warnings.filters:
+        warnings.filters.remove(deprecationWarning)
+
+# Ignore all deprecations from IPython etc.
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        module='(IPython|ipykernel|jupyter_client|jupyter_core|nbformat|notebook|ipywidgets|storemagic|jedi)')
+
+# scipy 1.18 introduced deprecation warnings on a number of things they are moving to
+# numpy, e.g. DeprecationWarning: scipy.array is deprecated
+#             and will be removed in SciPy 2.0.0, use numpy.array instead
+# This affects networkx 2.2 up and including 2.4 (cf. :issue:29766)
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        module='(scipy|networkx)')
+
+# However, be sure to keep OUR deprecation warnings
+warnings.filterwarnings('default', category=DeprecationWarning,
+                        message=r'[\s\S]*See https?://trac\.sagemath\.org/[0-9]* for details.')
+
+# Ignore packaging 20.5 deprecation warnings
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        module='(.*[.]_vendor[.])?packaging')
+
+# Ignore a few warnings triggered by pythran 0.12.1
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message='\n\n  `numpy.distutils` is deprecated since NumPy 1.23.0',
+                        module='pythran.dist')
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message='pkg_resources is deprecated as an API|'
+                        'Deprecated call to `pkg_resources.declare_namespace(.*)`',
+                        module='pkg_resources|setuptools.sandbox')
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message='msvccompiler is deprecated and slated to be removed',
+                        module='distutils.msvccompiler')
+
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message='The distutils(.sysconfig module| package) is deprecated',
+                        module='Cython|distutils|numpy|sage.env|sage.features')
+
+# triggered by pyparsing 2.4.7
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message="module 'sre_constants' is deprecated",
+                        module='pyparsing')
+
+# importlib.resources.path and ...read_binary are deprecated in python 3.11,
+# but the replacement importlib.resources.files needs python 3.9
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r'(path|read_binary) is deprecated\. Use files\(\) instead\.',
+                        module='sage.repl.rich_output.output_(graphics|graphics3d|video)')
+
+# triggered by sphinx
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message="'imghdr' is deprecated and slated for removal in Python 3.13",
+                        module='sphinx.util.images')
+
+# triggered by docutils 0.19 on Python 3.11
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r"Use setlocale\(\), getencoding\(\) and getlocale\(\) instead",
+                        module='docutils.io')
+
+# triggered by dateutil 2.8.2 and sphinx 7.0.1 on Python 3.12
+# see: https://github.com/dateutil/dateutil/pull/1285
+# see: https://github.com/sphinx-doc/sphinx/pull/11468
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r"datetime.datetime.utcfromtimestamp\(\) is deprecated",
+                        module='dateutil.tz.tz|sphinx.(builders.gettext|util.i18n)')
+
+# triggered on Python 3.12
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message=r"This process.* is multi-threaded, "
+                                r"use of .*\(\) may lead to deadlocks in the child.")
+
+# rpy2>=3.6 emits warnings for R modifying LD_LIBRARY_PATH
+warnings.filterwarnings('ignore', category=UserWarning,
+                        message=r".*redefined by R and overriding existing variable.*",
+                        module='rpy2.*')
+
 # ############### end setup warnings ###############################
-
-from sage.all__sagemath_repl import *
-# this includes .all__sagemath_objects, .all__sagemath_environment
-
-# ##################################################################
 
 # This import also sets up the interrupt handler
 from cysignals.signals import (AlarmInterrupt, SignalError,
                                sig_on_reset as sig_on_count)
 
 from time import sleep
+
+from sage.structure.all import *
+from sage.arith.power import generic_power as power
+
+from sage.cpython.all import *
+
+from copy import copy, deepcopy
+
+true = True
+false = False
+
+from sage.env import SAGE_ROOT, SAGE_SRC, SAGE_DOC_SRC, SAGE_LOCAL, DOT_SAGE, SAGE_ENV
+
+from sage.misc.all import *
+
+from sage.doctest.all import *
+from sage.repl.all import *
+
 from functools import reduce  # in order to keep reduce in python3
 
 import sage.misc.lazy_import
@@ -97,7 +213,6 @@ from sage.sat.all import *
 from sage.schemes.all import *
 from sage.graphs.all import *
 from sage.groups.all import *
-from sage.arith.power import generic_power as power
 from sage.databases.all import *
 from sage.categories.all import *
 from sage.sets.all import *
@@ -163,8 +278,6 @@ if sys.platform != 'win32':
 
 # Lazily import interacts (#15335)
 lazy_import('sage.interacts', 'all', 'interacts')
-
-from copy import copy, deepcopy
 
 # The code executed here uses a large amount of Sage components
 from sage.rings.qqbar import _init_qqbar

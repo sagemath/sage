@@ -1054,16 +1054,15 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
            [9, 27, 108, 675, 3069, 16302]
         """
         g = self.genus()
-        a = []
-        for i in range(1, min(n, g) + 1):
-            a.append(self.cardinality_exhaustive(extension_degree=i))
+        a = [self.cardinality_exhaustive(extension_degree=i)
+             for i in range(1, min(n, g) + 1)]
 
         if n <= g:
             return a
 
         if naive:
-            for i in range(g + 1, n + 1):
-                a.append(self.cardinality_exhaustive(extension_degree=i))
+            a.extend(self.cardinality_exhaustive(extension_degree=i)
+                     for i in range(g + 1, n + 1))
 
         # let's not be too naive and compute the frobenius polynomial
         f = self._frobenius_polynomial_cardinalities(a=a)

@@ -515,7 +515,7 @@ class GroupMorphism_libgap(Morphism):
         phi = self.gap()
         if h.gap() not in phi.Image():
             raise ValueError("{} is not an element of the image of {}".format(h, self))
-        return self.domain()( phi.PreImagesRepresentative(h.gap()) )
+        return self.domain()(phi.PreImagesRepresentative(h.gap()))
 
     def preimage(self, S):
         r"""

@@ -191,7 +191,7 @@ def native_two_isogeny_descent_work(E, two_tor_rk) -> tuple:
     if not all(n.is_power_of(2) for n in result_two_descent):
         raise RuntimeError("not a power of 2 in two-descent")
 
-    e1, e2, e1p, e2p = [n.valuation(2) for n in result_two_descent]
+    e1, e2, e1p, e2p = (n.valuation(2) for n in result_two_descent)
     rank_lower_bd = e1 + e1p - 2
     rank_upper_bd = e2 + e2p - 2
     sha_upper_bd = e2 + e2p - e1 - e1p
@@ -593,10 +593,12 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                 if p >= 5 and D_K % p and len(K.factor(p)) == 1:
                     # p is inert in K
                     BSD.primes.append(p)
-            for p in heegner_primes:
-                if p >= 5 and D_E % p and D_K % p and len(K.factor(p)) == 1:
-                    # p is good for E and inert in K
-                    kolyvagin_primes.append(p)
+
+            kolyvagin_primes.extend(p for p in heegner_primes
+                                    # p is good for E and inert in K
+                                    if p >= 5 and D_E % p and D_K % p
+                                    and len(K.factor(p)) == 1)
+
             for p in prime_divisors(BSD.sha_an):
                 if p >= 5 and D_K % p and len(K.factor(p)) == 1:
                     if BSD.curve.is_good(p):

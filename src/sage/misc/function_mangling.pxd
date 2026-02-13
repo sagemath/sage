@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 cdef class ArgumentFixer:
     cdef public object f
     cdef public int _ndefault

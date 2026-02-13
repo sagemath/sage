@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see
@@ -160,6 +159,16 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         sage: load(t)                                                                   # needs numpy
         sage: hello                                                                     # needs numpy
         <fortran ...>
+
+    Path objects are supported::
+
+        sage: from pathlib import Path
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     p = Path(d) / "test_path"
+        ....:     save(1, p)
+        ....:     load(p)
+        1
     """
     import sage.repl.load
     if len(filename) != 1:
@@ -172,6 +181,9 @@ def load(*filename, compress=True, verbose=True, **kwargs):
         return
 
     filename = filename[0]
+    # ensure that filename is a string
+    if not isinstance(filename, str):
+        filename = os.fspath(filename)
 
     if sage.repl.load.is_loadable_filename(filename):
         sage.repl.load.load(filename, globals())
@@ -213,7 +225,9 @@ def _base_save(obj, filename, compress=True):
     Otherwise this is equivalent to :func:`_base_dumps` just with the resulting
     pickle data saved to a ``.sobj`` file.
     """
-
+    # ensure that filename is a string
+    if not isinstance(filename, str):
+        filename = os.fspath(filename)
     filename = _normalize_filename(filename)
 
     with open(filename, 'wb') as fobj:
@@ -278,7 +292,20 @@ def save(obj, filename, compress=True, **kwargs):
         ....:     save((1,1), f.name)
         ....:     load(f.name)
         (1, 1)
+
+    Check that Path objects work::
+
+        sage: from pathlib import Path
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     p = Path(d) / "test_path"
+        ....:     save(1, p)
+        ....:     load(p)
+        1
     """
+    # ensure that filename is a string
+    if not isinstance(filename, str):
+        filename = os.fspath(filename)
 
     if not os.path.splitext(filename)[1] or not hasattr(obj, 'save'):
         filename = _normalize_filename(filename)
@@ -1117,7 +1144,7 @@ def unpickle_all(target, debug=False, run_test_suite=False):
        You must only pass trusted data to this function, including tar
        archives. We use the "data" filter from PEP 706 if possible
        while extracting the archive, but even that is not a perfect
-       solution, and it is only available since Python 3.11.4.
+       solution.
 
     EXAMPLES::
 
@@ -1138,14 +1165,10 @@ def unpickle_all(target, debug=False, run_test_suite=False):
     if os.path.isfile(target) and tarfile.is_tarfile(target):
         import tempfile
         with tempfile.TemporaryDirectory() as T:
-            # Extract the tarball to a temporary directory. The "data"
-            # filter only became available in python-3.11.4. See PEP
+            # Extract the tarball to a temporary directory. See PEP
             # 706 for background.
             with tarfile.open(target) as tf:
-                if hasattr(tarfile, "data_filter"):
-                    tf.extractall(T, filter='data')
-                else:
-                    tf.extractall(T)
+                tf.extractall(T, filter='data')
 
             # Ensure that the tarball contained exactly one thing, a
             # directory.

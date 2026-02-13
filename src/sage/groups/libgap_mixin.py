@@ -16,12 +16,13 @@ from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
 from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
-from sage.groups.class_function import ClassFunction_libgap
+from sage.misc.randstate import current_randstate
+from sage.groups.class_function import ClassFunction
 from sage.groups.libgap_wrapper import ElementLibGAP
 
 
 class GroupMixinLibGAP:
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         r"""
         TESTS::
 
@@ -52,7 +53,7 @@ class GroupMixinLibGAP:
                 return False
             return elt == elt2
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         r"""
         Return whether the group is Abelian.
 
@@ -74,7 +75,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsAbelian().sage()
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         r"""
         Return whether this group is nilpotent.
 
@@ -88,7 +89,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsNilpotentGroup().sage()
 
-    def is_solvable(self):
+    def is_solvable(self) -> bool:
         r"""
         Return whether this group is solvable.
 
@@ -102,7 +103,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsSolvableGroup().sage()
 
-    def is_supersolvable(self):
+    def is_supersolvable(self) -> bool:
         r"""
         Return whether this group is supersolvable.
 
@@ -116,7 +117,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsSupersolvableGroup().sage()
 
-    def is_polycyclic(self):
+    def is_polycyclic(self) -> bool:
         r"""
         Return whether this group is polycyclic.
 
@@ -130,7 +131,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsPolycyclicGroup().sage()
 
-    def is_perfect(self):
+    def is_perfect(self) -> bool:
         r"""
         Return whether this group is perfect.
 
@@ -147,7 +148,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsPerfectGroup().sage()
 
-    def is_p_group(self):
+    def is_p_group(self) -> bool:
         r"""
         Return whether this group is a p-group.
 
@@ -161,7 +162,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsPGroup().sage()
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return whether this group is simple.
 
@@ -178,7 +179,7 @@ class GroupMixinLibGAP:
         """
         return self.gap().IsSimpleGroup().sage()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Test whether the matrix group is finite.
 
@@ -339,8 +340,8 @@ class GroupMixinLibGAP:
             sage: list(chi)                                                             # needs sage.rings.number_field
             [0, 1, 2, 3, 4, 5, 6, 7]
         """
-        from sage.groups.class_function import ClassFunction_libgap
-        return ClassFunction_libgap(self, values)
+        from sage.groups.class_function import ClassFunction
+        return ClassFunction(self, values)
 
     @cached_method
     def center(self):
@@ -667,7 +668,7 @@ class GroupMixinLibGAP:
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
         Irr = self.gap().Irr()
-        L = [ClassFunction_libgap(self, irr) for irr in Irr]
+        L = [ClassFunction(self, irr) for irr in Irr]
         return tuple(L)
 
     def character(self, values):
@@ -698,7 +699,7 @@ class GroupMixinLibGAP:
         """
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
-        return ClassFunction_libgap(self, values)
+        return ClassFunction(self, values)
 
     def trivial_character(self):
         r"""
@@ -720,7 +721,7 @@ class GroupMixinLibGAP:
         """
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
-        values = [1] * self._gap_().NrConjugacyClasses().sage()
+        values = [1] * self._libgap_().NrConjugacyClasses().sage()
         return self.character(values)
 
     def character_table(self):
@@ -736,14 +737,18 @@ class GroupMixinLibGAP:
 
         EXAMPLES::
 
-            sage: MatrixGroup(SymmetricGroup(2)).character_table()                      # needs sage.rings.number_field
+            sage: ct = MatrixGroup(SymmetricGroup(2)).character_table(); ct             # random, needs sage.rings.number_field
             [ 1 -1]
             [ 1  1]
-            sage: MatrixGroup(SymmetricGroup(3)).character_table()                      # needs sage.rings.number_field
+            sage: sorted(ct, key=str)                                                   # needs sage.rings.number_field
+            [(1, -1), (1, 1)]
+            sage: ct = MatrixGroup(SymmetricGroup(3)).character_table(); ct             # random, needs sage.rings.number_field
             [ 1  1 -1]
             [ 2 -1  0]
             [ 1  1  1]
-            sage: MatrixGroup(SymmetricGroup(5)).character_table()  # long time
+            sage: sorted(ct, key=str)                                                   # needs sage.rings.number_field
+            [(1, 1, -1), (1, 1, 1), (2, -1, 0)]
+            sage: ct = MatrixGroup(SymmetricGroup(5)).character_table(); ct             # random, long time
             [ 1 -1 -1  1 -1  1  1]
             [ 4  0  1 -1 -2  1  0]
             [ 5  1 -1  0 -1 -1  1]
@@ -751,10 +756,14 @@ class GroupMixinLibGAP:
             [ 5 -1  1  0  1 -1  1]
             [ 4  0 -1 -1  2  1  0]
             [ 1  1  1  1  1  1  1]
+            sage: sorted(ct, key=str)                                                   # long time
+            [(1, -1, -1, 1, -1, 1, 1), (1, 1, 1, 1, 1, 1, 1),
+             (4, 0, -1, -1, 2, 1, 0), (4, 0, 1, -1, -2, 1, 0),
+             (5, -1, 1, 0, 1, -1, 1), (5, 1, -1, 0, -1, -1, 1), (6, 0, 0, 1, 0, 0, -2)]
         """
         # code from function in permgroup.py, but modified for
         # how gap handles these groups.
-        G = self._gap_()
+        G = self._libgap_()
         cl = self.conjugacy_classes()
         from sage.rings.integer import Integer
         n = Integer(len(cl))
@@ -797,6 +806,7 @@ class GroupMixinLibGAP:
             sage: G.random_element() in G
             True
         """
+        current_randstate().set_seed_libgap()
         return self(self.gap().Random())
 
     def __iter__(self):

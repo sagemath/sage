@@ -18,7 +18,6 @@ on:
         # 'tox -e update_docker_platforms' updates below
         default: >-
           [
-           "ubuntu-focal",
            "ubuntu-jammy",
            "ubuntu-noble",
            "debian-bullseye",
@@ -26,9 +25,6 @@ on:
            "fedora-40",
            "fedora-41",
            "centos-stream-9",
-           "centos-stream-9-python3.12",
-           "almalinux-9-python3.11",
-           "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed",
           ]
         # 'tox -e update_docker_platforms' updates above
@@ -123,15 +119,15 @@ jobs:
       EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v10
+        uses: jlumbroso/free-disk-space@main
         with:
-          # need space in /var for Docker images
-          root-reserve-mb:      30000
-          remove-dotnet:        true
-          remove-android:       true
-          remove-haskell:       true
-          remove-codeql:        true
-          remove-docker-images: true
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
         continue-on-error: true
         if: inputs.free_disk_space
       - name: Check out SageMath
@@ -141,7 +137,7 @@ jobs:
           ref: ${{ inputs.sage_ref }}
           fetch-depth: 10000
       - name: Download upstream artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: upstream
           name: ${{ inputs.upstream_artifact }}

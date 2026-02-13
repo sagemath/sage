@@ -805,7 +805,7 @@ class CartanMatrix(Base, CartanType_abstract,
         return self._cartan_type.is_finite()
 
     @cached_method
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return ``True`` if ``self`` is an affine type or ``False`` otherwise.
 
@@ -934,7 +934,7 @@ class CartanMatrix(Base, CartanType_abstract,
             sage: M.is_indecomposable()
             False
         """
-        comp_num = self.dynkin_diagram().connected_components_number()
+        comp_num = self.dynkin_diagram().number_of_connected_components()
         # consider the empty matrix to be indecomposable
         return comp_num <= 1
 
@@ -1173,7 +1173,7 @@ def find_cartan_type_from_matrix(CM):
     relabel = []
     for S in CM.dynkin_diagram().connected_components_subgraphs():
         S = DiGraph(S) # We need a simple digraph here
-        n = S.num_verts()
+        n = S.n_vertices()
         # Build the list to test based upon rank
         if n == 1:
             relabel.append({1: S.vertices()[0]})

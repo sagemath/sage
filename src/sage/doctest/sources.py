@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Classes for sources of doctests
 
@@ -59,8 +58,6 @@ double_colon = re.compile(r"^(\s*).*::\s*$")
 code_block = re.compile(r"^(\s*)[.][.]\s*code-block\s*::.*$")
 
 whitespace = re.compile(r"\s*")
-bitness_marker = re.compile('#.*(32|64)-bit')
-bitness_value = '64' if sys.maxsize > (1 << 32) else '32'
 
 # For neutralizing doctests
 find_prompt = re.compile(r"^(\s*)(>>>|sage:)(.*)")
@@ -219,6 +216,7 @@ class DocTestSource:
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.parsing import SageDocTestParser
@@ -336,13 +334,6 @@ class DocTestSource:
                     self._process_doc(doctests, doc, namespace, start)
                     unparsed_doc = False
                 else:
-                    bitness = bitness_marker.search(line)
-                    if bitness:
-                        if bitness.groups()[0] != bitness_value:
-                            self.line_shift += 1
-                            continue
-                        else:
-                            line = line[:bitness.start()] + "\n"
                     if self.line_shift and (m := sagestart.match(line)):
                         # We insert empty doctest lines to make up for the removed lines
                         indent_and_prompt = m.group(1)
@@ -773,19 +764,6 @@ class FileDocTestSource(DocTestSource):
 
         TESTS:
 
-        We check that we correctly process results that depend on 32
-        vs 64 bit architecture::
-
-            sage: import sys
-            sage: bitness = '64' if sys.maxsize > (1 << 32) else '32'
-            sage: sys.maxsize == 2^63 - 1
-            False # 32-bit
-            True  # 64-bit
-            sage: ex = doctests[20].examples[11]
-            sage: ((bitness == '64' and ex.want == 'True  \n')
-            ....:  or (bitness == '32' and ex.want == 'False \n'))
-            True
-
         We check that lines starting with a # aren't doctested::
 
             #sage: raise RuntimeError
@@ -931,6 +909,7 @@ class SourceLanguage:
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.parsing import SageDocTestParser

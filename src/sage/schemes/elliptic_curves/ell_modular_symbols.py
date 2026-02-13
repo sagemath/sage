@@ -296,7 +296,9 @@ class ModularSymbolECLIB(ModularSymbol):
             sage: [E.modular_symbol()._scaling for E in cremona_curves([14])]
             [1/2, 1, 1/2, 1/2, 1, 1]
 
-        TESTS (for :issue:`10236`)::
+        TESTS:
+
+        For :issue:`10236`::
 
             sage: E = EllipticCurve('11a1')
             sage: m = E.modular_symbol(implementation='eclib')

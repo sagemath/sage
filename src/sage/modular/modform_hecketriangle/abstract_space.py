@@ -16,9 +16,9 @@ AUTHORS:
 # ****************************************************************************
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_element import vector
+from sage.modules.free_module_element import FreeModuleElement, vector
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -117,8 +117,6 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: latex(QuasiWeakModularForms())
             QM^!_{ n=3 }(0,\ 1)(\Bold{Z})
         """
-
-        from sage.misc.latex import latex
         return r"{}_{{ n={} }}({},\ {})({})".format(self._analytic_type.latex_space_name(), self._group.n(), self._weight, self._ep, latex(self._base_ring))
 
     def _element_constructor_(self, el):
@@ -319,24 +317,23 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: subspace3.has_coerce_map_from(subspace2)
             True
         """
-
         from .space import ZeroForm
         from .subspace import SubSpaceForms
         if isinstance(S, ZeroForm):
             return True
         if (isinstance(S, SubSpaceForms)
-            and isinstance(self, SubSpaceForms)):
-                if (self.ambient_space().has_coerce_map_from(S.ambient_space())):
-                    S2 = S.change_ambient_space(self.ambient_space())
-                    return self.module().has_coerce_map_from(S2.module())
-                else:
-                    return False
-        elif (  isinstance(S, FormsSpace_abstract)
-            and self.graded_ring().has_coerce_map_from(S.graded_ring())
-            and S.weight() == self._weight
-            and S.ep() == self._ep
-            and not isinstance(self, SubSpaceForms)):
-                return True
+                and isinstance(self, SubSpaceForms)):
+            if (self.ambient_space().has_coerce_map_from(S.ambient_space())):
+                S2 = S.change_ambient_space(self.ambient_space())
+                return self.module().has_coerce_map_from(S2.module())
+            else:
+                return False
+        elif (isinstance(S, FormsSpace_abstract)
+              and self.graded_ring().has_coerce_map_from(S.graded_ring())
+              and S.weight() == self._weight
+              and S.ep() == self._ep
+              and not isinstance(self, SubSpaceForms)):
+            return True
         else:
             return self.contains_coeff_ring() \
                 and self.coeff_ring().has_coerce_map_from(S)
@@ -1310,13 +1307,12 @@ class FormsSpace_abstract(FormsRing_abstract):
                 new_space = self.extend_type("weak")
             else:
                 new_space = self.extend_type("holo")
+        elif (m > 0):
+            new_space = self.extend_type("cusp")
+        elif (m >= 0):
+            new_space = self.extend_type("holo")
         else:
-            if (m > 0):
-                new_space = self.extend_type("cusp")
-            elif (m >= 0):
-                new_space = self.extend_type("holo")
-            else:
-                new_space = self.extend_type("weak")
+            new_space = self.extend_type("weak")
 
         return new_space(basis_pol)
 

@@ -215,11 +215,10 @@ Check that :issue:`8237` is fixed::
 
 import math
 from functools import partial
-from sage.rings.infinity import (infinity, minus_infinity,
-                                 unsigned_infinity)
-from sage.structure.richcmp import richcmp_method, op_EQ, op_GE, op_LE
-from sage.symbolic.expression import register_symbol, init_pynac_I
-from sage.symbolic.expression import E
+
+from sage.rings.infinity import infinity, minus_infinity, unsigned_infinity
+from sage.structure.richcmp import op_EQ, op_GE, op_LE, richcmp_method
+from sage.symbolic.expression import E, init_pynac_I, register_symbol
 
 constants_table = {}
 constants_name_table = {}
@@ -292,7 +291,7 @@ class Constant:
             setattr(self, "_%s_" % system, partial(self._generic_interface, value))
             setattr(self, "_%s_init_" % system, partial(self._generic_interface_init, value))
 
-        from .expression import PynacConstant
+        from sage.symbolic.expression import PynacConstant
         self._pynac = PynacConstant(self._name, self._latex, self._domain)
         self._serial = self._pynac.serial()
         constants_table[self._serial] = self

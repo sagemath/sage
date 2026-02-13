@@ -25,8 +25,7 @@ AUTHORS:
 # ****************************************************************************
 
 from __future__ import annotations
-from typing import NewType
-from collections.abc import Iterator
+from typing import NewType, TYPE_CHECKING
 
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -43,6 +42,9 @@ from sage.arith.misc import Sigma, binomial, factorial
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.modules.free_module_element', 'vector')
 
@@ -139,7 +141,7 @@ class PlanePartition(ClonableArray,
                 self._max_y = 0
                 self._max_z = 0
         else:
-            (self._max_x, self._max_y, self._max_z) = self.parent()._box
+            self._max_x, self._max_y, self._max_z = self.parent()._box
 
     def __richcmp__(self, other, op):
         r"""
@@ -1098,17 +1100,14 @@ class PlanePartition(ClonableArray,
             [(0, 0, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (2, 0, 0)]
         """
         from sage.combinat.posets.poset_examples import posets
-        (a, b, c) = (self._max_x, self._max_y, self._max_z)
-        Q = posets.ProductOfChains([a, b, c])
-        count = 0
+        abc = [self._max_x, self._max_y, self._max_z]
+        Q = posets.ProductOfChains(abc)
         generate = []
         for i, row in enumerate(self):
             for j, val in enumerate(row):
                 if val > 0:
-                    generate.append((i, j, val-1))
-            count += 1
-        oi = Q.order_ideal(generate)
-        return oi
+                    generate.append((i, j, val - 1))
+        return Q.order_ideal(generate)
 
     def maximal_boxes(self) -> list:
         r"""

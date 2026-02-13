@@ -386,9 +386,24 @@ class EllipticCurveHom(Morphism):
 
             sage: (-tau).trace()
             1
+
+        The trace is only defined for endomorphisms. If this method is called
+        on an isogeny that is not an endomorphism a ``ValueError`` will be raised.
+        The elliptic curve below does not have CM and the isogeny phi is of
+        degree 2, hence it is not an endomorphism::
+
+            sage: E = EllipticCurve([17,42])
+            sage: phi =  E.isogenies_prime_degree()[0]
+            sage: phi.trace()
+            Traceback (most recent call last):
+            ...
+            ValueError: trace only makes sense for endomorphisms
+
         """
         F = self.domain().base_field()
         if F.characteristic().is_zero():
+            if self.domain() != self.codomain():
+                raise ValueError('trace only makes sense for endomorphisms')
             d = self.degree()
             s = self.scaling_factor()
             return ZZ(s + d/s)
@@ -618,6 +633,11 @@ class EllipticCurveHom(Morphism):
             sage: f.inverse_image(f.codomain().zero())
             (0 : 1 : 0)
 
+        Make sure the inverse image of zero is returned on the correct curve (:issue:`41529`)::
+
+            sage: f.inverse_image(0).curve() is f.domain()
+            True
+
         You can give a tuple as input::
 
             sage: f.inverse_image((0, 2))  # random
@@ -651,7 +671,7 @@ class EllipticCurveHom(Morphism):
             if all:
                 return self.kernel_points()
             else:
-                return Q
+                return self.domain().zero()
         if all:
             try:
                 P = self.inverse_image(Q)
