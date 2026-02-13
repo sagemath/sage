@@ -835,25 +835,26 @@ def PresentationComplex(G):
     """
     O = AbstractSimplex(0)
     SO = O.apply_degeneracies(0)
-    edges = {g: AbstractSimplex(1, name=str(g)) for g in G.gens()}
-    inverseedges = {g.inverse(): AbstractSimplex(1, name=str(g.inverse())) for g in G.gens()}
+    F = G.free_group()
+    edges = {g: AbstractSimplex(1, name=str(g)) for g in F.gens()}
+    inverseedges = {g.inverse(): AbstractSimplex(1, name=str(g.inverse())) for g in F.gens()}
     all_edges = {}
     all_edges.update(edges)
     all_edges.update(inverseedges)
-    triangles = {g: AbstractSimplex(2, name='T' + str(g)) for g in G.gens()}
+    triangles = {g: AbstractSimplex(2, name='T' + str(g)) for g in F.gens()}
     face_maps = {g: [O, O] for g in all_edges.values()}
     face_maps.update({triangles[t]: [all_edges[t], SO, all_edges[t.inverse()]] for t in triangles})
     for r in G.relations():
         if len(r.Tietze()) == 1:
             pass
         elif len(r.Tietze()) == 2:
-            a = all_edges[G([r.Tietze()[0]])]
-            b = all_edges[G([r.Tietze()[1]])]
+            a = all_edges[F([r.Tietze()[0]])]
+            b = all_edges[F([r.Tietze()[1]])]
             T = AbstractSimplex(2, name=str(r))
             face_maps[T] = [a, SO, b]
         else:
-            words = [all_edges[G([a])] for a in r.Tietze()]
-            words[-1] = all_edges[G([-r.Tietze()[-1]])]
+            words = [all_edges[F([a])] for a in r.Tietze()]
+            words[-1] = all_edges[F([-r.Tietze()[-1]])]
             while len(words) > 3:
                 auxedge = AbstractSimplex(1)
                 face_maps[auxedge] = [O, O]
