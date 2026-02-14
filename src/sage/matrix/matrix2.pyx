@@ -4132,7 +4132,11 @@ cdef class Matrix(Matrix1):
         """
         from sage.matrix.matrix_space import MatrixSpace
         tm = verbose("computing right kernel matrix over an arbitrary field for %sx%s matrix" % (self.nrows(), self.ncols()), level=2)
-        E = self.echelon_form(*args, **kwds)
+        full_pivoting = ('algorithm' in kwds and kwds['algorithm'] == 'full_pivoting')
+        if not full_pivoting:
+            E = self.echelon_form(*args, **kwds)
+        else:
+            E, s = self.echelon_form(*args, **kwds)
         pivots = E.pivots()
         pivots_set = set(pivots)
         zero = self._base_ring.zero()
@@ -4159,6 +4163,8 @@ cdef class Matrix(Matrix1):
                         v[p] = -E[r, i]
                     basis.append(v)
             M = MS(basis, coerce=False)
+        if full_pivoting:
+            M.permute_columns(s)
         tm = verbose("done computing right kernel matrix over an arbitrary field for %sx%s matrix"
                      % (self.nrows(), self.ncols()), level=2, t=tm)
         return 'pivot-generic', M
@@ -4832,7 +4838,7 @@ cdef class Matrix(Matrix1):
         algorithm = kwds.pop('algorithm', None)
         if algorithm is None:
             algorithm = 'default'
-        elif algorithm not in ['default', 'generic', 'flint', 'linbox', 'pari', 'padic', 'pluq']:
+        elif algorithm not in ['default', 'generic', 'flint', 'linbox', 'pari', 'padic', 'pluq', 'full_pivoting']:
             raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm)
         elif algorithm == 'padic' and not isinstance(R, (IntegerRing_class,
                                                          RationalField)):
@@ -4891,32 +4897,30 @@ cdef class Matrix(Matrix1):
         # Third: generic first, if requested explicitly
         #   then try specialized class methods, and finally
         #   delegate to ad-hoc methods in greater generality
-        M = None
-        format = ''
-
         if algorithm == 'generic':
             format, M = self._right_kernel_matrix_over_field()
-
-        if M is None:
+        else:
             try:
                 format, M = self._right_kernel_matrix(algorithm=algorithm, proof=proof)
             except AttributeError:
-                pass
+                if isinstance(R, NumberField):
+                    format, M = self._right_kernel_matrix_over_number_field()
 
-        if M is None and isinstance(R, NumberField):
-            format, M = self._right_kernel_matrix_over_number_field()
+                elif R in _Fields:
+                    from sage.categories.discrete_valuation import DiscreteValuationFields
+                    if algorithm == 'default' and R in DiscreteValuationFields():
+                        format, M = self._right_kernel_matrix_over_field(algorithm='full_pivoting')
+                    else:
+                        format, M = self._right_kernel_matrix_over_field(algorithm=algorithm)
 
-        if M is None and R in _Fields:
-            format, M = self._right_kernel_matrix_over_field()
+                elif R.is_integral_domain():
+                    format, M = self._right_kernel_matrix_over_domain()
 
-        if M is None and R.is_integral_domain():
-            format, M = self._right_kernel_matrix_over_domain()
+                elif isinstance(R, sage.rings.abc.IntegerModRing):
+                    format, M = self._right_kernel_matrix_over_integer_mod_ring()
 
-        if M is None and isinstance(R, sage.rings.abc.IntegerModRing):
-            format, M = self._right_kernel_matrix_over_integer_mod_ring()
-
-        if M is None:
-            raise NotImplementedError("Cannot compute a matrix kernel over %s" % R)
+                else:
+                    raise NotImplementedError("Cannot compute a matrix kernel over %s" % R)
 
         # Trivial kernels give empty matrices, which sometimes mistakenly have
         #   zero columns as well. (eg PARI?)  This could be fixed at the source
@@ -9229,6 +9233,7 @@ cdef class Matrix(Matrix1):
                 T.swap_columns(i, temp[i])
 
         self.cache('rank', piv)
+        self.cache('pivots', tuple(range(piv)))
         self.cache('echelon_form_full_pivoting', self)
         self.cache('echelon_full_pivoting_columnperm', s)
         if transformation:
