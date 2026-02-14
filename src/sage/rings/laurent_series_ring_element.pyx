@@ -1573,17 +1573,26 @@ cdef class LaurentSeries(AlgebraElement):
             sage: (2*t^-4).is_square()
             False
 
-        check for rings with zero divisors::
+        The following examples demonstrate that for rings with nonzero
+        nilradical, a :exc:`NotImplementedError` is raised::
 
             sage: R.<t> = LaurentSeriesRing(Zmod(8))
             sage: (t^2).is_square()
-            True
-            sage: (4*t^2).is_square()  # 4 is square of 2
-            True
-            sage: (2*t^2).is_square()  # 2 is not a square mod 8
-            False
-            sage: (4 + t).is_square()  # 4 is sq, but 4+t is not
-            False
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented for Laurent series over rings with nonzero nilradical
+            sage: (4*t^2).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented for Laurent series over rings with nonzero nilradical
+            sage: (2*t^2).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented for Laurent series over rings with nonzero nilradical
+            sage: (4 + t).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented for Laurent series over rings with nonzero nilradical
         """
         if self.is_zero():
             return (True, self) if root else True
