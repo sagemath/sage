@@ -78,12 +78,15 @@ ax_cv_[]_AC_LANG_ABBREV[]_openmp=unknown
 #                -qopenmp (icc>=15), -openmp (icc),
 #                -xopenmp (Sun), -omp (Tru64),
 #                -qsmp=omp (AIX),
+#                -Xpreprocessor -fopenmp (Darwin's clang),
 #                none
-ax_openmp_flags="-fopenmp -openmp -qopenmp -mp -xopenmp -omp -qsmp=omp none"
+ax_openmp_flags="-fopenmp:-openmp:-Xpreprocessor -fopenmp:-qopenmp:-mp:-xopenmp:-omp:-qsmp=omp:none"
 if test "x$OPENMP_[]_AC_LANG_PREFIX[]FLAGS" != x; then
-  ax_openmp_flags="$OPENMP_[]_AC_LANG_PREFIX[]FLAGS $ax_openmp_flags"
+  ax_openmp_flags="$OPENMP_[]_AC_LANG_PREFIX[]FLAGS:$ax_openmp_flags"
 fi
+ac_save_ax_openmp_IFS="$IFS"; IFS=":"
 for ax_openmp_flag in $ax_openmp_flags; do
+  IFS="$ac_save_ax_openmp_IFS"
   case $ax_openmp_flag in
     none) []_AC_LANG_PREFIX[]FLAGS=$save[]_AC_LANG_PREFIX[] ;;
     *) []_AC_LANG_PREFIX[]FLAGS="$save[]_AC_LANG_PREFIX[]FLAGS $ax_openmp_flag" ;;
@@ -109,7 +112,11 @@ main()
   return 0;
 }
 ]])],[ax_cv_[]_AC_LANG_ABBREV[]_openmp=$ax_openmp_flag; break],[])
+ac_save_ax_openmp_IFS="$IFS"; IFS=":"
 done
+
+IFS="$ac_save_ax_openmp_IFS"
+
 []_AC_LANG_PREFIX[]FLAGS=$save[]_AC_LANG_PREFIX[]FLAGS
 ])
 if test "x$ax_cv_[]_AC_LANG_ABBREV[]_openmp" = "xunknown"; then
