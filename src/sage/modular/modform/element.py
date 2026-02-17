@@ -60,31 +60,10 @@ from sage.structure.richcmp import richcmp, op_NE, op_EQ
 import sage.modular.hecke.element as element
 from . import defaults
 
-lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
-lazy_import('sage.rings.number_field.number_field_morphisms', 'NumberFieldEmbedding')
-
-
-def is_ModularFormElement(x):
-    """
-    Return ``True`` if x is a modular form.
-
-    EXAMPLES::
-
-        sage: from sage.modular.modform.element import is_ModularFormElement
-        sage: is_ModularFormElement(5)
-        doctest:warning...
-        DeprecationWarning: The function is_ModularFormElement is deprecated;
-        use 'isinstance(..., ModularFormElement)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        False
-        sage: is_ModularFormElement(ModularForms(11).0)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_ModularFormElement is deprecated; "
-                "use 'isinstance(..., ModularFormElement)' instead.")
-    return isinstance(x, ModularFormElement)
+lazy_import('sage.combinat.integer_vector_weighted',
+            'WeightedIntegerVectors')
+lazy_import('sage.rings.number_field.number_field_morphisms',
+            'NumberFieldEmbedding')
 
 
 def delta_lseries(prec=53, max_imaginary_part=0):

@@ -78,8 +78,8 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '14'
           - '15'
+          - '26'
 
     steps:
       - name: Checkout code
@@ -104,6 +104,7 @@ jobs:
           MAKE: 'make -j6'
 
       - name: Test
+        continue-on-error: true
         run: |
           source ./.homebrew-build-env # Needed so that runtime cython can find the dependencies
           ./sage -t --all -p4

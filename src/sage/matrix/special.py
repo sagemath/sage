@@ -936,11 +936,19 @@ def identity_matrix(ring, n=0, sparse=False):
         Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
         sage: M.is_mutable()
         True
+
+    ::
+
+        sage: T = TropicalSemiring(QQ)
+        sage: identity_matrix(T, 3)
+        [        0 +infinity +infinity]
+        [+infinity         0 +infinity]
+        [+infinity +infinity         0]
     """
     if isinstance(ring, (Integer, int)):
         n = ring
         ring = ZZ
-    return matrix_space.MatrixSpace(ring, n, n, sparse)(1)
+    return matrix_space.MatrixSpace(ring, n, n, sparse)(ring.one())
 
 
 @matrix_method

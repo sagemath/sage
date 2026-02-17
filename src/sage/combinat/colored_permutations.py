@@ -7,29 +7,32 @@ Colored permutations
     generalized to `G \wr S_n`
 """
 import itertools
-from sage.misc.prandom import choice
 
+from sage.arith.functions import lcm
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.partition_tuple import PartitionTuples
+from sage.combinat.permutation import Permutations
+from sage.combinat.specht_module import SpechtModule as SymGroupSpechtModule
+from sage.groups.conjugacy_classes import ConjugacyClass
+from sage.matrix.constructor import diagonal_matrix, matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.latex import latex
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.misc.prandom import choice
+from sage.modules.with_basis.representation import Representation_abstract
+from sage.modules.with_basis.subquotient import (
+    QuotientModuleWithBasis,
+    SubmoduleWithBasis,
+)
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import MultiplicativeGroupElement, parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
-from sage.misc.misc_c import prod
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.arith.functions import lcm
-
-from sage.combinat.permutation import Permutations
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.specht_module import SpechtModule as SymGroupSpechtModule
-from sage.combinat.partition_tuple import PartitionTuples
-from sage.groups.conjugacy_classes import ConjugacyClass
-from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModuleWithBasis
-from sage.modules.with_basis.representation import Representation_abstract
-from sage.matrix.constructor import matrix, diagonal_matrix
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.integer_ring import ZZ
 
 lazy_import('sage.matrix.constructor', 'diagonal_matrix')
 lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
@@ -2265,7 +2268,6 @@ class TabloidModule(Representation_abstract, CombinatorialFreeModule):
             \end{array}$}
             }}
         """
-        from sage.misc.latex import latex
         return "T^{" + ",".join(latex(la) for la in self._diagram) + "}"
 
     def _ascii_art_term(self, TP):
@@ -2572,7 +2574,6 @@ class SpechtModule(Representation_abstract, SubmoduleWithBasis):
             \end{array}$}
             }}
         """
-        from sage.misc.latex import latex
         return "S^{" + ",".join(latex(la) for la in self._diagram) + "}"
 
     @lazy_attribute
@@ -2833,7 +2834,6 @@ class MaximalSpechtSubmodule(Representation_abstract, SubmoduleWithBasis):
             \end{array}$}
             }}
         """
-        from sage.misc.latex import latex
         return "U^{" + ",".join(latex(la) for la in self._diagram) + "}"
 
     Element = SymGroupSpechtModule.Element
@@ -2973,7 +2973,6 @@ class SimpleModule(Representation_abstract, QuotientModuleWithBasis):
             \end{array}$}
             }}
         """
-        from sage.misc.latex import latex
         return "D^{" + ",".join(latex(la) for la in self._diagram) + "}"
 
     Element = SymGroupSpechtModule.Element
