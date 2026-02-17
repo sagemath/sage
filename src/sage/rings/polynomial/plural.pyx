@@ -1687,17 +1687,24 @@ cdef class NCPolynomial_plural(RingElement):
             sage: f^2
             x^6 + x^2*z + y^2
 
-        TESTS::
+        TESTS:
+
+        The exponents overflow at different points on 32- and 64-bit
+        systems::
 
             sage: A.<x,z,y> = FreeAlgebra(QQ, 3)
             sage: P = A.g_algebra(relations={y*x:-x*y + z},  order='lex')
             sage: P.inject_variables()
             Defining x, z, y
-            sage: x^(2^20-1)
-            Traceback (most recent call last):             # 32-bit
-            ...                                            # 32-bit
-            OverflowError: exponent overflow (1048575)     # 32-bit
-            x^1048575  # 64-bit
+            sage: try:
+            ....:     power = x^(2^20-1)
+            ....: except OverflowError as e:
+            ....:     # Happens on 32-bit systems
+            ....:     power = e
+            sage: isinstance(power, OverflowError)  # needs 32_bit
+            True
+            sage: power  # needs !32_bit
+            x^1048575
             sage: x^2^20
             Traceback (most recent call last):
             ....

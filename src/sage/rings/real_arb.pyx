@@ -293,9 +293,22 @@ cdef int arb_to_mpfi(mpfi_t target, arb_t source, const long precision) except -
 
     EXAMPLES::
 
-        sage: RIF(RBF(2)**(2**100))
-        [5.8756537891115869e1388255822130839282 .. +infinity] # 64-bit
-        [2.098... .. +infinity]                               # 32-bit
+        sage: from sage.rings.real_arb import RealBall
+        sage: from sage.rings.real_mpfi import RealIntervalFieldElement
+        sage: arb = RBF(2)
+        sage: isinstance(arb, RealBall)
+        True
+        sage: mpfi = RIF(arb)
+        sage: isinstance(mpfi, RealIntervalFieldElement)
+        True
+
+    TESTS::
+
+        sage: RIF(RBF(2)**(2**100))  # needs 32_bit
+        [2.098... .. +infinity]
+        sage: RIF(RBF(2)**(2**100))  # needs !32_bit
+        [5.8756537891115869e1388255822130839282 .. +infinity]
+
     """
     cdef mpfr_t left
     cdef mpfr_t right

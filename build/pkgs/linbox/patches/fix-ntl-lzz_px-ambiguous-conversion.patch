@@ -1,20 +1,26 @@
---- a/linbox/ring/ntl/ntl-lzz_px.h	2025-10-21 14:28:23.362837229 +0800
-+++ b/linbox/ring/ntl/ntl-lzz_px.h	2025-10-21 14:28:35.770836212 +0800
-@@ -195,9 +195,15 @@
-       template <class E>
- 		Element& init( Element& p, const std::vector<E>& v ) const
+Description: Restrict NTL_zz_pX::init to Coeff vector
+ The previous template allowed initializing a polynomial from any
+ vector type, but on some platforms (e.g., i386) this caused ambiguous
+ conversions when E is Givaro::Integer, because NTL::SetCoeff expects
+ a long. This patch removes the generic template overload and keeps
+ the overload specifically for std::vector<Coeff>, avoiding type
+ conversion errors.
+Author: Jean-Guillaume Dumas <Jean-Guillaume.Dumas@imag.fr>
+Origin: https://github.com/linbox-team/linbox/commit/9555c5b
+Bug: https://github.com/linbox-team/linbox/issues/328
+Last-Update: 2025-09-11
+
+
+--- a/linbox/ring/ntl/ntl-lzz_px.h
++++ b/linbox/ring/ntl/ntl-lzz_px.h
+@@ -191,9 +191,7 @@
+ 		 * of the vector corresponds to the leading coefficients.  That is,
+ 		 * v[i] = coefficient of x^i.
+ 		 */
+-		//Element& init( Element& p, const std::vector<Coeff>& v ) const
+-      template <class E>
+-		Element& init( Element& p, const std::vector<E>& v ) const
++		Element& init( Element& p, const std::vector<Coeff>& v ) const
  		{
-+			// Ensure coefficients are converted via the coefficient field to
-+			// avoid ambiguous implicit conversions (e.g., from Givaro::Integer
-+			// to long) when E is not NTL::zz_p. This fixes clang/libc++ builds.
  			p = 0;
--			for( long i = 0; i < (long)v.size(); ++i )
--				NTL::SetCoeff( p, i, v[ (size_t) i ] );
-+			Coeff temp;
-+			for( long i = 0; i < (long)v.size(); ++i ) {
-+				_CField.init( temp, v[ (size_t) i ] );
-+				NTL::SetCoeff( p, i, temp );
-+			}
- 			return p;
- 		}
- 
+ 			for( long i = 0; i < (long)v.size(); ++i )

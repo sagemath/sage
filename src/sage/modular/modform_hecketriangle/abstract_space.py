@@ -16,9 +16,9 @@ AUTHORS:
 # ****************************************************************************
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_element import vector
+from sage.modules.free_module_element import FreeModuleElement, vector
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -117,8 +117,6 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: latex(QuasiWeakModularForms())
             QM^!_{ n=3 }(0,\ 1)(\Bold{Z})
         """
-
-        from sage.misc.latex import latex
         return r"{}_{{ n={} }}({},\ {})({})".format(self._analytic_type.latex_space_name(), self._group.n(), self._weight, self._ep, latex(self._base_ring))
 
     def _element_constructor_(self, el):
@@ -1309,13 +1307,12 @@ class FormsSpace_abstract(FormsRing_abstract):
                 new_space = self.extend_type("weak")
             else:
                 new_space = self.extend_type("holo")
+        elif (m > 0):
+            new_space = self.extend_type("cusp")
+        elif (m >= 0):
+            new_space = self.extend_type("holo")
         else:
-            if (m > 0):
-                new_space = self.extend_type("cusp")
-            elif (m >= 0):
-                new_space = self.extend_type("holo")
-            else:
-                new_space = self.extend_type("weak")
+            new_space = self.extend_type("weak")
 
         return new_space(basis_pol)
 

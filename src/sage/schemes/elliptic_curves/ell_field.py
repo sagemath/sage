@@ -836,7 +836,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         If ``map`` is ``False``, the division field `K` as an absolute
         number field or a finite field.
         If ``map`` is ``True``, a tuple `(K, \phi)` where `\phi` is an
-        embedding of the base field in the division field `K`.
+        embedding of the base field into the division field `K`.
 
         .. WARNING::
 
@@ -962,22 +962,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
               To:   Number Field in b with defining polynomial x^24 ...
               Defn: i |--> -215621657062634529/183360797284413355040732*b^23 ...
 
-        Over a finite field::
-
-            sage: E = EllipticCurve(GF(431^2), [1,0])                                   # needs sage.rings.finite_rings
-            sage: E.division_field(5, map=True)                                         # needs sage.rings.finite_rings
-            (Finite Field in t of size 431^4,
-             Ring morphism:
-               From: Finite Field in z2 of size 431^2
-               To:   Finite Field in t of size 431^4
-               Defn: z2 |--> 52*t^3 + 222*t^2 + 78*t + 105)
-
-        ::
-
-            sage: E = EllipticCurve(GF(433^2), [1,0])                                   # needs sage.rings.finite_rings
-            sage: K.<v> = E.division_field(7); K                                        # needs sage.rings.finite_rings
-            Finite Field in v of size 433^16
-
         It also works for composite orders::
 
             sage: E = EllipticCurve(GF(11), [5,5])
@@ -1006,54 +990,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         .. SEEALSO::
 
+            This method has a faster specialized implementation for finite base fields;
+            see :meth:`sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.division_field`.
+
             To compute a basis of the `n`-torsion once the base field
             has been extended, you may use
             :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup`
             or
             :meth:`sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.torsion_basis`.
-
-        TESTS:
-
-        Some random for prime orders::
-
-            sage: # needs sage.rings.finite_rings
-            sage: def check(E, l, K):
-            ....:     EE = E.change_ring(K)
-            ....:     cof = EE.order().prime_to_m_part(l)
-            ....:     pts = (cof * EE.random_point() for _ in iter(int, 1))
-            ....:     mul = lambda P: P if not l*P else mul(l*P)
-            ....:     pts = map(mul, filter(bool, pts))
-            ....:     if l == EE.base_field().characteristic():
-            ....:         if EE.is_supersingular():
-            ....:             Ps = ()
-            ....:         else:
-            ....:             assert l.divides(EE.order())
-            ....:             Ps = (next(pts),)
-            ....:     else:
-            ....:         assert l.divides(EE.order())
-            ....:         for _ in range(9999):
-            ....:             P,Q = next(pts), next(pts)
-            ....:             if P.weil_pairing(Q,l) != 1:
-            ....:                 Ps = (P,Q)
-            ....:                 break
-            ....:         else:
-            ....:             assert False
-            ....:     deg = lcm(el.minpoly().degree() for el in sum(map(list,Ps),[]))
-            ....:     assert max(deg, E.base_field().degree()) == K.degree()
-            sage: q = next_prime_power(randrange(1, 10^9))
-            sage: F.<a> = GF(q)
-            sage: while True:
-            ....:     try:
-            ....:         E = EllipticCurve([F.random_element() for _ in range(5)])
-            ....:     except ArithmeticError:
-            ....:         continue
-            ....:     break
-            sage: l = random_prime(8)
-            sage: K = E.division_field(l)
-            sage: n = E.cardinality(extension_degree=K.degree()//F.degree())
-            sage: (l^2 if q%l else 0 + E.is_ordinary()).divides(n)
-            True
-            sage: check(E, l, K)                # long time
 
         AUTHORS:
 
@@ -1072,6 +1016,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         verbose("Adjoining X-coordinates of %s-torsion points" % n)
 
         F = self.base_ring()
+
+        # If the curve is supersingular, the p-torsion is trivial,
+        # so we may ignore the p-primary part of n right away.
+        if not F(n) and self.is_supersingular():
+            n = n.prime_to_m_part(F.characteristic())
+
         f = self.division_polynomial(n).radical()
 
         if n == 2 or f.is_constant():
