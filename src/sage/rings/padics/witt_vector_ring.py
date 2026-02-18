@@ -124,76 +124,12 @@ def fast_char_p_power(x, n, p=None):
 
     return xn
 
-def generate_sum_and_product_polynomials_list(prec, p, old_sum_poly = None, old_prod_poly = None):
-        """
-        Generate the sum and product polynomials defining the ring laws of
-        truncated Witt vectors for the ``standard`` algorithm, of the ZZ
-        ring. This method is used as an auxiliary for the computation of
-        the truncated Witt vectors of a ring R. 
 
-        """
-        x_var_names = [f'X{i}' for i in range(prec)]
-        y_var_names = [f'Y{i}' for i in range(prec)]
-        var_names = x_var_names + y_var_names
-
-        # Okay, what's going on here? Sage, by default, relies on
-        # Singular for Multivariate Polynomial Rings, but Singular uses
-        # only SIXTEEN bits (unsigned) to store its exponents. So if we
-        # want exponents larger than 2^16 - 1, we have to use the
-        # generic implementation. However, after some experimentation,
-        # it seems like the generic implementation is faster?
-        #
-        # After trying to compute S_4 for p=5, it looks like generic is
-        # faster for  very small polys, and MUCH slower for large polys.
-        # So we'll default to singular unless we can't use it.
-        #
-        # Remark: Since when is SIXTEEN bits sufficient for anyone???
-        #
-        if p**(prec - 1) >= 2**16:
-            implementation = 'generic'
-        else:
-            implementation = 'singular'
-
-        # We first generate the "universal" polynomials and then project
-        # to the coefficient ring.
-        R = PolynomialRing(ZZ, var_names, implementation=implementation)
-        x_y_vars = R.gens()
-        x_vars = x_y_vars[:prec]
-        y_vars = x_y_vars[prec:]
-        
-        if old_sum_poly is not None: # We want to extend, not create
-            start = len(old_sum_poly)
-            start_prod = start
-            sum_poly = old_sum_poly + [0]*(prec-start)
-            prod_poly = old_prod_poly + [0]*(prec-start)
-        else: 
-            start = 0
-            start_prod = 1
-            sum_poly = [0]*(prec)
-            prod_poly = [x_vars[0] * y_vars[0]] + [0]*(prec-1)
-            
-        for n in range(start, prec):
-            s_n = x_vars[n] + y_vars[n]
-            for i in range(n):
-                s_n += ((x_vars[i]**(p**(n-i)) + y_vars[i]**(p**(n-i))
-                        - sum_poly[i]**(p**(n-i))) / p**(n-i))
-            sum_poly[n] = R(s_n)
-
-        for n in range(start_prod, prec):
-            x_poly = sum([p**i * x_vars[i]**(p**(n-i)) for i in range(n+1)])
-            y_poly = sum([p**i * y_vars[i]**(p**(n-i)) for i in range(n+1)])
-            p_poly = sum([p**i * prod_poly[i]**(p**(n-i))
-                         for i in range(n)])
-            p_n = (x_poly*y_poly - p_poly) // p**n
-            prod_poly[n] = p_n
-            
-        return (sum_poly, prod_poly)
-
-class WittVectorRingFactory(UniqueFactory): 
+class WittVectorRingFactory(UniqueFactory):
     def __init__(self, name):
-        super().__init__(name) 
-        self._ZZ_dictionary = {}
-        
+        super().__init__(name)
+        self._witt_polynomials = {}
+
     def create_key(self, coefficient_ring, prec=1, p=None, algorithm=None):
         if coefficient_ring not in CommutativeRings():
             raise TypeError(f"{coefficient_ring} is not a commutative ring")
@@ -240,25 +176,93 @@ class WittVectorRingFactory(UniqueFactory):
                 raise ValueError("algorithm must be one of None, 'standard', "
                                  "'p_invertible', 'finotti', 'phantom'")
         return (coefficient_ring, prec, p, child)
-    
+
     def create_object(self, version, key, **extra_args):
         (coefficient_ring, prec, p, child) = key
         if child != WittVectorRing_standard:
             return child(coefficient_ring, prec, p)
 
-        if p in self._ZZ_dictionary:
-            if prec <= len(self._ZZ_dictionary[p][0]):
-                pass
-            else:
-                (sum_poly, prod_poly) = generate_sum_and_product_polynomials_list(prec, p, self._ZZ_dictionary[p][0], self._ZZ_dictionary[p][1])
-                self._ZZ_dictionary[p] = (sum_poly, prod_poly)
+        if p in self._witt_polynomials:
+            if prec > len(self._witt_polynomials[p][0]):
+                self._witt_polynomials[p] = self._generate_sum_and_product_polynomials_list(prec, p)
         else:
-            (sum_poly, prod_poly) = generate_sum_and_product_polynomials_list(prec, p)
-            self._ZZ_dictionary[p] = (sum_poly, prod_poly)
-        
+            self._witt_polynomials[p] = self._generate_sum_and_product_polynomials_list(prec, p)
+
         return child(coefficient_ring, prec, p)
 
+    def _generate_sum_and_product_polynomials_list(self, prec, p):
+        """
+        Generate the sum and product polynomials defining the ring laws of
+        truncated Witt vectors for the ``standard`` algorithm, of the ZZ
+        ring. This method is used as an auxiliary for the computation of
+        the truncated Witt vectors of a ring R.
+
+        """
+        x_var_names = [f'X{i}' for i in range(prec)]
+        y_var_names = [f'Y{i}' for i in range(prec)]
+        var_names = x_var_names + y_var_names
+
+        # Okay, what's going on here? Sage, by default, relies on
+        # Singular for Multivariate Polynomial Rings, but Singular uses
+        # only SIXTEEN bits (unsigned) to store its exponents. So if we
+        # want exponents larger than 2^16 - 1, we have to use the
+        # generic implementation. However, after some experimentation,
+        # it seems like the generic implementation is faster?
+        #
+        # After trying to compute S_4 for p=5, it looks like generic is
+        # faster for  very small polys, and MUCH slower for large polys.
+        # So we'll default to singular unless we can't use it.
+        #
+        # Remark: Since when is SIXTEEN bits sufficient for anyone???
+        #
+        if p**(prec - 1) >= 2**16:
+            implementation = 'generic'
+        else:
+            implementation = 'singular'
+
+        # We first generate the "universal" polynomials and then project
+        # to the coefficient ring.
+        R = PolynomialRing(ZZ, var_names, implementation=implementation)
+        x_y_vars = R.gens()
+        x_vars = x_y_vars[:prec]
+        y_vars = x_y_vars[prec:]
+
+        if p in self._witt_polynomials:
+            old_sum_poly, old_prod_poly = self._witt_polynomials[p][0], self._witt_polynomials[p][1]
+        else:
+            old_sum_poly, old_prod_poly = None, None
+
+        if old_sum_poly is not None: # We want to extend, not create
+            start = len(old_sum_poly)
+            start_prod = start
+            sum_poly = old_sum_poly + [0]*(prec-start)
+            prod_poly = old_prod_poly + [0]*(prec-start)
+        else:
+            start = 0
+            start_prod = 1
+            sum_poly = [0]*(prec)
+            prod_poly = [x_vars[0] * y_vars[0]] + [0]*(prec-1)
+
+        for n in range(start, prec):
+            s_n = x_vars[n] + y_vars[n]
+            for i in range(n):
+                s_n += ((x_vars[i]**(p**(n-i)) + y_vars[i]**(p**(n-i))
+                        - sum_poly[i]**(p**(n-i))) / p**(n-i))
+            sum_poly[n] = R(s_n)
+
+        for n in range(start_prod, prec):
+            x_poly = sum([p**i * x_vars[i]**(p**(n-i)) for i in range(n+1)])
+            y_poly = sum([p**i * y_vars[i]**(p**(n-i)) for i in range(n+1)])
+            p_poly = sum([p**i * prod_poly[i]**(p**(n-i))
+                         for i in range(n)])
+            p_n = (x_poly*y_poly - p_poly) // p**n
+            prod_poly[n] = p_n
+
+        return (sum_poly, prod_poly)
+
+
 WittVectorRing = WittVectorRingFactory("WittVectorRing")
+
 
 class WittVectorRingClass(Parent):
     r"""
@@ -380,6 +384,10 @@ class WittVectorRingClass(Parent):
         sage: W = WittVectorRing(PolynomialRing(GF(5), 't,u'))
         sage: type(W)
         <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_finotti_with_category'>
+
+        sage: W = WittVectorRing(QQ, p=5)
+        sage: W
+        Ring of truncated 5-typical Witt vectors of length 1 over Rational Field
     """
     def __init__(self, coefficient_ring, prec, prime) -> None:
         r"""
@@ -505,29 +513,28 @@ class WittVectorRingClass(Parent):
             (X1^3, X2^3)
         """
         var_names = [f'X{i}' for i in range(prec)] + [f'Y{i}' for i in range(prec)]
-        
-        if p in WittVectorRing._ZZ_dictionary:
-            (sum_poly, prod_poly) = WittVectorRing._ZZ_dictionary[p]
-        else: # Should not happen, 
-            raise ValueError("How did we get here ?")
-        
-        # Because ZZ can have a higher precision that prec, we need to create the 
-        # homomorphism, as there is no endowed homomorphism from R[X1,Y1] to 
+
+        (sum_poly, prod_poly) = WittVectorRing._witt_polynomials[p]
+        self._sum_polynomials = [None]*prec
+        self._prod_polynomials = [None]*prec
+
+        # Because ZZ can have a higher precision that prec, we need to create the
+        # homomorphism, as there is no endowed homomorphism from R[X1,Y1] to
         # ZZ[X1,X2,Y1,Y2]
-        
-        Rbig = sum_poly[0].parent()
-        prec_big = len(sum_poly)
+        if len(sum_poly) > prec:
+            ZZ_ring = sum_poly[-1].parent()
+            prec_big = len(sum_poly)
 
-        S = PolynomialRing(coefficient_ring, var_names)
-        Sgens = S.gens()
-        images = []
+            S = PolynomialRing(coefficient_ring, var_names)
+            Sgens = S.gens()
+            images = []
 
-        for i in range(prec_big):
-            images.append(Sgens[i] if i < prec else S(0))
-        for i in range(prec_big):
-            images.append(Sgens[prec + i] if i < prec else S(0))
+            for i in range(prec_big):
+                images.append(Sgens[i] if i < prec else S(0))
+            for i in range(prec_big):
+                images.append(Sgens[prec + i] if i < prec else S(0))
 
-        phi = Rbig.hom(images, S)
+            phi = ZZ_ring.hom(images, S)
 
 
         self._prod_polynomials = [x_vars[0] * y_vars[0]] + [0]*(prec-1)
