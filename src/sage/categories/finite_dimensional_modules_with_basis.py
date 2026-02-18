@@ -835,10 +835,24 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f = SGA.module_morphism(lambda x: SGA(x**2), codomain=SGA)        # needs sage.groups sage.modules
                 sage: f.kernel_basis()                                                  # needs sage.groups sage.modules
                 ([1, 2, 3] - [3, 2, 1], [1, 3, 2] - [3, 2, 1], [2, 1, 3] - [3, 2, 1])
-            """
-            return tuple(map( self.domain().from_vector,
-                              self.matrix().right_kernel_matrix().rows() ))
 
+            TESTS::
+
+                sage: A = linear_transformation(matrix([[0,-1],[0,0]]))
+                sage: v = A.kernel_basis()[0]
+                sage: v in A.kernel()
+                True
+                sage: A(v)
+                (0, 0)
+            """
+            M = self.matrix()
+
+            if hasattr(self, "side") and self.side() == "left":
+                K = M.left_kernel_matrix()
+            else:
+                K = M.right_kernel_matrix()
+
+            return tuple(self.domain().from_vector(v) for v in K.rows())
         def kernel(self):
             """
             Return the kernel of ``self`` as a submodule of the domain.
