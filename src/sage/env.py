@@ -227,6 +227,7 @@ SINGULAR_BIN = var("SINGULAR_BIN") or "Singular"
 
 # OpenMP
 OPENMP_CFLAGS = var("OPENMP_CFLAGS", "")
+OPENMP_LDFLAGS = OPENMP_CFLAGS+" "+var("OPENMP_CLIB", "")
 OPENMP_CXXFLAGS = var("OPENMP_CXXFLAGS", "")
 
 # Make sure that mpmath < 1.4 does not try to use Sage types
@@ -361,7 +362,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
         sage: cython(                                               # optional - sage.misc.cython
         ....: '''
         ....: #distutils: extra_compile_args = OPENMP_CFLAGS
-        ....: #distutils: extra_link_args = OPENMP_CFLAGS
+        ....: #distutils: extra_link_args = OPENMP_LDFLAGS
         ....: from cython.parallel import prange
         ....:
         ....: cdef int i
@@ -472,6 +473,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
     # OpenMP
     aliases["OPENMP_CFLAGS"] = OPENMP_CFLAGS.split()
     aliases["OPENMP_CXXFLAGS"] = OPENMP_CXXFLAGS.split()
+    aliases["OPENMP_LDFLAGS"] = OPENMP_LDFLAGS.split()
 
     return aliases
 

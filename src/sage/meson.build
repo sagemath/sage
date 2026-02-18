@@ -40,6 +40,7 @@ if openmp.found()
   if host_machine.system() == 'darwin'
     conf_data.set('OPENMP_CFLAGS', '-Xpreprocessor -fopenmp')
     conf_data.set('OPENMP_CXXFLAGS', '-Xpreprocessor -fopenmp')
+    conf_data.set('OPENMP_CLIB', '-lomp')
   else
     conf_data.set('OPENMP_CFLAGS', '-fopenmp')
     conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')

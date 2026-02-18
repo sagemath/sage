@@ -236,12 +236,14 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
     AC_LANG_PUSH([C])
     AX_OPENMP([
         AC_SUBST(OPENMP_CFLAGS)
+        AC_SUBST(OPENMP_CLIB)
     ])
     AC_LANG_POP()
 
     AC_LANG_PUSH([C++])
     AX_OPENMP([
         AC_SUBST(OPENMP_CXXFLAGS)
+        AC_SUBST(OPENMP_CXXLIB)
     ])
     AC_LANG_POP()
 
