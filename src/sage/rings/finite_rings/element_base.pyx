@@ -138,7 +138,8 @@ cdef class FiniteRingElement(CommutativeRingElement):
             sage: a.to_bytes(byteorder='little')
             b'\x16"\x00'
         """
-        length = (self.parent().order().nbits() + 7) // 8
+        order = self.parent().order()
+        length = ((order - 1).nbits() + 7) // 8
         return int(self).to_bytes(length=length, byteorder=byteorder)
 
     def canonical_associate(self):
@@ -747,7 +748,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: (a**2).is_square()                                                    # needs sage.libs.ntl
             True
             sage: k.<a> = FiniteField(17^5, implementation='pari_ffelt', modulus='primitive')     # needs sage.libs.pari
-            sage: a.is_square()
+            sage: a.is_square()                                                         # needs sage.libs.pari
             False
             sage: (a**2).is_square()                                                    # needs sage.libs.pari
             True
@@ -1128,8 +1129,18 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: a = 136*z3^2 + 10*z3 + 125
             sage: a.to_bytes()
             b'7)\xa3'
+
+        TESTS:
+
+        Check that :issue:`41545` is fixed::
+
+            sage: F.<z2> = GF(2^8)
+            sage: a = F.from_integer(137)
+            sage: a.to_bytes()
+            b'\x89'
         """
-        length = (self.parent().order().nbits() + 7) // 8
+        order = self.parent().order()
+        length = ((order - 1).nbits() + 7) // 8
         return self.to_integer().to_bytes(length=length, byteorder=byteorder)
 
 cdef class Cache_base(SageObject):

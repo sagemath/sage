@@ -8,8 +8,9 @@ Sage-the-distribution (classical build)
 .. note::
 
    This section describes the classical build process using
-   ``./configure && make``.
-   It is recommended to use the modern Meson build system instead;
+   ``./configure && make``, which at the end will invoke Meson build system
+   to build the main sagelib Python module. However,
+   it is recommended to use the modern Meson build system directly;
    see :ref:`section-build-source`.
 
 

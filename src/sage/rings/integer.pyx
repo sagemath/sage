@@ -1575,10 +1575,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         ::
 
             sage: n=3^100000
-            sage: n.digits(base=10)[-1]  # slightly slower than str                     # needs sage.rings.real_interval_field
+            sage: n.digits(base=10)[-1]  # slightly slower than str
             1
             sage: n=10^10000
-            sage: n.digits(base=10)[-1]  # slightly faster than str                     # needs sage.rings.real_interval_field
+            sage: n.digits(base=10)[-1]  # slightly faster than str
             1
 
         AUTHORS:
@@ -1819,13 +1819,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n.ndigits(2)
             4
             sage: n = 1000**1000000+1
-            sage: n.ndigits()                                                           # needs sage.rings.real_interval_field
+            sage: n.ndigits()
             3000001
             sage: n = 1000**1000000-1
-            sage: n.ndigits()                                                           # needs sage.rings.real_interval_field
+            sage: n.ndigits()
             3000000
             sage: n = 10**10000000-10**9999990
-            sage: n.ndigits()                                                           # needs sage.rings.real_interval_field
+            sage: n.ndigits()
             10000000
         """
         cdef Integer temp
@@ -2336,8 +2336,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 2 ^ 100000000000000000000000
             Traceback (most recent call last):
             ...
-            OverflowError: exponent must be at most 2147483647           # 32-bit
-            OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+            OverflowError: exponent must be at most ...
             sage: 1 ^ 100000000000000000000000
             1
             sage: 1 ^ -100000000000000000000000
@@ -2637,9 +2636,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-            sage: Integer(125)._exact_log_mpfi_log(3)                                   # needs sage.rings.real_interval_field
+            sage: Integer(125)._exact_log_mpfi_log(3)
             4
-            sage: Integer(5^150)._exact_log_mpfi_log(5)                                 # needs sage.rings.real_interval_field
+            sage: Integer(5^150)._exact_log_mpfi_log(5)
             150
         """
         cdef int i
@@ -2749,7 +2748,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: Integer(178^1700+1).exact_log(178)
             1700
             sage: # we need to exercise the large base code path too
-            sage: Integer(1780^1700-1).exact_log(1780)                                  # needs sage.rings.real_interval_field
+            sage: Integer(1780^1700-1).exact_log(1780)
             1699
 
             sage: # The following are very very fast.
@@ -2895,7 +2894,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         For extremely large numbers, this works::
 
             sage: x = 3^100000
-            sage: log(x, 3)                                                             # needs sage.rings.real_interval_field
+            sage: log(x, 3)
             100000
 
         Also ``log(x)``, giving a symbolic output,
@@ -3177,17 +3176,25 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         TESTS:
 
-        Overflow::
+        This example always overflows::
 
             sage: prod(primes_first_n(64)).divisors()                                   # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             OverflowError: value too large
-            sage: prod(primes_first_n(58)).divisors()                                   # needs sage.libs.pari
-            Traceback (most recent call last):
-            ...
-            OverflowError: value too large                                 # 32-bit
-            MemoryError: failed to allocate 288230376151711744 * 24 bytes  # 64-bit
+
+        While this one overflows only on 32-bit systems. On 64-bit
+        systems, we run out of memory::
+
+            sage: # needs sage.libs.pari
+            sage: try:
+            ....:     prod(primes_first_n(58)).divisors()
+            ....: except (OverflowError, MemoryError) as e:
+            ....:     exc = e
+            sage: isinstance(exc, OverflowError)  # needs 32_bit
+            True
+            sage: isinstance(exc, MemoryError)    # needs !32_bit
+            True
 
         Check for memory leaks and ability to interrupt
         (the ``divisors`` call below allocates about 800 MB every time,
@@ -4760,7 +4767,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             OverflowError: argument too large for multifactorial
         """
         if k <= 0:
-            raise ValueError("multifactorial only defined for nonpositive k")
+            raise ValueError("multifactorial only defined for positive k")
 
         if not mpz_fits_slong_p(self.value):
             raise OverflowError("argument too large for multifactorial")
@@ -6423,9 +6430,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: import numpy
             sage: numpy.array([1, 2, 3])
             array([1, 2, 3])
-            sage: numpy.array([1, 2, 3]).dtype
-            dtype('int32')                         # 32-bit
-            dtype('int64')                         # 64-bit
+            sage: d32 = numpy.dtype(numpy.int32)
+            sage: d64 = numpy.dtype(numpy.int64)
+            sage: numpy.array([1, 2, 3]).dtype in [d32, d64]
+            True
 
             sage: # needs numpy (this has to be repeated until #36099 is fixed)
             sage: import numpy

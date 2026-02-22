@@ -183,8 +183,7 @@ included in one of the following places:
 
   If the file needs to be used outside of Python, then the
   preferred way is using the context manager
-  :func:`importlib.resources.as_file`. It should be imported in the
-  same way as shown above.
+  :func:`importlib.resources.as_file`.
 
 - In an appropriate subdirectory of :sage_root:`src/sage/ext_data/`.
   (At runtime, it is then available in the directory indicated by
@@ -195,11 +194,6 @@ included in one of the following places:
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')
 
   This practice is deprecated, see :issue:`33037`.
-
-In all cases, the files must be listed (explicitly or via wildcards) in
-the section ``options.package_data`` of the file
-:sage_root:`pkgs/sagemath-standard/setup.cfg.m4` (or the corresponding
-file of another distribution).
 
 Large data files should not be added to the Sage source tree. Instead, it
 is proposed to do the following:
@@ -1363,6 +1357,15 @@ framework. Here is a comprehensive list:
        the doctests in this file will be skipped unless the
        appropriate conditions are met.
 
+  - **32-bit** or **64-bit:** for tests that behave differently on 32-bit or
+    64-bit machines, the ``32_bit`` feature can be used::
+
+        sage: h = hash(2^31 + 2^13)
+        sage: h  # needs 32_bit
+        8193
+        sage: h  # needs !32_bit
+        2147491840
+
 - **indirect doctest:** in the docstring of a function ``A(...)``, a line
   calling ``A`` and in which the name ``A`` does not appear should have this
   flag. This prevents ``sage --coverage <file>`` from reporting the docstring as
@@ -1377,16 +1380,8 @@ framework. Here is a comprehensive list:
       This is the docstring of an ``__add__`` method. The following
       example tests it, but ``__add__`` is not written anywhere::
 
-          sage: 1+1 # indirect doctest
+          sage: 1+1  # indirect doctest
           2
-
-- **32-bit** or **64-bit:** for tests that behave differently on 32-bit or
-  64-bit machines. Note that this particular flag is to be applied on the
-  **output** lines, not the input lines::
-
-      sage: hash(2^31 + 2^13)
-      8193                      # 32-bit
-      2147491840                # 64-bit
 
 Per coding style (:ref:`section-coding-python`), the magic comment
 should be separated by at least 2 spaces.
