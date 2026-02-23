@@ -184,9 +184,9 @@ class WittVectorRingFactory(UniqueFactory):
 
         if p in self._witt_polynomials:
             if prec > len(self._witt_polynomials[p][0]):
-                self._witt_polynomials[p] = self._generate_sum_and_product_polynomials_list(prec, p)
+                self._generate_sum_and_product_polynomials_list(prec, p)
         else:
-            self._witt_polynomials[p] = self._generate_sum_and_product_polynomials_list(prec, p)
+            self._generate_sum_and_product_polynomials_list(prec, p)
 
         return child(coefficient_ring, prec, p)
 
@@ -227,38 +227,32 @@ class WittVectorRingFactory(UniqueFactory):
         x_vars = x_y_vars[:prec]
         y_vars = x_y_vars[prec:]
 
-        if p in self._witt_polynomials:
-            old_sum_poly, old_prod_poly = self._witt_polynomials[p][0], self._witt_polynomials[p][1]
-        else:
-            old_sum_poly, old_prod_poly = None, None
-
-        if old_sum_poly is not None: # We want to extend, not create
-            start = len(old_sum_poly)
+        if p in self._witt_polynomials: # We want to extend, not create
+            start = len(self._witt_polynomials[p][0])
             start_prod = start
-            sum_poly = old_sum_poly + [0]*(prec-start)
-            prod_poly = old_prod_poly + [0]*(prec-start)
+            self._witt_polynomials[p][0] += [0]*(prec-start)
+            self._witt_polynomials[p][1] += [0]*(prec-start)
         else:
             start = 0
             start_prod = 1
-            sum_poly = [0]*(prec)
-            prod_poly = [x_vars[0] * y_vars[0]] + [0]*(prec-1)
+            self._witt_polynomials[p] = [[0]*(prec), [x_vars[0] * y_vars[0]] + [0]*(prec-1)]
 
         for n in range(start, prec):
             s_n = x_vars[n] + y_vars[n]
             for i in range(n):
                 s_n += ((x_vars[i]**(p**(n-i)) + y_vars[i]**(p**(n-i))
-                        - sum_poly[i]**(p**(n-i))) / p**(n-i))
-            sum_poly[n] = R(s_n)
+                        - self._witt_polynomials[p][0][i]**(p**(n-i))) / p**(n-i))
+            self._witt_polynomials[p][0][n] = R(s_n)
 
         for n in range(start_prod, prec):
             x_poly = sum([p**i * x_vars[i]**(p**(n-i)) for i in range(n+1)])
             y_poly = sum([p**i * y_vars[i]**(p**(n-i)) for i in range(n+1)])
-            p_poly = sum([p**i * prod_poly[i]**(p**(n-i))
+            p_poly = sum([p**i * self._witt_polynomials[p][1][i]**(p**(n-i))
                          for i in range(n)])
             p_n = (x_poly*y_poly - p_poly) // p**n
-            prod_poly[n] = p_n
+            self._witt_polynomials[p][1][n] = p_n
 
-        return (sum_poly, prod_poly)
+        return (self._witt_polynomials[p][0], self._witt_polynomials[p][1])
 
 
 WittVectorRing = WittVectorRingFactory("WittVectorRing")
