@@ -2680,7 +2680,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(5,7)
             sage: X.get_eichler_order()
-            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1, i, 1/2 + 1/2*j, 1/2*i + 1/2*k)
         """
         if magma:
             if not force_computation:
@@ -2708,7 +2708,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(5,7)
             sage: X.get_maximal_order()
-            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1, i, 1/2 + 1/2*j, 1/2*i + 1/2*k)
         """
         if magma:
             if not force_computation:

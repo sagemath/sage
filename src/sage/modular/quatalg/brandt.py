@@ -138,7 +138,7 @@ EXAMPLES::
 
     sage: B.maximal_order()
     Order of Quaternion Algebra (-1, -23) with base ring Rational Field
-    with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+     with basis (1, i, 1/2 + 1/2*j, 1/2*i + 1/2*k)
 
     sage: B.right_ideals()
     (Fractional ideal (4, 4*i, 2 + 2*j, 2*i + 2*k),
@@ -643,7 +643,7 @@ class BrandtModule_class(AmbientHeckeModule):
 
             sage: BrandtModule(17).maximal_order()
             Order of Quaternion Algebra (-3, -17) with base ring Rational Field
-            with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
+             with basis (1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k)
             sage: BrandtModule(17).maximal_order() is BrandtModule(17).maximal_order()
             True
         """
@@ -659,13 +659,13 @@ class BrandtModule_class(AmbientHeckeModule):
 
             sage: BrandtModule(7).order_of_level_N()
             Order of Quaternion Algebra (-1, -7) with base ring Rational Field
-            with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+             with basis (1, i, 1/2 + 1/2*j, 1/2*i + 1/2*k)
             sage: BrandtModule(7,13).order_of_level_N()
             Order of Quaternion Algebra (-1, -7) with base ring Rational Field
-            with basis (1/2 + 1/2*j + 12*k, 1/2*i + 9/2*k, j + 11*k, 13*k)
+             with basis (1, 13*i, 1/2 + 3*i + 1/2*j, 3/2*i + 1/2*k)
             sage: BrandtModule(7,3*17).order_of_level_N()
             Order of Quaternion Algebra (-1, -7) with base ring Rational Field
-            with basis (1/2 + 1/2*j + 35*k, 1/2*i + 65/2*k, j + 19*k, 51*k)
+             with basis (1, 51*i, 1/2 + 23*i + 1/2*j, 11/2*i + 1/2*k)
         """
         return self.quaternion_algebra().order_with_level(self.level())
 
