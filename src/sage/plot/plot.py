@@ -1092,7 +1092,13 @@ def plot(funcs, *args, **kwds):
         P = plot(sin, (0,10))
         sphinx_plot(P)
 
-    ::
+        We illustrate the use of ``max_symbolic`` and ``min_symbolic``::
+
+           plot(x^2, (x, -2, 2), max_symbolic=10)
+
+           plot(sin(x), (x, -pi, pi), min_symbolic=5)
+
+     ::
 
         sage: P = plot(sin, (0,10), plot_points=10); print(P)
         Graphics object consisting of 1 graphics primitive
