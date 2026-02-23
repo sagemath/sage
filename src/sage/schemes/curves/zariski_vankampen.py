@@ -1647,12 +1647,29 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         rel_h = [r[1] for r in relations_h]
         rel_h = flatten(rel_h, max_level=1)
     rel_v = []
+    B = BraidGroup(d)
+    cox = prod(F.gens()).Tietze()
+    coxm = tuple(-j for j in reversed(cox))
     for j, k in enumerate(vertical0):
         l1 = d + j + 1
         br = bm[k]
+        rnf = rightnormalform(br)
+        xp = rnf[-1][0]
+        if xp == 0:
+            cnja = ()
+            cnjb = ()
+        elif xp > 0:
+            cnja = xp * cox
+            cnjb = xp * coxm
+        elif xp < 0:
+            cnja = -xp * coxm
+            cnjb = -xp * cox
         for gen in F.gens():
+            gen0 = gen
+            for m in rnf[: -1]:
+                gen0 = gen0 * B(m)
             j0 = gen.Tietze()[0]
-            rl = (l1,) + (gen * br).Tietze() + (-l1, -j0)
+            rl = (l1,) + cnja + gen0.Tietze() + cnjb + (-l1, -j0)
             rel_v.append(rl)
     rel = rel_h + rel_v
     if projective:
