@@ -2235,7 +2235,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             return M(v[0] + self._II * v[1] + self._JJ * v[2] + self._KK * v[3])
 
         # Get basis of the maximal order and compute their action on vector (1, 0)
-        B = self.get_maximal_order().basis()
+        from sage.algebras.quatalg.quaternion_algebra import basis_for_quaternion_lattice
+        B = basis_for_quaternion_lattice(self.get_maximal_order().basis(), reverse=False)
         col_vectors = [phi(b).column(0) for b in B]
         mat = column_matrix(col_vectors)
 
@@ -3431,7 +3432,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             v = [1] + list(self._A.gens())
             self._O = self._A.maximal_order()
             self._OMax = self._O
-            OBasis = self._O.basis()
+            from sage.algebras.quatalg.quaternion_algebra import basis_for_quaternion_lattice
+            OBasis = basis_for_quaternion_lattice(self._O.basis(), reverse=False)
             self._B = [self._A(OBasis[tt]) for tt in range(4)]
 
         self._OQuadForm = QuadraticForm(self._Mat_44([(self._B[ii] * self._B[jj].conjugate()).reduced_trace() for ii in range(4) for jj in range(4)]))

@@ -712,7 +712,7 @@ class BrandtModule_class(AmbientHeckeModule):
 
         R = self.order_of_level_N()
         A = R.quaternion_algebra()
-        B = R.basis()
+        B = basis_for_quaternion_lattice(R.basis(), reverse=False)
         V = GF(p)**4
 
         # step 1: Compute alpha, beta, and the matrix of their action on I/pI.

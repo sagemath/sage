@@ -1190,7 +1190,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         #     O = self.quaternion_order(P)
 
         fact = M1.factor()
-        B = O.basis()
+        B = basis_for_quaternion_lattice(O.basis(), reverse=False)
 
         for p, r in fact:
             a = int(-p) // 2
