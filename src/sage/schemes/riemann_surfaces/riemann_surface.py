@@ -4027,14 +4027,19 @@ def poincare_form(M, transformation=False):
     INPUT:
 
     - ``M`` -- matrix with integer entries of size ``2m * 2g`` (``m < g``)
+
     - ``transformation`` -- boolean (default: ``False``); if ``True``,
-    return transformation matrix ``S`` and ``T``
+      return transformation matrices ``S`` and ``T``
 
     OUTPUT:
 
-    - ``N`` -- the Poincare normal form of M
-    - ``S`` -- the transformation matrix such that ``S * N * T == M`` (if ``transformation`` is ``True``)
-    - ``T`` -- the transformation matrix such that ``S * N * T == M`` (if ``transformation`` is ``True``)
+    - ``N`` -- the Poincare normal form of ``M``
+
+    - ``S`` -- the transformation matrix such that ``S * N * T == M``
+      (if ``transformation`` is ``True``)
+
+    - ``T`` -- the transformation matrix such that ``S * N * T == M``
+      (if ``transformation`` is ``True``)
 
     EXAMPLES::
 
