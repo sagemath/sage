@@ -371,8 +371,8 @@ const infinity & infinity::operator += (const ex & rhs)
 const infinity Infinity = infinity::from_sign(+1);
 
 
-/** Infinity, i.e., positive infinity.
- *  Calls python function py_eval_infinity for evalf(). */
+/** NegInfinity, i.e., negative infinity.
+ *  Calls python function py_eval_neg_infinity for evalf(). */
 const infinity NegInfinity = infinity::from_sign(-1);
 
 

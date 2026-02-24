@@ -214,10 +214,7 @@ class Submodule_free_ambient(Module_free_ambient):
             sage: M = S**2
             sage: N = M.submodule([vector([x - y, z]), vector([y * z, x * z])])
             sage: N.gens()
-            [
-            (x - y, z),
-            (y*z, x*z)
-            ]
+            [(x - y, z), (y*z, x*z)]
         """
         return self.__gens
 

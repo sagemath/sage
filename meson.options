@@ -1,0 +1,84 @@
+## Options for the Meson build system
+# https://mesonbuild.com/Build-options.html
+
+option(
+  'SAGE_LOCAL',
+  type: 'string',
+  value: '',
+  description: 'Path to SAGE_LOCAL directory (only used for compatibility with the old Sage-the-Distro',
+)
+
+#
+# Boolean options
+#
+option(
+  'build-docs',
+  type: 'boolean',
+  description: 'Build the HTML / PDF documentation'
+)
+
+#
+# Features
+#
+option(
+  'bliss',
+  type: 'feature',
+  value: 'auto',
+  description: 'Bliss interface to graph isomorphisms'
+)
+
+option(
+  'brial',
+  type: 'feature',
+  value: 'auto',
+  description: 'BRiAl interface to polynomials over boolean rings'
+)
+
+option(
+  'coxeter3',
+  type: 'feature',
+  value: 'auto',
+  description: 'Coxeter 3.x interface to Coxeter groups'
+)
+
+option(
+  'eclib',
+  type: 'feature',
+  value: 'auto',
+  description: 'eclib interface to mwrank and elliptic curves over Q'
+)
+
+option(
+  'mcqd',
+  type: 'feature',
+  value: 'auto',
+  description: 'MCQD interface to the MaxCliqueDyn algorithm'
+)
+
+option(
+  'meataxe',
+  type: 'feature',
+  value: 'auto',
+  description: 'MeatAxe interface to matrix representations over finite fields'
+)
+
+option(
+  'rankwidth',
+  type: 'feature',
+  value: 'auto',
+  description: 'Interface to librw for rank-width decompositions'
+)
+
+option(
+  'sirocco',
+  type: 'feature',
+  value: 'auto',
+  description: 'Sirocco interface to certified root continuation'
+)
+
+option(
+  'tdlib',
+  type: 'feature',
+  value: 'auto',
+  description: 'Interface to tdlib for tree decompositions'
+)

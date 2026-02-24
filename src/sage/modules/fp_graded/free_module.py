@@ -501,7 +501,7 @@ class FreeGradedModule(CombinatorialFreeModule):
         """
         return self._generator_degrees
 
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         r"""
         Return ``True`` if this module is trivial and ``False`` otherwise.
 
@@ -940,7 +940,7 @@ class FreeGradedModule(CombinatorialFreeModule):
         return FreeGradedModule(algebra=self.base_ring(),
                                 generator_degrees=degs)
 
-    def has_relations(self):
+    def has_relations(self) -> bool:
         r"""
         Return ``False`` as this has no relations.
 

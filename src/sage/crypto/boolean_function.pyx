@@ -31,7 +31,6 @@ from cysignals.signals cimport sig_check
 from libc.string cimport memcpy
 
 from sage.data_structures.bitset_base cimport *
-from sage.misc.superseded import deprecated_function_alias
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer cimport Integer
@@ -100,7 +99,7 @@ cdef long yellow_code(unsigned long a) noexcept:
     cdef unsigned long s = (8*sizeof(unsigned long)) >> 1
     cdef unsigned long m = (~0UL) >> s
     cdef unsigned long r = a
-    while(s):
+    while s:
         sig_check()
         r ^= (r&m) << s
         s >>= 1
@@ -288,11 +287,11 @@ cdef class BooleanFunction(SageObject):
         if isinstance(x, str):
             L = ZZ(len(x))
             if L.is_power_of(2):
-                x = ZZ("0x"+x).digits(base=2,padto=4*L)
+                x = ZZ("0x" + x).digits(base=2, padto=4*L)
             else:
                 raise ValueError("the length of the truth table must be a power of 2")
         from types import GeneratorType
-        if isinstance(x, (list,tuple,GeneratorType)):
+        if isinstance(x, (list, tuple, GeneratorType)):
             # initialisation from a truth table
 
             # first, check the length
@@ -336,21 +335,22 @@ cdef class BooleanFunction(SageObject):
                     FiniteField_givaro = ()
                 if isinstance(K, FiniteField_givaro):  # the ordering is not the same in this case
                     for u in K:
-                        bitset_set_to(self._truth_table, ZZ(u._vector_().list(),2), (x(u)).trace())
+                        bitset_set_to(self._truth_table,
+                                      ZZ(u._vector_().list(), 2), (x(u)).trace())
                 else:
-                    for i,u in enumerate(K):
+                    for i, u in enumerate(K):
                         bitset_set_to(self._truth_table, i, (x(u)).trace())
         elif isinstance(x, BooleanFunction):
             self._nvariables = x.nvariables()
             bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
-            bitset_copy(self._truth_table,(<BooleanFunction>x)._truth_table)
+            bitset_copy(self._truth_table, (<BooleanFunction>x)._truth_table)
         else:
             raise TypeError("unable to init the Boolean function")
 
     def __dealloc__(self):
         bitset_free(self._truth_table)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -507,7 +507,7 @@ cdef class BooleanFunction(SageObject):
         bitset_copy(anf, self._truth_table)
         reed_muller(anf.bits, ZZ(anf.limbs).exact_log(2))
         from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
-        R = BooleanPolynomialRing(self._nvariables,"x")
+        R = BooleanPolynomialRing(self._nvariables, "x")
         G = R.gens()
         P = R(0)
 
@@ -517,7 +517,7 @@ cdef class BooleanFunction(SageObject):
                 inf = i*sizeof(long)*8
                 sup = min((i+1)*sizeof(long)*8, (1<<self._nvariables))
                 for j in range(inf, sup):
-                    if bitset_in(anf,j):
+                    if bitset_in(anf, j):
                         m = R(1)
                         for k in range(self._nvariables):
                             if (j>>k)&1:
@@ -592,9 +592,9 @@ cdef class BooleanFunction(SageObject):
         if format == 'bin':
             return tuple(self)
         if format == 'int':
-            return tuple(map(int,self))
+            return tuple(map(int, self))
         if format == 'hex':
-            S = ZZ(self.truth_table(),2).str(16)
+            S = ZZ(self.truth_table(), 2).str(16)
             S = "0"*((1<<(self._nvariables-2)) - len(S)) + S
             return S
         raise ValueError("unknown output format")
@@ -611,7 +611,7 @@ cdef class BooleanFunction(SageObject):
         """
         return 2**self._nvariables
 
-    def __richcmp__(BooleanFunction self, other, int op):
+    def __richcmp__(BooleanFunction self, other, int op) -> bool:
         """
         Boolean functions are considered to be equal if the number of
         input variables is the same, and all the values are equal.
@@ -713,7 +713,7 @@ cdef class BooleanFunction(SageObject):
             (0, -4, 0, 4, 0, 4, 0, 4)
         """
         cdef long *temp
-        cdef mp_bitcnt_t i,n
+        cdef mp_bitcnt_t i, n
 
         if self._walsh_hadamard_transform is None:
             n = self._truth_table.size
@@ -744,15 +744,16 @@ cdef class BooleanFunction(SageObject):
             {8: 64}
         """
         d = {}
-        cdef long i
+        cdef long i, a
         for i in self.walsh_hadamard_transform():
-            if abs(i) in d:
-                d[abs(i)] += 1
+            a = abs(i)
+            if a in d:
+                d[a] += 1
             else:
-                d[abs(i)] = 1
+                d[a] = 1
         return d
 
-    def is_balanced(self):
+    def is_balanced(self) -> bool:
         """
         Return ``True`` if the function takes the value ``True`` half of the time.
 
@@ -768,7 +769,7 @@ cdef class BooleanFunction(SageObject):
         """
         return self.walsh_hadamard_transform()[0] == 0
 
-    def is_symmetric(self):
+    def is_symmetric(self) -> bool:
         """
         Return ``True`` if the function is symmetric, i.e. invariant under
         permutation of its input bits.
@@ -820,7 +821,7 @@ cdef class BooleanFunction(SageObject):
                 ((1<<self._nvariables) - max(abs(w) for w in self.walsh_hadamard_transform())) >> 1
         return self._nonlinearity
 
-    def is_bent(self):
+    def is_bent(self) -> bool:
         """
         Return ``True`` if the function is bent.
 
@@ -927,12 +928,13 @@ cdef class BooleanFunction(SageObject):
             [(0, 33), (8, 58), (16, 28), (24, 6), (32, 2), (128, 1)]
         """
         d = {}
-        cdef long i
+        cdef long i, a
         for i in self.autocorrelation():
-            if abs(i) in d:
-                d[abs(i)] += 1
+            a = abs(i)
+            if a in d:
+                d[a] += 1
             else:
-                d[abs(i)] = 1
+                d[a] = 1
         return d
 
     def absolute_indicator(self):
@@ -948,23 +950,12 @@ cdef class BooleanFunction(SageObject):
             sage: B = BooleanFunction("7969817CC5893BA6AC326E47619F5AD0")
             sage: B.absolute_indicator()
             32
-
-        The old method's name contained a typo, it is deprecated::
-
-            sage: B.absolut_indicator()
-            doctest:warning
-            ...
-            DeprecationWarning: absolut_indicator is deprecated. Please use absolute_indicator instead.
-            See https://github.com/sagemath/sage/issues/28001 for details.
-            32
         """
         cdef long a
         if self._absolute_indicator is None:
             D = self.autocorrelation()
             self._absolute_indicator = max([abs(a) for a in D[1:]])
         return self._absolute_indicator
-
-    absolut_indicator = deprecated_function_alias(28001, absolute_indicator)
 
     def sum_of_square_indicator(self):
         """
@@ -1010,7 +1001,7 @@ cdef class BooleanFunction(SageObject):
         """
         # NOTE: this is a toy implementation
         from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialRing_constructor
-        R = BooleanPolynomialRing_constructor(self._nvariables,'x')
+        R = BooleanPolynomialRing_constructor(self._nvariables, 'x')
         G = R.gens()
         r = [R(1)]
 
@@ -1022,7 +1013,8 @@ cdef class BooleanFunction(SageObject):
 
         from sage.matrix.constructor import Matrix
         from sage.arith.misc import binomial
-        M = Matrix(GF(2), sum(binomial(self._nvariables,i) for i in range(d+1)), len(s))
+        M = Matrix(GF(2), sum(binomial(self._nvariables, i)
+                              for i in range(d+1)), len(s))
 
         cdef long i
         for i in range(1, d+1):
@@ -1036,23 +1028,20 @@ cdef class BooleanFunction(SageObject):
         cdef long j
         cdef mp_bitcnt_t v
 
-        for i,m in enumerate(r):
+        for i, m in enumerate(r):
             t = BooleanFunction(m)
-            for j,v in enumerate(s):
+            for j, v in enumerate(s):
                 sig_check()
-                M[i,j] = bitset_in(t._truth_table,v)
+                M[i, j] = bitset_in(t._truth_table, v)
 
         kg = M.kernel().gens()
 
         if kg:
-            res = sum([kg[0][i]*ri for i,ri in enumerate(r)])
+            res = sum([kg[0][i]*ri for i, ri in enumerate(r)])
         else:
             res = None
 
-        if dim:
-            return res, len(kg)
-        else:
-            return res
+        return (res, len(kg)) if dim else res
 
     def algebraic_immunity(self, annihilator=False):
         """
@@ -1210,7 +1199,7 @@ cdef class BooleanFunction(SageObject):
         except TypeError:
             raise TypeError("cannot compute is_linear_structure() using parameter %s" % (val,))
 
-    def has_linear_structure(self):
+    def has_linear_structure(self) -> bool:
         r"""
         Return ``True`` if this function has a linear structure.
 
@@ -1483,5 +1472,5 @@ def random_boolean_function(n):
     T[0] = B._truth_table[0]
     for i in range(T.limbs):
         sig_check()
-        T.bits[i] = r.randrange(0,Integer(1)<<(sizeof(unsigned long)*8))
+        T.bits[i] = r.randrange(0, Integer(1)<<(sizeof(unsigned long)*8))
     return B

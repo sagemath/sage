@@ -289,15 +289,15 @@ cdef canonical_generator_data *allocate_cgd(int max_depth, int degree) noexcept:
     if cgd is NULL:
         sig_free(cgd)
         return NULL
-    cgd.object_stack     = <void **>               sig_malloc(max_depth * sizeof(void *))
-    cgd.degree_stack     = <int *>                 sig_malloc(max_depth * sizeof(int))
-    cgd.iterator_stack   = <iterator *>            sig_malloc(max_depth * sizeof(iterator))
-    cgd.aut_gp_stack     = <aut_gp_and_can_lab **> sig_malloc(max_depth * sizeof(aut_gp_and_can_lab *))
-    cgd.agcl_work_spaces = <agcl_work_space **>    sig_malloc(max_depth * sizeof(agcl_work_space *))
-    cgd.dc_work_spaces   = <dc_work_space **>      sig_malloc(max_depth * sizeof(dc_work_space *))
-    cgd.ps_stack         = <PartitionStack **>     sig_malloc(max_depth * sizeof(PartitionStack *))
-    cgd.aug_stack        = <void **>               sig_malloc(max_depth * sizeof(void *))
-    cgd.parent_stack     = <void **>               sig_malloc(max_depth * sizeof(void *))
+    cgd.object_stack = <void **> sig_malloc(max_depth * sizeof(void *))
+    cgd.degree_stack = <int *> sig_malloc(max_depth * sizeof(int))
+    cgd.iterator_stack = <iterator *> sig_malloc(max_depth * sizeof(iterator))
+    cgd.aut_gp_stack = <aut_gp_and_can_lab **> sig_malloc(max_depth * sizeof(aut_gp_and_can_lab *))
+    cgd.agcl_work_spaces = <agcl_work_space **> sig_malloc(max_depth * sizeof(agcl_work_space *))
+    cgd.dc_work_spaces = <dc_work_space **> sig_malloc(max_depth * sizeof(dc_work_space *))
+    cgd.ps_stack = <PartitionStack **> sig_malloc(max_depth * sizeof(PartitionStack *))
+    cgd.aug_stack = <void **> sig_malloc(max_depth * sizeof(void *))
+    cgd.parent_stack = <void **> sig_malloc(max_depth * sizeof(void *))
     part = PS_new(degree, 1)
     cdef agcl_work_space *agclws    = allocate_agcl_work_space(degree)
     cdef aut_gp_and_can_lab *output = allocate_agcl_output(degree)
@@ -323,7 +323,7 @@ cdef canonical_generator_data *allocate_cgd(int max_depth, int degree) noexcept:
 
     cdef int i
     cgd.allocd_levels = max_depth
-    for i from 0 <= i < max_depth:
+    for i in range(max_depth):
         cgd.agcl_work_spaces[i]    = NULL
         cgd.dc_work_spaces[i]      = NULL
         cgd.aut_gp_stack[i]        = NULL
@@ -347,7 +347,7 @@ cdef void deallocate_cgd(canonical_generator_data *cgd) noexcept:
     if cgd is NULL:
         return
     cdef int i
-    for i from 0 <= i < cgd.allocd_levels:
+    for i in range(cgd.allocd_levels):
         if cgd.agcl_work_spaces[i] is not NULL:
             deallocate_agcl_work_space(cgd.agcl_work_spaces[i])
         if cgd.ps_stack[i] is not NULL:

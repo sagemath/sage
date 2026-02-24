@@ -125,36 +125,6 @@ except ImportError:
     RR = None
 
 
-def is_FilteredVectorSpace(X):
-    """
-    Test whether ``X`` is a filtered vector space.
-
-    This function is for library use only.
-
-    INPUT:
-
-    - ``X`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: from sage.modules.filtered_vector_space import is_FilteredVectorSpace
-        sage: V = FilteredVectorSpace(2, 1)
-        sage: is_FilteredVectorSpace(V)
-        doctest:warning...:
-        DeprecationWarning: the function is_FilteredVectorSpace is deprecated;
-        use 'isinstance(..., FilteredVectorSpace_class)' instead
-        See https://github.com/sagemath/sage/issues/37924 for details.
-        True
-        sage: is_FilteredVectorSpace('ceci n\'est pas une pipe')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37924, "the function is_FilteredVectorSpace is deprecated; use 'isinstance(..., FilteredVectorSpace_class)' instead")
-    return isinstance(X, FilteredVectorSpace_class)
-
-
 def FilteredVectorSpace(arg1, arg2=None, base_ring=QQ, check=True):
     r"""
     Construct a filtered vector space.
@@ -517,7 +487,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         return VectorSpace(self.base_ring(), self.dimension())
 
     @cached_method
-    def is_constant(self):
+    def is_constant(self) -> bool:
         """
         Return whether the filtration is constant.
 
@@ -544,7 +514,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         f = self._filt
         return (len(f) == 1) or (len(f) == 2 and f[1][0] == infinity)
 
-    def is_exhaustive(self):
+    def is_exhaustive(self) -> bool:
         r"""
         Return whether the filtration is exhaustive.
 
@@ -567,7 +537,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         return self.get_degree(minus_infinity).dimension() == \
             self.ambient_vector_space().dimension()
 
-    def is_separating(self):
+    def is_separating(self) -> bool:
         r"""
         Return whether the filtration is separating.
 

@@ -13,11 +13,6 @@
 from sage_docbuild.conf import release, latex_elements
 from sage_docbuild.conf import *  # NOQA
 
-
-for tag in feature_tags():
-    tags.add(tag)
-
-
 # Add any paths that contain custom static files (such as style sheets),
 # relative to this directory to html_static_path. They are copied after the
 # builtin static files, so a file named "default.css" will overwrite the
@@ -36,9 +31,9 @@ project = "Tutoriel Sage"
 name = 'tutorial-fr'
 language = "fr"
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-html_title = project + " v" + release
+# The name for this set of Sphinx documents. Do not include release info.
+html_title = project
+html_short_title = project
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = name
@@ -49,7 +44,3 @@ latex_documents = [
   ('index', name + '.tex', project,
    'The Sage Group', 'manual'),
 ]
-
-# the definition of \\at in the standard preamble of the sphinx doc
-# conflicts with that in babel/french[b]
-latex_elements['preamble'] += '\\let\\at\\undefined'

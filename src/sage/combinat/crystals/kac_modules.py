@@ -430,7 +430,7 @@ class CrystalOfOddNegativeRoots(UniqueRepresentation, Parent):
             """
             WLR = self.parent().weight_lattice_realization()
             e = WLR.basis()
-            return WLR.sum(-e[i]+e[j] for (i,j) in self.value)
+            return WLR.sum(-e[i] + e[j] for i, j in self.value)
 
 
 class CrystalOfKacModule(UniqueRepresentation, Parent):

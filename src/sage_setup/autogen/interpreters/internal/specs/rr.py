@@ -8,13 +8,18 @@
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .base import StackInterpreter
-from .python import MemoryChunkPyConstant
-from ..instructions import (params_gen, instr_funcall_1arg_mpfr,
-                            instr_funcall_2args_mpfr, InstrSpec)
+from ..instructions import (
+    InstrSpec,
+    instr_funcall_1arg_mpfr,
+    instr_funcall_2args_mpfr,
+    params_gen,
+)
 from ..memory import MemoryChunk, MemoryChunkConstants
 from ..storage import ty_mpfr, ty_python
-from ..utils import je, reindent_lines as ri
+from ..utils import je
+from ..utils import reindent_lines as ri
+from .base import StackInterpreter
+from .python import MemoryChunkPyConstant
 
 
 class MemoryChunkRRRetval(MemoryChunk):
@@ -167,13 +172,12 @@ class RRInterpreter(StackInterpreter):
                 mpfr_set(retval, result.value, MPFR_RNDN)
                 return 1
 
-
         So instructions where you need to interact with Python can
         call back into Cython code fairly easily.
         """
 
         mc_retval = MemoryChunkRRRetval('retval', ty_mpfr)
-        super(RRInterpreter, self).__init__(ty_mpfr, mc_retval=mc_retval)
+        super().__init__(ty_mpfr, mc_retval=mc_retval)
         self.err_return = '0'
         self.mc_py_constants = MemoryChunkConstants('py_constants', ty_python)
         self.mc_domain = MemoryChunkPyConstant('domain')
@@ -211,7 +215,6 @@ class RRInterpreter(StackInterpreter):
                 cdef RealNumber result = domain(fn(*py_args))
                 mpfr_set(retval, result.value, MPFR_RNDN)
                 return 1
-
             """)
 
         instrs = [

@@ -1,8 +1,10 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'automatic_semigroup.py',
   'free_abelian_monoid.py',
   'free_abelian_monoid_element.pxd',
+  'free_abelian_monoid_element.pyx',
   'free_monoid.py',
   'free_monoid_element.py',
   'hecke_monoid.py',
@@ -16,7 +18,7 @@ py.install_sources(
 )
 
 extension_data = {
-  'free_abelian_monoid_element' : files('free_abelian_monoid_element.pyx'),
+  'free_abelian_monoid_element': files('free_abelian_monoid_element.pyx'),
 }
 
 foreach name, pyx : extension_data

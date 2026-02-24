@@ -100,7 +100,7 @@ from sage.rings.fraction_field import FractionField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ, RationalField
 from sage.schemes.generic.ambient_space import AmbientSpace
@@ -132,31 +132,6 @@ lazy_import('sage.schemes.projective.projective_subscheme',
 _Fields = Fields()
 _Rings = Rings()
 _CommRings = _Rings.Commutative()
-
-
-def is_ProjectiveSpace(x):
-    r"""
-    Return ``True`` if ``x`` is a projective space.
-
-    In other words, if ``x`` is an ambient space `\mathbb{P}^n_R`,
-    where `R` is a ring and `n\geq 0` is an integer.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.projective.projective_space import is_ProjectiveSpace
-        sage: is_ProjectiveSpace(ProjectiveSpace(5, names='x'))
-        doctest:warning...
-        DeprecationWarning: The function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_ProjectiveSpace(ProjectiveSpace(5, GF(9, 'alpha'), names='x'))         # needs sage.rings.finite_rings
-        True
-        sage: is_ProjectiveSpace(Spec(ZZ))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead.")
-    return isinstance(x, ProjectiveSpace_ring)
 
 
 def ProjectiveSpace(n, R=None, names=None):
@@ -248,7 +223,7 @@ def ProjectiveSpace(n, R=None, names=None):
         sage: P.gens() == R.gens()
         True
     """
-    if isinstance(n, (MPolynomialRing_base, PolynomialRing_general)) and R is None:
+    if isinstance(n, (MPolynomialRing_base, PolynomialRing_generic)) and R is None:
         if names is not None:
             # Check for the case that the user provided a variable name
             # That does not match what we wanted to use from R
@@ -982,9 +957,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         TESTS::
 
             sage: TestSuite(X).run(skip=["_test_an_element", "_test_elements",\
-            "_test_elements_eq", "_test_some_elements", "_test_elements_eq_reflexive",\
-            "_test_elements_eq_symmetric", "_test_elements_eq_transitive",\
-            "_test_elements_neq"])
+            ....: "_test_elements_eq", "_test_some_elements", "_test_elements_eq_reflexive",\
+            ....: "_test_elements_eq_symmetric", "_test_elements_eq_transitive",\
+            ....: "_test_elements_neq"])
         """
         R = self.base_ring()
         if R.is_field() and R.is_exact():
@@ -2034,10 +2009,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         all_subsets = Subsets(range(len(points)), n)
         linearly_independent = True
         for subset in all_subsets:
-            point_list = []
-            for index in subset:
-                point_list.append(list(points[index]))
-            M = matrix(point_list)
+            M = matrix([list(points[index]) for index in subset])
             if M.rank() != n:
                 linearly_independent = False
                 break
@@ -2165,18 +2137,13 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
         if binomial(n + 1, n - dim) != R.ngens():
             raise ValueError("for given dimension, there should be %d variables in the Chow form" % binomial(n + 1, n - dim))
         # create the brackets associated to variables
-        L1 = []
-        for t in UnorderedTuples(list(range(n + 1)), dim + 1):
-            if all(t[i] < t[i + 1] for i in range(dim)):
-                L1.append(list(t))
+        L1 = [list(t) for t in UnorderedTuples(range(n + 1), dim + 1)
+              if all(t[i] < t[i + 1] for i in range(dim))]
         # create the dual brackets
         L2 = []
         signs = []
         for l in L1:
-            s = []
-            for v in range(n + 1):
-                if v not in l:
-                    s.append(v)
+            s = [v for v in range(n + 1) if v not in l]
             t1 = [b + 1 for b in l]
             t2 = [b + 1 for b in s]
             perm = Permutation(t1 + t2)
@@ -2190,9 +2157,8 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
         else:
             T = PolynomialRing(R.base_ring(), n + 1, 'z')
             M = matrix(T, n - dim, n + 1, list(T.gens()))
-        coords = []
-        for i in range(len(L2)):
-            coords.append(signs[i] * M.matrix_from_columns(L2[i]).det())
+        coords = [si * M.matrix_from_columns(L2i).det()
+                  for si, L2i in zip(signs, L2)]
         # substitute in dual brackets to chow form
         phi = R.hom(coords, T)
         ch = phi(Ch)

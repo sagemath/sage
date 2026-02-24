@@ -127,7 +127,7 @@ class MinorMatroid(Matroid):
 
     def __init__(self, matroid, contractions=None, deletions=None):
         """
-        See class docstring for documentation.
+        See the class docstring for documentation.
 
         EXAMPLES::
 
@@ -324,8 +324,8 @@ class MinorMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M = MinorMatroid(matroids.catalog.Vamos(), contractions=set('c'), deletions={'b', 'f'})
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))
-            sage: N._minor(contractions=set([]), deletions=set(['d']))
+            sage: N = M._minor(contractions=set(['a']), deletions=set())
+            sage: N._minor(contractions=set(), deletions=set(['d']))
             M / {'a', 'c'} \ {'b', 'd', 'f'}, where M is Vamos:
             Matroid of rank 4 on 8 elements with circuit-closures
             {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'},
@@ -372,9 +372,9 @@ class MinorMatroid(Matroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should (and in
-            Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 

@@ -583,7 +583,7 @@ class AlgebraicWeight(WeightCharacter):
         """
         return self._chi
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -593,10 +593,9 @@ class AlgebraicWeight(WeightCharacter):
         """
         if self._chi.is_trivial():
             return hash(self._k)
-        else:
-            return hash( (self._k,self._chi.modulus(),self._chi) )
+        return hash((self._k, self._chi.modulus(), self._chi))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -611,8 +610,7 @@ class AlgebraicWeight(WeightCharacter):
         """
         if self._chi.is_trivial():
             return "%s" % self._k
-        else:
-            return "(%s, %s, %s)" % (self._k, self._chi.modulus(), self._chi._repr_short_())
+        return "(%s, %s, %s)" % (self._k, self._chi.modulus(), self._chi._repr_short_())
 
     def teichmuller_type(self):
         r"""

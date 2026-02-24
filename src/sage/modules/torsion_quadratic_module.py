@@ -740,7 +740,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
                         return genus
         raise ValueError("this discriminant form and signature do not define a genus")
 
-    def is_genus(self, signature_pair, even=True):
+    def is_genus(self, signature_pair, even=True) -> bool:
         r"""
         Return ``True`` if there is a lattice with this signature and discriminant form.
 
@@ -811,9 +811,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
                     if not (a in diag or b in diag):
                         if u % 8 != up % 8:
                             return False
-        if self.brown_invariant() != signature:
-            return False
-        return True
+        return self.brown_invariant() == signature
 
     def orthogonal_group(self, gens=None, check=False):
         r"""

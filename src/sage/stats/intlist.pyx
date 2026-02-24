@@ -79,8 +79,7 @@ cdef class IntList:
             sage: stats.IntList([1, 3, 2^32])
             Traceback (most recent call last):
             ...
-            OverflowError: ... too large to convert to C long  # 32-bit
-            OverflowError: ... too large to convert to int     # 64-bit
+            OverflowError: ... too large to convert to ...
 
         Printing omits entries::
 
@@ -560,7 +559,6 @@ cdef IntList new_int_list(Py_ssize_t length):
     return t
 
 
-@cython.binding(True)
 def unpickle_intlist_v1(bytes v, Py_ssize_t n):
     """
     Version 1 unpickle method.

@@ -547,7 +547,7 @@ class TensorField(ModuleElementWithMutability):
 
     # #### End of required methods for ModuleElement (beside arithmetic) #####
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -564,7 +564,7 @@ class TensorField(ModuleElementWithMutability):
             if self._name is not None:
                 description += self._name + " "
         else:
-        # Generic case
+            # Generic case
             description = "Tensor field "
             if self._name is not None:
                 description += self._name + " "

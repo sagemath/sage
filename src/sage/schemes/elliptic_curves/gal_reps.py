@@ -125,7 +125,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.real_mpfr import RealField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 
 
 def _ex_set(p):
@@ -453,7 +453,9 @@ class GaloisRepresentation(SageObject):
             sage: rho._is_surjective(7,100)
             True
 
-        TEST for :issue:`8451`::
+        TEST:
+
+        Test for :issue:`8451`::
 
             sage: E = EllipticCurve('648a1')
             sage: rho = E.galois_representation()

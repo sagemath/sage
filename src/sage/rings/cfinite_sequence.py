@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.symbolic
 r"""
-C-Finite Sequences
+C-finite sequences
 
 C-finite infinite sequences satisfy homogeneous linear recurrences with constant coefficients:
 
@@ -8,7 +8,7 @@ C-finite infinite sequences satisfy homogeneous linear recurrences with constant
 
     a_{n+d} = c_0a_n + c_1a_{n+1} + \cdots + c_{d-1}a_{n+d-1}, \quad d>0.
 
-CFiniteSequences are completely defined by their ordinary generating function (o.g.f., which
+They are completely defined by their ordinary generating function (o.g.f., which
 is always a :mod:`fraction <sage.rings.fraction_field_element>` of
 :mod:`polynomials <sage.rings.polynomial.polynomial_element>` over `\ZZ` or `\QQ` ).
 
@@ -65,9 +65,17 @@ can be guessed::
 
     :func:`fibonacci`, :class:`BinaryRecurrenceSequence`
 
-AUTHORS:
+.. TODO::
 
-- Ralf Stephan (2014): initial version
+    Implement a feature enabling::
+
+        sage: # not implemented
+        sage: CFiniteSequence(x+x^2+x^3+x^4+x^5+O(x^6))
+        sage: latex(r)
+        \big\{a_{n\ge0}\big|a_{n+2}=\sum_{i=0}^{1}c_ia_{n+i}, c=\{1,1\}, a_{n<2}=\{0,0,0,1\}\big\}
+        sage: r.egf()
+        exp(2*x)
+        sage: r = CFiniteSequence(1/(1-y-x*y), x)
 
 REFERENCES:
 
@@ -75,6 +83,10 @@ REFERENCES:
 - [KP2011]_
 - [SZ1994]_
 - [Zei2011]_
+
+AUTHORS:
+
+- Ralf Stephan (2014): initial version
 """
 
 # ****************************************************************************
@@ -95,7 +107,7 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.fraction_field import FractionField
@@ -142,7 +154,7 @@ def CFiniteSequences(base_ring, names=None, category=None):
 
         sage: TestSuite(C).run()
     """
-    if isinstance(base_ring, PolynomialRing_general):
+    if isinstance(base_ring, PolynomialRing_generic):
         polynomial_ring = base_ring
         base_ring = polynomial_ring.base_ring()
     if names is None:
@@ -1267,16 +1279,3 @@ class CFiniteSequences_generic(Parent, UniqueRepresentation):
         if num == 0 or sequence != S(num / den).list():
             return 0
         return CFiniteSequence(num / den)
-
-
-r"""
-.. TODO::
-
-    sage: # not implemented
-    sage: CFiniteSequence(x+x^2+x^3+x^4+x^5+O(x^6))
-    sage: latex(r)
-    \big\{a_{n\ge0}\big|a_{n+2}=\sum_{i=0}^{1}c_ia_{n+i}, c=\{1,1\}, a_{n<2}=\{0,0,0,1\}\big\}
-    sage: r.egf()
-    exp(2*x)
-    sage: r = CFiniteSequence(1/(1-y-x*y), x)
-"""

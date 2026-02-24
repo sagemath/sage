@@ -34,7 +34,7 @@ from sage.rings.padics.padic_floating_point_element import pAdicCoercion_ZZ_FP, 
 class pAdicBaseGeneric(pAdicGeneric):
     _implementation = 'GMP'
 
-    def __init__(self, p, prec, print_mode, names, element_class):
+    def __init__(self, p, prec, print_mode, names, element_class, category=None):
         """
         Initialization.
 
@@ -47,7 +47,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             self.prime_pow = PowComputer_flint(p, 1, 1, 1, self.is_field())
         else:
             self.prime_pow = PowComputer(p, max(min(prec - 1, 30), 1), prec, self.is_field(), self._prec_type())
-        pAdicGeneric.__init__(self, self, p, prec, print_mode, names, element_class)
+        pAdicGeneric.__init__(self, self, p, prec, print_mode, names, element_class, category=category)
         if self.is_field():
             if self.is_capped_relative():
                 coerce_list = [pAdicCoercion_ZZ_CR(self), pAdicCoercion_QQ_CR(self)]
@@ -167,7 +167,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         from sage.rings.integer_ring import ZZ
         return ZZ
 
-    def is_isomorphic(self, ring):
+    def is_isomorphic(self, ring) -> bool:
         r"""
         Return whether ``self`` and ``ring`` are isomorphic, i.e. whether
         ``ring`` is an implementation of `\ZZ_p` for the same prime as ``self``.
@@ -251,12 +251,11 @@ class pAdicBaseGeneric(pAdicGeneric):
             sage: Zp(5).discriminant()
             1
         """
-        if (K is None or K is self):
+        if K is None or K is self:
             return 1
-        else:
-            raise ValueError("Ground Ring must be a subring of self")
+        raise ValueError("Ground Ring must be a subring of self")
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return whether the Galois group is abelian, i.e. ``True``.
         #should this be automorphism group?
@@ -268,7 +267,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         """
         return True
 
-    def is_normal(self):
+    def is_normal(self) -> bool:
         """
         Return whether or not this is a normal extension, i.e. ``True``.
 
@@ -443,7 +442,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             args['pointsize'] = 1
         from sage.misc.mrange import cartesian_product_iterator
         from sage.rings.real_double import RDF
-        from sage.plot.all import points
+        from sage.plot.point import point as points
         p = self.prime()
         phi = 2*RDF.pi()/p
         V = RDF**2

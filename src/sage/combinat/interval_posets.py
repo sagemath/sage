@@ -30,7 +30,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
 
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -47,6 +46,7 @@ from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
@@ -57,6 +57,10 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.graphs.digraph import DiGraph
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.combinat.dyck_word', 'DyckWords')
 
@@ -592,8 +596,8 @@ class TamariIntervalPoset(Element,
         n = self._size
         m = other.size()
         relations = self._poset.cover_relations()
-        relations.extend([(i + n, j + n)
-                          for i, j in other._poset.cover_relations_iterator()])
+        relations.extend((i + n, j + n)
+                         for i, j in other._poset.cover_relations_iterator())
         P = FinitePoset(DiGraph([list(range(1, n + m + 1)), relations],
                                 format='vertices_and_edges'))  # type:ignore
         return TamariIntervalPoset(P, check=False)  # type:ignore
@@ -751,7 +755,7 @@ class TamariIntervalPoset(Element,
                 root = i
         return children
 
-    def increasing_parent(self, v) -> None | int:
+    def increasing_parent(self, v) -> int | None:
         r"""
         Return the vertex parent of ``v`` in the initial forest of ``self``.
 
@@ -887,7 +891,7 @@ class TamariIntervalPoset(Element,
                 root = i
         return children
 
-    def decreasing_parent(self, v) -> None | int:
+    def decreasing_parent(self, v) -> int | None:
         r"""
         Return the vertex parent of ``v`` in the final forest of ``self``.
 
@@ -1255,9 +1259,9 @@ class TamariIntervalPoset(Element,
                 return u + 1
             return u
         rels = [(add1(a), add1(b))
-                for (a, b) in self.decreasing_cover_relations()]
+                for a, b in self.decreasing_cover_relations()]
         rels += [(add1(a), add1(b))
-                 for (a, b) in self.increasing_cover_relations()]
+                 for a, b in self.increasing_cover_relations()]
         rels += [(k, k - 1) for k in [i] if i > 1]
         rels += [(k, k + 1) for k in [i] if i <= n]
         return TamariIntervalPoset(n + 1, rels)
@@ -1530,7 +1534,7 @@ class TamariIntervalPoset(Element,
         """
         if other.size() != self.size():
             return False
-        return all(other.le(i, j) for (i, j) in self._cover_relations)
+        return all(other.le(i, j) for i, j in self._cover_relations)
 
     def lower_contains_interval(self, other) -> bool:
         r"""
@@ -1571,7 +1575,7 @@ class TamariIntervalPoset(Element,
         if not self.contains_interval(other):
             return False
         return all(self.le(i, j)
-                   for (i, j) in other.decreasing_cover_relations())
+                   for i, j in other.decreasing_cover_relations())
 
     def upper_contains_interval(self, other) -> bool:
         r"""
@@ -1612,7 +1616,7 @@ class TamariIntervalPoset(Element,
         if not self.contains_interval(other):
             return False
         return all(self.le(i, j)
-                   for (i, j) in other.increasing_cover_relations())
+                   for i, j in other.increasing_cover_relations())
 
     def is_linear_extension(self, perm) -> bool:
         r"""
@@ -1978,11 +1982,11 @@ class TamariIntervalPoset(Element,
         if start == end:
             return TamariIntervalPoset(0, [])
         relations = [(i - start + 1, j - start + 1)
-                     for (i, j) in self.increasing_cover_relations()
+                     for i, j in self.increasing_cover_relations()
                      if i >= start and j < end]
-        relations.extend([(j - start + 1, i - start + 1)
-                          for (j, i) in self.decreasing_cover_relations()
-                          if i >= start and j < end])
+        relations.extend((j - start + 1, i - start + 1)
+                         for j, i in self.decreasing_cover_relations()
+                         if i >= start and j < end)
         return TamariIntervalPoset(end - start, relations, check=False)
 
     sub_poset = subposet
@@ -2565,7 +2569,7 @@ class TamariIntervalPoset(Element,
                                       extract_tree(cx, cy, t_up, common))
                 for cx, cy in common]
 
-    def decomposition_to_triple(self) -> None | tuple[TIP, TIP, int]:
+    def decomposition_to_triple(self) -> tuple[TIP, TIP, int] | None:
         """
         Decompose an interval-poset into a triple (``left``, ``right``, ``r``).
 
@@ -3110,7 +3114,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             rroots, rrelations, rindex = get_relations(bt[1], start=index + 1)
             roots.append(index)
             relations.extend(rrelations)
-            relations.extend([(j, index) for j in rroots])
+            relations.extend((j, index) for j in rroots)
             return roots, relations, rindex
 
         _, relations, index = get_relations(binary_tree)
@@ -3224,7 +3228,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             roots, relations, rindex = get_relations(bt[1], start=index + 1)
             roots.append(index)
             relations.extend(lrelations)
-            relations.extend([(j, index) for j in lroots])
+            relations.extend((j, index) for j in lroots)
             return roots, relations, rindex
 
         _, relations, index = get_relations(binary_tree)
@@ -3711,7 +3715,13 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
 
             sage: S = TamariIntervalPosets(3)
             sage: assert S is TamariIntervalPosets(3)
-            sage: for i in range(5): TestSuite(TamariIntervalPosets(i)).run()
+
+        We currently have to skip checking that elements are produced
+        uniformly at random by :meth:`random_element`. This is not
+        the case because of :issue:`40693`::
+
+            sage: for i in range(5):
+            ....:     TestSuite(TamariIntervalPosets(i)).run(skip="_test_random")
         """
         # there is a natural order on interval-posets through inclusions
         # that is why we use the FinitePosets category
@@ -3757,11 +3767,10 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
             sage: [TamariIntervalPosets(i).cardinality() for i in range(6)]
             [1, 1, 3, 13, 68, 399]
         """
-        from sage.arith.misc import binomial
         n = self._size
         if n == 0:
-            return Integer(1)
-        return (2 * binomial(4 * n + 1, n - 1)) // (n * (n + 1))
+            return ZZ.one()
+        return (2 * Integer(4 * n + 1).binomial(n - 1)) // (n * (n + 1))
         # return Integer(2 * factorial(4*n+1)/(factorial(n+1)*factorial(3*n+2)))
 
     def __iter__(self) -> Iterator[TIP]:

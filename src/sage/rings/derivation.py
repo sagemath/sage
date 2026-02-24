@@ -62,7 +62,7 @@ and now play with them::
     True
 
 Alternatively we can use the method
-:meth:`~sage.rings.ring.CommutativeRing.derivation`
+:meth:`~sage.categories.commutative_rings.CommutativeRings.ParentMethods.derivation`
 of the ring `A` to create derivations::
 
     sage: Dx = A.derivation(x); Dx
@@ -193,7 +193,7 @@ from sage.modules.module import Module
 from sage.structure.element import ModuleElement
 from sage.rings.integer_ring import ZZ
 
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.power_series_ring import PowerSeriesRing_generic
 from sage.rings.laurent_series_ring import LaurentSeriesRing
@@ -331,9 +331,9 @@ class RingDerivationModule(Module, UniqueRepresentation):
             self._basis = [ ]
             self._dual_basis = [ ]
             self._constants = (domain, True)
-        elif (isinstance(domain, (PolynomialRing_general, MPolynomialRing_base, PowerSeriesRing_generic, LaurentSeriesRing))
+        elif (isinstance(domain, (PolynomialRing_generic, MPolynomialRing_base, PowerSeriesRing_generic, LaurentSeriesRing))
               or (isinstance(domain, FractionField_generic)
-                  and isinstance(domain.ring(), (PolynomialRing_general, MPolynomialRing_base)))):
+                  and isinstance(domain.ring(), (PolynomialRing_generic, MPolynomialRing_base)))):
             self._base_derivation = RingDerivationModule(domain.base_ring(), defining_morphism)
             self.Element = RingDerivationWithoutTwist_function
             try:
@@ -495,10 +495,7 @@ class RingDerivationModule(Module, UniqueRepresentation):
                 morS = self._defining_morphism
                 try:
                     # this test is not perfect
-                    for g in self._domain.gens():
-                        if morR(g) != morS(g):
-                            return False
-                    return True
+                    return all(morR(g) == morS(g) for g in self._domain.gens())
                 except (AttributeError, NotImplementedError):
                     pass
         return super()._coerce_map_from_(R)
@@ -649,7 +646,7 @@ class RingDerivationModule(Module, UniqueRepresentation):
             raise NotImplementedError("generators are not implemented for this derivation module")
         return len(self._gens)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of this module of derivations.
 
@@ -1022,14 +1019,14 @@ class RingDerivationWithoutTwist(RingDerivation):
             {0: x, 1: y}
         """
         dual_basis = self.parent().dual_basis()
-        dict = { }
+        dic = {}
         for i in range(len(dual_basis)):
             c = self(dual_basis[i])
             if c != 0:
-                dict[i] = c
-        return dict
+                dic[i] = c
+        return dic
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if this derivation is zero.
 
@@ -1044,12 +1041,9 @@ class RingDerivationWithoutTwist(RingDerivation):
             sage: (f-f).is_zero()
             True
         """
-        for c in self.list():
-            if not c.is_zero():
-                return False
-        return True
+        return all(c.is_zero() for c in self.list())
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare this derivation with ``other`` according
         to the comparison operator ``op``.
@@ -1500,7 +1494,7 @@ class RingDerivationWithoutTwist_zero(RingDerivationWithoutTwist):
         """
         return self
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if this derivation vanishes.
 
@@ -1835,7 +1829,7 @@ class RingDerivationWithoutTwist_function(RingDerivationWithoutTwist):
             res += defining_morphism(x.derivative(domain.gen(i))) * self._images[i]
         return res
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if this derivation is zero.
 

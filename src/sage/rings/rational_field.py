@@ -18,9 +18,9 @@ function).
 
     sage: RealField(9).pi()                                                             # needs sage.rings.real_mpfr
     3.1
-    sage: QQ(RealField(9).pi())                                                         # needs sage.rings.real_interval_field sage.rings.real_mpfr
+    sage: QQ(RealField(9).pi())
     22/7
-    sage: QQ(RealField().pi())                                                          # needs sage.rings.real_interval_field sage.rings.real_mpfr
+    sage: QQ(RealField().pi())
     245850922/78256779
     sage: QQ(35)
     35
@@ -58,9 +58,8 @@ from sage.rings.rational import Rational
 
 ZZ = None
 
-import sage.rings.number_field.number_field_base as number_field_base
 from sage.misc.fast_methods import Singleton
-from sage.misc.superseded import deprecated_function_alias
+from sage.rings.number_field import number_field_base
 from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 
@@ -634,10 +633,8 @@ class RationalField(Singleton, number_field_base.NumberField):
         EXAMPLES::
 
             sage: QQ.automorphisms()
-            [
-            Ring endomorphism of Rational Field
-              Defn: 1 |--> 1
-            ]
+            [Ring endomorphism of Rational Field
+               Defn: 1 |--> 1]
         """
         return Sequence([self.hom(1, self)], cr=True, immutable=False,
                         check=False)
@@ -692,13 +689,12 @@ class RationalField(Singleton, number_field_base.NumberField):
                 from sage.rings.qqbar import QQbar as domain
             else:
                 from sage.rings.qqbar import AA as domain
+        elif all_complex:
+            from sage.rings.complex_mpfr import ComplexField
+            domain = ComplexField(prec)
         else:
-            if all_complex:
-                from sage.rings.complex_mpfr import ComplexField
-                domain = ComplexField(prec)
-            else:
-                from sage.rings.real_mpfr import RealField
-                domain = RealField(prec)
+            from sage.rings.real_mpfr import RealField
+            domain = RealField(prec)
         return [self.hom([domain(1)])]
 
     def complex_embedding(self, prec=53):
@@ -891,7 +887,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         # Compute the map phi of Hilbert symbols at all the primes
         # in S and S'
         # For technical reasons, a Hilbert symbol of -1 is
-        # respresented as 1 and a Hilbert symbol of 1
+        # represented as 1 and a Hilbert symbol of 1
         # is represented as 0
         def phi(x):
             v = [(1-hilbert_symbol(x, b, p))//2 for p in P]
@@ -918,7 +914,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             assert phi(a) == v, "oops"
         return a
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a tuple of generators of `\QQ`, which is only ``(1,)``.
 
@@ -978,7 +974,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return Integer(1)
 
-    def is_absolute(self):
+    def is_absolute(self) -> bool:
         r"""
         `\QQ` is an absolute extension of `\QQ`.
 
@@ -989,7 +985,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return True
 
-    def is_prime_field(self):
+    def is_prime_field(self) -> bool:
         r"""
         Return ``True`` since `\QQ` is a prime field.
 
@@ -1331,16 +1327,10 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         gens = list(S)
         ords = [ZZ(m)] * len(S)
-        if m % 2 == 0:
+        if not m % 2:
             gens = [ZZ(-1)] + gens
             ords = [ZZ(2)] + ords
-        if orders:
-            return gens, ords
-        else:
-            return gens
-
-    # For backwards compatibility:
-    selmer_group = deprecated_function_alias(31345, selmer_generators)
+        return (gens, ords) if orders else gens
 
     def selmer_group_iterator(self, S, m, proof=True):
         r"""
@@ -1516,7 +1506,7 @@ class RationalField(Singleton, number_field_base.NumberField):
     #################################
     #  Coercions to interfaces
     #################################
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return the GAP representation of `\QQ`.
 
@@ -1527,7 +1517,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return 'Rationals'
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return the magma representation of `\QQ`.
 
@@ -1545,7 +1535,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return 'RationalField()'
 
-    def _macaulay2_init_(self, macaulay2=None):
+    def _macaulay2_init_(self, macaulay2=None) -> str:
         r"""
         Return the macaulay2 representation of `\QQ`.
 
@@ -1556,7 +1546,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return "QQ"
 
-    def _axiom_init_(self):
+    def _axiom_init_(self) -> str:
         r"""
         Return the axiom/fricas representation of `\QQ`.
 
@@ -1571,7 +1561,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     _fricas_init_ = _axiom_init_
 
-    def _polymake_init_(self):
+    def _polymake_init_(self) -> str:
         r"""
         Return the polymake representation of `\QQ`.
 
@@ -1591,8 +1581,9 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ._sympy_()                                                          # needs sympy
             Rationals
         """
-        from sage.interfaces.sympy import sympy_init
         from sympy import Rationals
+
+        from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Rationals
 

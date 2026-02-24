@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # Compile this with -Os because it works around a bug with
 # GCC-4.7.3 + Cython 0.19 on Itanium, see Issue #14452. Moreover, it
 # actually results in faster code than -O3.
@@ -625,7 +624,7 @@ cdef class Element(SageObject):
             D = self.__dict__
         except AttributeError:
             return res
-        for k, v in D.iteritems():
+        for k, v in D.items():
             try:
                 setattr(res, k, v)
             except AttributeError:
@@ -712,7 +711,6 @@ cdef class Element(SageObject):
         """
         tester = self._tester(**options)
         SageObject._test_category(self, tester=tester)
-        category = self.category()
         # Tests that self inherits methods from the categories
         if can_assign_class(self):
             # For usual Python classes, that should be done with
@@ -817,9 +815,9 @@ cdef class Element(SageObject):
             ngens = parent.ngens()
         except (AttributeError, NotImplementedError, TypeError):
             return self
-        variables=[]
-        # use "gen" instead of "gens" as a ParentWithGens is not
-        # required to have the latter
+        variables = []
+
+        # using gen instead of gens
         for i in range(ngens):
             gen = parent.gen(i)
             if str(gen) in kwds:
@@ -928,7 +926,13 @@ cdef class Element(SageObject):
             sage: (1 + pi)._mpmath_(mp.prec)                                            # needs sage.symbolic
             mpf('4.14159265358979323846264338327933')
         """
-        return self.n(prec)._mpmath_(prec=prec)
+        t = self.n(prec)
+        from sage.rings.real_mpfr import RealNumber
+        from sage.rings.complex_mpfr import ComplexNumber
+        if not isinstance(t, (RealNumber, ComplexNumber)):
+            # avoid infinite recursion
+            raise NotImplementedError("mpmath conversion not implemented for %s" % type(self))
+        return t._mpmath_(prec=prec)
 
     cpdef _act_on_(self, x, bint self_on_left):
         """
@@ -1153,13 +1157,6 @@ cdef class Element(SageObject):
         if op == Py_NE:
             return True
         return NotImplemented
-
-    cpdef int _cmp_(left, right) except -2:
-        """
-        This was the old comparison framework. Now deprecated. Do not use.
-        """
-        deprecation(30130, "please use _richcmp_ for comparison methods")
-        raise NotImplementedError("__cmp__ and _cmp_ are deprecated")
 
     ##################################################
     # Arithmetic using the coercion model
@@ -3209,188 +3206,8 @@ cdef class CommutativeRingElement(RingElement):
             I = self._parent.ideal(I)
         return I.reduce(self)
 
-    ##################################################
-    # square roots
-    ##################################################
 
-    def is_square(self, root=False):
-        """
-        Return whether or not the ring element ``self`` is a square.
-
-        If the optional argument root is ``True``, then also return
-        the square root (or ``None``, if it is not a square).
-
-        INPUT:
-
-        - ``root`` -- boolean (default: ``False``); whether or not to also
-          return a square root
-
-        OUTPUT:
-
-        - boolean; whether or not a square
-
-        - object; (optional) an actual square root if found, and ``None``
-          otherwise
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: f = 12*(x+1)^2 * (x+3)^2
-            sage: f.is_square()
-            False
-            sage: f.is_square(root=True)
-            (False, None)
-            sage: h = f/3
-            sage: h.is_square()
-            True
-            sage: h.is_square(root=True)
-            (True, 2*x^2 + 8*x + 6)
-
-        .. NOTE::
-
-            This is the is_square implementation for general commutative ring
-            elements. It's implementation is to raise a
-            :exc:`NotImplementedError`. The function definition is here to show
-            what functionality is expected and provide a general framework.
-        """
-        raise NotImplementedError("is_square() not implemented for elements of %s" % self.parent())
-
-    def sqrt(self, extend=True, all=False, name=None):
-        """
-        Compute the square root.
-
-        INPUT:
-
-        - ``extend`` -- boolean (default: ``True``); whether to make a ring
-          extension containing a square root if ``self`` is not a square
-
-        - ``all`` -- boolean (default: ``False``); whether to return a list of
-          all square roots or just a square root
-
-        - ``name`` -- required when ``extend=True`` and ``self`` is not a
-          square; this will be the name of the generator of the extension
-
-        OUTPUT:
-
-        - if ``all=False``, a square root; raises an error if ``extend=False``
-          and ``self`` is not a square
-
-        - if ``all=True``, a list of all the square roots (empty if
-          ``extend=False`` and ``self`` is not a square)
-
-        ALGORITHM:
-
-        It uses ``is_square(root=true)`` for the hard part of the work, the rest
-        is just wrapper code.
-
-        EXAMPLES::
-
-            sage: # needs sage.libs.pari
-            sage: R.<x> = ZZ[]
-            sage: (x^2).sqrt()
-            x
-            sage: f = x^2 - 4*x + 4; f.sqrt(all=True)
-            [x - 2, -x + 2]
-            sage: sqrtx = x.sqrt(name='y'); sqrtx
-            y
-            sage: sqrtx^2
-            x
-            sage: x.sqrt(all=true, name='y')
-            [y, -y]
-            sage: x.sqrt(extend=False, all=True)
-            []
-            sage: x.sqrt()
-            Traceback (most recent call last):
-            ...
-            TypeError: Polynomial is not a square. You must specify the name
-            of the square root when using the default extend = True
-            sage: x.sqrt(extend=False)
-            Traceback (most recent call last):
-            ...
-            ValueError: trying to take square root of non-square x with extend = False
-
-        TESTS::
-
-            sage: # needs sage.libs.pari
-            sage: f = (x + 3)^2; f.sqrt()
-            x + 3
-            sage: f = (x + 3)^2; f.sqrt(all=True)
-            [x + 3, -x - 3]
-            sage: f = (x^2 - x + 3)^2; f.sqrt()
-            x^2 - x + 3
-            sage: f = (x^2 - x + 3)^6; f.sqrt()
-            x^6 - 3*x^5 + 12*x^4 - 19*x^3 + 36*x^2 - 27*x + 27
-            sage: g = (R.random_element(15))^2
-            sage: g.sqrt()^2 == g
-            True
-
-            sage: # needs sage.libs.pari
-            sage: R.<x> = GF(250037)[]
-            sage: f = x^2/(x+1)^2; f.sqrt()
-            x/(x + 1)
-            sage: f = 9 * x^4 / (x+1)^2; f.sqrt()
-            3*x^2/(x + 1)
-            sage: f = 9 * x^4 / (x+1)^2; f.sqrt(all=True)
-            [3*x^2/(x + 1), 250034*x^2/(x + 1)]
-
-            sage: R.<x> = QQ[]
-            sage: a = 2*(x+1)^2 / (2*(x-1)^2); a.sqrt()
-            (x + 1)/(x - 1)
-            sage: sqrtx=(1/x).sqrt(name='y'); sqrtx
-            y
-            sage: sqrtx^2
-            1/x
-            sage: (1/x).sqrt(all=true, name='y')
-            [y, -y]
-            sage: (1/x).sqrt(extend=False, all=True)
-            []
-            sage: (1/(x^2-1)).sqrt()
-            Traceback (most recent call last):
-            ...
-            TypeError: Polynomial is not a square. You must specify the name
-            of the square root when using the default extend = True
-            sage: (1/(x^2-3)).sqrt(extend=False)
-            Traceback (most recent call last):
-            ...
-            ValueError: trying to take square root of non-square 1/(x^2 - 3) with extend = False
-        """
-        # This code is very general, it works for all integral domains that have the
-        # is_square(root = True) option
-
-        from sage.categories.integral_domains import IntegralDomains
-        P = self._parent
-        is_sqr, sq_rt = self.is_square(root=True)
-        if is_sqr:
-            if all:
-                if P not in IntegralDomains():
-                    raise NotImplementedError('sqrt() with all=True is only implemented for integral domains, not for %s' % P)
-                if P.characteristic()==2 or sq_rt==0:
-                    # 0 has only one square root, and in characteristic 2 everything also has only 1 root
-                    return [sq_rt]
-                return [sq_rt, -sq_rt]
-            return sq_rt
-        # from now on we know that self is not a square
-        if P not in IntegralDomains():
-            raise NotImplementedError('sqrt() of non squares is only implemented for integral domains, not for %s' % P)
-        if not extend:
-            # all square roots of a non-square should be an empty list
-            if all:
-                return []
-            raise ValueError('trying to take square root of non-square %s with extend = False' % self)
-
-        if name is None:
-            raise TypeError("Polynomial is not a square. You must specify the name of the square root when using the default extend = True")
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        PY = PolynomialRing(P, 'y')
-        y = PY.gen()
-        sq_rt = PY.quotient(y**2-self, names = name)(y)
-        if all:
-            if P.characteristic() == 2:
-                return [sq_rt]
-            return [sq_rt, -sq_rt]
-        return sq_rt
-
-    ##############################################
+##############################################
 
 cdef class Expression(CommutativeRingElement):
 
@@ -4485,6 +4302,23 @@ cdef class FieldElement(CommutativeRingElement):
         if not (other._parent is self._parent):
             other = self.parent()(other)
         return bool(self) or other.is_zero()
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        EXAMPLES::
+
+            sage: R.<x,y>=QQ[]; k=R.fraction_field()
+            sage: (x/y).canonical_associate()
+            (1, x/y)
+            sage: (0).canonical_associate()
+            (0, 1)
+        """
+        P = self.parent()
+        if self.is_zero():
+            return (P.zero(), P.one())
+        return (P.one(), self)
 
 
 def is_AlgebraElement(x):

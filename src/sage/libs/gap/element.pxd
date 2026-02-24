@@ -15,7 +15,7 @@ from sage.structure.element cimport Element, ModuleElement, RingElement
 cdef Obj make_gap_list(sage_list) except NULL
 cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL
 cdef Obj make_gap_record(sage_dict) except NULL
-cdef Obj make_gap_integer(sage_int) except NULL
+cdef Obj make_gap_integer(x) except NULL
 cdef Obj make_gap_string(sage_string) except NULL
 
 cdef GapElement make_any_gap_element(parent, Obj obj)
@@ -38,6 +38,8 @@ cdef class GapElement(RingElement):
 
     # the pointer to the GAP object (memory managed by GASMAN)
     cdef Obj value
+
+    cdef bint _check_contains(self, Element other) except -2
 
     # comparison
     cdef bint _compare_by_id

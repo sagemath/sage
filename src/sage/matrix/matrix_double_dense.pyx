@@ -112,18 +112,20 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         ...
         TypeError: mutable matrices are unhashable
         sage: A.set_immutable()
-        sage: hash(A)
-        6694819972852100501  # 64-bit
-        1829383573           # 32-bit
+        sage: hash32 = 1829383573
+        sage: hash64 = 6694819972852100501
+        sage: hash(A) in [hash32, hash64]
+        True
         sage: A = matrix(CDF, 3, range(1,10))
         sage: hash(A)
         Traceback (most recent call last):
         ...
         TypeError: mutable matrices are unhashable
         sage: A.set_immutable()
-        sage: hash(A)
-        6694819972852100501  # 64-bit
-        1829383573           # 32-bit
+        sage: hash32 = 1829383573
+        sage: hash64 = 6694819972852100501
+        sage: hash(A) in [hash32, hash64]
+        True
     """
 
     def LU_valid(self):
@@ -1050,8 +1052,8 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         self.cache('PLU_factors', PLU)
         return PLU
 
-    def eigenvalues(self, other=None, algorithm='default', tol=None, *,
-                    homogeneous=False):
+    def eigenvalues(self, other=None, *, algorithm='default',
+                    tol=None, homogeneous=False):
         r"""
         Return a list of ordinary or generalized eigenvalues.
 
@@ -1264,43 +1266,20 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             sage: A.eigenvalues(B, algorithm='hermitian', homogeneous=True)  # tol 1e-14
             [(0.25, 1.0), (1.0, 1.0)]
 
-        Test the deprecation::
+        Test keyword-only arguments::
 
             sage: # needs sage.graphs
             sage: A = graphs.PetersenGraph().adjacency_matrix().change_ring(RDF)
-            sage: ev = A.eigenvalues('symmetric', 1e-13)
-            doctest:...: DeprecationWarning: "algorithm" and "tol" should be used
-            as keyword argument only
-            See https://github.com/sagemath/sage/issues/29243 for details.
-            sage: ev  # tol 1e-13
-            [(-2.0, 4), (1.0, 5), (3.0, 1)]
-            sage: A.eigenvalues('symmetric', 1e-13, tol=1e-12)
+            sage: ev = A.eigenvalues('symmetric')
             Traceback (most recent call last):
             ...
-            TypeError: eigenvalues() got multiple values for keyword argument 'tol'
-            sage: A.eigenvalues('symmetric', algorithm='hermitian')
-            Traceback (most recent call last):
-            ...
-            TypeError: eigenvalues() got multiple values for keyword argument 'algorithm'
+            TypeError: other should be None or a square matrix
         """
         from sage.rings.real_double import RDF
         from sage.rings.complex_double import CDF
         if isinstance(other, str):
-            # for backward compatibility, allow algorithm to be passed as first
-            # positional argument and tol as second positional argument
-            from sage.misc.superseded import deprecation
-            deprecation(29243, '"algorithm" and "tol" should be used as '
-                               'keyword argument only')
-            if algorithm != 'default':
-                if isinstance(algorithm, str):
-                    raise TypeError("eigenvalues() got multiple values for "
-                                    "keyword argument 'algorithm'")
-                if tol is not None:
-                    raise TypeError("eigenvalues() got multiple values for "
-                                    "keyword argument 'tol'")
-                tol = algorithm
-            algorithm = other
-            other = None
+            raise TypeError("other should be None or a square matrix")
+
         if algorithm not in ['default', 'symmetric', 'hermitian']:
             msg = "algorithm must be 'default', 'symmetric', or 'hermitian', not {0}"
             raise ValueError(msg.format(algorithm))
@@ -1387,7 +1366,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
                     ev_group[location][2] = ev_group[location][0]/ev_group[location][1]
             return [(return_class(avg), m) for _, m, avg in ev_group]
 
-    def left_eigenvectors(self, other=None, *, homogeneous=False):
+    def eigenvectors_left(self, other=None, *, algorithm=None, homogeneous=False):
         r"""
         Compute the ordinary or generalized left eigenvectors of a matrix of
         double precision real or complex numbers (i.e. ``RDF`` or ``CDF``).
@@ -1397,6 +1376,10 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         - ``other`` -- a square matrix `B` (default: ``None``) in a generalized
           eigenvalue problem; if ``None``, an ordinary eigenvalue problem is
           solved
+
+        - ``algorithm`` (default: ``None``); for compatibility with
+          :meth:`sage.matrix.matrix2.Matrix.eigenvectors_left`, supported options
+          are ``None`` (select automatically) or ``'scipy'``
 
         - ``homogeneous`` -- boolean (default: ``False``); if ``True``, use
           homogeneous coordinates for the eigenvalues in the output
@@ -1514,6 +1497,8 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             sage: spectrum
             [(1.0*I, [(1.0, 0.0)], 1), (1.0, [(0.0, 1.0)], 1)]
         """
+        if algorithm not in (None, "scipy"):
+            raise NotImplementedError(f"algorithm {algorithm} not implemented for matrix over {self.base_ring()}")
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
         if other is not None and not other.is_square():
@@ -1542,9 +1527,9 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             v = [CDF(e) for e in v]
         return [(v[i], [eig[i].conjugate()], 1) for i in range(len(v))]
 
-    eigenvectors_left = left_eigenvectors
+    left_eigenvectors = eigenvectors_left
 
-    def right_eigenvectors(self, other=None, *, homogeneous=False):
+    def eigenvectors_right(self, other=None, *, homogeneous=False):
         r"""
         Compute the ordinary or generalized right eigenvectors of a matrix of
         double precision real or complex numbers (i.e. ``RDF`` or ``CDF``).
@@ -1694,7 +1679,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             v = [CDF(e) for e in v]
         return [(v[i], [eig[i]], 1) for i in range(len(v))]
 
-    eigenvectors_right = right_eigenvectors
+    right_eigenvectors = eigenvectors_right
 
     def _solve_right_nonsingular_square(self, B, check_rank=False):
         """
@@ -1881,7 +1866,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         OUTPUT:
 
-        ``U, S, V`` -- immutable matrices such that ``A = U*S*V.conj().transpose()``
+        ``U, S, V`` -- immutable matrices such that ``A = U*S*V.conjugate_transpose()``
         where `U` and `V` are orthogonal and `S` is zero off of the diagonal
 
         Note that if ``self`` is m-by-n, then the dimensions of the

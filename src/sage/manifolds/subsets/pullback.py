@@ -315,10 +315,8 @@ class ManifoldSubsetPullback(ManifoldSubset):
                     cs = codomain_subset.minimized_constraints()
                     if cs.has_equalities():
                         return False
-                    if any(constraint.is_nonstrict_inequality()
-                           for constraint in cs):
-                        return False
-                    return True
+                    return not any(constraint.is_nonstrict_inequality()
+                                   for constraint in cs)
 
         return False
 

@@ -1,6 +1,6 @@
 # sage.doctest: optional - sage.graphs
 r"""
-Graphic Matroids
+Graphic matroids
 
 Let `G = (V,E)` be a graph and let `C` be the collection of the edge sets
 of cycles in `G`. The corresponding graphic matroid `M(G)` has groundset `E`
@@ -66,7 +66,7 @@ modified::
     sage: N1 = M1.contract((0,1))
     sage: N1.graph().edges_incident(0, sort=True)
     [(0, 2, (0, 2)), (0, 2, (1, 2)), (0, 3, (1, 3))]
-    sage: M2 = Matroid(range(G.num_edges()), G)
+    sage: M2 = Matroid(range(G.n_edges()), G)
     sage: N2 = M2.contract(0)
     sage: N1.is_isomorphic(N2)
     True
@@ -90,7 +90,6 @@ from sage.matroids.matroid cimport Matroid
 from copy import copy
 from sage.matroids.utilities import newlabel, split_vertex, sanitize_contractions_deletions
 from itertools import combinations
-from sage.rings.integer import Integer
 from sage.sets.disjoint_set cimport DisjointSet_of_hashables
 
 cdef class GraphicMatroid(Matroid):
@@ -152,7 +151,7 @@ cdef class GraphicMatroid(Matroid):
 
     def __init__(self, G, groundset=None):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -187,8 +186,8 @@ cdef class GraphicMatroid(Matroid):
 
         # if the provided groundset is incomplete, it gets overwritten
         # invalidate ``None`` as label
-        if None in groundset_set or len(groundset_set) != G.num_edges():
-            groundset = range(G.num_edges())
+        if None in groundset_set or len(groundset_set) != G.n_edges():
+            groundset = range(G.n_edges())
             groundset_set = frozenset(groundset)
 
         self._groundset = groundset_set
@@ -230,7 +229,7 @@ cdef class GraphicMatroid(Matroid):
             sage: sorted(M.groundset())
             [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
             sage: G = graphs.CompleteGraph(3).disjoint_union(graphs.CompleteGraph(4))
-            sage: M = Matroid(range(G.num_edges()), G); sorted(M.groundset())
+            sage: M = Matroid(range(G.n_edges()), G); sorted(M.groundset())
             [0, 1, 2, 3, 4, 5, 6, 7, 8]
             sage: M = Matroid(Graph([(0, 1, 'a'), (0, 2, 'b'), (0, 3, 'c')]))
             sage: sorted(M.groundset())
@@ -273,8 +272,7 @@ cdef class GraphicMatroid(Matroid):
         """
         cdef DisjointSet_of_hashables DS_vertices
         cdef list edges = self.groundset_to_edges(X)
-        cdef set vertices = set([u for (u, v, l) in edges]).union(
-                                [v for (u, v, l) in edges])
+        cdef set vertices = set([u for (u, v, l) in edges]).union([v for (u, v, l) in edges])
         # This counts components:
         DS_vertices = DisjointSet_of_hashables(vertices)
         for (u, v, l) in edges:
@@ -343,9 +341,9 @@ cdef class GraphicMatroid(Matroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should (and in
-            Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -476,9 +474,9 @@ cdef class GraphicMatroid(Matroid):
         EXAMPLES::
 
             sage: M = matroids.CompleteGraphic(5)
-            sage: M._minor(deletions=frozenset([0,1,2]), contractions=frozenset([]))
+            sage: M._minor(deletions=frozenset([0,1,2]), contractions=frozenset())
             Graphic matroid of rank 4 on 7 elements
-            sage: M._minor(deletions=frozenset([]), contractions=frozenset([0,1,2]))
+            sage: M._minor(deletions=frozenset(), contractions=frozenset([0,1,2]))
             Graphic matroid of rank 1 on 7 elements
             sage: M = Matroid(range(15), graphs.PetersenGraph())
             sage: N = M._minor(deletions=frozenset([0, 3, 5, 9]),
@@ -608,7 +606,7 @@ cdef class GraphicMatroid(Matroid):
                 # then use method from abstract matroid class
                 conset, delset = sanitize_contractions_deletions(self, contractions, deletions)
                 M = self._minor(contractions=conset, deletions=delset)
-                should_be_true, elements = Matroid._has_minor(M, N, certificate=True)
+                _, elements = Matroid._has_minor(M, N, certificate=True)
 
                 # elements is a tuple (contractions, deletions, dict)
                 # There should be no more contractions
@@ -651,7 +649,7 @@ cdef class GraphicMatroid(Matroid):
         DS_vertices = DisjointSet_of_hashables(all_vertices)
         for u, v, l in not_our_edges:
             DS_vertices.union(u, v)
-        return len(X) - (DS_vertices.number_of_subsets() - Integer(1))
+        return len(X) - (DS_vertices.number_of_subsets() - 1)
 
     cpdef bint _is_circuit(self, frozenset X) noexcept:
         """
@@ -712,13 +710,13 @@ cdef class GraphicMatroid(Matroid):
         cdef list edgelist = self._groundset_to_edges(Y)
         cdef GenericGraph_pyx g = self._subgraph_from_set(XX)
         cdef list V = g.vertices(sort=False)
-        cdef int components = g.connected_components_number()
+        cdef int components = g.number_of_connected_components()
         for e in edgelist:
             # a non-loop edge is in the closure iff both its vertices are
             # in the induced subgraph, and the edge doesn't connect components
             if e[0] in V and e[1] in V:
                 g.add_edge(e)
-                if g.connected_components_number() >= components:
+                if g.number_of_connected_components() >= components:
                     XX.add(e[2])
                 else:
                     g.delete_edge(e)
@@ -908,12 +906,12 @@ cdef class GraphicMatroid(Matroid):
         """
         cdef GenericGraph_pyx g = self.graph()
         g.delete_edges(self._groundset_to_edges(X))
-        cdef int components = g.connected_components_number()
+        cdef int components = g.number_of_connected_components()
         cdef set XX = set(X)
         cdef frozenset Y = self.groundset().difference(XX)
         for e in self._groundset_to_edges(Y):
             g.delete_edge(e)
-            if g.connected_components_number() > components:
+            if g.number_of_connected_components() > components:
                 XX.add(e[2])
             g.add_edge(e)
         return frozenset(XX)
@@ -1180,7 +1178,7 @@ cdef class GraphicMatroid(Matroid):
 
             sage: G = Graph([(0, 1), (0, 2), (1, 2), (3, 4), (3, 5), (4, 5),
             ....: (6, 7), (6, 8), (7, 8), (8, 8), (7, 8)], multiedges=True, loops=True)
-            sage: M = Matroid(range(G.num_edges()), G)
+            sage: M = Matroid(range(G.n_edges()), G)
             sage: M.graph().edges(sort=True)
             [(0, 1, 0),
              (0, 2, 1),
@@ -1700,9 +1698,9 @@ cdef class GraphicMatroid(Matroid):
         # If a vertex has degree 1, or 2, or 3, we already handled it.
         for u in vertices:
             if G.degree(u) > 3:
-                elts_incident = [l for (_, _, l) in G.edges_incident(u)]
+                elts_incident = [l for _, _, l in G.edges_incident(u)]
                 x = elts_incident.pop()
-                for i in range(1, (len(elts_incident) - Integer(1))):
+                for i in range(1, len(elts_incident) - 1):
                     groups = combinations(elts_incident, i)
                     for g in groups:
                         g = list(g)

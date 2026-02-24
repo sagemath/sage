@@ -45,6 +45,17 @@ Projective Schemes
    sage/schemes/projective/projective_subscheme
    sage/schemes/projective/projective_rational_point
    sage/schemes/projective/projective_homset
+   sage/schemes/projective/proj_bdd_height
+
+Weighted Projective Schemes
+---------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/schemes/weighted_projective/weighted_projective_space
+   sage/schemes/weighted_projective/weighted_projective_point
+   sage/schemes/weighted_projective/weighted_projective_homset
 
 Products of Projective Spaces
 -----------------------------

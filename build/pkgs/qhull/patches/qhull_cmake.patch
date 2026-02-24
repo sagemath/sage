@@ -1,0 +1,22 @@
+*** src/CMakeLists.txt.orig	Thu May  8 13:21:24 2025
+--- src/CMakeLists.txt	Thu May  8 13:25:39 2025
+***************
+*** 67,74 ****
+  # $Id: //main/2019/qhull/CMakeLists.txt#21 $$Change: 3039 $
+  # $DateTime: 2020/09/03 21:26:22 $$Author: bbarber $
+
+  project(qhull)
+- cmake_minimum_required(VERSION 3.0)
+
+  # Define qhull_VERSION in README.txt, Announce.txt, qh-get.htm, CMakeLists.txt
+  #   qhull-zip.sh (twice), qhull-wiki.md, qhull-news.htm, File_id.diz, index.htm
+--- 67,75 ----
+  # $Id: //main/2019/qhull/CMakeLists.txt#21 $$Change: 3039 $
+  # $DateTime: 2020/09/03 21:26:22 $$Author: bbarber $
+
++ cmake_minimum_required(VERSION 3.25...4.0.3)
++
+  project(qhull)
+
+  # Define qhull_VERSION in README.txt, Announce.txt, qh-get.htm, CMakeLists.txt
+  #   qhull-zip.sh (twice), qhull-wiki.md, qhull-news.htm, File_id.diz, index.htm

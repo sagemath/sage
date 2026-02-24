@@ -30,29 +30,6 @@ from . import element
 from . import hecke_operator
 
 
-def is_HeckeModule(x):
-    r"""
-    Return ``True`` if ``x`` is a Hecke module.
-
-    EXAMPLES::
-
-        sage: from sage.modular.hecke.module import is_HeckeModule
-        sage: is_HeckeModule(ModularForms(Gamma0(7), 4))
-        doctest:warning...
-        DeprecationWarning: the function is_HeckeModule is deprecated;
-        use 'isinstance(..., HeckeModule_generic)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        True
-        sage: is_HeckeModule(QQ^3)
-        False
-        sage: is_HeckeModule(J0(37).homology())
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_HeckeModule is deprecated; use 'isinstance(..., HeckeModule_generic)' instead")
-    return isinstance(x, HeckeModule_generic)
-
-
 class HeckeModule_generic(Module):
     r"""
     A very general base class for Hecke modules.
@@ -71,7 +48,7 @@ class HeckeModule_generic(Module):
 
     Element = element.HeckeModuleElement
 
-    def __init__(self, base_ring, level, category=None):
+    def __init__(self, base_ring, level, category=None) -> None:
         r"""
         Create a Hecke module. Not intended to be called directly.
 
@@ -320,7 +297,7 @@ class HeckeModule_generic(Module):
             sage: sage.modular.hecke.module.HeckeModule_generic(QQ, 10).character() is None
             True
         """
-        return None
+        return
 
     def dimension(self):
         r"""
@@ -356,7 +333,7 @@ class HeckeModule_generic(Module):
         """
         return algebra.HeckeAlgebra(self)
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if this Hecke module has dimension 0.
 
@@ -373,7 +350,7 @@ class HeckeModule_generic(Module):
         """
         return self.dimension() == 0
 
-    def is_full_hecke_module(self):
+    def is_full_hecke_module(self) -> bool:
         """
         Return ``True`` if this space is invariant under all Hecke operators.
 
@@ -404,7 +381,7 @@ class HeckeModule_generic(Module):
         self._is_full_hecke_module = True
         return True
 
-    def is_hecke_invariant(self, n):
+    def is_hecke_invariant(self, n) -> bool:
         """
         Return ``True`` if ``self`` is invariant under the Hecke operator `T_n`.
 
@@ -582,20 +559,15 @@ class HeckeModule_free_module(HeckeModule_generic):
             sage: M._eigen_nonzero()
             0
             sage: M.dual_free_module().basis()
-            [
-            (1, 0, 0, 0, 0),
-            (0, 1, 0, 0, 0),
-            (0, 0, 1, 0, 0),
-            (0, 0, 0, 1, 0),
-            (0, 0, 0, 0, 1)
-            ]
+            [(1, 0, 0, 0, 0),
+             (0, 1, 0, 0, 0),
+             (0, 0, 1, 0, 0),
+             (0, 0, 0, 1, 0),
+             (0, 0, 0, 0, 1)]
             sage: M.cuspidal_submodule().minus_submodule()._eigen_nonzero()
             1
             sage: M.cuspidal_submodule().minus_submodule().dual_free_module().basis()
-            [
-            (0, 1, 0, 0, 0),
-            (0, 0, 1, 0, 0)
-            ]
+            [(0, 1, 0, 0, 0), (0, 0, 1, 0, 0)]
         """
         try:
             return self.__eigen_nonzero
@@ -944,40 +916,32 @@ class HeckeModule_free_module(HeckeModule_generic):
         EXAMPLES::
 
             sage: ModularSymbols(17,2).decomposition()
-            [
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 for Gamma_0(17) of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 3 for Gamma_0(17) of weight 2 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 for Gamma_0(17) of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 3 for Gamma_0(17) of weight 2 with sign 0 over Rational Field]
             sage: ModularSymbols(Gamma1(10),4).decomposition()
-            [
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field]
             sage: ModularSymbols(GammaH(12, [11])).decomposition()
-            [
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 5 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 5 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field]
 
         TESTS::
 
             sage: M = ModularSymbols(1000,2,sign=1).new_subspace().cuspidal_subspace()
             sage: M.decomposition(3, sort_by_basis = True)
-            [
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field]
         """
         if not isinstance(anemic, bool):
             raise TypeError("anemic must be of type bool.")
@@ -1354,7 +1318,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         except AttributeError:
             return -1
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple of basis elements of ``self``.
 
@@ -1495,7 +1459,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         """
         return self.hecke_operator(n).charpoly(var)
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return ``True`` if this space is simple as a module for the
         corresponding Hecke algebra.
@@ -1512,7 +1476,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         """
         raise NotImplementedError
 
-    def is_splittable(self):
+    def is_splittable(self) -> bool:
         """
         Return ``True`` if and only if only it is possible to split
         off a nontrivial generalized eigenspace of ``self`` as the
@@ -1533,7 +1497,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             self.decomposition(anemic=False)
         return self.__is_splittable
 
-    def is_submodule(self, other):
+    def is_submodule(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a submodule of ``other``.
 
@@ -1552,7 +1516,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         return (self.ambient_free_module() == other.ambient_free_module() and
                 self.free_module().is_submodule(other.free_module()))
 
-    def is_splittable_anemic(self):
+    def is_splittable_anemic(self) -> bool:
         """
         Return ``True`` if and only if only it is possible to split off a
         nontrivial generalized eigenspace of ``self`` as the kernel of some
@@ -1610,10 +1574,8 @@ class HeckeModule_free_module(HeckeModule_generic):
             sage: m = ModularSymbols(34); s = m.cuspidal_submodule()
             sage: d = s.decomposition(7)
             sage: d
-            [
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 9 for Gamma_0(34) of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 9 for Gamma_0(34) of weight 2 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 9 for Gamma_0(34) of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 9 for Gamma_0(34) of weight 2 with sign 0 over Rational Field]
             sage: a = d[0]; a
             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 9 for Gamma_0(34) of weight 2 with sign 0 over Rational Field
             sage: pi = a.projection()

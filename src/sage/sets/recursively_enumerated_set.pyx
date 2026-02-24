@@ -984,19 +984,23 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         sage: f = lambda a: [a-1,a+1]
         sage: C = RecursivelyEnumeratedSet([0], f, structure='symmetric')
-        sage: loads(dumps(C))
-        Traceback (most recent call last):
-        ...
-        PicklingError: ...
+        sage: try:
+        ....:     loads(dumps(C))
+        ....: except Exception as e:
+        ....:     if 'PicklingError' in str(type(e).__name__):
+        ....:         print('PicklingError Caught')
+        PicklingError Caught
 
     This works in the command line but apparently not as a doctest::
 
         sage: def f(a): return [a-1,a+1]
         sage: C = RecursivelyEnumeratedSet([0], f, structure='symmetric')
-        sage: loads(dumps(C))
-        Traceback (most recent call last):
-        ...
-        PicklingError: ...
+        sage: try:
+        ....:     loads(dumps(C))
+        ....: except Exception as e:
+        ....:     if 'PicklingError' in str(type(e).__name__):
+        ....:         print('PicklingError Caught')
+        PicklingError Caught
     """
 
     def breadth_first_search_iterator(self, max_depth=None):
@@ -1122,11 +1126,8 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
             {0}
             sage: next(it)
             {-1, 1}
-            sage: from cysignals.alarm import alarm
-            sage: alarm(0.02); next(it)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.02): next(it)
             sage: next(it)
             Traceback (most recent call last):
             ...
@@ -1175,11 +1176,8 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
             ....:    sleep(0.1r)
             ....:    return [a - 1, a + 1]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='symmetric')
-            sage: from cysignals.alarm import alarm
-            sage: alarm(0.45); C.graded_component(10)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.45): C.graded_component(10)
             sage: C.graded_component(1)
             {-1, 1}
             sage: C.graded_component(2)
@@ -1394,11 +1392,8 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
             ....:    sleep(0.1r)
             ....:    return [a + 1, a + I]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
-            sage: from cysignals.alarm import alarm
-            sage: alarm(0.45); C.graded_component(10)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.45): C.graded_component(10)
             sage: C.graded_component(2)
             {2*I, I + 1, 2}
             sage: C.graded_component(3)
@@ -1728,10 +1723,12 @@ class RecursivelyEnumeratedSet_forest(Parent):
             sage: def children(x):
             ....:     return [x + 1]
             sage: S = RecursivelyEnumeratedSet_forest([1], children, category=InfiniteEnumeratedSets())
-            sage: dumps(S)
-            Traceback (most recent call last):
-            ...
-            PicklingError: Can't pickle <...function...>: attribute lookup ... failed
+            sage: try:
+            ....:     dumps(S)
+            ....: except Exception as e:
+            ....:     if 'PicklingError' in str(type(e).__name__):
+            ....:         print('PicklingError Caught')
+            PicklingError Caught
 
         Let us now fake ``children`` being defined in a Python module::
 

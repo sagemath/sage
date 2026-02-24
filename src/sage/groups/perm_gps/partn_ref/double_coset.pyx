@@ -213,24 +213,24 @@ cdef dc_work_space *allocate_dc_work_space(int n) noexcept:
         return NULL
 
     work_space.degree = n
-    int_array = <int *> sig_malloc((n*n + # for perm_stack
+    int_array = <int *> sig_malloc((n*n +  # for perm_stack
                                      5*n   # for int_array
                                     )*sizeof(int))
     work_space.group1 = SC_new(n)
     work_space.group2 = SC_new(n)
-    work_space.current_ps = PS_new(n,0)
-    work_space.first_ps   = PS_new(n,0)
+    work_space.current_ps = PS_new(n, 0)
+    work_space.first_ps = PS_new(n, 0)
     work_space.bitset_array = <bitset_t *> sig_calloc((n + 2*len_of_fp_and_mcr + 1), sizeof(bitset_t))
     work_space.orbits_of_subgroup = OP_new(n)
     work_space.perm_stack = NULL
 
-    if int_array                        is NULL or \
-       work_space.group1                is NULL or \
-       work_space.group2                is NULL or \
-       work_space.current_ps            is NULL or \
-       work_space.first_ps              is NULL or \
-       work_space.bitset_array          is NULL or \
-       work_space.orbits_of_subgroup    is NULL:
+    if int_array is NULL or \
+       work_space.group1 is NULL or \
+       work_space.group2 is NULL or \
+       work_space.current_ps is NULL or \
+       work_space.first_ps is NULL or \
+       work_space.bitset_array is NULL or \
+       work_space.orbits_of_subgroup is NULL:
         sig_free(int_array)
         deallocate_dc_work_space(work_space)
         return NULL
@@ -379,10 +379,10 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     orbits_of_subgroup                 = work_space.orbits_of_subgroup
 
     indicators                         = work_space.int_array
-    permutation                        = work_space.int_array +   n
-    id_perm                            = work_space.int_array + 2*n
-    cells_to_refine_by                 = work_space.int_array + 3*n
-    vertices_determining_current_stack = work_space.int_array + 4*n
+    permutation                        = work_space.int_array + n
+    id_perm                            = work_space.int_array + 2 * n
+    cells_to_refine_by                 = work_space.int_array + 3 * n
+    vertices_determining_current_stack = work_space.int_array + 4 * n
 
     fixed_points_of_generators         = work_space.bitset_array
     minimal_cell_reps_of_generators    = work_space.bitset_array + len_of_fp_and_mcr

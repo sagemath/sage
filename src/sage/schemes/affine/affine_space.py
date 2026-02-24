@@ -15,7 +15,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.categories.map import Map
@@ -36,28 +36,6 @@ from sage.schemes.affine.affine_point import (SchemeMorphism_point_affine,
 from sage.misc.persist import register_unpickle_override
 
 _Fields = Fields()
-
-
-def is_AffineSpace(x) -> bool:
-    r"""
-    Return ``True`` if ``x`` is an affine space.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.affine.affine_space import is_AffineSpace
-        sage: is_AffineSpace(AffineSpace(5, names='x'))
-        doctest:warning...
-        DeprecationWarning: The function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_AffineSpace(AffineSpace(5, GF(9, 'alpha'), names='x'))                 # needs sage.rings.finite_rings
-        True
-        sage: is_AffineSpace(Spec(ZZ))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead.")
-    return isinstance(x, AffineSpace_generic)
 
 
 def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
@@ -109,7 +87,7 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
         ...
         NameError: variable names passed to AffineSpace conflict with names in ring
     """
-    if isinstance(n, (MPolynomialRing_base, PolynomialRing_general)) and R is None:
+    if isinstance(n, (MPolynomialRing_base, PolynomialRing_generic)) and R is None:
         R = n
         if names is not None:
             # Check for the case that the user provided a variable name

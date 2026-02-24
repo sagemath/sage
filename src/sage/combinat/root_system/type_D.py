@@ -72,7 +72,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         res = []
         for p in [0, 1]:
             for j in range(self.n):
-                res.extend([self.root(i, j, 0, p) for i in range(j)])
+                res.extend(self.root(i, j, 0, p) for i in range(j))
         return res
 
     def negative_roots(self):
@@ -96,7 +96,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         res = []
         for p in [0, 1]:
             for j in range(self.n):
-                res.extend([self.root(i, j, 1, p) for i in range(j)])
+                res.extend(self.root(i, j, 1, p) for i in range(j))
         return res
 
     def fundamental_weight(self, i):

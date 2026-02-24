@@ -5,6 +5,7 @@ py.install_sources(
   'givaro.pxd',
   'linbox.pxd',
   'linbox_flint_interface.pxd',
+  'linbox_flint_interface.pyx',
   subdir: 'sage/libs/linbox',
 )
 
@@ -18,9 +19,13 @@ foreach name, pyx : extension_data_cpp
     sources: pyx,
     subdir: 'sage/libs/linbox',
     install: true,
-    override_options: ['cython_language=cpp'],
+    override_options: [
+      'cython_language=cpp',
+      # Temporary workaround for https://github.com/linbox-team/linbox/issues/306
+      'cpp_std=c++11',
+    ],
     include_directories: [inc_flint],
-    dependencies: [py_dep, blas, flint, fplll, givaro, gmp, gmpxx, linbox],
+    dependencies: [py_dep, blas, flint, givaro, gmp, gmpxx, linbox],
   )
 endforeach
 

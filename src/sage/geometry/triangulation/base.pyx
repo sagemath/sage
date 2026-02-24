@@ -595,13 +595,13 @@ cdef class PointConfiguration_base(Parent):
         EXAMPLES::
 
             sage: p = PointConfiguration([[1,0], [2,3], [3,2]])
-            sage: [ p[i] for i in range(0,p.n_points()) ]
+            sage: [p[i] for i in range(p.n_points())]
             [P(1, 0), P(2, 3), P(3, 2)]
             sage: list(p)
             [P(1, 0), P(2, 3), P(3, 2)]
             sage: list(p.points())
             [P(1, 0), P(2, 3), P(3, 2)]
-            sage: [ p.point(i) for i in range(0,p.n_points()) ]
+            sage: [p.point(i) for i in range(p.n_points())]
             [P(1, 0), P(2, 3), P(3, 2)]
         """
         return self._pts[i]

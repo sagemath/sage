@@ -134,11 +134,15 @@ cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd):
         elif rnd == 'd':
             mpz_fdiv_q_2exp(res.value, man.value, shift)
         elif rnd == 'f':
-            if sign: mpz_cdiv_q_2exp(res.value, man.value, shift)
-            else:    mpz_fdiv_q_2exp(res.value, man.value, shift)
+            if sign:
+                mpz_cdiv_q_2exp(res.value, man.value, shift)
+            else:
+                mpz_fdiv_q_2exp(res.value, man.value, shift)
         elif rnd == 'c':
-            if sign: mpz_fdiv_q_2exp(res.value, man.value, shift)
-            else:    mpz_cdiv_q_2exp(res.value, man.value, shift)
+            if sign:
+                mpz_fdiv_q_2exp(res.value, man.value, shift)
+            else:
+                mpz_cdiv_q_2exp(res.value, man.value, shift)
         elif rnd == 'u':
             mpz_cdiv_q_2exp(res.value, man.value, shift)
         exp += shift
@@ -160,8 +164,7 @@ cdef mpfr_from_mpfval(mpfr_t res, tuple x):
     cdef int sign
     cdef Integer man
     cdef long exp
-    cdef long bc
-    sign, man, exp, bc = x
+    sign, man, exp, _ = x
     if man:
         mpfr_set_z(res, man.value, MPFR_RNDZ)
         if sign:
@@ -316,7 +319,6 @@ def sage_to_mpmath(x, prec):
         sage: a.sage_to_mpmath({'n':0.5}, 53)
         {'n': mpf('0.5')}
     """
-    cdef RealNumber y
     if isinstance(x, Element):
         if isinstance(x, Integer):
             return int(<Integer>x)
@@ -336,7 +338,7 @@ def sage_to_mpmath(x, prec):
     if isinstance(x, (tuple, list)):
         return type(x)([sage_to_mpmath(v, prec) for v in x])
     if isinstance(x, dict):
-        return dict([(k, sage_to_mpmath(v, prec)) for (k, v) in x.items()])
+        return {k: sage_to_mpmath(v, prec) for k, v in x.items()}
     return x
 
 

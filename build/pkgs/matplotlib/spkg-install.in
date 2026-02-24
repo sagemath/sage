@@ -1,7 +1,9 @@
-# Write a configuration file to src/setup.cfg
+# Write a configuration file to src/mplsetup.cfg
 python3 make-setup-config.py
 
 cd src
 
 # Finally install
-sdh_pip_install .
+# https://matplotlib.org/stable/install/dependencies.html#use-system-libraries
+sdh_pip_install -C setup-args="-Dsystem-freetype=true" \
+                -C setup-args="-Dsystem-qhull=true" .

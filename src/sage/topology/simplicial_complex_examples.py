@@ -63,15 +63,6 @@ EXAMPLES::
     {0: 0, 1: C4, 2: 0}
     sage: simplicial_complexes.MatchingComplex(6).homology()                            # needs sage.modules
     {0: 0, 1: Z^16, 2: 0}
-
-TESTS::
-
-    sage: from sage.topology.simplicial_complex_examples import PseudoQuaternionicProjectivePlane
-    sage: H = PseudoQuaternionicProjectivePlane()                                       # needs sage.groups
-    doctest:warning...:
-    DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated.
-    Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
-    See https://github.com/sagemath/sage/issues/34568 for details.
 """
 
 from .simplicial_complex import SimplicialComplex
@@ -619,9 +610,6 @@ def QuaternionicProjectivePlane():
                                     for g in PermutationGroup([P, S])])
 
 
-PseudoQuaternionicProjectivePlane = deprecated_function_alias(34568, QuaternionicProjectivePlane)
-
-
 def PoincareHomologyThreeSphere():
     """
     A triangulation of the Poincaré homology 3-sphere.
@@ -839,7 +827,7 @@ def RealProjectiveSpace(n):
             name='Minimal triangulation of RP^4')
     if n >= 5:
         # Use the construction given by Datta in Example 3.21.
-        V = set(range(0, n+2))
+        V = set(range(n+2))
         S = Sphere(n).barycentric_subdivision()
         X = S.facets()
         facets = set()
@@ -1438,7 +1426,7 @@ def RandomTwoSphere(n):
     graph = RandomTriangulation(n)
 
     graph = graph.relabel(inplace=False)
-    triangles = [(u, v, w) for u, L in graph._embedding.items()
+    triangles = [(u, v, w) for u, L in graph.get_embedding().items()
                  for v, w in zip(L, L[1:] + [L[0]]) if u < v and u < w]
 
     return SimplicialComplex(triangles, maximality_check=False)
@@ -1483,10 +1471,10 @@ def ShiftedComplex(generators):
     """
     from sage.combinat.partition import Partitions
     Facets = []
-    for G in generators:
-        G = sorted(G, reverse=True)
+    for _G in generators:
+        G = sorted(_G, reverse=True)
         L = len(G)
-        for k in range(L * (L+1) // 2, sum(G) + 1):
+        for k in range(L * (L + 1) // 2, sum(G) + 1):
             for P in Partitions(k, length=L, max_slope=-1, outer=G):
                 Facets.append(list(reversed(P)))
     return SimplicialComplex(Facets)

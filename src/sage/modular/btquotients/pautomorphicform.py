@@ -862,7 +862,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         # return BruhatTitsHarmonicCocyclesSubmodule(self, v)
         raise NotImplementedError
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Whether ``self`` is irreducible.
 
@@ -949,9 +949,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         if isinstance(S, (BruhatTitsHarmonicCocycles, pAdicAutomorphicForms)):
             if S._k != self._k:
                 return False
-            if S._X != self._X:
-                return False
-            return True
+            return S._X == self._X
         return False
 
     def __eq__(self, other):
@@ -2355,15 +2353,11 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         if isinstance(S, BruhatTitsHarmonicCocycles):
             if S.weight() - 2 != self._n:
                 return False
-            if S._X != self._source:
-                return False
-            return True
+            return S._X == self._source
         if isinstance(S, pAdicAutomorphicForms):
             if S._n != self._n:
                 return False
-            if S._source != self._source:
-                return False
-            return True
+            return S._source == self._source
         return False
 
     def _element_constructor_(self, data):
@@ -2497,7 +2491,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
             sage: H = X.harmonic_cocycles(2,prec = 5)
             sage: A = X.padic_automorphic_forms(2,prec = 5)
             sage: h = H.basis()[0]
-            sage: A.lift(h) # indirect doctest long time
+            sage: A.lift(h)  # indirect doctest, long time
             p-adic automorphic form of cohomological weight 0
         """
         S = self._source.get_stabilizers()

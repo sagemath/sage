@@ -50,7 +50,7 @@ List all fields in the database ramified at 101::
      Number Field in a with defining polynomial x^5 - x^4 - 40*x^3 - 93*x^2 - 21*x + 17]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -64,8 +64,8 @@ List all fields in the database ramified at 101::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 
@@ -73,7 +73,6 @@ from sage.rings.number_field.number_field import NumberField
 from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.combinat.subset import powerset
-from sage.env import SAGE_SHARE
 
 from sage.misc.persist import load, save
 

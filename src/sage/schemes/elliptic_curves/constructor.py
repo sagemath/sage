@@ -161,7 +161,7 @@ class EllipticCurveFactory(UniqueFactory):
 
         sage: R.<x,y> = GF(5)[]
         sage: EllipticCurve(x^3 + x^2 + 2 - y^2 - y*x)
-        Elliptic Curve defined by y^2 + x*y  = x^3 + x^2 + 2 over Finite Field of size 5
+        Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 2 over Finite Field of size 5
 
     We can also create elliptic curves by giving a smooth plane cubic with a rational point::
 
@@ -437,7 +437,8 @@ class EllipticCurveFactory(UniqueFactory):
         if isinstance(x, str):
             # Interpret x as a Cremona or LMFDB label.
             from sage.databases.cremona import CremonaDatabase
-            x, data = CremonaDatabase().coefficients_and_data(x)
+            with CremonaDatabase() as D:
+                x, data = D.coefficients_and_data(x)
             # data is only valid for elliptic curves over QQ.
             if R not in (None, QQ):
                 data = {}
@@ -579,41 +580,19 @@ def coefficients_from_Weierstrass_polynomial(f):
         sage: R.<w,z> = QQ[]
         sage: coefficients_from_Weierstrass_polynomial(-w^2 + z^3 + 1)
         [0, 0, 0, 0, 1]
+        sage: R.<u,v> = GF(13)[]
+        sage: EllipticCurve(u^2 + 2*v*u + 3*u - (v^3 + 4*v^2 + 5*v + 6))  # indirect doctest
+        Elliptic Curve defined by y^2 + 2*x*y + 3*y = x^3 + 4*x^2 + 5*x + 6 over Finite Field of size 13
     """
-    R = f.parent()
-    cubic_variables = [ x for x in R.gens() if f.degree(x) == 3 ]
-    quadratic_variables = [ y for y in R.gens() if f.degree(y) == 2 ]
-    try:
-        x = cubic_variables[0]
-        y = quadratic_variables[0]
-    except IndexError:
+    from sage.schemes.hyperelliptic_curves.constructor import _parse_multivariate_defining_equation
+    f, h = _parse_multivariate_defining_equation(f)
+    # OUTPUT: tuple (f, h), each of them given as a list of coefficients.
+    if len(f) != 4 or len(h) > 2:
         raise ValueError('polynomial is not in long Weierstrass form')
-
-    a1 = a2 = a3 = a4 = a6 = 0
-    x3 = y2 = None
-    for coeff, mon in f:
-        if mon == x**3:
-            x3 = coeff
-        elif mon == x**2:
-            a2 = coeff
-        elif mon == x:
-            a4 = coeff
-        elif mon == 1:
-            a6 = coeff
-        elif mon == y**2:
-            y2 = -coeff
-        elif mon == x*y:
-            a1 = -coeff
-        elif mon == y:
-            a3 = -coeff
-        else:
-            raise ValueError('polynomial is not in long Weierstrass form')
-
-    if x3 != y2:
+    if not f[3].is_one():
         raise ValueError('the coefficient of x^3 and -y^2 must be the same')
-    elif x3 != 1:
-        a1, a2, a3, a4, a6 = a1/x3, a2/x3, a3/x3, a4/x3, a6/x3
-    return [a1, a2, a3, a4, a6]
+    h += [0] * (2 - len(h))
+    return [h[1], f[2], h[0], f[1], f[0]]
 
 
 def EllipticCurve_from_c4c6(c4, c6):
@@ -625,7 +604,7 @@ def EllipticCurve_from_c4c6(c4, c6):
 
         sage: E = EllipticCurve_from_c4c6(17, -2005)
         sage: E
-        Elliptic Curve defined by y^2  = x^3 - 17/48*x + 2005/864 over Rational Field
+        Elliptic Curve defined by y^2 = x^3 - 17/48*x + 2005/864 over Rational Field
         sage: E.c_invariants()
         (17, -2005)
     """
@@ -775,10 +754,11 @@ def coefficients_from_j(j, minimal_twist=True):
         Elist = [E for E in Elist if E.conductor() == min_cond]
         if len(Elist) > 1:
             from sage.databases.cremona import CremonaDatabase, parse_cremona_label
-            if min_cond <= CremonaDatabase().largest_conductor():
-                sorter = lambda E: parse_cremona_label(E.label(), numerical_class_code=True)
-            else:
-                sorter = lambda E: E.ainvs()
+            with CremonaDatabase() as D:
+                if min_cond <= D.largest_conductor():
+                    sorter = lambda E: parse_cremona_label(E.label(), numerical_class_code=True)
+                else:
+                    sorter = lambda E: E.ainvs()
             Elist.sort(key=sorter)
         return Sequence(Elist[0].ainvs())
 

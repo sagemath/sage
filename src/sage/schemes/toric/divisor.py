@@ -1742,7 +1742,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
         return self.scheme().fan().nrays()
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of the divisor group.
 
@@ -2026,10 +2026,7 @@ class ToricRationalDivisorClassGroup_basis_lattice(FreeModule_ambient_pid):
         Basis lattice of The toric rational divisor class group of a
         2-d CPR-Fano toric variety covered by 4 affine patches
         sage: L.basis()
-        [
-        Divisor class [1, 0],
-        Divisor class [0, 1]
-        ]
+        [Divisor class [1, 0], Divisor class [0, 1]]
     """
 
     def __init__(self, group):

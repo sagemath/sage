@@ -858,6 +858,22 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         r = r+'\\rangle'
         return r
 
+    def _regina_(self, regina):
+        r"""
+        Return the string used to construct the object in Regina.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(3)
+            sage: regina(B)        # optional regina
+            <regina.GroupPresentation: < a b | a b a b^-1 a^-1 b^-1 >>
+        """
+        F = regina(self._free_group)
+        new = F.__deepcopy__()
+        for r in self.relations():
+            new.addRelation(regina(r))
+        return new
+
     def free_group(self):
         """
         Return the free group (without relations).
@@ -1600,7 +1616,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         """
         Return the Alexander matrix of the group.
 
-        This matrix is given by the fox derivatives of the relations
+        This matrix is given by the Fox derivatives of the relations
         with respect to the generators.
 
         - ``im_gens`` -- (optional) the images of the generators

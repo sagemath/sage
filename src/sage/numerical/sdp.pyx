@@ -626,9 +626,7 @@ cdef class SemidefiniteProgram(SageObject):
         cdef GenericSDPBackend b = self._backend
 
         # inv_variables associates a SDPVariable object to an id
-        inv_variables = {}
-        for (v, id) in self._variables.iteritems():
-            inv_variables[id] = v
+        inv_variables = {id: v for v, id in self._variables.items()}
 
         # varid_name associates variables id to names
         varid_name = {}
@@ -656,7 +654,7 @@ cdef class SemidefiniteProgram(SageObject):
 
         ##### Constraints
         print("Constraints:")
-        for 0<= i < b.nrows():
+        for i in range(b.nrows()):
             indices, values = b.row(i)
             print(" ", end=" ")
             # Constraint's name
@@ -666,7 +664,7 @@ cdef class SemidefiniteProgram(SageObject):
             l = sorted(zip(indices,values))
             l.reverse()
             if l[-1][0] == -1:
-                last_i,last_value = l.pop()
+                _, last_value = l.pop()
             else:
                 last_value = matrix.zero( l[0][1].dimensions()[0],l[0][1].dimensions()[1]  )
             l.reverse()
@@ -892,7 +890,8 @@ cdef class SemidefiniteProgram(SageObject):
         from sage.numerical.linear_tensor_constraints import LinearTensorConstraint
         from sage.numerical.linear_tensor import LinearTensor
 
-        if isinstance(linear_function, LinearTensorConstraint) or isinstance(linear_function, LinearConstraint):
+        if isinstance(linear_function, (LinearTensorConstraint,
+                                        LinearConstraint)):
             c = linear_function
             if c.is_equation():
                 self.add_constraint(c.lhs()-c.rhs(), name=name)
@@ -900,7 +899,7 @@ cdef class SemidefiniteProgram(SageObject):
             else:
                 self.add_constraint(c.lhs()-c.rhs(), name=name)
 
-        elif isinstance(linear_function, LinearFunction) or isinstance(linear_function, LinearTensor):
+        elif isinstance(linear_function, (LinearFunction, LinearTensor)):
             l = sorted(linear_function.dict().items())
             self._backend.add_linear_constraint(l, name)
 
@@ -1125,7 +1124,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         d = {}
         for v in L:
-            for id, coeff in v.iteritems():
+            for id, coeff in v.items():
                 d[id] = coeff + d.get(id, 0)
         return self.linear_functions_parent()(d)
 

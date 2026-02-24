@@ -20,7 +20,7 @@ TESTS::
     True
 """
 
-####################################################################################
+##########################################################################
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -32,8 +32,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-####################################################################################
+#                  https://www.gnu.org/licenses/
+##########################################################################
 
 # A matrix morphism is a morphism that is defined by multiplication by a
 # matrix.  Elements of domain must either have a method "vector()" that
@@ -46,29 +46,6 @@ from sage.categories.morphism import Morphism
 from sage.modules import free_module_homspace, matrix_morphism
 from sage.structure.richcmp import rich_to_bool, richcmp
 from sage.structure.sequence import Sequence
-
-
-def is_FreeModuleMorphism(x):
-    """
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: V = ZZ^2; f = V.hom([V.1, -2*V.0])
-        sage: sage.modules.free_module_morphism.is_FreeModuleMorphism(f)
-        doctest:warning...
-        DeprecationWarning: is_FreeModuleMorphism is deprecated;
-        use isinstance(..., FreeModuleMorphism) or categories instead
-        See https://github.com/sagemath/sage/issues/37731 for details.
-        True
-        sage: sage.modules.free_module_morphism.is_FreeModuleMorphism(0)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37731,
-                "is_FreeModuleMorphism is deprecated; "
-                "use isinstance(..., FreeModuleMorphism) or categories instead")
-    return isinstance(x, FreeModuleMorphism)
 
 
 class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
@@ -542,27 +519,25 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             sage: V = (QQ^4).subspace([[0,2,1,4], [1,2,5,0], [1,1,1,1]])
             sage: H = (V.Hom(V))(matrix(QQ, [[0,1,0], [-1,0,0], [0,0,3]]))
             sage: H.eigenvectors()
-            [(3,    [ (0, 0, 1, -6/7) ], 1),
-             (-1*I, [ (1,  1*I, 0, -0.571428571428572? + 2.428571428571429?*I) ], 1),
-             (1*I,  [ (1, -1*I, 0, -0.571428571428572? - 2.428571428571429?*I) ], 1)]
+            [(3, [(0, 0, 1, -6/7)], 1),
+             (-1*I, [(1, 1*I, 0, -0.571428571428572? + 2.428571428571429?*I)], 1),
+             (1*I, [(1, -1*I, 0, -0.571428571428572? - 2.428571428571429?*I)], 1)]
             sage: H.eigenvectors(extend=False)
-            [(3, [ (0, 0, 1, -6/7) ], 1)]
+            [(3, [(0, 0, 1, -6/7)], 1)]
             sage: H1 = (V.Hom(V))(matrix(QQ, [[2,1,0],[0,2,0],[0,0,3]]))
             sage: H1.eigenvectors()
-            [(3, [ (0, 0, 1, -6/7) ], 1),
-             (2, [ (0, 1, 0, 17/7) ], 2)]
+            [(3, [(0, 0, 1, -6/7)], 1), (2, [(0, 1, 0, 17/7)], 2)]
             sage: H1.eigenvectors(extend=False)
-            [(3, [ (0, 0, 1, -6/7) ], 1),
-             (2, [ (0, 1, 0, 17/7) ], 2)]
+            [(3, [(0, 0, 1, -6/7)], 1), (2, [(0, 1, 0, 17/7)], 2)]
 
         ::
 
             sage: V = QQ^2
             sage: m = matrix(2, [1, 1, 0, 1])
             sage: V.hom(m, side='right').eigenvectors()                                 # needs sage.rings.number_field
-            [(1, [ (1, 0) ], 2)]
+            [(1, [(1, 0)], 2)]
             sage: V.hom(m).eigenvectors()                                               # needs sage.rings.number_field
-            [(1, [ (0, 1) ], 2)]
+            [(1, [(0, 1)], 2)]
         """
         if self.base_ring().is_field():
             if self.is_endomorphism():
@@ -660,7 +635,7 @@ class BaseIsomorphism1D(Morphism):
                 Multivariate Polynomial Ring in x, y over Rational Field
           To:   Multivariate Polynomial Ring in x, y over Rational Field
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         EXAMPLES::
 
@@ -671,7 +646,7 @@ class BaseIsomorphism1D(Morphism):
         """
         return "Isomorphism"
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -682,7 +657,7 @@ class BaseIsomorphism1D(Morphism):
         """
         return True
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         EXAMPLES::
 

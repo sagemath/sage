@@ -17,6 +17,7 @@ AUTHOR:
 # ***************************************************************************
 
 
+cimport cython
 from sage.ext.stdsage cimport PY_NEW
 from sage.cpython.getattr cimport AttributeErrorMessage
 from sage.cpython.getattr import dir_with_other_class
@@ -128,6 +129,52 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             return from_backend(output, self._parent)
         wrapper.__doc__ = method.__doc__
         return wrapper
+
+    def __getitem__(self, i):
+        r"""
+        Return the `i`-th item of this element.
+
+        This methods calls the appropriate method of the backend if
+        ``import_methods`` is set to ``True``
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: E = R.over()
+            sage: P = E(x^2 + 2*x + 3)
+            sage: P[0]
+            3
+        """
+        if (<RingExtension_generic>self._parent)._import_methods:
+            output = self._backend[to_backend(i)]
+            return from_backend(output, self._parent)
+        return TypeError("this element is not subscriptable")
+
+    def __call__(self, *args, **kwargs):
+        r"""
+        Call this element.
+
+        This methods calls the appropriate method of the backend if
+        ``import_methods`` is set to ``True``
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: E = R.over()
+            sage: P = E(x^2 + 2*x + 3)
+            sage: P(1)
+            6
+        """
+        if (<RingExtension_generic>self._parent)._import_methods:
+            output = self._backend(*to_backend(args), **to_backend(kwargs))
+            if args:
+                E = args[0].parent()
+                if isinstance(E, RingExtension_generic):
+                    return from_backend(output, args[0].parent())
+                return output
+            else:
+                return from_backend(output, self._parent)
+        return TypeError("this element is not callable")
 
     def __dir__(self):
         """

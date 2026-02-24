@@ -32,6 +32,8 @@ from memory_allocator cimport MemoryAllocator
 from sage.cpython.string cimport char_to_str
 from sage.libs.gmp.mpz cimport *
 from sage.misc.prandom import random
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_reverse
@@ -69,6 +71,21 @@ def layout_split(layout_function, G, **options):
          ...
          902: [3.13..., 0.22...]}
 
+    TESTS:
+
+    Check that issue:`41533` is fixed::
+
+        sage: H = graphs.LadderGraph(4) + graphs.CompleteGraph(3)
+        sage: em = {0: [1, 4], 4: [0, 5], 1: [5, 2, 0], 5: [4, 6, 1],
+        ....:       2: [1, 3, 6], 6: [7, 5, 2], 3: [7, 2], 7: [3, 6],
+        ....:       8: [10, 9], 9: [8, 10], 10: [8, 9]}
+        sage: em_before = deepcopy(em)
+        sage: p = H.layout_planar(on_embedding=em)
+        sage: em == em_before
+        True
+        sage: em is em_before
+        False
+
     AUTHOR:
 
     Robert Bradshaw
@@ -94,7 +111,7 @@ def layout_split(layout_function, G, **options):
     for g in Gs:
         if on_embedding:
             # Restrict ``on_embedding`` to ``g``
-            embedding_g = {v: on_embedding[v] for v in g}
+            embedding_g = {v: list(on_embedding[v]) for v in g}
             cur_pos = layout_function(g, on_embedding=embedding_g, **options)
         elif forest_roots:
             # Find a root for ``g`` (if any)
@@ -1327,6 +1344,18 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         sage: b, C = fh(G, find_path=False)
         sage: b, len(C)
         (True, 4)
+
+    Immutable graphs::
+
+        sage: G = graphs.PetersenGraph()
+        sage: H = Graph(G, immutable=True)
+        sage: fh(H)
+        (False, [7, 5, 0, 1, 2, 3, 8, 6, 9, 4])
+        sage: fh(H, find_path=True)
+        (True, [5, 0, 1, 6, 8, 3, 2, 7, 9, 4])
+        sage: G = DiGraph([(0, 1), (1, 2), (2, 3)], immutable=True)
+        sage: fh(G)
+        (False, [0, 1, 2, 3])
     """
     G._scream_if_not_simple()
 
@@ -1372,13 +1401,23 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     memset(member, 0, n * sizeof(int))
 
     # static copy of the graph for more efficient operations
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
     cdef short_digraph rev_sd
     cdef bint reverse = False
     if directed:
-        init_reverse(rev_sd, sd)
+        if isinstance(G, StaticSparseBackend) and cg._directed:
+            rev_sd = <short_digraph> cg.g_rev
+        else:
+            init_reverse(rev_sd, sd)
 
     # A list to store the available vertices at each step
     cdef list available_vertices = []
@@ -1518,9 +1557,11 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
         if bigcount * reset_bound > max_iter:
             output = [int_to_vertex[longest_path[i]] for i in range(longest)]
-            free_short_digraph(sd)
+            if not isinstance(G, StaticSparseBackend):
+                free_short_digraph(sd)
             if directed:
-                free_short_digraph(rev_sd)
+                if not (isinstance(G, StaticSparseBackend) and cg._directed):
+                    free_short_digraph(rev_sd)
                 if longest_reversed:
                     return (False, output[::-1])
             return (False, output)
@@ -1551,14 +1592,15 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
                            f"{int_to_vertex[path[0]]} are not adjacent")
 
     output = [int_to_vertex[path[i]] for i in range(length)]
-    free_short_digraph(sd)
-    if directed:
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
+    if directed and not (isinstance(G, StaticSparseBackend) and cg._directed):
         free_short_digraph(rev_sd)
 
     return (True, output)
 
 
-def transitive_reduction_acyclic(G):
+def transitive_reduction_acyclic(G, immutable=None):
     r"""
     Return the transitive reduction of an acyclic digraph.
 
@@ -1566,11 +1608,28 @@ def transitive_reduction_acyclic(G):
 
     - ``G`` -- an acyclic digraph
 
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable transitive closure. ``immutable=None`` (default) means
+      that the (di)graph and its transitive closure will behave the same way.
+
     EXAMPLES::
 
         sage: from sage.graphs.generic_graph_pyx import transitive_reduction_acyclic
         sage: G = posets.BooleanLattice(4).hasse_diagram()
         sage: G == transitive_reduction_acyclic(G.transitive_closure())
+        True
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: G = DiGraph([(0, 1)])
+        sage: transitive_reduction_acyclic(G).is_immutable()
+        False
+        sage: transitive_reduction_acyclic(G, immutable=True).is_immutable()
+        True
+        sage: G = DiGraph([(0, 1)], immutable=True)
+        sage: transitive_reduction_acyclic(G).is_immutable()
         True
     """
     cdef int  n = G.order()
@@ -1615,10 +1674,13 @@ def transitive_reduction_acyclic(G):
             if binary_matrix_get(closure, u, v):
                 useful_edges.append((uu, vv))
 
+    if immutable is None:
+        immutable = G.is_immutable()
+
     from sage.graphs.digraph import DiGraph
-    reduced = DiGraph()
-    reduced.add_edges(useful_edges)
-    reduced.add_vertices(linear_extension)
+    reduced = DiGraph([linear_extension, useful_edges],
+                      format='vertices_and_edges',
+                      immutable=immutable)
 
     binary_matrix_free(closure)
 

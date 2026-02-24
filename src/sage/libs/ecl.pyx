@@ -34,8 +34,6 @@ cdef bint bint_symbolp(cl_object obj) noexcept:
 # these type predicates are only provided in "cl_*" form, so we wrap them
 # with the proper type cast.
 
-cdef bint bint_numberp(cl_object obj) noexcept:
-    return not(cl_numberp(obj) == ECL_NIL)
 cdef bint bint_integerp(cl_object obj) noexcept:
     return not(cl_integerp(obj) == ECL_NIL)
 cdef bint bint_rationalp(cl_object obj) noexcept:
@@ -1355,7 +1353,11 @@ cpdef EclObject ecl_eval(str s):
         <ECL: "𝟜𝟟𝟙𝟙">
     """
     cdef cl_object o
-    o = ecl_safe_eval(python_to_ecl(s, True))
-    return ecl_wrap(o)
+    try:
+        o = ecl_safe_eval(python_to_ecl(s, True))
+        return ecl_wrap(o)
+    except RuntimeError as e:
+        e.add_note(f"while evaluating {s}")
+        raise
 
 init_ecl()

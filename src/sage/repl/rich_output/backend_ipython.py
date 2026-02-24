@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 IPython Backend for the Sage Rich Output System
 
@@ -16,7 +15,6 @@ This module defines the IPython backends for
 # ****************************************************************************
 
 import os
-import sys
 import html
 from IPython.display import publish_display_data
 from sage.repl.rich_output.backend_base import BackendBase

@@ -79,7 +79,7 @@ def _get_base_ring(ring, var_name='d'):
     """
 
     # from sage.rings.fraction_field import FractionField_generic
-    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
     from sage.categories.pushout import FractionField as FractionFieldFunctor
 
     base_ring = ring
@@ -87,7 +87,7 @@ def _get_base_ring(ring, var_name='d'):
     #    base_ring = base_ring.base()
     if (base_ring.construction() and base_ring.construction()[0] == FractionFieldFunctor()):
         base_ring = base_ring.construction()[1]
-    if (isinstance(base_ring, PolynomialRing_general) and base_ring.ngens() == 1 and base_ring.variable_name() == var_name):
+    if (isinstance(base_ring, PolynomialRing_generic) and base_ring.ngens() == 1 and base_ring.variable_name() == var_name):
         base_ring = base_ring.base()
     if (base_ring.construction() and base_ring.construction()[0] == FractionFieldFunctor()):
         base_ring = base_ring.construction()[1]

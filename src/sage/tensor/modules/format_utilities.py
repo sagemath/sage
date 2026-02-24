@@ -10,15 +10,15 @@ AUTHORS:
 - Michael Jung (2020): extended usage of :func:`is_atomic()`
 """
 
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from sage.misc.latex import LatexExpr
 
 
-def is_atomic(expr, sep=['+', '-']):
+def is_atomic(expr, sep=['+', '-']) -> bool:
     r"""
     Helper function to check whether some LaTeX expression is atomic.
 
@@ -70,9 +70,24 @@ def is_atomic(expr, sep=['+', '-']):
         False
         sage: is_atomic("(a mod b)", sep=['mod'])
         True
+
+    TESTS::
+
+        sage: is_atomic(1, sep=['*'])
+        Traceback (most recent call last):
+        ...
+        TypeError: the argument must be a string
+        sage: is_atomic("a*b", sep='*')
+        Traceback (most recent call last):
+        ...
+        TypeError: the argument 'sep' must be a list
+        sage: is_atomic("a*b", sep=[1])
+        Traceback (most recent call last):
+        ...
+        TypeError: the argument 'sep' must consist of strings
     """
     if not isinstance(expr, str):
-        raise TypeError("The argument must be a string")
+        raise TypeError("the argument must be a string")
     if not isinstance(sep, list):
         raise TypeError("the argument 'sep' must be a list")
     elif any(not isinstance(s, str) for s in sep):
@@ -91,7 +106,7 @@ def is_atomic(expr, sep=['+', '-']):
     return True
 
 
-def is_atomic_wedge_txt(expression):
+def is_atomic_wedge_txt(expression) -> bool:
     r"""
     Helper function to check whether some text-formatted expression is atomic
     in terms of wedge products.
@@ -247,7 +262,7 @@ def format_unop_txt(operator, name):
     if name is None:
         return None
     if not is_atomic(name) or not is_atomic_wedge_txt(name):
-    #!# is_atomic_otimes_txt should be added
+        # ! is_atomic_otimes_txt should be added
         name = '(' + name + ')'
     return operator + name
 
@@ -270,7 +285,7 @@ def format_unop_latex(operator, name):
     if name is None:
         return None
     if not is_atomic(name) or not is_atomic_wedge_latex(name):
-    #!# is_atomic_otimes_latex should be added
+        # ! is_atomic_otimes_latex should be added
         name = r'\left(' + name + r'\right)'
     return operator + name
 

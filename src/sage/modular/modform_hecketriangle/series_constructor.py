@@ -230,11 +230,9 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
         # the current implementation of power series reversion is slow
         # J_inv_ZZ = ZZ(1) / ((q*Phi.exp()).reverse())
 
-        temp_f = (q*Phi.exp()).polynomial()
-        new_f = temp_f.revert_series(temp_f.degree()+1)
-        J_inv_ZZ = ZZ.one() / (new_f + O(q**(temp_f.degree()+1)))
-
-        return J_inv_ZZ
+        temp_f = (q * Phi.exp()).polynomial()
+        new_f = temp_f.revert_series(temp_f.degree() + 1)
+        return ZZ.one() / (new_f + O(q**(temp_f.degree() + 1)))
 
     @cached_method
     def f_rho_ZZ(self):
@@ -363,15 +361,15 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             q^-1 - 1/8 - 59/1024*q + O(q^2)
         """
         n = self.hecke_n()
-        # Note that G_inv is not a weakly holomorphic form (because of the behavior at -1)
+        # Note that G_inv is not a weakly holomorphic form (because of
+        # the behavior at -1)
         if n == infinity:
             q = self._series_ring.gen()
             temp_expr = (self.J_inv_ZZ()/self.f_inf_ZZ()*q**2).power_series()
             return 1/q*self.f_i_ZZ()*(temp_expr.log()/2).exp()
-        elif (ZZ(2).divides(n)):
+        if (ZZ(2).divides(n)):
             return self.f_i_ZZ()*(self.f_rho_ZZ()**(ZZ(n/ZZ(2))))/self.f_inf_ZZ()
-        else:
-            raise ValueError("G_inv doesn't exist for n={}.".format(self.hecke_n()))
+        raise ValueError("G_inv doesn't exist for n={}.".format(self.hecke_n()))
 
     @cached_method
     def E4_ZZ(self):
@@ -397,10 +395,8 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=infinity, prec=3).E4_ZZ()
             1 + 1/4*q + 7/256*q^2 + O(q^3)
         """
-
         q = self._series_ring.gen()
-        E4_ZZ = ((-q*self.J_inv_ZZ().derivative())**2/(self.J_inv_ZZ()*(self.J_inv_ZZ()-1))).power_series()
-        return E4_ZZ
+        return ((-q*self.J_inv_ZZ().derivative())**2 / (self.J_inv_ZZ()*(self.J_inv_ZZ()-1))).power_series()
 
     @cached_method
     def E6_ZZ(self):
@@ -426,10 +422,8 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=infinity, prec=3).E6_ZZ()
             1 - 1/8*q - 31/512*q^2 + O(q^3)
         """
-
         q = self._series_ring.gen()
-        E6_ZZ = ((-q*self.J_inv_ZZ().derivative())**3/(self.J_inv_ZZ()**2*(self.J_inv_ZZ()-1))).power_series()
-        return E6_ZZ
+        return ((-q*self.J_inv_ZZ().derivative())**3 / (self.J_inv_ZZ()**2*(self.J_inv_ZZ()-1))).power_series()
 
     @cached_method
     def Delta_ZZ(self):
@@ -482,10 +476,8 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=infinity, prec=3).E2_ZZ()
             1 - 1/8*q - 1/512*q^2 + O(q^3)
         """
-
         q = self._series_ring.gen()
-        E2_ZZ = (q*self.f_inf_ZZ().derivative())/self.f_inf_ZZ()
-        return E2_ZZ
+        return (q * self.f_inf_ZZ().derivative()) / self.f_inf_ZZ()
 
     @cached_method
     def EisensteinSeries_ZZ(self, k):

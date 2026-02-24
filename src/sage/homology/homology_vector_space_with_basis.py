@@ -182,7 +182,8 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         sage: b.cup_product(b)
         h^{2,0}
     """
-    def __init__(self, base_ring, cell_complex, cohomology=False, category=None):
+    def __init__(self, base_ring, cell_complex, cohomology=False,
+                 category=None) -> None:
         """
         Initialize ``self``.
 
@@ -311,7 +312,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         """
         return self._complex
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -325,7 +326,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
             base = "Homology"
         return base + " module of {} over {}".format(self._complex, self.base_ring())
 
-    def _repr_term(self, i):
+    def _repr_term(self, i) -> str:
         """
         Return ``'h_{i[0],i[1]}'`` for homology, ``'h^{i[0],i[1]}'`` for
         cohomology, for the basis element indexed by ``i``.
@@ -444,7 +445,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         tester = self._tester(**options)
         dual = self.dual()
         dims = [a[0] for a in self._indices]
-        for dim in range(max(max(dims), tester._max_runs) + 1):
+        for dim in range(max(*dims, tester._max_runs) + 1):
             n = len(self.basis(dim))
             m = matrix(n, n, [a.eval(b) for a in self.basis(dim) for b in dual.basis(dim)])
             tester.assertEqual(m, 1, f"error in dimension {dim}")
@@ -576,7 +577,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
         sage: x4 * Sq(3)
         0
     """
-    def __init__(self, base_ring, cell_complex, category=None):
+    def __init__(self, base_ring, cell_complex, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -731,7 +732,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
         sage: x * x
         -h^{4,0}
     """
-    def __init__(self, base_ring, cell_complex, category=None):
+    def __init__(self, base_ring, cell_complex, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -748,7 +749,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             category = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
         HomologyVectorSpaceWithBasis.__init__(self, base_ring, cell_complex, True, category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1004,7 +1005,7 @@ class CohomologyRing_mod2(CohomologyRing):
         sage: x * Sq(3)
         h^{4,0}
     """
-    def __init__(self, base_ring, cell_complex):
+    def __init__(self, base_ring, cell_complex) -> None:
         """
         Initialize ``self``.
 
@@ -1253,7 +1254,7 @@ class CohomologyRing_mod2(CohomologyRing):
             ret = CombinatorialFreeModule.Element._acted_upon_(self, a, self_on_left)
             if ret is not None:  # did the scalar action
                 return ret
-            if self_on_left: # i.e., module element on left
+            if self_on_left:  # i.e., module element on left
                 a = a.antipode()
             b = a.change_basis('adem')
             ans = self.parent().zero()
@@ -1283,7 +1284,7 @@ class CohomologyRing_mod2(CohomologyRing):
           the action as a left module action or a right module
 
         We will write this with respect to the left action;
-        for the right action, just switch all of the the tensors.
+        for the right action, just switch all of the tensors.
         Writing `m` for ``deg_domain`` and `n` for ``deg_codomain``, this
         returns `A^{n-m} \otimes H^{m} \to H^{n}`, one single
         component of the map making `H` into an `A`-module.
@@ -1435,7 +1436,7 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
             for l in sum_indices(k-1, i_k, S_k)]
 
 
-def is_GF2(R):
+def is_GF2(R) -> bool:
     r"""
     Return ``True`` iff ``R`` is isomorphic to the field `\GF{2}`.
 
@@ -1444,7 +1445,7 @@ def is_GF2(R):
         sage: from sage.homology.homology_vector_space_with_basis import is_GF2
         sage: is_GF2(GF(2))
         True
-        sage: is_GF2(GF(2, impl='ntl'))
+        sage: is_GF2(GF(2, implementation='ntl'))
         True
         sage: is_GF2(GF(3))
         False

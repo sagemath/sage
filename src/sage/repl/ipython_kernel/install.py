@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Installing the SageMath Jupyter Kernel and Extensions
 
@@ -21,7 +20,6 @@ import warnings
 from sage.env import (
     SAGE_DOC,
     SAGE_EXTCODE,
-    SAGE_VENV,
     SAGE_VERSION,
 )
 
@@ -148,16 +146,14 @@ class SageKernelSpec:
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
             sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec._kernel_cmd()
-            ['/.../sage',
-             '--python',
+            ['python3',
              '-m',
              'sage.repl.ipython_kernel',
              '-f',
              '{connection_file}']
         """
         return [
-            os.path.join(SAGE_VENV, 'bin', 'sage'),
-            '--python',
+            'python3',
             '-m', 'sage.repl.ipython_kernel',
             '-f', '{connection_file}',
         ]
@@ -173,12 +169,13 @@ class SageKernelSpec:
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
             sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec.kernel_spec()
-            {'argv': ..., 'display_name': 'SageMath ...', 'language': 'sage'}
+            {'argv': ..., 'display_name': 'SageMath ...', 'language': 'sage', 'metadata': {'debugger': True}}
         """
         return dict(
             argv=self._kernel_cmd(),
             display_name=self._display_name,
             language='sage',
+            metadata=dict(debugger=True),
         )
 
     def _install_spec(self):
@@ -260,18 +257,26 @@ class SageKernelSpec:
         try:
             spec = get_kernel_spec(ident)
         except NoSuchKernel:
-            warnings.warn(f'no kernel named {ident} is accessible; '
+            warnings.warn(f'No kernel named {ident} is accessible; '
                           'check your Jupyter configuration '
-                          '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
+                          '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
         else:
+            import shutil
+            import sys
             from pathlib import Path
-            if Path(spec.argv[0]).resolve() != Path(os.path.join(SAGE_VENV, 'bin', 'sage')).resolve():
-                warnings.warn(f'the kernel named {ident} does not seem to correspond to this '
+            kernel_executable = shutil.which(spec.argv[0])
+            if not kernel_executable:
+                warnings.warn(f'The kernel named {ident} does not seem to be runnable; '
+                              'check your Jupyter configuration '
+                              '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
+                return
+            if Path(kernel_executable).resolve() != Path(sys.executable).resolve():
+                warnings.warn(f'The kernel named {ident} does not seem to correspond to this '
                               'installation of SageMath; check your Jupyter configuration '
-                              '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
+                              '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
 
 
-def have_prerequisites(debug=True):
+def have_prerequisites(debug=True) -> bool:
     """
     Check that we have all prerequisites to run the Jupyter notebook.
 

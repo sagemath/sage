@@ -16,7 +16,7 @@ modules = default_required_modules + default_optional_modules
 aliases = cython_aliases(required_modules=(), optional_modules=modules)
 
 library_order_list = aliases.get("SINGULAR_LIBRARIES", []) + [
-    "giac", "intl", "curl",
+    "intl", "curl",
     "ec", "ecm"
 ] + aliases.get("LINBOX_LIBRARIES", []) + aliases.get("FFLASFFPACK_LIBRARIES", []) + aliases.get("GSL_LIBRARIES", []) + [
     "pari", "flint", "ecl", "glpk", "ppl",

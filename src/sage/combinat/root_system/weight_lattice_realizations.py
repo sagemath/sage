@@ -596,10 +596,10 @@ class WeightLatticeRealizations(Category_over_base_ring):
             # Now, we have d = f w^-1
             winv = ~w
             assert all(alpha[i].level().is_zero() for i in self.index_set())
-            rank_simple_roots = dict( (alpha[i],i) for i in self.index_set())
+            rank_simple_roots = {alpha[i]: i for i in self.index_set()}
             permutation = dict()
             for i in self.index_set():
-                root = f(winv.action(alpha[i])) # This is d(alpha_i)
+                root = f(winv.action(alpha[i]))  # This is d(alpha_i)
                 assert root in rank_simple_roots
                 permutation[i] = rank_simple_roots[root]
                 assert set(permutation.values()), set(self.index_set())
@@ -694,7 +694,8 @@ class WeightLatticeRealizations(Category_over_base_ring):
             # preserving the alcoves.
             if elements is None:
                 c = self.cartan_type().c()
-                elements = [ c[i] * Lambda[i] for i in self.cartan_type().classical().index_set() ]
+                elements = [c[i] * Lambda[i]
+                            for i in self.cartan_type().classical().index_set()]
 
             # When the null root is zero in this root lattice realization,
             # the roots correspond to the classical roots. We use that to
@@ -703,7 +704,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             # set to be of the form 0..n
             test_automorphism = self.null_root().is_zero() and set(self.index_set()) == set(i for i in range(len(self.index_set())))
             # dictionary assigning a simple root to its index
-            rank_simple_roots = dict( (alpha[i],i) for i in self.index_set() )
+            rank_simple_roots = {alpha[i]: i for i in self.index_set()}
 
             try:
                 W = self.weyl_group()

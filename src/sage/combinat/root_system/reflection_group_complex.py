@@ -196,26 +196,25 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method, cached_function
-from sage.misc.misc_c import prod
 from sage.categories.category import Category
-from sage.categories.permutation_groups import PermutationGroups
 from sage.categories.complex_reflection_groups import ComplexReflectionGroups
 from sage.categories.coxeter_groups import CoxeterGroups
+from sage.categories.permutation_groups import PermutationGroups
+from sage.combinat.root_system.cartan_matrix import CartanMatrix
 from sage.combinat.root_system.reflection_group_element import ComplexReflectionGroupElement, _gap_return
-from sage.sets.family import Family
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
-from sage.combinat.permutation import Permutation
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
+from sage.interfaces.gap3 import gap3
 from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
-from sage.structure.element import Matrix
-from sage.interfaces.gap3 import gap3
-from sage.modules.free_module_element import vector
-from sage.combinat.root_system.cartan_matrix import CartanMatrix
+from sage.misc.cachefunc import cached_method, cached_function
+from sage.misc.misc_c import prod
 from sage.misc.sage_eval import sage_eval
+from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.sets.family import Family
+from sage.structure.element import Matrix
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
@@ -853,7 +852,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         return sum(coeffs[i] * mons[i] for i in range(m))
 
     @cached_method
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         r"""
         Return ``True`` if ``self`` is crystallographic.
 
@@ -891,9 +890,10 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             sage: W.is_crystallographic()
             False
         """
-        return self.is_real() and all(t.to_matrix().base_ring() is QQ for t in self.simple_reflections())
+        return self.is_real() and all(t.to_matrix().base_ring() is QQ
+                                      for t in self.simple_reflections())
 
-    def number_of_irreducible_components(self):
+    def number_of_irreducible_components(self) -> int:
         r"""
         Return the number of irreducible components of ``self``.
 
@@ -909,7 +909,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         """
         return len(self._type)
 
-    def irreducible_components(self):
+    def irreducible_components(self) -> list:
         r"""
         Return a list containing the irreducible components of ``self``
         as finite reflection groups.

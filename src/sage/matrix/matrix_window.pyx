@@ -66,8 +66,8 @@ cdef class MatrixWindow:
         a = self._matrix.new_matrix(nrows, ncols)
         return self.new_matrix_window(a, 0, 0, nrows, ncols)
 
-    def __repr__(self):
-        return "Matrix window of size %s x %s at (%s,%s):\n%s"%(
+    def __repr__(self) -> str:
+        return "Matrix window of size %s x %s at (%s,%s):\n%s" % (
             self._nrows, self._ncols, self._row, self._col, self._matrix)
 
     ############################

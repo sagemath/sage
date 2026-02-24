@@ -67,11 +67,14 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational import Rational
-from sage.rings.rational_field import QQ, RationalField as Rationals
+from sage.rings.rational_field import QQ
+from sage.rings.rational_field import RationalField as Rationals
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
-from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import HyperellipticCurve_generic
+from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import (
+    HyperellipticCurve_generic,
+)
 from sage.structure.element import ModuleElement
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
@@ -570,15 +573,10 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         """
         return self._poly_ring
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return a list [x, T] where x and T are the generators of the ring
-        (as element *of this ring*).
-
-        .. NOTE::
-
-             I have no idea if this is compatible with the usual Sage
-             'gens' interface.
+        Return (x, T) where x and T are the generators of the ring
+        (as elements *of this ring*).
 
         EXAMPLES::
 
@@ -673,16 +671,8 @@ def transpose_list(input) -> list[list]:
         sage: transpose_list(L)
         [[1, 3, 5], [2, 4, 6]]
     """
-    h = len(input)
     w = len(input[0])
-
-    output = []
-    for i in range(w):
-        row = []
-        for j in range(h):
-            row.append(input[j][i])
-        output.append(row)
-    return output
+    return [[input_j[i] for input_j in input] for i in range(w)]
 
 
 def helper_matrix(Q):
@@ -2078,7 +2068,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
             sage: R.<x> = QQ['x']
             sage: E = HyperellipticCurve(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
-            sage: x._rmul_(y)                                                           # needs sage.rings.real_interval_field
+            sage: x._rmul_(y)
             y*1*x
         """
         P = self.parent()
@@ -2098,7 +2088,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
             sage: R.<x> = QQ['x']
             sage: E = HyperellipticCurve(x^5-3*x+1)
             sage: x,y = E.monsky_washnitzer_gens()
-            sage: x._lmul_(y)                                                           # needs sage.rings.real_interval_field
+            sage: x._lmul_(y)
             y*1*x
         """
         P = self.parent()
@@ -2376,7 +2366,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             sage: E = HyperellipticCurve(x^5 - 3*x + 1)
             sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialHyperellipticQuotientRing
             sage: HQR = SpecialHyperellipticQuotientRing(E)
-            sage: TestSuite(HQR).run()                                                  # needs sage.rings.real_interval_field
+            sage: TestSuite(HQR).run()
 
         Check that caching works::
 
@@ -2539,7 +2529,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
         """
         return self.element_class(self, self._poly_ring.zero(), check=False)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -2596,7 +2586,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
         i = int(i)
         j = int(j)
 
-        if 0 < i and i < self._n:
+        if 0 < i < self._n:
             if b is None:
                 by_to_j = self._series_ring_y << (j - 1)
             else:
@@ -2680,7 +2670,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             mat_2[i] = self._precomputed_diff_coeffs[i][2]
         return mat_1.transpose(), mat_2.transpose()
 
-    def _precompute_monomial_diffs(self):
+    def _precompute_monomial_diffs(self) -> list:
         r"""
         Precompute coefficients of the basis representation of `d(x^iy^j)`
         for small `i`, `j`.
@@ -3511,7 +3501,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
             sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialHyperellipticQuotientRing, MonskyWashnitzerDifferentialRing
             sage: S = SpecialHyperellipticQuotientRing(E)
             sage: DR = MonskyWashnitzerDifferentialRing(S)
-            sage: TestSuite(DR).run()                                                   # needs sage.rings.real_interval_field
+            sage: TestSuite(DR).run()
 
         Check that caching works::
 
@@ -3669,7 +3659,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
             sage: MW = C.invariant_differential().parent()
             sage: MW.frob_Q(3)
             -(60-48*y^2+12*y^4-y^6)*1 + (192-96*y^2+12*y^4)*x - (192-48*y^2)*x^2 + 60*x^3
-            sage: MW.Q()(MW.x_to_p(3))                                                  # needs sage.rings.real_interval_field
+            sage: MW.Q()(MW.x_to_p(3))
             -(60-48*y^2+12*y^4-y^6)*1 + (192-96*y^2+12*y^4)*x - (192-48*y^2)*x^2 + 60*x^3
             sage: MW.frob_Q(11) is MW.frob_Q(11)
             True
@@ -3804,6 +3794,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
             F.append(F_i)
         return F
 
+    @cached_method
     def helper_matrix(self):
         r"""
         We use this to solve for the linear combination of
@@ -3821,22 +3812,16 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
             [-100/2101 -125/2101 -625/8404  -64/2101  -80/2101]
             [ -80/2101 -100/2101 -125/2101 -625/8404  -64/2101]
         """
-        try:
-            return self._helper_matrix
-        except AttributeError:
-            pass
-
         # The smallest y term of (1/j) d(x^i y^j) is constant for all j.
         x, y = self.base_ring().gens()
         n = self.degree()
         L = [(y * x**i).diff().extract_pow_y(0) for i in range(n)]
         A = matrix(L).transpose()
         if A.base_ring() not in IntegralDomains():
-            # must be using integer_mod or something to approximate
-            self._helper_matrix = (~A.change_ring(QQ)).change_ring(A.base_ring())
-        else:
-            self._helper_matrix = ~A
-        return self._helper_matrix
+            # must be using integer_mod or something to approximate ?
+            return (~A.change_ring(QQ)).change_ring(A.base_ring())
+
+        return ~A
 
     def _element_constructor_(self, val=0, offset=0):
         r"""

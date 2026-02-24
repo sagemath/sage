@@ -31,9 +31,9 @@ EXAMPLES::
 """
 
 
-from .PyPolyBoRi import Ring
-from .pbori import VariableFactory
-from .blocks import declare_ring as orig_declare_ring
+from sage.rings.polynomial.pbori.blocks import declare_ring as orig_declare_ring
+from sage.rings.polynomial.pbori.pbori import VariableFactory
+from sage.rings.polynomial.pbori.PyPolyBoRi import Ring
 
 
 def block_scheme_names(blocks):

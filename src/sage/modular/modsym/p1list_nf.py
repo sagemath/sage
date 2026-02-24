@@ -61,7 +61,7 @@ Lift an MSymbol to a matrix in `SL(2, R)`:
 
     sage: alpha = MSymbol(N, a + 2, 3*a^2)
     sage: alpha.lift_to_sl2_Ok()
-    [-1, 4*a^2 - 13*a + 23, a + 2, 5*a^2 + 3*a - 3]
+    [-a - 1, 15*a^2 - 38*a + 86, a + 2, -a^2 + 9*a - 19]
     sage: Ok = k.ring_of_integers()
     sage: M = Matrix(Ok, 2, alpha.lift_to_sl2_Ok())
     sage: det(M)
@@ -977,11 +977,11 @@ class P1NFList(SageObject):
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
             sage: u = k.unit_group().gens_values(); u
-            [-1, -2*a^2 - 4*a + 1]
+            [-1, 2*a^2 + 4*a - 1]
             sage: P.apply_J_epsilon(4, -1)
             2
             sage: P.apply_J_epsilon(4, u[0], u[1])
-            5
+            1
 
         ::
 
@@ -1122,7 +1122,7 @@ def lift_to_sl2_Ok(N, c, d):
         sage: M = Matrix(Ok, 2, lift_to_sl2_Ok(N, 0, 7))
         Traceback (most recent call last):
         ...
-        ValueError: <0> + <7> and the Fractional ideal (7, a) are not coprime.
+        ValueError: <0> + <7> and the Fractional ideal (7, -4/7*a^3 + 13/7*a^2 + 39/7*a - 19) are not coprime.
     """
     k = N.number_field()
     # check the input

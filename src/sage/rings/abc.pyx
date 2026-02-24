@@ -1,7 +1,6 @@
 """
 Abstract base classes for rings
 """
-from sage.rings.ring import IntegralDomain
 
 
 class NumberField_quadratic(Field):
@@ -227,12 +226,12 @@ cdef class RealIntervalField(Field):
     EXAMPLES::
 
         sage: import sage.rings.abc
-        sage: isinstance(RIF, sage.rings.abc.RealIntervalField)                         # needs sage.rings.real_interval_field
+        sage: isinstance(RIF, sage.rings.abc.RealIntervalField)
         True
 
     By design, there is a unique direct subclass::
 
-        sage: sage.rings.abc.RealIntervalField.__subclasses__()                         # needs sage.rings.real_interval_field
+        sage: sage.rings.abc.RealIntervalField.__subclasses__()
         [<class 'sage.rings.real_mpfi.RealIntervalField_class'>]
 
         sage: len(sage.rings.abc.RealIntervalField.__subclasses__()) <= 1
@@ -419,7 +418,7 @@ class Order:
     pass
 
 
-class pAdicRing(IntegralDomain):
+class pAdicRing(CommutativeRing):
     r"""
     Abstract base class for :class:`~sage.rings.padics.generic_nodes.pAdicRingGeneric`.
 

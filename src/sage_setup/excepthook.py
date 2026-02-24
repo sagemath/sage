@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 def excepthook(*exc):
     """
     When an error occurs, display an error message similar to the error

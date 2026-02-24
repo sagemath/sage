@@ -8,7 +8,7 @@ AUTHORS:
 - Tomas Kalvoda (2015-04-01): Add :meth:`exp_polar()` (:issue:`18085`)
 """
 
-from sage.misc.functional import log as log
+from sage.misc.functional import log
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -281,6 +281,18 @@ class Function_log2(GinacFunction):
         log(7)/log(2)
         sage: logb(int(7), 2)                                                           # needs sage.symbolic
         log(7)/log(2)
+
+    Check that :issue:`40883` is fixed::
+
+        sage: from sage.functions.log import logb
+        sage: logb(int(4294967300), 2)                                                  # needs sage.symbolic
+        log(4294967300)/log(2)
+        sage: float(logb(int(4294967300), 2))                                           # needs sage.symbolic
+        32.00000000134...
+        sage: logb(int(21743271936), 2)                                                 # needs sage.symbolic
+        log(21743271936)/log(2)
+        sage: float(logb(int(21743271936), 2))                                          # needs sage.symbolic
+        34.33985000288...
     """
     def __init__(self):
         """

@@ -11,7 +11,7 @@ EXAMPLES: We compute the cuspidal subgroup of `J_1(13)`::
     sage: C = A.cuspidal_subgroup(); C
     Finite subgroup with invariants [19, 19] over QQ of Abelian variety J1(13) of dimension 2
     sage: C.gens()
-    [[(1/19, 0, 9/19, 9/19)], [(0, 1/19, 0, 9/19)]]
+    ([(1/19, 0, 9/19, 9/19)], [(0, 1/19, 0, 9/19)])
     sage: C.order()
     361
     sage: C.invariants()
@@ -23,7 +23,7 @@ We compute the cuspidal subgroup of `J_0(54)`::
     sage: C = A.cuspidal_subgroup(); C
     Finite subgroup with invariants [3, 3, 3, 3, 3, 9] over QQ of Abelian variety J0(54) of dimension 4
     sage: C.gens()
-    [[(1/3, 0, 0, 0, 0, 1/3, 0, 2/3)], [(0, 1/3, 0, 0, 0, 2/3, 0, 1/3)], [(0, 0, 1/9, 1/9, 1/9, 1/9, 1/9, 2/9)], [(0, 0, 0, 1/3, 0, 1/3, 0, 0)], [(0, 0, 0, 0, 1/3, 1/3, 0, 1/3)], [(0, 0, 0, 0, 0, 0, 1/3, 2/3)]]
+    ([(1/3, 0, 0, 0, 0, 1/3, 0, 2/3)], [(0, 1/3, 0, 0, 0, 2/3, 0, 1/3)], [(0, 0, 1/9, 1/9, 1/9, 1/9, 1/9, 2/9)], [(0, 0, 0, 1/3, 0, 1/3, 0, 0)], [(0, 0, 0, 0, 1/3, 1/3, 0, 1/3)], [(0, 0, 0, 0, 0, 0, 1/3, 2/3)])
     sage: C.order()
     2187
     sage: C.invariants()
@@ -37,7 +37,7 @@ rational cusps.
     sage: C = J0(54).rational_cusp_subgroup(); C
     Finite subgroup with invariants [3, 3, 9] over QQ of Abelian variety J0(54) of dimension 4
     sage: C.gens()
-    [[(1/3, 0, 0, 1/3, 2/3, 1/3, 0, 1/3)], [(0, 0, 1/9, 1/9, 7/9, 7/9, 1/9, 8/9)], [(0, 0, 0, 0, 0, 0, 1/3, 2/3)]]
+    ([(1/3, 0, 0, 1/3, 2/3, 1/3, 0, 1/3)], [(0, 0, 1/9, 1/9, 7/9, 7/9, 1/9, 8/9)], [(0, 0, 0, 0, 0, 0, 1/3, 2/3)])
     sage: C.order()
     81
     sage: C.invariants()
@@ -70,7 +70,7 @@ TESTS::
 # *****************************************************************************
 
 from sage.matrix.constructor import matrix
-from sage.modular.arithgroup.all import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
 from sage.modular.cusps import Cusp
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
@@ -180,8 +180,7 @@ class CuspidalSubgroup_generic(FiniteSubgroup):
         B = Cusp.free_module().basis_matrix().stack(Eis.free_module().basis_matrix())
         X = B.solve_left(cusp_matrix)
         X = X.matrix_from_columns(range(Cusp.dimension()))
-        lattice = X.row_module(ZZ) + A.lattice()
-        return lattice
+        return X.row_module(ZZ) + A.lattice()
 
 
 class CuspidalSubgroup(CuspidalSubgroup_generic):
@@ -337,7 +336,7 @@ class RationalCuspidalSubgroup(CuspidalSubgroup_generic):
             return lattice
 
 
-def is_rational_cusp_gamma0(c, N, data):
+def is_rational_cusp_gamma0(c, N, data) -> bool:
     """
     Return ``True`` if the rational number c is a rational cusp of level N.
 

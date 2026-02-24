@@ -186,7 +186,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         """
         return (-len(x), sorted(x))
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -199,7 +199,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         """
         return "OT{{{}}}".format(', '.join(str(t) for t in sorted(m)))
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -219,7 +219,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         from sage.sets.set import Set
         return "e_{{{}}}".format(latex(Set(sorted(m))))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -242,7 +242,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
 
             sage: M = matroids.Wheel(3)
             sage: OT = M.orlik_terao_algebra(QQ)
-            sage: OT.one_basis() == frozenset([])
+            sage: OT.one_basis() == frozenset()
             True
         """
         return frozenset({})
@@ -391,7 +391,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
             [[(1, 2), (1, 4), (2, 3), (3, 4)],
              [(3, 5), (3, 6), (5, 6)]]
             sage: OT = M.orlik_terao_algebra(QQ, ordering=s)
-            sage: OT.subset_image(frozenset([]))
+            sage: OT.subset_image(frozenset())
             OT{}
             sage: OT.subset_image(frozenset([(1,2),(3,4),(1,4),(2,3)]))
             0
@@ -419,7 +419,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
              [0, 3, 5], [1, 2, 4], [1, 2, 5], [1, 3, 4],
              [1, 3, 5], [2, 3], [4, 5]]
             sage: OT = M.orlik_terao_algebra()
-            sage: OT.subset_image(frozenset([]))
+            sage: OT.subset_image(frozenset())
             OT{}
             sage: OT.subset_image(frozenset([1, 2, 3]))
             0
@@ -438,7 +438,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
             sage: sorted([sorted(c) for c in M.circuits()])
             [[0, 1], [2, 3, 4]]
             sage: OT = M.orlik_terao_algebra(QQ)
-            sage: OT.subset_image(frozenset([]))
+            sage: OT.subset_image(frozenset())
             OT{}
             sage: OT.subset_image(frozenset([1, 3, 4]))
             -OT{0, 2, 3} + OT{0, 2, 4}
@@ -693,7 +693,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
             sage: OTG.construction() is None
             True
         """
-        return None
+        return
 
     def _basis_action(self, g, f):
         r"""

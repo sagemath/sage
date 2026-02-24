@@ -124,7 +124,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.misc.latex import latex
 from sage.misc.misc import is_iterator
 
-from sage.structure.all import Sequence
+from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp, richcmp_method
 
 from sage.arith.functions import lcm
@@ -133,69 +133,6 @@ from sage.arith.misc import gcd
 import sage.schemes.affine
 from . import ambient_space
 from . import scheme
-
-
-def is_AlgebraicScheme(x):
-    """
-    Test whether ``x`` is an algebraic scheme.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    boolean; whether ``x`` is an algebraic scheme, that is, a
-    subscheme of an ambient space over a ring defined by polynomial
-    equations.
-
-    EXAMPLES::
-
-        sage: A2 = AffineSpace(2, QQ, 'x, y')
-        sage: A2.coordinate_ring().inject_variables()
-        Defining x, y
-        sage: V = A2.subscheme([x^2 + y^2]); V
-        Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-          x^2 + y^2
-        sage: from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
-        sage: is_AlgebraicScheme(V)
-        doctest:warning...
-        DeprecationWarning: The function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-
-    Affine space is itself not an algebraic scheme, though the closed
-    subscheme defined by no equations is::
-
-        sage: from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
-        sage: is_AlgebraicScheme(AffineSpace(10, QQ))
-        False
-        sage: V = AffineSpace(10, QQ).subscheme([]); V
-        Closed subscheme of Affine Space of dimension 10 over Rational Field defined by:
-          (no polynomials)
-        sage: is_AlgebraicScheme(V)
-        True
-
-    We create a more complicated closed subscheme::
-
-        sage: A,x = AffineSpace(10, QQ).objgens()
-        sage: X = A.subscheme([sum(x)]); X
-        Closed subscheme of Affine Space of dimension 10 over Rational Field defined by:
-          x0 + x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9
-        sage: is_AlgebraicScheme(X)
-        True
-
-    ::
-
-        sage: is_AlgebraicScheme(QQ)
-        False
-        sage: S = Spec(QQ)
-        sage: is_AlgebraicScheme(S)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead.")
-    return isinstance(x, AlgebraicScheme)
 
 
 # ****************************************************************************
@@ -219,7 +156,7 @@ class AlgebraicScheme(scheme.Scheme):
     defined by equations in affine, projective, or toric ambient
     spaces.
     """
-    def __init__(self, A, category=None):
+    def __init__(self, A, category=None) -> None:
         """
         TESTS::
 
@@ -976,13 +913,14 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         """
         coords = list(v)
         for f in self.defining_polynomials():
-            if f(coords) != 0:   # it must be "!=0" instead of "if f(v)", e.g.,
-                                 # because of p-adic base rings.
-                raise TypeError("Coordinates %s do not define a point on %s" % (coords,self))
+            if f(coords) != 0:
+                # it must be "!=0" instead of "if f(v)", e.g.,
+                # because of p-adic base rings.
+                raise TypeError("Coordinates %s do not define a point on %s" % (coords, self))
         try:
             return self.ambient_space()._check_satisfies_equations(coords)
         except TypeError:
-            raise TypeError("Coordinates %s do not define a point on %s" % (coords,self))
+            raise TypeError("Coordinates %s do not define a point on %s" % (coords, self))
 
     def base_extend(self, R):
         """
@@ -1121,7 +1059,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             initial_polys = list(self.__polys)
 
             for P in initial_polys:
-                # stores value which need to be mutliplied to make all coefficient integers
+                # stores value which need to be multiplied to make all coefficient integers
                 mult = lcm([c.denominator() for c in P.coefficients()])
                 P = mult*P
                 # stores the common factor from all coefficients
@@ -1133,8 +1071,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             self.__polys = tuple(normalized_polys)
 
         else:
-                raise NotImplementedError("currently normalization is implemented "
-                    "only for QQbar, number fields and number field orders")
+            raise NotImplementedError("currently normalization is implemented "
+                                      "only for QQbar, number fields and "
+                                      "number field orders")
 
     def defining_ideal(self):
         """
@@ -1196,16 +1135,14 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: PP.<x,y,z,w,v> = ProjectiveSpace(4, QQ)
             sage: V = PP.subscheme((x^2 - y^2 - z^2) * (w^5 - 2*v^2*z^3) * w * (v^3 - x^2*z))
             sage: V.irreducible_components()                                            # needs sage.libs.singular
-            [
-            Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-              w,
-            Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-              x^2 - y^2 - z^2,
-            Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-              x^2*z - v^3,
-            Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-              w^5 - 2*z^3*v^2
-            ]
+            [Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
+               w,
+             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
+               x^2 - y^2 - z^2,
+             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
+               x^2*z - v^3,
+             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
+               w^5 - 2*z^3*v^2]
 
         We verify that the irrelevant ideal is not accidentally returned
         (see :issue:`6920`)::
@@ -1216,9 +1153,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: I = [f] + [f.derivative(zz) for zz in PP.gens()]
             sage: V = PP.subscheme(I)
             sage: V.irreducible_components()                                            # needs sage.libs.singular
-            [
-            <BLANKLINE>
-            ]
+            []
 
         The same polynomial as above defines a scheme with a
         nontrivial irreducible component in affine space (instead of
@@ -1227,13 +1162,11 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: AA.<x,y,z,w> = AffineSpace(4, QQ)
             sage: V = AA.subscheme(I)
             sage: V.irreducible_components()                                            # needs sage.libs.singular
-            [
-            Closed subscheme of Affine Space of dimension 4 over Rational Field defined by:
-              w,
-              z,
-              y,
-              x
-            ]
+            [Closed subscheme of Affine Space of dimension 4 over Rational Field defined by:
+               w,
+               z,
+               y,
+               x]
         """
         try:
             return self.__irreducible_components
@@ -1363,7 +1296,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         d = self.codimension()
         minors = self.Jacobian_matrix().minors(d)
         I = self.defining_ideal()
-        minors = tuple([ I.reduce(m) for m in minors ])
+        minors = tuple([I.reduce(m) for m in minors])
         return I.ring().ideal(I.gens() + minors)
 
     def reduce(self):

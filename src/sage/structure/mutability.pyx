@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Mutability Cython Implementation
 """
@@ -12,6 +11,7 @@ Mutability Cython Implementation
 #                  https://www.gnu.org/licenses/
 ##########################################################################
 
+cimport cython
 from sage.misc.decorators import sage_wraps
 
 cdef class Mutability:

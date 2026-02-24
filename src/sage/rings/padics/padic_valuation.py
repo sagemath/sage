@@ -23,6 +23,15 @@ in the completion of a ring::
     sage: v.montes_factorization(f, required_precision=20)                              # needs sage.geometry.polyhedron
     (x + 676027) * (x^4 + 372550*x^3 + 464863*x^2 + 385052*x + 297869)
 
+They can also be called on elements, although it is usually shorter to use ``.valuation()``::
+
+    sage: v(24)
+    3
+    sage: 24.valuation(2)
+    3
+    sage: 24.valuation(v.uniformizer())
+    3
+
 AUTHORS:
 
 - Julian Rüth (2013-03-16): initial version
@@ -554,8 +563,8 @@ class pAdicValuation_base(DiscreteValuation):
         """
         R = G.parent()
 
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        if not isinstance(R, PolynomialRing_general) or R.base_ring() is not self.domain() or not G.is_monic():
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if not isinstance(R, PolynomialRing_generic) or R.base_ring() is not self.domain() or not G.is_monic():
             raise ValueError("G must be a monic univariate polynomial over the domain of this valuation")
         if not assume_squarefree and not G.is_squarefree():
             raise ValueError("G must be squarefree")
@@ -651,8 +660,8 @@ class pAdicValuation_base(DiscreteValuation):
         """
         R = G.parent()
 
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        if not isinstance(R, PolynomialRing_general) or R.base_ring() is not self.domain() or not G.is_monic():
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if not isinstance(R, PolynomialRing_generic) or R.base_ring() is not self.domain() or not G.is_monic():
             raise ValueError("G must be a monic univariate polynomial over the domain of this valuation")
         if not assume_squarefree and not G.is_squarefree():
             raise ValueError("G must be squarefree")

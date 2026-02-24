@@ -20,7 +20,21 @@ from cypari2.types cimport (GEN, typ, t_INT, t_FRAC, t_REAL, t_COMPLEX,
                             t_INTMOD, t_PADIC, t_INFINITY, t_VEC, t_COL,
                             t_VECSMALL, t_MAT, t_STR,
                             lg, precp)
-from cypari2.paridecl cimport *
+from cypari2.paridecl cimport (
+    avma,
+    divisorsu,
+    FF_to_FpXQ_i,
+    inf_get_sign,
+    is_rational_t,
+    maxprime,
+    pari_PRIMES, 
+    pari_sp, 
+    t_FFELT,
+    t_POLMOD,
+    uisprime,
+    uisprimepower,
+    ulong, 
+)
 from cypari2.stack cimport new_gen
 from sage.libs.pari.convert_gmp cimport INT_to_mpz, new_gen_from_mpz_t, new_gen_from_mpq_t, INTFRAC_to_mpq
 
@@ -274,7 +288,6 @@ cpdef gen_to_sage(Gen z, locals=None):
     cdef long t = typ(g)
     cdef long tx, ty
     cdef Gen real, imag, prec, xprec, yprec
-    cdef Py_ssize_t i, j, nr, nc
 
     if t == t_INT:
         return Integer(z)
@@ -573,17 +586,16 @@ cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False):
         sage: pari_prime_range(2, 19)
         [2, 3, 5, 7, 11, 13, 17]
     """
-    cdef long p = 0
-    cdef byteptr pari_prime_ptr = diffptr
+    cdef ulong i = 1
     res = []
-    while p < c_start:
-        NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
-    while p < c_stop:
+    while pari_PRIMES[i] < c_start:
+        i+=1
+    while pari_PRIMES[i] < c_stop:
         if py_ints:
-            res.append(p)
+            res.append(pari_PRIMES[i])
         else:
             z = <Integer>PY_NEW(Integer)
-            mpz_set_ui(z.value, p)
+            mpz_set_ui(z.value, pari_PRIMES[i])
             res.append(z)
-        NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
+        i+=1
     return res

@@ -162,9 +162,9 @@ class KleshchevPartition(Partition):
                     carry[res] += 1
             else:
                 res = KP._multicharge[0] + self[row] - row - 1
-                if row == len(self)-1 or self[row] > self[row+1]: # removable cell
+                if row == len(self)-1 or self[row] > self[row+1]:  # removable cell
                     carry[res] -= 1
-                if row == 0 or self[row-1] > self[row]:               #addable cell
+                if row == 0 or self[row-1] > self[row]:  # addable cell
                     if carry[res+1] >= 0:
                         conormals[res+1].append((row, self[row]))
                     else:
@@ -428,7 +428,7 @@ class KleshchevPartition(Partition):
         KP = mu.parent()
         return KP.element_class(KP, mu.add_cell(*mu.cogood_cells( r-c-self.parent()._multicharge[0]) ))
 
-    def is_regular(self):
+    def is_regular(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a `e`-regular partition tuple.
 
@@ -454,7 +454,7 @@ class KleshchevPartition(Partition):
         KP = self.parent()
         return super().is_regular(KP._e, KP._multicharge)
 
-    def is_restricted(self):
+    def is_restricted(self) -> bool:
         r"""
         Return ``True`` if ``self`` is an `e`-restricted partition tuple.
 
@@ -661,25 +661,25 @@ class KleshchevPartitionTuple(PartitionTuple):
         part_lens = [len(part) for part in self]  # so we don't repeatedly call these
         KP = self.parent()
         if KP._convention[0] == 'L':
-            rows = [(k,r) for k,ell in enumerate(part_lens) for r in range(ell+1)]
+            rows = [(k, r) for k, ell in enumerate(part_lens) for r in range(ell+1)]
         else:
-            rows = [(k,r) for k,ell in reversed(list(enumerate(part_lens))) for r in range(ell+1)]
+            rows = [(k, r) for k, ell in reversed(list(enumerate(part_lens))) for r in range(ell+1)]
         if KP._convention[1] == 'S':
             rows.reverse()
 
         for row in rows:
-            k,r = row
-            if r == part_lens[k]: # addable cell at bottom of a component
+            k, r = row
+            if r == part_lens[k]:  # addable cell at bottom of a component
                 carry[KP._multicharge[k]-r] += 1
             else:
                 part = self[k]
                 res = KP._multicharge[k] + (part[r] - r - 1)
-                if r == part_lens[k]-1 or part[r] > part[r+1]: # removable cell
+                if r == part_lens[k]-1 or part[r] > part[r+1]:  # removable cell
                     if carry[res] == 0:
                         normals[res].insert(0, (k, r, part[r]-1))
                     else:
                         carry[res] -= 1
-                if r == 0 or part[r-1] > part[r]:               #addable cell
+                if r == 0 or part[r-1] > part[r]:     # addable cell
                     carry[res+1] += 1
 
         # finally return the result
@@ -811,7 +811,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         KP = mu.parent()
         return KP.element_class(KP, mu.add_cell(*mu.cogood_cells( r-c-self.parent()._multicharge[k])))
 
-    def is_regular(self):
+    def is_regular(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a `e`-regular partition tuple.
 
@@ -835,7 +835,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         KP = self.parent()
         return _is_regular(self.to_list(), KP._multicharge, KP._convention)
 
-    def is_restricted(self):
+    def is_restricted(self) -> bool:
         r"""
         Return ``True`` if ``self`` is an `e`-restricted partition tuple.
 

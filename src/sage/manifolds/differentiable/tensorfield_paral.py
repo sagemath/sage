@@ -752,9 +752,9 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         if basis is None:
             basis = self._fmodule._def_basis
         elif isinstance(basis, Chart):
-             # a coordinate chart has been passed instead of a vector frame;
-             # the frame is then assumed to be the coordinate frame
-             # associated to the chart:
+            # a coordinate chart has been passed instead of a vector frame;
+            # the frame is then assumed to be the coordinate frame
+            # associated to the chart:
             if format_spec is None:
                 format_spec = basis
             basis = basis.frame()
@@ -2118,7 +2118,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         if dest_map.is_identity():
             amb_point = point
         else:
-            amb_point = dest_map(point)  #  "ambient" point
+            amb_point = dest_map(point)  # "ambient" point
         ts = amb_point._manifold.tangent_space(amb_point)
         resu = ts.tensor(self._tensor_type, name=self._name,
                          latex_name=self._latex_name, sym=self._sym,

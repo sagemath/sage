@@ -69,19 +69,18 @@ def product(m):
         ....:     assert sum(1 for _ in product(t)) == prod(t)-1
     """
     # n is the length of the element (we ignore sets of size 1)
-    n = k = 0
+    n = 0
 
     new_m = []   # will be the set of upper bounds m_i different from 1
     mm = []      # index of each set (we skip sets of cardinality 1)
-    for i in m:
+    for k, i in enumerate(m):
         i = int(i)
         if i <= 0:
             raise ValueError("accept only positive integers")
         if i > 1:
-            new_m.append(i-1)
+            new_m.append(i - 1)
             mm.append(k)
             n += 1
-        k += 1
 
     m = new_m
     f = list(range(n + 1))  # focus pointer
@@ -200,13 +199,12 @@ def combinations(n, t):
         n = int(n)
     else:
         n = Infinity
-    assert 0 <= t and t <= n, "t(={}) must be >=0 and <=n(={})".format(t,n)
+    assert 0 <= t <= n, "t(={}) must be >=0 and <=n(={})".format(t, n)
     if t == 0 or t == n:
         return iter([])
     if t % 2:
-        return _revolving_door_odd(n,t)
-    else:
-        return _revolving_door_even(n,t)
+        return _revolving_door_odd(n, t)
+    return _revolving_door_even(n, t)
 
 
 def _revolving_door_odd(n, t):

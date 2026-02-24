@@ -436,7 +436,7 @@ cdef void late_import() noexcept:
     prod = sage.misc.all.prod
 
     import sage.rings.polynomial.polynomial_ring_constructor
-    PolynomialRing =  sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing
+    PolynomialRing = sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing
 
     import sage.rings.all
     QQ = sage.rings.all.QQ

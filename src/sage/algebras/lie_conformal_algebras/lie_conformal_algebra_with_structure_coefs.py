@@ -17,18 +17,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.algebras.lie_conformal_algebras.finitely_freely_generated_lca import (
+    FinitelyFreelyGeneratedLCA,
+)
+from sage.algebras.lie_conformal_algebras.lie_conformal_algebra_element import (
+    LCAStructureCoefficientsElement,
+)
 from sage.arith.misc import binomial
-from sage.sets.family import Family
-from .lie_conformal_algebra_element import LCAStructureCoefficientsElement
 from sage.categories.lie_conformal_algebras import LieConformalAlgebras
-from .finitely_freely_generated_lca import FinitelyFreelyGeneratedLCA
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
-from sage.structure.indexed_generators import (IndexedGenerators,
-                                               standardize_names_index_set)
+from sage.sets.family import Family
+from sage.structure.indexed_generators import (
+    IndexedGenerators,
+    standardize_names_index_set,
+)
 
 
 class LieConformalAlgebraWithStructureCoefficients(
-                                        FinitelyFreelyGeneratedLCA):
+        FinitelyFreelyGeneratedLCA):
     r"""
     A Lie conformal algebra with a set of specified structure
     coefficients.
@@ -87,9 +93,11 @@ class LieConformalAlgebraWithStructureCoefficients(
       `\lambda`-brackets of the generators::
 
         sage: betagamma_dict = {('b','a'):{0:{('K',0):1}}}
-        sage: V = LieConformalAlgebra(QQ, betagamma_dict, names=('a','b'), weights=(1,0), central_elements=('K',))
+        sage: V = LieConformalAlgebra(QQ, betagamma_dict, names=('a','b'),
+        ....:         weights=(1,0), central_elements=('K',))
         sage: V.category()
-        Category of H-graded finitely generated Lie conformal algebras with basis over Rational Field
+        Category of H-graded finitely generated Lie conformal algebras
+        with basis over Rational Field
         sage: V.inject_variables()
         Defining a, b, K
         sage: a.bracket(b)
@@ -148,9 +156,8 @@ class LieConformalAlgebraWithStructureCoefficients(
         index_to_parity = dict(zip(index_set, parity))
         sc = {}
         # mypair has a pair of generators
-        for mypair in s_coeff.keys():
+        for mypair, v in s_coeff.items():
             # e.g.  v = { 0: { (L,2):3, (G,3):1}, 1:{(L,1),2} }
-            v = s_coeff[mypair]
             key = tuple(mypair)
             vals = {}
             for l in v:
@@ -170,23 +177,23 @@ class LieConformalAlgebraWithStructureCoefficients(
             # We now add the skew-symmetric part to optimize
             # brackets computations later
             key = (mypair[1], mypair[0])
-            if index_to_parity[mypair[0]]*index_to_parity[mypair[1]]:
+            if index_to_parity[mypair[0]] * index_to_parity[mypair[1]]:
                 parsgn = -1
             else:
                 parsgn = 1
             maxpole = max(v)
             vals = {}
-            for k in range(maxpole+1):
+            for k in range(maxpole + 1):
                 kth_product = {}
-                for j in range(maxpole+1-k):
-                    if k+j in v.keys():
-                        for i in v[k+j]:
+                for j in range(maxpole + 1 - k):
+                    if k + j in v.keys():
+                        for i in v[k + j]:
                             if (i[0] not in ce) or (
                                     i[0] in ce and i[1] + j == 0):
                                 kth_product[(i[0], i[1] + j)] = \
                                     kth_product.get((i[0], i[1] + j), 0)
                                 kth_product[(i[0], i[1] + j)] += parsgn *\
-                                    v[k+j][i]*(-1)**(k+j+1)*binomial(i[1]+j,j)
+                                    v[k+j][i]*(-1)**(k+j+1)*binomial(i[1]+j, j)
                 kth_product = {k: v for k, v in kth_product.items() if v}
                 if kth_product:
                     vals[k] = kth_product
@@ -203,7 +210,7 @@ class LieConformalAlgebraWithStructureCoefficients(
 
     def __init__(self, R, s_coeff, index_set=None, central_elements=None,
                  category=None, element_class=None, prefix=None, names=None,
-                 latex_names=None, parity=None, **kwds):
+                 latex_names=None, parity=None, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -212,21 +219,22 @@ class LieConformalAlgebraWithStructureCoefficients(
             sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)
             sage: TestSuite(V).run()
         """
-        names, index_set = standardize_names_index_set(names,index_set)
+        names, index_set = standardize_names_index_set(names, index_set)
         if central_elements is None:
             central_elements = ()
 
         if names is not None and names != tuple(index_set):
             names2 = names + tuple(central_elements)
-            index_set2 = DisjointUnionEnumeratedSets((index_set,
-                Family(tuple(central_elements))))
-            d = {x:index_set2[i] for i,x in enumerate(names2)}
+            index_set2 = DisjointUnionEnumeratedSets(
+                (index_set, Family(tuple(central_elements))))
+            d = {x: index_set2[i] for i, x in enumerate(names2)}
             try:
-                #If we are given a dictionary with names as keys,
-                #convert to index_set as keys
-                s_coeff = {(d[k[0]],d[k[1]]):{a:{(d[x[1]],x[2]):
-                    s_coeff[k][a][x] for x in
-                    s_coeff[k][a]} for a in s_coeff[k]} for k in s_coeff.keys()}
+                # If we are given a dictionary with names as keys,
+                # convert to index_set as keys
+                s_coeff = {(d[k[0]], d[k[1]]):
+                           {a: {(d[x[1]], x[2]): sck[a][x] for x in sck[a]}
+                            for a in sck}
+                           for k, sck in s_coeff.items()}
 
             except KeyError:
                 # We assume the dictionary was given with keys in the
@@ -274,11 +282,14 @@ class LieConformalAlgebraWithStructureCoefficients(
             prefix=prefix, names=names, latex_names=latex_names, **kwds)
 
         s_coeff = dict(s_coeff)
-        self._s_coeff = Family({k: tuple((j, sum(c*self.monomial(i)
-                for i,c in v)) for j,v in s_coeff[k]) for k in s_coeff})
-        self._parity = dict(zip(self.gens(),parity+(0,)*len(central_elements)))
+        self._s_coeff = Family({k:
+                                tuple((j, sum(c * self.monomial(i)
+                                              for i, c in v)) for j, v in sck)
+                                for k, sck in s_coeff.items()})
+        self._parity = dict(zip(self.gens(),
+                                parity + (0,) * len(central_elements)))
 
-    def structure_coefficients(self):
+    def structure_coefficients(self) -> Family:
         """
         The structure coefficients of this Lie conformal algebra.
 
@@ -289,11 +300,14 @@ class LieConformalAlgebraWithStructureCoefficients(
             Finite family {('L', 'L'): ((0, TL), (1, 2*L), (3, 1/2*C))}
 
             sage: lie_conformal_algebras.NeveuSchwarz(QQ).structure_coefficients()
-            Finite family {('G', 'G'): ((0, 2*L), (2, 2/3*C)),  ('G', 'L'): ((0, 1/2*TG), (1, 3/2*G)),  ('L', 'G'): ((0, TG), (1, 3/2*G)),  ('L', 'L'): ((0, TL), (1, 2*L), (3, 1/2*C))}
+            Finite family {('G', 'G'): ((0, 2*L), (2, 2/3*C)),
+            ('G', 'L'): ((0, 1/2*TG), (1, 3/2*G)),
+            ('L', 'G'): ((0, TG), (1, 3/2*G)),
+            ('L', 'L'): ((0, TL), (1, 2*L), (3, 1/2*C))}
         """
         return self._s_coeff
 
-    def _repr_generator(self, x):
+    def _repr_generator(self, x) -> str:
         """
         String representation of the generator ``x``.
 
@@ -316,4 +330,4 @@ class LieConformalAlgebraWithStructureCoefficients(
         """
         if x in self:
             return repr(x)
-        return IndexedGenerators._repr_generator(self,x)
+        return IndexedGenerators._repr_generator(self, x)

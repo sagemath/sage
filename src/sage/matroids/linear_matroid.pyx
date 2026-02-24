@@ -127,6 +127,7 @@ from sage.matroids.matroid cimport Matroid
 from sage.matroids.utilities import newlabel, spanning_stars, spanning_forest, lift_cross_ratios
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.structure.richcmp cimport rich_to_bool
 
@@ -259,7 +260,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -279,6 +280,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         BasisExchangeMatroid.__init__(self, groundset, [groundset[i] for i in basis])
         self._zero = self._A.base_ring()(0)
         self._one = self._A.base_ring()(1)
+        # Cached values used for zonotopal algebras
+        self._zonotopal_rho = {}
 
     def __dealloc__(self):
         """
@@ -878,8 +881,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         try:
             if GF2_not_defined:
                 GF2 = GF(2)
-                GF2_zero = GF2(0)
-                GF2_one = GF2(1)
+                GF2_zero = GF2.zero()
+                GF2_one = GF2.one()
                 GF2_not_defined = False
         except ImportError:
             pass
@@ -1285,9 +1288,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should (and in
-            Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -1332,8 +1335,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: M = Matroid(groundset='abcdefgh', ring=GF(5),
             ....: reduced_matrix=[[2, 1, 1, 0],
             ....:                 [1, 1, 0, 1], [1, 0, 1, 1], [0, 1, 1, 2]])
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))
+            sage: N = M._minor(contractions=set(['a']), deletions=set())
+            sage: N._minor(contractions=set(), deletions=set(['b', 'c']))
             Linear matroid of rank 3 on 5 elements represented over the Finite
             Field of size 5
         """
@@ -2200,14 +2203,14 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                         while todo:
                             r = todo.pop()
                             cocirc = self.fundamental_cocycle(B, r)
-                            for s, v in cocirc.iteritems():
+                            for s, v in cocirc.items():
                                 if s != r and s not in mult2:
                                     mult2[s] = mult[r] * v
                                     todo2.add(s)
                         while todo2:
                             s = todo2.pop()
                             circ = self.fundamental_cycle(B, s)
-                            for t, w in circ.iteritems():
+                            for t, w in circ.items():
                                 if t != s and t not in mult:
                                     mult[t] = mult2[s] / w
                                     if t not in T:
@@ -2398,7 +2401,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                         parallel = True
                         e = min(p)
                         ratio = c[e] / p[e]
-                        for f, w in p.iteritems():
+                        for f, w in p.items():
                             if c[f] / w != ratio:
                                 parallel = False
                                 break
@@ -2731,15 +2734,15 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         dX = dict(zip(range(len(X)), X))
         dY = dict(zip(range(len(Y)), Y))
 
-        for (x, y) in spanning_forest(M):
-            P_rows=[x]
-            P_cols=[y]
-            Q_rows=[]
-            Q_cols=[]
-            sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 2)
+        for x, y in spanning_forest(M):
+            P_rows = [x]
+            P_cols = [y]
+            Q_rows = []
+            Q_cols = []
+            sol, cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 2)
             if sol:
                 if certificate:
-                    cert = set([])
+                    cert = set()
                     for x in cert_pair[0]:
                         cert.add(dX[x])
                     for y in cert_pair[1]:
@@ -2795,8 +2798,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         M = M2._matrix_()
         X, Y = self._current_rows_cols()
 
-        dX = dict(zip(range(len(X)),X))
-        dY = dict(zip(range(len(Y)),Y))
+        dX = dict(zip(range(len(X)), X))
+        dY = dict(zip(range(len(Y)), Y))
         n = len(X)
         m = len(Y)
 
@@ -2817,22 +2820,22 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             Yp = list(range(m))
             Yp.remove(y1)
 
-            B = B.matrix_from_rows_and_columns(Xp,Yp)
+            B = B.matrix_from_rows_and_columns(Xp, Yp)
 
             # produce a spanning forest of B
-            for (x,y) in spanning_forest(B):
+            for x, y in spanning_forest(B):
                 if x >= x1:
                     x = x + 1
                 if y >= y1:
                     y = y + 1
                 # rank 2 matrix and rank 0 matrix
-                P_rows = [x,x1]
-                P_cols = [y,y1]
+                P_rows = [x, x1]
+                P_cols = [y, y1]
                 Q_rows = []
                 Q_cols = []
                 # make sure the matrix has rank 2
-                if M.matrix_from_rows_and_columns(P_rows,P_cols).rank() == 2:
-                    sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
+                if M.matrix_from_rows_and_columns(P_rows, P_cols).rank() == 2:
+                    sol, cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
                     if sol:
                         break
                 # rank 1 matrix and rank 1 matrix
@@ -2841,13 +2844,13 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 Q_rows = [x]
                 Q_cols = [y]
                 # both matrix have rank 1
-                sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
+                sol, cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
                 if sol:
                     break
             if sol:
                 if certificate:
                     (certX, certY) = cert_pair
-                    cert = set([])
+                    cert = set()
                     for x in certX:
                         cert.add(dX[x])
                     for y in certY:
@@ -2906,7 +2909,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 if action in Semigroups:
                     G, action = action, G
             else:
-                G, action = G_action, None # the None action is g.__call__
+                G, action = G_action, None  # the None action is g.__call__
 
             from sage.algebras.orlik_terao import OrlikTeraoInvariantAlgebra
 
@@ -2917,6 +2920,309 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         from sage.algebras.orlik_terao import OrlikTeraoAlgebra
         return OrlikTeraoAlgebra(R, self, ordering)
+
+    # zonotopal algebras
+
+    cpdef dict line_flats(self):
+        r"""
+        Return the lines that define the maximal non-trivial flats of ``self``.
+
+        A maximal non-trivial flat is 1 dimensional.
+
+        EXAMPLES::
+
+            sage: mat = matrix([[1,0,0,0,1],[0,1,0,1,-1],[0,0,1,0,0]]); mat
+            [ 1  0  0  0  1]
+            [ 0  1  0  1 -1]
+            [ 0  0  1  0  0]
+            sage: M = Matroid(mat)
+            sage: M.line_flats()
+            {frozenset({0, 1, 3, 4}): (0, 0, 1),
+             frozenset({0, 2}): (0, 1, 0),
+             frozenset({1, 2, 3}): (1, 0, 0),
+             frozenset({2, 4}): (1, 1, 0)}
+        """
+        cdef dict vecs = self.representation_vectors()
+        return {F: matrix([vecs[i] for i in F]).right_kernel_matrix()[0]
+                for F in self._zonotopal_rho_values()}
+
+    cdef dict _zonotopal_rho_values(self):
+        r"""
+        Return the function `\rho_M: v \to \rho_M(v)`, where the `v` is a
+        (column) vector `v` of the matrix defining ``self`` and `\rho_M(v)`
+        is the number of hyperplanes not containing `v`.
+
+        OUTPUT:
+
+        The function as a ``dict``.
+        """
+        cdef int size
+        if not self._zonotopal_rho:
+            size = len(self._groundset)
+            self._zonotopal_rho = {F: size - len(F) for F in self.flats(self.rank()-1)}
+        return self._zonotopal_rho
+
+    def zonotopal_algebra(self, k, lines=False, base_ring=None):
+        r"""
+        Return the ``k``-zonotopal algebra of ``self`` over ``base_ring``
+        containing the ground field of ``self``.
+
+        Let `M` be a linear matroid with representation matrix `\overline{M}`
+        over the field `R`. Let `\rho_M(v)` equal the number of column vectors
+        `w` of `\overline{M}` such that `v \cdot w \neq 0` (that is, `v` is not
+        contained in the hyperplane defined by `w`). Define an ideal
+
+        .. MATH::
+
+            I_k(M) := \langle v^{\rho_M(v)+k+1} \mid v \in V, v \neq 0 \rangle,
+
+        where `V` is the column space of `\overline{M}`. The `k`-*zonotopal
+        algebra* is defined as the quotient `Z_k(M) := S[e_0, \ldots, e_{m-1}]
+        / I_k(M)`, where `S` is any commutative ring containing `R`.
+
+        The *line zonotopal algebra* is the quotient of the ideal `I'_k(M)`
+        generated by the :meth:`line_flats()` rather than all nonzero vectors
+        in `V`. When `k \leq 0`, this ideal is equal to `I_k(M)` by Lemma 1
+        of [AP2015]_.
+
+        INPUT:
+
+        - ``k`` -- integer
+        - ``lines`` -- (default: ``False``) boolean; if ``True``, return
+          the line zonotopal algebra
+
+        .. SEEALSO::
+
+            - :meth:`central_zonotopal_algebra`
+            - :meth:`internal_zonotopal_algebra`
+
+        EXAMPLES:
+
+        We construct Example 4.1 in [AP2010]_::
+
+            sage: mat = matrix([[1,0,0,0,1],[0,1,0,1,-1],[0,0,1,0,0]]); mat
+            [ 1  0  0  0  1]
+            [ 0  1  0  1 -1]
+            [ 0  0  1  0  0]
+            sage: M = Matroid(mat)
+            sage: Z0 = M.zonotopal_algebra(0)
+            sage: Z0.defining_ideal().gens()
+            [e2^2, e1^4, e0^3, e0^4 + 4*e0^3*e1 + 6*e0^2*e1^2 + 4*e0*e1^3 + e1^4]
+            sage: Z0.defining_ideal().gens()[-1].factor()
+            (e0 + e1)^4
+            sage: Z0.defining_ideal().hilbert_series()
+            t^5 + 4*t^4 + 6*t^3 + 5*t^2 + 3*t + 1
+            sage: R.<t> = PolynomialRing(ZZ)
+            sage: t**(len(M.groundset())-M.rank()) * M.tutte_polynomial(1+t, ~t)
+            t^5 + 4*t^4 + 6*t^3 + 5*t^2 + 3*t + 1
+
+            sage: Z1 = M.zonotopal_algebra(-1)
+            sage: Z1.defining_ideal().hilbert_series()
+            2*t^2 + 2*t + 1
+            sage: t**(len(M.groundset())-M.rank()) * M.tutte_polynomial(1, ~t)
+            2*t^2 + 2*t + 1
+
+            sage: Z2 = M.zonotopal_algebra(-2)
+            sage: Z2.defining_ideal().hilbert_series()
+            0
+            sage: Z2p = M.internal_zonotopal_algebra()
+            sage: Z2p.defining_ideal().hilbert_series()
+            0
+            sage: t**(len(M.groundset())-M.rank()) * M.tutte_polynomial(0, ~t)
+            0
+
+        We construct the ideal in the proof of Proposition 2 in [AP2015]_::
+
+            sage: mat = matrix([[1,0,0,1,0,0],[0,1,0,0,1,0],[0,0,1,0,0,1],
+            ....:               [0,0,0,-1,-1,-1]]); mat
+            [ 1  0  0  1  0  0]
+            [ 0  1  0  0  1  0]
+            [ 0  0  1  0  0  1]
+            [ 0  0  0 -1 -1 -1]
+            sage: M = Matroid(mat)
+            sage: Z2 = M.zonotopal_algebra(-2)
+            sage: Z2.defining_ideal().hilbert_series()
+            t + 1
+            sage: Z2.defining_ideal().groebner_basis()
+            [e3^2, e0, e1, e2]
+            sage: Z2p = M.internal_zonotopal_algebra()
+            sage: Z2p.defining_ideal().hilbert_series()
+            t + 1
+            sage: t**(len(M.groundset())-M.rank()) * M.tutte_polynomial(0, ~t)
+            t + 1
+
+        We use Hilbert series and Theorem 4.12 in [AP2010]_ to show for
+        `k > 0` that the line zonotopal algebra is bigger than the zonotopal
+        algebra (as the line ideal is smaller)::
+
+            sage: mat = matrix([[1,0], [0,1]])
+            sage: M = Matroid(mat)
+            sage: n = len(M.groundset())
+            sage: r = M.rank()
+            sage: m = mat.nrows() - r
+            sage: R.<t> = PolynomialRing(ZZ)
+            sage: L.<z> = LazyPowerSeriesRing(R.fraction_field())
+            sage: H = t^(n-r) / ((1-z) * (1-t*z)^m) * M.tutte_polynomial(1+t/(1-t*z), ~t)
+            sage: H[:4]
+            [t^2 + 2*t + 1,
+             2*t^3 + 3*t^2 + 2*t + 1,
+             3*t^4 + 4*t^3 + 3*t^2 + 2*t + 1,
+             4*t^5 + 5*t^4 + 4*t^3 + 3*t^2 + 2*t + 1]
+            sage: [M.zonotopal_algebra(k, True).defining_ideal().hilbert_series() for k in range(4)]
+            [t^2 + 2*t + 1,
+             t^4 + 2*t^3 + 3*t^2 + 2*t + 1,
+             t^6 + 2*t^5 + 3*t^4 + 4*t^3 + 3*t^2 + 2*t + 1,
+             t^8 + 2*t^7 + 3*t^6 + 4*t^5 + 5*t^4 + 4*t^3 + 3*t^2 + 2*t + 1]
+
+        We finish by verifying Theorem 4.12 in [AP2010]_ by using Example 4.2
+        in [AP2010]_::
+
+            sage: S.<x1,x2> = PolynomialRing(QQ)
+            sage: [S.ideal([x1^(k+2), x2^(k+2)]
+            ....:          + [(x1+a*x2)^(k+3) for a in range(1,k+5)]
+            ....:         ).hilbert_series()
+            ....:  for k in range(-2, 4)]
+            [0,
+             1,
+             t^2 + 2*t + 1,
+             2*t^3 + 3*t^2 + 2*t + 1,
+             3*t^4 + 4*t^3 + 3*t^2 + 2*t + 1,
+             4*t^5 + 5*t^4 + 4*t^3 + 3*t^2 + 2*t + 1]
+
+            sage: M.zonotopal_algebra(-2).defining_ideal().hilbert_series()
+            0
+            sage: M.zonotopal_algebra(-1).defining_ideal().hilbert_series()
+            1
+
+        REFERENCES:
+
+        - [AP2010]_
+        - [AP2015]_
+        """
+        if base_ring is None:
+            base_ring = self.base_ring()
+        cdef dict rho = self._zonotopal_rho_values()
+        if k < -min(rho.values())-1 or k not in ZZ:
+            raise ValueError(f"k must be an integer >= {-min(rho.values())-1}")
+
+        cdef dict vecs, max_flats
+
+        if lines or k <= 0:
+            vecs = self.representation_vectors()
+            max_flats = self.line_flats()
+            P = PolynomialRing(base_ring, self.representation().nrows(), 'e')
+            e = P.gens()
+            I = P.ideal([P.sum(base_ring(c) * e[j] for j, c in ell.items()) ** (rho[F]+k+1)
+                         for F, ell in max_flats.items()])
+            return P.quotient(I)
+
+        raise NotImplementedError("only implemented for k <= 0")
+
+    def central_zonotopal_algebra(self, base_ring=None):
+        r"""
+        Return the central zonotopal algebra of ``self`` over ``base_ring``.
+
+        We use the presentation given in Section 3.1 of [HR2011]_. Let `M` be
+        a linear matroid, and let `L(M)` denote the dependent sets of the dual
+        matroid. Then the defining ideal is generated by
+
+        .. MATH::
+
+            I(M) := \langle p_Y = \prod_{y \in Y} S(y) \mid Y \in L(M) \rangle,
+
+        where we consider `Y` as a set of column vectors of the defining
+        :meth:`representation` `\overline{M}` of `M` and `S(y)` is the
+        corresponding linear polynomial in the symmetric space `S(V)` with `V`
+        being the column space of `\overline{M}`.
+
+        .. SEEALSO::
+
+            - :meth:`zonotopal_algebra`
+            - :meth:`internal_zonotopal_algebra`
+
+        EXAMPLES:
+
+        We construct Example 3.10 in [HR2011]_::
+
+            sage: mat = matrix([[1,0,0,1,1,0], [0,1,0,-1,0,1], [0,0,1,0,-1,-1]]); mat
+            [ 1  0  0  1  1  0]
+            [ 0  1  0 -1  0  1]
+            [ 0  0  1  0 -1 -1]
+            sage: M = Matroid(mat)
+            sage: Z = M.central_zonotopal_algebra()
+            sage: Z.defining_ideal().hilbert_series()
+            6*t^3 + 6*t^2 + 3*t + 1
+            sage: M.zonotopal_algebra(-1).defining_ideal().hilbert_series()
+            6*t^3 + 6*t^2 + 3*t + 1
+        """
+        if base_ring is None:
+            base_ring = self.base_ring()
+        from sage.combinat.subset import powerset
+        elts = self.groundset_list()
+        P = PolynomialRing(base_ring, self.representation().nrows(), 'e')
+        cdef dict vecs = self.representation_vectors()
+        cdef tuple e = P.gens()
+        bases = self.bases()
+        I = P.ideal([P.prod(P.sum(base_ring(c) * e[i] for i, c in vecs[y].items()) for y in Y)
+                     for Y in powerset(elts) if all(any(yp in B for yp in Y) for B in bases)])
+        return P.quotient(I)
+
+    def internal_zonotopal_algebra(self, base_ring=None):
+        r"""
+        Return the internal zonotopal algebra of ``self`` over ``base_ring``.
+
+        We use the presentation given in Section 5.1 of [HR2011]_. Let `M` be
+        a linear matroid, and define
+
+        .. MATH::
+
+            L_-(M) := \{ Y \subseteq E \mid Y \cap B \neq \emptyset
+                         \text{ for all bases } B
+                        \text{ with no internal activity} \}.
+
+        Then the defining ideal is generated by
+
+        .. MATH::
+
+            I_-(M) := \langle p_Y = \prod_{y \in Y} S(y) \mid Y \in L_-(M) \rangle,
+
+        where we consider `Y` as a set of column vectors of the defining
+        :meth:`representation` `\overline{M}` of `M` and `S(y)` is the
+        corresponding linear polynomial in the symmetric space `S(V)` with `V`
+        being the column space of `\overline{M}`.
+
+        .. SEEALSO::
+
+            - :meth:`zonotopal_algebra`
+            - :meth:`central_zonotopal_algebra`
+
+        EXAMPLES:
+
+        We construct Example 5.12 in [HR2011]_::
+
+            sage: mat = matrix([[1,0,0,1,1,1], [0,1,0,-1,2,1], [0,0,1,0,1,1]]); mat
+            [ 1  0  0  1  1  1]
+            [ 0  1  0 -1  2  1]
+            [ 0  0  1  0  1  1]
+            sage: M = Matroid(mat)
+            sage: Z = M.internal_zonotopal_algebra()
+            sage: Z.defining_ideal().hilbert_series()
+            4*t^2 + 3*t + 1
+            sage: M.zonotopal_algebra(-2).defining_ideal().hilbert_series()
+            4*t^2 + 3*t + 1
+        """
+        if base_ring is None:
+            base_ring = self.base_ring()
+        from sage.combinat.subset import powerset
+        elts = self.groundset_list()
+        P = PolynomialRing(base_ring, self.representation().nrows(), 'e')
+        cdef dict vecs = self.representation_vectors()
+        cdef tuple e = P.gens()
+        cdef tuple noninternal_bases = tuple([B for B in self.bases() if not self._internal(B)])
+        I = P.ideal([P.prod(P.sum(base_ring(c) * e[i] for i, c in vecs[y].items()) for y in Y)
+                     for Y in powerset(elts) if all(any(yp in B for yp in Y)
+                                                    for B in noninternal_bases)])
+        return P.quotient(I)
 
     # copying, loading, saving
 
@@ -3078,7 +3384,7 @@ cdef class BinaryMatroid(LinearMatroid):
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True, basis=None):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         .. NOTE::
 
@@ -3099,8 +3405,8 @@ cdef class BinaryMatroid(LinearMatroid):
         global GF2, GF2_zero, GF2_one, GF2_not_defined
         if GF2_not_defined:
             GF2 = GF(2)
-            GF2_zero = GF2(0)
-            GF2_one = GF2(1)
+            GF2_zero = GF2.zero()
+            GF2_one = GF2.one()
             GF2_not_defined = False
 
         # Setup representation; construct displayed basis
@@ -3783,8 +4089,8 @@ cdef class BinaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: M = matroids.catalog.Fano()
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))
+            sage: N = M._minor(contractions=set(['a']), deletions=set())
+            sage: N._minor(contractions=set(), deletions=set(['b', 'c']))
             Binary matroid of rank 2 on 4 elements, type (0, 6)
         """
         self._move_current_basis(contractions, deletions)
@@ -3835,7 +4141,7 @@ cdef class BinaryMatroid(LinearMatroid):
         global GF2
         cdef int r, c
         B= self.basis()
-        C = [self._fundamental_cocircuit(B,e) for e in B]
+        C = [self._fundamental_cocircuit(B, e) for e in B]
 
         c = 1
         col = {}
@@ -3850,21 +4156,22 @@ cdef class BinaryMatroid(LinearMatroid):
             for f in range(e):
                 for g in range(f):
                     if not C[e].issuperset(C[f] & C[g]):
-                        M.append([col[e,f], col[e,g]])
+                        M.append([col[e, f], col[e, g]])
                         r += 1
                     if not C[f].issuperset(C[e] & C[g]):
-                        M.append([col[f,e], col[f,g]])
+                        M.append([col[f, e], col[f, g]])
                         r += 1
                     if not C[g].issuperset(C[e] & C[f]):
-                        M.append([col[g,e], col[g,f]])
+                        M.append([col[g, e], col[g, f]])
                         r += 1
                     if len(C[e] & C[f] & C[g]) > 0:
-                        M.append([0,col[e,f], col[e,g], col[f,e], col[f,g], col[g,e], col[g,f]])
+                        M.append([0, col[e, f], col[e, g], col[f, e],
+                                  col[f, g], col[g, e], col[g, f]])
                         r += 1
         cdef BinaryMatrix m = BinaryMatrix(r, c)
         for r in range(len(M)):
             for c in M[r]:
-                m.set(r,c)
+                m.set(r, c)
         # now self is graphic iff there is a binary vector x so that M*x = 0 and x_0 = 1, so:
         return BinaryMatroid(m).corank(frozenset([0])) > 0
 
@@ -4110,7 +4417,7 @@ cdef class TernaryMatroid(LinearMatroid):
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True, basis=None):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         .. NOTE::
 
@@ -4719,8 +5026,8 @@ cdef class TernaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: M = matroids.catalog.P8()
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))
+            sage: N = M._minor(contractions=set(['a']), deletions=set())
+            sage: N._minor(contractions=set(), deletions=set(['b', 'c']))
             Ternary matroid of rank 3 on 5 elements, type 0-
         """
         self._move_current_basis(contractions, deletions)
@@ -4730,9 +5037,9 @@ cdef class TernaryMatroid(LinearMatroid):
         C = [self._idx[f] for f in F]
         A, C2 = (<TernaryMatrix>self._A).matrix_from_rows_and_columns_reordered(R, C)
         return TernaryMatroid(matrix=A,
-                             groundset=[self._E[c] for c in C2],
-                             basis=bas,
-                             keep_initial_representation=False)
+                              groundset=[self._E[c] for c in C2],
+                              basis=bas,
+                              keep_initial_representation=False)
 
     cpdef is_valid(self, certificate=False):
         r"""
@@ -4988,7 +5295,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True, basis=None):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         .. NOTE::
 
@@ -5487,8 +5794,8 @@ cdef class QuaternaryMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))              # needs sage.rings.finite_rings
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))             # needs sage.rings.finite_rings
+            sage: N = M._minor(contractions=set(['a']), deletions=set())              # needs sage.rings.finite_rings
+            sage: N._minor(contractions=set(), deletions=set(['b', 'c']))             # needs sage.rings.finite_rings
             Quaternary matroid of rank 4 on 7 elements
         """
         self._move_current_basis(contractions, deletions)
@@ -5498,9 +5805,9 @@ cdef class QuaternaryMatroid(LinearMatroid):
         C = [self._idx[f] for f in F]
         A, C2 = (<QuaternaryMatrix>self._A).matrix_from_rows_and_columns_reordered(R, C)
         return QuaternaryMatroid(matrix=A,
-                             groundset=[self._E[c] for c in C2],
-                             basis=bas,
-                             keep_initial_representation=False)
+                                 groundset=[self._E[c] for c in C2],
+                                 basis=bas,
+                                 keep_initial_representation=False)
 
     cpdef is_valid(self, certificate=False):
         r"""
@@ -5693,7 +6000,7 @@ cdef class RegularMatroid(LinearMatroid):
     """
     def __init__(self, matrix=None, groundset=None, reduced_matrix=None, ring=None, keep_initial_representation=True):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         .. NOTE::
 
@@ -6166,8 +6473,9 @@ cdef class RegularMatroid(LinearMatroid):
             VO.extend(X)
         m = isomorphic(HS[2], HO[2], HS[0], VO, 1, 1)
         if m:
-            idx={str(f):f for f in other.groundset()}
-            return {e:idx[m[str(e)]] for e in self.groundset() if str(e) in m}
+            idx = {str(f): f for f in other.groundset()}
+            return {e: idx[m[str(e)]] for e in self.groundset()
+                    if str(e) in m}
 
     cpdef has_line_minor(self, k, hyperlines=None, certificate=False):
         r"""

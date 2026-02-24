@@ -643,7 +643,8 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
                 e_list = e.list()
                 e_list = _insert_punctured_positions(e_list, pts, one)
             else:
-                e_list = [one if i in pts else zero for i in range(Cor.length())]
+                e_list = [one if i in pts else zero
+                          for i in range(Cor.length())]
             e = vector(GF(2), e_list)
             yl = y.list()
             yl = _insert_punctured_positions(yl, pts, zero)
@@ -655,10 +656,8 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
             I = iter(VectorSpace(F, len(pts)))
             list_pts = list(pts)
             list_pts.sort()
-            shift = 0
-            for i in list_pts:
+            for shift, i in enumerate(list_pts):
                 yl.insert(i + shift, zero)
-                shift += 1
             values = next(I)
             while not end:
                 try:

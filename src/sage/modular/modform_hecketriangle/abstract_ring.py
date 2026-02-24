@@ -16,8 +16,8 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.algebras.free_algebra import FreeAlgebra
-
 from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.rings.fraction_field import FractionField
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
@@ -125,8 +125,6 @@ class FormsRing_abstract(Parent):
             sage: latex(QuasiWeakModularFormsRing())
             \mathcal{ QM^! }_{n=3}(\Bold{Z})
         """
-
-        from sage.misc.latex import latex
         return "\\mathcal{{ {} }}_{{n={}}}({})".format(self._analytic_type.latex_space_name(), self._group.n(), latex(self._base_ring))
 
     def _element_constructor_(self, el):
@@ -835,7 +833,7 @@ class FormsRing_abstract(Parent):
             - (self._group.n()-2) / (4*self._group.n()) * (Z**2+X**(self._group.n()-2)) * dZ
 
     @cached_method
-    def has_reduce_hom(self):
+    def has_reduce_hom(self) -> bool:
         r"""
         Return whether the method ``reduce`` should reduce
         homogeneous elements to the corresponding space of homogeneous elements.
@@ -859,10 +857,9 @@ class FormsRing_abstract(Parent):
             sage: ModularForms(k=6).graded_ring().has_reduce_hom()
             True
         """
-
         return self._red_hom
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return whether ``self`` is homogeneous component.
 
@@ -876,10 +873,9 @@ class FormsRing_abstract(Parent):
             sage: ModularForms(k=6).is_homogeneous()
             True
         """
-
         return self._weight is not None
 
-    def is_modular(self):
+    def is_modular(self) -> bool:
         r"""
         Return whether ``self`` only contains modular elements.
 
@@ -897,10 +893,9 @@ class FormsRing_abstract(Parent):
             sage: CuspForms(n=7, k=12, base_ring=AA).is_modular()
             True
         """
-
         return not (self.AT("quasi") <= self._analytic_type)
 
-    def is_weakly_holomorphic(self):
+    def is_weakly_holomorphic(self) -> bool:
         r"""
         Return whether ``self`` only contains weakly
         holomorphic modular elements.
@@ -919,10 +914,9 @@ class FormsRing_abstract(Parent):
             sage: CuspForms(n=7, k=12, base_ring=AA).is_weakly_holomorphic()
             True
         """
-
         return (self.AT("weak", "quasi") >= self._analytic_type)
 
-    def is_holomorphic(self):
+    def is_holomorphic(self) -> bool:
         r"""
         Return whether ``self`` only contains holomorphic
         modular elements.
@@ -941,10 +935,9 @@ class FormsRing_abstract(Parent):
             sage: CuspForms(n=7, k=12, base_ring=AA).is_holomorphic()
             True
         """
-
         return (self.AT("holo", "quasi") >= self._analytic_type)
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
         Return whether ``self`` only contains cuspidal elements.
 
@@ -962,10 +955,9 @@ class FormsRing_abstract(Parent):
             sage: QuasiCuspForms(k=12).is_cuspidal()
             True
         """
-
         return (self.AT("cusp", "quasi") >= self._analytic_type)
 
-    def is_zerospace(self):
+    def is_zerospace(self) -> bool:
         r"""
         Return whether ``self`` is the (`0`-dimensional) zero space.
 
@@ -981,7 +973,6 @@ class FormsRing_abstract(Parent):
             sage: CuspForms(k=12).reduce_type([]).is_zerospace()
             True
         """
-
         return (self.AT(["quasi"]) >= self._analytic_type)
 
     def analytic_type(self):

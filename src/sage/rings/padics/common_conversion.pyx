@@ -1,4 +1,6 @@
 r"""
+Tools for creation of `p`-adic elements
+
 The functions in this file are used in creating new `p`-adic elements.
 
 When creating a `p`-adic element, the user can specify that the absolute
@@ -49,7 +51,7 @@ cdef Rational rat_temp = PY_NEW(Rational)
 
 cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
     """
-    This function determines the valuation of the `p`-adic element
+    Determine the valuation of the `p`-adic element
     that will result from the given data ``x``.
 
     Note that the valuation can differ depending on the ring: if the
@@ -106,7 +108,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
         k = mpz_remove(temp.value, mpq_numref((<Rational>x).value), prime_pow.prime.value)
         if k == 0:
             k = -mpz_remove(temp.value, mpq_denref((<Rational>x).value), prime_pow.prime.value)
-    elif isinstance(x, (list,tuple)):
+    elif isinstance(x, (list, tuple)):
         f = prime_pow.f
         if (e == 1 and len(x) > f) or (e != 1 and len(x) > e):
             # could reduce modulo the defining polynomial but that isn't currently supported
@@ -114,18 +116,19 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
         k = maxordp
         shift = 0
         for a in x:
-            if isinstance(a, (list,tuple)):
+            if isinstance(a, (list, tuple)):
                 if e == 1 or f == 1:
                     raise ValueError("nested lists not allowed for unramified and eisenstein extensions")
                 for b in a:
-                    if isinstance(b, (list,tuple)):
+                    if isinstance(b, (list, tuple)):
                         raise ValueError("list nesting too deep")
                     curterm = get_ordp(b, prime_pow)
                     k = min(k, curterm + shift, maxordp)
             else:
                 curterm = get_ordp(a, prime_pow)
                 k = min(k, curterm + shift, maxordp)
-            if e != 1: shift += 1
+            if e != 1:
+                shift += 1
         # We don't want to multiply by e again.
         return k
     elif isinstance(x, pAdicGenericElement):
@@ -154,13 +157,13 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
             return maxordp
         k = mpz_remove(temp.value, value.value, prime_pow.prime.value)
     else:
-        raise NotImplementedError("Cannot determine p-adic valuation of an element of %s"%parent(x))
+        raise NotImplementedError("Cannot determine p-adic valuation of an element of %s" % parent(x))
     # Should check for overflow
     return k * e
 
 cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
     """
-    This function determines the maximum absolute precision possible
+    Determine the maximum absolute precision possible
     for an element created from the given data ``x``.
 
     Note that the valuation can differ depending on the ring: if the
@@ -191,20 +194,21 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
     cdef long k, shift, e = prime_pow.e
     cdef Integer prec
     cdef GEN pari_tmp
-    if isinstance(x, int) or isinstance(x, Integer) or isinstance(x, Rational):
+    if isinstance(x, (int, Integer, Rational)):
         return maxordp
-    elif isinstance(x, (list,tuple)):
+    elif isinstance(x, (list, tuple)):
         k = maxordp
         shift = 0
         for a in x:
-            if isinstance(a, (list,tuple)):
+            if isinstance(a, (list, tuple)):
                 for b in a:
                     curterm = get_preccap(b, prime_pow)
                     k = min(k, curterm + shift)
             else:
                 curterm = get_preccap(a, prime_pow)
                 k = min(k, curterm + shift)
-            if e != 1: shift += 1
+            if e != 1:
+                shift += 1
         # We don't want to multiply by e again.
         return k
     elif isinstance(x, pAdicGenericElement):
@@ -226,12 +230,12 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
         if mpz_cmp_ui(temp.value, 1) != 0:
             raise TypeError("cannot coerce from the given integer mod ring (not a power of the same prime)")
     else:
-        raise NotImplementedError("Cannot determine p-adic precision of an element of %s"%parent(x))
+        raise NotImplementedError("Cannot determine p-adic precision of an element of %s" % parent(x))
     return k * e
 
 cdef long comb_prec(iprec, long prec) except? -10000:
     """
-    This function returns the minimum of iprec and prec.
+    Return the minimum of ``iprec`` and ``prec``.
 
     INPUT:
 
@@ -240,7 +244,8 @@ cdef long comb_prec(iprec, long prec) except? -10000:
 
     - ``prec`` -- a long
     """
-    if iprec is infinity: return prec
+    if iprec is infinity:
+        return prec
     cdef Integer intprec
     if isinstance(iprec, Integer):
         intprec = <Integer>iprec
@@ -255,7 +260,7 @@ cdef long comb_prec(iprec, long prec) except? -10000:
 
 cdef int _process_args_and_kwds(long *aprec, long *rprec, args, kwds, bint absolute, PowComputer_class prime_pow) except -1:
     """
-    This function obtains values for absprec and relprec from a
+    Obtain values for ``absprec`` and ``relprec`` from a
     combination of positional and keyword arguments.
 
     When creating a `p`-adic element, the user can pass in two arguments: ``absprec`` and ``relprec``.
@@ -300,13 +305,13 @@ cdef int _process_args_and_kwds(long *aprec, long *rprec, args, kwds, bint absol
             raise TypeError("_call_with_args() got multiple values for keyword argument 'relprec'")
         relprec = args[1]
     else:
-        relprec = kwds.get("relprec",infinity)
+        relprec = kwds.get("relprec", infinity)
     if len(args) >= 1:
         if "absprec" in kwds:
             raise TypeError("_call_with_args() got multiple values for keyword argument 'absprec'")
         absprec = args[0]
     else:
-        absprec = kwds.get("absprec",infinity)
+        absprec = kwds.get("absprec", infinity)
     if absolute:
         aprec[0] = comb_prec(absprec, prime_pow.ram_prec_cap)
         rprec[0] = comb_prec(relprec, maxordp)
@@ -332,7 +337,7 @@ cdef inline long cconv_mpq_t_shared(mpz_t out, mpq_t x, long prec, bint absolute
 
     OUTPUT:
 
-    - If ``absolute`` is False then returns the valuation that was
+    - If ``absolute`` is ``False`` then returns the valuation that was
       extracted (``maxordp`` when `x = 0`).
     """
     cdef long numval, denval
@@ -363,6 +368,8 @@ cdef inline long cconv_mpq_t_shared(mpz_t out, mpq_t x, long prec, bint absolute
 cdef inline int cconv_mpq_t_out_shared(mpq_t out, mpz_t x, long valshift, long prec, PowComputer_class prime_pow) except -1:
     """
     Convert the underlying `p`-adic element into a rational.
+
+    INPUT:
 
     - ``out`` -- gives a rational approximating the input. Currently uses
       rational reconstruction but may change in the future to use a more naive
@@ -447,11 +454,11 @@ cdef inline int cconv_shared(mpz_t out, x, long prec, long valshift, PowComputer
         else:
             raise NotImplementedError
     else:
-        raise NotImplementedError("No conversion defined for %s which is a %s in %s"%(x,type(x),x.parent() if hasattr(x,"parent") else "no parent"))
+        raise NotImplementedError("No conversion defined for %s which is a %s in %s" % (x, type(x), x.parent() if hasattr(x, "parent") else "no parent"))
 
 cdef inline long cconv_mpz_t_shared(mpz_t out, mpz_t x, long prec, bint absolute, PowComputer_class prime_pow) except -2:
     """
-    A fast pathway for conversion of integers that doesn't require
+    A fast pathway for conversion of integers that does not require
     precomputation of the valuation.
 
     INPUT:
@@ -484,6 +491,8 @@ cdef inline long cconv_mpz_t_shared(mpz_t out, mpz_t x, long prec, bint absolute
 cdef inline int cconv_mpz_t_out_shared(mpz_t out, mpz_t x, long valshift, long prec, PowComputer_class prime_pow) except -1:
     """
     Convert the underlying `p`-adic element into an integer if possible.
+
+    INPUT:
 
     - ``out`` -- stores the resulting integer as an integer between 0
       and `p^{prec + valshift}`

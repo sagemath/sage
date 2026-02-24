@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Various functions to debug Python internals
 """
@@ -18,9 +17,6 @@ from cpython.object cimport (PyObject, PyTypeObject, Py_TYPE,
 cdef extern from "Python.h":
     # Helper to get a pointer to an object's __dict__ slot, if any
     PyObject** _PyObject_GetDictPtr(obj)
-
-cdef extern from "debugimpl.c":
-    void _type_debug(PyTypeObject*)
 
 from sage.cpython.getattr cimport AttributeErrorMessage
 
@@ -303,5 +299,3 @@ def type_debug(cls):
     """
     if not isinstance(cls, type):
         raise TypeError(f"{cls!r} is not a type")
-
-    _type_debug(<PyTypeObject*>cls)

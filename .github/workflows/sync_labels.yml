@@ -30,7 +30,7 @@ jobs:
           files: .github/sync_labels.py
 
       # Set special sync_labels bot token
-      - name: Get Tocken
+      - name: Get Token
         run: |
           TOKEN="${{ secrets.SYNC_LABELS_BOT_TOKEN }}"
           if [ -z "$TOKEN" ]; then

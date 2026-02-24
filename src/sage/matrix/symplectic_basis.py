@@ -368,7 +368,7 @@ def _smallest_element_position_or_None(E, pivot):
     for i in range(pivot, n):
         for j in range(pivot, n):
             v = E[j, i]
-            if 0 < v and v < min:
+            if 0 < v < min:
                 min = v
                 found = (j, i)
     return found

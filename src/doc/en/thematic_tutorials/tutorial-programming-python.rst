@@ -12,9 +12,9 @@ This tutorial is an introduction to basic programming in Python and Sage, for
 readers with elementary notions of programming but not familiar with the Python
 language. It is far from exhaustive. For a more complete tutorial, have a look
 at the `Python Tutorial
-<http://docs.python.org/release/2.6.4/tutorial/index.html>`_. Also Python's
-`documentation <http://docs.python.org/release/2.6.4/>`_ and in particular the
-`standard library <http://docs.python.org/release/2.6.4/library>`_ can be
+<https://docs.python.org/3/tutorial/index.html>`_. Also Python's
+`documentation <https://docs.python.org/3/>`_ and in particular the
+`standard library <https://docs.python.org/3/library/>`_ can be
 useful.
 
 A :ref:`more advanced tutorial <tutorial-objects-and-classes>` presents the
@@ -24,15 +24,9 @@ Here are further resources to learn Python:
 
 * `Learn Python in 10 minutes
   <http://www.korokithakis.net/tutorials/python>`_ ou en français
-  `Python en 10 minutes
-  <http://mat.oxyg3n.org/index.php?post/2009/07/26/Python-en-10-minutes>`_
-* `Dive into Python <http://diveintopython.net/>`_
+* `Dive into Python <https://diveintopython3.net/>`_
   is a Python book for experienced programmers. Also available in
-  `other languages <http://diveintopython.net/#languages>`_.
-* `Discover Python
-  <http://www.ibm.com/developerworks/views/opensource/libraryview.jsp?search_by=Discover+Python+Part|>`_
-  is a series of articles published in IBM's `developerWorks
-  <http://www.ibm.com/developerworks/>`_ technical resource center.
+  `Spanish <https://www.jmgaguilera.com/inmersionenpython3html/>`_.
 
 Data structures
 ===============
@@ -93,7 +87,7 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
       sage: set([ [1], [2] ])
       Traceback (most recent call last):
       ...
-      TypeError: unhashable type: 'list'
+      TypeError: ...unhashable type: 'list'...
 
 * A *dictionary* is an association table, which associates values to
   keys. Keys must be hashable. One creates dictionaries using the
@@ -771,7 +765,7 @@ appear once and must be immutable::
     sage: d = {[1,2,3] : 12}
     Traceback (most recent call last):
     ...
-    TypeError: unhashable type: 'list'
+    TypeError: ...unhashable type: 'list'...
 
 Another way to add items to a dictionary is with the ``update()`` method which
 updates the dictionary from another dictionary::

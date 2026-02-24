@@ -17,6 +17,8 @@ AUTHORS:
 - Lorenz Panny (2023): ``special_supersingular_curve()``
 
 - Martin Grenouilloux, Gareth Ma (2024-09): ``EllipticCurve_with_prime_order()``
+
+- Lorenz Panny (2026): :meth:`EllipticCurve_finite_field.division_field()``
 """
 
 # ****************************************************************************
@@ -41,7 +43,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.schemes.curves.projective_curve import Hasse_bounds
+from sage.schemes.curves.projective_curve import Hasse_bounds, ProjectivePlaneCurve_finite_field
 from sage.structure.element import Element
 
 from . import ell_point
@@ -49,7 +51,7 @@ from .constructor import EllipticCurve
 from .ell_field import EllipticCurve_field
 
 
-class EllipticCurve_finite_field(EllipticCurve_field):
+class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finite_field):
     r"""
     Elliptic curve over a finite field.
 
@@ -287,116 +289,6 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         return [self.cardinality(extension_degree=i) for i in range(1, n + 1)]
 
-    def random_element(self):
-        """
-        Return a random point on this elliptic curve, uniformly chosen
-        among all rational points.
-
-        ALGORITHM:
-
-        Choose the point at infinity with probability `1/(2q + 1)`.
-        Otherwise, take a random element from the field as x-coordinate
-        and compute the possible y-coordinates. Return the i-th
-        possible y-coordinate, where i is randomly chosen to be 0 or 1.
-        If the i-th y-coordinate does not exist (either there is no
-        point with the given x-coordinate or we hit a 2-torsion point
-        with i == 1), try again.
-
-        This gives a uniform distribution because you can imagine
-        `2q + 1` buckets, one for the point at infinity and 2 for each
-        element of the field (representing the x-coordinates). This
-        gives a 1-to-1 map of elliptic curve points into buckets. At
-        every iteration, we simply choose a random bucket until we find
-        a bucket containing a point.
-
-        AUTHORS:
-
-        - Jeroen Demeyer (2014-09-09): choose points uniformly random,
-          see :issue:`16951`.
-
-        EXAMPLES::
-
-            sage: k = GF(next_prime(7^5))
-            sage: E = EllipticCurve(k,[2,4])
-            sage: P = E.random_element(); P  # random
-            (16740 : 12486 : 1)
-            sage: type(P)
-            <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
-            sage: P in E
-            True
-
-        ::
-
-            sage: # needs sage.rings.finite_rings
-            sage: k.<a> = GF(7^5)
-            sage: E = EllipticCurve(k,[2,4])
-            sage: P = E.random_element(); P  # random
-            (5*a^4 + 3*a^3 + 2*a^2 + a + 4 : 2*a^4 + 3*a^3 + 4*a^2 + a + 5 : 1)
-            sage: type(P)
-            <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
-            sage: P in E
-            True
-
-        ::
-
-            sage: # needs sage.rings.finite_rings
-            sage: k.<a> = GF(2^5)
-            sage: E = EllipticCurve(k,[a^2,a,1,a+1,1])
-            sage: P = E.random_element(); P  # random
-            (a^4 + a : a^4 + a^3 + a^2 : 1)
-            sage: type(P)
-            <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
-            sage: P in E
-            True
-
-        Ensure that the entire point set is reachable::
-
-            sage: E = EllipticCurve(GF(11), [2,1])
-            sage: S = set()
-            sage: while len(S) < E.cardinality():
-            ....:     S.add(E.random_element())
-
-        TESTS:
-
-        See :issue:`8311`::
-
-            sage: E = EllipticCurve(GF(3), [0,0,0,2,2])
-            sage: E.random_element()
-            (0 : 1 : 0)
-            sage: E.cardinality()
-            1
-
-            sage: E = EllipticCurve(GF(2), [0,0,1,1,1])
-            sage: E.random_point()
-            (0 : 1 : 0)
-            sage: E.cardinality()
-            1
-
-            sage: # needs sage.rings.finite_rings
-            sage: F.<a> = GF(4)
-            sage: E = EllipticCurve(F, [0, 0, 1, 0, a])
-            sage: E.random_point()
-            (0 : 1 : 0)
-            sage: E.cardinality()
-            1
-        """
-        k = self.base_field()
-        n = 2 * k.order() + 1
-
-        while True:
-            # Choose the point at infinity with probability 1/(2q + 1)
-            i = ZZ.random_element(n)
-            if not i:
-                return self.point(0)
-
-            v = self.lift_x(k.random_element(), all=True)
-            try:
-                return v[i % 2]
-            except IndexError:
-                pass
-
-    random_point = random_element
-
     def trace_of_frobenius(self):
         r"""
         Return the trace of Frobenius acting on this elliptic curve.
@@ -622,6 +514,155 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
     order = cardinality  # alias
 
+    def division_field(self, n, names='t', map=False, **kwds):
+        r"""
+        Construct the `n`-division field `F(E[n])` of this elliptic curve.
+
+        The `n`-division field is the smallest extension of `F` over which
+        all `n`-torsion points of `E` are defined.
+
+        INPUT:
+
+        - ``n`` -- positive integer
+        - ``names`` -- (default: ``'t'``) a variable name for the division field
+        - ``map`` -- boolean (default: ``False``); also return an embedding of the
+          :meth:`base_field` into the resulting field
+        - ``kwds`` -- additional keyword arguments passed to
+          :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.extension`
+
+        OUTPUT:
+
+        If ``map`` is ``False``, the (finite) division field `K`.
+        If ``map`` is ``True``, a tuple `(K, \phi)` where `\phi` is an
+        embedding of the base field into the division field `K`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(431^2), [1,0])                                   # needs sage.rings.finite_rings
+            sage: E.division_field(5, map=True)                                         # needs sage.rings.finite_rings
+            (Finite Field in t of size 431^4,
+             Ring morphism:
+               From: Finite Field in z2 of size 431^2
+               To:   Finite Field in t of size 431^4
+               Defn: z2 |--> 52*t^3 + 222*t^2 + 78*t + 105)
+
+        ::
+
+            sage: E = EllipticCurve(GF(433^2), [1,0])                                   # needs sage.rings.finite_rings
+            sage: K.<v> = E.division_field(7); K                                        # needs sage.rings.finite_rings
+            Finite Field in v of size 433^16
+
+        .. SEEALSO::
+
+            :meth:`EllipticCurve_field.division_field()`
+
+        ALGORITHM: For supersingular elliptic curves, this method uses a
+        combination of [MPSW25]_, Lemma 2.2, and [EPSV2023]_, Theorem 2.
+        For ordinary elliptic curves, it uses the algorithm of [VT2001]_.
+        In some cases (in particular: for ordinary curves, for square
+        factors of `n`), we defer to the general implementation
+        :meth:`EllipticCurve_field.division_field`.
+
+        TESTS:
+
+        Some random testing for prime orders::
+
+            sage: # needs sage.rings.finite_rings
+            sage: def check(E, l, K):
+            ....:     EE = E.change_ring(K)
+            ....:     cof = EE.order().prime_to_m_part(l)
+            ....:     pts = (cof * EE.random_point() for _ in iter(int, 1))
+            ....:     mul = lambda P: P if not l*P else mul(l*P)
+            ....:     pts = map(mul, filter(bool, pts))
+            ....:     if l == EE.base_field().characteristic():
+            ....:         if EE.is_supersingular():
+            ....:             Ps = ()
+            ....:         else:
+            ....:             assert l.divides(EE.order())
+            ....:             Ps = (next(pts),)
+            ....:     else:
+            ....:         assert l.divides(EE.order())
+            ....:         for _ in range(9999):
+            ....:             P,Q = next(pts), next(pts)
+            ....:             if P.weil_pairing(Q,l) != 1:
+            ....:                 Ps = (P,Q)
+            ....:                 break
+            ....:         else:
+            ....:             assert False
+            ....:     deg = lcm(el.minpoly().degree() for el in sum(map(list,Ps),[]))
+            ....:     assert max(deg, E.base_field().degree()) == K.degree()
+            sage: q = next_prime_power(randrange(1, 10^9))
+            sage: F.<a> = GF(q)
+            sage: while True:
+            ....:     try:
+            ....:         E = EllipticCurve([F.random_element() for _ in range(5)])
+            ....:     except ArithmeticError:
+            ....:         continue
+            ....:     break
+            sage: l = random_prime(8)
+            sage: K = E.division_field(l)
+            sage: n = E.cardinality(extension_degree=K.degree()//F.degree())
+            sage: (l^2 if q%l else 0 + E.is_ordinary()).divides(n)
+            True
+            sage: check(E, l, K)  # long time
+
+        Also check that it matches the generic implementation from :class:`EllipticCurve_field`::
+
+            sage: # needs sage.rings.finite_rings
+            sage: from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
+            sage: K.degree() == EllipticCurve_field.division_field(E, l).degree()  # long time
+            True
+        """
+        n = ZZ(n)
+        if n <= 0:
+            raise ValueError("n must be a positive integer")
+
+        F = self.base_field()
+
+        if self.is_supersingular():
+            n = n.prime_to_m_part(F.characteristic()) # p-torsion is trivial
+            if n.is_one():
+                ext = 1
+            elif n == 2:
+                ext = 3 if self.two_torsion_rank() == 0 else 2 if self.two_torsion_rank() == 1 else 1
+            else:
+                from sage.rings.finite_rings.integer_mod import Mod
+                if (pi := self.frobenius()) in ZZ:
+                    ext = Mod(pi, n).multiplicative_order()
+                else:
+                    m = next(m for m in range(1,7) if not (pi**m)[1] % n)
+                    ext = m * Mod((pi**m)[0], n).multiplicative_order()
+
+        else:
+            def van_tuyl(N):
+                if not N.is_prime():
+                    # currently not implemented here; defer to general implementation
+                    return EllipticCurve_field.division_field(self, N).degree() // F.degree()
+
+                chi = self.frobenius_polynomial()
+                chi_mod_N = chi.change_ring(GF(N))
+
+                if (roots := chi_mod_N.roots(multiplicities=False)):
+
+                    if len(roots) == 1:  # repeated root
+                        assert F(N)
+                        dstar = roots[0].multiplicative_order()
+                        from sage.rings.qqbar import QQbar
+                        gamma, delta = (r for r,m in chi.roots(ring=QQbar) for _ in range(m))
+                        if (N**2).divides(1 + F.cardinality()**dstar - gamma**dstar - delta**dstar):
+                            l = lcm(f.degree() for f,_ in self.division_polynomial(N).factor())
+                            if dstar in (l, 2*l):
+                                return dstar
+                        return N * dstar
+
+                    return lcm(r.multiplicative_order() for r in roots if r.is_unit())
+
+                return GF(N).extension(chi_mod_N, 'U').gen().multiplicative_order()
+
+            ext = lcm(van_tuyl(f**e) for f,e in n.factor())
+
+        return F.extension(ext, names=names, map=map, **kwds)
+
     @cached_method
     def multiplication_by_p_isogeny(self):
         r"""
@@ -682,31 +723,35 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             This computes the curve cardinality, which may be
             time-consuming.
 
+        .. SEEALSO::
+
+            :meth:`endomorphism_order`
+
         EXAMPLES::
 
             sage: E = EllipticCurve(GF(11),[3,3])
             sage: E.frobenius_order()
-            Order of conductor 2 generated by phi
-             in Number Field in phi with defining polynomial x^2 - 4*x + 11
+            Order of conductor 2 generated by pi
+             in Number Field in pi with defining polynomial x^2 - 4*x + 11
 
-        For some supersingular curves, Frobenius is in Z and the Frobenius
-        order is Z::
+        For some supersingular curves, Frobenius is in `\ZZ` and the Frobenius
+        order is `\ZZ`::
 
             sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(25,'a'),[0,0,0,0,1])
             sage: R = E.frobenius_order()
             sage: R
             Order generated by []
-             in Number Field in phi with defining polynomial x + 5
+             in Number Field in pi with defining polynomial x + 5
             sage: R.degree()
             1
         """
         f = self.frobenius_polynomial().factor()[0][0]
-        return ZZ.extension(f,names='phi')
+        return ZZ.extension(f, names='pi')
 
     def frobenius(self):
         r"""
-        Return the frobenius of ``self`` as an element of a quadratic order.
+        Return the Frobenius of ``self`` as an element of a quadratic order.
 
         .. NOTE::
 
@@ -719,7 +764,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
             sage: E = EllipticCurve(GF(11),[3,3])
             sage: E.frobenius()
-            phi
+            pi
             sage: E.frobenius().minpoly()
             x^2 - 4*x + 11
 
@@ -811,7 +856,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         return Integer(self.__pari__().ellcard())
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return points which generate the abelian group of points on
         this elliptic curve.
@@ -906,7 +951,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             self._order = ZZ(card)
         pts = tuple(self.point(list(P)) for P in pts)
         if len(pts) >= 1:
-            pts[0]._order = ZZ(ords[0]) # PARI documentation: "P is of order d_1"
+            pts[0]._order = ZZ(ords[0])  # PARI documentation: "P is of order d_1"
         return pts
 
     def __iter__(self):
@@ -1343,7 +1388,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         """
         return not is_j_supersingular(self.j_invariant(), proof=proof)
 
-    def has_order(self, value, num_checks=8):
+    def has_order(self, value, num_checks=8) -> bool:
         r"""
         Return ``True`` if the curve has order ``value``.
 
@@ -1619,7 +1664,11 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
     def height_above_floor(self, ell, e):
         r"""
-        Return the height of the `j`-invariant of this ordinary elliptic curve on its `\ell`-volcano.
+        Return the height of the `j`-invariant of this elliptic curve on its `\ell`-volcano.
+
+        The curve must have a rational endomorphism ring of rank 2: This includes all
+        ordinary elliptic curves over finite fields as well as those supersingular
+        elliptic curves with Frobenius not in `\ZZ`.
 
         INPUT:
 
@@ -1630,12 +1679,12 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         .. NOTE::
 
-            For an ordinary `E/\GF{q}`, and a prime `\ell`, the height
-            `e` of the `\ell`-volcano containing `j(E)` is the `\ell`-adic
+            For a suitable `E/\GF{q}`, and a prime `\ell`, the height
+            `e` of the `\ell`-volcano containing `E` is the `\ell`-adic
             valuation of the conductor of the order generated by the
-            Frobenius `\pi_E`; the height of `j(E)` on its
+            `\GF{q}`-Frobenius `\pi_E`; the height of `E` on its
             ell-volcano is the `\ell`-adic valuation of the conductor
-            of the order `\text{End}(E)`.
+            of the order `\text{End}_{\GF{q}}(E)`.
 
         ALGORITHM:
 
@@ -1652,10 +1701,51 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E.height_above_floor(2,8)
             5
         """
+        pi = self.frobenius()
+        if pi in ZZ:
+            raise ValueError("{} has a (rational) endomorphism ring of rank 4".format(self))
+
+        e = ZZ(e)
+        if not e:
+            return ZZ.zero()
+
         if self.is_supersingular():
-            raise ValueError("{} is not ordinary".format(self))
-        if e == 0:
-            return 0
+            if ell == self.base_field().characteristic():
+                # In this (exceptional) case, the Frobenius can always be divided
+                # by the maximal possible power of the characteristic. The reason
+                # is that Frobenius must be of the form phi o [p^k] where phi is
+                # a purely inseparable isogeny of degree 1 or p, hence this [p^k]
+                # can always be divided out while retaining an endomorphism.
+                assert self.base_field().cardinality().valuation(ell) >= 2*e
+                return e
+
+            # In the supersingular case, the j-invariant alone does not determine
+            # the level in the volcano. (The underlying reason is that there can
+            # be multiple non-F_q-isomorphic curves with a given j-invariant in
+            # the isogeny graph.)
+            # Example: y^2 = x^3 ± x over F_p with p congruent to 3 modulo 4 have
+            # distinct (rational) endomorphism rings.
+            # Thus we run the "probing the depths" algorithm with F_q-isomorphism
+            # classes of curves instead.
+            E0 = [self] * 3
+            E1 = [phi.codomain() for phi in self.isogenies_prime_degree(ell)]
+            assert E1
+            if len(E1) == 1:
+                return ZZ.zero()
+            assert len(E1) == ell + 1
+            h = ZZ.one()
+            while True:
+                for i in range(3):
+                    isogs = E1[i].isogenies_prime_degree(ell)
+                    try:
+                        step = next(phi for phi in isogs if not phi.codomain().is_isomorphic(E0[i]))
+                    except StopIteration:
+                        return h
+                    E0[i], E1[i] = step.domain(), step.codomain()
+                h += 1
+                assert h <= e
+            raise AssertionError('unreachable code -- this is a bug')
+
         j = self.j_invariant()
         if j in [0, 1728]:
             return e
@@ -1663,19 +1753,19 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         x = polygen(F)
         from sage.rings.polynomial.polynomial_ring import polygens
         from sage.schemes.elliptic_curves.mod_poly import classical_modular_polynomial
-        X, Y = polygens(F, "X, Y", 2)
+        X, Y = polygens(F, 'X,Y')
         phi = classical_modular_polynomial(ell)(X, Y)
         j1 = phi([x,j]).roots(multiplicities=False)
         nj1 = len(j1)
         on_floor = self.two_torsion_rank() < 2 if ell == 2 else nj1 <= ell
         if on_floor:
-            return 0
+            return ZZ.zero()
         if e == 1 or nj1 != ell+1:  # double roots can only happen at the surface
             return e
         if nj1 < 3:
-            return 0
+            return ZZ.zero()
         j0 = [j,j,j]
-        h = 1
+        h = ZZ.one()
         while True:
             for i in range(3):
                 r = (phi([x,j1[i]])//(x-j0[i])).roots(multiplicities=False)
@@ -1759,6 +1849,69 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             if len(cs) == 1:
                 return (v//cs[0])**2 * D0
         raise ValueError("Incorrect class number {}".format(h))
+
+    def endomorphism_order(self):
+        r"""
+        Return a quadratic order isomorphic to the endomorphism ring
+        of this elliptic curve, assuming the order has rank two.
+
+        .. NOTE::
+
+            In the future, this method will hopefully be extended to return a
+            :class:`~sage.algebras.quatalg.quaternion_algebra.QuaternionOrder`
+            object in the rank-4 case, but this has not been implemented yet.
+
+        .. SEEALSO::
+
+            :meth:`frobenius_order`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(11), [3,3])
+            sage: E.endomorphism_order()
+            Maximal Order generated by 1/2*pi + 1/2 in Number Field in pi with defining polynomial x^2 - 4*x + 11
+
+        It also works for supersingular elliptic curves provided that Frobenius
+        is not in `\ZZ`::
+
+            sage: E = EllipticCurve(GF(11), [1,0])
+            sage: E.is_supersingular()
+            True
+            sage: E.endomorphism_order()
+            Order of conductor 2 generated by pi in Number Field in pi with defining polynomial x^2 + 11
+
+        ::
+
+            sage: E = EllipticCurve(GF(11), [-1,0])
+            sage: E.is_supersingular()
+            True
+            sage: E.endomorphism_order()
+            Maximal Order generated by 1/2*pi + 1/2 in Number Field in pi with defining polynomial x^2 + 11
+
+        There are some exceptional cases where Frobenius itself is divisible
+        by the characteristic::
+
+            sage: EllipticCurve([GF(7^2).gen(), 0]).endomorphism_order()
+            Gaussian Integers generated by 1/7*pi in Number Field in pi with defining polynomial x^2 + 49
+            sage: EllipticCurve(GF(3^5), [1, 0]).endomorphism_order()
+            Order of conductor 2 generated by 1/9*pi in Number Field in pi with defining polynomial x^2 + 243
+            sage: EllipticCurve(GF(7^3), [-1, 0]).endomorphism_order()
+            Maximal Order generated by 1/14*pi + 1/2 in Number Field in pi with defining polynomial x^2 + 343
+        """
+        pi = self.frobenius()
+        if pi in ZZ:
+            raise NotImplementedError('the rank-4 case is not supported yet')
+
+        O = self.frobenius_order()
+        f0 = O.conductor()
+
+        f = 1
+        for l,e in f0.factor():
+            h = self.height_above_floor(l, e)
+            f *= l**(e-h)
+
+        K = O.number_field()
+        return K.order_of_conductor(f)
 
     def twists(self):
         r"""
@@ -3173,13 +3326,13 @@ def EllipticCurve_with_prime_order(N):
 
     def abs_products_under(bound):
         """
-        This function returns an iterator of all numbers with absolute value not
-        exceeding ``bound`` expressable as product of distinct elements in ``S``
-        in ascending order.
+        This function returns an iterator of all numbers with absolute
+        value not exceeding ``bound`` expressible as product of
+        distinct elements in ``S`` in ascending order.
         """
         import heapq
         hq = [(1, 1, -1)]
-        while len(hq):
+        while hq:
             abs_n, n, idx = heapq.heappop(hq)
             yield n
             for nxt in range(idx + 1, len(S)):

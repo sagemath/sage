@@ -212,9 +212,15 @@ static ex sin_eval(const ex & x)
         else
                 x_red = x;
 
+
+        ex x_red_expanded = x_red.expand();
 	// simplify sin(I*x) --> I*sinh(x)
-	if (is_multiple_of_I(x_red.expand()))
+	if (is_multiple_of_I(x_red_expanded)) {
+                // to avoid infinite recursion, check if the input expands to 0
+                if (x_red_expanded.is_zero())
+                        return _ex0;
 		return I*sinh(x_red/I);
+        }
 
 	if (is_exactly_a<function>(x_red)) {
 		const ex &t = x_red.op(0);
@@ -421,9 +427,14 @@ static ex cos_eval(const ex & x)
         else
                 x_red = x;
 
+        ex x_red_expanded = x_red.expand();
 	// simplify cos(I*x) --> cosh(x)
-	if (is_multiple_of_I(x_red.expand()))
-		return cosh(x_red/I);
+	if (is_multiple_of_I(x_red_expanded)) {
+                // to avoid infinite recursion, check if the input expands to 0
+                if (x_red_expanded.is_zero())
+                        return _ex1;
+                return cosh(x_red/I);
+        }
 
 	if (is_exactly_a<function>(x_red)) {
 		const ex &t = x_red.op(0);
@@ -634,8 +645,13 @@ static ex tan_eval(const ex & x)
         else
                 x_red = x;
 
-	if (is_multiple_of_I(x_red.expand()))
+        ex x_red_expanded = x_red.expand();
+	if (is_multiple_of_I(x_red_expanded)) {
+                // to avoid infinite recursion, check if the input expands to 0
+                if (x_red_expanded.is_zero())
+                        return _ex0;
 		return I*tanh(x_red/I);
+        }
 
 	if (is_exactly_a<function>(x_red)) {
 		const ex &t = x_red.op(0);
@@ -743,8 +759,13 @@ static ex cot_eval(const ex & x)
 	if (x.is_zero())
 		return UnsignedInfinity;
 
-	if (is_multiple_of_I(x.expand()))
+        ex x_expanded = x.expand();
+	if (is_multiple_of_I(x_expanded)) {
+                // to avoid infinite recursion, check if the input expands to 0
+                if (x_expanded.is_zero())
+                        return UnsignedInfinity;
 		return -I*coth(x/I);
+        }
 
 	if (is_exactly_a<function>(x)) {
 		const ex &t = x.op(0);
@@ -878,8 +899,13 @@ REGISTER_FUNCTION(cot, eval_func(cot_eval).
 
 static ex sec_eval(const ex & x)
 {
-	if (is_multiple_of_I(x.expand()))
+        ex x_expanded = x.expand();
+	if (is_multiple_of_I(x_expanded)) {
+                // to avoid infinite recursion, check if the input expands to 0
+                if (x_expanded.is_zero())
+                        return _ex1;
 		return sech(x/I);
+        }
 
 	if (is_exactly_a<function>(x)) {
 		const ex &t = x.op(0);
@@ -992,9 +1018,13 @@ REGISTER_FUNCTION(sec, eval_func(sec_eval).
 
 static ex csc_eval(const ex & x)
 {
-
-	if (is_multiple_of_I(x.expand()))
+        ex x_expanded = x.expand();
+	if (is_multiple_of_I(x_expanded)) {
+                // to avoid infinite recursion, check if the input expands to 0
+                if (x_expanded.is_zero())
+                        return UnsignedInfinity;
 		return -I*csch(x/I);
+        }
 
 	if (is_exactly_a<function>(x)) {
 		const ex &t = x.op(0);
@@ -1229,6 +1259,13 @@ static ex acos_eval(const ex & x)
 			return UnsignedInfinity;
 		throw (std::runtime_error("arccos_eval(): arccos(infinity) encountered"));
 	}
+
+	if (x.is_equal(mul(pow(_ex2, _ex1_2), _ex1_2)))
+                return mul(Pi, _ex1_4);
+
+        if (x.is_equal(mul(pow(_ex3, _ex1_2), _ex1_2)))
+                return numeric(1,6)*Pi;
+	
 	return acos(x).hold();
 }
 

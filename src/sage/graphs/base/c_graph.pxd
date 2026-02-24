@@ -1,9 +1,9 @@
-#**************************************************************************
+# *************************************************************************
 #        Copyright (C) 2008-9 Robert L. Miller <rlmillster@gmail.com>
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
-#**************************************************************************
+#                         https://www.gnu.org/licenses/
+# *************************************************************************
 
 from sage.data_structures.bitset cimport bitset_t
 from sage.graphs.base.graph_backends cimport GenericGraphBackend
@@ -87,7 +87,7 @@ cdef class CGraphBackend(GenericGraphBackend):
     cdef int get_vertex_checked(self, u) except ? -2
     cdef vertex_label(self, int u_int)
     cdef int check_labelled_vertex(self, u, bint reverse) except ? -1
-    #cdef CGraph _cg  # a child class should declare this accordingly
+    # cdef CGraph _cg  # a child class should declare this accordingly
     cdef bint _directed
     cdef dict vertex_labels
     cdef dict vertex_ints

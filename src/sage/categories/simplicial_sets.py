@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Simplicial Sets
 """
@@ -536,7 +535,7 @@ class SimplicialSets(Category_singleton):
                     sage: S1_.n_cells(1)[0].rename("sigma_1'")
                     sage: W = S1.wedge(S1_)
                     sage: G = CyclicPermutationGroup(3)
-                    sage: (a, b) = W.n_cells(1)
+                    sage: a, b = W.n_cells(1)
                     sage: C = W.cover({a : G.gen(0), b : G.gen(0)^2})
                     sage: C.face_data()
                     {(*, ()): None,
@@ -723,7 +722,7 @@ class SimplicialSets(Category_singleton):
                     if s in twop:
                         return twop[s]
                     if s.dimension() > 1:
-                        return twist(self.face(s,s.dimension()))
+                        return twist(self.face(s, s.dimension()))
                     return 1
                 base_ring = cm.common_parent(*twop.values())
 
@@ -815,9 +814,8 @@ class SimplicialSets(Category_singleton):
                         differentials[d] = matrix(base_ring, old_rank, rank, sparse=False)
 
                 if cochain:
-                    new_diffs = {}
-                    for d in differentials:
-                        new_diffs[d-1] = differentials[d].transpose()
+                    new_diffs = {d - 1: diff_d.transpose()
+                                 for d, diff_d in differentials.items()}
                     return ChainComplex(new_diffs, degree_of_differential=1,
                                         check=check)
                 return ChainComplex(differentials, degree_of_differential=-1,
@@ -961,7 +959,7 @@ class SimplicialSets(Category_singleton):
                     res = M
                     for g in GB:
                         res = res.stack(g*identity_matrix(M.ncols()))
-                    singres = matrix(singlift(res.T, S.T,ring=res.base_ring()))
+                    singres = matrix(singlift(res.T, S.T, ring=res.base_ring()))
                     return singres.submatrix(0, 0, M.nrows(), S.nrows())
 
                 def mgb(M):
@@ -973,7 +971,7 @@ class SimplicialSets(Category_singleton):
                     sres = matrix(singstd(res.T, ring=RP))
                     to_delete = [i for i, r in enumerate(sres.apply_map(reduce_laurent)) if not r]
                     return sres.delete_rows(to_delete)
-                    M2 = border_matrix(n+1)
+
                 if M1.nrows() == 0:
                     opt_verb.reset_default()
                     return (RP**0).quotient_module([])

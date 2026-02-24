@@ -892,9 +892,10 @@ class IntegratedCurveSet(DifferentiableCurveSet):
         # chart used on the codomain.
         if dom == codom:
             param = var('s')
-            if t == param: # the canonical coordinate of the domain
-            # might be the expression 's' even though it was affected
-            # above to the variable 't'
+            if t == param:
+                # the canonical coordinate of the domain
+                # might be the expression 's' even though it was affected
+                # above to the variable 't'
                 param = var('u')
         else:
             param = t
@@ -903,8 +904,8 @@ class IntegratedCurveSet(DifferentiableCurveSet):
         # where a certain integrated curve may be defined:
         H = Hom(dom, codom)
         c = H.an_element()
-        x0_A = c.expr()[0].substitute({t:1})
-        x0_B = c.expr()[0].substitute({t:0}) # necessarily, x0_A < x0_B
+        x0_A = c.expr()[0].substitute({t: 1})
+        x0_B = c.expr()[0].substitute({t: 0})  # necessarily, x0_A < x0_B
         p_coords = [x0_A] + list(c.expr()[1:dim])
         p = codom.point(p_coords)
 

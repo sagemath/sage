@@ -733,12 +733,10 @@ def ones(H, pivots):
     # that contain exactly one "1" entry and all other entries 0.
     onecol = []
     onerow = []
-    i = 0
-    for c in pivots:
+    for i, c in enumerate(pivots):
         if H[i, c] == 1:
             onecol.append(c)
             onerow.append(i)
-        i += 1
     onecol_set = set(onecol)
     non_onerow = [j for j in range(len(pivots)) if j not in onerow]
     non_onecol = [j for j in range(H.ncols()) if j not in onecol_set][:len(non_onerow)]
@@ -899,7 +897,12 @@ def probable_hnf(A, include_zero_rows, proof):
     B = A.matrix_from_rows(rows)
     cols = list(probable_pivot_columns(B))
     C = B.matrix_from_columns(cols)
-    # Now C is a submatrix of A that has full rank and is square.
+    # Now C is a submatrix of A that has full rank and is (probably)
+    # square, unless reduction mod p in probable_pivot_columns()
+    # was unlucky enough to introduce a linear dependence.
+    while not C.is_square():
+        cols = list(probable_pivot_columns(B))
+        C = B.matrix_from_columns(cols)
 
     # We compute the HNF of C, which is a square nonsingular matrix.
     try:

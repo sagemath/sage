@@ -131,27 +131,28 @@ cdef extern from "singular/Singular/libsingular.h":
         number* cfSub(number *, number *, const n_Procs_s* r)
         number* cfMult(number *, number *, const n_Procs_s* r)  # algebraic number multiplication
 
-        number*  (*cfInit)(int i, const n_Procs_s* r ) # algebraic number from int
-        number*  (*cfInitMPZ)(mpz_t i, const n_Procs_s* r)
-        number*  (*cfParameter)(int i, const n_Procs_s* r)
-        int     (*cfParDeg)(number* n, const n_Procs_s* r)
-        int     (*cfSize)(number* n, const n_Procs_s* r)
-        int     (*cfInt)(number* n, const n_Procs_s* r)
-        int     (*cdDivComp)(number* a,number* b, const n_Procs_s* r)
-        number*  (*cfGetUnit)(number* a, const n_Procs_s* r)
-        number*  (*cfExtGcd)(number* a, number* b, number* *s, number* *t , const n_Procs_s* r)
+        number* (*cfInit)(int i, const n_Procs_s* r ) # algebraic number from int
+        number* (*cfInitMPZ)(mpz_t i, const n_Procs_s* r)
+        number* (*cfParameter)(int i, const n_Procs_s* r)
+        int (*cfParDeg)(number* n, const n_Procs_s* r)
+        int (*cfSize)(number* n, const n_Procs_s* r)
+        int (*cfInt)(number* n, const n_Procs_s* r)
+        int (*cdDivComp)(number* a,number* b, const n_Procs_s* r)
+        number* (*cfGetUnit)(number* a, const n_Procs_s* r)
+        number* (*cfExtGcd)(number* a, number* b, number* *s, number* *t , const n_Procs_s* r)
 
         void (*cfDelete)(number **, const n_Procs_s*)
 
-        number*  (*cfInpNeg)(number* a,  const n_Procs_s* r)
-        number*  (*cfInvers)(number* a,  const n_Procs_s* r)
-        number*  (*cfCopy)(number* a,  const n_Procs_s* r) # deep copy of algebraic number
-        number*  (*cfRePart)(number* a, const n_Procs_s* cf)
-        number*  (*cfImPart)(number* a, const n_Procs_s* cf)
-        void    (*cfWrite)(number* a, const n_Procs_s* r)
-        void    (*cfNormalize)(number* a,  const n_Procs_s* r)
+        number* (*cfInpNeg)(number* a,  const n_Procs_s* r)
+        number* (*cfInvers)(number* a,  const n_Procs_s* r)
+        number* (*cfCopy)(number* a,  const n_Procs_s* r) # deep copy of algebraic number
+        number* (*cfRePart)(number* a, const n_Procs_s* cf)
+        number* (*cfImPart)(number* a, const n_Procs_s* cf)
+        void (*cfWrite)(number* a, const n_Procs_s* r)
+        void (*cfNormalize)(number* a,  const n_Procs_s* r)
 
         bint (*cfDivBy)(number* a, number* b, const n_Procs_s* r)
+        bint (*cfGreater)(number* a, number* b, const n_Procs_s* )
         bint (*cfEqual)(number* a,number* b, const n_Procs_s* )
         bint (*cfIsZero)(number* a, const n_Procs_s* ) # algebraic number comparison with zero
         bint (*cfIsOne)(number* a, const n_Procs_s* )  # algebraic number comparison with one
@@ -164,7 +165,7 @@ cdef extern from "singular/Singular/libsingular.h":
         mpz_ptr modBase
         unsigned long modExponent
 
-        #n_coeffType type
+        # n_coeffType type
         int type
 
     # polynomials
@@ -209,7 +210,7 @@ cdef extern from "singular/Singular/libsingular.h":
         int pCompIndex # index of components
         unsigned long bitmask # mask for getting single exponents
 
-        n_Procs_s*    cf # coefficient field/ring
+        n_Procs_s* cf  # coefficient field/ring
         int ref
 
         # return total degree of p
@@ -333,11 +334,11 @@ cdef extern from "singular/Singular/libsingular.h":
         TObject *T
         LObject *L
         LObject *B
-        poly*    kHEdge
-        poly*    kNoether
-        poly*    t_kHEdge
-        poly*    kNoetherTail()
-        poly*    t_kNoether
+        poly* kHEdge
+        poly* kNoether
+        poly* t_kHEdge
+        poly* kNoetherTail()
+        poly* t_kNoether
         bint *NotUsedAxis
         bint *pairtest
         void *R
@@ -351,10 +352,10 @@ cdef extern from "singular/Singular/libsingular.h":
 
     ctypedef struct attr "sattr":
         void (*Init)()
-        char *  name
-        void *  data
-        attr *  next
-        int     atyp # the type of the attribute, describes the data field
+        char * name
+        void * data
+        attr * next
+        int atyp # the type of the attribute, describes the data field
 
         void (*Print)()
         attr *(*Copy)() # copy all arguments
@@ -374,9 +375,9 @@ cdef extern from "singular/Singular/libsingular.h":
 
     ctypedef struct leftv "sleftv":
         leftv *next
-        char  *id
+        char *id
         void* data
-        #data is some union, so this might be very dangerous, but I am lazy now
+        # data is some union, so this might be very dangerous, but I am lazy now
         attr *attribute
         void (* Copy)(leftv*)
         void (* Init)()
@@ -989,10 +990,33 @@ cdef extern from "singular/coeffs/coeffs.h":
 
     number *ndCopyMap(number *, const n_Procs_s* src,const n_Procs_s* dst)
 
+    ctypedef struct LongComplexInfo:
+        short float_len
+        short float_len2
+        const char* par_name
+
 cdef extern from "singular/coeffs/rmodulo2m.h":
 
     #init 2^m from a long
     number *nr2mMapZp(number *,const n_Procs_s* src,const n_Procs_s* dst)
+
+cdef extern from "singular/coeffs/shortfl.h":
+    """
+    static inline SI_FLOAT sage_nrFloat(number n) { // copy from shortfl.cc to allow inlining
+        SI_FLOAT f = 0;
+        memcpy(&f, &n, sizeof(f) < sizeof(n) ? sizeof(f) : sizeof(n));
+        return f;
+    }
+
+    static inline number sage_nrInit(SI_FLOAT f) {
+        number n = 0;
+        memcpy(&n, &f, sizeof(f) < sizeof(n) ? sizeof(f) : sizeof(n));
+        return n;
+    }
+    """
+    ctypedef double SI_FLOAT  # actually might be double or float
+    SI_FLOAT nrFloat "sage_nrFloat" (number *n)
+    number *sage_nrInit(SI_FLOAT)
 
 cdef extern from "singular/kernel/maps/gen_maps.h":
 
@@ -1011,6 +1035,20 @@ cdef extern from "singular/polys/ext_fields/algext.h":
     naInitChar(n_Procs_s* cf, void * infoStruct)
 
     nMapFunc naSetMap(const n_Procs_s* src, const n_Procs_s* dst)
+
+cdef extern from "singular/coeffs/mpr_complex.h":
+    cdef cppclass gmp_float:
+        gmp_float(double v)
+        double to_double "operator double"() const
+
+    cdef cppclass gmp_complex:
+        gmp_complex(double re, double im)
+        gmp_float real() const
+        gmp_float imag() const
+
+    char *floatToStr(const gmp_float & r, const unsigned int oprec)
+    char *complexToStr(gmp_complex & c, const unsigned int oprec, const n_Procs_s* src)
+
 
 cdef extern from "singular/coeffs/rmodulon.h":
 

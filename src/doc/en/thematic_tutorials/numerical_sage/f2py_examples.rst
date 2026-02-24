@@ -4,7 +4,7 @@ More Interesting Examples with f2py
 Let us now look at some more interesting examples using f2py. We
 will implement a simple iterative method for solving laplace's
 equation in a square. Actually, this implementation is taken from
-http://www.scipy.org/PerformancePython?highlight=\%28performance\%29
+https://scipy.github.io/old-wiki/pages/PerformancePython.html
 page on the scipy website. It has lots of information on
 implementing numerical algorithms in python.
 

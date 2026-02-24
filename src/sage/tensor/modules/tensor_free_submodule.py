@@ -12,7 +12,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ******************************************************************************
 
 import itertools
@@ -307,9 +307,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
         coarser_sym, coarser_antisym = sym_antisym(coarser_comp)
         if not is_coarsening_of(coarser_sym, finer_sym):
             return False
-        if not is_coarsening_of(coarser_antisym, finer_antisym):
-            return False
-        return True
+        return is_coarsening_of(coarser_antisym, finer_antisym)
 
     def _element_constructor_(self, comp=[], basis=None, name=None,
                               latex_name=None, sym=None, antisym=None):

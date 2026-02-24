@@ -1,0 +1,19 @@
+{
+  "id": "uv",
+  "version": "1.0.0",
+  "name": "uv",
+  "description": "Install uv, an extremely fast Python package and project manager, written in Rust.",
+  "documentationURL": "https://docs.astral.sh/uv/",
+  "options": {
+    "version": {
+      "default": "latest",
+      "description": "Version of uv to install.",
+      "proposals": ["latest"],
+      "type": "string"
+    }
+  },
+  "installsAfter": [
+        "ghcr.io/devcontainers/features/common-utils",
+        "ghcr.io/devcontainers/features/python"
+    ]
+}
