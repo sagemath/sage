@@ -332,7 +332,7 @@ class RegularSequence(RecognizableSeries):
         return iter(self[n] for n in count())
 
     @cached_method
-    def is_degenerated(self):
+    def is_degenerated(self) -> bool:
         r"""
         Return whether this `k`-regular sequence is degenerated,
         i.e., whether this `k`-regular sequence does not satisfy
@@ -363,7 +363,7 @@ class RegularSequence(RecognizableSeries):
             False
         """
         from sage.rings.integer_ring import ZZ
-        return (self.mu[ZZ(0)] * self.right) != self.right
+        return (self.mu[ZZ.zero()] * self.right) != self.right
 
     def _error_if_degenerated_(self):
         r"""
@@ -1100,10 +1100,10 @@ class RegularSequence(RecognizableSeries):
             Z = zero_matrix(C[0].dimensions()[0])
 
             def blocks(r):
-                upper = list([C[s], D[s], Z]
-                             for s in reversed(srange(max(0, r-2), r+1)))
-                lower = list([Z, C[s], D[s]]
-                             for s in reversed(srange(k-3+len(upper), k)))
+                upper = [[C[s], D[s], Z]
+                         for s in reversed(srange(max(0, r-2), r+1))]
+                lower = [[Z, C[s], D[s]]
+                         for s in reversed(srange(k-3+len(upper), k))]
                 return upper + lower
 
             return {r: Matrix.block(blocks(r)) for r in P.alphabet()}
@@ -1280,7 +1280,7 @@ class RegularSequence(RecognizableSeries):
         return result
 
     @cached_method
-    def is_bounded(self):
+    def is_bounded(self) -> bool:
         r"""
         Return whether this `k`-regular sequence is bounded.
 

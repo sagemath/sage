@@ -45,6 +45,9 @@ from libc.string cimport memcpy
 from cpython.object cimport *
 from cpython.float cimport *
 
+cdef extern from "Python.h":
+    void Py_SET_REFCNT(PyObject*, Py_ssize_t) nogil
+
 from sage.ext.stdsage cimport PY_NEW
 from sage.cpython.python_debug cimport if_Py_TRACE_REFS_then_PyObject_INIT
 
@@ -2060,7 +2063,7 @@ def is_RealDoubleElement(x):
         use 'isinstance(..., RealDoubleElement)' instead.
         See https://github.com/sagemath/sage/issues/38128 for details.
         True
-        sage: is_RealDoubleElement(RIF(3))                                              # needs sage.rings.real_interval_field
+        sage: is_RealDoubleElement(RIF(3))
         False
     """
     from sage.misc.superseded import deprecation_cython
@@ -2157,7 +2160,7 @@ cdef PyObject* fast_tp_new(type t, args, kwds) noexcept:
     # Objects from the pool have reference count zero, so this
     # needs to be set in this case.
 
-    new.ob_refcnt = 1
+    Py_SET_REFCNT(<PyObject*>new, 1)
 
     return new
 

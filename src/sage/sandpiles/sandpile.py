@@ -320,7 +320,6 @@ Working with sandpile divisors::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from collections import Counter
 from copy import deepcopy
 from inspect import getdoc
@@ -448,14 +447,14 @@ class Sandpile(DiGraph):
             all_k_config             -- The constant configuration with all values set to k.
             all_k_div                -- The divisor with all values set to k.
             avalanche_polynomial     -- The avalanche polynomial.
-            betti                    -- The Betti table for the homogeneous toppling ideal.
+            betti                    -- Return the Betti table for the homogeneous toppling ideal.
             betti_complexes          -- The support-complexes with non-trivial homology.
             burning_config           -- The minimal burning configuration.
             burning_script           -- A script for the minimal burning configuration.
             canonical_divisor        -- The canonical divisor.
             dict                     -- A dictionary of dictionaries representing a directed graph.
             genus                    -- The genus: (# non-loop edges) - (# vertices) + 1.
-            groebner                 -- A Groebner basis for the homogeneous toppling ideal.
+            groebner                 -- Return a Groebner basis for the homogeneous toppling ideal.
             group_gens               -- A minimal list of generators for the sandpile group.
             group_order              -- The size of the sandpile group.
             h_vector                 -- The number of superstable configurations in each degree.
@@ -467,7 +466,7 @@ class Sandpile(DiGraph):
             invariant_factors        -- The invariant factors of the sandpile group.
             is_undirected            -- Is the underlying graph undirected?
             jacobian_representatives -- Representatives for the elements of the Jacobian group.
-            laplacian                -- The Laplacian matrix of the graph.
+            laplacian                -- Return the Laplacian matrix of the graph.
             markov_chain             -- The sandpile Markov chain for configurations or divisors.
             max_stable               -- The maximal stable configuration.
             max_stable_div           -- The maximal stable divisor.
@@ -480,7 +479,7 @@ class Sandpile(DiGraph):
             points                   -- Generators for the multiplicative group of zeros of the sandpile ideal.
             postulation              -- The postulation number of the toppling ideal.
             recurrents               -- The recurrent configurations.
-            reduced_laplacian        -- The reduced Laplacian matrix of the graph.
+            reduced_laplacian        -- Return the reduced Laplacian matrix of the graph.
             reorder_vertices         -- A copy of the sandpile with vertex names permuted.
             resolution               -- A minimal free resolution of the homogeneous toppling ideal.
             ring                     -- The ring containing the homogeneous toppling ideal.
@@ -504,7 +503,7 @@ class Sandpile(DiGraph):
             enter "Sandpile.FOO?" or enter "S.FOO?" for any Sandpile S."""),
                        verbose=verbose)
 
-    def __init__(self, g, sink=None):
+    def __init__(self, g, sink=None) -> None:
         r"""
         Create a sandpile.
 
@@ -642,7 +641,7 @@ class Sandpile(DiGraph):
         del self._nonsink_vertices[self._sink_ind]
         # compute Laplacians:
         self._laplacian = self.laplacian_matrix(indegree=False)
-        temp = list(range(self.num_verts()))
+        temp = list(range(self.n_vertices()))
         del temp[self._sink_ind]
         self._reduced_laplacian = self._laplacian[temp, temp]
 
@@ -780,7 +779,7 @@ class Sandpile(DiGraph):
             sage: repr(Sandpile({0:[1,1], 1:[0]}))
             'sandpile graph: 2 vertices, sink = 0'
         """
-        return self._name + ': ' + str(self.num_verts()) + ' vertices, sink = ' + str(self.sink())
+        return self._name + ': ' + str(self.n_vertices()) + ' vertices, sink = ' + str(self.sink())
 
     def show(self, **kwds):
         r"""
@@ -861,7 +860,7 @@ class Sandpile(DiGraph):
 
     def laplacian(self):
         r"""
-        The Laplacian matrix of the graph.
+        Return the Laplacian matrix of the graph.
 
         Its *rows* encode the vertex firing rules.
 
@@ -885,7 +884,7 @@ class Sandpile(DiGraph):
 
     def reduced_laplacian(self):
         r"""
-        The reduced Laplacian matrix of the graph.
+        Return the reduced Laplacian matrix of the graph.
 
         OUTPUT: matrix
 
@@ -1228,7 +1227,7 @@ class Sandpile(DiGraph):
             sage: s.all_k_config(7)
             {1: 7, 2: 7, 3: 7}
         """
-        return SandpileConfig(self, [k] * (self.num_verts() - 1))
+        return SandpileConfig(self, [k] * (self.n_vertices() - 1))
 
     def zero_config(self):
         r"""
@@ -1312,11 +1311,11 @@ class Sandpile(DiGraph):
             True
         """
         if self.name() == 'Complete sandpile graph':
-            n = self.num_verts()
+            n = self.n_vertices()
             self._recurrents = [SandpileConfig(self, [n - 1 - i for i in p])
                                 for p in ParkingFunctions(n - 1)]
         elif self.name() == 'Cycle sandpile graph':
-            n = self.num_verts()
+            n = self.n_vertices()
             one = [1] * (n - 2)
             self._recurrents = [SandpileConfig(self, [1] * (n - 1))] + [SandpileConfig(self, one[:i] + [0] + one[i:]) for i in range(n - 1)]
         else:
@@ -1502,10 +1501,10 @@ class Sandpile(DiGraph):
             1
         """
         if self.is_undirected():
-            return self.laplacian().trace() / 2 - self.num_verts() + 1
+            return self.laplacian().trace() / 2 - self.n_vertices() + 1
         raise TypeError("the underlying graph must be undirected")
 
-    def is_undirected(self):
+    def is_undirected(self) -> bool:
         r"""
         Is the underlying graph undirected?  ``True`` if `(u,v)` is and edge if
         and only if `(v,u)` is an edge, each edge with the same weight.
@@ -1647,7 +1646,7 @@ class Sandpile(DiGraph):
             sage: '_avalanche_polynomial' in s.__dict__                                 # needs sage.combinat
             True
         """
-        n = self.num_verts() - 1
+        n = self.n_vertices() - 1
         R = PolynomialRing(QQ, "x", n)
         A = R(0)
         V = []
@@ -1697,7 +1696,7 @@ class Sandpile(DiGraph):
             return deepcopy(self._avalanche_polynomial)
         X = self._avalanche_polynomial.parent().gens()
         return self._avalanche_polynomial.subs({X[i]: X[0]
-            for i in range(1, self.num_verts() - 1)})
+            for i in range(1, self.n_vertices() - 1)})
 
     def nonspecial_divisors(self, verbose=True) -> list:
         r"""
@@ -1768,7 +1767,7 @@ class Sandpile(DiGraph):
         """
         if self.is_undirected():
             return SandpileDivisor(self, [self.laplacian()[i][i] - 2
-                                          for i in range(self.num_verts())])
+                                          for i in range(self.n_vertices())])
         raise TypeError("only for undirected graphs")
 
     def _set_invariant_factors(self):
@@ -2195,9 +2194,9 @@ class Sandpile(DiGraph):
         V = self.vertices(sort=True)
         n = len(V)
         if isinstance(st, list):
-            if len(st) == self.num_verts() - 1:
+            if len(st) == self.n_vertices() - 1:
                 st = SandpileConfig(self, st)
-            elif len(st) == self.num_verts():
+            elif len(st) == self.n_vertices():
                 st = SandpileDivisor(self, st)
             else:
                 raise SyntaxError(state)
@@ -2239,7 +2238,7 @@ class Sandpile(DiGraph):
             True
         """
         if self.name() == 'Complete sandpile graph':
-            n = Integer(self.num_verts())
+            n = Integer(self.n_vertices())
             self._stationary_density = (n + QQ.one() / n + sum(falling_factorial(n, i) / n**i for i in range(1, n + 1)) - 3) / 2
         elif self.is_undirected() and '_h_vector' not in self.__dict__:
             t = Graph(self).tutte_polynomial().subs(x=1)
@@ -2248,13 +2247,13 @@ class Sandpile(DiGraph):
             t = myR(t)
             dt = derivative(t, y).subs(y=1)
             t = t.subs(y=1)
-            self._stationary_density = (self.num_edges()/2 + dt/t)/self.num_verts()
+            self._stationary_density = (self.n_edges()/2 + dt/t)/self.n_vertices()
         else:
             sink_deg = self.out_degree(self.sink())
             h = vector(ZZ, self.h_vector())
             m = self.max_stable().deg()
             d = vector(ZZ, range(m, m-len(h), -1))
-            self._stationary_density = (h*d/self.group_order() + sink_deg)/self.num_verts()
+            self._stationary_density = (h*d/self.group_order() + sink_deg)/self.n_vertices()
 
     def stationary_density(self):
         r"""
@@ -2303,7 +2302,7 @@ class Sandpile(DiGraph):
             sage: S.all_k_div(7)
             {0: 7, 1: 7, 2: 7, 3: 7, 4: 7}
         """
-        return SandpileDivisor(self, [k]*self.num_verts())
+        return SandpileDivisor(self, [k]*self.n_vertices())
 
     def zero_div(self):
         r"""
@@ -2616,8 +2615,10 @@ class Sandpile(DiGraph):
 
     def groebner(self):
         r"""
-        A Groebner basis for the homogeneous toppling ideal.  It is computed
-        with respect to the standard sandpile ordering (see ``ring``).
+        Return a Groebner basis for the homogeneous toppling ideal.
+
+        It is computed with respect to the standard sandpile ordering
+        (see ``ring``).
 
         OUTPUT: Groebner basis
 
@@ -2632,9 +2633,10 @@ class Sandpile(DiGraph):
 
     def betti(self, verbose=True):
         r"""
-        The Betti table for the homogeneous toppling ideal.  If
-        ``verbose`` is ``True``, it prints the standard Betti table, otherwise,
-        it returns a less formatted table.
+        Return the Betti table for the homogeneous toppling ideal.
+
+        If ``verbose`` is ``True``, it prints the standard Betti
+        table, otherwise, it returns a less formatted table.
 
         INPUT:
 
@@ -2710,7 +2712,7 @@ class Sandpile(DiGraph):
         sol = singular('SOL').sage_structured_str_list()
         return [[SR(j) for j in k] for k in sol[0][0]]
 
-    def _set_points(self):
+    def _set_points(self) -> None:
         r"""
         Generators for the multiplicative group of zeros of the sandpile
         ideal.
@@ -2723,7 +2725,7 @@ class Sandpile(DiGraph):
             True
         """
         L = self._reduced_laplacian.transpose().dense_matrix()
-        n = self.num_verts() - 1
+        n = self.n_vertices() - 1
         D, U, V = L.smith_form()
         self._points = []
         one = [1] * n
@@ -2733,7 +2735,7 @@ class Sandpile(DiGraph):
             if x not in self._points and x != one:
                 self._points.append(x)
 
-    def points(self):
+    def points(self) -> list:
         r"""
         Generators for the multiplicative group of zeros of the sandpile
         ideal.
@@ -2838,11 +2840,13 @@ class SandpileConfig(dict):
             enter "SandpileConfig.FOO?" or enter "c.FOO?" for any SandpileConfig c.
             <BLANKLINE>
             add_random             -- Add one grain of sand to a random vertex.
-            burst_size             -- The burst size of the configuration with respect to the given vertex.
+            burst_size             -- Return the burst size of the configuration with respect to the given
+            vertex.
             deg                    -- The degree of the configuration.
             dualize                -- The difference with the maximal stable configuration.
-            equivalent_recurrent   -- The recurrent configuration equivalent to the given configuration.
-            equivalent_superstable -- The equivalent superstable configuration.
+            equivalent_recurrent   -- Return the recurrent configuration equivalent to the given
+            configuration.
+            equivalent_superstable -- Return the equivalent superstable configuration.
             fire_script            -- Fire the given script.
             fire_unstable          -- Fire all unstable vertices.
             fire_vertex            -- Fire the given vertex.
@@ -2854,8 +2858,8 @@ class SandpileConfig(dict):
             order                  -- The order of the equivalent recurrent element.
             sandpile               -- The configuration's underlying sandpile.
             show                   -- Show the configuration.
-            stabilize              -- The stabilized configuration.
-            support                -- The vertices containing sand.
+            stabilize              -- Return the stabilized configuration.
+            support                -- Return the vertices containing sand.
             unstable               -- The unstable vertices.
             values                 -- The values of the configuration as a list.
         """
@@ -2871,7 +2875,7 @@ class SandpileConfig(dict):
             enter "SandpileConfig.FOO?" or enter "c.FOO?" for any SandpileConfig c."""),
                        verbose=verbose)
 
-    def __init__(self, S, c):
+    def __init__(self, S, c) -> None:
         r"""
         Create a configuration on a Sandpile.
 
@@ -2880,8 +2884,6 @@ class SandpileConfig(dict):
         - ``S`` -- Sandpile
 
         - ``c`` -- dictionary or list representing a configuration
-
-        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -2892,7 +2894,7 @@ class SandpileConfig(dict):
             sage: ~(3*c)  # stabilization
             {1: 2, 2: 2, 3: 0}
         """
-        if len(c) == S.num_verts()-1:
+        if len(c) == S.n_vertices() - 1:
             if isinstance(c, (dict, SandpileConfig)):
                 dict.__init__(self, c)
             elif isinstance(c, list):
@@ -2999,7 +3001,7 @@ class SandpileConfig(dict):
             else:
                 raise AttributeError(name)
 
-    def _set_deg(self):
+    def _set_deg(self) -> None:
         r"""
         Compute and store the degree of the configuration.
 
@@ -3155,10 +3157,10 @@ class SandpileConfig(dict):
             {1: 3, 2: 0, 3: 0}
         """
         if isinstance(other, SandpileConfig):
-            return (self+other).equivalent_recurrent()
+            return (self + other).equivalent_recurrent()
         if isinstance(other, Integer):
             return SandpileConfig(self.sandpile(),
-                                  [other*i for i in self.values()])
+                                  [other * i for i in self.values()])
         raise TypeError(other)
 
     def __rmul__(self, other):
@@ -3182,7 +3184,8 @@ class SandpileConfig(dict):
             sage: 3*c == c*3
             True
         """
-        return SandpileConfig(self.sandpile(), [other*i for i in self.values()])
+        return SandpileConfig(self.sandpile(),
+                              [other * i for i in self.values()])
 
     def __le__(self, other) -> bool:
         r"""
@@ -3323,18 +3326,18 @@ class SandpileConfig(dict):
             sage: c^0 == S.identity()
             True
         """
-        result = self._sandpile.zero_config()
         if k == 0:
             return self._sandpile.identity()
+
+        result = self._sandpile.zero_config()
+        if k < 0:
+            k = -k
+            for i in range(k):
+                result -= self
         else:
-            if k < 0:
-                k = -k
-                for i in range(k):
-                    result -= self
-            else:
-                for i in range(k):
-                    result += self
-            return result.equivalent_recurrent()
+            for i in range(k):
+                result += self
+        return result.equivalent_recurrent()
 
     # stable addition
     def __and__(self, other):
@@ -3360,7 +3363,7 @@ class SandpileConfig(dict):
             sage: ~(c + c) == c & c
             True
         """
-        return ~(self+other)
+        return ~(self + other)
 
     def sandpile(self):
         r"""
@@ -3379,7 +3382,7 @@ class SandpileConfig(dict):
         """
         return self._sandpile
 
-    def values(self):
+    def values(self) -> list:
         r"""
         The values of the configuration as a list.
 
@@ -3417,7 +3420,7 @@ class SandpileConfig(dict):
             sage: S.max_stable() - c == c.dualize()
             True
         """
-        return self._sandpile.max_stable()-self
+        return self._sandpile.max_stable() - self
 
     def fire_vertex(self, v):
         r"""
@@ -3445,8 +3448,9 @@ class SandpileConfig(dict):
 
     def fire_script(self, sigma):
         r"""
-        Fire the given script.  In other words,  fire each vertex the number of
-        times indicated by ``sigma``.
+        Fire the given script.
+
+        In other words,  fire each vertex the number of times indicated by ``sigma``.
 
         INPUT:
 
@@ -3471,10 +3475,10 @@ class SandpileConfig(dict):
         sigma = sigma.values()
         for i in range(len(sigma)):
             v = self._vertices[i]
-            c[v] -= sigma[i]*self._sandpile.out_degree(v)
+            c[v] -= sigma[i] * self._sandpile.out_degree(v)
             for e in self._sandpile.outgoing_edge_iterator(v):
                 if e[1] != self._sandpile.sink():
-                    c[e[1]] += sigma[i]*e[2]
+                    c[e[1]] += sigma[i] * e[2]
         return SandpileConfig(self._sandpile, c)
 
     def unstable(self) -> list:
@@ -3543,8 +3547,9 @@ class SandpileConfig(dict):
 
     def stabilize(self, with_firing_vector=False):
         r"""
-        The stabilized configuration. Optionally returns the
-        corresponding firing vector.
+        Return the stabilized configuration.
+
+        Optionally this returns the corresponding firing vector.
 
         INPUT:
 
@@ -3570,16 +3575,13 @@ class SandpileConfig(dict):
         """
         if with_firing_vector:
             return self._stabilize
-        else:
-            return self._stabilize[0]
+        return self._stabilize[0]
 
     def __invert__(self):
         r"""
-        The stabilized configuration.
+        Return the stabilized configuration.
 
         OUTPUT: ``SandpileConfig``
-
-        Returns the stabilized configuration.
 
         EXAMPLES::
 
@@ -3590,9 +3592,9 @@ class SandpileConfig(dict):
         """
         return self._stabilize[0]
 
-    def support(self):
+    def support(self) -> list:
         r"""
-        The vertices containing sand.
+        Return the vertices containing sand.
 
         OUTPUT: list - support of the configuration
 
@@ -3675,7 +3677,7 @@ class SandpileConfig(dict):
             1 and that its length is equal to the number of sink vertices or the number of nonsink vertices.
         """
         c = deepcopy(self)
-        n = self._sandpile.num_verts()
+        n = self._sandpile.n_vertices()
         if distrib is None:  # default = uniform distribution on nonsink vertices
             distrib = [QQ.one() / (n - 1)] * (n - 1)
         if len(distrib) == n - 1:  # prob. dist. on nonsink vertices
@@ -3713,10 +3715,10 @@ class SandpileConfig(dict):
             True
         """
         v = vector(self.values())
-        w = v*self._sandpile.reduced_laplacian().dense_matrix()**(-1)
-        return lcm([denominator(i) for i in w])
+        w = v * self._sandpile.reduced_laplacian().dense_matrix()**(-1)
+        return lcm([i.denominator() for i in w])
 
-    def is_stable(self):
+    def is_stable(self) -> bool:
         r"""
         Return whether the configuration is stable.
 
@@ -3732,12 +3734,9 @@ class SandpileConfig(dict):
             sage: (S.max_stable() & S.max_stable()).is_stable()
             True
         """
-        for v in self._vertices:
-            if self[v] >= self._sandpile.out_degree(v):
-                return False
-        return True
+        return all(self[v] < self._sandpile.out_degree(v) for v in self._vertices)
 
-    def _set_equivalent_recurrent(self):
+    def _set_equivalent_recurrent(self) -> None:
         r"""
         Set the equivalent recurrent configuration and the corresponding
         firing vector.
@@ -3767,8 +3766,9 @@ class SandpileConfig(dict):
 
     def equivalent_recurrent(self, with_firing_vector=False):
         r"""
-        The recurrent configuration equivalent to the given configuration.
-        Optionally, return the corresponding firing vector.
+        Return the recurrent configuration equivalent to the given configuration.
+
+        Optionally, this returns the corresponding firing vector.
 
         INPUT:
 
@@ -3800,7 +3800,7 @@ class SandpileConfig(dict):
         else:
             return self._equivalent_recurrent[0]
 
-    def _set_is_recurrent(self):
+    def _set_is_recurrent(self) -> None:
         r"""
         Compute and store whether the configuration is recurrent.
 
@@ -3822,7 +3822,7 @@ class SandpileConfig(dict):
             c = ~(self + b)
             self._is_recurrent = (c == self)
 
-    def is_recurrent(self):
+    def is_recurrent(self) -> bool:
         r"""
         Return whether the configuration is recurrent.
 
@@ -3838,7 +3838,7 @@ class SandpileConfig(dict):
         """
         return self._is_recurrent
 
-    def _set_equivalent_superstable(self):
+    def _set_equivalent_superstable(self) -> None:
         r"""
         Set the superstable configuration equivalent to the given
         configuration and its corresponding firing vector.
@@ -3858,8 +3858,9 @@ class SandpileConfig(dict):
 
     def equivalent_superstable(self, with_firing_vector=False):
         r"""
-        The equivalent superstable configuration. Optionally, return the
-        corresponding firing vector.
+        Return the equivalent superstable configuration.
+
+        Optionally, this returns the corresponding firing vector.
 
         INPUT:
 
@@ -3888,14 +3889,11 @@ class SandpileConfig(dict):
         """
         if with_firing_vector:
             return self._equivalent_superstable
-        else:
-            return self._equivalent_superstable[0]
+        return self._equivalent_superstable[0]
 
-    def _set_is_superstable(self):
+    def _set_is_superstable(self) -> None:
         r"""
         Compute and store whether ``config`` is superstable.
-
-        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3912,7 +3910,7 @@ class SandpileConfig(dict):
         else:
             self._is_superstable = self.dualize().is_recurrent()
 
-    def is_superstable(self):
+    def is_superstable(self) -> bool:
         r"""
         Return whether the configuration is superstable.
 
@@ -3928,9 +3926,10 @@ class SandpileConfig(dict):
 
     def is_symmetric(self, orbits) -> bool:
         r"""
-        Return whether the configuration is symmetric.  Return ``True`` if the values of the
-        configuration are constant over the vertices in each sublist of
-        ``orbits``.
+        Return whether the configuration is symmetric.
+
+        This returns ``True`` if the values of the configuration are
+        constant over the vertices in each sublist of ``orbits``.
 
         INPUT:
 
@@ -3953,7 +3952,7 @@ class SandpileConfig(dict):
 
     def burst_size(self, v):
         r"""
-        The burst size of the configuration with respect to the given vertex.
+        Return the burst size of the configuration with respect to the given vertex.
 
         INPUT:
 
@@ -3982,11 +3981,11 @@ class SandpileConfig(dict):
         """
         if v == self.sandpile().sink():
             return 1
-        else:
-            w = deepcopy(self)
-            w[v] -= 1
-            w = w.equivalent_recurrent()
-            return w.deg() - self.deg() + 1
+
+        w = deepcopy(self)
+        w[v] -= 1
+        w = w.equivalent_recurrent()
+        return w.deg() - self.deg() + 1
 
     def show(self, sink=True, colors=True, heights=False, directed=None, **kwds):
         r"""
@@ -4032,7 +4031,7 @@ class SandpileConfig(dict):
                 if i == self.sandpile().sink():
                     a[i] = str(i)
                 else:
-                    a[i] = str(i)+":"+str(self[i])
+                    a[i] = str(i) + ":" + str(self[i])
             T.relabel(a)
         if colors:
             vc: dict[str, list] = {}  # vertex colors
@@ -4088,7 +4087,7 @@ class SandpileDivisor(dict):
             betti                  -- The Betti numbers for the support-complex.
             deg                    -- The degree of the divisor.
             dualize                -- The difference with the maximal stable divisor.
-            effective_div          -- All linearly equivalent effective divisors.
+            effective_div          -- Return all linearly equivalent effective divisors.
             fire_script            -- Fire the given script.
             fire_unstable          -- Fire all unstable vertices.
             fire_vertex            -- Fire the given vertex.
@@ -4098,16 +4097,16 @@ class SandpileDivisor(dict):
             is_q_reduced           -- Return whether the divisor is q-reduced.
             is_symmetric           -- Return whether the divisor is symmetric.
             is_weierstrass_pt      -- Return whether the given vertex is a Weierstrass point.
-            polytope               -- The polytope determining the complete linear system.
-            polytope_integer_pts   -- The integer points inside divisor's polytope.
-            q_reduced              -- The linearly equivalent q-reduced divisor.
-            rank                   -- The rank of the divisor.
+            polytope               -- Return the polytope determining the complete linear system.
+            polytope_integer_pts   -- Return the integer points inside divisor's polytope.
+            q_reduced              -- Return the linearly equivalent q-reduced divisor.
+            rank                   -- Return the rank of the divisor.
             sandpile               -- The divisor's underlying sandpile.
             show                   -- Show the divisor.
-            simulate_threshold     -- The first unstabilizable divisor in the closed Markov chain.
+            simulate_threshold     -- Return the first unstabilizable divisor in the closed Markov chain.
             stabilize              -- The stabilization of the divisor.
             support                -- List of vertices at which the divisor is nonzero.
-            unstable               -- The unstable vertices.
+            unstable               -- Return the unstable vertices.
             values                 -- The values of the divisor as a list.
             weierstrass_div        -- The Weierstrass divisor.
             weierstrass_gap_seq    -- The Weierstrass gap sequence at the given vertex.
@@ -4119,7 +4118,7 @@ class SandpileDivisor(dict):
             enter "SandpileDivisor.FOO?" or enter "D.FOO?" for any SandpileDivisor D."""),
                        verbose=verbose)
 
-    def __init__(self, S, D):
+    def __init__(self, S, D) -> None:
         r"""
         Create a divisor on a Sandpile.
 
@@ -4129,8 +4128,6 @@ class SandpileDivisor(dict):
 
         - ``D`` -- dictionary or list representing a divisor
 
-        OUTPUT: SandpileDivisor
-
         EXAMPLES::
 
             sage: S = sandpiles.Cycle(6)
@@ -4138,7 +4135,7 @@ class SandpileDivisor(dict):
             sage: D.support()
             [1, 3, 4, 5]
         """
-        if len(D) == S.num_verts():
+        if len(D) == S.n_vertices():
             if type(D) in [dict, SandpileDivisor, SandpileConfig]:
                 dict.__init__(self, dict(D))
             elif isinstance(D, list):
@@ -4268,7 +4265,7 @@ class SandpileDivisor(dict):
             else:
                 raise AttributeError(name)
 
-    def _set_deg(self):
+    def _set_deg(self) -> None:
         r"""
         Compute and store the degree of the divisor.
 
@@ -4342,7 +4339,8 @@ class SandpileDivisor(dict):
             sage: 3*D == D*3
             True
         """
-        return SandpileDivisor(self.sandpile(), [i*other for i in self.values()])
+        return SandpileDivisor(self.sandpile(),
+                               [i * other for i in self.values()])
 
     def __rmul__(self, other):
         r"""
@@ -4453,7 +4451,7 @@ class SandpileDivisor(dict):
         """
         return SandpileDivisor(self._sandpile, [-self[v] for v in self._vertices])
 
-    def __le__(self, other):
+    def __le__(self, other) -> bool:
         r"""
         Return ``True`` if every component of ``self`` is at most that of
         ``other``.
@@ -4483,7 +4481,7 @@ class SandpileDivisor(dict):
         """
         return all(self[v] <= other[v] for v in self._vertices)
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         r"""
         Return ``True`` if every component of ``self`` is at most that
         of ``other`` and the two divisors are not equal.
@@ -4508,7 +4506,7 @@ class SandpileDivisor(dict):
         """
         return self <= other and self != other
 
-    def __ge__(self, other):
+    def __ge__(self, other) -> bool:
         r"""
         Return ``True`` if every component of ``self`` is at least that of
         ``other``.
@@ -4538,7 +4536,7 @@ class SandpileDivisor(dict):
         """
         return all(self[v] >= other[v] for v in self._vertices)
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         r"""
         Return ``True`` if every component of ``self`` is at least that
         of ``other`` and the two divisors are not equal.
@@ -4580,7 +4578,7 @@ class SandpileDivisor(dict):
         """
         return self._sandpile
 
-    def values(self):
+    def values(self) -> list:
         r"""
         The values of the divisor as a list.
 
@@ -4645,7 +4643,9 @@ class SandpileDivisor(dict):
 
     def fire_script(self, sigma):
         r"""
-        Fire the given script.  In other words, fire each vertex the number of
+        Fire the given script.
+
+        In other words, fire each vertex the number of
         times indicated by ``sigma``.
 
         INPUT:
@@ -4671,14 +4671,14 @@ class SandpileDivisor(dict):
         sigma = sigma.values()
         for i in range(len(sigma)):
             v = self._vertices[i]
-            D[v] -= sigma[i]*self._sandpile.out_degree(v)
+            D[v] -= sigma[i] * self._sandpile.out_degree(v)
             for e in self._sandpile.outgoing_edge_iterator(v):
                 D[e[1]] += sigma[i] * e[2]
         return SandpileDivisor(self._sandpile, D)
 
-    def unstable(self):
+    def unstable(self) -> list:
         r"""
-        The unstable vertices.
+        Return the unstable vertices.
 
         OUTPUT: list of vertices
 
@@ -4712,7 +4712,7 @@ class SandpileDivisor(dict):
                 D[e[1]] += e[2]
         return SandpileDivisor(self._sandpile, D)
 
-    def _set_q_reduced(self):
+    def _set_q_reduced(self) -> None:
         r"""
         The linearly equivalent `q`-reduced divisor.
 
@@ -4733,7 +4733,7 @@ class SandpileDivisor(dict):
 
     def q_reduced(self, verbose=True):
         r"""
-        The linearly equivalent `q`-reduced divisor.
+        Return the linearly equivalent `q`-reduced divisor.
 
         INPUT:
 
@@ -4757,13 +4757,14 @@ class SandpileDivisor(dict):
         """
         if verbose:
             return deepcopy(self._q_reduced)
-        else:
-            return self._q_reduced.values()
+        return self._q_reduced.values()
 
-    def is_q_reduced(self):
+    def is_q_reduced(self) -> bool:
         r"""
-        Return whether the divisor is `q`-reduced.  This would mean that `self = c + kq` where
-        `c` is superstable, `k` is an integer, and `q` is the sink vertex.
+        Return whether the divisor is `q`-reduced.
+
+        This would mean that `self = c + kq` where `c` is superstable,
+        `k` is an integer, and `q` is the sink vertex.
 
         OUTPUT: boolean
 
@@ -4800,8 +4801,9 @@ class SandpileDivisor(dict):
 
     def is_linearly_equivalent(self, D, with_firing_vector=False):
         r"""
-        Return whether the given divisor is linearly equivalent.  Optionally, returns the
-        firing vector.  (See NOTE.)
+        Return whether the given divisor is linearly equivalent.
+
+        Optionally, this returns the firing vector.  (See NOTE.)
 
         INPUT:
 
@@ -4844,33 +4846,33 @@ class SandpileDivisor(dict):
         # Now test for linear equivalence and find firing vector
         D, U, V = self.sandpile()._smith_form
         b = v - w
-        ub = U*b
+        ub = U * b
         if ub[-1] != 0:
             if with_firing_vector:
                 return vector([])
-            else:
-                return False
+            return False
+
+        try:
+            x = vector(ZZ, [ub[i] / D[i][i] for i in range(D.nrows() - 1)] + [0])
+        except (TypeError, ValueError):
+            if with_firing_vector:
+                return vector([])
+            return False
         else:
-            try:
-                x = vector(ZZ, [ub[i]/D[i][i] for i in range(D.nrows()-1)]+[0])
-                if with_firing_vector:
-                    return V*x
-                else:
-                    return True
-            except Exception:
-                if with_firing_vector:
-                    return vector([])
-                else:
-                    return False
+            if with_firing_vector:
+                return V * x
+            return True
 
     def simulate_threshold(self, distrib=None):
         r"""
-        The first unstabilizable divisor in the closed Markov chain.
+        Return the first unstabilizable divisor in the closed Markov chain.
+
         (See NOTE.)
 
         INPUT:
 
-        - ``distrib`` -- (optional)  list of nonnegative numbers representing a probability distribution on the vertices
+        - ``distrib`` -- (optional) list of nonnegative numbers
+          representing a probability distribution on the vertices
 
         OUTPUT: SandpileDivisor
 
@@ -4882,7 +4884,7 @@ class SandpileDivisor(dict):
             {0: 2, 1: 3, 2: 1, 3: 2}
             sage: n(mean([D.simulate_threshold().deg() for _ in range(10)]))  # random
             7.10000000000000
-            sage: n(s.stationary_density()*s.num_verts())
+            sage: n(s.stationary_density()*s.n_vertices())
             6.93750000000000
 
         .. NOTE::
@@ -4895,7 +4897,7 @@ class SandpileDivisor(dict):
         E = deepcopy(self)
         S = E.sandpile()
         V = S.vertices(sort=True)
-        n = S.num_verts()
+        n = S.n_vertices()
         if distrib is None:  # default = uniform distribution
             distrib = [QQ.one() / n] * n
         X = GeneralDiscreteDistribution(distrib)
@@ -4905,7 +4907,7 @@ class SandpileDivisor(dict):
             E[V[i]] += 1
         return E
 
-    def _set_linear_system(self):
+    def _set_linear_system(self) -> None:
         r"""
         Compute and store the complete linear system of a divisor.
 
@@ -4924,7 +4926,7 @@ class SandpileDivisor(dict):
             This method requires 4ti2.
         """
         L = self._sandpile._laplacian.transpose()
-        n = self._sandpile.num_verts()
+        n = self._sandpile.n_vertices()
 
         # temporary file names
         lin_sys = tmp_filename()
@@ -5000,7 +5002,7 @@ class SandpileDivisor(dict):
         self._linear_system = {'num_homog': num_homog, 'homog': homog,
                                'num_inhomog': num_inhomog, 'inhomog': inhomog}
 
-    def _set_polytope(self):
+    def _set_polytope(self) -> None:
         r"""
         Compute the polyhedron determining the linear system for D.
 
@@ -5017,9 +5019,9 @@ class SandpileDivisor(dict):
         my_ieqs = [[self[v]] + list(-myL[i]) for i, v in enumerate(S.vertices(sort=True))]
         self._polytope = Polyhedron(ieqs=my_ieqs)
 
-    def polytope(self):
+    def polytope(self) -> Polyhedron:
         r"""
-        The polytope determining the complete linear system.
+        Return the polytope determining the complete linear system.
 
         OUTPUT: polytope
 
@@ -5049,7 +5051,7 @@ class SandpileDivisor(dict):
         """
         return deepcopy(self._polytope)
 
-    def _set_polytope_integer_pts(self):
+    def _set_polytope_integer_pts(self) -> None:
         r"""
         Record the integer lattice points inside the polytope determining the
         complete linear system (see the documentation for ``polytope``).
@@ -5064,9 +5066,11 @@ class SandpileDivisor(dict):
         """
         self._polytope_integer_pts = self._polytope.integral_points()
 
-    def polytope_integer_pts(self):
+    def polytope_integer_pts(self) -> tuple:
         r"""
-        The integer points inside divisor's polytope.  The polytope referred to
+        Return the integer points inside divisor's polytope.
+
+        The polytope referred to
         here is the one determining the divisor's complete linear system (see the
         documentation for ``polytope``).
 
@@ -5089,7 +5093,7 @@ class SandpileDivisor(dict):
         """
         return deepcopy(self._polytope_integer_pts)
 
-    def _set_effective_div(self):
+    def _set_effective_div(self) -> None:
         r"""
         Compute all of the linearly equivalent effective divisors linearly.
 
@@ -5107,13 +5111,15 @@ class SandpileDivisor(dict):
         self._effective_div = [SandpileDivisor(S, list(dv - myL*i))
                                for i in self._polytope_integer_pts]
 
-    def effective_div(self, verbose=True, with_firing_vectors=False):
+    def effective_div(self, verbose=True, with_firing_vectors=False) -> list:
         r"""
-        All linearly equivalent effective divisors.  If ``verbose``
-        is ``False``, the divisors are converted to lists of integers.
-        If ``with_firing_vectors`` is ``True`` then a list of firing vectors
-        is also given, each of which prescribes the vertices to be fired
-        in order to obtain an effective divisor.
+        Return all linearly equivalent effective divisors.
+
+        If ``verbose`` is ``False``, the divisors are converted to
+        lists of integers.  If ``with_firing_vectors`` is ``True``
+        then a list of firing vectors is also given, each of which
+        prescribes the vertices to be fired in order to obtain an
+        effective divisor.
 
         INPUT:
 
@@ -5168,23 +5174,26 @@ class SandpileDivisor(dict):
         S = self.sandpile()
         eff = deepcopy(self._effective_div)
         if with_firing_vectors:
-            fv = [vector(list(i)[:S._sink_ind] + [0] + list(i)[S._sink_ind:]) for i in self._polytope_integer_pts]
+            fv = [vector(list(i)[:S._sink_ind] + [0] + list(i)[S._sink_ind:])
+                  for i in self._polytope_integer_pts]
         if verbose and with_firing_vectors:
             return list(zip(eff, fv))
-        elif verbose:   # verbose without firing vectors
+        if verbose:   # verbose without firing vectors
             return eff
-        elif with_firing_vectors:  # not verbose but with firing vectors
+        if with_firing_vectors:  # not verbose but with firing vectors
             return list(zip([i.values() for i in eff], fv))
-        else:  # not verbose, no firing vectors
-            return [i.values() for i in eff]
+        # not verbose, no firing vectors
+        return [i.values() for i in eff]
 
-    def _set_rank(self, set_witness=False):
+    def _set_rank(self, set_witness=False) -> None:
         r"""
         Find the rank of the divisor `D` and an effective divisor `E` such that
-        `D - E` is unwinnable, i.e., has an empty complete linear system.  If
-        Riemann-Roch applies, ``verbose`` is ``False``, and the degree of `D` is greater
-        than `2g-2` (`g = ` genus), then the rank is `\deg(D) - g`.  In that case,
-        the divisor `E` is not calculated.
+        `D - E` is unwinnable, i.e., has an empty complete linear system.
+
+        If Riemann-Roch applies, ``verbose`` is ``False``, and the
+        degree of `D` is greater than `2g-2` (`g = ` genus), then the
+        rank is `\deg(D) - g`.  In that case, the divisor `E` is not
+        calculated.
 
         INPUT:
 
@@ -5213,7 +5222,7 @@ class SandpileDivisor(dict):
         # If undirected and D has high degree, use Riemann-Roch.
         if S.is_undirected() and not set_witness:
             # We've been careful about loops
-            g = sum(S.laplacian().diagonal()) / 2 - S.num_verts() + 1
+            g = sum(S.laplacian().diagonal()) / 2 - S.n_vertices() + 1
             if self.deg() > 2 * g - 2:
                 self._rank = self.deg() - g
                 return  # return early
@@ -5221,7 +5230,7 @@ class SandpileDivisor(dict):
         # the Cori-Le Borgne algorithm
         if S.name() == 'Complete sandpile graph' and not set_witness:
             # Cori-LeBorgne algorithm
-            n = S.num_verts()
+            n = S.n_vertices()
             rk = -1
             E = self.q_reduced()
             k = E[S.sink()]
@@ -5231,20 +5240,20 @@ class SandpileDivisor(dict):
                 rk += 1
                 try:
                     d = next(i for i, j in enumerate(c) if i == j and i != 0)
-                except Exception:
+                except StopIteration:
                     d = n - 1
                 k = k - d
                 if k >= 0:
                     c[0] = n - 1 - d
                     b1 = [c[i] + n - d for i in range(1, d)]
-                    b2 = [c[i] - d for i in range(d, n-1)]
+                    b2 = [c[i] - d for i in range(d, n - 1)]
                     c = b2 + [c[0]] + b1
             self._rank = rk
         # All other cases.
         else:
             rk = -1
             while True:
-                for e in integer_vectors_nk_fast_iter(rk + 1, S.num_verts()):
+                for e in integer_vectors_nk_fast_iter(rk + 1, S.n_vertices()):
                     E = SandpileDivisor(S, e)
                     if not (self - E).effective_div():
                         self._rank = rk
@@ -5254,7 +5263,9 @@ class SandpileDivisor(dict):
 
     def rank(self, with_witness=False):
         r"""
-        The rank of the divisor.  Optionally returns an effective divisor `E` such
+        Return the rank of the divisor.
+
+        Optionally this returns an effective divisor `E` such
         that `D - E` is not winnable (has an empty complete linear system).
 
         INPUT:
@@ -5331,7 +5342,7 @@ class SandpileDivisor(dict):
             sage: D._set_r_of_D()                               # optional - 4ti2
         """
         eff = self.effective_div()
-        n = self._sandpile.num_verts()
+        n = self._sandpile.n_vertices()
         r = -1
         if not eff:
             self._r_of_D = (r, self)
@@ -5387,7 +5398,7 @@ class SandpileDivisor(dict):
             v = s.sink()
         try:
             seq = self._weierstrass_rank_seq[v]
-        except Exception:
+        except (KeyError, AttributeError):
             D = deepcopy(self)
             verts = s.vertices(sort=True)
             Ei = s.zero_div()
@@ -5446,7 +5457,7 @@ class SandpileDivisor(dict):
         else:
             return gaps
 
-    def is_weierstrass_pt(self, v='sink'):
+    def is_weierstrass_pt(self, v='sink') -> bool:
         r"""
         Return whether the given vertex is a Weierstrass point.
 
@@ -5685,18 +5696,19 @@ class SandpileDivisor(dict):
         S = self.sandpile()
         V = S.vertices(sort=True)
         if distrib is None:  # default = uniform distribution
-            n = S.num_verts()
+            n = S.n_vertices()
             distrib = [QQ.one() / n] * n
         X = GeneralDiscreteDistribution(distrib)
         i = X.get_random_element()
         D[V[i]] += 1
         return D
 
-    def is_symmetric(self, orbits):
+    def is_symmetric(self, orbits) -> bool:
         r"""
-        Return whether the divisor is symmetric.  Return ``True`` if the values of the
-        configuration are constant over the vertices in each sublist of
-        ``orbits``.
+        Return whether the divisor is symmetric.
+
+        This returns ``True`` if the values of the configuration are
+        constant over the vertices in each sublist of ``orbits``.
 
         INPUT:
 
@@ -5749,8 +5761,10 @@ class SandpileDivisor(dict):
 
     def is_alive(self, cycle=False):
         r"""
-        Return whether the divisor is stabilizable.  In other words, will the divisor stabilize
-        under repeated firings of all unstable vertices?  Optionally returns the
+        Return whether the divisor is stabilizable.
+
+        In other words, will the divisor stabilize under repeated
+        firings of all unstable vertices?  Optionally this returns the
         resulting cycle.
 
         INPUT:
@@ -5770,7 +5784,7 @@ class SandpileDivisor(dict):
         """
         return self._life if cycle else bool(self._life)
 
-    def _set_stabilize(self):
+    def _set_stabilize(self) -> None:
         r"""
         The stabilization of the divisor.  If not stabilizable, return an error.
 
@@ -5920,11 +5934,11 @@ def sandlib(selector=None):
                              3: [1, 2]}},
     }
     if selector is None:
-        print('')
+        print()
         print('  Sandpiles in the sandlib:')
         for i in sorted(sandpiles):
             print('    ', i, ':', sandpiles[i]['description'])
-        print("")
+        print()
     elif selector not in sandpiles:
         print(selector, 'is not in the sandlib.')
     else:

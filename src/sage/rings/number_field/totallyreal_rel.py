@@ -67,9 +67,6 @@ discriminant `\le 17 \times 10^9`.
     sage: F.<t> = NumberField(ZZx([1,-4,3,1]))
     sage: F.disc()
     49
-    sage: enumerate_totallyreal_fields_rel(F, 3, 17*10^9)  # not tested, too long time (258s on sage.math, 2013)
-    [[16240385609L, x^9 - x^8 - 9*x^7 + 4*x^6 + 26*x^5 - 2*x^4 - 25*x^3 - x^2 + 7*x + 1, xF^3 + (-t^2 - 4*t + 1)*xF^2 + (t^2 + 3*t - 5)*xF + 3*t^2 + 11*t - 5]]    # 32-bit
-    [[16240385609, x^9 - x^8 - 9*x^7 + 4*x^6 + 26*x^5 - 2*x^4 - 25*x^3 - x^2 + 7*x + 1, xF^3 + (-t^2 - 4*t + 1)*xF^2 + (t^2 + 3*t - 5)*xF + 3*t^2 + 11*t - 5]]     # 64-bit
 
 TESTS:
 
@@ -292,7 +289,7 @@ class tr_data_rel:
             # No starting input, all polynomials will be found; initialize to zero.
             self.a = [0]*m + [1]
             self.amaxvals = [[]]*m
-            anm1s = [[i] for i in range(0,m//2+1)]
+            anm1s = [[i] for i in range(m//2+1)]
             for i in range(1,self.d):
                 for j in range(len(anm1s)):
                     anm1s[j] = [anm1s[j] + [i] for i in range(m)]
@@ -392,7 +389,7 @@ class tr_data_rel:
         if k == -1:
             if len(self.amaxvals[0]) > 0 and self.amaxvals[0]:
                 self.a[0] = self.amaxvals[0].pop()
-                for i in range(0,m):
+                for i in range(m):
                     f_out[i] = self.a[i]
                 return
             else:
@@ -430,7 +427,7 @@ class tr_data_rel:
                     print(k, ":", end="")
                     for i in range(self.m + 1):
                         print(self.a[i], end="")
-                    print("")
+                    print()
 
                 if k == m - 2:
                     # We only know the value of a[n-1], the trace.

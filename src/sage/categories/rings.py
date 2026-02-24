@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Rings
 """
@@ -20,8 +19,6 @@ from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import randint
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
-from sage.structure.element import Element
-from sage.structure.parent import Parent
 
 
 class Rings(CategoryWithAxiom):
@@ -480,10 +477,38 @@ class Rings(CategoryWithAxiom):
                 False
                 sage: Qp(19).is_prime_field()                                               # needs sage.rings.padics
                 False
+                sage: R.<x> = PolynomialRing(QQ)
+                sage: S = R.quotient(x + 16)
+                sage: S.is_prime_field()
+                True
+                sage: S = R.quotient(x^2 - 2)
+                sage: S.is_prime_field()
+                False
+                sage: R.<x> = PolynomialRing(GF(5))
+                sage: S = R.quotient(x^2 + x + 1)
+                sage: S.is_field()
+                True
+                sage: S.is_prime_field()
+                False
+                sage: T = R.quotient(x - 2)
+                sage: T.is_prime_field()
+                True
+
+            We check that bug :issue:`40426` is fixed::
+
+                sage: K = GF(4)
+                sage: A.<x> = K[]
+                sage: L = K.extension(x+1)
+                sage: L.is_prime_field()
+                False
             """
             # the case of QQ is handled by QQ itself
+            from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
+            from sage.rings.rational_field import QQ
+            if isinstance(self, PolynomialQuotientRing_generic) and self.base_ring() is QQ:
+                return self.absolute_degree() == 1
             from sage.categories.finite_fields import FiniteFields
-            return self in FiniteFields() and self.degree() == 1
+            return self in FiniteFields() and self.absolute_degree() == 1
 
         def is_zero(self) -> bool:
             """
@@ -1746,6 +1771,67 @@ class Rings(CategoryWithAxiom):
             else:
                 a, b = args[0], args[1]
             return randint(a, b) * self.one()
+
+        @cached_method
+        def epsilon(self):
+            """
+            Return the precision error of elements in this ring.
+
+            .. NOTE:: This is not used anywhere inside the code base.
+
+            EXAMPLES::
+
+                sage: RDF.epsilon()
+                2.220446049250313e-16
+                sage: ComplexField(53).epsilon()                                            # needs sage.rings.real_mpfr
+                2.22044604925031e-16
+                sage: RealField(10).epsilon()                                               # needs sage.rings.real_mpfr
+                0.0020
+
+            For exact rings, zero is returned::
+
+                sage: ZZ.epsilon()
+                0
+
+            This also works over derived rings::
+
+                sage: RR['x'].epsilon()                                                     # needs sage.rings.real_mpfr
+                2.22044604925031e-16
+                sage: QQ['x'].epsilon()
+                0
+
+            For the symbolic ring, there is no reasonable answer::
+
+                sage: SR.epsilon()                                                          # needs sage.symbolic
+                Traceback (most recent call last):
+                ...
+                NotImplementedError
+            """
+            one = self.one()
+
+            # ulp is only defined in some real fields
+            try:
+                return one.ulp()
+            except AttributeError:
+                pass
+
+            try:
+                eps = one.real().ulp()
+            except AttributeError:
+                pass
+            else:
+                return self(eps)
+
+            if self.is_exact():
+                return self.zero()
+
+            S = self.base_ring()
+            if self is not S:
+                try:
+                    return self(S.epsilon())
+                except AttributeError:
+                    pass
+            raise NotImplementedError
 
     class ElementMethods:
         def is_unit(self) -> bool:

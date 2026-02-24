@@ -20,8 +20,8 @@ package, run the following command in the shell ::
 This causes the latest version of the database to be downloaded from
 the internet.
 
-Both the mini and full versions of John Cremona's tables are stored in
-SAGE_SHARE/cremona as SQLite databases. The mini version has the layout::
+Both the mini and full versions of John Cremona's tables are stored
+as SQLite databases. The mini version has the layout::
 
     CREATE TABLE t_class(conductor INTEGER, class TEXT PRIMARY KEY, rank INTEGER);
     CREATE TABLE t_curve(class TEXT, curve TEXT PRIMARY KEY, eqn TEXT UNIQUE, tors INTEGER);
@@ -115,8 +115,8 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
 
         sage: d = sage.databases.cremona.build('cremona','ecdata.tgz')   # not tested
     """
-    from sage.env import SAGE_SHARE
-    db_path = os.path.join(SAGE_SHARE,'cremona',name.replace(' ','_')+'.db')
+    from sage.env import DOT_SAGE
+    db_path = os.path.join(DOT_SAGE, 'db', 'cremona', name.replace(' ','_')+'.db')
     if os.path.exists(db_path):
         raise RuntimeError('Please (re)move %s before building ' % db_path
                 + 'database')

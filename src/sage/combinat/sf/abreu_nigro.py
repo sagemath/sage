@@ -17,8 +17,9 @@ Abreu-Nigro symmetric functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import multiplicative
 from sage.misc.cachefunc import cached_method
+
+from . import multiplicative
 
 
 class SymmetricFunctionAlgebra_AbreuNigro(multiplicative.SymmetricFunctionAlgebra_multiplicative):

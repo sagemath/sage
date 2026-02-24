@@ -1,4 +1,3 @@
-# cython: binding=True
 # distutils: language = c++
 r"""
 Graph traversals
@@ -1425,7 +1424,10 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     Immutable graphs;:
 
-        sage: G = graphs.RandomGNP(10, .7)
+        sage: while True:
+        ....:     G = graphs.RandomGNP(10, .7)
+        ....:     if G.is_connected():  # algorithm only available for connected graphs
+        ....:         break
         sage: G._backend
         <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
         sage: H = Graph(G, immutable=True)

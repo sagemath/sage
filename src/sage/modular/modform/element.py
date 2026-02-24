@@ -60,54 +60,24 @@ from sage.structure.richcmp import richcmp, op_NE, op_EQ
 import sage.modular.hecke.element as element
 from . import defaults
 
-lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
-lazy_import('sage.rings.number_field.number_field_morphisms', 'NumberFieldEmbedding')
+lazy_import('sage.combinat.integer_vector_weighted',
+            'WeightedIntegerVectors')
+lazy_import('sage.rings.number_field.number_field_morphisms',
+            'NumberFieldEmbedding')
 
 
-def is_ModularFormElement(x):
-    """
-    Return ``True`` if x is a modular form.
-
-    EXAMPLES::
-
-        sage: from sage.modular.modform.element import is_ModularFormElement
-        sage: is_ModularFormElement(5)
-        doctest:warning...
-        DeprecationWarning: The function is_ModularFormElement is deprecated;
-        use 'isinstance(..., ModularFormElement)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        False
-        sage: is_ModularFormElement(ModularForms(11).0)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_ModularFormElement is deprecated; "
-                "use 'isinstance(..., ModularFormElement)' instead.")
-    return isinstance(x, ModularFormElement)
-
-
-def delta_lseries(prec=53, max_imaginary_part=0,
-                  max_asymp_coeffs=40, algorithm=None):
+def delta_lseries(prec=53, max_imaginary_part=0):
     r"""
     Return the `L`-series of the modular form `\Delta`.
 
-    If algorithm is ``'gp'``, this returns an interface to Tim
-    Dokchitser's program for computing with the `L`-series of the
-    modular form `\Delta`.
-
-    If algorithm is ``'pari'``, this returns instead an interface to Pari's
+    This returns an interface to Pari's
     own general implementation of `L`-functions.
 
     INPUT:
 
-    - ``prec`` -- integer (bits precision)
+    - ``prec`` -- integer (default: 53) bits precision
 
-    - ``max_imaginary_part`` -- real number
-
-    - ``max_asymp_coeffs`` -- integer
-
-    - ``algorithm`` -- string; ``'gp'`` (default), ``'pari'``
+    - ``max_imaginary_part`` -- real number (default: 0)
 
     OUTPUT:
 
@@ -118,30 +88,10 @@ def delta_lseries(prec=53, max_imaginary_part=0,
         sage: L = delta_lseries()
         sage: L(1)
         0.0374412812685155
-
-        sage: L = delta_lseries(algorithm='pari')
-        sage: L(1)
-        0.0374412812685155
     """
-    if algorithm is None:
-        algorithm = 'pari'
-
-    if algorithm == 'gp':
-        from sage.lfunctions.all import Dokchitser
-        L = Dokchitser(conductor=1, gammaV=[0, 1], weight=12, eps=1,
-                       prec=prec)
-        s = 'tau(n) = (5*sigma(n,3)+7*sigma(n,5))*n/12-35*sum(k=1,n-1,(6*k-4*(n-k))*sigma(k,3)*sigma(n-k,5));'
-        L.init_coeffs('tau(k)', pari_precode=s,
-                      max_imaginary_part=max_imaginary_part,
-                      max_asymp_coeffs=max_asymp_coeffs)
-        L.set_coeff_growth('2*n^(11/2)')
-        L.rename('L-series associated to the modular form Delta')
-        return L
-    elif algorithm == 'pari':
-        from sage.lfunctions.pari import LFunction, lfun_delta
-        return LFunction(lfun_delta(), prec=prec)
-
-    raise ValueError('algorithm must be "gp" or "pari"')
+    from sage.lfunctions.pari import LFunction, lfun_delta
+    return LFunction(lfun_delta(), prec=prec,
+                     max_im=max_imaginary_part)
 
 
 class ModularForm_abstract(ModuleElement):
@@ -205,7 +155,7 @@ class ModularForm_abstract(ModuleElement):
 
     is_modular_form = is_homogeneous  # alias
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -1188,8 +1138,8 @@ class ModularForm_abstract(ModuleElement):
                        prec=prec)
         # Find out how many coefficients of the Dirichlet series are needed
         # in order to compute to the required precision
-        num_coeffs = L.num_coeffs()
-        coeffs = self.q_expansion(num_coeffs + 1).padded_list()[1:]
+        n_coeffs = L.cost()
+        coeffs = self.q_expansion(n_coeffs + 1).padded_list()[1:]
 
         # renormalize so that coefficient of q is 1
         b = coeffs[0]
@@ -1298,7 +1248,7 @@ class ModularForm_abstract(ModuleElement):
         else:
             L = Dokchitser(N, [0, 1, -weight + 1], 2 * weight - 1,
                            eps * C((0, 1)), prec=prec)
-        lcoeffs_prec = L.num_coeffs()
+        lcoeffs_prec = L.cost()
 
         t = verbose("Computing %s coefficients of F" % lcoeffs_prec, level=1)
         F_series = [u**2 for u in self.qexp(lcoeffs_prec + 1).list()[1:]]
@@ -1437,7 +1387,7 @@ class ModularForm_abstract(ModuleElement):
         return y.ceil()
 
     @cached_method
-    def has_cm(self):
+    def has_cm(self) -> bool:
         r"""
         Return whether the modular form ``self`` has complex multiplication.
 
@@ -2760,6 +2710,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         Testing modular forms of nontrivial character::
 
+            sage: # long time (:issue:`39569`)
             sage: F = ModularForms(DirichletGroup(17).0^2, 2).2
             sage: F3 = F^3; F3
             q^3 + (-3*zeta8^2 + 6)*q^4 + (-12*zeta8^2 + 3*zeta8 + 18)*q^5 + O(q^6)
@@ -2942,7 +2893,9 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
             G = DirichletGroup(level, base_ring=R)
             M = constructor(G(epsilon) * G(chi)**2, self.weight(), base_ring=R)
         else:
-            from sage.modular.arithgroup.all import Gamma1
+            from sage.modular.arithgroup.congroup_gamma1 import (
+                Gamma1_constructor as Gamma1,
+            )
             if level is None:
                 # See [AL1978], Proposition 3.1.
                 level = lcm([N, Q]) * Q
@@ -3452,11 +3405,11 @@ class GradedModularFormElement(ModuleElement):
             sage: M([E4, ModularForms(3, 6).0])
             Traceback (most recent call last):
             ...
-            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistant with the base space
+            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistent with the base space
             sage: M({4:E4, 6:ModularForms(3, 6).0})
             Traceback (most recent call last):
             ...
-            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistant with the base space
+            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistent with the base space
             sage: M = ModularFormsRing(Gamma0(2))
             sage: E4 = ModularForms(1, 4).0
             sage: M(E4)[4].parent()
@@ -3479,7 +3432,7 @@ class GradedModularFormElement(ModuleElement):
                                 M = parent.modular_forms_of_weight(f.weight()).change_ring(parent.base_ring())
                                 forms_dictionary[k] = M(f)
                             else:
-                                raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistant with the base space' % (f))
+                                raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistent with the base space' % (f))
                         else:
                             raise ValueError('at least one key (%s) of the defining dictionary does not correspond to the weight of its value (%s). Real weight: %s' % (k, f, f.weight()))
                     else:
@@ -3496,7 +3449,7 @@ class GradedModularFormElement(ModuleElement):
                         M = parent.modular_forms_of_weight(f.weight()).change_ring(parent.base_ring())
                         forms_dictionary[f.weight()] = M(forms_dictionary.get(f.weight(), 0) + f)
                     else:
-                        raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistant with the base space' % (f))
+                        raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistent with the base space' % (f))
                 else:
                     forms_dictionary[ZZ.zero()] = parent.base_ring().coerce(f)
         else:
@@ -3808,8 +3761,8 @@ class GradedModularFormElement(ModuleElement):
         f_other = other._forms_dictionary
         f_mul = defaultdict(int)
 
-        for k_self in f_self.keys():
-            for k_other in f_other.keys():
+        for k_self in f_self:
+            for k_other in f_other:
                 f_mul[k_self + k_other] += f_self[k_self] * f_other[k_other]
 
         return GM(self.parent(), f_mul)
@@ -4006,7 +3959,7 @@ class GradedModularFormElement(ModuleElement):
         mat = Matrix(matrix_datum).transpose()
 
         # initialize the column vector of the coefficients of self
-        coef_self = vector(self[k].coefficients(range(0, sturm_bound + 1))).column()
+        coef_self = vector(self[k].coefficients(range(sturm_bound + 1))).column()
 
         # solve the linear system: mat * X = coef_self
         soln = mat.solve_right(coef_self)

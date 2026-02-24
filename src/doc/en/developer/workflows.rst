@@ -10,9 +10,11 @@ We continue our introduction to Sage development from :ref:`chapter-walkthrough`
 We discuss how to push your local changes to your fork of the GitHub Sage repository
 so that your changes can be reviewed for inclusion in Sage.
 
-Before proceeding, check that you have ``origin`` and ``upstream`` remotes right::
+Before proceeding, check that you have ``origin`` and ``upstream`` remotes right
 
-    [alice@localhost sage]$ git remote -v
+.. code-block:: console
+
+    $ git remote -v
     origin  https://github.com/alice/sage.git (fetch)
     origin  https://github.com/alice/sage.git (push)
     upstream    https://github.com/sagemath/sage.git (fetch)
@@ -53,9 +55,11 @@ Creating a new PR
 
 Suppose you have written an algorithm for calculating the last twin prime,
 committed the code to a local branch based upon ``develop`` branch. Now you
-want to add it to Sage. You would first open a PR for that::
+want to add it to Sage. You would first open a PR for that
 
-    [alice@localhost sage]$ gh pr create
+.. code-block:: console
+
+    $ gh pr create
     ? Where should we push the 'last-twin-prime' branch? user/sage
 
     Creating pull request for user:last-twin-prime into develop in sagemath/sage
@@ -83,9 +87,11 @@ Checking out an existing PR
 ===========================
 
 If you want to base your work on an existing PR or want to review the code of a PR,
-then you would run::
+then you would run
 
-    [alice@localhost sage]$ gh pr checkout 12345
+.. code-block:: console
+
+    $ gh pr checkout 12345
     remote: Enumerating objects: 7, done.
     remote: Counting objects: 100% (7/7), done.
     remote: Compressing objects: 100% (7/7), done.
@@ -110,9 +116,11 @@ to your local branch as described in :ref:`section-walkthrough-add-edit` and
 :ref:`section-walkthrough-commit`.
 
 If you are ready to share the changes up to now, upload your new commits to
-your fork by::
+your fork by
 
-    [alice@localhost sage]$ git push origin
+.. code-block:: console
+
+    $ git push origin
     Enumerating objects: 13, done.
     Counting objects: 100% (13/13), done.
     Delta compression using up to 12 threads
@@ -150,16 +158,20 @@ Merging the upstream develop branch
 
 It commonly happens that ``develop`` branch at the remote ``upstream`` was
 updated and you need to merge the upstream changes to your local branch. Then
-you do::
+you do
 
-    [alice@localhost sage]$ git fetch upstream develop:develop
+.. code-block:: console
+
+    $ git fetch upstream develop:develop
 
 This fast-forwards your local ``develop`` branch to the upstream
 ``develop`` branch.
 
-Now you go back to your working branch and merge the updated ``develop`` branch::
+Now you go back to your working branch and merge the updated ``develop`` branch
 
-    [alice@localhost sage]$ git merge develop
+.. code-block:: console
+
+    $ git merge develop
     ....
 
 If there was no upstream change conflicting with the changes you made locally,

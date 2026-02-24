@@ -1854,9 +1854,9 @@ def plot(funcs, *args, **kwds):
     ``exclude`` and ``detect_poles`` can be used together::
 
         sage: f(x) = (floor(x)+0.5) / (1-(x-0.5)^2)
-        sage: plot(f, (x, -3.5, 3.5), detect_poles='show', exclude=[-3..3],
+        sage: plot(f, (x, 0, 3.5), detect_poles='show', exclude=[1,2,3],
         ....:      ymin=-5, ymax=5)
-        Graphics object consisting of 12 graphics primitives
+        Graphics object consisting of 6 graphics primitives
 
     .. PLOT::
 
@@ -3131,7 +3131,7 @@ def list_plot(data, plotjoined=False, **kwargs):
         sage: list_plot([4, 3+I, I, 1+5*i, None, 1+i])
         Graphics object consisting of 1 graphics primitive
     """
-    from sage.plot.all import point
+    from sage.plot.point import point
     try:
         if not data:
             return Graphics()

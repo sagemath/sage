@@ -26,8 +26,6 @@ from cypari2.gen import Gen as pari_gen
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 
-lazy_import('sage.libs.ntl.all', 'ZZX')
-
 min = misc.min
 ZZ = sage.rings.integer_ring.ZZ
 PrecisionError = precision_error.PrecisionError
@@ -79,6 +77,8 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             self._normalized = True
             self._list = None
             return
+
+        from sage.libs.ntl.ntl_ZZX import ntl_ZZX as ZZX
 
         # First we list the types that are turned into Polynomials
         if isinstance(x, ZZX):
@@ -1258,9 +1258,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             else:
                 if valaddeds[i] < compval:
                     return False
-        if valaddeds[deg] != -self._valbase:
-            return False
-        return True
+        return valaddeds[deg] == -self._valbase
 
     def newton_slopes(self, repetition=True):
         """

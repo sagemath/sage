@@ -477,7 +477,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         latex_name = self.number_field().latex_variable_names()[0]
         return self.polynomial()._latex_(name=latex_name)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Return gap string representation of ``self``.
 
@@ -507,7 +507,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         Check that :issue:`15276` is fixed::
 
-            sage: for n in range(2,20):                                                 # needs sage.libs.gap
+            sage: for n in range(2,20):                                                 # needs sage.libs.gap, long time (:issue:`39569`)
             ....:     K = CyclotomicField(n)
             ....:     assert K(gap(K.gen())) == K.gen(), "n = {}".format(n)
             ....:     assert K(gap(K.one())) == K.one(), "n = {}".format(n)
@@ -2027,7 +2027,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         # Compute the product of the p^e to figure out the unit
         from sage.misc.misc_c import prod
         element_product = prod([p**e for p,e in element_fac], K.one())
-        from sage.structure.all import Factorization
+        from sage.structure.factorization import Factorization
         return Factorization(element_fac, unit=self/element_product)
 
     def is_prime(self):
@@ -5343,6 +5343,23 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         """
         return self._parent.number_field()(NumberFieldElement_absolute.__invert__(self))
 
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        Only implemented here because order elements inherit from field elements,
+        but the canonical associate implemented there does not apply here.
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: K = NumberField(x^3 - x + 2, 'a')
+            sage: OK = K.ring_of_integers()
+            sage: (OK.1).canonical_associate()
+            NotImplemented
+        """
+        return NotImplemented
+
 
 cdef class OrderElement_relative(NumberFieldElement_relative):
     """
@@ -5555,6 +5572,24 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         K = self.parent().number_field()
         R = ZZ[var]
         return R(K(self).absolute_minpoly(var))
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        Only implemented here because order elements inherit from
+        field elements, but the canonical associate implemented there
+        does not apply here.
+
+        EXAMPLES::
+
+            sage: x = ZZ['x'].0
+            sage: K.<a,b> = NumberField([x^2 + 1, x^2 - 3])
+            sage: OK = K.maximal_order()
+            sage: (OK.1).canonical_associate()
+            NotImplemented
+        """
+        return NotImplemented
 
 
 class CoordinateFunction():

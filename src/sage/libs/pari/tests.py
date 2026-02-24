@@ -1523,8 +1523,9 @@ General number fields::
     sage: x = polygen(QQ)
     sage: K.<a> = NumberField(x^2 - 1/8)                                                # needs sage.rings.number_field
     sage: pari(x^2 - 2).factornf(K.pari_polynomial("a"))                                # needs sage.rings.number_field
-    doctest:...: DeprecationWarning: the PARI/GP function factornf is obsolete (2016-08-08)
-    [x + Mod(-a, a^2 - 2), 1; x + Mod(a, a^2 - 2), 1]
+    doctest:warning...
+    DeprecationWarning: the PARI/GP function factornf is obsolete (2016-08-08)
+    [x + Mod(-1/2*a, a^2 - 8), 1; x + Mod(1/2*a, a^2 - 8), 1]
 
     sage: K.<z> = QuadraticField(-23)                                                   # needs sage.rings.number_field
     sage: p = K.primes_above(3)[0]                                                      # needs sage.rings.number_field
@@ -1807,8 +1808,7 @@ library::
     3.6054636014326520859158205642077267748
     sage: eta1 = e.elleta(precision=150)[0]
     sage: eta1.sage()
-    3.605463601432652085915820564207726774810268996598024745444380641429820491740 # 64-bit
-    3.605463601432652085915820564207726774810268996598024745444380641430          # 32-bit
+    3.6054636014326520859158205642077267748102689965980247454443806414...
     sage: from cypari2 import Pari
     sage: pari = Pari()
 

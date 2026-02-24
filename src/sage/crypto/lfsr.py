@@ -127,7 +127,7 @@ AUTHORS:
 
 import copy
 
-from sage.structure.all import Sequence
+from sage.structure.sequence import Sequence
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing

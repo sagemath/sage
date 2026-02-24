@@ -16,8 +16,8 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.algebras.free_algebra import FreeAlgebra
-
 from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.rings.fraction_field import FractionField
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
@@ -125,8 +125,6 @@ class FormsRing_abstract(Parent):
             sage: latex(QuasiWeakModularFormsRing())
             \mathcal{ QM^! }_{n=3}(\Bold{Z})
         """
-
-        from sage.misc.latex import latex
         return "\\mathcal{{ {} }}_{{n={}}}({})".format(self._analytic_type.latex_space_name(), self._group.n(), latex(self._base_ring))
 
     def _element_constructor_(self, el):
@@ -835,7 +833,7 @@ class FormsRing_abstract(Parent):
             - (self._group.n()-2) / (4*self._group.n()) * (Z**2+X**(self._group.n()-2)) * dZ
 
     @cached_method
-    def has_reduce_hom(self):
+    def has_reduce_hom(self) -> bool:
         r"""
         Return whether the method ``reduce`` should reduce
         homogeneous elements to the corresponding space of homogeneous elements.

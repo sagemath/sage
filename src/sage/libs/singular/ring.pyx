@@ -26,10 +26,9 @@ from sage.libs.singular.decl cimport rChangeCurrRing, rComplete, rDelete, idInit
 from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc
 from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_ip, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
 from sage.libs.singular.decl cimport prCopyR
-from sage.libs.singular.decl cimport n_unknown, n_algExt, n_transExt, n_Z, n_Zn,  n_Znm, n_Z2m
-from sage.libs.singular.decl cimport n_coeffType
+from sage.libs.singular.decl cimport n_unknown, n_R, n_algExt, n_transExt, n_long_C, n_Z, n_Zn, n_Znm, n_Z2m
+from sage.libs.singular.decl cimport n_coeffType, LongComplexInfo
 from sage.libs.singular.decl cimport rDefault, GFInfo, ZnmInfo, nInitChar, AlgExtInfo, TransExtInfo
-
 
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring cimport IntegerRing_class
@@ -252,6 +251,16 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
+        sage: R(2)^32 == R(0)
+        True
+
+    The following may use ``n_Z2m`` or ``n_Znm`` depends on ``sizeof(unsigned long)``::
+
+        sage: R = PolynomialRing(Zmod(2^64), ("a", "b"), implementation="singular")
+        sage: ZZ(R(3^1000)) == 3^1000 % 2^64
+        True
+        sage: ZZ(R(5^1000)) == 5^1000 % 2^64
+        True
 
     Integer modulo large power of 2::
 
@@ -262,6 +271,10 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
+        sage: ZZ(R(5^1000)) == 5^1000 % 2^1000
+        True
+        sage: R(2)^1000 == R(0)
+        True
 
     Integer modulo large power of odd prime::
 
@@ -313,6 +326,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     cdef AlgExtInfo extParam
     cdef TransExtInfo trextParam
     cdef n_coeffType _type = n_unknown
+    cdef LongComplexInfo info
 
     #cdef cfInitCharProc myfunctionptr;
 
@@ -496,6 +510,17 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _cf = nInitChar( n_Z, NULL) # integer coefficient ring
         _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
+    elif isinstance(base_ring, sage.rings.abc.RealDoubleField):
+        _cf = nInitChar(n_R, NULL)
+        _ring = rDefault(_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+
+    elif isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
+        info.float_len = 15
+        info.float_len2 = 0
+        info.par_name = "I"
+        _cf = nInitChar(n_long_C, <void *>&info)
+        _ring = rDefault(_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+
     elif isinstance(base_ring, sage.rings.abc.IntegerModRing):
 
         ch = base_ring.characteristic()
@@ -516,7 +541,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         else:
             modbase, cexponent = ch.perfect_power()
 
-            if modbase == 2 and cexponent > 1:
+            if modbase == 2 and 1 < cexponent <= 8*sizeof(unsigned long):  # see :issue:`40855`
                 _cf = nInitChar(n_Z2m, <void *>cexponent)
 
             elif modbase.is_prime() and cexponent > 1:
@@ -851,7 +876,7 @@ cpdef poison_currRing(frame, event, arg):
         sage: from sage.libs.singular.ring import poison_currRing
         sage: sys.settrace(poison_currRing)
         sage: sys.gettrace()
-        <built-in function poison_currRing>
+        <cyfunction poison_currRing at ...>
         sage: sys.settrace(previous_trace_func)  # switch it off again
     """
     global currRing

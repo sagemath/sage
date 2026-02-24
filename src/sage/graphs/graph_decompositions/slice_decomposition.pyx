@@ -1,4 +1,3 @@
-# cython: binding=True
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
 r"""
@@ -505,7 +504,7 @@ cdef class SliceDecomposition(SageObject):
 
         OUTPUT:
 
-        A dictionnary with the keys:
+        A dictionary with the keys:
 
         * ``"pivot"`` -- the vertex `v` given as parameter
 
@@ -548,7 +547,7 @@ cdef class SliceDecomposition(SageObject):
              'sequence': [['u'], ['y', 'z']],
              'slice': ['u', 'y', 'z']}
 
-        Some values of the returned dictionnary can be obtained via other
+        Some values of the returned dictionary can be obtained via other
         methods (:meth:`~slice`, :meth:`~xslice_sequence`,
         :meth:`~active_edges`, :meth:`~lexicographic_label`)::
 

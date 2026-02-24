@@ -17,11 +17,13 @@ Generic dual bases symmetric functions
 #
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.categories.morphism import SetMorphism
-from sage.categories.homset import Hom
-from sage.matrix.constructor import matrix
 import sage.combinat.partition
 import sage.data_structures.blas_dict as blas
+from sage.categories.homset import Hom
+from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.categories.morphism import SetMorphism
+from sage.matrix.constructor import matrix
+
 from . import classical
 
 
@@ -166,7 +168,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                                                               prefix=prefix)
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-        category = sage.categories.all.ModulesWithBasis(self.base_ring())
+        category = ModulesWithBasis(self.base_ring())
         self.register_coercion(SetMorphism(Hom(self._dual_basis, self, category), self._dual_to_self))
         self._dual_basis.register_coercion(SetMorphism(Hom(self, self._dual_basis, category), self._self_to_dual))
 
@@ -392,16 +394,14 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
             # For every partition p of size n, compute self(p) in
             # terms of the dual basis using the scalar product.
-            i = 0
-            for s_part in partitions_n:
+            for i, s_part in enumerate(partitions_n):
                 # s_part corresponds to self(dual_basis(part))
                 # s_mcs  corresponds to self(dual_basis(part))._monomial_coefficients
                 s_mcs = {}
 
                 # We need to compute the scalar product of d[s_part] and
                 # all of the d[p_part]'s
-                j = 0
-                for p_part in partitions_n:
+                for j, p_part in enumerate(partitions_n):
                     # Compute the scalar product of d[s_part] and d[p_part]
                     sp = zero
                     for ds_part in d[s_part]:
@@ -411,10 +411,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                         s_mcs[p_part] = sp
                         transition_matrix_n[i,j] = sp
 
-                    j += 1
-
                 self._to_self_cache[ s_part ] = s_mcs
-                i += 1
 
         else:
             # Now the other case. Note that just being in this case doesn't
@@ -988,6 +985,7 @@ class DualBasisFunctor(SymmetricFunctionsFunctor):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.dual',
                            'SymmetricFunctionAlgebraElement_dual',
                            SymmetricFunctionAlgebra_dual.Element)

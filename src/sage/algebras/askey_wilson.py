@@ -311,7 +311,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
         var_names = ['A', 'B', 'C', '\\alpha', '\\beta', '\\gamma']
         return ''.join(exp(l, e) for l, e in zip(var_names, t))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

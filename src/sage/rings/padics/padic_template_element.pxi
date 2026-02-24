@@ -1065,7 +1065,7 @@ cdef class ExpansionIterable():
 
     def __cinit__(self, pAdicTemplateElement elt, long prec, long val_shift, expansion_mode mode):
         """
-        Allocate memory for the iteratable.
+        Allocate memory for the iterable.
 
         TESTS::
 
@@ -1085,7 +1085,7 @@ cdef class ExpansionIterable():
 
     def __dealloc__(self):
         """
-        Deallocate memory for the iteratable.
+        Deallocate memory for the iterable.
 
         TESTS::
 

@@ -59,7 +59,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         Number Field in a0 with defining polynomial x^2 + 1 over its base field
         sage: i = K.ideal([a0+1]); i # random
         Fractional ideal (-a1*a0)
-        sage: (g, ) = i.gens_reduced(); g # random
+        sage: (g,) = i.gens_reduced(); g # random
         -a1*a0
         sage: (g / (a0 + 1)).is_integral()
         True
@@ -68,7 +68,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
 
     TESTS:
 
-    One test fails, because ideals aren't fully integrated into the
+    One test fails, because ideals are not fully integrated into the
     categories framework yet::
 
         sage: TestSuite(i).run()
@@ -341,7 +341,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
                 self.__reduced_generators = tuple([g])
             return self.__is_principal
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` if this is the zero ideal.
 
@@ -639,7 +639,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             self._pari_prime = abs_ideal._pari_prime
             return self._pari_prime is not None
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         """
         Return ``True`` if this ideal is integral.
 
@@ -880,44 +880,3 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         if p.ring() != self.number_field():
             raise ValueError("p (= %s) must be an ideal in %s" % self.number_field())
         return self.absolute_ideal().valuation(p.absolute_ideal())
-
-
-def is_NumberFieldFractionalIdeal_rel(x):
-    """
-    Return ``True`` if `x` is a fractional ideal of a relative number field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field_ideal_rel import is_NumberFieldFractionalIdeal_rel
-        sage: from sage.rings.number_field.number_field_ideal import is_NumberFieldFractionalIdeal
-        sage: is_NumberFieldFractionalIdeal_rel(2/3)
-        doctest:warning...
-        DeprecationWarning: The function is_NumberFieldFractionalIdeal_rel is deprecated;
-        use 'isinstance(..., NumberFieldFractionalIdeal_rel' instead.
-        See https://github.com/sagemath/sage/issues/38124 for details.
-        False
-        sage: is_NumberFieldFractionalIdeal_rel(ideal(5))
-        False
-        sage: x = polygen(ZZ, 'x')
-        sage: k.<a> = NumberField(x^2 + 2)
-        sage: I = k.ideal([a + 1]); I
-        Fractional ideal (a + 1)
-        sage: is_NumberFieldFractionalIdeal_rel(I)
-        False
-        sage: R.<x> = QQ[]
-        sage: K.<a> = NumberField(x^2 + 6)
-        sage: L.<b> = K.extension(K['x'].gen()^4 + a)
-        sage: I = L.ideal(b); I
-        Fractional ideal (6, b)
-        sage: is_NumberFieldFractionalIdeal_rel(I)
-        True
-        sage: N = I.relative_norm(); N
-        Fractional ideal (-a)
-        sage: is_NumberFieldFractionalIdeal_rel(N)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38124,
-                "The function is_NumberFieldFractionalIdeal_rel is deprecated; "
-                "use 'isinstance(..., NumberFieldFractionalIdeal_rel' instead.")
-    return isinstance(x, NumberFieldFractionalIdeal_rel)

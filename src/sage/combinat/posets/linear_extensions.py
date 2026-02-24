@@ -1,15 +1,5 @@
 r"""
-Linear Extensions of Posets
-
-This module defines two classes:
-
-- :class:`LinearExtensionOfPoset`
-- :class:`LinearExtensionsOfPoset`
-- :class:`LinearExtensionsOfPosetWithHooks`
-- :class:`LinearExtensionsOfForest`
-
-Classes and methods
--------------------
+Linear extensions of posets
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Anne Schilling <anne at math.ucdavis.edu>
@@ -907,11 +897,10 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             lst = list(lst)
         if not isinstance(lst, (list, tuple)):
             raise TypeError("input should be a list or tuple")
-        lst = [self._poset(_) for _ in lst]
+        lst = [self._poset(e) for e in lst]
         if self._is_facade:
             return lst
-        else:
-            return self.element_class(self, lst, check)
+        return self.element_class(self, lst, check)
 
     Element = LinearExtensionOfPoset
 

@@ -62,7 +62,7 @@ TESTS::
 
 import sage.rings.fraction_field_element as fraction_field_element
 
-from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base, is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polydict import PolyDict, ETuple
 from sage.rings.polynomial.term_order import TermOrder
@@ -172,7 +172,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         return hash((self.base_ring(), self.ngens(),
                      self.variable_names(), self.term_order()))
 
-    def __call__(self, x=0, check=True):
+    def _element_constructor_(self, x=0, check=True):
         """
         Convert ``x`` to an element of this multivariate polynomial ring,
         possibly non-canonically.

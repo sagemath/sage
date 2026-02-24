@@ -37,9 +37,5 @@ class EvalCmd:
         Execute the given command.
         """
         code = preparse(self.options.command)
-        try:
-            eval(compile(code, "<cmdline>", "exec"), sage_globals())
-        except Exception as e:
-            print(f"An error occurred while executing the command: {e}")
-            return 1
+        eval(compile(code, "<cmdline>", "exec"), sage_globals())
         return 0

@@ -99,7 +99,7 @@ cdef class ntl_mat_GF2():
             sig_on()
             for i from 0 <= i < _nrows:
                 for j from 0 <= j < _ncols:
-                    GF2_conv_long(_elem, int(v[i,j])%2)
+                    GF2_conv_long(_elem, int(v[i, j]) % 2)
                     mat_GF2_setitem(&self.x, i, j, &_elem)
             sig_off()
             return

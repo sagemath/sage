@@ -219,7 +219,7 @@ def isogeny_codomain_from_kernel(E, kernel):
     if algorithm == 'velu':
         # if we are using Velu's formula, just instantiate the isogeny
         # and return the codomain
-        return EllipticCurveIsogeny(E, kernel).codomain()
+        return E.isogeny(kernel).codomain()
 
     if algorithm == 'kohel':
         return compute_codomain_kohel(E, kernel)
@@ -2244,11 +2244,10 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         else:
             invX = x
 
-        psi = poly_ring.one()
-        for xQ in self.__kernel_mod_sign.keys():
-            psi *= x - invX(xQ)
+        from sage.misc.misc_c import prod
+        psi = prod([x - invX(xQ) for xQ in self.__kernel_mod_sign.keys()])  # building the list is not redundant; this is slightly faster
 
-        self.__kernel_polynomial = psi
+        self.__kernel_polynomial = poly_ring(psi)
 
     ###################################
     # Kohel's Variant of Velu's Formula
@@ -3126,7 +3125,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             True
             sage: phi_hat.codomain() == phi.domain()
             True
-            sage: (X, Y) = phi.rational_maps()
+            sage: X, Y = phi.rational_maps()
             sage: (Xhat, Yhat) = phi_hat.rational_maps()
             sage: Xm = Xhat.subs(x=X, y=Y)
             sage: Ym = Yhat.subs(x=X, y=Y)
@@ -3142,7 +3141,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             True
             sage: phi_hat.domain() == phi.codomain()
             True
-            sage: (X, Y) = phi.rational_maps()
+            sage: X, Y = phi.rational_maps()
             sage: (Xhat, Yhat) = phi_hat.rational_maps()
             sage: Xm = Xhat.subs(x=X, y=Y)
             sage: Ym = Yhat.subs(x=X, y=Y)
@@ -3158,7 +3157,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             True
             sage: phi_hat.domain() == phi.codomain()
             True
-            sage: (X, Y) = phi.rational_maps()
+            sage: X, Y = phi.rational_maps()
             sage: (Xhat, Yhat) = phi_hat.rational_maps()
             sage: Xm = Xhat.subs(x=X, y=Y)
             sage: Ym = Yhat.subs(x=X, y=Y)

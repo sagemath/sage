@@ -16,6 +16,7 @@ py.install_sources(
   'galois_group_perm.py',
   'generic.py',
   'group.pxd',
+  'group.pyx',
   'group_exp.py',
   'group_semidirect_product.py',
   'groups_catalog.py',
@@ -25,16 +26,15 @@ py.install_sources(
   'libgap_mixin.py',
   'libgap_morphism.py',
   'libgap_wrapper.pxd',
-  'old.pxd',
+  'libgap_wrapper.pyx',
   'pari_group.py',
   'raag.py',
   subdir: 'sage/groups',
 )
 
 extension_data = {
-  'group' : files('group.pyx'),
-  'libgap_wrapper' : files('libgap_wrapper.pyx'),
-  'old' : files('old.pyx'),
+  'group': files('group.pyx'),
+  'libgap_wrapper': files('libgap_wrapper.pyx'),
 }
 
 foreach name, pyx : extension_data

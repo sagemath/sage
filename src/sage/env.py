@@ -1,27 +1,5 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Sage Runtime Environment
-
-Verify that importing ``sage.all`` works in Sage's Python without any
-``SAGE_`` environment variables, and has the same ``SAGE_ROOT`` and
-``SAGE_LOCAL`` (see also :issue:`29446`). If ``SAGE_ROOT`` is a path,
-we normalize it, but keep in mind that ``SAGE_ROOT`` may also be
-``None``::
-
-    sage: env = {k:v for (k,v) in os.environ.items() if not k.startswith("SAGE_")}
-    sage: from subprocess import check_output
-    sage: module_name = "sage.all"   # hide .all import from the linter
-    sage: cmd  = f"from {module_name} import SAGE_ROOT, SAGE_LOCAL;"
-    sage: cmd +=  "from os.path import samefile;"
-    sage: if SAGE_ROOT is None:
-    ....:     cmd +=  "s1 = SAGE_ROOT is None;"
-    ....: else:
-    ....:     cmd += f"s1 = samefile(SAGE_ROOT, '{SAGE_ROOT}');"
-    sage: cmd += f"s2 = samefile(SAGE_LOCAL, '{SAGE_LOCAL}');"
-    sage: cmd += "print(s1 and s2);"
-    sage: out = check_output([sys.executable, "-c", cmd], env=env).decode().strip()   # long time
-    sage: out == "True"                                                               # long time
-    True
 
 AUTHORS:
 
@@ -39,22 +17,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import Optional
-import sage
-import platform
 import os
 import socket
+import subprocess
 import sys
 import sysconfig
-from . import version
-import subprocess
+from typing import Optional
 
+from platformdirs import site_data_dir, user_data_dir
+
+import sage.config
+from sage import version
+from sage.config import get_include_dirs
 
 # All variables set by var() appear in this SAGE_ENV dict
 SAGE_ENV = dict()
 
 
-def join(*args):
+def join(*args) -> str | None:
     """
     Join paths like ``os.path.join`` except that the result is ``None``
     if any of the components is ``None``.
@@ -149,19 +129,11 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
     else:
         value = os.environ.get(key)
     if value is None:
-        try:
-            import sage_conf
-            value = getattr(sage_conf, key, None)
-        except ImportError:
-            try:
-                import sage.config
-                value = getattr(sage.config, key, None)
-            except ImportError:
-                pass
+        value = getattr(sage.config, key, None)
 
-    # Try all fallbacks in order as long as we don't have a value
+    # Try all fallbacks in order as long as we don't have a non-empty value
     for f in fallbacks:
-        if value is not None:
+        if value not in (None, ""):
             break
         value = f
     SAGE_ENV[key] = value
@@ -179,13 +151,11 @@ SAGE_DATE = var("SAGE_DATE", version.date)
 SAGE_VERSION_BANNER = var("SAGE_VERSION_BANNER", version.banner)
 
 # virtual environment where sagelib is installed
-SAGE_VENV = var("SAGE_VENV", os.path.abspath(sys.prefix))
 SAGE_LIB = var("SAGE_LIB", os.path.dirname(os.path.dirname(__file__)))
 SAGE_EXTCODE = var("SAGE_EXTCODE", join(SAGE_LIB, "sage", "ext_data"))
-SAGE_VENV_SPKG_INST = var("SAGE_VENV_SPKG_INST", join(SAGE_VENV, "var", "lib", "sage", "installed"))
 
 # prefix hierarchy where non-Python packages are installed
-SAGE_LOCAL = var("SAGE_LOCAL", SAGE_VENV)
+SAGE_LOCAL = var("SAGE_LOCAL")
 SAGE_SHARE = var("SAGE_SHARE", join(SAGE_LOCAL, "share"))
 SAGE_DOC = var("SAGE_DOC", join(SAGE_SHARE, "doc", "sage"))
 SAGE_LOCAL_SPKG_INST = var("SAGE_LOCAL_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))
@@ -215,13 +185,9 @@ SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
 SAGE_ARCHFLAGS = var("SAGE_ARCHFLAGS", "unset")
 SAGE_PKG_CONFIG_PATH = var("SAGE_PKG_CONFIG_PATH")
 
-# colon-separated search path for databases.
-SAGE_DATA_PATH = var("SAGE_DATA_PATH",
-                     os.pathsep.join(filter(None, [
-                         join(DOT_SAGE, "db"),
-                         join(SAGE_SHARE, "sagemath"),
-                         SAGE_SHARE,
-                         ])))
+# colon-separated search path for databases
+# should not be used directly; instead use sage_data_paths
+SAGE_DATA_PATH = var("SAGE_DATA_PATH")
 
 # database directories, the default is to search in SAGE_DATA_PATH
 CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR")
@@ -238,6 +204,7 @@ THREEJS_DIR = var("THREEJS_DIR")
 PPLPY_DOCS = var("PPLPY_DOCS", join(SAGE_SHARE, "doc", "pplpy"))
 MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
+MAXIMA_PREFIX = var("MAXIMA_PREFIX")
 KENZO_FAS = var("KENZO_FAS")
 SAGE_NAUTY_BINS_PREFIX = var("SAGE_NAUTY_BINS_PREFIX", "")
 SAGE_ECMBIN = var("SAGE_ECMBIN", "ecm")
@@ -251,7 +218,6 @@ FOURTITWO_RAYS = var("FOURTITWO_RAYS")
 FOURTITWO_PPI = var("FOURTITWO_PPI")
 FOURTITWO_CIRCUITS = var("FOURTITWO_CIRCUITS")
 FOURTITWO_GROEBNER = var("FOURTITWO_GROEBNER")
-CBLAS_PC_MODULES = var("CBLAS_PC_MODULES", "cblas:openblas:blas")
 ECL_CONFIG = var("ECL_CONFIG", "ecl-config")
 NTL_INCDIR = var("NTL_INCDIR")
 NTL_LIBDIR = var("NTL_LIBDIR")
@@ -310,6 +276,9 @@ def sage_include_directories(use_sources=False):
 
         sage: import sage.env
         sage: sage.env.sage_include_directories()
+        doctest:warning...
+        DeprecationWarning: use sage.config.get_include_dirs() instead
+        ...
         ['...',
          '.../numpy/...core/include',
          '.../include/python...']
@@ -330,6 +299,9 @@ def sage_include_directories(use_sources=False):
         sage: any(os.path.isfile(os.path.join(d, file)) for d in dirs)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(40765, 'use sage.config.get_include_dirs() instead')
+
     if use_sources:
         dirs = [SAGE_SRC]
     else:
@@ -344,20 +316,13 @@ def sage_include_directories(use_sources=False):
 
     dirs.append(sysconfig.get_config_var('INCLUDEPY'))
 
+    dirs.extend([dir.as_posix() for dir in get_include_dirs()])
+
     return dirs
 
 
-def get_cblas_pc_module_name() -> str:
-    """
-    Return the name of the BLAS libraries to be used.
-    """
-    import pkgconfig
-    cblas_pc_modules = CBLAS_PC_MODULES.split(':')
-    return next(blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib))
-
-
 default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',
-                            'libpng', 'gdlib', 'm4ri', 'zlib', 'cblas', 'ecl')
+                            'libpng', 'gdlib', 'm4ri', 'zlib', 'ecl')
 
 
 default_optional_modules = ('lapack',)
@@ -382,7 +347,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
         sage: cython_aliases()
         {...}
         sage: sorted(cython_aliases().keys())
-        ['CBLAS_CFLAGS',
+        ['ECL_CFLAGS',
          ...,
          'ZLIB_LIBRARIES']
         sage: cython_aliases(required_modules=('module-that-is-assumed-to-not-exist'))
@@ -414,8 +379,9 @@ def cython_aliases(required_modules=None, optional_modules=None):
         ....: ''')
         435
     """
-    import pkgconfig
     import itertools
+
+    import pkgconfig
 
     if required_modules is None:
         required_modules = default_required_modules
@@ -428,8 +394,6 @@ def cython_aliases(required_modules=None, optional_modules=None):
     for lib, required in itertools.chain(((lib, True) for lib in required_modules),
                                          ((lib, False) for lib in optional_modules)):
         var = lib.upper().replace("-", "") + "_"
-        if lib == 'cblas':
-            lib = get_cblas_pc_module_name()
         if lib == 'zlib':
             aliases[var + "CFLAGS"] = ""
             try:
@@ -515,3 +479,32 @@ def cython_aliases(required_modules=None, optional_modules=None):
     aliases["OPENMP_CXXFLAGS"] = OPENMP_CXXFLAGS.split()
 
     return aliases
+
+
+def sage_data_paths(name: str = '') -> set[str]:
+    r"""
+    Search paths for general data files.
+
+    If specified, the subdirectory ``name`` is appended to the
+    directories. Otherwise, the directories are returned as is.
+
+    EXAMPLES::
+
+        sage: from sage.env import sage_data_paths
+        sage: sage_data_paths("cremona")
+        {'.../cremona'}
+    """
+    if not SAGE_DATA_PATH:
+        paths = {
+            join(DOT_SAGE, "db"),
+            join(SAGE_SHARE, "sagemath"),
+            SAGE_SHARE,
+        }
+        paths.add(user_data_dir("sagemath"))
+        paths.add(user_data_dir())
+        for path in site_data_dir("sagemath", multipath=True).split(os.pathsep) + site_data_dir(multipath=True).split(os.pathsep):
+            paths.add(path)
+    else:
+        paths = set(SAGE_DATA_PATH.split(os.pathsep))
+
+    return {os.path.join(path, name) for path in paths if os.path.exists(path)}

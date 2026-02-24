@@ -70,7 +70,7 @@ TESTS::
 # *****************************************************************************
 
 from sage.matrix.constructor import matrix
-from sage.modular.arithgroup.all import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
 from sage.modular.cusps import Cusp
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
@@ -180,8 +180,7 @@ class CuspidalSubgroup_generic(FiniteSubgroup):
         B = Cusp.free_module().basis_matrix().stack(Eis.free_module().basis_matrix())
         X = B.solve_left(cusp_matrix)
         X = X.matrix_from_columns(range(Cusp.dimension()))
-        lattice = X.row_module(ZZ) + A.lattice()
-        return lattice
+        return X.row_module(ZZ) + A.lattice()
 
 
 class CuspidalSubgroup(CuspidalSubgroup_generic):

@@ -98,9 +98,9 @@ Classes and Methods
 # ****************************************************************************
 
 import sage.rings.abc
-from .ring import SymbolicRing, SR
 from sage.categories.pushout import ConstructionFunctor
 from sage.structure.factory import UniqueFactory
+from sage.symbolic.ring import SR, SymbolicRing
 
 
 class SymbolicSubringFactory(UniqueFactory):
@@ -397,7 +397,7 @@ class GenericSymbolicSubring(SymbolicRing):
         """
         from sage.rings.infinity import InfinityRing
         from sage.rings.qqbar import AA, QQbar
-        from sage.rings.real_lazy import RLF, CLF
+        from sage.rings.real_lazy import CLF, RLF
 
         if isinstance(P, type):
             return SR._coerce_map_from_(P)

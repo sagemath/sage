@@ -130,7 +130,7 @@ cdef class Distribution:
             sage: P.plot(-10,30)                                                        # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
-        from sage.plot.all import plot
+        from sage.plot.plot import plot
         return plot(self.prob, *args, **kwds)
 
 cdef class GaussianMixtureDistribution(Distribution):

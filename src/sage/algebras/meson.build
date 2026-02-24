@@ -8,10 +8,12 @@ py.install_sources(
   'cellular_basis.py',
   'clifford_algebra.py',
   'clifford_algebra_element.pxd',
+  'clifford_algebra_element.pyx',
   'cluster_algebra.py',
   'commutative_dga.py',
   'down_up_algebra.py',
   'exterior_algebra_groebner.pxd',
+  'exterior_algebra_groebner.pyx',
   'finite_gca.py',
   'free_algebra.py',
   'free_algebra_element.py',
@@ -24,6 +26,7 @@ py.install_sources(
   'jordan_algebra.py',
   'nil_coxeter_algebra.py',
   'octonion_algebra.pxd',
+  'octonion_algebra.pyx',
   'orlik_solomon.py',
   'orlik_terao.py',
   'q_commuting_polynomials.py',
@@ -45,9 +48,9 @@ py.install_sources(
 )
 
 extension_data = {
-  'clifford_algebra_element' : files('clifford_algebra_element.pyx'),
-  'exterior_algebra_groebner' : files('exterior_algebra_groebner.pyx'),
-  'octonion_algebra' : files('octonion_algebra.pyx'),
+  'clifford_algebra_element': files('clifford_algebra_element.pyx'),
+  'exterior_algebra_groebner': files('exterior_algebra_groebner.pyx'),
+  'octonion_algebra': files('octonion_algebra.pyx'),
 }
 
 foreach name, pyx : extension_data

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Unicode Art
 
@@ -49,7 +48,6 @@ class UnicodeArt(CharacterArt):
          π⋅x
         ℯ
     """
-    _string_type = str
 
 
 _unicode_art_factory = CharacterArtFactory(

@@ -610,7 +610,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
             sage: G = HeckeTriangleGroup(8)
             sage: z = AlgebraicField()(1+i/2)
-            sage: (A, w) = G.get_FD(z)
+            sage: A, w = G.get_FD(z)
             sage: A
             [-lam    1]
             [  -1    0]
@@ -619,7 +619,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
             sage: z = (134.12 + 0.22*i).n()
-            sage: (A, w) = G.get_FD(z)
+            sage: A, w = G.get_FD(z)
             sage: A
             [-73*lam^3 + 74*lam       73*lam^2 - 1]
             [        -lam^2 + 1                lam]
@@ -1004,10 +1004,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             return False
 
         def is_cycle_of_length(seq, n) -> bool:
-            for j in range(n, len(seq)):
-                if seq[j] != seq[j % n]:
-                    return False
-            return True
+            return all(seq[j] == seq[j % n] for j in range(n, len(seq)))
 
         j_list = range(1, self.n())
 
@@ -1240,10 +1237,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         if D in self._conj_prim:
             return True
-        elif not primitive and D in self._conj_nonprim:
-            return True
-        else:
-            return False
+        return not primitive and D in self._conj_nonprim
 
     def list_discriminants(self, D, primitive=True, hyperbolic=True, incomplete=False):
         r"""

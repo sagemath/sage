@@ -31,7 +31,7 @@ html_theme_options.update({
 # General information about the project.
 project = "FAQ"
 
-# The name for this set of Sphinx documents.
+# The name for this set of Sphinx documents. Do not include release info.
 html_title = project
 html_short_title = project
 

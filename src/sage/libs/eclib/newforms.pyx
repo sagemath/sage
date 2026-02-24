@@ -319,7 +319,9 @@ cdef class ECModularSymbol:
             ...
             ValueError: impossible to evaluate both symbols on a plus space
 
-        TESTS (see :issue:`11211`)::
+        TESTS:
+
+        See :issue:`11211`::
 
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('11a')

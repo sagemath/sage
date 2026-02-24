@@ -682,7 +682,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         return self.polyhedron().ambient_vector_space(base_field=base_field)
 
-    def is_relatively_open(self):
+    def is_relatively_open(self) -> bool:
         r"""
         Return whether ``self`` is relatively open.
 
@@ -699,7 +699,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         return self.as_polyhedron().is_relatively_open()
 
-    def is_compact(self):
+    def is_compact(self) -> bool:
         r"""
         Return whether ``self`` is compact.
 
@@ -806,10 +806,7 @@ class PolyhedronFace(ConvexSet_closed):
         if not self.polyhedron().contains(p):
             return False
 
-        for H in self.ambient_Hrepresentation():
-            if H.eval(p) != 0:
-                return False
-        return True
+        return all(H.eval(p) == 0 for H in self.ambient_Hrepresentation())
 
     __contains__ = contains
 

@@ -104,7 +104,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         ....:     })
         sage: G.is_isomorphic(GG)
         True
-        sage: for (u,v,i) in G.edges(sort=True):
+        sage: for u, v, i in G.edges(sort=True):
         ....:     print((u.integer_sequence() , v.integer_sequence(), i))
         ([], [0], 2)
         ([0], [0, 8], 1)
@@ -484,7 +484,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         """
         return iter(self.value)
 
-    def is_admissible(self):
+    def is_admissible(self) -> bool:
         r"""
         Diagnostic test to check if ``self`` is a valid element of the crystal.
 

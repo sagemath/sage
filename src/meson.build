@@ -4,11 +4,14 @@ cpp = meson.get_compiler('cpp')
 cython = meson.get_compiler('cython')
 
 # Setup dependencies that are needed by many modules
-inc_numpy = run_command(
-  py,
-  [
-    '-c',
-    '''
+numpy = dependency('numpy', required: false, version: '>=2.2.4')
+if not numpy.found()
+  # Older versions of numpy don't have a pkg-config file
+  inc_numpy = run_command(
+    py,
+    [
+      '-c',
+      '''
 from os.path import relpath
 import numpy
 path = numpy.get_include()
@@ -16,11 +19,12 @@ try:
   print(relpath(path))
 except Exception:
   print(path)
-    '''.strip(),
-  ],
-  check: true,
-).stdout().strip()
-numpy = declare_dependency(include_directories: inc_numpy)
+      '''.strip(),
+    ],
+    check: true,
+  ).stdout().strip()
+  numpy = declare_dependency(include_directories: inc_numpy)
+endif
 
 inc_cysignals = run_command(
   py,
@@ -79,10 +83,40 @@ except Exception:
     ],
     check: true,
   ).stdout().strip()
-  cypari2 = declare_dependency(include_directories: inc_cypari2)
+  # Cannot be found via pkg-config
+  # We need to link against libpari directly to avoid runtime issues, so use pari as dependency of cypari2
+  pari = cc.find_library('pari', required: not is_windows, disabler: true)
+  if pari.found() and not meson.is_cross_build()
+    # Verify PARI version
+    pari_version_code = '''
+    #include <stdio.h>
+    #include <pari/pari.h>
+    int main(void) {
+      pari_init(1000000, 2);
+      GEN v = pari_version(), M = gel(v,1), m = gel(v,2), p = gel(v,3);
+      printf("%ld.%ld.%ld", itos(M), itos(m), itos(p));
+      pari_close();
+      return 0;
+    }
+    '''
+    pari_version = cc.run(
+      pari_version_code,
+      args: ['-v'],
+      name: 'pari version',
+      dependencies: [pari],
+      required: true,
+    ).stdout().strip()
+    if pari_version.version_compare('<=2.17.0')
+      message('PARI version > 2.17.0 required, found ' + pari_version)
+      pari = disabler()
+    endif
+  endif
+  cypari2 = declare_dependency(
+    include_directories: inc_cypari2,
+    dependencies: pari,
+  )
 endif
-# Cannot be found via pkg-config
-pari = cc.find_library('pari', required: not is_windows, disabler: true)
+
 
 mpfr = dependency('mpfr')
 
@@ -131,26 +165,44 @@ if not gd.found()
 endif
 # Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
 m = cc.find_library('m', required: false)
-m4ri = dependency('m4ri', version: '>=20140914')
+m4ri = dependency('m4ri', version: '>=20250128', required: false)
+if not m4ri.found()
+  # Older versions of m4ri are declaring "@SIMD_CFLAGS@" as compile_args
+  # which breaks the build. So we exclude these compile args.
+  # https://github.com/malb/m4ri/commit/3197be5f7d3c67e8f13e32516557f35cbf4ff6ce
+  m4ri = dependency('m4ri', version: '>=20140914').partial_dependency(
+    includes: true,
+    link_args: true,
+    links: true,
+    sources: true,
+  )
+endif
 m4rie = dependency('m4rie', required: false)
 if not m4rie.found()
   # For some reason, m4rie is not found via pkg-config on some systems (eg Conda)
   m4rie = cc.find_library('m4rie', required: not is_windows, disabler: true)
 endif
-# Cannot be found via pkg-config
-mtx = cc.find_library(
-  'mtx',
-  required: false,
-  disabler: true,
-  has_headers: ['meataxe.h'],
-)
+mtx = dependency('libmtx', required: false)
+if not mtx.found()
+  # fallback for older versions without pkg-config
+  mtx = cc.find_library(
+    'mtx',
+    required: get_option('meataxe'),
+    disabler: true,
+    has_headers: ['meataxe.h'],
+  )
+endif
 png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
 zlib = dependency('zlib', version: '>=1.2.11')
-# We actually want >= 20231212, but the version number is not updated in the pkgconfig
+# We actually want >= 20250122, but the version number is not updated in the pkgconfig
 # https://github.com/conda-forge/eclib-feedstock/issues/48
-ec = dependency('eclib', version: '>=20231211', required: false, disabler: true)
-# Cannot be found via pkg-config
-ec = cc.find_library('ec', required: not is_windows, disabler: true)
+# To old versions of eclib don't ship a pkg-config file, so this should be rather safe
+ec = dependency(
+  'eclib',
+  version: '>=20231211',
+  required: get_option('eclib'),
+  disabler: true,
+)
 ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
 gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
 fflas = dependency(
@@ -195,9 +247,29 @@ else
   singular_proj = subproject('singular')
   singular_factory = singular_proj.get_variable('factory_dep')
 endif
-maxima = find_program('maxima', required: not is_windows, disabler: true)
 # Cannot be found via pkg-config
 ntl = cc.find_library('ntl', required: not is_windows, disabler: true)
+
+boost_cpp17_compatible = false
+boost = dependency(
+  'boost',
+  version: '>=1.83.0',
+  required: false,
+  modules: ['graph'],
+)
+if boost.found()
+  # Need at least v1.83.0 (https://github.com/boostorg/functional/commit/6a573e4b8333ee63ee62ce95558c3667348db233)
+  # for C++17 compatibility.
+  boost_cpp17_compatible = true
+else
+  boost = dependency(
+    'boost',
+    version: '>=1.66.0',
+    required: false,
+    modules: ['graph'],
+  )
+endif
+
 
 # Meson currently ignores include_directories for Cython modules, so we
 # have to add them manually.
@@ -208,7 +280,7 @@ add_project_arguments('-I', meson.current_build_dir(), language: 'cython')
 # Add global compiler flags
 add_project_arguments('-X auto_pickle=False', language: 'cython')
 add_project_arguments('-X autotestdict=False', language: 'cython')
-add_project_arguments('-X binding=False', language: 'cython')
+add_project_arguments('-X binding=True', language: 'cython')
 add_project_arguments('-X c_api_binop_methods=True', language: 'cython')
 add_project_arguments('-X cdivision=True', language: 'cython')
 add_project_arguments('-X cpow=True', language: 'cython')
@@ -234,5 +306,8 @@ inc_ext = include_directories('sage/ext')
 inc_partn_ref2 = include_directories('sage/groups/perm_gps/partn_ref2')
 inc_src = include_directories('.')
 
+src = meson.current_source_dir()
+
 # Submodules
 subdir('sage')
+subdir('doc')

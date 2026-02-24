@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python
+#!/usr/bin/env python3
 
 #*****************************************************************************
 # This is the sage monitor *daemon*, which cleans up after Sage.
@@ -17,8 +17,14 @@
 #*****************************************************************************
 
 
-import os, shutil, sys, time, socket, errno, signal, atexit
-
+import atexit
+import errno
+import os
+import shutil
+import signal
+import socket
+import sys
+import time
 
 HOSTNAME = os.environ.get('HOSTNAME', socket.gethostname())
 DOT_SAGE = os.environ['DOT_SAGE']
@@ -30,6 +36,7 @@ pidfile = os.path.join(SAGE_TMP_ROOT, 'cleaner.pid')
 old_pidfile = os.path.join(DOT_SAGE, 'temp', 'cleaner-%s.pid'%HOSTNAME)
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 

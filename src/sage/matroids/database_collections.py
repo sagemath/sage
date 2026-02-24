@@ -179,7 +179,7 @@ def AllMatroids(n, r=None, type='all'):
         raise ValueError("The rank needs to be specified for type '%s'" % type)
 
     if r is None:
-        rng = range(0, n + 1)
+        rng = range(n + 1)
     else:
         rng = range(r, r + 1)
 

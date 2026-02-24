@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.gap
 """
-Braid Move Calculator
+Braid move calculator
 
 AUTHORS:
 

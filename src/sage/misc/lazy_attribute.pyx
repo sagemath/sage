@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Lazy attributes
 
@@ -71,7 +70,7 @@ cdef class _lazy_attribute():
             sage: Parent.element_class.__name__
             'element_class'
             sage: Parent.element_class.__module__
-            'sage.misc.lazy_attribute'
+            'sage.structure.parent'
         """
         raise NotImplementedError("Only instantiate wrapper python class")
 
@@ -87,7 +86,7 @@ cdef class _lazy_attribute():
             sage: src[0]
             'def banner():\n'
             sage: lines
-            95
+            94
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)

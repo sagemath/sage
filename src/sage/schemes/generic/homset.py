@@ -32,7 +32,7 @@ AUTHORS:
 #   Distributed under the terms of the GNU General Public License (GPL)
 #   as published by the Free Software Foundation; either version 2 of
 #   the License, or (at your option) any later version.
-#                   http://www.gnu.org/licenses/
+#                   https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from sage.categories.homset import HomsetWithBase
@@ -41,44 +41,18 @@ from sage.structure.factory import UniqueFactory
 from sage.structure.parent import Set_generic
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.ring import CommutativeRing
 from sage.categories.commutative_rings import CommutativeRings
 
-from sage.schemes.generic.scheme import AffineScheme, is_AffineScheme
+from sage.schemes.generic.scheme import AffineScheme
 from sage.schemes.generic.morphism import (
     SchemeMorphism,
     SchemeMorphism_structure_map,
-    SchemeMorphism_spec )
+    SchemeMorphism_spec)
 
 lazy_import('sage.schemes.affine.affine_space', 'AffineSpace_generic', as_='AffineSpace')
 lazy_import('sage.schemes.generic.algebraic_scheme', 'AlgebraicScheme_subscheme')
 lazy_import('sage.schemes.product_projective.space', 'ProductProjectiveSpaces_ring', as_='ProductProjectiveSpaces')
 lazy_import('sage.schemes.projective.projective_space', 'ProjectiveSpace_ring', as_='ProjectiveSpace')
-
-
-def is_SchemeHomset(H):
-    r"""
-    Test whether ``H`` is a scheme Hom-set.
-
-    EXAMPLES::
-
-        sage: f = Spec(QQ).identity_morphism();  f
-        Scheme endomorphism of Spectrum of Rational Field
-          Defn: Identity map
-        sage: from sage.schemes.generic.homset import is_SchemeHomset
-        sage: is_SchemeHomset(f)
-        doctest:warning...
-        DeprecationWarning: The function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        False
-        sage: is_SchemeHomset(f.parent())
-        True
-        sage: is_SchemeHomset('a string')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead.")
-    return isinstance(H, SchemeHomset_generic)
 
 
 # *******************************************************************
@@ -181,7 +155,7 @@ class SchemeHomsetFactory(UniqueFactory):
             from sage.categories.schemes import Schemes
             category = Schemes(base_spec)
         key = (id(X), id(Y), category, as_point_homset)
-        extra = {'X':X, 'Y':Y, 'base_ring':base_ring, 'check':check}
+        extra = {'X': X, 'Y': Y, 'base_ring': base_ring, 'check': check}
         return key, extra
 
     def create_object(self, version, key, **extra_args):
@@ -574,7 +548,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         target = self.codomain()
         # ring elements can be coerced to a space if we're affine dimension 1
         # and the base rings are coercible
-        if isinstance(other, CommutativeRing):
+        if other in CommutativeRings:
             try:
                 if (isinstance(target.ambient_space(), AffineSpace)
                         and target.ambient_space().dimension_relative() == 1):
@@ -601,18 +575,18 @@ class SchemeHomset_points(SchemeHomset_generic):
                 try:
                     ta = target.ambient_space()
                     sa = source.ambient_space()
-                except AttributeError: #no .ambient_space
+                except AttributeError:  # no .ambient_space
                     return False
-                #for projective and affine varieties, we check dimension
-                #and matching variable names
+                # for projective and affine varieties, we check dimension
+                # and matching variable names
                 if ((isinstance(ta, ProjectiveSpace) and isinstance(sa, ProjectiveSpace))
                         or (isinstance(ta, AffineSpace) and isinstance(sa, AffineSpace))):
                     if (ta.variable_names() == sa.variable_names()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
                     else:
                         return False
-                #for products of projective spaces, we check dimension of
-                #components and matching variable names
+                # for products of projective spaces, we check dimension of
+                # components and matching variable names
                 elif isinstance(ta, ProductProjectiveSpaces) and isinstance(sa, ProductProjectiveSpaces):
                     if (ta.dimension_relative_components() == sa.dimension_relative_components()) \
                       and (ta.variable_names() == sa.variable_names()):
@@ -761,7 +735,7 @@ class SchemeHomset_points(SchemeHomset_generic):
             sage: P2(QQ)._repr_()
             'Set of rational points of Projective Space of dimension 2 over Rational Field'
         """
-        return 'Set of rational points of '+str(self.extended_codomain())
+        return 'Set of rational points of ' + str(self.extended_codomain())
 
     def value_ring(self):
         r"""

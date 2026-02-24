@@ -1,0 +1,42 @@
+doc_sources = [
+  'ActiveCell.png',
+  'BlankJupyter.png',
+  'ClickBlueLine.png',
+  'EmptyNotebook.png',
+  'EmptyNotebookGetNew.png',
+  'EvaluateCell.png',
+  'FileChoose.png',
+  'FirstCell.png',
+  'HaveSignin.png',
+  'InputJupyter.png',
+  'JupyterHelpMenu.png',
+  'JupyterIntroDetails.png',
+  'JupyterIntroScreen.png',
+  'LiveWorksheet.png',
+  'LoggedIn.png',
+  'MDInput.png',
+  'MDOutput.png',
+  'MarkDownMenu.png',
+  'MoreCells.png',
+  'NewWorksheet.png',
+  'NotLoggedIn.png',
+  'NotebookExport.png',
+  'NotebookExportDetails.png',
+  'OpenIDPage.png',
+  'OutputJupyter.png',
+  'RegularSigninPage.png',
+  'Riemann.png',
+  'Rplot001.png',
+  'RunCellIcon.png',
+  'SignIn.png',
+  'SignInNormal.png',
+  'SignInOpenID.png',
+  'TextEditor.png',
+  'ThinBlueLine.png',
+  'heawood-graph-latex.png',
+]
+
+foreach file : doc_sources
+  doc_src += fs.copyfile(file)
+endforeach
+

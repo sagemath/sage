@@ -145,12 +145,14 @@ EXAMPLES::
 # ****************************************************************************
 
 import os
-from .expect import Expect, ExpectElement
+
 import pexpect
-from sage.misc.verbose import verbose
+
+from sage.cpython.string import bytes_to_str
+from sage.interfaces.expect import Expect, ExpectElement
 from sage.misc.instancedoc import instancedoc
 from sage.misc.temporary_file import tmp_filename
-from sage.cpython.string import bytes_to_str
+from sage.misc.verbose import verbose
 
 
 class Octave(Expect):
@@ -186,6 +188,7 @@ class Octave(Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.octave import octave
             sage: octave == loads(dumps(octave))
             True
         """

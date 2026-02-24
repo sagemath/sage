@@ -551,7 +551,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
     def __pari__(self):
         return self.lift().__pari__().Mod(self._modulus.sageInteger)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return string representation of corresponding GAP object.
 
@@ -570,7 +570,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         return '%s*One(ZmodnZ(%s))' % (self, self._modulus.sageInteger)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Coercion to Magma.
 
@@ -586,7 +586,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         return '%s!%s' % (self.parent()._magma_init_(magma), self)
 
-    def _axiom_init_(self):
+    def _axiom_init_(self) -> str:
         """
         Return a string representation of the corresponding to
         (Pan)Axiom object.
@@ -1894,8 +1894,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         try:
             return sage.rings.integer.Integer(self.__pari__().znorder())
         except PariError:
-            raise ArithmeticError("multiplicative order of %s not defined since it is not a unit modulo %s" % (
-                self, self._modulus.sageInteger))
+            raise ArithmeticError(f"multiplicative order of {self} not defined since it is not a unit modulo {self._modulus.sageInteger}")
+
+        # fallback (for composite moduli): use generic-group algorithm
+        from sage.groups.generic import order_from_multiple
+        return order_from_multiple(self, self.parent().unit_group_exponent(), operation='*')
 
     def valuation(self, p):
         """
@@ -3229,7 +3232,7 @@ cdef int_fast32_t mod_pow_int(int_fast32_t base, int_fast32_t exp, int_fast32_t 
 
 cdef int jacobi_int(int_fast32_t a, int_fast32_t m) except -2:
     """
-    Calculate the jacobi symbol (a/n).
+    Calculate the Jacobi symbol (a/n).
 
     For use in ``IntegerMod_int``.
 
@@ -3244,7 +3247,7 @@ cdef int jacobi_int(int_fast32_t a, int_fast32_t m) except -2:
 
     while True:
         if a == 0:
-            return 0 # gcd was nontrivial
+            return 0  # gcd was nontrivial
         elif a == 1:
             return jacobi
         s = 0
@@ -3893,7 +3896,7 @@ cdef int_fast64_t mod_pow_int64(int_fast64_t base, int_fast64_t exp, int_fast64_
 
 cdef int jacobi_int64(int_fast64_t a, int_fast64_t m) except -2:
     """
-    Calculate the jacobi symbol (a/n).
+    Calculate the Jacobi symbol (a/n).
 
     For use in ``IntegerMod_int64``.
 
@@ -3908,7 +3911,7 @@ cdef int jacobi_int64(int_fast64_t a, int_fast64_t m) except -2:
 
     while True:
         if a == 0:
-            return 0 # gcd was nontrivial
+            return 0  # gcd was nontrivial
         elif a == 1:
             return jacobi
         s = 0

@@ -34,14 +34,16 @@ AUTHORS:
 # *****************************************************************************
 
 import sage.rings.abc
-
 from sage.categories.function_fields import FunctionFields
+from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RealNumber, RR
-from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
+from sage.rings.real_mpfr import RR, RealNumber
+from sage.schemes.projective.projective_point import (
+    SchemeMorphism_point_projective_field,
+)
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.element import Element, Expression
 
@@ -201,12 +203,11 @@ class Berkovich_Element_Cp(Berkovich_Element):
                         if center.scheme().base_ring().prime() != self._p:
                             raise ValueError("center must be an element of " +
                                              "%s not %s" % self._base_space, center.scheme())
-                    else:
-                        if center not in self._base_space:
-                            try:
-                                center = (self._base_space)(center)
-                            except (TypeError, ValueError):
-                                raise ValueError('could not convert %s to %s' % (center, self._base_space))
+                    elif center not in self._base_space:
+                        try:
+                            center = (self._base_space)(center)
+                        except (TypeError, ValueError):
+                            raise ValueError('could not convert %s to %s' % (center, self._base_space))
                     if center.scheme().ambient_space() != center.scheme():
                         raise ValueError("the center of a point of Berkovich space over " +
                                          "P^1(Cp(%s)) must be a point of Cp not %s" % (self._p, center.scheme()))
@@ -251,13 +252,12 @@ class Berkovich_Element_Cp(Berkovich_Element):
                             center = (center.parent().fraction_field())(center)
                         if (center.parent()).prime() != self._p:
                             raise ValueError("center in %s, should be in %s") % (center.parent(), self._base_space)
-                    else:
-                        # make sure the center is in the appropriate number field
-                        if center.parent() == self._base_space:
-                            try:
-                                center = (self._base_space)(center)
-                            except (TypeError, ValueError):
-                                raise ValueError('could not convert %s to %s' % (center, self._base_space))
+                    # make sure the center is in the appropriate number field
+                    elif center.parent() == self._base_space:
+                        try:
+                            center = (self._base_space)(center)
+                        except (TypeError, ValueError):
+                            raise ValueError('could not convert %s to %s' % (center, self._base_space))
                     # make sure the radius coerces into the reals
                     if not isinstance(radius, RealNumber):
                         if isinstance(radius, Expression):
@@ -309,12 +309,11 @@ class Berkovich_Element_Cp(Berkovich_Element):
                     if center.scheme().base_ring().prime() != self._p:
                         raise ValueError("center must be an element of " +
                                          "%s not %s" % self._base_space, center.scheme())
-                else:
-                    if center not in self._base_space:
-                        try:
-                            center = (self._base_space)(center)
-                        except (TypeError, ValueError):
-                            raise ValueError('could not convert %s to %s' % (center, self._base_space))
+                elif center not in self._base_space:
+                    try:
+                        center = (self._base_space)(center)
+                    except (TypeError, ValueError):
+                        raise ValueError('could not convert %s to %s' % (center, self._base_space))
                 if center.scheme().ambient_space() is not center.scheme():
                     raise ValueError("the center of a point of projective Berkovich space cannot be " +
                                      "a point of %s" % (center.scheme()))
@@ -333,13 +332,12 @@ class Berkovich_Element_Cp(Berkovich_Element):
                         center = (center.parent().fraction_field())(center)
                     if (center.parent()).prime() != self._p:
                         raise ValueError("center in %s, should be in %s") % (center.parent(), self._base_space)
-                else:
-                    # make sure the center is in the appropriate number field
-                    if not (center.parent() == self._base_space):
-                        try:
-                            center = (self._base_space)(center)
-                        except (TypeError, ValueError):
-                            raise ValueError('could not convert %s to %s' % (center, self._base_space))
+                # make sure the center is in the appropriate number field
+                elif not (center.parent() == self._base_space):
+                    try:
+                        center = (self._base_space)(center)
+                    except (TypeError, ValueError):
+                        raise ValueError('could not convert %s to %s' % (center, self._base_space))
             else:
                 raise ValueError("bad value %s passed to space_type. Do not initialize  " % (space_type) +
                                  "Berkovich_Element_Cp directly")
@@ -1053,15 +1051,14 @@ class Berkovich_Element_Cp(Berkovich_Element):
             return "Type III point centered at " \
                 + format(self._center) + " of radius " \
                 + format(self._radius)
+        elif self._center_func is not None and self._radius_func is not None:
+            return "Type IV point of precision %s " % self._prec + \
+                "with centers given by %s and radii given by %s"\
+                % (self._center_func, self._radius_func)
         else:
-            if self._center_func is not None and self._radius_func is not None:
-                return "Type IV point of precision %s " % self._prec + \
-                    "with centers given by %s and radii given by %s"\
-                    % (self._center_func, self._radius_func)
-            else:
-                return "Type IV point of precision %s, approximated " % self._prec + \
-                    "by disks centered at %s ... with radii %s ..." \
-                    % (self._center_lst[:min(self._prec, 2)], self._radius_lst[:min(self._prec, 2)])
+            return "Type IV point of precision %s, approximated " % self._prec + \
+                "by disks centered at %s ... with radii %s ..." \
+                % (self._center_lst[:min(self._prec, 2)], self._radius_lst[:min(self._prec, 2)])
 
     def _latex_(self):
         r"""
@@ -1075,7 +1072,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
             \Bold{C}_{3} \text{equivalent to the disk centered at
             (2 + O(3^20) : 1 + O(3^20)) of radius 1.00000000000000 in } \Bold{C}_3
         """
-        from sage.misc.latex import latex
         if self._type == 1:
             text = r"the point %s of } \Bold{C}_%s" % (self._center, self._p)
         elif self._type in [2, 3]:
@@ -2361,18 +2357,16 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
                                              max(dist_b_s, self.radius(), basepoint.radius())))
 
                 # case where self and basepoint are comparable
-                else:
-                    if b_ge_s:
-                        return basepoint
-                    else:
-                        return self
-
-            # case where other and basepoint are comparable
-            else:
-                if b_ge_o:
+                elif b_ge_s:
                     return basepoint
                 else:
-                    return other
+                    return self
+
+            # case where other and basepoint are comparable
+            elif b_ge_o:
+                return basepoint
+            else:
+                return other
 
         # now the cases where self > other
         elif s_ge_o:

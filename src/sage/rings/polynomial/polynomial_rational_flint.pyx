@@ -263,7 +263,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 #               deg += 1
 
         elif isinstance(x, dict):
-            for deg, e in x.iteritems():
+            for deg, e in x.items():
                 c = Rational(e)
                 fmpq_poly_set_coeff_mpq(self._poly, deg, c.value)
 
@@ -1502,10 +1502,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             3
         """
         cdef Integer den = Integer.__new__(Integer)
-        if fmpq_poly_denref(self._poly) is NULL:
-            mpz_set_ui(den.value, 1)
-        else:
-            fmpz_get_mpz(den.value, <fmpz *> fmpq_poly_denref(self._poly))
+        fmpz_get_mpz(den.value, <fmpz *> fmpq_poly_denref(self._poly))
         return den
 
     def _derivative(self, var=None):

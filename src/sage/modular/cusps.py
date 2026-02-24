@@ -772,7 +772,7 @@ class Cusp(Element):
             sage: G.dimension_cusp_forms(2)
             0
         """
-        from sage.modular.arithgroup.all import GammaH_class
+        from sage.modular.arithgroup.congroup_gammaH import GammaH_class
         if not isinstance(other, Cusp):
             other = Cusp(other)
         if not isinstance(G, GammaH_class):
@@ -1097,9 +1097,7 @@ class Cusps_class(Singleton, Parent):
     def _coerce_map_from_(self, R):
         if QQ.has_coerce_map_from(R):
             return True
-        if R is InfinityRing:
-            return True
-        return False
+        return R is InfinityRing
 
     def _element_constructor_(self, x):
         return Cusp(x)

@@ -29,14 +29,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import (PolynomialRing,
 from sage.rings.polynomial.polydict cimport ETuple
 
 
-def is_MPolynomialRing(x):
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38266,
-                       "The function is_MPolynomialRing is deprecated; "
-                       "use 'isinstance(..., MPolynomialRing_base)' instead.")
-    return isinstance(x, MPolynomialRing_base)
-
-
 cdef class MPolynomialRing_base(CommutativeRing):
     def __init__(self, base_ring, n, names, order):
         """
@@ -108,10 +100,10 @@ cdef class MPolynomialRing_base(CommutativeRing):
             category = categories.rings.Rings().Finite()
         else:
             category = polynomial_default_category(base_ring.category(), n)
-        # Ring.__init__ assigns the names.
-        Ring.__init__(self, base_ring, names, category=category)
         from sage.combinat.integer_vector import IntegerVectors
         self._indices = IntegerVectors(length=self._ngens)
+        # Ring.__init__ assigns the names.
+        Ring.__init__(self, base_ring, names, category=category)
 
     def is_integral_domain(self, proof=True):
         """
@@ -561,7 +553,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: T = PolynomialRing(QQ, []); T
             Multivariate Polynomial Ring in no variables over Rational Field
             sage: T.coerce_map_from(QQ)
-            Call morphism:
+            Coercion map:
               From: Rational Field
               To:   Multivariate Polynomial Ring in no variables over Rational Field
         """
@@ -813,20 +805,9 @@ cdef class MPolynomialRing_base(CommutativeRing):
                                           self.term_order().magma_str())
         return magma._with_names(s, self.variable_names())
 
-    def _gap_init_(self, gap=None):
+    def _gap_init_(self) -> str:
         """
         Return a string that yields a representation of ``self`` in GAP.
-
-        INPUT:
-
-        - ``gap`` -- (optional GAP instance) interface to which the
-          string is addressed
-
-        NOTE:
-
-        - If the optional argument ``gap`` is provided, the base ring
-          of ``self`` will be represented as ``gap(self.base_ring()).name()``.
-        - The result of applying the GAP interface to ``self`` is cached.
 
         EXAMPLES::
 
@@ -838,10 +819,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: libgap(P)
             <field in characteristic 0>[x,y]
         """
-        L = ['"%s"' % t for t in self.variable_names()]
-        if gap is not None:
-            return 'PolynomialRing(%s,[%s])' % (gap(self.base_ring()).name(),
-                                                ','.join(L))
+        L = ('"%s"' % t for t in self.variable_names())
         return 'PolynomialRing(%s,[%s])' % (self.base_ring()._gap_init_(),
                                             ','.join(L))
 
@@ -882,6 +860,21 @@ cdef class MPolynomialRing_base(CommutativeRing):
         return False
 
     def term_order(self):
+        """
+        Return the term order of ``self``.
+
+        OUTPUT: a :class:`~sage.rings.polynomial.term_order.TermOrder` of the
+        variables of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = PolynomialRing(ZZ, 3)
+            sage: R.term_order()
+            Degree reverse lexicographic term order
+            sage: S.<t,u> = PolynomialRing(QQ, 2, order='lex')
+            sage: S.term_order()
+            Lexicographic term order
+        """
         return self._term_order
 
     def characteristic(self):
@@ -900,6 +893,29 @@ cdef class MPolynomialRing_base(CommutativeRing):
         return self.base_ring().characteristic()
 
     def gen(self, n=0):
+        """
+        Return the ``n``-th indeterminate generator of ``self``.
+
+        INPUT:
+
+        - ``n`` -- integer (default: ``0``); number of the generator
+
+        EXAMPLES::
+
+            sage: R = CC['x,y,z']
+            sage: x = R.gen()
+            sage: x
+            x
+            sage: parent(x)
+            Multivariate Polynomial Ring in x, y, z over Complex Field with 53
+            bits of precision
+            sage: R.gen(2)
+            z
+            sage: R.gen(23)
+            Traceback (most recent call last):
+            ...
+            ValueError: generator not defined
+        """
         if n < 0 or n >= self._ngens:
             raise ValueError("generator not defined")
         return self._gens[int(n)]
@@ -957,9 +973,30 @@ cdef class MPolynomialRing_base(CommutativeRing):
                 return self.base_ring()
 
     def krull_dimension(self):
+        """
+        Return the Krull dimension of ``self``.
+
+        EXAMPLES::
+
+            sage: R = ZZ['t,u']
+            sage: R.krull_dimension()
+            3
+            sage: S = QQ['x,y']
+            sage: S.krull_dimension()
+            2
+        """
         return self.base_ring().krull_dimension() + self.ngens()
 
     def ngens(self):
+        """
+        Return the number of indeterminate generators of ``self``.
+
+        EXAMPLES::
+
+            sage: R = RR['x,y']
+            sage: R.ngens()
+            2
+        """
         return self._ngens
 
     def _monomial_order_function(self):

@@ -264,7 +264,7 @@ class ShiftedPrimedTableau(ClonableArray,
             sage: s.is_standard()
             True
         """
-        flattened = set([i for row in self for i in row if i is not None])
+        flattened = {i for row in self for i in row if i is not None}
         if len(flattened) != sum(len(row) - row.count(None) for row in self):
             return False
 
@@ -1089,7 +1089,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
         h, l = len(T), len(T[0])
 
         if (c+1 == l or T[r][c+1] is None or T[r][c+1] >= ind_plus_one):
-            (tp_r, tp_c) = (r, c)
+            tp_r, tp_c = (r, c)
             while True:
                 if tp_r+1 == h or T[tp_r+1][tp_c] is None or T[tp_r+1][tp_c] > ind_plus_one:
                     break
@@ -1263,7 +1263,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
             r, c = c, r
 
         if (c == 0 or T[r][c-1] is None or T[r][c-1] <= ind_e):
-            (tp_r, tp_c) = (r, c)
+            tp_r, tp_c = (r, c)
             while True:
                 if tp_r == 0 or T[tp_r-1][tp_c] is None or T[tp_r-1][tp_c] < ind_e:
                     break
@@ -1983,11 +1983,9 @@ class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
                        for j in range(skew[i], len(row)-1)
                        if row[j].is_primed()):
                 return False
-        if not (self._primed_diagonal or all(row[0].is_unprimed()
-                   for i, row in enumerate(T)
-                   if skew[i] == 0)):
-            return False
-        return True
+        return self._primed_diagonal or all(row[0].is_unprimed()
+                                            for i, row in enumerate(T)
+                                            if skew[i] == 0)
 
 
 class ShiftedPrimedTableaux_all(ShiftedPrimedTableaux):

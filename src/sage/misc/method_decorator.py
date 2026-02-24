@@ -5,6 +5,8 @@ AUTHOR:
 
 - Martin Albrecht (2009-05): inspired by a conversation with and code by Mike Hansen
 """
+from typing import Self
+
 from sage.structure.sage_object import SageObject
 
 
@@ -64,7 +66,7 @@ class MethodDecorator(SageObject):
         """
         return self.f(self._instance, *args, **kwds)
 
-    def __get__(self, inst, cls=None):
+    def __get__(self, inst, cls=None) -> Self:
         """
         EXAMPLES:
 
