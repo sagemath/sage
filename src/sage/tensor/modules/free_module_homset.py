@@ -17,19 +17,20 @@ REFERENCES:
 - Chaps. 13, 14 of R. Godement : *Algebra* [God1968]_
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
 """
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.homset import Homset
 from sage.misc.classcall_metaclass import ClasscallMetaclass
-from sage.tensor.modules.free_module_morphism import FiniteRankFreeModuleEndomorphism, FiniteRankFreeModuleMorphism
+from sage.tensor.modules.free_module_morphism import (
+    FiniteRankFreeModuleEndomorphism, FiniteRankFreeModuleMorphism)
 from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 
@@ -239,7 +240,7 @@ class FreeModuleHomset(Homset, metaclass=ClasscallMetaclass):
         from sage.structure.parent import Parent
         return Parent.__call__(self, *args, **kwds)
 
-    #### Methods required for any Parent
+    # ### Methods required for any Parent ###
 
     def _element_constructor_(self, matrix_rep, bases=None, name=None,
                               latex_name=None, is_identity=False):
@@ -273,7 +274,8 @@ class FreeModuleHomset(Homset, metaclass=ClasscallMetaclass):
             sage: N = FiniteRankFreeModule(ZZ, 2, name='N')
             sage: e = M.basis('e') ; f = N.basis('f')
             sage: H = Hom(M,N)
-            sage: phi = H._element_constructor_([[2,-1,3], [1,0,-4]], bases=(e,f),
+            sage: phi = H._element_constructor_([[2,-1,3], [1,0,-4]],
+            ....:                               bases=(e,f),
             ....:                               name='phi', latex_name=r'\phi')
             sage: phi
             Generic morphism:
@@ -346,7 +348,7 @@ class FreeModuleHomset(Homset, metaclass=ClasscallMetaclass):
         matrix_rep = [[ring.an_element() for i in range(m)] for j in range(n)]
         return self.element_class(self, matrix_rep)
 
-    #### End of methods required for any Parent
+    # ### End of methods required for any Parent ###
 
 
 class FreeModuleEndset(FreeModuleHomset):
@@ -492,10 +494,10 @@ class FreeModuleEndset(FreeModuleHomset):
         """
         from sage.tensor.modules.tensor_free_module import TensorFreeModule
         from sage.tensor.modules.free_module_linear_group import \
-                                                          FreeModuleLinearGroup
+            FreeModuleLinearGroup
         if isinstance(other, TensorFreeModule):
             # Coercion of a type-(1,1) tensor to an endomorphism:
-            if other.tensor_type() == (1,1):
+            if other.tensor_type() == (1, 1):
                 return self.is_endomorphism_set() and \
                                            other.base_module() is self.domain()
         if isinstance(other, FreeModuleLinearGroup):
@@ -504,7 +506,7 @@ class FreeModuleEndset(FreeModuleHomset):
                                            other.base_module() is self.domain()
         return False
 
-    #### Methods required for any Parent
+    # ### Methods required for any Parent ###
 
     def _element_constructor_(self, matrix_rep, bases=None, name=None,
                               latex_name=None, is_identity=False):
@@ -569,17 +571,17 @@ class FreeModuleEndset(FreeModuleHomset):
             # (this includes automorphisms, since the class
             #  FreeModuleAutomorphism inherits from FreeModuleTensor)
             tensor = matrix_rep  # for readability
-            if tensor.tensor_type() == (1,1) and tensor.base_module() is self.domain():
+            if tensor.tensor_type() == (1, 1) and tensor.base_module() is self.domain():
                 basis = tensor.pick_a_basis()
                 tcomp = tensor.comp(basis)
                 fmodule = tensor.base_module()
-                mat = [[tcomp[[i,j]] for j in fmodule.irange()]
+                mat = [[tcomp[[i, j]] for j in fmodule.irange()]
                        for i in fmodule.irange()]
                 if isinstance(tensor, FreeModuleAutomorphism):
                     is_identity = tensor._is_identity
                 else:
                     is_identity = False
-                return self.element_class(self, mat, bases=(basis,basis),
+                return self.element_class(self, mat, bases=(basis, basis),
                                           name=tensor._name,
                                           latex_name=tensor._latex_name,
                                           is_identity=is_identity)
@@ -590,7 +592,7 @@ class FreeModuleEndset(FreeModuleHomset):
                                              name=name, latex_name=latex_name,
                                              is_identity=is_identity)
 
-    #### Monoid methods ####
+    # ### Monoid methods ###
 
     def one(self):
         r"""
@@ -648,4 +650,4 @@ class FreeModuleEndset(FreeModuleHomset):
             self._one = self.element_class(self, [], is_identity=True)
         return self._one
 
-    #### End of monoid methods ####
+    # ### End of monoid methods ###

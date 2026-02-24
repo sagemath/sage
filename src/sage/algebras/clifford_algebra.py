@@ -3008,6 +3008,10 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         - ``reduced`` -- boolean (default: ``True``); whether or not to return
           the reduced Gröbner basis
 
+        .. SEEALSO::
+
+            :mod:`sage.algebras.exterior_algebra_groebner`
+
         EXAMPLES:
 
         We compute an example::
@@ -3057,20 +3061,20 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         Gröber bases (which are not unique)::
 
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
-            sage: I = E.ideal([x+y*z])
+            sage: I = E.ideal([x+y*z, x - z - y])
             sage: I.groebner_basis(reduced=False)
-            (x*y, x*z, y*z + x, x*y*z)
-            sage: I.groebner_basis(reduced=True)
-            (x*y, x*z, y*z + x)
+            (x, x*y, -x + y + z, y*z + x)
+            sage: I.groebner_basis()
+            (x, y + z)
 
         However, if we have already computed a reduced Gröbner basis (with
         a given term order), then we return that::
 
-            sage: I = E.ideal([x+y*z])  # A fresh ideal
+            sage: I = E.ideal([x+y*z, x - z - y])  # A fresh ideal
             sage: I.groebner_basis()
-            (x*y, x*z, y*z + x)
+            (x, y + z)
             sage: I.groebner_basis(reduced=False)
-            (x*y, x*z, y*z + x)
+            (x, y + z)
 
         TESTS::
 

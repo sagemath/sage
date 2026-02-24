@@ -81,7 +81,7 @@ def JohnsonGraph(n, k, immutable=False):
                  immutable=immutable)
 
 
-def KneserGraph(n, k, immutable=False):
+def KneserGraph(n, k, immutable=False, name=None):
     r"""
     Return the Kneser Graph with parameters `n, k`.
 
@@ -101,6 +101,9 @@ def KneserGraph(n, k, immutable=False):
 
     - ``immutable`` -- boolean (default: ``False``); whether to return an
       immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
 
     EXAMPLES::
 
@@ -127,6 +130,8 @@ def KneserGraph(n, k, immutable=False):
         raise ValueError("Parameter n should be a strictly positive integer")
     if k <= 0 or k > n:
         raise ValueError("Parameter k should be a strictly positive integer inferior to n")
+    if name is None:
+        name = f"Kneser graph with parameters {n},{k}"
 
     from sage.combinat.subset import Subsets
 
@@ -135,8 +140,7 @@ def KneserGraph(n, k, immutable=False):
     edges = ((s, t) for s in S for t in Subsets(s0.difference(s), k))
 
     return Graph([S, edges], format="vertices_and_edges",
-                 name=f"Kneser graph with parameters {n},{k}",
-                 immutable=immutable)
+                 name=name, immutable=immutable)
 
 
 def FurerGadget(k, prefix=None, immutable=False):
@@ -1078,7 +1082,7 @@ def chang_graphs(immutable=False):
     return [g1, g2, g3]
 
 
-def CirculantGraph(n, adjacency, immutable=False):
+def CirculantGraph(n, adjacency, immutable=False, name=None):
     r"""
     Return a circulant graph with `n` nodes.
 
@@ -1093,6 +1097,9 @@ def CirculantGraph(n, adjacency, immutable=False):
 
     - ``immutable`` -- boolean (default: ``False``); whether to return an
       immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, each circulant
@@ -1178,11 +1185,12 @@ def CirculantGraph(n, adjacency, immutable=False):
     """
     if not isinstance(adjacency, list):
         adjacency = [adjacency]
+    if name is None:
+        name = f"Circulant graph ({adjacency})"
 
     edges = ((v, (v + j) % n) for v in range(n) for j in adjacency)
     G = Graph([range(n), edges], format="vertices_and_edges",
-              name=f"Circulant graph ({adjacency})",
-              immutable=immutable)
+              name=name, immutable=immutable)
     G._circle_embedding(list(range(n)))
     return G
 
@@ -2133,7 +2141,7 @@ def TabacjnGraph(n, a, b, r, immutable=False):
     return G
 
 
-def HararyGraph(k, n):
+def HararyGraph(k, n, immutable=False):
     r"""
     Return the Harary graph on `n` vertices and connectivity `k`, where
     `2 \leq k < n`.
@@ -2146,6 +2154,15 @@ def HararyGraph(k, n):
     The construction provided uses the method CirculantGraph.  For more
     details, see the book [West2001]_ or the `MathWorld article on
     Harary graphs <http://mathworld.wolfram.com/HararyGraph.html>`_.
+
+    INPUT:
+
+    - ``k`` -- integer; connectivity of the graph
+
+    - ``n`` -- integer; number of vertices of the graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -2175,22 +2192,23 @@ def HararyGraph(k, n):
     if k >= n:
         raise ValueError("Number of vertices n should be greater than k.")
 
-    if k % 2 == 0:
-        G = CirculantGraph(n, list(range(1, k//2 + 1)))
-    else:
-        if n % 2 == 0:
-            G = CirculantGraph(n, list(range(1, (k - 1)//2 + 1)))
-            for i in range(n):
-                G.add_edge(i, (i + n//2) % n)
-        else:
-            G = HararyGraph(k - 1, n)
-            for i in range((n - 1)//2 + 1):
-                G.add_edge(i, (i + (n - 1)//2) % n)
-    G.name('Harary graph {0}, {1}'.format(k, n))
-    return G
+    name = f"Harary graph {k}, {n}"
+    if not k % 2:
+        return CirculantGraph(n, list(range(1, k//2 + 1)),
+                              immutable=immutable, name=name)
+    if not n % 2:
+        shift_list = list(range(1, (k - 1)//2 + 1))
+        shift_list.append(n//2)
+        return CirculantGraph(n, shift_list,
+                              immutable=immutable, name=name)
+    G = CirculantGraph(n, list(range(1, (k - 1)//2 + 1)),
+                       immutable=False, name=name)
+    for i in range((n - 1)//2 + 1):
+        G.add_edge(i, (i + (n - 1)//2) % n)
+    return G.copy(immutable=True) if immutable else G
 
 
-def HyperStarGraph(n, k):
+def HyperStarGraph(n, k, immutable=False):
     r"""
     Return the hyper-star graph `HS(n, k)`.
 
@@ -2206,6 +2224,9 @@ def HyperStarGraph(n, k):
     - ``n`` -- nonnegative integer; length of the binary strings
 
     - ``k`` -- nonnegative integer; number of 1s per binary string
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2260,7 +2281,8 @@ def HyperStarGraph(n, k):
                 c[i] = one
             adj[u] = L
 
-    return Graph(adj, format='dict_of_lists', name=f"HS({n},{k})")
+    return Graph(adj, format='dict_of_lists', name=f"HS({n},{k})",
+                 immutable=immutable)
 
 
 def LCFGraph(n, shift_list, repeats):
@@ -2440,7 +2462,7 @@ def MycielskiStep(g):
     return gg
 
 
-def NKStarGraph(n, k):
+def NKStarGraph(n, k, immutable=False):
     r"""
     Return the `(n,k)`-star graph.
 
@@ -2457,6 +2479,9 @@ def NKStarGraph(n, k):
     -  ``n`` -- integer; number of symbols
 
     -  ``k`` -- integer; length of the labels of the vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2479,14 +2504,14 @@ def NKStarGraph(n, k):
     d = {}
     for v in Arrangements(set, k):
         v = list(v)  # So we can easily mutate it
-        tmp_dict = {}
+        neighbors = []
         # add edges of dimension i
         for i in range(1, k):
             # swap 0th and ith element
             v[0], v[i] = v[i], v[0]
             # convert to str and add to list
             vert = "".join(v)
-            tmp_dict[vert] = None
+            neighbors.append(vert)
             # swap back
             v[0], v[i] = v[i], v[0]
         # add other edges
@@ -2497,13 +2522,14 @@ def NKStarGraph(n, k):
                 v[0] = i
                 # add edge
                 vert = "".join(v)
-                tmp_dict[vert] = None
+                neighbors.append(vert)
             v[0] = tmp_bit
-        d["".join(v)] = tmp_dict
-    return Graph(d, name=f"({n},{k})-star")
+        d["".join(v)] = neighbors
+    return Graph(d, format="dict_of_lists", name=f"({n},{k})-star",
+                 immutable=immutable)
 
 
-def NStarGraph(n):
+def NStarGraph(n, immutable=False):
     r"""
     Return the `n`-star graph.
 
@@ -2514,6 +2540,9 @@ def NStarGraph(n):
     INPUT:
 
     -  ``n`` -- integer; number of symbols
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2537,21 +2566,22 @@ def NStarGraph(n):
     d = {}
     for v in Permutations(set):
         v = list(v)  # So we can easily mutate it
-        tmp_dict = {}
+        neighbors = []
         for i in range(1, n):
             if v[0] != v[i]:
                 # swap 0th and ith element
                 v[0], v[i] = v[i], v[0]
                 # convert to str and add to list
                 vert = "".join(v)
-                tmp_dict[vert] = None
+                neighbors.append(vert)
                 # swap back
                 v[0], v[i] = v[i], v[0]
-        d["".join(v)] = tmp_dict
-    return Graph(d, name=f"{n}-star")
+        d["".join(v)] = neighbors
+    return Graph(d, format="dict_of_lists", name=f"{n}-star",
+                 immutable=immutable)
 
 
-def OddGraph(n):
+def OddGraph(n, immutable=False):
     r"""
     Return the Odd Graph with parameter `n`.
 
@@ -2564,6 +2594,13 @@ def OddGraph(n):
 
     For example, the Petersen Graph can be defined
     as the Odd Graph with parameter `3`.
+
+    INPUT:
+
+    -  ``n`` -- integer; the groundset has `2n - 1` elements
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2580,21 +2617,27 @@ def OddGraph(n):
         sage: KG = graphs.OddGraph(1)
         Traceback (most recent call last):
         ...
-        ValueError: Parameter n should be an integer strictly greater than 1
+        ValueError: parameter n should be an integer strictly greater than 1
     """
     if n <= 1:
-        raise ValueError("Parameter n should be an integer strictly greater than 1")
-    g = KneserGraph(2*n - 1, n - 1)
-    g.name("Odd Graph with parameter %s" % n)
-    return g
+        raise ValueError("parameter n should be an integer strictly greater than 1")
+    return KneserGraph(2*n - 1, n - 1, immutable=immutable,
+                       name=f"Odd Graph with parameter {n}")
 
 
-def PaleyGraph(q):
+def PaleyGraph(q, immutable=False):
     r"""
     Paley graph with `q` vertices.
 
     Parameter `q` must be the power of a prime number and congruent
     to 1 mod 4.
+
+    INPUT:
+
+    - ``q`` -- integer; number of vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2628,9 +2671,9 @@ def PaleyGraph(q):
         raise ValueError("parameter q must be a prime power")
     if not mod(q, 4) == 1:
         raise ValueError("parameter q must be congruent to 1 mod 4")
-    g = Graph([FiniteField(q, 'a'), lambda i, j: (i - j).is_square()],
-              loops=False, name=f"Paley graph with parameter {q}")
-    return g
+    return Graph([FiniteField(q, 'a'), lambda i, j: (i - j).is_square()],
+                 format="rule", immutable=immutable,
+                 loops=False, name=f"Paley graph with parameter {q}")
 
 
 def PasechnikGraph(n):

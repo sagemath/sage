@@ -29,28 +29,6 @@ import sage.misc.latex as latex
 _print_mode = "manin"
 
 
-def is_ModularSymbolsElement(x) -> bool:
-    r"""
-    Return ``True`` if x is an element of a modular symbols space.
-
-    EXAMPLES::
-
-        sage: sage.modular.modsym.element.is_ModularSymbolsElement(ModularSymbols(11, 2).0)
-        doctest:warning...
-        DeprecationWarning: The function is_ModularSymbolsElement is deprecated;
-        use 'isinstance(..., ModularSymbolsElement)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        True
-        sage: sage.modular.modsym.element.is_ModularSymbolsElement(13)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_ModularSymbolsElement is deprecated; "
-                "use 'isinstance(..., ModularSymbolsElement)' instead.")
-    return isinstance(x, ModularSymbolsElement)
-
-
 def set_modsym_print_mode(mode='manin'):
     r"""
     Set the mode for printing of elements of modular symbols spaces.

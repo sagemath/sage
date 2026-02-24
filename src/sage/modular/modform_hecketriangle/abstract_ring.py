@@ -16,8 +16,8 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.algebras.free_algebra import FreeAlgebra
-
 from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.rings.fraction_field import FractionField
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
@@ -125,8 +125,6 @@ class FormsRing_abstract(Parent):
             sage: latex(QuasiWeakModularFormsRing())
             \mathcal{ QM^! }_{n=3}(\Bold{Z})
         """
-
-        from sage.misc.latex import latex
         return "\\mathcal{{ {} }}_{{n={}}}({})".format(self._analytic_type.latex_space_name(), self._group.n(), latex(self._base_ring))
 
     def _element_constructor_(self, el):
