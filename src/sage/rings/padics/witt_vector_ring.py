@@ -126,11 +126,48 @@ def fast_char_p_power(x, n, p=None):
 
 
 class WittVectorRingFactory(UniqueFactory):
+    r"""
+        Return a Factory that creates and stores all truncated Witt vector rings.
+        
+        Send directly to the appropriate constructor of WittVectorRingClass for each algorithm
+        Except: `standard` where the Witt's Polynomials for `p` of `ZZ` are cached,
+        in order to be reused in the computation of the Witt's Polynomials of any ring `R`
+        for the same prime `p`
+    """
     def __init__(self, name):
+        r"""
+        Initialize such a Factory as described above.
+        
+            EXAMPLES::
+
+            sage: from sage.rings.padics.witt_vector_ring import WittVectorRing
+            sage: isinstance(WittVectorRing, object)
+            True
+        """
         super().__init__(name)
         self._witt_polynomials = {}
 
     def create_key(self, coefficient_ring, prec=1, p=None, algorithm=None):
+        r"""
+        Normalise and validate inputs to create the factory cache key.
+        
+        INPUT:
+
+        - ``coefficient_ring`` -- a commutative ring
+        - ``prec`` -- positive integer precision
+        - ``p`` -- prime number (default: the characteristic when it is prime)
+        - ``algorithm`` -- optional algorithm selector
+
+        OUTPUT:
+
+        A tuple ``(coefficient_ring, prec, p, algorithm)`` suitable for caching.
+        
+        EXAMPLES::
+
+            sage: from sage.rings.padics.witt_vector_ring import WittVectorRing
+            sage: WittVectorRing(GF(5), prec=2)  # indirect doctest
+            Ring of truncated 5-typical Witt vectors of length 2 over Finite Field of size 5
+        """
         if coefficient_ring not in CommutativeRings():
             raise TypeError(f"{coefficient_ring} is not a commutative ring")
         elif not isinstance(prec, (int, Integer)):
@@ -157,13 +194,30 @@ class WittVectorRingFactory(UniqueFactory):
                                       PolynomialRing_generic)
                         and coefficient_ring.base()
                             in Fields().Finite()):
-                        child = WittVectorRing_phantom
+                        algorithm = 'phantom'
                     else:
-                        child = WittVectorRing_finotti
+                        algorithm = 'finotti'
                 elif coefficient_ring(p).is_unit():
-                    child = WittVectorRing_pinvertible
+                    algorithm = 'p_invertible'
                 else:
-                    child = WittVectorRing_standard
+                    algorithm = 'standard'
+            case _ if algorithm not in ['standard','p_invertible', 'finotti', 'phantom']:
+                raise ValueError("algorithm must be one of None, 'standard', "
+                                 "'p_invertible', 'finotti', 'phantom'")
+        return (coefficient_ring, prec, p, algorithm)
+
+    def create_object(self, version, key, **extra_args):
+        r"""
+        Create a truncated Witt Vector Ring from ``key``.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(5), p=31, prec=2, algorithm='standard')
+            sage: W  # indirect doctest
+            Ring of truncated 31-typical Witt vectors of length 2 over Finite Field of size 5
+        """
+        (coefficient_ring, prec, p, algorithm) = key
+        match algorithm:
             case 'finotti':
                 child = WittVectorRing_finotti
             case 'phantom':
@@ -172,13 +226,6 @@ class WittVectorRingFactory(UniqueFactory):
                 child = WittVectorRing_pinvertible
             case 'standard':
                 child = WittVectorRing_standard
-            case _:
-                raise ValueError("algorithm must be one of None, 'standard', "
-                                 "'p_invertible', 'finotti', 'phantom'")
-        return (coefficient_ring, prec, p, child)
-
-    def create_object(self, version, key, **extra_args):
-        (coefficient_ring, prec, p, child) = key
         if child != WittVectorRing_standard:
             return child(coefficient_ring, prec, p)
 
@@ -196,7 +243,25 @@ class WittVectorRingFactory(UniqueFactory):
         truncated Witt vectors for the ``standard`` algorithm, of the ZZ
         ring. This method is used as an auxiliary for the computation of
         the truncated Witt vectors of a ring R.
+        
+        EXAMPLES::
 
+            sage: from sage.rings.padics.witt_vector_ring import WittVectorRing
+            sage: F = WittVectorRing  # the global factory instance
+
+            sage: p = 2
+            sage: p in F._witt_polynomials
+            False
+
+            sage: F._generate_sum_and_product_polynomials_list(2, p)
+            sage: p in F._witt_polynomials
+            True
+            sage: len(F._witt_polynomials[p][0]), len(F._witt_polynomials[p][1])
+            (2, 2)
+
+            sage: F._generate_sum_and_product_polynomials_list(4, p)
+            sage: len(F._witt_polynomials[p][0]), len(F._witt_polynomials[p][1])
+            (4, 4)
         """
         x_var_names = [f'X{i}' for i in range(prec)]
         y_var_names = [f'Y{i}' for i in range(prec)]
@@ -251,8 +316,6 @@ class WittVectorRingFactory(UniqueFactory):
                          for i in range(n)])
             p_n = (x_poly*y_poly - p_poly) // p**n
             self._witt_polynomials[p][1][n] = p_n
-
-        return (self._witt_polynomials[p][0], self._witt_polynomials[p][1])
 
 
 WittVectorRing = WittVectorRingFactory("WittVectorRing")
@@ -505,6 +568,8 @@ class WittVectorRingClass(Parent):
             (X1*Y1, X2*Y1^3 + X1^3*Y2)
             sage: W.frobenius_morphism()(W([X1,X2]))  # indirect doctest
             (X1^3, X2^3)
+            sage: WW = WittVectorRing(P, p=3, prec=3, algorithm='standard')
+            sage: V = WittVectorRing(P, p=3, prec=1, algorithm='standard')
         """
         var_names = [f'X{i}' for i in range(prec)] + [f'Y{i}' for i in range(prec)]
 
@@ -516,7 +581,7 @@ class WittVectorRingClass(Parent):
         # homomorphism, as there is no endowed homomorphism from R[X1,Y1] to
         # ZZ[X1,X2,Y1,Y2]
         if len(sum_poly) > prec:
-            ZZ_ring = sum_poly[-1].parent()
+            ZZ_ring = sum_poly[-1].parent()  # TO FIX
             prec_big = len(sum_poly)
 
             S = PolynomialRing(coefficient_ring, var_names)
