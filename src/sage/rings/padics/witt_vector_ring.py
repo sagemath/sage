@@ -146,6 +146,7 @@ class WittVectorRingFactory(UniqueFactory):
         """
         super().__init__(name)
         self._witt_polynomials = {}
+        self._frob_polynomials = {}
 
     def create_key(self, coefficient_ring, prec=1, p=None, algorithm=None):
         r"""
@@ -243,7 +244,7 @@ class WittVectorRingFactory(UniqueFactory):
         truncated Witt vectors for the ``standard`` algorithm, of the ZZ
         ring. This method is used as an auxiliary for the computation of
         the truncated Witt vectors of a ring R.
-        
+
         EXAMPLES::
 
             sage: from sage.rings.padics.witt_vector_ring import WittVectorRing
@@ -316,6 +317,18 @@ class WittVectorRingFactory(UniqueFactory):
                          for i in range(n)])
             p_n = (x_poly*y_poly - p_poly) // p**n
             self._witt_polynomials[p][1][n] = p_n
+
+        R = PolynomialRing(ZZ, x_var_names, implementation=implementation)
+        x_vars = R.gens()
+
+        self._frob_polynomials[p] = []
+        if not prec.is_one():
+            self._frob_polynomials[p] = [x_vars[0]**p + p*x_vars[1]]
+            for n in range(2, prec):
+                x_poly = sum([p**i * x_vars[i]**(p**(n-i)) for i in range(n+1)])
+                p_poly = sum([p**i * self._frob_polynomials[p][i]**(p**(n-1-i))
+                              for i in range(n-1)])
+                self._frob_polynomials[p].append((x_poly - p_poly) / p**(n-1))
 
 
 WittVectorRing = WittVectorRingFactory("WittVectorRing")
@@ -470,15 +483,9 @@ class WittVectorRingClass(Parent):
         else:
             cat = CommutativeRings()
 
-        if coefficient_ring.base_ring() is coefficient_ring:
-            base = self
-        else:
-            base = WittVectorRing(coefficient_ring.base_ring(), prec=prec,
-                                  p=prime, algorithm=algorithm)
-
         names = tuple('V' + x for x in coefficient_ring.variable_names())
 
-        Parent.__init__(self, base=base, category=cat, names=names)
+        Parent.__init__(self, base=ZZ, category=cat, names=names)
 
     def __iter__(self) -> Iterator:
         """
@@ -573,57 +580,19 @@ class WittVectorRingClass(Parent):
         """
         var_names = [f'X{i}' for i in range(prec)] + [f'Y{i}' for i in range(prec)]
 
-        (sum_poly, prod_poly) = WittVectorRing._witt_polynomials[p]
-        self._sum_polynomials = [None]*prec
-        self._prod_polynomials = [None]*prec
-
         # Because ZZ can have a higher precision that prec, we need to create the
         # homomorphism, as there is no endowed homomorphism from R[X1,Y1] to
         # ZZ[X1,X2,Y1,Y2]
-        if len(sum_poly) > prec:
-            ZZ_ring = sum_poly[-1].parent()  # TO FIX
-            prec_big = len(sum_poly)
-
-            S = PolynomialRing(coefficient_ring, var_names)
-            Sgens = S.gens()
-            images = []
-
-            for i in range(prec_big):
-                images.append(Sgens[i] if i < prec else S(0))
-            for i in range(prec_big):
-                images.append(Sgens[prec + i] if i < prec else S(0))
-
-            phi = ZZ_ring.hom(images, S)
-
-
-        self._prod_polynomials = [x_vars[0] * y_vars[0]] + [0]*(prec-1)
-        for n in range(1, prec):
-            x_poly = sum([p**i * x_vars[i]**(p**(n-i)) for i in range(n+1)])
-            y_poly = sum([p**i * y_vars[i]**(p**(n-i)) for i in range(n+1)])
-            p_poly = sum([p**i * self._prod_polynomials[i]**(p**(n-i))
-                         for i in range(n)])
-            p_n = (x_poly*y_poly - p_poly) // p**n
-            self._prod_polynomials[n] = p_n
-
-        R = PolynomialRing(ZZ, x_var_names, implementation=implementation)
-        x_vars = R.gens()
-
-        self._frob_polynomials = []
-        if not prec.is_one():
-            self._frob_polynomials = [x_vars[0]**p + p*x_vars[1]]
-            for n in range(2, prec):
-                x_poly = sum([p**i * x_vars[i]**(p**(n-i)) for i in range(n+1)])
-                p_poly = sum([p**i * self._frob_polynomials[i]**(p**(n-1-i))
-                              for i in range(n-1)])
-                self._frob_polynomials.append((x_poly - p_poly) / p**(n-1))
-
-        S = PolynomialRing(coefficient_ring, x_y_vars)
+        S = PolynomialRing(coefficient_ring, var_names)
         for n in range(prec):
             self._sum_polynomials[n] = S(self._sum_polynomials[n])
             self._prod_polynomials[n] = S(self._prod_polynomials[n])
+
+        R = PolynomialRing(ZZ, var_names[:prec])
+        x_vars = R.gens()
         S = PolynomialRing(coefficient_ring, x_vars)
         for n in range(prec-1):
-            self._frob_polynomials[n] = S(self._frob_polynomials[n])
+            self._frob_polynomials[p][n] = S(self._frob_polynomials[p][n])
 
     def _latex_(self) -> str:
         r"""
