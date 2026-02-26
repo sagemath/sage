@@ -1853,6 +1853,73 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
     _print_style = 'lex'
 
+    def _coerce_map_from_(self, R):
+        """
+        Allow coercion from a 1-fold tensor product back to the algebra itself.
+
+        EXAMPLES::
+
+            sage: # needs sage.modules
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: p = Sym.p()
+            sage: t1 = tensor([p[2]])
+            sage: p.has_coerce_map_from(t1.parent())
+            True
+        """
+        if hasattr(R, 'tensor_factors'):
+            factors = R.tensor_factors()
+            if len(factors) == 1 and factors[0] is self:
+                from sage.categories.morphism import SetMorphism
+                from sage.categories.homset import Hom
+                def unwrap_tensor(t):
+                    return self.sum_of_terms(
+                        (key[0], coeff) for key, coeff in t.monomial_coefficients().items()
+                    )
+
+                return SetMorphism(Hom(R, self), unwrap_tensor)
+
+        # Fallback to the standard coercion
+        if hasattr(super(), '_coerce_map_from_'):
+            return super()._coerce_map_from_(R)
+        return False
+
+    def __call__(self, x, *args, **kwargs):
+        """
+        Evaluate ``self`` on ``x``.
+
+        EXAMPLES::
+
+            sage: # needs sage.modules
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: s = Sym.s()
+            sage: p = Sym.p()
+
+            sage: # 1-fold tensor conversion
+            sage: t1 = tensor([p[2]])
+            sage: s(t1)
+            -s[1, 1] + s[2]
+
+            sage: # Multi-fold tensor conversion
+            sage: t2 = tensor([p[2], p[1]])
+            sage: s(t2)
+            -s[1, 1] # s[1] + s[2] # s[1]
+        """
+        if not args and not kwargs and hasattr(x, 'parent'):
+            P = x.parent()
+            if hasattr(P, 'tensor_factors'):
+                factors = P.tensor_factors()
+                if all(isinstance(F, SymmetricFunctionAlgebra_generic) for F in factors):
+                    if len(factors) == 1:
+                        unwrapped = factors[0].sum_of_terms(
+                            (key[0], coeff) for key, coeff in x.monomial_coefficients().items()
+                        )
+                        return super().__call__(unwrapped)
+                    elif len(factors) > 1:
+                        from sage.categories.tensor import tensor
+                        return tensor([self] * len(factors))(x)
+
+        return super().__call__(x, *args, **kwargs)
+
     # Todo: share this with ncsf and over algebras with basis indexed by word-like elements
     def __getitem__(self, c):
         r"""
