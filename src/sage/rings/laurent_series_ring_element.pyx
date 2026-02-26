@@ -1566,52 +1566,81 @@ cdef class LaurentSeries(AlgebraElement):
             False
             sage: (4/x^2 + 4/x + 1).is_square(root=True)
             (True, 2*x^-1 + 1)
+
             sage: R.<t> = LaurentSeriesRing(ZZ)
             sage: (t^-4).is_square()
             True
             sage: (2*t^-4).is_square()
             False
+
+        The following examples demonstrate that for rings with nonzero
+        nilradical, a :exc:`NotImplementedError` is raised::
+
+            sage: R.<t> = LaurentSeriesRing(Zmod(8))
+            sage: (t^2).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented for Laurent series over rings with nonzero nilradical
+            sage: (4*t^2).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented for Laurent series over rings with nonzero nilradical
+            sage: (2*t^2).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented for Laurent series over rings with nonzero nilradical
+            sage: (4 + t).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented for Laurent series over rings with nonzero nilradical
         """
-        # Case 1: Handle Zero
         if self.is_zero():
-            if root:
-                return True, self
-            return True
+            return (True, self) if root else True
 
-        # Case 2: Valuation must be even
         v = self.valuation()
-        if v % 2:
-            if root:
-                return False, None
-            return False
+        if v % 2 != 0:
+            try:
+                if self.base_ring().nilradical().is_zero():
+                    return (False, None) if root else False
+            except (AttributeError, NotImplementedError, ArithmeticError):
+                pass
+            raise NotImplementedError(
+                "is_square() not implemented for Laurent series over rings with nonzero nilradical"
+            )
 
-        # Case 3: The unit part must be a square
-        unit_part = (self >> v).power_series()
+        unit = self.valuation_zero_part()
         
-        # We use a try-except block to handle inconsistent API in base rings
+        # Check if the base ring has a nonzero nilradical. 
+        # If it does (like Zmod(8)), PowerSeries.is_square will raise NotImplementedError.
         try:
-            # Check is_square without keyword args first (safest)
-            is_sq = unit_part.is_square()
-        except (TypeError, ValueError, ArithmeticError, NotImplementedError):
-            if root:
+            nil_zero = self.base_ring().nilradical().is_zero()
+        except (AttributeError, NotImplementedError, ArithmeticError):
+            nil_zero = False
+
+        if not nil_zero:
+             raise NotImplementedError(
+                "is_square() not implemented for Laurent series over rings with nonzero nilradical"
+            )
+        try:
+            res = unit.is_square(root=root)
+        except TypeError:
+            # Fallback for older Sage versions where PowerSeries.is_square lacks 'root'
+            is_sq = unit.is_square()
+            if not root:
+                return is_sq
+            if not is_sq:
                 return False, None
-            return False
+            res = (True, unit.sqrt())
 
         if not root:
-            return is_sq
+            return res
 
-        if is_sq:
-            # If we need the root, calculate it
-            # We try .sqrt() which is standard across most elements
-            try:
-                sqrt_unit = unit_part.sqrt()
-            except (ValueError, ArithmeticError):
-                return False, None
-                
-            # Reconstruct: t^(v/2) * sqrt(unit)
-            return True, self.parent()(sqrt_unit) << (v // 2)
-        else:
+        is_sq, sqrt_unit = res
+        if not is_sq:
             return False, None
+
+        result = self.parent().gen()**(v // 2) * sqrt_unit
+        return True, result
 
     def derivative(self, *args):
         """
