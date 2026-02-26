@@ -3948,32 +3948,60 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         if subcomplex in self.__enlarged:
             return self.__enlarged[subcomplex]
+
         faces = [x for x in list(self._facets) if x not in subcomplex._facets]
         # For consistency when using different Python versions, for example, sort 'faces'.
         faces = sorted(faces, key=str)
-        done = False
+        stack = list(faces)
+        skipped = []
         new_facets = sorted(subcomplex._facets, key=str)
-        while not done:
-            done = True
-            remove_these = []
-            if verbose:
-                print(f"  looping through {len(faces)} facets")
-            for f in faces:
-                f_set = f.set()
-                int_facets = {a.set().intersection(f_set) for a in new_facets}
-                intersection = SimplicialComplex(int_facets)
-                if not intersection._facets[0].is_empty():
-                    if (len(intersection._facets) == 1 or
-                            intersection == intersection._contractible_subcomplex()):
-                        new_facets.append(f)
-                        remove_these.append(f)
-                        done = False
-            if verbose and not done:
-                print("    added %s facets" % len(remove_these))
-            for f in remove_these:
-                faces.remove(f)
+
         if verbose:
+            print(f"  looping through {len(faces)} facets")
+
+        added_count = 0
+
+        while stack:
+            f = stack.pop()
+            f_set = f.set()
+            int_facets = {a.set().intersection(f_set) for a in new_facets}
+            intersection = SimplicialComplex(int_facets)
+
+            contractible = False
+
+            if not intersection._facets[0].is_empty():
+                if len(intersection._facets) == 1:
+                    contractible = True
+                elif intersection.dimension() == 0:
+                    contractible = False
+                else:
+                    sum_v_i = sum(len(s) for s in intersection._facets)
+                    v_count = len(intersection.vertices())
+                    f_count = len(intersection._facets)
+                    if sum_v_i - v_count < f_count - 1:
+                        contractible = False
+                    elif f_count == 2:
+                        contractible = True
+                    else:
+                        contractible = (intersection == intersection._contractible_subcomplex())
+
+            if contractible:
+                new_facets.append(f)
+                added_count += 1
+                to_requeue = []
+                for uf in skipped:
+                    if not uf.set().isdisjoint(f_set):
+                        to_requeue.append(uf)
+                for uf in to_requeue:
+                    skipped.remove(uf)
+                    stack.append(uf)
+            else:
+                skipped.append(f)
+
+        if verbose:
+            print(f"    added {added_count} facets")
             print("  now constructing a simplicial complex with {} vertices and {} facets".format(len(self.vertices()), len(new_facets)))
+
         L = SimplicialComplex(new_facets, maximality_check=False,
                               is_immutable=self._is_immutable)
         self.__enlarged[subcomplex] = L
@@ -4805,9 +4833,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: X.intersection(Z) == Z
             True
         """
-        F = []
-        for k in range(1 + min(self.dimension(), other.dimension())):
-            F = F + [s for s in self.faces()[k] if s in other.faces()[k]]
+        F = {f1.set().intersection(f2.set()) for f1 in self.facets() for f2 in other.facets()}
         return SimplicialComplex(F)
 
     def bigraded_betti_numbers(self, base_ring=ZZ, verbose=False):
