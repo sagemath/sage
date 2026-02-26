@@ -1,0 +1,22 @@
+diff --git a/build-aux/ltmain.sh b/build-aux/ltmain.sh
+index 2a50d7f..a206d1f 100644
+--- a/build-aux/ltmain.sh
++++ b/build-aux/ltmain.sh
+@@ -7347,7 +7347,7 @@ func_mode_link ()
+ 	continue
+ 	;;
+       -mt|-mthreads|-kthread|-Kthread|-pthreads|--thread-safe \
+-      |-threads|-fopenmp|-openmp|-mp|-xopenmp|-omp|-qsmp=*)
++      |-threads|"-Xpreprocessor -fopenmp"|fopenmp=*|-openmp|-mp|-xopenmp|-omp|-qsmp=*)
+ 	func_append compiler_flags " $arg"
+ 	func_append compile_command " $arg"
+ 	func_append finalize_command " $arg"
+@@ -7891,7 +7891,7 @@ func_mode_link ()
+ 	found=false
+ 	case $deplib in
+ 	-mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe \
+-        |-threads|-fopenmp|-openmp|-mp|-xopenmp|-omp|-qsmp=*)
++        |-threads|"-Xpreprocessor -fopenmp"|fopenmp=*|-openmp|-mp|-xopenmp|-omp|-qsmp=*)
+ 	  if test prog,link = "$linkmode,$pass"; then
+ 	    compile_deplibs="$deplib $compile_deplibs"
+ 	    finalize_deplibs="$deplib $finalize_deplibs"
