@@ -333,7 +333,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
                 return crossing_dict
 
             matches = [st for st in los if st.start in bot_transpos or st.end in bot_transpos]
-            st1, st2  = matches
+            st1, st2 = matches
             # note that st1 < st2
             add_crossings_to_dict(st1, [(st2, lw - 1)])
             add_crossings_to_dict(st2, [(st1, lw - 1)])
@@ -1015,7 +1015,7 @@ class Strand:
         conn, loops = positive_tangle.connector()
         if ((start, end) not in conn
             and (end, start) not in conn
-            and not (start == end and start in range(1, loops + 1))):
+                and not (start == end and start in range(1, loops + 1))):
             raise ValueError('%s and %s do not describe a strand of %s' % (start, end, tangle))
         self.tangle = positive_tangle
         self.start = start

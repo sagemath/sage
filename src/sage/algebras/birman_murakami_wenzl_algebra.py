@@ -158,19 +158,22 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
             sage: ~(g1*g2)                    # indirect doctest
             m^2*e2 + (-m)*g1*g2*e1*g2^-1 + m^2*g1*g2*e1 + (-m)*g2*e1 + g2*g1
              + (-m)*g2 + m^2*e1 + (-m)*g1 + m^2*o1
+            sage: c = BMW3.base_ring().an_element()
+            sage: ~(c*g1)                     # indirect doctest
+            (l^-1*m)*e1 + (-l^-1)*g1 + (l^-1*m)*o1
             sage: ~(g1 + g2)                  # indirect doctest
             Traceback (most recent call last):
             ...
-            NotImplementedError: Only braid images can be inverted
+            NotImplementedError: only braid images can be inverted
         """
         b = self.braid_group_algebra_preimage()
 
         if b is None or len(b.support()) > 1:
-            raise NotImplementedError('Only braid images can be inverted')
+            raise NotImplementedError('only braid images can be inverted')
 
-        br = b.support_of_term()
+        (br, coeff), = list(b._monomial_coefficients.items())
         P = self.parent()
-        return P(~br)
+        return ~coeff * P(~br)
 
     @cached_method
     def braid_group_algebra_preimage(self):
@@ -179,8 +182,8 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
 
         OUTPUT:
 
-        The pre image of ``self`` as instance of the element class of the group
-        algebra of the braid group.
+        The pre image of ``self`` as an element of the group algebra of the
+        braid group.
 
         EXAMPLES::
 
@@ -240,9 +243,10 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
     @cached_method
     def markov_trace(self):
         r"""
-        Return the value of the Markov trace of ``self``. If ``self`` is
-        an image of a braid then this methods yield the polynomial invariant
-        under regular isotopy of the braid´s closure which is used in the
+        Return the value of the Markov trace of ``self``.
+
+        If ``self`` is an image of a braid then this methods yield the polynomial
+        invariant under regular isotopy of the braid´s closure which is used in the
         definition of the Kauffman polynomial.
 
         EXAMPLES::
@@ -331,7 +335,6 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
         """
         from sage.algebras.iwahori_hecke_algebra import IwahoriHeckeAlgebra
         from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-        from sage.misc.misc_c import prod
         from sage.functions.generalized import sgn
         bmw_algebra = self.parent()
         basis = bmw_algebra.basis().keys()
@@ -393,6 +396,7 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
 
 class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
     r"""
+    The Birman-Murakami-Wenzl algebra.
 
     INPUT:
 
@@ -668,8 +672,6 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
             sage: BMW2.<g, e> = algebras.BirmanMurakamiWenzl(2)
             sage: BMW2((1, 2, -1, 2))
             (l*m^-1-1+l^-1*m^-1)*e
-
-        More examples are given in the docstring of the class.
         """
         braid_grp_alg = self.braid_group_algebra()
         n = self.strands()
@@ -678,7 +680,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         T = self._tangles
 
         xb = x
-        if type(x) in (tuple, list):
+        if isinstance(x, (tuple, list)):
             x = tuple(x)
             xb = T(x)
 
@@ -695,8 +697,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         def mwt_mon(bas_ele): return self.monomial(T.morton_wasserman_tangle(bas_ele))
 
         if xb in BA:
-            def fc(ele): return mwt_mon(ele)
-            return BA._apply_module_morphism(xb, fc, codomain=self)
+            return BA._apply_module_morphism(xb, lambda ele: mwt_mon(ele), codomain=self)
 
         if isinstance(xb, BirmanMurakamiWenzlElement):
             other_bmw = xb.parent()
@@ -712,8 +713,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
                 return other_bmw._apply_module_morphism(xb, fd, codomain=self)
 
         if xb in braid_grp_alg:
-            def fb(ele): return self(ele)
-            return braid_grp_alg._apply_module_morphism(xb, fb, codomain=self)
+            return braid_grp_alg._apply_module_morphism(xb, self, codomain=self)
 
         from sage.algebras.hecke_algebras.cubic_hecke_algebra import CubicHeckeElement
         if isinstance(xb, CubicHeckeElement):
@@ -813,6 +813,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
             raise IndexError('i must be positive and less than %s' % n)
         return self.gen(i + self.strands() - 2)
 
+    @cached_method
     def one_basis(self):
         r"""
         Return the index of the basis element for the identity element
@@ -1118,7 +1119,6 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
 
         if nstrands >= n or nstrands <= 0:
             raise ValueError('nstrands must be positive and less than %s' % n)
-
 
         names = [str(g) for g in self.gens()]
         names_g = tuple(g for g in names if names.index(g) < nstrands - 1)
