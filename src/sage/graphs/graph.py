@@ -2557,7 +2557,7 @@ class Graph(GenericGraph):
     @doc_index("Algorithmically hard stuff")
     def is_perfect(self, certificate=False):
         r"""
-        Test whether the graph is perfect.
+        Return whether the graph is perfect.
 
         A graph `G` is said to be perfect if `\chi(H)=\omega(H)` hold for any
         induced subgraph `H\subseteq_i G` (and so for `G` itself, too), where
@@ -2566,7 +2566,7 @@ class Graph(GenericGraph):
         another characterization of perfect graphs:
 
         A graph is perfect if and only if it contains no odd hole (cycle on an
-        odd number `k` of vertices, `k>3`) nor any odd antihole (complement of a
+        odd number ``k`` of vertices, ``k>3``) nor any odd antihole (complement of a
         hole) as an induced subgraph.
 
         INPUT:
@@ -2576,8 +2576,8 @@ class Graph(GenericGraph):
 
         OUTPUT:
 
-        When ``certificate = False``, this function returns a boolean
-        value. When ``certificate = True``, it returns a subgraph of ``self``
+        When ``certificate`` is ``False``, this function returns a boolean
+        value. When ``certificate`` is ``True``, it returns a subgraph of ``self``
         isomorphic to an odd hole or an odd antihole if any, and ``None``
         otherwise.
 
@@ -9401,12 +9401,12 @@ class Graph(GenericGraph):
 
         - ``return_map`` -- boolean (default: ``False``); whether to return
           a map indicating one of the forbidden graph minors if in fact the
-          graph is not projective planar, or only True/False.
+          graph is not projective planar, or only ``True``/``False``.
 
         OUTPUT:
 
         Return ``True`` if the graph is projective planar and ``False`` if not.  If the
-        parameter ``map_flag`` is ``True`` and the graph is not projective planar, then
+        parameter ``return_map`` is ``True`` and the graph is not projective planar, then
         the method returns ``False`` and a map from :meth:`~Graph.minor`
         indicating one of the forbidden graph minors.
 
@@ -9418,8 +9418,8 @@ class Graph(GenericGraph):
             sage: P.is_projective_planar()
             True
 
-        `K_{4,4}` has a projective plane crossing number of 2. One of the
-        minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
+        :math:`K_{4,4}` has a projective plane crossing number of 2. One of the
+        minimal forbidden minors is :math:`K_{4,4} - e`, so we get a one-to-one
         dictionary from :meth:`~Graph.minor`::
 
             sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
