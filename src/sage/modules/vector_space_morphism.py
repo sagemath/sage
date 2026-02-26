@@ -328,14 +328,13 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 ####################################################################################
 
-
 import sage.modules.free_module_morphism as free_module_morphism
 import sage.modules.matrix_morphism as matrix_morphism
 from sage.modules import vector_space_homspace
 from sage.structure.element import Matrix
 
 
-def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
+def linear_transformation(arg0, arg1=None, arg2=None, side="left"):
     r"""
     Create a linear transformation from a variety of possible inputs.
 
@@ -697,6 +696,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     from sage.matrix.constructor import matrix
     from sage.modules.free_module import VectorSpace
     from sage.modules.module import Module
+
     try:
         from sage.modules.vector_callable_symbolic_dense import (
             Vector_callable_symbolic_dense,
@@ -704,7 +704,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     except ImportError:
         Vector_callable_symbolic_dense = ()
 
-    if side not in ['left', 'right']:
+    if side not in ["left", "right"]:
         raise ValueError("side must be 'left' or 'right', not {}".format(side))
     if isinstance(arg0, Matrix):
         R = arg0.base_ring()
@@ -712,23 +712,25 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
             try:
                 R = R.fraction_field()
             except (NotImplementedError, TypeError):
-                msg = 'matrix must have entries from a field, or a ring with a fraction field, not {0}'
+                msg = "matrix must have entries from a field, or a ring with a fraction field, not {0}"
                 raise TypeError(msg.format(R))
-        if side == 'right':
+        if side == "right":
             arg0 = arg0.transpose()
-            side = 'left'
+            side = "left"
         arg2 = arg0
         arg0 = VectorSpace(R, arg2.nrows())
         arg1 = VectorSpace(R, arg2.ncols())
     elif isinstance(arg0, Module) and arg0.base_ring().is_field():
         if not (isinstance(arg1, Module) and arg1.base_ring().is_field()):
-            msg = 'if first argument is a vector space, then second argument must be a vector space, not {0}'
+            msg = "if first argument is a vector space, then second argument must be a vector space, not {0}"
             raise TypeError(msg.format(arg1))
         if arg0.base_ring() != arg1.base_ring():
-            msg = 'vector spaces must have the same field of scalars, not {0} and {1}'
+            msg = "vector spaces must have the same field of scalars, not {0} and {1}"
             raise TypeError(msg.format(arg0.base_ring(), arg1.base_ring()))
     else:
-        raise TypeError('first argument must be a matrix or a vector space, not {}'.format(arg0))
+        raise TypeError(
+            "first argument must be a matrix or a vector space, not {}".format(arg0)
+        )
     # Now arg0 = domain D, arg1 = codomain C, and
     #   both are vector spaces with common field of scalars
     #   use these to make a VectorSpaceHomSpace
@@ -741,37 +743,45 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     # Pass on matrices, Python functions and lists to homspace call
     # Convert symbolic function here, to a matrix
     if isinstance(arg2, Matrix):
-        if side == 'right':
+        if side == "right":
             arg2 = arg2.transpose()
     elif isinstance(arg2, (list, tuple)):
         pass
     elif isinstance(arg2, Vector_callable_symbolic_dense):
         from sage.symbolic.ring import SR
+
         args = arg2.parent().base_ring()._arguments
         exprs = arg2.change_ring(SR)
         m = len(args)
         n = len(exprs)
         if m != D.degree():
-            raise ValueError('symbolic function has the wrong number of inputs for domain')
+            raise ValueError(
+                "symbolic function has the wrong number of inputs for domain"
+            )
         if n != C.degree():
-            raise ValueError('symbolic function has the wrong number of outputs for codomain')
+            raise ValueError(
+                "symbolic function has the wrong number of outputs for codomain"
+            )
         arg2 = [[e.coefficient(a) for e in exprs] for a in args]
         try:
             arg2 = matrix(D.base_ring(), m, n, arg2)
         except TypeError as e:
-            msg = 'symbolic function must be linear in all the inputs:\n' + e.args[0]
+            msg = "symbolic function must be linear in all the inputs:\n" + e.args[0]
             raise ValueError(msg)
         # have matrix with respect to standard bases, now consider user bases
         images = [v * arg2 for v in D.basis()]
         try:
             arg2 = matrix([C.coordinates(C(a)) for a in images])
         except (ArithmeticError, TypeError) as e:
-            msg = 'some image of the function is not in the codomain, because\n' + e.args[0]
+            msg = (
+                "some image of the function is not in the codomain, because\n"
+                + e.args[0]
+            )
             raise ArithmeticError(msg)
     elif callable(arg2):
         pass
     else:
-        msg = 'third argument must be a matrix, function, or list of images, not {0}'
+        msg = "third argument must be a matrix, function, or list of images, not {0}"
         raise TypeError(msg.format(arg2))
 
     # arg2 now compatible with homspace H call method
@@ -780,8 +790,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
 
 
 class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
-
-    def __init__(self, homspace, A, side='left'):
+    def __init__(self, homspace, A, side="left"):
         r"""
         Create a linear transformation, a morphism between vector spaces.
 
@@ -835,23 +844,25 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
             <class 'sage.modules.vector_space_morphism.VectorSpaceMorphism'>
         """
         if not isinstance(homspace, vector_space_homspace.VectorSpaceHomspace):
-            raise TypeError('homspace must be a vector space hom space, not {}'.format(homspace))
+            raise TypeError(
+                "homspace must be a vector space hom space, not {}".format(homspace)
+            )
         if isinstance(A, matrix_morphism.MatrixMorphism):
             A = A.matrix()
         if not isinstance(A, Matrix):
-            msg = 'input must be a matrix representation or another matrix morphism, not {0}'
+            msg = "input must be a matrix representation or another matrix morphism, not {0}"
             raise TypeError(msg.format(A))
         # now have a vector space homspace, and a matrix, check compatibility
         if side == "left":
             if homspace.domain().dimension() != A.nrows():
-                raise TypeError('domain dimension is incompatible with matrix size')
+                raise TypeError("domain dimension is incompatible with matrix size")
             if homspace.codomain().dimension() != A.ncols():
-                raise TypeError('codomain dimension is incompatible with matrix size')
+                raise TypeError("codomain dimension is incompatible with matrix size")
         if side == "right":
             if homspace.codomain().dimension() != A.nrows():
-                raise TypeError('Domain dimension is incompatible with matrix size')
+                raise TypeError("Domain dimension is incompatible with matrix size")
             if homspace.domain().dimension() != A.ncols():
-                raise TypeError('codomain dimension is incompatible with matrix size')
+                raise TypeError("codomain dimension is incompatible with matrix size")
 
         A = homspace._matrix_space(side)(A)
         free_module_morphism.FreeModuleMorphism.__init__(self, homspace, A, side)
@@ -908,6 +919,52 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
             return False
         return m.rank() == m.ncols()
 
+    def kernel_basis(self):
+        r"""
+        Return a basis of the kernel of this linear transformation in
+        echelon form.
+
+        This overrides the generic implementation to correctly handle the
+        ``side`` convention of :class:`VectorSpaceMorphism`. For
+        ``side='left'``, vectors act on the left (``phi(x) = x * M``), so
+        the kernel is the left kernel of the matrix. For ``side='right'``,
+        vectors act on the right (``phi(x) = M * x``), so the kernel is
+        the right kernel.
+
+        EXAMPLES::
+
+            sage: phi = linear_transformation(matrix(QQ, [[1, 0, 0], [0, 0, 0]]))
+            sage: phi.kernel_basis()
+            ((0, 1),)
+            sage: v = phi.kernel_basis()[0]
+            sage: v in phi.kernel()
+            True
+            sage: phi(v)
+            (0, 0)
+
+            sage: psi = linear_transformation(matrix(QQ, [[1, 0], [0, 0], [0, 0]]), side='right')
+            sage: w = psi.kernel_basis()[0]
+            sage: w in psi.kernel()
+            True
+            sage: psi(w)
+            (0, 0, 0)
+
+        TESTS::
+
+            sage: A = linear_transformation(matrix([[0, -1], [0, 0]]))
+            sage: v = A.kernel_basis()[0]
+            sage: v in A.kernel()
+            True
+            sage: A(v)
+            (0, 0)
+        """
+        M = self.matrix()
+        if self.side() == "left":
+            ker_vectors = M.left_kernel_matrix().rows()
+        else:
+            ker_vectors = M.right_kernel_matrix().rows()
+        return tuple(self.domain().from_vector(v) for v in ker_vectors)
+
     def _latex_(self):
         r"""
         A LaTeX representation of this vector space morphism.
@@ -923,10 +980,15 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
             '}\n\\left(\\begin{array}{rr}\n0', '&', '1',
             '\\\\\n2', '&', '3', '\\\\\n4', '&', '5\n\\end{array}\\right)']
         """
-        s = ('\\text{vector space morphism from }\n', self.domain()._latex_(),
-             '\\text{ to }\n', self.codomain()._latex_(),
-             '\\text{ represented by the matrix }\n', self.matrix()._latex_())
-        return ''.join(s)
+        s = (
+            "\\text{vector space morphism from }\n",
+            self.domain()._latex_(),
+            "\\text{ to }\n",
+            self.codomain()._latex_(),
+            "\\text{ represented by the matrix }\n",
+            self.matrix()._latex_(),
+        )
+        return "".join(s)
 
     def _repr_(self):
         r"""
@@ -947,8 +1009,10 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
         act = ""
         if self.side() == "right":
             act = "as left-multiplication "
-        msg = ("Vector space morphism represented {}by the matrix:\n",
-               "{!r}\n",
-               "Domain: {}\n",
-               "Codomain: {}")
-        return ''.join(msg).format(act, m, self.domain(), self.codomain())
+        msg = (
+            "Vector space morphism represented {}by the matrix:\n",
+            "{!r}\n",
+            "Domain: {}\n",
+            "Codomain: {}",
+        )
+        return "".join(msg).format(act, m, self.domain(), self.codomain())

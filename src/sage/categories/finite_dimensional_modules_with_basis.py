@@ -10,7 +10,10 @@ Finite dimensional modules with basis
 # *****************************************************************************
 
 import operator
-from sage.categories.category_with_axiom import CategoryWithAxiom, CategoryWithAxiom_over_base_ring
+from sage.categories.category_with_axiom import (
+    CategoryWithAxiom,
+    CategoryWithAxiom_over_base_ring,
+)
 from sage.categories.fields import Fields
 from sage.categories.homsets import HomsetsCategory
 from sage.categories.tensor import TensorProductsCategory
@@ -38,7 +41,6 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
     """
 
     class ParentMethods:
-
         def gens(self) -> tuple:
             """
             Return the generators of ``self``.
@@ -53,7 +55,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             return tuple(self.basis())
 
-        def annihilator(self, S, action=operator.mul, side='right', category=None):
+        def annihilator(self, S, action=operator.mul, side="right", category=None):
             r"""
             Return the annihilator of a finite set.
 
@@ -126,11 +128,13 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: sorted(P.cover_relations(), key=str)                              # needs sage.graphs
                 [[Ax, A], [Axy, Ax], [Axy, Ay], [Ay, A]]
             """
-            return self.submodule(self.annihilator_basis(S, action, side),
-                                  already_echelonized=True,
-                                  category=category)
+            return self.submodule(
+                self.annihilator_basis(S, action, side),
+                already_echelonized=True,
+                category=category,
+            )
 
-        def annihilator_basis(self, S, action=operator.mul, side='right'):
+        def annihilator_basis(self, S, action=operator.mul, side="right"):
             """
             Return a basis of the annihilator of a finite set of elements.
 
@@ -233,14 +237,19 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             # TODO: optimize this!
             from sage.matrix.constructor import matrix
-            if side == 'right':
+
+            if side == "right":
                 action_left = action
-                action = lambda b,s: action_left(s, b)
+                action = lambda b, s: action_left(s, b)
 
             mat = matrix(self.base_ring(), self.dimension(), 0)
             for s in S:
-                mat = mat.augment(matrix(self.base_ring(),
-                                         [action(s, b)._vector_() for b in self.basis()]))
+                mat = mat.augment(
+                    matrix(
+                        self.base_ring(),
+                        [action(s, b)._vector_() for b in self.basis()],
+                    )
+                )
             return tuple(map(self.from_vector, mat.left_kernel().basis()))
 
         @cached_method
@@ -272,6 +281,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if base_ring is None:
                 base_ring = self.base_ring()
             from sage.modules.free_module import FreeModule
+
             return FreeModule(base_ring, self.dimension())
 
         def from_vector(self, vector, order=None, coerce=True):
@@ -291,14 +301,18 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if order is None:
                 try:
                     order = sorted(self.basis().keys())
-                except AttributeError: # Not a family, assume it is list-like
+                except AttributeError:  # Not a family, assume it is list-like
                     order = range(self.dimension())
             if not coerce or vector.base_ring() is self.base_ring():
-                return self._from_dict({order[i]: c for i,c in vector.items()},
-                                       coerce=False)
+                return self._from_dict(
+                    {order[i]: c for i, c in vector.items()}, coerce=False
+                )
             R = self.base_ring()
-            return self._from_dict({order[i]: R(c) for i,c in vector.items() if R(c)},
-                                   coerce=False, remove_zeros=False)
+            return self._from_dict(
+                {order[i]: R(c) for i, c in vector.items() if R(c)},
+                coerce=False,
+                remove_zeros=False,
+            )
 
         def echelon_form(self, elements, row_reduced=False, order=None):
             r"""
@@ -378,6 +392,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if order is not None:
                 order = self._compute_support_order(elements, order)
             from sage.matrix.constructor import matrix
+
             mat = matrix(self.base_ring(), [g._vector_(order=order) for g in elements])
             # Echelonizing a matrix over a field returned the rref
             if row_reduced and self.base_ring() not in Fields():
@@ -390,8 +405,9 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             ret = [self.from_vector(vec, order=order) for vec in mat if vec]
             return ret
 
-        def invariant_module(self, S, action=operator.mul, action_on_basis=None,
-                             side='left', **kwargs):
+        def invariant_module(
+            self, S, action=operator.mul, action_on_basis=None, side="left", **kwargs
+        ):
             r"""
             Return the submodule of ``self`` invariant under the action
             of ``S``.
@@ -457,18 +473,28 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             if action_on_basis is not None:
                 from sage.modules.with_basis.representation import Representation
+
                 M = Representation(S, self, action_on_basis, side=side)
             else:
                 M = self
 
-            from sage.modules.with_basis.invariant import FiniteDimensionalInvariantModule
-            return FiniteDimensionalInvariantModule(M, S, action=action, side=side, **kwargs)
+            from sage.modules.with_basis.invariant import (
+                FiniteDimensionalInvariantModule,
+            )
 
-        def twisted_invariant_module(self, G, chi,
-                                     action=operator.mul,
-                                     action_on_basis=None,
-                                     side='left',
-                                     **kwargs):
+            return FiniteDimensionalInvariantModule(
+                M, S, action=action, side=side, **kwargs
+            )
+
+        def twisted_invariant_module(
+            self,
+            G,
+            chi,
+            action=operator.mul,
+            action_on_basis=None,
+            side="left",
+            **kwargs,
+        ):
             r"""
             Create the isotypic component of the action of ``G`` on
             ``self`` with irreducible character given by ``chi``.
@@ -505,14 +531,21 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if action_on_basis is not None:
                 from sage.modules.with_basis.representation import Representation
                 from sage.categories.modules import Modules
-                category = kwargs.pop('category', Modules(self.base_ring()).WithBasis())
-                M = Representation(G, self, action_on_basis, side=side, category=category)
+
+                category = kwargs.pop("category", Modules(self.base_ring()).WithBasis())
+                M = Representation(
+                    G, self, action_on_basis, side=side, category=category
+                )
             else:
                 M = self
 
-            from sage.modules.with_basis.invariant import FiniteDimensionalTwistedInvariantModule
-            return FiniteDimensionalTwistedInvariantModule(M, G, chi,
-                                                          action, side, **kwargs)
+            from sage.modules.with_basis.invariant import (
+                FiniteDimensionalTwistedInvariantModule,
+            )
+
+            return FiniteDimensionalTwistedInvariantModule(
+                M, G, chi, action, side, **kwargs
+            )
 
     class ElementMethods:
         def dense_coefficient_list(self, order=None):
@@ -540,7 +573,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if order is None:
                 try:
                     order = sorted(self.parent().basis().keys())
-                except AttributeError: # Not a family, assume it is list-like
+                except AttributeError:  # Not a family, assume it is list-like
                     order = range(self.parent().dimension())
             return [self[i] for i in order]
 
@@ -562,14 +595,18 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 dense_free_module = self.parent()._dense_free_module()
             else:
                 from sage.modules.free_module import FreeModule
+
                 dense_free_module = FreeModule(self.parent().base_ring(), len(order))
             # We slightly break encapsulation for speed reasons
-            return dense_free_module.element_class(dense_free_module,
-                                                   self.dense_coefficient_list(order),
-                                                   coerce=True, copy=False)
+            return dense_free_module.element_class(
+                dense_free_module,
+                self.dense_coefficient_list(order),
+                coerce=True,
+                copy=False,
+            )
 
     class MorphismMethods:
-        def matrix(self, base_ring=None, side='left'):
+        def matrix(self, base_ring=None, side="left"):
             r"""
             Return the matrix of this morphism in the distinguished
             bases of the domain and codomain.
@@ -662,6 +699,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             on_basis = self.on_basis()
             basis_keys = self.domain().basis().keys()
             from sage.matrix.matrix_space import MatrixSpace
+
             if isinstance(basis_keys, list):
                 nrows = len(basis_keys)
             else:
@@ -696,9 +734,14 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             from sage.matrix.constructor import options
 
-            if matrix.nrows() <= options.max_rows() and matrix.ncols() <= options.max_cols():
-                return matrix.str(top_border=self.domain().basis().keys(),
-                                  left_border=self.codomain().basis().keys())
+            if (
+                matrix.nrows() <= options.max_rows()
+                and matrix.ncols() <= options.max_cols()
+            ):
+                return matrix.str(
+                    top_border=self.domain().basis().keys(),
+                    left_border=self.codomain().basis().keys(),
+                )
 
             return repr(matrix)
 
@@ -725,10 +768,15 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             from sage.matrix.constructor import options
 
-            if matrix.nrows() <= options.max_rows() and matrix.ncols() <= options.max_cols():
-                return matrix.str(character_art=True,
-                                  top_border=self.domain().basis().keys(),
-                                  left_border=self.codomain().basis().keys())
+            if (
+                matrix.nrows() <= options.max_rows()
+                and matrix.ncols() <= options.max_cols()
+            ):
+                return matrix.str(
+                    character_art=True,
+                    top_border=self.domain().basis().keys(),
+                    left_border=self.codomain().basis().keys(),
+                )
 
             from sage.typeset.ascii_art import AsciiArt
 
@@ -757,10 +805,16 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             from sage.matrix.constructor import options
 
-            if matrix.nrows() <= options.max_rows() and matrix.ncols() <= options.max_cols():
-                return matrix.str(unicode=True, character_art=True,
-                                  top_border=self.domain().basis().keys(),
-                                  left_border=self.codomain().basis().keys())
+            if (
+                matrix.nrows() <= options.max_rows()
+                and matrix.ncols() <= options.max_cols()
+            ):
+                return matrix.str(
+                    unicode=True,
+                    character_art=True,
+                    top_border=self.domain().basis().keys(),
+                    left_border=self.codomain().basis().keys(),
+                )
 
             from sage.typeset.unicode_art import UnicodeArt
 
@@ -822,8 +876,8 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             except (ZeroDivisionError, TypeError):
                 raise RuntimeError("morphism is not invertible")
             return self.codomain().module_morphism(
-                matrix=inv_mat,
-                codomain=self.domain(), category=self.category_for())
+                matrix=inv_mat, codomain=self.domain(), category=self.category_for()
+            )
 
         def kernel_basis(self):
             """
@@ -835,24 +889,14 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f = SGA.module_morphism(lambda x: SGA(x**2), codomain=SGA)        # needs sage.groups sage.modules
                 sage: f.kernel_basis()                                                  # needs sage.groups sage.modules
                 ([1, 2, 3] - [3, 2, 1], [1, 3, 2] - [3, 2, 1], [2, 1, 3] - [3, 2, 1])
-
-            TESTS::
-
-                sage: A = linear_transformation(matrix([[0,-1],[0,0]]))
-                sage: v = A.kernel_basis()[0]
-                sage: v in A.kernel()
-                True
-                sage: A(v)
-                (0, 0)
             """
-            M = self.matrix()
+            return tuple(
+                map(
+                    self.domain().from_vector,
+                    self.matrix().right_kernel_matrix().rows(),
+                )
+            )
 
-            if hasattr(self, "side") and self.side() == "left":
-                K = M.left_kernel_matrix()
-            else:
-                K = M.right_kernel_matrix()
-
-            return tuple(self.domain().from_vector(v) for v in K.rows())
         def kernel(self):
             """
             Return the kernel of ``self`` as a submodule of the domain.
@@ -869,8 +913,11 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 Symmetric group algebra of order 3 over Rational Field
             """
             D = self.domain()
-            return D.submodule(self.kernel_basis(), already_echelonized=True,
-                               category=self.category_for())
+            return D.submodule(
+                self.kernel_basis(),
+                already_echelonized=True,
+                category=self.category_for(),
+            )
 
         def image_basis(self):
             """
@@ -884,7 +931,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 ([1, 2, 3], [2, 3, 1], [3, 1, 2])
             """
             C = self.codomain()
-            return tuple(C.echelon_form( map(self, self.domain().basis()) ))
+            return tuple(C.echelon_form(map(self, self.domain().basis())))
 
         def image(self):
             """
@@ -898,15 +945,15 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 Free module generated by {0, 1, 2} over Rational Field
             """
             C = self.codomain()
-            return C.submodule(self.image_basis(), already_echelonized=True,
-                               category=self.category_for())
+            return C.submodule(
+                self.image_basis(),
+                already_echelonized=True,
+                category=self.category_for(),
+            )
 
     class Homsets(HomsetsCategory):
-
         class Endset(CategoryWithAxiom):
-
             class ElementMethods:
-
                 @lazy_attribute
                 def characteristic_polynomial(self):
                     r"""
@@ -1062,7 +1109,6 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     return self.matrix().trace
 
     class TensorProducts(TensorProductsCategory):
-
         def extra_super_categories(self):
             """
             Implement the fact that a (finite) tensor product of
