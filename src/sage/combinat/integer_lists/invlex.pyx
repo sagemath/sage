@@ -508,7 +508,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
         sage: m = [3,1,2]
         sage: def term(exponents):
         ....:     return x^exponents[0] * y^exponents[1] * z^exponents[2]
-        sage: list( IntegerListsLex(4, length=len(m), ceiling=m, element_constructor=term) )
+        sage: list(IntegerListsLex(4, length=len(m), ceiling=m, element_constructor=term))
         [x^3*y, x^3*z, x^2*y*z, x^2*z^2, x*y*z^2]
 
     Note the use of the ``element_constructor`` option to specify how
@@ -1038,11 +1038,11 @@ If you know what you are doing, you can set check=False to skip this warning."""
             return True
 
         # Variant on ceiling.limit() ==0 where we actually discover that the ceiling limit is 0
-        if ( self.max_slope == 0 and
-             (self.max_sum < Infinity or
-              (self.ceiling.limit_start() < Infinity and
-               any(self.ceiling(i) == 0 for i in range(self.ceiling.limit_start()+1)))
-             ) ):
+        if (self.max_slope == 0 and
+            (self.max_sum < Infinity or
+             (self.ceiling.limit_start() < Infinity and
+              any(self.ceiling(i) == 0 for i in range(self.ceiling.limit_start()+1)))
+             )):
             return True
 
         limit_start = max(self.ceiling.limit_start(), self.floor.limit_start())
@@ -1070,11 +1070,11 @@ If you know what you are doing, you can set check=False to skip this warning."""
 
 # Constants for IntegerListsLexIter._next_state
 LOOKAHEAD = 5
-PUSH      = 4
-ME        = 3
-DECREASE  = 2
-POP       = 1
-STOP      = 0
+PUSH = 4
+ME = 3
+DECREASE = 2
+POP = 1
+STOP = 0
 
 
 class IntegerListsLexIter(builtins.object):
@@ -1381,9 +1381,9 @@ class IntegerListsLexIter(builtins.object):
         mu = self._current_list
         nu = self._current_sum
         l = self._j + 1
-        return (nu >= p.min_sum and nu <= p.max_sum # Good sum
-                 and l >= p.min_length and l <= p.max_length # Good length
-                 and (l <= max(p.min_length,0) or mu[-1] != 0)) # No trailing zeros
+        return (p.min_sum <= nu <= p.max_sum  # Good sum
+                and p.min_length <= l <= p.max_length  # Good length
+                and (l <= max(p.min_length, 0) or mu[-1] != 0))  # No trailing zeros
 
     def _m_interval(self, i, max_sum, prev=None):
         r"""
@@ -1463,7 +1463,7 @@ class IntegerListsLexIter(builtins.object):
             lower_bound = max(lower_bound, prev + p.min_slope)
             upper_bound = min(upper_bound, prev + p.max_slope)
 
-        ## check for infinite upper bound, in case max_sum is infinite
+        # check for infinite upper bound, in case max_sum is infinite
         if p.check and upper_bound == Infinity:
             # This assumes that there exists a valid list (which
             # is not yet always guaranteed). Then we just
@@ -1598,8 +1598,8 @@ class IntegerListsLexIter(builtins.object):
 
         # Beware that without slope conditions, the functions below
         # currently forget about the value m at k!
-        lower_envelope = self.backend.floor.adapt(m,j)
-        upper_envelope = self.backend.ceiling.adapt(m,j)
+        lower_envelope = self.backend.floor.adapt(m, j)
+        upper_envelope = self.backend.ceiling.adapt(m, j)
         lower = 0    # The lower bound `l_k`
         upper = 0    # The upper bound `u_k`
 
@@ -1618,7 +1618,7 @@ class IntegerListsLexIter(builtins.object):
             # There could exist a valid list `v_j,\dots,v_{min_length-1}`
             return True
 
-        k = max(p.min_length-1,j)
+        k = max(p.min_length-1, j)
         # Check if any of the intervals intersect the target interval
         while k < p.max_length:
             lo = m if k == j else lower_envelope(k)
@@ -1634,8 +1634,8 @@ class IntegerListsLexIter(builtins.object):
                 # There cannot exist a valid list `v_j,\dots,v_l` with l>=k
                 return False
 
-            if ( (p.max_slope <= 0 and up <= 0)
-                 or (p.ceiling.limit() == 0 and k > p.ceiling.limit_start()) ):
+            if ((p.max_slope <= 0 and up <= 0) or
+                    (p.ceiling.limit() == 0 and k > p.ceiling.limit_start())):
                 # This implies v_l=0 for l>=k: that is we would be generating
                 # a list with trailing zeroes
                 return False

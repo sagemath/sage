@@ -59,7 +59,6 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.morphism import RingHomomorphism
 
-
 lazy_import("sage.rings.function_field.derivations", (
     "FunctionFieldDerivation",
     "FunctionFieldHigherDerivation",
@@ -252,8 +251,9 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
         # construct the basis composed of powers of the generators of all the
         # intermediate fields, i.e., 1, x, y, x*y, ...
-        from sage.misc.misc_c import prod
         from itertools import product
+
+        from sage.misc.misc_c import prod
         exponents = product(*[range(d) for d in degrees])
         basis = [prod(g**e for g, e in zip(gens, es)) for es in exponents]
 

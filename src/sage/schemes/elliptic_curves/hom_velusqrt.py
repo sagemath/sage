@@ -139,8 +139,8 @@ from .hom import EllipticCurveHom, compare_via_evaluation
 class _VeluBoundObj:
     """
     Helper object to define the point in which isogeny
-    computation should start using square-roor Velu formulae
-    instead of Velu.
+    computation should start using square-root Vélu formulae
+    instead of Vélu.
 
     EXAMPLES ::
 

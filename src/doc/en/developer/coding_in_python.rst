@@ -520,8 +520,7 @@ Importing
 =========
 
 We mention two issues with importing: circular imports and importing
-large third-party modules. See also :ref:`section_dependencies_distributions`
-for a discussion of imports from the viewpoint of modularization.
+large third-party modules.
 
 First, you must avoid circular imports. For example, suppose that the
 file :sage_root:`src/sage/algebras/steenrod_algebra.py`

@@ -545,7 +545,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
     @cached_method
     def shortest_vector(self, update_reduced_basis=True, algorithm='fplll', *args, **kwds):
         r"""
-        Return a shortest vector.
+        Return an exact shortest vector in the lattice.
+
+        Unlike :meth:`approximate_closest_vector`, this method finds an exact
+        solution to the Shortest Vector Problem (SVP).
 
         INPUT:
 

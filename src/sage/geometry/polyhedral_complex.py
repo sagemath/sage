@@ -1074,7 +1074,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         return all(p.is_compact() for p in self.maximal_cell_iterator())
 
-    def graph(self):
+    def graph(self, immutable=False):
         """
         Return the 1-skeleton of this polyhedral complex, as a graph.
 
@@ -1085,6 +1085,11 @@ class PolyhedralComplex(GenericCellComplex):
 
             This may give the wrong answer if the polyhedral complex
             was constructed with ``maximality_check`` set to ``False``.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or a mutable graph
 
         EXAMPLES::
 
@@ -1113,6 +1118,16 @@ class PolyhedralComplex(GenericCellComplex):
             True
             sage: PolyhedralComplex([p2, p3], maximality_check=False).is_pure()
             False
+
+        Check the behavior of parameter immutable::
+
+            sage: pc = PolyhedralComplex([
+            ....:         Polyhedron(vertices=[(1, 1), (0, 0), (1, 2)]),
+            ....:         Polyhedron(vertices=[(1, 2), (0, 0), (0, 2)])])
+            sage: pc.graph(immutable=False).is_immutable()
+            False
+            sage: pc.graph(immutable=True).is_immutable()
+            True
         """
         if not self.is_compact():
             raise NotImplementedError("the polyhedral complex is unbounded")
@@ -1126,7 +1141,7 @@ class PolyhedralComplex(GenericCellComplex):
                 d[v] = [max_e]
         for v in self.n_maximal_cells(0):
             d[v] = []
-        return Graph(d)
+        return Graph(d, format="dict_of_lists", immutable=immutable)
 
     def is_connected(self) -> bool:
         """

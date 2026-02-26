@@ -832,28 +832,52 @@ def PresentationComplex(G):
          a^2: (a, s_0 Delta^0, a)}
         sage: S.fundamental_group()
         Finitely presented group < e0 | e0^2 >
+
+    TESTS::
+
+        sage: # needs sage.groups
+        sage: S = simplicial_sets.PresentationComplex(FreeGroup(0) / [])
+        sage: S
+        Simplicial set with 1 non-degenerate simplex
+        sage: S.face_data()
+        {Delta^0: None}
+
+    ::
+
+        sage: F = FreeGroup(2)
+        sage: G = F / [[2, 1, -2, -1, 2]]
+        sage: S = simplicial_sets.PresentationComplex(G)
+        sage: S
+        Simplicial set with 12 non-degenerate simplices
+
     """
     O = AbstractSimplex(0)
     SO = O.apply_degeneracies(0)
-    edges = {g: AbstractSimplex(1, name=str(g)) for g in G.gens()}
-    inverseedges = {g.inverse(): AbstractSimplex(1, name=str(g.inverse())) for g in G.gens()}
+    edges = {i + 1: AbstractSimplex(1, name=str(g)) for (i, g) in enumerate(G.gens())}
+    inverseedges = {-i - 1: AbstractSimplex(1, name=str(g.inverse())) for (i, g) in enumerate(G.gens())}
     all_edges = {}
     all_edges.update(edges)
     all_edges.update(inverseedges)
-    triangles = {g: AbstractSimplex(2, name='T' + str(g)) for g in G.gens()}
-    face_maps = {g: [O, O] for g in all_edges.values()}
-    face_maps.update({triangles[t]: [all_edges[t], SO, all_edges[t.inverse()]] for t in triangles})
+    triangles = {i + 1 : AbstractSimplex(2, name='T' + str(g)) for (i, g) in enumerate(G.gens())}
+    face_maps = {O: None}
+    face_maps.update({g: [O, O] for g in all_edges.values()})
+    face_maps.update({triangles[t]: [all_edges[t], SO, all_edges[-t]] for t in triangles})
     for r in G.relations():
-        if len(r.Tietze()) == 1:
-            pass
+        if len(r.Tietze()) == 0:
+            T = AbstractSimplex(2, name=str(r))
+            face_maps[T] = [SO, SO, SO]
+        elif len(r.Tietze()) == 1:
+            T = AbstractSimplex(2, name=str(r))
+            a = all_edges[r.Tietze()[0]]
+            face_maps[T] = [a, SO, SO]
         elif len(r.Tietze()) == 2:
-            a = all_edges[G([r.Tietze()[0]])]
-            b = all_edges[G([r.Tietze()[1]])]
+            a = all_edges[r.Tietze()[0]]
+            b = all_edges[r.Tietze()[1]]
             T = AbstractSimplex(2, name=str(r))
             face_maps[T] = [a, SO, b]
         else:
-            words = [all_edges[G([a])] for a in r.Tietze()]
-            words[-1] = all_edges[G([-r.Tietze()[-1]])]
+            words = [all_edges[a] for a in r.Tietze()]
+            words[-1] = all_edges[-r.Tietze()[-1]]
             while len(words) > 3:
                 auxedge = AbstractSimplex(1)
                 face_maps[auxedge] = [O, O]

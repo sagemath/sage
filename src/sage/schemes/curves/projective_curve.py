@@ -2923,7 +2923,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         return [p for p in f.zeros()
                 if all(f.valuation(p) > 0 for f in fs)]
 
-    def jacobian(self, model, base_div=None):
+    def jacobian(self, model, base_div=None, **kwargs):
         """
         Return the Jacobian of this curve.
 
@@ -2933,11 +2933,15 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         - ``base_div`` -- an effective divisor for the model
 
+        -- ``kwargs`` -- passed on to :meth:`sage.rings.function_field.function_field.FunctionField.jacobian`
+
         The degree of the base divisor should satisfy certain degree condition
         corresponding to the model used. The following table lists these
         conditions. Let `g` be the geometric genus of the curve.
 
         - ``hess``: ideal-based arithmetic; requires base divisor of degree `g`
+
+        - ``unique_hess``: ideal-based arithmetic; requires base place of degree 1
 
         - ``km_large``: Khuri-Makdisi's large model; requires base divisor of
           degree at least `2g + 1`
@@ -2961,7 +2965,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             sage: J.base_divisor().degree() == C.genus()
             True
         """
-        return self.function_field().jacobian(model, base_div, curve=self)
+        return self.function_field().jacobian(model, base_div, curve=self, **kwargs)
 
 
 class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):

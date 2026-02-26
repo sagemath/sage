@@ -694,9 +694,8 @@ class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
         from sage.misc.cachefunc import CachedFunction
         d = {}
         try:
-            for key, value in self.__dict__.items():
-                if isinstance(value, CachedFunction) and value.is_pickled_with_cache():
-                    d[key] = value
+            d.update({key: value for key, value in self.__dict__.items()
+                      if isinstance(value, CachedFunction) and value.is_pickled_with_cache()})
         except AttributeError:
             pass
         return d

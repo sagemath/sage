@@ -1015,28 +1015,13 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         TESTS::
 
-            sage: A.<x> = AffineSpace(QQ, 1)
-            sage: f1 = DynamicalSystem(x^2 + 1, A)
-            sage: f2 = DynamicalSystem(x^3 - 1, A)
+            sage: A.<x, y, z, w, t, u ,v> = AffineSpace(QQ, 7)
+            sage: f = DynamicalSystem([t + u, v - w, x + y, z^2, u * t, v^2 - w^2, x * y * z], A)
             sage: d = DynamicalSemigroup(f)
             sage: d*d == d^2
             True
-
-        ::
-
-            sage: A.<x> = AffineSpace(QQ, 1)
-            sage: f1 = DynamicalSystem(x^2 + 1, A)
-            sage: f2 = DynamicalSystem(x^3 - 1, A)
-            sage: d = DynamicalSemigroup(f)
             sage: d^3 * d^2 == d^(3 + 2)
             True
-
-        ::
-
-            sage: A.<x> = AffineSpace(QQ, 1)
-            sage: f1 = DynamicalSystem(x^2 + 1, A)
-            sage: f2 = DynamicalSystem(x^3 - 1, A)
-            sage: d = DynamicalSemigroup(f)
             sage: (d^3)^2 == d^(3 * 2)
             True
 

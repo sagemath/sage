@@ -40,10 +40,12 @@ Utilities
 from sage.misc.namespace_package import install_doc, install_dict
 # install the docstring of this module to the containing package
 install_doc(__package__, __doc__)
+del install_doc
 
 # install modules quickref and tutorial to the containing package
 from sage.combinat import quickref, tutorial
 install_dict(__package__, {'quickref': quickref, 'tutorial': tutorial})
+del install_dict
 del quickref, tutorial
 
 from sage.misc.lazy_import import lazy_import
@@ -289,3 +291,5 @@ lazy_import('sage.combinat.path_tableaux', 'catalog', as_='path_tableaux')
 
 # Bijectionist
 lazy_import('sage.combinat.bijectionist', 'Bijectionist')
+
+del lazy_import

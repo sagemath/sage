@@ -6,11 +6,11 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     cdef bitset_t _bb
     cdef bitset_t _b
     cdef SetSystem _nonbases
-    cdef _bases_invariant_var
+    cdef Py_hash_t _bases_invariant_var
     cdef SetSystem _bases_partition_var
-    cdef _bases_invariant2_var
+    cdef Py_hash_t _bases_invariant2_var
     cdef SetSystem _bases_partition2_var
-    cdef _bases_invariant3_var
+    cdef Py_hash_t _bases_invariant3_var
     cdef SetSystem _bases_partition3_var
 
     cdef reset_current_basis(self)
@@ -26,12 +26,12 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     cpdef _with_coloop(self, e)
     # cpdef relabel(self, mapping)
 
-    cpdef _bases_invariant(self)
-    cpdef _bases_partition(self)
-    cpdef _bases_invariant2(self)
-    cpdef _bases_partition2(self)
-    cpdef _bases_invariant3(self)
-    cpdef _bases_partition3(self)
+    cpdef Py_hash_t _bases_invariant(self) noexcept
+    cpdef SetSystem _bases_partition(self)
+    cpdef Py_hash_t _bases_invariant2(self) noexcept
+    cpdef SetSystem _bases_partition2(self)
+    cpdef Py_hash_t _bases_invariant3(self) noexcept
+    cpdef SetSystem _bases_partition3(self)
     cdef _reset_invariants(self)
     cpdef  bint is_distinguished(self, e) noexcept
     cpdef _is_relaxation(self, M, morphism)

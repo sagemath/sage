@@ -16,7 +16,11 @@ Orders of function fields: basis
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .ideal import FunctionFieldIdeal, FunctionFieldIdeal_module, FunctionFieldIdealInfinite_module
+from .ideal import (
+    FunctionFieldIdeal,
+    FunctionFieldIdeal_module,
+    FunctionFieldIdealInfinite_module,
+)
 from .order import FunctionFieldOrder, FunctionFieldOrderInfinite
 
 

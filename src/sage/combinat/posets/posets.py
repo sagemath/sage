@@ -312,6 +312,10 @@ from sage.combinat.posets.elements import PosetElement
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.subset import Subsets
 from .linear_extensions import LinearExtensionsOfPoset
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import builtins
 
 
 def Poset(data=None, element_labels=None, cover_relations=False, linear_extension=False, category=None, facade=None, key=None):
@@ -2746,7 +2750,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
     relations_number = number_of_relations
 
-    def linear_intervals_count(self) -> list[int]:
+    def linear_intervals_count(self) -> builtins.list[int]:
         """
         Return the enumeration of linear intervals w.r.t. their cardinality.
 
@@ -4156,7 +4160,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         for e in self._hasse_diagram.neighbor_out_iterator(self._element_to_vertex(x)):
             yield self._vertex_to_element(e)
 
-    def upper_covers(self, x) -> list:
+    def upper_covers(self, x) -> builtins.list:
         """
         Return the list of upper covers of the element ``x``.
 
@@ -4189,7 +4193,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         for e in self._hasse_diagram.neighbor_in_iterator(self._element_to_vertex(x)):
             yield self._vertex_to_element(e)
 
-    def lower_covers(self, x) -> list:
+    def lower_covers(self, x) -> builtins.list:
         """
         Return the list of lower covers of the element ``x``.
 
@@ -4429,7 +4433,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return dense_matrix.CharacteristicPolynomial().sage()
         return cox_matrix.charpoly()
 
-    def coxeter_smith_form(self, algorithm='singular') -> list:
+    def coxeter_smith_form(self, algorithm='singular') -> builtins.list:
         """
         Return the Smith normal form of `x` minus the Coxeter transformation
         matrix.
@@ -4743,7 +4747,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             raise TypeError("'other' is not a finite poset")
         return (self.subposet([self._list[i] for i in x]) for x in self._hasse_diagram.transitive_closure().subgraph_search_iterator(other.hasse_diagram().transitive_closure(), induced=True, return_graphs=False))
 
-    def isomorphic_subposets(self, other) -> list:
+    def isomorphic_subposets(self, other) -> builtins.list:
         """
         Return a list of subposets of ``self`` isomorphic to ``other``.
 
@@ -5051,7 +5055,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         result.rename("Set of chains of %s" % self)
         return result
 
-    def connected_components(self) -> list:
+    def connected_components(self) -> builtins.list:
         """
         Return the connected components of the poset as subposets.
 
@@ -5098,7 +5102,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                                     facade=False))
         return result
 
-    def ordinal_summands(self) -> list:
+    def ordinal_summands(self) -> builtins.list:
         r"""
         Return the ordinal summands of the poset as subposets.
 
@@ -5309,7 +5313,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         return Poset((rees_set, covers), cover_relations=True)
 
-    def factor(self) -> list:
+    def factor(self) -> builtins.list:
         """
         Factor the poset as a Cartesian product of smaller posets.
 

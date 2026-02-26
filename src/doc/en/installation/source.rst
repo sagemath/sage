@@ -217,15 +217,6 @@ Remarks
 
 .. note::
 
-  To build the documentation, use:
-
-  .. code-block:: console
-
-    $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
-    $ sage --docbuild all html
-
-.. note::
-
   You can update the conda lock files by running ``tools/update-conda.py``.
   In order to update the conda environment afterwards use::
 

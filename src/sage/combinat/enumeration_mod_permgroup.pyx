@@ -49,7 +49,7 @@ cpdef list all_children(ClonableIntArray v, int max_part):
     j = l - 1
     while v._list[j] == 0 and j >= 1:
         j = j - 1
-    for i in range(j,l):
+    for i in range(j, l):
         if (max_part < 0) or ((v[i]+1) <= max_part):
             child = v.clone()
             child._list[i] = v._list[i]+1
@@ -175,7 +175,7 @@ cpdef bint is_canonical(list sgs, ClonableIntArray v) except -1:
         for list_test in to_analyse:
             for x in transversal:
                 child = x._act_on_array_on_position(list_test)
-                comp = lex_cmp_partial(v,child,i+1)
+                comp = lex_cmp_partial(v, child, i + 1)
                 if comp == -1:
                     return False
                 if comp == 0:
@@ -211,7 +211,7 @@ cpdef ClonableIntArray canonical_representative_of_orbit_of(list sgs, ClonableIn
         sage: canonical_representative_of_orbit_of(sgs, IA([1,2,3,5]))
         [5, 1, 2, 3]
     """
-    cdef int l,i,comp
+    cdef int l, i, comp
     cdef set to_analyse, new_to_analyse
     cdef ClonableIntArray representative, list_test, child
     cdef PermutationGroupElement x
@@ -223,7 +223,7 @@ cpdef ClonableIntArray canonical_representative_of_orbit_of(list sgs, ClonableIn
         for list_test in to_analyse:
             for x in sgs[i]:
                 child = x._act_on_array_on_position(list_test)
-                comp = lex_cmp_partial(representative,child,i+1)
+                comp = lex_cmp_partial(representative, child, i + 1)
                 if comp <= 0:
                     new_to_analyse.add(child)
         to_analyse = new_to_analyse
@@ -271,7 +271,7 @@ cpdef set orbit(list sgs, ClonableIntArray v):
         sage: sorted(orbit(sgs, IA([1,2,3,4])))
         [[1, 2, 3, 4], [2, 3, 4, 1], [3, 4, 1, 2], [4, 1, 2, 3]]
     """
-    cdef i,l
+    cdef int i, l
     cdef set to_analyse, new_to_analyse
     cdef ClonableIntArray list_test, child
     cdef PermutationGroupElement x

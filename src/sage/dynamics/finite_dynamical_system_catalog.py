@@ -369,11 +369,12 @@ def bulgarian_solitaire(n):
         sage: BS(8).is_homomesic(lambda lam: lam[-1])
         False
     """
-    from sage.combinat.partition import Partition, Partitions
+    from sage.combinat.partition import Partitions, _Partitions
     X = Partitions(n)
 
     def phi(lam):
         mu = [p - 1 for p in lam if p > 0]
         nu = sorted(mu + [len(lam)], reverse=True)
-        return Partition(nu)
+        return _Partitions(nu)
+
     return FiniteDynamicalSystem(X, phi)

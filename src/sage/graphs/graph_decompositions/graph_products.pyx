@@ -209,8 +209,8 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     Wagner's Graph (:issue:`13599`)::
 
-        sage: g = graphs.WagnerGraph()                                                  # needs networkx
-        sage: g.is_cartesian_product()                                                  # needs networkx
+        sage: g = graphs.WagnerGraph()
+        sage: g.is_cartesian_product()
         False
 
     Empty and one-element graph (:issue:`19546`)::
