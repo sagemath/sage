@@ -127,12 +127,12 @@ def fast_char_p_power(x, n, p=None):
 
 class WittVectorRingFactory(UniqueFactory):
     r"""
-        Return a Factory that creates and stores all truncated Witt vector rings.
+        Factory that creates and stores all truncated Witt vector rings.
 
-        Send directly to the appropriate constructor of WittVectorRingClass for each algorithm
-        Except: `standard` where the Witt's Polynomials for `p` of `ZZ` are cached,
-        in order to be reused in the computation of the Witt's Polynomials of any ring `R`
-        for the same prime `p`
+        Send directly to the appropriate constructor of WittVectorRingClass for each algorithm.
+        Except: `standard`, where the Witt's Polynomials for `p` of `ZZ` are cached,
+        in order to be reused in the computation of the Witt Polynomials of any ring `R`,
+        for the same prime `p`.
     """
     def __init__(self, name):
         r"""
@@ -140,8 +140,9 @@ class WittVectorRingFactory(UniqueFactory):
 
             EXAMPLES::
 
-            sage: from sage.rings.padics.witt_vector_ring import WittVectorRing
-            sage: isinstance(WittVectorRing, object)
+            sage: from sage.rings.padics.witt_vector_ring import WittVectorRingClass
+            sage: W = WittVectorRing(GF(5), p=31, prec=1)
+            sage: isinstance(W, WittVectorRingClass)
             True
         """
         super().__init__(name)
@@ -165,9 +166,10 @@ class WittVectorRingFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: from sage.rings.padics.witt_vector_ring import WittVectorRing
-            sage: WittVectorRing(GF(5), prec=2)  # indirect doctest
-            Ring of truncated 5-typical Witt vectors of length 2 over Finite Field of size 5
+            sage: WittVectorRing.create_key(ZZ, p=2)
+            (Integer Ring, 1, 2, 'standard')
+            sage: WittVectorRing.create_key(QQ[x], prec=1, p=5)
+            (Univariate Polynomial Ring in x over Rational Field, 1, 5, 'p_invertible')
         """
         if coefficient_ring not in CommutativeRings():
             raise TypeError(f"{coefficient_ring} is not a commutative ring")
@@ -247,22 +249,26 @@ class WittVectorRingFactory(UniqueFactory):
 
         EXAMPLES::
 
-            sage: from sage.rings.padics.witt_vector_ring import WittVectorRing
-            sage: F = WittVectorRing  # the global factory instance
-
             sage: p = 2
-            sage: p in F._witt_polynomials
+            sage: p in WittVectorRing._witt_polynomials
             False
 
-            sage: F._generate_sum_and_product_polynomials_list(2, p)
-            sage: p in F._witt_polynomials
+            sage: WittVectorRing._generate_sum_and_product_polynomials_list(2, p)
+            sage: p in WittVectorRing._witt_polynomials
             True
-            sage: len(F._witt_polynomials[p][0]), len(F._witt_polynomials[p][1])
+            sage: len(WittVectorRing._witt_polynomials[p][0]), len(WittVectorRing._witt_polynomials[p][1])
             (2, 2)
 
-            sage: F._generate_sum_and_product_polynomials_list(4, p)
-            sage: len(F._witt_polynomials[p][0]), len(F._witt_polynomials[p][1])
+            sage: WittVectorRing._generate_sum_and_product_polynomials_list(4, p)
+            sage: len(WittVectorRing._witt_polynomials[p][0]), len(WittVectorRing._witt_polynomials[p][1])
             (4, 4)
+            sage: WittVectorRing._witt_polynomials[p][0][2]
+            -X0^3*Y0 - 2*X0^2*Y0^2 - X0*Y0^3 + X0*X1*Y0 + X0*Y0*Y1 - X1*Y1 + X2 + Y2
+
+            sage: len(WittVectorRing._frob_polynomials[p])
+            3
+            sage: WittVectorRing._frob_polynomials[p][2]
+            -2*X0^6*X1 - 8*X0^4*X1^2 - 10*X0^2*X1^3 - 4*X1^4 + 4*X0^2*X1*X2 + 2*X1^2*X2 - X2^2 + 2*X3
         """
         x_var_names = [f'X{i}' for i in range(prec)]
         y_var_names = [f'Y{i}' for i in range(prec)]
@@ -582,7 +588,11 @@ class WittVectorRingClass(Parent):
             sage: W.frobenius_morphism()(W([X1,X2]))  # indirect doctest
             (X1^3, X2^3)
             sage: WW = WittVectorRing(P, p=3, prec=3, algorithm='standard')
+            sage: WW.sum_polynomials()[1].parent()
+            Multivariate Polynomial Ring in X0, X1, X2, Y0, Y1, Y2 over Multivariate Polynomial Ring in X1, X2, Y1, Y2 over Finite Field of size 3
             sage: V = WittVectorRing(P, p=3, prec=1, algorithm='standard')
+            sage: V.sum_polynomials()[0].parent()
+            Multivariate Polynomial Ring in X0, Y0 over Multivariate Polynomial Ring in X1, X2, Y1, Y2 over Finite Field of size 3
         """
         var_names = [f'X{i}' for i in range(prec)] + [f'Y{i}' for i in range(prec)]
 
