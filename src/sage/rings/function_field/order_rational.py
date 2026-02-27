@@ -16,7 +16,6 @@ Orders of function fields: rational
 # ****************************************************************************
 
 import sage.rings.abc
-
 from sage.arith.functions import lcm
 from sage.arith.misc import GCD as gcd
 from sage.categories.euclidean_domains import EuclideanDomains
@@ -24,7 +23,10 @@ from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.rings.number_field.number_field_base import NumberField
 
 from .ideal import FunctionFieldIdeal
-from .ideal_rational import FunctionFieldIdeal_rational, FunctionFieldIdealInfinite_rational
+from .ideal_rational import (
+    FunctionFieldIdeal_rational,
+    FunctionFieldIdealInfinite_rational,
+)
 from .order import FunctionFieldMaximalOrder, FunctionFieldMaximalOrderInfinite
 
 

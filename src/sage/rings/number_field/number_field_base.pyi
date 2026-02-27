@@ -3,7 +3,7 @@ from typing import Any
 def number_field_base(x: Any) -> bool:
     ...
 
-class NumberFieldBase:
+class NumberField:
     def _pushout_(self, other: Any) -> Any:
         ...
 

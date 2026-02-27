@@ -210,10 +210,10 @@ class DefiniteIntegral(BuiltinFunction):
 
             sage: # needs sage.libs.giac
             sage: ex = 1/max_symbolic(x, 1)**2
-            sage: integral(ex, x, 0, 2, algorithm='giac')
+            sage: result = integral(ex, x, 0, 2, algorithm='giac') # random
+            sage: result
             3/2
-            sage: result = integral(1/max_symbolic(x, 1)**2, x, 0, oo, algorithm='giac')
-            ...
+            sage: result = integral(1/max_symbolic(x, 1)**2, x, 0, oo, algorithm='giac') # random
             sage: result
             2
         """
@@ -354,7 +354,8 @@ class DefiniteIntegral(BuiltinFunction):
             sage: f = function('f')
             sage: print_latex(f(x),x,0,1)
             '\\int_{0}^{1} f\\left(x\\right)\\,{d x}'
-            sage: latex(integrate(tan(x)/x, x, 0, 1))
+            sage: ans = latex(integrate(tan(x)/x, x, 0, 1)) # random - ignore giac stderr output
+            sage: ans
             \int_{0}^{1} \frac{\tan\left(x\right)}{x}\,{d x}
         """
         from sage.misc.latex import latex
@@ -689,7 +690,9 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     but is nevertheless computed::
 
-        sage: integrate(f(x), x, 1, 2)  # long time
+        sage: # long time
+        sage: ans = integrate(f(x), x, 1, 2)  # random - ignore giac stderr output
+        sage: ans
         -1/2*pi + arctan(8) + arctan(5) + arctan(2) + arctan(1/2)
 
     Both fricas and sympy give the correct result::

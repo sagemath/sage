@@ -710,7 +710,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             sage: matrix([[a, b], [c, d]], sparse=True).jordan_form(subdivide=False)
             [1/2*a + 1/2*d - 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)                                                   0]
             [                                                  0 1/2*a + 1/2*d + 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)]
-        
+
         Check that :issue:`40803` is fixed::
 
             sage: matrix([[a, 0], [0, a]], sparse=True).jordan_form()

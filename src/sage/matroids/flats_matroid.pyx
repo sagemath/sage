@@ -405,8 +405,7 @@ cdef class FlatsMatroid(Matroid):
         for i in self._k_F:
             F[i] = []
             F[i] += [[d[y] for y in x] for x in self._k_F[i]]
-        M = FlatsMatroid(groundset=E, flats=F)
-        return M
+        return FlatsMatroid(groundset=E, flats=F)
 
     # enumeration
 

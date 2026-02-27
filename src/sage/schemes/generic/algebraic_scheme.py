@@ -175,7 +175,7 @@ class AlgebraicScheme(scheme.Scheme):
         self.__divisor_group = {}
         scheme.Scheme.__init__(self, A.base_scheme(), category=category)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of this algebraic scheme.
 
@@ -190,7 +190,7 @@ class AlgebraicScheme(scheme.Scheme):
         """
         return r"\text{{Subscheme of ${}$}}".format(latex(self.__A))
 
-    def is_projective(self):
+    def is_projective(self) -> bool:
         """
         Return ``True`` if ``self`` is presented as a subscheme of an ambient
         projective space.
@@ -1134,15 +1134,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
             sage: PP.<x,y,z,w,v> = ProjectiveSpace(4, QQ)
             sage: V = PP.subscheme((x^2 - y^2 - z^2) * (w^5 - 2*v^2*z^3) * w * (v^3 - x^2*z))
-            sage: V.irreducible_components()                                            # needs sage.libs.singular
-            [Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-               w,
-             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-               x^2 - y^2 - z^2,
-             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-               x^2*z - v^3,
-             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-               w^5 - 2*z^3*v^2]
+            sage: Vc=V.irreducible_components()                                      # needs sage.libs.singular
+            sage: len(Vc)==4 and all(PP.subscheme(t) in  Vc for t in [w, -w^5 + 2*z^3*v^2, -x^2*z + v^3, -x^2 + y^2 + z^2])                                                 # needs sage.libs.singular
+            True
 
         We verify that the irrelevant ideal is not accidentally returned
         (see :issue:`6920`)::
@@ -1191,7 +1185,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         self.__irreducible_components = C
         return C
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         r"""
         Return whether this subscheme is or is not irreducible.
 

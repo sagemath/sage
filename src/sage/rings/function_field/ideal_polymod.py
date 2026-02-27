@@ -18,12 +18,13 @@ Ideals of function fields: extension
 # ****************************************************************************
 
 import itertools
-from sage.rings.infinity import infinity
+
 from sage.arith.power import generic_power
+from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.rings.infinity import infinity
 from sage.structure.richcmp import richcmp
-from sage.matrix.constructor import matrix
 
 from .ideal import FunctionFieldIdeal, FunctionFieldIdealInfinite
 
@@ -470,6 +471,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             True
         """
         from sage.matrix.special import block_matrix
+
         from .hermite_form_polynomial import reversed_hermite_form
 
         A = self._hnf

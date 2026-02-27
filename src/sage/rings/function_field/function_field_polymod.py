@@ -27,7 +27,9 @@ Function Fields: extension
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from typing import Literal
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Literal
 
 from sage.arith.functions import lcm
 from sage.categories.function_fields import FunctionFields
@@ -37,11 +39,17 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.rings.function_field.element import FunctionFieldElement
 from sage.rings.function_field.element_polymod import FunctionFieldElement_polymod
-from sage.rings.function_field.function_field import FunctionField
-from sage.rings.function_field.function_field_rational import RationalFunctionField
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
+
+from .function_field import FunctionField
+from .function_field_rational import RationalFunctionField
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+    from .place_polymod import FunctionFieldPlace_polymod
 
 
 class FunctionField_polymod(FunctionField):
@@ -1882,7 +1890,7 @@ class FunctionField_simple(FunctionField_polymod):
         else:
             k_degree = k.degree()
         different_degree = self.different().degree()  # must be even
-        return Integer(different_degree // 2 - self.degree() / k_degree) + 1
+        return Integer((different_degree // 2 - self.degree() / k_degree) + 1)
 
     def residue_field(self, place, name=None):
         """
@@ -1932,13 +1940,14 @@ class FunctionField_simple(FunctionField_polymod):
         """
         return place.residue_field(name=name)
 
-    def places_infinite(self, degree=1):
+    def places_infinite(self, degree=1) -> list[FunctionFieldPlace_polymod]:
         """
-        Return a list of the infinite places with ``degree``.
+        Return a list of infinite places of the given degree.
+        If ``degree`` is ``None``, return all infinite places.
 
         INPUT:
 
-        - ``degree`` -- positive integer (default: `1`)
+        - ``degree`` -- positive integer (default: `1`) or ``None``
 
         EXAMPLES::
 
@@ -1952,13 +1961,37 @@ class FunctionField_simple(FunctionField_polymod):
         """
         return list(self._places_infinite(degree))
 
+    def get_infinite_place(self, degree=1) -> FunctionFieldPlace_polymod | None:
+        r"""
+        Return an infinite place of degree ``degree`` if one exists.
+        If no infinite place of the specified degree exists, return ``None``.
+
+        If ``degree`` is ``None``, return any infinite place.
+
+        INPUT:
+
+        - ``degree`` -- positive integer (default: `1`) or ``None``
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L.get_infinite_place()
+            Place (1/x, 1/x^4*y^3)
+        """
+        return next(self._places_infinite(degree), None)
+
     def _places_infinite(self, degree):
         """
         Return a generator of *infinite* places with ``degree``.
 
         INPUT:
 
-        - ``degree`` -- positive integer
+        - ``degree`` -- positive integer or ``None``.
+                        If ``None``, return a generator of all infinite places.
 
         EXAMPLES::
 
@@ -1973,7 +2006,9 @@ class FunctionField_simple(FunctionField_polymod):
         Oinf = self.maximal_order_infinite()
         for prime, _, _ in Oinf.decomposition():
             place = prime.place()
-            if place.degree() == degree:
+            if degree is None:
+                yield place
+            elif place.degree() == degree:
                 yield place
 
 
@@ -2097,48 +2132,7 @@ class FunctionField_global(FunctionField_simple):
         from .derivations_polymod import FunctionFieldHigherDerivation_global
         return FunctionFieldHigherDerivation_global(self)
 
-    def get_place(self, degree):
-        """
-        Return a place of ``degree``.
-
-        INPUT:
-
-        - ``degree`` -- positive integer
-
-        OUTPUT: a place of ``degree`` if any exists; otherwise ``None``
-
-        EXAMPLES::
-
-            sage: # needs sage.rings.finite_rings
-            sage: F.<a> = GF(2)
-            sage: K.<x> = FunctionField(F)
-            sage: R.<Y> = PolynomialRing(K)
-            sage: L.<y> = K.extension(Y^4 + Y - x^5)
-            sage: L.get_place(1)
-            Place (x, y)
-            sage: L.get_place(2)
-            Place (x, y^2 + y + 1)
-            sage: L.get_place(3)
-            Place (x^3 + x^2 + 1, y + x^2 + x)
-            sage: L.get_place(4)
-            Place (x + 1, x^5 + 1)
-            sage: L.get_place(5)
-            Place (x^5 + x^3 + x^2 + x + 1, y + x^4 + 1)
-            sage: L.get_place(6)
-            Place (x^3 + x^2 + 1, y^2 + y + x^2)
-            sage: L.get_place(7)
-            Place (x^7 + x + 1, y + x^6 + x^5 + x^4 + x^3 + x)
-            sage: L.get_place(8)
-        """
-        for p in self._places_finite(degree):
-            return p
-
-        for p in self._places_infinite(degree):
-            return p
-
-        return None
-
-    def places(self, degree=1):
+    def places(self, degree=1) -> list[FunctionFieldPlace_polymod]:
         """
         Return a list of the places with ``degree``.
 
@@ -2158,27 +2152,7 @@ class FunctionField_global(FunctionField_simple):
         """
         return self.places_infinite(degree) + self.places_finite(degree)
 
-    def places_finite(self, degree=1):
-        """
-        Return a list of the finite places with ``degree``.
-
-        INPUT:
-
-        - ``degree`` -- positive integer (default: `1`)
-
-        EXAMPLES::
-
-            sage: # needs sage.rings.finite_rings
-            sage: F.<a> = GF(2)
-            sage: K.<x> = FunctionField(F)
-            sage: R.<t> = PolynomialRing(K)
-            sage: L.<y> = K.extension(t^4 + t - x^5)
-            sage: L.places_finite(1)
-            [Place (x, y), Place (x, y + 1)]
-        """
-        return list(self._places_finite(degree))
-
-    def _places_finite(self, degree):
+    def _places_finite(self, degree) -> Iterator[FunctionFieldPlace_polymod]:
         """
         Return a generator of finite places with ``degree``.
 
@@ -2512,6 +2486,7 @@ class FunctionField_integral(FunctionField_simple):
             pols_in_S = _singular_normal(S.ideal(g))[0]
 
         from sage.matrix.constructor import matrix
+
         from .hermite_form_polynomial import reversed_hermite_form
 
         # reconstruct the polynomials in the function field

@@ -157,7 +157,7 @@ A := RMatrixSpace(RationalField(), n+1,n)![Random(%s,%s) : i in [1..n*(n+1)]];
 t := Cputime();
 K := Kernel(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -197,7 +197,7 @@ A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
 t := Cputime();
 K := CharacteristicPolynomial(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -237,7 +237,7 @@ A := RMatrixSpace(IntegerRing(), n, n+10)![Random(%s,%s) : i in [1..n*(n+10)]];
 t := Cputime();
 K := Rank(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -277,7 +277,7 @@ A := RMatrixSpace(IntegerRing(), n+10, n)![Random(%s,%s) : i in [1..n*(n+10)]];
 t := Cputime();
 K := Rank(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -319,7 +319,7 @@ A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
 t := Cputime();
 K := ElementaryDivisors(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -365,7 +365,7 @@ for z in [1..%s] do
     K := A * B;
 end for;
 s := Cputime(t);
-""" % (n,min,max,times)
+""" % (n, min, max, times)
         if verbose:
             print(code)
         magma.eval(code)
@@ -413,7 +413,7 @@ for z in [1..%s] do
     K := A + B;
 end for;
 s := Cputime(t);
-""" % (n,min,max,times)
+""" % (n, min, max, times)
         if verbose:
             print(code)
         magma.eval(code)
@@ -476,7 +476,7 @@ A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
 t := Cputime();
 d := Determinant(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -565,7 +565,7 @@ for z in [1..%s] do
     K := v * A;
 end for;
 s := Cputime(t);
-""" % (n,min,max,times)
+""" % (n, min, max, times)
         if verbose:
             print(code)
         magma.eval(code)
@@ -950,7 +950,7 @@ A := RMatrixSpace(RationalField(), n, 2*n)![Random(%s,%s) : i in [1..n*2*n]];
 t := Cputime();
 K := EchelonForm(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -991,7 +991,7 @@ A := MatrixAlgebra(RationalField(), n)![Random(%s,%s) : i in [1..n*n]];
 t := Cputime();
 K := A^(-1);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -1207,7 +1207,7 @@ A := RMatrixSpace(RealField(16), n+1,n)![Random(%s,%s) : i in [1..n*(n+1)]];
 t := Cputime();
 K := Kernel(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)

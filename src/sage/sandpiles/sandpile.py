@@ -2533,14 +2533,21 @@ class Sandpile(DiGraph):
         """
         # get the resolution in singular form
         res = self.ideal()._singular_().mres(0)
+        len_res = len(res)
+        sing = res.parent()
+        # remove trailing zero in the resolution
+        found_zero = False
+        if sing.size(res[len_res]) == 0:
+            len_res -= 1
+            found_zero = True
         # compute the betti numbers
-        # self._betti = [1] + [len(res[i])
-        #        for i in range(1,len(res)-2)]
         self._betti = [1] + [len(x) for x in res]
+        if found_zero:
+            self._betti = self._betti[:-1]
         # convert the resolution to a list of Sage poly matrices
         result = []
         zero = self._ring.gens()[0] * 0
-        for i in range(1, len(res) + 1):
+        for i in range(1, len_res + 1):
             syz_mat = []
             new = [res[i][j] for j in range(1, int(res[i].size()) + 1)]
             for j in range(self._betti[i]):

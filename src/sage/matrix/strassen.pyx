@@ -139,77 +139,77 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
 
     # 8 T1 = B11-T0 in Y
     T1 = Y
-    T1.set_to_diff(B11,T0)
+    T1.set_to_diff(B11, T0)
 
     # 9 P5 = S1*T1 in C01
-    P5 = C.matrix_window(0,           B_sub_ncols, A_sub_nrows, B_sub_ncols)
+    P5 = C.matrix_window(0, B_sub_ncols, A_sub_nrows, B_sub_ncols)
     if have_cutoff:
         P5.set_to_prod(S1, T1)
     else:
         strassen_window_multiply_c(P5, S1, T1, cutoff)
 
-    #10 S3 = A01-S1 in X
+    # 10 S3 = A01-S1 in X
     S3 = X.matrix_window(0, 0, A_sub_nrows, A_sub_ncols)
-    S3.set_to_diff(A01,S1)
+    S3.set_to_diff(A01, S1)
 
-    #11 P2 = S3*B11 in C00
-    P2 = C.matrix_window(0,           0,           A_sub_nrows, B_sub_ncols)
+    # 11 P2 = S3*B11 in C00
+    P2 = C.matrix_window(0, 0, A_sub_nrows, B_sub_ncols)
     if have_cutoff:
         P2.set_to_prod(S3, B11)
     else:
         strassen_window_multiply_c(P2, S3, B11, cutoff)
 
-    #12 P0 = A00*B00 in X
+    # 12 P0 = A00*B00 in X
     P0 = X.matrix_window(0, 0, A_sub_nrows, B_sub_ncols)
     if have_cutoff:
         P0.set_to_prod(A00, B00)
     else:
         strassen_window_multiply_c(P0, A00, B00, cutoff)
 
-    #13 U1 = P0+P5 in C01
-    U1 = C.matrix_window(0,           B_sub_ncols, A_sub_nrows, B_sub_ncols)
+    # 13 U1 = P0+P5 in C01
+    U1 = C.matrix_window(0, B_sub_ncols, A_sub_nrows, B_sub_ncols)
     U1.set_to_sum(P0, P5)
 
-    #14 U2 = U1+P6 in C10
-    U2 = C.matrix_window(A_sub_nrows, 0,           A_sub_nrows, B_sub_ncols)
+    # 14 U2 = U1+P6 in C10
+    U2 = C.matrix_window(A_sub_nrows, 0, A_sub_nrows, B_sub_ncols)
     U2.set_to_sum(U1, P6)
 
-    #15 U3 = U1+P4 in C01
-    U3 = C.matrix_window(0,           B_sub_ncols, A_sub_nrows, B_sub_ncols)
+    # 15 U3 = U1+P4 in C01
+    U3 = C.matrix_window(0, B_sub_ncols, A_sub_nrows, B_sub_ncols)
     U3.set_to_sum(U1, P4)
 
-    #16 U6 = U2+P4 in C11 (final)
+    # 16 U6 = U2+P4 in C11 (final)
     U6 = C.matrix_window(A_sub_nrows, B_sub_ncols, A_sub_nrows, B_sub_ncols)
     U6.set_to_sum(U2, P4)
 
-    #17 U4 = U3+P2 in C01 (final)
-    U4 = C.matrix_window(0,           B_sub_ncols, A_sub_nrows, B_sub_ncols)
+    # 17 U4 = U3+P2 in C01 (final)
+    U4 = C.matrix_window(0, B_sub_ncols, A_sub_nrows, B_sub_ncols)
     U4.set_to_sum(U3, P2)
 
-    #18 T3 = T1-B10 in Y
+    # 18 T3 = T1-B10 in Y
     T3 = Y
     T3.set_to_diff(T1, B10)
 
-    #19 P3 = A11*T3 in C00
-    P3 = C.matrix_window(0,           0,           A_sub_nrows, B_sub_ncols)
+    # 19 P3 = A11*T3 in C00
+    P3 = C.matrix_window(0, 0, A_sub_nrows, B_sub_ncols)
     if have_cutoff:
         P3.set_to_prod(A11, T3)
     else:
         strassen_window_multiply_c(P3, A11, T3, cutoff)
 
-    #20 U5 = U2-P3 in C10 (final)
-    U5 = C.matrix_window(A_sub_nrows, 0,           A_sub_nrows, B_sub_ncols)
+    # 20 U5 = U2-P3 in C10 (final)
+    U5 = C.matrix_window(A_sub_nrows, 0, A_sub_nrows, B_sub_ncols)
     U5.set_to_diff(U2, P3)
 
-    #21 P1 = A01*B10 in C00
-    P1 = C.matrix_window(0,           0,           A_sub_nrows, B_sub_ncols)
+    # 21 P1 = A01*B10 in C00
+    P1 = C.matrix_window(0, 0, A_sub_nrows, B_sub_ncols)
     if have_cutoff:
         P1.set_to_prod(A01, B10)
     else:
         strassen_window_multiply_c(P1, A01, B10, cutoff)
 
-    #22 U0 = P0+P1 in C00 (final)
-    U0 = C.matrix_window(0,           0,           A_sub_nrows, B_sub_ncols)
+    # 22 U0 = P0+P1 in C00 (final)
+    U0 = C.matrix_window(0, 0, A_sub_nrows, B_sub_ncols)
     U0.set_to_sum(P0, P1)
 
     # Now deal with the leftover row and/or column (if they exist).
@@ -370,7 +370,7 @@ cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff
             if bottom_cut == top_h:
                 clear = bottom_left
             else:
-                clear = bottom_left.to_matrix().matrix_from_columns(top_pivots).matrix_window() # TODO: read only, can I do this faster? Also below
+                clear = bottom_left.to_matrix().matrix_from_columns(top_pivots).matrix_window()  # TODO: read only, can I do this faster? Also below
             # Subtract off C time top from the bottom_right
             if bottom_cut < ncols:
                 bottom_right = bottom.matrix_window(0, bottom_cut, nrows-split, ncols-bottom_cut)
@@ -388,7 +388,8 @@ cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff
                     bottom_left.matrix_window(0, cols[0], nrows-split, cols[1]).set_to_zero()
                 non_pivots = int_range(0, bottom_cut) - top_pivot_intervals
                 for cols in non_pivots:
-                    if cols[0] == 0: continue
+                    if cols[0] == 0:
+                        continue
                     prev_pivot_count = len(top_pivot_intervals - int_range(cols[0]+cols[1], bottom_cut - cols[0]+cols[1]))
                     subtract_strassen_product(bottom_left.matrix_window(0, cols[0], nrows-split, cols[1]),
                                               clear.matrix_window(0, 0, nrows-split, prev_pivot_count),
@@ -445,7 +446,8 @@ cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff
                     bottom_pivot_intervals = int_range(bottom_pivots)
                     non_pivots = int_range(bottom_start, top_cut - bottom_start) - bottom_pivot_intervals - top_pivot_intervals
                     for cols in non_pivots:
-                        if cols[0] == 0: continue
+                        if cols[0] == 0:
+                            continue
                         prev_pivot_count = len(bottom_pivot_intervals - int_range(cols[0]+cols[1], top_cut - cols[0]+cols[1]))
                         subtract_strassen_product(top.matrix_window(0, cols[0], top_h, cols[1]),
                                                   clear.matrix_window(0, 0, top_h, prev_pivot_count),

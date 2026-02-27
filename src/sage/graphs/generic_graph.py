@@ -16987,10 +16987,10 @@ class GenericGraph(GenericGraph_pyx):
 
         The McGee graph has girth 7 and therefore its odd girth is 7 as well::
 
-            sage: G = graphs.McGeeGraph()                                               # needs networkx
-            sage: G.girth()                                                             # needs networkx
+            sage: G = graphs.McGeeGraph()
+            sage: G.girth()
             7
-            sage: G.odd_girth()                                                         # needs networkx
+            sage: G.odd_girth()
             7
 
         Any complete (directed) graph on more than 2 vertices contains
@@ -24594,8 +24594,8 @@ class GenericGraph(GenericGraph_pyx):
         ::
 
             sage: ss = (graphs.WheelGraph(5)).line_graph(labels=False)
-            sage: ss.coarsest_equitable_refinement(prt)
-            [[(0, 1)], [(1, 2), (1, 4)], [(0, 3)], [(0, 4), (0, 2)], [(2, 3), (3, 4)]]
+            sage: [sorted(cell) for cell in ss.coarsest_equitable_refinement(prt)]
+            [[(0, 1)], [(1, 2), (1, 4)], [(0, 3)], [(0, 2), (0, 4)], [(2, 3), (3, 4)]]
 
         ALGORITHM: Brendan D. McKay's Master's Thesis, University of
         Melbourne, 1976.

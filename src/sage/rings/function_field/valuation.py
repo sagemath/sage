@@ -149,13 +149,20 @@ developed for number fields in [Mac1936I]_ and [Mac1936II]_.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.factory import UniqueFactory
-from sage.rings.rational_field import QQ
 from sage.misc.cachefunc import cached_method
-
-from sage.rings.valuation.valuation import DiscreteValuation, DiscretePseudoValuation, InfiniteDiscretePseudoValuation, NegativeInfiniteDiscretePseudoValuation
+from sage.rings.rational_field import QQ
+from sage.rings.valuation.mapped_valuation import (
+    FiniteExtensionFromLimitValuation,
+    MappedValuation_base,
+)
 from sage.rings.valuation.trivial_valuation import TrivialValuation
-from sage.rings.valuation.mapped_valuation import FiniteExtensionFromLimitValuation, MappedValuation_base
+from sage.rings.valuation.valuation import (
+    DiscretePseudoValuation,
+    DiscreteValuation,
+    InfiniteDiscretePseudoValuation,
+    NegativeInfiniteDiscretePseudoValuation,
+)
+from sage.structure.factory import UniqueFactory
 
 
 class FunctionFieldValuationFactory(UniqueFactory):
@@ -569,8 +576,8 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
                     return [L.valuation(w) for w in self.mac_lane_approximants(L.polynomial(), require_incomparability=True)]
                 elif L.base() is not L and K.is_subring(L):
                     # recursively call this method for the tower of fields
-                    from operator import add
                     from functools import reduce
+                    from operator import add
                     A = [base_valuation.extensions(L) for base_valuation in self.extensions(L.base())]
                     return reduce(add, A, [])
                 elif L.constant_base_field() is not K.constant_base_field() and K.constant_base_field().is_subring(L):

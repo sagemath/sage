@@ -259,7 +259,8 @@ def integral(f, *args, **kwds):
 
     Sage cannot do this elliptic integral (yet)::
 
-        sage: integral(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)
+        sage: ans = integral(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)  # random - ignore giac stderr output
+        sage: ans
         integrate(1/(sqrt(2*t^2 + 1)*sqrt(t^2 - 2)), t, 2, 3)
 
     A double integral::

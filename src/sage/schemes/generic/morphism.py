@@ -90,40 +90,6 @@ from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
 
 
-def is_SchemeMorphism(f):
-    """
-    Test whether ``f`` is a scheme morphism.
-
-    INPUT:
-
-    - ``f`` -- anything
-
-    OUTPUT:
-
-    boolean; return ``True`` if ``f`` is a scheme morphism or a point
-    on an elliptic curve.
-
-    EXAMPLES::
-
-        sage: A.<x,y> = AffineSpace(QQ, 2); H = A.Hom(A)
-        sage: f = H([y, x^2 + y]); f
-        Scheme endomorphism of Affine Space of dimension 2 over Rational Field
-          Defn: Defined on coordinates by sending (x, y) to (y, x^2 + y)
-        sage: from sage.schemes.generic.morphism import is_SchemeMorphism
-        sage: is_SchemeMorphism(f)
-        doctest:warning...
-        DeprecationWarning: The function is_SchemeMorphism is deprecated;
-        use 'isinstance(..., SchemeMorphism)' instead.
-        See https://github.com/sagemath/sage/issues/38296 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38296,
-                "The function is_SchemeMorphism is deprecated; "
-                "use 'isinstance(..., SchemeMorphism)' instead.")
-    return isinstance(f, SchemeMorphism)
-
-
 class SchemeMorphism(Element):
     """
     Base class for scheme morphisms.
@@ -238,7 +204,7 @@ class SchemeMorphism(Element):
         """
         P = parent(x)
         D = self.domain()
-        if P is D: # we certainly want to call _call_/with_args
+        if P is D:  # we certainly want to call _call_/with_args
             if not args and not kwds:
                 return self._call_(x)
             return self._call_with_args(x, args, kwds)
@@ -252,10 +218,10 @@ class SchemeMorphism(Element):
                 pass
 
             # Here, we would like to do
-            ##try:
-            ##    x = D(x).
-            ##except (TypeError, NotImplementedError):
-            ##    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (x, self.domain()))
+            # #try:
+            # #    x = D(x).
+            # #except (TypeError, NotImplementedError):
+            # #    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (x, self.domain()))
             # However, this would involve a test whether x.codomain() ==
             # self. This would trigger a Groebner basis computation, that
             # (1) could be slow and (2) could involve an even slower toy
@@ -596,7 +562,7 @@ class SchemeMorphism(Element):
         """
         if not isinstance(right, Map):
             right = SetMorphism(right.parent(), right)
-        return FormalCompositeMap(homset, right, SetMorphism(self.parent(),self))
+        return FormalCompositeMap(homset, right, SetMorphism(self.parent(), self))
 
     def glue_along_domains(self, other):
         r"""
@@ -1114,7 +1080,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         """
         # Checks were done in __call__
         P = [f(x._coords) for f in self.defining_polynomials()]
-        return self._codomain.point(P,check=True)
+        return self._codomain.point(P, check=True)
 
     def _call_with_args(self, x, args, kwds):
         """
@@ -1203,7 +1169,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             check = kwds.get("check", False)
         # containment of x in the domain has already been checked, in __call__
         P = [f(x._coords) for f in self.defining_polynomials()]
-        return self._codomain.point(P,check)
+        return self._codomain.point(P, check)
 
     def _repr_defn(self):
         """
@@ -1222,7 +1188,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         """
         i = self.domain().ambient_space()._repr_generic_point()
         o = self._codomain.ambient_space()._repr_generic_point(self.defining_polynomials())
-        return "Defined on coordinates by sending %s to\n%s" % (i,o)
+        return "Defined on coordinates by sending %s to\n%s" % (i, o)
 
     def __getitem__(self, i):
         """
@@ -1497,22 +1463,22 @@ class SchemeMorphism_polynomial(SchemeMorphism):
             if R.domain() == self.base_ring():
                 S = self.domain().ambient_space().coordinate_ring()
                 T = T.ambient_space().coordinate_ring()
-                phi = CallableConvertMap(S, T, lambda self, g:T(g.map_coefficients(R)))
+                phi = CallableConvertMap(S, T, lambda self, g: T(g.map_coefficients(R)))
                 G = []
                 for f in self:
                     if isinstance(f, FractionFieldElement):
-                        G.append(phi(f.numerator())/phi(f.denominator()))
+                        G.append(phi(f.numerator()) / phi(f.denominator()))
                     else:
                         G.append(phi(f))
             elif R.domain().coerce_map_from(self.base_ring()) is not None:
-                R = R*R.domain().coerce_map_from(self.base_ring())
+                R = R * R.domain().coerce_map_from(self.base_ring())
                 S = self.domain().ambient_space().coordinate_ring()
                 T = T.ambient_space().coordinate_ring()
-                phi = CallableConvertMap(S, T, lambda self, g:T(g.map_coefficients(R)))
+                phi = CallableConvertMap(S, T, lambda self, g: T(g.map_coefficients(R)))
                 G = []
                 for f in self:
                     if isinstance(f, FractionFieldElement):
-                        G.append(phi(f.numerator())/phi(f.denominator()))
+                        G.append(phi(f.numerator()) / phi(f.denominator()))
                     else:
                         G.append(phi(f))
             else:

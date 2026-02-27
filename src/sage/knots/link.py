@@ -2295,7 +2295,7 @@ class Link(SageObject):
                 gens = {g: g.order() for g in H.gens()}
                 if integral:
                     tor_count = {}
-                    for g, tor in gens.items():
+                    for tor in gens.values():
                         if tor in tor_count:
                             tor_count[tor] += 1
                         else:

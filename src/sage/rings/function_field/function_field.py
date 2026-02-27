@@ -251,38 +251,14 @@ from sage.rings.ring import Field
 from sage.structure.category_object import CategoryObject
 
 if TYPE_CHECKING:
-    from sage.rings.function_field.divisor import DivisorGroup
-    from sage.rings.function_field.element import FunctionFieldElement
-    from sage.rings.function_field.extensions import ConstantFieldExtension
-    from sage.rings.function_field.function_field_rational import RationalFunctionField
-    from sage.rings.function_field.jacobian_base import Jacobian_base
-    from sage.rings.function_field.maps import FunctionFieldCompletion
-    from sage.rings.function_field.place import PlaceSet
-    from sage.rings.function_field.valuation import FunctionFieldValuation
-
-
-def is_FunctionField(x) -> bool:
-    """
-    Return ``True`` if ``x`` is a function field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.function_field.function_field import is_FunctionField
-        sage: is_FunctionField(QQ)
-        doctest:warning...
-        DeprecationWarning: The function is_FunctionField is deprecated; use '... in FunctionFields()' instead.
-        See https://github.com/sagemath/sage/issues/38289 for details.
-        False
-        sage: is_FunctionField(FunctionField(QQ, 't'))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38289,
-                "The function is_FunctionField is deprecated; "
-                "use '... in FunctionFields()' instead.")
-    if isinstance(x, FunctionField):
-        return True
-    return x in FunctionFields()
+    from .divisor import DivisorGroup, FunctionFieldDivisor
+    from .element import FunctionFieldElement
+    from .extensions import ConstantFieldExtension
+    from .function_field_rational import RationalFunctionField
+    from .jacobian_base import Jacobian_base
+    from .maps import FunctionFieldCompletion
+    from .place import FunctionFieldPlace, PlaceSet
+    from .valuation import FunctionFieldValuation_base
 
 
 class FunctionField(Field):
@@ -904,7 +880,7 @@ class FunctionField(Field):
 
         return self if isinstance(self, RationalFunctionField) else self.base_field().rational_function_field()
 
-    def valuation(self, prime) -> FunctionFieldValuation:
+    def valuation(self, prime) -> FunctionFieldValuation_base:
         r"""
         Return the discrete valuation on this function field defined by
         ``prime``.
@@ -1387,8 +1363,92 @@ class FunctionField(Field):
         from .extensions import ConstantFieldExtension
         return ConstantFieldExtension(self, k)
 
+    def places_finite(self, degree=1) -> list[FunctionFieldPlace]:
+        """
+        Return a list of the finite places of the given degree.
+
+        INPUT:
+
+        - ``degree`` -- (default: 1) a positive integer
+
+        EXAMPLES::
+
+            sage: F.<x> = FunctionField(GF(5))
+            sage: F.places_finite()                                                     # needs sage.libs.pari
+            [Place (x), Place (x + 1), Place (x + 2), Place (x + 3), Place (x + 4)]
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L.places_finite(1)
+            [Place (x, y), Place (x, y + 1)]
+        """
+        return list(self._places_finite(degree))
+
+    def get_finite_place(self, degree) -> FunctionFieldPlace | None:
+        r"""
+        Return a finite place of degree ``degree`` if one exists.
+        If no finite place of the specified degree exists, return ``None``.
+
+        INPUT:
+
+        - ``degree`` -- positive integer
+        """
+        return next(self._places_finite(degree), None)
+
+    def get_infinite_place(self, degree) -> FunctionFieldPlace | None:
+        r"""
+        Return an infinite place of degree ``degree`` if one exists.
+        If no infinite place of the specified degree exists, return ``None``.
+
+        INPUT:
+
+        - ``degree`` -- positive integer
+        """
+        return NotImplemented
+
+    def get_place(self, degree) -> FunctionFieldPlace | None:
+        r"""
+        Return a place of degree ``degree`` if one exists.
+        If no place of the specified degree exists, return ``None``.
+
+        INPUT:
+
+        - ``degree`` -- positive integer
+
+        OUTPUT: a place of degree ``degree`` if any exists; otherwise ``None``
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<Y> = PolynomialRing(K)
+            sage: L.<y> = K.extension(Y^4 + Y - x^5)
+            sage: L.get_place(1)
+            Place (x, y)
+            sage: L.get_place(2)
+            Place (x, y^2 + y + 1)
+            sage: L.get_place(3)
+            Place (x^3 + x^2 + 1, y + x^2 + x)
+            sage: L.get_place(4)
+            Place (x + 1, x^5 + 1)
+            sage: L.get_place(5)
+            Place (x^5 + x^3 + x^2 + x + 1, y + x^4 + 1)
+            sage: L.get_place(6)
+            Place (x^3 + x^2 + 1, y^2 + y + x^2)
+            sage: L.get_place(7)
+            Place (x^7 + x + 1, y + x^6 + x^5 + x^4 + x^3 + x)
+            sage: L.get_place(8)
+        """
+        if (place := self.get_finite_place(degree)):
+            return place
+        return self.get_infinite_place(degree)
+
     @cached_method
-    def jacobian(self, model=None, base_div=None, **kwds) -> Jacobian_base:
+    def jacobian(self, model: str = 'hess', base_div: FunctionFieldPlace | FunctionFieldDivisor | None = None, extra_caching: bool = True, **kwds) -> Jacobian_base:
         """
         Return the Jacobian of the function field.
 
@@ -1396,13 +1456,19 @@ class FunctionField(Field):
 
         - ``model`` -- (default: ``'hess'``) model to use for arithmetic
 
-        - ``base_div`` -- an effective divisor
+        - ``base_div`` -- an effective divisor or a place
+
+        - ``extra_caching`` -- speed up Jacobian arithmetic at the cost
+            of increased memory use by caching frequent computations.
+            This parameter is currently only used by the Unique Hess model.
 
         The degree of the base divisor should satisfy certain degree condition
         corresponding to the model used. The following table lists these
         conditions. Let `g` be the genus of the function field.
 
         - ``hess``: ideal-based arithmetic; requires base divisor of degree `g`
+
+        - ``unique_hess``: ideal-based arithmetic; requires base place of degree `1`
 
         - ``km_large``: Khuri-Makdisi's large model; requires base divisor of
           degree at least `2g + 1`
@@ -1435,52 +1501,59 @@ class FunctionField(Field):
         """
         from .place import FunctionFieldPlace
 
-        if model is None:
-            model = 'hess'
-
-        if base_div is None:
-            try:
-                base_place = self.get_place(1)
-            except AttributeError:
-                raise ValueError('failed to obtain a rational place; provide a base divisor')
-            if base_place is None:
-                raise ValueError('the function field has no rational place')
-            # appropriate base divisor is constructed below.
-        elif isinstance(base_div, FunctionFieldPlace):
-            base_div = base_div.divisor()
+        if model != 'unique_hess':
+            if base_div is None:
+                try:
+                    base_place = self.get_place(1)
+                except AttributeError:
+                    raise ValueError('failed to obtain a rational place; provide a base divisor')
+                if base_place is None:
+                    raise ValueError('the function field has no rational place')
+                # appropriate base divisor is constructed below.
+            elif isinstance(base_div, FunctionFieldPlace):
+                base_div = base_div.divisor()
 
         g = self.genus()
         curve = kwds.get('curve')
 
         if model.startswith('km'):
-            from .jacobian_khuri_makdisi import Jacobian
+            from .jacobian_khuri_makdisi import Jacobian as JacobianKhuriMakdisi
             if model == 'km' or model.endswith('large'):
                 if base_div is None:
                     base_div = (2 * g + 1) * base_place
                 if not base_div.degree() >= 2 * g + 1:
                     raise ValueError("Khuri-Makdisi large model requires base divisor of degree "
                                      "at least 2*g + 1 for genus g")
-                return Jacobian(self, base_div, model='large', curve=curve)
+                return JacobianKhuriMakdisi(self, base_div, model='large', curve=curve)
             elif model.endswith('medium'):
                 if base_div is None:
                     base_div = (2 * g + 1) * base_place
                 if not base_div.degree() >= 2 * g + 1:
                     raise ValueError("Khuri-Makdisi medium model requires base divisor of degree "
                                      "at least 2*g + 1 for genus g")
-                return Jacobian(self, base_div, model='medium', curve=curve)
+                return JacobianKhuriMakdisi(self, base_div, model='medium', curve=curve)
             elif model.endswith('small'):
                 if base_div is None:
                     base_div = (g + 1) * base_place
                 if not base_div.degree() >= g + 1:
                     raise ValueError("Khuri-Makdisi small model requires base divisor of degree "
                                      "at least g + 1 for genus g")
-                return Jacobian(self, base_div, model='small', curve=curve)
+                return JacobianKhuriMakdisi(self, base_div, model='small', curve=curve)
         elif model == 'hess':
-            from .jacobian_hess import Jacobian
+            from .jacobian_hess import Jacobian as JacobianHess
             if base_div is None:
                 base_div = g * base_place
             if base_div.degree() != g:
                 raise ValueError("Hess model requires base divisor of degree g for genus g")
-            return Jacobian(self, base_div, curve=curve)
+            return JacobianHess(self, base_div, curve=curve)
+        elif model == 'unique_hess':
+            from .jacobian_unique_hess import Jacobian as JacobianUniqueHess
+            if base_div is None:
+                base_div = self.get_infinite_place(1)
+            if base_div is None:
+                base_div = self.get_finite_place(1)
+            if base_div is None:
+                raise ValueError('the function field has no degree 1 place')
+            return JacobianUniqueHess(self, base_div, cache_infinite_ideals=extra_caching, curve=curve)
 
         raise ValueError("unknown model")

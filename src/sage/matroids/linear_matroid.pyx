@@ -3309,8 +3309,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         """
         d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset_list()]
-        M = LinearMatroid(groundset=E, matrix=self._matrix_())
-        return M
+        return LinearMatroid(groundset=E, matrix=self._matrix_())
 
 # Binary matroid
 
@@ -4344,8 +4343,7 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset_list()]
-        M = BinaryMatroid(groundset=E, matrix=self._matrix_())
-        return M
+        return BinaryMatroid(groundset=E, matrix=self._matrix_())
 
 cdef class TernaryMatroid(LinearMatroid):
     r"""
@@ -5214,8 +5212,7 @@ cdef class TernaryMatroid(LinearMatroid):
         """
         d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset_list()]
-        M = TernaryMatroid(groundset=E, matrix=self._matrix_())
-        return M
+        return TernaryMatroid(groundset=E, matrix=self._matrix_())
 
 # Quaternary Matroids
 
@@ -5922,8 +5919,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         """
         d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset_list()]
-        M = QuaternaryMatroid(groundset=E, matrix=self._matrix_())
-        return M
+        return QuaternaryMatroid(groundset=E, matrix=self._matrix_())
 
 # Regular Matroids
 
