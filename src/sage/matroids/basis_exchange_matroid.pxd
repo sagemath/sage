@@ -11,7 +11,7 @@ cdef class BasisExchangeMatroid(Matroid):
     cdef frozenset _groundset
 
     cdef _bcount
-    cdef _weak_invariant_var, _strong_invariant_var, _heuristic_invariant_var
+    cdef Py_hash_t _weak_invariant_var, _strong_invariant_var, _heuristic_invariant_var
     cdef SetSystem _weak_partition_var, _strong_partition_var, _heuristic_partition_var
 
     cdef _relabel(self, mapping)
@@ -75,14 +75,14 @@ cdef class BasisExchangeMatroid(Matroid):
     cpdef SetSystem cocircuits(self)
     cpdef SetSystem circuits(self, k=*)
 
-    cpdef _characteristic_setsystem(self)
-    cpdef _weak_invariant(self)
-    cpdef _weak_partition(self)
-    cpdef _strong_invariant(self)
-    cpdef _strong_partition(self)
-    cpdef _heuristic_invariant(self)
-    cpdef _heuristic_partition(self)
-    cdef _flush(self)
+    cpdef SetSystem _characteristic_setsystem(self)
+    cpdef Py_hash_t _weak_invariant(self) noexcept
+    cpdef SetSystem _weak_partition(self)
+    cpdef Py_hash_t _strong_invariant(self) noexcept
+    cpdef SetSystem _strong_partition(self)
+    cpdef Py_hash_t _heuristic_invariant(self) noexcept
+    cpdef SetSystem _heuristic_partition(self)
+    cdef _flush_invariants(self)
 
     cpdef _equitable_partition(self, P=*)
     cpdef _is_isomorphic(self, other, certificate=*)

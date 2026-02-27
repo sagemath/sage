@@ -26,33 +26,6 @@ from sage.structure.richcmp import richcmp_method, richcmp
 _Fields = Fields()
 
 
-def is_Jacobian(J):
-    """
-    Return ``True`` if `J` is of type ``Jacobian_generic``.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.jacobians.abstract_jacobian import Jacobian, is_Jacobian
-        sage: P2.<x, y, z> = ProjectiveSpace(QQ, 2)
-        sage: C = Curve(x^3 + y^3 + z^3)
-        sage: J = Jacobian(C)
-        sage: is_Jacobian(J)
-        ...
-        DeprecationWarning: Use Jacobian_generic directly
-        See https://github.com/sagemath/sage/issues/35467 for details.
-        True
-
-    ::
-
-        sage: E = EllipticCurve('37a1')
-        sage: is_Jacobian(E)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(35467, "Use Jacobian_generic directly")
-    return isinstance(J, Jacobian_generic)
-
-
 def Jacobian(C):
     """
     EXAMPLES::
@@ -141,7 +114,7 @@ class Jacobian_generic(Scheme):
         self.__curve = C
         Scheme.__init__(self, C.base_scheme(), category=Jacobians(C.base_ring()).or_subcategory(category))
 
-    def __richcmp__(self, J, op):
+    def __richcmp__(self, J, op) -> bool:
         """
         Compare the Jacobian ``self`` to `J`.  If `J` is a Jacobian, then
         ``self`` and `J` are equal if and only if their curves are equal.

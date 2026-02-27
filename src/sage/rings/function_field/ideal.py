@@ -93,15 +93,15 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.latex import latex
-from sage.combinat.subset import powerset
-from sage.structure.parent import Parent
-from sage.structure.element import Element
-from sage.structure.richcmp import richcmp
-from sage.structure.factorization import Factorization
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.monoids import Monoids
+from sage.combinat.subset import powerset
+from sage.misc.latex import latex
 from sage.rings.ideal import Ideal_generic
+from sage.structure.element import Element
+from sage.structure.factorization import Factorization
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class FunctionFieldIdeal(Element):

@@ -22,17 +22,18 @@ AUTHORS:
 - Nick Alexander (2009-01)
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from .number_field_ideal import NumberFieldFractionalIdeal
+from sage.misc.cachefunc import cached_method
 from sage.structure.factorization import Factorization
 from sage.structure.proof.proof import get_flag
 from sage.structure.richcmp import richcmp
@@ -111,6 +112,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         to_abs = abs_ideal.number_field().structure()[1]
         return to_abs(x) in abs_ideal
 
+    @cached_method
     def pari_rhnf(self):
         """
         Return PARI's representation of this relative ideal in Hermite
@@ -124,14 +126,10 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: I.pari_rhnf()
             [[1, -2; 0, 1], [[2, 1; 0, 1], 1/2]]
         """
-        try:
-            return self.__pari_rhnf
-        except AttributeError:
-            nfzk = self.number_field().pari_nf().nf_subst('x').nf_get_zk()
-            rnf = self.number_field().pari_rnf()
-            L_hnf = self.absolute_ideal().pari_hnf()
-            self.__pari_rhnf = rnf.rnfidealabstorel(nfzk * L_hnf)
-            return self.__pari_rhnf
+        nfzk = self.number_field().pari_nf().nf_subst('x').nf_get_zk()
+        rnf = self.number_field().pari_rnf()
+        L_hnf = self.absolute_ideal().pari_hnf()
+        return rnf.rnfidealabstorel(nfzk * L_hnf)
 
     def absolute_ideal(self, names='a'):
         r"""
@@ -314,10 +312,11 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             raise ZeroDivisionError
         return self._from_absolute_ideal(~self.absolute_ideal())
 
-    def is_principal(self, proof=None):
+    def is_principal(self, proof=None) -> bool:
         """
-        Return ``True`` if this ideal is principal.  If so, set
-        ``self.__reduced_generators``, with length one.
+        Return ``True`` if this ideal is principal.
+
+        If so, set ``self.__reduced_generators``, with length one.
 
         EXAMPLES::
 
@@ -616,9 +615,9 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             True
         """
         d = self.absolute_ideal().integral_split()[1]
-        return (d*self, d)
+        return (d * self, d)
 
-    def is_prime(self):
+    def is_prime(self) -> bool:
         """
         Return ``True`` if this ideal of a relative number field is prime.
 

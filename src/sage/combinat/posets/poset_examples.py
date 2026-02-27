@@ -1284,8 +1284,7 @@ class Posets(metaclass=ClasscallMetaclass):
         elem_labels = {}
         if 'labels' in labels:
             if labels['labels'] == 'integers':
-                for labelcount, ijk in enumerate(elem):
-                    elem_labels[ijk] = labelcount
+                elem_labels.update({ijk: labelcount for labelcount, ijk in enumerate(elem)})
         for c in colors:
             for i, j, k in elem:
                 if i + j + k < n - 1:

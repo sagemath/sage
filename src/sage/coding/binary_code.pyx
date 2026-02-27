@@ -48,7 +48,6 @@ from cysignals.memory cimport sig_malloc, sig_free
 from sage.structure.element cimport Matrix
 from sage.misc.timing import cputime
 from sage.rings.integer cimport Integer
-from copy import copy
 from sage.data_structures.bitset_base cimport *
 
 WORD_SIZE = sizeof(codeword) << 3
@@ -121,7 +120,7 @@ def weight_dist(M):
         [1, 0, 0, 0, 0, 0, 68, 0, 85, 0, 68, 0, 34, 0, 0, 0, 0, 0]
     """
     cdef bitset_t word
-    cdef int i,j,k, dim=M.nrows(), deg=M.ncols()
+    cdef int i, j, k, dim=M.nrows(), deg=M.ncols()
     cdef list L
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int *LL = <int *> mem.malloc((deg+1) * sizeof(int))
@@ -1405,15 +1404,18 @@ cdef class OrbitPartition:
         y_root = self.wd_find(y)
         if self.wd_rank[x_root] > self.wd_rank[y_root]:
             self.wd_parent[y_root] = x_root
-            self.wd_min_cell_rep[x_root] = min(self.wd_min_cell_rep[x_root],self.wd_min_cell_rep[y_root])
+            self.wd_min_cell_rep[x_root] = min(self.wd_min_cell_rep[x_root],
+                                               self.wd_min_cell_rep[y_root])
             self.wd_size[x_root] += self.wd_size[y_root]
         elif self.wd_rank[x_root] < self.wd_rank[y_root]:
             self.wd_parent[x_root] = y_root
-            self.wd_min_cell_rep[y_root] = min(self.wd_min_cell_rep[x_root],self.wd_min_cell_rep[y_root])
+            self.wd_min_cell_rep[y_root] = min(self.wd_min_cell_rep[x_root],
+                                               self.wd_min_cell_rep[y_root])
             self.wd_size[y_root] += self.wd_size[x_root]
         elif x_root != y_root:
             self.wd_parent[y_root] = x_root
-            self.wd_min_cell_rep[x_root] = min(self.wd_min_cell_rep[x_root],self.wd_min_cell_rep[y_root])
+            self.wd_min_cell_rep[x_root] = min(self.wd_min_cell_rep[x_root],
+                                               self.wd_min_cell_rep[y_root])
             self.wd_size[x_root] += self.wd_size[y_root]
             self.wd_rank[x_root] += 1
 
@@ -1477,15 +1479,18 @@ cdef class OrbitPartition:
         y_root = self.col_find(y)
         if self.col_rank[x_root] > self.col_rank[y_root]:
             self.col_parent[y_root] = x_root
-            self.col_min_cell_rep[x_root] = min(self.col_min_cell_rep[x_root],self.col_min_cell_rep[y_root])
+            self.col_min_cell_rep[x_root] = min(self.col_min_cell_rep[x_root],
+                                                self.col_min_cell_rep[y_root])
             self.col_size[x_root] += self.col_size[y_root]
         elif self.col_rank[x_root] < self.col_rank[y_root]:
             self.col_parent[x_root] = y_root
-            self.col_min_cell_rep[y_root] = min(self.col_min_cell_rep[x_root],self.col_min_cell_rep[y_root])
+            self.col_min_cell_rep[y_root] = min(self.col_min_cell_rep[x_root],
+                                                self.col_min_cell_rep[y_root])
             self.col_size[y_root] += self.col_size[x_root]
         elif x_root != y_root:
             self.col_parent[y_root] = x_root
-            self.col_min_cell_rep[x_root] = min(self.col_min_cell_rep[x_root],self.col_min_cell_rep[y_root])
+            self.col_min_cell_rep[x_root] = min(self.col_min_cell_rep[x_root],
+                                                self.col_min_cell_rep[y_root])
             self.col_size[x_root] += self.col_size[y_root]
             self.col_rank[x_root] += 1
 
@@ -3043,7 +3048,7 @@ cdef class BinaryCodeClassifier:
         """
         self.radix = sizeof(codeword) << 3
         self.ham_wts = hamming_weights()
-        self.L = 100 # memory limit for Phi and Omega- multiply by 8KB
+        self.L = 100  # memory limit for Phi and Omega- multiply by 8KB
         self.aut_gens_size = self.radix * 100
 
         self.w_gamma_size = 1 << (self.radix/2)
@@ -3058,7 +3063,7 @@ cdef class BinaryCodeClassifier:
         self.W = <unsigned int *> self.mem.malloc(self.Phi_size * self.radix * 2 * sizeof(unsigned int))
 
         self.base = <int *> self.mem.malloc(self.radix * sizeof(int))
-        self.aut_gp_gens = <int *> self.mem.malloc(self.aut_gens_size  * sizeof(int))
+        self.aut_gp_gens = <int *> self.mem.malloc(self.aut_gens_size * sizeof(int))
         self.c_gamma = <int *> self.mem.malloc(self.radix * sizeof(int))
         self.labeling = <int *> self.mem.malloc(self.radix * 3 * sizeof(int))
         self.Lambda1 = <int *> self.mem.malloc(self.radix * 2 * sizeof(int))
@@ -3254,40 +3259,60 @@ cdef class BinaryCodeClassifier:
     cdef void aut_gp_and_can_label(self, BinaryCode C, int verbosity) noexcept:
 
         # declare variables:
-        cdef int i, j, ii, jj, iii, jjj, iiii # local variables
+        cdef int i, j, ii, jj, iii, jjj, iiii  # local variables
 
-        cdef PartitionStack nu, zeta, rho # nu is the current position in the tree,
-                                          # zeta the first terminal position,
-                                          # and rho the best-so-far guess at canonical labeling position
+        cdef PartitionStack nu, zeta, rho
+        # nu is the current position in the tree,
+        # zeta the first terminal position,
+        # rho the best-so-far guess at canonical labeling position
+
         cdef int k = 0  # the number of partitions in nu
         cdef int k_rho  # the number of partitions in rho
         cdef int *v = self.v    # list of vertices determining nu
-        cdef int h = -1 # longest common ancestor of zeta and nu: zeta[h] == nu[h], zeta[h+1] != nu[h+1]
-                        # -1 indicates that zeta is not yet defined
-        cdef int hb     # longest common ancestor of rho and nu:
-                        # rho[hb] == nu[hb], rho[hb+1] != nu[hb+1]
-        cdef int hh = 1 # the height of the oldest ancestor of nu satisfying Lemma 2.25 in [1]:
-                        # if nu does not satisfy it at k, then hh = k
-        cdef int ht # smallest such that all descendants of zeta[ht] are equivalent under
-                    # the portion of the automorphism group so far discovered
-        cdef int *alpha # for storing pointers to cells of nu[k]
-        cdef int tvc    # tvc keeps track of which vertex is the first where nu and zeta differ-
-                        # zeta was defined by splitting one vertex, and nu was defined by splitting tvc
 
-        cdef OrbitPartition Theta # keeps track of which vertices have been discovered to be equivalent
+        cdef int h = -1
+        # longest common ancestor of zeta and nu:
+        # zeta[h] == nu[h], zeta[h+1] != nu[h+1]
+        # -1 indicates that zeta is not yet defined
+
+        cdef int hb
+        # longest common ancestor of rho and nu:
+        # rho[hb] == nu[hb], rho[hb+1] != nu[hb+1]
+
+        cdef int hh = 1
+        # the height of the oldest ancestor of nu satisfying Lemma 2.25 in [1]:
+        # if nu does not satisfy it at k, then hh = k
+
+        cdef int ht
+        # smallest such that all descendants of zeta[ht] are equivalent under
+        # the portion of the automorphism group so far discovered
+
+        cdef int *alpha  # for storing pointers to cells of nu[k]
+        cdef int tvc
+        # tvc keeps track of which vertex is the first where nu and zeta differ
+        # zeta was defined by splitting one vertex, and nu was defined by splitting tvc
+
+        cdef OrbitPartition Theta  # keeps track of which vertices have been discovered to be equivalent
         cdef unsigned int *Phi      # Phi stores the fixed point sets of each automorphism
         cdef unsigned int *Omega    # Omega stores the minimal elements of each cell of the orbit partition
-        cdef int l = -1    # current index for storing values in Phi and Omega- we start at -1 so that when
-                           # we increment first, the first place we write to is 0.
-        cdef unsigned int *W    # for each k, W[k] is a list (as int mask) of the vertices to be searched down from
-                       # the current partition, at k. Phi and Omega are ultimately used to make the size of
-                       # W as small as possible
+        cdef int l = -1
+        # current index for storing values in Phi and Omega.
+        # we start at -1 so that when we increment first,
+        # the first place we write to is 0.
+
+        cdef unsigned int *W
+        # for each k, W[k] is a list (as int mask) of the vertices to
+        # be searched down from the current partition, at k. Phi and
+        # Omega are ultimately used to make the size of W as small as
+        # possible
+
         cdef int *e  # 0 or 1, whether or not we have used Omega and Phi to narrow down W[k] yet: see states 12 and 17
 
-        cdef int index = 0 # Define $\Gamma^{(-1)} := \text{Aut}(C)$, and
-                           # $\Gamma^{(i)} := \Gamma^{(-1)}_{v_0,...,v_i}$.
-                           # Then index = $|\Gamma^{(k-1)}|/|\Gamma^{(k)}|$ at (POINT A)
-                           # and size = $|\Gamma^{(k-1)}|$ at (POINT A) and (POINT B).
+        cdef int index = 0
+        # Define $\Gamma^{(-1)} := \text{Aut}(C)$, and
+        # $\Gamma^{(i)} := \Gamma^{(-1)}_{v_0,...,v_i}$.
+        # Then index = $|\Gamma^{(k-1)}|/|\Gamma^{(k)}|$ at (POINT A)
+        # and size = $|\Gamma^{(k-1)}|$ at (POINT A) and (POINT B).
 
         cdef int *Lambda = self.Lambda1             # for tracking indicator values- zf and zb are
         cdef int *zf__Lambda_zeta = self.Lambda2    # indicator vectors remembering Lambda[k] for
@@ -3297,7 +3322,7 @@ cdef class BinaryCodeClassifier:
         cdef int hzb__h_rho = -1  # the max height for which Lambda and zb agree
 
         cdef int *word_gamma
-        cdef int *col_gamma = self.c_gamma # used for storing permutations
+        cdef int *col_gamma = self.c_gamma  # used for storing permutations
         cdef int nwords = C.nwords, ncols = C.ncols, nrows = C.nrows
         cdef int *ham_wts = self.ham_wts
         cdef int state  # keeps track of position in algorithm - see sage/graphs/graph_isom.pyx, search for "STATE DIAGRAM"
@@ -3319,7 +3344,7 @@ cdef class BinaryCodeClassifier:
         for i from 0 <= i < self.Phi_size * self.L:
             self.Omega[i] = 0
         word_gamma = self.w_gamma
-        alpha = self.alpha # think of alpha as of length exactly nwords + ncols
+        alpha = self.alpha  # think of alpha as of length exactly nwords + ncols
         Phi = self.Phi
         Omega = self.Omega
         W = self.W
@@ -3334,7 +3359,7 @@ cdef class BinaryCodeClassifier:
         state = 1
         while state != -1:
 
-            if state == 1: # Entry point: once only
+            if state == 1:  # Entry point: once only
                 alpha[0] = 0
                 alpha[1] = nu.flag
                 nu.refine(k, alpha, 2, C, ham_wts)
@@ -3352,13 +3377,15 @@ cdef class BinaryCodeClassifier:
                 e[k] = 0
                 state = 2
 
-            elif state == 2: # Move down the search tree one level by refining nu:
-                             # split out a vertex, and refine nu against it
+            elif state == 2:
+                # Move down the search tree one level by refining nu:
+                # split out a vertex, and refine nu against it
                 k += 1
                 nu.clear(k)
 
                 alpha[0] = nu.split_vertex(v[k-1], k)
-                Lambda[k] = nu.refine(k, alpha, 1, C, ham_wts) # store the invariant to Lambda[k]
+                Lambda[k] = nu.refine(k, alpha, 1, C, ham_wts)  # store the invariant to Lambda[k]
+
                 # only if this is the first time moving down the search tree:
                 if h == -1:
                     state = 5
@@ -3460,7 +3487,7 @@ cdef class BinaryCodeClassifier:
 
                 state = 12
 
-            elif state == 7: # we have just arrived at a terminal node of the search tree T(G, Pi)
+            elif state == 7:  # we have just arrived at a terminal node of the search tree T(G, Pi)
                 # if this is the first terminal node, go directly to 18, to
                 # process zeta
                 if h == -1:
@@ -3481,8 +3508,10 @@ cdef class BinaryCodeClassifier:
                 else:
                     state = 8
 
-            elif state == 8: # we have just ruled out the presence of automorphism and have not yet
-                             # considered whether nu improves on rho
+            elif state == 8:
+                # we have just ruled out the presence of automorphism
+                # and have not yet considered whether nu improves on rho
+
                 # if qzb < 0, then rho already has larger indicator tuple
                 if qzb < 0:
                     state = 6
@@ -3510,7 +3539,8 @@ cdef class BinaryCodeClassifier:
 
                 state = 10
 
-            elif state == 9:  # nu is a better guess at the canonical label than rho
+            elif state == 9:
+                # nu is a better guess at the canonical label than rho
                 rho = PartitionStack(nu)
                 k_rho = k
                 qzb = 0
@@ -3522,7 +3552,8 @@ cdef class BinaryCodeClassifier:
 
             elif state == 10:  # we have an automorphism to process
                 # increment l
-                if l < self.L-1: l += 1
+                if l < self.L-1:
+                    l += 1
                 # store information about the automorphism to Omega and Phi
                 ii = self.Phi_size*l
                 jj = 1 + nwords/self.radix
@@ -3592,20 +3623,26 @@ cdef class BinaryCodeClassifier:
                 k = h
                 state = 13
 
-            elif state == 11: # We have just found a new automorphism, and deduced that there may
-                # be a better canonical label below the current branch off of zeta. So go to where
-                # nu meets rho
+            elif state == 11:
+                # We have just found a new automorphism, and deduced
+                # that there may be a better canonical label below the
+                # current branch off of zeta. So go to where nu meets
+                # rho
                 k = hb
                 state = 12
 
-            elif state == 12: # Coming here from either state 6 or 11, the algorithm has discovered
-                              # some new information. 11 came from 10, where a new line in Omega and
-                              # Phi was just recorded, and 6 stored information about implicit auto-
-                              # morphisms in Omega and Phi
+            elif state == 12:
+                # Coming here from either state 6 or 11, the algorithm
+                # has discovered some new information. 11 came from
+                # 10, where a new line in Omega and Phi was just
+                # recorded, and 6 stored information about implicit
+                # auto- morphisms in Omega and Phi
                 if e[k] == 1:
-                    # this means that the algorithm has come upward to this position (in state 17)
-                    # before, so we have already intersected W[k] with the bulk of Omega and Phi, but
-                    # we should still catch up with the latest ones
+                    # this means that the algorithm has come upward to
+                    # this position (in state 17) before, so we have
+                    # already intersected W[k] with the bulk of Omega
+                    # and Phi, but we should still catch up with the
+                    # latest ones
                     ii = self.Phi_size*l
                     jj = self.Phi_size*k
                     j = 1 + nwords/self.radix
@@ -3853,7 +3890,7 @@ cdef class BinaryCodeClassifier:
             [000000000010001011110101]
             [000000000001001101101110]
         """
-        aut_gp_gens, labeling, size, base = self._aut_gp_and_can_label(B)
+        labeling = self._aut_gp_and_can_label(B)[1]
         B._apply_permutation_to_basis(labeling)
         B.put_in_std_form()
 
@@ -3916,30 +3953,25 @@ cdef class BinaryCodeClassifier:
         cdef codeword *ortho_basis
         cdef codeword *B_can_lab
         cdef codeword current, swap
-        cdef codeword word, temp, gate, nonzero_gate, orbit, bwd, k_gate
+        cdef codeword word, temp, gate, nonzero_gate, k_gate
         cdef codeword *temp_basis
         cdef codeword *orbit_checks
-        cdef codeword orb_chx_size, orb_chx_shift, radix_gate
-        cdef WordPermutation *gwp
+        cdef codeword orb_chx_size, radix_gate
         cdef WordPermutation *hwp
         cdef WordPermutation *can_lab
         cdef WordPermutation *can_lab_inv
         cdef WordPermutation **parent_generators
         cdef BinaryCode B_aug
-        cdef int i, ii, j, jj, ij, k = 0, parity, combo, num_gens
-        cdef int base_size, row
-        cdef int *multimod2_index
+        cdef int i, ii, j, jj, k = 0, parity, combo
+        cdef int row
         cdef int *ham_wts = self.ham_wts
-        cdef int *num_inner_gens
-        cdef int *num_outer_gens
-        cdef int *v
         cdef int log_2_radix
-        cdef bint bingo, bingo2, bingo3
+        cdef bint bingo2
 
         B.put_in_std_form()
-        ortho_basis = expand_to_ortho_basis(B, n) # modifies B!
+        ortho_basis = expand_to_ortho_basis(B, n)  # modifies B!
 
-        aut_gp_gens, labeling, size, base = self._aut_gp_and_can_label(B)
+        aut_gp_gens, labeling, _, _ = self._aut_gp_and_can_label(B)
         B_can_lab = <codeword *> sig_malloc(B.nrows * sizeof(codeword))
         can_lab = create_word_perm(labeling[:B.ncols])
         if B_can_lab is NULL or can_lab is NULL:
@@ -3971,8 +4003,6 @@ cdef class BinaryCodeClassifier:
                         B_can_lab[j] ^= B_can_lab[row]
                 row += 1
             current = current << 1
-        num_gens = len(aut_gp_gens)
-        base_size = len(base)
 
         parent_generators = <WordPermutation **> sig_malloc(len(aut_gp_gens) * sizeof(WordPermutation*))
         temp_basis = <codeword *> sig_malloc(self.radix * sizeof(codeword))
@@ -4017,7 +4047,7 @@ cdef class BinaryCodeClassifier:
                 temp = (word >> B.nrows) & ((<codeword>1 << k) - 1)
                 if not orbit_checks[temp >> log_2_radix] & ((<codeword>1) << (temp & radix_gate)):
                     B_aug = BinaryCode(B, word)
-                    aug_aut_gp_gens, aug_labeling, aug_size, aug_base = self._aut_gp_and_can_label(B_aug)
+                    aug_aut_gp_gens, aug_labeling, _, _ = self._aut_gp_and_can_label(B_aug)
 
                     # check if (B, B_aug) ~ (m(B_aug), B_aug)
 
@@ -4064,7 +4094,7 @@ cdef class BinaryCodeClassifier:
                         rs.append(r)
                     m = BinaryCode(matrix(ZZ, rs))
 
-                    m_aut_gp_gens, m_labeling, m_size, m_base = self._aut_gp_and_can_label(m)
+                    m_aut_gp_gens = self._aut_gp_and_can_label(m)[0]
                     if True:  # size*factorial(n-B.ncols) == m_size:
 
                         if len(m_aut_gp_gens) == 0:
@@ -4100,7 +4130,7 @@ cdef class BinaryCodeClassifier:
                             M = matrix(GF(2), B_aug.nrows, B_aug.ncols)
                             for i from 0 <= i < B_aug.ncols:
                                 for j from 0 <= j < B_aug.nrows:
-                                    M[j,i] = B_aug.is_one(1 << j, i)
+                                    M[j, i] = B_aug.is_one(1 << j, i)
                             output.append(M)
                     dealloc_word_perm(can_lab)
                     dealloc_word_perm(can_lab_inv)

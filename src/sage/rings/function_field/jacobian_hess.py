@@ -1,5 +1,5 @@
 r"""
-Jacobians in Hess model
+Jacobians in the Hess model
 
 This module implements Jacobian arithmetic based on divisor representation by
 ideals. This approach to Jacobian arithmetic implementation is attributed to
@@ -60,31 +60,28 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
+from __future__ import annotations
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.richcmp import op_EQ, richcmp
-
-from sage.categories.map import Map
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.homset import Hom
-
-from sage.arith.misc import integer_ceil
-from sage.arith.functions import lcm
-
-from sage.rings.integer import Integer
-from sage.matrix.constructor import matrix
-
+from sage.categories.map import Map
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
+from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecation
+from sage.rings.function_field import riemann_roch
+from sage.rings.integer import Integer
+from sage.structure.richcmp import op_EQ, op_NE, richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
-from .place import FunctionFieldPlace
 from .divisor import FunctionFieldDivisor
-
-from .jacobian_base import (Jacobian_base,
-                            JacobianGroup_base,
-                            JacobianGroup_finite_field_base,
-                            JacobianPoint_base,
-                            JacobianPoint_finite_field_base)
+from .jacobian_base import (
+    Jacobian_base,
+    JacobianGroup_base,
+    JacobianGroup_finite_field_base,
+    JacobianPoint_base,
+    JacobianPoint_finite_field_base,
+)
+from .place import FunctionFieldPlace
 
 
 class JacobianPoint(JacobianPoint_base):
@@ -152,24 +149,6 @@ class JacobianPoint(JacobianPoint_base):
         divisor = (~dS).divisor() + (~ds).divisor()
         return f'[{divisor}]'
 
-    def __hash__(self) -> int:
-        """
-        Return the hash of ``self``.
-
-        EXAMPLES::
-
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
-            sage: f = x/(y + 1)
-            sage: d = f.divisor()
-            sage: {d: 1}
-            {Place (1/x, 1/x^4*y^2 + 1/x^2*y + 1)
-              + Place (1/x, 1/x^2*y + 1)
-              + 3*Place (x, (1/(x^3 + x^2 + x))*y^2)
-              - 6*Place (x + 1, y + 1): 1}
-        """
-        return hash(self._data)
-
     def _richcmp_(self, other, op):
         """
         Compare ``self`` with ``other`` with respect to operator ``op``.
@@ -186,6 +165,10 @@ class JacobianPoint(JacobianPoint_base):
             sage: p2 = G.point(pl2 - b)
             sage: p1 == p1
             True
+            sage: p1 != p1
+            False
+            sage: p1 == p2
+            False
             sage: p1 != p2
             True
             sage: p1 > p1
@@ -194,14 +177,34 @@ class JacobianPoint(JacobianPoint_base):
             False
             sage: p1 < p2
             True
+            sage: p2 < p1
+            False
+
+        We correctly handle divisor classes that are equal but have different defining divisors:
+
+            sage: Kx.<x> = FunctionField(GF(17))
+            sage: t = polygen(Kx)
+            sage: F.<y> = Kx.extension(t^4 + (14*x + 3)*t^3 + (5*x + 7)*t^2 + (14*x^2 + 4*x + 8)*t + 4*x^3 + 7*x^2 + 4*x + 13)
+            sage: O = F.maximal_order()
+            sage: Oinf = F.maximal_order_infinite()
+            sage: B = 3 * O.ideal(x, y + 2).divisor()
+            sage: J = F.jacobian('hess', base_div=B)
+            sage: D1 = 2 * Oinf.ideal(1/x, y/x).divisor() + Oinf.ideal(1/x, y/x + 14).divisor()
+            sage: D2 = O.ideal(x^3 + 6 * x^2 + x + 16, y).divisor()
+            sage: G = J.group()
+            sage: P1 = G.point(D1 - B)
+            sage: P2 = G.point(D2 - B)
+            sage: P1 == P2
+            True
+            sage: P1.defining_divisor() == P2.defining_divisor()
+            False
         """
-        if op is op_EQ:
-            J = self.parent()
-            idS, ids = self._data
-            jdS, jds = other._data
-            return J._normalize(idS / jdS, ids / jds) is not None
-        else:
+        if op not in (op_EQ, op_NE):
             return richcmp(self._data, other._data, op)
+        J = self.parent()
+        idS, ids = self._data
+        jdS, jds = other._data
+        return (J._normalize(idS / jdS, ids / jds) is not None) == (op is op_EQ)
 
     def _add_(self, other):
         """
@@ -227,7 +230,7 @@ class JacobianPoint(JacobianPoint_base):
         jdS, jds = other._data
         bdS, bds = G._base_point
         dS, ds = G._normalize(idS * jdS * bdS, ids * jds * bds)
-        return G.element_class(self.parent(), dS, ds)
+        return G.element_class(G, dS, ds)
 
     def _neg_(self):
         """
@@ -250,9 +253,9 @@ class JacobianPoint(JacobianPoint_base):
         idS, ids = self._data
         bdS2, bds2 = G._base_point_double
         dS, ds = G._normalize(~(idS * bdS2), ~(ids * bds2))
-        return G.element_class(self.parent(), dS, ds)
+        return G.element_class(G, dS, ds)
 
-    def multiple(self, n):
+    def _lmul_(self, n):
         """
         Return the ``n``-th multiple of this point.
 
@@ -264,9 +267,11 @@ class JacobianPoint(JacobianPoint_base):
             sage: G = C.jacobian(model='hess', base_div=b).group()
             sage: pl = C([-1,2,1]).place()
             sage: p = G.point(pl - b)
-            sage: p.multiple(100)
+            sage: 100 * p
             [Place (1/y, 1/y*z + 8)]
         """
+        # The coercion model can take care of multiplication
+        # without this method, but this implementation is faster.
         if n == 0:
             return self.parent().zero()
 
@@ -296,26 +301,12 @@ class JacobianPoint(JacobianPoint_base):
 
         return G.element_class(self.parent(), dS, ds)
 
-    def addflip(self, other):
+    def multiple(self, n):
+        r"""
+        Deprecated alias of ``self * n``.
         """
-        Return the addflip of this and ``other`` point.
-
-        EXAMPLES::
-
-            sage: P2.<x,y,z> = ProjectiveSpace(GF(29), 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
-            sage: b = C([0,1,0]).place()
-            sage: G = C.jacobian(model='hess', base_div=b).group()
-            sage: pl1 = C([-1,2,1]).place()
-            sage: pl2 = C([2,19,1]).place()
-            sage: p1 = G.point(pl1 - b)
-            sage: p2 = G.point(pl2 - b)
-            sage: p1.addflip(p2)
-            [Place (y + 8, z + 27)]
-            sage: _ == -(p1 + p2)
-            True
-        """
-        return -(self + other)
+        deprecation(41453, 'this method is deprecated, use regular multiplication with * instead')
+        return self * n
 
     def defining_divisor(self):
         """
@@ -334,62 +325,6 @@ class JacobianPoint(JacobianPoint_base):
         """
         dS, ds = self._data
         return (~dS).divisor() + (~ds).divisor()
-
-    def order(self, bound=None):
-        """
-        Return the order of this point.
-
-        ALGORITHM: Shanks' Baby Step Giant Step
-
-        EXAMPLES::
-
-            sage: P2.<x,y,z> = ProjectiveSpace(GF(29), 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
-            sage: b = C([0,1,0]).place()
-            sage: G = C.jacobian(model='hess', base_div=b).group()
-            sage: p = C([-1,2,1]).place()
-            sage: pt = G.point(p - b)
-            sage: pt.order()
-            30
-        """
-        if bound is None:  # naive
-            J = self.parent()
-            zero = J.zero()
-
-            m = self
-            r = 1
-            while m != zero:
-                m = m + self
-                r += 1
-            return r
-
-        # if bound is given, deploy Shanks' Baby Step Giant Step
-
-        J = self.parent()
-        B = J.bound_on_order()
-        q = integer_ceil(B.sqrt())
-        zero = J.zero()
-
-        # baby steps
-        b = [zero]
-        g = self
-        for i in range(q - 1):
-            if g == zero:
-                return i + 1
-            b.append(g)
-            g = g + self
-
-        # giant steps
-        g0 = (-q) * self
-        g = g0
-        for i in range(q - 1):
-            for r in range(q):
-                if g == b[r]:
-                    return q * (i + 1) + r
-            g = g + g0
-
-        # order is neither smaller or nor larger than this
-        return q**2
 
     def divisor(self):
         """
@@ -574,7 +509,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         """
         super().__init__(parent, function_field, base_div)
 
-        bdS, bds = self._get_dS_ds(-base_div)
+        bdS, bds = riemann_roch._divisor_to_inverted_ideals(-base_div)
         try:
             bdS._gens_two()  # speed up multiplication with these ideals
             bds._ideal._gens_two()  # by storing vector forms of two generators
@@ -599,8 +534,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             Group of rational points of Jacobian
              over Finite Field of size 17 (Hess model)
         """
-        r = super()._repr_()
-        return r + ' (Hess model)'
+        return f'{super()._repr_()} (Hess model)'
 
     def _element_constructor_(self, x):
         """
@@ -636,41 +570,9 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             if x.is_effective():
                 if x.degree() != self._genus:
                     raise ValueError(f"effective divisor is not of degree {self._genus}")
-                return self.element_class(self, *self._get_dS_ds(x))
+                return self.element_class(self, *riemann_roch._divisor_to_inverted_ideals(x))
 
         raise ValueError(f"cannot construct a point from {x}")
-
-    def _get_dS_ds(self, divisor):
-        """
-        Return (dS,ds) representation of the divisor.
-
-        TESTS::
-
-            sage: k = GF(17)
-            sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
-            sage: b = C([0,1,0]).place()
-            sage: J = C.jacobian(model='hess', base_div=b)
-            sage: G = J.group()
-            sage: pl = C([2,8,1]).place()
-            sage: dS, ds = G._get_dS_ds(2*pl)
-            sage: (~dS).divisor() + (~ds).divisor() == 2*pl
-            True
-        """
-        F = self._function_field
-        O = F.maximal_order()
-        Oinf = F.maximal_order_infinite()
-
-        I = O.ideal(1)
-        J = Oinf.ideal(1)
-        for p in divisor._data:
-            m = divisor._data[p]
-            if p.is_infinite_place():
-                J *= p.prime_ideal() ** (-m)
-            else:
-                I *= p.prime_ideal() ** (-m)
-
-        return I, J
 
     def _normalize(self, I, J):
         """
@@ -707,90 +609,15 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             True
         """
         F = self._function_field
-        n = F.degree()
+        f = riemann_roch._short_circuit_riemann_roch_ideals(F, I, J)
+
+        if f is None:
+            return None
 
         O = F.maximal_order()
         Oinf = F.maximal_order_infinite()
-
-        # Step 1: construct matrix M of rational functions in x such that
-        # M * B == C where B = [b1,b1,...,bn], C =[v1,v2,...,vn]
-        V, fr, to = F.free_module(map=True)
-        B = matrix([to(b) for b in J.gens_over_base()])
-        C = matrix([to(v) for v in I.gens_over_base()])
-        M = C * B.inverse()
-
-        # Step 2: get the denominator d of M and set mat = d * M
-        den = lcm([e.denominator() for e in M.list()])
-        R = den.parent()  # polynomial ring
-        one = R.one()
-        mat = matrix(R, n, [e.numerator() for e in (den * M).list()])
-        gens = list(I.gens_over_base())
-
-        # Step 3: transform mat to a weak Popov form, together with gens
-
-        # initialise pivot_row and conflicts list
-        found = None
-        pivot_row = [[] for i in range(n)]
-        conflicts = []
-        for i in range(n):
-            bestp = -1
-            best = -1
-            for c in range(n):
-                d = mat[i, c].degree()
-                if d >= best:
-                    bestp = c
-                    best = d
-
-            if best <= den.degree():
-                found = i
-                break
-
-            if best >= 0:
-                pivot_row[bestp].append((i, best))
-                if len(pivot_row[bestp]) > 1:
-                    conflicts.append(bestp)
-
-        if found is None:
-            # while there is a conflict, do a simple transformation
-            while conflicts:
-                c = conflicts.pop()
-                row = pivot_row[c]
-                i, ideg = row.pop()
-                j, jdeg = row.pop()
-
-                if jdeg > ideg:
-                    i, j = j, i
-                    ideg, jdeg = jdeg, ideg
-
-                coeff = - mat[i, c].lc() / mat[j, c].lc()
-                s = coeff * one.shift(ideg - jdeg)
-
-                mat.add_multiple_of_row(i, j, s)
-                gens[i] += s * gens[j]
-
-                row.append((j, jdeg))
-
-                bestp = -1
-                best = -1
-                for c in range(n):
-                    d = mat[i, c].degree()
-                    if d >= best:
-                        bestp = c
-                        best = d
-
-                if best <= den.degree():
-                    found = i
-                    break
-
-                if best >= 0:
-                    pivot_row[bestp].append((i, best))
-                    if len(pivot_row[bestp]) > 1:
-                        conflicts.append(bestp)
-            else:
-                return None
-
-        f = gens[found]
-        return (O.ideal(~f) * I, Oinf.ideal(~f) * J)
+        f_inv = ~f
+        return (O.ideal(f_inv) * I, Oinf.ideal(f_inv) * J)
 
     def point(self, divisor):
         """
@@ -812,7 +639,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         c = divisor + self._base_div
         f = c.basis_function_space()[0]
         d = f.divisor() + c
-        dS, ds = self._get_dS_ds(d)
+        dS, ds = riemann_roch._divisor_to_inverted_ideals(d)
         return self.element_class(self, dS, ds)
 
     @cached_method
@@ -935,8 +762,8 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
             multiples.append((g + 1) * [None])
             P = ~new_pl.prime_ideal()
             dn = new_pl.degree()
-            I0 = O.ideal(1)
-            J0 = Oinf.ideal(1)
+            I0 = O.unit_ideal()
+            J0 = Oinf.unit_ideal()
             dr = 0
             for r in range(1, g // new_pl.degree() + 1):
                 if new_pl.is_infinite_place():
@@ -1045,5 +872,4 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             Jacobian of Projective Plane Curve over Finite Field of size 17
              defined by x^3 - y^2*z + 5*z^3 (Hess model)
         """
-        r = super()._repr_()
-        return r + ' (Hess model)'
+        return f'{super()._repr_()} (Hess model)'

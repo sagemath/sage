@@ -1873,14 +1873,9 @@ def laplace(ex, t, s, algorithm='maxima'):
         (t, s)
         sage: laplace(5*cos(3*t-2)*heaviside(t-2), t, s, algorithm='giac')
         5*(s*cos(4)*e^(-2*s) - 3*e^(-2*s)*sin(4))/(s^2 + 9)
-
-    Check unevaluated expression from Giac (it is locale-dependent, see
-    :issue:`22833`)::
-
-        sage: # needs giac
         sage: n = SR.var('n')
         sage: laplace(t^n, t, s, algorithm='giac')
-        laplace(t^n, t, s)
+        s^(-n - 1)*gamma(n + 1)
 
     Testing SymPy::
 

@@ -10,6 +10,7 @@ py.install_sources(
   'morphism.py',
   'number_field.py',
   'number_field_base.pxd',
+  'number_field_base.pyi',
   'number_field_base.pyx',
   'number_field_element.pxd',
   'number_field_element.pyx',

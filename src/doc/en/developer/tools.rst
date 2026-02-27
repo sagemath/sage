@@ -30,18 +30,11 @@ Tox
 used by a large number of Python projects as the standard entry point
 for testing and linting.
 
-Sage includes tox as a standard package and uses it for three purposes:
+Sage includes tox as a standard package and uses it for two purposes:
 
 - For portability testing of the Sage distribution, as we explain in
   :ref:`chapter-portability_testing`.  This is configured in the file
   :sage_root:`tox.ini`.
-
-- For testing modularized distributions of the Sage library. This is configured
-  in ``tox.ini`` files in subdirectories of :sage_root:`pkgs/`, such as
-  :sage_root:`pkgs/sagemath-standard/tox.ini`. Each distribution's configuration
-  defines tox environments for testing the distribution with different Python
-  versions and different ways how the dependencies are provided.
-  We explain this in :ref:`chapter-modularization`.
 
 - As an entry point for testing and linting of the Sage library, as we describe below.
   This is configured in the file :sage_root:`src/tox.ini`.

@@ -521,7 +521,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         //        block   2 : ordering C
         sage: print(singular(R))
         polynomial ring, over a field, global ordering
-        // coefficients: Float() considered as a field
+        // coefficients: Float(...) considered as a field
         // number of vars : 1
         //        block   1 : ordering dp
         //                  : names    x

@@ -1350,7 +1350,7 @@ cdef class BinaryMatrix(LeanMatrix):
         Return the vector of intersection lengths of the rows with ``x``.
         """
         cdef long i
-        I = []
+        cdef list I = []
         for i in range(self._nrows):
             bitset_intersection(self._temp, self._M[i], x)
             I.append(bitset_len(self._temp))
@@ -1361,7 +1361,9 @@ cdef class BinaryMatrix(LeanMatrix):
         Helper method for equitable partition.
         """
         cdef BinaryMatrix Q
-        d = {}
+        cdef Py_hash_t c
+        cdef dict d = {}
+        cdef long i
         for i in range(self._nrows):
             c = hash(tuple(P._character(self._M[i])))
             if c in d:

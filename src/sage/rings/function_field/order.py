@@ -112,10 +112,14 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.integral_domains import IntegralDomains
+from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
-from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
+from sage.structure.unique_representation import (
+    CachedRepresentation,
+    UniqueRepresentation,
+)
 
-from .ideal import IdealMonoid, FunctionFieldIdeal
+from .ideal import FunctionFieldIdeal, IdealMonoid
 
 
 class FunctionFieldOrder_base(CachedRepresentation, Parent):
@@ -259,6 +263,18 @@ class FunctionFieldMaximalOrder(UniqueRepresentation, FunctionFieldOrder):
             'Maximal order of Rational function field in y over Rational Field'
         """
         return "Maximal order of %s" % (self.function_field(),)
+
+    @cached_method
+    def unit_ideal(self):
+        """
+        Return ``self.ideal(1)``. We cache this to avoid overhead because it is used frequently.
+
+        EXAMPLES::
+
+            sage: FunctionField(QQ,'y').maximal_order().unit_ideal()
+            Ideal (1) of Maximal order of Rational function field in y over Rational Field
+        """
+        return self.ideal(1)
 
 
 class FunctionFieldMaximalOrderInfinite(FunctionFieldMaximalOrder, FunctionFieldOrderInfinite):

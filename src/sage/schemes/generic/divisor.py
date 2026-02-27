@@ -32,14 +32,14 @@ EXAMPLES::
     sage: C.divisor([(3, pts[0]), (-1, pts[1]), (10, pts[5])])
     3*(x, y) - (x, z) + 10*(x + 2*z, y + z)
 """
-#*******************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu.au>
 #  Copyright (C) 2005 William Stein
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
@@ -83,45 +83,14 @@ def CurvePointToIdeal(C, P):
             else:
                 polys.append(a_m*x[i]-ai*x_m)
     elif isinstance(A, AffineSpace_generic):
-        for i in range(m+1):
+        for i in range(m + 1):
             ai = P[i]
             if ai == 0:
                 polys.append(x[i])
             else:
-                polys.append(x[i]-ai)
+                polys.append(x[i] - ai)
     polys.extend(x[i] for i in range(m + 1, n))
     return R.ideal(polys)
-
-
-def is_Divisor(x):
-    r"""
-    Test whether ``x`` is an instance of :class:`Divisor_generic`.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: from sage.schemes.generic.divisor import is_Divisor
-        sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
-        sage: C = Curve(y^2 - x^9 - x)
-        sage: is_Divisor(C.divisor([]))
-        doctest:warning...
-        DeprecationWarning: The function is_Divisor is deprecated;
-        use 'isinstance(..., Divisor_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38277 for details.
-        True
-        sage: is_Divisor("Ceci n'est pas un diviseur")
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38277,
-                "The function is_Divisor is deprecated; "
-                "use 'isinstance(..., Divisor_generic)' instead.")
-    return isinstance(x, Divisor_generic)
 
 
 class Divisor_generic(FormalSum):
@@ -213,7 +182,8 @@ class Divisor_generic(FormalSum):
         # straight - as the test above demonstrates, it results in the first
         # generator being in front of the second one
         terms.sort(key=lambda x: x[1], reverse=True)
-        return repr_lincomb([(r"\mathrm{V}\left(%s\right)" % latex(v), c) for c,v in terms],
+        return repr_lincomb([(r"\mathrm{V}\left(%s\right)" % latex(v), c)
+                             for c, v in terms],
                             is_latex=True)
 
     def _repr_(self):
@@ -240,7 +210,7 @@ class Divisor_generic(FormalSum):
         # straight - as the test above demonstrates, it results in the first
         # generator being in front of the second one
         terms.sort(key=lambda x: x[1], reverse=True)
-        return repr_lincomb([("V(%s)" % v, c) for c,v in terms])
+        return repr_lincomb([("V(%s)" % v, c) for c, v in terms])
 
     def scheme(self):
         """
@@ -318,7 +288,7 @@ class Divisor_curve(Divisor_generic):
         """
         from sage.schemes.generic.divisor_group import DivisorGroup_curve
         if not isinstance(v, (list, tuple)):
-            v = [(1,v)]
+            v = [(1, v)]
 
         if parent is None:
             if v:
@@ -352,15 +322,15 @@ class Divisor_curve(Divisor_generic):
                 if isinstance(t, tuple) and len(t) == 2:
                     n = ZZ(t[0])
                     I = t[1]
-                    points.append((n,I))
+                    points.append((n, I))
                 else:
                     n = ZZ(1)
                     I = t
                 if isinstance(I, SchemeMorphism):
-                    I = CurvePointToIdeal(C,I)
+                    I = CurvePointToIdeal(C, I)
                 else:
                     know_points = False
-                w.append((n,I))
+                w.append((n, I))
             v = w
         Divisor_generic.__init__(
             self, v, check=False, reduce=True, parent=parent)

@@ -1726,7 +1726,7 @@ class Graph(GenericGraph):
 
         Test a graph that is not outerplanar, see :issue:`24480`::
 
-            sage: graphs.Balaban10Cage().is_cactus()                                    # needs networkx
+            sage: graphs.Balaban10Cage().is_cactus()
             False
         """
         self._scream_if_not_simple()
@@ -2700,8 +2700,8 @@ class Graph(GenericGraph):
             sage: C = graphs.CubeGraph(3)
             sage: C.is_edge_transitive()                                                # needs sage.libs.gap
             True
-            sage: G = graphs.GrayGraph()                                                # needs networkx
-            sage: G.is_edge_transitive()                                                # needs networkx sage.libs.gap
+            sage: G = graphs.GrayGraph()
+            sage: G.is_edge_transitive()                                                # needs sage.libs.gap
             True
             sage: P = graphs.PathGraph(4)
             sage: P.is_edge_transitive()                                                # needs sage.libs.gap
@@ -2743,8 +2743,8 @@ class Graph(GenericGraph):
             sage: P = graphs.PetersenGraph()
             sage: P.is_arc_transitive()                                                 # needs sage.libs.gap
             True
-            sage: G = graphs.GrayGraph()                                                # needs networkx
-            sage: G.is_arc_transitive()                                                 # needs networkx sage.libs.gap
+            sage: G = graphs.GrayGraph()
+            sage: G.is_arc_transitive()                                                 # needs sage.libs.gap
             False
         """
         from sage.libs.gap.libgap import libgap
@@ -2820,14 +2820,14 @@ class Graph(GenericGraph):
 
         The Gray graph is the smallest possible cubic semi-symmetric graph::
 
-            sage: G = graphs.GrayGraph()                                                # needs networkx
-            sage: G.is_semi_symmetric()                                                 # needs networkx sage.libs.gap
+            sage: G = graphs.GrayGraph()
+            sage: G.is_semi_symmetric()                                                 # needs sage.libs.gap
             True
 
         Another well known semi-symmetric graph is the Ljubljana graph::
 
-            sage: L = graphs.LjubljanaGraph()                                           # needs networkx
-            sage: L.is_semi_symmetric()                                                 # needs networkx sage.libs.gap
+            sage: L = graphs.LjubljanaGraph()
+            sage: L.is_semi_symmetric()                                                 # needs sage.libs.gap
             True
         """
         # A semi-symmetric graph is always bipartite
