@@ -824,11 +824,11 @@ class KauffmanTangles(AutomaticSemigroup):
         The defining word of the tangle consists of three parts
         ``wt``, ``we`` and ``wb``. In the case of the first and last
         part the tangle generators correspond to braid generators
-        (i.e. signed neighboured transpostions, thus the elements
+        (i.e. signed neighbored transpostions, thus the elements
         returned by :meth:`~sage.combinat.diagram_algebras.PartitionAlgebra.s`
         in the ambient algebra of the Brauer algebra with a sign
         attached). The generators for the word in the middle correspond
-        to aligned neighboured inline-pairs (i.e. the elements returned
+        to aligned neighbored inline-pairs (i.e. the elements returned
         by :meth:`~sage.combinat.diagram_algebras.PartitionAlgebra.a` in
         the ambient algebra of the Brauer algebra, also called cap-cup
         generators).
@@ -885,7 +885,7 @@ class KauffmanTangles(AutomaticSemigroup):
         # permutation of top and bottom endpoints in the middle to give an
         # according list `we` of `e`-generators `(e_1, e_3, ... e_{2r-1})`
         # The permutation on the propagating strands are combined with
-        # the adjusting top permutation. Then neighboured transpositions
+        # the adjusting top permutation. Then neighbored transpositions
         # in a reduced word for the permutations are replaced by positive
         # or negative braid generators using :meth:`layered_copy`.
         # Note that the restriction of the construction to tangles with
@@ -1149,9 +1149,9 @@ class Strand:
             sage: KT = KauffmanTangles('g0, g1, e0, e1')
             sage: el = KT((-1, 2, 4, 3, 3, 4, 3))
             sage: st1, st2, st3, st4 = el.list_of_strands()
-            sage: st1.neighbour() == st2
+            sage: st1.neighbor() == st2
             True
-            sage: st1.neighbour() == st3
+            sage: st1.neighbor() == st3
             False
         """
         return hash(self) == hash(other)
@@ -1168,7 +1168,7 @@ class Strand:
             sage: KT = KauffmanTangles('g0, g1, e0, e1')
             sage: el = KT((-1, 2, 4, 3, 3, 4, 3))
             sage: st1, st2, st3, st4 = el.list_of_strands()
-            sage: hash(st1.neighbour()) == hash(st2)
+            sage: hash(st1.neighbor()) == hash(st2)
             True
         """
         return hash((self.tangle.defining_word(), self.start, self.end))
@@ -1651,12 +1651,12 @@ class Strand:
             sage: KT = KauffmanTangles('g0, g1, e0, e1')
             sage: los = KT((-1, 2, 4, 3, 3, 4, 3)).list_of_strands()
             sage: st1, st2, st3, st4 = los
-            sage: st1.neighbour() == st2; st3.neighbour() == st1
+            sage: st1.neighbor() == st2; st3.neighbor() == st1
             True
             True
-            sage: st1.neighbour(successor=False) == st3
+            sage: st1.neighbor(successor=False) == st3
             True
-            sage: st4.neighbour() == st4
+            sage: st4.neighbor() == st4
             True
         """
         if self.loop():
@@ -1705,7 +1705,7 @@ class Strand:
         reverse = False
         prec = self
         res = {prec: reverse}
-        suc = self.neighbour()
+        suc = self.neighbor()
         while self != suc:
             if reverse:
                 if prec.start == -suc.start:
@@ -1715,7 +1715,7 @@ class Strand:
                     reverse = True
             res[suc] = reverse
             prec = suc
-            suc = prec.neighbour(successor=not reverse)
+            suc = prec.neighbor(successor=not reverse)
         return res
 
 
