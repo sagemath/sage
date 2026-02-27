@@ -40,9 +40,9 @@ class KauffmanTangle(AutomaticSemigroup.Element):
     r"""
     Element in the semigroup of Kauffman tangles.
 
-    SEEALSO::
+    .. SEEALSO::
 
-        :class:`~sage.algebras.birman_murakami_wenzl_algebra.BirmanMurakamiWenzlAlgebra`.
+        :class:`~sage.algebras.birman_murakami_wenzl_algebra.BirmanMurakamiWenzlAlgebra`
 
     EXAMPLES::
 
@@ -223,7 +223,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
     def list_of_strands(self) -> list:
         r"""
         Return a list of instances of ``Strand`` covering all strands of
-        ``self``. The strands are ordered as follows:
+        ``self`` ordered as indicated below.
 
         It starts with the propagating strands, ordered by their starting position
         in the top line, followed by inline pairs in the top line and then inline
@@ -344,8 +344,9 @@ class KauffmanTangle(AutomaticSemigroup.Element):
     def _strands_at_position(self, pos):
         r"""
         Return a list of strands of ``self`` that start (or end)
-        at position ``pos`` in the top line. This is a helper function
-        for :meth:`plot`.
+        at position ``pos`` in the top line.
+
+        This is a helper function for :meth:`plot`.
 
         INPUT:
 
@@ -455,9 +456,9 @@ class KauffmanTangle(AutomaticSemigroup.Element):
     @cached_method
     def find_unlayered_crossing(self) -> int | None:
         r"""
-        Return the first postion in the defining word of ``self`` which
+        Return the first postion in the defining word of ``self`` that
         prevents it to be layered according to the order of its strands given
-        by ``<<``. If no such position exists, i.e.  ``self`` is layered,
+        by ``<<``; if no such position exists, i.e.  ``self`` is layered,
         ``None`` is returned.
 
         EXAMPLES::
@@ -471,14 +472,10 @@ class KauffmanTangle(AutomaticSemigroup.Element):
             sage: KT((1, 2, 1, 2)).find_unlayered_crossing()
             3
         """
-        w = list(self.defining_word())
-        for pos in range(len(w)):
+        for pos, gen in enumerate(self.defining_word()):
             d = self.crossing_info(pos)
-            gen = w[pos]
             if d:
-                pos_list1, pos_list2 = d.keys()
-                st1 = d[pos_list1]
-                st2 = d[pos_list2]
+                st1, st2 = d.values()
                 if st1 == st2:
                     if st1.closure()[st1]:
                         # st1 has reverse orientation in its closure
@@ -500,7 +497,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
     def layered_copy(self):
         r"""
         Return a layered copy of ``self`` switching crossing signs if
-        neccessary. If ``self`` was already layered it is returned itself.
+        necessary; if ``self`` was already layered it is returned itself.
 
         EXAMPLES::
 
@@ -526,8 +523,8 @@ class KauffmanTangle(AutomaticSemigroup.Element):
 
         INPUT:
 
-        - ``closure`` -- boolean (default ``False``). If set to ``True``
-          the writhe is calculated with respect to the closure of ``self``.
+        - ``closure`` -- boolean (default ``False``); if ``True``, the
+          writhe is calculated with respect to the closure of ``self``
 
         EXAMPLES::
 
@@ -564,10 +561,10 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         The following options are available:
 
         - ``color`` -- (default: ``'rainbow'``) the color of the
-          strands. Possible values are:
+          strands; possible values are:
 
-            * ``'rainbow'``, uses :meth:`~sage.plot.colors.rainbow`
-              according to the number of strands.
+          * ``'rainbow'``, uses :meth:`~sage.plot.colors.rainbow`
+            according to the number of strands.
 
             * a valid color name for :meth:`~sage.plot.bezier_path`
               and :meth:`~sage.plot.line`. Used for all strands.
@@ -618,13 +615,13 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         los = self.list_of_strands()
         num_strands = len(los)
         if isinstance(color, (list, tuple)):
-            if len(color) != num_strands:
-                raise TypeError(f"color (={color}) must contain exactly {num_strands} colors")
-            col = list(color)
+            if len(color) < num_strands:
+                raise TypeError(f"color (={color}) must contain at least {num_strands} colors")
+            col = color
         elif color == "rainbow":
             col = rainbow(num_strands)
         else:
-            col = [color]*num_strands
+            col = [color] * num_strands
         col_st = {los[i]: col[i] for i in range(num_strands)}
         rotation = 0
         if orientation == 'left-right':
@@ -718,7 +715,7 @@ class KauffmanTangles(AutomaticSemigroup):
         self._mwt_names = {}  # support for the names of the BMW-algebra basis
         self._shared_memory = {}  # shared cache for sign independent results of methods
 
-    def __repr__(self):
+    def _repr_(self):
         r"""
         Return a string representation of ``self``
 
@@ -758,6 +755,7 @@ class KauffmanTangles(AutomaticSemigroup):
         from sage.rings.infinity import infinity
         return infinity
 
+    @cached_method
     def one(self):
         r"""
         Return one as element of ``self``.
@@ -897,7 +895,7 @@ class KauffmanTangles(AutomaticSemigroup):
         n = self.strands()
         nb = max(bd.base_set())
         if n != nb:
-            raise ValueError('Base set of Brauer diagram is incompatible with the number of strands %s' % n)
+            raise ValueError('base set of Brauer diagram is incompatible with the number of strands %s' % n)
 
         num_prop = bd.propagating_number()
         num_e = (n - num_prop) // 2
@@ -993,9 +991,9 @@ class Strand:
 
         INPUT:
 
-        - start -- integer, position on the top or bottom line
+        - ``start`` -- integer, position on the top or bottom line
           (for bottom inline pairs) of the connector
-        - end -- integer, position on the bottom or top line
+        - ``end`` -- integer, position on the bottom or top line
           (for top inline pairs) of the connector
 
         For closed loops both values coincide and give the number
@@ -1639,7 +1637,7 @@ class Strand:
                     return -1
 
     @cached_method
-    def neighbour(self, successor: bool = True):
+    def neighbor(self, successor: bool = True):
         r"""
         Return the strand next to ``self`` in the extension of ``self``
         in the closure of the tangle.
