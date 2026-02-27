@@ -19,7 +19,8 @@ cd src
 
 cp "$SAGE_ROOT"/config/config.* .
 
+export OPENMP_CFLAGS="$OPENMP_CFLAGS $OPENMP_CLIB"
 # Configure and build M4RI
-sdh_configure --enable-shared --disable-static $ENABLE_DEBUG $DISABLE_SSE2
+sdh_configure --enable-openmp --enable-shared --disable-static $ENABLE_DEBUG $DISABLE_SSE2
 sdh_make
 sdh_make_install
