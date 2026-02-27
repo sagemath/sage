@@ -128,7 +128,7 @@ def fast_char_p_power(x, n, p=None):
 class WittVectorRingFactory(UniqueFactory):
     r"""
         Return a Factory that creates and stores all truncated Witt vector rings.
-        
+
         Send directly to the appropriate constructor of WittVectorRingClass for each algorithm
         Except: `standard` where the Witt's Polynomials for `p` of `ZZ` are cached,
         in order to be reused in the computation of the Witt's Polynomials of any ring `R`
@@ -137,7 +137,7 @@ class WittVectorRingFactory(UniqueFactory):
     def __init__(self, name):
         r"""
         Initialize such a Factory as described above.
-        
+
             EXAMPLES::
 
             sage: from sage.rings.padics.witt_vector_ring import WittVectorRing
@@ -151,7 +151,7 @@ class WittVectorRingFactory(UniqueFactory):
     def create_key(self, coefficient_ring, prec=1, p=None, algorithm=None):
         r"""
         Normalise and validate inputs to create the factory cache key.
-        
+
         INPUT:
 
         - ``coefficient_ring`` -- a commutative ring
@@ -162,7 +162,7 @@ class WittVectorRingFactory(UniqueFactory):
         OUTPUT:
 
         A tuple ``(coefficient_ring, prec, p, algorithm)`` suitable for caching.
-        
+
         EXAMPLES::
 
             sage: from sage.rings.padics.witt_vector_ring import WittVectorRing
@@ -459,7 +459,7 @@ class WittVectorRingClass(Parent):
         sage: W
         Ring of truncated 5-typical Witt vectors of length 1 over Rational Field
     """
-    def __init__(self, coefficient_ring, prec, prime) -> None:
+    def __init__(self, coefficient_ring, prec, prime, algorithm) -> None:
         r"""
         Initialise ``self``.
 
@@ -483,9 +483,15 @@ class WittVectorRingClass(Parent):
         else:
             cat = CommutativeRings()
 
+        if coefficient_ring.base_ring() is coefficient_ring:
+            base = self
+        else:
+            base = WittVectorRing(coefficient_ring.base_ring(), prec=prec,
+                                  p=prime, algorithm=algorithm)
+
         names = tuple('V' + x for x in coefficient_ring.variable_names())
 
-        Parent.__init__(self, base=ZZ, category=cat, names=names)
+        Parent.__init__(self, base=base, category=cat, names=names)
 
     def __iter__(self) -> Iterator:
         """
@@ -580,19 +586,24 @@ class WittVectorRingClass(Parent):
         """
         var_names = [f'X{i}' for i in range(prec)] + [f'Y{i}' for i in range(prec)]
 
+        self._sum_polynomials = [None]*prec
+        self._prod_polynomials = [None]*prec
+        self._frob_polynomials = [None]*(prec-1)
+
         # Because ZZ can have a higher precision that prec, we need to create the
         # homomorphism, as there is no endowed homomorphism from R[X1,Y1] to
         # ZZ[X1,X2,Y1,Y2]
+        Q = PolynomialRing(ZZ, var_names)
         S = PolynomialRing(coefficient_ring, var_names)
         for n in range(prec):
-            self._sum_polynomials[n] = S(self._sum_polynomials[n])
-            self._prod_polynomials[n] = S(self._prod_polynomials[n])
+            self._sum_polynomials[n] = S(Q(WittVectorRing._witt_polynomials[p][0][n]))
+            self._prod_polynomials[n] = S(Q(WittVectorRing._witt_polynomials[p][1][n]))
 
         R = PolynomialRing(ZZ, var_names[:prec])
         x_vars = R.gens()
         S = PolynomialRing(coefficient_ring, x_vars)
         for n in range(prec-1):
-            self._frob_polynomials[p][n] = S(self._frob_polynomials[p][n])
+            self._frob_polynomials[n] = S(R(WittVectorRing._frob_polynomials[p][n]))
 
     def _latex_(self) -> str:
         r"""
@@ -1401,7 +1412,6 @@ class WittVectorRing_standard(WittVectorRingClass):
 
             sage: TestSuite(W).run()
         """
-        super().__init__(coefficient_ring, prec, prime)
         self._always_coerce = []
         self._coerce_when_different = [WittVectorRingClass]
 
