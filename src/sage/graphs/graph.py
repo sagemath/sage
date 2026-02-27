@@ -2559,9 +2559,9 @@ class Graph(GenericGraph):
         r"""
         Return whether the graph is perfect.
 
-        A graph `G` is said to be perfect if `\chi(H)=\omega(H)` hold for any
-        induced subgraph `H\subseteq_i G` (and so for `G` itself, too), where
-        `\chi(H)` represents the chromatic number of `H`, and `\omega(H)` its
+        A graph ``G`` is said to be perfect if :math:`\chi(H)=\omega(H)` hold for any
+        induced subgraph :math:`H\subseteq_i G` (and so for ``G`` itself, too), where
+        :math:`\chi(H)` represents the chromatic number of ``H``, and :math:`\omega(H)` its
         clique number. The Strong Perfect Graph Theorem [CRST2006]_ gives
         another characterization of perfect graphs:
 
