@@ -2174,7 +2174,6 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             ...
             NotImplementedError: Weil pairing over p-adic base rings is not implemented
 
-
         TESTS:
 
         Check that the original Sage implementation still works and
@@ -2240,8 +2239,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         # is unreliable, so Weil pairing is not implemented
         if hasattr(K, "is_padic") and K.is_padic():
             raise NotImplementedError(
-                "Weil pairing over p-adic base rings is not implemented "
-                "(exact n-torsion testing is unreliable in this setting)"
+                "Weil pairing over p-adic base rings is not implemented"
             )
 
         # Existing behavior for other base rings (finite fields, number fields)
