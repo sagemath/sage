@@ -2200,6 +2200,21 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
                 dres[(0, -e)] = c
         return self.parent()._extended_ring(dres)
 
+    def _lift_to_poly_cover(self, S):
+        """
+        Lifts this univariate Laurent polynomial to the cover ring S with variable T.
+        """
+        x, T = S.gens()
+        res = S.zero()
+        for e, c in self.monomial_coefficients().items():
+            if e > 0:
+                res += c * x**e
+            elif e < 0:
+                res += c * T**(-e)
+            else:
+                res += c
+        return res
+
     @coerce_binop
     def divides(self, other):
         r"""
@@ -2239,16 +2254,35 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         Check that :issue:`40372` is fixed::
 
             sage: R.<y> = LaurentPolynomialRing(Zmod(4))
-            sage: a = 2+y
+            sage: a = 2 + y
             sage: a.divides(a)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: divisibility test not implemented for Laurent polynomials over non-integral domains
+            True
+
+        Tests for non-integral domains to verify the cover ring lift::
+
+            sage: R.<x> = LaurentPolynomialRing(Zmod(6))
+            sage: f = 3*x + 3
+            sage: g = 3*x^2 + 3*x^-1
+            sage: f.divides(g)
+            True
+            sage: (x + 2).divides(x^2 + 4*x + 4)
+            True
+            sage: (x + 2).divides(x^2 + 4)
+            False
+            sage: (2*x).divides(3*x)
+            False
         """
-        if self.base_ring().is_integral_domain() is True:
-            p = self.polynomial_construction()[0]
-            q = other.polynomial_construction()[0]
+        if self.is_zero():
+            #avoiding ring construction for zero element
+            return other.is_zero()
+        R = self.parent().base_ring()
+        if R.is_integral_domain():
+            p = self.monomial_reduction()[0]
+            q = other.monomial_reduction()[0]
             return p.divides(q)
-        else:
-            raise NotImplementedError("divisibility test not implemented for Laurent"
-                                      " polynomials over non-integral domains")
+        P = self.parent()
+        S, relations = P._poly_cover_ring()
+        f_s = self._lift_to_poly_cover(S)
+        g_s = other._lift_to_poly_cover(S)
+        I = S.ideal([f_s] + relations)
+        return g_s in I

@@ -47,7 +47,7 @@ from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial, LaurentP
 from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import parent
-
+from sage.misc.misc_c import prod
 
 _cache = {}
 
@@ -428,6 +428,30 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
     Element = LaurentPolynomial_univariate
 
+    def _poly_cover_ring(self):
+        """
+        Return the polynomial cover ring with a unique variable T
+
+        EXAMPLES::
+
+            sage: L.<T> = LaurentPolynomialRing(Zmod(4))
+            sage: S, relations = L._poly_cover_ring()
+            sage: S.variable_names()
+            ('T', 'T0')
+            sage: (T + 2).divides(T + 2)
+            True
+        """
+        base_name = self.variable_name()
+        t_name = 'T'
+        i = 0
+        while t_name == base_name:
+            t_name = f'T{i}'
+            i += 1
+        new_names = (base_name, t_name)
+        S = self.base_ring()[new_names]
+        x, T = S.gens()
+        return S, [x * T - 1]
+
     def _repr_(self):
         """
         TESTS::
@@ -574,14 +598,38 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         """
         if R.ngens() <= 0:
             raise ValueError("n must be positive")
-        if not R.base_ring().is_integral_domain():
-            raise ValueError("base ring must be an integral domain")
         LaurentPolynomialRing_generic.__init__(self, R)
         from sage.modules.free_module import FreeModule
         from sage.rings.integer_ring import IntegerRing
         self._indices = FreeModule(IntegerRing(), R.ngens())
 
     Element = LazyImport('sage.rings.polynomial.laurent_polynomial_mpair', 'LaurentPolynomial_mpair')
+
+    def _poly_cover_ring(self):
+        """
+        Return the polynomial cover ring with a unique variable T.
+
+        EXAMPLES::
+
+            sage: R.<x, T, T0> = LaurentPolynomialRing(Zmod(9), 3)
+            sage: S, relations = R._poly_cover_ring()
+            sage: S.variable_names()
+            ('x', 'T', 'T0', 'T1')
+            sage: (x + T + T0).divides(x + T + T0)
+            True
+        """
+        base_names = self.variable_names()
+        t_name = 'T'
+        i = 0
+        while t_name in base_names:
+            t_name = f'T{i}'
+            i += 1
+        new_names = base_names + (t_name,)
+        S = self.base_ring()[new_names]
+        xs = S.gens()[:-1]
+        T_gen = S.gens()[-1]
+        relation = T_gen * prod(xs) - 1
+        return S, [relation]
 
     def _repr_(self):
         """

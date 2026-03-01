@@ -201,15 +201,24 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             sage: I = P.ideal([x^2 + 3*x])
             sage: 1 + 3*x^-1 in I
             True
+
+        Verify membership in rings with zero-divisors using a polynomial cover ring lift::
+
+                sage: R.<x,y> = LaurentPolynomialRing(Zmod(9), 2)
+                sage: I = R.ideal([3*x, 3*y])
+                sage: 6*x + 6*y^-1 in I
+                True
+                sage: x + y in I
+                False
         """
-        if not f or f in self.gens():
-            return True
-        f = self.ring()(f)
-        if isinstance(self.ring(), LaurentPolynomialRing_univariate):
-            g = f.__reduce__()[1][1]
-        else:
-            g = f.__reduce__()[1][0]
-        return (g in self.polynomial_ideal())
+        R = self.ring()
+        if not R.base_ring().is_integral_domain():
+            S, relations = R._poly_cover_ring()
+            I_S = S.ideal(list(self.gens()) + relations)
+            return f._lift_to_poly_cover(S) in I_S
+        f = R(f)
+        p_part, _ = f.monomial_reduction()
+        return p_part in self.polynomial_ideal()
 
     def gens_reduced(self) -> tuple:
         """
