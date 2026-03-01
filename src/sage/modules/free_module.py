@@ -189,6 +189,7 @@ from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.integral_domains import IntegralDomains
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -890,7 +891,6 @@ class Module_free_ambient(Module):
         if degree < 0:
             raise ValueError("degree (=%s) must be nonnegative" % degree)
 
-        from sage.categories.modules_with_basis import ModulesWithBasis
         modules_category = ModulesWithBasis(base_ring.category()).FiniteDimensional()
         try:
             if base_ring.is_finite() or degree == 0:
@@ -1583,7 +1583,7 @@ class Module_free_ambient(Module):
 
     _submodule_class = LazyImport("sage.modules.submodule", "Submodule_free_ambient")
 
-    def span(self, gens, base_ring=None, check=True, already_echelonized=False):
+    def span(self, gens, base_ring=None, check=True, already_echelonized=False, *, category=None):
         r"""
         Return the `R`-span of ``gens``, where `R` is the ``base_ring``.
 
@@ -1701,7 +1701,7 @@ class Module_free_ambient(Module):
         if isinstance(gens, FreeModule_generic):
             gens = gens.gens()
         if base_ring is None or base_ring is self.base_ring():
-            return self._submodule_class(self.ambient_module(), gens, check=check, already_echelonized=already_echelonized)
+            return self._submodule_class(self.ambient_module(), gens, check=check, already_echelonized=already_echelonized, category=category)
 
         # The base ring has changed
         try:
@@ -1710,12 +1710,12 @@ class Module_free_ambient(Module):
             raise ValueError("argument base_ring (= %s) is not compatible " % base_ring +
                              "with the base ring (= %s)" % self.base_ring())
         try:
-            return M.span(gens)
+            return M.span(gens, check=check, category=category)
         except TypeError:
             raise ValueError("argument gens (= %s) is not compatible " % gens +
                              "with base_ring (= %s)" % base_ring)
 
-    def submodule(self, gens, check=True, already_echelonized=False):
+    def submodule(self, gens, check=True, already_echelonized=False, *, category=None):
         r"""
         Create the `R`-submodule of the ambient module with given generators,
         where `R` is the base ring of ``self``.
@@ -1789,7 +1789,7 @@ class Module_free_ambient(Module):
         """
         if isinstance(gens, Module_free_ambient):
             gens = gens.gens()
-        V = self.span(gens, check=check, already_echelonized=already_echelonized)
+        V = self.span(gens, check=check, already_echelonized=already_echelonized, category=category)
         if check:
             if not V.is_submodule(self):
                 raise ArithmeticError("argument gens (= %s) does not generate "
@@ -5488,6 +5488,7 @@ class FreeModule_ambient(FreeModule_generic):
                                     degree=rank, sparse=sparse,
                                     coordinate_ring=coordinate_ring,
                                     category=category)
+        self._indices = range(rank)  # cf. IndexedGenerators, used by basis
 
     def __hash__(self):
         """
@@ -5808,34 +5809,7 @@ class FreeModule_ambient(FreeModule_generic):
         """
         return self
 
-    def basis(self):
-        """
-        Return a basis for this ambient free module.
-
-        OUTPUT:
-
-        - ``Sequence`` -- an immutable sequence with universe
-          this ambient free module
-
-        EXAMPLES::
-
-            sage: A = ZZ^3; B = A.basis(); B
-            [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
-            sage: B.universe()
-            Ambient free module of rank 3 over the principal ideal domain Integer Ring
-        """
-        try:
-            return self.__basis
-        except AttributeError:
-            ZERO = self(0)
-            one = self.coordinate_ring().one()
-            w = []
-            for n in range(self.rank()):
-                v = ZERO.__copy__()
-                v.set(n, one)
-                w.append(v)
-            self.__basis = basis_seq(self, w)
-            return self.__basis
+    basis = ModulesWithBasis.ParentMethods.basis
 
     def echelonized_basis(self):
         """
@@ -6119,6 +6093,8 @@ class FreeModule_ambient(FreeModule_generic):
             v[i] = self.base_ring().one()
             v.set_immutable()
             return v
+
+    monomial = gen
 
     def _sympy_(self):
         """
