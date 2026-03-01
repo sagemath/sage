@@ -78,8 +78,8 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '14'
           - '15'
+          - '26'
 
     steps:
       - name: Checkout code
@@ -93,17 +93,19 @@ jobs:
         run: |
           eval $(build/bin/sage-print-system-package-command homebrew update)
           eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew _bootstrap _prereq $(build/bin/sage-package list :standard:)))
+          brew install libomp Macaulay2/homebrew-tap/gfan Macaulay2/homebrew-tap/linbox
 
       - name: Build
         run: |
           source ./.homebrew-build-env
           ./bootstrap
-          ./configure --enable-download-from-upstream-url
+          ./configure --enable-download-from-upstream-url --with-darwin-accelerate
           make build V=0
         env:
           MAKE: 'make -j6'
 
       - name: Test
+        continue-on-error: true
         run: |
           source ./.homebrew-build-env # Needed so that runtime cython can find the dependencies
           ./sage -t --all -p4

@@ -192,41 +192,6 @@ from sage.structure.element import Vector
 lazy_import('sage.topology.simplicial_complex', 'SimplicialComplex')
 
 
-def is_ToricDivisor(x):
-    r"""
-    Test whether ``x`` is a toric divisor.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is an instance of :class:`ToricDivisor_generic` and
-      ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.toric.divisor import is_ToricDivisor
-        sage: is_ToricDivisor(1)
-        doctest:warning...
-        DeprecationWarning: The function is_ToricDivisor is deprecated;
-        use 'isinstance(..., ToricDivisor_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38277 for details.
-        False
-        sage: P2 = toric_varieties.P2()
-        sage: D = P2.divisor(0); D
-        V(x)
-        sage: is_ToricDivisor(D)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38277,
-                "The function is_ToricDivisor is deprecated; "
-                "use 'isinstance(..., ToricDivisor_generic)' instead.")
-    return isinstance(x, ToricDivisor_generic)
-
-
 # ********************************************************
 def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
     r"""
@@ -641,7 +606,7 @@ class ToricDivisor_generic(Divisor_generic):
         self._m[cone] = m
         return m
 
-    def is_Weil(self):
+    def is_Weil(self) -> bool:
         """
         Return whether the divisor is a Weil-divisor.
 
@@ -662,7 +627,7 @@ class ToricDivisor_generic(Divisor_generic):
         except TypeError:
             return False
 
-    def is_QQ_Weil(self):
+    def is_QQ_Weil(self) -> bool:
         r"""
         Return whether the divisor is a `\QQ`-Weil-divisor.
 
@@ -683,7 +648,7 @@ class ToricDivisor_generic(Divisor_generic):
         """
         return True
 
-    def is_Cartier(self):
+    def is_Cartier(self) -> bool:
         r"""
         Return whether the divisor is a Cartier-divisor.
 
@@ -714,7 +679,7 @@ class ToricDivisor_generic(Divisor_generic):
             self._is_Cartier = all(self.m(c) in M for c in fan)
         return self._is_Cartier
 
-    def is_QQ_Cartier(self):
+    def is_QQ_Cartier(self) -> bool:
         r"""
         Return whether the divisor is a `\QQ`-Cartier divisor.
 
@@ -745,7 +710,7 @@ class ToricDivisor_generic(Divisor_generic):
             self._is_QQ_Cartier = False
         return self._is_QQ_Cartier
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         r"""
         Return whether the coefficients of the divisor are all integral.
 
@@ -908,7 +873,7 @@ class ToricDivisor_generic(Divisor_generic):
         return sum(self.coefficient(i) * A(cone_1d)
                    for i, cone_1d in enumerate(fan(dim=1)))
 
-    def is_ample(self):
+    def is_ample(self) -> bool:
         r"""
         Return whether a `\QQ`-Cartier divisor is ample.
 
@@ -989,7 +954,7 @@ class ToricDivisor_generic(Divisor_generic):
         self._is_ample = Kc.relative_interior_contains(self.divisor_class())
         return self._is_ample
 
-    def is_nef(self):
+    def is_nef(self) -> bool:
         r"""
         Return whether a `\QQ`-Cartier divisor is nef.
 

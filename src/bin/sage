@@ -103,27 +103,22 @@ usage() {
     ####  |.....................--.|...................................................|
     echo
     echo "Running Sage:"
-    if command -v sage-ipython &>/dev/null; then
-        echo
-        echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
-        echo "  -c <cmd>            -- evaluate cmd as sage code"
-        echo "  --notebook=[...]    -- start the Sage notebook (valid options are"
-        echo "                         'default', 'jupyter', 'jupyterlab', and 'export')"
-        echo "                         Current default is 'jupyter'"
-        echo "  -n, --notebook      -- shortcut for --notebook=default"
-        echo "  --nodotsage         -- run Sage without using the user's .sage directory:"
-        echo "                         create and use a temporary .sage directory instead"
-        echo "  -t [options] <--all|files|dir>"
-        echo "                      -- test examples in .py, .pyx, .sage, .tex or .rst files"
-        echo "                         selected options:"
-        echo "                           --long - include lines with the phrase 'long time'"
-        echo "                           --verbose - print debugging output during the test"
-        echo "                           --optional - controls which optional tests are run"
-        echo "                           --help - show all testing options"
-    else
-        echo "                         (not installed currently, "
-        echo "                          to install, run sage --pip install sagemath-repl)"
-    fi
+    echo
+    echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
+    echo "  -c <cmd>            -- evaluate cmd as sage code"
+    echo "  --notebook=[...]    -- start the Sage notebook (valid options are"
+    echo "                         'default', 'jupyter', 'jupyterlab', and 'export')"
+    echo "                         Current default is 'jupyter'"
+    echo "  -n, --notebook      -- shortcut for --notebook=default"
+    echo "  --nodotsage         -- run Sage without using the user's .sage directory:"
+    echo "                         create and use a temporary .sage directory instead"
+    echo "  -t [options] <--all|files|dir>"
+    echo "                      -- test examples in .py, .pyx, .sage, .tex or .rst files"
+    echo "                         selected options:"
+    echo "                           --long - include lines with the phrase 'long time'"
+    echo "                           --verbose - print debugging output during the test"
+    echo "                           --optional - controls which optional tests are run"
+    echo "                           --help - show all testing options"
     echo
     echo "Running external programs:"
     echo
@@ -952,11 +947,6 @@ fi
 
 if [ "$1" = '-startuptime' -o "$1" = '--startuptime' ]; then
     exec sage-startuptime.py "$@"
-fi
-
-if [ "$1" = '-fixdistributions' -o "$1" = '--fixdistributions' ]; then
-    shift
-    exec python3 -m sage.misc.package_dir "$@"
 fi
 
 if [ "$1" = '-tox' -o "$1" = '--tox' ]; then

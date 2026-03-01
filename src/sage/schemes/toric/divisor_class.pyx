@@ -67,7 +67,7 @@ from sage.structure.element cimport Vector
 from sage.structure.element import Vector
 
 
-def is_ToricRationalDivisorClass(x):
+def is_ToricRationalDivisorClass(x) -> bool:
     r"""
     Check if ``x`` is a toric rational divisor class.
 

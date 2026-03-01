@@ -47,6 +47,8 @@ export SAGE_DOCS="@SAGE_DOCS@"
 # Location of system crti.o, in case we build our own gcc
 export SAGE_CRTI_DIR="@SAGE_CRTI_DIR@"
 
+export SAGE_DARWIN_ACCELERATE="@SAGE_DARWIN_ACCELERATE@"
+
 export SAGE_NTL_PREFIX="@SAGE_NTL_PREFIX@"
 
 export SAGE_FLINT_PREFIX="@SAGE_FLINT_PREFIX@"

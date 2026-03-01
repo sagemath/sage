@@ -191,14 +191,14 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
         if not value:
             try:
-                del self._entries[(i,j)]
+                del self._entries[(i, j)]
             except KeyError:
                 pass
         else:
-            self._entries[(i,j)] = value
+            self._entries[(i, j)] = value
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
-        return self._entries.get((i,j), self._zero)
+        return self._entries.get((i, j), self._zero)
 
     cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
         r"""
@@ -239,10 +239,10 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             [      0       2]
         """
         cdef Matrix_generic_sparse _src = <Matrix_generic_sparse>src
-        if (iSrc,jSrc) in _src._entries:
-            self._entries[(iDst,jDst)] = _src._entries.get((iSrc, jSrc), _src._zero)
-        elif (iDst,jDst) in self._entries:
-            del self._entries[(iDst,jDst)]
+        if (iSrc, jSrc) in _src._entries:
+            self._entries[(iDst, jDst)] = _src._entries.get((iSrc, jSrc), _src._zero)
+        elif (iDst, jDst) in self._entries:
+            del self._entries[(iDst, jDst)]
 
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
@@ -256,7 +256,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             [0 1 1 1]
             [1 1 1 0]
         """
-        return (i,j) not in self._entries
+        return (i, j) not in self._entries
 
     def _pickle(self):
         version = 0
@@ -392,11 +392,11 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         Return all entries of ``self`` as a list of numbers of rows times
         number of columns entries.
         """
-        cdef Py_ssize_t i,j
+        cdef Py_ssize_t i, j
         cdef list v = self.fetch('list')
         if v is None:
             v = [self._zero]*(self._nrows * self._ncols)
-            for (i,j), x in self._entries.items():
+            for (i, j), x in self._entries.items():
                 v[i*self._ncols + j] = x
             self.cache('list', v)
         return v

@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.rings.real_interval_field sage.rings.real_mpfr
+# sage.doctest: needs sage.rings.real_mpfr
 """
 Subsets of the Real Line
 
@@ -102,8 +102,8 @@ from sage.categories.sets_cat import EmptySetError
 from sage.categories.topological_spaces import TopologicalSpaces
 from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_lazy import LazyFieldElement, RLF
-from sage.sets.set import Set_base, Set_boolean_operators, Set_add_sub_operators
+from sage.rings.real_lazy import RLF, LazyFieldElement
+from sage.sets.set import Set_add_sub_operators, Set_base, Set_boolean_operators
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import UniqueRepresentation
@@ -457,6 +457,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
             Interval.open(0, oo)
         """
         from sympy import Interval
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Interval(self.lower(), self.upper(),
@@ -1210,7 +1211,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             elif isinstance(arg, RealSet):
                 intervals.extend(arg._intervals)
             elif isinstance(arg, Expression) and arg.is_relational():
-                from operator import eq, ne, lt, gt, le, ge
+                from operator import eq, ge, gt, le, lt, ne
 
                 def rel_to_interval(op, val):
                     """
@@ -1255,7 +1256,9 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
                 else:
                     raise ValueError(str(arg) + ' does not determine real interval')
             else:
-                from sage.manifolds.differentiable.examples.real_line import OpenInterval
+                from sage.manifolds.differentiable.examples.real_line import (
+                    OpenInterval,
+                )
                 from sage.manifolds.subsets.closure import ManifoldSubsetClosure
                 if isinstance(arg, OpenInterval):
                     lower, upper = RealSet._prep(arg.lower_bound(), arg.upper_bound())
@@ -2660,26 +2663,26 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             sage: s.simplest_rational()
             Traceback (most recent call last):
             ...
-            NotImplementedError:
+            NotImplementedError
             sage: s=RealSet((0, 1));  s
             (0, 1)
             sage: s.simplest_rational()
             Traceback (most recent call last):
             ...
-            NotImplementedError:
+            NotImplementedError
             sage: s=RealSet();  s
             {}
             sage: s.simplest_rational()
             Traceback (most recent call last):
             ...
-            EmptySetError:
+            EmptySetError
         """
 
         if self.is_empty():
             raise EmptySetError
 
-        from sage.rings.real_mpfi import RealIntervalField
         from sage.rings.rational_field import QQ
+        from sage.rings.real_mpfi import RealIntervalField
 
         RIF = RealIntervalField()
         candidates = []
@@ -2748,11 +2751,10 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
                         t = 'RealSet.closed'
                     else:
                         t = 'RealSet.closed_open'
+                elif i.upper_closed():
+                    t = 'RealSet.open_closed'
                 else:
-                    if i.upper_closed():
-                        t = 'RealSet.open_closed'
-                    else:
-                        t = 'RealSet.open'
+                    t = 'RealSet.open'
                 return sib.name(t)(sib(lower), sib(upper))
 
         if self.is_empty():
@@ -2822,6 +2824,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             False
         """
         from sympy import Reals, Union
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         if self.is_universe():

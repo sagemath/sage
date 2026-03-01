@@ -7,23 +7,34 @@ py.install_sources(
   'assumptions.py',
   'benchmark.py',
   'callable.py',
+  'callable.pyi',
+  'comparison_impl.pyi',
   'complexity_measures.py',
   'constants.py',
+  'constants_c_impl.pyi',
   'expression.pxd',
   'expression.pyx',
   'expression_conversion_algebraic.py',
   'expression_conversion_sympy.py',
   'expression_conversions.py',
   'function.pxd',
+  'function.pyi',
   'function.pyx',
   'function_factory.py',
+  'function_factory.pyi',
+  'getitem_impl.pyi',
   'maxima_wrapper.py',
   'operators.py',
+  'operators.pyi',
+  'pynac_constant_impl.pyi',
+  'pynac_function_impl.pyi',
   'pynac_wrap.h',
   'random_tests.py',
   'relation.py',
   'ring.pxd',
+  'ring.pyi',
   'ring.pyx',
+  'series_impl.pyi',
   'subring.py',
   'symbols.py',
   'symengine.py',
@@ -32,10 +43,7 @@ py.install_sources(
   subdir: 'sage/symbolic',
 )
 
-extension_data = {
-  'function': files('function.pyx'),
-  'ring': files('ring.pyx'),
-}
+extension_data = {'function': files('function.pyx'), 'ring': files('ring.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

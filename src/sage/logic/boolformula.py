@@ -615,7 +615,7 @@ class BooleanFormula:
         """
         return booleval.eval_formula(self.__tree, var_values)
 
-    def is_satisfiable(self):
+    def is_satisfiable(self) -> bool:
         r"""
         Determine if the formula is ``True`` for some assignment of values.
 
@@ -643,7 +643,7 @@ class BooleanFormula:
         table = self.truthtable().get_table_list()
         return any(row[-1] is True for row in table[1:])
 
-    def is_tautology(self):
+    def is_tautology(self) -> bool:
         r"""
         Determine if the formula is always ``True``.
 
@@ -672,7 +672,7 @@ class BooleanFormula:
         """
         return not (~self).is_satisfiable()
 
-    def is_contradiction(self):
+    def is_contradiction(self) -> bool:
         r"""
         Determine if the formula is always ``False``.
 
@@ -703,7 +703,7 @@ class BooleanFormula:
         """
         return not self.is_satisfiable()
 
-    def is_consequence(self, *hypotheses):
+    def is_consequence(self, *hypotheses) -> bool:
         r"""
         Determine if ``self`` (the desired conclusion) is a logical consequence of the
         hypotheses. The function call ``is_consequence(conclusion, *hypotheses)`` is a

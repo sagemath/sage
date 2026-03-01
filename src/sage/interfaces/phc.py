@@ -917,8 +917,8 @@ class PHC:
 
         # Was there an error?
         if e:
-            from sage.misc.sage_ostools import have_program
-            if not have_program('phc'):
+            from shutil import which
+            if not which('phc'):
                 print(str(os.system('which phc')) + '  PHC needs to be installed and in your path')
                 raise RuntimeError
             # todo -- why? etc.

@@ -26,9 +26,7 @@ def stable_uniq(L) -> list:
         sage: stable_uniq( (1, 2, 3, 4, 5, 6, 3, 7, 5, 1, 5, 9) )
         [2, 4, 6, 3, 7, 1, 5, 9]
     """
-    D = {}
-    for pos, item in enumerate(L):
-        D[item] = pos  # Store the last position where an item appears
+    D = {item: pos for pos, item in enumerate(L)}  # Store the last position where an item appears
     return sorted(D, key=lambda item: D[item])
 
 

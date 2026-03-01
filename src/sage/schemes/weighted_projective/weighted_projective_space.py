@@ -1,3 +1,16 @@
+"""
+Weighted projective spaces
+"""
+
+# *****************************************************************************
+#        Copyright (C) 2024 Gareth Ma <grhkm21@gmail.com>
+#
+#   Distributed under the terms of the GNU General Public License (GPL)
+#   as published by the Free Software Foundation; either version 2 of
+#   the License, or (at your option) any later version.
+#                   https://www.gnu.org/licenses/
+# *****************************************************************************
+
 from sage.categories.fields import Fields
 from sage.categories.map import Map
 from sage.misc.latex import latex
