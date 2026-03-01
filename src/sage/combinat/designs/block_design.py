@@ -909,10 +909,10 @@ def CremonaRichmondConfiguration():
 
     EXAMPLES::
 
-        sage: H = designs.CremonaRichmondConfiguration(); H                             # needs networkx
+        sage: H = designs.CremonaRichmondConfiguration(); H
         Incidence structure with 15 points and 15 blocks
-        sage: g = graphs.TutteCoxeterGraph()                                            # needs networkx
-        sage: H.incidence_graph().is_isomorphic(g)                                      # needs networkx
+        sage: g = graphs.TutteCoxeterGraph()
+        sage: H.incidence_graph().is_isomorphic(g)
         True
     """
     from sage.graphs.generators.smallgraphs import TutteCoxeterGraph

@@ -137,8 +137,7 @@ If you want to create a new directory (`package
 <https://docs.python.org/3/tutorial/modules.html#packages>`_) in the
 Sage library :sage_root:`src/sage` (say, ``measure_theory``), that
 directory will usually contain an empty file ``__init__.py``, which
-marks the directory as an ordinary package (see
-:ref:`section_namespace_packages`), and also a file ``all.py``,
+marks the directory as an ordinary package, and also a file ``all.py``,
 listing imports from this package that are user-facing and important
 enough to be in the global namespace of Sage at startup.  The file
 ``all.py`` might look like this::
