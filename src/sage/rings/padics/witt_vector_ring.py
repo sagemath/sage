@@ -592,6 +592,13 @@ class WittVectorRingClass(Parent):
             sage: V = WittVectorRing(P, p=3, prec=1, algorithm='standard')
             sage: V.sum_polynomials()[0].parent()
             Multivariate Polynomial Ring in X0, Y0 over Multivariate Polynomial Ring in X1, X2, Y1, Y2 over Finite Field of size 3
+            sage: W = WittVectorRing(GF(37), prec=2)
+            sage: W.sum_polynomials()[0]
+            X0 + Y0
+            sage: W.prod_polynomials()
+            [X0*Y0, X1*Y0^37 + X0^37*Y1]
+            sage: W.frobenius_polynomials()
+            [X0^37]
         """
         if p in WittVectorRing._witt_polynomials:
             if prec > len(WittVectorRing._witt_polynomials[p][0]):
