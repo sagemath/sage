@@ -130,7 +130,7 @@ class WittVectorRingFactory(UniqueFactory):
         Factory that creates and stores all truncated Witt vector rings.
 
         Send directly to the appropriate constructor of WittVectorRingClass for each algorithm.
-        Except: `standard`, where the Witt's Polynomials for `p` of `ZZ` are cached,
+        Except: algorithm=`standard`, where the Witt's Polynomials for `p` of `\ZZ` are cached,
         in order to be reused in the computation of the Witt Polynomials of any ring `R`,
         for the same prime `p`.
     """
@@ -189,23 +189,22 @@ class WittVectorRingFactory(UniqueFactory):
         elif p not in Primes():
             raise ValueError(f"p must be a prime number, here {p} was given")
 
-        match algorithm:
-            case None:
-                if p == char:
-                    if (coefficient_ring in Fields().Finite()
-                        or isinstance(coefficient_ring,
-                                      PolynomialRing_generic)
-                        and coefficient_ring.base()
-                            in Fields().Finite()):
-                        algorithm = 'phantom'
-                    else:
-                        algorithm = 'finotti'
-                elif coefficient_ring(p).is_unit():
-                    algorithm = 'p_invertible'
+        if algorithm is None:
+            if p == char:
+                if (coefficient_ring in Fields().Finite()
+                    or isinstance(coefficient_ring,
+                                  PolynomialRing_generic)
+                    and coefficient_ring.base()
+                        in Fields().Finite()):
+                    algorithm = 'phantom'
                 else:
-                    algorithm = 'standard'
-            case _ if algorithm not in ['standard','p_invertible', 'finotti', 'phantom']:
-                raise ValueError("algorithm must be one of None, 'standard', "
+                    algorithm = 'finotti'
+            elif coefficient_ring(p).is_unit():
+                algorithm = 'p_invertible'
+            else:
+                algorithm = 'standard'
+        elif algorithm not in ['standard','p_invertible', 'finotti', 'phantom']:
+            raise ValueError("algorithm must be one of None, 'standard', "
                                  "'p_invertible', 'finotti', 'phantom'")
         return (coefficient_ring, prec, p, algorithm)
 
@@ -243,8 +242,8 @@ class WittVectorRingFactory(UniqueFactory):
     def _generate_sum_and_product_polynomials_list(self, prec, p):
         """
         Generate the sum and product polynomials defining the ring laws of
-        truncated Witt vectors for the ``standard`` algorithm, of the ZZ
-        ring. This method is used as an auxiliary for the computation of
+        truncated Witt vectors, of the integer ring.
+        This method is used as an auxiliary for the computation of
         the truncated Witt vectors of a ring R.
 
         EXAMPLES::
@@ -594,6 +593,12 @@ class WittVectorRingClass(Parent):
             sage: V.sum_polynomials()[0].parent()
             Multivariate Polynomial Ring in X0, Y0 over Multivariate Polynomial Ring in X1, X2, Y1, Y2 over Finite Field of size 3
         """
+        if p in WittVectorRing._witt_polynomials:
+            if prec > len(WittVectorRing._witt_polynomials[p][0]):
+                WittVectorRing._generate_sum_and_product_polynomials_list(prec, p)
+        else:
+            WittVectorRing._generate_sum_and_product_polynomials_list(prec, p)
+
         var_names = [f'X{i}' for i in range(prec)] + [f'Y{i}' for i in range(prec)]
 
         self._sum_polynomials = [None]*prec
