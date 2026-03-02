@@ -130,7 +130,7 @@ class WittVectorRingFactory(UniqueFactory):
         Factory that creates and stores all truncated Witt vector rings.
 
         Send directly to the appropriate constructor of WittVectorRingClass for each algorithm.
-        Except: algorithm=`standard`, where the Witt's Polynomials for `p` of `\ZZ` are cached,
+        Except: "algorithm=`standard`", where the Witt's Polynomials for `p` of `\ZZ` are cached,
         in order to be reused in the computation of the Witt Polynomials of any ring `R`,
         for the same prime `p`.
     """
@@ -148,6 +148,7 @@ class WittVectorRingFactory(UniqueFactory):
         super().__init__(name)
         self._witt_polynomials = {}
         self._frob_polynomials = {}
+        self._binomial_table = {}
 
     def create_key(self, coefficient_ring, prec=1, p=None, algorithm=None):
         r"""
@@ -192,10 +193,8 @@ class WittVectorRingFactory(UniqueFactory):
         if algorithm is None:
             if p == char:
                 if (coefficient_ring in Fields().Finite()
-                    or isinstance(coefficient_ring,
-                                  PolynomialRing_generic)
-                    and coefficient_ring.base()
-                        in Fields().Finite()):
+                    or isinstance(coefficient_ring, PolynomialRing_generic)
+                    and coefficient_ring.base() in Fields().Finite()):
                     algorithm = 'phantom'
                 else:
                     algorithm = 'finotti'
@@ -222,20 +221,22 @@ class WittVectorRingFactory(UniqueFactory):
         match algorithm:
             case 'finotti':
                 child = WittVectorRing_finotti
+                if p in self._binomial_table:
+                    if prec > len(self._binomial_table[p]):
+                        self._compute_binomial_table(prec, p)
+                else:
+                    self._compute_binomial_table(prec, p)
             case 'phantom':
                 child = WittVectorRing_phantom
             case 'p_invertible':
                 child = WittVectorRing_pinvertible
             case 'standard':
                 child = WittVectorRing_standard
-        if child != WittVectorRing_standard:
-            return child(coefficient_ring, prec, p)
-
-        if p in self._witt_polynomials:
-            if prec > len(self._witt_polynomials[p][0]):
-                self._generate_sum_and_product_polynomials_list(prec, p)
-        else:
-            self._generate_sum_and_product_polynomials_list(prec, p)
+                if p in self._witt_polynomials:
+                    if prec > len(self._witt_polynomials[p][0]):
+                        self._generate_sum_and_product_polynomials_list(prec, p)
+                else:
+                    self._generate_sum_and_product_polynomials_list(prec, p)
 
         return child(coefficient_ring, prec, p)
 
@@ -244,7 +245,7 @@ class WittVectorRingFactory(UniqueFactory):
         Generate the sum and product polynomials defining the ring laws of
         truncated Witt vectors, of the integer ring.
         This method is used as an auxiliary for the computation of
-        the truncated Witt vectors of a ring R.
+        the truncated Witt vectors of a ring `R`.
 
         EXAMPLES::
 
@@ -334,6 +335,36 @@ class WittVectorRingFactory(UniqueFactory):
                 p_poly = sum([p**i * self._frob_polynomials[p][i]**(p**(n-1-i))
                               for i in range(n-1)])
                 self._frob_polynomials[p].append((x_poly - p_poly) / p**(n-1))
+
+    def _compute_binomial_table(self, prec, prime):
+        if prime in self._binomial_table: # Extend binomial table
+            start = len(self._binomial_table[prime])
+            table = self._binomial_table[prime]
+        else:
+            start = 1
+            table = [[0]]
+        import numpy as np
+        R = Zp(prime, prec=prec+1, type='fixed-mod')
+        v_p = ZZ.valuation(prime)
+        for k in range(start, prec+1):
+            pk = prime**k
+            row = np.empty(pk, dtype=int)
+            row[0] = 0
+            prev_bin = 1
+            for i in range(1, pk // 2 + 1):
+                val = v_p(i)
+                # Instead of calling binomial each time, we compute the
+                # coefficients recursively. This is MUCH faster.
+                next_bin = prev_bin * (pk - (i-1)) // i
+                prev_bin = next_bin
+                series = R(-next_bin // prime**(k-val))
+                for _ in range(val):
+                    temp = series % prime
+                    series = (series - R.teichmuller(temp)) // prime
+                row[i] = ZZ(series % prime)
+                row[pk - i] = row[i]  # binomial coefficients are symmetric
+            table.append(row)
+        self._binomial_table[prime] = table
 
 
 WittVectorRing = WittVectorRingFactory("WittVectorRing")
@@ -1201,30 +1232,6 @@ class WittVectorRing_finotti(WittVectorRingClass):
                                    WittVectorRing_standard]
             self._coerce_when_different = [WittVectorRing_phantom]
 
-        import numpy as np
-        R = Zp(prime, prec=prec+1, type='fixed-mod')
-        v_p = ZZ.valuation(prime)
-        table = [[0]]
-        for k in range(1, prec+1):
-            pk = prime**k
-            row = np.empty(pk, dtype=int)
-            row[0] = 0
-            prev_bin = 1
-            for i in range(1, pk // 2 + 1):
-                val = v_p(i)
-                # Instead of calling binomial each time, we compute the
-                # coefficients recursively. This is MUCH faster.
-                next_bin = prev_bin * (pk - (i-1)) // i
-                prev_bin = next_bin
-                series = R(-next_bin // prime**(k-val))
-                for _ in range(val):
-                    temp = series % prime
-                    series = (series - R.teichmuller(temp)) // prime
-                row[i] = ZZ(series % prime)
-                row[pk - i] = row[i]  # binomial coefficients are symmetric
-            table.append(row)
-        self._binomial_table = table
-
         super().__init__(coefficient_ring, prec, prime, "finotti")
 
     def _eta_bar(self, vec, eta_index):
@@ -1260,7 +1267,7 @@ class WittVectorRing_finotti(WittVectorRingClass):
             # calculate first N_t scriptN's
             for t in range(1, k+1):
                 for i in range(1, p**t):
-                    scriptN[t].append(self._binomial_table[t][i]
+                    scriptN[t].append(WittVectorRing._binomial_table[p][t][i]
                                       * fast_char_p_power(x, i)
                                       * fast_char_p_power(y, p**t - i))
             indexN = [p**i - 1 for i in range(k+1)]
