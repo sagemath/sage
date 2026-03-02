@@ -277,7 +277,7 @@ cdef class Function(SageObject):
                                                    self._nargs, self._evalf_params_first,
                                                    False)
 
-    def _evalf_try_(self, *args):
+    def _evalf_try_(self, *args, **kwargs):
         """
         Call :meth:`_evalf_` if one the arguments is numerical and none
         of the arguments are symbolic.
@@ -344,7 +344,7 @@ cdef class Function(SageObject):
             if any(self._is_numerical(x) for x in args):
                 if not any(isinstance(x, Expression) for x in args):
                     p = coercion_model.common_parent(*args)
-                    return evalf(*args, parent=p)
+                    return evalf(*args, parent=p, **kwargs)
         except Exception:
             pass
 
@@ -408,7 +408,7 @@ cdef class Function(SageObject):
         except AttributeError:
             return NotImplemented
 
-    def __call__(self, *args, bint coerce=True, bint hold=False):
+    def __call__(self, *args, bint coerce=True, bint hold=False, **kwargs):
         """
         Evaluates this function at the given arguments.
 
@@ -470,6 +470,10 @@ cdef class Function(SageObject):
             sage: exp(RR(0)).parent()
             Real Field with 53 bits of precision
 
+        Other keyword arguments are passed to corresponding evaluation methods::
+
+            sage: exp(2, prec=16)
+            7.389
 
         TESTS:
 
@@ -546,7 +550,7 @@ cdef class Function(SageObject):
                 if len(args) == 1:
                     method = getattr(args[0], self._name, None)
                     if callable(method):
-                        return method()
+                        return method(**kwargs)
                 raise TypeError("cannot coerce arguments: %s" % (err))
 
         else: # coerce == False
@@ -747,7 +751,7 @@ cdef class Function(SageObject):
         args = [etb._var_number(n) for n in range(self.number_of_arguments())]
         return etb.call(self, *args)
 
-    def _eval_numpy_(self, *args):
+    def _eval_numpy_(self, *args, **kwargs):
         r"""
         Evaluates this function at the given arguments.
 
@@ -769,7 +773,7 @@ cdef class Function(SageObject):
         """
         raise NotImplementedError("The Function %s does not support numpy arrays as arguments" % self.name())
 
-    def _eval_mpmath_(self, *args):
+    def _eval_mpmath_(self, *args, **kwargs):
         r"""
         Evaluates this function for arguments of mpmath types.
 
@@ -816,7 +820,7 @@ cdef class Function(SageObject):
         args = [mpmath_to_sage(x, prec)
                 if isinstance(x, (mpmath.mpf, mpmath.mpc)) else x
                 for x in args]
-        res = self(*args)
+        res = self(*args, **kwargs)
         res = sage_to_mpmath(res, prec)
         return res
 
@@ -942,7 +946,7 @@ cdef class BuiltinFunction(Function):
         return [arg]
 
     def __call__(self, *args, bint coerce=True, bint hold=False,
-                 bint dont_call_method_on_arg=False):
+                 bint dont_call_method_on_arg=False, **kwargs):
         r"""
         Evaluate this function on the given arguments and return the result.
 
@@ -983,6 +987,19 @@ cdef class BuiltinFunction(Function):
             0.0
             sage: type(_)                                                               # needs numpy
             <class 'numpy.float64'>
+
+        One can hold the expression unevaluated by passing ``hold=True``::
+
+            sage: from sage.functions.airy import airy_ai_simple
+            sage: airy_ai_simple(0)
+            1/3*3^(1/3)/gamma(2/3)
+            sage: airy_ai_simple(0, hold=True)
+            airy_ai(0)
+
+        Other keyword arguments are passed to the relevant evaluation methods::
+
+            sage: airy_ai_simple(1000., algorithm='scipy')                               # needs scipy
+            0.000000000000000
 
         TESTS::
 
@@ -1040,12 +1057,12 @@ cdef class BuiltinFunction(Function):
 
                 if callable(func):
                     try:
-                        return func(*args)
+                        return func(*args, **kwargs)
                     except (ValueError, TypeError):
                         pass
 
             if custom is not None:
-                return custom(*args)
+                return custom(*args, **kwargs)
 
         if not hold and not dont_call_method_on_arg:
             try:
@@ -1062,15 +1079,15 @@ cdef class BuiltinFunction(Function):
 
                 if callable(method):
                     try:
-                        res = method(*method_args[1:])
+                        res = method(*method_args[1:], **kwargs)
                     except (TypeError, ValueError, ArithmeticError):
                         pass
 
         if res is None and not hold:
-            res = self._evalf_try_(*args)
+            res = self._evalf_try_(*args, **kwargs)
         if res is None:
             res = super().__call__(
-                    *args, coerce=coerce, hold=hold)
+                    *args, coerce=coerce, hold=hold, **kwargs)
 
         cdef Parent arg_parent
         if any(isinstance(x, Element) for x in args):
@@ -1157,15 +1174,15 @@ cdef class BuiltinFunction(Function):
 
         return False
 
-    def _evalf_or_eval_(self, *args):
+    def _evalf_or_eval_(self, *args, **kwargs):
         """
         First try to call :meth:`_evalf_` and return the result if it
         was not ``None``. Otherwise, call :meth:`_eval0_`, which is the
         original version of :meth:`_eval_` saved in :meth:`__init__`.
         """
-        res = self._evalf_try_(*args)
+        res = self._evalf_try_(*args, **kwargs)
         if res is None:
-            return self._eval0_(*args)
+            return self._eval0_(*args, **kwargs)
         else:
             return res
 
