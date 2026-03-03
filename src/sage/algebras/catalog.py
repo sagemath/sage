@@ -75,6 +75,7 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 - :class:`algebras.RationalCherednik
   <sage.algebras.rational_cherednik_algebra.RationalCherednikAlgebra>`
 - :class:`algebras.Schur <sage.algebras.schur_algebra.SchurAlgebra>`
+- :class:`algebras.Sergeev <sage.algebras.sergeev_superalgebra.SergeevSuperalgebra>`
 - :class:`algebras.Shuffle <sage.algebras.shuffle_algebra.ShuffleAlgebra>`
 - :class:`algebras.Steenrod
   <sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra>`
@@ -143,5 +144,6 @@ lazy_import('sage.algebras.quantum_groups.ace_quantum_onsager',
 lazy_import('sage.algebras.down_up_algebra', 'DownUpAlgebra', 'DownUp')
 lazy_import('sage.algebras.yangian', 'Yangian')
 lazy_import('sage.algebras.octonion_algebra', 'OctonionAlgebra', 'Octonion')
+lazy_import('sage.algebras.sergeev_superalgebra', 'SergeevSuperalgebra', 'Sergeev')
 
 del lazy_import  # We remove the object from here so it doesn't appear under tab completion
