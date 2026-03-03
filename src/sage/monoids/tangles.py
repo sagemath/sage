@@ -27,6 +27,7 @@ REFERENCES:
 
 from collections.abc import Callable
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.monoids.automatic_semigroup import AutomaticSemigroup
 from sage.plot.graphics import Graphics
 from sage.combinat.diagram_algebras import BrauerDiagram
@@ -156,12 +157,8 @@ class KauffmanTangle(AutomaticSemigroup.Element):
             return self._connector
         P = self.parent()
         n = P._nstrands
-        from sage.combinat.diagram_algebras import BrauerAlgebra
-        from sage.rings.polynomial.polynomial_ring import polygen
-        from sage.rings.integer_ring import ZZ
-        BA = BrauerAlgebra(P._nstrands, polygen(ZZ))
-        PA = BA.ambient()
-        con = BA.one_basis()
+        PA = P.BA.ambient()
+        con = P.BA.one_basis()
         num_removed_loop = 0
         for i in self.defining_word():
             i = abs(i)
@@ -566,23 +563,23 @@ class KauffmanTangle(AutomaticSemigroup.Element):
           * ``'rainbow'``, uses :meth:`~sage.plot.colors.rainbow`
             according to the number of strands.
 
-            * a valid color name for :meth:`~sage.plot.bezier_path`
-              and :meth:`~sage.plot.line`. Used for all strands.
+          * a valid color name for :meth:`~sage.plot.bezier_path`
+            and :meth:`~sage.plot.line`. Used for all strands.
 
-            * a list or a tuple of colors for each individual strand.
+          * a list or a tuple of colors for each individual strand.
 
         - ``orientation`` -- (default: ``'top-bottom'``) determines how
           the braid is printed. The possible values are:
 
-            * ``'bottom-top'``, the braid is printed from bottom to top
+          * ``'bottom-top'``, the braid is printed from bottom to top
 
-            * ``'top-bottom'``, the braid is printed from top to bottom
+          * ``'top-bottom'``, the braid is printed from top to bottom
 
-            * ``'left-right'``, the braid is printed from left to right
+          * ``'left-right'``, the braid is printed from left to right
 
-            Note that the default doesn't matches the default of the orientation
-            in :meth:`~sage.groups.braid.Braid.plot` but is according to
-            :meth:`~sage.combinat.diagram_algebras.BrauerDiagram.compose`
+          Note that the default doesn't matches the default of the orientation
+          in :meth:`~sage.groups.braid.Braid.plot` but is according to
+          :meth:`~sage.combinat.diagram_algebras.BrauerDiagram.compose`
 
         - ``gap`` -- floating point number (default: 0.05); determines
           the size of the gap left when a strand goes under another
@@ -726,6 +723,22 @@ class KauffmanTangles(AutomaticSemigroup):
             Semigroup of tangles with 3 (non closed) strands with generators Family (1, B1, B2, C1, C2, B1^-1, B2^-1)
         """
         return 'Semigroup of tangles with %s (non closed) strands with generators %s' % (self.strands(), self.gens())
+
+    @lazy_attribute
+    def BA(self):
+        """
+        Return the Brauer algebra corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.monoids.tangles import KauffmanTangles
+            sage: KauffmanTangles('B1, B2, C1, C2').BA
+            Brauer Algebra of rank 3 with parameter x over Univariate Polynomial Ring in x over Integer Ring
+        """
+        from sage.combinat.diagram_algebras import BrauerAlgebra
+        from sage.rings.polynomial.polynomial_ring import polygen
+        from sage.rings.integer_ring import ZZ
+        return BrauerAlgebra(self._nstrands, polygen(ZZ))
 
     def list(self):
         r"""
@@ -973,6 +986,16 @@ class Strand:
     r"""
     Class to deal with strands of a tangle.
 
+    INPUT:
+
+    - ``start`` -- integer, position on the top or bottom line
+      (for bottom inline pairs) of the connector
+    - ``end`` -- integer, position on the bottom or top line
+      (for top inline pairs) of the connector
+
+    For closed loops both values coincide and give the number
+    of the loop according to the top to bottom order.
+
     EXAMPLES::
 
         sage: from sage.monoids.tangles import KauffmanTangles
@@ -988,16 +1011,6 @@ class Strand:
     def __init__(self, tangle: KauffmanTangle, start: int, end: int):
         r"""
         Constructor
-
-        INPUT:
-
-        - ``start`` -- integer, position on the top or bottom line
-          (for bottom inline pairs) of the connector
-        - ``end`` -- integer, position on the bottom or top line
-          (for top inline pairs) of the connector
-
-        For closed loops both values coincide and give the number
-        of the loop according to the top to bottom order.
 
         EXAMPLES::
 
