@@ -268,7 +268,7 @@ class Hypergeometric(BuiltinFunction):
                                               'sympy': 'hyper',
                                               'fricas': 'hypergeometricF'})
 
-    def __call__(self, a, b, z, **kwargs):
+    def __call__(self, a, b, z, *, hold=False, **kwargs):
         """
         Return symbolic hypergeometric function expression.
 
@@ -277,6 +277,8 @@ class Hypergeometric(BuiltinFunction):
         - ``a`` -- list or tuple of parameters
         - ``b`` -- list or tuple of parameters
         - ``z`` -- number or symbolic expression
+        - ``**kwargs`` -- other keyword arguments passed to `mpmath` when input
+            include numerical number while none is symbolic.
 
         EXAMPLES::
 
@@ -300,11 +302,16 @@ class Hypergeometric(BuiltinFunction):
 
             sage: hypergeometric([2, 3, 4], [4, 1], 1)
             hypergeometric((2, 3, 4), (4, 1), 1)
+            sage: parent(hypergeometric( # :issue:`27785`
+            ....:     [4.14 + 15*I, -3.14 + 15*I], 
+            ....:     [1. - 1.12e7*I], -500000, maxterms=1e6
+            ....: ))
+            Complex Field with 53 bits of precision
         """
         return BuiltinFunction.__call__(self,
                                         SR._force_pyobject(a),
                                         SR._force_pyobject(b),
-                                        z, **kwargs)
+                                        z, hold=hold, **kwargs)
 
     def _print_latex_(self, a, b, z):
         r"""
@@ -327,12 +334,12 @@ class Hypergeometric(BuiltinFunction):
             1
         """
         if not isinstance(a, tuple) or not isinstance(b, tuple):
-            raise TypeError("The first two parameters must be of type list")
+            raise TypeError("The first two parameters must be of type list or tuple")
 
         if not isinstance(z, Expression) and z == 0:  # Expression is excluded
             return Integer(1)                         # to avoid call to Maxima
 
-    def _evalf_try_(self, a, b, z):
+    def _evalf_try_(self, a, b, z, **kwargs):
         """
         Call :meth:`_evalf_` if one of the arguments is numerical and none
         of the arguments are symbolic.
@@ -357,16 +364,35 @@ class Hypergeometric(BuiltinFunction):
         # We need to override this for hypergeometric functions since
         # the first 2 arguments are tuples and the generic _evalf_try_
         # cannot handle that.
-        if not isinstance(a, tuple) or not isinstance(b, tuple):
+
+        # Note that a and b might be SR._force_pyobject-ed:
+        if isinstance(a, Expression) and a.operator() is tuple:
+            a = a.operands()
+        if isinstance(b, Expression) and b.operator() is tuple:
+            b = b.operands()
+        if (not isinstance(a, (tuple, list)) 
+            or not isinstance(b, (tuple, list))):
             return None
 
         args = list(a) + list(b) + [z]
-        if any(self._is_numerical(x) for x in args):
-            if not any(isinstance(x, Expression) for x in args):
-                p = get_coercion_model().common_parent(*args)
-                return self._evalf_(a, b, z, parent=p)
+        has_numeric = False
+        for i, x in enumerate(args):
+            if isinstance(x, Expression):
+                try:  # possibly coerced from a numerical number
+                    x = x.pyobject()
+                    args[i] = x
+                except TypeError:
+                    return None
 
-    def _evalf_(self, a, b, z, parent, algorithm=None):
+            x_is_numerical = self._is_numerical(x)
+            if x_is_numerical:
+                has_numeric = True
+
+        if has_numeric:
+            p = get_coercion_model().common_parent(*args)
+            return self._evalf_(tuple(a), tuple(b), z, parent=p, **kwargs)
+
+    def _evalf_(self, a, b, z, parent, algorithm=None, **kwargs):
         """
         TESTS::
 
@@ -376,10 +402,10 @@ class Hypergeometric(BuiltinFunction):
             2.7182818284590452353602874714
         """
         if not isinstance(a, tuple) or not isinstance(b, tuple):
-            raise TypeError("The first two parameters must be of type list")
+            raise TypeError("The first two parameters must be of type list or tuple")
         aa = [rational_param_as_tuple(c) for c in a]
         bb = [rational_param_as_tuple(c) for c in b]
-        return _mpmath_utils_call(_mpmath_hyper, aa, bb, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_hyper, aa, bb, z, parent=parent, **kwargs)
 
     def _tderivative_(self, a, b, z, *args, **kwargs):
         """
@@ -1001,14 +1027,14 @@ class Hypergeometric_M(BuiltinFunction):
             return Integer(1)
         return
 
-    def _evalf_(self, a, b, z, parent, algorithm=None):
+    def _evalf_(self, a, b, z, parent, algorithm=None, **kwargs):
         """
         TESTS::
 
             sage: hypergeometric_M(1,1,1).n()                                           # needs mpmath sage.symbolic
             2.71828182845905
         """
-        return _mpmath_utils_call(_mpmath_hyp1f1, a, b, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_hyp1f1, a, b, z, parent=parent, **kwargs)
 
     def _derivative_(self, a, b, z, diff_param):
         """
@@ -1107,14 +1133,14 @@ class Hypergeometric_U(BuiltinFunction):
     def _eval_(self, a, b, z, **kwargs):
         return
 
-    def _evalf_(self, a, b, z, parent, algorithm=None):
+    def _evalf_(self, a, b, z, parent, algorithm=None, **kwargs):
         """
         TESTS::
 
             sage: hypergeometric_U(1, 1, 1).n()                                         # needs mpmath sage.symbolic
             0.596347362323194
         """
-        return _mpmath_utils_call(_mpmath_hyperu, a, b, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_hyperu, a, b, z, parent=parent, **kwargs)
 
     def _derivative_(self, a, b, z, diff_param):
         """
