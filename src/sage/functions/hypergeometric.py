@@ -278,7 +278,7 @@ class Hypergeometric(BuiltinFunction):
         - ``b`` -- list or tuple of parameters
         - ``z`` -- number or symbolic expression
         - ``**kwargs`` -- other keyword arguments passed to `mpmath` when input
-            include numerical number while none is symbolic.
+            includes numerical number while none is symbolic
 
         EXAMPLES::
 
