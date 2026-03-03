@@ -5,8 +5,7 @@ AUTHORS:
 
 - Niles Johnson (2010-08): :issue:`3893`: ``random_element()`` should pass on ``*args`` and ``**kwds``.
 """
-
-################################################################################
+# #############################################################################
 #
 #       Copyright (C) 2009, The Sage Group -- http://www.sagemath.org/
 #
@@ -16,7 +15,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 #
-################################################################################
+# #############################################################################
 
 from sage.arith.misc import gcd
 from sage.modular.arithgroup.arithgroup_element import ArithmeticSubgroupElement
@@ -26,33 +25,12 @@ from sage.modular.modsym.p1list import lift_to_sl2z
 from sage.rings.integer_ring import ZZ
 
 
-def is_SL2Z(x):
-    r"""
-    Return ``True`` if x is the modular group `\SL_2(\ZZ)`.
-
-    EXAMPLES::
-
-        sage: from sage.modular.arithgroup.all import is_SL2Z
-        sage: is_SL2Z(SL2Z)
-        doctest:warning...
-        DeprecationWarning: The function is_SL2Z is deprecated; use 'isinstance(..., SL2Z_class)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        True
-        sage: is_SL2Z(Gamma0(6))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_SL2Z is deprecated; use 'isinstance(..., SL2Z_class)' instead.")
-    return isinstance(x, SL2Z_class)
-
-
 class SL2Z_class(Gamma0_class):
     r"""
     The full modular group `\SL_2(\ZZ)`, regarded as a congruence
     subgroup of itself.
     """
-
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The modular group `\SL_2(\Z)`.
 

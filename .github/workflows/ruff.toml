@@ -1,0 +1,60 @@
+# Configuration for GitHub Action running ruff
+extend = "../../pyproject.toml"  # Start with the project configuration
+
+[lint]
+# Remove rules that we do not yet follow across the whole codebase.
+# Roughly sorted by how easy these should be to fix.
+extend-ignore = [
+  "E742",    # 2 failures
+  "PLW3301", # 3 failures, should be easy to autofix
+  "PLW1510", # 18 failures, should be easy to autofix 
+  "PLC3002", # 3 failures
+  "PLE0302", # 3 failures
+  "E721",    # 5 failures
+  "PLR0124", # 7 failures
+  "PLW1508", # 8 failures
+  "PLR0402", # 90 failures, should be easy to autofix
+  "PLR5501", # 375 failures, should be easy to autofix
+  "PLC0206", # 39
+  "PLW0602", # 43 failures
+  "PLR1704", # 56 failures
+  "PLW0642", # 61 failures
+  "F841",    # 61 failures
+  "PLW0603", # 94 failures
+  "F403",    # 142 failures
+  "F405",    # 163 failures
+  "E731",    # 370 failures
+  "PLW0211", # 495 failures
+  "PLW2901", # 474 failures
+  "F821",    # 2271 failures
+  "E231",    # 49042 failures, could be autofixed but would change too many files for one PR
+  "E226",    # 29323 failures, could be autofixed but would change too many files for one PR
+  "F401",    # 583 failures
+  "I001",    # 2888 failures
+  "PLC0415", # 10515 failures, the ideal fix requires PEP 810
+
+  # The remaining failing rules were in ruff preview mode only when added to this file.
+  "PLW3201",
+  "PLR6301",
+  "E241",  	
+  "E203",  	
+  "E265",  	
+  "E201",  	
+  "E261",  	
+  "PLR6104",
+  "E202",  	
+  "PLR6201",
+  "E266",  	
+  "PLR1702",
+  "E262",  	
+  "PLW1514",
+  "PLC1901",
+  "PLC2801",
+  "E116",
+  "E114",
+  "PLC2701",
+  "E251",
+  "PLW0108",
+  "E302",
+  "PLE4703",
+]

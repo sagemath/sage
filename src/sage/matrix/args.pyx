@@ -4,15 +4,15 @@
 Helpers for creating matrices
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2018 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 cimport cython
 from cpython.sequence cimport PySequence_Fast
@@ -23,7 +23,7 @@ MatrixSpace = None
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.structure.coerce cimport (coercion_model,
-        is_numpy_type, py_scalar_parent)
+                                    is_numpy_type, py_scalar_parent)
 from sage.structure.element cimport Element, RingElement, Vector
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.misc_c import sized_iter
@@ -375,7 +375,8 @@ cdef class MatrixArgs:
         # Parse positional arguments (base, nrows, ncols, entries)
         # where each of them is optional.
         cdef Py_ssize_t argi = 0, argc = len(args)
-        if argi == argc: return
+        if argi == argc:
+            return
 
         # fast check for certain types of entries which cannot be
         # confused with a base ring or a number.
@@ -424,7 +425,8 @@ cdef class MatrixArgs:
         if self.entries is None:
             self.entries = args[argi]
             argi += 1
-            if argi == argc: return
+            if argi == argc:
+                return
 
         raise TypeError("too many arguments in matrix constructor")
 

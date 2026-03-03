@@ -64,7 +64,7 @@ class Gamma_class(CongruenceSubgroup):
     r"""
     The principal congruence subgroup `\Gamma(N)`.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -75,7 +75,7 @@ class Gamma_class(CongruenceSubgroup):
         """
         return "Congruence Subgroup Gamma(%s)" % self.level()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the \LaTeX representation of ``self``.
 
@@ -307,24 +307,7 @@ class Gamma_class(CongruenceSubgroup):
         return MatrixGroup([matrix(Zmod(self.level()), 2, 2, 1)])
 
 
-def is_Gamma(x):
-    r"""
-    Return ``True`` if x is a congruence subgroup of type Gamma.
-
-    EXAMPLES::
-
-        sage: from sage.modular.arithgroup.congroup_gamma import Gamma_class
-        sage: isinstance(Gamma0(13), Gamma_class)
-        False
-        sage: isinstance(Gamma(4), Gamma_class)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_Gamma is deprecated; use 'isinstance(..., Gamma_class)' instead.")
-    return isinstance(x, Gamma_class)
-
-
-def _lift_pair(U, V, N):
+def _lift_pair(U, V, N) -> tuple:
     r"""
     Utility function. Given integers ``U, V, N``, with `N \ge 1` and `{\rm
     gcd}(U, V, N) = 1`, return a pair `(u, v)` congruent to `(U, V) \bmod N`,
@@ -341,6 +324,9 @@ def _lift_pair(U, V, N):
         sage: from sage.modular.arithgroup.congroup_gamma import _lift_pair
         sage: _lift_pair(2,4,7)
         (9, 4)
+
+    TESTS::
+
         sage: _lift_pair(2,4,8) # don't do this
         Traceback (most recent call last):
         ...
@@ -349,12 +335,11 @@ def _lift_pair(U, V, N):
     u = U % N
     v = V % N
     if v == 0:
-        if u == 1 or u == N-1:
-            return (1,0)
-        else:
-            v = N
+        if u == 1 or u == N - 1:
+            return (1, 0)
+        v = N
     while gcd(u, v) > 1:
-        u = u+N
-        if u > N*v:
+        u += N
+        if u > N * v:
             raise ValueError("(U, V, N) must be coprime")
     return (u, v)

@@ -91,7 +91,7 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
 
         folder = Path(target.filename).parent
         python_files = sorted(
-            list(folder.glob("*.py")) + list(folder.glob('*.pxd')) + list(folder.glob('*.pyx'))
+            list(folder.glob("*.py")) + list(folder.glob('*.pxd')) + list(folder.glob('*.pyx')) + list(folder.glob('*.pyi'))
         )  # + list(folder.glob('*.pxd')) + list(folder.glob('*.h')))
 
         to_append: list[StringNode] = []
@@ -213,7 +213,7 @@ def update_doc_sources(self: Rewriter, visitor: AstPython):
         if not dirs and not files:
             folder.rmdir()
 
-    for folder, dirs, files  in doc_folder.walk():
+    for folder, dirs, files in doc_folder.walk():
         if folder.name in ignored_folders or folder == doc_folder:
             continue
         files_to_add = {}

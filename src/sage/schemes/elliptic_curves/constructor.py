@@ -437,7 +437,8 @@ class EllipticCurveFactory(UniqueFactory):
         if isinstance(x, str):
             # Interpret x as a Cremona or LMFDB label.
             from sage.databases.cremona import CremonaDatabase
-            x, data = CremonaDatabase().coefficients_and_data(x)
+            with CremonaDatabase() as D:
+                x, data = D.coefficients_and_data(x)
             # data is only valid for elliptic curves over QQ.
             if R not in (None, QQ):
                 data = {}
@@ -753,10 +754,11 @@ def coefficients_from_j(j, minimal_twist=True):
         Elist = [E for E in Elist if E.conductor() == min_cond]
         if len(Elist) > 1:
             from sage.databases.cremona import CremonaDatabase, parse_cremona_label
-            if min_cond <= CremonaDatabase().largest_conductor():
-                sorter = lambda E: parse_cremona_label(E.label(), numerical_class_code=True)
-            else:
-                sorter = lambda E: E.ainvs()
+            with CremonaDatabase() as D:
+                if min_cond <= D.largest_conductor():
+                    sorter = lambda E: parse_cremona_label(E.label(), numerical_class_code=True)
+                else:
+                    sorter = lambda E: E.ainvs()
             Elist.sort(key=sorter)
         return Sequence(Elist[0].ainvs())
 

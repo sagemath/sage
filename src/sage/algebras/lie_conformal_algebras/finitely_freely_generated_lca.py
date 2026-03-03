@@ -15,9 +15,10 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
+from sage.algebras.lie_conformal_algebras.freely_generated_lie_conformal_algebra import (
+    FreelyGeneratedLieConformalAlgebra,
+)
 from sage.categories.lie_conformal_algebras import LieConformalAlgebras
-from .freely_generated_lie_conformal_algebra import \
-    FreelyGeneratedLieConformalAlgebra
 from sage.misc.cachefunc import cached_method
 
 

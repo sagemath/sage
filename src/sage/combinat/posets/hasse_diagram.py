@@ -2947,6 +2947,35 @@ class HasseDiagram(DiGraph):
 
         return result
 
+    def spine(self) -> tuple[set, int]:
+        """
+        Return the spine and the maximum chain length.
+
+        The poset is assumed to be bounded. The spine is the union
+        of all longest maximal chains.
+
+        EXAMPLES::
+
+            sage: P = posets.PentagonPoset()
+            sage: P._hasse_diagram.spine()
+            ({0, 2, 3, 4}, 4)
+        """
+        n = self.cardinality()
+        spine_over: dict[tuple[set, int]] = dict()
+        for x in range(n):
+            ups = self.neighbors_in(x)
+            if not ups:
+                spine_over[x] = ({x}, 1)
+            else:
+                N = max(spine_over[y][1] for y in ups)
+                subset = {x}
+                for y in ups:
+                    S, length = spine_over[y]
+                    if length == N:
+                        subset.update(S)
+                spine_over[x] = (subset, N + 1)
+        return spine_over[n - 1]
+
     def is_convex_subset(self, S) -> bool:
         r"""
         Return ``True`` if `S` is a convex subset of the poset,

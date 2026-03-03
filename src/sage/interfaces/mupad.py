@@ -94,11 +94,15 @@ TESTS::
 
 import os
 
-from .expect import (Expect, ExpectElement, ExpectFunction,
-                    FunctionElement)
+from sage.env import DOT_SAGE
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
 from sage.interfaces.interface import AsciiArtString
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.env import DOT_SAGE
 from sage.misc.instancedoc import instancedoc
 
 COMMANDS_CACHE = '%s/mupad_commandlist_cache.sobj' % DOT_SAGE

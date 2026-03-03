@@ -29,14 +29,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import (PolynomialRing,
 from sage.rings.polynomial.polydict cimport ETuple
 
 
-def is_MPolynomialRing(x):
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38266,
-                       "The function is_MPolynomialRing is deprecated; "
-                       "use 'isinstance(..., MPolynomialRing_base)' instead.")
-    return isinstance(x, MPolynomialRing_base)
-
-
 cdef class MPolynomialRing_base(CommutativeRing):
     def __init__(self, base_ring, n, names, order):
         """

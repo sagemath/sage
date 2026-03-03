@@ -1101,7 +1101,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
                                       " virtual rays are not implemented yet")
         return SchemeMorphism_polynomial_toric_variety(self.parent(), polys)
 
-    def is_bundle(self):
+    def is_bundle(self) -> bool:
         r"""
         Check if ``self`` is a bundle.
 
@@ -1119,7 +1119,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         return self.fan_morphism().is_bundle()
 
-    def is_fibration(self):
+    def is_fibration(self) -> bool:
         r"""
         Check if ``self`` is a fibration.
 
@@ -1138,7 +1138,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         return self.fan_morphism().is_fibration()
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         Check if ``self`` is injective.
 
@@ -1168,7 +1168,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         return self.fan_morphism().is_injective()
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         Check if ``self`` is surjective.
 
@@ -1198,7 +1198,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         return self.fan_morphism().is_surjective()
 
-    def is_birational(self):
+    def is_birational(self) -> bool:
         r"""
         Check if ``self`` is birational.
 
@@ -1224,7 +1224,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         return self.fan_morphism().is_birational()
 
-    def is_dominant(self):
+    def is_dominant(self) -> bool:
         r"""
         Return whether ``self`` is dominant.
 

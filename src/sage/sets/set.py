@@ -1292,7 +1292,8 @@ class Set_object_enumerated(Set_object):
             sage: sEmpty.is_empty                                                       # needs sympy
             True
         """
-        from sympy import Set, EmptySet
+        from sympy import EmptySet, Set
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         if self.is_empty():
@@ -1563,6 +1564,7 @@ class Set_object_union(Set_object_binary):
             Union(Integers, Set(1/2))
         """
         from sympy import Union
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Union(self._X._sympy_(), self._Y._sympy_())
@@ -1777,6 +1779,7 @@ class Set_object_intersection(Set_object_binary):
             Range(2, 6, 1)
         """
         from sympy import Intersection
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Intersection(self._X._sympy_(), self._Y._sympy_())
@@ -1924,7 +1927,7 @@ class Set_object_difference(Set_object_binary):
             False
             sage: sqrt(2) in X     # since sqrt(2) is not a numerical approx            # needs sage.symbolic
             False
-            sage: sqrt(RR(2)) in X  # since sqrt(RR(2)) is a numerical approx           # needs sage.rings.real_interval_field
+            sage: sqrt(RR(2)) in X  # since sqrt(RR(2)) is a numerical approx
             True
             sage: 5/2 in X
             True
@@ -1957,6 +1960,7 @@ class Set_object_difference(Set_object_binary):
             EmptySet
         """
         from sympy import Complement
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Complement(self._X._sympy_(), self._Y._sympy_())
@@ -2096,7 +2100,7 @@ class Set_object_symmetric_difference(Set_object_binary):
             False
             sage: sqrt(2) in X      # since sqrt(2) is currently symbolic               # needs sage.symbolic
             False
-            sage: sqrt(RR(2)) in X  # since sqrt(RR(2)) is currently approximated       # needs sage.rings.real_interval_field
+            sage: sqrt(RR(2)) in X  # since sqrt(RR(2)) is currently approximated
             True
             sage: pi in X                                                               # needs sage.symbolic
             False
@@ -2124,6 +2128,7 @@ class Set_object_symmetric_difference(Set_object_binary):
                   Complement(Set(0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3), Integers))
         """
         from sympy import SymmetricDifference
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         return SymmetricDifference(self._X._sympy_(), self._Y._sympy_())

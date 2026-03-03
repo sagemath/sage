@@ -57,11 +57,20 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.structure.element import Element
-from sage.structure.richcmp import richcmp
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sage.categories.sets_cat import Sets
+from sage.structure.element import Element
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import UniqueRepresentation
+
+if TYPE_CHECKING:
+    from .divisor import FunctionFieldDivisor
+    from .function_field import FunctionField
+    from .ideal import FunctionFieldIdeal
 
 
 class FunctionFieldPlace(Element):
@@ -189,7 +198,7 @@ class FunctionFieldPlace(Element):
             raise TypeError("only left multiplication by integers is allowed")
         return other * self.divisor()
 
-    def _neg_(self):
+    def _neg_(self) -> FunctionFieldDivisor:
         """
         Return the negative of the prime divisor of this place.
 
@@ -206,7 +215,7 @@ class FunctionFieldPlace(Element):
         from .divisor import divisor
         return divisor(self.function_field(), {self: -1})
 
-    def _add_(self, other):
+    def _add_(self, other) -> FunctionFieldDivisor:
         """
         Return the divisor that is the sum of the place and ``other``.
 
@@ -221,10 +230,9 @@ class FunctionFieldPlace(Element):
              + Place (1/x, 1/x^3*y^2 + 1/x^2*y + 1)
              + Place (x, y)
         """
-        from .divisor import prime_divisor
-        return prime_divisor(self.function_field(), self) + other
+        return self.divisor() + other
 
-    def _sub_(self, other):
+    def _sub_(self, other) -> FunctionFieldDivisor:
         """
         Return the divisor that is this place minus ``other``.
 
@@ -238,10 +246,9 @@ class FunctionFieldPlace(Element):
             Place (1/x, 1/x^3*y^2 + 1/x)
              - Place (1/x, 1/x^3*y^2 + 1/x^2*y + 1)
         """
-        from .divisor import prime_divisor
-        return prime_divisor(self.function_field(), self) - other
+        return self.divisor() - other
 
-    def __radd__(self, other):
+    def __radd__(self, other) -> FunctionFieldDivisor:
         """
         Return the prime divisor of the place if ``other`` is zero.
 
@@ -262,15 +269,14 @@ class FunctionFieldPlace(Element):
             ...
             TypeError: unsupported operand parent(s) for +: ...
 
-        The reason is that the ``0`` is a Sage integer, for which
+        The reason is that the ``0`` is a Sage ``Integer``, for which
         the coercion system applies.
         """
         if other == 0:
-            from .divisor import prime_divisor
-            return prime_divisor(self.function_field(), self)
-        raise NotImplementedError
+            return self.divisor()
+        return NotImplemented
 
-    def function_field(self):
+    def function_field(self) -> FunctionField:
         """
         Return the function field to which the place belongs.
 
@@ -284,7 +290,7 @@ class FunctionFieldPlace(Element):
         """
         return self.parent()._field
 
-    def prime_ideal(self):
+    def prime_ideal(self) -> FunctionFieldIdeal:
         """
         Return the prime ideal associated with the place.
 
@@ -314,8 +320,8 @@ class FunctionFieldPlace(Element):
             sage: P.divisor()
             Place (x + 1, y)
         """
-        from .divisor import prime_divisor
-        return prime_divisor(self.function_field(), self, multiplicity)
+        from .divisor import divisor
+        return divisor(self.function_field(), {self: multiplicity})
 
 
 class PlaceSet(UniqueRepresentation, Parent):
@@ -364,7 +370,7 @@ class PlaceSet(UniqueRepresentation, Parent):
         """
         return "Set of places of {}".format(self._field)
 
-    def _element_constructor_(self, x):
+    def _element_constructor_(self, x) -> FunctionFieldPlace:
         """
         Create a place from ``x`` if ``x`` is a prime ideal.
 
@@ -385,7 +391,7 @@ class PlaceSet(UniqueRepresentation, Parent):
         else:
             raise ValueError("not a prime ideal")
 
-    def _an_element_(self):
+    def _an_element_(self) -> FunctionFieldPlace:
         """
         Return a place.
 
@@ -409,7 +415,7 @@ class PlaceSet(UniqueRepresentation, Parent):
                 break
         return p
 
-    def function_field(self):
+    def function_field(self) -> FunctionField:
         """
         Return the function field to which this place set belongs.
 

@@ -2217,7 +2217,7 @@ class ParallelogramPolyomino(ClonableList,
 
         if h >= len(widths) or h < 0:
             return 0
-        if lower_widths[h] <= w and w < lower_widths[h] + widths[h]:
+        if lower_widths[h] <= w < lower_widths[h] + widths[h]:
             return 1
         return 0
 

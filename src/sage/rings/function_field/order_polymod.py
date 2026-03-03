@@ -23,9 +23,9 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from .ideal import FunctionFieldIdeal
 from .ideal_polymod import (
-    FunctionFieldIdeal_polymod,
     FunctionFieldIdeal_global,
-    FunctionFieldIdealInfinite_polymod
+    FunctionFieldIdeal_polymod,
+    FunctionFieldIdealInfinite_polymod,
 )
 from .order import FunctionFieldMaximalOrder, FunctionFieldMaximalOrderInfinite
 
@@ -50,6 +50,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         FunctionFieldMaximalOrder.__init__(self, field, ideal_class)
 
         from sage.modules.free_module_element import vector
+
         from .function_field_polymod import FunctionField_integral
 
         if isinstance(field, FunctionField_integral):
@@ -270,6 +271,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             defined by y^2 + 6*x^3 + 6
         """
         from sage.matrix.constructor import matrix
+
         from .hermite_form_polynomial import reversed_hermite_form
 
         R = self._module_base_ring._ring
@@ -622,7 +624,9 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             Use Kummer's theorem to shortcut this code if possible, like as
             done in :meth:`FunctionFieldMaximalOrder_global.decomposition()`
         """
-        from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra
+        from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import (
+            FiniteDimensionalAlgebra,
+        )
         from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
 
@@ -929,6 +933,7 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
             # factors removed. For a fractional ideal, we also need to find
             # the largest factor x^m that divides the denominator.
             from sage.matrix.special import block_matrix
+
             from .hermite_form_polynomial import reversed_hermite_form
 
             d = ideal.denominator()

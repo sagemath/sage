@@ -606,7 +606,7 @@ class ChebyshevFunction(OrthogonalFunction):
             2*t^2 - 1
             sage: chebyshev_U(2, t)
             4*t^2 - 1
-            sage: parent(chebyshev_T(4, RIF(5)))                                        # needs sage.rings.real_interval_field
+            sage: parent(chebyshev_T(4, RIF(5)))
             Real Interval Field with 53 bits of precision
             sage: RR2 = RealField(5)                                                    # needs sage.rings.real_mpfr
             sage: chebyshev_T(100000, RR2(2))                                           # needs sage.rings.real_mpfr

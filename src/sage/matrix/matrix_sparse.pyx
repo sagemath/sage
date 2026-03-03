@@ -117,9 +117,10 @@ cdef class Matrix_sparse(matrix.Matrix):
 
             sage: m = matrix(2, range(6), sparse=True)
             sage: m.set_immutable()
-            sage: hash(m)
-            -154991009345361003  # 64-bit
-            -2003358827          # 32-bit
+            sage: hash32 = -2003358827
+            sage: hash64 = -154991009345361003
+            sage: hash(m) in [hash32, hash64]
+            True
 
         The sparse and dense hashes should agree::
 

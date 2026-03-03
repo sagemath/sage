@@ -10,25 +10,26 @@ Free modules
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.structure.indexed_generators import IndexedGenerators, parse_indices_names
-from sage.modules.module import Module
-from sage.rings.integer import Integer
-from sage.structure.element import parent
-from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
-from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.combinat.cartesian_product import CartesianProduct_iters
-from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.morphism import SetMorphism
-from sage.categories.category import Category
-from sage.categories.sets_cat import Sets
-from sage.categories.modules_with_basis import ModulesWithBasis
-from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
-from sage.categories.tensor import tensor
 import sage.data_structures.blas_dict as blas
+from sage.categories.category import Category
+from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
+from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.categories.morphism import SetMorphism
+from sage.categories.sets_cat import Sets
+from sage.categories.tensor import tensor
+from sage.combinat.cartesian_product import CartesianProduct_iters
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.modules.module import Module
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+from sage.rings.integer import Integer
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+from sage.structure.element import parent
+from sage.structure.indexed_generators import IndexedGenerators, parse_indices_names
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.typeset.ascii_art import AsciiArt, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, unicode_art
 
@@ -1510,7 +1511,6 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             sage: latex(tensor([F, F, G])) # indirect doctest
             F \otimes F \otimes G
         """
-        from sage.misc.latex import latex
         symb = " \\otimes "
         return symb.join("%s" % latex(module) for module in self._sets)
 

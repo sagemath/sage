@@ -43,31 +43,11 @@ from sage.structure.all import Sequence, SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,
                                     rich_to_bool, richcmp_not_equal)
 
-from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0, Gamma0_class # for Sturm bound given a character
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0, Gamma0_class  # for Sturm bound given a character
 from sage.modular.hecke.module import HeckeModule_free_module
 from sage.modular.modsym.element import ModularSymbolsElement
 
 lazy_import('sage.modular.modsym', 'hecke_operator')
-
-
-def is_ModularSymbolsSpace(x):
-    r"""
-    Return ``True`` if ``x`` is a space of modular symbols.
-
-    EXAMPLES::
-
-        sage: M = ModularForms(3, 2)
-        sage: sage.modular.modsym.space.is_ModularSymbolsSpace(M)
-        doctest:warning...
-        DeprecationWarning: The function is_ModularSymbolsSpace is deprecated; use 'isinstance(..., ModularForms)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        False
-        sage: sage.modular.modsym.space.is_ModularSymbolsSpace(M.modular_symbols(sign=1))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_ModularSymbolsSpace is deprecated; use 'isinstance(..., ModularForms)' instead.")
-    return isinstance(x, ModularSymbolsSpace)
 
 
 @richcmp_method
@@ -94,7 +74,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         self.__sign = sign
         HeckeModule_free_module.__init__(self, base_ring, group.level(), weight, category=category)
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         """
         Compare ``self`` and ``other``.
 
