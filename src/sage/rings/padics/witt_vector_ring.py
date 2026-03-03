@@ -340,6 +340,38 @@ class WittVectorRingFactory(UniqueFactory):
                 self._frob_polynomials[p].append((x_poly - p_poly) / p**(n-1))
 
     def _compute_binomial_table(self, prec, prime):
+        """
+        Auxiliary function for WittVectorRing_finotti, initializing the binomial table.
+
+        EXAMPLES::
+
+            sage: WittVectorRing._compute_binomial_table(3,2)
+            sage: WittVectorRing._binomial_table[2]
+            [[0], array([0, 1]), array([0, 1, 0, 1]), array([0, 1, 0, 1, 1, 1, 0, 1])]
+            sage: WittVectorRing._compute_binomial_table(5,2)
+            sage: WittVectorRing._binomial_table[2]
+            [[0],
+            array([0, 1]),
+            array([0, 1, 0, 1]),
+            array([0, 1, 0, 1, 1, 1, 0, 1]),
+            array([0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1]),
+            array([0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                    0, 1, 1, 1, 1, 1, 0, 1, 0, 1])]
+
+            sage: WW = WittVectorRing(GF(5), p=5, prec=2, algorithm="finotti")
+            sage: WittVectorRing._binomial_table
+            {2: [[0],
+            array([0, 1]),
+            array([0, 1, 0, 1]),
+            array([0, 1, 0, 1, 1, 1, 0, 1]),
+            array([0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1]),
+            array([0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                    0, 1, 1, 1, 1, 1, 0, 1, 0, 1])],
+            5: [[0],
+            array([0, 4, 3, 3, 4]),
+            array([0, 4, 3, 3, 4, 0, 1, 2, 2, 1, 1, 4, 3, 3, 4, 1, 1, 2, 2, 1, 0, 4,
+                    3, 3, 4])]}
+        """
         if prime in self._binomial_table: # Extend binomial table
             start = len(self._binomial_table[prime])
             table = self._binomial_table[prime]
