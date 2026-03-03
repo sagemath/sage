@@ -998,7 +998,7 @@ cdef class BuiltinFunction(Function):
 
         Other keyword arguments are passed to the relevant evaluation methods::
 
-            sage: airy_ai_simple(1000., algorithm='scipy')                               # needs scipy
+            sage: airy_ai_simple(1000., algorithm='scipy')
             0.000000000000000
 
         TESTS::
