@@ -2551,7 +2551,6 @@ class SingularGBLogPrettyPrinter:
             sage: s3.write("M[389,12]")
             Parallel reduction of 389 elements with 12 nonzero output elements.
         """
-        
         verbosity = self.verbosity
 
         if isinstance(s, bytes):
