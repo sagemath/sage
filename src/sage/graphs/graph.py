@@ -2721,15 +2721,15 @@ class Graph(GenericGraph):
     @doc_index("Graph properties")
     def is_arc_transitive(self):
         r"""
-        Check if ``self`` is an arc-transitive graph.
+        Check weather the graph is arc-transitive.
 
         A graph is arc-transitive if its automorphism group acts transitively on
         its pairs of adjacent vertices.
 
-        Equivalently, if there exists for any pair of edges :math:`uv,u'v'\in E(G)` an
-        automorphism :math:`\phi_1` of ``G`` such that :math:`\phi_1(u)=u'` and
-        :math:`\phi_1(v)=v'`, as well as another automorphism :math:`\phi_2` of ``G`` such
-        that :math:`\phi_2(u)=v'` and :math:`\phi_2(v)=u'`
+        Equivalently, if there exists for any pair of edges `uv, u'v' \in E(G)`
+        an automorphism `\phi_1` of `G` such that `\phi_1(u) = u'` and
+        `\phi_1(v) = v'`, as well as another automorphism `\phi_2` of `G`
+        such that `\phi_2(u) = v'` and `\phi_2(v) = u'`.
 
         .. SEEALSO::
 
