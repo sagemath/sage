@@ -303,7 +303,7 @@ class Hypergeometric(BuiltinFunction):
             sage: hypergeometric([2, 3, 4], [4, 1], 1)
             hypergeometric((2, 3, 4), (4, 1), 1)
             sage: parent(hypergeometric( # :issue:`27785`
-            ....:     [4.14 + 15*I, -3.14 + 15*I], 
+            ....:     [4.14 + 15*I, -3.14 + 15*I],
             ....:     [1. - 1.12e7*I], -500000, maxterms=1e6
             ....: ))
             Complex Field with 53 bits of precision
@@ -370,7 +370,7 @@ class Hypergeometric(BuiltinFunction):
             a = a.operands()
         if isinstance(b, Expression) and b.operator() is tuple:
             b = b.operands()
-        if (not isinstance(a, (tuple, list)) 
+        if (not isinstance(a, (tuple, list))
             or not isinstance(b, (tuple, list))):
             return None
 
