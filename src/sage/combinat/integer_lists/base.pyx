@@ -101,9 +101,11 @@ cdef class IntegerListsBackend():
             else:
                 raise TypeError("floor should be a list, tuple, or function")
             self.floor = Envelope(floor, sign=-1,
-                    min_part=self.min_part, max_part=self.max_part,
-                    min_slope=self.min_slope, max_slope=self.max_slope,
-                    min_length=self.min_length)
+                                  min_part=self.min_part,
+                                  max_part=self.max_part,
+                                  min_slope=self.min_slope,
+                                  max_slope=self.max_slope,
+                                  min_length=self.min_length)
 
         if isinstance(ceiling, Envelope):
             self.ceiling = ceiling
@@ -118,9 +120,11 @@ cdef class IntegerListsBackend():
             else:
                 raise ValueError("Unable to parse value of parameter ceiling")
             self.ceiling = Envelope(ceiling, sign=1,
-                    min_part=self.min_part, max_part=self.max_part,
-                    min_slope=self.min_slope, max_slope=self.max_slope,
-                    min_length=self.min_length)
+                                    min_part=self.min_part,
+                                    max_part=self.max_part,
+                                    min_slope=self.min_slope,
+                                    max_slope=self.max_slope,
+                                    min_length=self.min_length)
 
     def __richcmp__(self, other, int op):
         r"""
@@ -155,22 +159,21 @@ cdef class IntegerListsBackend():
         cdef IntegerListsBackend left = <IntegerListsBackend>self
         cdef IntegerListsBackend right = <IntegerListsBackend>other
         equal = (type(left) is type(other) and
-            left.min_length == right.min_length and
-            left.max_length == right.max_length and
-            left.min_sum == right.min_sum and
-            left.max_sum == right.max_sum and
-            left.min_slope == right.min_slope and
-            left.max_slope == right.max_slope and
-            left.floor == right.floor and
-            left.ceiling == right.ceiling)
+                 left.min_length == right.min_length and
+                 left.max_length == right.max_length and
+                 left.min_sum == right.min_sum and
+                 left.max_sum == right.max_sum and
+                 left.min_slope == right.min_slope and
+                 left.max_slope == right.max_slope and
+                 left.floor == right.floor and
+                 left.ceiling == right.ceiling)
         if equal:
             return op == Py_EQ or op == Py_LE or op == Py_GE
         if op == Py_EQ:
             return False
         if op == Py_NE:
             return True
-        else:
-            raise TypeError("IntegerListsBackend can only be compared for equality")
+        raise TypeError("IntegerListsBackend can only be compared for equality")
 
     def _repr_(self):
         """
@@ -458,8 +461,9 @@ cdef class Envelope():
 
         if min_length > 0:
             self(min_length-1)
-            for i in range(min_length-1,0,-1):
-                self.precomputed[i-1] = min(self.precomputed[i-1], self.precomputed[i] - self.min_slope)
+            for i in range(min_length-1, 0, -1):
+                self.precomputed[i-1] = min(self.precomputed[i-1],
+                                            self.precomputed[i] - self.min_slope)
 
     def __richcmp__(self, other, int op):
         r"""
@@ -485,20 +489,19 @@ cdef class Envelope():
         cdef Envelope left = <Envelope>self
         cdef Envelope right = <Envelope>other
         equal = (type(left) is type(other) and
-            left.sign == right.sign and
-            left.f == right.f and
-            left.f_limit_start == right.f_limit_start and
-            left.max_part == right.max_part and
-            left.min_slope == right.min_slope and
-            left.max_slope == right.max_slope)
+                 left.sign == right.sign and
+                 left.f == right.f and
+                 left.f_limit_start == right.f_limit_start and
+                 left.max_part == right.max_part and
+                 left.min_slope == right.min_slope and
+                 left.max_slope == right.max_slope)
         if equal:
             return op == Py_EQ or op == Py_LE or op == Py_GE
         if op == Py_EQ:
             return False
         if op == Py_NE:
             return True
-        else:
-            raise TypeError("Envelopes can only be compared for equality")
+        raise TypeError("Envelopes can only be compared for equality")
 
     def limit_start(self):
         """
@@ -691,7 +694,7 @@ cdef class Envelope():
 
 
 def _unpickle_Envelope(type t, _sign, _f, _f_limit_start, _precomputed,
-        _max_part, _min_slope, _max_slope):
+                       _max_part, _min_slope, _max_slope):
     """
     Internal function to support pickling for :class:`Envelope`.
 

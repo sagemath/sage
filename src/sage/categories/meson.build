@@ -141,6 +141,7 @@ py.install_sources(
   'magmatic_algebras.py',
   'manifolds.py',
   'map.pxd',
+  'map.pyi',
   'map.pyx',
   'matrix_algebras.py',
   'metric_spaces.py',
