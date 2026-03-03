@@ -130,7 +130,7 @@ class WittVectorRingFactory(UniqueFactory):
         Factory that creates and stores all truncated Witt vector rings.
 
         Send directly to the appropriate constructor of WittVectorRingClass for each algorithm.
-        Except: "algorithm=`standard`", where the Witt's Polynomials for `p` of `\ZZ` are cached,
+        Except: `algorithm="standard"`, where the Witt's Polynomials for `p` of `\ZZ` are cached,
         in order to be reused in the computation of the Witt Polynomials of any ring `R`,
         for the same prime `p`.
     """
@@ -222,7 +222,7 @@ class WittVectorRingFactory(UniqueFactory):
             case 'finotti':
                 child = WittVectorRing_finotti
                 if p in self._binomial_table:
-                    if prec > len(self._binomial_table[p]):
+                    if prec >= len(self._binomial_table[p]):
                         self._compute_binomial_table(prec, p)
                 else:
                     self._compute_binomial_table(prec, p)
@@ -302,12 +302,15 @@ class WittVectorRingFactory(UniqueFactory):
         if p in self._witt_polynomials: # We want to extend, not create
             start = len(self._witt_polynomials[p][0])
             start_prod = start
+            start_frob = max(start,2)
             self._witt_polynomials[p][0] += [0]*(prec-start)
             self._witt_polynomials[p][1] += [0]*(prec-start)
         else:
             start = 0
             start_prod = 1
+            start_frob = 2
             self._witt_polynomials[p] = [[0]*(prec), [x_vars[0] * y_vars[0]] + [0]*(prec-1)]
+            self._frob_polynomials[p] = []
 
         for n in range(start, prec):
             s_n = x_vars[n] + y_vars[n]
@@ -327,10 +330,10 @@ class WittVectorRingFactory(UniqueFactory):
         R = PolynomialRing(ZZ, x_var_names, implementation=implementation)
         x_vars = R.gens()
 
-        self._frob_polynomials[p] = []
         if not prec.is_one():
-            self._frob_polynomials[p] = [x_vars[0]**p + p*x_vars[1]]
-            for n in range(2, prec):
+            if self._frob_polynomials[p] == []:
+                self._frob_polynomials[p] = [x_vars[0]**p + p*x_vars[1]]
+            for n in range(start_frob, prec):
                 x_poly = sum([p**i * x_vars[i]**(p**(n-i)) for i in range(n+1)])
                 p_poly = sum([p**i * self._frob_polynomials[p][i]**(p**(n-1-i))
                               for i in range(n-1)])
