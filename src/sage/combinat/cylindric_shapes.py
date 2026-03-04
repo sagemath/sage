@@ -300,6 +300,91 @@ class CylindricShape(Element):
         new_vals[idx] -= 1
         return self.parent()(tuple(new_vals))
 
+    def complement(self):
+        r"""
+        Return the complement shape in the same parent.
+
+        If ``self`` has fundamental-domain values `(\mu_1,\dots,
+        \mu_d)`, the complement has values `(L - \mu_d,\dots, L -
+        \mu_1)` in the same parent (d, L).
+
+        OUTPUT:
+
+        - a :class:`CylindricShape` in the same parent
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CS = CylindricShapes(3, 2)
+            sage: s = CS((2, 1, 0))
+            sage: s.complement()
+            [2, 1, 0]
+            sage: t = CS((2, 2, 1))
+            sage: t.complement()
+            [1, 0, 0]
+
+        Complement is an involution::
+
+            sage: (t.complement()).complement() == t
+            True
+        """
+        P = self.parent()
+        L = P._L
+        return P(L - v for v in reversed(self._values))
+
+    def conjugate(self):
+        r"""Return the conjugate shape in the parent with `d` and `L`
+        swapped.
+
+        If ``self`` has fundamental-domain values `(\mu_1,\dots,
+        \mu_d)`, the conjugate shape `\mu'` is in the parent with `L`
+        and `d` swapped and has values defined by
+        .. MATH::
+
+            \mu'_j = \max\{ i \in \{1,\dots,d\} : \mu_i \ge j \}
+
+        Equivalently, because `\mu` is weakly decreasing, `\mu'_j` is
+        the number of parts of `\mu` that are at least `j`.
+
+        OUTPUT:
+
+        - a :class:`CylindricShape` in :class:`CylindricShapes(L, d)`
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CS = CylindricShapes(3, 2)
+            sage: s = CS((2, 1, 0))
+            sage: sc = s.conjugate()
+            sage: sc, sc.parent()
+            ([2, 1], Cylindric Shapes of period (2, 3))
+
+        Conjugation is an involution::
+
+            sage: s2 = sc.conjugate()
+            sage: s2, s2.parent()
+            ([2, 1, 0], Cylindric Shapes of period (3, 2))
+            sage: s2 == s
+            True
+        """
+        P = self.parent()
+        d = P._d
+        L = P._L
+        new_P = CylindricShapes(L, d)
+        vals = list(self._values)
+        # Compute counts: for each j=1..L, how many vals are >= j
+        new_vals = []
+        for j in range(1, L + 1):
+            cnt = 0
+            for v in vals:
+                if v >= j:
+                    cnt += 1
+                else:
+                    # vals is weakly decreasing, so we can break
+                    break
+            new_vals.append(cnt)
+        return new_P(new_vals)
+
 
 class CylindricShapes(UniqueRepresentation, Parent):
     r"""
