@@ -678,29 +678,22 @@ class WittVectorRingClass(Parent):
         self._prod_polynomials = [None]*prec
         self._frob_polynomials = [None]*(prec-1)
 
-        # Because the stored Witt/Frobenius polynomials can belong to a ring of higher
-        # precision than `prec`, we need to use indirect coersion (with 2 rings) because
-        # there there is no endowed homomorphism from ZZ[X1,X2,Y1,Y2] to R[X1,Y1]
-        # we need to create ZZ[X1,Y1] in between.
-        if len(WittVectorRing._witt_polynomials[p][0]) > prec and coefficient_ring is not ZZ:
-            Q = PolynomialRing(ZZ, var_names)
-            S = PolynomialRing(coefficient_ring, var_names)
-            for n in range(prec):
-                self._sum_polynomials[n] = S(Q(WittVectorRing._witt_polynomials[p][0][n]))
-                self._prod_polynomials[n] = S(Q(WittVectorRing._witt_polynomials[p][1][n]))
-            R = PolynomialRing(ZZ, var_names[:prec])
-            x_vars = R.gens()
-            S = PolynomialRing(coefficient_ring, x_vars)
-            for n in range(prec-1):
-                self._frob_polynomials[n] = S(R(WittVectorRing._frob_polynomials[p][n]))
-        else:
-            S = PolynomialRing(coefficient_ring, var_names)
-            for n in range(prec):
-                self._sum_polynomials[n] = S(WittVectorRing._witt_polynomials[p][0][n])
-                self._prod_polynomials[n] = S(WittVectorRing._witt_polynomials[p][1][n])
-            R = PolynomialRing(coefficient_ring, var_names[:prec])
-            for n in range(prec-1):
-                self._frob_polynomials[n] = R(WittVectorRing._frob_polynomials[p][n])
+        # Because the stored Witt/Frobenius polynomials can belong to a ring of
+        # higher precision than `prec`, we need to use indirect coersion
+        # (with 2 rings) because there there is no endowed homomorphism from
+        # ZZ[X1,X2,Y1,Y2] to R[X1,Y1] we need to create ZZ[X1,Y1] in between.
+        # Direct coersion when possible has been tried, but performance
+        # is negligeable to justify its implementation.
+        Q = PolynomialRing(ZZ, var_names)
+        S = PolynomialRing(coefficient_ring, var_names)
+        for n in range(prec):
+            self._sum_polynomials[n] = S(Q(WittVectorRing._witt_polynomials[p][0][n]))
+            self._prod_polynomials[n] = S(Q(WittVectorRing._witt_polynomials[p][1][n]))
+        R = PolynomialRing(ZZ, var_names[:prec])
+        x_vars = R.gens()
+        S = PolynomialRing(coefficient_ring, x_vars)
+        for n in range(prec-1):
+            self._frob_polynomials[n] = S(R(WittVectorRing._frob_polynomials[p][n]))
 
     def _latex_(self) -> str:
         r"""
