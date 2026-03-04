@@ -165,6 +165,7 @@ from sage.misc.persist import register_unpickle_override
 from sage.misc.cachefunc import cached_method
 from sage.misc.converting_dict import KeyConvertingDict
 from sage.misc.method_decorator import MethodDecorator
+from sage.misc.sage_eval import sage_eval
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.infinity import Infinity
@@ -185,18 +186,27 @@ except ImportError:
     singular_gb_standard_options = libsingular_gb_standard_options = MethodDecorator
 
 
-def converter_polynomial_libraries_to_sage(gb_lib, ring):
+def polynomial_list_to_sage(gb_lib:list, ring):
 
     """
-    
-        New function added to transform sequence of multivariate polynomials from libraries C to SageMath object
+    New function added to transform sequence of multivariate 
+    polynomials from libraries C to SageMath object. The 
+    constant limit may be chosen differently. It represents 
+    the size of the character string to transform by sage_eval at 
+    each step.
 
-        The constant LIMIT may be chosen differently. It represents the size of the character string to transform by eval at each step.
-    
+    INPUT:
+
+    - ``gb_list`` -- a list of multivariate polynomial typed by 
+    external librairies for Groebner bases computation
+
+    - ``ring`` -- Multivariate polynomial ring 
+
     """
+
     gb_sage = []
 
-    LIMIT = 10000 
+    limit = 10000
 
     for polynomial in gb_lib:
 
@@ -206,26 +216,24 @@ def converter_polynomial_libraries_to_sage(gb_lib, ring):
         i = 0
         j = 0
 
-        if len_pol <= LIMIT:
-            """
-                If the string representing the polynomial has a size inferior to LIMIT then use eval.
-            """
-            gb_sage.append(eval(new_pol, gens_dict))
+        if len_pol <= limit:
+
+            # If the string representing the polynomial has a size inferior to limit then use eval.
+
+            gb_sage.append(sage_eval(new_pol, gens_dict))
 
         else:
-            """
-                The case the polynomial length as string is superior to the the LIMIT.
-            """
-            i=LIMIT
+            # The case the polynomial length as string is superior to the the limit.
+
+            i=limit
             j=0
             new_pol_sage = ring(0)
-            """
-                Cut the polynomial in part of size around LIMIT by identifying the nearest operation.
-                
-                We deal also with the extremity cases.
-            """
+            # Cut the polynomial in part of size around limit by identifying the nearest operation.
+            # We deal also with the extremity cases.
+
             while i != len_pol:
                 i_saved = i
+
                 while new_pol[i] != '+' and new_pol[i] != '-':
                     i+=1
                     if i == len_pol:
@@ -233,27 +241,25 @@ def converter_polynomial_libraries_to_sage(gb_lib, ring):
                         while new_pol[i] != '+' and new_pol[i] != '-':
                             i-=1
 
-                """
-                    Construct the Sage polynomial
-                """
+                # Construct the Sage polynomial
                 operation = new_pol[i]
-                new_pol_sage += eval(new_pol[j:i], gens_dict)
+                new_pol_sage += sage_eval(new_pol[j:i], gens_dict)
                 if operation == '+':
                     j=i+1
+
                 elif operation == '-':
                     j=i
+
                 else:
-                    raise "Not accepted character"
-                
-                """
-                    Construct the next part
-                """
-                
-                if i+LIMIT >= len_pol:
-                    new_pol_sage += eval(new_pol[j:], gens_dict)
+                    raise ValueError(f"Not accepted character {operation}")
+
+                # Construct the next part
+                if i+limit >= len_pol:
+                    new_pol_sage += sage_eval(new_pol[j:], gens_dict)
                     i = len_pol
+
                 else:
-                    i+=LIMIT
+                    i+=limit
             gb_sage.append(new_pol_sage)
 
     return PolynomialSequence(gb_sage, ring, immutable=True)
