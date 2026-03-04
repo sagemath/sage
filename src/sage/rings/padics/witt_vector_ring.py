@@ -678,8 +678,8 @@ class WittVectorRingClass(Parent):
         self._prod_polynomials = [None]*prec
         self._frob_polynomials = [None]*(prec-1)
 
-        # Because the stored witt/frobenius polynomials can belong to a Ring of higher
-        # precision than `prec`, we need to use Indirect Coersion (with 2 rings) because
+        # Because the stored Witt/Frobenius polynomials can belong to a ring of higher
+        # precision than `prec`, we need to use indirect coersion (with 2 rings) because
         # there there is no endowed homomorphism from ZZ[X1,X2,Y1,Y2] to R[X1,Y1]
         # we need to create ZZ[X1,Y1] in between.
         if len(WittVectorRing._witt_polynomials[p][0]) > prec and coefficient_ring is not ZZ:
