@@ -28,6 +28,7 @@ py.install_sources(
   'core.py',
   'counting.py',
   'cyclic_sieving_phenomenon.py',
+  'cylindric_shapes.py',
   'debruijn_sequence.pyx',
   'decorated_permutation.py',
   'degree_sequences.pyx',
