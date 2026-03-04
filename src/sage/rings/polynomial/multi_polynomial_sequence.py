@@ -197,11 +197,10 @@ def polynomial_list_to_sage(gb_lib:list, ring):
 
     INPUT:
 
-    - ``gb_list`` -- a list of multivariate polynomial typed by 
-    external librairies for Groebner bases computation
+    - ``gb_list`` -- a list of multivariate polynomial typed by
+      external librairies for Groebner bases computation
 
-    - ``ring`` -- Multivariate polynomial ring 
-
+    - ``ring`` -- Multivariate polynomial ring
     """
 
     gb_sage = []
