@@ -11,8 +11,6 @@ AUTHORS:
 .. TODO::
 
     - provide examples for the P and Q-symbol in the skew case
-    - implement a method providing a visualization of the growth
-      diagram with all labels, perhaps as LaTeX code
     - when shape is given, check that it is compatible with filling
       or labels
     - optimize rules, mainly for :class:`RuleRSK` and
@@ -1639,6 +1637,286 @@ class GrowthDiagram(SageObject):
         self._in_labels = labels
         self._filling = F
 
+    def _latex_(self):
+        r"""
+        Return a `\LaTeX` representation of ``self``.
+
+        The latex output of the growth diagram is given using TikZ as follows:
+
+        - The skew region drawn as a grid of light boxes,
+        - The filling values at cell centers,
+        - The labels at lattice vertices (converted via ``rule.normalize_vertex``),
+          scaled to fit within about one third of a cell.
+
+        EXAMPLES::
+
+            sage: pi = [2, 1, 5, 9, 3, 10, 4, 7, 8, 6]
+            sage: view(GrowthDiagram.rules.RSK()(pi))  # not tested
+            sage: view(GrowthDiagram.rules.Sylvester()(pi))  # not tested
+            sage: view(GrowthDiagram.rules.BinaryWord()(pi))  # not tested
+            sage: view(GrowthDiagram.rules.Domino()(pi))  # not tested
+
+        Edge labels are also displayed::
+
+            sage: LLMS3 = GrowthDiagram.rules.LLMS(3)
+            sage: G = LLMS3([4,1,2,6,3,5])
+            sage: view(G)  # not tested
+
+        TESTS::
+
+            sage: G = GrowthDiagram.rules.RSK()([1])
+            sage: latex(G)
+            ...
+            \end{tikzpicture}
+
+        Check that non-hashable labels work::
+
+            sage: class RuleNonHashable(GrowthDiagram.rules.RSK):
+            ....:     def normalize_vertex(self, v):
+            ....:         return v
+            sage: G = RuleNonHashable()([1])
+            sage: latex(G)
+            ...
+            \end{tikzpicture}
+
+        Check that it is not necessary that both the forward and the
+        backward rules are implemented::
+
+            sage: from sage.combinat.growth import Rule
+            sage: class RulePascal(Rule):
+            ....:     zero = 0
+            ....:     has_multiple_edges = True
+            ....:     zero_edge = None
+            ....:     def rank(self, v): return v
+            ....:     def vertices(self, n): return [n]
+            ....:     def is_P_edge(self, v, w): return [0] if w == v + 1 else []
+            ....:     def is_Q_edge(self, v, w): return list(range(w)) if w == v+1 else []
+            ....:     def backward_rule(self, y, g, z, h, x):
+            ....:         if g is None:
+            ....:             return (0, x, None, 0)
+            ....:         if h is None:
+            ....:             return (None, y, g, 0)
+            ....:         if g == 0:
+            ....:             return (None, y, None, 1)
+            ....:         else:
+            ....:             return (0, x-1, g-1, 0)
+
+            sage: G = RulePascal()(labels=[0,0,1,1,2,0,1,1,2,0,1,0,0])
+            sage: G
+              0  0  1
+              0  1  0
+              1  0
+            sage: view(G)  # not tested
+        """
+        from sage.misc.latex import latex
+        latex.add_package_to_preamble_if_available("tikz")
+
+        # Visual parameters (later to be routed through GlobalOptions)
+        x_unit = "0.9em"
+        y_unit = "0.9em"
+
+        # Coordinate transforms (draw top row at the top)
+        def y_rect(j):
+            return h - 1 - j
+
+        def y_vert(y):
+            return h - y
+
+        if not self._lambda:
+            return (f"\\begin{{tikzpicture}}[baseline=(BL.base),x={x_unit},y={y_unit}]\n"
+                    "  \\coordinate (BL) at (0,0);\n"
+                    "\\end{tikzpicture}")
+
+        h = len(self._lambda)
+        rule = self.rule
+        V = {}  # (x, y) -> raw vertex label
+        E = {}  # (x, y) -> raw edge label
+        try:
+            forward = rule.forward_rule
+        except AttributeError:
+            forward = None
+
+        if forward is not None:
+            # Forward sweep: start from boundary near origin
+            labels = list(self._in_labels)  # local copy
+            if rule.has_multiple_edges:
+                for j in range(h):
+                    for c in range(self._mu[j] + h - j, self._lambda[j] + h - j):
+                        i = c - h + j
+                        NW = labels[2*c - 2]
+                        SW = labels[2*c]
+                        SE = labels[2*c + 2]
+                        mW = labels[2*c - 1]  # m for middle
+                        mS = labels[2*c + 1]
+                        (labels[2*c - 1],
+                         labels[2*c],
+                         labels[2*c + 1]) = forward(labels[2*c - 2],
+                                                    labels[2*c - 1],
+                                                    labels[2*c],
+                                                    labels[2*c + 1],
+                                                    labels[2*c + 2],
+                                                    self._filling.get((i, j), 0))
+                        mN = labels[2*c - 1]
+                        NE = labels[2*c]
+                        mE = labels[2*c + 1]
+                        V[(i,   j  )] = SW
+                        V[(i+1, j  )] = SE
+                        V[(i,   j+1)] = NW
+                        V[(i+1, j+1)] = NE
+                        E[(i,   j+0.5)] = mW
+                        E[(i+1, j+0.5)] = mE
+                        E[(i+0.5,   j)] = mS
+                        E[(i+0.5, j+1)] = mN
+
+            else:
+                for j in range(h):
+                    for c in range(self._mu[j] + h - j, self._lambda[j] + h - j):
+                        i = c - h + j
+                        NW = labels[c - 1]
+                        SW = labels[c]
+                        SE = labels[c + 1]
+                        labels[c] = forward(labels[c - 1],
+                                            labels[c],
+                                            labels[c + 1],
+                                            self._filling.get((i, j), 0))
+                        NE = labels[c]
+                        V[(i,   j  )] = SW
+                        V[(i+1, j  )] = SE
+                        V[(i,   j+1)] = NW
+                        V[(i+1, j+1)] = NE
+
+        else:
+            # Backward sweep fallback: start from boundary opposite the origin
+            labels = list(self._out_labels)  # local copy
+            if rule.has_multiple_edges:
+                for r in range(h):
+                    j = h - r - 1
+                    for c in range(self._lambda[j] + r, self._mu[j] + r, -1):
+                        i = c - r - 1
+                        NW = labels[2*c - 2]
+                        NE = labels[2*c]
+                        SE = labels[2*c + 2]
+                        mN = labels[2*c - 1]  # m for middle
+                        mE = labels[2*c + 1]
+                        (labels[2*c - 1],
+                         labels[2*c],
+                         labels[2*c + 1], v) = rule.backward_rule(labels[2*c - 2],
+                                                                  labels[2*c - 1],
+                                                                  labels[2*c],
+                                                                  labels[2*c + 1],
+                                                                  labels[2*c + 2])
+                        mW = labels[2*c - 1]
+                        SW = labels[2*c]
+                        mS = labels[2*c + 1]
+                        V[(i,   j  )] = SW
+                        V[(i+1, j  )] = SE
+                        V[(i,   j+1)] = NW
+                        V[(i+1, j+1)] = NE
+                        E[(i,   j+0.5)] = mW
+                        E[(i+1, j+0.5)] = mE
+                        E[(i+0.5,   j)] = mS
+                        E[(i+0.5, j+1)] = mN
+            else:
+                for r in range(h):
+                    j = h - r - 1
+                    for c in range(self._lambda[j] + r, self._mu[j] + r, -1):
+                        i = c - r - 1
+                        NW = labels[c - 1]
+                        NE = labels[c]
+                        SE = labels[c + 1]
+                        labels[c], v = rule.backward_rule(labels[c - 1],
+                                                          labels[c],
+                                                          labels[c + 1])
+                        SW = labels[c]
+                        V[(i,   j  )] = SW
+                        V[(i+1, j  )] = SE
+                        V[(i,   j+1)] = NW
+                        V[(i+1, j+1)] = NE
+
+        # Target size inside a 1x1 cell (in ems, consistent with x=..., y=...):
+        target_em = 0.80
+        default_scale = 0.33  # fallback if measurement degenerates
+
+        tikz = []
+        tikz.append("\\newcommand{\\GDwrap}[1]{$\\displaystyle #1$}")
+
+        tikz.append("\\newlength\\GDWmax\\newlength\\GDHmax\\newlength\\GDtmp")
+        tikz.append("\\setlength\\GDWmax{0pt}\\setlength\\GDHmax{0pt}")
+
+        tikz.append("\\newlength\\GDtargetW\\newlength\\GDtargetH")
+        tikz.append("\\setlength\\GDtargetW{" + f"{target_em:.3f}" + "em}")
+        tikz.append("\\setlength\\GDtargetH{" + f"{target_em:.3f}" + "em}")
+
+        coord_dict = {}  # coordinates in the tikz grid to box_id "GDlbl@1", "GDlbl@2", ...
+        all_labels = []  # distinct (possibly non-hashable) labels
+        def add_label(coords, label):
+            try:
+                k = all_labels.index(label)
+                box_id = f"GDlbl@{k}"
+            except ValueError:
+                k = len(all_labels)
+                all_labels.append(label)
+                box_id = f"GDlbl@{k}"
+                tikz.append(f"\\expandafter\\newsavebox\\csname {box_id}\\endcsname")
+                tikz.append(f"\\expandafter\\sbox\\csname {box_id}\\endcsname{{\\GDwrap{{{latex(label)}}}}}")
+                # width max
+                tikz.append(f"\\setlength\\GDtmp{{\\wd\\csname {box_id}\\endcsname}}")
+                tikz.append("\\ifdim\\GDtmp>\\GDWmax\\setlength\\GDWmax{\\GDtmp}\\fi")
+                # height+depth max
+                tikz.append(f"\\setlength\\GDtmp{{\\ht\\csname {box_id}\\endcsname}}")
+                tikz.append(f"\\addtolength\\GDtmp{{\\dp\\csname {box_id}\\endcsname}}")
+                tikz.append("\\ifdim\\GDtmp>\\GDHmax\\setlength\\GDHmax{\\GDtmp}\\fi")
+
+            coord_dict[coords] = box_id
+
+        for coords, raw_label in V.items():
+            add_label(coords, rule.normalize_vertex(raw_label))
+
+        for coords, raw_label in E.items():
+            if raw_label != rule.zero_edge:
+                add_label(coords, raw_label)
+
+        # determine scale = min(targetW/Wmax, targetH/Hmax, 1)
+        tikz.append("\\ifdim\\GDWmax<1pt \\setlength\\GDWmax{1pt}\\fi")
+        tikz.append("\\ifdim\\GDHmax<1pt \\setlength\\GDHmax{1pt}\\fi")
+        tikz.append("\\pgfmathsetlengthmacro{\\GDWmaxNum}{\\GDWmax}")
+        tikz.append("\\pgfmathsetlengthmacro{\\GDHmaxNum}{\\GDHmax}")
+        tikz.append("\\pgfmathsetlengthmacro{\\GDtargetWNum}{\\GDtargetW}")
+        tikz.append("\\pgfmathsetlengthmacro{\\GDtargetHNum}{\\GDtargetH}")
+        tikz.append("\\pgfmathsetmacro{\\GDscaleW}{\\GDtargetWNum/\\GDWmaxNum}")
+        tikz.append("\\pgfmathsetmacro{\\GDscaleH}{\\GDtargetHNum/\\GDHmaxNum}")
+        tikz.append("\\pgfmathparse{min(\\GDscaleW,\\GDscaleH,1)}")
+        tikz.append("\\xdef\\GDscale{\\pgfmathresult}")
+
+        # Begin outer TikZ picture
+        tikz.append(f"\\begin{{tikzpicture}}[baseline=(BL.base),x={x_unit},y={y_unit}]")
+        tikz.append("  \\coordinate (BL) at (0,0);")
+        # Region boxes
+        tikz.append("  \\begin{scope}[draw=black!40,line width=0.2pt]")
+
+        for j in range(h):
+            for i in range(self._mu[j], self._lambda[j]):
+                y = y_rect(j)
+                tikz.append(f"    \\draw ({i},{y}) rectangle ++(1,1);")
+        tikz.append("  \\end{scope}")
+
+        # Filling values at cell centers
+        if self._filling:
+            tikz.append("  % filling values")
+            tikz.append("  \\begin{scope}[black]")
+            for (i, j), v in self._filling.items():
+                if v != 0:
+                    y = y_rect(j)
+                    tikz.append(f"    \\node at ({i+0.5},{y+0.5}) {{$ {latex(v)} $}};")
+            tikz.append("  \\end{scope}")
+
+        tikz.append("  \\begin{scope}[every node/.style={inner sep=0.2pt,outer sep=0pt}]")
+        tikz.extend(f"\\node at ({x},{y_vert(y)}) {{\\scalebox{{\\GDscale}}{{\\usebox{{\\csname {box_id}\\endcsname}}}}}};"
+                    for (x, y), box_id in coord_dict.items())
+        tikz.append("  \\end{scope}")
+        tikz.append("\\end{tikzpicture}")
+        return "\n".join(tikz)
+
 ######################################################################
 # ABC for rules of growth diagrams
 ######################################################################
@@ -2346,7 +2624,7 @@ class RuleLLMS(Rule):
         sage: LLMS3.vertices(4)
         3-Cores of length 4
 
-    Let us check example of Figure 1 in [LS2007]_.  Note that,
+    Let us check the example of Figure 1 in [LS2007]_.  Note that,
     instead of passing the rule to :class:`GrowthDiagram`, we can
     also call the rule to create growth diagrams::
 
