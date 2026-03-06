@@ -64,13 +64,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-
 from sage.categories.homset import Hom
 from sage.categories.rings import Rings
+from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class FunctionFieldValuationRing(UniqueRepresentation, Parent):

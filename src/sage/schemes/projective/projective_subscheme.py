@@ -27,7 +27,6 @@ from sage.categories.homset import Hom
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import RationalField
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.projective.projective_morphism import SchemeMorphism_polynomial_projective_subscheme_field
 
@@ -897,7 +896,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         - ``X`` -- a subscheme of projective space. At present, ``X`` is
           required to be an irreducible and reduced hypersurface defined
-          over `\QQ` or a finite field.
+          over a number field (including `\QQ`) or a finite field.
 
         OUTPUT: the dual of ``X`` as a subscheme of the dual projective space
 
@@ -913,6 +912,19 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             Closed subscheme of Projective Space of dimension 2 over Rational Field
              defined by:
               y0^2 + y1^2 + y2^2
+
+        We can compute dual of curves over number fields::
+
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = CyclotomicField(3)
+            sage: P.<x, y, z> = ProjectiveSpace(2, K)
+            sage: C = Curve((y * z - (a + 1) * x^2)^2 - (a^5 + a^3) * x^3 * z)
+            sage: C = Curve((y * z - (a + 1) * x^2)^2 - (a^5 + 2 * a^3) * x^3 * z)
+            sage: C.dual()
+            Closed subscheme of Projective Space of dimension 2 over
+              Cyclotomic Field of order 3 and degree 2 defined by:
+            16*y0^4 + (8*a + 4)*y0^3*y1 + (-128*a - 128)*y0^2*y1*y2 +
+            (-144*a + 144)*y0*y1^2*y2 + (81*a + 81)*y1^3*y2 + (256*a)*y1^2*y2^2
 
         The dual of the twisted cubic curve in projective 3-space is a singular
         quartic surface. In the following example, we compute the dual of this
@@ -937,6 +949,22 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             Ideal (z^2 - 3*y*w, y*z - 9*x*w, y^2 - 3*x*z) of Multivariate
             Polynomial Ring in x, y, z, w over Rational Field
 
+        After a change of variables we compute the dual of another twisted
+        cubic::
+
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = CyclotomicField(5)
+            sage: R.<x, y, z, w> = K[]
+            sage: P.<x, y, z, w> = ProjectiveSpace(3, K)
+            sage: I = R.ideal(y^2*z^2 - 4*(a + 1)*x*z^3 - 4*y^3*w + 18*(a + 1)*x*y*z*w - 27*(a + 1)^2*x^2*w^2)
+            sage: X = P.subscheme(I)
+            sage: X.dual()                                                              # needs sage.libs.singular
+            Closed subscheme of Projective Space of dimension 3 over
+             Cyclotomic Field of order 5 and degree 4 defined by:
+                y2^2 - y1*y3,
+                y1*y2 + (a^3 + a)*y0*y3,
+                y1^2 + (a^3 + a)*y0*y2
+
         An example over a finite field::
 
             sage: R = PolynomialRing(GF(61), 'a,b,c')
@@ -956,18 +984,19 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: X.dual()
             Traceback (most recent call last):
             ...
-            NotImplementedError: base ring must be QQ or a finite field
+            NotImplementedError: base ring must be QQ, a number field or a finite field
         """
         from sage.libs.singular.function_factory import ff
+        from sage.rings.number_field.number_field_base import NumberField
 
         K = self.base_ring()
-        if not (isinstance(K, RationalField) or K in Fields().Finite()):
-            raise NotImplementedError("base ring must be QQ or a finite field")
-        I = self.defining_ideal()
-        m = I.ngens()
-        n = I.ring().ngens() - 1
-        if (m != 1 or (n < 1) or I.is_zero()
-                or I.is_trivial() or not I.is_prime()):
+        if not (isinstance(K, NumberField) or K in Fields().Finite()):
+            raise NotImplementedError("base ring must be QQ, a number field  or a finite field")
+        J = self.defining_ideal()
+        m = J.ngens()
+        n = J.ring().ngens() - 1
+        if (m != 1 or (n < 1) or J.is_zero()
+                or J.is_trivial() or not J.is_prime()):
             raise NotImplementedError("At the present, the method is only"
                                       " implemented for irreducible and"
                                       " reduced hypersurfaces and the given"
@@ -980,11 +1009,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         x = R.variable_names()
         y = Rd.variable_names()
         S = PolynomialRing(K, x + y + ('t',))
-        if S.has_coerce_map_from(I.ring()):
+        if S.has_coerce_map_from(J.ring()):
             T = PolynomialRing(K, 'w', n + 1)
-            I_S = (I.change_ring(T)).change_ring(S)
+            I_S = (J.change_ring(T)).change_ring(S)
         else:
-            I_S = I.change_ring(S)
+            I_S = J.change_ring(S)
         f_S = I_S.gens()[0]
         z = S.gens()
         J = I_S

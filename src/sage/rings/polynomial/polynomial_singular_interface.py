@@ -202,7 +202,7 @@ class PolynomialRing_singular_repr:
             sage: R.<x,y> = PolynomialRing(RealField(100))                              # needs sage.rings.real_mpfr
             sage: singular(R)                                                           # needs sage.libs.singular sage.rings.real_mpfr
             polynomial ring, over a field, global ordering
-            // coefficients: Float()...
+            // coefficients: Float(...
             // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y

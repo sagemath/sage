@@ -662,7 +662,7 @@ class Order(Parent, sage.rings.abc.Order):
         """
         return self.ideal(left)
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         r"""
         Return ``False`` (because an order is never a field).
 
@@ -1206,7 +1206,7 @@ class Order(Parent, sage.rings.abc.Order):
         else:
             raise NotImplementedError('non-maximal orders are not yet supported')
 
-    def is_suborder(self, other):
+    def is_suborder(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are both orders in the
         same ambient number field and ``self`` is a subset of ``other``.
@@ -1819,7 +1819,7 @@ class Order_absolute(Order):
 
     absolute_discriminant = discriminant
 
-    def is_maximal(self, p=None):
+    def is_maximal(self, p=None) -> bool:
         """
         Return whether this is the maximal order.
 
@@ -2476,7 +2476,7 @@ class Order_relative(Order):
 
         return RelativeOrder(left._K, left._absolute_order & right._absolute_order, check=False)
 
-    def is_maximal(self, p=None):
+    def is_maximal(self, p=None) -> bool:
         """
         Return whether this is the maximal order.
 
@@ -2632,7 +2632,7 @@ class Order_relative(Order):
         """
         return self.absolute_order().discriminant()
 
-    def is_suborder(self, other):
+    def is_suborder(self, other) -> bool:
         """
         Return ``True`` if ``self`` is a subset of the order ``other``.
 
