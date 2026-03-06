@@ -377,8 +377,20 @@ cdef class LazyImport():
             sage: my_integer = LazyImport('sage.rings.integer', 'Integer')
             sage: my_integer.sqrt is Integer.sqrt
             True
+
+        TESTS::
+
+            sage: from sage.misc.lazy_import import LazyImport
+            sage: LazyT = LazyImport('sage.combinat.tableau', 'Tableau')
+            sage: hasattr(LazyT, '_repr_svg_')
+            False
         """
-        return getattr(self.get_object(), attr)
+        obj = self.get_object()
+
+        if isinstance(obj, type) and attr.startswith('_repr_') and attr.endswith('_') and len(attr) > len('_repr_'):
+            raise AttributeError(f"type object '{obj.__name__}' has no attribute '{attr}'")
+
+        return getattr(obj, attr)
 
     # We need to wrap all the slot methods, as they are not forwarded
     # via getattr.
