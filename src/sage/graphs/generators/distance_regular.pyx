@@ -1895,9 +1895,9 @@ def _intersection_array_from_graph(G):
 
         sage: from sage.graphs.generators.distance_regular import \
         ....: _intersection_array_from_graph
-        sage: _intersection_array_from_graph(graphs.FosterGraph())                      # needs networkx
+        sage: _intersection_array_from_graph(graphs.FosterGraph())
         [3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3]
-        sage: graphs.FosterGraph().is_distance_regular(True)                            # needs networkx
+        sage: graphs.FosterGraph().is_distance_regular(True)
         ([3, 2, 2, 2, 2, 1, 1, 1, None], [None, 1, 1, 1, 1, 2, 2, 2, 3])
         sage: graphs.DartGraph().is_distance_regular()
         False

@@ -159,7 +159,7 @@ lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldEl
 _NumberFields = NumberFields()
 
 
-def is_NumberFieldHomsetCodomain(codomain, category=None):
+def is_NumberFieldHomsetCodomain(codomain, category=None) -> bool:
     """
     Return whether ``codomain`` is a valid codomain for a
     :class:`NumberFieldHomset` in ``category``.
@@ -1160,14 +1160,10 @@ class CyclotomicFieldFactory(UniqueFactory):
         if n == 0:
             from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             return UniversalCyclotomicField()
-        else:
-            return NumberField_cyclotomic(n, names, embedding=embedding)
+        return NumberField_cyclotomic(n, names, embedding=embedding)
 
 
 CyclotomicField = CyclotomicFieldFactory("sage.rings.number_field.number_field.CyclotomicField")
-
-
-is_NumberField = number_field_base.is_NumberField
 
 
 class NumberField_generic(WithEqualityById, number_field_base.NumberField):
@@ -2489,7 +2485,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         raise NotImplementedError
 
-    def is_relative(self):
+    def is_relative(self) -> bool:
         """
         EXAMPLES::
 
@@ -2667,7 +2663,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         else:
             return res
 
-    def is_totally_real(self):
+    def is_totally_real(self) -> bool:
         """
         Return ``True`` if ``self`` is totally real, and ``False`` otherwise.
 
@@ -2686,7 +2682,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         return self.signature()[1] == 0
 
-    def is_totally_imaginary(self):
+    def is_totally_imaginary(self) -> bool:
         """
         Return ``True`` if ``self`` is totally imaginary, and ``False`` otherwise.
 
@@ -2705,7 +2701,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         return self.signature()[0] == 0
 
-    def is_CM(self):
+    def is_CM(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a CM field (i.e., a totally imaginary
         quadratic extension of a totally real field).
@@ -3667,10 +3663,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                 [[1], [2, 2], [3, 3], [4, 4, 4], [], [6, 6, 6, 6], [], [8, 8, 8, 8], [9, 9, 9], []]
         """
         hnf_ideals = self.pari_nf().ideallist(bound)
-        d = {}
-        for i in range(bound):
-            d[i+1] = [self.ideal(hnf) for hnf in hnf_ideals[i]]
-        return d
+        return {i + 1: [self.ideal(hnf) for hnf in hnf_ideals[i]]
+                for i in range(bound)}
 
     def primes_above(self, x, degree=None):
         r"""
@@ -6175,7 +6169,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         ret.set_immutable()
         return ret
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``True`` since a number field is a field.
 
@@ -6188,7 +6182,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         return True
 
     @cached_method
-    def is_galois(self):
+    def is_galois(self) -> bool:
         r"""
         Return ``True`` if this number field is a Galois extension of
         `\QQ`.
@@ -12273,7 +12267,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         else:
             return NumberField_generic.discriminant(self, v)
 
-    def is_galois(self):
+    def is_galois(self) -> bool:
         """
         Return ``True`` since all quadratic fields are automatically Galois.
 
@@ -12708,11 +12702,11 @@ def refine_embedding(e, prec=None):
     # Now we determine which is an extension of the old one; this
     # relies on the fact that coercing a high-precision root into a
     # field with lower precision will equal the lower-precision root!
-    diffs = [(RC(ee(K.gen()))-old_root).abs() for ee in elist]
+    diffs = [(RC(ee(K.gen())) - old_root).abs() for ee in elist]
     return elist[min(zip(diffs, count()))[1]]
 
 
-def is_real_place(v):
+def is_real_place(v) -> bool:
     r"""
     Return ``True`` if `v` is real, ``False`` if `v` is complex.
 

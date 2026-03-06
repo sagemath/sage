@@ -145,7 +145,6 @@ It is an error to create a formula with bad syntax::
 
 from . import boolformula
 from . import logicparser
-from sage.misc.superseded import deprecated_function_alias
 
 
 def formula(s):
@@ -259,7 +258,7 @@ def get_formulas(*statements):
     return formulas
 
 
-def consistent(*formulas):
+def consistent(*formulas) -> bool:
     r"""
     Determine if the formulas are logically consistent.
 
@@ -305,7 +304,3 @@ def consistent(*formulas):
 
     # if conjunction is a contradiction, the formulas are inconsistent
     return not conjunction.is_contradiction()
-
-
-# define function ``valid_consequence`` for backward compatibility
-valid_consequence = deprecated_function_alias(28052, boolformula.is_consequence)

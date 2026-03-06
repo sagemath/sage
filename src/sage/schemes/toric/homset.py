@@ -310,7 +310,7 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
         Set of rational points of 2-d CPR-Fano toric variety covered by 4 affine patches
     """
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return whether there are finitely many points.
 
