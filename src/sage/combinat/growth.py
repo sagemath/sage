@@ -1706,7 +1706,9 @@ class GrowthDiagram(SageObject):
               0  0  1
               0  1  0
               1  0
-            sage: view(G)  # not tested
+            sage: latex(G)
+            ...
+            \end{tikzpicture}
         """
         from sage.misc.latex import latex
         latex.add_package_to_preamble_if_available("tikz")
@@ -1737,101 +1739,44 @@ class GrowthDiagram(SageObject):
             forward = None
 
         if forward is not None:
-            # Forward sweep: start from boundary near origin
             labels = list(self._in_labels)  # local copy
-            if rule.has_multiple_edges:
-                for j in range(h):
-                    for c in range(self._mu[j] + h - j, self._lambda[j] + h - j):
-                        i = c - h + j
-                        NW = labels[2*c - 2]
-                        SW = labels[2*c]
-                        SE = labels[2*c + 2]
-                        mW = labels[2*c - 1]  # m for middle
-                        mS = labels[2*c + 1]
-                        (labels[2*c - 1],
-                         labels[2*c],
-                         labels[2*c + 1]) = forward(labels[2*c - 2],
-                                                    labels[2*c - 1],
-                                                    labels[2*c],
-                                                    labels[2*c + 1],
-                                                    labels[2*c + 2],
-                                                    self._filling.get((i, j), 0))
-                        mN = labels[2*c - 1]
-                        NE = labels[2*c]
-                        mE = labels[2*c + 1]
-                        V[(i,   j  )] = SW
-                        V[(i+1, j  )] = SE
-                        V[(i,   j+1)] = NW
-                        V[(i+1, j+1)] = NE
-                        E[(i,   j+0.5)] = mW
-                        E[(i+1, j+0.5)] = mE
-                        E[(i+0.5,   j)] = mS
-                        E[(i+0.5, j+1)] = mN
 
-            else:
-                for j in range(h):
-                    for c in range(self._mu[j] + h - j, self._lambda[j] + h - j):
-                        i = c - h + j
-                        NW = labels[c - 1]
-                        SW = labels[c]
-                        SE = labels[c + 1]
-                        labels[c] = forward(labels[c - 1],
-                                            labels[c],
-                                            labels[c + 1],
-                                            self._filling.get((i, j), 0))
+            for j in range(h):
+                for c in range(self._mu[j] + h - j, self._lambda[j] + h - j):
+                    i = c - h + j
+                    fill_val = self._filling.get((i, j), 0)
+                    if rule.has_multiple_edges:
+                        NW, mW, SW, mS, SE = labels[2*c-2 : 2*c+3]
+                        labels[2*c-1 : 2*c+2] = forward(NW, mW, SW, mS, SE, fill_val)
+                        mN, NE, mE = labels[2*c-1 : 2*c+2]
+
+                        E[i, j+0.5], E[i+1, j+0.5], E[i+0.5, j], E[i+0.5, j+1] = mW, mE, mS, mN
+                    else:
+                        NW, SW, SE = labels[c-1 : c+2]
+                        labels[c] = forward(NW, SW, SE, fill_val)
                         NE = labels[c]
-                        V[(i,   j  )] = SW
-                        V[(i+1, j  )] = SE
-                        V[(i,   j+1)] = NW
-                        V[(i+1, j+1)] = NE
+
+                    V[i, j], V[i+1, j], V[i, j+1], V[i+1, j+1] = SW, SE, NW, NE
 
         else:
-            # Backward sweep fallback: start from boundary opposite the origin
             labels = list(self._out_labels)  # local copy
-            if rule.has_multiple_edges:
-                for r in range(h):
-                    j = h - r - 1
-                    for c in range(self._lambda[j] + r, self._mu[j] + r, -1):
-                        i = c - r - 1
-                        NW = labels[2*c - 2]
-                        NE = labels[2*c]
-                        SE = labels[2*c + 2]
-                        mN = labels[2*c - 1]  # m for middle
-                        mE = labels[2*c + 1]
-                        (labels[2*c - 1],
-                         labels[2*c],
-                         labels[2*c + 1], v) = rule.backward_rule(labels[2*c - 2],
-                                                                  labels[2*c - 1],
-                                                                  labels[2*c],
-                                                                  labels[2*c + 1],
-                                                                  labels[2*c + 2])
-                        mW = labels[2*c - 1]
-                        SW = labels[2*c]
-                        mS = labels[2*c + 1]
-                        V[(i,   j  )] = SW
-                        V[(i+1, j  )] = SE
-                        V[(i,   j+1)] = NW
-                        V[(i+1, j+1)] = NE
-                        E[(i,   j+0.5)] = mW
-                        E[(i+1, j+0.5)] = mE
-                        E[(i+0.5,   j)] = mS
-                        E[(i+0.5, j+1)] = mN
-            else:
-                for r in range(h):
-                    j = h - r - 1
-                    for c in range(self._lambda[j] + r, self._mu[j] + r, -1):
-                        i = c - r - 1
-                        NW = labels[c - 1]
-                        NE = labels[c]
-                        SE = labels[c + 1]
-                        labels[c], v = rule.backward_rule(labels[c - 1],
-                                                          labels[c],
-                                                          labels[c + 1])
+
+            for r in range(h):
+                j = h - r - 1
+                for c in range(self._lambda[j] + r, self._mu[j] + r, -1):
+                    i = c - r - 1
+                    if rule.has_multiple_edges:
+                        NW, mN, NE, mE, SE = labels[2*c-2 : 2*c+3]
+                        labels[2*c-1], labels[2*c], labels[2*c+1], _ = rule.backward_rule(NW, mN, NE, mE, SE)
+                        mW, SW, mS = labels[2*c-1 : 2*c+2]
+
+                        E[i, j+0.5], E[i+1, j+0.5], E[i+0.5, j], E[i+0.5, j+1] = mW, mE, mS, mN
+                    else:
+                        NW, NE, SE = labels[c-1 : c+2]
+                        labels[c] = rule.backward_rule(NW, NE, SE)[0]
                         SW = labels[c]
-                        V[(i,   j  )] = SW
-                        V[(i+1, j  )] = SE
-                        V[(i,   j+1)] = NW
-                        V[(i+1, j+1)] = NE
+
+                    V[i, j], V[i+1, j], V[i, j+1], V[i+1, j+1] = SW, SE, NW, NE
 
         # Target size inside a 1x1 cell (in ems, consistent with x=..., y=...):
         target_em = 0.80
@@ -1849,6 +1794,7 @@ class GrowthDiagram(SageObject):
 
         coord_dict = {}  # coordinates in the tikz grid to box_id "GDlbl@1", "GDlbl@2", ...
         all_labels = []  # distinct (possibly non-hashable) labels
+
         def add_label(coords, label):
             try:
                 k = all_labels.index(label)
