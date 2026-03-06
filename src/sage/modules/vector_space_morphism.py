@@ -415,11 +415,12 @@ def linear_transformation(arg0, arg1=None, arg2=None, side="left"):
 
         sage: B = matrix(Integers(7), [[1, 2, 1], [3, 5, 6]])
         sage: rho = linear_transformation(B, side='right')
+        sage: rho.side()
+        'right'
         sage: rho
-        Vector space morphism represented by the matrix:
-        [1 3]
-        [2 5]
-        [1 6]
+        Vector space morphism represented as left-multiplication by the matrix:
+        [1 2 1]
+        [3 5 6]
         Domain: Vector space of dimension 3 over Ring of integers modulo 7
         Codomain: Vector space of dimension 2 over Ring of integers modulo 7
         sage: rho([2, 4, 6])
@@ -715,11 +716,13 @@ def linear_transformation(arg0, arg1=None, arg2=None, side="left"):
                 msg = "matrix must have entries from a field, or a ring with a fraction field, not {0}"
                 raise TypeError(msg.format(R))
         if side == "right":
-            arg0 = arg0.transpose()
-            side = "left"
-        arg2 = arg0
-        arg0 = VectorSpace(R, arg2.nrows())
-        arg1 = VectorSpace(R, arg2.ncols())
+            arg2 = arg0
+            arg0 = VectorSpace(R, arg2.ncols())
+            arg1 = VectorSpace(R, arg2.nrows())
+        else:
+            arg2 = arg0
+            arg0 = VectorSpace(R, arg2.nrows())
+            arg1 = VectorSpace(R, arg2.ncols())
     elif isinstance(arg0, Module) and arg0.base_ring().is_field():
         if not (isinstance(arg1, Module) and arg1.base_ring().is_field()):
             msg = "if first argument is a vector space, then second argument must be a vector space, not {0}"
@@ -743,8 +746,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side="left"):
     # Pass on matrices, Python functions and lists to homspace call
     # Convert symbolic function here, to a matrix
     if isinstance(arg2, Matrix):
-        if side == "right":
-            arg2 = arg2.transpose()
+        pass
     elif isinstance(arg2, (list, tuple)):
         pass
     elif isinstance(arg2, Vector_callable_symbolic_dense):
@@ -786,7 +788,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side="left"):
 
     # arg2 now compatible with homspace H call method
     # __init__ will check matrix sizes versus domain/codomain dimensions
-    return H(arg2)
+    return H(arg2, side=side)
 
 
 class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
