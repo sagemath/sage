@@ -12,6 +12,7 @@ from sage.misc.functional import log
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import infinity, unsigned_infinity
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
 from sage.structure.element import Expression, parent as s_parent
@@ -1109,6 +1110,23 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         1
         sage: harmonic_number(x, 1)                                                     # needs sage.symbolic
         harmonic_number(x)
+
+    The limit at infinity converges only for ``Re(m) > 1``::
+
+        sage: harmonic_number(oo, 2)                                                    # needs sage.symbolic
+        1/6*pi^2
+        sage: harmonic_number(oo, 1)                                                    # needs sage.symbolic
+        +Infinity
+        sage: harmonic_number(oo, 1/2)                                                  # needs sage.symbolic
+        +Infinity
+
+    For complex exponents, divergence at ``Re(m) <= 1`` is reported as
+    unsigned infinity::
+
+        sage: harmonic_number(oo, 1 + 2*I)                                               # needs sage.symbolic
+        Infinity
+        sage: harmonic_number(oo, 2 + 2*I)                                               # needs sage.symbolic
+        zeta(2*I + 2)
     """
 
     def __init__(self):
@@ -1171,6 +1189,30 @@ class Function_harmonic_number_generalized(BuiltinFunction):
             sage: harmonic_number(int(3), int(3))                                       # needs sage.symbolic
             1.162037037037037
         """
+        if z == infinity:
+            if m == 0:
+                return z
+            if m == 1:
+                return infinity
+            if m in QQ:
+                if m <= 1:
+                    return infinity
+                return zeta(m)
+
+            # Handle symbolic numeric constants with exact real/imag parts.
+            # (Example: 1 + 2*I has Re(m)=1, so the defining series diverges.)
+            try:
+                re = m.real()
+                im = m.imag()
+            except AttributeError:
+                re = im = None
+            if re in QQ and im in QQ:
+                if re <= 1:
+                    if im == 0:
+                        return infinity
+                    return unsigned_infinity
+                return zeta(m)
+
         if m == 0:
             return z
         elif m == 1:
@@ -1199,6 +1241,42 @@ class Function_harmonic_number_generalized(BuiltinFunction):
             return parent(z)
         elif m == 1:
             return harmonic_m1._evalf_(z, parent, algorithm)
+
+        if z == infinity:
+            # For z = +Infinity, H_{z,m} is the limit of sum_{k=1}^z k^{-m},
+            # which converges iff Re(m) > 1.
+            try:
+                real_part = m.real()
+            except AttributeError:
+                real_part = None
+
+            real_value = None
+            if real_part is not None:
+                try:
+                    real_value = float(real_part)
+                except TypeError:
+                    pass
+
+            if real_value is not None and real_value <= 1:
+                try:
+                    imag_part = m.imag()
+                except AttributeError:
+                    imag_part = None
+
+                imag_value = 0
+                if imag_part is not None:
+                    try:
+                        imag_value = float(imag_part)
+                    except TypeError:
+                        # If we cannot reliably determine whether Im(m)=0,
+                        # fall back to unsigned infinity (divergence in magnitude).
+                        return unsigned_infinity
+
+                if imag_value == 0:
+                    return infinity
+                return unsigned_infinity
+
+            return zeta(m)
 
         return zeta(m) - hurwitz_zeta(m, z + 1)
 

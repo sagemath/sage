@@ -20,6 +20,7 @@ import math
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc import increase_recursion_limit
 from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import infinity, minus_infinity, unsigned_infinity
 from sage.symbolic.function import GinacFunction, BuiltinFunction
 
 lazy_import('sage.functions.gamma', 'psi')
@@ -31,6 +32,7 @@ lazy_import('sage.rings.complex_mpfr', ['ComplexField', 'ComplexNumber'])
 lazy_import('sage.rings.polynomial.polynomial_real_mpfr_dense', 'PolynomialRealDense')
 lazy_import('sage.rings.real_double', 'RDF')
 lazy_import('sage.rings.real_mpfr', ['RR', 'RealField', 'RealNumber'])
+lazy_import('sage.rings.rational_field', 'QQ')
 
 lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
 lazy_import('mpmath', 'zeta', as_='_mpmath_zeta')
@@ -248,15 +250,67 @@ class Function_HurwitzZeta(BuiltinFunction):
             sage: hurwitz_zeta(0, x)
             -x + 1/2
 
-            sage: hurwitz_zeta(3, 0.5)                                                  # needs mpmath
+            sage: # needs mpmath
+            sage: hurwitz_zeta(3, 0.5)
             8.41439832211716
+
+            sage: # needs sage.symbolic
+            sage: hurwitz_zeta(11/10, oo)
+            0
+            sage: hurwitz_zeta(11/10, unsigned_infinity)
+            0
+            sage: hurwitz_zeta(11/10, -oo)
+            0
+            sage: hurwitz_zeta(1 + 2*I, oo)
+            hurwitz_zeta(2*I + 1, +Infinity)
+
+            sage: # needs sage.symbolic
+            sage: hurwitz_zeta(0, oo)
+            -Infinity
+            sage: hurwitz_zeta(0, -oo)
+            +Infinity
+            sage: hurwitz_zeta(-4, oo)
+            -Infinity
+            sage: hurwitz_zeta(-4, -oo)
+            +Infinity
+            sage: hurwitz_zeta(-4, unsigned_infinity)
+            hurwitz_zeta(-4, Infinity)
         """
         if x == 1:
             return zeta(s)
+        if s in ZZ and s <= 0 and (x == infinity or x == minus_infinity or x == unsigned_infinity):
+            # For s <= 0, hurwitz_zeta(s, x) is a polynomial in x of degree 1 - s
+            # with leading term -(1/(1-s))*x^(1-s). At x = ±Infinity this diverges,
+            # and evaluating the full polynomial can lead to indeterminate expressions.
+            if x == unsigned_infinity:
+                return self(s, x, hold=True)
+            degree = 1 - s
+            if x == infinity:
+                return minus_infinity
+            # x == -Infinity
+            if degree % 2 == 0:
+                return minus_infinity
+            return infinity
+        if s in ZZ and s <= 0:
+            return -bernoulli_polynomial(x, -s + 1) / (-s + 1)
+        if x == infinity or x == unsigned_infinity or x == minus_infinity:
+            if s in ZZ:
+                if s > 1:
+                    return ZZ.zero()
+                return self(s, x, hold=True)
+            if s in QQ:
+                if s > 1:
+                    return ZZ.zero()
+                return self(s, x, hold=True)
+            try:
+                re = s.real()
+            except AttributeError:
+                return self(s, x, hold=True)
+            if re > 1:
+                return ZZ.zero()
+            return self(s, x, hold=True)
         if s in ZZ and s > 1:
             return ((-1) ** s) * psi(s - 1, x) / factorial(s - 1)
-        elif s in ZZ and s <= 0:
-            return -bernoulli_polynomial(x, -s + 1) / (-s + 1)
         else:
             return
 
@@ -271,6 +325,18 @@ class Function_HurwitzZeta(BuiltinFunction):
             sage: hurwitz_zeta(11/10, 1 + 1j).n()                                       # needs mpmath sage.rings.real_mpfr
             9.85014164287853 - 1.06139499403981*I
         """
+        if x == infinity or x == unsigned_infinity or x == minus_infinity:
+            # Avoid calling mpmath at infinity; return 0 only when Re(s) > 1.
+            # Keep the exact Bernoulli polynomial cases correct by letting _eval_ handle them.
+            if s in ZZ and s <= 0:
+                return None
+            try:
+                re = s.real()
+            except AttributeError:
+                return self(s, x, hold=True)
+            if re > 1:
+                return ZZ.zero()
+            return self(s, x, hold=True)
         return _mpmath_utils_call(_mpmath_zeta, s, x, parent=parent)
 
     def _derivative_(self, s, x, diff_param):
@@ -333,6 +399,14 @@ def hurwitz_zeta(s, x, **kwargs):
         8.41439832211716
         sage: hurwitz_zeta(3, 0.5)                                                      # needs mpmath
         8.41439832211716
+
+    Behavior at infinity::
+
+        sage: # needs sage.symbolic
+        sage: hurwitz_zeta(11/10, oo)
+        0
+        sage: hurwitz_zeta(0, oo)
+        -Infinity
 
     REFERENCES:
 
