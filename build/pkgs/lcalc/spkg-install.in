@@ -1,2 +1,3 @@
 cd src
+sdh_configure --enable-openmp
 sdh_make_install
