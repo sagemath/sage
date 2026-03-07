@@ -109,7 +109,7 @@ REFERENCES:
          Advances in Mathematics, Volume 365, 13 May 2020.
 
 .. [ACN2023] Ali Al Zoobi, David Coudert, Nicolas Nisse
-             Finding the k Shortest Simple Paths: Time and Space trade-offs
+             *Finding the k Shortest Simple Paths: Time and Space trade-offs*
              ACM Journal of Experimental Algorithmics, 2023, 28, pp.23 :doi:`10.1145/3626567`.
 
 .. [ALL2002] \P. Auger, G. Labelle and P. Leroux, *Combinatorial
@@ -121,8 +121,8 @@ REFERENCES:
          Proc. Amer. Math. Soc. Volume 148, Number 12, 2020, pp. 5091--5107.
 
 .. [ADKF1970] \V. Arlazarov, E. Dinic, M. Kronrod,
-              and I. Faradzev. 'On Economical Construction of the
-              Transitive Closure of a Directed Graph.'
+              and I. Faradzev. *On Economical Construction of the
+              Transitive Closure of a Directed Graph*.
               Dokl. Akad. Nauk. SSSR No. 194 (in Russian), English
               Translation in Soviet Math Dokl. No. 11, 1970.
 
@@ -197,7 +197,7 @@ REFERENCES:
                  *Camellia: A 128-bit block cipher suitable for multiple
                  platforms - Design and analysis*; in SAC, (2000), pp. 39-56.
 
-.. [Aj1996] \M. Ajtai. Generating hard instances of lattice problems
+.. [Aj1996] \M. Ajtai. *Generating hard instances of lattice problems*
             (extended abstract). STOC, pp. 99--108, ACM, 1996.
 
 .. [AK1994] \S. Ariki and K. Koike.
@@ -223,8 +223,8 @@ REFERENCES:
              *The modular branching rule for affine Hecke algebras of type A*.
              Adv. Math. 228:481-526, 2011.
 
-.. [Aki1980] \J. Akiyama. and G. Exoo and F. Harary. Covering and packing in
-             graphs. III: Cyclic and acyclic invariants. Mathematical Institute
+.. [Aki1980] \J. Akiyama. and G. Exoo and F. Harary. *Covering and packing in
+             graphs. III: Cyclic and acyclic invariants*. Mathematical Institute
              of the Slovak Academy of Sciences. Mathematica Slovaca vol 30, n 4,
              pages 405--417, 1980
 
@@ -297,8 +297,8 @@ REFERENCES:
             Vol. 7, pp. 305-314, 1986.
             :doi:`10.1137/0607033`.
 
-.. [Ap1997] \T. Apostol, Modular functions and Dirichlet series in
-            number theory, Springer, 1997 (2nd ed), section 3.7--3.9.
+.. [Ap1997] \T. Apostol, *Modular functions and Dirichlet series in
+            number theory*, Springer, 1997 (2nd ed), section 3.7--3.9.
 
 .. [AP2010] Federico Ardila and Alexander Postnikov.
             *Combinatorics and geometry of power ideals*.
@@ -320,6 +320,7 @@ REFERENCES:
 
 .. [Ar2006] \D. Armstrong. *Generalized noncrossing partitions and
             combinatorics of Coxeter groups*. Mem. Amer. Math. Soc., 2006.
+            :doi:`10.1090/S0065-9266-09-00565-1`
 
 .. [AR2012] \D. Armstrong and B. Rhoades. *The Shi arrangement and the
             Ish arrangement*. Transactions of the American
@@ -335,7 +336,7 @@ REFERENCES:
                multipartitions*. Osaka J. Math. **38** (2001), 827-837.
                :mathscinet:`MR1864465`
 
-.. [Arn2002] \P. Arnoux, Sturmian sequences, in Substitutions in Dynamics,
+.. [Arn2002] \P. Arnoux, *Sturmian sequences*, in Substitutions in Dynamics,
              \N. Pytheas Fogg (Ed.), Arithmetics, and Combinatorics (Lecture
              Notes in Mathematics, Vol. 1794), 2002.
 .. [Ass1978] \J. Assion: *Einige endliche Faktorgruppen der Zopfgruppen*, Math. Z., 163
@@ -659,7 +660,7 @@ REFERENCES:
                  http://eprint.iacr.org/2010/313.pdf
 
 .. [BCCM2015] \M. Borassi, D. Coudert, P. Crescenzi, and A. Marino.
-              On Computing the Hyperbolicity of Real-World Graphs. Proceedings
+              *On Computing the Hyperbolicity of Real-World Graphs*. Proceedings
               of the 23rd European Symposium on Algorithms (ESA 2015),
               :doi:`10.1007/978-3-662-48350-3_19`.
 
@@ -693,7 +694,7 @@ REFERENCES:
              http://eprint.iacr.org/2007/024
 
 .. [BCM15] Michele Borassi, Pierluigi Crescenzi, and Andrea Marino,
-           Fast and Simple Computation of Top-k Closeness Centralities.
+           *Fast and Simple Computation of Top-k Closeness Centralities*.
            :arxiv:`1507.01490`.
 
 .. [BCMS1988] \I. Z. Bouwer, W. W. Chernoff, B. Monson, and Z. Star.
@@ -1451,6 +1452,9 @@ REFERENCES:
               An Algorithmic Approach, Algorithms and Computation in Mathematics,
               Volume 20, Springer (2007)
 
+.. [But2010] Peter Butkovič, *Max-linear systems. Theory and algorithms.*
+             Springer Monographs in Mathematics. London: Springer. xvii, 272 p. (2010). 
+
 .. [Buell89] Duncan A. Buell.
              *Binary Quadratic Forms: Classical Theory and Modern Computations.*
              Springer, 1989.
@@ -1704,8 +1708,12 @@ REFERENCES:
 .. [Conr] Keith Conrad, *Artin-Hasse-Type Series and Roots of Unity*,
           http://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf
 
-.. [Coron2023] Basile Coron *Supersolvability of built lattices and Koszulness
+.. [Coron2023] Basile Coron. *Supersolvability of built lattices and Koszulness
                of generalized Chow rings*. Preprint, :arxiv:`2302.13072` (2023).
+
+.. [Cos2020] Craig Costello. *Supersingular Isogeny Key Exchange for Beginners*,
+             Selected Areas in Cryptography -- SAC 2019. Lecture Notes in Computer
+             Science, vol 11959. Springer, Cham. :doi:`10.1007/978-3-030-38471-5_2`.
 
 .. [CGMRV16] \A. Conte, R. Grossi, A. Marino, R. Rizzi, L. Versari,
              *Directing Road Networks by Listing Strong Orientations*,
@@ -2449,8 +2457,8 @@ REFERENCES:
 
 .. [DP2011] \B. Deconinck and M. S. Patterson, *Computing with plane algebraic
             curves and Riemann surfaces: The algorithms of the Maple package
-            "Algcurves"*, In: A. Bobenko and C. Klein (eds) Computational 
-            approach to Riemann surfaces. Lecture Notes in Mathematics 2013. 
+            "Algcurves"*, In: A. Bobenko and C. Klein (eds) Computational
+            approach to Riemann surfaces. Lecture Notes in Mathematics 2013.
             Springer, Berlin, Heidelberg. (2011).
             :doi:`10.1007/978-3-642-17413-1_2`
 
@@ -2607,7 +2615,7 @@ REFERENCES:
 
 .. [Eh2013] Ehrhardt, Wolfgang. *The AMath and DAMath Special
             Functions: Reference Manual and Implementation Notes*,
-            Version 1.3. 2013. 
+            Version 1.3. 2013.
             https://web.archive.org/web/20131210061646/http://www.wolfgang-ehrhardt.de/specialfunctions.pdf.
 
 .. [EL2002] Ekedahl, Torsten & Laksov, Dan. (2002). *Splitting algebras, Symmetric functions and
@@ -2655,7 +2663,7 @@ REFERENCES:
              for the Yokonuma-Hecke algebra and the algebra of braids
              and ties*. (2015) :arxiv:`1506.00715`.
 
-.. [ERT1979] Erdos, P. and Rubin, A.L. and Taylor, H.
+.. [ERT1979] Erd\H{o}s, P. and Rubin, A.L. and Taylor, H.
              *Choosability in graphs*.
              Proc. West Coast Conf. on Combinatorics,
              Graph Theory and Computing, Congressus Numerantium,
@@ -3015,17 +3023,17 @@ REFERENCES:
               Characteristic*. Applicable Algebra In Engineering, Communication
               And Computing, 7(1), p. 1-14.
 
-.. [GJ1997] Ewgenij Gawrilow and Michael Joswig, polymake: a framework for
-            analyzing convex polytopes, Polytopes—combinatorics and
+.. [GJ1997] Ewgenij Gawrilow and Michael Joswig, *polymake: a framework for
+            analyzing convex polytopes*, Polytopes—combinatorics and
             computation (Oberwolfach, 1997), DMV Sem., vol. 29, Birkhäuser,
-            Basel, 2000, pp. 43-73.
+            Basel, 2000, pp. 43-73. :doi:`10.1007/978-3-0348-8438-9_2`
 
-.. [GJ2006] Ewgenij Gawrilow and Michael Joswig, Flexible object hierarchies in
-            polymake (extended abstract), Mathematical software—ICMS 2006,
+.. [GJ2006] Ewgenij Gawrilow and Michael Joswig, *Flexible object hierarchies in
+            polymake* (extended abstract), Mathematical software—ICMS 2006,
             Lecture Notes in Comput. Sci., vol. 4151, Springer, Berlin, 2006,
             pp. 219-221, :doi:`10.1007/11832225_20`
 
-.. [GJ2007] \A. Glen, J. Justin, Episturmian words: a survey, Preprint,
+.. [GJ2007] \A. Glen, J. Justin, *Episturmian words: a survey*, Preprint,
             2007, :arxiv:`0801.1655`.
 
 .. [Goff1999] Christopher Goff. *Isomorphic fusion algebras of twisted quantum
@@ -3494,6 +3502,13 @@ REFERENCES:
              vol. 17 n11 pp.89--95, 1993.
              :doi:`10.1016/0895-7177(93)90259-2`.
 
+.. [HLT2003] Everett W. Howe, Kristin E. Lauter, Jaap Top,
+             *Pointless curves of genus three and four*,
+             Algebra, Geometry, and Coding Theory (2003),
+             Seminaires et Congres 11, pp. 125-141.
+             Societe Mathematique de France, Paris, 2005
+             :arxiv:`math/0403178` [math.NT]
+
 .. [HLY2002] Yi Hu, Chien-Hao Liu, and Shing-Tung Yau. *Toric morphisms
              and fibrations of toric Calabi-Yau
              hypersurfaces*. Adv. Theor. Math. Phys.,
@@ -3801,6 +3816,15 @@ REFERENCES:
 
 .. [Ja1971] \N. Jacobson. *Exceptional Lie Algebras*. Marcel Dekker,
             Inc. New York. 1971. IBSN No. 0-8247-1326-5.
+
+.. [Jao2022] David Jao, Reza Azarderakhsh, Matthew Campagna, Craig Costello,
+             Luca De Feo, Basil Hess, Aaron Hutchinson, Amir Jalali,
+             Koray Karabina, Brian Koziel, Brian LaMacchia, Patrick Longa,
+             Michael Naehrig, Geovandro Pereira, Joost Renes,
+             Vladimir Soukharev, and David Urbanik.
+             *Supersingular Isogeny Key Encapsulation*.
+             Technical report, National Institute of Standards and Technology,
+             2022. https://sike.org/files/SIDH-spec.pdf
 
 .. [Jer2006] Mark Jerrum. *Two remarks concerning balanced matroids*.
              Combinatorica 26, no. 6 (2006): 733-742.
@@ -4894,6 +4918,11 @@ REFERENCES:
 .. [Mac2015] Diane Maclagan and Bernd Sturmfels, *Introduction to
              Tropical Geometry*, American Mathematical Society, 2015.
 
+.. [Mac2025] Vincent Macri, *Comparison of and Improvements to Degree Zero
+             Divisor Class Group Arithmetic in Algebraic Function Fields*,
+             Masters thesis, University of Calgary, Canada, 2025.
+             :doi:`10.11575/PRISM/50422`.
+
 .. [MagmaHGM] *Hypergeometric motives* in Magma,
    http://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf
 
@@ -4912,9 +4941,10 @@ REFERENCES:
              Journal of Pure and Applied Algebra 216 (2012) 2754-2782.
              :doi:`10.1016/j.jpaa.2012.04.013`, :arxiv:`1110.6621`.
 
-.. [Mar2018] \I. Marin, *Maximal cubic quotient of the braid algebra*,
+.. [Mar2018] \I. Marin, *A Maximal cubic quotient of the braid algebra I.*,
              preprint, 2018. available at
              http://www.lamfa.u-picardie.fr/marin/arts/GQ.pdf
+             :arxiv:`1811.04964`, :doi:`10.1016/j.jalgebra.2020.09.045`
 
 .. [Marin2018] Ivan Marin, *Artin groups and Yokonuma-Hecke algebras*,
                Int. Math. Res. Not. IMRN, **2018** No. 13, (2018) pp. 4022-4062.
@@ -4952,8 +4982,8 @@ REFERENCES:
              in conformal field theory*. Groups '93 Galway/St. Andrews, Vol. 2,
              405-417, London Math. Soc. Lecture Note Ser., 212, Cambridge, 1995.
 
-.. [Ma2009] Sarah Mason, An Explicit Construction of Type A Demazure
-            Atoms, Journal of Algebraic Combinatorics, Vol. 29,
+.. [Ma2009] Sarah Mason, *An Explicit Construction of Type A Demazure
+            Atoms*, Journal of Algebraic Combinatorics, Vol. 29,
             (2009), No. 3, p.295-313. :arxiv:`0707.4267`
 
 .. [Mac1936I] Saunders MacLane, *A construction for prime ideals as absolute
@@ -5138,6 +5168,11 @@ REFERENCES:
              of graphs*, Linear Algebra and its Applications 103 (1988),
              119-131.
 
+.. [MPSW25] Travis Morrison, Lorenz Panny, Jana Sotáková, and Michael Wills:
+            *The SEA algorithm for endomorphisms of supersingular elliptic curves*
+            (2025).
+            :arxiv:`2501.16321`
+
 .. [Most2019] Jacob Mostovoy.
               *The pure cactus group is residually nilpotent*.
               Archiv der Math., **113** (2019). pp. 229-235.
@@ -5287,7 +5322,7 @@ REFERENCES:
              Inventiones Mathematicae **84**, (1986), 1-48.
 
 .. [MT2001] B. Mojar and C. Thomassen. *Graphs on Surfaces*.
-             Johns Hopkins University Press, (2001).  ISBN 9780801866890. 
+             Johns Hopkins University Press, (2001).  ISBN 9780801866890.
 
 .. [Mu1997] Murty, M. Ram. *Congruences between modular forms*. In "Analytic
             Number Theory" (ed. Y. Motohashi), London Math. Soc. Lecture Notes
@@ -5300,7 +5335,7 @@ REFERENCES:
 .. [Mur1983] \G. E. Murphy. *The idempotents of the symmetric group
              and Nakayama's conjecture*. J. Algebra **81** (1983). 258-265.
 
-.. [Mus2023] Yossef Musleh. *Algorithms for Drinfeld Modules*. 
+.. [Mus2023] Yossef Musleh. *Algorithms for Drinfeld Modules*.
              PhD thesis, University of Waterloo, 2023.
 
 .. [Muth2019] Robert Muth. *Super RSK correspondence with symmetry*.
@@ -6459,6 +6494,9 @@ REFERENCES:
 .. [Sti2006] Douglas R. Stinson. *Cryptography: Theory and
              Practice*. 3rd edition, Chapman \& Hall/CRC, 2006.
 
+.. [Stokes1990] Timothy Stokes. *Gröbner bases in exterior algebra*.
+                J. Automat. Reason. **6** (1990) 233-250.
+
 .. [Sto1998] \A. Storjohann, An O(n^3) algorithm for Frobenius normal
              form. Proceedings of the International Symposium on
              Symbolic and Algebraic Computation (ISSAC'98), ACM Press,
@@ -6814,6 +6852,10 @@ REFERENCES:
 .. [Vai1994] \I. Vaisman, *Lectures on the Geometry of Poisson
              Manifolds*, Springer Basel AG (Basel) (1994);
              :doi:`10.1007/978-3-0348-8495-2`
+
+.. [VT2001] Adam Van Tuyl: *Computing the degree of the field of 𝑛‑torsion points*
+            (2001).
+            https://ms.mcmaster.ca/~vantuyl/papers/ntorsion_2001.pdf
 
 .. [Var1984] \V. S. Varadarajan. *Lie groups, Lie algebras, and their
              representations*. Reprint of the 1974 edition. Graduate Texts in

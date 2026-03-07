@@ -2379,7 +2379,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
         x = PolynomialRing(R, 'xx').gen()
         if isinstance(Q, EllipticCurve_generic):
             E = Q
-            if E.a1() != 0 or E.a2() != 0:
+            if not E.a1().is_zero() or not E.a3().is_zero():
                 raise NotImplementedError("curve must be in Weierstrass normal form")
             Q = -E.change_ring(R).defining_polynomial()(x, 0, 1)
             self._curve = E
