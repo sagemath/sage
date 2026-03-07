@@ -68,7 +68,7 @@ class Application(object):
         _bootstrap
         _develop
         [...]
-        zlib
+        zipp
 
         $ sage -package list --has-file=spkg-configure.m4 :experimental:
         perl_term_readline_gnu
@@ -78,7 +78,7 @@ class Application(object):
         _develop
         _prereq
         [...]
-        zlib
+        zeromq
         """
         log.debug('Listing packages')
         pc = PackageClass(*package_classes, **filters)

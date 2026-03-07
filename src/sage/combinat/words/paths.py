@@ -312,11 +312,11 @@ def WordPaths(alphabet, steps=None):
         sage: WordPaths(range(5))
         Traceback (most recent call last):
         ...
-        TypeError: Unable to make a class WordPaths from {0, 1, 2, 3, 4}
+        TypeError: unable to make a class WordPaths from {0, 1, 2, 3, 4}
         sage: WordPaths('abAB', steps='square_gridd')
         Traceback (most recent call last):
         ...
-        TypeError: Unknown type of steps : square_gridd
+        TypeError: unknown type of steps : square_gridd
     """
     # Construction of the alphabet
     alphabet = build_alphabet(alphabet)
@@ -330,26 +330,25 @@ def WordPaths(alphabet, steps=None):
         elif alphabet.cardinality() == 6:
             steps = 'hexagonal_grid'
         else:
-            raise TypeError("Unable to make a class WordPaths from %s" % alphabet)
+            raise TypeError("unable to make a class WordPaths from %s" % alphabet)
 
     # Return the class of WordPaths according to the given type of paths
     if isinstance(steps, str):
         if steps in ('square_grid', 'square'):
             return WordPaths_square_grid(alphabet=alphabet)
-        elif steps in ('triangle_grid', 'triangle'):
+        if steps in ('triangle_grid', 'triangle'):
             return WordPaths_triangle_grid(alphabet=alphabet)
-        elif steps in ('hexagonal_grid', 'hexagon'):
+        if steps in ('hexagonal_grid', 'hexagon'):
             return WordPaths_hexagonal_grid(alphabet=alphabet)
-        elif steps in ('cube_grid', 'cube'):
+        if steps in ('cube_grid', 'cube'):
             return WordPaths_cube_grid(alphabet=alphabet)
-        elif steps in ('north_east', 'ne', 'NE'):
+        if steps in ('north_east', 'ne', 'NE'):
             return WordPaths_north_east(alphabet=alphabet)
-        elif steps == 'dyck':
+        if steps == 'dyck':
             return WordPaths_dyck(alphabet=alphabet)
-        else:
-            raise TypeError("Unknown type of steps : %s" % steps)
-    else:
-        return WordPaths_all(alphabet=alphabet, steps=steps)
+        raise TypeError(f"unknown type of steps : {steps}")
+
+    return WordPaths_all(alphabet=alphabet, steps=steps)
 
 
 #######################################################################
@@ -1197,16 +1196,14 @@ class FiniteWordPath_all(SageObject):
             sage: P('aabdee').is_simple()
             False
         """
-        n = 0
         s = set()
         include_last = not self.is_closed()
-        for p in self.points(include_last=include_last):
+        for n, p in enumerate(self.points(include_last=include_last), start=1):
             # We need the elements to have a common parent,
             # so we convert the points to immutable vectors.
             v = vector(p)
             v.set_immutable()
             s.add(v)
-            n += 1
             if len(s) != n:
                 return False
         return True
@@ -1393,7 +1390,7 @@ class FiniteWordPath_all(SageObject):
         if letters is None:
             letters = self.parent().alphabet()
         if color is None:
-            from sage.plot.all import hue
+            from sage.plot.colors import hue
             A = self.parent().alphabet()
             color = {a: hue(A.rank(a) / float(A.cardinality())) for a in A}
         it = self.projected_point_iterator(v, ring=ring)
@@ -1655,7 +1652,9 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
             See www.imagemagick.org, for example.
         """
-        from sage.plot.all import line, polygon, animate
+        from sage.plot.line import line
+        from sage.plot.polygon import polygon
+        from sage.plot.animate import animate
 
         pts = list(self.points())
 

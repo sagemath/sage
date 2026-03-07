@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Rings
 """
@@ -20,8 +19,6 @@ from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import randint
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
-from sage.structure.element import Element
-from sage.structure.parent import Parent
 
 
 class Rings(CategoryWithAxiom):
@@ -480,10 +477,38 @@ class Rings(CategoryWithAxiom):
                 False
                 sage: Qp(19).is_prime_field()                                               # needs sage.rings.padics
                 False
+                sage: R.<x> = PolynomialRing(QQ)
+                sage: S = R.quotient(x + 16)
+                sage: S.is_prime_field()
+                True
+                sage: S = R.quotient(x^2 - 2)
+                sage: S.is_prime_field()
+                False
+                sage: R.<x> = PolynomialRing(GF(5))
+                sage: S = R.quotient(x^2 + x + 1)
+                sage: S.is_field()
+                True
+                sage: S.is_prime_field()
+                False
+                sage: T = R.quotient(x - 2)
+                sage: T.is_prime_field()
+                True
+
+            We check that bug :issue:`40426` is fixed::
+
+                sage: K = GF(4)
+                sage: A.<x> = K[]
+                sage: L = K.extension(x+1)
+                sage: L.is_prime_field()
+                False
             """
             # the case of QQ is handled by QQ itself
+            from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
+            from sage.rings.rational_field import QQ
+            if isinstance(self, PolynomialQuotientRing_generic) and self.base_ring() is QQ:
+                return self.absolute_degree() == 1
             from sage.categories.finite_fields import FiniteFields
-            return self in FiniteFields() and self.degree() == 1
+            return self in FiniteFields() and self.absolute_degree() == 1
 
         def is_zero(self) -> bool:
             """
@@ -603,6 +628,110 @@ class Rings(CategoryWithAxiom):
                 raise NotImplementedError("No way to prove that %s is an integral domain!" % self)
             else:
                 return False
+
+        def zeta(self, n=2, all=False):
+            """
+            Return a primitive ``n``-th root of unity in ``self`` if there
+            is one, or raise a :exc:`ValueError` otherwise.
+
+            INPUT:
+
+            - ``n`` -- positive integer
+
+            - ``all`` -- boolean (default: ``False``); whether to return
+              a list of all primitive `n`-th roots of unity. If ``True``, raise a
+              :exc:`ValueError` if ``self`` is not an integral domain.
+
+            OUTPUT: element of ``self`` of finite order
+
+            EXAMPLES::
+
+                sage: QQ.zeta()
+                -1
+                sage: QQ.zeta(1)
+                1
+                sage: CyclotomicField(6).zeta(6)                                            # needs sage.rings.number_field
+                zeta6
+                sage: CyclotomicField(3).zeta(3)                                            # needs sage.rings.number_field
+                zeta3
+                sage: CyclotomicField(3).zeta(3).multiplicative_order()                     # needs sage.rings.number_field
+                3
+
+                sage: # needs sage.rings.finite_rings
+                sage: a = GF(7).zeta(); a
+                3
+                sage: a.multiplicative_order()
+                6
+                sage: a = GF(49,'z').zeta(); a
+                z
+                sage: a.multiplicative_order()
+                48
+                sage: a = GF(49,'z').zeta(2); a
+                6
+                sage: a.multiplicative_order()
+                2
+
+                sage: QQ.zeta(3)
+                Traceback (most recent call last):
+                ...
+                ValueError: no n-th root of unity in rational field
+                sage: Zp(7, prec=8).zeta()                                                  # needs sage.rings.padics
+                3 + 4*7 + 6*7^2 + 3*7^3 + 2*7^5 + 6*7^6 + 2*7^7 + O(7^8)
+
+            TESTS::
+
+                sage: R.<x> = QQ[]
+                sage: R.zeta(1)
+                1
+                sage: R.zeta(2)
+                -1
+                sage: R.zeta(3)                                                             # needs sage.libs.pari
+                Traceback (most recent call last):
+                ...
+                ValueError: no 3rd root of unity in Univariate Polynomial Ring in x over Rational Field
+                sage: IntegerModRing(8).zeta(2, all = True)
+                Traceback (most recent call last):
+                ...
+                ValueError: ring is not an integral domain
+            """
+            if all and not self.is_integral_domain():
+                raise ValueError("ring is not an integral domain")
+            if n == 2:
+                if all:
+                    return [self(-1)]
+                else:
+                    return self(-1)
+            elif n == 1:
+                if all:
+                    return [self(1)]
+                else:
+                    return self(1)
+            else:
+                f = self['x'].cyclotomic_polynomial(n)
+                if all:
+                    return [-P[0] for P, e in f.factor() if P.degree() == 1]
+                for P, e in f.factor():
+                    if P.degree() == 1:
+                        return -P[0]
+                from sage.rings.integer_ring import ZZ
+                raise ValueError("no %s root of unity in %r" % (ZZ(n).ordinal_str(), self))
+
+        def zeta_order(self):
+            """
+            Return the order of the distinguished root of unity in ``self``.
+
+            EXAMPLES::
+
+                sage: CyclotomicField(19).zeta_order()                                      # needs sage.rings.number_field
+                38
+                sage: GF(19).zeta_order()
+                18
+                sage: GF(5^3,'a').zeta_order()                                              # needs sage.rings.finite_rings
+                124
+                sage: Zp(7, prec=8).zeta_order()                                            # needs sage.rings.padics
+                6
+            """
+            return self.zeta().multiplicative_order()
 
         def localization(self, *args, **kwds):
             """
@@ -1642,6 +1771,67 @@ class Rings(CategoryWithAxiom):
             else:
                 a, b = args[0], args[1]
             return randint(a, b) * self.one()
+
+        @cached_method
+        def epsilon(self):
+            """
+            Return the precision error of elements in this ring.
+
+            .. NOTE:: This is not used anywhere inside the code base.
+
+            EXAMPLES::
+
+                sage: RDF.epsilon()
+                2.220446049250313e-16
+                sage: ComplexField(53).epsilon()                                            # needs sage.rings.real_mpfr
+                2.22044604925031e-16
+                sage: RealField(10).epsilon()                                               # needs sage.rings.real_mpfr
+                0.0020
+
+            For exact rings, zero is returned::
+
+                sage: ZZ.epsilon()
+                0
+
+            This also works over derived rings::
+
+                sage: RR['x'].epsilon()                                                     # needs sage.rings.real_mpfr
+                2.22044604925031e-16
+                sage: QQ['x'].epsilon()
+                0
+
+            For the symbolic ring, there is no reasonable answer::
+
+                sage: SR.epsilon()                                                          # needs sage.symbolic
+                Traceback (most recent call last):
+                ...
+                NotImplementedError
+            """
+            one = self.one()
+
+            # ulp is only defined in some real fields
+            try:
+                return one.ulp()
+            except AttributeError:
+                pass
+
+            try:
+                eps = one.real().ulp()
+            except AttributeError:
+                pass
+            else:
+                return self(eps)
+
+            if self.is_exact():
+                return self.zero()
+
+            S = self.base_ring()
+            if self is not S:
+                try:
+                    return self(S.epsilon())
+                except AttributeError:
+                    pass
+            raise NotImplementedError
 
     class ElementMethods:
         def is_unit(self) -> bool:

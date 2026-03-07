@@ -219,7 +219,7 @@ def isogeny_codomain_from_kernel(E, kernel):
     if algorithm == 'velu':
         # if we are using Velu's formula, just instantiate the isogeny
         # and return the codomain
-        return EllipticCurveIsogeny(E, kernel).codomain()
+        return E.isogeny(kernel).codomain()
 
     if algorithm == 'kohel':
         return compute_codomain_kohel(E, kernel)
@@ -2244,11 +2244,10 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         else:
             invX = x
 
-        psi = poly_ring.one()
-        for xQ in self.__kernel_mod_sign.keys():
-            psi *= x - invX(xQ)
+        from sage.misc.misc_c import prod
+        psi = prod([x - invX(xQ) for xQ in self.__kernel_mod_sign.keys()])  # building the list is not redundant; this is slightly faster
 
-        self.__kernel_polynomial = psi
+        self.__kernel_polynomial = poly_ring(psi)
 
     ###################################
     # Kohel's Variant of Velu's Formula
@@ -3126,7 +3125,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             True
             sage: phi_hat.codomain() == phi.domain()
             True
-            sage: (X, Y) = phi.rational_maps()
+            sage: X, Y = phi.rational_maps()
             sage: (Xhat, Yhat) = phi_hat.rational_maps()
             sage: Xm = Xhat.subs(x=X, y=Y)
             sage: Ym = Yhat.subs(x=X, y=Y)
@@ -3142,7 +3141,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             True
             sage: phi_hat.domain() == phi.codomain()
             True
-            sage: (X, Y) = phi.rational_maps()
+            sage: X, Y = phi.rational_maps()
             sage: (Xhat, Yhat) = phi_hat.rational_maps()
             sage: Xm = Xhat.subs(x=X, y=Y)
             sage: Ym = Yhat.subs(x=X, y=Y)
@@ -3158,7 +3157,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             True
             sage: phi_hat.domain() == phi.codomain()
             True
-            sage: (X, Y) = phi.rational_maps()
+            sage: X, Y = phi.rational_maps()
             sage: (Xhat, Yhat) = phi_hat.rational_maps()
             sage: Xm = Xhat.subs(x=X, y=Y)
             sage: Ym = Yhat.subs(x=X, y=Y)
@@ -3646,12 +3645,59 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         x^3 + x^2 + 28*x + 33
         sage: poly.factor()
         (x + 10) * (x + 12) * (x + 16)
+
+    Check that it works even when the degree is large compared to the characteristic::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
+        sage: E1 = EllipticCurve(GF(5), [1,1])
+        sage: E2 = EllipticCurve(GF(5), [1,4])
+        sage: compute_isogeny_kernel_polynomial(E1, E2, 11)
+        x^5 + 4*x^4 + 4*x^2 + 3*x + 4
+
+    ...even for long Weierstraß curves::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
+        sage: E1 = EllipticCurve(GF(2), [1,0,1,0,1])
+        sage: E2 = EllipticCurve(GF(2), [1,0,1,1,1])
+        sage: compute_isogeny_kernel_polynomial(E1, E2, 7)
+        x^3 + x + 1
+
+    Verify that it works with the ``"bruteforce"`` algorithm even when
+    :meth:`~EllipticCurve_field.isogenies_degree` returns a non-normalized
+    isogeny (see :issue:`41565`)::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
+        sage: E1 = EllipticCurve(GF(419^2), [1,0])
+        sage: for phi in E1.isogenies_degree(5):
+        ....:     E2 = phi.codomain().isomorphism(~phi.scaling_factor()).codomain()
+        ....:     assert phi.kernel_polynomial() == compute_isogeny_kernel_polynomial(E1, E2, phi.degree(), algorithm='bruteforce')
     """
     if algorithm is None:
         char = E1.base_ring().characteristic()
-        if char != 0 and char < 4*ell + 4:
-            raise NotImplementedError(f'no algorithm for computing kernel polynomial from domain and codomain is implemented for degree {ell} and characteristic {char}')
-        algorithm = 'stark' if ell < 10 else 'bmss'
+        # This could be 4l+4 according to Stark/BMSS alone, but
+        # weierstrass_p() currently only works for p-2 >= 4l+4.
+        if char != 0 and char < 4*ell + 6:
+            # No good algorithm available... See :issue:`38481`.
+            algorithm = 'bruteforce'
+        else:
+            algorithm = 'stark' if ell < 10 else 'bmss'
+
+    if algorithm == 'bruteforce':
+        # This is a lazy workaround; there are better algorithms
+        # for most cases even when BMSS fails. See :issue:`38481`.
+        for phi in E1.isogenies_degree(ell):
+            if not any(E1.a_invariants()[:3] + E2.a_invariants()[:3]):
+                # short Weierstrass
+                u = phi.scaling_factor()
+                iso = phi.codomain().isomorphism(~u)
+                if iso.codomain() == E2:
+                    return phi.kernel_polynomial()
+            else:
+                # long Weierstrass
+                for iso in phi.codomain().isomorphisms(E2):
+                    if iso.scaling_factor().is_one():
+                        return phi.kernel_polynomial()
+        raise ValueError(f"the two curves are not linked by a cyclic normalized isogeny of degree {ell}")
 
     if algorithm == 'bmss':
         return compute_isogeny_bmss(E1, E2, ell)

@@ -65,6 +65,12 @@ class OperationTable(SageObject):
       can also be a subset which is closed under the operation, useful
       perhaps when the set is infinite.
 
+    - ``closed`` -- (default: ``True``) Only has an effect if the ``elements``
+      argument is passed and indicates whether the ``elements`` are closed under
+      ``operation``. When set to ``False`` the operation table is generated even if
+      the result of the operation is not in the list ``elements``, otherwise
+      ``ValueError`` is raised.
+
     OUTPUT:
 
     An object with methods that abstracts multiplication tables,
@@ -327,10 +333,33 @@ class OperationTable(SageObject):
         a| a b
         b| b a
 
+    When the argument ``elements`` is given, by default they are assumed to be closed under ``operation``.
+    In case they are not closed, the argument ``closed=False`` can be used to tell that it is not a problem
+    if the result of the operation is not among ``elements`` as long as it can be coerced into ``S``. ::
+
+        sage: # needs sage.groups
+        sage: elts.append(L[1])
+        sage: elts
+        [(), (1,3)(2,4), (1,2,3,4)]
+        sage: OperationTable(H, operator.mul, elements=elts)
+        Traceback (most recent call last):
+        ...
+        ValueError: (1,3)(2,4)*(1,2,3,4)=(1,4,3,2), and so the set is not closed. You may try "closed=False".
+        sage: OperationTable(H, operator.mul, names='elements', elements=elts, closed=False)
+                *          () (1,3)(2,4)  (1,2,3,4)
+                  +---------------------------------
+                ()|         () (1,3)(2,4)  (1,2,3,4)
+        (1,3)(2,4)| (1,3)(2,4)         ()  (1,4,3,2)
+         (1,2,3,4)|  (1,2,3,4)  (1,4,3,2) (1,3)(2,4)
+
+    When ``closed=False`` is passed together with ``elements`` that are not closed under ``operation``, new
+    names are introduced for the elements not contained in ``elements``, but they will only appear in the
+    table as results, i.e. they will not be appended to the list of operands.
+
     Here are a couple of improper uses::
 
         sage: # needs sage.groups
-        sage: elts.append(5)
+        sage: elts[2] = 5
         sage: OperationTable(H, operator.mul, elements=elts)
         Traceback (most recent call last):
         ...
@@ -340,11 +369,6 @@ class OperationTable(SageObject):
         Traceback (most recent call last):
         ...
         TypeError: unable to coerce (1,3,2,4) into Cyclic group of order 4 as a permutation group
-        sage: elts[2] = '(1,2,3,4)'
-        sage: OperationTable(H, operator.mul, elements=elts)
-        Traceback (most recent call last):
-        ...
-        ValueError: (1,3)(2,4)*(1,2,3,4)=(1,4,3,2), and so the set is not closed
 
     Unusable functions should be recognized as such::
 
@@ -386,7 +410,7 @@ class OperationTable(SageObject):
     - Bruno Edwards (2022-10-31)
     """
 
-    def __init__(self, S, operation, names='letters', elements=None):
+    def __init__(self, S, operation, names='letters', elements=None, closed=True):
         r"""
         TESTS::
 
@@ -421,9 +445,9 @@ class OperationTable(SageObject):
         self._elts = tuple(elems)
         self._n = len(self._elts)
         self._name_dict = {}
-
-        # Map elements to strings
-        self._width, self._names, self._name_dict = self._name_maker(names)
+        self._closed = closed
+        self._elts_ext = [] # elements that are not in _elts
+        self._n_ext = 0
 
         # Determine the operation, if given by a string
         # Some simple symbols are supported,
@@ -481,11 +505,26 @@ class OperationTable(SageObject):
                         except (KeyError, ValueError):
                             failed = True
                     if failed:
-                        raise ValueError('%s%s%s=%s, and so the set is not closed' % (
-                            g, self._ascii_symbol, h, result))
+                        if elements is not None and not self._closed:
+                            # if the result is not necessarily among elements
+                            try:
+                                coerced = S(result)
+                                if coerced not in self._elts_ext:
+                                    self._elts_ext.append(coerced)
+                                r = self._elts_ext.index(coerced) + self._n
+                            except Exception:
+                                raise TypeError('unable to coerce %s into %s' % (result, S))
+                        else:
+                            raise ValueError('%s%s%s=%s, and so the set is not closed. You may try "closed=False".' % (
+                                g, self._ascii_symbol, h, result))
 
                 row.append(r)
             self._table.append(row)
+
+        self._n_ext = len(self._elts_ext)
+
+        # Map elements to strings
+        self._width, self._names, self._names_ext, self._name_dict = self._name_maker(names)
 
     def _name_maker(self, names):
         r"""
@@ -503,6 +542,8 @@ class OperationTable(SageObject):
           version of the table.
         - ``name_list`` -- list of strings naming the elements, in the
           same order as given by the :meth:`list` method
+        - ``name_list_ext`` -- list of strings naming the elements that are
+          not in the list of elements if passed
         - ``name_dict`` -- dictionary giving the correspondence between the
           strings and the actual elements.  So the keys are the strings and
           the values are the elements of the structure.
@@ -517,7 +558,7 @@ class OperationTable(SageObject):
             sage: from sage.matrix.operation_table import OperationTable
             sage: G = SymmetricGroup(3)
             sage: T = OperationTable(G, operator.mul)
-            sage: w, l, d = T._name_maker('letters')
+            sage: w, l, lx, d = T._name_maker('letters')
             sage: w
             1
             sage: l[0]
@@ -550,33 +591,45 @@ class OperationTable(SageObject):
         """
         from math import log, log10
         name_list = []
+        name_list_ext = []
         if names == 'digits':
-            if self._n == 0 or self._n == 1:
+            if self._n + self._n_ext <= 1:
                 width = 1
             else:
-                width = int(log10(self._n - 1)) + 1
+                width = int(log10(self._n + self._n_ext - 1)) + 1
             for i in range(self._n):
                 name_list.append('{0:0{1}d}'.format(i, width))
+            for i in range(self._n_ext):
+                name_list_ext.append('{0:0{1}d}'.format(self._n + i, width))
         elif names == 'letters':
             from string import ascii_lowercase as letters
             from sage.rings.integer import Integer
             base = len(letters)
-            if self._n == 0 or self._n == 1:
+            if self._n + self._n_ext <= 1:
                 width = 1
             else:
-                width = int(log(self._n - 1, base)) + 1
+                width = int(log(self._n + self._n_ext - 1, base)) + 1
             for i in range(self._n):
-                places = Integer(i).digits(
-                    base=base, digits=letters, padto=width)
+                places = Integer(i).digits( base=base, digits=letters, padto=width)
                 places.reverse()
                 name_list.append(''.join(places))
+            for i in range(self._n_ext):
+                places = Integer(self._n + i).digits(base=base, digits=letters, padto=width)
+                places.reverse()
+                name_list_ext.append(''.join(places))
         elif names == 'elements':
             width = 0
             for e in self._elts:
                 estr = repr(e)
                 width = max(len(estr), width)
                 name_list.append(estr)
+            for e in self._elts_ext:
+                estr = repr(e)
+                width = max(len(estr), width)
+                name_list_ext.append(estr)
         elif isinstance(names, list):
+            if names is not None and not self._closed:
+                raise ValueError('custom names cannot be used together with closed=False')
             if len(names) != self._n:
                 raise ValueError('list of element names must be the same size as the set, %s != %s' % (
                     len(names), self._n))
@@ -593,7 +646,9 @@ class OperationTable(SageObject):
         name_dict = {}
         for i in range(self._n):
             name_dict[name_list[i]] = self._elts[i]
-        return width, name_list, name_dict
+        for i in range(self._n_ext):
+            name_dict[name_list_ext[i]] = self._elts_ext[i]
+        return width, name_list, name_list_ext, name_dict
 
     def __getitem__(self, pair):
         r"""
@@ -655,7 +710,8 @@ class OperationTable(SageObject):
         except ValueError:
             raise IndexError(
                 'invalid indices of operation table: (%s, %s)' % (g, h))
-        return self._elts[self._table[row][col]]
+        r = self._table[row][col]
+        return self._elts[r] if r < self._n else self._elts_ext[r - self._n]
 
     def __eq__(self, other):
         r"""
@@ -682,7 +738,8 @@ class OperationTable(SageObject):
             sage: P == P, P == Q, P == R, P == S
             (True, True, False, False)
         """
-        return (self._elts == other._elts) and (self._operation == other._operation)
+        return ((self._elts == other._elts) and (self._elts_ext == other._elts_ext) and
+                (self._operation == other._operation))
 
     def __ne__(self, other):
         """
@@ -927,7 +984,7 @@ class OperationTable(SageObject):
             sage: T.translation()['y']
             (1,2)
         """
-        self._width, self._names, self._name_dict = self._name_maker(names)
+        self._width, self._names, self._names_ext, self._name_dict = self._name_maker(names)
 
     def matrix_of_variables(self):
         r"""
@@ -1007,7 +1064,7 @@ class OperationTable(SageObject):
             width = self._width
 
             widenames = []
-            for name in self._names:
+            for name in self._names + self._names_ext:
                 widenames.append("{0: >{1}s}".format(name, width))
 
             # iterate through each element
@@ -1016,7 +1073,7 @@ class OperationTable(SageObject):
                     # add text to the plot
                     tPos = (h, g)
                     tText = widenames[self._table[g][h]]
-                    t = text(tText, tPos, rgbcolor=(0, 0, 0))
+                    t = text(tText, tPos, rgbcolor=(0, 0, 0), fontsize='x-small')
                     plot = plot + t
 
         # https://moyix.blogspot.com/2022/09/someones-been-messing-with-my-subnormals.html
@@ -1129,6 +1186,9 @@ class OperationTable(SageObject):
         widenames = []
         for name in self._names:
             widenames.append('{0: >{1}s}'.format(name, width))
+        widenames_ext = [widename for widename in widenames]
+        for name in self._names_ext:
+            widenames_ext.append('{0: >{1}s}'.format(name, width))
 
         # Headers
         table = ['{0: >{1}s} '.format(self._ascii_symbol, width)]
@@ -1139,7 +1199,13 @@ class OperationTable(SageObject):
         for g in range(n):
             table.append(widenames[g]+'|')
             for h in range(n):
-                table.append(' '+widenames[self._table[g][h]])
+                r = self._table[g][h]
+                if r < len(widenames):
+                    table.append(' '+widenames[r])
+                elif r < len(widenames_ext):
+                    table.append(' '+widenames_ext[r])
+                else:
+                    raise ValueError('unknown error')
             table.append('\n')
         return ''.join(table)
 

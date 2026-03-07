@@ -5,7 +5,7 @@ SuiteSparse is a collection of software to deal with sparse matrix. It is
 hosted at https://people.engr.tamu.edu/davis/suitesparse.html with source code
 now on github at https://github.com/DrTimothyAldenDavis/SuiteSparse
 
-This spkg does a minimal install of suitesparse, only intalling the following
+This spkg does a minimal install of suitesparse, only installing the following
 
 -  AMD
 -  CAMD

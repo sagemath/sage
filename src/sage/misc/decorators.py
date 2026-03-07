@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Decorators
 
@@ -26,14 +25,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from functools import (partial, update_wrapper, WRAPPER_ASSIGNMENTS,
-                       WRAPPER_UPDATES)
 from copy import copy
-
-from sage.misc.sageinspect import (sage_getsource, sage_getsourcelines,
-                                   sage_getargspec)
-
+from functools import WRAPPER_ASSIGNMENTS, WRAPPER_UPDATES, partial, update_wrapper
 from inspect import FullArgSpec
+
+from sage.misc.sageinspect import sage_getargspec, sage_getsource, sage_getsourcelines
 
 
 def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
@@ -49,16 +45,11 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     implies, that if one uses ``sage_wraps`` in a decorator which intentionally
     changes the argument specification, one should add this information to
     the special attribute ``_sage_argspec_`` of the wrapping function (for an
-    example, see e.g. ``@options`` decorator in this module).
-
-    Note that in ``.pyx`` files which is compiled by Cython, because Sage uses
-    ``binding=False`` compiler directive by default, you need to explicitly
-    specify ``binding=True`` for all functions decorated with ``sage_wraps``::
+    example, see e.g. ``@options`` decorator in this module)::
 
         sage: import cython
         sage: def square(f):
         ....:     @sage_wraps(f)
-        ....:     @cython.binding(True)
         ....:     def new_f(x):
         ....:         return f(x)*f(x)
         ....:     return new_f

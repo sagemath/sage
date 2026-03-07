@@ -670,7 +670,7 @@ class Diagrams(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, cells, n_rows=None, n_cols=None, check=True):
         r"""
-        Cosntruct an element of ``self``.
+        Construct an element of ``self``.
 
         EXAMPLES::
 
@@ -1261,7 +1261,7 @@ class NorthwestDiagrams(Diagrams):
         O . . . . . .
 
     It is also possible to turn a Ferrers diagram of a skew partition into a
-    northwest diagram, altough it is more subtle than just using the skew
+    northwest diagram, although it is more subtle than just using the skew
     diagram itself. One must first reflect the partition about a vertical axis
     so that the skew partition looks "backwards"::
 

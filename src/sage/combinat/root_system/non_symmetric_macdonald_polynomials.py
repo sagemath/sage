@@ -309,7 +309,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
     (where `a=1` except for `i=0` in type `BC` where `a=a_0=2`) which
     satisfy the following skew commutation relations:
 
-    .. MATH:: \tau_i Y_\lambda = \tau_i Y_{s_i\lambda} \,.
+    .. MATH:: \tau_i Y_\lambda = Y_{s_i\lambda} \tau_i \,.
 
     If `s_i \mu \ne \mu`, applying `\tau_i` on an eigenvector `E_\mu`
     produces a new eigenvector (essentially `E_{s_i\mu}`) with a

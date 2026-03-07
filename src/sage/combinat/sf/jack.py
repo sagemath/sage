@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Jack Symmetric Functions
+Jack symmetric functions
 
 Jack's symmetric functions appear in [Ma1995]_ Chapter VI, section 10.
 Zonal polynomials are the subject of [Ma1995]_ Chapter VII.
@@ -30,17 +30,17 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-import sage.categories.all
+from sage.arith.functions import lcm
+from sage.arith.misc import gcd
+from sage.categories.homset import End, Hom
+from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.categories.morphism import SetMorphism
+from sage.misc.misc_c import prod
+from sage.rings.fraction_field import FractionField, FractionField_generic
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
-from sage.arith.misc import gcd
-from sage.arith.functions import lcm
-from sage.rings.fraction_field import FractionField_generic
-from sage.misc.misc_c import prod
-from sage.categories.morphism import SetMorphism
-from sage.categories.homset import Hom, End
-from sage.rings.fraction_field import FractionField
+from sage.structure.unique_representation import UniqueRepresentation
+
 from . import sfa
 
 QQt = FractionField(QQ['t'])
@@ -201,7 +201,7 @@ class Jack(UniqueRepresentation):
         ::
 
             sage: Sym = SymmetricFunctions(QQ['a','b'].fraction_field())
-            sage: (a,b) = Sym.base_ring().gens()
+            sage: a, b = Sym.base_ring().gens()
             sage: Jacka = Sym.jack(t=a)
             sage: Jackb = Sym.jack(t=b)
             sage: m = Sym.monomial()
@@ -525,13 +525,13 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         # common category BasesByOrthotriangularity (shared with Jack, HL, orthotriang, Mcdo)
         if hasattr(self, "_m_cache"):
             # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-            category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
+            category = ModulesWithBasis(self._sym.base_ring())
             self._m = self._sym.monomial()
             self   .register_coercion(SetMorphism(Hom(self._m, self, category), self._m_to_self))
             self._m.register_coercion(SetMorphism(Hom(self, self._m, category), self._self_to_m))
         if hasattr(self, "_h_cache"):
             # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-            category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
+            category = ModulesWithBasis(self._sym.base_ring())
             self._h = self._sym.homogeneous()
             self   .register_coercion(SetMorphism(Hom(self._h, self, category), self._h_to_self))
             self._h.register_coercion(SetMorphism(Hom(self, self._h, category), self._self_to_h))
@@ -908,12 +908,14 @@ class JackPolynomials_p(JackPolynomials_generic):
              ([3],
               [([1, 1, 1], 3/(t^2 + 3/2*t + 1/2)), ([2, 1], 3/2/(t + 1/2)), ([3], 1)])]
         """
+        from sage.combinat.sf.sf import SymmetricFunctions
+
         if n in self._self_to_m_cache:
             return
         self._self_to_m_cache[n] = {}
         t = QQt.gen()
-        monomial = sage.combinat.sf.sf.SymmetricFunctions(QQt).monomial()
-        JP = sage.combinat.sf.sf.SymmetricFunctions(QQt).jack().P()
+        monomial = SymmetricFunctions(QQt).monomial()
+        JP = SymmetricFunctions(QQt).jack().P()
         JP._gram_schmidt(n, monomial, lambda p: part_scalar_jack(p, p, t),
                          self._self_to_m_cache[n], upper_triangular=True)
         JP._invert_morphism(n, QQt, self._self_to_m_cache,
@@ -1080,7 +1082,7 @@ class JackPolynomials_j(JackPolynomials_generic):
         # Should be shared with _q (and possibly other bases in Macdo/HL) as BasesByRenormalization
         self._P = self._jack.P()
         # temporary until Hom(GradedHopfAlgebrasWithBasis) works better
-        category = sage.categories.all.ModulesWithBasis(self.base_ring())
+        category = ModulesWithBasis(self.base_ring())
         phi = self.module_morphism(diagonal=self.c1,
                                    codomain=self._P, category=category)
         # should use module_morphism(on_coeffs = ...) once it exists
@@ -1116,7 +1118,7 @@ class JackPolynomials_q(JackPolynomials_generic):
         # Should be shared with _j (and possibly other bases in Macdo/HL) as BasesByRenormalization
         self._P = self._jack.P()
         # temporary until Hom(GradedHopfAlgebrasWithBasis) works better
-        category = sage.categories.all.ModulesWithBasis(self.base_ring())
+        category = ModulesWithBasis(self.base_ring())
         phi = self._P.module_morphism(diagonal=self._P.scalar_jack_basis,
                                       codomain=self, category=category)
         self.register_coercion(self._normalize_morphism(category) * phi)
@@ -1348,7 +1350,7 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
         #self._self_to_m_cache = {} and we don't need to compute it separately for zonals
         sfa.SymmetricFunctionAlgebra_generic.__init__(self, self._sym,
                                                       prefix='Z', basis_name='zonal')
-        category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
+        category = ModulesWithBasis(self._sym.base_ring())
         self   .register_coercion(SetMorphism(Hom(self._P, self, category), self.sum_of_terms))
         self._P.register_coercion(SetMorphism(Hom(self, self._P, category), self._P.sum_of_terms))
 
@@ -1415,6 +1417,7 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.jack', 'JackPolynomial_qp', JackPolynomials_qp.Element)
 register_unpickle_override('sage.combinat.sf.jack', 'JackPolynomial_j', JackPolynomials_j.Element)
 register_unpickle_override('sage.combinat.sf.jack', 'JackPolynomial_p', JackPolynomials_p.Element)

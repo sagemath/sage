@@ -111,6 +111,7 @@ TESTS::
     True
 """
 from cysignals.memory cimport sig_malloc, sig_free
+from libc.limits cimport INT_MAX
 
 from sage.categories.algebras import Algebras
 from sage.cpython.string cimport char_to_str
@@ -1618,10 +1619,14 @@ cdef class NCPolynomial_plural(RingElement):
             sage: P = A.g_algebra(relations={y*x:-x*y + z},  order='lex')
             sage: P.inject_variables()
             Defining x, z, y
-            sage: (x^2^31) * x^2^31
+
+            sage: # needs !32_bit
+            sage: f = x^2^19; f
+            x^524288
+            sage: f*f
             Traceback (most recent call last):
             ...
-            OverflowError: exponent overflow (2147483648)
+            OverflowError: exponent overflow (1048576)
         """
         # all currently implemented rings are commutative
         cdef poly *_p
@@ -1682,16 +1687,52 @@ cdef class NCPolynomial_plural(RingElement):
             sage: f^2
             x^6 + x^2*z + y^2
 
-        TESTS::
+        TESTS:
+
+        The exponents overflow at different points on 32- and 64-bit
+        systems::
 
             sage: A.<x,z,y> = FreeAlgebra(QQ, 3)
             sage: P = A.g_algebra(relations={y*x:-x*y + z},  order='lex')
             sage: P.inject_variables()
             Defining x, z, y
+            sage: try:
+            ....:     power = x^(2^20-1)
+            ....: except OverflowError as e:
+            ....:     # Happens on 32-bit systems
+            ....:     power = e
+            sage: isinstance(power, OverflowError)  # needs 32_bit
+            True
+            sage: power  # needs !32_bit
+            x^1048575
+            sage: x^2^20
+            Traceback (most recent call last):
+            ....
+            OverflowError: exponent overflow (1048576)
             sage: (x+y^2^31)^10
             Traceback (most recent call last):
             ....
-            OverflowError: exponent overflow (2147483648)
+            OverflowError: exponent overflow (2147483647)
+
+        In the example above, the maximum exponent is `2^{20}-1`,
+        and in the last example, ``2147483647`` instead of ``2147483648`` appears in the
+        error message because of an internal implementation detail.
+        When there are only two variables, the maximum exponent is `2^{32}-1`,
+        however because of a Singular bug, raising a variable directly to the `2^{32}-1`-th
+        power is very slow.
+        Note that the discussion on maximum exponent above is only valid for 64-bit machines,
+        see :meth:`MPolynomial_libsingular.__pow__`.
+
+        ::
+
+            sage: A.<x,y> = FreeAlgebra(QQ)
+            sage: B.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')
+
+            sage: # needs !32_bit
+            sage: (x^65537)^65535
+            x^4294967295
+            sage: x^(2^31)  # known bug (very slow)
+            x^2147483648
 
         Check that using third argument raises an error::
 
@@ -1714,10 +1755,13 @@ cdef class NCPolynomial_plural(RingElement):
             except TypeError:
                 raise TypeError("non-integral exponents not supported")
 
+        # TODO duplication with multi_polynomial_libsingular and sage.structure.element
         if exp < 0:
             return 1/(self**(-exp))
         elif exp == 0:
             return (<NCPolynomialRing_plural>self._parent)._one_element
+        elif exp > INT_MAX:
+            return (self ** INT_MAX) ** (exp // INT_MAX) * self ** (exp % INT_MAX)
 
         cdef ring *_ring = (<NCPolynomialRing_plural>self._parent)._ring
         cdef poly *_p
@@ -2925,8 +2969,9 @@ cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring):
     self._term_order = TermOrder(rw.ordering_string(), force=True)
 
     names = tuple(rw.var_names())
-    CommutativeRing.__init__(self, base_ring, names, category=Algebras(base_ring),
-                             normalize=False)
+    Parent.__init__(self, base=base_ring, names=names,
+                    category=Algebras(base_ring).Commutative(),
+                    normalize=False)
 
     self._has_singular = True
 
@@ -2994,7 +3039,8 @@ cpdef NCPolynomialRing_plural new_NRing(RingWrap rw, base_ring):
     self._ngens = rw.ngens()
     self._term_order = TermOrder(rw.ordering_string(), force=True)
 
-    Parent.__init__(self, base=base_ring, names=rw.var_names(), category=Algebras(base_ring))
+    Parent.__init__(self, base=base_ring, names=rw.var_names(),
+                    category=Algebras(base_ring))
 
     self._has_singular = True
     self._relations = self.relations()

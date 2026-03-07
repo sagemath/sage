@@ -526,7 +526,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: # needs sage.rings.number_field
             sage: i = GF(7)(3)
             sage: G = MatrixGroup([[i^3,0, 0,-i^3], [i^2,0, 0,-i^2]])
-            sage: chi = G.character(G.character_table()[4])
+            sage: chi = G.character(sorted(G.character_table())[3])
             sage: G.molien_series(chi)
             3*t^5 + 6*t^11 + 9*t^17 + 12*t^23 + O(t^25)
         """
@@ -641,12 +641,12 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
             sage: # needs sage.groups sage.rings.number_field
             sage: G = MatrixGroup(CyclicPermutationGroup(4))
-            sage: chi = G.character(G.character_table()[3])
+            sage: chi = G.character(sorted(G.character_table())[1])
             sage: K.<v> = CyclotomicField(4)
             sage: R.<x,y,z,w> = K[]
             sage: G.reynolds_operator(x, chi)
             1/4*x + (1/4*v)*y - 1/4*z + (-1/4*v)*w
-            sage: chi = G.character(G.character_table()[2])
+            sage: chi = G.character(sorted(G.character_table())[0])
             sage: R.<x,y,z,w> = QQ[]
             sage: G.reynolds_operator(x*y, chi)
             1/4*x*y + (-1/4*zeta4)*y*z + (1/4*zeta4)*x*w - 1/4*z*w
@@ -656,7 +656,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: # needs sage.groups sage.rings.number_field
             sage: K.<i> = CyclotomicField(4)
             sage: G =  MatrixGroup(CyclicPermutationGroup(3))
-            sage: chi = G.character(G.character_table()[1])
+            sage: chi = G.character(sorted(G.character_table())[0])
             sage: R.<x,y,z> = K[]
             sage: G.reynolds_operator(x*y^5, chi)
             1/3*x*y^5 + (-2/3*izeta3^3 - izeta3^2 - 8/3*izeta3 - 4/3)*x^5*z
@@ -886,7 +886,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: # needs sage.groups sage.rings.number_field
             sage: K.<i> = CyclotomicField(4)
             sage: G =  MatrixGroup(CyclicPermutationGroup(3))
-            sage: chi = G.character(G.character_table()[1])
+            sage: chi = G.character(sorted(G.character_table())[0])
             sage: R.<x,y,z> = K[]
             sage: sorted(G.invariants_of_degree(2, R=R, chi=chi))
             [x*y + (-2*izeta3^3 - 3*izeta3^2 - 8*izeta3 - 4)*x*z
@@ -898,7 +898,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
             sage: # needs sage.groups sage.rings.number_field
             sage: S3 = MatrixGroup(SymmetricGroup(3))
-            sage: chi = S3.character(S3.character_table()[0])
+            sage: chi = S3.character(sorted(S3.character_table(), key=str)[0])
             sage: sorted(S3.invariants_of_degree(5, chi=chi))
             [x0^3*x1^2 - x0^2*x1^3 - x0^3*x2^2 + x1^3*x2^2 + x0^2*x2^3 - x1^2*x2^3,
              x0^4*x1 - x0*x1^4 - x0^4*x2 + x1^4*x2 + x0*x2^4 - x1*x2^4]

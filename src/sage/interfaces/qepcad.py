@@ -38,13 +38,10 @@ documentation for the \sage interface rather than for QEPCAD.  As
 such, it does not cover several issues that are very important to use
 QEPCAD efficiently, such as variable ordering, the efficient use of
 the alternate quantifiers and ``_root_`` expressions, the
-``measure-zero-error`` command, etc.  For more information on
-QEPCAD, see the online documentation at
-\url{http://www.cs.usna.edu/~qepcad/B/QEPCAD.html} and Chris Brown's
-tutorial handout and slides from
-\url{http://www.cs.usna.edu/~wcbrown/research/ISSAC04/Tutorial.html}.
-(Several of the examples in this documentation came from these
-sources.)
+``measure-zero-error`` command, etc.  For more information on QEPCAD,
+see the `online documentation <https://www.usna.edu/Users/cs/wcbrown/qepcad/B/QEPCAD.html>`_
+and Chris Brown's `tutorial handout <https://www.usna.edu/Users/cs/wcbrown/research/ISSAC04/Tutorial.html>`_.
+(Several of the examples in this documentation came from these sources.)
 
 The examples below require that the optional qepcad package is installed.
 
@@ -596,6 +593,7 @@ AUTHORS:
 
 - Carl Witty (2008-03): initial version
 - Thierry Monteil (2015-07) repackaging + noncommutative doctests.
+
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Carl Witty <Carl.Witty@gmail.com>
@@ -606,19 +604,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import os
-from sage.env import SAGE_LOCAL
-import pexpect
 import re
 import sys
 
+import pexpect
+
 from sage.cpython.string import bytes_to_str
+from sage.env import SAGE_LOCAL
+from sage.interfaces.expect import Expect, ExpectFunction
+from sage.interfaces.interface import AsciiArtString
+from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.flatten import flatten
+from sage.misc.instancedoc import instancedoc
 from sage.misc.sage_eval import sage_eval
 from sage.repl.preparse import implicit_mul
-from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.misc.instancedoc import instancedoc
-from .expect import Expect, ExpectFunction
-from sage.interfaces.interface import AsciiArtString
 
 
 def _qepcad_atoms(formula):
@@ -2338,10 +2337,10 @@ def _eval_qepcad_algebraic(text):
         sage: 8*x^2 - 8*x - 29 == 0
         True
     """
-    from sage.rings.rational_field import QQ
     from sage.rings.polynomial.polynomial_ring import polygen
-    from sage.rings.real_mpfi import RealIntervalField
     from sage.rings.qqbar import AA
+    from sage.rings.rational_field import QQ
+    from sage.rings.real_mpfi import RealIntervalField
 
     match = _qepcad_algebraic_re.match(text)
 

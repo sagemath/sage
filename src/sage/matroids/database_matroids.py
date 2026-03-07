@@ -2401,8 +2401,8 @@ def Psi(r, groundset=None):
 
     [Oxl2011]_, p. 664.
     """
-    A = [f'a{i}' for i in range(0, r)]
-    B = [f'b{i}' for i in range(0, r)]
+    A = [f'a{i}' for i in range(r)]
+    B = [f'b{i}' for i in range(r)]
     E = A + B
 
     def generate_binary_strings(bit_count):
@@ -2419,7 +2419,7 @@ def Psi(r, groundset=None):
         return binary_strings
 
     NSC = []  # nonspanning circuits
-    for i in range(0, r):
+    for i in range(r):
         for k in range(1, r - 2):
             I0 = [f'a{i}', f'b{i}']
             IK = [f'a{(i + k) % r}', f'b{(i + k) % r}']

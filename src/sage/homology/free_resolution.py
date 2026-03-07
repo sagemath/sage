@@ -180,7 +180,7 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
             return module.graded_free_resolution(*args, **kwds)
         return module.free_resolution(*args, **kwds)
 
-    def __init__(self, module, name='S', **kwds):
+    def __init__(self, module, name='S', **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -206,7 +206,7 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
         self._name = name
         self._module = module
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -224,7 +224,7 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
             return f"Free resolution of the row space of the matrix:\n{self._module}"
         return f"Free resolution of {self._module}"
 
-    def _repr_module(self, i):
+    def _repr_module(self, i) -> str:
         r"""
         Return the string form of the `i`-th free module.
 
@@ -369,7 +369,7 @@ class FiniteFreeResolution(FreeResolution):
         """
         return len(self._maps)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string form of this resolution.
 
@@ -851,7 +851,7 @@ class FiniteFreeResolution_singular(FiniteFreeResolution):
         [-y*z + x*w]
         [ z^2 - y*w]
     """
-    def __init__(self, module, name='S', algorithm='heuristic', **kwds):
+    def __init__(self, module, name='S', algorithm='heuristic', **kwds) -> None:
         r"""
         Initialize ``self``.
 

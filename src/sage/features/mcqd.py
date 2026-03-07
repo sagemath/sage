@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``mcqd``
 """
@@ -38,7 +37,7 @@ class Mcqd(JoinFeature):
         """
         JoinFeature.__init__(self, 'mcqd',
                              [PythonModule('sage.graphs.mcqd',
-                                           spkg='sagemath_mcqd')])
+                                           spkg='mcqd')])
 
 
 def all_features():

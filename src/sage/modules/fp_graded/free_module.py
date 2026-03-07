@@ -940,7 +940,7 @@ class FreeGradedModule(CombinatorialFreeModule):
         return FreeGradedModule(algebra=self.base_ring(),
                                 generator_degrees=degs)
 
-    def has_relations(self):
+    def has_relations(self) -> bool:
         r"""
         Return ``False`` as this has no relations.
 

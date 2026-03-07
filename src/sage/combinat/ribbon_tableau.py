@@ -1,5 +1,5 @@
 r"""
-Ribbon Tableaux
+Ribbon tableaux
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,

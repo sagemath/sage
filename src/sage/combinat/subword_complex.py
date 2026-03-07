@@ -349,7 +349,7 @@ class SubwordComplexFacet(Simplex, Element):
         Phi = self.parent().group().roots()
         return [Phi[i] for i in self._root_configuration_indices()]
 
-    def kappa_preimage(self):
+    def kappa_preimage(self) -> list:
         r"""
         Return the fiber of ``self`` under the `\kappa` map.
 
@@ -403,7 +403,7 @@ class SubwordComplexFacet(Simplex, Element):
                 if all(w.action_on_root_indices(i, side='left') < N
                        for i in root_conf)]
 
-    def is_vertex(self):
+    def is_vertex(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a vertex of the brick polytope
         of ``self.parent``.
@@ -1445,7 +1445,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
     # topological properties
 
-    def is_sphere(self):
+    def is_sphere(self) -> bool:
         r"""
         Return ``True`` if the subword complex ``self`` is a sphere.
 
@@ -1472,7 +1472,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         w = W.demazure_product(self._Q)
         return w == self._pi
 
-    def is_ball(self):
+    def is_ball(self) -> bool:
         r"""
         Return ``True`` if the subword complex ``self`` is a ball.
 
@@ -1499,7 +1499,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         return not self.is_sphere()
 
-    def is_pure(self):
+    def is_pure(self) -> bool:
         r"""
         Return ``True`` since all subword complexes are pure.
 
@@ -1541,7 +1541,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
     # root and weight
 
     @cached_method
-    def is_root_independent(self):
+    def is_root_independent(self) -> bool:
         r"""
         Return ``True`` if ``self`` is root-independent.
 
@@ -1569,7 +1569,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         return M.rank() == max(M.ncols(), M.nrows())
 
     @cached_method
-    def is_double_root_free(self):
+    def is_double_root_free(self) -> bool:
         r"""
         Return ``True`` if ``self`` is double-root-free.
 

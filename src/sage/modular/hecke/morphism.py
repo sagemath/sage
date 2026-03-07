@@ -35,41 +35,6 @@ from sage.categories.morphism import Morphism
 # integral homology). All morphisms derive from HeckeModuleMorphism.
 
 
-def is_HeckeModuleMorphism(x):
-    r"""
-    Return ``True`` if x is of type HeckeModuleMorphism.
-
-    EXAMPLES::
-
-        sage: sage.modular.hecke.morphism.is_HeckeModuleMorphism(ModularSymbols(6).hecke_operator(7).hecke_module_morphism())
-        doctest:warning...
-        DeprecationWarning: the function is_HeckeModuleMorphism is deprecated;
-        use 'isinstance(..., HeckeModuleMorphism)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_HeckeModuleMorphism is deprecated; use 'isinstance(..., HeckeModuleMorphism)' instead")
-    return isinstance(x, HeckeModuleMorphism)
-
-
-def is_HeckeModuleMorphism_matrix(x):
-    """
-
-    EXAMPLES::
-
-        sage: sage.modular.hecke.morphism.is_HeckeModuleMorphism_matrix(ModularSymbols(6).hecke_operator(7).matrix_form().hecke_module_morphism())
-        doctest:warning...
-        DeprecationWarning: the function is_HeckeModuleMorphism_matrix is deprecated;
-        use 'isinstance(..., HeckeModuleMorphism_matrix)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_HeckeModuleMorphism_matrix is deprecated; use 'isinstance(..., HeckeModuleMorphism_matrix)' instead")
-    return isinstance(x, HeckeModuleMorphism_matrix)
-
-
 class HeckeModuleMorphism(Morphism):
     r"""
     Abstract base class for morphisms of Hecke modules.
@@ -103,7 +68,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         ...
         TypeError: Incompatible composition of morphisms: domain of left morphism must be codomain of right.
     """
-    def __init__(self, parent, A, name='', side='left'):
+    def __init__(self, parent, A, name='', side='left') -> None:
         """
         INPUT:
 

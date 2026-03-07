@@ -25,7 +25,7 @@ class Polyhedron_mutable(Polyhedron_base):
             sage: set([p])
             Traceback (most recent call last):
             ...
-            TypeError: mutable polyhedra are unhashable
+            TypeError: ...mutable polyhedra are unhashable...
             sage: p.set_immutable()
             sage: set([p])
             {A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex}

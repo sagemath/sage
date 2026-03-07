@@ -316,7 +316,7 @@ class SloaneSequence(SageObject):
             return self(n)
 
         LENGTH = 100000
-        (start, stop, step) = n.indices(2 * LENGTH)
+        start, stop, step = n.indices(2 * LENGTH)
         if abs(stop - start) > LENGTH:
             raise IndexError("slice (=%s) too long" % n)
         return [self(i) for i in range(start, stop, step) if i >= self.offset]
@@ -8087,7 +8087,7 @@ def perm_mh(m, h):
     A = M(0)
     for i in range(m):
         for j in range(n):
-            if i <= j and j <= i + h:
+            if i <= j <= i + h:
                 A[i, j] = 1
     return A.permanent()
 
@@ -8911,7 +8911,7 @@ class Sloane(SageObject):
         ::
 
             sage: sloane.__repr__
-            <built-in method __repr__ of Sloane object at 0x...>
+            <...__repr__...of Sloane object at 0x...>
             sage: sloane.__name__
             Traceback (most recent call last):
             ...

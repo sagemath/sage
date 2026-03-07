@@ -511,7 +511,7 @@ cdef class Farey:
         else:  # output == 'gens'
             return tuple((gens[a-1], len(list(g))) if a > 0 else (gens[-a-1], -len(list(g))) for a, g in groupby(tietze))
 
-    def __contains__(self, M):
+    def __contains__(self, M) -> bool:
         r"""
         Test if element is in the arithmetic group of the Farey symbol
         via LLT algorithm.
@@ -533,7 +533,7 @@ cdef class Farey:
         sig_off()
         return result
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         r"""
         Compare ``self`` to ``other``.
 
@@ -569,7 +569,7 @@ cdef class Farey:
         """
         return Farey, (self.group, self.this_ptr.dumps())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -958,9 +958,10 @@ cdef class Farey:
             ....:                                            thickness='2')
             Graphics object consisting of 58 graphics primitives
         """
-        from sage.plot.all import Graphics
+        from sage.plot.graphics import Graphics
         from sage.plot.colors import rainbow
-        from sage.plot.all import hyperbolic_arc, hyperbolic_triangle
+        from sage.plot.hyperbolic_arc import hyperbolic_arc
+        from sage.plot.hyperbolic_polygon import hyperbolic_triangle
 
         I = CC(0, 1)
         w = RR(3).sqrt()

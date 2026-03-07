@@ -53,13 +53,16 @@ TESTS::
     sage: TestSuite(S.an_element()).run()
 """
 from __future__ import annotations
-from sage.rings.integer import Integer
 
 from sage.groups.group import FiniteGroup
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.action import Action
 from sage.combinat.permutation import Permutation
 from sage.groups.semimonomial_transformations.semimonomial_transformation import SemimonomialTransformation
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 
 class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):

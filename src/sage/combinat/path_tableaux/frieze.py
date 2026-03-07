@@ -1,5 +1,5 @@
 r"""
-Frieze Patterns
+Frieze patterns
 
 This implements the original frieze patterns due to Conway and Coxeter.
 Such a frieze pattern is considered as a sequence of nonnegative

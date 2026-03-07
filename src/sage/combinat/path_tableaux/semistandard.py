@@ -1,6 +1,5 @@
 r"""
-Semistandard Tableaux
-=====================
+Semistandard tableaux
 
 This is an implementation of the abstract base class
 :class:`sage.combinat.path_tableaux.path_tableau.PathTableau`.

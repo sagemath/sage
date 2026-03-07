@@ -1,4 +1,4 @@
-$(MP_LIBRARY) givaro gsl $(BLAS) | pkgconf
+$(MP_LIBRARY) givaro gsl $(BLAS)
 
 ----------
 All lines of this file are ignored except the first.

@@ -67,12 +67,12 @@ cdef class PartitionStack:
     cdef int ncols
     cdef int radix
     cdef int flag
-    cdef int *col_degs   #
-    cdef int *col_counts #
-    cdef int *col_output #
-    cdef int *wd_degs    #
-    cdef int *wd_counts  # These are just for scratch space...
-    cdef int *wd_output  #
+    cdef int *col_degs    #
+    cdef int *col_counts  #
+    cdef int *col_output  #
+    cdef int *wd_degs     #
+    cdef int *wd_counts   # These are just for scratch space...
+    cdef int *wd_output   #
 
     cdef int is_discrete(self, int) noexcept
     cdef int num_cells(self, int) noexcept

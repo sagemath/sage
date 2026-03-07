@@ -1353,7 +1353,11 @@ cpdef EclObject ecl_eval(str s):
         <ECL: "𝟜𝟟𝟙𝟙">
     """
     cdef cl_object o
-    o = ecl_safe_eval(python_to_ecl(s, True))
-    return ecl_wrap(o)
+    try:
+        o = ecl_safe_eval(python_to_ecl(s, True))
+        return ecl_wrap(o)
+    except RuntimeError as e:
+        e.add_note(f"while evaluating {s}")
+        raise
 
 init_ecl()

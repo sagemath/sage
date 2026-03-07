@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 SageMath version and banner info
 """
@@ -28,13 +27,13 @@ def version():
        sage: version()
        doctest:warning
        ...
-       DeprecationWarning: Use sage.version instead.
+       DeprecationWarning: Use sage.version.version instead.
        ...
        'SageMath version ..., Release Date: ...'
     """
     from sage.misc.superseded import deprecation
 
-    deprecation(39015, "Use sage.version instead.")
+    deprecation(39015, "Use sage.version.version instead.")
     return sage_banner
 
 

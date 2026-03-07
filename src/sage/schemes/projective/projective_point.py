@@ -39,10 +39,9 @@ from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
-from sage.rings.ring import CommutativeRing
 from sage.schemes.generic.morphism import (SchemeMorphism,
                                            SchemeMorphism_point)
-from sage.structure.element import AdditiveGroupElement
+from sage.structure.element import AdditiveGroupElement, RingElement
 from sage.structure.richcmp import richcmp, op_EQ, op_NE
 from sage.structure.sequence import Sequence
 
@@ -168,18 +167,18 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
                 v = list(v)
             else:
                 try:
-                    if isinstance(v.parent(), CommutativeRing):
+                    if isinstance(v, RingElement):
                         v = [v]
                 except AttributeError:
                     pass
             if not isinstance(v, (list, tuple)):
                 raise TypeError("argument v (= %s) must be a scheme point, list, or tuple" % str(v))
-            if len(v) != d and len(v) != d-1:
+            if len(v) != d and len(v) != d - 1:
                 raise TypeError("v (=%s) must have %s components" % (v, d))
 
             R = X.value_ring()
             v = Sequence(v, R)
-            if len(v) == d-1:     # very common special case
+            if len(v) == d - 1:     # very common special case
                 v.append(R.one())
 
             if R in IntegralDomains():
@@ -414,14 +413,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             True
         """
         R = self.codomain().base_ring()
-        #if there is a fraction field normalize the point so that
-        #equal points have equal hash values
+        # if there is a fraction field normalize the point so that
+        # equal points have equal hash values
         if R in IntegralDomains():
             P = self.change_ring(FractionField(R))
             P.normalize_coordinates()
             return hash(tuple(P))
-        #if there is no good way to normalize return
-        #a constant value
+        # if there is no good way to normalize return
+        # a constant value
         return hash(self.codomain())
 
     def _matrix_times_point_(self, mat, dom):
@@ -519,7 +518,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: Q.scale_by(1/2);Q
             (1 : 1 : 1)
         """
-        if t.is_zero():  #what if R(t) == 0 ?
+        if t.is_zero():  # what if R(t) == 0 ?
             raise ValueError("Cannot scale by 0")
         R = self.codomain().base_ring()
         if isinstance(R, QuotientRing_generic):
@@ -677,14 +676,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             ...
             ValueError: can...t dehomogenize at 0 coordinate
         """
-        if self[n].is_zero():
+        sn = self[n]
+        if sn.is_zero():
             raise ValueError("can't dehomogenize at 0 coordinate")
         PS = self.codomain()
         A = PS.affine_patch(n)
-        Q = []
-        for i in range(PS.ambient_space().dimension_relative() + 1):
-            if i != n:
-                Q.append(self[i] / self[n])
+        Q = [self[i] / sn
+             for i in range(PS.ambient_space().dimension_relative() + 1)
+             if i != n]
         return A.point(Q)
 
     def global_height(self, prec=None):
@@ -1142,11 +1141,11 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
                 v = list(v)
             else:
                 try:
-                    if isinstance(v.parent(), CommutativeRing):
+                    if isinstance(v, RingElement):
                         v = [v]
                 except AttributeError:
                     pass
-            if not isinstance(v, (list,tuple)):
+            if not isinstance(v, (list, tuple)):
                 raise TypeError("argument v (= %s) must be a scheme point, list, or tuple" % str(v))
             if len(v) != d and len(v) != d-1:
                 raise TypeError("v (=%s) must have %s components" % (v, d))
@@ -1273,16 +1272,16 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         # Issue #23808: Keep the embedding info associated with the number field K
         # used below, instead of in the separate embedding map phi which is
         # forgotten.
-        K_pre,P,phi = number_field_elements_from_algebraics(list(self))
+        K_pre, P, phi = number_field_elements_from_algebraics(list(self))
         if K_pre is QQ:
             K = QQ
         else:
             from sage.rings.number_field.number_field import NumberField
             K = NumberField(K_pre.polynomial(), embedding=phi(K_pre.gen()), name='a')
-            psi = K_pre.hom([K.gen()], K) # Identification of K_pre with K
-            P = [ psi(p) for p in P ] # The elements of P were elements of K_pre
+            psi = K_pre.hom([K.gen()], K)  # Identification of K_pre with K
+            P = [psi(p) for p in P]  # The elements of P were elements of K_pre
         from sage.schemes.projective.projective_space import ProjectiveSpace
-        PS = ProjectiveSpace(K,self.codomain().dimension_relative(),'z')
+        PS = ProjectiveSpace(K, self.codomain().dimension_relative(), 'z')
         return PS(P)
 
     def clear_denominators(self):
@@ -1421,7 +1420,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
                 break
         a = v[i]
         x = g[i]
-        return P.subscheme([a*g[j] - v[j]*x for j in range(n) if j != i])
+        return P.subscheme([a * g[j] - v[j] * x for j in range(n) if j != i])
 
 
 class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projective_field):

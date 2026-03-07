@@ -892,7 +892,7 @@ def compute_definiteness_string_by_determinants(self):
     if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
         raise NotImplementedError("we can only check definiteness over ZZ, QQ, and RR for now")
 
-    from sage.functions.all import sgn
+    from sage.functions.generalized import sgn
 
     # Some useful variables
     n = self.dim()

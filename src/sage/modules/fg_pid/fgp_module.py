@@ -214,7 +214,7 @@ from itertools import product
 
 from sage.modules.module import Module
 from sage.modules.free_module import FreeModule_generic
-from sage.structure.all import parent
+from sage.structure.element import parent
 from sage.structure.sequence import Sequence
 from .fgp_element import DEBUG, FGP_Element
 from .fgp_morphism import FGP_Morphism, FGP_Homset
@@ -222,7 +222,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.arith.functions import lcm
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecated_function_alias
 from sage.matrix.constructor import matrix
 
 import sage.misc.weak_dict
@@ -264,30 +263,6 @@ def FGP_Module(V, W, check=True):
     M = FGP_Module_class(V, W, check=check)
     _fgp_module[key] = M
     return M
-
-
-def is_FGP_Module(x):
-    """
-    Return ``True`` if x is an FGP module, i.e., a finitely generated
-    module over a PID represented as a quotient of finitely generated
-    free modules over a PID.
-
-    EXAMPLES::
-
-        sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
-        sage: W = V.span([2*V.0 + 4*V.1, 9*V.0 + 12*V.1, 4*V.2]); Q = V/W
-        sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(V)
-        doctest:warning...
-        DeprecationWarning: the function is_FGP_Module is deprecated;
-        use 'isinstance(..., FGP_Module_class)' instead
-        See https://github.com/sagemath/sage/issues/37924 for details.
-        False
-        sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(Q)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37924, "the function is_FGP_Module is deprecated; use 'isinstance(..., FGP_Module_class)' instead")
-    return isinstance(x, FGP_Module_class)
 
 
 class FGP_Module_class(Module):
@@ -336,7 +311,7 @@ class FGP_Module_class(Module):
     # module. Should be overridden in derived classes.
     Element = FGP_Element
 
-    def __init__(self, V, W, check=True):
+    def __init__(self, V, W, check=True) -> None:
         """
         INPUT:
 
@@ -470,7 +445,7 @@ class FGP_Module_class(Module):
         raise ValueError("Scalar multiplication of a module is only " +
                          "defined for an element of the base ring.")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this module.
 
@@ -507,9 +482,9 @@ class FGP_Module_class(Module):
                 raise TypeError("other must be an FGP module")
         if not other.is_submodule(self):
             raise ValueError("other must be a submodule of self")
-        return self._module_constructor(self._V, other._V+self._W)
+        return self._module_constructor(self._V, other._V + self._W)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         EXAMPLES::
 
@@ -529,7 +504,7 @@ class FGP_Module_class(Module):
             return False
         return self._V == other._V and self._W == other._W
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` iff ``self`` is not equal to ``other``.
 
@@ -569,7 +544,7 @@ class FGP_Module_class(Module):
 
     # __le__ is a synonym for `is_submodule`: see below
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         """
         Return ``True`` iff ``self`` is a proper submodule of ``other``.
 
@@ -587,7 +562,7 @@ class FGP_Module_class(Module):
         """
         return self <= other and not self == other
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         """
         Return ``True`` iff ``other`` is a proper submodule of ``self``.
 
@@ -605,7 +580,7 @@ class FGP_Module_class(Module):
         """
         return self >= other and not self == other
 
-    def __ge__(self, other):
+    def __ge__(self, other) -> bool:
         """
         Return ``True`` iff ``other`` is a submodule of ``self``.
 
@@ -675,7 +650,7 @@ class FGP_Module_class(Module):
             raise TypeError(msg)
         return self.element_class(self, self._V(x))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return true if ``x`` is contained in ``self``.
 
@@ -764,7 +739,7 @@ class FGP_Module_class(Module):
         V = self._V.submodule(x) + self._W
         return self._module_constructor(V, self._W)
 
-    def has_canonical_map_to(self, A):
+    def has_canonical_map_to(self, A) -> bool:
         """
         Return ``True`` if ``self`` has a canonical map to ``A``, relative to the
         given presentation of ``A``.
@@ -1198,21 +1173,20 @@ class FGP_Module_class(Module):
 
         We create a derived class and overwrite :meth:`gens`::
 
-             sage: from sage.modules.fg_pid.fgp_module import FGP_Module_class
-             sage: W = ZZ^3
-             sage: V = W.span(matrix.diagonal([1/6, 1/3, 1/12]))
-             sage: class FGP_with_gens(FGP_Module_class):
-             ....:     def __init__(self, V, W, gens):
-             ....:         FGP_Module_class.__init__(self, V, W)
-             ....:         self._gens = tuple([self(g) for g in gens])
-             ....:     def gens(self):
-             ....:         return self._gens
-             sage: gens = [(1/2, 0, 0), (0, 0, 1/4), (1/3, 0, 0), (0, 1/3, 0), (0, 0, 2/3)]
-             sage: gens = [V(g) for g in gens]
-             sage: D = FGP_with_gens(V, W, gens)
-             sage: D.gens()
-             ((0, 3, 0), (0, 0, 3), (0, 4, 0), (1, 2, 0), (0, 0, 8))
-
+            sage: from sage.modules.fg_pid.fgp_module import FGP_Module_class
+            sage: W = ZZ^3
+            sage: V = W.span(matrix.diagonal([1/6, 1/3, 1/12]))
+            sage: class FGP_with_gens(FGP_Module_class):
+            ....:     def __init__(self, V, W, gens):
+            ....:         FGP_Module_class.__init__(self, V, W)
+            ....:         self._gens = tuple([self(g) for g in gens])
+            ....:     def gens(self) -> tuple:
+            ....:         return self._gens
+            sage: gens = [(1/2, 0, 0), (0, 0, 1/4), (1/3, 0, 0), (0, 1/3, 0), (0, 0, 2/3)]
+            sage: gens = [V(g) for g in gens]
+            sage: D = FGP_with_gens(V, W, gens)
+            sage: D.gens()
+            ((0, 3, 0), (0, 0, 3), (0, 4, 0), (1, 2, 0), (0, 0, 8))
 
         We create some element of ``D``::
 
@@ -1620,7 +1594,7 @@ class FGP_Module_class(Module):
         EXAMPLES::
 
             sage: class SillyModule(sage.modules.fg_pid.fgp_module.FGP_Module_class):
-            ....:     def gens(self):
+            ....:     def gens(self) -> tuple:
             ....:         return tuple(flatten([[x,x] for x in self.smith_form_gens()]))
             sage: A = SillyModule(ZZ**1, span([[3]], ZZ))
             sage: A.gen(0)
@@ -1662,7 +1636,7 @@ class FGP_Module_class(Module):
         EXAMPLES::
 
             sage: class SillyModule(sage.modules.fg_pid.fgp_module.FGP_Module_class):
-            ....:     def gens(self):
+            ....:     def gens(self) -> tuple:
             ....:         return tuple(flatten([[x,x] for x in self.smith_form_gens()]))
             sage: A = SillyModule(ZZ**1, span([[3]], ZZ))
             sage: A.gen(0)
@@ -1941,7 +1915,7 @@ class FGP_Module_class(Module):
         """
         return len(self.gens())
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Calculate a hash for ``self``.
 
@@ -2075,6 +2049,3 @@ def _test_morphism_0(*args, **kwds):
     if len(I.smith_form_gens()) > 0:
         x = phi.lift(I.smith_form_gen(0))
         assert phi(x) == I.smith_form_gen(0)
-
-
-test_morphism_0 = deprecated_function_alias(33617, _test_morphism_0)

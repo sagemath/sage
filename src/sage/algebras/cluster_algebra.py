@@ -1988,8 +1988,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
                 msg += "you can compute it by mutating from the initial seed along the sequence "
                 msg += str(self._path_dict[g_vector])
                 raise KeyError(msg)
-            else:
-                raise KeyError("the g-vector %s has not been found yet" % str(g_vector))
+            raise KeyError("the g-vector {} has not been found yet".format(g_vector))
 
     def find_g_vector(self, g_vector, depth=infinity):
         r"""
@@ -2629,7 +2628,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         g_vector = tuple(g_vector)
         F = self.theta_basis_F_polynomial(g_vector).subs(self._yhat)
         g_mon = prod(self.ambient().gen(i) ** g_vector[i] for i in range(self.rank()))
-        # we only return the monomal g_mon times the evaluated F-polynomial because this is how
+        # we only return the monomial g_mon times the evaluated F-polynomial because this is how
         # theta basis elements behave.
         return self.retract(g_mon * F)
 

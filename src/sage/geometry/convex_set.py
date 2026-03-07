@@ -41,7 +41,7 @@ class ConvexSet_base(SageObject, Set_base):
     Abstract base class for convex sets.
     """
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         r"""
         Test whether ``self`` is the empty set.
 
@@ -56,7 +56,7 @@ class ConvexSet_base(SageObject, Set_base):
         """
         return self.dim() < 0
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Test whether ``self`` is a finite set.
 
@@ -106,7 +106,7 @@ class ConvexSet_base(SageObject, Set_base):
             return ZZ(1)
         return infinity
 
-    def is_universe(self):
+    def is_universe(self) -> bool:
         r"""
         Test whether ``self`` is the whole ambient space.
 
@@ -445,7 +445,7 @@ class ConvexSet_base(SageObject, Set_base):
 
     codim = codimension
 
-    def is_full_dimensional(self):
+    def is_full_dimensional(self) -> bool:
         r"""
         Return whether ``self`` is full dimensional.
 
@@ -465,7 +465,7 @@ class ConvexSet_base(SageObject, Set_base):
         """
         return self.dim() == self.ambient_dim()
 
-    def is_open(self):
+    def is_open(self) -> bool:
         r"""
         Return whether ``self`` is open.
 
@@ -489,7 +489,7 @@ class ConvexSet_base(SageObject, Set_base):
             return True
         raise NotImplementedError
 
-    def is_relatively_open(self):
+    def is_relatively_open(self) -> bool:
         r"""
         Return whether ``self`` is relatively open.
 
@@ -514,7 +514,7 @@ class ConvexSet_base(SageObject, Set_base):
             return True
         raise NotImplementedError
 
-    def is_closed(self):
+    def is_closed(self) -> bool:
         r"""
         Return whether ``self`` is closed.
 
@@ -536,7 +536,7 @@ class ConvexSet_base(SageObject, Set_base):
             return True
         raise NotImplementedError
 
-    def is_compact(self):
+    def is_compact(self) -> bool:
         r"""
         Return whether ``self`` is compact.
 
@@ -969,7 +969,7 @@ class ConvexSet_closed(ConvexSet_base):
     Abstract base class for closed convex sets.
     """
 
-    def is_closed(self):
+    def is_closed(self) -> bool:
         r"""
         Return whether ``self`` is closed.
 
@@ -983,7 +983,7 @@ class ConvexSet_closed(ConvexSet_base):
         """
         return True
 
-    def is_open(self):
+    def is_open(self) -> bool:
         r"""
         Return whether ``self`` is open.
 
@@ -1007,7 +1007,7 @@ class ConvexSet_compact(ConvexSet_closed):
     Abstract base class for compact convex sets.
     """
 
-    def is_universe(self):
+    def is_universe(self) -> bool:
         r"""
         Return whether ``self`` is the whole ambient space.
 
@@ -1025,7 +1025,7 @@ class ConvexSet_compact(ConvexSet_closed):
         """
         return self.ambient_dim() == 0 and not self.is_empty()
 
-    def is_compact(self):
+    def is_compact(self) -> bool:
         r"""
         Return whether ``self`` is compact.
 
@@ -1047,7 +1047,7 @@ class ConvexSet_relatively_open(ConvexSet_base):
     Abstract base class for relatively open convex sets.
     """
 
-    def is_relatively_open(self):
+    def is_relatively_open(self) -> bool:
         r"""
         Return whether ``self`` is relatively open.
 
@@ -1062,7 +1062,7 @@ class ConvexSet_relatively_open(ConvexSet_base):
         """
         return True
 
-    def is_open(self):
+    def is_open(self) -> bool:
         r"""
         Return whether ``self`` is open.
 
@@ -1083,7 +1083,7 @@ class ConvexSet_open(ConvexSet_relatively_open):
     Abstract base class for open convex sets.
     """
 
-    def is_open(self):
+    def is_open(self) -> bool:
         r"""
         Return whether ``self`` is open.
 
@@ -1098,7 +1098,7 @@ class ConvexSet_open(ConvexSet_relatively_open):
         """
         return True
 
-    def is_closed(self):
+    def is_closed(self) -> bool:
         r"""
         Return whether ``self`` is closed.
 

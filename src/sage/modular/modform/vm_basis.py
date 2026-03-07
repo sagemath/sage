@@ -32,6 +32,7 @@ import math
 
 from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
 from sage.misc.verbose import verbose
+from sage.modular.modform.eis_series_cython import eisenstein_series_poly
 from sage.rings.big_oh import O as bigO
 from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.integer import Integer
@@ -39,9 +40,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
-from sage.structure.all import Sequence
-
-from .eis_series_cython import eisenstein_series_poly
+from sage.structure.sequence import Sequence
 
 
 def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):

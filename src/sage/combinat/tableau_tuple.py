@@ -207,7 +207,7 @@ subsequent papers on the representation theory of these algebras.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.arith.misc import factorial
@@ -5077,7 +5077,7 @@ class StandardTableaux_residue(StandardTableauTuples):
             sage: T = StandardTableauTuple([[[6],[7]],[[1,2,3],[4,5]]]).residue_sequence(2,(0,0)).standard_tableaux()
             sage: TestSuite(T).run()
         """
-        super().__init__(residue, category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         self._level = residue.level()
         self._multicharge = residue.multicharge()
         self._quantum_characteristic = residue.quantum_characteristic()

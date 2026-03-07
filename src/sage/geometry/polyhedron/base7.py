@@ -663,7 +663,17 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P = Polyhedron([[0, 0], [1, 1]])
             sage: P.volume(measure='induced', engine='lrs')             # optional - lrslib
             1.414213562373095?
-        """
+
+        TESTS:
+
+        Check for :issue:`30772`::
+
+            sage: R2.<sqrt2> = NumberField(x^2 - 2, embedding=AA(2).sqrt())
+            sage: R3.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3).sqrt())
+            sage: F2 = Polyhedron([[sqrt2,0],[0,sqrt3]])
+            sage: F2.volume(measure="induced")
+            2.236067977499790?
+       """
         from sage.features import FeatureNotPresentError
         if measure == 'induced_rational' and engine not in ['auto', 'latte', 'normaliz']:
             raise RuntimeError("the induced rational measure can only be computed with the engine set to `auto`, `latte`, or `normaliz`")

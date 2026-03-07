@@ -610,7 +610,7 @@ def line2d(points, **options):
         sage: line(enumerate(range(2)), marker='o', legend_label='circle')
         Graphics object consisting of 1 graphics primitive
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.plot.plot import xydata_from_point_list
     points = list(points)  # make sure points is a python list
     if not points:

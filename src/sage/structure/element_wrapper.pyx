@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Element Wrapper
 
@@ -27,6 +26,7 @@ from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from copy import copy
+from sage.misc.latex import latex
 
 
 cdef class ElementWrapper(Element):
@@ -199,7 +199,6 @@ cdef class ElementWrapper(Element):
             sage: ElementWrapper(DummyParent("A parent"), 3/5)._latex_()
             \frac{3}{5}
         """
-        from sage.misc.latex import latex
         return latex(self.value)
 
     def _ascii_art_(self):

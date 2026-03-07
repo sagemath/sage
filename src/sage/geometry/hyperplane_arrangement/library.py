@@ -152,7 +152,7 @@ class HyperplaneArrangementLibrary:
             ....:   'generic').n_regions() == 65 for _ in range(5))
             True
         """
-        n = G.num_verts()
+        n = G.n_vertices()
         if A is None:  # default to G-semiorder arrangement
             A = matrix(K, n, lambda i, j: 1)
         elif A == 'generic':
@@ -355,7 +355,7 @@ class HyperplaneArrangementLibrary:
             sage: hyperplane_arrangements.G_semiorder(g)
             Arrangement of 12 hyperplanes of dimension 5 and rank 4
         """
-        n = G.num_verts()
+        n = G.n_vertices()
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
@@ -394,7 +394,7 @@ class HyperplaneArrangementLibrary:
             sage: a = hyperplane_arrangements.G_Shi(graphs.WheelGraph(4)); a
             Arrangement of 12 hyperplanes of dimension 4 and rank 3
         """
-        n = G.num_verts()
+        n = G.n_vertices()
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
@@ -445,7 +445,7 @@ class HyperplaneArrangementLibrary:
             sage: h.characteristic_polynomial()         # long time
             x^5 - 6*x^4 + 14*x^3 - 15*x^2 + 6*x
         """
-        n = G.num_verts()
+        n = G.n_vertices()
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []

@@ -32,33 +32,6 @@ lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve_generic', as_='EllipticCurve')
 
 
-def is_Scheme(x):
-    """
-    Test whether ``x`` is a scheme.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean; whether ``x`` derives from :class:`Scheme`
-
-    EXAMPLES::
-
-        sage: from sage.schemes.generic.scheme import is_Scheme
-        sage: is_Scheme(5)
-        doctest:warning...
-        DeprecationWarning: The function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        False
-        sage: X = Spec(QQ)
-        sage: is_Scheme(X)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead.")
-    return isinstance(x, Scheme)
-
-
 class Scheme(Parent):
     r"""
     The base class for all schemes.
@@ -120,7 +93,7 @@ class Scheme(Parent):
             # X is a morphism of Rings
             self._base_ring = X.codomain()
         else:
-            raise ValueError('The base must be define by a scheme, '
+            raise ValueError('The base must be defined by a scheme, '
                              'scheme morphism, or commutative ring.')
 
         from sage.categories.schemes import Schemes
@@ -767,27 +740,6 @@ class Scheme(Parent):
         return temp.exp()
 
 
-def is_AffineScheme(x):
-    """
-    Return ``True`` if `x` is an affine scheme.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.generic.scheme import is_AffineScheme
-        sage: is_AffineScheme(5)
-        doctest:warning...
-        DeprecationWarning: The function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        False
-        sage: E = Spec(QQ)
-        sage: is_AffineScheme(E)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead.")
-    return isinstance(x, AffineScheme)
-
-
 class AffineScheme(UniqueRepresentation, Scheme):
     """
     Class for general affine schemes.
@@ -1052,7 +1004,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         return self.__R
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         Return ``True`` if ``self`` is Noetherian, ``False`` otherwise.
 

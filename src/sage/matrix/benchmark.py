@@ -18,13 +18,17 @@ The basic command syntax is as follows::
     ======================================================================
 """
 
-from .constructor import random_matrix, Matrix
+import sys
+
+from sage.matrix.constructor import Matrix, random_matrix
 from sage.misc.lazy_import import lazy_import
+from sage.misc.timing import cputime
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.misc.timing import cputime
-from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
+
+if sys.platform != 'win32':
+    from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
 lazy_import('sage.interfaces.magma', 'magma')
 
@@ -153,7 +157,7 @@ A := RMatrixSpace(RationalField(), n+1,n)![Random(%s,%s) : i in [1..n*(n+1)]];
 t := Cputime();
 K := Kernel(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -193,7 +197,7 @@ A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
 t := Cputime();
 K := CharacteristicPolynomial(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -233,7 +237,7 @@ A := RMatrixSpace(IntegerRing(), n, n+10)![Random(%s,%s) : i in [1..n*(n+10)]];
 t := Cputime();
 K := Rank(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -273,7 +277,7 @@ A := RMatrixSpace(IntegerRing(), n+10, n)![Random(%s,%s) : i in [1..n*(n+10)]];
 t := Cputime();
 K := Rank(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -315,7 +319,7 @@ A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
 t := Cputime();
 K := ElementaryDivisors(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -361,7 +365,7 @@ for z in [1..%s] do
     K := A * B;
 end for;
 s := Cputime(t);
-""" % (n,min,max,times)
+""" % (n, min, max, times)
         if verbose:
             print(code)
         magma.eval(code)
@@ -409,7 +413,7 @@ for z in [1..%s] do
     K := A + B;
 end for;
 s := Cputime(t);
-""" % (n,min,max,times)
+""" % (n, min, max, times)
         if verbose:
             print(code)
         magma.eval(code)
@@ -472,7 +476,7 @@ A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
 t := Cputime();
 d := Determinant(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -561,7 +565,7 @@ for z in [1..%s] do
     K := v * A;
 end for;
 s := Cputime(t);
-""" % (n,min,max,times)
+""" % (n, min, max, times)
         if verbose:
             print(code)
         magma.eval(code)
@@ -946,7 +950,7 @@ A := RMatrixSpace(RationalField(), n, 2*n)![Random(%s,%s) : i in [1..n*2*n]];
 t := Cputime();
 K := EchelonForm(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -987,7 +991,7 @@ A := MatrixAlgebra(RationalField(), n)![Random(%s,%s) : i in [1..n*n]];
 t := Cputime();
 K := A^(-1);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)
@@ -1203,7 +1207,7 @@ A := RMatrixSpace(RealField(16), n+1,n)![Random(%s,%s) : i in [1..n*(n+1)]];
 t := Cputime();
 K := Kernel(A);
 s := Cputime(t);
-""" % (n,min,max)
+""" % (n, min, max)
         if verbose:
             print(code)
         magma.eval(code)

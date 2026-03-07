@@ -308,27 +308,3 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
             [ (1,2,3,4) ] -> [ (1,2,3,4) ]
         """
         return self.domain()._libgap_().GroupHomomorphismByImages(self.codomain(), self.domain().gens(), self._images)
-
-
-def is_PermutationGroupMorphism(f) -> bool:
-    r"""
-    Return ``True`` if the argument ``f`` is a :class:`PermutationGroupMorphism`.
-
-    EXAMPLES::
-
-        sage: from sage.groups.perm_gps.permgroup_morphism import is_PermutationGroupMorphism
-        sage: G = CyclicPermutationGroup(4)
-        sage: H = DihedralGroup(4)
-        sage: phi = PermutationGroupMorphism_im_gens(G, H, map(H, G.gens()))
-        sage: is_PermutationGroupMorphism(phi)
-        doctest:warning...
-        DeprecationWarning: The function is_PermutationGroupMorphism is deprecated;
-        use 'isinstance(..., PermutationGroupMorphism)' instead.
-        See https://github.com/sagemath/sage/issues/38103 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38103,
-                "The function is_PermutationGroupMorphism is deprecated; "
-                "use 'isinstance(..., PermutationGroupMorphism)' instead.")
-    return isinstance(f, PermutationGroupMorphism)

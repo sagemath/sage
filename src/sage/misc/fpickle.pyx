@@ -1,5 +1,4 @@
 # cython: old_style_globals=True
-# cython: binding=True
 """
 Function pickling
 

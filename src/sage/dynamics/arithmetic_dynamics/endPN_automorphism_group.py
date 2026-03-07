@@ -766,10 +766,10 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
             # or if the gcd is equal to the number of automorphisms we have
             if (len(elements) == gcd(orderaut + [24])) or \
                 (gcd(orderaut + [24]) == 24 and
-                (len(elements) == 12 or len(elements) == 8)):
-                    if iso_type:
-                        return elements, which_group(elements)
-                    return elements
+                    (len(elements) == 12 or len(elements) == 8)):
+                if iso_type:
+                    return elements, which_group(elements)
+                return elements
             else:
                 N = gcd(orderaut + [12])  # all orders of elements divide N
                 for order in divisors(N):
@@ -795,11 +795,11 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                         elements.extend(temp)
 
                         if (len(elements) == gcd(orderaut + [24])):
-                            #found enough automorphisms
-                                if iso_type:
-                                    return elements, which_group(elements)
-                                return elements
-                        elif numelts <= (len(temp)):
+                            # found enough automorphisms
+                            if iso_type:
+                                return elements, which_group(elements)
+                            return elements
+                        elif numelts <= len(temp):
                             badorders.append(order)
                             # found all elements of order 'order;
                         elif len(temp) != 0:
@@ -809,24 +809,24 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                             # attempt to lift that element again unnecessarily
                             automorphisms = remove_redundant_automorphisms(automorphisms,
                                 orderelts, primepowers, temp)
-                            if order == 4: #have some elements of order 4
+                            if order == 4:  # have some elements of order 4
                                 # so possible aut group is Z/4 or D_4
                                 badorders.extend([3, 6])
                             elif order == 3 or order == 6:#have some elements of
                                 # order 3 or 6 so possible aut groups are Z/3,
                                 # D_3, Z/6, or D_6
                                 badorders.append(4)
-                    else: #no elements of order d in some F_v
+                    else:  # no elements of order d in some F_v
                         for m in divisors(N):
                             if m % order == 0:
                                 badorders.append(m)
                                 #no elements of that order or any order that
                                 # is a multiple of it
                 if all(order in badorders for order in divisors(N)):
-                    #found all elements of every possible order
-                        if iso_type:
-                            return (elements, which_group(elements))
-                        return elements
+                    # found all elements of every possible order
+                    if iso_type:
+                        return (elements, which_group(elements))
+                    return elements
             congruence = congruence * p
 
         p = primes.next(p)

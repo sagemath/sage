@@ -1,8 +1,14 @@
-lcalc = dependency('lcalc', version: '>= 2.0.0')
+lcalc = dependency(
+  'lcalc',
+  version: '>= 2.0.0',
+  required: not is_windows,
+  disabler: true,
+)
 
 py.install_sources(
   '__init__.py',
   'lcalc_Lfunction.pxd',
+  'lcalc_Lfunction.pyx',
   'lcalc_sage.h',
   subdir: 'sage/libs/lcalc',
 )

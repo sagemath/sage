@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Determination of programs for viewing web pages, etc.
 
@@ -56,7 +55,7 @@ def default_viewer(viewer=None):
         ValueError: Unknown type of viewer: jpg.
     """
     import os
-    from sage.misc.sage_ostools import have_program
+    from shutil import which
 
     if isinstance(viewer, str):
         viewer = viewer.lower()
@@ -75,7 +74,7 @@ def default_viewer(viewer=None):
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER
 
-    elif have_program('xdg-open'):
+    elif which('xdg-open'):
         # On other OS'es try xdg-open if present.
         # See http://portland.freedesktop.org/xdg-utils-1.0.
         BROWSER = 'xdg-open'
@@ -90,7 +89,7 @@ def default_viewer(viewer=None):
         except KeyError:
             BROWSER = 'less'  # silly default; lets hope it doesn't come to this!
             for cmd in ['firefox', 'konqueror', 'mozilla', 'mozilla-firefox']:
-                if have_program(cmd):
+                if which(cmd):
                     BROWSER = cmd
                     break
         DVI_VIEWER = BROWSER
@@ -102,14 +101,14 @@ def default_viewer(viewer=None):
             DVI_VIEWER = os.environ['DVI_VIEWER']
         except KeyError:
             for cmd in ['xdvi', 'kdvi']:
-                if have_program(cmd):
+                if which(cmd):
                     DVI_VIEWER = cmd
                     break
         try:
             PDF_VIEWER = os.environ['PDF_VIEWER']
         except KeyError:
             for cmd in ['acroread', 'xpdf']:
-                if have_program(cmd):
+                if which(cmd):
                     PDF_VIEWER = cmd
                     break
 

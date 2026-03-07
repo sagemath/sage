@@ -149,13 +149,20 @@ developed for number fields in [Mac1936I]_ and [Mac1936II]_.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.factory import UniqueFactory
-from sage.rings.rational_field import QQ
 from sage.misc.cachefunc import cached_method
-
-from sage.rings.valuation.valuation import DiscreteValuation, DiscretePseudoValuation, InfiniteDiscretePseudoValuation, NegativeInfiniteDiscretePseudoValuation
+from sage.rings.rational_field import QQ
+from sage.rings.valuation.mapped_valuation import (
+    FiniteExtensionFromLimitValuation,
+    MappedValuation_base,
+)
 from sage.rings.valuation.trivial_valuation import TrivialValuation
-from sage.rings.valuation.mapped_valuation import FiniteExtensionFromLimitValuation, MappedValuation_base
+from sage.rings.valuation.valuation import (
+    DiscretePseudoValuation,
+    DiscreteValuation,
+    InfiniteDiscretePseudoValuation,
+    NegativeInfiniteDiscretePseudoValuation,
+)
+from sage.structure.factory import UniqueFactory
 
 
 class FunctionFieldValuationFactory(UniqueFactory):
@@ -569,8 +576,8 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
                     return [L.valuation(w) for w in self.mac_lane_approximants(L.polynomial(), require_incomparability=True)]
                 elif L.base() is not L and K.is_subring(L):
                     # recursively call this method for the tower of fields
-                    from operator import add
                     from functools import reduce
+                    from operator import add
                     A = [base_valuation.extensions(L) for base_valuation in self.extensions(L.base())]
                     return reduce(add, A, [])
                 elif L.constant_base_field() is not K.constant_base_field() and K.constant_base_field().is_subring(L):
@@ -616,7 +623,7 @@ class RationalFunctionFieldValuation_base(FunctionFieldValuation_base):
             return super().element_with_valuation(s)
 
         a, b = self.value_group()._element_with_valuation(constant_valuation.value_group(), s)
-        ret = self.uniformizer()**a * constant_valuation.element_with_valuation(constant_valuation.value_group().gen()*b)
+        ret = self.uniformizer()**a * constant_valuation.element_with_valuation(constant_valuation.value_group().gen() * b)
 
         return self.simplify(ret, error=s)
 
@@ -634,7 +641,7 @@ class ClassicalFunctionFieldValuation_base(DiscreteFunctionFieldValuation_base):
         sage: isinstance(v, ClassicalFunctionFieldValuation_base)
         True
     """
-    def _test_classical_residue_field(self, **options):
+    def _test_classical_residue_field(self, **options) -> None:
         r"""
         Check correctness of the residue field of a discrete valuation at a
         classical point.
@@ -680,7 +687,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
         sage: K.<x> = FunctionField(QQ)
         sage: v = K.valuation(x^2 + 1) # indirect doctest
     """
-    def __init__(self, parent, base_valuation):
+    def __init__(self, parent, base_valuation) -> None:
         r"""
         TESTS::
 
@@ -779,7 +786,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
         assert not ret.is_zero()
         return self.residue_field()(ret)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation of this valuation.
 
@@ -874,7 +881,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
             return self._base_valuation.restriction(ring)
         return super().restriction(ring)
 
-    def simplify(self, f, error=None, force=False):
+    def simplify(self, f, error=None, force: bool = False):
         r"""
         Return a simplified version of ``f``.
 
@@ -924,10 +931,10 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
             # This case is not implemented yet, so we just return f which is always safe.
             return f
 
-        numerator = self.domain()(self._base_valuation.simplify(numerator, error=error+v_denominator, force=force))
-        denominator = self.domain()(self._base_valuation.simplify(denominator, error=max(v_denominator, error - v_numerator + 2*v_denominator), force=force))
+        numerator = self.domain()(self._base_valuation.simplify(numerator, error=error + v_denominator, force=force))
+        denominator = self.domain()(self._base_valuation.simplify(denominator, error=max(v_denominator, error - v_numerator + 2 * v_denominator), force=force))
 
-        ret = numerator/denominator
+        ret = numerator / denominator
         assert self(ret - f) > error
         return ret
 
@@ -991,7 +998,7 @@ class FiniteRationalFunctionFieldValuation(InducedRationalFunctionFieldValuation
         sage: q = L.valuation(x^6 - t); q
         (x^6 + 2*t)-adic valuation
     """
-    def __init__(self, parent, base_valuation):
+    def __init__(self, parent, base_valuation) -> None:
         r"""
         TESTS::
 
@@ -1018,7 +1025,7 @@ class NonClassicalRationalFunctionFieldValuation(InducedRationalFunctionFieldVal
         sage: w = K.valuation(v); w  # indirect doctest
         2-adic valuation
     """
-    def __init__(self, parent, base_valuation):
+    def __init__(self, parent, base_valuation) -> None:
         r"""
         TESTS:
 
@@ -1092,7 +1099,7 @@ class FunctionFieldFromLimitValuation(FiniteExtensionFromLimitValuation, Discret
         sage: w = v.extension(L); w                                                     # needs sage.rings.function_field
         (x - 1)-adic valuation
     """
-    def __init__(self, parent, approximant, G, approximants):
+    def __init__(self, parent, approximant, G, approximants) -> None:
         r"""
         TESTS::
 
@@ -1157,7 +1164,7 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
         sage: v = K.valuation(1/x); v
         Valuation at the infinite place
     """
-    def __init__(self, parent, base_valuation, to_base_valuation_domain, from_base_valuation_domain):
+    def __init__(self, parent, base_valuation, to_base_valuation_domain, from_base_valuation_domain) -> None:
         r"""
         TESTS::
 
@@ -1225,7 +1232,7 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
             return self.domain().valuation((self._base_valuation.scale(scalar), self._to_base, self._from_base))
         return super().scale(scalar)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation of this valuation.
 
@@ -1273,7 +1280,7 @@ class FunctionFieldMappedValuationRelative_base(FunctionFieldMappedValuation_bas
         sage: v = K.valuation(1/x); v
         Valuation at the infinite place
     """
-    def __init__(self, parent, base_valuation, to_base_valuation_domain, from_base_valuation_domain):
+    def __init__(self, parent, base_valuation, to_base_valuation_domain, from_base_valuation_domain) -> None:
         r"""
         TESTS::
 
@@ -1318,7 +1325,7 @@ class RationalFunctionFieldMappedValuation(FunctionFieldMappedValuationRelative_
         [ Gauss valuation induced by 2-adic valuation, v(x) = 1 ]
         (in Rational function field in x over Rational Field after x |--> 1/x)
     """
-    def __init__(self, parent, base_valuation, to_base_valuation_doain, from_base_valuation_domain):
+    def __init__(self, parent, base_valuation, to_base_valuation_doain, from_base_valuation_domain) -> None:
         r"""
         TESTS::
 
@@ -1344,7 +1351,7 @@ class InfiniteRationalFunctionFieldValuation(FunctionFieldMappedValuationRelativ
         sage: K.<x> = FunctionField(QQ)
         sage: v = K.valuation(1/x)  # indirect doctest
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         r"""
         TESTS::
 
@@ -1355,11 +1362,11 @@ class InfiniteRationalFunctionFieldValuation(FunctionFieldMappedValuationRelativ
             True
         """
         x = parent.domain().gen()
-        FunctionFieldMappedValuationRelative_base.__init__(self, parent, FunctionFieldValuation(parent.domain(), x), parent.domain().hom([1/x]), parent.domain().hom([1/x]))
+        FunctionFieldMappedValuationRelative_base.__init__(self, parent, FunctionFieldValuation(parent.domain(), x), parent.domain().hom([1 / x]), parent.domain().hom([1 / x]))
         RationalFunctionFieldValuation_base.__init__(self, parent)
         ClassicalFunctionFieldValuation_base.__init__(self, parent)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation of this valuation.
 
@@ -1401,7 +1408,7 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
         sage: isinstance(w, FunctionFieldExtensionMappedValuation)                      # needs sage.rings.function_field
         True
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation of this valuation.
 

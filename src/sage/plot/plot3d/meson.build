@@ -2,38 +2,44 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'base.pxd',
+  'base.pyx',
   'implicit_plot3d.py',
+  'implicit_surface.pyx',
   'index_face_set.pxd',
+  'index_face_set.pyx',
   'introduction.py',
   'list_plot3d.py',
   'parametric_plot3d.py',
   'parametric_surface.pxd',
+  'parametric_surface.pyx',
   'platonic.py',
   'plot3d.py',
   'plot_field3d.py',
   'revolution_plot3d.py',
   'shapes.pxd',
+  'shapes.pyx',
   'shapes2.py',
   'tachyon.py',
   'texture.py',
   'transform.pxd',
+  'transform.pyx',
   'tri_plot.py',
   subdir: 'sage/plot/plot3d',
 )
 
 extension_data = {
-  'base' : files('base.pyx'),
-  'implicit_surface' : files('implicit_surface.pyx'),
-  'index_face_set' : files('index_face_set.pyx'),
-  'shapes' : files('shapes.pyx'),
-  'transform' : files('transform.pyx'),
-  'parametric_surface' : files('parametric_surface.pyx'),
+  'base': files('base.pyx'),
+  'implicit_surface': files('implicit_surface.pyx'),
+  'index_face_set': files('index_face_set.pyx'),
+  'shapes': files('shapes.pyx'),
+  'transform': files('transform.pyx'),
+  'parametric_surface': files('parametric_surface.pyx'),
 }
 
 foreach name, pyx : extension_data
-  dependencies = [py_dep, cysignals, gmp, numpy]
+  deps = [py_dep, cysignals, gmp, numpy]
   if name == 'parametric_surface'
-    dependencies += [interpreters_dep]
+    deps += [interpreters_dep]
   endif
   py.extension_module(
     name,
@@ -41,6 +47,6 @@ foreach name, pyx : extension_data
     subdir: 'sage/plot/plot3d',
     install: true,
     include_directories: [inc_cpython, inc_ext],
-    dependencies: dependencies,
+    dependencies: deps,
   )
 endforeach

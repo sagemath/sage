@@ -1,5 +1,4 @@
 # pyright: strict
-# sage_setup: distribution = sagemath-objects
 r"""
 Timing functions
 """

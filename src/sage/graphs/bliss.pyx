@@ -1,7 +1,6 @@
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
 # distutils: libraries = bliss
-# sage_setup: distribution = sagemath-bliss
 
 r"""
 Interface with bliss: graph (iso/auto)morphism
@@ -476,7 +475,7 @@ cpdef canonical_form(G, partition=None, return_graph=False,
         ....:     for labels in product([0,1], repeat=len(edges)):
         ....:         g = Graph([(u,v,l) for ((u,v),l) in zip(edges, labels)])
         ....:         gcan = canonical_form(g, use_edge_labels=True)
-        ....:         for p in permutations(range(g.num_verts())):
+        ....:         for p in permutations(range(g.n_vertices())):
         ....:             h = Graph([(p[u], p[v], lab) for u,v,lab in g.edges(sort=True)])
         ....:             hcan = canonical_form(h, use_edge_labels=True)
         ....:             if gcan != hcan: print(edges, labels, p)

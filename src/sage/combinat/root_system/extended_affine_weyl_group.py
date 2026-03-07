@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.gap
 r"""
-Extended Affine Weyl Groups
+Extended affine Weyl groups
 
 AUTHORS:
 
@@ -1321,7 +1321,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         class ElementMethods:
 
             @abstract_method
-            def has_descent(self, i, side='right', positive=False):
+            def has_descent(self, i, side='right', positive=False) -> bool:
                 r"""
                 Return whether ``self`` * `s_i` < ``self`` where `s_i` is the `i`-th simple
                 reflection in the realized group.
@@ -1671,7 +1671,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 return self.coset_representative(index_set=self.parent().realization_of().cartan_type().classical().index_set())
 
-            def is_affine_grassmannian(self):
+            def is_affine_grassmannian(self) -> bool:
                 r"""
                 Return whether ``self`` is affine Grassmannian.
 
@@ -1918,7 +1918,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         The element class for the "PW0" realization.
         """
 
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             r"""
             Return whether ``self`` has `i` as a descent.
 
@@ -2128,7 +2128,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         The element class for the W0P realization.
         """
 
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             r"""
             Return whether ``self`` has `i` as a descent.
 
@@ -2307,7 +2307,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         Element class for the "WF" realization.
         """
 
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             r"""
             Return whether ``self`` has `i` as a descent.
 
@@ -2481,7 +2481,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         The element class for the "FW" realization.
         """
 
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             r"""
             Return whether ``self`` has descent at `i`.
 
@@ -2641,7 +2641,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         The element class for the "PvW0" realization.
         """
 
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             r"""
             Return whether ``self`` has `i` as a descent.
 
@@ -2836,7 +2836,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             assert la in w.parent().domain()
             return w.action(self.cartesian_projection(1).value + la)
 
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             r"""
             Return whether ``self`` has `i` as a descent.
 

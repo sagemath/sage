@@ -349,6 +349,10 @@ But this still uses Maxima::
 Note that ``x`` is still ``x``, since the
 maxima used by the calculus package is different than the one in
 the interactive interpreter.
+Clear the maxima variables to avoid interference with other tests::
+
+    sage: maxima('kill(x,y)')
+    done
 
 Check to see that the problem with the variables method mentioned
 in :issue:`3779` is actually fixed::
@@ -395,7 +399,7 @@ the giac version, we simplify it (see :issue:`34037`)::
 Check if maxima has redundant variables defined after initialization,
 see :issue:`9538`::
 
-    sage: maxima = sage.interfaces.maxima.maxima
+    sage: maxima = sage.interfaces.maxima_lib.maxima
     sage: maxima('f1')
     f1
     sage: sage.calculus.calculus.maxima('f1')
@@ -419,26 +423,24 @@ To check that :issue:`27092` is fixed::
 """
 
 import re
+from types import FunctionType
+
 from sage.arith.misc import algebraic_dependency
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.interfaces.maxima_lib","maxima")
+from sage.misc.latex import latex
+from sage.misc.parser import LookupNameMaker, Parser
+from sage.rings.cc import CC
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RealDoubleElement
 from sage.rings.real_mpfr import RR, create_RealNumber
-from sage.rings.cc import CC
-
-from sage.misc.latex import latex
-from sage.misc.parser import Parser, LookupNameMaker
 from sage.structure.element import Expression
-from sage.symbolic.ring import var, SR
-from sage.symbolic.symbols import symbol_table
 from sage.symbolic.function import Function
 from sage.symbolic.function_factory import function_factory
-from sage.symbolic.integration.integral import (indefinite_integral,
-        definite_integral)
-
-from sage.misc.lazy_import import lazy_import
-lazy_import('sage.interfaces.maxima_lib', 'maxima')
-from types import FunctionType
+from sage.symbolic.integration.integral import definite_integral, indefinite_integral
+from sage.symbolic.ring import SR, var
+from sage.symbolic.symbols import symbol_table
 
 
 ########################################################
@@ -667,6 +669,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
     elif algorithm == 'sympy':
         expression,v,a,b = (expr._sympy_() for expr in (expression, v, a, b))
         from sympy import summation
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         result = summation(expression, (v, a, b))
@@ -920,6 +923,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
     elif algorithm == 'sympy':
         expression,v,a,b = (expr._sympy_() for expr in (expression, v, a, b))
         from sympy import product as sproduct
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         result = sproduct(expression, (v, a, b))
@@ -1208,16 +1212,16 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
         sage: f = (1 + 1/x)^x
         sage: limit(f, x=oo)
         e
-        sage: limit(f, x, oo) 
+        sage: limit(f, x, oo)
         e
         sage: f.limit(x=5)
         7776/3125
         sage: f.limit(x, 5)
         7776/3125
 
-    The positional ``limit(expr, v, a)`` syntax is particularly useful 
-    when the limit variable ``v`` is an indexed variable or another 
-    expression that cannot be used as a keyword argument 
+    The positional ``limit(expr, v, a)`` syntax is particularly useful
+    when the limit variable ``v`` is an indexed variable or another
+    expression that cannot be used as a keyword argument
     (fixes :issue:`38761`)::
 
         sage: y = var('y', n=3)
@@ -1243,8 +1247,8 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
 
         sage: limit(sin(x)/x, x, 0, algorithm='sympy')
         1
-        sage: limit(abs(x)/x, x, 0, algorithm='giac') # needs sage.libs.giac # Two-sided limit -> undefined
-        und
+        sage: limit(sin(x)/x, x, 0, algorithm='giac') # needs sage.libs.giac
+        1
         sage: limit(x^x, x, 0, dir='+', algorithm='fricas') # optional - fricas
         1
 
@@ -1280,7 +1284,7 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
 
         sage: maxima_calculus.eval("domain:real")
         ...
-        sage: f = (1 + 1/x)^x 
+        sage: f = (1 + 1/x)^x
         sage: f.limit(x=1.2).n()
         2.06961575467...
         sage: maxima_calculus.eval("domain:complex");
@@ -1550,19 +1554,19 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
         v = args[0]
         a = args[1]
     elif len(args) == 1:
-        if kwargs: 
-             raise ValueError("cannot mix positional specification of limit variable and point with keyword variable arguments")
+        if kwargs:
+            raise ValueError("cannot mix positional specification of limit variable and point with keyword variable arguments")
         else:
-             raise ValueError("three positional arguments (expr, v, a) or one positional and one keyword argument (expr, v=a) required")
-    elif len(args) == 0: # Potential syntax: limit(ex, v=a, ...) or limit(ex)
-        if len(kwargs) == 1: 
+            raise ValueError("three positional arguments (expr, v, a) or one positional and one keyword argument (expr, v=a) required")
+    elif len(args) == 0:  # Potential syntax: limit(ex, v=a, ...) or limit(ex)
+        if len(kwargs) == 1:
             k, = kwargs.keys()
             v = var(k)
             a = kwargs[k]
-        elif len(kwargs) == 0: # For No variable specified at all
-             raise ValueError("invalid limit specification")
-        else: # For Multiple keyword arguments like x=1, y=2
-             raise ValueError("multiple keyword arguments specified")
+        elif len(kwargs) == 0:  # For No variable specified at all
+            raise ValueError("invalid limit specification")
+        else:  # For Multiple keyword arguments like x=1, y=2
+            raise ValueError("multiple keyword arguments specified")
 
     # Ensuring v is a symbolic expression and a valid limit variable
     if not isinstance(v, Expression):
@@ -1586,7 +1590,7 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
         raise ValueError("dir must be one of " + ", ".join(map(repr, dir_both)))
 
     # Calling the appropriate backend based on effective_algorithm
-    l = None 
+    l = None
     if effective_algorithm == 'maxima':
         if dir is None:
             l = maxima.sr_limit(ex, v, a)
@@ -1603,7 +1607,7 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
             l = maxima.sr_tlimit(ex, v, a, 'minus')
     elif effective_algorithm == 'sympy':
         import sympy
-        sympy_dir = '+-'  
+        sympy_dir = '+-'
         if dir in dir_plus:
             sympy_dir = '+'
         elif dir in dir_minus:
@@ -1620,25 +1624,25 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
             fricas_dir_arg = '"left"'
 
         if fricas_dir_arg:
-             l = fricas.limit(f, eq, fricas_dir_arg).sage()
+            l = fricas.limit(f, eq, fricas_dir_arg).sage()
         else:
-             l_raw = fricas.limit(f, eq).sage()
-             if isinstance(l_raw, dict):
-                 l = SR('und')
-             else:
-                 l = l_raw
+            l_raw = fricas.limit(f, eq).sage()
+            if isinstance(l_raw, dict):
+                l = SR('und')
+            else:
+                l = l_raw
     elif effective_algorithm == 'giac':
         from sage.libs.giac.giac import libgiac
         giac_v = v._giac_init_()
         giac_a = a._giac_init_()
-        giac_dir_arg = 0 # Default for two-sided 
+        giac_dir_arg = 0  # Default for two-sided
         if dir in dir_plus:
             giac_dir_arg = 1
         elif dir in dir_minus:
             giac_dir_arg = -1
         l = libgiac.limit(ex, giac_v, giac_a, giac_dir_arg).sage()
     elif effective_algorithm == 'mathematica_free':
-        # Ensuring mma_free_limit exists 
+        # Ensuring mma_free_limit exists
         l = mma_free_limit(ex, v, a, dir)
     else:
         raise ValueError("Unknown algorithm: %s" % effective_algorithm)
@@ -1646,6 +1650,7 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
     original_parent = ex.parent()
 
     return original_parent(l)
+
 
 # lim is alias for limit
 lim = limit
@@ -1673,7 +1678,11 @@ def mma_free_limit(expression, v, a, dir=None):
         sage: mma_free_limit(e^(-x), x, a=oo) # optional - internet
         0
     """
-    from sage.interfaces.mathematica import request_wolfram_alpha, parse_moutput_from_json, symbolic_expression_from_mathematica_string
+    from sage.interfaces.mathematica import (
+        parse_moutput_from_json,
+        request_wolfram_alpha,
+        symbolic_expression_from_mathematica_string,
+    )
     dir_plus = ['plus', '+', 'above', 'right']
     dir_minus = ['minus', '-', 'below', 'left']
     math_expr = expression._mathematica_init_()
@@ -1814,8 +1823,8 @@ def laplace(ex, t, s, algorithm='maxima'):
         (a, s, t)
         sage: f = exp (2*t + a) * sin(t) * t; f
         t*e^(a + 2*t)*sin(t)
-        sage: L = laplace(f, t, s); L
-        2*(s - 2)*e^a/(s^2 - 4*s + 5)^2
+        sage: L = laplace(f, t, s); L.simplify_rational()
+        2*(s*e^a - 2*e^a)/(s^4 - 8*s^3 + 26*s^2 - 40*s + 25)
         sage: inverse_laplace(L, s, t)
         t*e^(a + 2*t)*sin(t)
 
@@ -1864,14 +1873,9 @@ def laplace(ex, t, s, algorithm='maxima'):
         (t, s)
         sage: laplace(5*cos(3*t-2)*heaviside(t-2), t, s, algorithm='giac')
         5*(s*cos(4)*e^(-2*s) - 3*e^(-2*s)*sin(4))/(s^2 + 9)
-
-    Check unevaluated expression from Giac (it is locale-dependent, see
-    :issue:`22833`)::
-
-        sage: # needs giac
         sage: n = SR.var('n')
         sage: laplace(t^n, t, s, algorithm='giac')
-        laplace(t^n, t, s)
+        s^(-n - 1)*gamma(n + 1)
 
     Testing SymPy::
 
@@ -1914,6 +1918,7 @@ def laplace(ex, t, s, algorithm='maxima'):
     elif algorithm == 'sympy':
         ex_sy, t, s = (expr._sympy_() for expr in (ex, t, s))
         from sympy import laplace_transform
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         result = laplace_transform(ex_sy, t, s)
@@ -2099,6 +2104,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
     elif algorithm == 'sympy':
         ex_sy, s, t = (expr._sympy_() for expr in (ex, s, t))
         from sympy import inverse_laplace_transform
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         result = inverse_laplace_transform(ex_sy, s, t)
@@ -2255,8 +2261,8 @@ def dummy_integrate(*args):
 
 def dummy_laplace(*args):
     """
-    This function is called to create formal wrappers of laplace transforms
-    that Maxima can't compute:
+    This function is called to create formal wrappers of Laplace transforms
+    that Maxima cannot compute:
 
     EXAMPLES::
 
@@ -2459,10 +2465,12 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
 
     Make sure that we don't accidentally pick up variables in the maxima namespace (:issue:`8734`)::
 
-        sage: sage.calculus.calculus.maxima('my_new_var : 2')
+        sage: maxima('my_new_var : 2')
         2
         sage: var('my_new_var').full_simplify()
         my_new_var
+        sage: maxima('kill(my_new_var)')
+        done
 
     ODE solution constants are treated differently (:issue:`16007`)::
 
@@ -2496,7 +2504,7 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     maxima.set('_tmp_', x)
 
     # This is inefficient since it so rarely is needed:
-    #r = maxima._eval_line('listofvars(_tmp_);')[1:-1]
+    # r = maxima._eval_line('listofvars(_tmp_);')[1:-1]
 
     s = maxima._eval_line('_tmp_;')
 
@@ -2508,10 +2516,10 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     # there is a potential very subtle bug if 'foo is in a string
     # literal -- but string literals should *never* ever be part of a
     # symbolic expression.
-    s = s.replace("'","")
+    s = s.replace("'", "")
 
     delayed_functions = maxima_qp.findall(s)
-    if len(delayed_functions):
+    if delayed_functions:
         for X in delayed_functions:
             if X == '?%at':  # we will replace Maxima's "at" with symbolic evaluation, not a SymbolicFunction
                 pass
@@ -2536,8 +2544,8 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     s = s.replace("%","")
 
     s = s.replace("#","!=")  # a lot of this code should be refactored somewhere...
-    #we apply the square-bracket replacing patterns repeatedly
-    #to ensure that nested brackets get handled (from inside to out)
+    # we apply the square-bracket replacing patterns repeatedly
+    # to ensure that nested brackets get handled (from inside to out)
     while True:
         olds = s
         s = polylog_ex.sub('polylog(\\1,', s)

@@ -1325,6 +1325,20 @@ class FockSpace(Parent, UniqueRepresentation):
                 |3> + q*|2, 1>
                 sage: G._G_to_fock_basis(Partition([2,1]))
                 |2, 1> + q*|1, 1, 1>
+
+            TESTS:
+
+            Check that :issue:`41408` is fixed::
+
+                sage: Fock = FockSpace(3, [0, 1])
+                sage: G = Fock.G()
+                sage: la = PartitionTuple([[6], [5,5,1]])
+                sage: v = G._G_to_fock_basis(la)
+                sage: len(v.support())
+                261
+                sage: v
+                |[6], [5, 5, 1]> + q*|[6], [5, 4, 1, 1]> + q*|[6], [5, 3, 3]>
+                 + ... + q^7*|[], [3, 3, 3, 2, 1, 1, 1, 1, 1, 1]>
             """
             # Special case for the empty partition
             if la.size() == 0:
@@ -1354,13 +1368,40 @@ class FockSpace(Parent, UniqueRepresentation):
                 return fock.sum_of_terms((fock._indices([[]]*k + list(pt)), c) for pt,c in cur)
 
             cur = R.A()._A_to_fock_basis(la)
-            s = sorted(cur.support())  # Sort lex, which respects dominance order
-            s.pop()  # Remove the largest
+
+            def domorder_insertion(data, elt):
+                """
+                Add ``elt`` at the largest position of ``data`` such that
+                it dominants all larger entries.
+                """
+                for i in range(len(data)-1, -1, -1):
+                    if not data[i].dominates(elt):
+                        data.insert(i+1, elt)
+                        return
+                data.insert(0, elt)
+
+            # Build the elimination list s so that whenever y.dominates(x),
+            # y appears after x.
+            if len(R._multicharge) == 1:
+                s = [x for x in cur.support() if x in self._indices]
+                s.sort()  # Sort lex, which respects dominance order
+                s.pop()  # Remove the largest
+            else:
+                # In level > 1, the default comparison on PartitionTuples is lexicographic
+                # and does not necessarily refine dominance order.
+                s = []
+                for x in cur.support():
+                    if x == la or x not in self._indices:
+                        continue
+                    domorder_insertion(s, x)
 
             q = R._q
+
             while s:
                 mu = s.pop()
+                # assert mu in self._indices
                 d = cur[mu].denominator()
+
                 k = d.degree()
                 n = cur[mu].numerator()
                 if k != 0 or n.constant_coefficient() != 0:
@@ -1369,14 +1410,13 @@ class FockSpace(Parent, UniqueRepresentation):
                     gamma += n[k]
                     cur -= gamma * self._G_to_fock_basis(mu)
 
-                    # Add any new support elements
                     for x in cur.support():
-                        if x == mu or not mu.dominates(x): # Add only things (strictly) dominated by mu
+                        # Add only new support elements that are (strictly) dominanted by mu
+                        # and correspond to crystal basis elements.
+                        if x == mu or x in s or not mu.dominates(x) or x not in self._indices:
                             continue
-                        for i in reversed(range(len(s))):
-                            if not s[i].dominates(x):
-                                s.insert(i+1, x)
-                                break
+                        domorder_insertion(s, x)
+
             return cur
 
     lower_global_crystal = G

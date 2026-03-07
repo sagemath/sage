@@ -288,7 +288,7 @@ class CyclicCode(AbstractLinearCode):
     _registered_decoders = {}
 
     def __init__(self, generator_pol=None, length=None, code=None, check=True,
-                 D=None, field=None, primitive_root=None):
+                 D=None, field=None, primitive_root=None) -> None:
         r"""
         TESTS:
 
@@ -462,7 +462,7 @@ class CyclicCode(AbstractLinearCode):
                                  "of powers and the length and the field, or "
                                  "a generator polynomial and the code length")
 
-    def __contains__(self, word):
+    def __contains__(self, word) -> bool:
         r"""
         Return ``True`` if ``word`` belongs to ``self``, ``False`` otherwise.
 
@@ -484,7 +484,7 @@ class CyclicCode(AbstractLinearCode):
         R = self._polynomial_ring
         return (g.divides(R(word.list())) and word in self.ambient_space())
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between CyclicCode objects.
 
@@ -836,7 +836,7 @@ class CyclicCodePolynomialEncoder(Encoder):
         Polynomial-style encoder for [7, 4] Cyclic Code over GF(2)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -853,7 +853,7 @@ class CyclicCodePolynomialEncoder(Encoder):
         self._polynomial_ring = code._polynomial_ring
         super().__init__(code)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between CyclicCodePolynomialEncoder objects.
 
@@ -1005,7 +1005,7 @@ class CyclicCodeVectorEncoder(Encoder):
         Vector-style encoder for [7, 4] Cyclic Code over GF(2)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
 
         EXAMPLES::
@@ -1023,7 +1023,7 @@ class CyclicCodeVectorEncoder(Encoder):
         self._polynomial_ring = code._polynomial_ring
         super().__init__(code)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between CyclicCodeVectorEncoder objects.
 
@@ -1198,7 +1198,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
         sage: D
         Decoder through the surrounding BCH code of the [15, 10] Cyclic Code over GF(16)
     """
-    def __init__(self, code, **kwargs):
+    def __init__(self, code, **kwargs) -> None:
         r"""
 
         EXAMPLES::
@@ -1213,7 +1213,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
         self._decoder_type = copy(self._bch_decoder.decoder_type())
         super().__init__(code, code.ambient_space(), "Vector")
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between CyclicCodeSurroundingBCHDecoder objects.
 

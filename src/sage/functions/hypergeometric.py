@@ -553,7 +553,7 @@ class Hypergeometric(BuiltinFunction):
                     return self.is_termwise_finite()
             return False
 
-        def is_absolutely_convergent(self, a, b, z):
+        def is_absolutely_convergent(self, a, b, z) -> bool:
             r"""
             Determine whether ``self`` converges absolutely as an infinite
             series. ``False`` is returned if not all terms are finite.
@@ -947,7 +947,7 @@ class Hypergeometric_M(BuiltinFunction):
         zy'' + (b-z)y' - ay = 0.
 
     This is not the same as Kummer's `U`-hypergeometric function, though it
-    satisfies the same DE that `M` does.
+    satisfies the same differential equation that `M` does.
 
     .. warning::
 

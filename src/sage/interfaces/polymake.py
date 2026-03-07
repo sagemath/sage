@@ -28,10 +28,14 @@ polymake has been described in [GJ1997]_, [GJ2006]_, [JMP2009]_, [GJRW2010]_,
 import os
 import re
 
-from .interface import (Interface, InterfaceElement, InterfaceFunctionElement)
-from sage.misc.verbose import get_verbose
-from sage.misc.cachefunc import cached_method
+from sage.interfaces.interface import (
+    Interface,
+    InterfaceElement,
+    InterfaceFunctionElement,
+)
 from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.misc.cachefunc import cached_method
+from sage.misc.verbose import get_verbose
 from sage.structure.richcmp import rich_to_bool
 
 _name_pattern = re.compile('SAGE[0-9]+')
@@ -446,6 +450,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         TESTS::
 
             sage: # optional - jupymake
+            sage: from sage.interfaces.polymake import polymake
             sage: c = polymake.cube(15)
             sage: polymake._available_vars = []
             sage: old = c._name

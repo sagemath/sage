@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Quitting interfaces
 """
@@ -19,7 +18,6 @@ import subprocess
 import sys
 from typing import TYPE_CHECKING
 
-from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.cachefunc import cached_function
 
 if TYPE_CHECKING:
@@ -37,12 +35,8 @@ def sage_spawned_process_file() -> str:
         sage: len(sage_spawned_process_file()) > 1
         True
     """
-    # This is the old value of SAGE_TMP. Until sage-cleaner is
-    # completely removed, we need to leave these spawned_processes
-    # files where sage-cleaner will look for them.
-    d = os.path.join(DOT_SAGE, "temp", HOSTNAME, str(os.getpid()))
-    os.makedirs(d, exist_ok=True)
-    return os.path.join(d, "spawned_processes")
+    from sage.misc.temporary_file import tmp_dir
+    return os.path.join(tmp_dir(), "spawned_processes")
 
 
 def register_spawned_process(pid: int, cmd: str = "") -> None:
@@ -58,13 +52,6 @@ def register_spawned_process(pid: int, cmd: str = "") -> None:
             file.write("%s %s\n" % (pid, cmd))
     except OSError:
         pass
-    else:
-        # If sage is being used as a python library, we need to launch
-        # the cleaner ourselves upon being told that there will be
-        # something to clean.
-        from sage.interfaces.cleaner import start_cleaner
-
-        start_cleaner()
 
 
 expect_objects: list[ReferenceType[Expect]] = []
@@ -157,12 +144,12 @@ def invalidate_all() -> None:
     EXAMPLES::
 
         sage: # needs sage.libs.pari sage.symbolic
-        sage: a = maxima(2); b = gp(3)
+        sage: a = gap(2); b = gp(3)
         sage: a, b
         (2, 3)
         sage: sage.interfaces.quit.invalidate_all()
         sage: a
-        (invalid Maxima object -- The maxima session in which this object was defined is no longer running.)
+        (invalid Gap object -- The gap session in which this object was defined is no longer running.)
         sage: b
         (invalid PARI/GP interpreter object -- The pari session in which this object was defined is no longer running.)
 

@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Diagram and Partition Algebras
+Diagram and partition algebras
 
 AUTHORS:
 
@@ -27,28 +27,31 @@ AUTHORS:
 
 import itertools
 
+from sage.arith.misc import integer_ceil as ceil
+from sage.arith.misc import integer_floor as floor
+from sage.arith.power import generic_power
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.arith.power import generic_power
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.combinat import bell_number, catalan_number
-from sage.structure.global_options import GlobalOptions
-from sage.combinat.combinat_cython import (perfect_matchings_iterator,
-                                           set_partition_composition)
-from sage.combinat.set_partition import SetPartitions, AbstractSetPartition
-from sage.combinat.set_partition_iterator import set_partition_iterator
+from sage.combinat.combinat_cython import (
+    perfect_matchings_iterator,
+    set_partition_composition,
+)
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
+from sage.combinat.set_partition import AbstractSetPartition, SetPartitions
+from sage.combinat.set_partition_iterator import set_partition_iterator
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
+from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.misc import integer_floor as floor
-from sage.arith.misc import integer_ceil as ceil
+from sage.structure.global_options import GlobalOptions
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.graphs.graph', 'Graph')
 lazy_import('sage.combinat.symmetric_group_algebra', 'SymmetricGroupAlgebra_n')
@@ -357,7 +360,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
             sage: pd2 = da.AbstractPartitionDiagram(pd, [[[1,2],[-1,-2]]]) # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'list'
+            TypeError: ...unhashable type: 'list'...
         """
         if self._base_diagram:
             tst = frozenset(e for B in self._base_diagram for e in B)
@@ -501,7 +504,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
             sage: pd([[1,2],[-1,-2]]).compose(pd([[1,2],[-1,-2]]))
             ({{-2, -1}, {1, 2}}, 1)
         """
-        (composite_diagram, loops_removed) = set_partition_composition(self._base_diagram, other._base_diagram)
+        composite_diagram, loops_removed = set_partition_composition(self._base_diagram, other._base_diagram)
         return (self.__class__(self.parent(), composite_diagram, check=check), loops_removed)
 
     def propagating_number(self):
@@ -565,7 +568,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         """
         return self.parent().order
 
-    def is_planar(self):
+    def is_planar(self) -> bool:
         r"""
         Test if the diagram ``self`` is planar.
 
@@ -998,7 +1001,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
             sage: bd([[1,4],[6,7], [-2,-6],[-5,-7], [2,-4],[3,-1],[5,-3]])._repr_compact()
             '[14.67/26.57;312]'
         """
-        (top, bot, thru) = self.involution_permutation_triple()
+        top, bot, thru = self.involution_permutation_triple()
         bot.reverse()
         s1 = ".".join("".join(str(b) for b in block) for block in top)
         s2 = ".".join("".join(str(abs(k)) for k in sorted(block, reverse=True))
@@ -1108,7 +1111,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
                 std[short_form.index(i)] = j
         return std
 
-    def is_elementary_symmetric(self):
+    def is_elementary_symmetric(self) -> bool:
         r"""
         Check if is elementary symmetric.
 
@@ -1127,10 +1130,10 @@ class BrauerDiagram(AbstractPartitionDiagram):
             sage: elm2.is_elementary_symmetric()
             False
         """
-        (D1,D2,pi) = self.involution_permutation_triple()
+        D1, D2, pi = self.involution_permutation_triple()
         D1 = sorted(sorted(abs(y) for y in x) for x in D1)
         D2 = sorted(sorted(abs(y) for y in x) for x in D2)
-        return D1 == D2 and pi == list(range(1,len(pi)+1))
+        return D1 == D2 and pi == list(range(1, len(pi) + 1))
 
 
 class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
@@ -1328,9 +1331,8 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
                 return False
         if obj.base_diagram():
             tst = sorted(flatten(obj.base_diagram()))
-            if len(tst) % 2 or tst != list(range(-len(tst)//2,0)) + list(range(1,len(tst)//2+1)):
-                return False
-            return True
+            ell = len(tst)
+            return not ell % 2 and tst == list(range(-ell // 2, 0)) + list(range(1, ell // 2 + 1))
         return self.order == 0
 
     def _element_constructor_(self, d):
@@ -1616,7 +1618,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
             raise NotImplementedError("only implemented for integer order,"
                                       " not for order %s" % (self.order))
         try:
-            (D1,D2,pi) = tuple(D1_D2_pi)
+            D1, D2, pi = tuple(D1_D2_pi)
         except ValueError:
             raise ValueError("argument %s not in correct form; must be a tuple (D1, D2, pi)" % D1_D2_pi)
         D1 = [[abs(x) for x in b] for b in D1 if len(b) == 2] # not needed if argument correctly passed at outset.
@@ -2204,7 +2206,7 @@ class DiagramBasis(DiagramAlgebra):
             d1 = self._indices(d1)
         if not self._indices.is_parent_of(d2):
             d2 = self._indices(d2)
-        (composite_diagram, loops_removed) = d1.compose(d2, check=False)
+        composite_diagram, loops_removed = d1.compose(d2, check=False)
         return self.term(composite_diagram, self._q**loops_removed)
 
 
@@ -3543,9 +3545,9 @@ class OrbitBasis(DiagramAlgebra):
         """
         # According to Corollary 4.12 in [BH2017]_, product is zero unless the
         # stacked diagrams "exactly match" in the middle.
-        pi_1 = [frozenset([-i for i in part if i < 0]) for part in d1]
-        pi_2 = [frozenset([i for i in part if i > 0]) for part in d2]
-        if set([part for part in pi_1 if part]) != set([part for part in pi_2 if part]):
+        pi_1 = (frozenset([-i for i in part if i < 0]) for part in d1)
+        pi_2 = (frozenset([i for i in part if i > 0]) for part in d2)
+        if {part for part in pi_1 if part} != {part for part in pi_2 if part}:
             return self.zero()
 
         q = self._q
@@ -3562,10 +3564,10 @@ class OrbitBasis(DiagramAlgebra):
                             yield [x.union(y) for x, y in zip(X, sigma)] + restA + restB
 
         D, removed = d1.compose(d2, check=False)
-        only_top = set([frozenset(part) for part in d1
-                        if all(i > 0 for i in part)])
-        only_bottom = set([frozenset(part) for part in d2
-                           if all(i < 0 for i in part)])
+        only_top = {frozenset(part) for part in d1
+                    if all(i > 0 for i in part)}
+        only_bottom = {frozenset(part) for part in d2
+                       if all(i < 0 for i in part)}
         only_both = only_top.union(only_bottom)
         restD = [P for P in D if frozenset(P) not in only_both]
         term_dict = {PDs(restD + X):
@@ -4492,7 +4494,6 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
                o o o o      o o o o       o o o o
         """
         M = x.monomial_coefficients(copy=False)
-        I = self._indices
         return self._from_dict({d.dual(): c for d, c in M.items()},
                                remove_zeros=False)
 
@@ -4835,15 +4836,14 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
             insert_pairing([-P[1], -P[0], False, False], intervals)
         elif P[0] > 0:  # Top matching
             insert_pairing([P[0], P[1], True, True], top_intervals)
-        else:  # Propogating line
-            if -P[0] == P[1]:
-                vertical.append(P[1])
+        elif -P[0] == P[1]:
+            vertical.append(P[1])
+        else:
+            if -P[0] < P[1]:
+                num_right += 1
             else:
-                if -P[0] < P[1]:
-                    num_right += 1
-                else:
-                    num_left += 1
-                propogating.append(P)
+                num_left += 1
+            propogating.append(P)
 
     # Now piece together the intervals together
     total_prop = max(num_left, num_right)
@@ -4937,7 +4937,6 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
     """
     # these allow the view command to work (maybe move them
     # somewhere more appropriate?)
-    from sage.misc.latex import latex
     latex.add_package_to_preamble_if_available('tikz')
 
     if fill:
@@ -5189,9 +5188,8 @@ class PottsRepresentation(CombinatorialFreeModule):
             if y not in ZZ or y < 1 or y > self._d:
                 raise ValueError(f"the magnetic field direction must be an integer in [1, {self._d}]")
             y = ZZ(y)
-        else:
-            if y is not None:
-                raise ValueError("the magnetic field direction should not be given for integer rank")
+        elif y is not None:
+            raise ValueError("the magnetic field direction should not be given for integer rank")
         self._y = y
         # _order is used to define the ordering of the basis elements
         self._num_factors = ZZ(order)
@@ -5397,11 +5395,10 @@ class PottsRepresentation(CombinatorialFreeModule):
                 if i > 0:
                     if word[i] != color:
                         return self.zero()
-                else:  # i < 0
-                    if -i == order + 1:
-                        assert color == self._y
-                    else:
-                        fixed[-i-1] = color  # convert 1-based to 0-based
+                elif -i == order + 1:
+                    assert color == self._y
+                else:
+                    fixed[-i-1] = color  # convert 1-based to 0-based
         if not neg_parts:
             return self._monomial(fixed)
 
@@ -5577,7 +5574,7 @@ class PottsRepresentation(CombinatorialFreeModule):
 #########################################################################
 
 
-def is_planar(sp):
+def is_planar(sp) -> bool:
     r"""
     Return ``True`` if the diagram corresponding to the set partition ``sp``
     is planar; otherwise, return ``False``.

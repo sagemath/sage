@@ -59,7 +59,6 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.morphism import RingHomomorphism
 
-
 lazy_import("sage.rings.function_field.derivations", (
     "FunctionFieldDerivation",
     "FunctionFieldHigherDerivation",
@@ -165,7 +164,7 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
         return richcmp((self.domain(), self.codomain()),
                        (other.domain(), other.codomain()), op)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash value of this map.
 
@@ -198,7 +197,7 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
           From: Vector space of dimension 2 over Rational function field in x over Rational Field
           To:   Function field in y defined by y^2 - x*y + 4*x^3
     """
-    def __init__(self, V, K):
+    def __init__(self, V, K) -> None:
         """
         EXAMPLES::
 
@@ -252,8 +251,9 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
         # construct the basis composed of powers of the generators of all the
         # intermediate fields, i.e., 1, x, y, x*y, ...
-        from sage.misc.misc_c import prod
         from itertools import product
+
+        from sage.misc.misc_c import prod
         exponents = product(*[range(d) for d in degrees])
         basis = [prod(g**e for g, e in zip(gens, es)) for es in exponents]
 
@@ -307,7 +307,7 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
           From: Function field in y defined by y^2 - x*y + 4*x^3
           To:   Vector space of dimension 2 over Rational function field in x over Rational Field
     """
-    def __init__(self, K, V):
+    def __init__(self, K, V) -> None:
         """
         Initialize.
 
@@ -380,7 +380,7 @@ class FunctionFieldMorphism(RingHomomorphism):
         Function Field endomorphism of Rational function field in x over Rational Field
           Defn: x |--> 1/x
     """
-    def __init__(self, parent, im_gen, base_morphism):
+    def __init__(self, parent, im_gen, base_morphism) -> None:
         """
         Initialize.
 
@@ -448,7 +448,7 @@ class FunctionFieldMorphism_polymod(FunctionFieldMorphism):
         sage: f(y).charpoly('y')
         y^3 + 6*x^3 + x
     """
-    def __init__(self, parent, im_gen, base_morphism):
+    def __init__(self, parent, im_gen, base_morphism) -> None:
         """
         Initialize.
 
@@ -493,7 +493,7 @@ class FunctionFieldMorphism_rational(FunctionFieldMorphism):
     """
     Morphism from a rational function field to a function field.
     """
-    def __init__(self, parent, im_gen, base_morphism):
+    def __init__(self, parent, im_gen, base_morphism) -> None:
         """
         Initialize.
 
@@ -560,7 +560,7 @@ class FunctionFieldConversionToConstantBaseField(Map):
           From: Rational function field in x over Rational Field
           To:   Rational Field
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         """
         Initialize.
 
@@ -767,7 +767,7 @@ class FunctionFieldCompletion(Map):
         b + b*t + b*t^3 + b*t^4 + (b + 1)*t^5 + (b + 1)*t^7 + b*t^9 + b*t^11
         + b*t^12 + b*t^13 + b*t^15 + b*t^16 + (b + 1)*t^17 + (b + 1)*t^19 + O(t^20)
     """
-    def __init__(self, field, place, name=None, prec=None, gen_name=None):
+    def __init__(self, field, place, name=None, prec=None, gen_name=None) -> None:
         """
         Initialize.
 

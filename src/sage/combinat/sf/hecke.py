@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Hecke Character Basis
+Hecke character basis
 
 The basis of symmetric functions given by characters of the
 Hecke algebra (of type `A`).
@@ -24,7 +24,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.combinat.partition import _Partitions, Partitions
+from sage.combinat.partition import Partitions, _Partitions
 from sage.combinat.sf.multiplicative import SymmetricFunctionAlgebra_multiplicative
 
 

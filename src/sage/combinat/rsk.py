@@ -2587,6 +2587,8 @@ class RuleStar(Rule):
         sage: FC_tabs = [T for shape in shapes
         ....:                  for T in SemistandardTableaux(shape, max_entry=4)
         ....:                      if fc(row_reading(T.conjugate()))]
+        sage: from random import sample
+        sage: FC_tabs = sample(FC_tabs, 25)  # verify only a random subset
         sage: Checks = []
         sage: for T in FC_tabs:  # long time
         ....:    shape = T.shape().conjugate()

@@ -81,7 +81,8 @@ class Polyhedron_QQ(Polyhedron_base):
     _base_ring = QQ
 
     def integral_points_count(self, verbose=False, use_Hrepresentation=False,
-                              explicit_enumeration_threshold=1000, preprocess=True, **kwds):
+                              explicit_enumeration_threshold=1000,
+                              preprocess=True, **kwds):
         r"""
         Return the number of integral points in the polyhedron.
 
@@ -210,6 +211,8 @@ class Polyhedron_QQ(Polyhedron_base):
                 cdd=True,
                 verbose=verbose,
                 **kwds)
+
+    n_points = integral_points_count
 
     @cached_method(do_pickle=True)
     def ehrhart_polynomial(self, engine=None, variable='t', verbose=False,

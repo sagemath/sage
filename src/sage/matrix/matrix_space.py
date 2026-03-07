@@ -48,8 +48,9 @@ import sage.misc.latex as latex
 import sage.modules.free_module
 
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.superseded import deprecated_function_alias
 from sage.misc.persist import register_unpickle_override
+from sage.categories.monoids import Monoids
+from sage.categories.semirings import Semirings
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -60,33 +61,8 @@ lazy_import('sage.matrix.matrix_gfpn_dense', ['Matrix_gfpn_dense'],
             feature=Meataxe())
 lazy_import('sage.groups.matrix_gps.matrix_group', ['MatrixGroup_base'])
 
-_Rings = Rings()
+_Semirings = Semirings()
 _Fields = Fields()
-
-
-def is_MatrixSpace(x):
-    """
-    Return whether ``self`` is an instance of ``MatrixSpace``.
-
-    EXAMPLES::
-
-        sage: from sage.matrix.matrix_space import is_MatrixSpace
-        sage: MS = MatrixSpace(QQ,2)
-        sage: A = MS.random_element()
-        sage: is_MatrixSpace(MS)
-        doctest:warning...
-        DeprecationWarning: the function is_MatrixSpace is deprecated;
-        use 'isinstance(..., MatrixSpace)' instead
-        See https://github.com/sagemath/sage/issues/37924 for details.
-        True
-        sage: is_MatrixSpace(A)
-        False
-        sage: is_MatrixSpace(5)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37924, "the function is_MatrixSpace is deprecated; use 'isinstance(..., MatrixSpace)' instead")
-    return isinstance(x, MatrixSpace)
 
 
 def get_matrix_class(R, nrows, ncols, sparse, implementation):
@@ -319,6 +295,15 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                         pass
                     else:
                         return matrix_laurent_mpolynomial_dense.Matrix_laurent_mpolynomial_dense
+
+            try:
+                from sage.rings.semirings.tropical_semiring import TropicalSemiring
+            except ImportError:
+                pass
+            else:
+                if isinstance(R, TropicalSemiring):
+                    from sage.rings.semirings import tropical_matrix
+                    return tropical_matrix.Matrix_tropical_dense
 
             # The fallback
             from sage.matrix.matrix_generic_dense import Matrix_generic_dense
@@ -725,8 +710,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: MS2._my_option
             False
         """
-        if base_ring not in _Rings:
-            raise TypeError("base_ring (=%s) must be a ring" % base_ring)
+        if base_ring not in _Semirings:
+            raise TypeError("base_ring (=%s) must be a ring or a semiring" % base_ring)
 
         if ncols_or_column_keys is not None:
             try:
@@ -785,7 +770,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         return super().__classcall__(cls, base_ring, nrows,
                                      ncols, sparse, matrix_cls, **kwds)
 
-    def __init__(self, base_ring, nrows, ncols, sparse, implementation):
+    def __init__(self, base_ring, nrows, ncols, sparse, implementation) -> None:
         r"""
         INPUT:
 
@@ -898,12 +883,17 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         from sage.categories.modules import Modules
         from sage.categories.algebras import Algebras
-        if nrows == ncols:
-            category = Algebras(base_ring.category())
+        if base_ring in Rings():
+            if nrows == ncols:
+                category = Algebras(base_ring.category())
+            else:
+                category = Modules(base_ring.category())
+            category = category.WithBasis().FiniteDimensional()
         else:
-            category = Modules(base_ring.category())
-
-        category = category.WithBasis().FiniteDimensional()
+            if nrows == ncols:
+                category = Semirings()
+            else:
+                category = Monoids()
 
         if not self.__nrows or not self.__ncols:
             is_finite = True
@@ -1046,10 +1036,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             return False
         elif self.Element is sage.matrix.matrix_rational_dense.Matrix_rational_dense:
             return False
-        elif self.__nrows > 40 and self.__ncols > 40:
-            return False
-        else:
-            return True
+        return self.__nrows <= 40 or self.__ncols <= 40
 
     def _element_constructor_(self, entries, **kwds):
         """
@@ -2027,8 +2014,9 @@ class MatrixSpace(UniqueRepresentation, Parent):
         if self.__nrows != self.__ncols:
             raise TypeError("identity matrix must be square")
         A = self.zero_matrix().__copy__()
+        one = self.base_ring().one()
         for i in range(self.__nrows):
-            A[i, i] = 1
+            A[i, i] = one
         A.set_immutable()
         return A
 
@@ -2819,9 +2807,6 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
     assert inv == m1
     if checkrank:
         assert m1.rank() == 1
-
-
-test_trivial_matrices_inverse = deprecated_function_alias(33612, _test_trivial_matrices_inverse)
 
 
 # Fix unpickling Matrix_modn_dense and Matrix_integer_2x2

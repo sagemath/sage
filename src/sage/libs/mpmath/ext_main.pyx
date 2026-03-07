@@ -973,23 +973,24 @@ cdef class Context:
     def _convert_param(ctx, x):
         """
         Internal function for parsing a hypergeometric function parameter.
-        Retrurns (T, x) where T = 'Z', 'Q', 'R', 'C' depending on the
+
+        This returns (T, x) where T = 'Z', 'Q', 'R', 'C' depending on the
         type of the parameter, and with x converted to the canonical
         mpmath type.
 
         TESTS::
 
             sage: from mpmath import mp
-            sage: (x, T) = mp._convert_param(3)
+            sage: x, T = mp._convert_param(3)
             sage: (x, type(x).__name__, T)
             (3, 'int', 'Z')
-            sage: (x, T) = mp._convert_param(2.5)
+            sage: x, T = mp._convert_param(2.5)
             sage: (x, type(x).__name__, T)
             (mpq(5,2), 'mpq', 'Q')
-            sage: (x, T) = mp._convert_param(2.3)
+            sage: x, T = mp._convert_param(2.3)
             sage: (str(x), type(x).__name__, T)
             ('2.3', 'mpf', 'R')
-            sage: (x, T) = mp._convert_param(2+3j)
+            sage: x, T = mp._convert_param(2+3j)
             sage: (x, type(x).__name__, T)
             (mpc(real='2.0', imag='3.0'), 'mpc', 'C')
             sage: mp.pretty = False

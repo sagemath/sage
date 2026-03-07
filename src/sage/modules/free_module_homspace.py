@@ -82,53 +82,6 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 
 
-def is_FreeModuleHomspace(x):
-    r"""
-    Return ``True`` if ``x`` is a free module homspace.
-
-    Notice that every vector space is a free module, but when we construct
-    a set of morphisms between two vector spaces, it is a
-    ``VectorSpaceHomspace``, which qualifies as a ``FreeModuleHomspace``,
-    since the former is special case of the latter.
-
-    EXAMPLES::
-
-        sage: H = Hom(ZZ^3, ZZ^2)
-        sage: type(H)
-        <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
-        sage: sage.modules.free_module_homspace.is_FreeModuleHomspace(H)
-        doctest:warning...
-        DeprecationWarning: the function is_FreeModuleHomspace is deprecated;
-        use 'isinstance(..., FreeModuleHomspace)' instead
-        See https://github.com/sagemath/sage/issues/37924 for details.
-        True
-
-        sage: K = Hom(QQ^3, ZZ^2)
-        sage: type(K)
-        <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
-        sage: sage.modules.free_module_homspace.is_FreeModuleHomspace(K)
-        True
-
-        sage: L = Hom(ZZ^3, QQ^2)
-        sage: type(L)
-        <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
-        sage: sage.modules.free_module_homspace.is_FreeModuleHomspace(L)
-        True
-
-        sage: P = Hom(QQ^3, QQ^2)
-        sage: type(P)
-        <class 'sage.modules.vector_space_homspace.VectorSpaceHomspace_with_category'>
-        sage: sage.modules.free_module_homspace.is_FreeModuleHomspace(P)
-        True
-
-        sage: sage.modules.free_module_homspace.is_FreeModuleHomspace('junk')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37924, "the function is_FreeModuleHomspace is deprecated; use 'isinstance(..., FreeModuleHomspace)' instead")
-    return isinstance(x, FreeModuleHomspace)
-
-
 class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
     def __call__(self, A, **kwds):
         r"""

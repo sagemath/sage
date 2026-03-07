@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Unit testing for Sage objects
 """
@@ -71,6 +70,8 @@ class TestSuite:
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
 
     The different test methods can be called independently::
@@ -229,10 +230,9 @@ class TestSuite:
             AssertionError: None
             ------------------------------------------------------------
             Failure in _test_pickling:
-            Traceback (most recent call last):
-              ...
-            ...PicklingError: Can't pickle <class '__main__.Blah'>: attribute
-            lookup ...Blah... failed
+            ...
+            ...PicklingError: Can't pickle <class '__main__.Blah'>: ...
+            ...
             ------------------------------------------------------------
             The following tests failed: _test_b, _test_d, _test_pickling
 
@@ -253,15 +253,13 @@ class TestSuite:
             running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . fail
-            Traceback (most recent call last):
-              ...
-            ...PicklingError: Can't pickle <class '__main__.Blah'>: attribute
-            lookup ...Blah... failed
+            ...
+            ...PicklingError: Can't pickle <class '__main__.Blah'>: ...
+            ...
             ------------------------------------------------------------
             The following tests failed: _test_b, _test_d, _test_pickling
 
-            File "/opt/sage/local/lib/python/site-packages/sage/misc/sage_unittest.py", line 183, in run
-            test_method(tester = tester)
+            ...
 
         The ``catch=False`` option prevents ``TestSuite`` from
         catching exceptions::

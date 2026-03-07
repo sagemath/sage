@@ -626,9 +626,7 @@ cdef class SemidefiniteProgram(SageObject):
         cdef GenericSDPBackend b = self._backend
 
         # inv_variables associates a SDPVariable object to an id
-        inv_variables = {}
-        for (v, id) in self._variables.iteritems():
-            inv_variables[id] = v
+        inv_variables = {id: v for v, id in self._variables.items()}
 
         # varid_name associates variables id to names
         varid_name = {}
@@ -1126,7 +1124,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         d = {}
         for v in L:
-            for id, coeff in v.iteritems():
+            for id, coeff in v.items():
                 d[id] = coeff + d.get(id, 0)
         return self.linear_functions_parent()(d)
 

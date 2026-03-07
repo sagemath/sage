@@ -168,8 +168,8 @@ Laplace de :math:`t^2e^t -\sin(t)` é calculada da seguinte forma:
     sage: s = var("s")
     sage: t = var("t")
     sage: f = t^2*exp(t) - sin(t)
-    sage: f.laplace(t,s)
-    -1/(s^2 + 1) + 2/(s - 1)^3
+    sage: f.laplace(t,s).simplify_rational()
+    -(s^3 - 5*s^2 + 3*s - 3)/(s^5 - 3*s^4 + 4*s^3 - 4*s^2 + 3*s - 1)
 
 A seguir, um exemplo mais complicado. O deslocamento, com respeito à
 posição de equilíbrio, de duas massas presas a uma parede através de

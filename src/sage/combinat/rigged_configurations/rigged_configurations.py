@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Rigged Configurations
+Rigged configurations
 
 AUTHORS:
 
-- Travis Scrimshaw (2010-09-26): Initial version
+- Travis Scrimshaw (2010-09-26): initial version
 """
 
 # ****************************************************************************

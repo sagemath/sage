@@ -71,6 +71,21 @@ def layout_split(layout_function, G, **options):
          ...
          902: [3.13..., 0.22...]}
 
+    TESTS:
+
+    Check that issue:`41533` is fixed::
+
+        sage: H = graphs.LadderGraph(4) + graphs.CompleteGraph(3)
+        sage: em = {0: [1, 4], 4: [0, 5], 1: [5, 2, 0], 5: [4, 6, 1],
+        ....:       2: [1, 3, 6], 6: [7, 5, 2], 3: [7, 2], 7: [3, 6],
+        ....:       8: [10, 9], 9: [8, 10], 10: [8, 9]}
+        sage: em_before = deepcopy(em)
+        sage: p = H.layout_planar(on_embedding=em)
+        sage: em == em_before
+        True
+        sage: em is em_before
+        False
+
     AUTHOR:
 
     Robert Bradshaw
@@ -96,7 +111,7 @@ def layout_split(layout_function, G, **options):
     for g in Gs:
         if on_embedding:
             # Restrict ``on_embedding`` to ``g``
-            embedding_g = {v: on_embedding[v] for v in g}
+            embedding_g = {v: list(on_embedding[v]) for v in g}
             cur_pos = layout_function(g, on_embedding=embedding_g, **options)
         elif forest_roots:
             # Find a root for ``g`` (if any)

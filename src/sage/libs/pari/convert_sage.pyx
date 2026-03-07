@@ -20,7 +20,21 @@ from cypari2.types cimport (GEN, typ, t_INT, t_FRAC, t_REAL, t_COMPLEX,
                             t_INTMOD, t_PADIC, t_INFINITY, t_VEC, t_COL,
                             t_VECSMALL, t_MAT, t_STR,
                             lg, precp)
-from cypari2.paridecl cimport *
+from cypari2.paridecl cimport (
+    avma,
+    divisorsu,
+    FF_to_FpXQ_i,
+    inf_get_sign,
+    is_rational_t,
+    maxprime,
+    pari_PRIMES, 
+    pari_sp, 
+    t_FFELT,
+    t_POLMOD,
+    uisprime,
+    uisprimepower,
+    ulong, 
+)
 from cypari2.stack cimport new_gen
 from sage.libs.pari.convert_gmp cimport INT_to_mpz, new_gen_from_mpz_t, new_gen_from_mpq_t, INTFRAC_to_mpq
 
@@ -274,7 +288,6 @@ cpdef gen_to_sage(Gen z, locals=None):
     cdef long t = typ(g)
     cdef long tx, ty
     cdef Gen real, imag, prec, xprec, yprec
-    cdef Py_ssize_t i, j, nr, nc
 
     if t == t_INT:
         return Integer(z)

@@ -1,6 +1,5 @@
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
-# sage_setup: distribution = sagemath-tdlib
 
 r"""
 Interface with TdLib (algorithms for tree decompositions)

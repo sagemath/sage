@@ -7,7 +7,6 @@ related to Hermitean unitals, graphs on nonisotropic points, etc.
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 """
-
 # ****************************************************************************
 #           Copyright (C) 2015 Sagemath project
 #
@@ -17,6 +16,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import combinations
 
 from sage.graphs.graph import Graph
 from sage.arith.misc import is_prime_power
@@ -190,7 +190,6 @@ def AffineOrthogonalPolarGraph(d, q, sign='+'):
     from sage.modules.free_module import VectorSpace
     from sage.matrix.constructor import Matrix
     from sage.libs.gap.libgap import libgap
-    from itertools import combinations
 
     M = Matrix(libgap.InvariantQuadraticForm(libgap.GeneralOrthogonalGroup(s, d, q))['matrix'])
     F = libgap.GF(q).sage()
@@ -583,7 +582,6 @@ def _polar_graph(m, q, g, intersection_size=None):
         Graph on 27 vertices
     """
     from sage.libs.gap.libgap import libgap
-    from itertools import combinations
     W = libgap.FullRowSpace(libgap.GF(q), m)   # F_q^m
     B = libgap.Elements(libgap.Basis(W))       # the standard basis of W
     V = libgap.Orbit(g, B[0], libgap.OnLines)  # orbit on isotropic points
@@ -709,7 +707,6 @@ def NonisotropicUnitaryPolarGraph(m, q):
     if not k:
         raise ValueError('q must be a prime power')
     from sage.libs.gap.libgap import libgap
-    from itertools import combinations
     F = libgap.GF(q**2)  # F_{q^2}
     W = libgap.FullRowSpace(F, m)  # F_{q^2}^m
     B = libgap.Elements(libgap.Basis(W))  # the standard basis of W
@@ -1111,7 +1108,7 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
                         raise RuntimeError("incorrect hyperoval")
 
     L = [[y for y in z if y not in HO]
-         for z in [x for x in Theta.blocks() if len(HO.intersection(x)) == 1]]
+         for z in Theta.blocks() if len(HO.intersection(z)) == 1]
 
     if dual:
         G = IncidenceStructure(L).intersection_graph()
@@ -1203,7 +1200,6 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
     """
     from sage.modules.free_module_element import free_module_element as vector
     from sage.rings.finite_rings.finite_field_constructor import GF
-    from itertools import combinations
 
     p, k = is_prime_power(q, get_data=True)
     if not k or p != 2:
@@ -1524,7 +1520,6 @@ def OrthogonalDualPolarGraph(e, d, q):
     from sage.matrix.constructor import Matrix
     from sage.modules.free_module import VectorSpace
     from sage.rings.finite_rings.finite_field_constructor import GF
-    import itertools
 
     def hashable(v):
         v.set_immutable()
@@ -1595,15 +1590,13 @@ def OrthogonalDualPolarGraph(e, d, q):
     allIsoSubspaces = libgap.Orbit(permutation, isoSPointsInt, libgap.OnSets)
 
     # number of projective points in a (d-1)-subspace
-    intersection_size = (q**(d-1) - 1) // (q-1)
+    intersection_size = (q**(d - 1) - 1) // (q - 1)
 
-    edges = []
     n = len(allIsoSubspaces)
-    for i, j in itertools.combinations(range(n), 2):
-        if libgap.Size(libgap.Intersection(allIsoSubspaces[i],
-                                           allIsoSubspaces[j])) \
-                                           == intersection_size:
-            edges.append((i, j))
+    edges = [(i, j) for i, j in combinations(range(n), 2)
+             if libgap.Size(libgap.Intersection(allIsoSubspaces[i],
+                                                allIsoSubspaces[j]))
+             == intersection_size]
 
     G = Graph(edges, format='list_of_edges')
     G.name("Dual Polar Graph on Orthogonal group (%d, %d, %d)" % (e, m, q))

@@ -65,7 +65,7 @@ from cysignals.signals cimport sig_on, sig_off
 import operator
 import fractions
 
-import sage.rings.rational_field
+from sage.rings.rational_field import QQ
 
 from sage.arith.long cimport integer_check_long_py
 from sage.categories.morphism cimport Morphism
@@ -73,7 +73,6 @@ from sage.categories.map cimport Map
 from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.libs.gmp.pylong cimport mpz_set_pylong
 from sage.rings.integer cimport Integer, smallInteger
-from sage.rings.integer_ring import ZZ
 from sage.structure.coerce cimport coercion_model, is_numpy_type
 from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
@@ -182,7 +181,7 @@ cdef Rational_sub_(Rational self, Rational other):
 
     return x
 
-cdef Parent the_rational_ring = sage.rings.rational_field.Q
+cdef Parent the_rational_ring = QQ
 
 # make sure zero/one elements are set
 cdef set_zero_one_elements():
@@ -235,7 +234,9 @@ cpdef Integer integer_rational_power(Integer a, Rational b):
         sage: integer_rational_power(-1, 9/8) is None
         True
 
-    TESTS (:issue:`11228`)::
+    TESTS:
+
+    Check for :issue:`11228`::
 
         sage: integer_rational_power(-10, QQ(2))
         100
@@ -496,6 +497,11 @@ cdef class Rational(sage.structure.element.FieldElement):
         1267650600228229401496703205376/515377520732011331036461129765621272702107522001
         sage: QQ((-2r^100r, -3r^100r))
         1267650600228229401496703205376/515377520732011331036461129765621272702107522001
+
+    Conversion from real number::
+
+        sage: QQ(RR(2^100))
+        1267650600228229401496703205376
     """
     def __cinit__(self):
         r"""
@@ -587,7 +593,6 @@ cdef class Rational(sage.structure.element.FieldElement):
     cdef __set_value(self, x, unsigned int base):
         cdef int n
         cdef Rational temp_rational
-        cdef integer.Integer a, b
 
         if isinstance(x, Rational):
             set_from_Rational(self, x)
@@ -604,14 +609,16 @@ cdef class Rational(sage.structure.element.FieldElement):
                 mpq_set_si(self.value, 0, 1)
                 return
             if not base:
-                set_from_Rational(self, x.simplest_rational())
+                if x.is_integer():
+                    set_from_Rational(self, x.exact_rational())
+                else:
+                    set_from_Rational(self, x.simplest_rational())
             else:
                 # Truncate in base 10 to match repr(x).
                 # See https://github.com/sagemath/sage/issues/21124
                 xstr = x.str(base, truncate=(base == 10))
                 if '.' in xstr:
                     exp = (len(xstr) - (xstr.index('.') +1))
-                    p = base**exp
                     pstr = '1'+'0'*exp
                     s = xstr.replace('.','') +'/'+pstr
                     n = mpq_set_str(self.value, str_to_bytes(s), base)
@@ -1054,6 +1061,21 @@ cdef class Rational(sage.structure.element.FieldElement):
             '-485/82847'
         """
         return self.numerator()._magma_init_(magma) + '/' + self.denominator()._magma_init_(magma)
+
+    def _regina_(self, regina):
+        r"""
+        Return a Regina Rational.
+
+        EXAMPLES::
+
+            sage: r53 = regina(5/3); (r53, type(r53), type(r53._inst))  # optional regina
+            (5/3,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Rational'>)
+        """
+        num = self.numerator()
+        den = self.denominator()
+        return regina.Rational(num, den)
 
     @property
     def __array_interface__(self):
@@ -1881,7 +1903,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             return self
         a = self
         for p in S:
-            e, a = a.val_unit(p)
+            _, a = a.val_unit(p)
         return a
 
     def sqrt(self, prec=None, extend=True, all=False):
@@ -2045,10 +2067,9 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: RealField(200)(x)                                                     # needs sage.rings.real_mpfr
             3.1415094339622641509433962264150943396226415094339622641509
         """
-        cdef unsigned int alpha, beta
         d = self.denominator()
-        alpha, d = d.val_unit(2)
-        beta, d  = d.val_unit(5)
+        d = d.val_unit(2)[1]
+        d = d.val_unit(5)[1]
         from sage.rings.finite_rings.integer_mod import Mod
         return Mod(10, d).multiplicative_order()
 
@@ -2105,10 +2126,14 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         num, exact = self.numerator().nth_root(n, 1)
         if not exact:
+            from sage.rings.integer_ring import ZZ
+
             raise ValueError("not a perfect %s power" % ZZ(n).ordinal_str())
 
         den, exact = self.denominator().nth_root(n, 1)
         if not exact:
+            from sage.rings.integer_ring import ZZ
+
             raise ValueError("not a perfect %s power" % ZZ(n).ordinal_str())
 
         if negative:
@@ -2266,17 +2291,19 @@ cdef class Rational(sage.structure.element.FieldElement):
 
             sage: QQ(42).__hash__()
             42
-            sage: QQ(1/42).__hash__()
-            1488680910            # 32-bit
-            -7658195599476688946  # 64-bit
+            sage: hash32 = 1488680910
+            sage: hash64 = -7658195599476688946
+            sage: QQ(1/42).__hash__() in [hash32, hash64]
+            True
             sage: n = ZZ.random_element(10^100)
             sage: hash(n) == hash(QQ(n)) or n
             True
             sage: hash(-n) == hash(-QQ(n)) or n
             True
-            sage: hash(-4/17)
-            -47583156            # 32-bit
-            8709371129873690700  # 64-bit
+            sage: hash32 = -47583156
+            sage: hash64 = 8709371129873690700
+            sage: hash(-4/17) in [hash32, hash64]
+            True
         """
         cdef Py_hash_t n = mpz_pythonhash(mpq_numref(self.value))
         cdef Py_hash_t d = mpz_pythonhash(mpq_denref(self.value))
@@ -2603,13 +2630,11 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (1/2)^(2^100)
             Traceback (most recent call last):
             ...
-            OverflowError: exponent must be at most 2147483647           # 32-bit
-            OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+            OverflowError: exponent must be at most ...
             sage: (1/2)^(-2^100)
             Traceback (most recent call last):
             ...
-            OverflowError: exponent must be at most 2147483647           # 32-bit
-            OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+            OverflowError: exponent must be at most ...
             sage: QQ(-1)^(2^100)                                                        # needs sage.symbolic
             1
         """
@@ -2807,7 +2832,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             ...
             ArithmeticError: The inverse of 0 modulo 17 is not defined.
         """
-        cdef unsigned int num, den, a
+        cdef unsigned int num, den
 
         # Documentation from GMP manual:
         # "For the ui variants the return value is the remainder, and
@@ -3195,6 +3220,8 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (-1/2).log(3)                                                         # needs sage.symbolic
             (I*pi + log(1/2))/log(3)
         """
+        from sage.rings.integer_ring import ZZ
+
         cdef int self_sgn
         if self.denom().is_one():
             return ZZ(self.numer()).log(m, prec)
@@ -4070,7 +4097,6 @@ cdef double mpq_get_d_nearest(mpq_t x) except? -648555075988944.5:
     return ldexp(d, shift)
 
 
-@cython.binding(True)
 def make_rational(s):
     """
     Make a rational number from ``s`` (a string in base 32).
@@ -4109,10 +4135,10 @@ cdef class Z_to_Q(Morphism):
               From: Integer Ring
               To:   Rational Field
         """
-        from sage.rings import integer_ring
-        from sage.rings import rational_field
+        from sage.rings.integer_ring import ZZ
+
         import sage.categories.homset
-        Morphism.__init__(self, sage.categories.homset.Hom(integer_ring.ZZ, rational_field.QQ))
+        Morphism.__init__(self, sage.categories.homset.Hom(ZZ, QQ))
 
     cpdef Element _call_(self, x):
         """

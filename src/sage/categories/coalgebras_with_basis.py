@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Coalgebras with basis
 """
@@ -66,7 +65,7 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6
                   as a permutation group over Rational Field
-                sage: (a, b) = A._group.gens()                                          # needs sage.groups sage.modules
+                sage: a, b = A._group.gens()                                          # needs sage.groups sage.modules
                 sage: A.coproduct_on_basis(a)                                           # needs sage.groups sage.modules
                 B[(1,2,3)] # B[(1,2,3)]
             """
@@ -120,7 +119,7 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6
                   as a permutation group over Rational Field
-                sage: (a, b) = A._group.gens()                                          # needs sage.groups sage.modules
+                sage: a, b = A._group.gens()                                          # needs sage.groups sage.modules
                 sage: A.counit_on_basis(a)                                              # needs sage.groups sage.modules
                 1
             """

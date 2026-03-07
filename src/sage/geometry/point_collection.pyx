@@ -986,13 +986,13 @@ def read_palp_point_collection(f, lattice=None, permutation=False):
         # Typical situation: a point on each line
         lattice = lattice or ToricLattice(n).dual()
         points = [lattice.element_class(lattice, f.readline().split())
-                for i in range(m)]
+                  for i in range(m)]
     else:
         # Also may appear as PALP output, e.g. points of 3-d polytopes
         lattice = lattice or ToricLattice(m).dual()
         data = [f.readline().split() for j in range(m)]
         points = [lattice.element_class(lattice, [data[j][i] for j in range(m)])
-                for i in range(n)]
+                  for i in range(n)]
     for p in points:
         p.set_immutable()
     pc = PointCollection(points, lattice)

@@ -799,7 +799,7 @@ cpdef find_brouwer_separable_design(int k, int n):
 from sage.combinat.designs.database import QDM as __QDM
 cdef dict _QDM = __QDM
 cdef dict ioa_indexed_by_n_minus_x = {}
-for x in _QDM.itervalues():
+for x in _QDM.values():
     for (n, _, _, u), (k, _) in x.items():
         if u > 1:
             if n not in ioa_indexed_by_n_minus_x:

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 The coercion model
 
@@ -550,9 +549,8 @@ cdef class CoercionModel:
 
         sage: numpy.uint8('2') + 3                                                      # needs numpy
         5
-        sage: type(_)                                                                   # needs numpy
-        <class 'numpy.int32'>  # 32-bit
-        <class 'numpy.int64'>  # 64-bit
+        sage: type(_) in [numpy.int32, numpy.int64]                                     # needs numpy
+        True
 
         sage: numpy.int8('12') + 1/3                                                    # needs numpy
         12.333333333333334
@@ -808,6 +806,9 @@ cdef class CoercionModel:
         elements or parents). If the parent of the result can be determined
         then it will be returned.
 
+        For programmatic usages, use :meth:`canonical_coercion` and
+        :meth:`common_parent` instead.
+
         EXAMPLES::
 
             sage: cm = sage.structure.element.get_coercion_model()
@@ -937,6 +938,9 @@ cdef class CoercionModel:
         The :meth:`explain` method is easier to use, but if one wants access to
         the actual morphism and action objects (rather than their string
         representations), then this is the function to use.
+
+        For programmatic usages, use :meth:`canonical_coercion` and
+        :meth:`common_parent` instead.
 
         EXAMPLES::
 
@@ -1675,13 +1679,13 @@ cdef class CoercionModel:
             sage: ZZxy = ZZ['x,y']
             sage: cm.discover_coercion(ZZxy, RDF)
             ((map internal to coercion system -- copy before use)
-            Call morphism:
-              From: Multivariate Polynomial Ring in x, y over Integer Ring
-              To:   Multivariate Polynomial Ring in x, y over Real Double Field,
+             Coercion map:
+               From: Multivariate Polynomial Ring in x, y over Integer Ring
+               To:   Multivariate Polynomial Ring in x, y over Real Double Field,
              (map internal to coercion system -- copy before use)
              Polynomial base injection morphism:
-              From: Real Double Field
-              To:   Multivariate Polynomial Ring in x, y over Real Double Field)
+               From: Real Double Field
+               To:   Multivariate Polynomial Ring in x, y over Real Double Field)
 
         Sometimes there is a reasonable "cover," but no canonical coercion::
 

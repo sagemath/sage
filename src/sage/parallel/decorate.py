@@ -7,7 +7,6 @@ import types
 from sage.rings.integer import Integer
 
 from .reference import parallel_iter as p_iter_reference
-from .use_fork import p_iter_fork
 from . import multiprocessing_sage
 from sage.misc.instancedoc import instancedoc
 
@@ -76,6 +75,7 @@ class Parallel:
             ncpus = compute_ncpus()
 
         if p_iter == 'fork':
+            from .use_fork import p_iter_fork
             self.p_iter = p_iter_fork(ncpus, **kwds)
         elif p_iter == 'multiprocessing':
             self.p_iter = multiprocessing_sage.pyprocessing(ncpus)

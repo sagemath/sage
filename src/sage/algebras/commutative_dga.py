@@ -74,35 +74,35 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation, CachedRepresentation
-from sage.structure.sage_object import SageObject
-from sage.misc.cachefunc import cached_method
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.misc.functional import is_odd, is_even
-from sage.misc.misc_c import prod
-from sage.categories.chain_complexes import ChainComplexes
-from sage.categories.algebras import Algebras
-from sage.categories.morphism import Morphism
-from sage.categories.modules import Modules
-from sage.categories.homset import Hom
-
+import sage.interfaces.abc
 from sage.algebras.free_algebra import FreeAlgebra
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.categories.algebras import Algebras
+from sage.categories.chain_complexes import ChainComplexes
+from sage.categories.homset import Hom
+from sage.categories.modules import Modules
+from sage.categories.morphism import Morphism
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
 from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_function, cached_method
+from sage.misc.functional import is_even, is_odd
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.misc_c import prod
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
-from sage.rings.integer_ring import ZZ
 from sage.rings.homset import RingHomset_generic
+from sage.rings.integer_ring import ZZ
 from sage.rings.morphism import RingHomomorphism_im_gens
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.quotient_ring import QuotientRing_nc
 from sage.rings.quotient_ring_element import QuotientRingElement
-from sage.misc.cachefunc import cached_function
-
-import sage.interfaces.abc
+from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import (
+    CachedRepresentation,
+    UniqueRepresentation,
+)
 
 
 def sorting_keys(element):
@@ -321,7 +321,7 @@ class Differential(UniqueRepresentation, Morphism,
                 idx += 1
         return res
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         r"""
         Return a string showing where ``self`` sends each generator.
 
@@ -338,7 +338,7 @@ class Differential(UniqueRepresentation, Morphism,
         """
         return '\n'.join(f"{i} --> {self(i)}" for i in self.domain().gens())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1051,7 +1051,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
         category = Algebras(R.base_ring()).Graded().or_subcategory(category)
         QuotientRing_nc.__init__(self, R, I, names, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -1286,8 +1286,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         if isinstance(x, sage.interfaces.abc.SingularElement):
             # self._singular_().set_ring()
-            x = self.element_class(self, x.sage_poly(self.cover_ring()))
-            return x
+            return self.element_class(self, x.sage_poly(self.cover_ring()))
 
         return self.element_class(self, x)
 
@@ -1531,9 +1530,8 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             for m in self.monomials():
                 if degree is None:
                     degree = m.degree(total)
-                else:
-                    if degree != m.degree(total):
-                        return False
+                elif degree != m.degree(total):
+                    return False
             return True
 
         def homogeneous_parts(self):
@@ -1788,7 +1786,7 @@ class GCAlgebra_multigraded(GCAlgebra):
         self._degrees_multi = degrees
         self._grading_rank = len(list(degrees[0]))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -2199,7 +2197,7 @@ class DifferentialGCAlgebra(GCAlgebra):
         """
         return GCAlgebra._repr_(self).replace('Graded Commutative', 'Commutative Differential Graded')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3652,7 +3650,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
         ValueError: you must specify names or degrees
     """
     if max_degree:
-        from .finite_gca import FiniteGCAlgebra
+        from sage.algebras.finite_gca import FiniteGCAlgebra
         return FiniteGCAlgebra(ring, names=names, degrees=degrees,
                                max_degree=max_degree, **kwargs)
     multi = False
@@ -3912,7 +3910,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
                        and x.degree(total=total) == y.degree(total=total))
                    for (x, y) in zip(self.domain().gens(), self.im_gens()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         EXAMPLES::
 
@@ -3930,7 +3928,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
             return "Commutative Differential Graded Algebra"
         return "Graded Commutative Algebra"
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         EXAMPLES::
 
@@ -4131,7 +4129,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         """
         return hash(self._x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4141,7 +4139,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         """
         return '[{}]'.format(self._x)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 

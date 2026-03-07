@@ -949,9 +949,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         if isinstance(S, (BruhatTitsHarmonicCocycles, pAdicAutomorphicForms)):
             if S._k != self._k:
                 return False
-            if S._X != self._X:
-                return False
-            return True
+            return S._X == self._X
         return False
 
     def __eq__(self, other):
@@ -2355,15 +2353,11 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         if isinstance(S, BruhatTitsHarmonicCocycles):
             if S.weight() - 2 != self._n:
                 return False
-            if S._X != self._source:
-                return False
-            return True
+            return S._X == self._source
         if isinstance(S, pAdicAutomorphicForms):
             if S._n != self._n:
                 return False
-            if S._source != self._source:
-                return False
-            return True
+            return S._source == self._source
         return False
 
     def _element_constructor_(self, data):

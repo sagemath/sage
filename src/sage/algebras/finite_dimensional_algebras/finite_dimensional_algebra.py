@@ -12,21 +12,23 @@ Finite-Dimensional Algebras
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
-from .finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
+from functools import reduce
 
-from sage.rings.integer_ring import ZZ
-
-from sage.categories.magmatic_algebras import MagmaticAlgebras
+from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_element import (
+    FiniteDimensionalAlgebraElement,
+)
+from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_ideal import (
+    FiniteDimensionalAlgebraIdeal,
+)
 from sage.categories.algebras import Algebras
+from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.matrix.constructor import matrix
-from sage.structure.element import Matrix
+from sage.misc.cachefunc import cached_method
+from sage.rings.integer_ring import ZZ
 from sage.structure.category_object import normalize_names
+from sage.structure.element import Matrix
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-
-from sage.misc.cachefunc import cached_method
-from functools import reduce
 
 
 class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
@@ -266,7 +268,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         # No further validity checks necessary!
         Parent.__init__(self, base=k, names=names, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -336,7 +338,9 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         """
         cat = MagmaticAlgebras(self.base_ring()).FiniteDimensional().WithBasis()
         if category.is_subcategory(cat):
-            from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_morphism import FiniteDimensionalAlgebraHomset
+            from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_morphism import (
+                FiniteDimensionalAlgebraHomset,
+            )
             return FiniteDimensionalAlgebraHomset(self, B, category=category)
         return super()._Hom_(B, category)
 
@@ -749,8 +753,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         """
         if not self.is_unitary():
             raise TypeError("algebra is not unitary")
-        else:
-            return self(self._one)
+        return self(self._one)
 
     def random_element(self, *args, **kwargs):
         """

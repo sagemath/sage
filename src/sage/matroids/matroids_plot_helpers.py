@@ -420,19 +420,19 @@ def slp(M1, pos_dict=None, B=None) -> tuple:
     """
     L = set(M1.loops())
     nP = L | set(M1.simplify().groundset())
-    P = set(M1.groundset())-nP
+    P = set(M1.groundset()) - nP
     if P:
         if pos_dict is not None:
-            pcls = list(set([frozenset(set(M1.closure([p])) - L)
-                             for p in list(P)]))
+            pcls = list({frozenset(set(M1.closure([p])) - L)
+                         for p in list(P)})
             newP = []
             for pcl in pcls:
                 pcl_in_dict = [p for p in list(pcl) if p in pos_dict.keys()]
-                newP.extend(list(pcl-set([pcl_in_dict[0]])))
+                newP.extend(list(pcl - set([pcl_in_dict[0]])))
             return [M1.delete(L | set(newP)), L, set(newP)]
         elif B is not None:
-            pcls = list(set([frozenset(set(M1.closure([p])) - L)
-                             for p in list(P)]))
+            pcls = list({frozenset(set(M1.closure([p])) - L)
+                         for p in list(P)})
             newP = []
             for pcl in pcls:
                 pcl_list = list(pcl)
@@ -673,15 +673,14 @@ def posdict_is_sane(M1, pos_dict) -> bool:
     """
     L = set(M1.loops())
     nP = L | set(M1.simplify().groundset())
-    P = set(M1.groundset())-nP
-    pcls = list(set([frozenset(set(M1.closure([p])) - L) for p in list(P)]))
+    P = set(M1.groundset()) - nP
+    pcls = list({frozenset(set(M1.closure([p])) - L) for p in list(P)})
     for pcl in pcls:
-        pcl_list = list(pcl)
-        if not any(x in pos_dict for x in pcl_list):
+        if not any(x in pos_dict for x in pcl):
             return False
     allP = []
     for pcl in pcls:
-        allP.extend(list(pcl))
+        allP.extend(pcl)
     return all(x in pos_dict
                for x in list(set(M1.groundset()) - (L | set(allP))))
 
