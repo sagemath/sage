@@ -57,6 +57,30 @@ class CylindricShape(Element):
         """
         return str(list(self._values))
 
+    def _latex_(self):
+        r"""
+        Return a `\LaTeX` representation of ``self``.
+
+        We use bars to indicate negative values. If all letters are
+        single-digit letters, we omit commas.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CS = CylindricShapes(4, 11)
+            sage: latex(CS((2,0,-1,-1)))
+            20\bar{1}\bar{1}
+
+            sage: latex(CS((10,0,-1,-1)))
+            10,0,\bar{1},\bar{1}
+        """
+        if all(abs(v) < 10 for v in self._values):
+            sep = ""
+        else:
+            sep = ","
+        return sep.join(r"\bar{" + str(-v) + "}" if v < 0 else str(v)
+                        for v in self._values)
+
     def __getitem__(self, i):
         r"""
         Return the value at index ``i``, accounting for periodicity.
@@ -145,6 +169,25 @@ class CylindricShape(Element):
             raise TypeError("the parents of the cylindric shapes must coincide")
 
         return all(self._values[i] <= other._values[i] for i in range(self.parent()._d))
+
+    def __lt__(self, other):
+        r"""
+        Return whether ``self[i] <= other[i]`` for all ``i``.
+
+        INPUT:
+
+        - ``other`` -- a :class:`CylindricShape` in the same parent
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CS = CylindricShapes(3, 2)
+            sage: CS((1, 1, 1)) < CS((2, 1, 1))
+            True
+            sage: CS((1, 1, 1)) < CS((1, 1, 1))
+            False
+        """
+        return self != other and self <= other
 
     def __ge__(self, other):
         r"""
