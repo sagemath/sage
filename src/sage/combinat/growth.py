@@ -2031,12 +2031,22 @@ class Rule(UniqueRepresentation):
             D U = [[2]]
             U D + 1 I = [[1, 1], [2], [2]]
         """
+        # compare multisets of possibly non-hashable, non-sortable objects
+        def equal(s, t):
+            t = list(t)
+            try:
+                for elem in s:
+                    t.remove(elem)
+            except ValueError:
+                return False
+            return not t
+
         if self.has_multiple_edges:
             def check_vertex(w, P, Q):
                 DUw = [v[0] for uw in P.outgoing_edges(w) for v in Q.incoming_edges(uw[1])]
                 UDw = [v[1] for lw in Q.incoming_edges(w) for v in P.outgoing_edges(lw[0])]
                 UDw.extend([w]*self.r)
-                if sorted(DUw) != sorted(UDw):
+                if not equal(DUw, UDw):
                     raise ValueError("D U - U D differs from %s I for vertex %s:\n"
                                      "D U = %s\n"
                                      "U D + %s I = %s"
@@ -2046,7 +2056,7 @@ class Rule(UniqueRepresentation):
                 DUw = [v for uw in P.upper_covers(w) for v in Q.lower_covers(uw)]
                 UDw = [v for lw in Q.lower_covers(w) for v in P.upper_covers(lw)]
                 UDw.extend([w]*self.r)
-                if sorted(DUw) != sorted(UDw):
+                if not equal(DUw, UDw):
                     raise ValueError("D U - U D differs from %s I for vertex %s:\n"
                                      "D U = %s\n"
                                      "U D + %s I = %s"
@@ -4600,6 +4610,12 @@ class RuleCylindricRS(Rule):
         sage: S = CylindricShapes(3, 2)
         sage: CRS(filling={}, labels=l_i).out_labels() == [S(mu) for mu in l_o]
         True
+
+    Check Figure 15::
+
+        sage: l = [[-1,-1,-2],[0,-1,-2],[0,-1,-1],[1,-1,-1],[1,0,-1],[1,1,-1],[2,1,-1],[2,2,-1],[2,2,0]]
+        sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=3)
+        sage: view(CRS(filling={}, labels=l[::-1] + l[1:]))  # not tested
     """
     def __init__(self, d, L):
         """
@@ -4629,6 +4645,44 @@ class RuleCylindricRS(Rule):
         if isinstance(v, CylindricShape):
             return v
         return self._P(v)
+
+    def vertices(self, n):
+        r"""
+        Return the vertices of the dual graded graph on level ``n``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: CRS.vertices(1)
+            [[1, 1, -1], [1, 0, 0]]
+        """
+        d = self._d
+        L = self._L
+        v = []
+        for la_d in range((n - L*(d-1)) // d, (n // d) + 1):
+            for la in Partitions(n - d * la_d, max_length=d - 1, max_part=L):
+                la0 = [e + la_d for e in la] + [la_d]*(d-len(la))
+                v.append(self._P(la0))
+        return v
+
+    def is_P_edge(self, v, w):
+        r"""
+        Return whether ``(v, w)`` is a `P`-edge of ``self``.
+
+        ``(v, w)`` is an edge if ``w`` is obtained from ``v`` by
+        adding a cell.
+
+        EXAMPLES::
+
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=4, L=3)
+            sage: CRS._check_duality(5)
+        """
+        if self.rank(w) != self.rank(v) + 1:
+            return False
+        return v <= w
+
+    is_Q_edge = is_P_edge
 
     def forward_rule(self, y, t, x, content=None):
         """
