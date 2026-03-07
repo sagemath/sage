@@ -163,13 +163,13 @@ class AmbientSpace(Scheme):
             NotImplementedError: ambient spaces must override "change_ring" method!
         """
         raise NotImplementedError(
-                        'ambient spaces must override "change_ring" method!')
+            'ambient spaces must override "change_ring" method!')
 
     #######################################################################
     # End overloads
     #######################################################################
 
-    def is_projective(self):
+    def is_projective(self) -> bool:
         """
         Return whether this ambient space is projective n-space.
 

@@ -1004,7 +1004,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         return self.__R
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         Return ``True`` if ``self`` is Noetherian, ``False`` otherwise.
 

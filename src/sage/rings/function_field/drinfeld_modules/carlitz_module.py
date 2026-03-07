@@ -16,6 +16,8 @@ AUTHORS:
 #                   http://www.gnu.org/licenses/
 # *****************************************************************************
 
+from sage.misc.cachefunc import cached_function
+
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.categories.finite_fields import FiniteFields
@@ -114,6 +116,8 @@ def carlitz_exponential(A, prec=+Infinity, name='z'):
 
     INPUT:
 
+    - ``A`` -- a polynomial ring over a finite field
+
     - ``prec`` -- an integer or ``Infinity`` (default: ``Infinity``);
       the precision at which the series is returned; if ``Infinity``,
       a lazy power series in returned, else, a classical power series
@@ -163,6 +167,8 @@ def carlitz_logarithm(A, prec=+Infinity, name='z'):
 
     INPUT:
 
+    - ``A`` -- a polynomial ring over a finite field
+
     - ``prec`` -- an integer or ``Infinity`` (default: ``Infinity``);
       the precision at which the series is returned; if ``Infinity``,
       a lazy power series in returned, else, a classical power series
@@ -195,3 +201,102 @@ def carlitz_logarithm(A, prec=+Infinity, name='z'):
     """
     C = CarlitzModule(A)
     return C.logarithm(prec, name)
+
+
+def carlitz_factorial(A, n):
+    r"""
+    Return the Carlitz factorial attached the ring `A`,
+    evaluated at `n`.
+
+    INPUT:
+
+    - ``A`` -- a polynomial ring over a finite field
+
+    - ``n`` -- an integer
+
+    EXAMPLES::
+
+        sage: A.<T> = GF(3)[]
+        sage: carlitz_factorial(A, 0)
+        1
+        sage: carlitz_factorial(A, 1)
+        T^3 + 2*T
+        sage: carlitz_factorial(A, 2)
+        T^6 + T^4 + T^2
+        sage: carlitz_factorial(A, 3)
+        T^18 + 2*T^12 + 2*T^10 + T^4
+
+    TESTS::
+
+        sage: carlitz_factorial(ZZ, 10)
+        Traceback (most recent call last):
+        ...
+        TypeError: the function ring must be defined over a finite field
+    """
+    if (not isinstance(A, PolynomialRing_generic)
+     or A.base_ring() not in FiniteFields()):
+        raise TypeError('the function ring must be defined over a finite field')
+    T = A.gen()
+    q = A.base_ring().cardinality()
+    ans = A.one()
+    D = A.one()
+    j = 1
+    while n > 0:
+        n, c = n.quo_rem(q)
+        D = D**q * (T**(q**j) - T)
+        ans *= D**c
+        j += 1
+    return ans
+
+
+carlitz_series = {}
+
+def carlitz_bernoulli(A, n):
+    r"""
+    Return the `n`-th Bernoulli-Carlitz number attached
+    to the ring `A`.
+
+    - ``A`` -- a polynomial ring over a finite field
+
+    - ``n`` -- an integer
+
+    EXAMPLES::
+
+        sage: A.<T> = GF(3)[]
+        sage: carlitz_bernoulli(A, 2)
+        2*T^3 + T
+        sage: carlitz_bernoulli(A, 4)
+        T^15 + T^13 + T^11 + 2*T^7 + 2*T^5 + 2*T^3
+
+    The Bernoulli-Carlitz numbers vanish when `n` is not a
+    multiple of `q-1` where `q` is the cardinality of the
+    base field::
+
+        sage: carlitz_bernoulli(A, 1)
+        0
+        sage: carlitz_bernoulli(A, 3)
+        0
+
+    TESTS::
+
+        sage: carlitz_bernoulli(ZZ, 10)
+        Traceback (most recent call last):
+        ...
+        TypeError: the function ring must be defined over a finite field
+
+    ::
+
+        sage: B.<X> = GF(3)[]
+        sage: carlitz_bernoulli(B, 2)
+        2*X^3 + X
+    """
+    if (not isinstance(A, PolynomialRing_generic)
+     or A.base_ring() not in FiniteFields()):
+        raise TypeError('the function ring must be defined over a finite field')
+    q = A.base_ring().cardinality()
+    if q not in carlitz_series:
+        e = carlitz_exponential(A)
+        carlitz_series[q] = e.parent().gen() / e
+    coeff = carlitz_series[q][n]
+    coeff = A.fraction_field()(coeff)
+    return A(coeff * carlitz_factorial(A, n))
