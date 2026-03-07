@@ -334,6 +334,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import builtins
 import os
 import platform
 import re
@@ -626,7 +627,7 @@ class Singular(ExtraTabCompletion, Expect):
             sage: o = s.hilb()
             ...// dimension (affine) = 0
             // degree (affine)  = 8
-            // ** right side is not a datum, assignment ignored
+            // ** right side is not a datum, assignment...ignored
             ...
 
         rather than ignored
@@ -1221,7 +1222,7 @@ class Singular(ExtraTabCompletion, Expect):
         else:
             return None
 
-    def _tab_completion(self) -> list:
+    def _tab_completion(self) -> builtins.list[str]:
         """
         Return a list of all Singular commands.
 
@@ -1763,7 +1764,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             -4.00000000000000*z^3 - 27.0000000000000
             sage: Rx.<x> = RR[]
             sage: Rx("x + 7.5")._singular_().sage_poly()
-            x + 7.50000
+            x + 7.50000...
             sage: Rx("x + 7.5")._singular_().sage_poly(Rx)
             x + 7.50000000000000
 
