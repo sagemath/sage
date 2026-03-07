@@ -136,7 +136,7 @@ def Sp(n, R, var='a', invariant_form=None):
         ...
         NotImplementedError: invariant_form for finite groups is fixed by GAP
 
-    We have the same behavior for other implementations of 
+    We have the same behavior for other implementations of
     finite fields (:issue:`36441`)::
 
         sage: Sp(4, Zmod(11), invariant_form=I)
