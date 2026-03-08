@@ -2053,7 +2053,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         T = RT.gen()
         return P/((1-T)*(1-q*T))
 
-    def cosetGraph(self):
+    def cosetGraph(self, immutable=False):
         r"""
         Return the coset graph of this linear code.
 
@@ -2061,6 +2061,11 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         are the cosets of `C`, considered as a subgroup of the additive
         group of the ambient vector space, and two cosets are adjacent
         if they have representatives that differ in exactly one coordinate.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or a mutable graph
 
         EXAMPLES::
 
@@ -2094,6 +2099,10 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [0]
             sage: G.edges(sort=False)
             []
+            sage: C.cosetGraph(immutable=False).is_immutable()
+            False
+            sage: C.cosetGraph(immutable=True).is_immutable()
+            True
         """
         from sage.matrix.constructor import matrix
         from sage.graphs.graph import Graph
@@ -2107,12 +2116,11 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         # Handle special cases
         if len(self.basis()) == self.length():
-            G = Graph(1)
-            G.name(f"coset graph of {self.__repr__()}")
-            return G
+            return Graph(1, name=f"coset graph of {self.__repr__()}",
+                         immutable=immutable)
         if len(self.basis()) == 0:
-            from sage.graphs.graph_generators import GraphGenerators
-            return GraphGenerators.HammingGraph(self.length(), F.order())
+            from sage.graphs.generators.families import HammingGraph
+            return HammingGraph(self.length(), F.order(), immutable=immutable)
 
         # we need to find a basis for the complement
         M = matrix(F, self.basis())
@@ -2154,17 +2162,17 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         lPei = [l*u for l in F for u in Pei if not l.is_zero()]
 
-        edges = []
-        for v in vertices:
-            v.set_immutable()
-            for u in lPei:
-                w = v + u
-                w.set_immutable()
-                edges.append((v, w))
+        def edges():
+            for v in vertices:
+                v.set_immutable()
+                for u in lPei:
+                    w = v + u
+                    w.set_immutable()
+                    yield (v, w)
 
-        G = Graph(edges, format='list_of_edges')
-        G.name(f"coset graph of {self.__repr__()}")
-        return G
+        return Graph(edges(), format="list_of_edges",
+                     name=f"coset graph of {self.__repr__()}",
+                     immutable=immutable)
 
 
 # ########################### linear codes python class ########################

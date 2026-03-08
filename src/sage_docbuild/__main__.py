@@ -454,7 +454,7 @@ def main():
     args.source_dir = args.source_dir.absolute()
     if not args.source_dir.is_dir():
         parser.error(f"Source directory {args.source_dir} does not exist.")
-    
+
     if args.all_documents:
         if args.all_documents == 'reference':
             docs = get_all_reference_documents(args.source_dir / 'en')
@@ -468,7 +468,7 @@ def main():
 
     # Check that the docs output directory exists
     if args.output_dir is None:
-        args.output_dir = Path(os.environ.get('SAGE_DOC', 'src/doc'))    
+        args.output_dir = Path(os.environ.get('SAGE_DOC', 'src/doc'))
     args.output_dir = args.output_dir.absolute()
     if not args.output_dir.exists():
         try:

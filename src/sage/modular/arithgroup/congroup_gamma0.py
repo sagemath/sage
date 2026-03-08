@@ -22,29 +22,6 @@ from sage.modular.modsym.p1list import P1List, lift_to_sl2z
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 
-
-def is_Gamma0(x):
-    """
-    Return ``True`` if x is a congruence subgroup of type Gamma0.
-
-    EXAMPLES::
-
-        sage: from sage.modular.arithgroup.congroup_gamma0 import is_Gamma0
-        sage: is_Gamma0(SL2Z)
-        doctest:warning...
-        DeprecationWarning: The function is_Gamma0 is deprecated; use 'isinstance(..., Gamma0_class)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        True
-        sage: is_Gamma0(Gamma0(13))
-        True
-        sage: is_Gamma0(Gamma1(6))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_Gamma0 is deprecated; use 'isinstance(..., Gamma0_class)' instead.")
-    return isinstance(x, Gamma0_class)
-
-
 _gamma0_cache = {}
 
 
@@ -113,7 +90,7 @@ class Gamma0_class(GammaH_class):
           of weight 2 with sign 1 over Rational Field
     """
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         The congruence subgroup `\Gamma_0(N)`.
 
@@ -146,7 +123,7 @@ class Gamma0_class(GammaH_class):
         #
         # GammaH_class.__init__(self, level, [int(x) for x in IntegerModRing(level).unit_gens()])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

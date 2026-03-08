@@ -18,14 +18,15 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-from sage.rings.rational_field import QQ
 from sage.categories.algebras import Algebras
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+from sage.rings.rational_field import QQ
 from sage.sets.family import Family
 
 
@@ -713,7 +714,6 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
             sage: latex(Y)
             \mathcal{Y}_{5,E_6}(q)
         """
-        from sage.misc.latex import latex
         return "\\mathcal{Y}_{%s,%s}(%s)" % (self._d, latex(self._cartan_type), self._q)
 
     def _repr_term(self, m) -> str:

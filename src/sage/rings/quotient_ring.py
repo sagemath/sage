@@ -859,7 +859,7 @@ class QuotientRing_nc(Parent):
         return self.__I
 
     @cached_method
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         r"""
         Return ``True`` if the quotient ring is a field. Checks to see if the
         defining ideal is maximal.
@@ -881,14 +881,13 @@ class QuotientRing_nc(Parent):
         """
         if proof:
             return self.defining_ideal().is_maximal()
-        else:
-            try:
-                return self.defining_ideal().is_maximal()
-            except NotImplementedError:
-                return False
+        try:
+            return self.defining_ideal().is_maximal()
+        except NotImplementedError:
+            return False
 
     @cached_method
-    def is_integral_domain(self, proof=True):
+    def is_integral_domain(self, proof=True) -> bool:
         r"""
         With ``proof`` equal to ``True``  (the default), this function may
         raise a :exc:`NotImplementedError`.
@@ -918,13 +917,12 @@ class QuotientRing_nc(Parent):
         """
         if proof:
             return self.defining_ideal().is_prime()
-        else:
-            try:
-                return self.defining_ideal().is_prime()
-            except NotImplementedError:
-                return False
+        try:
+            return self.defining_ideal().is_prime()
+        except NotImplementedError:
+            return False
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         r"""
         Return ``True`` if this ring is Noetherian.
 
@@ -957,7 +955,6 @@ class QuotientRing_nc(Parent):
         # then it is Noetherian.  Otherwise we give up.
         if self.cover_ring().is_noetherian():
             return True
-
         raise NotImplementedError
 
     def cover_ring(self):

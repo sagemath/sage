@@ -831,7 +831,7 @@ class InterfaceElement(Element):
         return self.parent(), (self._reduce(),)
 
     def _reduce(self):
-        """
+        r"""
         Helper for pickling.
 
         By default, if ``self`` is a string, then the representation of

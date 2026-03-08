@@ -488,8 +488,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         We can write classical cubic multiplication (``C=A*B``) as::
 
         for i in range(A.ncols()):
-           for j in range(A.nrows()):
-             C[j] += A[j,i] * B[j]
+            for j in range(A.nrows()):
+                C[j] += A[j,i] * B[j]
 
         Hence, in the inner-most loop we compute multiples of ``B[j]``
         by the values ``A[j,i]``. If the matrix ``A`` is big and the
@@ -661,24 +661,25 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: all(B.list()[i] == a*A.list()[i] for i in range(100))
             True
 
-        TESTS (see :issue:`40653`)::
+        TESTS:
 
-            sage: K = GF(4)
+        Check for :issue:`40653`::
+
+            sage: K.<i> = GF(4)
             sage: M = Matrix(K, 0, 3)
             sage: (2 * M).nrows()
             0
             sage: (2 * M).ncols()
             3
 
-           sage: N = Matrix(K, 2, 3)
-           sage: zero = K(0)
-           sage: (zero * N).nrows()
-           2
-           sage: (zero * N).ncols()
-           3    
+            sage: N = Matrix(K, [[1, i], [0, 1], [i+1, 0]])
+            sage: K.zero() * N
+            [0 0]
+            [0 0]
+            [0 0]
         """    
         cdef m4ri_word a = poly_to_word(right)
-        cdef Matrix_gf2e_dense C = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, self._parent, self._nrows, self._ncols, 0)
+        cdef Matrix_gf2e_dense C = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, self._parent)
 
         # Handle zero scalar or zero-size matrices explicitly
         if self._nrows == 0 or self._ncols == 0 or a == 0:
@@ -1388,28 +1389,30 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-             sage: K.<a> = GF(2^10)
-             sage: A = random_matrix(K,200,200)
-             sage: A[0:2,0:2] == A.submatrix(0,0,2,2)
-             True
-             sage: A[0:100,0:100] == A.submatrix(0,0,100,100)
-             True
-             sage: A == A.submatrix(0,0,200,200)
-             True
+            sage: K.<a> = GF(2^10)
+            sage: A = random_matrix(K,200,200)
+            sage: A[0:2,0:2] == A.submatrix(0,0,2,2)
+            True
+            sage: A[0:100,0:100] == A.submatrix(0,0,100,100)
+            True
+            sage: A == A.submatrix(0,0,200,200)
+            True
 
-             sage: A[1:3,1:3] == A.submatrix(1,1,2,2)
-             True
-             sage: A[1:100,1:100] == A.submatrix(1,1,99,99)
-             True
-             sage: A[1:200,1:200] == A.submatrix(1,1,199,199)
-             True
+            sage: A[1:3,1:3] == A.submatrix(1,1,2,2)
+            True
+            sage: A[1:100,1:100] == A.submatrix(1,1,99,99)
+            True
+            sage: A[1:200,1:200] == A.submatrix(1,1,199,199)
+            True
 
-        TESTS for handling of default arguments (:issue:`18761`)::
+        TESTS:
 
-             sage: A.submatrix(17,15) == A.submatrix(17,15,183,185)
-             True
-             sage: A.submatrix(row=100,col=37,nrows=1,ncols=3) == A.submatrix(100,37,1,3)
-             True
+        Check for handling of default arguments (:issue:`18761`)::
+
+            sage: A.submatrix(17,15) == A.submatrix(17,15,183,185)
+            True
+            sage: A.submatrix(row=100,col=37,nrows=1,ncols=3) == A.submatrix(100,37,1,3)
+            True
         """
         if nrows < 0:
             nrows = self._nrows - row

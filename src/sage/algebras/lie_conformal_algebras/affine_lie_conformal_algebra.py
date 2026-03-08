@@ -31,9 +31,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from sage.rings.integer import Integer
 from sage.algebras.lie_algebras.lie_algebra import LieAlgebra
-from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+from sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra import (
+    GradedLieConformalAlgebra,
+)
+from sage.rings.integer import Integer
 
 
 class AffineLieConformalAlgebra(GradedLieConformalAlgebra):

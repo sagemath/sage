@@ -17,14 +17,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.algebras.lie_conformal_algebras.finitely_freely_generated_lca import (
+    FinitelyFreelyGeneratedLCA,
+)
+from sage.algebras.lie_conformal_algebras.lie_conformal_algebra_element import (
+    LCAStructureCoefficientsElement,
+)
 from sage.arith.misc import binomial
-from sage.sets.family import Family
-from .lie_conformal_algebra_element import LCAStructureCoefficientsElement
 from sage.categories.lie_conformal_algebras import LieConformalAlgebras
-from .finitely_freely_generated_lca import FinitelyFreelyGeneratedLCA
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
-from sage.structure.indexed_generators import (IndexedGenerators,
-                                               standardize_names_index_set)
+from sage.sets.family import Family
+from sage.structure.indexed_generators import (
+    IndexedGenerators,
+    standardize_names_index_set,
+)
 
 
 class LieConformalAlgebraWithStructureCoefficients(

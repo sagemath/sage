@@ -17,8 +17,8 @@ Ideals of function fields: rational
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.structure.richcmp import richcmp
 from sage.rings.infinity import infinity
+from sage.structure.richcmp import richcmp
 
 from .ideal import FunctionFieldIdeal, FunctionFieldIdealInfinite
 

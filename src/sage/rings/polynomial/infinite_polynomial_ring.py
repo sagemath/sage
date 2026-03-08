@@ -1148,7 +1148,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
     # Basic Ring Properties
     # -- some stuff that is useful for quotient rings etc.
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         Return ``False``, since polynomial rings in infinitely many
         variables are never Noetherian rings.
@@ -1178,7 +1178,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         """
         return False
 
-    def is_field(self, *args, **kwds):
+    def is_field(self, *args, **kwds) -> bool:
         """
         Return ``False`` since Infinite Polynomial Rings are never fields.
 

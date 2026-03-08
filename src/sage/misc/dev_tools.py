@@ -64,10 +64,11 @@ def runsnake(command):
         - :class:`Profiler`
     """
     import cProfile
-    from sage.misc.temporary_file import tmp_filename
+
     from sage.misc.misc import get_main_globals
-    from sage.repl.preparse import preparse
     from sage.misc.superseded import deprecation
+    from sage.misc.temporary_file import tmp_filename
+    from sage.repl.preparse import preparse
 
     deprecation(39274, "just use the runsnake program directly")
 
@@ -175,8 +176,9 @@ def load_submodules(module=None, exclude_pattern=None):
         load sage.geometry.polyhedron.palp_database... succeeded
         load sage.geometry.polyhedron.ppl_lattice_polygon... succeeded
     """
-    from .package_dir import walk_packages
     import importlib
+
+    from .package_dir import walk_packages
 
     if module is None:
         import sage
@@ -465,8 +467,9 @@ def import_statements(*objects, **kwds):
         detect deprecated stuff). So, if you use it, double check the answer and
         report weird behaviors.
     """
-    import itertools
     import inspect
+    import itertools
+
     from sage.misc.lazy_import import LazyImport
 
     answer = defaultdict(list)

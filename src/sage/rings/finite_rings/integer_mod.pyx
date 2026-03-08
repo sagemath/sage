@@ -1894,8 +1894,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         try:
             return sage.rings.integer.Integer(self.__pari__().znorder())
         except PariError:
-            raise ArithmeticError("multiplicative order of %s not defined since it is not a unit modulo %s" % (
-                self, self._modulus.sageInteger))
+            raise ArithmeticError(f"multiplicative order of {self} not defined since it is not a unit modulo {self._modulus.sageInteger}")
+
+        # fallback (for composite moduli): use generic-group algorithm
+        from sage.groups.generic import order_from_multiple
+        return order_from_multiple(self, self.parent().unit_group_exponent(), operation='*')
 
     def valuation(self, p):
         """
