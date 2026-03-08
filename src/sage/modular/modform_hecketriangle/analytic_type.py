@@ -20,10 +20,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.sets.set import Set
-from sage.combinat.posets.posets import Poset, FinitePoset
-from sage.combinat.posets.lattices import FiniteLatticePoset
 from sage.combinat.posets.elements import LatticePosetElement
+from sage.combinat.posets.lattices import FiniteLatticePoset
+from sage.combinat.posets.posets import FinitePoset, Poset
+from sage.misc.latex import latex
+from sage.sets.set import Set
 
 
 class AnalyticTypeElement(LatticePosetElement):
@@ -93,7 +94,6 @@ class AnalyticTypeElement(LatticePosetElement):
             sage: latex(AnalyticType()(["quasi", "cusp"]))
             \text{\texttt{quasi{ }cuspidal}}
         """
-        from sage.misc.latex import latex
         return latex(self.analytic_name())
 
     def analytic_space_name(self):

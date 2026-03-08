@@ -84,9 +84,11 @@ EXAMPLES:
 
 A difficult conversion::
 
-    sage: RR(sys.maxsize)
-    9.22337203685478e18      # 64-bit
-    2.14748364700000e9       # 32-bit
+    sage: r = RR(sys.maxsize)
+    sage: r  # needs 32_bit
+    2.14748364700000e9
+    sage: r  # needs !32_bit
+    9.22337203685478e18
 
 TESTS::
 
@@ -228,10 +230,17 @@ def mpfr_prec_max():
         sage: R = RealField(2^31-257); R
         Real Field with 2147483391 bits of precision
 
-        sage: R = RealField(2^31-256)
-        Traceback (most recent call last):                     # 32-bit
-        ...                                                    # 32-bit
-        ValueError: prec (=...) must be >= 1 and <= ...        # 32-bit
+   This overflows on 32-bit, leading to an invalid argument::
+
+        sage: try:
+        ....:     R = RealField(2^31-256)
+        ....: except ValueError as e:
+        ....:     R = e
+        sage: isinstance(R, ValueError)  # needs 32_bit
+        True
+        sage: isinstance(R, ValueError)  # needs !32_bit
+        False
+
     """
     return MPFR_PREC_MAX
 
@@ -247,9 +256,11 @@ def mpfr_get_exp_min():
         sage: min64 = -4611686018427387903
         sage: mpfr_get_exp_min() in [min32, min64]
         True
-        sage: 0.5 >> (-mpfr_get_exp_min())
-        2.38256490488795e-323228497            # 32-bit
-        8.50969131174084e-1388255822130839284  # 64-bit
+        sage: x = 0.5 >> (-mpfr_get_exp_min())
+        sage: x  # needs 32_bit
+        2.38256490488795e-323228497
+        sage: x  # needs !32_bit
+        8.50969131174084e-1388255822130839284
         sage: 0.5 >> (-mpfr_get_exp_min()+1)
         0.000000000000000
     """
@@ -267,9 +278,11 @@ def mpfr_get_exp_max():
         sage: max64 = 4611686018427387903
         sage: mpfr_get_exp_max() in [max32, max64]
         True
-        sage: 0.5 << mpfr_get_exp_max()
-        1.04928935823369e323228496            # 32-bit
-        2.93782689455579e1388255822130839282  # 64-bit
+        sage: x = 0.5 << mpfr_get_exp_max()
+        sage: x  # needs 32_bit
+        1.04928935823369e323228496
+        sage: x  # needs !32_bit
+        2.93782689455579e1388255822130839282
         sage: 0.5 << (mpfr_get_exp_max()+1)
         +infinity
     """
@@ -2861,9 +2874,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
         The ulp of zero is the smallest nonzero number::
 
             sage: a = RR(0).ulp()
-            sage: a
-            2.38256490488795e-323228497            # 32-bit
-            8.50969131174084e-1388255822130839284  # 64-bit
+            sage: a  # needs 32_bit
+            2.38256490488795e-323228497
+            sage: a  # needs !32_bit
+            8.50969131174084e-1388255822130839284
             sage: a.fp_rank()
             1
 
@@ -3164,9 +3178,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             '1.0000000000000002'
             sage: (1.0).nexttoward(RR('-infinity')).str()
             '0.99999999999999989'
-            sage: RR(infinity).nexttoward(0)
-            2.09857871646739e323228496            # 32-bit
-            5.87565378911159e1388255822130839282  # 64-bit
+            sage: x = RR(infinity).nexttoward(0)
+            sage: x  # needs 32_bit
+            2.09857871646739e323228496
+            sage: x  # needs !32_bit
+            5.87565378911159e1388255822130839282
             sage: RR(pi).str()                                                          # needs sage.symbolic
             '3.1415926535897931'
             sage: RR(pi).nexttoward(22/7).str()                                         # needs sage.symbolic
@@ -3193,12 +3209,16 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: RR('-infinity').nextabove()
-            -2.09857871646739e323228496            # 32-bit
-            -5.87565378911159e1388255822130839282  # 64-bit
-            sage: RR(0).nextabove()
-            2.38256490488795e-323228497            # 32-bit
-            8.50969131174084e-1388255822130839284  # 64-bit
+            sage: x = RR('-infinity').nextabove()
+            sage: x  # needs 32_bit
+            -2.09857871646739e323228496
+            sage: x  # needs !32_bit
+            -5.87565378911159e1388255822130839282
+            sage: x = RR(0).nextabove()
+            sage: x  # needs 32_bit
+            2.38256490488795e-323228497
+            sage: x  # needs !32_bit
+            8.50969131174084e-1388255822130839284
             sage: RR('+infinity').nextabove()
             +infinity
             sage: RR(-sqrt(2)).str()                                                    # needs sage.symbolic
@@ -3221,12 +3241,16 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
             sage: RR('-infinity').nextbelow()
             -infinity
-            sage: RR(0).nextbelow()
-            -2.38256490488795e-323228497            # 32-bit
-            -8.50969131174084e-1388255822130839284  # 64-bit
-            sage: RR('+infinity').nextbelow()
-            2.09857871646739e323228496              # 32-bit
-            5.87565378911159e1388255822130839282    # 64-bit
+            sage: x = RR(0).nextbelow()
+            sage: x  # needs 32_bit
+            -2.38256490488795e-323228497
+            sage: x  # needs !32_bit
+            -8.50969131174084e-1388255822130839284
+            sage: x = RR('+infinity').nextbelow()
+            sage: x  # needs 32_bit
+            2.09857871646739e323228496
+            sage: x  # needs !32_bit
+            5.87565378911159e1388255822130839282
             sage: RR(-sqrt(2)).str()                                                    # needs sage.symbolic
             '-1.4142135623730951'
             sage: RR(-sqrt(2)).nextbelow().str()                                        # needs sage.symbolic

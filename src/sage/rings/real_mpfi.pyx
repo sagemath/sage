@@ -1861,19 +1861,27 @@ cdef class RealIntervalFieldElement(RingElement):
 
         Check that :issue:`15166` is fixed::
 
-            sage: RIF(1.84e13).exp()
-            [2.0985787164673874e323228496 .. +infinity] # 32-bit
-            6.817557048799520?e7991018467019 # 64-bit
+            sage: v = RIF(1.84e13).exp()
+            sage: v  # needs 32_bit
+            [2.0985787164673874e323228496 .. +infinity]
+            sage: v  # needs !32_bit
+            6.817557048799520?e7991018467019
             sage: from sage.rings.real_mpfr import mpfr_get_exp_min, mpfr_get_exp_max
-            sage: v = RIF(1.0 << (mpfr_get_exp_max() - 1)); v
-            1.0492893582336939?e323228496 # 32-bit
-            2.9378268945557938?e1388255822130839282 # 64-bit
-            sage: -v
-            -1.0492893582336939?e323228496 # 32-bit
-            -2.9378268945557938?e1388255822130839282 # 64-bit
-            sage: v = RIF(1.0 >> -mpfr_get_exp_min()+1); v
-            2.3825649048879511?e-323228497 # 32-bit
-            8.5096913117408362?e-1388255822130839284 # 64-bit
+            sage: v = RIF(1.0 << (mpfr_get_exp_max() - 1))
+            sage: v  # needs 32_bit
+            1.0492893582336939?e323228496
+            sage: v  # needs !32_bit
+            2.9378268945557938?e1388255822130839282
+            sage: v = -v
+            sage: v  # needs 32_bit
+            -1.0492893582336939?e323228496
+            sage: v  # needs !32_bit
+            -2.9378268945557938?e1388255822130839282
+            sage: v = RIF(1.0 >> -mpfr_get_exp_min()+1)
+            sage: v  # needs 32_bit
+            2.3825649048879511?e-323228497
+            sage: v  # needs !32_bit
+            8.5096913117408362?e-1388255822130839284
         """
         if not(mpfr_number_p(&self.value.left) and mpfr_number_p(&self.value.right)):
             raise ValueError("_str_question_style on NaN or infinity")
@@ -2479,17 +2487,22 @@ cdef class RealIntervalFieldElement(RingElement):
             2.06622879260?e6137
             sage: a.fp_rank_diameter()
             30524
-            sage: (RIF(sqrt(2)) - RIF(sqrt(2))).fp_rank_diameter()
-            9671406088542672151117826            # 32-bit
-            41538374868278620559869609387229186  # 64-bit
+            sage: d = (RIF(sqrt(2)) - RIF(sqrt(2))).fp_rank_diameter()
+            sage: diam32 = 9671406088542672151117826
+            sage: diam64 = 41538374868278620559869609387229186
+            sage: d in [diam32, diam64]
+            True
 
         Just because we have the best possible interval, doesn't mean the
         interval is actually small::
 
-            sage: a = RIF(pi)^12345678901234567890; a                                   # needs sage.symbolic
-            [2.0985787164673874e323228496 .. +infinity]            # 32-bit
-            [5.8756537891115869e1388255822130839282 .. +infinity]  # 64-bit
-            sage: a.fp_rank_diameter()                                                  # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: a = RIF(pi)^12345678901234567890
+            sage: a  # needs 32_bit
+            [2.0985787164673874e323228496 .. +infinity]
+            sage: a  # needs !32_bit
+            [5.8756537891115869e1388255822130839282 .. +infinity]
+            sage: a.fp_rank_diameter()
             1
         """
         return self.lower().fp_rank_delta(self.upper())

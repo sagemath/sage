@@ -294,6 +294,11 @@ select = [
 
   "TC", # flake8-type-checking - https://docs.astral.sh/ruff/rules/#flake8-type-checking-tc
 
+  # perflint -- https://docs.astral.sh/ruff/rules/#perflint-perf
+  "PERF101",
+  "PERF102",
+  "PERF403",
+
   # pyupgrade -- https://docs.astral.sh/ruff/rules/#pyupgrade-up
   "UP004",
   "UP006",
