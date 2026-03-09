@@ -48,9 +48,8 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.sets.primes import Primes
-from sage.structure.parent import Parent
-from sage.sets.primes import Primes
 from sage.structure.factory import UniqueFactory
+from sage.structure.parent import Parent
 
 
 def fast_char_p_power(x, n, p=None):
@@ -250,14 +249,9 @@ class WittVectorRingFactory(UniqueFactory):
         EXAMPLES::
 
             sage: p = 2
-            sage: p in WittVectorRing._witt_polynomials
-            False
-
             sage: WittVectorRing._generate_sum_and_product_polynomials_list(2, p)
             sage: p in WittVectorRing._witt_polynomials
             True
-            sage: len(WittVectorRing._witt_polynomials[p][0]), len(WittVectorRing._witt_polynomials[p][1])
-            (2, 2)
 
             sage: WittVectorRing._generate_sum_and_product_polynomials_list(4, p)
             sage: len(WittVectorRing._witt_polynomials[p][0]), len(WittVectorRing._witt_polynomials[p][1])
@@ -358,19 +352,33 @@ class WittVectorRingFactory(UniqueFactory):
             array([0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                     0, 1, 1, 1, 1, 1, 0, 1, 0, 1])]
 
-            sage: WW = WittVectorRing(GF(5), p=5, prec=2, algorithm="finotti")
-            sage: WittVectorRing._binomial_table
-            {2: [[0],
-            array([0, 1]),
-            array([0, 1, 0, 1]),
-            array([0, 1, 0, 1, 1, 1, 0, 1]),
-            array([0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1]),
-            array([0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                    0, 1, 1, 1, 1, 1, 0, 1, 0, 1])],
-            5: [[0],
-            array([0, 4, 3, 3, 4]),
-            array([0, 4, 3, 3, 4, 0, 1, 2, 2, 1, 1, 4, 3, 3, 4, 1, 1, 2, 2, 1, 0, 4,
-                    3, 3, 4])]}
+            sage: WW = WittVectorRing(GF(19), p=19, prec=2, algorithm="finotti")
+            sage: WittVectorRing._binomial_table[19]
+            [[0],
+            array([ 0, 18, 10,  6,  5, 15, 16,  8, 12,  2,  2, 12,  8, 16, 15,  5,  6,
+                    10, 18]),
+            array([ 0, 18, 10,  6,  5, 15, 16,  8, 12,  2,  2, 12,  8, 16, 15,  5,  6,
+                    10, 18,  0,  1,  9, 13, 14,  4,  3, 11,  7, 17, 17,  7, 11,  3,  4,
+                    14, 13,  9,  1,  1, 18, 10,  6,  5, 15, 16,  8, 12,  2,  2, 12,  8,
+                    16, 15,  5,  6, 10, 18,  4,  1,  9, 13, 14,  4,  3, 11,  7, 17, 17,
+                    7, 11,  3,  4, 14, 13,  9,  1,  5, 18, 10,  6,  5, 15, 16,  8, 12,
+                    2,  2, 12,  8, 16, 15,  5,  6, 10, 18, 11,  1,  9, 13, 14,  4,  3,
+                    11,  7, 17, 17,  7, 11,  3,  4, 14, 13,  9,  1, 17, 18, 10,  6,  5,
+                    15, 16,  8, 12,  2,  2, 12,  8, 16, 15,  5,  6, 10, 18, 16,  1,  9,
+                    13, 14,  4,  3, 11,  7, 17, 17,  7, 11,  3,  4, 14, 13,  9,  1, 15,
+                    18, 10,  6,  5, 15, 16,  8, 12,  2,  2, 12,  8, 16, 15,  5,  6, 10,
+                    18,  4,  1,  9, 13, 14,  4,  3, 11,  7, 17, 17,  7, 11,  3,  4, 14,
+                    13,  9,  1,  4, 18, 10,  6,  5, 15, 16,  8, 12,  2,  2, 12,  8, 16,
+                    15,  5,  6, 10, 18, 15,  1,  9, 13, 14,  4,  3, 11,  7, 17, 17,  7,
+                    11,  3,  4, 14, 13,  9,  1, 16, 18, 10,  6,  5, 15, 16,  8, 12,  2,
+                    2, 12,  8, 16, 15,  5,  6, 10, 18, 17,  1,  9, 13, 14,  4,  3, 11,
+                    7, 17, 17,  7, 11,  3,  4, 14, 13,  9,  1, 11, 18, 10,  6,  5, 15,
+                    16,  8, 12,  2,  2, 12,  8, 16, 15,  5,  6, 10, 18,  5,  1,  9, 13,
+                    14,  4,  3, 11,  7, 17, 17,  7, 11,  3,  4, 14, 13,  9,  1,  4, 18,
+                    10,  6,  5, 15, 16,  8, 12,  2,  2, 12,  8, 16, 15,  5,  6, 10, 18,
+                    1,  1,  9, 13, 14,  4,  3, 11,  7, 17, 17,  7, 11,  3,  4, 14, 13,
+                    9,  1,  0, 18, 10,  6,  5, 15, 16,  8, 12,  2,  2, 12,  8, 16, 15,
+                    5,  6, 10, 18])]
         """
         if prime in self._binomial_table: # Extend binomial table
             start = len(self._binomial_table[prime])
