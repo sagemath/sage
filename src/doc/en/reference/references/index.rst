@@ -1024,6 +1024,10 @@ REFERENCES:
 .. [BK1992] \U. Brehm and W. Kuhnel, *15-vertex triangulations of an
             8-manifold*, Math. Annalen 294 (1992), no. 1, 167-193.
 
+.. [BK2001] \J. Bandlow, K. Killpatrick -- *An area-to_inv bijection
+            between Dyck paths and 312-avoiding permutations*, Electronic
+            Journal of Combinatorics, Volume 8, Issue 1 (2001).
+
 .. [BK2001] \W. Bruns and R. Koch, *Computing the integral closure of an
             affine semigroup*. Uni. Iaggelonicae Acta Math. 39, (2001),
             59-70
@@ -1830,6 +1834,10 @@ REFERENCES:
          Primes of the form `x^2+ny^2`.
          Wiley, 1989.
 
+.. [CK2008] \A. Claesson, S. Kitaev. *Classification of bijections
+            between `321`- and `132`- avoiding permutations*. Séminaire
+            Lotharingien de Combinatoire **60** 2008. :arxiv:`0805.1325`.
+
 .. [CK2008] Derek G. Corneil and Richard M. Krueger, *A Unified View
             of Graph Searching*, SIAM Journal on Discrete Mathematics,
             22(4), 1259--1276, 2008.
@@ -2536,6 +2544,9 @@ REFERENCES:
              Amer. Math. Soc. **100**
              (1987). No 3. http://educ.jmu.edu/~dromscg/vita/preprints/Isomorphisms.pdf
 
+.. [DS1992] \A. Denise, R. Simion, *Two combinatorial statistics on
+            Dyck paths*, Discrete Math 137 (1992), 155--176.
+
 .. [DS1994] \J. Dalbec and B. Sturmfels. *Invariant methods in discrete and computational geometry*,
             chapter Introduction to Chow forms, pages 37-58. Springer Netherlands, 1994.
 
@@ -2684,6 +2695,9 @@ REFERENCES:
 
 .. [Eny2013] \J. Enyang. *A seminormal form for partition algebras*.
              \J. Combin. Theory Series A **120** (2013) 1737--1785.
+
+.. [EP2004] \S. Elizalde, I. Pak. *Bijections for refined restricted
+            permutations**. JCTA 105(2) 2004.
 
 .. [EP2013] David Einstein, James Propp. *Combinatorial,
             piecewise-linear, and birational homomesy for products of
@@ -3254,6 +3268,10 @@ REFERENCES:
 .. [GR2001] Chris Godsil and Gordon Royle, *Algebraic Graph Theory*. Graduate
             Texts in Mathematics, Springer, 2001.
 
+.. [Green55] Green, J. A.  *The characters of the finite general linear groups*.
+             Trans. Amer. Math. Soc.  80  (1955), 402--447.
+             :doi:`10.1090/S0002-9947-1955-0072878-2`
+             
 .. [Gre1988] \C. Greene. *Posets of shuffles*. J. Combin. Theory Ser. A
              Vol 47.2 (1988), pp. 191--206.
 
@@ -3430,10 +3448,11 @@ REFERENCES:
              The Electronic Journal of Combinatorics 11 (2004), #R77.
              http://www.combinatorics.org/Volume_11/PDF/v11i1r77.pdf
 
-.. [Hag08] The `q,t` -- Catalan Numbers and the Space of Diagonal Harmonics:
-           With an Appendix on the Combinatorics of Macdonald Polynomials, James Haglund,
-           University of Pennsylvania, Philadelphia -- AMS, 2008, 167 pp.
+.. [Hag2008] James Haglund. *The* `q,t` -- *Catalan Numbers and the
+             Space of Diagonal Harmonics:
+             With an Appendix on the Combinatorics of Macdonald Polynomials*.
 
+             University of Pennsylvania, Philadelphia -- AMS, 2008, 167 pp.
 .. [HaHo2017] Nate Harman and Sam Hopkins,
               *Quantum integer-valued polynomials*,
               \J. Alg. Comb. 2017, :doi:`10.1007/s10801-016-0717-3`
@@ -4309,10 +4328,15 @@ REFERENCES:
 
 .. [KnotAtlas] The Knot atlas. http://katlas.org/wiki/Main_Page
 
+<<<<<<< HEAD
 .. [Knu1970] Donald E. Knuth.
              *Permutations, matrices, and generalized Young tableaux*.
              Pacific J. Math. Volume 34, Number 3 (1970), pp. 709-727.
              http://projecteuclid.org/euclid.pjm/1102971948
+=======
+.. [Knu1973] \D. Knuth. *The Art of Computer Programming, Vol. III*.
+             Addison-Wesley. Reading, MA. 1973.
+>>>>>>> 5d2211f971a (Move local references from dyck_word.py and similarity_class_type.py to master bibliography)
 
 .. [Knu1995] Donald E. Knuth, *Overlapping Pfaffians*,
              :arxiv:`math/9503234v1`.
@@ -4433,6 +4457,9 @@ REFERENCES:
 .. [Kra1989] Kraus, Alain, Quelques remarques à propos des invariants
              \(c_4\), \(c_6\) et \(\Delta\) d'une courbe elliptique, Acta
              Arith. 54 (1989), 75-80.
+
+.. [Kra2001] \C. Krattenthaler -- *Permutations with restricted
+             patterns and Dyck paths*, Adv. Appl. Math. 27 (2001), 510--530.
 
 .. [Kre2002] \V. Kreps. *Social Network Analysis* (2002).
              [Online] Available: http://www.orgnet.com/sna.html
@@ -5358,6 +5385,11 @@ REFERENCES:
                 Astérisque. **87-88** (1981) pp. 267-287.
                 http://www.numdam.org/article/AST_1981__87-88__267_0.pdf
 
+.. [Morrison06] Morrison, Kent E.
+                *Integer sequences and matrices over finite fields*.
+                J. Integer Seq. 9 (2006), no. 2, Article 06.2.1, 28 pp.
+                https://cs.uwaterloo.ca/journals/JIS/VOL9/Morrison/morrison37.html
+
 .. [Motsak2006] Olekasandr Motsak. *Computation of the central elements and
                 centralizers of sets of elements in non-commutative polynomial
                 algebras*. Ph.D. Thesis, 2006.
@@ -5893,6 +5925,9 @@ REFERENCES:
               for the hook product formula: Partial Presentation of Proof*.
               RIMS Kôkyûroku, 1913:120-140, 2014.
 
+.. [PR22] Prasad, A., Ram, S., *Splitting subspaces and a finite field
+          interpretation of the Touchard-Riordan formula*. :arxiv:`2205.11076`
+
 .. [PR2003] Perrin-Riou, *Arithmétique des courbes elliptiques à
             réduction supersingulière en p*,
             Experiment. Math. 12 (2003), no. 2, 155-186.
@@ -5934,6 +5969,9 @@ REFERENCES:
             symbols and p-adic L-functions.* Annales scientifiques de
             l'École normale supérieure.
             Vol. 44. No. 1. Elsevier, 2011.
+
+.. [PSS13] Prasad, A., Singla, P., and Spallone, S., *Similarity of matrices
+           over local rings of length two*. :arxiv:`1212.6157`
 
 .. [PSW1996] Boris Pittel, Joel Spencer and Nicholas Wormald. *Sudden
              Emergence of a Giant k-Core in a Random
@@ -5984,8 +6022,14 @@ REFERENCES:
 
 **R**
 
+<<<<<<< HEAD
 .. [Rad1979] David E. Radford, *A natural ring basis for the shuffle algebra
              and an application to group schemes*, J. Algebra **58** (1979), 432-454.
+=======
+.. [R17] Ramaré, O., *Rationality of the zeta function of the subgroups of
+         abelian p-groups*. Publ. Math. Debrecen 90.1-2.
+         :doi:`10.5486/PMD.2017.7466`
+>>>>>>> 5d2211f971a (Move local references from dyck_word.py and similarity_class_type.py to master bibliography)
 
 .. [Rai2012] Alexander Raichev.  *Leinartas's partial fraction
              decomposition*.  :arxiv:`1206.4740`.
@@ -6631,6 +6675,11 @@ REFERENCES:
              American Mathematical Society, Providence, RI, 2007,
              pp. 389-496.
 
+.. [StaCat98] Richard Stanley. *Exercises on Catalan and Related Numbers
+              excerpted from Enumerative Combinatorics, vol. 2 (CUP 1999)*,
+              version of 23 June 1998.
+
+              http://www-math.mit.edu/~rstan/ec/catalan.pdf
 .. [EnumComb1] Stanley, Richard P.
                *Enumerative Combinatorics, volume 1*,
                Second Edition,

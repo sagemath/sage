@@ -3,7 +3,7 @@ Dyck words
 
 A class of an object enumerated by the
 :func:`Catalan numbers<sage.combinat.combinat.catalan_number>`,
-see [Sta-EC2]_, [StaCat98]_ for details.
+see [EnumComb2]_, [StaCat98]_ for details.
 
 AUTHORS:
 
@@ -24,42 +24,6 @@ AUTHORS:
 
 - Travis Scrimshaw (2013-07-09): Removed ``CombinatorialClass`` and added
   global options.
-
-REFERENCES:
-
-.. [Sta-EC2] Richard P. Stanley.
-   *Enumerative Combinatorics*, Volume 2.
-   Cambridge University Press, 2001.
-
-.. [StaCat98] Richard Stanley. *Exercises on Catalan and Related Numbers
-   excerpted from Enumerative Combinatorics, vol. 2 (CUP 1999)*,
-   version of 23 June 1998.
-   http://www-math.mit.edu/~rstan/ec/catalan.pdf
-
-.. [Hag2008] James Haglund. *The* `q,t` -- *Catalan Numbers and the
-   Space of Diagonal Harmonics:
-   With an Appendix on the Combinatorics of Macdonald Polynomials*.
-   University of Pennsylvania, Philadelphia -- AMS, 2008, 167 pp.
-
-.. [BK2001] \J. Bandlow, K. Killpatrick -- *An area-to_inv bijection
-   between Dyck paths and 312-avoiding permutations*, Electronic
-   Journal of Combinatorics, Volume 8, Issue 1 (2001).
-
-.. [EP2004] \S. Elizalde, I. Pak. *Bijections for refined restricted
-   permutations**. JCTA 105(2) 2004.
-
-.. [CK2008] \A. Claesson, S. Kitaev. *Classification of bijections
-   between `321`- and `132`- avoiding permutations*. Séminaire
-   Lotharingien de Combinatoire **60** 2008. :arxiv:`0805.1325`.
-
-.. [Knu1973] \D. Knuth. *The Art of Computer Programming, Vol. III*.
-   Addison-Wesley. Reading, MA. 1973.
-
-.. [Kra2001] \C. Krattenthaler -- *Permutations with restricted
-   patterns and Dyck paths*, Adv. Appl. Math. 27 (2001), 510--530.
-
-.. [DS1992] \A. Denise, R. Simion, *Two combinatorial statistics on
-   Dyck paths*, Discrete Math 137 (1992), 155--176.
 """
 
 # ****************************************************************************
@@ -2438,7 +2402,7 @@ class DyckWord_complete(DyckWord):
         The Catalan code of a Dyck word is example (x) in Richard Stanley's
         exercises on combinatorial interpretations for Catalan objects.
         The code in this example is the reverse of the description provided
-        there. See [Sta-EC2]_ and [StaCat98]_.
+        there. See [EnumComb2]_ and [StaCat98]_.
 
         EXAMPLES::
 
@@ -3830,7 +3794,7 @@ class CompleteDyckWords(DyckWords):
         The Catalan code of a Dyck word is example (x) in Richard Stanley's
         exercises on combinatorial interpretations for Catalan objects.
         The code in this example is the reverse of the description provided
-        there. See [Sta-EC2]_ and [StaCat98]_.
+        there. See [EnumComb2]_ and [StaCat98]_.
 
         EXAMPLES::
 
