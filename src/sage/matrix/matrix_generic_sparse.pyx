@@ -189,7 +189,12 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         return bool(self._entries)
 
     cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
-        if not value:
+        try:
+            is_zero = value.is_trivial_zero()
+        except AttributeError:
+            is_zero = not value
+
+        if is_zero:
             try:
                 del self._entries[(i, j)]
             except KeyError:

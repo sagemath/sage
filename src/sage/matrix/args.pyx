@@ -913,8 +913,13 @@ cdef class MatrixArgs:
         for t in self.iter(convert, True):
             se = <SparseEntry>t
             x = se.entry
-            if x:
-                D[se.i, se.j] = x
+            try:
+                if x.is_trivial_zero():
+                    continue
+            except AttributeError:
+                if not x:
+                    continue
+            D[se.i, se.j] = x
         return D
 
     cpdef int set_column_keys(self, column_keys) except -1:

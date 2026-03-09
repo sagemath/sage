@@ -161,6 +161,22 @@ Check that :issue:`35653` is fixed::
     sage: M([[x,0],[0,x]]).inverse()
     [1/x   0]
     [  0 1/x]
+
+Check that symbolic entries are not dropped from sparse storage merely because
+assumptions make their truth value unreliable::
+
+    sage: var('a c')
+    (a, c)
+    sage: assume(c > 0)
+    sage: matrix(2, 2, [a/c, 0, 0, 1], sparse=True).map_coefficients(lambda z: z + 1)
+    [a/c + 1       0]
+    [      0       2]
+    sage: M = matrix(SR, 2, 2, sparse=True)
+    sage: M[0, 0] = a/c
+    sage: M
+    [a/c   0]
+    [  0   0]
+    sage: forget()
 """
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.factorization import Factorization
@@ -1010,13 +1026,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             [1 1 1]
         """
         entry = self.get_unsafe(i, j)
-        # See if we can avoid the full proof machinery that the entry is 0
-        if entry.is_trivial_zero():
-            return 1
-        if entry:
-            return 0
-        else:
-            return 1
+        return entry.is_trivial_zero()
 
     def function(self, *args):
         """

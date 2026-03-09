@@ -152,6 +152,17 @@ Check that :issue:`12778` is fixed::
     [                3  2.90000000000000               3/5               x^4]
     sage: parent(M)
     Full MatrixSpace of 3 by 4 dense matrices over Symbolic Ring
+
+Check that symbolic entries are not dropped from the support merely because
+assumptions make their truth value unreliable::
+
+    sage: var('a c')
+    (a, c)
+    sage: assume(c > 0)
+    sage: matrix(2, 2, [a/c, 0, 0, 1]).map_coefficients(lambda z: z + 1)
+    [a/c + 1       0]
+    [      0       2]
+    sage: forget()
 """
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.factorization import Factorization
@@ -1002,13 +1013,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [1 1 1]
         """
         entry = self.get_unsafe(i, j)
-        # See if we can avoid the full proof machinery that the entry is 0
-        if entry.is_trivial_zero():
-            return 1
-        if entry:
-            return 0
-        else:
-            return 1
+        return entry.is_trivial_zero()
 
     def function(self, *args):
         """
