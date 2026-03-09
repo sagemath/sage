@@ -521,19 +521,25 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
         def __pow__(self, n):
             r"""
-            Return the naive powering of an instance of ``self``.
+            Return the power of ``self``.
+
+            Binary exponentiation leads to an explosion in the number of terms
+            for monomial polynomials. Naive multiplication is significantly faster.
 
             INPUT:
 
             - ``n`` -- nonnegative integer
 
-            OUTPUT: the `n`-th power of ``self`` in the monomial basis
+            OUTPUT: the `n`-th power of ``self``
 
-            EXAMPLES::
+            EXAMPLES:
+
+            Test that this can be done in reasonable time (see :issue:`41623`)::
 
                 sage: m = SymmetricFunctions(QQ).m()
-                sage: len(m([2,1])^4) # long time
-                52
+                sage: f = m([3,2,1])
+                sage: len(f^6)  # long time
+                11295
             """
             return self._pow_naive(n)
 

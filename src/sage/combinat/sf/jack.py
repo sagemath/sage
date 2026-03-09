@@ -822,24 +822,38 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         def __pow__(self, n):
             r"""
-            Return the naive powering of an instance of ``self``.
+            Return the power of ``self``.
+
+            Multiplication is performed by converting to the monomial basis,
+            which avoids the exponential term explosion seen in binary
+            exponentiation for this basis.
 
             INPUT:
 
             - ``n`` -- nonnegative integer
 
-            OUTPUT: the `n`-th power of ``self`` in the Jack basis
+            OUTPUT: the `n`-th power of ``self``
 
-            Binary exponentiation leads to an explosion in the number of terms
-            for Jack polynomials. Naive multiplication is significantly faster.
+            EXAMPLES:
 
-            EXAMPLES::
+            Test that this can be done in reasonable time (see :issue:`41623`)::
 
                 sage: Jack = SymmetricFunctions(FractionField(QQ['t'])).jack().P()
-                sage: len(Jack([2,1])^3) # long time (~2 s)
-                22
+                sage: f = Jack([2,1])
+                sage: len(f^4)  # long time
+                63
             """
-            return self._pow_naive(n)
+            P = self.parent()
+            S = P.symmetric_function_ring()
+
+            # Special case: The Jack Q basis has a more efficient
+            # transition to/from the homogeneous (h) basis.
+            if P.basis_name() == 'Q':
+                target_basis = S.h()
+            else:
+                target_basis = S.m()
+
+            return P(target_basis(self).__pow__(n))
 
 
 def part_scalar_jack(part1, part2, t):

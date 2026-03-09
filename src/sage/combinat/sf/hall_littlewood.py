@@ -571,7 +571,11 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         def __pow__(self, n):
             r"""
-            Return the naive powering of an instance of ``self``.
+            Return the power of ``self``.
+
+            Multiplication is performed by converting to the Schur basis,
+            which is significantly faster than binary exponentiation or
+            naive multiplication for Hall-Littlewood polynomials.
 
             INPUT:
 
@@ -579,13 +583,17 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
             OUTPUT: the `n`-th power of ``self`` in the Hall-Littlewood basis
 
-            EXAMPLES::
+            EXAMPLES:
+
+            Test that this can be done in reasonable time (see :issue:`41623`)::
 
                 sage: HLP = SymmetricFunctions(FractionField(QQ['t'])).hall_littlewood().P()
-                sage: len(HLP([2,1])^4) # long time
+                sage: len(HLP([2,1])^4)  # long time
                 63
             """
-            return self._pow_naive(n)
+            P = self.parent()
+
+            return P(P._s(self).__pow__(n))
 
         def expand(self, n, alphabet='x'):
             r"""

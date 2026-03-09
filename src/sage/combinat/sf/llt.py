@@ -624,21 +624,30 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         def __pow__(self, n):
             r"""
-            Return the naive powering of an instance of ``self``.
+            Return the power of ``self``.
+
+            Multiplication is performed by converting to the monomial basis,
+            which avoids the exponential term explosion seen in binary
+            exponentiation for this basis.
 
             INPUT:
 
             - ``n`` -- nonnegative integer
 
-            OUTPUT: the `n`-th power of ``self`` in the LLT basis
+            OUTPUT: the `n`-th power of ``self``
 
-            EXAMPLES::
+            EXAMPLES:
+
+            Test that this can be done in reasonable time (see :issue:`41623`)::
 
                 sage: L = SymmetricFunctions(FractionField(QQ['t'])).llt(3).hspin()
-                sage: len(L([1,1])^3) # long time
-                8
+                sage: f = L([1,1])
+                sage: len(f^4)  # long time
+                18
             """
-            return self._pow_naive(n)
+            P = self.parent()
+
+            return P(P._m(self).__pow__(n))
 
 
 # the H-spin basis
