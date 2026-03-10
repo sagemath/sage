@@ -4132,11 +4132,7 @@ cdef class Matrix(Matrix1):
         """
         from sage.matrix.matrix_space import MatrixSpace
         tm = verbose("computing right kernel matrix over an arbitrary field for %sx%s matrix" % (self.nrows(), self.ncols()), level=2)
-        full_pivoting = kwds.get('algorithm') == 'full_pivoting'
-        if not full_pivoting:
-            E = self.echelon_form(*args, **kwds)
-        else:
-            E, s = self.echelon_form(*args, **kwds)
+        E = self.echelon_form(*args, **kwds)
         pivots = E.pivots()
         pivots_set = set(pivots)
         zero = self._base_ring.zero()
@@ -4163,8 +4159,6 @@ cdef class Matrix(Matrix1):
                         v[p] = -E[r, i]
                     basis.append(v)
             M = MS(basis, coerce=False)
-        if full_pivoting:
-            M.permute_columns(s)
         tm = verbose("done computing right kernel matrix over an arbitrary field for %sx%s matrix"
                      % (self.nrows(), self.ncols()), level=2, t=tm)
         return 'pivot-generic', M
@@ -4910,6 +4904,7 @@ cdef class Matrix(Matrix1):
                     from sage.categories.discrete_valuation import DiscreteValuationFields
                     if algorithm == 'default' and R in DiscreteValuationFields():
                         format, M = self._right_kernel_matrix_over_field(algorithm='full_pivoting')
+                        basis = 'computed'
                     else:
                         format, M = self._right_kernel_matrix_over_field(algorithm=algorithm)
 
@@ -8539,7 +8534,7 @@ cdef class Matrix(Matrix1):
                 elif algorithm == 'strassen':
                     self._echelon_strassen(cutoff)
                 elif algorithm == 'full_pivoting':
-                    transformation = 'transformation' in kwds and kwds['transformation']
+                    transformation = kwds.get('transformation', False)
                     return self._echelon_in_place_fp(transformation)
                 else:
                     raise ValueError("Unknown algorithm '%s'" % algorithm)
@@ -8651,10 +8646,10 @@ cdef class Matrix(Matrix1):
             if x is not None:
                 s = self.fetch('echelon_full_pivoting_columnperm')
                 if not transformation:
-                    return x, s
+                    return x
                 y = self.fetch('echelon_full_pivoting_transformation')
                 if y:
-                    return x, s, y
+                    return x, y
 
         E = self.__copy__()
         if algorithm == 'default':
@@ -8662,6 +8657,7 @@ cdef class Matrix(Matrix1):
         else:
             v = E.echelonize(algorithm=algorithm, cutoff=cutoff, **kwds)
         E.set_immutable()  # so we can cache the echelon form.
+
         if algorithm != 'full_pivoting':
             self.cache('echelon_form', E)
             if v is not None:
@@ -8674,13 +8670,12 @@ cdef class Matrix(Matrix1):
                 return E
         else:
             self.cache('echelon_form_full_pivoting', E)
+            self.cache('pivots', v[0])
+            self.cache('echelon_full_pivoting_columnperm', v[1])
             if transformation:
-                self.cache('echelon_full_pivoting_transformation', v[1])
-                self.cache('echelon_full_pivoting_columnperm', v[0])
-                return E, v[0], v[1]
-            else:
-                self.cache('echelon_full_pivoting_columnperm', v)
-                return E, v
+                self.cache('echelon_full_pivoting_transformation', v[2])
+                return E, v[2]
+            return E
 
     cpdef _echelon(self, str algorithm):
         """
@@ -9211,7 +9206,7 @@ cdef class Matrix(Matrix1):
                 T.swap_columns(piv, pivi)
             if piv != pivj:
                 self.swap_columns(piv, pivj)
-                s = s * S((piv+1, pivj+1))
+                s = S((piv+1, pivj+1)) * s
 
             scalar = ~self.get_unsafe(piv, piv)
             self.rescale_row(piv, scalar, piv+1)
@@ -9228,20 +9223,23 @@ cdef class Matrix(Matrix1):
                             T.add_multiple_of_row(i, piv, scalar, end_col=piv)
         else:
             piv += 1
+        self.permute_columns(~s)
         if transformation:
             for i in range(len(temp)-1,-1,-1):
                 T.swap_columns(i, temp[i])
 
+        pivots = s.tuple()[:piv]
+        pivots = tuple([n-1 for n in pivots])
+        self.cache('pivots', pivots)
         self.cache('rank', piv)
-        self.cache('pivots', tuple(range(piv)))
         self.cache('echelon_form_full_pivoting', self)
         self.cache('echelon_full_pivoting_columnperm', s)
         if transformation:
             self.cache('echelon_full_pivoting_transformation', T)
 
         if transformation:
-            return s, T
-        return s
+            return pivots, s, T
+        return pivots, s
 
     #####################################################################################
     # Functions for symmetries of a matrix under row and column permutations
