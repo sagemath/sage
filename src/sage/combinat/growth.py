@@ -1668,6 +1668,11 @@ class GrowthDiagram(SageObject):
             ...
             \end{tikzpicture}
 
+        Check that we can have two growth diagrams in the same
+        picture::
+
+            sage: view([G, G])  # not tested
+
         Check that non-hashable labels work::
 
             sage: class RuleNonHashable(GrowthDiagram.rules.RSK):
@@ -1782,14 +1787,15 @@ class GrowthDiagram(SageObject):
         default_scale = 0.33  # fallback if measurement degenerates
 
         tikz = []
-        tikz.append("\\newcommand{\\GDwrap}[1]{$\\displaystyle #1$}")
+        tikz.append("\\begingroup")
+        tikz.append("\\def\\GDwrap#1{$\\displaystyle #1$}")
 
-        tikz.append("\\newlength\\GDWmax\\newlength\\GDHmax\\newlength\\GDtmp")
-        tikz.append("\\setlength\\GDWmax{0pt}\\setlength\\GDHmax{0pt}")
+        tikz.append("\\newdimen\\GDWmax\\newdimen\\GDHmax\\newdimen\\GDtmp")
+        tikz.append("\\GDWmax=0pt\\GDHmax=0pt")
 
-        tikz.append("\\newlength\\GDtargetW\\newlength\\GDtargetH")
-        tikz.append("\\setlength\\GDtargetW{" + f"{target_em:.3f}" + "em}")
-        tikz.append("\\setlength\\GDtargetH{" + f"{target_em:.3f}" + "em}")
+        tikz.append("\\newdimen\\GDtargetW\\newdimen\\GDtargetH")
+        tikz.append("\\GDtargetW=" + f"{target_em:.3f}" + "em")
+        tikz.append("\\GDtargetH=" + f"{target_em:.3f}" + "em")
 
         coord_dict = {}  # coordinates in the tikz grid to box_id "GDlbl@1", "GDlbl@2", ...
         all_labels = []  # distinct (possibly non-hashable) labels
@@ -1802,15 +1808,15 @@ class GrowthDiagram(SageObject):
                 k = len(all_labels)
                 all_labels.append(label)
                 box_id = f"GDlbl@{k}"
-                tikz.append(f"\\expandafter\\newsavebox\\csname {box_id}\\endcsname")
+                tikz.append(f"\\expandafter\\newbox\\csname {box_id}\\endcsname")
                 tikz.append(f"\\expandafter\\sbox\\csname {box_id}\\endcsname{{\\GDwrap{{{latex(label)}}}}}")
                 # width max
-                tikz.append(f"\\setlength\\GDtmp{{\\wd\\csname {box_id}\\endcsname}}")
-                tikz.append("\\ifdim\\GDtmp>\\GDWmax\\setlength\\GDWmax{\\GDtmp}\\fi")
+                tikz.append(f"\\GDtmp=\\wd\\csname {box_id}\\endcsname")
+                tikz.append("\\ifdim\\GDtmp>\\GDWmax\\GDWmax=\\GDtmp\\fi")
                 # height+depth max
-                tikz.append(f"\\setlength\\GDtmp{{\\ht\\csname {box_id}\\endcsname}}")
-                tikz.append(f"\\addtolength\\GDtmp{{\\dp\\csname {box_id}\\endcsname}}")
-                tikz.append("\\ifdim\\GDtmp>\\GDHmax\\setlength\\GDHmax{\\GDtmp}\\fi")
+                tikz.append(f"\\GDtmp=\\ht\\csname {box_id}\\endcsname")
+                tikz.append(f"\\advance\\GDtmp by\\dp\\csname {box_id}\\endcsname")
+                tikz.append("\\ifdim\\GDtmp>\\GDHmax\\GDHmax=\\GDtmp\\fi")
 
             coord_dict[coords] = box_id
 
@@ -1822,8 +1828,8 @@ class GrowthDiagram(SageObject):
                 add_label(coords, raw_label)
 
         # determine scale = min(targetW/Wmax, targetH/Hmax, 1)
-        tikz.append("\\ifdim\\GDWmax<1pt \\setlength\\GDWmax{1pt}\\fi")
-        tikz.append("\\ifdim\\GDHmax<1pt \\setlength\\GDHmax{1pt}\\fi")
+        tikz.append("\\ifdim\\GDWmax<1pt\\GDWmax=1pt\\fi")
+        tikz.append("\\ifdim\\GDHmax<1pt\\GDHmax=1pt\\fi")
         tikz.append("\\pgfmathsetlengthmacro{\\GDWmaxNum}{\\GDWmax}")
         tikz.append("\\pgfmathsetlengthmacro{\\GDHmaxNum}{\\GDHmax}")
         tikz.append("\\pgfmathsetlengthmacro{\\GDtargetWNum}{\\GDtargetW}")
@@ -1860,6 +1866,7 @@ class GrowthDiagram(SageObject):
                     for (x, y), box_id in coord_dict.items())
         tikz.append("  \\end{scope}")
         tikz.append("\\end{tikzpicture}")
+        tikz.append("\\endgroup")
         return "\n".join(tikz)
 
 ######################################################################
