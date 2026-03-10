@@ -867,47 +867,63 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     def dimension(self):
         """
-Return the dimension of the free module (which is given
-by the number of elements in the basis).
+        Return the dimension of the free module (which is given
+        by the number of elements in the basis).
 
-EXAMPLES::
+        EXAMPLES::
 
-    sage: F = CombinatorialFreeModule(QQ, ['x','y'])
-    sage: F.rank()
-    2
+            sage: F = CombinatorialFreeModule(QQ, ['x','y'])
+            sage: F.dimension()
+            2
 
-    sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
-    sage: F.dimension()
-    3
-    sage: F.basis().cardinality()
-    3
-    sage: F.basis().keys().cardinality()
-    3
+            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
+            sage: F.dimension()
+            3
+            sage: F.basis().cardinality()
+            3
+            sage: F.basis().keys().cardinality()
+            3
 
-Rank is available as a synonym::
+        Rank is available as a synonym::
 
-    sage: F.rank()
-    3
+            sage: F.rank()
+            3
 
-The dimension is zero when the basis is empty::
+        The dimension is zero when the basis is empty::
 
-    sage: F = CombinatorialFreeModule(QQ, [])
-    sage: F.dimension()
-    0
+            sage: F = CombinatorialFreeModule(QQ, [])
+            sage: F.dimension()
+            0
 
-The dimension is infinite when the basis is infinite::
+        The dimension is infinite when the basis is infinite::
 
-    sage: F = CombinatorialFreeModule(QQ, ZZ)
-    sage: F.dimension()
-    +Infinity
+            sage: F = CombinatorialFreeModule(QQ, ZZ)
+            sage: F.dimension()
+            +Infinity
 
-    sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
-    sage: s.dimension()                                                         # needs sage.combinat
-    +Infinity
-"""
+            sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
+            sage: s.dimension()                                                         # needs sage.combinat
+            +Infinity
+        """
         return self._indices.cardinality()
 
     rank = dimension
+
+    def is_finite_dimensional(self):
+        """
+        Return ``True`` if the module has finite dimension.
+
+        EXAMPLES::
+
+            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+            sage: F.is_finite_dimensional()
+            True
+
+            sage: F = CombinatorialFreeModule(QQ, ZZ)
+            sage: F.is_finite_dimensional()
+            False
+        """
+        return self._indices in Sets().Finite()
 
     def is_exact(self):
         r"""
