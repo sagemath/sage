@@ -4132,7 +4132,7 @@ cdef class Matrix(Matrix1):
         """
         from sage.matrix.matrix_space import MatrixSpace
         tm = verbose("computing right kernel matrix over an arbitrary field for %sx%s matrix" % (self.nrows(), self.ncols()), level=2)
-        full_pivoting = ('algorithm' in kwds and kwds['algorithm'] == 'full_pivoting')
+        full_pivoting = kwds.get('algorithm') == 'full_pivoting'
         if not full_pivoting:
             E = self.echelon_form(*args, **kwds)
         else:
