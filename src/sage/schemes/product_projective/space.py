@@ -61,30 +61,6 @@ from sage.schemes.product_projective.morphism import ProductProjectiveSpaces_mor
 from sage.schemes.product_projective.subscheme import AlgebraicScheme_subscheme_product_projective
 
 
-def is_ProductProjectiveSpaces(x):
-    r"""
-    Return ``True`` if ``x`` is a product of projective spaces.
-
-    This is an ambient space defined by `\mathbb{P}^n_R \times \cdots \times \mathbb{P}^m_R`,
-    where `R` is a ring and `n,\ldots, m\geq 0` are integers.
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: is_ProductProjectiveSpaces(ProjectiveSpace(5, names='x'))
-        doctest:warning...
-        DeprecationWarning: The function is_ProductProjectiveSpaces is deprecated; use 'isinstance(..., ProductProjectiveSpaces_ring)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        False
-        sage: is_ProductProjectiveSpaces(ProductProjectiveSpaces([1, 2, 3], ZZ, 'x'))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_ProductProjectiveSpaces is deprecated; use 'isinstance(..., ProductProjectiveSpaces_ring)' instead.")
-    return isinstance(x, ProductProjectiveSpaces_ring)
-
-
 def ProductProjectiveSpaces(n, R=None, names='x'):
     r"""
     Return the Cartesian product of projective spaces.

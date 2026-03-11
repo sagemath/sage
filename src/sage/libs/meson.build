@@ -61,15 +61,15 @@ if not maxima_present
     # Use the freshly built maxima
     conf_data.set('SAGE_MAXIMA_FAS', maxima.get_variable(internal: 'MAXIMA_FAS'))
     conf_data.set(
-      'SAGE_MAXIMA_SHARE',
-      maxima.get_variable(internal: 'MAXIMA_SHARE'),
+      'SAGE_MAXIMA_PREFIX',
+      maxima.get_variable(internal: 'MAXIMA_PREFIX'),
     )
     conf_data.set('SAGE_MAXIMA', maxima.get_variable(internal: 'MAXIMA_BIN'))
   endif
 else
   maxima = declare_dependency()
   # ecl does not have any problems with Maxima, so nothing needs to be set here:
-  conf_data.set('SAGE_MAXIMA_SHARE', '')
+  conf_data.set('SAGE_MAXIMA_PREFIX', '')
   conf_data.set('SAGE_MAXIMA', maxima_bin.full_path())
 endif
 

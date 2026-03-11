@@ -48,7 +48,6 @@ import sage.misc.latex as latex
 import sage.modules.free_module
 
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.superseded import deprecated_function_alias
 from sage.misc.persist import register_unpickle_override
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
@@ -62,31 +61,6 @@ lazy_import('sage.groups.matrix_gps.matrix_group', ['MatrixGroup_base'])
 
 _Rings = Rings()
 _Fields = Fields()
-
-
-def is_MatrixSpace(x):
-    """
-    Return whether ``self`` is an instance of ``MatrixSpace``.
-
-    EXAMPLES::
-
-        sage: from sage.matrix.matrix_space import is_MatrixSpace
-        sage: MS = MatrixSpace(QQ,2)
-        sage: A = MS.random_element()
-        sage: is_MatrixSpace(MS)
-        doctest:warning...
-        DeprecationWarning: the function is_MatrixSpace is deprecated;
-        use 'isinstance(..., MatrixSpace)' instead
-        See https://github.com/sagemath/sage/issues/37924 for details.
-        True
-        sage: is_MatrixSpace(A)
-        False
-        sage: is_MatrixSpace(5)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37924, "the function is_MatrixSpace is deprecated; use 'isinstance(..., MatrixSpace)' instead")
-    return isinstance(x, MatrixSpace)
 
 
 def get_matrix_class(R, nrows, ncols, sparse, implementation):
@@ -785,7 +759,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         return super().__classcall__(cls, base_ring, nrows,
                                      ncols, sparse, matrix_cls, **kwds)
 
-    def __init__(self, base_ring, nrows, ncols, sparse, implementation):
+    def __init__(self, base_ring, nrows, ncols, sparse, implementation) -> None:
         r"""
         INPUT:
 
@@ -2816,9 +2790,6 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
     assert inv == m1
     if checkrank:
         assert m1.rank() == 1
-
-
-test_trivial_matrices_inverse = deprecated_function_alias(33612, _test_trivial_matrices_inverse)
 
 
 # Fix unpickling Matrix_modn_dense and Matrix_integer_2x2

@@ -147,46 +147,6 @@ DEFAULT_COEFFICIENT = "a"
 DEFAULT_COEFFICIENTS = tuple(chr(i) for i in range(ord("a"), ord("z") + 1))
 
 
-def is_CPRFanoToricVariety(x):
-    r"""
-    Check if ``x`` is a CPR-Fano toric variety.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is a :class:`CPR-Fano toric variety
-      <CPRFanoToricVariety_field>` and ``False`` otherwise.
-
-    .. NOTE::
-
-        While projective spaces are Fano toric varieties mathematically, they
-        are not toric varieties in Sage due to efficiency considerations, so
-        this function will return ``False``.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.toric.fano_variety import is_CPRFanoToricVariety
-        sage: is_CPRFanoToricVariety(1)
-        doctest:warning...
-        DeprecationWarning: The function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        False
-        sage: FTV = toric_varieties.P2()
-        sage: FTV
-        2-d CPR-Fano toric variety covered by 3 affine patches
-        sage: is_CPRFanoToricVariety(FTV)
-        True
-        sage: is_CPRFanoToricVariety(ProjectiveSpace(2))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead.")
-    return isinstance(x, CPRFanoToricVariety_field)
-
-
 def CPRFanoToricVariety(Delta=None,
                         Delta_polar=None,
                         coordinate_points=None,

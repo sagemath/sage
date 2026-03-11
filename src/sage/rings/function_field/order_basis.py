@@ -350,7 +350,7 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
         sage: O = L.order_infinite_with_basis([1, y, 1/x^2*y^2, 1 + y]); O              # needs sage.rings.function_field
         Traceback (most recent call last):
         ...
-        ValueError: The given basis vectors must be linearly independent.
+        ValueError: the given basis vectors must be linearly independent
 
     Note that 1 does not need to be an element of the basis, as long as it is
     in the module spanned by it::

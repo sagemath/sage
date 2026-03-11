@@ -348,7 +348,6 @@ from itertools import combinations, product
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import shuffle
-from sage.misc.superseded import deprecated_function_alias
 from sage.rings.integer_ring import ZZ
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.sage_object cimport SageObject
@@ -2933,8 +2932,6 @@ cdef class Matroid(SageObject):
                 X = frozenset(Xt)
                 if self._rank(X) == len(X):
                     yield X
-
-    independent_r_sets = deprecated_function_alias(38057, independent_sets)
 
     cpdef list _extend_flags(self, list flags):
         r"""

@@ -646,7 +646,7 @@ class FreeQuadraticModule_generic_pid(free_module.FreeModule_generic_pid,
             sage: W.span_of_basis([ [1,2,0], [2,4,0] ])
             Traceback (most recent call last):
             ...
-            ValueError: The given basis vectors must be linearly independent.
+            ValueError: the given basis vectors must be linearly independent
         """
         return FreeQuadraticModule_submodule_with_basis_pid(
             self.ambient_module(), basis=basis, inner_product_matrix=self.inner_product_matrix(),
@@ -780,7 +780,7 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
             sage: W.span_of_basis([[2,2,2], [3,3,3]])
             Traceback (most recent call last):
             ...
-            ValueError: The given basis vectors must be linearly independent.
+            ValueError: the given basis vectors must be linearly independent
         """
         return FreeQuadraticModule_submodule_with_basis_field(
             self.ambient_module(), basis=basis,

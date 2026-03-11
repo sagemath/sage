@@ -7641,7 +7641,7 @@ cdef class int_to_Z(Morphism):
 
     cpdef Element _call_(self, a):
         cdef Integer r
-        cdef long l
+        cdef long l = 0
         cdef int err = 0
 
         integer_check_long_py(a, &l, &err)
@@ -7827,12 +7827,6 @@ cdef hook_fast_tp_functions():
     # Finally replace the functions called when an Integer needs
     # to be constructed/destructed.
     hook_tp_functions(global_dummy_Integer, <newfunc>(&fast_tp_new), <destructor>(&fast_tp_dealloc), False)
-
-cdef integer(x):
-    if isinstance(x, Integer):
-        return x
-    return Integer(x)
-
 
 def free_integer_pool():
     cdef int i

@@ -4240,7 +4240,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             Traceback (most recent call last):
             ...
             NotImplementedError: general algorithm not implemented
-            (The given basis vectors must be linearly independent.)
+             (the given basis vectors must be linearly independent)
         """
         R = self.right_order()
         Q = self.quaternion_algebra()

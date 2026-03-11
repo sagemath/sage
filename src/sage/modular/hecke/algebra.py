@@ -44,28 +44,7 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_method, richcmp
 
 
-def is_HeckeAlgebra(x) -> bool:
-    r"""
-    Return ``True`` if x is of type HeckeAlgebra.
-
-    EXAMPLES::
-
-        sage: from sage.modular.hecke.algebra import is_HeckeAlgebra
-        sage: is_HeckeAlgebra(CuspForms(1, 12).anemic_hecke_algebra())
-        doctest:warning...
-        DeprecationWarning: the function is_HeckeAlgebra is deprecated;
-        use 'isinstance(..., HeckeAlgebra_base)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        True
-        sage: is_HeckeAlgebra(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_HeckeAlgebra is deprecated; use 'isinstance(..., HeckeAlgebra_base)' instead")
-    return isinstance(x, HeckeAlgebra_base)
-
-
-def _heckebasis(M):
+def _heckebasis(M) -> list:
     r"""
     Return a basis of the Hecke algebra of M as a ZZ-module.
 

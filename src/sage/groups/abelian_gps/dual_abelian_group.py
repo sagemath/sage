@@ -70,7 +70,7 @@ from sage.categories.groups import Groups
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.groups.abelian_gps.dual_abelian_group_element import (
-    DualAbelianGroupElement, is_DualAbelianGroupElement)
+    DualAbelianGroupElement)
 from sage.misc.mrange import mrange
 from sage.misc.cachefunc import cached_method
 from sage.groups.group import AbelianGroup as AbelianGroupBase

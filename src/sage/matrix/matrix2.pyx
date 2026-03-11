@@ -107,9 +107,6 @@ from sage.matrix.matrix_misc import permanental_minor_polynomial
 
 from sage.misc.misc_c import prod
 
-# used to deprecate only adjoint method
-from sage.misc.superseded import deprecated_function_alias
-
 
 # temporary hack to silence the warnings from #34806
 def ideal_or_fractional(R, *args):
@@ -367,7 +364,7 @@ cdef class Matrix(Matrix1):
             sage: A.solve_left(b)                                                       # needs scipy
             Traceback (most recent call last):
             ...
-            LinAlgError: Matrix is singular.
+            LinAlgError: ...singular.
 
         The vector of constants needs the correct degree::
 
@@ -762,7 +759,7 @@ cdef class Matrix(Matrix1):
             sage: A.solve_right(b)
             Traceback (most recent call last):
             ...
-            LinAlgError: Matrix is singular.
+            LinAlgError: ...singular.
 
         The vector of constants needs the correct degree.  ::
 
@@ -10901,14 +10898,8 @@ cdef class Matrix(Matrix1):
             [7363/1092         0]
             [        0 7363/1092]
 
-        An alias is :meth:`adjoint_classical`, which replaces the deprecated
-        :meth:`adjoint` method::
+        An alias is :meth:`adjoint_classical`::
 
-            sage: M.adjoint()                                                           # needs sage.libs.pari
-            ...: DeprecationWarning: adjoint is deprecated. Please use adjugate instead.
-            See https://github.com/sagemath/sage/issues/10501 for details.
-            [ 41/10  -1/28]
-            [-33/13    5/3]
             sage: M.adjoint_classical()                                                 # needs sage.libs.pari
             [ 41/10  -1/28]
             [-33/13    5/3]
@@ -10931,8 +10922,6 @@ cdef class Matrix(Matrix1):
         X = self._adjugate()
         self.cache('adjugate', X)
         return X
-
-    adjoint = deprecated_function_alias(10501, adjugate)
 
     adjoint_classical = adjugate
 

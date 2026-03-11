@@ -21,7 +21,7 @@ MAXIMA = "@SAGE_MAXIMA@".replace("${prefix}", SAGE_LOCAL)
 # Set this to the empty string if your ECL can load maxima without
 # further prodding.
 MAXIMA_FAS = "@SAGE_MAXIMA_FAS@".replace("${prefix}", SAGE_LOCAL)
-MAXIMA_SHARE = "@SAGE_MAXIMA_SHARE@".replace("${prefix}", SAGE_LOCAL)
+MAXIMA_PREFIX = "@SAGE_MAXIMA_PREFIX@".replace("${prefix}", SAGE_LOCAL)
 
 # Delete this line if your ECL can load Kenzo without further prodding.
 KENZO_FAS = "@SAGE_KENZO_FAS@".replace("${prefix}", SAGE_LOCAL)
@@ -47,11 +47,6 @@ FOURTITWO_RAYS = "@FOURTITWO_RAYS@"
 FOURTITWO_PPI = "@FOURTITWO_PPI@"
 FOURTITWO_CIRCUITS = "@FOURTITWO_CIRCUITS@"
 FOURTITWO_GROEBNER = "@FOURTITWO_GROEBNER@"
-
-# Colon-separated list of pkg-config modules to search for cblas functionality.
-# We hard-code it here as cblas because configure (build/pkgs/openblas/spkg-configure.m4)
-# always provides cblas.pc, if necessary by creating a facade pc file for a system BLAS.
-CBLAS_PC_MODULES = "cblas"
 
 # for sage_setup.setenv
 SAGE_ARCHFLAGS = "@SAGE_ARCHFLAGS@"

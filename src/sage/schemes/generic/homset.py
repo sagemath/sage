@@ -55,31 +55,6 @@ lazy_import('sage.schemes.product_projective.space', 'ProductProjectiveSpaces_ri
 lazy_import('sage.schemes.projective.projective_space', 'ProjectiveSpace_ring', as_='ProjectiveSpace')
 
 
-def is_SchemeHomset(H):
-    r"""
-    Test whether ``H`` is a scheme Hom-set.
-
-    EXAMPLES::
-
-        sage: f = Spec(QQ).identity_morphism();  f
-        Scheme endomorphism of Spectrum of Rational Field
-          Defn: Identity map
-        sage: from sage.schemes.generic.homset import is_SchemeHomset
-        sage: is_SchemeHomset(f)
-        doctest:warning...
-        DeprecationWarning: The function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        False
-        sage: is_SchemeHomset(f.parent())
-        True
-        sage: is_SchemeHomset('a string')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead.")
-    return isinstance(H, SchemeHomset_generic)
-
-
 # *******************************************************************
 #  Factory for Hom sets of schemes
 # *******************************************************************
