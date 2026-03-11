@@ -41,6 +41,7 @@ COMMON_HEADER = r'''\usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{graphicx}
 \usepackage{mathrsfs}
+\usepackage{luatex85}
 \pagestyle{empty}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -48,7 +49,7 @@ COMMON_HEADER = r'''\usepackage{amsmath}
 
 LATEX_HEADER = (r'''\documentclass{article}
 ''' + COMMON_HEADER +
-r'''\oddsidemargin 0.0in
+                r'''\oddsidemargin 0.0in
 \evensidemargin 0.0in
 \textwidth 6.45in
 \topmargin 0.0in
@@ -59,7 +60,7 @@ r'''\oddsidemargin 0.0in
 
 SLIDE_HEADER = (r'''\documentclass[a0,8pt]{beamer}
 ''' + COMMON_HEADER +
-r'''\textwidth=1.1\textwidth
+                r'''\textwidth=1.1\textwidth
 \textheight=2\textheight
 ''')
 
@@ -1913,11 +1914,6 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
         engine = _Latex_prefs._option["engine"]
         if engine is None:
             engine = _default_engine()
-
-    # lualatex fails to produce correct result for the latex package "preview"
-    # force use of pdflatex if the current engine is lualatex
-    if tightpage and engine == "lualatex":
-        engine = "pdflatex"
 
     if viewer == "pdf" and engine == "latex":
         engine = "pdflatex"
