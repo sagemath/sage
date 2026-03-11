@@ -96,7 +96,11 @@ AC_ARG_WITH([system-]SPKG_NAME,
 AS_VAR_SET([sage_spkg_name], SPKG_NAME)
 
 dnl Default value for most packages
-AS_VAR_SET_IF([SPKG_USE_SYSTEM], [], [AS_VAR_SET([SPKG_USE_SYSTEM], [yes])])
+dnl If --disable-system-packages was given, default to building from source
+AS_VAR_SET_IF([SPKG_USE_SYSTEM], [], [
+    AS_IF([test "$enable_system_packages" = "no"],
+        [AS_VAR_SET([SPKG_USE_SYSTEM], [no])],
+        [AS_VAR_SET([SPKG_USE_SYSTEM], [yes])])])
 
 dnl The default is not to install a package, unless a check below finds that we should.
 AS_VAR_SET(SPKG_INSTALL, [no])

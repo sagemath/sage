@@ -90,6 +90,17 @@ missing or have unsuitable versions. **Please read the messages that
 you can install to avoid having to build them from source. This can save a lot of
 time.
 
+If you prefer a fully self-contained installation that does not depend on
+any system packages (for example, on shared servers where system updates
+should not affect Sage), you can use::
+
+    $ ./configure --disable-system-packages
+
+This tells ``configure`` to build all dependencies from source. Individual
+packages can still be overridden, for example::
+
+    $ ./configure --disable-system-packages --with-system-gmp=yes
+
 The following sections provide the commands to install a large
 recommended set of packages on various systems, which will minimize
 the time it takes to build Sage. This is intended as a convenient

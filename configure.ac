@@ -469,6 +469,12 @@ AC_ARG_ENABLE([download-from-upstream-url],
     [AS_VAR_SET([enable_download_from_upstream_url], [yes])])
 
 AC_ARG_ENABLE(
+  [system-packages], [AS_HELP_STRING(
+    [--disable-system-packages],
+    [do not use any system packages; build everything from source (default: enabled)]
+  )])
+
+AC_ARG_ENABLE(
   [system-site-packages], [AS_HELP_STRING(
     [--enable-system-site-packages],
     [allow the use of python packages from the system (experimental; default: no)]
