@@ -392,6 +392,21 @@ AX_PROG_PERL_VERSION([5.8.0],[],[
 
 # Save compiler flags as configured by the user.
 # We have to redo this, because otherwise `AC_PROG_CC` will just overwrite them.
+
+AC_ARG_ENABLE(
+  [march-native], [AS_HELP_STRING(
+    [--enable-march-native],
+    [compile with -march=native to optimize for the current CPU (default: disabled)]
+  )])
+
+AS_IF([test "$enable_march_native" = "yes"], [
+    CFLAGS="${CFLAGS} -march=native"
+    CXXFLAGS="${CXXFLAGS} -march=native"
+    FCFLAGS="${FCFLAGS} -march=native"
+    F77FLAGS="${F77FLAGS} -march=native"
+    AC_MSG_NOTICE([Compiling with -march=native])
+])
+
 AC_SUBST(CFLAGS, "$CFLAGS")
 AC_SUBST(CXXFLAGS, "$CXXFLAGS")
 AC_SUBST(FCFLAGS, "$FCFLAGS")
