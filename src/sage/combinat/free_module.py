@@ -1098,6 +1098,10 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F.term('a')
             B['a']
 
+            sage: F = CombinatorialFreeModule(QQ, ['a','b'])
+            sage: F.term('b',5)
+            5*B['b']
+
         Design: should this do coercion on the coefficient ring?
         """
         if coeff is None:
