@@ -1129,6 +1129,17 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F.monomial('a')
             B['a']
 
+            sage: F = CombinatorialFreeModule(QQ, ['x','y'])
+            sage: m = F.monomial('x')
+            sage: m
+            B['x']
+            sage: 3*m
+            3*B['x']
+
+            sage: F = CombinatorialFreeModule(QQ, [1,2])
+            sage: F.monomial(2)
+            B[2]
+
         ``F.monomial`` is in fact (almost) a map::
 
             sage: F.monomial
