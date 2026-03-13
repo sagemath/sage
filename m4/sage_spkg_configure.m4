@@ -96,9 +96,13 @@ AC_ARG_WITH([system-]SPKG_NAME,
 AS_VAR_SET([sage_spkg_name], SPKG_NAME)
 
 dnl Default value for most packages
-dnl If --disable-system-packages was given, default to building from source
+dnl If --disable-system-packages was given, default to building from source,
+dnl but only if the package actually has source to build (checksums.ini or package-version.txt).
+dnl Packages without source (like iconv) can only come from the system.
 AS_VAR_SET_IF([SPKG_USE_SYSTEM], [], [
-    AS_IF([test "$enable_system_packages" = "no"],
+    AS_IF([test "$enable_system_packages" = "no" \
+           -a \( -f "${SAGE_ROOT}/build/pkgs/$1/checksums.ini" \
+                 -o -f "${SAGE_ROOT}/build/pkgs/$1/package-version.txt" \)],
         [AS_VAR_SET([SPKG_USE_SYSTEM], [no])],
         [AS_VAR_SET([SPKG_USE_SYSTEM], [yes])])])
 
