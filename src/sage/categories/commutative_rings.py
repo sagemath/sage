@@ -210,7 +210,7 @@ class CommutativeRings(CategoryWithAxiom):
                 else:
                     tester.assertTrue(test)
 
-        def over(self, base=None, gen=None, gens=None, name=None, names=None):
+        def over(self, base=None, gen=None, *, gens=None, name=None, names=None, check=True):
             r"""
             Return this ring, considered as an extension of ``base``.
 
@@ -230,6 +230,10 @@ class CommutativeRings(CategoryWithAxiom):
 
             - ``names`` -- list or a tuple of variable names or ``None``
               (default: ``None``)
+
+            - ``check`` -- forwarded to :class:`sage.rings.ring_extension.RingExtensionWithGen`
+              to check that the provided generator indeed generates the ring.
+              Might be ignored if :class:`sage.rings.ring_extension.RingExtension_generic` is selected
 
             EXAMPLES:
 
@@ -329,6 +333,17 @@ class CommutativeRings(CategoryWithAxiom):
                 [Field in b with defining polynomial x^2 - a over its base,
                  Field in a with defining polynomial x^2 - 2 over its base,
                  Rational Field]
+
+            TESTS:
+
+            Even when ``check=False``, the generator must be valid, the behavior is not guaranteed
+            otherwise. The behavior with ``check=False`` below may change any time::
+
+                sage: GF(5^2).over(GF(5), gen=1, name='t', check=True)
+                Traceback (most recent call last):
+                ...
+                ValueError: the given family is not a basis
+                sage: ignore = GF(5^2).over(GF(5), gen=1, name='t', check=False)
             """
             from sage.rings.ring_extension import RingExtension
             if name is not None:
@@ -339,7 +354,7 @@ class CommutativeRings(CategoryWithAxiom):
                 if gens is not None:
                     raise ValueError("keyword argument 'gen' cannot be combined with 'gens'")
                 gens = (gen,)
-            return RingExtension(self, base, gens, names)
+            return RingExtension(self, base, gens, names, check=check)
 
         def frobenius_endomorphism(self, n=1):
             """
