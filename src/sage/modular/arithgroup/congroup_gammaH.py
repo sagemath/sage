@@ -100,30 +100,6 @@ def GammaH_constructor(level, H):
         return _gammaH_cache[key]
 
 
-def is_GammaH(x):
-    """
-    Return ``True`` if x is a congruence subgroup of type GammaH.
-
-    EXAMPLES::
-
-        sage: from sage.modular.arithgroup.congroup_gammaH import is_GammaH
-        sage: is_GammaH(GammaH(13, [2]))
-        doctest:warning...
-        DeprecationWarning: The function is_GammaH is deprecated; use 'isinstance(..., GammaH_class)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        True
-        sage: is_GammaH(Gamma0(6))
-        True
-        sage: is_GammaH(Gamma1(6))
-        True
-        sage: is_GammaH(sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_GammaH is deprecated; use 'isinstance(..., GammaH_class)' instead.")
-    return isinstance(x, GammaH_class)
-
-
 def _normalize_H(H, level) -> list:
     """
     Normalize representatives for a given subgroup H of the units

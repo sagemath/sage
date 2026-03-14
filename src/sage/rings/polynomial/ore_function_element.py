@@ -409,7 +409,7 @@ class OreFunction(AlgebraElement):
         """
         return self._reverse_fraction()[0]
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` if this element is equal to zero.
 

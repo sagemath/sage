@@ -421,14 +421,14 @@ cdef class RiggedPartition(SageObject):
         """
         cdef Py_ssize_t max_pos = -1
         cdef Py_ssize_t i
-        self._hash = 0 # Reset the cached hash value
+        self._hash = 0  # Reset the cached hash value
         if max_width > 0:
             for i, vac_num in enumerate(self.vacancy_numbers):
                 if self._list[i] <= max_width and vac_num == self.rigging[i]:
                     max_pos = i
                     break
 
-        if max_pos == -1: # No singular values, then add a new row
+        if max_pos == -1:  # No singular values, then add a new row
             self._list.append(1)
             self.vacancy_numbers.append(None)
             # Go through our partition until we find a length of greater than 1
@@ -439,7 +439,7 @@ cdef class RiggedPartition(SageObject):
             return 0
 
         self._list[max_pos] += 1
-        self.rigging[max_pos] = None # State that we've changed this row
+        self.rigging[max_pos] = None  # State that we've changed this row
         return self._list[max_pos] - 1
 
     cpdef remove_cell(self, row, int num_cells=1):
@@ -472,7 +472,7 @@ cdef class RiggedPartition(SageObject):
             -1[ ]-1
             <BLANKLINE>
         """
-        self._hash = 0 # Reset the cached hash value
+        self._hash = 0  # Reset the cached hash value
         if row is None:
             return None
 
@@ -484,7 +484,7 @@ cdef class RiggedPartition(SageObject):
             return None
 
         # Find the beginning of the next block we want
-        cdef Py_ssize_t block_len = self._list[r] - num_cells # The length of the desired block
+        cdef Py_ssize_t block_len = self._list[r] - num_cells  # The length of the desired block
         if row + 1 == len(self._list):
             # If we are at the end, just do a simple remove
             self._list[r] = block_len

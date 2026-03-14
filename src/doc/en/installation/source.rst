@@ -112,6 +112,8 @@ Using Conda
 - You can then start Sage from the command line with ``./sage``
   or run the tests with ``./sage -t``.
 
+.. _system_package_manager:
+
 Using system package manager
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -127,7 +129,7 @@ Depending on your distribution, install the following packages:
 
 .. tab:: Debian/Ubuntu
 
-    Not yet supported.
+    Not yet (fully) supported.
 
 .. tab:: Fedora
 
@@ -151,6 +153,9 @@ Depending on your distribution, install the following packages:
    .. literalinclude:: void.txt
       :language: console
 
+.. tab:: Homebrew (macOS)
+
+    Not yet (fully) supported.
 
 In the case that you want to install some dependencies manually, set the
 correct environment variables to point to the installed libraries:
@@ -168,17 +173,7 @@ To compile and install Sage in editable install, then just use:
 
   .. code-block:: console
 
-    $ uv venv
-    $ uv pip install \
-        meson-python \
-        "cypari2 >=2.2.1" \
-        "cython >=3.0, != 3.0.3, != 3.1.0" \
-        "gmpy2 >=2.1.5" \
-        memory_allocator \
-        "numpy >=1.25" \
-        "ninja >=1.8.2" \
-        jinja2 \
-        setuptools
+    $ uv sync --frozen --inexact --no-install-project
     $ uv sync --frozen --inexact --no-build-isolation
 
 You can then start Sage from the command line with ``./sage``
@@ -219,15 +214,6 @@ Remarks
 
   ``--verbose`` can be passed to ``pip install``, then the meson commands
   internally used by pip will be printed out.
-
-.. note::
-
-  To build the documentation, use:
-
-  .. code-block:: console
-
-    $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
-    $ sage --docbuild all html
 
 .. note::
 

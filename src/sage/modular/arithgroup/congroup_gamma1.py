@@ -24,34 +24,6 @@ from sage.modular.dirichlet import DirichletGroup
 from sage.rings.integer_ring import ZZ
 
 
-def is_Gamma1(x):
-    """
-    Return ``True`` if x is a congruence subgroup of type Gamma1.
-
-    EXAMPLES::
-
-        sage: from sage.modular.arithgroup.congroup_gamma1 import is_Gamma1
-        sage: is_Gamma1(SL2Z)
-        doctest:warning...
-        DeprecationWarning: The function is_Gamma1 is deprecated; use 'isinstance(..., Gamma1_class)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        False
-        sage: is_Gamma1(Gamma1(13))
-        True
-        sage: is_Gamma1(Gamma0(6))
-        False
-        sage: is_Gamma1(GammaH(12, [])) # trick question!
-        True
-        sage: is_Gamma1(GammaH(12, [5]))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_Gamma1 is deprecated; use 'isinstance(..., Gamma1_class)' instead.")
-    # from congroup_sl2z import is_SL2Z
-    # return (isinstance(x, Gamma1_class) or is_SL2Z(x))
-    return isinstance(x, Gamma1_class)
-
-
 _gamma1_cache = {}
 
 
@@ -105,8 +77,7 @@ class Gamma1_class(GammaH_class):
         sage: Gamma1(23).dimension_cusp_forms(1)
         1
     """
-
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         The congruence subgroup `\Gamma_1(N)`.
 
@@ -119,7 +90,7 @@ class Gamma1_class(GammaH_class):
         """
         GammaH_class.__init__(self, level, [])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

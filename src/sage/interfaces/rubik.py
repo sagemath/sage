@@ -32,16 +32,15 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
-import pexpect
-import time
 import shlex
+import time
 
-from . import quit
+import pexpect
 
+import sage.features.rubiks
 from sage.cpython.string import bytes_to_str
 from sage.groups.perm_gps.cubegroup import index2singmaster
-import sage.features.rubiks
-
+from sage.interfaces import quit
 
 # Can't seem to find consistency in letter ordering
 # between us and them... These are copied from the source.

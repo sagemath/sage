@@ -40,6 +40,6 @@ log.warn('cython_modules = {0}'.format(cython_modules))
 setup(
     cmdclass = cmdclass,
     packages = python_packages,
-    py_modules  = python_modules,
+    py_modules = python_modules,
     ext_modules = cython_modules,
 )

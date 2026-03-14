@@ -10678,7 +10678,7 @@ cdef class Matrix(Matrix1):
             sage: decomp = bistochastic_as_sum_of_permutations(M)                       # needs sage.graphs
             Traceback (most recent call last):
             ...
-            ValueError: The matrix is not bistochastic
+            ValueError: the matrix is not bistochastic
         """
 
         from sage.combinat.permutation import bistochastic_as_sum_of_permutations

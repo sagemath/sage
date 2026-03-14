@@ -10169,6 +10169,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = Graph([('A', 1)])
             sage: G.feedback_vertex_set()
             []
+
+        Test an immutable graph (:issue:`41487`)::
+
+            sage: G = graphs.CycleGraph(3, immutable=True)
+            sage: G.feedback_vertex_set(value_only=True)
+            1
         """
         if not constraint_generation and not self.is_directed():
             raise ValueError("the only implementation available for "
@@ -10205,7 +10211,7 @@ class GenericGraph(GenericGraph_pyx):
 
                 # Building the graph without the vertices removed by the LP
                 b_val = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
-                h = self.subgraph([v for v in self if not b_val[v]])
+                h = self.subgraph([v for v in self if not b_val[v]], immutable=False)
 
                 # Is the graph acyclic ?
                 if self.is_directed():
@@ -16981,10 +16987,10 @@ class GenericGraph(GenericGraph_pyx):
 
         The McGee graph has girth 7 and therefore its odd girth is 7 as well::
 
-            sage: G = graphs.McGeeGraph()                                               # needs networkx
-            sage: G.girth()                                                             # needs networkx
+            sage: G = graphs.McGeeGraph()
+            sage: G.girth()
             7
-            sage: G.odd_girth()                                                         # needs networkx
+            sage: G.odd_girth()
             7
 
         Any complete (directed) graph on more than 2 vertices contains
@@ -24588,8 +24594,8 @@ class GenericGraph(GenericGraph_pyx):
         ::
 
             sage: ss = (graphs.WheelGraph(5)).line_graph(labels=False)
-            sage: ss.coarsest_equitable_refinement(prt)
-            [[(0, 1)], [(1, 2), (1, 4)], [(0, 3)], [(0, 4), (0, 2)], [(2, 3), (3, 4)]]
+            sage: [sorted(cell) for cell in ss.coarsest_equitable_refinement(prt)]
+            [[(0, 1)], [(1, 2), (1, 4)], [(0, 3)], [(0, 2), (0, 4)], [(2, 3), (3, 4)]]
 
         ALGORITHM: Brendan D. McKay's Master's Thesis, University of
         Melbourne, 1976.

@@ -93,38 +93,14 @@ from sage.rings.cc import CC
 TUNE_CHARPOLY_NF = 25
 
 
-def is_NumberFieldElement(x):
-    """
-    Return ``True`` if `x` is of type :class:`NumberFieldElement`, i.e., an element of
-    a number field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field_element import is_NumberFieldElement
-        sage: is_NumberFieldElement(2)
-        doctest:warning...
-        DeprecationWarning: is_NumberFieldElement is deprecated;
-        use isinstance(..., sage.rings.number_field.number_field_element_base.NumberFieldElement_base) instead
-        See https://github.com/sagemath/sage/issues/34931 for details.
-        False
-        sage: x = polygen(ZZ, 'x')
-        sage: k.<a> = NumberField(x^7 + 17*x + 1)
-        sage: is_NumberFieldElement(a+1)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34931,
-                'is_NumberFieldElement is deprecated; '
-                'use isinstance(..., sage.rings.number_field.number_field_element_base.NumberFieldElement_base) instead')
-    return isinstance(x, NumberFieldElement)
-
-
 def _inverse_mod_generic(elt, I):
     r"""
-    Return an inverse of ``elt`` modulo the given ideal. This is a separate
-    function called from each of the ``OrderElement_xxx`` classes, since
-    otherwise we'd have to have the same code three times over (there
-    is no ``OrderElement_generic`` class - no multiple inheritance). See
+    Return an inverse of ``elt`` modulo the given ideal ``I``.
+
+    This is a separate function called from each of the
+    ``OrderElement_xxx`` classes, since otherwise we'd have to have
+    the same code three times over (there is no
+    ``OrderElement_generic`` class - no multiple inheritance). See
     :issue:`4190`.
 
     EXAMPLES::

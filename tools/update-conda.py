@@ -323,9 +323,10 @@ def get_dev_dependencies(pyproject: dict) -> list[str]:
 def get_optional_dependencies(pyproject: dict) -> list[str]:
     optional_dependencies = []
     optional_groups = pyproject.get("project", {}).get("optional-dependencies", {})
-    for _, dependencies in optional_groups.items():
+    for dependencies in optional_groups.values():
         optional_dependencies.extend(dependencies)
     # print(f"Optional dependencies: {optional_dependencies}")  # Uncommented for debugging
     return optional_dependencies
+
 
 update_conda(options.sourcedir, options.systems)

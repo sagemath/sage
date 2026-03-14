@@ -168,7 +168,7 @@ def from_graph6(data, immutable=False):
 
 
 def from_sparse6(data, immutable=False):
-    """
+    r"""
     Return a list of Sage Graphs, given a list of sparse6 data.
 
     INPUT:
