@@ -918,6 +918,21 @@ class PolynomialRing_generic(Ring):
         base_ring = self.base_ring()._gap_init_()
         return 'PolynomialRing(%s, ["%s"])' % (base_ring, self.variable_name())
 
+    def _fricas_init_(self):
+        """
+        Return a FriCAS string representation of this polynomial ring.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: R._fricas_init_()                                                 # optional - fricas
+            'UP(x,Integer)'
+            sage: fricas(matrix(R, 1, [x^2 + 1]))                                   # optional - fricas
+            + 2    +
+            +x  + 1+
+        """
+        return 'UP(%s,%s)' % (self.variable_name(), self.base_ring()._fricas_init_())
+
     def _sage_input_(self, sib, coerced):
         r"""
         Produce an expression which will reproduce this value when

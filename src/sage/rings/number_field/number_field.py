@@ -12123,6 +12123,24 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         self._zero_element = self._element_class(self, (QQ(0), QQ(0)))
         self._one_element = self._element_class(self, (QQ(1), QQ(0)))
 
+    def _fricas_init_(self):
+        """
+        Return a FriCAS string representation of this quadratic field.
+
+        FriCAS exposes generic algebraic numbers as ``AN``. This does not
+        preserve the original quadratic field on the Sage round-trip, but it
+        allows coercion of quadratic-field elements and matrices to FriCAS.
+
+        EXAMPLES::
+
+            sage: K.<a> = QuadraticField(2)
+            sage: K._fricas_init_()                                                   # optional - fricas
+            'AN'
+            sage: fricas(K)                                                           # optional - fricas
+            AlgebraicNumber
+        """
+        return 'AN'
+
     def _coerce_map_from_(self, K):
         """
         EXAMPLES::

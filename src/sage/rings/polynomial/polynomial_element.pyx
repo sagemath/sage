@@ -7062,6 +7062,21 @@ cdef class Polynomial(CommutativePolynomial):
     def _pari_init_(self):
         return repr(self.__pari__())
 
+    def _fricas_init_(self):
+        """
+        Return a FriCAS string representation of this polynomial.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: f = x^2 + 1
+            sage: f._fricas_init_()                                                 # optional - fricas
+            '(x^2 + 1)::UP(x,Integer)'
+            sage: fricas(f).sage().parent()                                         # optional - fricas
+            Univariate Polynomial Ring in x over Integer Ring
+        """
+        return '(%s)::%s' % (repr(self), self._parent._fricas_init_())
+
     def _magma_init_(self, magma):
         """
         Return a string that evaluates in Magma to this polynomial.

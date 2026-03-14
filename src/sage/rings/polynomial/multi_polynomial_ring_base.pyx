@@ -820,6 +820,22 @@ cdef class MPolynomialRing_base(CommutativeRing):
         return 'PolynomialRing(%s,[%s])' % (self.base_ring()._gap_init_(),
                                             ','.join(L))
 
+    def _fricas_init_(self):
+        """
+        Return a FriCAS string representation of this multivariate polynomial ring.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = ZZ[]
+            sage: R._fricas_init_()                                                 # optional - fricas
+            'DMP([x,y],Integer)'
+            sage: fricas(matrix(R, 1, [x + y + 1])).sage().parent()                 # optional - fricas
+            Full MatrixSpace of 1 by 1 dense matrices over
+            Multivariate Polynomial Ring in x, y over Integer Ring
+        """
+        vars = ','.join(self.variable_names())
+        return 'DMP([%s],%s)' % (vars, self.base_ring()._fricas_init_())
+
     cpdef bint is_exact(self) except -2:
         """
         Test whether this multivariate polynomial ring is defined over an exact

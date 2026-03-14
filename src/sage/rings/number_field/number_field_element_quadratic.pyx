@@ -285,8 +285,32 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             return str(x0) + "+" + "%i*" + str(x1)
         raise NotImplementedError("conversion implemented only for elements of quadratic fields with discriminant -1 and standard embedding")
 
-    # by coincidence, maxima and fricas both use %i for the imaginary unit I
-    _fricas_init_ = _maxima_init_
+    def _fricas_init_(self):
+        """
+        Return a FriCAS string representation of this quadratic field element.
+
+        This uses FriCAS's generic algebraic number domain, so the Sage
+        round-trip lands in ``QQbar`` rather than the original quadratic field.
+
+        EXAMPLES::
+
+            sage: K.<sqrt2> = QuadraticField(2)
+            sage: (1 + sqrt2)._fricas_init_()                                         # optional - fricas
+            '(((((2)::EXPR INT))^(((1/2)::EXPR INT)))+(((1/1)::EXPR INT)))::AN'
+            sage: fricas(1 + sqrt2).sage().parent()                                   # optional - fricas
+            Algebraic Field
+        """
+        import re
+        from sage.rings.qqbar import QQbar
+        a = self.parent().gen()
+        if a**2 == -1 and self.standard_embedding:
+            x0, x1 = self
+            return str(x0) + "+" + "%i*" + str(x1)
+        expr = str(QQbar(self).radical_expression())
+        expr = re.sub(r'I\*sqrt\(([^()]*)\)', r'sqrt(-\1)', expr)
+        expr = re.sub(r'sqrt\(([^()]*)\)\*I', r'sqrt(-\1)', expr)
+        expr = expr.replace('I', 'sqrt(-1)')
+        return '(%s)::AN' % expr
 
     def _sympy_(self):
         """

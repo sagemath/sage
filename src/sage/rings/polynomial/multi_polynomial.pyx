@@ -1133,6 +1133,21 @@ cdef class MPolynomial(CommutativePolynomial):
 
         return '%s!(%s)' % (R.name(), s)
 
+    def _fricas_init_(self):
+        r"""
+        Return a FriCAS string representation of this polynomial.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = ZZ[]
+            sage: f = x + y + 1
+            sage: f._fricas_init_()                                                 # optional - fricas
+            '(x + y + 1)::DMP([x,y],Integer)'
+            sage: fricas(f).sage().parent()                                         # optional - fricas
+            Multivariate Polynomial Ring in x, y over Integer Ring
+        """
+        return '(%s)::%s' % (repr(self), self.parent()._fricas_init_())
+
     def _giac_init_(self):
         r"""
         Return a Giac string representation of this polynomial.

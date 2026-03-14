@@ -221,6 +221,7 @@ FRICAS_LINE_LENGTH = 80       # length of a line, should match the line length i
 # the following messages have, unfortunately, no markup.
 FRICAS_WHAT_OPERATIONS_STRING = r"Operations whose names satisfy the above pattern\(s\):"
 FRICAS_ERROR_IN_LIBRARY_CODE = ">> Error detected within library code:"
+FRICAS_SYSTEM_ERROR = ">> System error:"
 
 # only the last command should be necessary to make the interface
 # work, the other are optimizations.  Beware that lisp distinguishes
@@ -540,12 +541,9 @@ http://fricas.sourceforge.net.
             Traceback (most recent call last):
             ...
             RuntimeError: An error occurred when FriCAS evaluated '[i fo83r i in 0..17]':
-              Line   1: x:=[i fo83r i in 0..17];
-                       ...A..........B
-              Error  A: Missing mate.
-              Error  B: syntax error at top level
-              Error  B: Possibly missing a ]
-               3 error(s) parsing
+            <BLANKLINE>
+               >> System error:
+               invalid number of arguments: 2
 
             sage: fricas.set("x", "something stupid")       # indirect doctest
             Traceback (most recent call last):
@@ -575,7 +573,7 @@ http://fricas.sourceforge.net.
             raise RuntimeError("An error occurred when FriCAS evaluated '%s':\n%s" % (line, output))
 
         # or even an error
-        if FRICAS_ERROR_IN_LIBRARY_CODE in output:
+        if FRICAS_ERROR_IN_LIBRARY_CODE in output or FRICAS_SYSTEM_ERROR in output:
             raise RuntimeError("An error occurred when FriCAS evaluated '%s':\n%s" % (line, output))
 
     @staticmethod
@@ -1039,6 +1037,67 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         l = P('#(%s)' % self._name)
         return l.sage()
 
+    @staticmethod
+    def _distributed_mpoly_vars(domain) -> tuple[str, ...]:
+        """
+        Extract variable names from a FriCAS distributed multivariate polynomial domain.
+
+        EXAMPLES::
+
+            sage: m = fricas("DMP([x,y],Integer)::INFORM")                            # optional - fricas
+            sage: fricas(0)._distributed_mpoly_vars(m)                                # optional - fricas
+            ('x', 'y')
+        """
+        vars_expr = str(domain[1]).strip()
+        if vars_expr in {"(construct)", "()"}:
+            return tuple()
+        prefix = "(construct "
+        if vars_expr.startswith(prefix) and vars_expr.endswith(")"):
+            return tuple(vars_expr[len(prefix):-1].split())
+        if vars_expr.startswith("(") and vars_expr.endswith(")"):
+            return tuple(vars_expr[1:-1].split())
+        raise NotImplementedError("unable to extract distributed multivariate polynomial variables from %s" % domain[1])
+
+    def _sage_inputform_locals(self, domain):
+        """
+        Return locals for fast ``InputForm`` parsing of container domains.
+
+        This is used to bulk-convert lists, vectors, and matrices instead of
+        fetching their entries one by one from FriCAS.
+        """
+        from sage.matrix.constructor import matrix
+        from sage.modules.free_module_element import vector
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+        locals = {'matrix': matrix, 'vector': vector}
+        head = str(domain.car())
+
+        if head in {"List", "Vector", "DirectProduct", "Matrix", "Fraction", "Complex"}:
+            locals.update(self._sage_inputform_locals(domain[1]))
+            return locals
+
+        if head == "UnivariatePolynomial":
+            R = PolynomialRing(self._get_sage_type(domain[2]), str(domain[1]))
+            locals.update(R.gens_dict_recursive())
+            return locals
+
+        if head == "DistributedMultivariatePolynomial":
+            R = PolynomialRing(self._get_sage_type(domain[2]), self._distributed_mpoly_vars(domain))
+            locals.update(R.gens_dict_recursive())
+            return locals
+
+        return locals
+
+    def _sage_container_from_InputForm(self, domain):
+        """
+        Convert a FriCAS list, vector, or matrix using one bulk ``InputForm`` parse.
+        """
+        from sage.misc.sage_eval import sage_eval
+
+        P = self._check_valid()
+        return sage_eval(P.get_unparsed_InputForm(self._name),
+                         locals=self._sage_inputform_locals(domain))
+
     def __iter__(self):
         """
         Return an iterator over ``self``.
@@ -1271,6 +1330,10 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         if head == "UnivariatePolynomial":
             var = str(domain[1])
             return PolynomialRing(self._get_sage_type(domain[2]), var)
+
+        if head == "DistributedMultivariatePolynomial":
+            vars = self._distributed_mpoly_vars(domain)
+            return PolynomialRing(self._get_sage_type(domain[2]), vars)
 
         raise NotImplementedError("the translation of FriCAS type %s to sage is not yet implemented" % domain)
 
@@ -1833,7 +1896,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: fricas(x+3).sage()
             x + 3
             sage: fricas(x+3).domainOf()
-            Polynomial(Integer...)
+            UnivariatePolynomial(x,Fraction(Integer))
 
             sage: fricas(matrix([[2,3],[4,x+5]])).diagonal().sage()
             (2, x + 5)
@@ -1870,10 +1933,6 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
             sage: fricas("integrate(sin((x^2+1)/x),x)").sage()
             integral(sin((x^2 + 1)/x), x)
-
-        .. TODO::
-
-            - Converting matrices and lists takes much too long.
 
         Matrices::
 
@@ -1940,12 +1999,17 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         from sage.structure.factorization import Factorization
         from sage.misc.sage_eval import sage_eval
 
-        # TODO: perhaps we should translate the type first?
-        # TODO: perhaps we should get the InputForm as SExpression?
-
         # remember: fricas.new gives a FriCASElement
 
-        # the coercion to Any gets rid of the Union domain
+        # Determine the FriCAS domain first. This lets us route container and
+        # polynomial domains through fast paths before falling back to
+        # InputForm-based conversion for general expressions.
+        #
+        # We use two InputForm flavours below:
+        # - unparsed InputForm for direct ring parsing / sage_eval
+        # - sageprint(InputForm) for symbolic-expression reconstruction
+        #
+        # The coercion to Any gets rid of the Union domain.
         P = self._check_valid()
         domain = P.new("dom((%s)::Any)" % self._name)  # domain is now a fricas SExpression
 
@@ -1962,17 +2026,28 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             return {field: self.elt(field).sage() for field in fields}
 
         if head == "List":
+            try:
+                return self._sage_container_from_InputForm(domain)
+            except (NameError, RuntimeError, TypeError, ValueError, SyntaxError, NotImplementedError):
+                pass
             n = P.get_integer('#(%s)' % self._name)
             return [self.elt(k).sage() for k in range(1, n + 1)]
 
         if head == "Vector" or head == "DirectProduct":
+            try:
+                return self._sage_container_from_InputForm(domain)
+            except (NameError, RuntimeError, TypeError, ValueError, SyntaxError, NotImplementedError):
+                pass
             n = P.get_integer('#(%s)' % self._name)
             return vector([self.elt(k).sage() for k in range(1, n + 1)])
 
         if head == "Matrix":
-            base_ring = self._get_sage_type(domain[1])
-            rows = self.listOfLists().sage()
-            return matrix(base_ring, rows)
+            try:
+                return self._sage_container_from_InputForm(domain)
+            except (NameError, RuntimeError, TypeError, ValueError, SyntaxError, NotImplementedError):
+                base_ring = self._get_sage_type(domain[1])
+                rows = self.listOfLists().sage()
+                return matrix(base_ring, rows)
 
         if head == "Fraction":
             return self.numer().sage() / self.denom().sage()
@@ -2035,7 +2110,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         if head == 'DistributedMultivariatePolynomial':
             base_ring = self._get_sage_type(domain[2])
-            vars = domain[1].car()
+            vars = self._distributed_mpoly_vars(domain)
             R = PolynomialRing(base_ring, vars)
             return R(unparsed_InputForm())
 
