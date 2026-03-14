@@ -816,8 +816,8 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             Finite meet-semilattice containing 13 elements
         """
         from sage.combinat.posets.lattices import MeetSemilattice
-        els = self.covectors()
-        def rels(X, Y):
+        els = copy.deepcopy(self.covectors())
+        def rels(Y, X):
             return Y.support().issubset(X.support()) and Y.is_conformal_with(X)
         return MeetSemilattice((els, rels), cover_relations=False, facade=facade)
 
@@ -843,20 +843,17 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             sage: M.face_lattice()
             Finite lattice containing 14 elements
         """
-        from sage.combinat.posets.lattices import LatticePoset
-        els = copy.deepcopy(self.covectors())
-        rels = [
-            (Y, X)
-            for X in els
-            for Y in els
-            if Y.is_conformal_with(X) and Y.support().issubset(X.support())
-        ]
+        # from sage.combinat.posets.lattices import LatticePoset
+        # els = copy.deepcopy(self.covectors())
+        # def rels(X, Y):
+        #     return Y.support().issubset(X.support()) and Y.is_conformal_with(X)
 
-        # Add top element
-        for i in els:
-            rels.append((i, 1))
-        els.append(1)
-        return LatticePoset((els, rels), cover_relations=False, facade=facade)
+        # # Add top element
+        # for i in els:
+        #     rels.append((i, 1))
+        # els.append(1)
+        # return LatticePoset((els, rels), cover_relations=False, facade=facade)
+        return self.face_poset(facade).with_bounds(labels=(None, 1))
 
     def topes(self):
         r"""
@@ -872,7 +869,19 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             sage: len(M.topes())
             6
         """
-        return self.face_poset(facade=True).maximal_elements()
+        els = copy.deepcopy(self.covectors())
+        max_support = []
+        sup_num = 0
+        for i in els:
+            li = len(i.support())
+            if li == sup_num:
+                max_support.append(i)
+            elif li > sup_num:
+                sup_num = li
+                max_support = [i]
+        # return self.face_poset(facade=True).maximal_elements()
+        return max_support
+
 
     def tope_poset(self, base_tope, facade=False):
         r"""
