@@ -843,16 +843,6 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             sage: M.face_lattice()
             Finite lattice containing 14 elements
         """
-        # from sage.combinat.posets.lattices import LatticePoset
-        # els = copy.deepcopy(self.covectors())
-        # def rels(X, Y):
-        #     return Y.support().issubset(X.support()) and Y.is_conformal_with(X)
-
-        # # Add top element
-        # for i in els:
-        #     rels.append((i, 1))
-        # els.append(1)
-        # return LatticePoset((els, rels), cover_relations=False, facade=facade)
         return self.face_poset(facade).with_bounds(labels=(None, 1))
 
     def topes(self):
@@ -879,7 +869,6 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             elif li > sup_num:
                 sup_num = li
                 max_support = [i]
-        # return self.face_poset(facade=True).maximal_elements()
         return max_support
 
 
