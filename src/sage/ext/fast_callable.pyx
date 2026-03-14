@@ -337,6 +337,29 @@ def fast_callable(x, domain=None, vars=None,
     specified (unless ``x`` is a symbolic expression with only one variable,
     and ``expect_one_var`` is ``True``, in which case we will use that variable).
 
+    INPUT:
+
+    - ``x`` -- an expression to compile; this may be a symbolic expression,
+      an element of a polynomial ring, or an :class:`Expression` built from
+      an :class:`ExpressionTreeBuilder`
+
+    - ``domain`` -- a Sage parent or Python type or ``None`` (default:
+      ``None``); if non-``None``, all arithmetic is done in that domain and
+      a domain-specific interpreter is used when available (e.g., for
+      ``RDF``, ``CDF``, or :class:`float`)
+
+    - ``vars`` -- a list of variable names or symbolic variables (default:
+      ``None``); the order determines the argument order of the resulting
+      callable; required for symbolic expressions unless ``expect_one_var``
+      is ``True``, and inferred from the polynomial ring for polynomials
+
+    - ``expect_one_var`` -- boolean (default: ``False``); if ``True``, allow
+      a symbolic expression with a single variable without requiring ``vars``
+      to be specified explicitly
+
+    OUTPUT: a :class:`Wrapper` that can be called with numeric arguments and
+    returns the value of the compiled expression
+
     EXAMPLES::
 
         sage: # needs sage.symbolic
