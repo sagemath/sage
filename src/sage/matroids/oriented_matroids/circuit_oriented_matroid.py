@@ -221,10 +221,7 @@ class CircuitOrientedMatroid(OrientedMatroid):
                                 'msg': "only same/opposites can have same support",
                                 'elt': (X, Y)
                             }
-                            return (
-                                False,
-                                error_info
-                            )
+                            return (False, error_info)
                         return False
                 # Axiom 4: Weak elimination
                 if X != -Y:

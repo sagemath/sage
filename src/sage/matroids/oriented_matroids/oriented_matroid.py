@@ -188,33 +188,6 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         Depending on the data provided, this method will return an oriented
         matroid of the appropriate type.
 
-        INPUT:
-
-        - ``data`` -- (default: ``None``) the data that defines the oriented
-          matroid; it can be one of the following:
-
-          + Objects
-
-            + Hyperplane arrangement
-            + Point configuration
-            + Digraph
-            + Matrix (not yet implemented)
-
-          + A list or tuple of
-
-            + :class:`SignedSubsetElement`
-            + A tuple with positive, negative, and zero sets.
-
-        - ``groundset`` -- (default: ``None``) the groundset of the oriented
-          matroid
-
-        - ``key`` -- (default: ``None``) the representation of the oriented
-          matroid; can be one of the following:
-
-          + ``'covector'`` - uses covector axioms with covectors
-          + ``'vector'`` - uses vector axioms with signed subsets
-          + ``'circuit'`` - uses circuit axioms with signed subsets
-          + ``None`` - try and guess key
 
         EXAMPLES::
 
@@ -425,7 +398,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
 
     def __hash__(self) -> int:
         """
-        Return hashed string of oriented matroid.
+        Return the hash of ``self``.
 
         EXAMPLES::
 
@@ -445,7 +418,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``x`` - to see if :class:`SignedSubsetElement` is in ``self``
+        - ``x`` -- to see if :class:`SignedSubsetElement` is in ``self``
 
         EXAMPLES::
 
@@ -476,7 +449,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``x`` - to call :class:`SignedSubsetElement` from ``self``
+        - ``x`` -- to call :class:`SignedSubsetElement` from ``self``
 
         EXAMPLES::
 
@@ -497,9 +470,9 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         try:
             if x in self.elements():
                 return x
-            return None
         except ValueError:
-            return None
+            pass
+        return None
 
     @abstract_method
     def is_valid(self, certificate=False) -> bool | tuple[bool, dict]:
@@ -540,7 +513,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
 
     def elements(self):
         """
-        Return all elements.
+        Return all elements of ``self``.
 
         The elements of an oriented matroid are the "defining" elements of
         the oriented matroid. For example, covectors are the elements of
@@ -709,8 +682,8 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``new_type`` -- (default: ``None``) new oriented matroid type. Should be
-          same as ``key``.
+        - ``new_type`` -- (default: ``None``) new oriented matroid type; should be
+          same as ``key``
 
         EXAMPLES::
 
@@ -741,16 +714,16 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
         if new_type is None:
             raise TypeError("must be given a type to convert to")
-        elif new_type in OrientedMatroid.keys:
-            if hasattr(self, new_type + 's'):
-                els = getattr(self, new_type + 's')()
-            else:
-                raise NotImplementedError("no %ss() method found in oriented matroid" % (new_type,))
-            return OrientedMatroid(els,
-                                   key=new_type,
-                                   groundset=self._groundset)
-        else:
+        if new_type not in OrientedMatroid.keys:
             raise NotImplementedError("type %s not implemented" % (new_type,))
+
+        if hasattr(self, new_type + 's'):
+            els = getattr(self, new_type + 's')()
+        else:
+            raise NotImplementedError("no %ss() method found in oriented matroid" % (new_type,))
+        return OrientedMatroid(els,
+                               key=new_type,
+                               groundset=self._groundset)
 
     def dual(self):
         """
@@ -767,7 +740,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         """
         raise NotImplementedError("dual of oriented matroid not implemented yet")
 
-    @cached_method
+    @abstract_method
     def matroid(self):
         r"""
         Return the underlying matroid.
@@ -823,8 +796,8 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         r"""
         Return the (big) face poset.
 
-        The *(big) face poset* is the poset on covectors such that `X \leq Y```self`` `
-        the if and only if `S(X,Y) = \emptyset` and
+        The *(big) face poset* is the poset on covectors such that `X \leq Y`
+        if and only if `S(X,Y) = \emptyset` and
         `\underline{Y} \subseteq \underline{X}`.
 
         INPUT:
@@ -844,12 +817,8 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         """
         from sage.combinat.posets.lattices import MeetSemilattice
         els = self.covectors()
-        rels = [
-            (Y, X)
-            for X in els
-            for Y in els
-            if Y.is_conformal_with(X) and Y.support().issubset(X.support())
-        ]
+        def rels(X, Y):
+            return Y.support().issubset(X.support()) and Y.is_conformal_with(X)
         return MeetSemilattice((els, rels), cover_relations=False, facade=facade)
 
     def face_lattice(self, facade=False):
@@ -932,12 +901,8 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         """
         from sage.combinat.posets.posets import Poset
         els = self.topes()
-        rels = [
-            (X, Y)
-            for X in els
-            for Y in els
-            if base_tope.separation_set(X).issubset(base_tope.separation_set(Y))
-        ]
+        def rels(X, Y):
+            return base_tope.separation_set(X).issubset(base_tope.separation_set(Y))
 
         return Poset((els, rels), cover_relations=False, facade=facade)
 
@@ -1018,7 +983,6 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         else:
             change_set = set(change_set)
 
-        from sage.matroids.oriented_matroids.oriented_matroid import deep_tupler
         groundset = set(self._groundset).difference(change_set)
         groundset = deep_tupler(groundset)
         data = []
@@ -1074,7 +1038,6 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         else:
             change_set = set(change_set)
 
-        from sage.matroids.oriented_matroids.oriented_matroid import deep_tupler
         groundset = set(self._groundset).difference(change_set)
         groundset = deep_tupler(groundset)
         data = []
@@ -1146,10 +1109,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         gs = set(self._groundset).difference(set(self.loops()))
         if e not in gs or f not in gs:
             raise ValueError("elements must be in groundset and must not be loops")
-        for i in self.elements():
-            if i(e) == 0 and i(f) != 0:
-                return False
-        return True
+        return all(i(e) != 0 or i(f) == 0 for i in self.elements())
 
     def is_simple(self) -> bool:
         r"""
@@ -1174,10 +1134,8 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         from sage.combinat.subset import Subsets
         if len(self.loops()) > 0:
             return False
-        for i in Subsets(self._groundset, 2):
-            if self.are_parallel(i[0], i[1]):
-                return False
-        return True
+        from itertools import combinations
+        return all(not self.are_parallel(i[0], i[1]) for i in combinations(self._groundset, 2))
 
     def is_dual_with(self, other) -> bool:
         r"""
@@ -1204,11 +1162,8 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         """
         if self._groundset != other.groundset():
             return False
-        for u in self.circuits():
-            for v in other.circuits():
-                if not u.is_orthogonal_with(v):
-                    return False
-        return True
+        return all(u.is_orthogonal_with(v) for u in self.circuits()
+                   for v in other.circuits())
 
 
 def deep_tupler(obj):

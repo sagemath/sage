@@ -67,8 +67,8 @@ class VectorOrientedMatroid(OrientedMatroid):
 
     .. SEEALSO::
 
-        - :class:`~sage.oriented_matroids.oriented_matroid.OrientedMatroid`
-        - :class:`~sage.oriented_matroids.signed_subset_element.SignedSubsetElement`
+        - :class:`~sage.matroids.oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~sage.matroids.oriented_matroids.signed_subset_element.SignedSubsetElement`
     """
     def __init__(self, data, groundset=None):
         """
@@ -226,9 +226,9 @@ class VectorOrientedMatroid(OrientedMatroid):
                     for Z in vectors:
                         if found:
                             break
-                        if Z.positives().issubset(p) \
-                                and Z.negatives().issubset(n) \
-                                and ze.issubset(Z.support()):
+                        if (Z.positives().issubset(p)
+                            and Z.negatives().issubset(n)
+                            and ze.issubset(Z.support())):
                             found = True
                     if not found:
                         if certificate:

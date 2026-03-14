@@ -32,7 +32,7 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
 
     INPUT:
 
-    - ``data`` -- a :class:`HyperplaneArrangementElement` element.
+    - ``data`` -- :class:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement`
     - ``groundset`` -- (default: ``None``) the groundset for the data; if not
       provided, we grab the data from the hyperplane arrangement
 
@@ -55,20 +55,13 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
 
     .. SEEALSO::
 
-        - :class:`~sage.oriented_matroids.oriented_matroid.OrientedMatroid`
-        - :class:`~sage.oriented_matroids.covector_oriented_matroid.CovectorOrientedMatroid`
-        - :class:`sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement`
+        - :class:`~sage.matroids.oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~sage.matroids.oriented_matroids.covector_oriented_matroid.CovectorOrientedMatroid`
+        - :class:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement`
     """
     def __init__(self, data, groundset=None):
         """
         Return a ``RealHyperplaneArrangementOrientedMatroid`` object.
-
-        INPUT:
-
-        - ``data`` -- a :class:`HyperplaneArrangementElement` element.
-        - ``groundset`` -- (default: ``None``) the groundset for the data; if not
-          provided, we grab the data from the hyperplane arrangement
-
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid

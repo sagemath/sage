@@ -81,11 +81,11 @@ class SignedSubsetElement(SageObject):
 
     .. SEEALSO::
 
-        - :class:`~sage.oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~sage.matroids.oriented_matroids.oriented_matroid.OrientedMatroid`
     """
     def __init__(self, parent=None, data=None, groundset=None, positives=None, negatives=None, zeros=None):
         """
-        Return a ``SignedSubsetElement`` object.
+        Initialize ``self``.
 
         INPUT:
 
