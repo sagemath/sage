@@ -49,30 +49,31 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
+import itertools
 import random
+from typing import TYPE_CHECKING, Self
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.latex import latex
-
-from sage.arith.functions import lcm
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.structure.element import ModuleElement
-from sage.structure.richcmp import richcmp
-
+from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.homset import Hom
 from sage.categories.morphism import SetMorphism
-from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
-
-from sage.matrix.constructor import matrix
-
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
+from sage.misc.superseded import deprecation
 from sage.modules.free_module_element import vector
-
-from sage.rings.integer_ring import IntegerRing
+from sage.rings.function_field import riemann_roch
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import IntegerRing
+from sage.structure.element import ModuleElement
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
-from .place import PlaceSet
+from .place import FunctionFieldPlace, PlaceSet
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 def divisor(field, data):
@@ -119,11 +120,13 @@ def prime_divisor(field, place, m=1):
         sage: p = F.places()[0]
         sage: from sage.rings.function_field.divisor import prime_divisor
         sage: d = prime_divisor(F, p)
+        ...
         sage: 3 * d == prime_divisor(F, p, 3)
         True
     """
+    deprecation(41453, 'this method is deprecated, call the .divisor() method on the place instead')
     divisor_group = field.divisor_group()
-    return divisor_group.element_class(divisor_group, {place: Integer(m)})
+    return divisor_group.element_class(divisor_group, {place: m})
 
 
 class FunctionFieldDivisor(ModuleElement):
@@ -147,7 +150,7 @@ class FunctionFieldDivisor(ModuleElement):
          + 3*Place (x, (1/(x^3 + x^2 + x))*y^2)
          - 6*Place (x + 1, y + 1)
     """
-    def __init__(self, parent, data) -> None:
+    def __init__(self, parent: DivisorGroup, data: dict[FunctionFieldPlace, Integer | int]) -> None:
         """
         Initialize.
 
@@ -159,7 +162,9 @@ class FunctionFieldDivisor(ModuleElement):
             sage: TestSuite(G).run()
         """
         ModuleElement.__init__(self, parent)
-        self._data = data
+        # Removing 0 in the constructor allows us to make additional
+        # assumptions to simplify some logic for prime divisors.
+        self._data: dict[FunctionFieldPlace, Integer] = {k: Integer(v) for k, v in data.items() if v != 0}
 
     def __hash__(self) -> int:
         """
@@ -308,7 +313,7 @@ class FunctionFieldDivisor(ModuleElement):
             return richcmp(skey, okey, op)
         return richcmp(len(s), len(o), op)
 
-    def _neg_(self):
+    def _neg_(self) -> Self:
         """
         Return the additive inverse of the divisor.
 
@@ -335,7 +340,7 @@ class FunctionFieldDivisor(ModuleElement):
             data[place] = -self._data[place]
         return divisor_group.element_class(divisor_group, data)
 
-    def _add_(self, other):
+    def _add_(self, other) -> Self:
         """
         Add the divisor to the other divisor.
 
@@ -363,7 +368,7 @@ class FunctionFieldDivisor(ModuleElement):
                 data[place] = m
         return divisor_group.element_class(divisor_group, data)
 
-    def _rmul_(self, i):
+    def _lmul_(self, i) -> Self:
         """
         Multiply integer `i` to the divisor.
 
@@ -467,7 +472,7 @@ class FunctionFieldDivisor(ModuleElement):
 
     valuation = multiplicity
 
-    def is_effective(self):
+    def is_effective(self) -> bool:
         """
         Return ``True`` if this divisor has nonnegative multiplicity at all
         places.
@@ -486,6 +491,66 @@ class FunctionFieldDivisor(ModuleElement):
         """
         data = self._data
         return all(data[place] >= 0 for place in data)
+
+    def is_prime(self) -> bool:
+        """
+        Return ``True`` if this is a prime divisor (i.e. the divisor is a place).
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: p1, p2 = L.places()[:2]
+            sage: (3 * p2 - 2 * p1).is_prime()
+            False
+            sage: p2.divisor().is_prime()
+            True
+            sage: (2 * p2).is_prime()
+            False
+            sage: (0 * p2).is_prime()
+            False
+
+        TESTS::
+
+            sage: from sage.rings.function_field.divisor import divisor
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: P = L.places(degree=2)[0]
+            sage: divisor(L, {P: 1}).is_prime()
+            True
+            sage: divisor(L, {P: 0}).is_prime()
+            False
+            sage: divisor(L, {P: 2}).is_prime()
+            False
+            sage: divisor(L, {}).is_prime()
+            False
+        """
+        return len(self._data) == 1 and next(iter(self._data.values())) == 1
+
+    def place(self) -> FunctionFieldPlace:
+        """
+        Return the place of this divisor if it is prime.
+        Raises ``ValueError`` if this divisor is not prime.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: p1, p2 = L.places()[:2]
+            sage: p1.divisor().place() == p1
+            True
+            sage: (3 * p2).place()
+            Traceback (most recent call last):
+            ...
+            ValueError: only prime divisors can be converted to a place
+            sage: (3 * p2 - 2 * p1).place()
+            Traceback (most recent call last):
+            ...
+            ValueError: only prime divisors can be converted to a place
+        """
+        if not self.is_prime():
+            raise ValueError('only prime divisors can be converted to a place')
+        return next(iter(self._data))
 
     def numerator(self):
         """
@@ -536,7 +601,7 @@ class FunctionFieldDivisor(ModuleElement):
                 d[place] = -m
         return divisor_group.element_class(self.parent(), d)
 
-    def degree(self):
+    def degree(self) -> Integer:
         """
         Return the degree of the divisor.
 
@@ -551,7 +616,7 @@ class FunctionFieldDivisor(ModuleElement):
         """
         return sum([p.degree() * m for p, m in self.list()])
 
-    def dimension(self):
+    def dimension(self) -> Integer:
         """
         Return the dimension of the Riemann-Roch space of the divisor.
 
@@ -567,7 +632,7 @@ class FunctionFieldDivisor(ModuleElement):
             sage: D.dimension()
             5
         """
-        return len(self.basis_function_space())
+        return Integer(len(self.basis_function_space()))
 
     def basis_function_space(self):
         """
@@ -622,7 +687,9 @@ class FunctionFieldDivisor(ModuleElement):
             return vector(coordinates(f))
 
         from sage.rings.function_field.maps import (
-            FunctionFieldLinearMap, FunctionFieldLinearMapSection)
+            FunctionFieldLinearMap,
+            FunctionFieldLinearMapSection,
+        )
 
         mor_from_V = FunctionFieldLinearMap(Hom(V, F), from_V)
         mor_to_V = FunctionFieldLinearMapSection(Hom(F, V), to_V)
@@ -726,7 +793,9 @@ class FunctionFieldDivisor(ModuleElement):
             return vector(coordinates(w._f))
 
         from sage.rings.function_field.maps import (
-            FunctionFieldLinearMap, FunctionFieldLinearMapSection)
+            FunctionFieldLinearMap,
+            FunctionFieldLinearMapSection,
+        )
 
         mor_from_V = FunctionFieldLinearMap(Hom(V, W), from_V)
         mor_to_V = FunctionFieldLinearMapSection(Hom(W, V), to_V)
@@ -784,100 +853,7 @@ class FunctionFieldDivisor(ModuleElement):
 
         This implements Hess' algorithm 6.1 in [Hes2002]_
         """
-        F = self.parent()._field
-        n = F.degree()
-        O = F.maximal_order()
-        Oinf = F.maximal_order_infinite()
-
-        # Step 1: The ideal I is the inverse of the product of prime ideals attached
-        # to the finite places in the divisor while the ideal J corresponds
-        # to the infinite places in the divisor. The later steps are basically
-        # to compute the intersection of the ideals I and J.
-        I = O.ideal(1)
-        J = Oinf.ideal(1)
-        for p in self._data:
-            m = self._data[p]
-            if p.is_infinite_place():
-                J *= p.prime_ideal() ** (-m)
-            else:
-                I *= p.prime_ideal() ** (-m)
-
-        # Step 2: construct matrix M of rational functions in x such that
-        # M * B == C where B = [b1,b1,...,bn], C =[v1,v2,...,vn]
-        V, fr, to = F.free_module(map=True)
-        B = matrix([to(b) for b in J.gens_over_base()])
-        C = matrix([to(v) for v in I.gens_over_base()])
-        M = C * B.inverse()
-
-        # Step 2.5: get the denominator d of M and set mat = d * M
-        den = lcm([e.denominator() for e in M.list()])
-        R = den.parent()  # polynomial ring
-        one = R.one()
-        mat = matrix(R, n, [e.numerator() for e in (den * M).list()])
-        gens = list(I.gens_over_base())
-
-        # Step 3: transform mat to a weak Popov form, together with gens
-
-        # initialise pivot_row and conflicts list
-        pivot_row = [[] for i in range(n)]
-        conflicts = []
-        for i in range(n):
-            bestp = -1
-            best = -1
-            for c in range(n):
-                d = mat[i, c].degree()
-                if d >= best:
-                    bestp = c
-                    best = d
-
-            if best >= 0:
-                pivot_row[bestp].append((i, best))
-                if len(pivot_row[bestp]) > 1:
-                    conflicts.append(bestp)
-
-        # while there is a conflict, do a simple transformation
-        while conflicts:
-            c = conflicts.pop()
-            row = pivot_row[c]
-            i, ideg = row.pop()
-            j, jdeg = row.pop()
-
-            if jdeg > ideg:
-                i, j = j, i
-                ideg, jdeg = jdeg, ideg
-
-            coeff = - mat[i, c].lc() / mat[j, c].lc()
-            s = coeff * one.shift(ideg - jdeg)
-
-            mat.add_multiple_of_row(i, j, s)
-            gens[i] += s * gens[j]
-
-            row.append((j, jdeg))
-
-            bestp = -1
-            best = -1
-            for c in range(n):
-                d = mat[i, c].degree()
-                if d >= best:
-                    bestp = c
-                    best = d
-
-            if best >= 0:
-                pivot_row[bestp].append((i, best))
-                if len(pivot_row[bestp]) > 1:
-                    conflicts.append(bestp)
-
-        # Step 4: build a Riemann-Roch basis from the data in mat and gens.
-        # Note that the values mat[i,j].degree() - den.degree() are known as
-        # invariants of M.
-        basis = []
-        for j in range(n):
-            i, ideg = pivot_row[j][0]
-            gi = gens[i]
-            basis.extend(one.shift(k) * gi
-                         for k in range(den.degree() - ideg + 1))
-        # Done!
-        return basis
+        return riemann_roch._riemann_roch_divisor(self)
 
     def _echelon_basis(self, basis):
         """
@@ -1027,7 +1003,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
         """
         return "Divisor group of %s" % (self._field,)
 
-    def _element_constructor_(self, x):
+    def _element_constructor_(self, x) -> FunctionField:
         """
         Construct a divisor from ``x``.
 
@@ -1043,7 +1019,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
             return self.element_class(self, {})
         raise ValueError(f"cannot construct a divisor from {x}")
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> SetMorphism:
         """
         Define coercions.
 
@@ -1062,10 +1038,10 @@ class DivisorGroup(UniqueRepresentation, Parent):
              + Place (x^2 + 4*x + 1, y)
         """
         if isinstance(S, PlaceSet):
-            func = lambda place: prime_divisor(self._field, place)
+            func = lambda place: place.divisor()
             return SetMorphism(Hom(S, self), func)
 
-    def function_field(self):
+    def function_field(self) -> FunctionField:
         """
         Return the function field to which the divisor group is attached.
 
@@ -1079,7 +1055,79 @@ class DivisorGroup(UniqueRepresentation, Parent):
         """
         return self._field
 
-    def _an_element_(self):
+    def effective_divisors(self, of_degree=None, max_degree=None, avoid: Container[FunctionFieldPlace] | None = None) -> Iterable[FunctionFieldDivisor]:
+        r"""
+        Return an iterator of all effective divisors either of ``of_degree``
+        or up to ``max_degree``. Exactly one of these must be specified.
+
+        This function is useful for generating divisors for testing purposes.
+
+        INPUT:
+
+        - ``of_degree`` -- nonnegative integer; return iterator of all
+          effective divisors of this degree
+
+        - ``max_degree`` -- nonnegative integer; return iterator of all
+          effective divisors up to this degree
+
+        - ``avoid`` -- collection (list/tuple/set/etc.) of places to exclude
+          from the support of the returned divisors
+
+
+        EXAMPLES:
+
+        We are able to handle function fields without any degree 1 places, such
+        as this example from [HLT2003]_::
+
+            sage: K.<x> = FunctionField(GF(3)); _.<t> = K[]
+            sage: F.<y> = K.extension(x^4 + x * t + t^4 + t^3 - t + 1)
+            sage: G = F.divisor_group()
+            sage: list(G.effective_divisors(of_degree=1))
+            []
+            sage: list(G.effective_divisors(max_degree=1))
+            [0]
+            sage: len(list(G.effective_divisors(of_degree=2)))
+            8
+            sage: len(set(G.effective_divisors(max_degree=3))) == len(list(G.effective_divisors(max_degree=3)))
+            True
+        """
+        if not self._field.constant_base_field().is_finite():
+            raise NotImplementedError
+
+        if of_degree is not None and max_degree is None:
+            if of_degree == 0:
+                yield self.zero()
+                return
+
+            if of_degree < 0:
+                raise ValueError('of_degree must be nonnegative')
+
+            places = []
+            for d in range(1, of_degree + 1):
+                # Avoid unnecessarily unpacking self._field.places(d)
+                if avoid is None:
+                    places.append(self._field.places(d))
+                else:
+                    places.append([P for P in self._field.places(d) if P not in avoid])
+
+            from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
+            weighted_vectors = WeightedIntegerVectors(of_degree, range(1, of_degree + 1))
+            for weights in weighted_vectors:
+                component_divisors = []
+                for i, w in enumerate(weights):
+                    w_sums_of_places = [sum(ps) for ps in itertools.product(places[i], repeat=w)]
+                    component_divisors.append(w_sums_of_places)
+
+                for divisors in itertools.product(*component_divisors):
+                    yield sum(divisors)
+
+        elif max_degree is not None and of_degree is None:
+            for d in range(max_degree + 1):
+                yield from self.effective_divisors(of_degree=d, avoid=avoid)
+        else:
+            raise ValueError('must specify either of_degree or max_degree')
+
+    def _an_element_(self) -> FunctionFieldDivisor:
         """
         Return a divisor.
 

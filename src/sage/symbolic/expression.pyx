@@ -13160,7 +13160,8 @@ cdef class Expression(Expression_abc):
             integrate(log(4/5*sin(x) + 1), x, -3.14150000000000,
             3.14150000000000)
             sage: # needs sage.libs.giac
-            sage: integrate(f, x, -3.1415, 3.1415)  # tol 10e-6
+            sage: ans = integrate(f, x, -3.1415, 3.1415)  # random
+            sage: ans  # tol 10e-6
             -1.40205228301000
         """
         from sage.symbolic.integration.integral import \
