@@ -1040,7 +1040,12 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
     @staticmethod
     def _distributed_mpoly_vars(domain) -> tuple[str, ...]:
         """
-        Extract variable names from a FriCAS distributed multivariate polynomial domain.
+        Extract variable names from a FriCAS multivariate polynomial domain.
+
+        This is the domain-level helper used when translating a FriCAS type
+        S-expression.  We cannot use the FriCAS function ``variables`` here,
+        because that operates on polynomial values, not on bare domain
+        descriptors.
 
         EXAMPLES::
 
@@ -1058,6 +1063,25 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             return tuple(vars_expr[1:-1].split())
         raise NotImplementedError("unable to extract distributed multivariate polynomial variables from %s" % domain[1])
 
+    def _mpoly_vars_from_value(self) -> tuple[str, ...]:
+        """
+        Extract variable names from a FriCAS multivariate polynomial value.
+
+        This is the value-level companion of :meth:`_distributed_mpoly_vars`;
+        here we do use the FriCAS function ``variables`` so that the variable
+        order agrees with FriCAS's actual polynomial value.
+
+        EXAMPLES::
+
+            sage: f = fricas("(x+y)::DMP([x,y],Integer)")
+            sage: f._mpoly_vars_from_value()
+            ('x', 'y')
+            sage: g = fricas("(x+y)::MultivariatePolynomial([x,y],Integer)")
+            sage: g._mpoly_vars_from_value()
+            ('x', 'y')
+        """
+        return tuple(str(v) for v in fricas('[string(v::Symbol) for v in variables(%s)]' % self._name).sage())
+
     @staticmethod
     def _container_entry_domain(domain):
         """
@@ -1071,7 +1095,35 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
     @staticmethod
     def _sage_source_names(source):
         """
-        Return variable-like names appearing in ``source`` in first-use order.
+        Return variable-like names appearing in a Sage-readable source string.
+
+        This helper is only used for bulk container conversion when FriCAS has
+        already produced a Sage-readable string, but the FriCAS domain does not
+        explicitly carry generator names.  The main case is a container over
+        the generic domain ``Polynomial(R)``: to evaluate a string such as
+        ``"[[y+(-1)*x,1],[y^4+x*y^3,1]]"``, :func:`sage_eval` needs local names
+        for ``x`` and ``y`` first.
+
+        Why this function exists:
+
+        - For typed polynomial domains such as ``UnivariatePolynomial``,
+          ``DistributedMultivariatePolynomial``, and
+          ``MultivariatePolynomial``, we obtain the variables directly from the
+          FriCAS domain or from ``variables(self)``.
+        - For the generic FriCAS domain ``Polynomial(R)``, the container type
+          tells us the base ring ``R`` but not the generator names.
+        - In that generic case, the best information available is the already
+          Sage-readable source string itself, so we scan it for identifier-like
+          tokens and preserve their first-use order.
+
+        The returned names are therefore a parsing aid for ``sage_eval``, not a
+        general-purpose variable analysis of arbitrary FriCAS expressions.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas import FriCASElement
+            sage: FriCASElement._sage_source_names('[[y+(-1)*x,1],[x^2+z,1]]')
+            ['y', 'x', 'z']
         """
         import re
 
@@ -1104,9 +1156,14 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             return locals
 
         if head == "Expression" and source is not None:
+            # ``Expression`` domains have no explicit generators.  We only need
+            # enough local names for ``sage_eval`` to rebuild the container.
             return self._sage_symbol_locals(source, locals)
 
         if head == "Polynomial" and source is not None:
+            # FriCAS's generic ``Polynomial(R)`` domain does not record the
+            # variable names in the domain, so for container parsing we infer
+            # them from the already Sage-readable source string.
             names = self._sage_source_names(source)
             if names:
                 base_ring = self._get_sage_type(domain[1])
@@ -1131,6 +1188,9 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
     def _sage_symbol_locals(source, locals):
         """
         Add symbolic generators inferred from a Sage-readable source string.
+
+        This is the symbolic-ring analogue of the generic ``Polynomial(R)``
+        handling in :meth:`_sage_inputform_locals`.
         """
         from sage.symbolic.ring import SR
 
@@ -2273,13 +2333,13 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         if head == 'DistributedMultivariatePolynomial':
             base_ring = self._get_sage_type(domain[2])
-            vars = self._distributed_mpoly_vars(domain)
+            vars = self._mpoly_vars_from_value()
             R = PolynomialRing(base_ring, vars)
             return R(unparsed_InputForm())
 
         if head == 'MultivariatePolynomial':
             base_ring = self._get_sage_type(domain[2])
-            vars = self._distributed_mpoly_vars(domain)
+            vars = self._mpoly_vars_from_value()
             R = PolynomialRing(base_ring, vars)
             return R(unparsed_InputForm())
 
