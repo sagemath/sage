@@ -1130,6 +1130,8 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         excluded = {
             'matrix', 'vector', 'True', 'False', 'None',
             'sqrt', 'sin', 'cos', 'tan', 'log', 'exp',
+            'index', 'Integer', 'PrimeField', 'FiniteField',
+            'IntegerMod', '_sage_from_integer',
         }
         names = []
         for name in re.findall(r'\b[A-Za-z_][A-Za-z0-9_]*\b', source):
@@ -1207,6 +1209,85 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         if isinstance(obj, list):
             return '[%s]' % ','.join(FriCASElement._format_nested_sage_strings(v) for v in obj)
         return str(obj)
+
+    @staticmethod
+    def _rewrite_indexed_coefficients(source):
+        """
+        Rewrite FriCAS finite-ring coefficients into Sage-callable syntax.
+
+        FriCAS prints coefficients from ``PrimeField(...)``,
+        ``FiniteField(...)``, and ``IntegerMod(...)`` as terms like
+        ``index(Integer(1))$PrimeField(Integer(3))``. These are not valid
+        Sage expressions, so we rewrite them to ``_sage_from_integer(1)``
+        before handing the source to :func:`sage_eval`.
+
+        This only rewrites the coefficient atoms themselves. The helper
+        function ``_sage_from_integer`` is provided separately by
+        :meth:`_sage_from_integer_locals`.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas import FriCASElement
+            sage: FriCASElement._rewrite_indexed_coefficients(
+            ....:     'index(Integer(7))$FiniteField(Integer(5),Integer(2))*x'
+            ....:     ' + index(3)$PrimeField(5)')
+            '_sage_from_integer(7)*x + _sage_from_integer(3)'
+        """
+        import re
+
+        pattern = re.compile(
+            r'index\((?:Integer\()?(-?\d+)\)?\)\$'
+            r'(?:PrimeField|FiniteField|IntegerMod)\('
+            r'(?:Integer\(-?\d+\)|-?\d+)'
+            r'(?:,(?:Integer\(-?\d+\)|-?\d+))*\)'
+        )
+        return pattern.sub(r'_sage_from_integer(\1)', source)
+
+    def _sage_from_integer_locals(self, domain):
+        """
+        Return helper locals for rewritten finite-ring coefficients.
+
+        This is the companion to :meth:`_rewrite_indexed_coefficients`.
+        After rewriting a FriCAS source string to use
+        ``_sage_from_integer(...)``, we still need a callable with that name
+        in the :func:`sage_eval` locals. For prime fields and residue rings,
+        the ring constructor is sufficient. For extension finite fields, we
+        use ``from_integer`` instead, because FriCAS ``index(n)$FiniteField``
+        follows the field's internal enumeration, not the plain coercion of
+        the integer ``n``.
+
+        The input ``domain`` can be a scalar finite-ring domain or a nested
+        container/polynomial domain; this method recurses down to the
+        coefficient ring and returns either ``{'_sage_from_integer': ...}``
+        or ``{}`` when no such helper is needed.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(5)[]
+            sage: domain = fricas.new("dom((%s)::Any)" % fricas([x])._name)
+            sage: helper = fricas(0)._sage_from_integer_locals(domain)['_sage_from_integer']
+            sage: helper(2)
+            2
+        """
+        head = str(domain.car())
+
+        if head in {"PrimeField", "FiniteField", "IntegerMod"}:
+            ring = self._get_sage_type(domain)
+            return {'_sage_from_integer': getattr(ring, 'from_integer', ring)}
+
+        if head == "Polynomial":
+            return self._sage_from_integer_locals(domain[1])
+
+        if head == "UnivariatePolynomial":
+            return self._sage_from_integer_locals(domain[2])
+
+        if head == "DistributedMultivariatePolynomial" or head == "MultivariatePolynomial":
+            return self._sage_from_integer_locals(domain[2])
+
+        if head == "List" or head == "Vector" or head == "DirectProduct" or head == "Matrix":
+            return self._sage_from_integer_locals(self._container_entry_domain(domain))
+
+        return {}
 
     def _container_entry_unparse(self, entry, domain):
         """
@@ -1295,12 +1376,20 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: domain = fricas.new("dom((%s)::Any)" % d._name)
             sage: d._sage_container_from_InputForm(domain)
             (2, x + 5)
+
+        TESTS::
+
+            sage: x, y, z = polygens(GF(3), 'x,y,z')
+            sage: list(fricas("((x+y)*(x+z))::Polynomial(PrimeField(3))").factor().sage())
+            [(y + x, 1), (x + z, 1)]
         """
         from sage.misc.sage_eval import sage_eval
 
         try:
             source = self._sage_container_source(domain)
+            source = self._rewrite_indexed_coefficients(source)
             locals = self._sage_inputform_locals(domain, source=source)
+            locals.update(self._sage_from_integer_locals(domain))
             if str(domain.car()) == "Matrix" and str(self._container_entry_domain(domain).car()) in {"PrimeField", "IntegerMod"}:
                 locals['_sage_container_base_ring'] = self._get_sage_type(self._container_entry_domain(domain))
             self._sage_symbol_locals(source, locals)
@@ -1544,6 +1633,10 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         if head == "PrimeField":
             return FiniteField(domain[1].integer().sage())
+
+        if head == "FiniteField":
+            return FiniteField(domain[1].integer().sage(),
+                               domain[2].integer().sage())
 
         if head == "Fraction":
             return FractionField(self._get_sage_type(domain[1]))
@@ -2280,7 +2373,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         if head == "Factored":
             l = P.new('[[f.factor, f.exponent] for f in factors(%s)]' % self._name).sage()
-            return Factorization(list(l))
+            return Factorization(list(l), sort=False)
 
         if head == "UnivariatePolynomial":
             base_ring = self._get_sage_type(domain[2])
@@ -2335,13 +2428,23 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             base_ring = self._get_sage_type(domain[2])
             vars = self._mpoly_vars_from_value()
             R = PolynomialRing(base_ring, vars)
-            return R(unparsed_InputForm())
+            s = self._rewrite_indexed_coefficients(unparsed_InputForm())
+            locals = R.gens_dict_recursive()
+            locals.update(self._sage_from_integer_locals(domain))
+            if '_sage_from_integer' in locals:
+                return sage_eval(s, locals=locals)
+            return R(s)
 
         if head == 'MultivariatePolynomial':
             base_ring = self._get_sage_type(domain[2])
             vars = self._mpoly_vars_from_value()
             R = PolynomialRing(base_ring, vars)
-            return R(unparsed_InputForm())
+            s = self._rewrite_indexed_coefficients(unparsed_InputForm())
+            locals = R.gens_dict_recursive()
+            locals.update(self._sage_from_integer_locals(domain))
+            if '_sage_from_integer' in locals:
+                return sage_eval(s, locals=locals)
+            return R(s)
 
         if head == "Polynomial":
             base_ring = self._get_sage_type(domain[1])
@@ -2351,11 +2454,18 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
             # the following is a bad hack, we should be getting a list here
             vars = P.get_unparsed_InputForm("variables(%s)" % self._name)[1:-1]
-            s = unparsed_InputForm()
+            s = self._rewrite_indexed_coefficients(unparsed_InputForm())
             if vars == "":
+                locals = self._sage_from_integer_locals(domain)
+                if '_sage_from_integer' in locals:
+                    return sage_eval(s, locals=locals)
                 return base_ring(s)
 
             R = PolynomialRing(base_ring, vars)
+            locals = R.gens_dict_recursive()
+            locals.update(self._sage_from_integer_locals(domain))
+            if '_sage_from_integer' in locals:
+                return sage_eval(s, locals=locals)
             return R(s)
 
         if head in ["OrderedCompletion", "OnePointCompletion"]:
