@@ -1038,19 +1038,23 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         return l.sage()
 
     @staticmethod
-    def _distributed_mpoly_vars(domain) -> tuple[str, ...]:
+    def _mpoly_vars_from_domain(domain) -> tuple[str, ...]:
         """
         Extract variable names from a FriCAS multivariate polynomial domain.
 
         This is the domain-level helper used when translating a FriCAS type
-        S-expression.  We cannot use the FriCAS function ``variables`` here,
-        because that operates on polynomial values, not on bare domain
-        descriptors.
+        S-expression such as ``DistributedMultivariatePolynomial([x,y],R)``
+        or ``MultivariatePolynomial([x,y],R)``. We cannot use the FriCAS
+        function ``variables`` here, because that operates on polynomial
+        values, not on bare domain descriptors.
 
         EXAMPLES::
 
             sage: m = fricas("DMP([x,y],Integer)::INFORM")
-            sage: fricas(0)._distributed_mpoly_vars(m)
+            sage: fricas(0)._mpoly_vars_from_domain(m)
+            ('x', 'y')
+            sage: n = fricas("MultivariatePolynomial([x,y],Integer)::INFORM")
+            sage: fricas(0)._mpoly_vars_from_domain(n)
             ('x', 'y')
         """
         vars_expr = str(domain[1]).strip()
@@ -1061,13 +1065,13 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             return tuple(vars_expr[len(prefix):-1].split())
         if vars_expr.startswith("(") and vars_expr.endswith(")"):
             return tuple(vars_expr[1:-1].split())
-        raise NotImplementedError("unable to extract distributed multivariate polynomial variables from %s" % domain[1])
+        raise NotImplementedError("unable to extract multivariate polynomial variables from %s" % domain[1])
 
     def _mpoly_vars_from_value(self) -> tuple[str, ...]:
         """
         Extract variable names from a FriCAS multivariate polynomial value.
 
-        This is the value-level companion of :meth:`_distributed_mpoly_vars`;
+        This is the value-level companion of :meth:`_mpoly_vars_from_domain`;
         here we do use the FriCAS function ``variables`` so that the variable
         order agrees with FriCAS's actual polynomial value.
 
@@ -1180,7 +1184,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             return locals
 
         if head == "DistributedMultivariatePolynomial" or head == "MultivariatePolynomial":
-            R = PolynomialRing(self._get_sage_type(domain[2]), self._distributed_mpoly_vars(domain))
+            R = PolynomialRing(self._get_sage_type(domain[2]), self._mpoly_vars_from_domain(domain))
             locals.update(R.gens_dict_recursive())
             return locals
 
@@ -1653,11 +1657,11 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             return PolynomialRing(self._get_sage_type(domain[2]), var)
 
         if head == "DistributedMultivariatePolynomial":
-            vars = self._distributed_mpoly_vars(domain)
+            vars = self._mpoly_vars_from_domain(domain)
             return PolynomialRing(self._get_sage_type(domain[2]), vars)
 
         if head == "MultivariatePolynomial":
-            vars = self._distributed_mpoly_vars(domain)
+            vars = self._mpoly_vars_from_domain(domain)
             return PolynomialRing(self._get_sage_type(domain[2]), vars)
 
         raise NotImplementedError("the translation of FriCAS type %s to sage is not yet implemented" % domain)
