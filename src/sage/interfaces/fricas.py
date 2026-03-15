@@ -1044,8 +1044,8 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         EXAMPLES::
 
-            sage: m = fricas("DMP([x,y],Integer)::INFORM")                            # optional - fricas
-            sage: fricas(0)._distributed_mpoly_vars(m)                                # optional - fricas
+            sage: m = fricas("DMP([x,y],Integer)::INFORM")
+            sage: fricas(0)._distributed_mpoly_vars(m)
             ('x', 'y')
         """
         vars_expr = str(domain[1]).strip()
@@ -1091,6 +1091,23 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
     def _sage_container_from_InputForm(self, domain):
         """
         Convert a FriCAS list, vector, or matrix using one bulk ``InputForm`` parse.
+
+        EXAMPLES::
+
+            sage: L = fricas("[1/2, 2/3]")
+            sage: domain = fricas.new("dom((%s)::Any)" % L._name)
+            sage: fricas.get_unparsed_InputForm(L._name)
+            '[1/2,2/3]'
+            sage: L._sage_container_from_InputForm(domain)
+            [1/2, 2/3]
+
+            sage: M = fricas("matrix [[1,2],[3,4]]")
+            sage: domain = fricas.new("dom((%s)::Any)" % M._name)
+            sage: fricas.get_unparsed_InputForm(M._name)
+            'matrix([[1,2],[3,4]])'
+            sage: M._sage_container_from_InputForm(domain)
+            [1 2]
+            [3 4]
         """
         from sage.misc.sage_eval import sage_eval
 
