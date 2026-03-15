@@ -1142,7 +1142,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R.<x,y> = ZZ[]
             sage: f = x + y + 1
             sage: f._fricas_init_()                                                 # optional - fricas
-            '(x + y + 1)::DMP([x,y],Integer)'
+            '(x + y + 1)::MultivariatePolynomial([x,y],Integer)'
             sage: fricas(f).sage().parent()                                         # optional - fricas
             Multivariate Polynomial Ring in x, y over Integer Ring
         """
