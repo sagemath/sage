@@ -1104,7 +1104,8 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         This is a last-resort fallback for bulk container conversion.
         We first try to ask FriCAS itself for the variables:
 
-        - for ``Expression`` containers via ``variables(container)``
+        - for ``Expression`` containers via
+          ``reduce(setUnion, map(variables, parts(container)))``
         - for generic ``Polynomial(R)`` containers via
           ``reduce(setUnion, map(variables, parts(container)))``
 
@@ -1141,9 +1142,8 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         conversion. It asks FriCAS for the variables of the container entries
         whenever possible:
 
-        - ``variables(container)`` for ``Expression`` lists and vectors
-        - ``reduce(setUnion, map(variables, parts(container)))`` for generic
-          ``Polynomial(R)`` containers and for ``Expression`` matrices
+        - ``map(string, reduce(setUnion, map(variables, parts(container))))``
+          for both ``Expression`` and generic ``Polynomial(R)`` containers
 
         If FriCAS does not provide a usable result, we fall back to scanning
         the already-unparsed Sage-like ``source``.
@@ -1153,7 +1153,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: L = fricas("[(sin(x)+y)^3, (z+y)^2, f]")
             sage: domain = fricas.new("dom((%s)::Any)" % L._name)
             sage: L._container_variable_names(domain)
-            ('f', 'x', 'y', 'z')
+            ('x', 'y', 'z', 'f')
 
             sage: P = fricas("[(x+y)^3, z, q]::List Polynomial Integer")
             sage: domain = fricas.new("dom((%s)::Any)" % P._name)
@@ -1168,17 +1168,13 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         entry_head = str(entry_domain.car())
 
         expr = None
-        if entry_head == "Expression":
-            if head in {"List", "Vector"}:
-                expr = '[string(v::Symbol) for v in variables(%s)]' % self._name
-            else:
-                expr = '[string(v::Symbol) for v in reduce(setUnion, map(variables, parts(%s)))]' % self._name
-        elif entry_head == "Polynomial":
-            expr = '[string(v::Symbol) for v in reduce(setUnion, map(variables, parts(%s)))]' % self._name
+        if entry_head == "Expression" or entry_head == "Polynomial":
+            expr = 'map(string, reduce(setUnion, map(variables, parts(%s))))' % self._name
 
         if expr is not None:
             try:
-                return tuple(str(v) for v in fricas(expr).sage())
+                values, _ = self._parse_and_eval(self._check_valid().get_InputForm(expr))
+                return tuple(values)
             except (RuntimeError, TypeError, ValueError, SyntaxError, NotImplementedError):
                 pass
 
