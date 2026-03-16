@@ -2243,6 +2243,18 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: fricas("matrix([[(x+y)::MultivariatePolynomial([x,y],Integer)]])").sage().base_ring()
             Multivariate Polynomial Ring in x, y over Integer Ring
 
+            sage: a, b = GF(13)['a,b'].gens()
+            sage: p = 4*a + b^2
+            sage: fricas(p).typeOf()
+            MultivariatePolynomial([a, b],PrimeField(13))
+            sage: p = a^3 + b^3
+            sage: fricas(p).factor()
+            (a + b)(a + 9 b)(a + 3 b)
+            sage: fricas(p).factor().sage()
+            (a + b) * (a - 4*b) * (a + 3*b)
+            sage: fricas(p).sage().parent()
+            Multivariate Polynomial Ring in a, b over Finite Field of size 13
+
             sage: fricas("(y^2+sqrt 3)::UP(y, AN)").sage()
             y^2 + 1.732050807568878?
 
