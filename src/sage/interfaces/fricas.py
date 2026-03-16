@@ -1101,27 +1101,17 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         """
         Return variable-like names appearing in a Sage-readable source string.
 
-        This helper is only used for bulk container conversion when FriCAS has
-        already produced a Sage-readable string, but the FriCAS domain does not
-        explicitly carry generator names.  The main case is a container over
-        the generic domain ``Polynomial(R)``: to evaluate a string such as
-        ``"[[y+(-1)*x,1],[y^4+x*y^3,1]]"``, :func:`sage_eval` needs local names
-        for ``x`` and ``y`` first.
+        This is a last-resort fallback for bulk container conversion.
+        We first try to ask FriCAS itself for the variables:
 
-        Why this function exists:
+        - for ``Expression`` containers via ``variables(container)``
+        - for generic ``Polynomial(R)`` containers via
+          ``reduce(setUnion, map(variables, parts(container)))``
 
-        - For typed polynomial domains such as ``UnivariatePolynomial``,
-          ``DistributedMultivariatePolynomial``, and
-          ``MultivariatePolynomial``, we obtain the variables directly from the
-          FriCAS domain or from ``variables(self)``.
-        - For the generic FriCAS domain ``Polynomial(R)``, the container type
-          tells us the base ring ``R`` but not the generator names.
-        - In that generic case, the best information available is the already
-          Sage-readable source string itself, so we scan it for identifier-like
-          tokens and preserve their first-use order.
-
-        The returned names are therefore a parsing aid for ``sage_eval``, not a
-        general-purpose variable analysis of arbitrary FriCAS expressions.
+        If that does not work, we fall back to scanning the already-unparsed
+        Sage-like source string and preserving identifier first-use order.
+        The result is therefore only a parsing aid for :func:`sage_eval`,
+        not a general-purpose variable analysis of arbitrary FriCAS code.
 
         EXAMPLES::
 
@@ -1143,7 +1133,60 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
                 names.append(name)
         return names
 
-    def _sage_inputform_locals(self, domain, source=None):
+    def _container_variable_names(self, domain, source=None):
+        """
+        Return variable names needed to rebuild a FriCAS container in Sage.
+
+        This helper is only for bulk list/vector/matrix/direct-product
+        conversion. It asks FriCAS for the variables of the container entries
+        whenever possible:
+
+        - ``variables(container)`` for ``Expression`` lists and vectors
+        - ``reduce(setUnion, map(variables, parts(container)))`` for generic
+          ``Polynomial(R)`` containers and for ``Expression`` matrices
+
+        If FriCAS does not provide a usable result, we fall back to scanning
+        the already-unparsed Sage-like ``source``.
+
+        EXAMPLES::
+
+            sage: L = fricas("[(sin(x)+y)^3, (z+y)^2, f]")
+            sage: domain = fricas.new("dom((%s)::Any)" % L._name)
+            sage: L._container_variable_names(domain)
+            ('f', 'x', 'y', 'z')
+
+            sage: P = fricas("[(x+y)^3, z, q]::List Polynomial Integer")
+            sage: domain = fricas.new("dom((%s)::Any)" % P._name)
+            sage: P._container_variable_names(domain)
+            ('y', 'x', 'z', 'q')
+        """
+        head = str(domain.car())
+        if head not in {"List", "Vector", "DirectProduct", "Matrix"}:
+            return tuple()
+
+        entry_domain = self._container_entry_domain(domain)
+        entry_head = str(entry_domain.car())
+
+        expr = None
+        if entry_head == "Expression":
+            if head in {"List", "Vector"}:
+                expr = '[string(v::Symbol) for v in variables(%s)]' % self._name
+            else:
+                expr = '[string(v::Symbol) for v in reduce(setUnion, map(variables, parts(%s)))]' % self._name
+        elif entry_head == "Polynomial":
+            expr = '[string(v::Symbol) for v in reduce(setUnion, map(variables, parts(%s)))]' % self._name
+
+        if expr is not None:
+            try:
+                return tuple(str(v) for v in fricas(expr).sage())
+            except (RuntimeError, TypeError, ValueError, SyntaxError, NotImplementedError):
+                pass
+
+        if source is not None:
+            return tuple(self._sage_source_names(source))
+        return tuple()
+
+    def _sage_inputform_locals(self, domain, source=None, container_domain=None):
         """
         Return locals for fast ``InputForm`` parsing of container domains.
 
@@ -1154,23 +1197,27 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         from sage.modules.free_module_element import vector
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
+        if container_domain is None:
+            container_domain = domain
+
         locals = {'matrix': matrix, 'vector': vector}
         head = str(domain.car())
 
         if head in {"List", "Vector", "DirectProduct", "Matrix", "Fraction", "Complex"}:
-            locals.update(self._sage_inputform_locals(self._container_entry_domain(domain), source=source))
+            locals.update(self._sage_inputform_locals(self._container_entry_domain(domain),
+                                                     source=source,
+                                                     container_domain=container_domain))
             return locals
 
         if head == "Expression" and source is not None:
-            # ``Expression`` domains have no explicit generators.  We only need
-            # enough local names for ``sage_eval`` to rebuild the container.
-            return self._sage_symbol_locals(source, locals)
+            names = self._container_variable_names(container_domain, source=source)
+            from sage.symbolic.ring import SR
+            for name in names:
+                locals[name] = SR.var(name)
+            return locals
 
         if head == "Polynomial" and source is not None:
-            # FriCAS's generic ``Polynomial(R)`` domain does not record the
-            # variable names in the domain, so for container parsing we infer
-            # them from the already Sage-readable source string.
-            names = self._sage_source_names(source)
+            names = self._container_variable_names(container_domain, source=source)
             if names:
                 base_ring = self._get_sage_type(domain[1])
                 R = PolynomialRing(base_ring, names[0] if len(names) == 1 else tuple(names))
