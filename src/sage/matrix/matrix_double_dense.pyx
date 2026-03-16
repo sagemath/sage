@@ -1735,6 +1735,33 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         X._matrix_numpy = arr
         return X
 
+    def rank(self, eps='auto'):
+        r"""
+        Return the numerical rank of this matrix.
+
+        The rank is computed using the Singular Value Decomposition (SVD),
+        which is much more stable for floating-point numbers than 
+        Gaussian elimination.
+
+        INPUT:
+
+        - ``eps`` -- (default: ``'auto'``) a threshold below which 
+          singular values are considered zero. 
+
+        EXAMPLES::
+
+            sage: # This matrix is mathematically rank 1
+            sage: m = matrix(RDF, [[1.5, 1.75], [1.5, 1.75]])
+            sage: m.rank()
+            1
+        """
+        # We use the singular_values method already defined in this file.
+        # It already handles the 'auto' logic and NumPy conversion.
+        sv = self.singular_values(eps=eps)
+        
+        # Count how many singular values are NOT zero
+        return len([s for s in sv if s > 0])
+
     def determinant(self):
         """
         Return the determinant of ``self``.
