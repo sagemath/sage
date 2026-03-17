@@ -15,7 +15,9 @@ Stein) then implemented it in C++ for Hecke. I also implemented it
 in Magma. Also, the functions for dimensions of spaces with
 nontrivial character are based on a paper (that has no proofs) by
 Cohen and Oesterlé [CO1977]_. The formulas for `\Gamma_H(N)` were found
-and implemented by Jordi Quer.
+and implemented by Jordi Quer. The dimension formula for newspaces
+with character (computing the newspace convolution explicitly)
+was found and implemented by Erick Ross.  
 
 The formulas here are more complete than in Hecke or Magma.
 
@@ -309,7 +311,9 @@ def dimension_new_cusp_forms(X, k=2, p=0):
         else:
             # Gamma1(N) for N<=2 just returns Gamma0(N), which has no
             # eps parameter. See trac #12640.
-            return Gamma1(N).dimension_new_cusp_forms(k, eps=X, p=p)
+            alg = 'Ross' if p == 0 and k >= 2  else 'CohenOesterle' 
+            # algorithm 'Ross' is much faster, but is only implemented for p=0,k>=2. 
+            return Gamma1(N).dimension_new_cusp_forms(k, eps=X, p=p, algorithm=alg)
     elif isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_new_cusp_forms(k, p=p)
     raise TypeError(f"X (={X}) must be an integer, a Dirichlet character or a congruence subgroup of type Gamma0, Gamma1 or GammaH")

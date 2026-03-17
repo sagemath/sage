@@ -12,7 +12,7 @@ Congruence subgroup `\Gamma_1(N)`
 # ****************************************************************************
 
 
-from sage.arith.misc import divisors, moebius
+from sage.arith.misc import divisors, moebius, kronecker, CRT, factor
 from sage.arith.misc import euler_phi as phi
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
@@ -22,6 +22,8 @@ from sage.modular.arithgroup.congroup_gammaH import (
 )
 from sage.modular.dirichlet import DirichletGroup
 from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.rational_field import frac
 
 
 _gamma1_cache = {}
@@ -567,11 +569,14 @@ class Gamma1_class(GammaH_class):
 
         - ``p`` -- a prime (default: 0); just the `p`-new subspace if given
 
-        - ``algorithm`` -- either ``'CohenOesterle'`` (the default) or
-          ``'Quer'``. This specifies the method to use in the case of nontrivial
-          character: either the Cohen--Oesterle formula as described in Stein's
-          book, or by Möbius inversion using the subgroups GammaH (a method due
-          to Jordi Quer).
+        - ``algorithm`` -- either ``'CohenOesterle'`` (the default), 
+          ``'Quer'``, or ``'Ross'``. This specifies the method to use in the
+          case of nontrivial character: either the Cohen--Oesterle formula as
+          described in Stein's book, by Möbius inversion using the subgroups 
+          GammaH (a method due to Jordi Quer), or an explicit convolution 
+          formula (due to Erick Ross). Ross' algorithm should be faster than the 
+          other two (since it does have to compute each term of the newspace
+          convolution), but is only implemented for `p = 0` and `k \ge 2`.
 
         EXAMPLES::
 
@@ -619,6 +624,13 @@ class Gamma1_class(GammaH_class):
             from .all import Gamma0
             return Gamma0(N).dimension_new_cusp_forms(k, p)
 
+        if algorithm == 'Ross':
+            if p != 0:
+                raise ValueError("Algorithm 'Ross' not defined for p-new subspace")
+            if k < 2:
+                raise ValueError("Algorithm 'Ross' only defined for k >= 2")
+            return _ross_dim_formula_newspace_character(N, k, eps)
+ 
         from .congroup_gammaH import mumu
 
         if p == 0 or N % p != 0 or eps.conductor().valuation(p) == N.valuation(p):
@@ -627,3 +639,209 @@ class Gamma1_class(GammaH_class):
         eps_p = eps.restrict(N//p)
         old = Gamma1_constructor(N//p).dimension_cusp_forms(k, eps_p, algorithm)
         return self.dimension_cusp_forms(k, eps, algorithm) - 2*old
+
+
+##########################################################################
+# Formula of Ross for dim S_k^new(Gamma1(N), chi). 
+##########################################################################
+
+def _ross_dim_formula_newspace_character(N, k, chi):
+    r"""
+    Compute the dimension formula for `S_k^\text{new}(\Gamma_1(N), \chi)`
+    given in Theorem 1.4 of :arxiv:`2407.08881`.
+    This formula computes the newspace convolution explicitly. Fuller tests
+    are at :meth:`sage.modular.arithgroup.tests.Test.test_ross_dim_formula()`.
+
+
+        
+    TESTS::
+
+        sage: chi = DirichletGroup(60)[5]
+        sage: sage.modular.arithgroup.congroup_gamma1._ross_dim_formula_newspace_character(60,12,chi)
+        66
+    """
+
+    # First term of explicit dimension formula
+    def psi(n_fact):
+        ret = ZZ(1)
+        for p,r in n_fact:
+            ret *= (p+1) * p**(r-1)
+        return ret
+
+    def beta_psi_f(n_fact, f):
+        ret = ZZ(1)
+        for p,r in n_fact:
+            alpha = f.valuation(p)
+            if alpha == 0:
+                if r == 1:
+                    ret *= p-1
+                elif r == 2:
+                    ret *= p**2-p-1
+                else:
+                    ret *= (p**3-p**2-p+1) * p**(r-3)
+            else:
+                if r == 1:
+                    ret *= p-2
+                else:
+                    ret *= (p**2-2*p+1) * p**(r-2)
+        return ret
+
+    # Second term of explicit dimension formula
+    def beta_sigma_f(n_fact, f):
+        ret = ZZ(1)
+        for p,r in n_fact:
+            alpha = f.valuation(p)
+            if alpha == 0:
+                if r % 2 == 1:
+                    ret *= 0
+                elif r == 2:
+                    ret *= p-2
+                else:
+                    ret *= (p**2-2*p+1) * p**(r//2-2)
+            elif r == 1:
+                if alpha == 1:
+                    ret *= (p-3)/2
+                else:
+                    ret *= p-2
+            else:
+                if r >= alpha+1 and (r+alpha) % 2 == 1:
+                    ret *= 0
+                elif r >= alpha+2 and (r+alpha) % 2 == 0:
+                    ret *= frac(1,2) * (p**2-2*p+1) * p**((r+alpha)/2-2)
+                elif r == alpha:
+                    ret *= frac(1,2) * (p**2-3*p+2) * p**(r-2)
+                else:
+                    ret *= (p**2-2*p+1) * p**(r-2)
+        return ret
+
+    # Third term of explicit dimension formula
+    def get_chi_p_alpha(f, chi, p, x):
+        assert f % p == 0
+        f_fact = factor(f)
+        rems = [(x if q == p else ZZ(1)) for (q,alpha) in f_fact]
+        mods = [q**alpha for (q,alpha) in f_fact]
+        x_hat = CRT(rems, mods)
+        chi_prim = chi.primitive_character()
+        return chi_prim(x_hat)
+
+    def rho(n_fact,chi,f):
+        ret = ZZ(1)
+        for p,r in n_fact:
+            if p == 2:
+                ret *= 0
+            elif p == 3:
+                if r == 1:
+                    ret *= 1
+                else:
+                    ret *= 0
+            elif kronecker(-3,p) == -1:
+                ret *= 0
+            else:
+                u = Zmod(p**r)(-3).sqrt(extend=False)
+                chi_x = get_chi_p_alpha(f, chi, p, ZZ((-1+u)/2))
+                assert chi_x**3 == 1
+                if chi_x == 1:
+                    ret *= 2
+                else:
+                    ret *= -1
+        return ret
+
+    def beta_rho_f(n_fact, f):
+        ret = ZZ(1)
+        for p,r in n_fact:
+            alpha = f.valuation(p)
+            if r == 1:
+                if p == 3 and alpha == 0:
+                    ret *= -1
+                elif p != 3 and alpha >= 1:
+                    ret *= -1
+                elif p != 2 and p != 3 and alpha == 0 and kronecker(-3,p) == 1:
+                    ret *= 0
+                else:
+                    ret *= -2
+            elif r == 2:
+                if p == 3 and alpha == 0:
+                    ret *= -1
+                elif p != 3 and alpha >= 1:
+                    ret *= 0
+                elif p != 2 and p != 3 and alpha == 0 and kronecker(-3,p) == 1:
+                    ret *= -1
+                else:
+                    ret *= 1
+            else:
+                if p == 3 and r == 3 and alpha == 0:
+                    ret *= 1
+                else:
+                    ret *= 0
+        return ret
+
+    # Fourth term of explicit dimension formula
+    def rhopm(n_fact,chi,f):
+        ret = ZZ(1)
+        for p,r in n_fact:
+            if p == 2:
+                if r == 1:
+                    ret *= 1
+                else:
+                    ret *= 0
+            elif kronecker(-1,p) == -1:
+                ret *= 0
+            else:
+                upm = Zmod(p**r)(-1).sqrt(extend=False)
+                chi_x = get_chi_p_alpha(f, chi, p, ZZ(upm))
+                assert chi_x**4 == 1
+                if chi_x == 1:
+                    ret *= 2
+                elif chi_x == -1:
+                    ret *= -2
+                else:
+                    ret *= 0
+        return ret
+
+    def beta_rhopm_f(n_fact, f):
+        ret = ZZ(1)
+        for p,r in n_fact:
+            alpha = f.valuation(p)
+            if r == 1:
+                if p == 2 and alpha == 0:
+                    ret *= -1
+                elif p != 2 and alpha >= 1:
+                    ret *= -1
+                elif p != 2 and alpha == 0 and kronecker(-1,p) == 1:
+                    ret *= 0
+                else:
+                    ret *= -2
+            elif r == 2:
+                if p == 2 and alpha == 0:
+                    ret *= -1
+                elif p != 2 and alpha >= 1:
+                    ret *= 0
+                elif p != 2 and alpha == 0 and kronecker(-1,p) == 1:
+                    ret *= -1
+                else:
+                    ret *= 1
+            else:
+                if p == 2 and r == 3 and alpha == 0:
+                    ret *= 1
+                else:
+                    ret *= 0
+        return ret
+
+    # Finally, compute the actual dimension formula
+    k = ZZ(k)
+    N = ZZ(N)
+    assert k >= 2
+    assert chi.modulus() == N
+    if chi(-1) != (-1)**k:
+        return ZZ(0)
+    f = chi.conductor()
+    f_fact = factor(f)
+    Nf_fact = factor(N//f)
+    ret = ZZ(0)
+    ret += (k-1)/12 * psi(f_fact) * beta_psi_f(Nf_fact, f)
+    ret -= ((k-1)/3 - k//3) * rho(f_fact, chi, f) * beta_rho_f(Nf_fact, f)
+    ret -= ((k-1)/4 - k//4) * rhopm(f_fact, chi, f) * beta_rhopm_f(Nf_fact, f)
+    ret -= frac(1,2) * 2**len(f_fact) * beta_sigma_f(Nf_fact, f)
+    ret += (1 if k == 2 and f == 1 else 0) * moebius(N//f)
+    assert ret.is_integral()
+    return ZZ(ret)
