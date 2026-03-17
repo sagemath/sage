@@ -428,19 +428,4 @@ We demonstrate here the defining relation of the antipode::
     0
     sage: X.apply_multilinear_morphism(lambda x,y: x.antipode()*y)
     0
-
-REFERENCES:
-
-.. [HHL05] *A combinatorial formula for Macdonald polynomials*.
-   Haiman, Haglund, and Loehr.
-   J. Amer. Math. Soc. 18 (2005), no. 3, 735-761.
-
-.. [LW12] *Quasisymmetric expansions of Schur-function plethysms*.
-   Loehr and Warrington.
-   Proc. Amer. Math. Soc. 140 (2012), no. 4, 1159-1171.
-
-.. [KT97] *Noncommutative symmetric functions IV: Quantum linear groups and
-   Hecke algebras at* `q = 0`.
-   Krob and Thibon.
-   Journal of Algebraic Combinatorics 6 (1997), 339-376.
 """

@@ -196,6 +196,10 @@ REFERENCES:
              Multiplication and Related Operations.' The Design and
              Analysis of Computer Algorithms. Addison-Wesley, 1974.
 
+.. [AI] \P. Arnoux, S. Ito,
+        Pisot substitutions and Rauzy fractals,
+        Bull. Belg. Math. Soc. 8 (2), 2001, pp. 181--207
+
 .. [AIKMMNT2001] \K. Aoki, T. Ichikawa, M. Kanda, M. Matsui, S. Moriai,
                  \J. Nakajima, and T. Tokita,
                  *Camellia: A 128-bit block cipher suitable for multiple
@@ -3533,6 +3537,10 @@ REFERENCES:
             *Overlap Cycles for Steiner Quadruple Systems*,
             2012, :arxiv:`1204.3215`
 
+.. [HHL05] *A combinatorial formula for Macdonald polynomials*.
+           Haiman, Haglund, and Loehr.
+           J. Amer. Math. Soc. 18 (2005), no. 3, 735-761.
+
 .. [HHL2009] \T. Huang, L. Huang, M.I. Lin,
              *On a class of strongly regular designs and quasi-semisymmetric
              designs*.
@@ -4491,6 +4499,11 @@ REFERENCES:
             Mapping via the Szego kernel*. Journal of Computational
             and Applied Mathematics, 14(1-2): 111--123, 1986.
 
+.. [KT97] *Noncommutative symmetric functions IV: Quantum linear groups and
+          Hecke algebras at* `q = 0`.
+          Krob and Thibon.
+          Journal of Algebraic Combinatorics 6 (1997), 339-376.
+
 .. [KT2013] \K. Tsukazaki, Explicit Isogenies of Elliptic Curves,
             Ph.D. thesis, University of Warwick, 2013.
 
@@ -5001,6 +5014,10 @@ REFERENCES:
 .. [LTV1999] Bernard Leclerc, Jean-Yves Thibon, and Eric Vasserot.
              *Zelevinsky's involution at roots of unity*.
              J. Reine Angew. Math. 513:33-51 (1999).
+
+.. [LW12] *Quasisymmetric expansions of Schur-function plethysms*.
+          Loehr and Warrington.
+          Proc. Amer. Math. Soc. 140 (2012), no. 4, 1159-1171.
 
 .. [LW2012] David Loeffler and Jared Weinstein, *On the computation of
             local components of a newform*, Mathematics of Computation
@@ -5545,6 +5562,9 @@ REFERENCES:
              Proceedings of the National Academy of Sciences 36.1
              (1950): 48-49.
 
+.. [NCSF] Gelfand, Krob, Lascoux, Leclerc, Retakh, Thibon,
+          *Noncommutative Symmetric Functions*, Adv. Math. 112 (1995), no. 2, 218-348.
+
 .. [NCSF1] Israel Gelfand, D. Krob, Alain Lascoux, B. Leclerc,
            V. S. Retakh, J.-Y. Thibon,
            *Noncommutative symmetric functions*.
@@ -5980,6 +6000,14 @@ REFERENCES:
               Math. Proc. Camb. Phil. Soc. (1999), 127, 383-402
 
 .. _ref-Q:
+
+**Q**
+
+.. [QSCHUR] Haglund, Luoto, Mason, van Willigenburg,
+            *Quasisymmetric Schur functions*, J. Comb. Theory Ser. A 118 (2011), 463-490.
+            http://www.sciencedirect.com/science/article/pii/S0097316509001745 ,
+            :arxiv:`0810.2489v2`.
+
 .. _ref-R:
 
 **R**
@@ -6254,6 +6282,10 @@ REFERENCES:
 
 .. [Sah2000] Sartaj Sahni. *Data Structures, Algorithms, and Applications
              in Java*. McGraw-Hill, 2000.
+
+.. [SAI] \Y. Sano, P. Arnoux, S. Ito,
+         Higher dimensional extensions of substitutions and their dual maps,
+         J. Anal. Math. 83, 2001, pp. 183--206
 
 .. [Sal1954] \G. Salmon: *A Treatise on Conic Sections*,
              Chelsea Publishing Co., New York, 1954.
@@ -6954,6 +6986,11 @@ REFERENCES:
 
 .. [Ter2021b] Paul Terwilliger. *The alternating central extension of the
               Onsager Lie algebra*. Preprint, :arxiv:`2104.08106` (2021).
+              
+.. [Tev2007] Lenny Tevlin,
+             *Noncommutative Analogs of Monomial Symmetric Functions,
+             Cauchy Identity, and Hall Scalar Product*,
+             :arxiv:`0712.2201v1`.
 
 .. [Tok88] \T. Tokuyama.
            A Generating Function of Strict Gelfand Patterns and Some Formulas on
