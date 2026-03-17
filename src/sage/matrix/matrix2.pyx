@@ -4834,9 +4834,8 @@ cdef class Matrix(Matrix1):
             algorithm = 'default'
         elif algorithm not in ['default', 'generic', 'flint', 'linbox', 'pari', 'padic', 'pluq', 'full_pivoting']:
             raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm)
-        elif algorithm == 'padic' and not isinstance(R, (IntegerRing_class,
-                                                         RationalField)):
-            raise ValueError("'padic' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
+        elif algorithm == 'generic' and R not in _Fields:
+            raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
         elif algorithm == 'flint' and not isinstance(R, (IntegerRing_class,
                                                          RationalField)):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
@@ -4847,10 +4846,13 @@ cdef class Matrix(Matrix1):
                 raise ValueError("'linbox' matrix kernel algorithm only available over the rationals, not over %s" % R)
         elif algorithm == 'pari' and not (isinstance(R, (IntegerRing_class, NumberField)) and not isinstance(R, RationalField)):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
-        elif algorithm == 'generic' and R not in _Fields:
-            raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
+        elif algorithm == 'padic' and not isinstance(R, (IntegerRing_class,
+                                                         RationalField)):
+            raise ValueError("'padic' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
         elif algorithm == 'pluq' and not isinstance(self, sage.matrix.matrix_mod2_dense.Matrix_mod2_dense):
             raise ValueError("'pluq' matrix kernel algorithm only available over integers mod 2, not over %s" % R)
+        elif algorithm == 'full_pivoting' and R not in _Fields:
+            raise ValueError("'full_pivoting' matrix kernel algorithm only available over a field, not over %s" % R)
 
         # Determine the basis format of independent spanning set to return
         basis = kwds.pop('basis', None)
@@ -4904,7 +4906,6 @@ cdef class Matrix(Matrix1):
                     from sage.categories.discrete_valuation import DiscreteValuationFields
                     if algorithm == 'default' and R in DiscreteValuationFields():
                         format, M = self._right_kernel_matrix_over_field(algorithm='full_pivoting')
-                        basis = 'computed'
                     else:
                         format, M = self._right_kernel_matrix_over_field(algorithm=algorithm)
 
