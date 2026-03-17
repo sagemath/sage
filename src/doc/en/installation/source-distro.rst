@@ -94,12 +94,17 @@ If you prefer a fully self-contained installation that does not depend on
 any system packages (for example, on shared servers where system updates
 should not affect Sage), you can use::
 
-    $ ./configure --disable-system-packages
+    $ ./configure --with-system-standard-packages=no
 
-This tells ``configure`` to build all dependencies from source. Individual
-packages can still be overridden, for example::
+This tells ``configure`` to build all standard dependencies from source.
+Individual packages can still be overridden, for example::
 
-    $ ./configure --disable-system-packages --with-system-gmp=yes
+    $ ./configure --with-system-standard-packages=no --with-system-gmp=yes
+
+Conversely, if you want to require that all standard packages come from the
+system (and error out if any are missing), use::
+
+    $ ./configure --with-system-standard-packages=force
 
 The following sections provide the commands to install a large
 recommended set of packages on various systems, which will minimize
