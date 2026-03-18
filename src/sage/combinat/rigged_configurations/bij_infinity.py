@@ -5,12 +5,6 @@ Bijection between rigged configurations for `B(\infty)` and marginally large tab
 AUTHORS:
 
 - Travis Scrimshaw (2015-07-01): Initial version
-
-REFERENCES:
-
-.. [RC-MLT] Ben Salisbury and Travis Scrimshaw. *Connecting marginally
-   large tableaux and rigged configurations via crystals*.
-   Preprint. :arxiv:`1505.07040`.
 """
 
 # ****************************************************************************

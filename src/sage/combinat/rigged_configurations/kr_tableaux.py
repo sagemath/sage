@@ -12,13 +12,6 @@ rigged configurations [RigConBijection]_.
 
 For more information, see :class:`~sage.combinat.rigged_configurations.kr_tableaux.KirillovReshetikhinTableaux`
 and :class:`~sage.combinat.rigged_configurations.tensor_product_kr_tableaux.TensorProductOfKirillovReshetikhinTableaux`.
-
-REFERENCES:
-
-.. [OSS13] Masato Okado, Reiho Sakamoto, and Anne Schilling.
-   *Affine crystal structure on rigged configurations of type* `D_n^{(1)}`.
-   J. Algebraic Combinatorics, **37** (2013). 571-599. :arxiv:`1109.3523`.
-
 AUTHORS:
 
 - Travis Scrimshaw (2012-01-03): initial version
