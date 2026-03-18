@@ -204,6 +204,35 @@ import sage.modules.free_module_homspace
 
 class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
 
+    def natural_map(self):
+        r"""
+        Return the natural map in this vector space homspace.
+
+        For vector spaces, the coercion map (when it exists) is typically a
+        matrix morphism, so this method prefers that over the generic formal
+        coercion morphism.
+
+        EXAMPLES::
+
+            sage: V = QQ^2
+            sage: W = V.span([V.0])
+            sage: f = W.hom(V)
+            sage: from sage.modules.matrix_morphism import MatrixMorphism_abstract
+            sage: isinstance(f, MatrixMorphism_abstract)
+            True
+            sage: f.matrix()
+            [1 0]
+            sage: f.restrict_domain(W).matrix()
+            [1 0]
+            sage: U = V.span([V.0])
+            sage: f.restrict_codomain(U).matrix()
+            [1]
+        """
+        mor = self.codomain().coerce_map_from(self.domain())
+        if mor is not None:
+            return mor
+        return super().natural_map()
+
     def __call__(self, A, check=True, **kwds):
         r"""
         INPUT:
