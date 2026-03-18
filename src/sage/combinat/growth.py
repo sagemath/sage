@@ -480,11 +480,13 @@ from sage.combinat.binary_tree import BinaryTree, BinaryTrees, LabelledBinaryTre
 from sage.combinat.composition import Compositions
 from sage.combinat.cylindric_shapes import CylindricShape, CylindricShapes
 from sage.combinat.partition import _Partitions, Partitions
+from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.skew_partition import SkewPartition
 from sage.combinat.skew_tableau import SkewTableau
 from sage.combinat.core import Core, Cores
 from sage.combinat.k_tableau import WeakTableau, StrongTableau
 from sage.combinat.shifted_primed_tableau import ShiftedPrimedTableau
+from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.graphs.digraph', 'DiGraph')
@@ -1653,6 +1655,7 @@ class GrowthDiagram(SageObject):
             sage: view(GrowthDiagram.rules.RSK()(pi))  # not tested
             sage: view(GrowthDiagram.rules.Sylvester()(pi))  # not tested
             sage: view(GrowthDiagram.rules.BinaryWord()(pi))  # not tested
+            sage: pi = [2, 1, 5, 9, -3, 10, 4, 7, 8, 6]
             sage: view(GrowthDiagram.rules.Domino()(pi))  # not tested
 
         Edge labels are also displayed::
@@ -1714,7 +1717,6 @@ class GrowthDiagram(SageObject):
             ...
             \end{tikzpicture}
         """
-        from sage.misc.latex import latex
         latex.add_package_to_preamble_if_available("tikz")
 
         # Visual parameters (later to be routed through GlobalOptions)
@@ -1856,9 +1858,9 @@ class GrowthDiagram(SageObject):
             tikz.append("  % filling values")
             tikz.append("  \\begin{scope}[black]")
             for (i, j), v in self._filling.items():
-                if v != 0:
+                if v:
                     y = y_rect(j)
-                    tikz.append(f"    \\node at ({i+0.5},{y+0.5}) {{$ {latex(v)} $}};")
+                    tikz.append(f"    \\node at ({i+0.5},{y+0.5}) {{${rule.latex_vertex(v)}$}};")
             tikz.append("  \\end{scope}")
 
         tikz.append("  \\begin{scope}[every node/.style={inner sep=0.2pt,outer sep=0pt}]")
@@ -1975,6 +1977,9 @@ class Rule(UniqueRepresentation):
             True
         """
         return v
+
+    def latex_vertex(self, v):
+        return latex(v)
 
     def __call__(self, *args, **kwds):
         r"""
@@ -4004,7 +4009,6 @@ class RuleRSK(RulePartitions):
         sage: all([G.P_symbol(), G.Q_symbol()] == RSK(pi) for pi, G in l)
         True
     """
-
     def forward_rule(self, y, t, x, content):
         r"""
         Return the output shape given three shapes and the content.
@@ -4773,6 +4777,145 @@ class RuleCylindricRS(Rule):
         return sum(rho._values)
 
 
+class RuleBPD(Rule):
+    """
+
+    EXAMPLES:
+
+    Recall that `(j, i)` refers to column `j` and row `i`::
+
+        sage: BPD = GrowthDiagram.rules.BPD()
+        sage: def biword_to_filling(w):
+        ....:     m = max(i for i, _ in w)
+        ....:     return {(j, i): (v if m-i == k else -v) for i in range(m) for j, (k, v) in enumerate(w)}
+
+        sage: w = [(1,3), (3,3), (1,2), (2,2), (1,1)]
+        sage: BPD(biword_to_filling(w)).out_labels()
+        [[],
+         [1, 2, 4, 3],
+         [1, 2, 5, 3, 4],
+         [1, 3, 5, 2, 4],
+         [1, 5, 3, 2, 4],
+         [2, 5, 3, 1, 4],
+         [1, 3, 4, 2],
+         [1, 2, 4, 3],
+         []]
+
+        sage: w = [(1,3), (3,3), (1,3), (2,3), (1,3)]
+        sage: [pi.to_lehmer_cocode() for pi in BPD(biword_to_filling(w)).out_labels()]
+        [[],
+         [0, 0, 0, 1],
+         [0, 0, 0, 1, 1],
+         [0, 0, 0, 2, 1],
+         [0, 0, 0, 2, 1, 1],
+         [0, 0, 0, 3, 1, 1],
+         [0, 0, 0, 2],
+         [0, 0, 0, 1],
+         []]
+    """
+    def __init__(self):
+        r"""
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: BPD = GrowthDiagram.rules.BPD(3)
+        """
+        self._P = Permutations()
+        self.zero = Permutation([])
+
+    def normalize_vertex(self, v):
+        r"""
+        Convert ``v`` to a `Permutation`.
+        """
+        return self._P(v)
+
+    def latex_vertex(self, v):
+        if v > 0:
+            return latex(v)
+        return latex('')
+
+    def forward_rule(self, mu, pi, sigma, content):
+        r"""
+        Return the output shape given three shapes and the content.
+
+        See Theorem 2.9 of [HuangSon2023]_.
+
+        INPUT:
+
+        - ``mu``, ``pi``, ``sigma`` -- three permutations from a cell in a
+          growth diagram, labelled as::
+
+              pi sigma
+              mu
+
+        - ``content`` -- non-zero integer
+
+        The content of a cell is interpreted as follows:
+
+        - if ``content=k > 0``, it corresponds to `\times_k`,
+        - otherwise, if ``content=-k < 0`` it corresponds to `k`.
+
+        Thus, in every column there is exactly one positive
+        letter, and the absolute values of all letters in a
+        column are the same.
+
+        OUTPUT:
+
+        The fourth permutation according to forward rule.
+
+        EXAMPLES::
+
+            sage: RuleBPD = GrowthDiagram.rules.BPD()
+            sage: P = Permutations()
+            sage: RuleBPD.forward_rule(P([1,3,5,2,4]), P([1,2,4,3,5]), P([1,3,4,2,5]), -2)
+            [1,5,3,2,4]
+
+            sage: RuleBPD.forward_rule(P([1,5,3,2,4]), P([1,3,4,2,5]), P([1,3,4,2,5]), 1)
+            [2,5,3,1,4]
+        """
+        k = abs(content)
+        has_cross = (content > 0)
+
+        # Theorem 2.9: I is the set of indices for the horizontal edge pi -> mu
+        # (pi^-1 * mu) represents the transformation; its reduced word contains the indices.
+        mu_inv = mu.inverse()
+        I = set((mu_inv * pi).reduced_word())
+        if not has_cross:
+            if pi == sigma: return mu
+            if pi == mu: return sigma
+
+            # Rule 1c: sigma = pi * t_{alpha, beta} (swap values at positions alpha, beta)
+            t = pi.inverse() * sigma
+            alpha, beta = next(p for p in t.cycle_tuples() if len(p) == 2)
+            # x = min (I^c intersect [alpha, beta))
+            x = next((v for v in range(alpha, beta) if v not in I), None)
+            # A = {j1 < j2 < ...} = {x} union (I^c intersect [beta, infinity))
+            # A will be gradually enlarged
+            A = [] if x is None else [x]
+            curr = beta
+        else:
+            # Case 2: Square has cross x_k
+            # A = I^c = {j1 < j2 < ...}
+            A = []
+            curr = 1
+        # find j_l, j_{l+1} in A with mu^-1(j_l) <= k < mu^-1(j_{l+1})
+        def get_mu_inv(v):
+            return mu_inv[v-1] if v <= len(mu) else v
+        while True:
+            if curr not in I:
+                A.append(curr)
+                if len(A) >= 2:
+                    l, r = A[-2:]
+                    if get_mu_inv(l) <= k < get_mu_inv(r):
+                        jl, jl1 = l, r
+                        break
+            curr += 1
+
+        # rho = mu * t_{jl, jl1}
+        return mu * Permutation((jl, jl1))
+
+
 #####################################################################
 ## Set the rules available from GrowthDiagram.rules.<tab>
 #####################################################################
@@ -4791,6 +4934,7 @@ class Rules:
     Burge = RuleBurge
     Domino = RuleDomino
     CylindricRS = RuleCylindricRS
+    BPD = RuleBPD
 
 
 GrowthDiagram.rules = Rules
