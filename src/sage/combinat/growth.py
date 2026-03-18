@@ -4882,8 +4882,10 @@ class RuleBPD(Rule):
         mu_inv = mu.inverse()
         I = set((mu_inv * pi).reduced_word())
         if not has_cross:
-            if pi == sigma: return mu
-            if pi == mu: return sigma
+            if pi == sigma:
+                return mu
+            if pi == mu:
+                return sigma
 
             # Rule 1c: sigma = pi * t_{alpha, beta} (swap values at positions alpha, beta)
             t = pi.inverse() * sigma
