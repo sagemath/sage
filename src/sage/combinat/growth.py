@@ -4819,7 +4819,7 @@ class RuleBPD(Rule):
 
         TESTS::
 
-            sage: BPD = GrowthDiagram.rules.BPD(3)
+            sage: BPD = GrowthDiagram.rules.BPD()
         """
         self._P = Permutations()
         self.zero = Permutation([])
@@ -4869,10 +4869,10 @@ class RuleBPD(Rule):
             sage: RuleBPD = GrowthDiagram.rules.BPD()
             sage: P = Permutations()
             sage: RuleBPD.forward_rule(P([1,3,5,2,4]), P([1,2,4,3,5]), P([1,3,4,2,5]), -2)
-            [1,5,3,2,4]
+            [1, 5, 3, 2, 4]
 
             sage: RuleBPD.forward_rule(P([1,5,3,2,4]), P([1,3,4,2,5]), P([1,3,4,2,5]), 1)
-            [2,5,3,1,4]
+            [2, 5, 3, 1, 4]
         """
         k = abs(content)
         has_cross = (content > 0)
