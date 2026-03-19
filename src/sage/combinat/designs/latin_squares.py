@@ -106,19 +106,6 @@ Comparison with the results from the Handbook of Combinatorial Designs (2ed)
 .. TODO::
 
     Look at [ColDin01]_.
-
-REFERENCES:
-
-.. [Stinson2004] Douglas R. Stinson,
-  *Combinatorial designs: construction and analysis*,
-  Springer, 2004.
-
-.. [ColDin01] Charles Colbourn, Jeffrey Dinitz,
-  *Mutually orthogonal latin squares: a brief survey of constructions*,
-  Volume 95, Issues 1-2, Pages 9-48,
-  Journal of Statistical Planning and Inference,
-  Springer, 1 May 2001.
-
 Functions
 ---------
 """

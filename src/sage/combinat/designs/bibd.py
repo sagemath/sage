@@ -40,12 +40,6 @@ possible cases of `(v,4,1)`-BIBD.
 
 Decompositions of `K_v` into `K_4` (i.e. `(v,4,1)`-BIBD) are built following
 Clayton Smith's construction [ClaytonSmith]_.
-
-.. [ClaytonSmith] On the existence of `(v,5,1)`-BIBD.
-  http://www.argilo.net/files/bibd.pdf
-  Clayton Smith
-
-
 Functions
 ---------
 """
@@ -479,13 +473,6 @@ def steiner_triple_system(n):
         Traceback (most recent call last):
         ...
         EmptySetError: Steiner triple systems only exist for n = 1 mod 6 or n = 3 mod 6
-
-    REFERENCE:
-
-    .. [AndHonk97] A short course in Combinatorial Designs,
-      Ian Anderson, Iiro Honkala,
-      Internet Editions, Spring 1997,
-      http://www.utu.fi/~honkala/designs.ps
     """
 
     name = "Steiner Triple System on "+str(n)+" elements"
@@ -1347,13 +1334,6 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n, k, existence=False):
         Traceback (most recent call last):
         ...
         ValueError: This function cannot produce a (7,3,1)-BIBD
-
-    REFERENCE:
-
-    .. [Denniston69] \R. H. F. Denniston,
-       Some maximal arcs in finite projective planes.
-       Journal of Combinatorial Theory 6, no. 3 (1969): 317-319.
-       :doi:`10.1016/S0021-9800(69)80095-5`
     """
     q = (n-1)//(k-1)-1
     if (k % 2 or
