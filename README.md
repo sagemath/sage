@@ -205,10 +205,11 @@ in the Installation Guide.
     source](https://doc.sagemath.org/html/en/installation/source.html) in the
     Sage Installation Manual for compilations of system packages
     that you can install. When done, skip to step 7 (bootstrapping).
+    If you use conda-forge to install system packages, you should follow the rest of the documentaiton without returning to step 7. 
 
     Alternatively, follow the more fine-grained approach below.
 
-4.  [Linux, WSL] Install the required minimal build prerequisites:
+5.  [Linux, WSL] Install the required minimal build prerequisites:
 
     - Compilers: `gcc`, `gfortran`, `g++` (GCC versions from 8.4.0 to 13.x
       and recent versions of Clang (LLVM) are supported).
@@ -241,25 +242,25 @@ in the Installation Guide.
     [void.txt](build/pkgs/_prereq/distros/void.txt), or visit
     https://doc.sagemath.org/html/en/reference/spkg/_prereq.html#spkg-prereq
 
-5.  Optional: It is recommended that you have both LaTeX and
+6.  Optional: It is recommended that you have both LaTeX and
     the ImageMagick tools (e.g. the "convert" command) installed
     since some plotting functionality benefits from them.
 
-6.  [Development] If you plan to do Sage development or otherwise work with
+7.  [Development] If you plan to do Sage development or otherwise work with
     ticket branches and not only releases, install the bootstrapping
     prerequisites. See the files in the folder
     [build/pkgs/_bootstrap/distros](build/pkgs/_bootstrap/distros), or
     visit
     https://doc.sagemath.org/html/en/reference/spkg/_bootstrap.html#spkg-bootstrap
 
-7.  Bootstrap the source tree using the following command:
+8.  Bootstrap the source tree using the following command:
 
         $ make configure
 
     (If the bootstrapping prerequisites are not installed, this command
     will download a package providing pre-built bootstrap output instead.)
 
-8.  Sanitize the build environment. Use the command
+9.  Sanitize the build environment. Use the command
 
         $ env
 
@@ -291,7 +292,7 @@ in the Installation Guide.
       can also add it to your shell profile so that it gets run
       automatically in all future sessions.)
 
-9.  Optionally, decide on the installation prefix (`SAGE_LOCAL`):
+10.  Optionally, decide on the installation prefix (`SAGE_LOCAL`):
 
     - Traditionally, and by default, Sage is installed into the
       subdirectory hierarchy rooted at `SAGE_ROOT/local/`.
@@ -313,7 +314,7 @@ in the Installation Guide.
       install into shared locations such as `/usr/local/`.
       Do not attempt to build Sage as `root`.
 
-10. Optionally, review the configuration options, which includes
+11. Optionally, review the configuration options, which includes
     many optional packages:
 
         $ ./configure --help
@@ -331,7 +332,7 @@ in the Installation Guide.
       a great speedup when switching between different branches, at the
       expense of disk space use.
 
-11. Optional, but highly recommended: Set some environment variables to
+12. Optional, but highly recommended: Set some environment variables to
     customize the build.
 
     The `MAKEFLAGS` variable controls whether to run several jobs in parallel.
@@ -359,7 +360,7 @@ in the Installation Guide.
     building Sage, see [the installation
     guide](https://doc.sagemath.org/html/en/installation/source.html#environment-variables).
 
-12. Type `./configure`, followed by any options that you wish to use.
+13. Type `./configure`, followed by any options that you wish to use.
     For example, to build Sage with `gf2x` package supplied by Sage,
     use `./configure --with-system-gf2x=no`.
 
@@ -379,14 +380,14 @@ in the Installation Guide.
     available; only the most recent releases of your distribution will
     have all of these recommended packages.
 
-13. Optional: If you choose to install the additional system packages,
+14. Optional: If you choose to install the additional system packages,
     a re-run of `./configure` will test whether the versions installed
     are usable for Sage; if they are, this will reduce the compilation
     time and disk space needed by Sage. The usage of packages may be
     adjusted by `./configure` parameters (check again the output of
     `./configure --help`).
 
-14. Type `make`.  That's it! Everything is automatic and
+15. Type `make`.  That's it! Everything is automatic and
     non-interactive.
 
     If you followed the above instructions, in particular regarding the
@@ -398,30 +399,30 @@ in the Installation Guide.
     The build should work fine on all fully supported platforms. If it
     does not, we want to know!
 
-15. Type `./sage` to try it out. In Sage, try for example `2 + 2`,
+16. Type `./sage` to try it out. In Sage, try for example `2 + 2`,
     `plot(x^2)`, `plot3d(lambda x, y: x*y, (-1, 1), (-1, 1))`
     to test a simple computation and plotting in 2D and 3D.
     Type <kbd>Ctrl</kbd>+<kbd>D</kbd> or `quit` to quit Sage.
 
-16. Optional: Type `make ptestlong` to test all examples in the documentation
+17. Optional: Type `make ptestlong` to test all examples in the documentation
     (over 200,000 lines of input!) -- this takes from 10 minutes to
     several hours. Don't get too disturbed if there are 2 to 3 failures,
     but always feel free to email the section of `logs/ptestlong.log` that
     contains errors to the [sage-support mailing list](https://groups.google.com/group/sage-support).
     If there are numerous failures, there was a serious problem with your build.
 
-17. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
+18. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
     can be built by running `make doc-html` and resides in
     `build/sage-distro/src/doc/`. You may want to bookmark it in your browser.
 
-18. Optional: If you want to build the PDF version of the documentation,
+19. Optional: If you want to build the PDF version of the documentation,
     run `make doc-pdf` (this requires LaTeX to be installed).
 
-19. Optional: Install optional packages of interest to you:
+20. Optional: Install optional packages of interest to you:
     get a list by typing  `./sage --optional` or by visiting the
     [packages documentation page](https://doc.sagemath.org/html/en/reference/spkg/).
 
-20. Optional: Create a symlink to the installed `sage` script in a
+21. Optional: Create a symlink to the installed `sage` script in a
     directory in your `PATH`, for example `/usr/local`. This will
     allow you to start Sage by typing `sage` from anywhere rather than
     having to either type the full path or navigate to the Sage
@@ -429,7 +430,7 @@ in the Installation Guide.
 
         $ sudo ln -s $(pwd)/sage /usr/local/bin
 
-21. Optional: Set up SageMath as a Jupyter kernel in an existing Jupyter notebook
+22. Optional: Set up SageMath as a Jupyter kernel in an existing Jupyter notebook
     or JupyterLab installation, as described in the section
     [Launching SageMath](https://doc.sagemath.org/html/en/installation/launching.html)
     in the Sage Installation Guide.
