@@ -205,7 +205,7 @@ in the Installation Guide.
     source](https://doc.sagemath.org/html/en/installation/source.html) in the
     Sage Installation Manual for compilations of system packages
     that you can install. When done, skip to step 7 (bootstrapping).
-    If you use conda-forge to install system packages, you should follow the rest of the documentaiton without returning to step 7. 
+    If you use conda-forge to install system packages, you should follow the rest of the documentation without returning to step 7. 
 
     Alternatively, follow the more fine-grained approach below.
 
