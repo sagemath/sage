@@ -569,12 +569,12 @@ class Gamma1_class(GammaH_class):
 
         - ``p`` -- a prime (default: 0); just the `p`-new subspace if given
 
-        - ``algorithm`` -- either ``'CohenOesterle'`` (the default), 
+        - ``algorithm`` -- either ``'CohenOesterle'`` (the default),
           ``'Quer'``, or ``'Ross'``. This specifies the method to use in the
           case of nontrivial character: either the Cohen--Oesterle formula as
-          described in Stein's book, by Möbius inversion using the subgroups 
-          GammaH (a method due to Jordi Quer), or an explicit convolution 
-          formula (due to Erick Ross). Ross' algorithm should be faster than the 
+          described in Stein's book, by Möbius inversion using the subgroups
+          GammaH (a method due to Jordi Quer), or an explicit convolution
+          formula (due to Erick Ross). Ross' algorithm should be faster than the
           other two (since it does have to compute each term of the newspace
           convolution), but is only implemented for `p = 0` and `k \ge 2`.
 
@@ -630,7 +630,7 @@ class Gamma1_class(GammaH_class):
             if k < 2:
                 raise ValueError("Algorithm 'Ross' only defined for k >= 2")
             return _ross_dim_formula_newspace_character(N, k, eps)
- 
+
         from .congroup_gammaH import mumu
 
         if p == 0 or N % p != 0 or eps.conductor().valuation(p) == N.valuation(p):
@@ -642,7 +642,7 @@ class Gamma1_class(GammaH_class):
 
 
 ##########################################################################
-# Formula of Ross for dim S_k^new(Gamma1(N), chi). 
+# Formula of Ross for dim S_k^new(Gamma1(N), chi).
 ##########################################################################
 
 def _ross_dim_formula_newspace_character(N, k, chi):
@@ -653,7 +653,7 @@ def _ross_dim_formula_newspace_character(N, k, chi):
     are at :meth:`sage.modular.arithgroup.tests.Test.test_ross_dim_formula()`.
 
 
-        
+
     TESTS::
 
         sage: chi = DirichletGroup(60)[5]
