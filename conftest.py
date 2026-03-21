@@ -122,7 +122,6 @@ class SageDoctestModule(DoctestModule):
                         if exception.name in (
                             "valgrind",
                             "sage.libs.coxeter3.coxeter",
-                            "sage.libs.giac.giac",
                         ):
                             pytest.skip(
                                 f"unable to import module {self.path} due to missing feature {exception.name}"
@@ -214,6 +213,10 @@ def pytest_collect_file(
                 or (file_path.name == "__init__.py" and file_path.parent.name == "mq")
             ):
                 # TODO: Fix these (import fails with "RuntimeError: dictionary changed size during iteration")
+                return IgnoreCollector.from_parent(parent)
+
+            if file_path.parent.name == "giac" and file_path.parent.parent.name == "libs":
+                # These files import the Cython extension sage.libs.giac.giac at module level
                 return IgnoreCollector.from_parent(parent)
 
             if (
