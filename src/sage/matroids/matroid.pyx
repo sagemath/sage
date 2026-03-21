@@ -8305,6 +8305,8 @@ cdef class Matroid(SageObject):
 
         TESTS::
 
+            sage: M = matroids.catalog.Fano()
+            sage: assert M.broken_circuit_complex().is_immutable()                      # needs sage.graphs
             sage: for M in matroids.AllMatroids(5):  # optional - matroid_database
             ....:     r = M.rank()
             ....:     if r > 0 and not M.dual().loops():
@@ -8323,7 +8325,7 @@ cdef class Matroid(SageObject):
         for S in self.no_broken_circuits_sets_iterator(ordering):
             if len(S) == r:
                 facets.append(S)
-        return SimplicialComplex(facets, maximality_check=False)
+        return SimplicialComplex(facets, maximality_check=False, is_immutable=True)
 
     cpdef automorphism_group(self):
         r"""
@@ -8644,5 +8646,4 @@ cdef class Matroid(SageObject):
             X_inv = frozenset([d_inv[x] for x in X])
             return self._rank(X_inv)
 
-        M = RankMatroid(groundset=E, rank_function=f_relabel)
-        return M
+        return RankMatroid(groundset=E, rank_function=f_relabel)

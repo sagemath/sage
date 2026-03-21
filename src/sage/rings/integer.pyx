@@ -3176,17 +3176,25 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         TESTS:
 
-        Overflow::
+        This example always overflows::
 
             sage: prod(primes_first_n(64)).divisors()                                   # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             OverflowError: value too large
-            sage: prod(primes_first_n(58)).divisors()                                   # needs sage.libs.pari
-            Traceback (most recent call last):
-            ...
-            OverflowError: value too large                                 # 32-bit
-            MemoryError: failed to allocate 288230376151711744 * 24 bytes  # 64-bit
+
+        While this one overflows only on 32-bit systems. On 64-bit
+        systems, we run out of memory::
+
+            sage: # needs sage.libs.pari
+            sage: try:
+            ....:     prod(primes_first_n(58)).divisors()
+            ....: except (OverflowError, MemoryError) as e:
+            ....:     exc = e
+            sage: isinstance(exc, OverflowError)  # needs 32_bit
+            True
+            sage: isinstance(exc, MemoryError)    # needs !32_bit
+            True
 
         Check for memory leaks and ability to interrupt
         (the ``divisors`` call below allocates about 800 MB every time,

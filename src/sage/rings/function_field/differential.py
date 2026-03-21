@@ -59,16 +59,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.latex import latex
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.structure.element import ModuleElement
-from sage.structure.richcmp import richcmp
-from sage.sets.family import Family
-
 from sage.categories.modules import Modules
 from sage.categories.morphism import Morphism
+from sage.misc.latex import latex
+from sage.sets.family import Family
+from sage.structure.element import ModuleElement
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class FunctionFieldDifferential(ModuleElement):

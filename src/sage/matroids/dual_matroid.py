@@ -543,8 +543,7 @@ class DualMatroid(Matroid):
             sage: for S in powerset(M.groundset()):
             ....:     assert M.rank(S) == N.rank([f[x] for x in S])
         """
-        M = self._matroid.relabel(mapping).dual()
-        return M
+        return self._matroid.relabel(mapping).dual()
 
     def is_valid(self, certificate=False):
         """

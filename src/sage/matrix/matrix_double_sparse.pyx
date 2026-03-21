@@ -176,7 +176,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: (B.cholesky() - L).norm(1) < 1e-10                                    # needs scipy
             True
         """
-        cdef Matrix L # output matrix
+        cdef Matrix L  # output matrix
 
         L = self.fetch('cholesky')
         if L is not None:

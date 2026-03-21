@@ -112,35 +112,6 @@ from sage.structure.factorization import Factorization
 from sage.structure.sequence import Sequence
 
 
-def is_RelativeNumberField(x):
-    r"""
-    Return ``True`` if `x` is a relative number field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field_rel import is_RelativeNumberField
-        sage: x = polygen(ZZ, 'x')
-        sage: is_RelativeNumberField(NumberField(x^2+1,'a'))
-        doctest:warning...
-        DeprecationWarning: The function is_RelativeNumberField is deprecated;
-        use 'isinstance(..., NumberField_relative)' instead.
-        See https://github.com/sagemath/sage/issues/38124 for details.
-        False
-        sage: k.<a> = NumberField(x^3 - 2)
-        sage: l.<b> = k.extension(x^3 - 3); l
-        Number Field in b with defining polynomial x^3 - 3 over its base field
-        sage: is_RelativeNumberField(l)
-        True
-        sage: is_RelativeNumberField(QQ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38124,
-                "The function is_RelativeNumberField is deprecated; "
-                "use 'isinstance(..., NumberField_relative)' instead.")
-    return isinstance(x, NumberField_relative)
-
-
 class NumberField_relative(NumberField_generic):
     """
     INPUT:
@@ -732,7 +703,7 @@ class NumberField_relative(NumberField_generic):
 
         return RelativeOrder(self, absolute_order, is_maximal=assume_maximal, is_maximal_at=v)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this relative number field.
 

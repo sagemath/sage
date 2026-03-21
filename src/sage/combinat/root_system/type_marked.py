@@ -8,11 +8,11 @@ Root system data for Cartan types with marked nodes
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.combinat.root_system import cartan_type
-from sage.combinat.root_system import ambient_space
+from sage.combinat.root_system import ambient_space, cartan_type
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
+from sage.misc.lazy_attribute import lazy_attribute
 
 
 class CartanType(cartan_type.CartanType_decorator):
@@ -207,7 +207,6 @@ class CartanType(cartan_type.CartanType_decorator):
             D_4^{(3)} \text{ with node $0$ marked}
             sage: CartanType.options._reset()
         """
-        from sage.misc.latex import latex
         ret = self._type._latex_()
         if self.options('latex_marked'):
             if len(self._marked_nodes) == 1:
