@@ -3,7 +3,7 @@ r"""
 Context manager and local wrapper for giacsettings.
 """
 
-from sage.libs.giac.giac import giacsettings, libgiac
+from sage.libs.giac.giac import giacsettings, libgiac  # noqa: F401
 
 
 class GiacSettingsDefaultContext:

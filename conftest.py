@@ -122,6 +122,7 @@ class SageDoctestModule(DoctestModule):
                         if exception.name in (
                             "valgrind",
                             "sage.libs.coxeter3.coxeter",
+                            "sage.libs.giac.giac",
                         ):
                             pytest.skip(
                                 f"unable to import module {self.path} due to missing feature {exception.name}"

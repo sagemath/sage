@@ -4,6 +4,7 @@ py.install_sources(
   'context.py',
   'gb.py',
   'giac.pxd',
+  'giac.pyx',
   'keywords.pxi',
   'misc.h',
   subdir: 'sage/libs/giac',

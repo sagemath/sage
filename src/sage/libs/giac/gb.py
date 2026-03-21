@@ -10,7 +10,7 @@ AUTHORS:
 - Martin Albrecht (2015-07-01): initial version
 - Han Frederic (2015-07-01): initial version
 
-EXAMPLES::
+EXAMPLES:
 
 Compute and verify a Groebner basis::
 
