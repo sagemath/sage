@@ -856,8 +856,7 @@ vertex.  There are four possible forms for ``graph``:
       A random graph.
 
    See
-   `sage.graphs.graph_generators
-   <../reference/sage/graphs/graph_generators.html>`_
+   :mod:`sage.graphs.graph_generators`
    for more information on the Sage graph library and graph constructors.
 
 Each of these four formats is preprocessed by the Sandpile class so that,

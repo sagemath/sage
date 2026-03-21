@@ -19,6 +19,8 @@ Optional Packages
 For additional functionality, you can install some of the following
 optional packages.
 
+.. _optional-packages:
+
 .. include:: index_optional.rst
 
 

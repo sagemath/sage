@@ -48,7 +48,7 @@ Software prerequisites and recommended packages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Sage depends on `a large number of software packages
-<../reference/spkg/index.html>`_.  Sage provides its own software
+:ref:`spkg`.  Sage provides its own software
 distribution providing most of these packages, so you do not have to
 worry about having to download and install these packages yourself.
 
@@ -602,7 +602,7 @@ Installation steps
 
 #. Optional:
    Install optional Sage packages and databases. See `the list of optional packages
-   in the reference manual <../reference/spkg/index.html#optional-packages>`_ for
+   in the reference manual :ref:`optional-packages` for
    detailed information, or type ``sage --optional`` (this requires an Internet connection).
 
    Then type ``sage -i <package-name>`` to automatically download and install
@@ -866,6 +866,8 @@ Sage-specific environment variables controlling the build process
   building ccache for Sage, so that Sage can pull down the necessary
   sources.
 
+.. _sage-debug:
+
 .. envvar:: SAGE_DEBUG
 
   Controls debugging support. There are three different possible values:
@@ -955,6 +957,8 @@ Sage-specific environment variables controlling the build process
       building Sage from scratch or when installing individual spkgs.
       So you can set this variable to ``yes`` instead of using the ``-s`` flag
       for ``sage -i`` and ``sage -f``.
+
+.. _sage-fat-binary:
 
 .. envvar:: SAGE_FAT_BINARY
 

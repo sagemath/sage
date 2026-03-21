@@ -17,7 +17,7 @@ Linear algebra underpins a lot of Sage's algorithms, so it is fast,
 robust and comprehensive.  We've already seen some basic linear algebra,
 including matrices, determinants, and the ``.rref()`` method for
 row-reduced echelon form in the :doc:`Programming Tutorial
-<../programming>`, so the content here continues from there to some
+:ref:`prep-programming`, so the content here continues from there to some
 extent.
 
 Matrices and Vectors

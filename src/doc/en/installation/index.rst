@@ -9,7 +9,7 @@ It is designed to help you install SageMath on your computer.
 For options to run SageMath in the cloud, see the section :ref:`sec-cloud` below.
 
 If you are planning to do development on SageMath, please refer instead to the
-`Sage Developer's Guide <../developer/walkthrough.html>`_ for instructions on
+:ref:`Sage Developer's Guide <chapter-walkthrough>` for instructions on
 obtaining the source code and building SageMath.
 
 .. tab:: Linux
