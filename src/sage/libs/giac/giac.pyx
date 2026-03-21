@@ -1735,7 +1735,7 @@ cdef class Pygen(GiacMethods_base):
 #   A wrapper from a cpp element of type giac gen to create    #
 #   the Python object                                          #
 ################################################################
-cdef inline _wrap_gen(gen  g)except +:
+cdef inline _wrap_gen(gen  g):
 
 #   cdef Pygen pyg=Pygen('NULL')
 # It is much faster with ''
@@ -1769,7 +1769,7 @@ cdef inline _wrap_gen(gen  g)except +:
 #    A wrapper from a python list to a vector of gen           #
 ################################################################
 
-cdef  vecteur _wrap_pylist(L) except +:
+cdef  vecteur _wrap_pylist(L) except *:
     cdef vecteur  * V
     cdef int i
 
@@ -1789,7 +1789,7 @@ cdef  vecteur _wrap_pylist(L) except +:
 #################################
 #  slice wrapper for a giac list
 #################################
-cdef  vecteur _getgiacslice(Pygen L, slice sl) except +:
+cdef  vecteur _getgiacslice(Pygen L, slice sl) except *:
     cdef vecteur  * V
     cdef int u
 
@@ -1808,7 +1808,7 @@ cdef  vecteur _getgiacslice(Pygen L, slice sl) except +:
         raise TypeError("argument must be a Pygen list and a slice")
 
 
-cdef  gen pylongtogen(a) except +:
+cdef  gen pylongtogen(a) except *:
     #                                                                     #
     # basic conversion of Python long integers to gen via Horner's Method #
     #                                                                     #
