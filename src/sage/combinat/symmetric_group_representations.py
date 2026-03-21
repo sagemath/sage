@@ -1066,6 +1066,10 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             ValueError: the base ring must be a finite field of square order
             sage: U = SymmetricGroupRepresentation([2,1], "unitary", GF(7**2))
             sage: TestSuite(U).run()
+            sage: U = SymmetricGroupRepresentation([2,1], "unitary", GF(3**2))
+            sage: all(A * A.H == 1 for A in [U.representation_matrix(g)
+            ....:                            for g in Permutations(3)])
+            True
         """
         if parent._ring.characteristic() == 0:
             orth = SymmetricGroupRepresentation(partition, 'orthogonal')
@@ -1076,9 +1080,6 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
                     and parent._ring.is_finite()
                     and parent._ring.order().is_square()):
                 raise ValueError("the base ring must be a finite field of square order")
-            from sage.arith.misc import factorial
-            if parent._ring.characteristic().divides(factorial(parent._n)):
-                raise NotImplementedError("not implemented when p|n!; dimension of invariant forms may be greater than one")
             self._q = parent._ring.order().sqrt()
             self._specht = Permutations(sum(partition)).algebra(parent._ring).specht_module(partition)
         super().__init__(parent, partition)
@@ -1124,6 +1125,48 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
         return ret
 
     @lazy_attribute
+    def _canonical_invariant_form(self):
+        """
+        Select a deterministic `G`-invariant symmetric bilinear form.
+
+        The invariant space may have dimension greater than one in modular
+        settings (for example when `p|n!`). We currently pick the first basis
+        element returned by Sage's kernel basis routine.
+
+        TODO: Improve this choice with a stronger canonical normalization.
+        """
+        d_rho = self._specht.dimension()
+        null_space = matrix(self._ring, self._invariant_form_linear_system).right_kernel()
+        return matrix(self._ring, d_rho, d_rho, null_space.basis()[0])
+
+    @lazy_attribute
+    def _invariant_form_linear_system(self):
+        """
+        Return the linear system defining invariant symmetric bilinear forms.
+        """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        G = Permutations(self._n)
+        F = self._ring
+        rho = self._specht.representation_matrix
+        d_rho = self._specht.dimension()
+        R = PolynomialRing(F, 'u', d_rho**2)
+        U_vars = R.gens()
+        Utemp = matrix(R, d_rho, d_rho, U_vars)
+
+        def augmented_matrix(g):
+            rho_g = rho(g)
+            equation_matrix = rho_g.transpose() * Utemp * rho_g.conjugate() - Utemp
+            augmented_system = []
+            for i in range(d_rho):
+                for j in range(d_rho):
+                    linear_expression = equation_matrix[i, j]
+                    row = [linear_expression.coefficient(u) for u in U_vars]
+                    augmented_system.append(row)
+            return augmented_system
+
+        return sum((augmented_matrix(g) for g in G), [])
+
+    @lazy_attribute
     def _unitary_change_basis_matrix(self):
         """
         Compute the change of basis matrix.
@@ -1147,31 +1190,10 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             [       1        4]
             [       0 2*z2 + 2]
         """
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        G = Permutations(self._n)
-        F = self._ring
-        rho = self._specht.representation_matrix
-
-        # compute the invariant symmetric bilinear matrix
-        d_rho = self._specht.dimension()
-        R = PolynomialRing(F, 'u', d_rho**2)
-        U_vars = R.gens()
-        Utemp = matrix(R, d_rho, d_rho, U_vars)
-
-        def augmented_matrix(g):
-            rho_g = rho(g)
-            equation_matrix = rho_g.transpose() * Utemp * rho_g.conjugate() - Utemp
-            augmented_system = []
-            for i in range(d_rho):
-                for j in range(d_rho):
-                    linear_expression = equation_matrix[i, j]
-                    row = [linear_expression.coefficient(u) for u in U_vars]
-                    augmented_system.append(row)
-            return augmented_system
-
-        total_system = sum((augmented_matrix(g) for g in G), [])
-        null_space = matrix(F, total_system).right_kernel()
-        U = matrix(F, d_rho, d_rho, null_space.basis()[0])
+        # Compute a deterministic invariant form from the full invariant space.
+        # When this space has dimension > 1 (possible in modular settings),
+        # we use the first basis vector as a stable fallback.
+        U = self._canonical_invariant_form
         return U.cholesky(extended=True).H
 
     def _representation_matrix_uncached(self, permutation):

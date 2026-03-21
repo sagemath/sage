@@ -2172,9 +2172,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             ValueError: the base ring must be a finite field of square order
             sage: GF9_S3 = SymmetricGroupAlgebra(GF(3**2), 3)
             sage: U = GF9_S3._dft_unitary()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: not implemented when p|n!; dimension of invariant forms may be greater than one
+            sage: U*U.H == 1
+            True
         """
         F = self.base_ring()
         G = self.group()
@@ -2199,8 +2198,6 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         assert F.characteristic() > 0, "F must have positive characteristic"
         if not (F.is_field() and F.is_finite() and F.order().is_square()):
             raise ValueError("the base ring must be a finite field of square order")
-        if F.characteristic().divides(G.cardinality()):
-            raise NotImplementedError("not implemented when p|n!; dimension of invariant forms may be greater than one")
         q = F.order().sqrt()
 
         def conj_square_root(u):
