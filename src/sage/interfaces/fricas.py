@@ -1299,44 +1299,20 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         if head in {"PrimeField", "IntegerMod"}:
             return "Integer"
 
-        if head == "Polynomial":
+        if head in ["Polynomial", "Fraction", "List", "Vector", "Matrix"]:
             sub = FriCASElement._simplified_fricas_type(domain[1])
-            return "Polynomial(%s)" % sub if sub else None
-
-        if head == "UnivariatePolynomial":
-            sub = FriCASElement._simplified_fricas_type(domain[2])
             if sub:
-                return "UnivariatePolynomial(%s,%s)" % (str(domain[1]), sub)
+                return f"{head}({sub})"
             return None
 
-        if head == "DistributedMultivariatePolynomial":
+        if head in ["UnivariatePolynomial",
+                    "MultivariatePolynomial",
+                    "DistributedMultivariatePolynomial",
+                    "DirectProduct"]:
             sub = FriCASElement._simplified_fricas_type(domain[2])
             if sub:
-                vars = FriCASElement._mpoly_vars_from_domain(domain)
-                return "DistributedMultivariatePolynomial([%s],%s)" % (",".join(vars), sub)
+                return f"{head}({domain[1]}, {sub})"
             return None
-
-        if head == "MultivariatePolynomial":
-            sub = FriCASElement._simplified_fricas_type(domain[2])
-            if sub:
-                vars = FriCASElement._mpoly_vars_from_domain(domain)
-                return "MultivariatePolynomial([%s],%s)" % (",".join(vars), sub)
-            return None
-
-        if head in {"List", "Vector", "Matrix"}:
-            sub = FriCASElement._simplified_fricas_type(domain[1])
-            return "%s(%s)" % (head, sub) if sub else None
-
-        if head == "DirectProduct":
-            sub = FriCASElement._simplified_fricas_type(domain[2])
-            if sub:
-                dim = domain[1].integer().sage()
-                return "DirectProduct(%s,%s)" % (dim, sub)
-            return None
-
-        if head == "Fraction":
-            sub = FriCASElement._simplified_fricas_type(domain[1])
-            return "Fraction(%s)" % sub if sub else None
 
         return None
 
