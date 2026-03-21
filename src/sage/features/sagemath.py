@@ -535,7 +535,7 @@ class sage__libs__giac(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.giac',
                              [PythonModule('sage.libs.giac.giac')],
-                             spkg='sagemath_giac', type='optional')
+                             spkg='giac', type='optional')
 
 
 class sage__libs__homfly(JoinFeature):

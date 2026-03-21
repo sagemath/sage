@@ -7,6 +7,7 @@ if not sirocco.found()
     disabler: true,
   )
 endif
+giac_dep = cpp.find_library('giac', required: get_option('giac'), disabler: true)
 # cannot be found via pkg-config
 ecl = cc.find_library('ecl', required: false, disabler: true)
 if not ecl.found() and not is_windows
@@ -175,7 +176,7 @@ install_subdir('cremona', install_dir: sage_install_dir / 'libs')
 subdir('eclib')
 subdir('flint')
 subdir('gap')
-install_subdir('giac', install_dir: sage_install_dir / 'libs')
+subdir('giac')
 subdir('glpk')
 subdir('gmp')
 subdir('gsl')

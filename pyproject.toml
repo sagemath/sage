@@ -91,7 +91,7 @@ extra = [
   'sage_numerical_backends_coin',
   'symengine >= 0.6.1', # Only used in tests
 ]
-#giac = ['sagemath_giac'] # Not yet available on PyPI (https://github.com/sagemath/sagemath-giac/issues/3)
+#giac = [] # giac integration is now built in-tree as sage.libs.giac (requires libgiac C++ library)
 
 [project.readme]
 content-type = "text/markdown"

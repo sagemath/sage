@@ -70,6 +70,13 @@ option(
 )
 
 option(
+  'giac',
+  type: 'feature',
+  value: 'auto',
+  description: 'Giac interface for symbolic computation'
+)
+
+option(
   'sirocco',
   type: 'feature',
   value: 'auto',
