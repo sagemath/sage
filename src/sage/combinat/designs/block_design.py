@@ -5,6 +5,7 @@ Block designs
 A *block design* is a set together with a family of subsets (repeated subsets
 are allowed) whose members are chosen to satisfy some set of properties that are
 deemed useful for a particular application. See :wikipedia:`Block_design`.
+
 - Block design from wikipedia: :wikipedia:`Block_design`
 
 - What is a block design?,
