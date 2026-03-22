@@ -22,6 +22,7 @@ development of Sage. [Full documentation](https://doc.sagemath.org/html/en/index
 - [Supported Platforms](#supported-platforms)
 - [\[Windows\] Preparing the Platform](#windows-preparing-the-platform)
 - [\[macOS\] Preparing the Platform](#macos-preparing-the-platform)
+- [Environment Setup](#environment-setup)
 - [Instructions to Build from Source](#instructions-to-build-from-source)
 - [SageMath Docker Images](#sagemath-docker-images)
 - [Troubleshooting](#troubleshooting)
@@ -175,32 +176,7 @@ below](#sagemath-docker-images)) or other virtualization solutions.
 
 ## Instructions to Build from Source
 
-Follow instructions in in the section [Install from Source Code](https://doc.sagemath.org/html/en/installation/source.html)
-in the Installation Guide.
-
-17. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
-    can be built by running `make doc-html` and resides in
-    `build/sage-distro/src/doc/`. You may want to bookmark it in your browser.
-
-18. Optional: If you want to build the PDF version of the documentation,
-    run `make doc-pdf` (this requires LaTeX to be installed).
-
-19. Optional: Install optional packages of interest to you:
-    get a list by typing `./sage --optional` or by visiting the
-    [packages documentation page](https://doc.sagemath.org/html/en/reference/spkg/).
-
-20. Optional: Create a symlink to the installed `sage` script in a
-    directory in your `PATH`, for example `/usr/local`. This will
-    allow you to start Sage by typing `sage` from anywhere rather than
-    having to either type the full path or navigate to the Sage
-    directory and type `./sage`. This can be done by running:
-
-        $ sudo ln -s $(pwd)/sage /usr/local/bin
-
-21. Optional: Set up SageMath as a Jupyter kernel in an existing Jupyter notebook
-    or JupyterLab installation, as described in the section
-    [Launching SageMath](https://doc.sagemath.org/html/en/installation/launching.html)
-    in the Sage Installation Guide.
+Follow instructions in in the section [Install from Source Code](https://doc.sagemath.org/html/en/installation/source.html) in the Installation Guide.
 
 ## SageMath Docker images
 
