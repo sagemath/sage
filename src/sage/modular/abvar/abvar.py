@@ -77,36 +77,6 @@ from .cuspidal_subgroup import (CuspidalSubgroup, RationalCuspidalSubgroup,
                                 RationalCuspSubgroup)
 
 
-def is_ModularAbelianVariety(x) -> bool:
-    """
-    Return ``True`` if x is a modular abelian variety.
-
-    INPUT:
-
-    - ``x`` -- object
-
-    EXAMPLES::
-
-        sage: from sage.modular.abvar.abvar import is_ModularAbelianVariety
-        sage: is_ModularAbelianVariety(5)
-        doctest:warning...
-        DeprecationWarning: The function is_ModularAbelianVariety is deprecated; use 'isinstance(..., ModularAbelianVariety_abstract)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        False
-        sage: is_ModularAbelianVariety(J0(37))
-        True
-
-    Returning ``True`` is a statement about the data type not whether or
-    not some abelian variety is modular::
-
-        sage: is_ModularAbelianVariety(EllipticCurve('37a'))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_ModularAbelianVariety is deprecated; use 'isinstance(..., ModularAbelianVariety_abstract)' instead.")
-    return isinstance(x, ModularAbelianVariety_abstract)
-
-
 @richcmp_method
 class ModularAbelianVariety_abstract(Parent):
     def __init__(self, groups, base_field, is_simple=None, newform_level=None,
@@ -358,7 +328,7 @@ class ModularAbelianVariety_abstract(Parent):
         nLambda = self.ambient_variety().lattice().scale(n)
         return n * v in self.lattice() + nLambda
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         """
         Compare two modular abelian varieties.
 
@@ -559,7 +529,7 @@ class ModularAbelianVariety_abstract(Parent):
         """
         return Newform(self.newform_label(), names=names)
 
-    def newform_decomposition(self, names=None):
+    def newform_decomposition(self, names=None) -> list:
         """
         Return the newforms of the simple subvarieties in the decomposition of
         ``self`` as a product of simple subvarieties, up to isogeny.
@@ -813,7 +783,7 @@ class ModularAbelianVariety_abstract(Parent):
         else:
             return homspace.Homspace(self, B, cat)
 
-    def in_same_ambient_variety(self, other):
+    def in_same_ambient_variety(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are abelian subvarieties of
         the same ambient product Jacobian.
@@ -2353,7 +2323,7 @@ class ModularAbelianVariety_abstract(Parent):
             ValueError: p must be prime
         """
         if self.dimension() == 0:
-            return ZZ(1)
+            return ZZ.one()
         if self.level() % p == 0:
             raise ValueError("p must not divide the level of self")
         if not is_prime(p):
@@ -3073,13 +3043,12 @@ class ModularAbelianVariety_abstract(Parent):
                 raise ValueError("ambient product Jacobians must be equal")
             if A == self:
                 X = X.lattice()
+            elif X.is_subgroup(self):
+                X = (X.lattice() +
+                     self.ambient_variety().lattice()).intersection(
+                         self.vector_space())
             else:
-                if X.is_subgroup(self):
-                    X = (X.lattice() +
-                         self.ambient_variety().lattice()).intersection(
-                             self.vector_space())
-                else:
-                    raise ValueError("X must be a subgroup of self.")
+                raise ValueError("X must be a subgroup of self")
 
         if field_of_definition is None:
             from sage.rings.qqbar import QQbar as field_of_definition
@@ -3087,6 +3056,7 @@ class ModularAbelianVariety_abstract(Parent):
         return FiniteSubgroup_lattice(
             self, X, field_of_definition=field_of_definition, check=check)
 
+    @cached_method
     def torsion_subgroup(self, n):
         """
         If `n` is an integer, return the subgroup of points of order `n`.
@@ -3111,16 +3081,9 @@ class ModularAbelianVariety_abstract(Parent):
             sage: A.torsion_subgroup(2).order()
             16
         """
-        try:
-            return self.__torsion_subgroup[n]
-        except KeyError:
-            pass
-        except AttributeError:
-            self.__torsion_subgroup = {}
         lattice = self.lattice().scale(1 / Integer(n))
-        H = FiniteSubgroup_lattice(self, lattice, field_of_definition=self.base_field())
-        self.__torsion_subgroup[n] = H
-        return H
+        return FiniteSubgroup_lattice(self, lattice,
+                                      field_of_definition=self.base_field())
 
     # #########################################################################
     # Decomposition

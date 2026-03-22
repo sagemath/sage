@@ -1019,14 +1019,14 @@ class RingDerivationWithoutTwist(RingDerivation):
             {0: x, 1: y}
         """
         dual_basis = self.parent().dual_basis()
-        dict = { }
+        dic = {}
         for i in range(len(dual_basis)):
             c = self(dual_basis[i])
             if c != 0:
-                dict[i] = c
-        return dict
+                dic[i] = c
+        return dic
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if this derivation is zero.
 
@@ -1043,7 +1043,7 @@ class RingDerivationWithoutTwist(RingDerivation):
         """
         return all(c.is_zero() for c in self.list())
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare this derivation with ``other`` according
         to the comparison operator ``op``.
@@ -1494,7 +1494,7 @@ class RingDerivationWithoutTwist_zero(RingDerivationWithoutTwist):
         """
         return self
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if this derivation vanishes.
 
@@ -1829,7 +1829,7 @@ class RingDerivationWithoutTwist_function(RingDerivationWithoutTwist):
             res += defining_morphism(x.derivative(domain.gen(i))) * self._images[i]
         return res
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if this derivation is zero.
 

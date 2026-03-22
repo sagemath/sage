@@ -2063,7 +2063,7 @@ def is_RealDoubleElement(x):
         use 'isinstance(..., RealDoubleElement)' instead.
         See https://github.com/sagemath/sage/issues/38128 for details.
         True
-        sage: is_RealDoubleElement(RIF(3))                                              # needs sage.rings.real_interval_field
+        sage: is_RealDoubleElement(RIF(3))
         False
     """
     from sage.misc.superseded import deprecation_cython

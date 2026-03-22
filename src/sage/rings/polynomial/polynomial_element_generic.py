@@ -29,24 +29,26 @@ We test coercion in a particularly complicated situation::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.rings.polynomial.polynomial_element import Polynomial, Polynomial_generic_dense, Polynomial_generic_dense_inexact
-from sage.structure.element import IntegralDomainElement, EuclideanDomainElement
-
+from sage.rings.polynomial.polynomial_element import (
+    Polynomial,
+    Polynomial_generic_dense,
+    Polynomial_generic_dense_inexact,
+)
 from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singular_repr
+from sage.structure.element import EuclideanDomainElement, IntegralDomainElement
 
 try:
     from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
+from sage.rings.infinity import Infinity, infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.padics.precision_error import PrecisionError
 from sage.structure.element import coerce_binop, parent
 from sage.structure.factorization import Factorization
-from sage.structure.richcmp import richcmp, richcmp_item, rich_to_bool, rich_to_bool_sgn
-
-from sage.rings.infinity import infinity, Infinity
-from sage.rings.integer_ring import ZZ
-from sage.rings.integer import Integer
-from sage.rings.padics.precision_error import PrecisionError
+from sage.structure.richcmp import rich_to_bool, rich_to_bool_sgn, richcmp, richcmp_item
 
 
 class Polynomial_generic_sparse(Polynomial):
@@ -85,9 +87,9 @@ class Polynomial_generic_sparse(Polynomial):
         """
         TESTS::
 
-            sage: PolynomialRing(RIF, 'z', sparse=True)([RIF(-1, 1), RIF(-1,1)])                    # needs sage.rings.real_interval_field
+            sage: PolynomialRing(RIF, 'z', sparse=True)([RIF(-1, 1), RIF(-1,1)])
             0.?*z + 0.?
-            sage: PolynomialRing(RIF, 'z', sparse=True)((RIF(-1, 1), RIF(-1,1)))                    # needs sage.rings.real_interval_field
+            sage: PolynomialRing(RIF, 'z', sparse=True)((RIF(-1, 1), RIF(-1,1)))
             0.?*z + 0.?
             sage: PolynomialRing(CIF, 'z', sparse=True)([CIF(RIF(-1,1), RIF(-1,1)), RIF(-1,1)])     # needs sage.rings.complex_interval_field
             0.?*z + 0.? + 0.?*I
@@ -332,8 +334,9 @@ class Polynomial_generic_sparse(Polynomial):
         # calling the coercion model bin_op is much more accurate than using the
         # true division (which is bypassed by polynomials). But it does not work
         # in all cases!!
-        from sage.structure.element import coercion_model as cm
         import operator
+
+        from sage.structure.element import coercion_model as cm
         try:
             Q = cm.bin_op(R.one(), ZZ.one(), operator.truediv).parent()
         except TypeError:
@@ -377,8 +380,8 @@ class Polynomial_generic_sparse(Polynomial):
 
         TESTS::
 
-            sage: pol = RIF['x']([0, 0, (-1,1)])                                        # needs sage.rings.real_interval_field
-            sage: PolynomialRing(RIF, 'x', sparse=True)(pol)                            # needs sage.rings.real_interval_field
+            sage: pol = RIF['x']([0, 0, (-1,1)])
+            sage: PolynomialRing(RIF, 'x', sparse=True)(pol)
             0.?*x^2
 
         AUTHOR:
@@ -1623,7 +1626,9 @@ class Polynomial_generic_sparse_cdvf(Polynomial_generic_sparse_cdv, Polynomial_g
 # until at least until 4.5.0 unpickle correctly as polynomials implemented #
 # via FLINT.                                                               #
 try:
-    from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
+    from sage.rings.polynomial.polynomial_rational_flint import (
+        Polynomial_rational_flint,
+    )
 except ImportError:
     pass
 else:

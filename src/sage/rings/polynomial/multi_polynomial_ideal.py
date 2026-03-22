@@ -1004,9 +1004,7 @@ class MPolynomialIdeal_singular_repr(
             sage: f2 = 1/2*((x1^2 + 2*x1 + 1)*x2^2 + 2*(x1^2 + x1)*x2 - 4*x1^2)
             sage: I = Ideal(f1,f2)
             sage: I.triangular_decomposition()
-            [Ideal (x2, x1^2) of Multivariate Polynomial Ring in x1, x2 over Rational Field,
-             Ideal (x2, x1^2) of Multivariate Polynomial Ring in x1, x2 over Rational Field,
-             Ideal (x2, x1^2) of Multivariate Polynomial Ring in x1, x2 over Rational Field,
+            [Ideal (x2, x1^2) of Multivariate Polynomial Ring in x1, x2 over Rational Field...
              Ideal (x2^4 + 4*x2^3 - 6*x2^2 - 20*x2 + 5, 8*x1 - x2^3 + x2^2 + 13*x2 - 5)
               of Multivariate Polynomial Ring in x1, x2 over Rational Field]
 

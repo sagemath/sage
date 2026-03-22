@@ -283,7 +283,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return hash((self._domain, self._codomain, self._ore_polynomial))
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` whether the morphism is the zero morphism.
 
@@ -307,7 +307,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return self._ore_polynomial.is_zero()
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
         Return ``True`` whether the morphism is the identity morphism.
 
@@ -367,7 +367,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return not self.is_zero()
 
-    def is_isomorphism(self):
+    def is_isomorphism(self) -> bool:
         r"""
         Return ``True`` whether the morphism is an isomorphism.
 

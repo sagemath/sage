@@ -300,6 +300,33 @@ class LatticePosets(Category):
                 """
                 return True
 
+            def spine(self):
+                """
+                Return the spine of ``self``.
+
+                For a semidistributive lattice `L`, the *spine* of `L` is
+                the distributive lattice constructed as the subposet
+                on the union of longest maximal chains.
+
+                EXAMPLES::
+
+                    sage: P = posets.TamariLattice(4)
+                    sage: S = P.spine(); S
+                    Finite lattice containing 8 elements
+                    sage: S.category()
+                    Category of facade finite enumerated distributive lattices
+                """
+                from sage.combinat.posets.lattices import LatticePoset
+                subset_H, _ = self._hasse_diagram.spine()
+                subset = [self._vertex_to_element(v) for v in subset_H]
+
+                H = self.hasse_diagram()
+                covers = [(x, y) for x in subset for y in H.neighbors_in(x)
+                          if y in subset]
+                cat = LatticePosets().Finite().Distributive()
+                return LatticePoset([subset, covers],
+                                    cover_relations=True, category=cat)
+
     class CongruenceUniform(CategoryWithAxiom):
         """
         The category of congruence uniform lattices.

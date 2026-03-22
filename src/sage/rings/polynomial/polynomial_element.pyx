@@ -993,7 +993,6 @@ cdef class Polynomial(CommutativePolynomial):
         Test that comparisons are consistent when using interval
         coefficients::
 
-            sage: # needs sage.rings.real_interval_field
             sage: R.<x> = RIF[]
             sage: a = RIF(0,1) * x
             sage: b = RIF(1,2) * x
@@ -1338,7 +1337,7 @@ cdef class Polynomial(CommutativePolynomial):
             [0.2000000000000000 +/- 4.45e-17]
             sage: CBF(a)                                                                # needs sage.libs.flint
             [0.2000000000000000 +/- 4.45e-17]
-            sage: RIF(a)                                                                # needs sage.rings.real_interval_field
+            sage: RIF(a)
             0.2000000000000000?
             sage: CIF(a)                                                                # needs sage.rings.complex_interval_field
             0.2000000000000000?
@@ -1355,7 +1354,7 @@ cdef class Polynomial(CommutativePolynomial):
             0.816496580927726
             sage: RBF(b)                                                                # needs sage.libs.flint
             [0.816496580927726 +/- 2.44e-16]
-            sage: RIF(b)                                                                # needs sage.rings.real_interval_field
+            sage: RIF(b)
             0.8164965809277260?
             sage: float(b)
             0.816496580927726
@@ -6595,8 +6594,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: a = RIF['x'](1/3)                                                     # needs sage.rings.real_interval_field
-            sage: (a - a).exponents()                                                   # needs sage.rings.real_interval_field
+            sage: a = RIF['x'](1/3)
+            sage: (a - a).exponents()
             [0]
         """
         cdef Py_ssize_t i
@@ -8455,7 +8454,6 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f.roots(ring=AA)                                                      # needs sage.rings.number_field
             [(-0.618033988749895?, 1), (1.618033988749895?, 1)]
 
-            sage: # needs sage.rings.real_interval_field
             sage: f.roots(ring=RIF)
             [(-0.6180339887498948482045868343657?, 1), (1.6180339887498948482045868343657?, 1)]
             sage: f.roots(ring=RIF, multiplicities=False)

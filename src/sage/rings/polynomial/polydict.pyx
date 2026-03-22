@@ -126,7 +126,7 @@ cdef class PolyDict:
             sage: PolyDict({(2, 3): 0, (1, 2): 3, (2, 1): 4})
             PolyDict with representation {(1, 2): 3, (2, 1): 4, (2, 3): 0}
 
-            sage: PolyDict({(0, 0): RIF(-1,1)})                                         # needs sage.rings.real_interval_field
+            sage: PolyDict({(0, 0): RIF(-1,1)})
             PolyDict with representation {(0, 0): 0.?}
 
         TESTS::
@@ -802,8 +802,8 @@ cdef class PolyDict:
 
         We make sure that intervals are correctly represented. ::
 
-            sage: f = PolyDict({(2, 3): RIF(1/2,3/2), (1, 2): RIF(-1,1)})               # needs sage.rings.real_interval_field
-            sage: f.poly_repr(['x', 'y'])                                               # needs sage.rings.real_interval_field
+            sage: f = PolyDict({(2, 3): RIF(1/2,3/2), (1, 2): RIF(-1,1)})
+            sage: f.poly_repr(['x', 'y'])
             '1.?*x^2*y^3 + 0.?*x*y^2'
 
         TESTS:
@@ -1017,7 +1017,7 @@ cdef class PolyDict:
             sage: f = PolyDict({(2,3):2, (1, 2): 3, (2, 1): 4})
             sage: f.scalar_rmult(-2)
             PolyDict with representation {(1, 2): -6, (2, 1): -8, (2, 3): -4}
-            sage: f.scalar_rmult(RIF(-1,1))                                             # needs sage.rings.real_interval_field
+            sage: f.scalar_rmult(RIF(-1,1))
             PolyDict with representation {(1, 2): 0.?e1, (2, 1): 0.?e1, (2, 3): 0.?e1}
         """
         cdef dict v = {}
@@ -1041,7 +1041,7 @@ cdef class PolyDict:
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: f.scalar_lmult(-2)
             PolyDict with representation {(1, 2): -6, (2, 1): -8, (2, 3): -4}
-            sage: f.scalar_lmult(RIF(-1,1))                                             # needs sage.rings.real_interval_field
+            sage: f.scalar_lmult(RIF(-1,1))
             PolyDict with representation {(1, 2): 0.?e1, (2, 1): 0.?e1, (2, 3): 0.?e1}
         """
         cdef dict v = {}

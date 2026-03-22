@@ -22,10 +22,11 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
-from sage.structure.element import coercion_model, Element, Expression
+from sage.structure.element import Element, Expression, coercion_model
+
 # avoid name conflicts with `parent` as a function parameter
 from sage.structure.element import parent as s_parent
-from sage.symbolic.function import GinacFunction, BuiltinFunction
+from sage.symbolic.function import BuiltinFunction, GinacFunction
 from sage.symbolic.symbols import register_symbol, symbol_table
 
 lazy_import('sage.misc.latex', 'latex')
@@ -173,7 +174,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
 
     These do not work but fail gracefully::
 
-        sage: ceil(Infinity)                                                            # needs sage.rings.real_interval_field
+        sage: ceil(Infinity)
         Traceback (most recent call last):
         ...
         ValueError: Calling ceil() on infinity or NaN
@@ -911,7 +912,7 @@ class Function_real_nth_root(BuiltinFunction):
             sage: real_nth_root(x, 3)                                                   # needs sage.symbolic
             real_nth_root(x, 3)
 
-            sage: real_nth_root(RIF(2), 3)                                              # needs sage.rings.real_interval_field
+            sage: real_nth_root(RIF(2), 3)
             1.259921049894873?
             sage: real_nth_root(RBF(2), 3)                                              # needs sage.libs.flint
             [1.259921049894873 +/- 3.92e-16]
@@ -1049,11 +1050,10 @@ class Function_arg(BuiltinFunction):
         if isinstance(x,Expression):
             if x.is_trivial_zero():
                 return x
+        elif not x:
+            return x
         else:
-            if not x:
-                return x
-            else:
-                return arctan2(imag_part(x),real_part(x))
+            return arctan2(imag_part(x),real_part(x))
 
     def _evalf_(self, x, parent=None, algorithm=None):
         """
