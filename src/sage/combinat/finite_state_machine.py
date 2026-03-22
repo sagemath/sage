@@ -863,6 +863,7 @@ See also methods :meth:`Automaton.process` and
 :class:`FSMTransition`, and the description and examples in
 :class:`FSMProcessIterator` for more information on processing and
 hooks.
+
 AUTHORS:
 
 - Daniel Krenn (2012-03-27): initial version

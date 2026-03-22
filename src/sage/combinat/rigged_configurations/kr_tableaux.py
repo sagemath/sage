@@ -12,6 +12,7 @@ rigged configurations [RigConBijection]_.
 
 For more information, see :class:`~sage.combinat.rigged_configurations.kr_tableaux.KirillovReshetikhinTableaux`
 and :class:`~sage.combinat.rigged_configurations.tensor_product_kr_tableaux.TensorProductOfKirillovReshetikhinTableaux`.
+
 AUTHORS:
 
 - Travis Scrimshaw (2012-01-03): initial version
