@@ -98,7 +98,6 @@ An Eisenstein extension::
 
 An unramified extension::
 
-    sage: # needs sage.libs.flint
     sage: g = x^3 + 3*x + 3
     sage: A.<a> = R.ext(g)
     sage: z = (1+a)^5; z
@@ -117,7 +116,6 @@ An unramified extension::
 
 Different printing modes::
 
-    sage: # needs sage.libs.flint
     sage: R = ZpCA(5, print_mode='digits'); S.<x> = ZZ[]; f = x^5 + 75*x^3 - 15*x^2 + 125*x -5; W.<w> = R.ext(f)
     sage: z = (1+w)^5; repr(z)
     '...4110403113210310442221311242000111011201102002023303214332011214403232013144001400444441030421100001'
@@ -133,7 +131,6 @@ Different printing modes::
 
 You can get at the underlying ntl representation::
 
-    sage: # needs sage.libs.flint
     sage: z._ntl_rep()
     [6 95367431640505 25 95367431640560 5]
     sage: y._ntl_rep()
@@ -254,7 +251,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 
         Check that :issue:`13612` has been fixed::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpCA(3)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 1)
@@ -1552,7 +1548,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: ZZ(ZqCA(125,names='a')(-1))  # indirect doctest
             95367431640624
             sage: R = ZpCA(5); S.<x> = ZZ[]; f = x^5 + 25*x^3 - 5; W.<w> = R.ext(f)
@@ -1894,7 +1889,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             w^10 + 4*w^12 + 2*w^14 + w^15 + 2*w^16 + 4*w^17 + w^18 + O(w^19)
             sage: g = x^3 + 3*x + 3
 
-            sage: # needs sage.libs.flint
             sage: A.<a> = R.ext(g)
             sage: y = 75 + 45*a + 1200*a^2; y
             4*a*5 + (3*a^2 + a + 3)*5^2 + 4*a^2*5^3 + a^2*5^4 + O(5^5)
@@ -2140,7 +2134,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             True
             sage: g = x^3 + 9*x^2 + 7
 
-            sage: # needs sage.libs.flint
             sage: A.<a> = R.ext(g)
             sage: b = A.teichmuller(1 + 2*a - a^2); b
             (10*a^2 + 2*a + 1) + (4*a^2 + 7)*11 + (5*a^2 + a + 3)*11^2 + (a^2 + 9*a + 6)*11^3 + (7*a^2 + 2*a + 3)*11^4 + O(11^5)
@@ -2322,7 +2315,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             w^10 + 4*w^12 + 2*w^14 + w^15 + 2*w^16 + 4*w^17 + w^18 + O(w^19)
             sage: g = x^3 + 3*x + 3
 
-            sage: # needs sage.libs.flint
             sage: A.<a> = R.ext(g)
             sage: y = 75 + 45*a + 1200*a^2; y
             4*a*5 + (3*a^2 + a + 3)*5^2 + 4*a^2*5^3 + a^2*5^4 + O(5^5)

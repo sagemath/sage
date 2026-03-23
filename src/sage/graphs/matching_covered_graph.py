@@ -249,7 +249,6 @@ class MatchingCoveredGraph(Graph):
         sage: sorted(H.get_matching())
         [(0, 5, None), (1, 2, None), (3, 4, None)]
 
-        sage: # needs sage.modules
         sage: M = Matrix([(0,1,0,0,1,1,0,0,0,0),
         ....:             (1,0,1,0,0,0,1,0,0,0),
         ....:             (0,1,0,1,0,0,0,1,0,0),
@@ -278,7 +277,6 @@ class MatchingCoveredGraph(Graph):
         sage: sorted(H.get_matching())
         [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
 
-        sage: # needs sage.modules
         sage: M = Matrix([(-1, 0, 0, 0, 1, 0, 0, 0, 0, 0,-1, 0, 0, 0, 0),
         ....:             ( 1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0,-1, 0, 0, 0),
         ....:             ( 0, 1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0,-1, 0, 0),
@@ -476,7 +474,6 @@ class MatchingCoveredGraph(Graph):
         ...
         ValueError: input graph is not matching covered
 
-        sage: # needs sage.modules
         sage: M = Matrix([(0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0),
         ....:             (1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
         ....:             (0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -516,7 +513,6 @@ class MatchingCoveredGraph(Graph):
         ...
         ValueError: input graph is not matching covered
 
-        sage: # needs sage.modules
         sage: M = Matrix([(1, 1, 0, 0, 0, 0),
         ....:             (0, 0, 1, 1, 0, 0),
         ....:             (0, 0, 1, 0, 1, 0),

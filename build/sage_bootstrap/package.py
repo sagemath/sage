@@ -242,6 +242,196 @@ class Package(object):
             return None
 
     @property
+    def tarballs_info(self):
+        """
+        Return information about all tarballs for this package.
+        
+        This supports packages with multiple platform-specific wheels.
+        
+        OUTPUT:
+        
+        List of dictionaries, each containing:
+        - 'tarball': tarball filename pattern
+        - 'sha256': SHA256 checksum
+        - 'sha1': SHA1 checksum (optional)
+        - 'upstream_url': upstream URL pattern
+        """
+        return self.__tarballs_info
+    
+    def find_tarball_for_platform(self):
+        """
+        Find the appropriate tarball for the current platform.
+        
+        For packages with multiple platform-specific wheels, this selects
+        the one matching the current platform and Python version using
+        the packaging.tags module to ensure compatibility.
+        
+        Properly handles wheel ABI tags:
+        - cp313-cp313 (CPython 3.13 specific)
+        - cp313-cp313t (CPython 3.13 free-threaded/nogil)
+        - cp313-abi3 (stable ABI, forward compatible)
+        - py3-none-any (universal pure Python wheel)
+        - pp39-pypy39_pp73 (PyPy wheels)
+        
+        INPUT:
+        
+        - ``python_version`` -- Python version string (e.g., '3.11'), or None to auto-detect
+        
+        OUTPUT:
+        
+        Dictionary with tarball info, or None if no suitable tarball found.
+        The dictionary contains the same fields as tarballs_info entries.
+        """
+        import json
+        import subprocess
+
+        from sage_bootstrap.env import SAGE_ROOT
+        
+        if not self.__tarballs_info:
+            return None
+
+        source_tarballs = [
+            tarball_info for tarball_info in self.__tarballs_info
+            if not tarball_info['tarball'].endswith('.whl')
+        ]
+
+        def fallback_to_source_tarball(reason):
+            if not source_tarballs:
+                return None
+            tarball_info = source_tarballs[0]
+            log.warning(
+                'Falling back to source tarball for %s: %s (%s)',
+                self.name,
+                tarball_info['tarball'],
+                reason,
+            )
+            return tarball_info
+        
+        # If only one tarball, return it
+        if len(self.__tarballs_info) == 1:
+            return self.__tarballs_info[0]
+        
+        # Get compatible tags from Sage's Python using packaging.tags
+        sage_script = os.path.join(SAGE_ROOT, 'sage')
+        if not os.path.exists(sage_script):
+            tarball_info = fallback_to_source_tarball(
+                'Sage script not found at: {0}'.format(sage_script)
+            )
+            if tarball_info is not None:
+                return tarball_info
+            raise RuntimeError('Sage script not found at: {0}'.format(sage_script))
+        
+        try:
+            # Get all compatible tags from Sage's Python
+            result = subprocess.run(
+                [sage_script, '-python', '-c', 
+                 'import packaging.tags; import json; tags = [str(t) for t in packaging.tags.sys_tags()]; print(json.dumps(tags))'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
+                timeout=10,
+                cwd=SAGE_ROOT
+            )
+            if result.returncode != 0:
+                tarball_info = fallback_to_source_tarball(
+                    'failed to get compatible tags from sage -python: {0}'.format(result.stderr)
+                )
+                if tarball_info is not None:
+                    return tarball_info
+                raise RuntimeError('Failed to get compatible tags from sage -python: {0}'.format(result.stderr))
+            
+            compatible_tags = json.loads(result.stdout.strip())
+            
+        except subprocess.TimeoutExpired:
+            tarball_info = fallback_to_source_tarball(
+                'timeout while querying compatible tags via ./sage -python'
+            )
+            if tarball_info is not None:
+                return tarball_info
+            raise RuntimeError('Timeout while querying compatible tags via ./sage -python')
+        except Exception as e:
+            tarball_info = fallback_to_source_tarball(
+                'error querying compatible tags via ./sage -python: {0}'.format(str(e))
+            )
+            if tarball_info is not None:
+                return tarball_info
+            raise RuntimeError('Error querying compatible tags via ./sage -python: {0}'.format(str(e)))
+        
+        # Convert tags list to a set for fast lookup with priority
+        # Lower index = higher priority
+        tag_priority = {tag: idx for idx, tag in enumerate(compatible_tags)}
+        
+        # Separate wheels from non-wheel tarballs
+        wheel_tarballs = []
+        for tarball_info in self.__tarballs_info:
+            if tarball_info['tarball'].endswith('.whl'):
+                wheel_tarballs.append(tarball_info)
+        
+        # Batch parse all wheel filenames in a single subprocess call.
+        # Use concrete filenames so patterns containing VERSION remain parseable.
+        wheel_tags_map = {}
+        if wheel_tarballs:
+            try:
+                wheel_filenames = [
+                    self._substitute_variables(info['tarball'])
+                    for info in wheel_tarballs
+                ]
+                python_code = 'import packaging.utils as pu,json,sys;d={};[exec(f"try: d[f]=[str(t)for t in pu.parse_wheel_filename(f)[3]]\\nexcept: d[f]=None",{"f":f,"d":d,"pu":pu})for f in sys.argv[1:]];print(json.dumps(d))'
+                result = subprocess.run(
+                    [sage_script, '-python', '-c', python_code] + wheel_filenames,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True,
+                    timeout=30,
+                    cwd=SAGE_ROOT
+                )
+                if result.returncode != 0:
+                    log.warning(f'Failed to parse wheel filenames: {result.stderr}')
+                else:
+                    wheel_tags_map = json.loads(result.stdout.strip())
+                    
+            except subprocess.TimeoutExpired:
+                log.warning('Timeout while parsing wheel filenames')
+            except Exception as e:
+                log.warning(f'Error parsing wheel filenames: {e}')
+        
+        # Find the best matching tarball
+        best_match = None
+        best_priority = float('inf')
+        
+        # Check wheel tarballs first (they have higher priority than source)
+        for tarball_info in wheel_tarballs:
+            tarball = self._substitute_variables(tarball_info['tarball'])
+            wheel_tags_str = wheel_tags_map.get(tarball)
+            
+            if wheel_tags_str is None:
+                log.debug(f'Could not parse wheel filename {tarball}')
+                continue
+            
+            # Check each tag in the wheel (multi-platform wheels have multiple tags)
+            for wheel_tag_str in wheel_tags_str:
+                if wheel_tag_str in tag_priority:
+                    priority = tag_priority[wheel_tag_str]
+                    if priority < best_priority:
+                        best_match = tarball_info
+                        best_priority = priority
+                        log.debug(f'Found compatible wheel: {tarball} with tag {wheel_tag_str} (priority: {priority})')
+                    break  # Found a match, no need to check other tags for this wheel
+        
+        # If no wheel matched, consider source distributions
+        if best_match is None and source_tarballs:
+            best_match = fallback_to_source_tarball('no compatible wheel found')
+            best_priority = len(compatible_tags) + 1000
+        
+        if best_match:
+            log.debug(f'Selected {best_match["tarball"]} with priority {best_priority}')
+            return best_match
+        
+        # If no match found, return the first one (backward compatibility)
+        log.warning(f'No exact platform match found for {self.name}, using first tarball')
+        return self.__tarballs_info[0]
+
+    @property
     def tarball_package(self):
         """
         Return the canonical package for the tarball
@@ -507,10 +697,24 @@ class Package(object):
     def _init_checksum(self):
         """
         Load the checksums from the appropriate ``checksums.ini`` file
+        
+        Supports multiple tarballs with format:
+        tarball=package-VERSION-cp311-cp311-manylinux_2_17_x86_64.whl
+        sha256=abc123...
+        upstream_url=https://...
+        tarball=package-VERSION-cp311-cp311-macosx_11_0_arm64.whl
+        sha256=def456...
+        upstream_url=https://...
         """
         checksums_ini = os.path.join(self.path, 'checksums.ini')
         assignment = re.compile('(?P<var>[a-zA-Z0-9_]*)=(?P<value>.*)')
-        result = dict()
+        
+        # Store all entries, supporting multiple values for tarball, sha256, upstream_url
+        tarballs = []
+        sha256s = []
+        sha1s = []
+        upstream_urls = []
+        
         try:
             with open(checksums_ini, 'rt') as f:
                 for line in f.readlines():
@@ -518,13 +722,36 @@ class Package(object):
                     if match is None:
                         continue
                     var, value = match.groups()
-                    result[var] = value
+                    
+                    # Collect multiple entries
+                    if var == 'tarball':
+                        tarballs.append(value)
+                    elif var == 'sha256':
+                        sha256s.append(value)
+                    elif var == 'sha1':
+                        sha1s.append(value)
+                    elif var == 'upstream_url':
+                        upstream_urls.append(value)
         except IOError:
             pass
-        self.__sha1 = result.get('sha1', None)
-        self.__sha256 = result.get('sha256', None)
-        self.__tarball_pattern = result.get('tarball', None)
-        self.__tarball_upstream_url_pattern = result.get('upstream_url', None)
+        
+        # Store all tarballs info
+        self.__tarballs_info = []
+        for i, tarball in enumerate(tarballs):
+            info = {
+                'tarball': tarball,
+                'sha256': sha256s[i] if i < len(sha256s) else None,
+                'sha1': sha1s[i] if i < len(sha1s) else None,
+                'upstream_url': upstream_urls[i] if i < len(upstream_urls) else None,
+            }
+            self.__tarballs_info.append(info)
+        
+        # For backward compatibility, set the first tarball as primary
+        self.__sha1 = sha1s[0] if sha1s else None
+        self.__sha256 = sha256s[0] if sha256s else None
+        self.__tarball_pattern = tarballs[0] if tarballs else None
+        self.__tarball_upstream_url_pattern = upstream_urls[0] if upstream_urls else None
+        
         # Name of the directory containing the checksums.ini file
         self.__tarball_package_name = os.path.realpath(checksums_ini).split(os.sep)[-2]
 

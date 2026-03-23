@@ -595,8 +595,9 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         fw = []
         for i, ambient_sp in enumerate(self.ambient_spaces()):
-            fw.extend(self.inject_weights(i, v) for v in ambient_sp.fundamental_weights())
-        return Family(dict([i,fw[i-1]] for i in range(1,len(fw)+1)))
+            fw.extend(self.inject_weights(i, v)
+                      for v in ambient_sp.fundamental_weights())
+        return Family({i: fw[i - 1] for i in range(1, len(fw) + 1)})
 
 
 CartanType.AmbientSpace = AmbientSpace

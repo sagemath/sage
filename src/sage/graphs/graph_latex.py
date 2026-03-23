@@ -168,20 +168,13 @@ document.::
     \definecolor{cv11v12}{rgb}{0.0,0.502,0.0}
     \definecolor{cv12v13}{rgb}{0.0,0.502,0.0}
     %
-    \Vertex[style={minimum size=0.2cm,draw=cv0,fill=cfv0,text=clv0,shape=circle},LabelOut=false,L=\hbox{$0$},x=2.5cm,y=5.0cm]{v0}
-    \Vertex[style={minimum size=0.2cm,draw=cv1,fill=cfv1,text=clv1,shape=circle},LabelOut=false,L=\hbox{$1$},x=1.3874cm,y=4.7524cm]{v1}
-    \Vertex[style={minimum size=0.2cm,draw=cv2,fill=cfv2,text=clv2,shape=circle},LabelOut=false,L=\hbox{$2$},x=0.4952cm,y=4.0587cm]{v2}
-    \Vertex[style={minimum size=0.2cm,draw=cv3,fill=cfv3,text=clv3,shape=circle},LabelOut=false,L=\hbox{$3$},x=0.0cm,y=3.0563cm]{v3}
-    \Vertex[style={minimum size=0.2cm,draw=cv4,fill=cfv4,text=clv4,shape=circle},LabelOut=false,L=\hbox{$4$},x=0.0cm,y=1.9437cm]{v4}
-    \Vertex[style={minimum size=0.2cm,draw=cv5,fill=cfv5,text=clv5,shape=circle},LabelOut=false,L=\hbox{$5$},x=0.4952cm,y=0.9413cm]{v5}
-    \Vertex[style={minimum size=0.2cm,draw=cv6,fill=cfv6,text=clv6,shape=circle},LabelOut=false,L=\hbox{$6$},x=1.3874cm,y=0.2476cm]{v6}
-    \Vertex[style={minimum size=0.2cm,draw=cv7,fill=cfv7,text=clv7,shape=circle},LabelOut=false,L=\hbox{$7$},x=2.5cm,y=0.0cm]{v7}
-    \Vertex[style={minimum size=0.2cm,draw=cv8,fill=cfv8,text=clv8,shape=circle},LabelOut=false,L=\hbox{$8$},x=3.6126cm,y=0.2476cm]{v8}
-    \Vertex[style={minimum size=0.2cm,draw=cv9,fill=cfv9,text=clv9,shape=circle},LabelOut=false,L=\hbox{$9$},x=4.5048cm,y=0.9413cm]{v9}
-    \Vertex[style={minimum size=0.2cm,draw=cv10,fill=cfv10,text=clv10,shape=circle},LabelOut=false,L=\hbox{$10$},x=5.0cm,y=1.9437cm]{v10}
-    \Vertex[style={minimum size=0.2cm,draw=cv11,fill=cfv11,text=clv11,shape=circle},LabelOut=false,L=\hbox{$11$},x=5.0cm,y=3.0563cm]{v11}
-    \Vertex[style={minimum size=0.2cm,draw=cv12,fill=cfv12,text=clv12,shape=circle},LabelOut=false,L=\hbox{$12$},x=4.5048cm,y=4.0587cm]{v12}
-    \Vertex[style={minimum size=0.2cm,draw=cv13,fill=cfv13,text=clv13,shape=circle},LabelOut=false,L=\hbox{$13$},x=3.6126cm,y=4.7524cm]{v13}
+    \begin{scope}[VertexStyle/.append style={minimum size=0.2cm,draw=cv0,fill=cfv0,text=clv0,shape=circle}]
+    \Vertex[LabelOut=false,L=\hbox{$0$},x=2.5cm,y=5.0cm]{v0}
+    \end{scope}
+    ...
+    \begin{scope}[VertexStyle/.append style={minimum size=0.2cm,draw=cv13,fill=cfv13,text=clv13,shape=circle}]
+    \Vertex[LabelOut=false,L=\hbox{$13$},x=3.6126cm,y=4.7524cm]{v13}
+    \end{scope}
     %
     \Edge[lw=0.04cm,style={color=cv0v1,},](v0)(v1)
     \Edge[lw=0.04cm,style={color=cv0v5,},](v0)(v5)
@@ -265,7 +258,6 @@ the possible options available through Sage's interface to the ``tkz-graph``
 package.  So it is worth viewing this in the notebook to see the effects of
 various defaults and choices.::
 
-    sage: # needs sage.symbolic
     sage: var('x y u w')
     (x, y, u, w)
     sage: G = Graph(loops=True)
@@ -362,11 +354,21 @@ various defaults and choices.::
     \definecolor{cfv4v4}{rgb}{0.0,0.502,0.0}
     \definecolor{clv4v4}{rgb}{0.0,0.0,0.0}
     %
-    \Vertex[style={minimum size=0.5in,draw=cv0,fill=cfv0,text=clv0,shape=diamond},LabelOut=false,L=\hbox{$0$},x=1.75in,y=3.0in]{v0}
-    \Vertex[style={minimum size=0.15in,draw=cv1,fill=cfv1,text=clv1,shape=rectangle},LabelOut=false,L=\hbox{$1$},x=0.5in,y=2.0451in]{v1}
-    \Vertex[style={minimum size=0.15in,draw=cv2,fill=cfv2,text=clv2,shape=circle,shading=ball,line width=0pt,ball color=cv2,},LabelOut=true,Ldist=0.3in,Lpos=180.0,L=\hbox{$2$},x=0.9775in,y=0.5in]{v2}
-    \Vertex[style={minimum size=0.15in,draw=cv3,fill=cfv3,text=clv3,shape=circle,shading=ball,line width=0pt,ball color=cv3,},LabelOut=false,L=\hbox{$3$},x=2.5225in,y=0.5in]{v3}
-    \Vertex[style={minimum size=0.5in,draw=cv4,fill=cfv4,text=clv4,shape=circle},LabelOut=true,Ldist=0.0in,Lpos=45.0,L=\hbox{$4$},x=3.0in,y=2.0451in]{v4}
+    \begin{scope}[VertexStyle/.append style={minimum size=0.5in,draw=cv0,fill=cfv0,text=clv0,shape=diamond}]
+    \Vertex[LabelOut=false,L=\hbox{$0$},x=1.75in,y=3.0in]{v0}
+    \end{scope}
+    \begin{scope}[VertexStyle/.append style={minimum size=0.15in,draw=cv1,fill=cfv1,text=clv1,shape=rectangle}]
+    \Vertex[LabelOut=false,L=\hbox{$1$},x=0.5in,y=2.0451in]{v1}
+    \end{scope}
+    \begin{scope}[VertexStyle/.append style={minimum size=0.15in,draw=cv2,fill=cfv2,text=clv2,shape=circle,shading=ball,line width=0pt,ball color=cv2,}]
+    \Vertex[LabelOut=true,Ldist=0.3in,Lpos=180.0,L=\hbox{$2$},x=0.9775in,y=0.5in]{v2}
+    \end{scope}
+    \begin{scope}[VertexStyle/.append style={minimum size=0.15in,draw=cv3,fill=cfv3,text=clv3,shape=circle,shading=ball,line width=0pt,ball color=cv3,}]
+    \Vertex[LabelOut=false,L=\hbox{$3$},x=2.5225in,y=0.5in]{v3}
+    \end{scope}
+    \begin{scope}[VertexStyle/.append style={minimum size=0.5in,draw=cv4,fill=cfv4,text=clv4,shape=circle}]
+    \Vertex[LabelOut=true,Ldist=0.0in,Lpos=45.0,L=\hbox{$4$},x=3.0in,y=2.0451in]{v4}
+    \end{scope}
     %
     \Loop[dist=1.0in,dir=NO,style={color=cv0v0,double=cfv0v0},labelstyle={sloped,above,text=clv0v0,},label=\hbox{$\sin\left(u\right)$},](v0)
     \Edge[lw=0.025in,style={color=cv0v1,double=cfv0v1},labelstyle={sloped,pos=0.5,text=clv0v1,},label=\hbox{$y$},](v0)(v1)
@@ -1312,8 +1314,12 @@ class GraphLatex(SageObject):
             \definecolor{clv1}{rgb}{0.0,0.0,0.0}
             \definecolor{cv0v1}{rgb}{0.0,0.0,0.0}
             %
-            \Vertex[style={minimum size=1.0cm,draw=cv0,fill=cfv0,text=clv0,shape=circle},LabelOut=false,L=\hbox{$0$},x=2.5cm,y=5.0cm]{v0}
-            \Vertex[style={minimum size=1.0cm,draw=cv1,fill=cfv1,text=clv1,shape=circle},LabelOut=false,L=\hbox{$1$},x=2.5cm,y=0.0cm]{v1}
+            \begin{scope}[VertexStyle/.append style={minimum size=1.0cm,draw=cv0,fill=cfv0,text=clv0,shape=circle}]
+            \Vertex[LabelOut=false,L=\hbox{$0$},x=2.5cm,y=5.0cm]{v0}
+            \end{scope}
+            \begin{scope}[VertexStyle/.append style={minimum size=1.0cm,draw=cv1,fill=cfv1,text=clv1,shape=circle}]
+            \Vertex[LabelOut=false,L=\hbox{$1$},x=2.5cm,y=0.0cm]{v1}
+            \end{scope}
             %
             \Edge[lw=0.1cm,style={color=cv0v1,},](v0)(v1)
             %
@@ -1510,14 +1516,37 @@ class GraphLatex(SageObject):
             \definecolor{cv0v2}{rgb}{0.0,0.0,0.0}
             \definecolor{cv1v2}{rgb}{0.0,0.0,0.0}
             %
-            \Vertex[style={minimum size=1.0cm,draw=cv0,fill=cfv0,text=clv0,shape=circle},LabelOut=false,L=\hbox{$0$},x=2.5cm,y=5.0cm]{v0}
-            \Vertex[style={minimum size=1.0cm,draw=cv1,fill=cfv1,text=clv1,shape=circle},LabelOut=false,L=\hbox{$1$},x=0.0cm,y=0.0cm]{v1}
-            \Vertex[style={minimum size=1.0cm,draw=cv2,fill=cfv2,text=clv2,shape=circle},LabelOut=false,L=\hbox{$2$},x=5.0cm,y=0.0cm]{v2}
+            \begin{scope}[VertexStyle/.append style={minimum size=1.0cm,draw=cv0,fill=cfv0,text=clv0,shape=circle}]
+            \Vertex[LabelOut=false,L=\hbox{$0$},x=2.5cm,y=5.0cm]{v0}
+            \end{scope}
+            \begin{scope}[VertexStyle/.append style={minimum size=1.0cm,draw=cv1,fill=cfv1,text=clv1,shape=circle}]
+            \Vertex[LabelOut=false,L=\hbox{$1$},x=0.0cm,y=0.0cm]{v1}
+            \end{scope}
+            \begin{scope}[VertexStyle/.append style={minimum size=1.0cm,draw=cv2,fill=cfv2,text=clv2,shape=circle}]
+            \Vertex[LabelOut=false,L=\hbox{$2$},x=5.0cm,y=0.0cm]{v2}
+            \end{scope}
             %
             \Edge[lw=0.1cm,style={color=cv0v1,},](v0)(v1)
             \Edge[lw=0.1cm,style={color=cv0v2,},](v0)(v2)
             \Edge[lw=0.1cm,style={color=cv1v2,},](v1)(v2)
             %
+            \end{tikzpicture}
+
+        Non-default vertex appearance is encoded through ``VertexStyle`` so it
+        is not overwritten by tkz-graph defaults (:issue:`38282`)::
+
+            sage: from sage.graphs.graph_latex import check_tkz_graph
+            sage: check_tkz_graph()  # random - depends on TeX installation
+            sage: g = graphs.PathGraph(2)
+            sage: g.set_latex_options(vertex_shape='rectangle', vertex_color='red')
+            sage: print(g.latex_options().tkz_picture())
+            \begin{tikzpicture}
+            \definecolor{cv0}{rgb}{1.0,0.0,0.0}
+            ...
+            \begin{scope}[VertexStyle/.append style={minimum size=1.0cm,draw=cv0,fill=cfv0,text=clv0,shape=rectangle}]
+            \Vertex[LabelOut=false,L=\hbox{$0$},x=...,y=...]{v0}
+            \end{scope}
+            ...
             \end{tikzpicture}
 
         See the introduction to the :mod:`~sage.graphs.graph_latex` module for
@@ -1574,7 +1603,9 @@ class GraphLatex(SageObject):
             \raisebox{-.6ex}{$\begin{array}[b]{*{1}c}\cline{1-1}
             \lr{1}\\\cline{1-1}
             \end{array}$}
-            }$}\Vertex[style={minimum size=1.0cm,draw=cv0,fill=cfv0,text=clv0,shape=circle},LabelOut=false,L=\usebox{\vertex},x=...,y=...]{v0}
+            }$}\begin{scope}[VertexStyle/.append style={minimum size=1.0cm,draw=cv0,fill=cfv0,text=clv0,shape=circle}]
+            \Vertex[LabelOut=false,L=\usebox{\vertex},x=...,y=...]{v0}
+            \end{scope}
             ...
             \end{tikzpicture}
         """
@@ -1958,10 +1989,13 @@ class GraphLatex(SageObject):
         box = ''
         used = False
         for u in vertex_list:
-            t = [r'\Vertex[']
+            t = []
             # colors, shapes, sizes, labels/placement for 'Custom' style
             if customized:
-                t += ['style={']  # begin style list
+                # tkz-graph applies vertex styles through VertexStyle; passing
+                # these keys as a \Vertex[style={...}] option leaves them
+                # ineffective for shape/color overrides.
+                t += [r'\begin{scope}[VertexStyle/.append style={']
                 t += ['minimum size=', str(round(float(scale * v_size[u]), 4)),
                       units, ',']
                 t += ['draw=', vertex_color_names[u], ',']
@@ -1972,7 +2006,9 @@ class GraphLatex(SageObject):
                     t += ['shape=circle,shading=ball,line width=0pt,ball color=', vertex_color_names[u], ',']
                 else:
                     t += ['shape=', v_shape[u]]
-                t += ['},']  # end style list
+                t += ['}]', '\n']
+            t += [r'\Vertex[']
+            if customized:
                 if vertex_labels:
                     if vl_placement[u] == 'center':
                         t += ['LabelOut=false,']
@@ -2000,6 +2036,8 @@ class GraphLatex(SageObject):
             t += ['y=', str(round(float(scale * scaled_pos[1]), 4)), units]
             t += [']']
             t += ['{', prefix, str(index_of_vertex[u]), '}\n']
+            if customized:
+                t += [r'\end{scope}', '\n']
             if box:
                 v += [box] + t
                 box = ''

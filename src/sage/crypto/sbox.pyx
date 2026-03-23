@@ -414,7 +414,7 @@ cdef class SBox(SageObject):
             (1, 1, 0)
 
             sage: id = SBox(range(8))
-            sage: all([x == id(x) for x in k])
+            sage: all(x == id(x) for x in k)
             True
 
         Some examples for inputs that throw an :exc:`TypeError`::
@@ -526,7 +526,7 @@ cdef class SBox(SageObject):
         """
         return self.n
 
-    def is_permutation(self):
+    def is_permutation(self) -> bool:
         r"""
         Return ``True`` if this S-Box is a permutation.
 
@@ -544,8 +544,7 @@ cdef class SBox(SageObject):
         if self.m != self.n:
             return False
         cdef Py_ssize_t m = self.m
-        cdef Py_ssize_t i
-        return len(set([self._S_list[i] for i in range(1 << m)])) == 1 << m
+        return len(set(self._S_list)) == 1 << m
 
     def __iter__(self):
         """
@@ -1836,7 +1835,7 @@ cdef class SBox(SageObject):
             (a + 1)*x^6 + (a^2 + a + 1)*x^5 + (a^2 + a)*x^4
              + (a^2 + 1)*x^3 + a*x^2 + a*x
 
-            sage: all([S(x) == S_poly(x) for x in S_poly.base_ring()])
+            sage: all(S(x) == S_poly(x) for x in S_poly.base_ring())
             True
 
             sage: S = SBox(0,3,2,1)

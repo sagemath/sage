@@ -28,19 +28,23 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu', 'macos', 'windows']
-        python: ['3.12', '3.13']
+        python: ['3.13', '3.14']
         tests: ['all']
         editable:
           ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
         include:
           # Test only changed files
           - os: 'ubuntu'
-            python: '3.12'
+            python: '3.13'
             tests: 'new'
           # One additional editable run in pull_request, this has no effect if not pull_request
           - os: 'ubuntu'
-            python: '3.12'
+            python: '3.13'
             editable: true
+            tests: 'all'
+          # Test for python 3.12
+          - os: 'ubuntu'
+            python: '3.12'
             tests: 'all'
 
     steps:

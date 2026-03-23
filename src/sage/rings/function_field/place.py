@@ -158,7 +158,6 @@ class FunctionFieldPlace(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)
             sage: p1, p2, p3 = L.places()[:3]
@@ -185,7 +184,6 @@ class FunctionFieldPlace(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(5)); R.<Y> = PolynomialRing(K)
             sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: O = F.maximal_order()
@@ -204,7 +202,6 @@ class FunctionFieldPlace(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: p1, p2, p3 = L.places()[:3]
@@ -221,7 +218,6 @@ class FunctionFieldPlace(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: p1, p2, p3 = L.places()[:3]
@@ -238,7 +234,6 @@ class FunctionFieldPlace(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: p1, p2 = L.places()[:2]
@@ -311,7 +306,6 @@ class FunctionFieldPlace(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(5)); R.<Y> = PolynomialRing(K)
             sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: O = F.maximal_order()
@@ -376,7 +370,6 @@ class PlaceSet(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: places = L.place_set()
@@ -397,7 +390,6 @@ class PlaceSet(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: places = L.place_set()
@@ -421,7 +413,6 @@ class PlaceSet(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: PS = L.place_set()

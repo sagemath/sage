@@ -1,19 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 LLT symmetric functions
-
-REFERENCES:
-
-.. [LLT1997] Alain Lascoux, Bernard Leclerc, Jean-Yves Thibon,
-   Ribbon tableaux, Hall-Littlewood functions, quantum affine algebras, and unipotent varieties,
-   J. Math. Phys. 38 (1997), no. 2, 1041-1068,
-   :arxiv:`q-alg/9512031v1` [math.q.alg]
-
-.. [LT2000] Bernard Leclerc and Jean-Yves Thibon,
-   Littlewood-Richardson coefficients and Kazhdan-Lusztig polynomials,
-   in: Combinatorial methods in representation theory (Kyoto)
-   Adv. Stud. Pure Math., vol. 28, Kinokuniya, Tokyo, 2000, pp 155-220
-   :arxiv:`math/9809122v3` [math.q-alg]
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
