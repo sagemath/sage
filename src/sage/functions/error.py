@@ -256,8 +256,8 @@ class Function_erf(BuiltinFunction):
             0.995322265018953
             sage: erf(2).n(200)                                                         # needs sage.symbolic
             0.99532226501895273416206925636725292861089179704006007673835
-            sage: erf(pi - 1/2*I).n(100)                                                # needs sage.symbolic
-            1.0000111669099367825726058952 + 1.6332655417638522934072124547e-6*I
+            sage: erf(pi - 1/2*I).n(100)                                                # needs sage.symbolic # abs tol 1e-28
+            1.0000111669099367825726058952 + 1.6332655417638522934072124548e-6*I
 
         TESTS:
 

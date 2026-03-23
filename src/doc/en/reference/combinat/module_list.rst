@@ -129,6 +129,7 @@ Comprehensive module list
     sage/combinat/t_sequences
     sage/combinat/tableau_tuple
     sage/combinat/tableau
+    sage/combinat/tamari_blossoming_tree
     sage/combinat/interval_posets
     sage/combinat/hillman_grassl
     sage/combinat/tiling

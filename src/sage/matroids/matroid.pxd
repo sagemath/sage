@@ -121,7 +121,7 @@ cdef class Matroid(SageObject):
     cpdef SetSystem dependent_sets(self, long k)
     cpdef list _extend_flags(self, list flags)
     cpdef list _flags(self, long k)
-    cpdef SetSystem flats(self, long k)
+    cpdef SetSystem flats(self, long k=*)
     cpdef SetSystem coflats(self, long k)
     cpdef SetSystem hyperplanes(self)
     cpdef list f_vector(self)

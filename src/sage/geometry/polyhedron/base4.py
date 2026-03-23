@@ -399,7 +399,6 @@ class Polyhedron_base4(Polyhedron_base3):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: P = polytopes.regular_polygon(4).pyramid()
             sage: D = P.hasse_diagram(); D
             Digraph on 20 vertices
@@ -409,7 +408,6 @@ class Polyhedron_base4(Polyhedron_base3):
         Faces of a mutable polyhedron are not hashable. Hence those are not suitable as
         vertices of the hasse diagram. Use the combinatorial polyhedron instead::
 
-            sage: # needs sage.rings.number_field
             sage: P = polytopes.regular_polygon(4).pyramid()
             sage: parent = P.parent()
             sage: parent = parent.change_ring(QQ, backend='ppl')
@@ -659,7 +657,6 @@ class Polyhedron_base4(Polyhedron_base3):
         This shows an example of two polytopes whose vertex-edge graphs are isomorphic,
         but their face lattices are not isomorphic::
 
-            sage: # needs sage.groups
             sage: Q = Polyhedron([[-123984206864/2768850730773, -101701330976/922950243591, -64154618668/2768850730773, -2748446474675/2768850730773],
             ....:                 [-11083969050/98314591817, -4717557075/98314591817, -32618537490/98314591817, -91960210208/98314591817],
             ....:                 [-9690950/554883199, -73651220/554883199, 1823050/554883199, -549885101/554883199],
@@ -680,7 +677,6 @@ class Polyhedron_base4(Polyhedron_base3):
 
         The automorphism group of the face lattice is isomorphic to the combinatorial automorphism group::
 
-            sage: # needs sage.groups
             sage: CG = C.hasse_diagram().automorphism_group()
             sage: C.combinatorial_automorphism_group().is_isomorphic(CG)
             True
@@ -799,7 +795,6 @@ class Polyhedron_base4(Polyhedron_base3):
 
         A cross-polytope example::
 
-            sage: # needs sage.groups
             sage: P = polytopes.cross_polytope(3)
             sage: P.restricted_automorphism_group() == PermutationGroup([[(3,4)], [(2,3),(4,5)],[(2,5)],[(1,2),(5,6)],[(1,6)]])
             True
@@ -809,7 +804,6 @@ class Polyhedron_base4(Polyhedron_base3):
 
         We test groups for equality in a fool-proof way; they can have different generators, etc::
 
-            sage: # needs sage.groups
             sage: poly_g = P.restricted_automorphism_group(output='matrix')
             sage: matrix_g = MatrixGroup([matrix(QQ,t) for t in mgens])
             sage: all(t.matrix() in poly_g for t in matrix_g.gens())
@@ -819,7 +813,6 @@ class Polyhedron_base4(Polyhedron_base3):
 
         24-cell example::
 
-            sage: # needs sage.groups
             sage: P24 = polytopes.twenty_four_cell()
             sage: AutP24 = P24.restricted_automorphism_group()
             sage: PermutationGroup([
@@ -832,7 +825,6 @@ class Polyhedron_base4(Polyhedron_base3):
 
         Here is the quadrant example mentioned in the beginning::
 
-            sage: # needs sage.groups
             sage: P = Polyhedron(rays=[(1,0),(0,1)])
             sage: P.Vrepresentation()
             (A vertex at (0, 0), A ray in the direction (0, 1), A ray in the direction (1, 0))
@@ -841,7 +833,6 @@ class Polyhedron_base4(Polyhedron_base3):
 
         Also, the polyhedron need not be full-dimensional::
 
-            sage: # needs sage.groups
             sage: P = Polyhedron(vertices=[(1,2,3,4,5),(7,8,9,10,11)])
             sage: P.restricted_automorphism_group()
             Permutation Group with generators [(1,2)]
@@ -876,7 +867,6 @@ class Polyhedron_base4(Polyhedron_base3):
         dihedral group with 6 elements, `D_6`, as its automorphism
         group::
 
-            sage: # needs sage.groups
             sage: initial_points = [vector([1,0]), vector([0,1]), vector([-2,-1])]
             sage: points = initial_points
             sage: Polyhedron(vertices=points).restricted_automorphism_group()
@@ -894,7 +884,6 @@ class Polyhedron_base4(Polyhedron_base3):
         The ``output="matrixlist"`` can be used over fields without a
         complete implementation of matrix groups::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron(); P
             A 3-dimensional polyhedron in (Number Field in sqrt5 with defining
              polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^3

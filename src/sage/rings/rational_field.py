@@ -109,7 +109,6 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     ::
 
-        sage: # needs sage.rings.real_mpfr
         sage: QQ(23.2, 2)
         6530219459687219/281474976710656
         sage: 6530219459687219.0/281474976710656
@@ -121,7 +120,6 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     Here's a nice example involving elliptic curves::
 
-        sage: # needs sage.rings.real_mpfr sage.schemes
         sage: E = EllipticCurve('11a')
         sage: L = E.lseries().at1(300)[0]; L
         0.2538418608559106843377589233...
@@ -1419,7 +1417,6 @@ class RationalField(Singleton, number_field_base.NumberField):
         In general there is one generator for each `p\in S`, and an
         additional generator of `-1` when `p=2`::
 
-            sage: # needs sage.modules sage.rings.number_field
             sage: QS2, QS2gens, fromQS2, toQS2 = QQ.selmer_space([5,7], 2)
             sage: QS2
             Vector space of dimension 3 over Finite Field of size 2
@@ -1624,7 +1621,6 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         TESTS::
 
-            sage: # needs sage.libs.pari
             sage: R.<x> = QQ[]
             sage: QQ._factor_univariate_polynomial(x)
             x

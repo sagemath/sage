@@ -74,7 +74,6 @@ cdef class Matrix_dense(matrix.Matrix):
 
         Check :issue:`27629`::
 
-            sage: # needs sage.symbolic
             sage: var('x')
             x
             sage: assume(x, 'real')

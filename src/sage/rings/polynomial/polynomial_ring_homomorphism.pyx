@@ -76,7 +76,6 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: F(2 * x, check=True)
             2*x
 
-            sage: # needs sage.rings.finite_rings
             sage: k = GF(49, 'z')
             sage: A = PolynomialRing(GF(7), 'x', sparse=True)
             sage: B = PolynomialRing(k, 'x', sparse=True)

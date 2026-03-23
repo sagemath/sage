@@ -113,7 +113,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         deprecation(34509, "using 'index in vector' is deprecated; use 'index in vector.support()' instead")
         return x in self.support()
 
-    def __hash__(self) -> int:
+    def __hash__(self) -> Py_hash_t:
         """
         Return the hash value for ``self``.
 

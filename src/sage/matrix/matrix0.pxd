@@ -30,12 +30,12 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef int _strassen_default_echelon_cutoff(self) except -2
 
     # Implementation of hash function
-    cdef long _hash_(self) except -1
+    cdef Py_hash_t _hash_(self) except -1
     cdef void get_hash_constants(self, long C[5]) noexcept
 
     # Cache
     cdef public object _cache
-    cdef long hash  # cached hash value
+    cdef Py_hash_t hash  # cached hash value
     cdef void clear_cache(self) noexcept
     cdef fetch(self, key)
     cdef cache(self, key, x)

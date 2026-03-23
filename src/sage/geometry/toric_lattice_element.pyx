@@ -103,39 +103,6 @@ from sage.rings.integer cimport Integer
 from sage.structure.richcmp cimport richcmp_not_equal
 
 
-def is_ToricLatticeElement(x):
-    r"""
-    Check if ``x`` is an element of a toric lattice.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is an element of a toric lattice, ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.toric_lattice_element import (
-        ....:   is_ToricLatticeElement)
-        sage: is_ToricLatticeElement(1)
-        doctest:warning...
-        DeprecationWarning: The function is_ToricLatticeElement is deprecated;
-        use 'isinstance(..., ToricLatticeElement)' instead.
-        See https://github.com/sagemath/sage/issues/38126 for details.
-        False
-        sage: e = ToricLattice(3).an_element()
-        sage: e
-        N(1, 0, 0)
-        sage: is_ToricLatticeElement(e)
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38126,
-                       "The function is_ToricLatticeElement is deprecated; "
-                       "use 'isinstance(..., ToricLatticeElement)' instead.")
-    return isinstance(x, ToricLatticeElement)
-
-
 # Why do we need a special class:
 # - customize output to include lattice name
 # - prohibit operations mixing "wrong" lattices

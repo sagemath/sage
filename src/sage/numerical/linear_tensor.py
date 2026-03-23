@@ -108,6 +108,7 @@ from sage.numerical.linear_tensor_element import LinearTensor
 #
 # ***************************************************************************
 
+
 @cached_function
 def LinearTensorParent(free_module_parent, linear_functions_parent):
     """

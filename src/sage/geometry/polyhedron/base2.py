@@ -776,7 +776,6 @@ class Polyhedron_base2(Polyhedron_base1):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P2 = (Polyhedron(ieqs=[(0, 0, 0, 1), (0, 0, 1, 0), (0, 1, 0, -1)]),
             ....:       Polyhedron(ieqs=[(0, -1, 0, 1), (0, 1, 0, 0), (0, 0, 1, 0)]))
             sage: P2[0].generating_function_of_integral_points(sort_factors=True)
@@ -793,7 +792,6 @@ class Polyhedron_base2(Polyhedron_base1):
         The number of integer partitions
         `1 \leq r_0 \leq r_1 \leq r_2 \leq r_3 \leq r_4`::
 
-            sage: # needs sage.combinat
             sage: P = Polyhedron(ieqs=[(-1, 1, 0, 0, 0, 0), (0, -1, 1, 0, 0, 0),
             ....:                      (0, 0, -1, 1, 0, 0), (0, 0, 0, -1, 1, 0),
             ....:                      (0, 0, 0, 0, -1, 1)])
