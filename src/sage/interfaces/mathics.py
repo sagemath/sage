@@ -427,6 +427,8 @@ def _mathics_sympysage_symbol(self):
                 return True
             if name == mathics._false_symbol():
                 return False
+        elif '`' in name:
+            name = name.split('`')[-1]
         return SR.var(name)
     except ValueError:
         # sympy sometimes returns dummy variables
