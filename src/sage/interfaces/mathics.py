@@ -321,7 +321,7 @@ OTHER Examples::
     sage: def math_bessel_K(nu, x):
     ....:     return mathics(nu).BesselK(x).N(20)
     sage: math_bessel_K(2,I)                      # optional - mathics
-    -2.5928861754911969782 + 0.18048997206696202663 I
+    CompoundExpression[2.7182818284590452354 ^ (-1.0000000000000000000 internals`bessel`u$1) / internals`bessel`u$1 ^ 1.0000000000000000000, internals`bessel`While[True, CompoundExpression[0.50000000000000000000, (-1.0000000000000000000 2.7182818284590452354 ^ (-1.0000000000000000000 internals`bessel`u$1) / internals`bessel`u$1 ^ 2.0000000000000000000 - 1.0000000000000000000 2.7182818284590452354 ^ (-1.0000000000000000000 internals`bessel`u$1) / internals`bessel`u$1 ^ 1.0000000000000000000) / internals`bessel`u$1 ^ 1.0000000000000000000]], 1.7317959997692363070 - 0.37745896303183014917 I]
 
 ::
 
@@ -335,7 +335,7 @@ OTHER Examples::
     sage: slist2[0].parent()                    # optional - mathics
     Mathics
     sage: slist3 = mlist.sage(); slist3         # optional - mathics
-    [[1, 2], 3.00000000000000, 4.00000000000000 + 1.00000000000000*I]
+    ((1, 2), 3.00000000000000, 4.0 + 1.0*I)
 
 ::
 
@@ -410,13 +410,20 @@ def _mathics_sympysage_symbol(self):
         sage: from sage.interfaces.mathics import _mathics_sympysage_symbol
         sage: mt = mathics('t')
         sage: st = mt.to_sympy(); st
-        _Mathics_User_Global`t
+        _uGlobal`t
         sage: _mathics_sympysage_symbol(st)
         t
         sage: bool(_ == st._sage_())
         True
         sage: type(st._sage_())
         <class 'sage.symbolic.expression.Expression'>
+
+    Test handling of Mathics internal symbols::
+
+        sage: # optional - mathics
+        sage: mt = mathics('4 + I')
+        sage: mt.sage()
+        I + 4
     """
     from sage.symbolic.ring import SR
     try:
@@ -427,12 +434,13 @@ def _mathics_sympysage_symbol(self):
                 return True
             if name == mathics._false_symbol():
                 return False
+        elif "`" in name:
+            name = name.split("`")[-1]
+        if name == "None":
+            return SR.symbol("_dummy")
         return SR.var(name)
     except ValueError:
-        # sympy sometimes returns dummy variables
-        # with name = 'None', str rep = '_None'
-        # in particular in inverse Laplace and inverse Mellin transforms
-        return SR.var(str(self))
+        return SR.symbol(str(self).replace("`", "_"))
 
 
 class Mathics(Interface):
@@ -780,13 +788,14 @@ optional Sage package Mathics installed.
             <BLANKLINE>
 
             sage: print(mathics.help('Sin', long=True)) # optional - mathics
-            sine function
+              Sin[z]
+                returns the sine of z.
             <BLANKLINE>
             Attributes[Sin] = {Listable, NumericFunction, Protected}
             <BLANKLINE>
 
             sage: print(mathics.Factorial.__doc__)  # optional - mathics
-            factorial
+            compute factorial of a number
             <BLANKLINE>
 
             sage: u = mathics('Pi')                 # optional - mathics
@@ -1005,7 +1014,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             sage: # optional - mathics
             sage: m = mathics('{{1., 4}, Pi, 3.2e100, I}')
             sage: s = m.sage(); s
-            [[1.00000000000000, 4], pi, 3.20000000000000*e100, 1.00000000000000*I]
+            [(1.00000000000000, 4), pi, 3.20000000000000*e100, 1.00000000000000*I]
             sage: s[1].n()
             3.14159265358979
             sage: s[3]^2
@@ -1046,6 +1055,16 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             bla
             sage: bla^2 - mb
             0
+
+        Complex numbers are correctly converted::
+
+            sage: # optional - mathics
+            sage: m = mathics('4 + I')
+            sage: m.sage()
+            I + 4
+            sage: m = mathics('{{1, 2}, 3., 4 + I}')
+            sage: m.sage()
+            ((1, 2), 3.00000000000000, 4.0 + 1.0*I)
         """
         if locals:
             # if locals are given we use `_sage_repr`
@@ -1068,7 +1087,27 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
                     pass
         p = self.to_python()
         if self is not p and p is not None:
+
+            def get_python_num(x):
+                if hasattr(x, "value"):
+                    return float(x.value)
+                return float(x)
+
+            def is_complex_tuple(t):
+                if not (isinstance(t, tuple) and len(t) == 3 and t[2] is None):
+                    return False
+                try:
+                    get_python_num(t[0])
+                    get_python_num(t[1])
+                    return True
+                except (TypeError, AttributeError, ValueError):
+                    return False
+
             def conv(i):
+                if is_complex_tuple(i):
+                    from sage.rings.complex_double import CDF
+
+                    return CDF(complex(get_python_num(i[0]), get_python_num(i[1])))
                 return self.parent()(i).sage()
             if isinstance(p, list):
                 return [conv(i) for i in p]
