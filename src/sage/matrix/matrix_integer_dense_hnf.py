@@ -43,7 +43,8 @@ def max_det_prime(n):
     return Integer(8388593)
 
 
-def det_from_modp_and_divisor(A, d, p, z_mod, moduli, z_so_far=ZZ(1), N_so_far=ZZ(1)):
+def det_from_modp_and_divisor(A, d, p, z_mod, moduli,
+                              z_so_far=ZZ.one(), N_so_far=ZZ.one()):
     """
     This is used for internal purposes for computing determinants
     quickly (with the hybrid `p`-adic / multimodular algorithm).
@@ -57,7 +58,8 @@ def det_from_modp_and_divisor(A, d, p, z_mod, moduli, z_so_far=ZZ(1), N_so_far=Z
     - ``moduli`` -- the moduli so far
     - ``z_so_far`` -- for a modulus p in the list moduli,
       (z_so_far mod p) is the determinant of A modulo p
-    - ``N_so_far`` -- N_so_far is the product over the primes in the list moduli
+    - ``N_so_far`` -- N_so_far is the product over the primes
+      in the list moduli
 
     OUTPUT:
 
@@ -252,12 +254,15 @@ def double_det(A, b, c, proof):
         sage: double_det(A, b, c, False)
         (-48, 42)
     """
-    # We use the "two for the price of one" algorithm, which I made up. (William Stein)
+    # We use the "two for the price of one" algorithm, which I made
+    # up. (William Stein)
 
-    # This is a clever trick!  First we transpose everything.  Then
-    # we use that if [A|b]*v = c then [A|c]*w = b with w easy to write down!
-    # In fact w is got from v by dividing all entries by -v[n], where n is the
-    # number of rows of v, and *also* dividing the last entry of w by v[n] again.
+    # This is a clever trick!  First we transpose everything.  Then we
+    # use that if [A|b]*v = c then [A|c]*w = b with w easy to write
+    # down!  In fact w is got from v by dividing all entries by -v[n],
+    # where n is the number of rows of v, and *also* dividing the last
+    # entry of w by v[n] again.
+
     # See this as an algebra exercise where you have to think of matrix vector
     # multiply as "linear combination of columns".
     A = A.transpose()
@@ -313,7 +318,7 @@ def add_column_fallback(B, a, proof):
         [ 0  0  2 -2]
     """
     tt = verbose('add column fallback...')
-    W = B.augment(matrix(ZZ,B.nrows(),a.list()))
+    W = B.augment(matrix(ZZ, B.nrows(), a.list()))
     H, _ = hnf(W, proof)
     C = H.matrix_from_columns([H.ncols()-1])
     verbose('finished add column fallback', tt)
@@ -355,7 +360,7 @@ def solve_system_with_difficult_last_row(B, a):
     #    by a random very nice row.
     C = copy(B)
     while True:
-        C[C.nrows()-1] = random_matrix(ZZ,1,C.ncols()).row(0)
+        C[C.nrows()-1] = random_matrix(ZZ, 1, C.ncols()).row(0)
         # 2. Then we find the unique solution to C * x = a
         try:
             x = C.solve_right(a)
@@ -493,7 +498,7 @@ def add_row(A, b, pivots, include_zero_rows):
     return H, pivs
 
 
-def pivots_of_hnf_matrix(H):
+def pivots_of_hnf_matrix(H) -> list[int]:
     """
     Return the pivot columns of a matrix H assumed to be in HNF.
 
@@ -551,7 +556,7 @@ def hnf_square(A, proof):
     n = A.nrows()
     m = A.ncols()
     if n != m:
-        raise ValueError("A must be square.")
+        raise ValueError("A must be square")
 
     # Small cases -- do not use this algorithm
     if n <= 3:
@@ -609,7 +614,7 @@ def hnf_square(A, proof):
         H = W._hnf_mod(2 * g)
 
     x = add_column(W, H, b.stack(matrix(1, 1,
-                                        [k*A[m-2,m-1] + l*A[m-1,m-1]])),
+                                        [k*A[m-2, m-1] + l*A[m-1, m-1]])),
                    proof)
     Hprime = H.augment(x)
     pivots = pivots_of_hnf_matrix(Hprime)
@@ -703,7 +708,7 @@ def probable_pivot_columns(A):
     return A._reduce(p).pivots()
 
 
-def ones(H, pivots):
+def ones(H, pivots) -> tuple[list, list, list, list]:
     """
     Find all 1 pivot columns of the matrix H in Hermite form, along
     with the corresponding rows, and also the non 1 pivot columns and
@@ -804,7 +809,7 @@ def extract_ones_data(H, pivots):
         return None, None, None, onecol, onerow, non_onecol, non_onerow
 
 
-def is_in_hnf_form(H, pivots):
+def is_in_hnf_form(H, pivots) -> bool:
     """
     Return whether the matrix ``H`` is in Hermite normal form
     with given pivot columns.
@@ -833,23 +838,23 @@ def is_in_hnf_form(H, pivots):
         if j in pivots_set:
             for i in range(r + 1, H.nrows()):
                 if H[i, j]:
-                    verbose('not HNF because nonzeros below pivot position',tt)
+                    verbose('not HNF because nonzeros below pivot position', tt)
                     return False
             for i in range(r):
                 if H[i, j] < 0 or H[i, j] >= H[r, j]:
-                    verbose('not HNF because negative or too big above pivot position',tt)
+                    verbose('not HNF because negative or too big above pivot position', tt)
                     return False
             r += 1
         else:
             for i in range(r, H.nrows()):
                 if H[i, j]:
-                    verbose('not HNF nonzero in wrong place in nonpivot column',tt)
+                    verbose('not HNF nonzero in wrong place in nonpivot column', tt)
                     return False
     verbose('done verifying in HNF -- yes', tt)
     return True
 
 
-def probable_hnf(A, include_zero_rows, proof):
+def probable_hnf(A, include_zero_rows, proof) -> tuple:
     """
     Return the HNF of A or raise an exception if something involving
     the randomized nature of the algorithm goes wrong along the way.
@@ -974,7 +979,7 @@ def probable_hnf(A, include_zero_rows, proof):
                                                            D.ncols()))
                 Y = (z - w * C).transpose()
                 k = E * Y
-                verbose("done checking denom",tt)
+                verbose("done checking denom", tt)
                 if k.denominator() != 1:
                     H, pivots = add_row(H, v, pivots, include_zero_rows=False)
                     D = H.matrix_from_rows_and_columns(non_onerow, non_onecol).transpose()
@@ -1071,8 +1076,8 @@ def hnf(A, include_zero_rows=True, proof=True):
             if not include_zero_rows:
                 A = A.new_matrix(0)  # 0 rows
         else:
-            i,j = np[0]
-            if A[i,j] < 0:
+            i, j = np[0]
+            if A[i, j] < 0:
                 A = -A
             pivots = [j]
         return A, pivots
@@ -1086,7 +1091,7 @@ def hnf(A, include_zero_rows=True, proof=True):
     while True:
         try:
             H, pivots = probable_hnf(A, include_zero_rows=include_zero_rows,
-                                 proof=True)
+                                     proof=True)
         except ValueError:
             verbose("The attempt failed since the pivots must have been wrong. We try again.")
             continue
@@ -1130,7 +1135,8 @@ def hnf_with_transformation(A, proof=True):
         [  1   3 197]
         [  0   8 207]
     """
-    # All we do is augment the input matrix with the identity matrix of the appropriate rank on the right.
+    # All we do is augment the input matrix with the identity matrix
+    # of the appropriate rank on the right.
     C = A.augment(identity_matrix(ZZ, A.nrows()))
     H, _ = hnf(C, include_zero_rows=True, proof=proof)
     U = H.matrix_from_columns(range(A.ncols(), H.ncols()))
@@ -1274,7 +1280,7 @@ def sanity_checks(times=50, n=8, m=5, proof=True, stabilize=2,
     print("small %s x %s" % (m, n))
     __do_check([random_matrix(ZZ, m, n, x=-1, y=1) for _ in range(times)])
     print("big %s x %s" % (m, n))
-    __do_check([random_matrix(ZZ, m, n, x=-2**32,y=2**32)
+    __do_check([random_matrix(ZZ, m, n, x=-2**32, y=2**32)
                 for _ in range(times)])
 
     print("sparse %s x %s" % (n, m))

@@ -121,7 +121,6 @@ class SageDoctestModule(DoctestModule):
                         # TODO: Remove this once all optional things are using Features
                         if exception.name in (
                             "valgrind",
-                            "rpy2",
                             "sage.libs.coxeter3.coxeter",
                             "sagemath_giac",
                         ):
@@ -197,18 +196,8 @@ def pytest_collect_file(
                 # We don't allow tests to be defined in __main__.py/setup.py files (because their import will fail).
                 return IgnoreCollector.from_parent(parent)
             if (
-                (
-                    file_path.name == "postprocess.py"
-                    and file_path.parent.name == "nbconvert"
-                )
-                or (
-                    file_path.name == "giacpy-mkkeywords.py"
-                    and file_path.parent.name == "autogen"
-                )
-                or (
-                    file_path.name == "flint_autogen.py"
-                    and file_path.parent.name == "autogen"
-                )
+                file_path.name == "postprocess.py"
+                and file_path.parent.name == "nbconvert"
             ):
                 # This is an executable file.
                 return IgnoreCollector.from_parent(parent)

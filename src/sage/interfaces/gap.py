@@ -18,6 +18,12 @@ The interface offers two pieces of functionality:
    ``f.Factors()`` returns the prime factorization of
    `10` computed using GAP.
 
+.. NOTE::
+
+    This interface is based on pexpect and communicates with GAP via a
+    subprocess. For most purposes, the library-based interface
+    :mod:`~sage.libs.gap.libgap` is preferred, as it is faster and
+    more robust. See :mod:`sage.libs.gap.libgap` for details.
 
 First Examples
 --------------

@@ -1161,7 +1161,6 @@ def spectral_radius(G, prec=1e-10):
 
     A larger example::
 
-        sage: # needs sage.modules
         sage: G = DiGraph()
         sage: G.add_edges((i,i+1) for i in range(200))
         sage: G.add_edge(200,0)

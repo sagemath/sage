@@ -138,10 +138,10 @@ class SandpileExamples:
         EXAMPLES::
 
             sage: f = sandpiles.Fan(10)
-            sage: f.group_order() == fibonacci(18)                                      # needs sage.libs.pari
+            sage: f.group_order() == fibonacci(18)
             True
             sage: f = sandpiles.Fan(10,True)  # all nonsink vertices have deg 3
-            sage: f.group_order() == fibonacci(20)                                      # needs sage.libs.pari
+            sage: f.group_order() == fibonacci(20)
             True
         """
         f = graphs.WheelGraph(n)

@@ -1647,12 +1647,42 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         rel_h = [r[1] for r in relations_h]
         rel_h = flatten(rel_h, max_level=1)
     rel_v = []
+    B = BraidGroup(d)
+    cox = tuple(range(1, d + 1))
+    coxm = tuple([-j for j in reversed(cox)])
+    cnjdelta = []
+    for j in range(d):
+        a = tuple(range(1, d - j))
+        a1 = tuple([-j for j in reversed(a)])
+        cnjdelta.append(a + (d - j,) + a1)
+    homcnjdelta = F.hom(codomain=F, im_gens=cnjdelta)
     for j, k in enumerate(vertical0):
         l1 = d + j + 1
         br = bm[k]
+        rnf = rightnormalform(br)
+        rnf1 = rnf[: -1]
+        xp = rnf[-1][0]
+        if rnf1:
+            elt = prod(B(m) for m in rnf1)
+        else:
+            elt = B.one()
+        parity = xp % 2
+        yp = xp // 2
+        if yp == 0:
+            cnja = ()
+            cnjb = ()
+        elif yp > 0:
+            cnja = yp * cox
+            cnjb = yp * coxm
+        else:
+            cnja = abs(yp) * coxm
+            cnjb = abs(yp) * cox
         for gen in F.gens():
             j0 = gen.Tietze()[0]
-            rl = (l1,) + (gen * br).Tietze() + (-l1, -j0)
+            gen0 = gen * elt
+            if parity:
+                gen0 = homcnjdelta(gen0)
+            rl = (l1,) + cnja + gen0.Tietze() + cnjb + (-l1, -j0)
             rel_v.append(rl)
     rel = rel_h + rel_v
     if projective:

@@ -23,7 +23,6 @@ EXAMPLES:
 
 Consider Katsura-6 with respect to a ``degrevlex`` ordering. ::
 
-    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: from sage.rings.polynomial.toy_buchberger import *
     sage: P.<a,b,c,e,f,g,h,i,j,k> = PolynomialRing(GF(32003))
     sage: I = sage.rings.ideal.Katsura(P, 6)
@@ -33,7 +32,6 @@ Consider Katsura-6 with respect to a ``degrevlex`` ordering. ::
 
 All algorithms actually compute a Groebner basis::
 
-    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: Ideal(g1).basis_is_groebner()
     True
     sage: Ideal(g2).basis_is_groebner()
@@ -43,13 +41,11 @@ All algorithms actually compute a Groebner basis::
 
 The results are correct::
 
-    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: Ideal(g1) == Ideal(g2) == Ideal(g3)
     True
 
 If ``get_verbose()`` is `\ge 1`, a protocol is provided::
 
-    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: from sage.misc.verbose import set_verbose
     sage: set_verbose(1)
     sage: P.<a,b,c> = PolynomialRing(GF(127))
@@ -119,7 +115,6 @@ If ``get_verbose()`` is `\ge 1`, a protocol is provided::
 The original Buchberger algorithm performs 15 useless reductions to
 zero for this example::
 
-    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: gb = buchberger(I)
     ...
     15 reductions to zero.
@@ -127,7 +122,6 @@ zero for this example::
 The 'improved' Buchberger algorithm in contrast only performs 1 reduction to
 zero::
 
-    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: gb = buchberger_improved(I)
     ...
     1 reductions to zero.
