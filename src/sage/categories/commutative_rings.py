@@ -12,7 +12,7 @@ Commutative rings
 # *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.categories.cartesian_product import CartesianProductsCategory, cartesian_product
 from sage.structure.sequence import Sequence
 from sage.structure.element import coercion_model
 
@@ -928,3 +928,17 @@ class CommutativeRings(CategoryWithAxiom):
                 True
             """
             return [CommutativeRings()]
+
+        class ParentMethods:
+            def _pseudo_fraction_field(self):
+                r"""
+                This method is used by the coercion model to determine if `a / b`
+                should be treated as `a * (1/b)`.
+
+                EXAMPLES::
+
+                    sage: R = cartesian_product([ZZ, Zmod(5)])
+                    sage: R._pseudo_fraction_field()
+                    The Cartesian product of (Rational Field, Ring of integers modulo 5)
+                """
+                return cartesian_product([c._pseudo_fraction_field() for c in self.cartesian_factors()])

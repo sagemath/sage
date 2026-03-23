@@ -107,6 +107,7 @@ Vectors
 .. toctree::
    :maxdepth: 1
 
+   sage/modules/vector_cartesian_product
    sage/modules/vector_integer_dense
    sage/modules/vector_integer_sparse
    sage/modules/vector_mod2_dense

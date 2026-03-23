@@ -1569,8 +1569,7 @@ class Sets(Category_singleton):
                 sage: type(C)                                                           # needs sage.combinat sage.modules
                 <class 'sage.sets.cartesian_product.CartesianProduct_with_category'>
                 sage: C.category()                                                      # needs sage.combinat sage.modules
-                Join of Category of rings and ...
-                    and Category of Cartesian products of commutative additive groups
+                Category of Cartesian products of rings
 
             ::
 
