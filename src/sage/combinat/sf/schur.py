@@ -501,6 +501,10 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 s[]
                 sage: s([]).verschiebung(4)
                 s[]
+                sage: s([]).verschiebung(2)
+                s[]
+                sage: s[1].verschiebung(2)
+                0                
 
             TESTS:
 
