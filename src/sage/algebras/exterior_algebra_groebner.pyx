@@ -301,7 +301,6 @@ cdef class GroebnerStrategy:
         Generate all of the S-polynomials to remove the ambiguities.
         """
         cdef GBElement f0, f1
-        cdef set additions
 
         cdef set L = set()
         if self.side != 1:  # We compute a left Gröbner basis for homogeneous two-sided ideals
@@ -334,8 +333,8 @@ cdef class GroebnerStrategy:
         monL.difference_update(done)
 
         while monL:
-            #m = max(monL, key=self.bitset_to_int) # self.int_to_bitset(max(self.bitset_to_int(k) for k in monL))
-            #monL.remove(m)
+            # m = max(monL, key=self.bitset_to_int) # self.int_to_bitset(max(self.bitset_to_int(k) for k in monL))
+            # monL.remove(m)
             m = monL.pop()
             done.add(m)
             mbs = self.int_to_bitset(m)
@@ -365,10 +364,11 @@ cdef class GroebnerStrategy:
         cdef Py_ssize_t i
         from sage.matrix.constructor import matrix
         cdef Integer r = self.r
-        cdef Matrix M = matrix({(i, r - self.bitset_to_int(<FrozenBitset> m)): c
-                    for i, f in enumerate(L)
-                    for m, c in (<GBElement> f).elt._monomial_coefficients.items()},
-                   sparse=True)
+        cdef Matrix M = matrix(
+            {(i, r - self.bitset_to_int(<FrozenBitset> m)): c
+             for i, f in enumerate(L)
+             for m, c in (<GBElement> f).elt._monomial_coefficients.items()},
+            sparse=True)
         M.echelonize()  # Do this in place
         return M
 

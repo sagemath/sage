@@ -293,7 +293,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: F,t = GF(random_prime(99)^randrange(2,99), 't').objgen()
             sage: a = F.random_element()
             sage: all(a[i] == a.polynomial()[i] for i in range(F.degree()))
@@ -334,7 +333,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: R.<x> = GF(17)[]
             sage: F.<t> = GF(17^60)
             sage: a = F.random_element()
@@ -378,7 +376,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: F = GF(random_prime(333)^randrange(111,999),'t')
             sage: a = F.random_element()
             sage: list(a) == a.list()  # implicit doctest
@@ -386,7 +383,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         ::
 
-            sage: # needs sage.modules
             sage: F.<t> = GF(17^60)
             sage: a = F.random_element()
             sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
@@ -394,7 +390,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         ::
 
-            sage: # needs sage.modules
             sage: F.<t> = GF((2^127 - 1)^10, 't')
             sage: a = F.random_element()
             sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
@@ -461,7 +456,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: k.<a> = GF(2^4)
             sage: b = k.random_element()
             sage: vector(a*b) == a.matrix() * vector(b)
@@ -1027,7 +1021,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         Check that :issue:`26761` is fixed::
 
-            sage: # needs sage.libs.gap
             sage: G32 = GU(3,2)
             sage: g1, g2 = G32.gens()
             sage: m1 = g1.matrix()
@@ -1079,7 +1072,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: p = random_prime(2^99)
             sage: k = randrange(2,10)
             sage: F.<t> = GF((p, k))

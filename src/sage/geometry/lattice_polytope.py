@@ -729,7 +729,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         Check that :issue:`28741` is fixed::
 
-            sage: # needs sage.graphs
             sage: p = LatticePolytope([], lattice=ToricLattice(3).dual()); p
             -1-d lattice polytope in 3-d lattice M
             sage: a = p.faces()[0][0]
@@ -1479,7 +1478,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             sage: o.ambient() is o
             True
 
-            sage: # needs sage.graphs
             sage: face = o.faces(1)[0]
             sage: face
             1-d face of 3-d reflexive polytope in 3-d lattice M
@@ -1506,7 +1504,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         But each of its other faces is contained in one or more facets::
 
-            sage: # needs sage.graphs
             sage: face = o.faces(1)[0]
             sage: face.ambient_facet_indices()
             (4, 5)
@@ -1809,7 +1806,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: o = lattice_polytope.cross_polytope(4)
             sage: e = o.edges()[0]; e
             1-d face of 4-d reflexive polytope in 4-d lattice M
@@ -1938,7 +1934,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         However, you can achieve some of this functionality using
         :meth:`facets`, :meth:`facet_of`, and :meth:`adjacent` methods::
 
-            sage: # needs sage.graphs
             sage: face = square.faces(0)[0]
             sage: face
             0-d face of 2-d lattice polytope in 2-d lattice M
@@ -1960,7 +1955,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         Note that if ``p`` is a face of ``superp``, then the face
         lattice of ``p`` consists of (appropriate) faces of ``superp``::
 
-            sage: # needs sage.graphs
             sage: superp = LatticePolytope([(1,2,3,4), (5,6,7,8),
             ....:                           (1,2,4,8), (1,3,9,7)])
             sage: superp.face_lattice()
@@ -2326,7 +2320,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: square = LatticePolytope([(0,0), (1,0), (1,1), (0,1)])
             sage: square.facet_of()
             ()

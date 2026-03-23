@@ -850,7 +850,6 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.complex_double sage.symbolic
             sage: R.<m> = CDF[[]]
             sage: f = CDF(pi)^2 + m^3 + CDF(e)*m^4 + O(m^10); f   # abs tol 5e-16
             9.869604401089358 + 0.0*m + 0.0*m^2 + 1.0*m^3 + 2.718281828459045*m^4 + O(m^10)
@@ -1221,7 +1220,6 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
             sage: f = exp(x) + O(x^7); f
             1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
@@ -1240,7 +1238,6 @@ cdef class PowerSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
             sage: f = exp(x) + O(x^7)
             sage: f >> 3
@@ -1326,7 +1323,6 @@ cdef class PowerSeries(AlgebraElement):
 
         Tests other implementations::
 
-            sage: # needs sage.libs.pari
             sage: R.<q> = PowerSeriesRing(GF(11), implementation='pari')
             sage: f = q - q^3 + O(q^10)
             sage: f.map_coefficients(lambda c: c - 2)
@@ -1666,7 +1662,6 @@ cdef class PowerSeries(AlgebraElement):
 
         ::
 
-            sage: # needs sage.rings.complex_double
             sage: K.<t> = PowerSeriesRing(CDF, 5)
             sage: v = sqrt(-1 + t + t^3, all=True); v
             [1.0*I - 0.5*I*t - 0.125*I*t^2 - 0.5625*I*t^3 - 0.2890625*I*t^4 + O(t^5),
@@ -2596,7 +2591,6 @@ cdef class PowerSeries(AlgebraElement):
 
         Handle nonzero constant term (fixes :issue:`4477`)::
 
-            sage: # needs sage.rings.real_mpfr
             sage: R.<x> = PowerSeriesRing(RR)
             sage: (1 + x + x^2 + O(x^3)).exp()
             2.71828182845905 + 2.71828182845905*x + 4.07742274268857*x^2 + O(x^3)
@@ -2672,7 +2666,6 @@ cdef class PowerSeries(AlgebraElement):
             ...
             ArithmeticError: constant term of power series is not 1
 
-            sage: # needs sage.rings.real_mpfr
             sage: R.<t> = PowerSeriesRing(RR)
             sage: (2 + t).log().exp()
             2.00000000000000 + 1.00000000000000*t + O(t^20)

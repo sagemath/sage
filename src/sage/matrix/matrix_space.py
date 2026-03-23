@@ -571,7 +571,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     Check that different implementations play together as expected::
 
-        sage: # needs sage.libs.linbox
         sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')
         sage: M2 = MatrixSpace(ZZ, 2, implementation='generic')
         sage: type(M1(range(4)))
@@ -590,7 +589,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     Check that libgap matrices over finite fields are working properly::
 
-        sage: # needs sage.libs.gap
         sage: M2 = MatrixSpace(GF(2), 5, implementation='gap')
         sage: M2.one()
         [1 0 0 0 0]
@@ -1076,7 +1074,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
             [1 2]
             [3 4]
 
-            sage: # needs sage.modular
             sage: MS = MatrixSpace(ZZ, 2)
             sage: g = Gamma0(5)([1,1,0,1])
             sage: MS(g)
@@ -2174,7 +2171,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         Check that :issue:`38221` is fixed::
 
-            sage: # needs sage.groups
             sage: G = CyclicPermutationGroup(7)
             sage: R = GF(2)
             sage: A = G.algebra(R)
@@ -2266,7 +2262,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
             [1]
             [2]
 
-            sage: # needs sage.rings.real_mpfr
             sage: MS = MatrixSpace(CC, 2, 1)
             sage: x = polygen(ZZ, 'x')
             sage: F = NumberField(x^2 + 1, name='x')                                    # needs sage.rings.number_field
@@ -2301,7 +2296,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
         One-rowed matrices over combinatorial free modules used to break
         the constructor (:issue:`17124`). Check that this is fixed::
 
-            sage: # needs sage.combinat
             sage: Sym = SymmetricFunctions(ZZ)
             sage: h = Sym.h()
             sage: MatrixSpace(h, 1,1)([h[1]])

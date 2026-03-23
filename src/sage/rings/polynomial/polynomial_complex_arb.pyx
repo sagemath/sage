@@ -197,7 +197,6 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         TESTS::
 
-            sage: # needs sage.symbolic
             sage: Pol.<x> = ComplexBallField(42)[]
             sage: pol = (x + i)/3
             sage: pol2 = loads(dumps(pol))

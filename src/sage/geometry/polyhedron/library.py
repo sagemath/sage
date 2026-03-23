@@ -518,7 +518,6 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: octagon = polytopes.regular_polygon(8)
             sage: octagon
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 8 vertices
@@ -804,7 +803,6 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: d12 = polytopes.dodecahedron()
             sage: d12.f_vector()
             (1, 20, 30, 12, 1)
@@ -1320,7 +1318,6 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: sc_inexact = polytopes.snub_cube(exact=False); sc_inexact
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 24 vertices
             sage: sc_inexact.f_vector()
@@ -2489,7 +2486,6 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: h_4_2 = polytopes.hypersimplex(4, 2)
             sage: h_4_2
             A 3-dimensional polyhedron in ZZ^4 defined as the convex hull of 6 vertices
@@ -2499,7 +2495,6 @@ class Polytopes:
             2/3*t^3 + 2*t^2 + 7/3*t + 1
             sage: TestSuite(h_4_2).run()
 
-            sage: # needs sage.combinat
             sage: h_7_3 = polytopes.hypersimplex(7, 3, project=True)
             sage: h_7_3
             A 6-dimensional polyhedron in RDF^6 defined as the convex hull of 35 vertices
@@ -2637,7 +2632,6 @@ class Polytopes:
         You can put the starting point along the hyperplane of the first
         generator::
 
-            sage: # needs sage.combinat
             sage: perm_a3_011 = polytopes.generalized_permutahedron(['A',3], [0,1,1])
             sage: perm_a3_011
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 12 vertices
@@ -2731,7 +2725,6 @@ class Polytopes:
 
         Larger examples take longer::
 
-            sage: # needs sage.combinat sage.rings.number_field
             sage: perm_a3_reg = polytopes.generalized_permutahedron(    # long time
             ....:     ['A',3], regular=True); perm_a3_reg
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 24 vertices
@@ -2744,7 +2737,6 @@ class Polytopes:
         It is faster with the backend ``'number_field'``, which internally uses an embedded
         number field instead of doing the computations directly with the base ring (``AA``)::
 
-            sage: # needs sage.combinat sage.rings.number_field
             sage: perm_a3_reg_nf = polytopes.generalized_permutahedron(
             ....:    ['A',3], regular=True, backend='number_field'); perm_a3_reg_nf
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 24 vertices

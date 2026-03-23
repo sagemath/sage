@@ -314,7 +314,6 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
 
     Independent distance-`k` dominating sets of a Path graph::
 
-        sage: # needs sage.numerical.mip
         sage: G = graphs.PathGraph(6)
         sage: sorted(sorted(d) for d in G.dominating_sets(k=1, independent=True))
         [[1, 4]]
@@ -326,7 +325,6 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
     The dominating set is calculated for both the directed and undirected graphs
     (modification introduced in :issue:`17905`)::
 
-        sage: # needs sage.numerical.mip
         sage: g = digraphs.Path(3)
         sage: g.dominating_set(value_only=True)
         2
