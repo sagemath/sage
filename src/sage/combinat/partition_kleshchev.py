@@ -426,7 +426,9 @@ class KleshchevPartition(Partition):
         mu = P.element_class(P, self.remove_cell(r, c)).mullineux_conjugate()
         # add back on a cogood cell of residue -residue(k,r,c)
         KP = mu.parent()
-        return KP.element_class(KP, mu.add_cell(*mu.cogood_cells( r-c-self.parent()._multicharge[0]) ))
+        return KP.element_class(
+            KP,
+            mu.add_cell(*mu.cogood_cells(r-c-self.parent()._multicharge[0])))
 
     def is_regular(self) -> bool:
         r"""
@@ -745,8 +747,8 @@ class KleshchevPartitionTuple(PartitionTuple):
 
         res = sorted(good_cells.keys())[0]
         k, r, c = good_cells[res]
-        good_seq = type(self)(self.parent(), self.remove_cell(k,r,c)).good_residue_sequence()
-        good_seq.append( self.parent()._index_set(res) )
+        good_seq = type(self)(self.parent(), self.remove_cell(k, r, c)).good_residue_sequence()
+        good_seq.append(self.parent()._index_set(res))
         return good_seq
 
     def good_cell_sequence(self):

@@ -1254,11 +1254,13 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
                 sage: list(s._from_dict({part: 0}, remove_zeros=False))                 # needs sage.combinat
                 [([2, 1], 0)]
         """
-        assert isinstance(d, dict)
         if coerce:
             R = self.base_ring()
-            d = {key: R(coeff) for key, coeff in d.items()}
-        if remove_zeros:
+            if remove_zeros:
+                d = {key: c for key, coeff in d.items() if (c := R(coeff))}
+            else:
+                d = {key: R(coeff) for key, coeff in d.items()}
+        elif remove_zeros:
             d = {key: coeff for key, coeff in d.items() if coeff}
         return self.element_class(self, d)
 

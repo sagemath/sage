@@ -1232,7 +1232,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: C = A.curve((y - 3/2)^3 - (x + 2)^5 - (x + 2)^6)
             sage: Q = A([-2,3/2])
-            sage: C.blowup(Q)
+            sage: Bl = C.blowup(Q); Bl # random - depends on version of singular
             ((Affine Plane Curve over Rational Field
                defined by x^3 - s1^3 + 7*x^2 + 16*x + 12,
               Affine Plane Curve over Rational Field
@@ -1278,6 +1278,13 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                                  - 320*x^2 - 9/2*y^2 - 272*x + 27/4*y - 795/8
                 Defn: Defined on coordinates by sending (y, s0) to
                       (y*s0 - 3/2*s0 - 2, y)))
+            sage: [P/P.lc() for curve in Bl[0] for P in curve.defining_ideal().gens()]
+            [x^3 - s1^3 + 7*x^2 + 16*x + 12,
+              y^3*s0^6 - 9/2*y^2*s0^6 + y^2*s0^5 + 27/4*y*s0^6 - 3*y*s0^5 - 27/8*s0^6 + 9/4*s0^5 - 1]
+            sage: [m.defining_polynomials() for chart in Bl[1] for m in chart]
+            [(x, s1), (x*s1 + 2*s1 + 3/2, 1/s1), (y*s0 - 3/2*s0 - 2, 1/s0), (y, s0)]
+            sage: [m.defining_polynomials() for m in Bl[2]]
+            [(x, x*s1 + 2*s1 + 3/2), (y*s0 - 3/2*s0 - 2, y)]
 
         ::
 
@@ -1483,7 +1490,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             sage: K.<a> = QuadraticField(3)
             sage: A.<x,y> = AffineSpace(K, 2)
             sage: C = A.curve(x^4 + 2*x^2 + a*y^3 + 1)
-            sage: C.resolution_of_singularities(extend=True)[0]         # long time (2 s)
+            sage: RS = C.resolution_of_singularities(extend=True)[0]; RS        # long time (2 s) # random - depends on version of singular
             (Affine Plane Curve over Number Field in a0
               with defining polynomial y^4 - 4*y^2 + 16
               defined by 24*x^2*ss1^3 + 24*ss1^3 + (a0^3 - 8*a0),
@@ -1493,6 +1500,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
              Affine Plane Curve over Number Field in a0
               with defining polynomial y^4 - 4*y^2 + 16
               defined by 8*y^2*s0^4 + (4*a0^3)*y*s0^3 - 32*s0^2 + (a0^3 - 8*a0)*y)
+            sage: [P/P.lc() for curve in RS for P in curve.defining_ideal().gens()]  # long time
+            [x^2*ss1^3 + ss1^3 + (1/24*a0^3 - 1/3*a0),
+              s1^2*ss0 + (1/24*a0^3 - 1/3*a0)*ss0^2 + (-1/4*a0^3)*s1,
+              y^2*s0^4 + (1/2*a0^3)*y*s0^3 - 4*s0^2 + (1/8*a0^3 - a0)*y]
 
         ::
 

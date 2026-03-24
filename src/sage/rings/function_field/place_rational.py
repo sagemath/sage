@@ -102,7 +102,6 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: i = O.ideal(x^2 + x + 1)

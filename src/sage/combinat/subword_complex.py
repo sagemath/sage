@@ -98,11 +98,6 @@ AUTHORS:
 
 - Christian Stump: initial version
 - Vincent Pilaud: greedy flip algorithm, minor improvements, documentation
-
-REFERENCES:
-
-.. [KnuMil] Knutson and Miller. *Subword complexes in Coxeter groups*. Adv. Math., 184(1):161-176, 2004.
-.. [PilStu] Pilaud and Stump. *Brick polytopes of spherical subword complexes and generalized associahedra*. Adv. Math. 276:1-61, 2015.
 """
 # ****************************************************************************
 #       Copyright (C) 2015      Christian Stump <christian.stump@gmail.com>

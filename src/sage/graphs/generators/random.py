@@ -10,7 +10,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #           Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+#                         https://www.gnu.org/licenses/
 ###########################################################################
 
 import sys
@@ -22,7 +22,7 @@ from sage.misc.prandom import random
 from sage.misc.prandom import randint
 
 
-def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
+def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage', immutable=False):
     r"""
     Return a random graph on `n` nodes. Each edge is inserted independently
     with probability `p`.
@@ -48,6 +48,9 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
       ``gnp_random_graph``. Try them to know which algorithm is the best for
       you. The ``fast`` parameter is not taken into account by the 'Sage'
       algorithm so far.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     REFERENCES:
 
@@ -92,7 +95,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
         sage: graphs.RandomGNP(50,.2,algorithm=50)
         Traceback (most recent call last):
         ...
-        ValueError: 'algorithm' must be equal to 'networkx' or to 'Sage'.
+        ValueError: 'algorithm' must be equal to 'networkx' or to 'Sage'
         sage: set_random_seed(0)
         sage: graphs.RandomGNP(50,.2, algorithm='Sage').size()
         243
@@ -107,7 +110,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
 
     if p == 1:
         from sage.graphs.generators.basic import CompleteGraph
-        return CompleteGraph(n)
+        return CompleteGraph(n, immutable=immutable)
 
     if algorithm == 'networkx':
         if seed is None:
@@ -117,16 +120,15 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
             G = networkx.fast_gnp_random_graph(n, p, seed=seed)
         else:
             G = networkx.gnp_random_graph(n, p, seed=seed)
-        return Graph(G)
-    elif algorithm in ['Sage', 'sage']:
+        return Graph(G, format="NX", immutable=immutable)
+    if algorithm in ['Sage', 'sage']:
         # We use the Sage generator
         from sage.graphs.graph_generators_pyx import RandomGNP as sageGNP
-        return sageGNP(n, p, seed=seed)
-    else:
-        raise ValueError("'algorithm' must be equal to 'networkx' or to 'Sage'.")
+        return sageGNP(n, p, seed=seed, immutable=immutable)
+    raise ValueError("'algorithm' must be equal to 'networkx' or to 'Sage'")
 
 
-def RandomBarabasiAlbert(n, m, seed=None):
+def RandomBarabasiAlbert(n, m, seed=None, immutable=False):
     r"""
     Return a random graph created using the Barabasi-Albert preferential
     attachment model.
@@ -143,6 +145,9 @@ def RandomBarabasiAlbert(n, m, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -183,10 +188,11 @@ def RandomBarabasiAlbert(n, m, seed=None):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.barabasi_albert_graph(int(n), int(m), seed=seed))
+    return Graph(networkx.barabasi_albert_graph(int(n), int(m), seed=seed),
+                 format="NX", immutable=immutable)
 
 
-def RandomBipartite(n1, n2, p, set_position=False, seed=None):
+def RandomBipartite(n1, n2, p, set_position=False, seed=None, immutable=False):
     r"""
     Return a bipartite graph with `n1+n2` vertices such that any edge
     from `[n1]` to `[n2]` exists with probability `p`.
@@ -203,6 +209,9 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -244,19 +253,15 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None):
     if seed is not None:
         set_random_seed(seed)
 
+    from itertools import chain
     from numpy.random import uniform
 
-    g = Graph(name=f"Random bipartite graph of order {n1}+{n2} with edge probability {p}")
-
+    name = f"Random bipartite graph of order {n1}+{n2} with edge probability {p}"
     S1 = [(0, i) for i in range(n1)]
     S2 = [(1, i) for i in range(n2)]
-    g.add_vertices(S1)
-    g.add_vertices(S2)
-
-    for w in range(n2):
-        for v in range(n1):
-            if uniform() <= p:
-                g.add_edge((0, v), (1, w))
+    edges = ((v, w) for w in S2 for v in S1 if uniform() <= p)
+    g = Graph([chain(S1, S2), edges], format="vertices_and_edges",
+              name=name, immutable=immutable)
 
     # We now assign positions to vertices:
     # - vertices in S1 are placed on the line from (0, 1) to (max(n1, n2), 1)
@@ -270,7 +275,8 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None):
     return g
 
 
-def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
+def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None,
+                           immutable=False):
     r"""
     Return a random regular bipartite graph on `n1 + n2` vertices.
 
@@ -297,6 +303,9 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -418,7 +427,7 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
         d1, d2 = n2 - d1, n1 - d2
 
     name = "Random regular bipartite graph of order {}+{} and degrees {} and {}".format(n1, n2, d1, d2)
-    G = Graph(list(E), name=name)
+    G = Graph(E, format="list_of_edges", name=name, immutable=immutable)
 
     # We now assign positions to vertices:
     # - vertices 0,..,n1-1 are placed on the line (0, 1) to (max(n1, n2), 1)
@@ -432,7 +441,8 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
     return G
 
 
-def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
+def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None,
+                     immutable=False):
     r"""
     Return a Random Block Graph.
 
@@ -465,6 +475,9 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -587,15 +600,15 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
 
     # We finally build the block graph
     if k == kmax:
-        BG = Graph(name="Random Block Graph with {} blocks of order {}".format(m, k))
+        name = f"Random Block Graph with {m} blocks of order {k}"
     else:
-        BG = Graph(name="Random Block Graph with {} blocks of order {} to {}".format(m, k, kmax))
-    for block in IS:
-        BG.add_clique(block)
-    return BG
+        name = f"Random Block Graph with {m} blocks of order {k} to {kmax}"
+    from itertools import chain, combinations
+    edges = chain.from_iterable(combinations(block, 2) for block in IS)
+    return Graph(edges, format="list_of_edges", name=name, immutable=immutable)
 
 
-def RandomBoundedToleranceGraph(n, seed=None):
+def RandomBoundedToleranceGraph(n, seed=None, immutable=False):
     r"""
     Return a random bounded tolerance graph.
 
@@ -617,6 +630,9 @@ def RandomBoundedToleranceGraph(n, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -656,10 +672,10 @@ def RandomBoundedToleranceGraph(n, seed=None):
             left, right = right, left + 1
         tolrep.append((left, right, randint(1, right - left)))
 
-    return ToleranceGraph(tolrep)
+    return ToleranceGraph(tolrep, immutable=immutable)
 
 
-def RandomGNM(n, m, dense=False, seed=None):
+def RandomGNM(n, m, dense=False, seed=None, immutable=False):
     r"""
     Return a graph randomly picked out of all graphs on `n` vertices with `m`
     edges.
@@ -675,6 +691,9 @@ def RandomGNM(n, m, dense=False, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -708,12 +727,13 @@ def RandomGNM(n, m, dense=False, seed=None):
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
     if dense:
-        return Graph(networkx.dense_gnm_random_graph(n, m, seed=seed))
-    else:
-        return Graph(networkx.gnm_random_graph(n, m, seed=seed))
+        return Graph(networkx.dense_gnm_random_graph(n, m, seed=seed),
+                     format="NX", immutable=immutable)
+    return Graph(networkx.gnm_random_graph(n, m, seed=seed),
+                 format="NX", immutable=immutable)
 
 
-def RandomNewmanWattsStrogatz(n, k, p, seed=None):
+def RandomNewmanWattsStrogatz(n, k, p, seed=None, immutable=False):
     r"""
     Return a Newman-Watts-Strogatz small world random graph on `n` vertices.
 
@@ -734,6 +754,9 @@ def RandomNewmanWattsStrogatz(n, k, p, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -776,10 +799,11 @@ def RandomNewmanWattsStrogatz(n, k, p, seed=None):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.newman_watts_strogatz_graph(n, k, p, seed=seed))
+    return Graph(networkx.newman_watts_strogatz_graph(n, k, p, seed=seed),
+                 format="NX", immutable=immutable)
 
 
-def RandomHolmeKim(n, m, p, seed=None):
+def RandomHolmeKim(n, m, p, seed=None, immutable=False):
     r"""
     Return a random graph generated by the Holme and Kim algorithm for
     graphs with power law degree distribution and approximate average
@@ -795,6 +819,9 @@ def RandomHolmeKim(n, m, p, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     From the NetworkX documentation: the average clustering has a hard time
     getting above a certain cutoff that depends on `m`. This cutoff is often
@@ -820,10 +847,11 @@ def RandomHolmeKim(n, m, p, seed=None):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.powerlaw_cluster_graph(n, m, p, seed=seed))
+    return Graph(networkx.powerlaw_cluster_graph(n, m, p, seed=seed),
+                 format="NX", immutable=immutable)
 
 
-def RandomIntervalGraph(n, seed=None):
+def RandomIntervalGraph(n, seed=None, immutable=False):
     r"""
     Return a random interval graph.
 
@@ -857,6 +885,9 @@ def RandomIntervalGraph(n, seed=None):
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES:
 
     As for any interval graph, the chromatic number is equal to
@@ -871,10 +902,10 @@ def RandomIntervalGraph(n, seed=None):
     from sage.graphs.generators.intersection import IntervalGraph
 
     intervals = [tuple(sorted((random(), random()))) for i in range(n)]
-    return IntervalGraph(intervals, True)
+    return IntervalGraph(intervals, points_ordered=True, immutable=immutable)
 
 
-def RandomProperIntervalGraph(n, seed=None):
+def RandomProperIntervalGraph(n, seed=None, immutable=False):
     r"""
     Return a random proper interval graph.
 
@@ -908,6 +939,9 @@ def RandomProperIntervalGraph(n, seed=None):
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: from sage.graphs.generators.random import RandomProperIntervalGraph
@@ -932,12 +966,12 @@ def RandomProperIntervalGraph(n, seed=None):
     if n < 0:
         raise ValueError('parameter n must be >= 0')
     if not n:
-        return Graph()
+        return Graph(immutable=immutable)
 
     from sage.graphs.generators.intersection import IntervalGraph
 
     if n == 1:
-        return IntervalGraph([[0, 1]])
+        return IntervalGraph([[0, 1]], immutable=immutable)
 
     from sage.combinat.combinat import catalan_number
     from sage.functions.other import binomial
@@ -980,7 +1014,7 @@ def RandomProperIntervalGraph(n, seed=None):
         intervals[R][1] = k + 2
 
         # Finally return the interval graph
-        return IntervalGraph(intervals)
+        return IntervalGraph(intervals, immutable=immutable)
 
     # Otherwise, generate a balanced nonnegative reversible string of length
     # 2n'. This case happens with small probability and is way more complex.
@@ -1061,7 +1095,7 @@ def RandomProperIntervalGraph(n, seed=None):
             R += 1
 
     # We finally return the resulting interval graph
-    return IntervalGraph(intervals)
+    return IntervalGraph(intervals, immutable=immutable)
 
 
 # Random Chordal Graphs
@@ -1301,7 +1335,8 @@ def pruned_tree(T, f, s):
     return S
 
 
-def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None, seed=None):
+def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None,
+                       seed=None, immutable=False):
     r"""
     Return a random chordal graph of order ``n``.
 
@@ -1369,6 +1404,9 @@ def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None, s
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: from sage.graphs.generators.random import RandomChordalGraph
@@ -1418,7 +1456,7 @@ def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None, s
         - :meth:`~sage.graphs.graph_generators.GraphGenerators.IntersectionGraph`
     """
     if n < 2:
-        return Graph(n, name="Random Chordal Graph")
+        return Graph(n, name="Random Chordal Graph", immutable=immutable)
 
     if seed is not None:
         set_random_seed(seed)
@@ -1467,14 +1505,13 @@ def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None, s
     for i, s in enumerate(S):
         for x in s:
             vertex_to_subtrees[x].append(i)
-    G = Graph(n, name="Random Chordal Graph")
-    for X in vertex_to_subtrees:
-        G.add_clique(X)
+    from itertools import chain, combinations
+    edges = chain.from_iterable(combinations(X, 2) for X in vertex_to_subtrees)
+    return Graph([range(n), edges], format="vertices_and_edges",
+                 name="Random Chordal Graph", immutable=immutable)
 
-    return G
 
-
-def RandomKTree(n, k, seed=None):
+def RandomKTree(n, k, seed=None, immutable=False):
     r"""
     Return a random `k`-tree on `n` nodes numbered `0` through `n-1`.
 
@@ -1494,6 +1531,9 @@ def RandomKTree(n, k, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     TESTS::
 
@@ -1535,8 +1575,7 @@ def RandomKTree(n, k, seed=None):
 
     # A graph with treewidth 0 has no edges
     if k == 0:
-        g = Graph(n, name="Random 0-tree")
-        return g
+        return Graph(n, name="Random 0-tree", immutable=immutable)
 
     if n < k + 1:
         raise ValueError("n must be greater than k")
@@ -1544,24 +1583,27 @@ def RandomKTree(n, k, seed=None):
     if seed is not None:
         set_random_seed(seed)
 
-    g = Graph(name=f"Random {k}-tree")
-    g.add_clique(list(range(k + 1)))
+    from itertools import chain, combinations
+    first_clique = combinations(range(k + 1), 2)
 
-    cliques = [list(range(k+1))]
+    def extra_edges():
+        cliques = [list(range(k+1))]
 
-    # Randomly choose a row, and copy 1 of the cliques
-    # One of those vertices is then replaced with a new vertex
-    for newVertex in range(k + 1, n):
-        copiedClique = cliques[randint(0, len(cliques)-1)].copy()
-        copiedClique[randint(0, k)] = newVertex
-        cliques.append(copiedClique)
-        for u in copiedClique:
-            if u != newVertex:
-                g.add_edge(u, newVertex)
-    return g
+        # Randomly choose a row, and copy 1 of the cliques
+        # One of those vertices is then replaced with a new vertex
+        for newVertex in range(k + 1, n):
+            copiedClique = cliques[randint(0, len(cliques)-1)].copy()
+            copiedClique[randint(0, k)] = newVertex
+            cliques.append(copiedClique)
+            for u in copiedClique:
+                if u != newVertex:
+                    yield (u, newVertex)
+
+    return Graph(chain(first_clique, extra_edges()), format="list_of_edges",
+                 name=f"Random {k}-tree", immutable=immutable)
 
 
-def RandomPartialKTree(n, k, x, seed=None):
+def RandomPartialKTree(n, k, x, seed=None, immutable=False):
     r"""
     Return a random partial `k`-tree on `n` nodes.
 
@@ -1579,6 +1621,9 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     TESTS::
 
@@ -1614,6 +1659,16 @@ def RandomPartialKTree(n, k, x, seed=None):
         sage: G.size()
         0
 
+    Check the behavior of parameter immutable::
+
+        sage: seed = int(current_randstate().long_seed() % sys.maxsize)
+        sage: mu = graphs.RandomPartialKTree(30, 5, 2, seed=seed, immutable=False)
+        sage: im = graphs.RandomPartialKTree(30, 5, 2, seed=seed, immutable=True)
+        sage: mu.vertices(sort=True) == im.vertices(sort=True)
+        True
+        sage: sorted(mu.edges()) == sorted(im.edges())
+        True
+
     EXAMPLES::
 
         sage: G = graphs.RandomPartialKTree(50,5,2)
@@ -1629,8 +1684,7 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     # A graph with treewidth 0 has no edges
     if k == 0:
-        g = Graph(n, name="Random partial 0-tree")
-        return g
+        return Graph(n, name="Random partial 0-tree", immutable=immutable)
 
     if n < k + 1:
         raise ValueError("n must be greater than k")
@@ -1647,23 +1701,27 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     # The graph will have no edges
     if x == edgesInKTree:
-        g = Graph(n, name=f"Random partial {k}-tree")
-        return g
+        return Graph(n, name=f"Random partial {k}-tree", immutable=immutable)
 
     g = RandomKTree(n, k, seed)
 
     from sage.misc.prandom import shuffle
 
-    edges = list(g.edges())
+    edges = list(g.edges(labels=False))
     # Deletes x random edges from the graph
     shuffle(edges)
-    g.delete_edges(edges[:x])
+    if not immutable:
+        g.delete_edges(edges[:x])
+        g.name(f"Random partial {k}-tree")
+        return g
 
-    g.name(f"Random partial {k}-tree")
-    return g
+    # Build an immutable graph without the x first edges
+    return Graph([g, edges[x:]], format="vertices_and_edges",
+                 name=f"Random partial {k}-tree", immutable=True)
 
 
-def RandomRegular(d, n, seed=None):
+
+def RandomRegular(d, n, seed=None, immutable=False):
     r"""
     Return a random `d`-regular graph on `n` vertices, or ``False`` on failure.
 
@@ -1677,6 +1735,9 @@ def RandomRegular(d, n, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1707,12 +1768,12 @@ def RandomRegular(d, n, seed=None):
         N = networkx.random_regular_graph(d, n, seed=seed)
         if N is False:
             return False
-        return Graph(N, sparse=True)
+        return Graph(N, format="NX", sparse=True, immutable=immutable)
     except Exception:
         return False
 
 
-def RandomShell(constructor, seed=None):
+def RandomShell(constructor, seed=None, immutable=False):
     """
     Return a random shell graph for the constructor given.
 
@@ -1730,6 +1791,9 @@ def RandomShell(constructor, seed=None):
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: G = graphs.RandomShell([(10,20,0.8),(20,40,0.8)])                         # needs networkx
@@ -1740,10 +1804,11 @@ def RandomShell(constructor, seed=None):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.random_shell_graph(constructor, seed=seed))
+    return Graph(networkx.random_shell_graph(constructor, seed=seed),
+                 format="NX", immutable=immutable)
 
 
-def RandomToleranceGraph(n, seed=None):
+def RandomToleranceGraph(n, seed=None, immutable=False):
     r"""
     Return a random tolerance graph.
 
@@ -1768,6 +1833,9 @@ def RandomToleranceGraph(n, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1803,9 +1871,8 @@ def RandomToleranceGraph(n, seed=None):
         # The tolerance value must be > 0
         tolrep.append((left, right, randint(1, W)))
 
-    g = ToleranceGraph(tolrep)
-    g.name("Random tolerance graph")
-    return g
+    return ToleranceGraph(tolrep, immutable=immutable,
+                          name="Random tolerance graph")
 
 
 # uniform random triangulation using Schaeffer-Poulalhon algorithm
@@ -2039,7 +2106,7 @@ def _contour_and_graph_from_words(pendant_word, forest_word):
     return word, G
 
 
-def RandomTriangulation(n, set_position=False, k=3, seed=None):
+def RandomTriangulation(n, set_position=False, k=3, seed=None, immutable=False):
     r"""
     Return a random inner triangulation of an outer face of degree ``k`` with
     ``n`` vertices in total.
@@ -2058,6 +2125,9 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -2174,7 +2244,7 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None):
     assert graph.n_vertices() == n
     if set_position:
         graph.layout(layout='planar', save_pos=True)
-    return graph
+    return graph.copy(immutable=True) if immutable else graph
 
 
 def blossoming_contour(t, shift=0, seed=None):
@@ -2268,7 +2338,7 @@ def blossoming_contour(t, shift=0, seed=None):
     return label + tt1 + label + tt2 + label
 
 
-def RandomBicubicPlanar(n, seed=None):
+def RandomBicubicPlanar(n, seed=None, immutable=False):
     """
     Return the graph of a random bipartite cubic map with `3 n` edges.
 
@@ -2278,6 +2348,9 @@ def RandomBicubicPlanar(n, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -2302,7 +2375,6 @@ def RandomBicubicPlanar(n, seed=None):
 
     EXAMPLES::
 
-        sage: # needs sage.combinat
         sage: n = randint(200, 300)
         sage: G = graphs.RandomBicubicPlanar(n)
         sage: G.order() == 2*n
@@ -2387,10 +2459,10 @@ def RandomBicubicPlanar(n, seed=None):
         colour = [u for u in Z3 if u not in taken_colours][0]
         G.add_edge((('n', -1), w[i - 1], colour))
 
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
-def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
+def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None, immutable=False):
     r"""
     Return a random unit disk graph of order `n`.
 
@@ -2410,6 +2482,9 @@ def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
       the points are drawn
 
     - ``seed`` -- seed of the random number generator
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -2444,4 +2519,4 @@ def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
            for i in range(n)}
     return Graph(adj, format='dict_of_lists',
                  pos={i: points[i] for i in range(n)},
-                 name="Random unit disk graph")
+                 name="Random unit disk graph", immutable=immutable)

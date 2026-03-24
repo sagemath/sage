@@ -730,7 +730,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         C._matrix = M
         return C
 
-    cdef long _hash_(self) except -1:
+    cdef Py_hash_t _hash_(self) except -1:
         """
         Return hash of an immutable matrix.
 

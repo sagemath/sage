@@ -5989,18 +5989,18 @@ cdef class Expression(Expression_abc):
         is identity::
 
             sage: x = SR.var("x")
-            sage: all([bool(u(x).exponentialize().demoivre(force=True) == u(x))
-            ....:      for u in (sin, cos, tan, csc, sec, cot,
-            ....:                sinh, cosh, tanh, csch, sech, coth)])
+            sage: all(bool(u(x).exponentialize().demoivre(force=True) == u(x))
+            ....:     for u in (sin, cos, tan, csc, sec, cot,
+            ....:               sinh, cosh, tanh, csch, sech, coth))
             True
 
         Check that differentiation and exponentialization commute::
 
             sage: x = SR.var("x")
-            sage: all([bool(u(x).diff(x).exponentialize() ==
-            ....:           u(x).exponentialize().diff(x))
-            ....:      for u in (sin, cos, tan, csc, sec, cot,
-            ....:                sinh, cosh, tanh, csch, sech, coth)])
+            sage: all(bool(u(x).diff(x).exponentialize() ==
+            ....:          u(x).exponentialize().diff(x))
+            ....:     for u in (sin, cos, tan, csc, sec, cot,
+            ....:               sinh, cosh, tanh, csch, sech, coth))
             True
         """
         from sage.symbolic.expression_conversions import Exponentialize
