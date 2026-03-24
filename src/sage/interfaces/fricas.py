@@ -257,6 +257,14 @@ FRICAS_INIT_CODE = (
     "               (princ #\\Newline))))")
 # code (one-liners!) executed after having set up the prompt
 FRICAS_HELPER_CODE = (
+    'sageform(x:InputForm):InputForm == ' +
+    '(atom? x => return x;' +
+    'not atom?(x.1)' +
+    " and x.1.1 = '_$elt::InputForm" +
+    " and x.1.3 = 'index::InputForm" +
+    " and member?(x.1.2.1, ['FiniteField::InputForm,'PrimeField::InputForm,'IntegerMod::InputForm])" +
+    ' => return x.2;' +
+    'return convert([sageform e for e in destruct x])$InputForm);' +
     'sageprint(x:InputForm):String == ' +
     '(atom? x => (' +
     'float? x => return float(x)::String;' +
