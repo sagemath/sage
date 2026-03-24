@@ -80,7 +80,7 @@ def _killing_equations(metric, chart=None, vector_name='X', latex_name=None,
     dest_map = metric.base_module().destination_map()
     if not dest_map.is_identity():
         raise NotImplementedError(
-            "killing_equations is only works for metrics on "
+            "killing_equations is only implemented for metrics on "
             "their own domain"
         )
 
@@ -88,10 +88,10 @@ def _killing_equations(metric, chart=None, vector_name='X', latex_name=None,
     if chart is None:
         chart = domain.default_chart()
         if chart is None:
-            raise ValueError("no default chart defined on " +
+            raise ValueError("no default chart has been defined on " +
                              f"{domain}")
     if not isinstance(chart, DiffChart):
-        raise TypeError("chart must be differentiable")
+        raise TypeError("chart must be a differentiable chart")
     if not chart.domain().is_subset(domain):
         raise ValueError("the chart must be defined on " +
                          f"{domain} or on an open subset of it")
@@ -122,7 +122,7 @@ def _killing_equations(metric, chart=None, vector_name='X', latex_name=None,
     except (AttributeError, KeyError, NotImplementedError, TypeError,
             ValueError) as err:
         raise ValueError(
-            f"cannot compute metric components in chart {chart}"
+            f"unable to compute metric components in chart {chart}"
         ) from err
 
     eqs = []
