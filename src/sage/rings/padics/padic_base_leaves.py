@@ -230,7 +230,6 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = ZpCR(2)
             sage: TestSuite(R).run()
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],              # long time
@@ -328,7 +327,6 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = ZpCA(2)
             sage: TestSuite(R).run()
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],              # long time
@@ -442,7 +440,6 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = ZpFP(2)
             sage: TestSuite(R).run()
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],              # long time
@@ -537,7 +534,6 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = ZpFM(2)
             sage: TestSuite(R).run()
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],  # long time
@@ -663,7 +659,6 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = Qp(2)
             sage: TestSuite(R).run()
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],  # long time
@@ -807,7 +802,6 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = QpFP(2)
             sage: TestSuite(R).run()
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(2^10)],  # long time
@@ -1182,7 +1176,6 @@ class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
 
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpER(7)
             sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])
             sage: R = ZpER(7, secure=True)
@@ -1221,7 +1214,6 @@ class pAdicFieldRelaxed(pAdicRelaxedGeneric, pAdicFieldBaseGeneric):
 
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: K = QpER(7)
             sage: TestSuite(K).run(skip=['_test_log', '_test_matrix_smith'])
             sage: K = QpER(7, secure=True)

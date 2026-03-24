@@ -552,6 +552,14 @@ class R(ExtraTabCompletion, Interface):
             # Set this to True *before* the call to start, since that will call eval() which will in turn call this function.
             # Setting this to True early prevents infinite recursion.
             self._initialized = True
+            # Workaround for rpy2 calling super().__del__() which does not
+            # exist in Python 3.13+ (object has no __del__).
+            # https://github.com/rpy2/rpy2/pull/1234
+            import rpy2.robjects.help
+            if not hasattr(object, '__del__'):
+                def _Package__del__(self):
+                    self._dbcon.close()
+                rpy2.robjects.help.Package.__del__ = _Package__del__
             self._r_to_sage_converter = _setup_r_to_sage_converter()
             self._start()
 

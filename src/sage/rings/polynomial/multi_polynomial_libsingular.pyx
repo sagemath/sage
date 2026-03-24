@@ -429,7 +429,6 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         TESTS::
 
-            sage: # needs sage.rings.function_field
             sage: import gc
             sage: from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
             sage: from sage.libs.singular.ring import ring_refcount_dict
@@ -769,7 +768,6 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         Check that :issue:`17964` is fixed::
 
-            sage: # needs sage.rings.number_field
             sage: K.<a> = QuadraticField(17)
             sage: Q.<x,y> = K[]
             sage: f = (-3*a)*y + (5*a)
@@ -1357,7 +1355,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: R = IntegerModRing(15)['x,y']
             sage: singular(R)                                                           # needs sage.rings.function_field
             polynomial ring, over a ring (with zero-divisors), global ordering
-            // coefficients: ZZ/(15)...
+            // coefficients: ZZ/...(15)...
             // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
@@ -1926,7 +1924,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(7^2)
             sage: R.<x,y> = F[]
             sage: p = a*x^2 + y + a^3; p
@@ -2033,7 +2030,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         See :issue:`8502`::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ)
             sage: K.<t> = NumberField(x^2 + 47)
             sage: R.<X,Y,Z> = K[]
@@ -2052,7 +2048,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         See :issue:`33373`::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(2^4)
             sage: R.<x> = PolynomialRing(k, 1)
             sage: f = R(1)
@@ -4197,7 +4192,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y,z> = GF(32003)[]
             sage: f = y*x^2 + x + 1
             sage: f//x
@@ -4345,7 +4339,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         Next we factor a polynomial, but over a finite field of order 9.::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(3^2)
             sage: R.<x, y> = K[]
             sage: f = (x^3 + 2*a*y^2*x) * (x^2 + x + 1); f
@@ -4357,7 +4350,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         Next we factor a polynomial over a number field.::
 
-            sage: # needs sage.rings.number_field
             sage: p = polygen(ZZ, 'p')
             sage: K.<s> = NumberField(p^3 - 2)
             sage: KXY.<x,y> = K[]
@@ -4370,7 +4362,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         This shows that issue :issue:`2780` is fixed, i.e. that the unit
         part of the factorization is set correctly::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)
             sage: R.<y, z> = PolynomialRing(K)
@@ -4452,7 +4443,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         This checks that :issue:`11838` is fixed::
 
-            sage: # needs sage.rings.finite_rings
             sage: K = GF(4,'a')
             sage: a = K.gens()[0]
             sage: R.<x,y> = K[]
@@ -4546,7 +4536,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         stuck, see :issue:`12846`. These 100 iterations should take less
         than 1 second::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(4)
             sage: R.<x,y> = K[]
             sage: f = (a + 1)*x^145*y^84 + (a + 1)*x^205*y^17 + x^32*y^112 + x^92*y^45
@@ -5023,7 +5012,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         We compute a gcd over a finite field::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<u> = GF(31^2)
             sage: R.<x,y,z> = F[]
             sage: p = x^3 + (1+u)*y^3 + z^3
@@ -5035,7 +5023,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         We compute a gcd over a number field::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ)
             sage: F.<u> = NumberField(x^3 - 2)
             sage: R.<x,y,z> = F[]
@@ -5053,7 +5040,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: x.gcd(1)
             1
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: R.<x,y> = PolynomialRing(k)
             sage: f = R.change_ring(GF(3)).gen()
@@ -5158,14 +5144,12 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: lcm(p,q)
             6*x*y*z^4 + 6*y^2*z^4 + 6*x*z^5 + 6*y*z^5 + 12*x*y + 12*y^2 + 12*x*z + 12*y*z
 
-            sage: # needs sage.rings.finite_rings
             sage: r.<x,y> = PolynomialRing(GF(2**8, 'a'), 2)
             sage: a = r.base_ring().0
             sage: f = (a^2+a)*x^2*y + (a^4+a^3+a)*y + a^5
             sage: f.lcm(x^4)
             (a^2 + a)*x^6*y + (a^4 + a^3 + a)*x^4*y + (a^5)*x^4
 
-            sage: # needs sage.rings.number_field
             sage: w = polygen(ZZ, 'w')
             sage: r.<x,y> = PolynomialRing(NumberField(w^4 + 1, 'a'), 2)
             sage: a = r.base_ring().0
@@ -5608,7 +5592,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         You can specify a map on the base ring::
 
-            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
             sage: K.<i> = NumberField(x^2 + 1)
             sage: cc = K.hom([-i])
@@ -5963,7 +5946,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: K.<k> = CyclotomicField(3)
             sage: R.<x,y> = PolynomialRing(K, sparse=True)
             sage: f = k*x*y + 1
@@ -6042,7 +6024,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<k> = NumberField(x^2 - 5)
             sage: T.<t,w> = K[]
@@ -6090,7 +6071,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<k> = NumberField(x^2 - 5)
             sage: T.<t,w> = K[]

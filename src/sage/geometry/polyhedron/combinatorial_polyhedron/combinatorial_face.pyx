@@ -260,7 +260,6 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(6)
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator(dimension=3, algorithm='primal')
@@ -319,7 +318,6 @@ cdef class CombinatorialFace(SageObject):
 
         TESTS::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(5)
             sage: C = CombinatorialPolyhedron(P)
             sage: F = C.face_lattice()
@@ -503,7 +501,6 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.associahedron(['A', 3])
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator()
@@ -548,7 +545,6 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(5)
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator(dimension=2)
@@ -613,7 +609,6 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(5)
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator(dimension=2)
@@ -693,7 +688,6 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(5)
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator(2)
@@ -754,7 +748,6 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(5)
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator(2)
@@ -835,7 +828,6 @@ cdef class CombinatorialFace(SageObject):
 
         Specifying whether to count the equations or not::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(5)
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator(2)

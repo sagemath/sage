@@ -227,7 +227,6 @@ class LaurentPolynomialRing_generic(Parent):
             sage: 1 / g
             -x^-1 + 1 + O(x^19)
 
-            sage: # needs sage.combinat
             sage: PP = P.completion(x, prec=oo); PP
             Lazy Laurent Series Ring in x over Rational Field
             sage: g = 1 / PP(f); g
@@ -406,7 +405,6 @@ class LaurentPolynomialRing_generic(Parent):
         """
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: T.<t> = ZZ[]
             sage: K.<i> = NumberField(t^2 + 1)
             sage: L.<x,y> = LaurentPolynomialRing(K)
