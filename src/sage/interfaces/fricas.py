@@ -814,7 +814,7 @@ http://fricas.sourceforge.net.
             sage: fricas.get_unparsed_InputForm('1..3')
             '(1..3)$Segment(PositiveInteger())'
         """
-        return self.get_string('unparse((%s)::InputForm)' % var)
+        return self.get_string('unparse(sageform((%s)::InputForm))' % var)
 
     def get_InputForm(self, var):
         """
@@ -825,7 +825,7 @@ http://fricas.sourceforge.net.
             sage: fricas.get_InputForm('1..3')
             '(($elt (Segment (PositiveInteger)) SEGMENT) 1 3)'
         """
-        return self.get_string('sageprint((%s)::InputForm)' % str(var))
+        return self.get_string('sageprint(sageform((%s)::InputForm))' % str(var))
 
     def _assign_symbol(self):
         """
@@ -1265,101 +1265,6 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             return '[%s]' % ','.join(FriCASElement._format_nested_sage_strings(v) for v in obj)
         return str(obj)
 
-    @staticmethod
-    def _simplified_fricas_type(domain):
-        """
-        Build a FriCAS type string with ``PrimeField``/``IntegerMod`` replaced
-        by ``Integer``.
-
-        Returns the simplified type string if any ``PrimeField`` or
-        ``IntegerMod`` domains were found and replaced, or ``None`` if no
-        simplification is needed.
-
-        This is used to coerce FriCAS objects to simpler types before
-        extracting their ``InputForm``, so that the ``InputForm`` contains
-        plain integers instead of ``index(...)$PrimeField(...)`` notation.
-
-        EXAMPLES::
-
-            sage: from sage.interfaces.fricas import FriCASElement
-            sage: d = fricas("PrimeField(5)::INFORM")
-            sage: FriCASElement._simplified_fricas_type(d)
-            'Integer'
-
-            sage: d = fricas("Polynomial(PrimeField(5))::INFORM")
-            sage: FriCASElement._simplified_fricas_type(d)
-            'Polynomial(Integer)'
-
-            sage: d = fricas("List(Polynomial(PrimeField(5)))::INFORM")
-            sage: FriCASElement._simplified_fricas_type(d)
-            'List(Polynomial(Integer))'
-
-            sage: d = fricas("Integer::INFORM")
-            sage: FriCASElement._simplified_fricas_type(d) is None
-            True
-
-            sage: d = fricas("FiniteField(5,2)::INFORM")
-            sage: FriCASElement._simplified_fricas_type(d) is None
-            True
-        """
-        head = str(domain.car())
-
-        if head in {"PrimeField", "IntegerMod"}:
-            return "Integer"
-
-        if head in ["Polynomial", "Fraction", "List", "Vector", "Matrix"]:
-            sub = FriCASElement._simplified_fricas_type(domain[1])
-            if sub:
-                return f"{head}({sub})"
-            return None
-
-        if head in ["UnivariatePolynomial",
-                    "MultivariatePolynomial",
-                    "DistributedMultivariatePolynomial",
-                    "DirectProduct"]:
-            sub = FriCASElement._simplified_fricas_type(domain[2])
-            if sub:
-                return f"{head}({domain[1]}, {sub})"
-            return None
-
-        return None
-
-    @staticmethod
-    def _rewrite_indexed_coefficients(source):
-        """
-        Rewrite FriCAS finite-ring coefficients into Sage-callable syntax.
-
-        FriCAS prints coefficients from ``FiniteField(...)`` as terms like
-        ``index(Integer(1))$FiniteField(Integer(5),Integer(2))``. These are
-        not valid Sage expressions, so we rewrite them to
-        ``_sage_from_integer(1)`` before handing the source to
-        :func:`sage_eval`.
-
-        .. NOTE::
-
-            For ``PrimeField`` and ``IntegerMod``, the preferred approach is
-            :meth:`_simplified_fricas_type`, which coerces the entire object
-            to ``Integer`` in FriCAS before getting ``InputForm``. This
-            method is only used as a fallback for ``FiniteField(p,n)``
-            extension fields where the simplified coercion is not available.
-
-        EXAMPLES::
-
-            sage: from sage.interfaces.fricas import FriCASElement
-            sage: FriCASElement._rewrite_indexed_coefficients(
-            ....:     'index(Integer(7))$FiniteField(Integer(5),Integer(2))*x'
-            ....:     ' + index(3)$PrimeField(5)')
-            '_sage_from_integer(7)*x + _sage_from_integer(3)'
-        """
-        import re
-
-        pattern = re.compile(
-            r'index\((?:Integer\()?(-?\d+)\)?\)\$'
-            r'(?:PrimeField|FiniteField|IntegerMod)\('
-            r'(?:Integer\(-?\d+\)|-?\d+)'
-            r'(?:,(?:Integer\(-?\d+\)|-?\d+))*\)'
-        )
-        return pattern.sub(r'_sage_from_integer(\1)', source)
 
     def _sage_from_integer_locals(self, domain):
         """
