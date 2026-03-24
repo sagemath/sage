@@ -9210,18 +9210,15 @@ cdef class Matrix(Matrix1):
                 s = S((piv+1, pivj+1)) * s
 
             scalar = ~self.get_unsafe(piv, piv)
-            self.rescale_row(piv, scalar, piv+1)
-            self.set_unsafe(piv, piv, R.one())
+            self.rescale_row(piv, scalar, piv)
             if transformation:
                 T.rescale_row(piv, scalar)
             for i in range(nr):
                 if i != piv:
                     scalar = -self.get_unsafe(i, piv)
-                    if scalar:
-                        self.add_multiple_of_row(i, piv, scalar, piv+1)
-                        self.set_unsafe(i, piv, R.zero())
-                        if transformation:
-                            T.add_multiple_of_row(i, piv, scalar, end_col=piv)
+                    self.add_multiple_of_row(i, piv, scalar, piv)
+                    if transformation:
+                        T.add_multiple_of_row(i, piv, scalar, end_col=piv)
         else:
             piv += 1
         self.permute_columns(~s)
