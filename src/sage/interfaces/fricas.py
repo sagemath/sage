@@ -1427,40 +1427,35 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         P = self._check_valid()
         head = str(domain.car())
 
-        # Phase 1: try type simplification (PF/ZMOD → Integer)
-        simplified_type = self._simplified_fricas_type(domain)
-        if simplified_type is not None:
-            try:
-                simplified_obj = P.new("(%s)::%s" % (self._name, simplified_type))
-                source = P.get_unparsed_InputForm(simplified_obj._name)
-                locals = self._sage_inputform_locals(domain, source=source)
-                self._sage_symbol_locals(source, locals)
-                result = sage_eval(source, locals=locals)
+        try:
+            source = P.get_unparsed_InputForm(self._name)
+            locals = self._sage_inputform_locals(domain, source=source)
+            self._sage_symbol_locals(source, locals)
+            result = sage_eval(source, locals=locals)
 
-                # For direct PF/ZMOD containers, convert integers to
-                # finite-field elements
-                entry_domain = self._container_entry_domain(domain)
-                entry_head = str(entry_domain.car())
-                if entry_head in {"PrimeField", "IntegerMod"}:
-                    ring = self._get_sage_type(entry_domain)
-                    if head == "List":
-                        return [ring(x) for x in result]
-                    elif head in {"Vector", "DirectProduct"}:
-                        from sage.modules.free_module_element import vector
-                        return vector(ring, result)
-                    elif head == "Matrix":
-                        from sage.matrix.constructor import matrix
-                        return matrix(ring, result)
+            # For direct PF/ZMOD containers, convert integers to
+            # finite-field elements
+            entry_domain = self._container_entry_domain(domain)
+            entry_head = str(entry_domain.car())
+            if entry_head in {"PrimeField", "IntegerMod"}:
+                ring = self._get_sage_type(entry_domain)
+                if head == "List":
+                    return [ring(x) for x in result]
+                elif head in {"Vector", "DirectProduct"}:
+                    from sage.modules.free_module_element import vector
+                    return vector(ring, result)
+                elif head == "Matrix":
+                    from sage.matrix.constructor import matrix
+                    return matrix(ring, result)
 
-                return result
-            except (NameError, RuntimeError, TypeError, ValueError,
-                    SyntaxError, NotImplementedError):
-                pass  # fall through to Phase 2
+            return result
+        except (NameError, RuntimeError, TypeError, ValueError,
+                SyntaxError, NotImplementedError):
+            pass  # fall through to Phase 2
 
         # Phase 2: existing approach (FiniteField and other non-simplifiable cases)
         try:
             source = self._sage_container_source(domain)
-            source = self._rewrite_indexed_coefficients(source)
             locals = self._sage_inputform_locals(domain, source=source)
             locals.update(self._sage_from_integer_locals(domain))
             if head == "Matrix" and str(self._container_entry_domain(domain).car()) in {"PrimeField", "IntegerMod"}:
@@ -2405,7 +2400,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
               65536      262144
             <BLANKLINE>
             to sage is not yet implemented:
-            An error occurred when FriCAS evaluated 'unparse(...::InputForm)':
+            An error occurred when FriCAS evaluated 'unparse(sageform(...)::InputForm))':
             <BLANKLINE>
                Cannot convert the value from type Any to InputForm .
         """
@@ -2509,35 +2504,11 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             n = P.get_integer('(%s)::Integer' % self._name)
             return self._get_sage_type(domain)(n)
 
-        if head == 'DistributedMultivariatePolynomial':
+        if head in ['MultivariatePolynomial', 'DistributedMultivariatePolynomial']:
             base_ring = self._get_sage_type(domain[2])
             vars = self._mpoly_vars_from_value()
             R = PolynomialRing(base_ring, vars)
-            simplified = self._simplified_fricas_type(domain)
-            if simplified:
-                s = P.get_unparsed_InputForm(P.new("(%s)::%s" % (self._name, simplified))._name)
-                return sage_eval(s, locals=R.gens_dict_recursive())
-            s = self._rewrite_indexed_coefficients(unparsed_InputForm())
-            locals = R.gens_dict_recursive()
-            locals.update(self._sage_from_integer_locals(domain))
-            if '_sage_from_integer' in locals:
-                return sage_eval(s, locals=locals)
-            return R(s)
-
-        if head == 'MultivariatePolynomial':
-            base_ring = self._get_sage_type(domain[2])
-            vars = self._mpoly_vars_from_value()
-            R = PolynomialRing(base_ring, vars)
-            simplified = self._simplified_fricas_type(domain)
-            if simplified:
-                s = P.get_unparsed_InputForm(P.new("(%s)::%s" % (self._name, simplified))._name)
-                return sage_eval(s, locals=R.gens_dict_recursive())
-            s = self._rewrite_indexed_coefficients(unparsed_InputForm())
-            locals = R.gens_dict_recursive()
-            locals.update(self._sage_from_integer_locals(domain))
-            if '_sage_from_integer' in locals:
-                return sage_eval(s, locals=locals)
-            return R(s)
+            return R(unparsed_InputForm())
 
         if head == "Polynomial":
             base_ring = self._get_sage_type(domain[1])
@@ -2547,23 +2518,12 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
             # the following is a bad hack, we should be getting a list here
             vars = P.get_unparsed_InputForm("variables(%s)" % self._name)[1:-1]
-            simplified = self._simplified_fricas_type(domain)
-            if simplified:
-                s = P.get_unparsed_InputForm(P.new("(%s)::%s" % (self._name, simplified))._name)
-            else:
-                s = self._rewrite_indexed_coefficients(unparsed_InputForm())
+            s = unparsed_InputForm()
             if vars == "":
-                if not simplified:
-                    locals = self._sage_from_integer_locals(domain)
-                    if '_sage_from_integer' in locals:
-                        return sage_eval(s, locals=locals)
                 return base_ring(s)
 
             R = PolynomialRing(base_ring, vars)
-            locals = R.gens_dict_recursive()
-            if not simplified:
-                locals.update(self._sage_from_integer_locals(domain))
-            return sage_eval(s, locals=locals)
+            return R(s)
 
         if head in ["OrderedCompletion", "OnePointCompletion"]:
             # it would be more correct to get the type parameter
