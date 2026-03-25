@@ -171,7 +171,17 @@ EOF
         INSTALL="xbps-install --yes"
         ;;
     opensuse*)
-        UPDATE="zypper refresh &&"
+        if [[ "$SYSTEM" = opensuse-tumbleweed* || "$FULL_BASE_IMAGE_AND_TAG$BASE_IMAGE" == *opensuse/tumbleweed* ]]; then
+            # Tumbleweed is a rolling release. Refreshing metadata alone can leave
+            # the base image on a different snapshot than the repositories, which
+            # then makes package installation fail on versioned dependencies (for
+            # example sqlite3-devel requiring an older libsqlite3-0 than the one
+            # preinstalled in the image). Sync the image to the current snapshot
+            # before installing build dependencies.
+            UPDATE="zypper refresh && zypper --non-interactive dup --auto-agree-with-licenses --no-recommends &&"
+        else
+            UPDATE="zypper refresh &&"
+        fi
         EXISTS="zypper --quiet install --no-confirm --auto-agree-with-licenses --no-recommends --download-only > /dev/null"
         INSTALL="zypper --ignore-unknown install --no-confirm --auto-agree-with-licenses --no-recommends --details"
         ;;
