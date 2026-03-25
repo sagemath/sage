@@ -1389,6 +1389,32 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         if 'tensor_symbol' in options:
             self._print_options['tensor_symbol'] = options['tensor_symbol']
 
+    def _element_constructor_(self, x):
+        """
+        Construct an element of this tensor product module.
+
+        EXAMPLES::
+
+            sage: m1 = CombinatorialFreeModule(QQ, ["a", "b", "c"], prefix="m1")
+            sage: m2 = CombinatorialFreeModule(QQ, ["x", "y", "z"], prefix="m2")
+            sage: t = tensor([m1, m2])
+            sage: t(("a", "x"))
+            m1['a'] # m2['x']
+            sage: t(("b", "z"))
+            m1['b'] # m2['z']
+
+        Conversion from an existing element still works::
+
+            sage: elt = m1["a"].tensor(m2["x"])
+            sage: t(elt) == t(("a", "x"))
+            True
+        """
+        if isinstance(x, tuple) and len(x) == len(self._sets):
+            if all(xi in s.basis().keys() for xi, s in zip(x, self._sets)):
+                return self.monomial(x)
+            raise ValueError(f"{x} is not a valid index")
+        return super()._element_constructor_(x)
+
     def _repr_(self):
         r"""
         This is customizable by setting
