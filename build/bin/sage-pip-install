@@ -27,7 +27,10 @@ PIP=pip3
 
 # We should avoid running pip while installing a package because that
 # is prone to race conditions. Therefore, we use a lockfile while
-# running pip. This is implemented in the Python script sage-flock
+# running pip. This is implemented in the Python script sage-flock.
+# Use an exclusive lock here as well: multiple concurrent pip installs
+# mutate the same venv and can otherwise race or starve pending
+# uninstall/install sequences under parallel package builds.
 LOCK="$SAGE_VENV/var/lock/$PIP.lock"
 
 # Issue #33155: Pythons installed using the python.org macOS installers
@@ -35,9 +38,9 @@ LOCK="$SAGE_VENV/var/lock/$PIP.lock"
 # pip to refuse to install wheels tagged macosx_11_0_x86_64
 export SYSTEM_VERSION_COMPAT=0
 
-# Finally actually do the installation (the "SHARED" tells pip2/3-lock
-# to apply a shared lock)
-sage-flock -s $LOCK $PYTHON -m pip install $pip_install_flags "$@"
+# Finally actually do the installation under the same exclusive lock
+# discipline as uninstall.
+sage-flock -x $LOCK $PYTHON -m pip install $pip_install_flags "$@"
 if [ $? -ne 0 ]; then
     # --ignore-installed : Force pip to re-install package even if it thinks it's
     #                      already installed (for which it sometimes gets false
@@ -45,7 +48,7 @@ if [ $? -ne 0 ]; then
     # --no-deps          : Don't install runtime dependencies from PyPI.
     extra_pip_install_flags="--no-deps --ignore-installed --ignore-requires-python"
     echo >&2 "Warning: installing with \"$PYTHON -m pip install $pip_install_flags\" failed. Retrying, adding \"$extra_pip_install_flags\""
-    sage-flock -s $LOCK $PYTHON -m pip install $pip_install_flags $extra_pip_install_flags "$@"
+    sage-flock -x $LOCK $PYTHON -m pip install $pip_install_flags $extra_pip_install_flags "$@"
     if [ $? -ne 0 ]; then
         echo >&2 "Error: installing with pip  failed"
         exit 3
