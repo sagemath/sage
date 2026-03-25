@@ -108,7 +108,6 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             sage: ZZ.residue_field(7).hom(GF(7))(1)  # See trac 11319
             1
 
-            sage: # needs sage.rings.finite_rings sage.rings.number_field
             sage: K.<w> = QuadraticField(337)  # See trac 11319
             sage: pp = K.ideal(13).factor()[0][0]
             sage: RF13 = K.residue_field(pp)
@@ -158,7 +157,6 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: GF(3).convert_map_from(Qp(3))
             Reduction morphism:
               From: 3-adic Field with capped relative precision 20
@@ -206,7 +204,6 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             sage: k.is_prime_field()
             True
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(3^2)
             sage: k.is_prime_field()
             False
@@ -278,7 +275,6 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             sage: k.gen()
             1
 
-            sage: # needs sage.rings.finite_rings
             sage: k = GF(1009, modulus='primitive')
             sage: k.gen()  # this gives a primitive element
             11
@@ -336,7 +332,6 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
         We can even start iterating over something that would be too big
         to actually enumerate::
 
-            sage: # needs sage.rings.finite_rings
             sage: K = GF(next_prime(2^256))
             sage: all = iter(K)
             sage: next(all)

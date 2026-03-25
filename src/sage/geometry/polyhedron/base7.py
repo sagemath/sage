@@ -44,7 +44,6 @@ class Polyhedron_base7(Polyhedron_base6):
 
     TESTS::
 
-        sage: # needs sage.combinat
         sage: from sage.geometry.polyhedron.base7 import Polyhedron_base7
         sage: P = polytopes.associahedron(['A', 3])
         sage: Polyhedron_base7.centroid(P)
@@ -539,7 +538,6 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P.volume(measure='induced_rational')                  # optional - latte_int
             1
 
-            sage: # needs sage.rings.number_field
             sage: S = polytopes.regular_polygon(6); S
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 6 vertices
             sage: edge = S.faces(1)[4].as_polyhedron()
@@ -574,7 +572,6 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P.volume(measure='induced_lattice', engine='latte')   # optional - latte_int
             3
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: Dexact = polytopes.dodecahedron()
             sage: F0 = Dexact.faces(2)[0].as_polyhedron()
             sage: v = F0.volume(measure='induced', engine='internal'); v
@@ -585,7 +582,6 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: RDF(v)    # abs tol 1e-9
             1.53406271079044
 
-            sage: # needs sage.groups
             sage: Dinexact = polytopes.dodecahedron(exact=False)
             sage: F2 = Dinexact.faces(2)[2].as_polyhedron()
             sage: w = F2.volume(measure='induced', engine='internal')

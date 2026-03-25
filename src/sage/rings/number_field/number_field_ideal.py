@@ -273,7 +273,6 @@ class NumberFieldIdeal(Ideal_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: K.<I>=QQ[i]
             sage: A = K.ideal([5, 2 + I])
             sage: B = K.ideal([13, 5 + 12*I])

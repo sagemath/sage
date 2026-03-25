@@ -752,7 +752,6 @@ def color_list(color, n):
 
     EXAMPLES::
 
-        sage: # needs sage.plot
         sage: from sage.geometry.toric_plotter import color_list
         sage: color_list("grey", 1)
         [RGB color (0.5019607843137255, 0.5019607843137255, 0.5019607843137255)]

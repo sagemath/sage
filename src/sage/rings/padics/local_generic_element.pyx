@@ -126,7 +126,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
         Over unramified extensions::
 
 
-            sage: # needs sage.libs.ntl
             sage: R = ZpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
             sage: t.inverse_of_unit()
             2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4 + O(3^5)
@@ -134,7 +133,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: t.inverse_of_unit()
             2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4 + O(3^5)
 
-            sage: # needs sage.libs.flint
             sage: R = ZpCA(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
             sage: t.inverse_of_unit()
             2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4 + O(3^5)
@@ -148,7 +146,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         Over Eisenstein extensions::
 
-            sage: # needs sage.libs.ntl
             sage: R = ZpCA(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )
             sage: (t - 1).inverse_of_unit()
             2 + 2*t + t^2 + t^3 + t^4 + t^5 + t^6 + t^7 + t^8 + t^9 + O(t^10)
@@ -296,7 +293,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         Test that slices also work over eisenstein extensions::
 
-            sage: # needs sage.libs.ntl
             sage: F = Qp(5)
             sage: H.<x> = F[]
             sage: T.<t> = F.extension(x^2 - 5)
@@ -310,7 +306,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         Test that slices also work over unramified extensions::
 
-            sage: # needs sage.libs.ntl
             sage: F = Qp(5)
             sage: H.<x> = F[]
             sage: T.<t> = F.extension(x^2 - 2)
@@ -324,7 +319,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         Test that slices also work over 2-step extensions (unramified followed by eisenstein)::
 
-            sage: # needs sage.libs.ntl
             sage: F = Qp(5)
             sage: H.<x> = F[]
             sage: T.<t> = F.extension(x^2 - 3)

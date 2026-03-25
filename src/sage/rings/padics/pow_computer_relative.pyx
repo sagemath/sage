@@ -39,7 +39,6 @@ cdef class PowComputer_relative(PowComputer_class):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.flint
         sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
         sage: R.<a> = ZqFM(25)
         sage: S.<x> = R[]
@@ -58,7 +57,6 @@ cdef class PowComputer_relative(PowComputer_class):
         r"""
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25)
             sage: S.<x> = R[]
@@ -73,7 +71,6 @@ cdef class PowComputer_relative(PowComputer_class):
         r"""
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
@@ -103,7 +100,6 @@ cdef class PowComputer_relative(PowComputer_class):
         r"""
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25)
             sage: S.<x> = R[]
@@ -120,7 +116,6 @@ cdef class PowComputer_relative(PowComputer_class):
 
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25)
             sage: S.<x> = R[]
@@ -139,7 +134,6 @@ cdef class PowComputer_relative(PowComputer_class):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25,print_pos=False,show_prec=False)
             sage: S.<x> = R[]
@@ -168,7 +162,6 @@ cdef class PowComputer_relative(PowComputer_class):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
@@ -189,7 +182,6 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.flint
         sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_eis, PowComputer_relative_maker
         sage: R.<a> = ZqFM(25)
         sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
@@ -206,7 +198,6 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
         r"""
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
@@ -233,7 +224,6 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25,3)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
@@ -279,7 +269,6 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(25, prec=3)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
             sage: W.<w> = R.ext(f)
@@ -309,7 +298,6 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(25, prec=3)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
             sage: W.<w> = R.ext(f)
@@ -340,7 +328,6 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(25, prec=3)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
             sage: W.<w> = R.ext(f)
@@ -398,7 +385,6 @@ def PowComputer_relative_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_fi
 
     EXAMPLES::
 
-        sage: # needs sage.libs.flint
         sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
         sage: R.<a> = ZqFM(25, prec=2)
         sage: S.<x> = R[]

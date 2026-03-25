@@ -171,8 +171,8 @@ def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
 
     - ``n_vec`` -- a `k`-tuple of non-negative integers
 
-    - ``d`` -- a non-negative integer, the total sum of the parts in
-      all components
+    - ``d`` -- a non-negative integer, the total weighted sum of the
+      parts in all components
 
     - ``weight_multiplicities_vec`` -- `k`-tuple of iterables, where
       ``weight_multiplicities_vec[j][i]`` is the number of
@@ -193,6 +193,22 @@ def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
          ([1, 2], [0, 1]),
          ([0, 3], [1, 0]),
          ([0, 3], [0, 1])]
+
+    In the following example, we obtain pairs of compositions, one of
+    `3` and one of `2`.  In the first composition, the first `2`
+    positions have weight one, there is no position of weight two,
+    and the next position has weight `3`.  In the second composition,
+    the first position has weight `1` and the second position has
+    weight `2`.  The total weight is `7`.::
+
+        sage: list(weighted_vector_compositions([3,2], 7, [[2,0,1], [1,1]]))
+        [([2, 0, 1], [2]),
+         ([1, 1, 1], [2]),
+         ([0, 2, 1], [2]),
+         ([3, 0], [0, 2]),
+         ([2, 1], [0, 2]),
+         ([1, 2], [0, 2]),
+         ([0, 3], [0, 2])]
     """
     k = len(n_vec)
     from sage.combinat.integer_lists.invlex import IntegerListsBackend_invlex

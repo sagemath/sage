@@ -9483,7 +9483,7 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
 
             sage: R.<x,y,z> = ProjectiveSpace(GF(5), 2)
             sage: f = DynamicalSystem_projective([x^3 + x*z^2, y^3 + y*z^2, z^3])
-            sage: all([f.conjugate(m) == f for m in f.automorphism_group()])            # needs sage.rings.function_field
+            sage: all(f.conjugate(m) == f for m in f.automorphism_group())            # needs sage.rings.function_field
             True
         """
         absolute = kwds.get('absolute', False)

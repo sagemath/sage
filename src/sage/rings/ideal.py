@@ -514,7 +514,6 @@ class Ideal_generic(MonoidElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.real_mpfr
             sage: psi = CC['x'].hom([-CC['x'].0])
             sage: J = ideal([CC['x'].0 + 1]); J
             Principal ideal (x + 1.00000000000000) of Univariate Polynomial Ring in x
@@ -538,7 +537,6 @@ class Ideal_generic(MonoidElement):
 
         TESTS::
 
-            sage: # needs sage.rings.number_fields
             sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^2 + 1)
             sage: A = K.ideal(a)
@@ -552,7 +550,6 @@ class Ideal_generic(MonoidElement):
 
         ::
 
-            sage: # needs sage.rings.number_fields
             sage: K.<a> = NumberField(x^2 + 5)
             sage: B = K.ideal([2, a + 1]); B
             Fractional ideal (2, a + 1)
@@ -786,7 +783,6 @@ class Ideal_generic(MonoidElement):
 
         Some examples from the Macaulay2 documentation::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x, y, z> = GF(101)[]
             sage: I = R.ideal([y^6])
             sage: I.is_primary()                                                        # needs sage.libs.singular
@@ -1649,7 +1645,6 @@ class Ideal_pid(Ideal_principal):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(5)[]
             sage: p = R.ideal(t^2 + 2)
             sage: p.is_maximal()
@@ -1679,7 +1674,6 @@ class Ideal_pid(Ideal_principal):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: P = ZZ.ideal(61); P
             Principal ideal (61) of Integer Ring
             sage: F = P.residue_field(); F

@@ -292,16 +292,19 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
             if universe is None:   # no type errors raised.
                 universe = sage.structure.element.parent(x[len(x)-1])
 
+    from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+    from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+    from sage.rings.quotient_ring import QuotientRing_nc
     try:
-        from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        # pbori (brial) is optional, so to keep the isinstance() below
+        # working as intended in its absence, we set it equal to the
+        # other type that isinstance() is checking for.
         from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
-        from sage.rings.quotient_ring import QuotientRing_nc
     except ImportError:
-        pass
-    else:
-        if isinstance(universe, (MPolynomialRing_base, BooleanMonomialMonoid)) or (isinstance(universe, QuotientRing_nc) and isinstance(universe.cover_ring(), MPolynomialRing_base)):
-            return PolynomialSequence(x, universe, immutable=immutable, cr=cr, cr_str=cr_str)
+        BooleanMonomialMonoid = MPolynomialRing_base
+
+    if isinstance(universe, (MPolynomialRing_base, BooleanMonomialMonoid)) or (isinstance(universe, QuotientRing_nc) and isinstance(universe.cover_ring(), MPolynomialRing_base)):
+        return PolynomialSequence(x, universe, immutable=immutable, cr=cr, cr_str=cr_str)
 
     return Sequence_generic(x, universe, check, immutable, cr, cr_str, use_sage_types)
 
