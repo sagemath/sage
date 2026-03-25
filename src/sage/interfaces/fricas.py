@@ -1426,45 +1426,50 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         P = self._check_valid()
         head = str(domain.car())
+        entry_domain = self._container_entry_domain(domain)
+        entry_head = str(entry_domain.car())
 
-        try:
-            source = P.get_unparsed_InputForm(self._name)
-            locals = self._sage_inputform_locals(domain, source=source)
-            self._sage_symbol_locals(source, locals)
-            result = sage_eval(source, locals=locals)
+        # For extension finite fields, sageform strips indices in a
+        # way that loses the element identity; skip directly to
+        # element-by-element conversion.
+        if entry_head != "FiniteField":
 
-            # For direct PF/ZMOD containers, convert integers to
-            # finite-field elements
-            entry_domain = self._container_entry_domain(domain)
-            entry_head = str(entry_domain.car())
-            if entry_head in {"PrimeField", "IntegerMod"}:
-                ring = self._get_sage_type(entry_domain)
-                if head == "List":
-                    return [ring(x) for x in result]
-                elif head in {"Vector", "DirectProduct"}:
-                    from sage.modules.free_module_element import vector
-                    return vector(ring, result)
-                elif head == "Matrix":
-                    from sage.matrix.constructor import matrix
-                    return matrix(ring, result)
+            try:
+                source = P.get_unparsed_InputForm(self._name)
+                locals = self._sage_inputform_locals(domain, source=source)
+                self._sage_symbol_locals(source, locals)
+                result = sage_eval(source, locals=locals)
 
-            return result
-        except (NameError, RuntimeError, TypeError, ValueError,
-                SyntaxError, NotImplementedError):
-            pass  # fall through to Phase 2
+                # For direct PF/ZMOD containers, convert integers to
+                # finite-field elements
+                if entry_head in {"PrimeField", "IntegerMod"}:
+                    ring = self._get_sage_type(entry_domain)
+                    if head == "List":
+                        return [ring(x) for x in result]
+                    elif head in {"Vector", "DirectProduct"}:
+                        from sage.modules.free_module_element import vector
+                        return vector(ring, result)
+                    elif head == "Matrix":
+                        from sage.matrix.constructor import matrix
+                        return matrix(ring, result)
 
-        # Phase 2: existing approach (FiniteField and other non-simplifiable cases)
-        try:
-            source = self._sage_container_source(domain)
-            locals = self._sage_inputform_locals(domain, source=source)
-            locals.update(self._sage_from_integer_locals(domain))
-            if head == "Matrix" and str(self._container_entry_domain(domain).car()) in {"PrimeField", "IntegerMod"}:
-                locals['_sage_container_base_ring'] = self._get_sage_type(self._container_entry_domain(domain))
-            self._sage_symbol_locals(source, locals)
-            return sage_eval(source, locals=locals)
-        except (NameError, RuntimeError, TypeError, ValueError,
-                SyntaxError, NotImplementedError):
-            pass
+                return result
+            except (NameError, RuntimeError, TypeError, ValueError,
+                    SyntaxError, NotImplementedError):
+                pass  # fall through to Phase 2
+
+            # Phase 2: existing approach (FiniteField and other non-simplifiable cases)
+            try:
+                source = self._sage_container_source(domain)
+                locals = self._sage_inputform_locals(domain, source=source)
+                locals.update(self._sage_from_integer_locals(domain))
+                if head == "Matrix" and str(self._container_entry_domain(domain).car()) in {"PrimeField", "IntegerMod"}:
+                    locals['_sage_container_base_ring'] = self._get_sage_type(self._container_entry_domain(domain))
+                self._sage_symbol_locals(source, locals)
+                return sage_eval(source, locals=locals)
+            except (NameError, RuntimeError, TypeError, ValueError,
+                    SyntaxError, NotImplementedError):
+                pass
 
         # Phase 3: element-by-element fallback
         if head == "List":
@@ -2503,6 +2508,13 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             # Coerce to Integer in FriCAS and read the plain integer.
             n = P.get_integer('(%s)::Integer' % self._name)
             return self._get_sage_type(domain)(n)
+
+        if head == "FiniteField":
+            ring = self._get_sage_type(domain)
+            coords = P.new(
+                '[retract(c)::Integer for c in parts coordinates(%s)]'
+                % self._name).sage()
+            return ring(coords)
 
         if head in ['MultivariatePolynomial', 'DistributedMultivariatePolynomial']:
             base_ring = self._get_sage_type(domain[2])
