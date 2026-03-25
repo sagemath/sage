@@ -375,6 +375,9 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         LimitValuation_generic.__init__(self, parent, approximation)
         InfiniteDiscretePseudoValuation.__init__(self, parent)
 
+        self._defining_G = G
+        # ``_G`` is a mutable cache of a factor of ``_defining_G`` which is
+        # already known to have infinite valuation.
         self._G = G
         self._next_coefficients = None
         self._next_valuations = None
@@ -588,6 +591,68 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
 
                     self._improve_approximation()
 
+    def _restrict_infinite_factor_to(self, H):
+        r"""
+        Refine ``self._G`` until it is either contained in ``H`` or coprime to
+        ``H``.
+
+        INPUT:
+
+        - ``H`` -- a squarefree polynomial in the domain of this valuation
+
+        OUTPUT:
+
+        Whether the factor with infinite valuation is contained in ``H``.
+
+        ALGORITHM:
+
+        Write `G` for ``self._G`` and `s = gcd(G, H)`. Since `G` is squarefree
+        and only one of its factors has infinite valuation, repeated Mac Lane
+        improvements eventually decide whether the branch singled out by this
+        valuation lies in `s` or in the complementary factor `G/s`.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: F = (x^2 + 7) * (x^2 + 9)
+            sage: G = x^2 + 7
+            sage: V = QQ.valuation(2).mac_lane_approximants(F, require_incomparability=True)
+            sage: w = valuations.LimitValuation(V[1], F)
+            sage: w._restrict_infinite_factor_to(G)
+            True
+            sage: w._G
+            x^2 + 7
+
+            sage: w = valuations.LimitValuation(V[0], F)
+            sage: w._restrict_infinite_factor_to(G)
+            False
+            sage: w._G
+            x^2 + 9
+        """
+        from sage.rings.infinity import infinity
+        s = self._G.gcd(H)
+        if s.is_one():
+            return False
+        if s == self._G:
+            return True
+
+        t = self._G // s
+        while True:
+            if self._approximation.is_equivalence_unit(s):
+                self._G = t
+                return False
+            if self._approximation.is_equivalence_unit(t):
+                self._G = s
+                return True
+            if self._approximation(self._approximation.phi()) is infinity:
+                if self._approximation(s) is infinity:
+                    self._G = s
+                    return True
+                assert self._approximation(t) is infinity
+                self._G = t
+                return False
+            self._improve_approximation()
+
     def _improve_approximation_for_reduce(self, f):
         r"""
         Replace our approximation with a sufficiently precise approximation to
@@ -658,6 +723,12 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             True
             sage: valuations.LimitValuation(V[2], F) >= valuations.LimitValuation(V[2], G)
             True
+            sage: w0 = valuations.LimitValuation(V[0], F)
+            sage: w1 = valuations.LimitValuation(V[1], F)
+            sage: w1(G)
+            +Infinity
+            sage: w0 >= w1
+            False
         """
         if other.is_trivial():
             return other.is_discrete_valuation()
@@ -667,27 +738,24 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                 # valuation are either equal or incomparable; neither v>w nor
                 # v<w can hold everywhere.
                 # They are equal iff they approximate the same factor of their
-                # defining G. Note that they can be equal even if the defining
-                # G is different, so we need to make sure that this can not be
-                # the case.
-                self._improve_approximation_for_call(other._G)
-                other._improve_approximation_for_call(self._G)
+                # defining G. Since ``_G`` is only a mutable cache, start from
+                # the immutable defining polynomials and then refine the cached
+                # factors into their common part.
+                common = self._defining_G.gcd(other._defining_G)
+                if common.is_one():
+                    return False
+                if not self._restrict_infinite_factor_to(common):
+                    return False
+                if not other._restrict_infinite_factor_to(common):
+                    return False
                 while self._G != other._G:
-                    gcd = self._G.gcd(other._G)
-                    if gcd.is_one():
+                    common = self._G.gcd(other._G)
+                    if common.is_one():
                         return False
-                    # ``_improve_approximation_for_call`` mutates ``_G`` in
-                    # place, so cached limit-valuation objects may carry
-                    # partially reduced ``_G`` values from earlier calls.
-                    # Force further reduction by evaluating the complementary
-                    # cofactor: this makes the algorithm decide which
-                    # sub-factor carries infinite valuation.
-                    # (Calling with the common factor itself may be an
-                    # equivalence unit and thus not trigger any reduction.)
-                    if gcd != self._G:
-                        self._improve_approximation_for_call(self._G // gcd)
-                    if gcd != other._G:
-                        other._improve_approximation_for_call(other._G // gcd)
+                    if not self._restrict_infinite_factor_to(common):
+                        return False
+                    if not other._restrict_infinite_factor_to(common):
+                        return False
 
                 # If the valuations are comparable, they must approximate the
                 # same factor of G (see the documentation of LimitValuation:
