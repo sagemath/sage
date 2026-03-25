@@ -604,13 +604,6 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
 
         Whether the factor with infinite valuation is contained in ``H``.
 
-        ALGORITHM:
-
-        Write `G` for ``self._G`` and `s = gcd(G, H)`. Since `G` is squarefree
-        and only one of its factors has infinite valuation, repeated Mac Lane
-        improvements eventually decide whether the branch singled out by this
-        valuation lies in `s` or in the complementary factor `G/s`.
-
         EXAMPLES::
 
             sage: R.<x> = QQ[]
@@ -628,6 +621,13 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             False
             sage: w._G
             x^2 + 9
+
+        ALGORITHM:
+
+        Write `G` for ``self._G`` and `s = gcd(G, H)`. Since `G` is squarefree
+        and only one of its factors has infinite valuation, repeated Mac Lane
+        improvements eventually decide whether the branch singled out by this
+        valuation lies in `s` or in the complementary factor `G/s`.
         """
         from sage.rings.infinity import infinity
         s = self._G.gcd(H)
