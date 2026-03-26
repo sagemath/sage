@@ -1,2 +1,0 @@
-# See https://github.com/sagemath/sage/pull/40081
-khoca

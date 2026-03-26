@@ -1,2 +1,0 @@
-cddlib
-cddlib-devel

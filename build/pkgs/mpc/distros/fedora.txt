@@ -1,2 +1,0 @@
-libmpc
-libmpc-devel

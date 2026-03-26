@@ -1,3 +1,0 @@
-SAGE_SPKG_CONFIGURE([furo], [
-  SAGE_PYTHON_PACKAGE_CHECK([furo])
-])

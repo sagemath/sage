@@ -1,3 +1,0 @@
-dev-build/autoconf
-dev-build/automake
-dev-build/libtool

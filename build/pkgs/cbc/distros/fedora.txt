@@ -1,2 +1,0 @@
-coin-or-Cbc
-coin-or-Cbc-devel

@@ -1,2 +1,0 @@
-cd src
-sdh_pip_install --config-settings "--global-option=--use-pkg-config" --config-settings "--global-option=--no-wait" .

@@ -1,2 +1,0 @@
-jupyter-singular
-python:jupyter-kernel-singular

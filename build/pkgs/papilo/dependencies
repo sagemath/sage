@@ -1,1 +1,0 @@
-$(MP_LIBRARY) onetbb $(BLAS) gfortran | cmake

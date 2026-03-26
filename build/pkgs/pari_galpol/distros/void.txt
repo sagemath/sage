@@ -1,2 +1,0 @@
-#pari-galpol
-pari-galpol-small

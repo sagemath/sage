@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([notedown], [SAGE_PYTHON_PACKAGE_CHECK([notedown])])

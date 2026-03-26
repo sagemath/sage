@@ -1,2 +1,0 @@
-rpy2
-r-lattice

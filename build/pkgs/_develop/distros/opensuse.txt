@@ -1,2 +1,0 @@
-gpg2
-openssh

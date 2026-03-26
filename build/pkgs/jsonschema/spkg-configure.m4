@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([jsonschema], [SAGE_PYTHON_PACKAGE_CHECK([jsonschema])])

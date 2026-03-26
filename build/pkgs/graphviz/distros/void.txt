@@ -1,2 +1,0 @@
-graphviz
-graphviz-devel

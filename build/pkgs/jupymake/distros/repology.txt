@@ -1,2 +1,0 @@
-jupymake
-python:jupymake

@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([nibabel], [SAGE_PYTHON_PACKAGE_CHECK([nibabel])])

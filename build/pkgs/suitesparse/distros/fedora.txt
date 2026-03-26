@@ -1,2 +1,0 @@
-suitesparse
-suitesparse-devel

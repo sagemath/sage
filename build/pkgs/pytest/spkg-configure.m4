@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([pytest], [SAGE_PYTHON_PACKAGE_CHECK([pytest])])

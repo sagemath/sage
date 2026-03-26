@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([imagesize], [SAGE_PYTHON_PACKAGE_CHECK([imagesize])])

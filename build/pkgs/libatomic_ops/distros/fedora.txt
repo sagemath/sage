@@ -1,2 +1,0 @@
-libatomic_ops
-libatomic_ops-devel

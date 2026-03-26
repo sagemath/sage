@@ -1,9 +1,0 @@
-FORCE $(SCRIPTS) $(BLAS) brial cliquer cypari cysignals cython ecl eclib ecm flint libgd gap givaro glpk gmpy2 gsl iml importlib_metadata importlib_resources jupyter_core lcalc lrcalc_python libbraiding libhomfly libpng linbox m4ri m4rie memory_allocator mpc mpfi mpfr $(MP_LIBRARY) ntl numpy pari pip pkgconfig planarity ppl pplpy primesieve primecount primecountpy $(PYTHON) requests rw singular symmetrica typing_extensions $(PCFILES) | $(PYTHON_TOOLCHAIN) $(PYTHON) pythran
-
-----------
-All lines of this file are ignored except the first.
-
-The above are the *build-time* dependencies of the Sage library.  These are,
-on the one hand, programs needed for the build/install process of the
-Sage library (e.g. CYTHON, JINJA2), and on the other hand all
-dependencies for Cython files (e.g. PARI, NTL, MP_LIBRARY).

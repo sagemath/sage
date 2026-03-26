@@ -1,3 +1,0 @@
-SAGE_SPKG_CONFIGURE([calver], [
-  SAGE_PYTHON_PACKAGE_CHECK([calver])
-])

@@ -1,2 +1,0 @@
-# Currently, this file is unused. However, it needs to exist to coerce
-# automake into thinking that this is an Automake project.

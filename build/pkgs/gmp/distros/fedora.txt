@@ -1,2 +1,0 @@
-gmp
-gmp-devel

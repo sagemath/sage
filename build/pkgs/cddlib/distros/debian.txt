@@ -1,2 +1,0 @@
-libcdd-dev
-libcdd-tools

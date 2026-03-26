@@ -1,2 +1,0 @@
-libfplll-dev
-fplll-tools

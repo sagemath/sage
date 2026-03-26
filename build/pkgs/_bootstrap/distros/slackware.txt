@@ -1,4 +1,0 @@
-# Additional packages needed for ./bootstrap
-autoconf
-automake
-libtool

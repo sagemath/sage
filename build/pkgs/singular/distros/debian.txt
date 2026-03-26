@@ -1,3 +1,0 @@
-singular
-singular-doc
-libsingular4-dev

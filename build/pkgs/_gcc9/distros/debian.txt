@@ -1,3 +1,0 @@
-gcc-9
-g++-9
-gfortran-9

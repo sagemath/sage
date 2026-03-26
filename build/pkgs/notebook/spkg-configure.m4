@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([notebook], [SAGE_PYTHON_PACKAGE_CHECK([notebook])])

@@ -1,8 +1,0 @@
-# libpng needs to have no default options set for grep
-unset GREP_OPTIONS
-
-cd src
-
-sdh_configure --enable-shared --disable-static
-sdh_make
-sdh_make_install
