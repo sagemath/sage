@@ -4,6 +4,14 @@
 #
 #############################################################
 
+TESTS:
+
+    Check that the immutable flag is respected for sparse vectors (see :issue:`6769`)::
+
+        sage: v = vector({2: 10}, degree=5, immutable=True)
+        sage: v.is_immutable()
+        True
+
 from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.libs.gmp.mpz cimport *

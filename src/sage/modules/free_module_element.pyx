@@ -204,11 +204,6 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: v.parent()
         Ambient free module of rank 3 over the principal ideal domain Integer Ring
 
-        Check that the immutable flag is respected for sparse vectors (see :issue:`6769`)::
-
-        sage: v = vector({2: 10}, degree=5, immutable=True)
-        sage: v.is_immutable()
-        True
         sage: v = vector([1,2,3/5]); v
         (1, 2, 3/5)
         sage: v.parent()
