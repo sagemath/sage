@@ -271,6 +271,11 @@ def normalize_names(names, rank):
     r"""
     Return a normalized form of ``names``.
 
+    .. WARNING::
+
+        This has different signature and slightly different functionality
+        from :func:`sage.structure.category_object.normalize_names`!
+
     INPUT:
 
     - ``names`` -- a string, a list of strings or ``None``
