@@ -2374,18 +2374,18 @@ class FiniteWord_class(Word_class):
         Return ``True`` if ``self`` is a palindrome (or a ``f``-palindrome), and
         ``False`` otherwise.
 
-        Let `f : \Sigma \rightarrow \Sigma` be an involution that extends
+        Let `f : \Sigma \rightarrow \Sigma` be a letter permutation that extends
         to a morphism on `\Sigma^*`. We say that `w\in\Sigma^*` is a
         *`f`-palindrome* if `w=f(\tilde{w})` [Lab2008]_. Also called
         *`f`-pseudo-palindrome* [AZZ2005]_.
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
-          It must be callable on letters as well as words (e.g.
-          :class:`~sage.combinat.words.morphism.WordMorphism`). The
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`); the
           default value corresponds to usual palindromes, i.e., ``f``
-          equal to the identity.
+          equal to the identity
 
         EXAMPLES::
 
@@ -2426,7 +2426,7 @@ class FiniteWord_class(Word_class):
             sage: w.is_palindrome(f)
             True
 
-        The word must be in the domain of the involution::
+        The word must be in the domain of the morphism::
 
             sage: f = WordMorphism('a->a')
             sage: Word('aababb').is_palindrome(f)
@@ -2436,13 +2436,13 @@ class FiniteWord_class(Word_class):
 
         TESTS:
 
-        If the given involution is not an involution::
+        If the given morphism is not a letter permutation::
 
             sage: f = WordMorphism('a->b,b->b')
             sage: Word('abab').is_palindrome(f)
             Traceback (most recent call last):
             ...
-            TypeError: self (=a->b, b->b) is not an endomorphism
+            ValueError: f must be a letter permutation
 
         ::
 
@@ -2478,23 +2478,21 @@ class FiniteWord_class(Word_class):
             from sage.combinat.words.morphism import WordMorphism
             if not isinstance(f, WordMorphism):
                 f = WordMorphism(f)
-            if not f.is_involution():
-                raise ValueError("f must be an involution")
+            if not f.is_letter_permutation():
+                raise ValueError("f must be a letter permutation")
             return self[:l//2 + l % 2] == f(self[l//2:].reversal())
 
-    def lps(self, f=None, l=None):
+    def lps(self, f=None):
         r"""
         Return the longest palindromic (or ``f``-palindromic) suffix of ``self``.
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
-          It must be callable on letters as well as words (e.g. ``WordMorphism``)
-        - ``l`` -- integer (default: ``None``); the length of the longest
-          palindrome suffix of ``self[:-1]``, if known
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT: word; if ``f`` is ``None``, the longest palindromic suffix of
-        ``self``. Otherwise, the longest ``f``-palindromic suffix of ``self``.
+        OUTPUT: word; the longest palindromic (or ``f``-palindromic) suffix of ``self``
 
         EXAMPLES::
 
@@ -2512,24 +2510,16 @@ class FiniteWord_class(Word_class):
             sage: Word('abbabaab').lps(f=f)
             word: abbabaab
             sage: w = Word('33412321')
-            sage: w.lps(l=3)
+            sage: w.lps()
             word: 12321
             sage: Y = Word
             sage: w = Y('01101001')
-            sage: w.lps(l=2)
-            word: 1001
             sage: w.lps()
             word: 1001
-            sage: w.lps(l=None)
-            word: 1001
-            sage: Y().lps(l=2)
-            Traceback (most recent call last):
-            ...
-            IndexError: list index out of range
             sage: v = Word('abbabaab')
             sage: pal = v[:0]
-            sage: for i in range(1, v.length()+1):
-            ....:   pal = v[:i].lps(l=pal.length())
+            sage: for i in range(1, v.length() + 1):
+            ....:   pal = v[:i].lps()
             ....:   pal
             word: a
             word: b
@@ -2542,8 +2532,8 @@ class FiniteWord_class(Word_class):
             sage: f = WordMorphism('a->b,b->a')
             sage: v = Word('abbabaab')
             sage: pal = v[:0]
-            sage: for i in range(1, v.length()+1):
-            ....:   pal = v[:i].lps(f=f, l=pal.length())
+            sage: for i in range(1, v.length() + 1):
+            ....:   pal = v[:i].lps(f=f)
             ....:   pal
             word:
             word: ab
@@ -2554,34 +2544,8 @@ class FiniteWord_class(Word_class):
             word: bbabaa
             word: abbabaab
         """
-        # If the length of the lps of self[:-1] is not known:
-        if l is None:
-            l = self.lps_lengths(f)[-1]
-            return self[len(self)-l:]
-
-        # If l == w[:-1].length(), there is no shortcut
-        if self.length() == l + 1:
-            return self.lps(f=f)
-
-        # Obtain the letter to the left (g) and to the right (d) of the
-        # precedent lps of self
-        g = self[-l-2]
-        d = self[-1]
-
-        # If the word g*d is a `f`-palindrome, the result follows
-        if f is None:
-            if g == d:
-                return self[-l-2:]
-            else:
-                # Otherwise, the length of the lps of self is smallest than l+2
-                return self[-l-1:].lps()
-        else:
-            from sage.combinat.words.morphism import WordMorphism
-            f = WordMorphism(f)
-            if f(g)[0] == d:
-                return self[-l-2:]
-            else:
-                return self[-l-1:].lps(f=f)
+        lps_length = self.lps_lengths(f=f)[-1]
+        return self[self.length() - lps_length:]
 
     @cached_method
     def palindromic_lacunas_study(self, f=None):
@@ -2597,18 +2561,19 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
-          It must be callable on letters as well as words (e.g. ``WordMorphism``).
-          The default value corresponds to usual palindromes, i.e.,
-          ``f`` equal to the identity.
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`);
+          the default value corresponds to usual palindromes, i.e.,
+          ``f`` equal to the identity
 
         OUTPUT:
 
-        - ``list`` -- list of the length of the longest palindromic
-          suffix (lps) for each non-empty prefix of ``self``
-        - ``list`` -- list of all the lacunas, i.e. positions where there is no
+        - list of lengths of the longest palindromic suffixes (lps)
+          for each non-empty prefix of ``self``
+        - list of all lacunas, i.e. positions where there is no
           unioccurrent lps
-        - ``set`` -- set of palindromic factors of ``self``
+        - set of palindromic factors of ``self``
 
         EXAMPLES::
 
@@ -2633,29 +2598,11 @@ class FiniteWord_class(Word_class):
             sage: c == set([Word(), Word('ba'), Word('baba'), Word('ab'), Word('bbabaa'), Word('abbabaab')])
             True
         """
-        # Initialize the results of computations
-        palindromes = set()
-        lengths_lps = [None] * self.length()
-        lacunas = []
-
-        # Initialize the first lps
-        pal = self[:0]
-        palindromes.add(pal)
-
-        # For all the non-empty prefixes of self,
-        for i in range(self.length()):
-
-            # Compute its longest `f`-palindromic suffix using the preceding lps (pal)
-            pal = self[:i+1].lps(l=pal.length(), f=f)
-
-            lengths_lps[i] = pal.length()
-
-            if pal in palindromes:
-                lacunas.append(i)
-            else:
-                palindromes.add(pal)
-
-        return lengths_lps, lacunas, palindromes
+        maximal_palindrome_lengths, palindromes_tree = self._get_palindromic_factors_data(f=f)
+        lps_lengths = self._find_lps_for_all_prefixes_from_maximal_palindrome_lengths(maximal_palindrome_lengths)[1:]
+        lacunas = self._find_lacunas_from_palindromes_tree(palindromes_tree)
+        palindromic_factors = self.palindromes(f=f)
+        return lps_lengths, lacunas, palindromic_factors
 
     def lacunas(self, f=None):
         r"""
@@ -2666,12 +2613,13 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``). The
-          default value corresponds to usual palindromes, i.e., ``f`` equal to
-          the identity.
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`);
+          the default value corresponds to usual palindromes, i.e.,
+          ``f`` equal to the identity
 
-        OUTPUT: list of all the lacunas of self
+        OUTPUT: list of all lacunas of ``self``
 
         EXAMPLES::
 
@@ -2684,7 +2632,8 @@ class FiniteWord_class(Word_class):
             sage: words.ThueMorseWord()[:50].lacunas(f)
             [0, 2, 4, 12, 16, 17, 18, 19, 48, 49]
         """
-        return self.palindromic_lacunas_study(f=f)[1]
+        _, palindromes_tree = self._get_palindromic_factors_data(f=f)
+        return self._find_lacunas_from_palindromes_tree(palindromes_tree)
 
     def lengths_unioccurrent_lps(self, f=None):
         r"""
@@ -2696,16 +2645,17 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``). The
-          default value corresponds to usual palindromes, i.e., ``f`` equal to
-          the identity.
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`);
+          the default value corresponds to usual palindromes, i.e.,
+          ``f`` equal to the identity
 
         OUTPUT:
 
-        a list -- list of the length of the unioccurrent longest palindromic
-        suffix (lps) for each non-empty prefix of ``self``.
-        No unioccurrent lps are indicated by ``None``.
+        list of lengths of unioccurrent longest palindromic
+        suffixes (lps) for each non-empty prefix of ``self``;
+        non-unioccurrent lps are indicated by ``None``
 
         EXAMPLES::
 
@@ -2722,187 +2672,156 @@ class FiniteWord_class(Word_class):
             sage: t[:15].lengths_unioccurrent_lps(f)
             [None, 2, None, 2, None, 4, 6, 8, 4, 6, 4, 6, None, 4, 6]
         """
-        l = self.lps_lengths(f=f)[1:]
-        for i in self.lacunas(f=f):
-            l[i] = None
-        return l
+        maximal_palindrome_lengths, palindromes_tree = self._get_palindromic_factors_data(f=f)
+        lps_lengths = self._find_lps_for_all_prefixes_from_maximal_palindrome_lengths(maximal_palindrome_lengths)[1:]
+        lacunas = self._find_lacunas_from_palindromes_tree(palindromes_tree)
+        for i in lacunas:
+            lps_lengths[i] = None
+        return lps_lengths
 
-    def length_maximal_palindrome(self, j, m=None, f=None):
+    def length_maximal_palindrome(self, pos, f=None):
         r"""
-        Return the length of the longest palindrome centered at position ``j``.
+        Return the length of the longest palindrome centered at position ``pos``.
 
         INPUT:
 
-        - ``j`` -- rational; position of the symmetry axis of the palindrome.
-          Must return an integer when doubled. It is an integer when the
-          center of the palindrome is a letter.
+        - ``pos`` -- integer; position of the symmetry axis of the palindrome;
+          if ``pos`` is even, then it is position of letter;
+          if ``pos`` is odd, then it is position of space between two letters
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        - ``m`` -- integer (default: ``None``); minimal length of palindrome, if known.
-          The parity of ``m`` can't be the same as the parity of ``2j``.
-
-        - ``f`` -- involution (default: ``None``) on the alphabet; it must be
-          callable on letters as well as words (e.g. ``WordMorphism``)
-
-        OUTPUT: length of the longest ``f``-palindrome centered at position ``j``
+        OUTPUT: non-negative integer
 
         EXAMPLES::
 
-            sage: Word('01001010').length_maximal_palindrome(3/2)
+            sage: Word('01001010').length_maximal_palindrome(3)
             0
-            sage: Word('01101001').length_maximal_palindrome(3/2)
+            sage: Word('01101001').length_maximal_palindrome(3)
             4
-            sage: Word('01010').length_maximal_palindrome(j=3, f='0->1,1->0')
+            sage: Word('01010').length_maximal_palindrome(pos=6, f='0->1,1->0')
             0
-            sage: Word('01010').length_maximal_palindrome(j=2.5, f='0->1,1->0')
+            sage: Word('01010').length_maximal_palindrome(pos=5, f='0->1,1->0')
             4
-            sage: Word('0222220').length_maximal_palindrome(3, f='0->1,1->0,2->2')
+            sage: Word('0222220').length_maximal_palindrome(6, f='0->1,1->0,2->2')
             5
 
         ::
 
             sage: w = Word('abcdcbaxyzzyx')
-            sage: w.length_maximal_palindrome(3)
+            sage: w.length_maximal_palindrome(6)
             7
-            sage: w.length_maximal_palindrome(3, 3)
-            7
-            sage: w.length_maximal_palindrome(3.5)
+            sage: w.length_maximal_palindrome(7)
             0
-            sage: w.length_maximal_palindrome(9.5)
-            6
-            sage: w.length_maximal_palindrome(9.5, 2)
+            sage: w.length_maximal_palindrome(19)
             6
 
         TESTS:
 
         These are wrong inputs::
 
-            sage: w.length_maximal_palindrome(9.6)
+            sage: w.length_maximal_palindrome(-1)
             Traceback (most recent call last):
             ...
-            ValueError: j must be positive, inferior to length of self
-            sage: w.length_maximal_palindrome(3, 2)
-            Traceback (most recent call last):
-            ...
-            ValueError: (2*j-m-1)/2(=3/2) must be an integer, i.e., 2*j(=6) and
-            m(=2) can't have the same parity
-            sage: w.length_maximal_palindrome(9.5, 3)
-            Traceback (most recent call last):
-            ...
-            ValueError: (2*j-m-1)/2(=15/2) must be an integer, i.e., 2*j(=19) and
-            m(=3) can't have the same parity
+            ValueError: pos must be a positive integer, less than length of self multiplied by 2 and decreased by 1
         """
-        # Ensure `f` is an involutory word morphism
         if f is not None:
             from sage.combinat.words.morphism import WordMorphism
             if not isinstance(f, WordMorphism):
                 f = WordMorphism(f)
-            if not f.is_involution():
-                raise ValueError("f must be an involution")
-
-        # Ensure j is a valid entry
-        jj = 2*j
-        if not jj.is_integer() or j < 0 or j >= len(self):
-            raise ValueError("j must be positive, inferior to length of self")
-        jj = Integer(jj)
-
-        # Initialize length of the known palindrome
-        if m is None:
-            m = 0 if jj % 2 else -1
-
-        # Initialize the next (left) position to check
-        i = (jj - m - 1) / 2
-        if not i.is_integer():
-            raise ValueError(f"(2*j-m-1)/2(={i}) must be an integer, i.e., "
-                             f"2*j(={jj}) and m(={m}) can't "
-                             "have the same parity")
-        i = Integer(i)
-
-        # Compute
+            if not f.is_letter_permutation():
+                raise ValueError("f must be a letter permutation")
+        if pos < 0 or pos >= 2 * self.length() - 1:
+            raise ValueError("pos must be a positive integer, less than length of self multiplied by 2 and decreased by 1")
+        left = (pos - 1) // 2
+        if pos % 2 == 0:
+            left = pos // 2
         if f is None:
-            while i >= 0 and jj-i < len(self) and self[i] == self[jj-i]:
-                i -= 1
+            while left >= 0 and pos - left < self.length() and self[left] == self[pos - left]:
+                left -= 1
         else:
-            while i >= 0 and jj-i < len(self) and self[i] == f(self[jj-i])[0]:
-                i -= 1
-        if jj == 2 * i:
-            return 0
-        return jj - 2 * i - 1
+            while (left >= 0 and pos - left < self.length()
+                   and self[left] == f(self[pos - left])[0]
+                   and self[pos - left] == f(self[left])[0]):
+                left -= 1
+        return max(pos - 2 * left - 1, 0)
 
     def lengths_maximal_palindromes(self, f=None):
         r"""
-        Return the length of maximal palindromes centered at each position.
+        Return lengths of maximal palindromes (or ``f``-palindrome)
+        centered at each symmetry axis (letter or space between two letters).
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
           it must be callable on letters as well as words (e.g.
-          ``WordMorphism``)
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT: list; the length of the maximal palindrome (or ``f``-palindrome)
-        with a given symmetry axis (letter or space between two letters)
+        OUTPUT: list of non-negative integers
+
+        ALGORITHM:
+
+        Manacher's algorithm from [Man1975]_ generalized for ``f``-palindromes.
+
+        Time complexity is linear from length of ``self``.
 
         EXAMPLES::
 
             sage: Word('01101001').lengths_maximal_palindromes()
-            [0, 1, 0, 1, 4, 1, 0, 3, 0, 3, 0, 1, 4, 1, 0, 1, 0]
+            [1, 0, 1, 4, 1, 0, 3, 0, 3, 0, 1, 4, 1, 0, 1]
             sage: Word('00000').lengths_maximal_palindromes()
-            [0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0]
+            [1, 2, 3, 4, 5, 4, 3, 2, 1]
             sage: Word('0').lengths_maximal_palindromes()
-            [0, 1, 0]
+            [1]
             sage: Word('').lengths_maximal_palindromes()
-            [0]
+            []
             sage: Word().lengths_maximal_palindromes()
-            [0]
+            []
             sage: f = WordMorphism('a->b,b->a')
             sage: Word('abbabaab').lengths_maximal_palindromes(f)
-            [0, 0, 2, 0, 0, 0, 2, 0, 8, 0, 2, 0, 0, 0, 2, 0, 0]
+            [0, 2, 0, 0, 0, 2, 0, 8, 0, 2, 0, 0, 0, 2, 0]
+
+        TESTS::
+
+            sage: f = WordMorphism('a->b,b->c,c->a,d->d,e->e')
+            sage: Word('dedadbc').lengths_maximal_palindromes(f)
+            [1, 0, 3, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]
         """
-        if f is not None:
-            from sage.combinat.words.morphism import WordMorphism
-            if not isinstance(f, WordMorphism):
-                f = WordMorphism(f)
-            if not f.is_involution():
-                raise ValueError("f must be an involution")
-
-        LPC = []  # lengths of the maximal palindromes centered at a position
-        LPC.append(0)
-
-        k = 0  # index, center of rightmost-ending `f`-palindrome encountered
-
-        for j in range(1, 2 * len(self) + 1):
-            if j >= k + LPC[k]:
-                p = self.length_maximal_palindrome((j - 1)*0.5, -(j % 2), f)
-                LPC.append(p)
-                if j + p > k + LPC[k]:
-                    k = j
-
-            # If the center is included in an encountered `f`-palindrome
-            else:
-                # If the `f`-palindrome centered at position j is not the
-                # longest proper `f`-palindromic suffix of the maximal
-                # `f`-palindrome centered at k
-                if LPC[k] + k - j != LPC[2*k - j]:
-                    LPC.append(min(LPC[k] + k - j, LPC[2*k - j]))
-
-                else:
-                    mp = LPC[k] + k - j
-                    p = self.length_maximal_palindrome((j-1)*0.5, mp, f)
-                    LPC.append(p)
-                    k = j
-        return LPC
+        word_with_special_letter, updated_morphism, _ = self._insert_not_used_letter_between_consecutive_letters(f=f)
+        result_lengths = [0] * word_with_special_letter.length()
+        center, right = 0, 0
+        for i in range(word_with_special_letter.length()):
+            if i < right:
+                result_lengths[i] = min(right - i, result_lengths[2 * center - i])
+            l, r = i - result_lengths[i], i + result_lengths[i]
+            while (l >= 0 and r < word_with_special_letter.length()
+                   and updated_morphism(word_with_special_letter[l])[0] == word_with_special_letter[r]
+                   and word_with_special_letter[l] == updated_morphism(word_with_special_letter[r])[0]):
+                result_lengths[i] += 1
+                l -= 1
+                r += 1
+            if i + result_lengths[i] > right:
+                center = i
+                right = i + result_lengths[i]
+        even_pos_results = [max(x + x % 2 - 1, 0) for x in result_lengths[::2]]
+        odd_pos_results = [x - x % 2 for x in result_lengths[1::2]]
+        result_lengths[::2] = even_pos_results
+        result_lengths[1::2] = odd_pos_results
+        return result_lengths
 
     def lps_lengths(self, f=None):
         r"""
-        Return the length of the longest palindromic suffix of each prefix.
+        Return lengths of longest palindromic (or ``f``-palindromic) suffixes
+        for each prefix of ``self``.
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
-          It must be callable on letters as well as words (e.g.
-          ``WordMorphism``).
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT: list; the length of the longest palindromic (or
-        ``f``-palindromic) suffix of each prefix of ``self``
+        OUTPUT: list of non-negative integers
 
         EXAMPLES::
 
@@ -2920,29 +2839,20 @@ class FiniteWord_class(Word_class):
             sage: Word('abbabaab').lps_lengths(f)
             [0, 0, 2, 0, 2, 2, 4, 6, 8]
         """
-        LPC = self.lengths_maximal_palindromes(f)
-        Nk = LPC[0]
-        LPS = [0]  # lengths of the longest palindromic suffix of prefixes
-
-        for j in range(1, 2 * len(self) + 1):
-            Nj = j + LPC[j]
-            if Nj > Nk:
-                LPS.extend(i - j for i in range(Nk + 2 - (Nk % 2), Nj + 1, 2))
-                Nk = Nj
-        return LPS
+        maximal_palindromes_lengths = self.lengths_maximal_palindromes(f=f)
+        return self._find_lps_for_all_prefixes_from_maximal_palindrome_lengths(maximal_palindromes_lengths)
 
     def palindromes(self, f=None):
         r"""
-        Return the set of all palindromic (or ``f``-palindromic) factors of ``self``.
+        Return set of all palindromic (or ``f``-palindromic) factors of ``self``.
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
-          it must be callable on letters as well as words (e.g. ``WordMorphism``).
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT: a set -- If ``f`` is ``None``, the set of all palindromic
-        factors of ``self``; otherwise, the set of all ``f``-palindromic
-        factors of ``self``
+        OUTPUT: set of words
 
         EXAMPLES::
 
@@ -2960,16 +2870,19 @@ class FiniteWord_class(Word_class):
             sage: sorted(Word('abbabaab').palindromes(f))
             [word: , word: ab, word: abbabaab, word: ba, word: baba, word: bbabaa]
         """
-        LPS = self.lps_lengths(f)
-        return {self[i - LPS[i]: i] for i in range(len(self) + 1)}
+        lps_lengths = self.lps_lengths(f=f)
+        return {self[i - lps_lengths[i]: i] for i in range(len(self) + 1)}
 
-    def palindromic_complexity(self, n):
+    def palindromic_complexity(self, n, f=None):
         r"""
         Return the number of distinct palindromic factors of length ``n`` of ``self``.
 
         INPUT:
 
-        - ``n`` -- the length of the factors
+        - ``n`` -- length of the factors
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
         EXAMPLES::
 
@@ -2983,7 +2896,14 @@ class FiniteWord_class(Word_class):
             sage: [w.palindromic_complexity(i) for i in range(20)]
             [1, 2, 2, 2, 2, 0, 4, 0, 4, 0, 4, 0, 4, 0, 2, 0, 2, 0, 4, 0]
         """
-        return len([1 for x in self.palindromes() if len(x) == n])
+        _, palindromes_tree = self._get_palindromic_factors_data(f=f)
+        result = 0
+        for palindrome_node in palindromes_tree:
+            ends_with_special_letter = palindrome_node[3]
+            palindrome_length = palindrome_node[2]
+            if (not ends_with_special_letter) and (palindrome_length == n):
+                result += 1
+        return result
 
     def palindrome_prefixes(self):
         r"""
@@ -3010,7 +2930,7 @@ class FiniteWord_class(Word_class):
         It is well known that the maximum number of palindromic factors in `w`
         is `|w|+1` (see [DJP2001]_).
 
-        An optional involution on letters ``f`` can be given. In that case, the
+        An optional letter permutation on letters ``f`` can be given. In that case, the
         *f-palindromic defect* (or *pseudopalindromic defect*, or
         *theta-palindromic defect*) of `w` is returned. It is a
         generalization of defect to f-palindromes. More precisely, the defect is
@@ -3024,15 +2944,13 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``). The
-          default value corresponds to usual palindromes, i.e., ``f`` equal to
-          the identity.
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`);
+          the default value corresponds to usual palindromes, i.e.,
+          ``f`` equal to the identity
 
-        OUTPUT:
-
-        an integer -- If ``f`` is ``None``, the palindromic defect of ``self``;
-        otherwise, the ``f``-palindromic defect of ``self``.
+        OUTPUT: non-negative integer
 
         EXAMPLES::
 
@@ -3066,7 +2984,7 @@ class FiniteWord_class(Word_class):
             sage: w[:300].defect()                                                      # needs sage.modules
             52
 
-        For generalized defect with an involution different from the identity,
+        For generalized defect with a letter permutation different from the identity,
         there is always a letter which is not a palindrome! This is the reason
         for the modification of the definition::
 
@@ -3106,18 +3024,517 @@ class FiniteWord_class(Word_class):
             from sage.combinat.words.morphism import WordMorphism
             if not isinstance(f, WordMorphism):
                 f = WordMorphism(f)
-            if not f.is_involution():
-                raise ValueError("f must be an involution")
-            D = f.domain()
-            A = set(map(D, self.letters()))
-            while A:
-                x = A.pop()
-                if f(x) != x:  # count only non f-palindromic letters
-                    if f(x) in A:
-                        A.remove(f(x))
-                    g_w += 1
+            if not f.is_letter_permutation():
+                raise ValueError("f must be a letter permutation")
+            # Compute g_w
+            already_found_letter_pairs = set()
+            for letter in self.letters():
+                if (letter, f(letter)[0]) not in already_found_letter_pairs:
+                    already_found_letter_pairs.add((letter, f(letter)[0]))
+                    already_found_letter_pairs.add((f(letter)[0], letter))
+                    if letter != f(letter)[0]:
+                        g_w += 1
+        _, palindromes_tree = self._get_palindromic_factors_data(f=f)
+        distinct_palindromes_count = 0
+        for palindrome_node in palindromes_tree:
+            ends_with_special_letter = palindrome_node[3]
+            if not ends_with_special_letter:
+                distinct_palindromes_count += 1
+        return self.length() + 1 - g_w - distinct_palindromes_count
 
-        return self.length()+1-g_w-len(self.palindromes(f=f))
+    def g_defect(self, morphisms=[], antimorphisms=[]):
+        r"""
+        Return the `G`-defect of ``self``.
+
+        The *G-defect* of a finite word `w` is defined in [PS2014]_ as
+        generalization of defect of `w`. More precisely, for the finite group `G`
+        generated from `morphisms` and `antimorphisms`, the `G`-defect is
+        `D_G(w)=|w|+1-g_G(w)-|PAL_G(w)|`, where `PAL_G(w)` denotes the set of
+        `G`-palindromic classes of equivalence of factors of `w` (including
+        the empty word) and `g_G(w)` is the number of classes of equivalence
+        `[a]` such that `a` is a letter, `a` is not equal to `f(a)` for
+        every antimorphism `f \in G`, and `a` occurs in `w`.
+
+        INPUT:
+
+        - ``morphisms`` -- iterable of letter permutations (default: ``[]``)
+          on the alphabet of ``self``; letter permutations must be callable on
+          letters as well as words (e.g. :class:`~sage.combinat.words.morphism.WordMorphism`);
+          if the identity morphism is not in ``morphisms``, then it is added automatically
+        - ``antimorphisms`` -- iterable of letter permutations (default: ``[]``)
+          on the alphabet of ``self``; if ``antimorphisms`` is empty, then
+          antimorphism that acts as identity on letters is added to it;
+          letter permutations must be callable on letters as well
+          as words (e.g. :class:`~sage.combinat.words.morphism.WordMorphism`)
+
+        OUTPUT: non-negative integer
+
+        ALGORITHM:
+
+        Algorithm is described in [Rom2024]_.
+
+        Time complexity of this algorithm is `O(|G| \cdot self.length())`
+        plus time to generate `G` from `morphisms` and `antimorphisms`.
+
+        EXAMPLES::
+
+            sage: Word('ara').g_defect()
+            0
+            sage: Word('abcacba').g_defect()
+            1
+            sage: w = Word('abbabca')
+            sage: f = WordMorphism('a->b,b->a,c->c')
+            sage: g = WordMorphism('a->c,b->b,c->a')
+            sage: w.g_defect(antimorphisms=[f, g])
+            1
+            sage: w.g_defect(morphisms=[f, g])
+            0
+            sage: words.FibonacciWord()[:100].g_defect()
+            0
+            sage: w = words.ThueMorseWord()
+            sage: w[:50].g_defect()
+            12
+            sage: w[:100].g_defect()
+            16
+            sage: w[:300].g_defect()
+            52
+            sage: Word().g_defect()
+            0
+        """
+        morphisms_G, antimorphisms_G, inverse_morphisms_G = \
+            self._g_defect_generate_morphisms_and_antimorpisms_group(morphisms, antimorphisms)
+        g_G = self._g_defect_secondary_subtrahend(morphisms_G, antimorphisms_G)
+        palindromes_trees = []
+        for antimorphism in antimorphisms_G:
+            _, palindromes_tree = self._get_palindromic_factors_data(f=antimorphism)
+            palindromes_trees.append((palindromes_tree, antimorphism))
+        g_palindromes_tree = self._g_defect_build_g_palindromes_tree(
+            morphisms_G, inverse_morphisms_G, palindromes_trees)
+        distinct_palindromes_count = 0
+        for node in g_palindromes_tree:
+            if not node[3]:
+                distinct_palindromes_count += 1
+        return self.length() + 1 - g_G - distinct_palindromes_count
+
+    def _g_defect_build_g_palindromes_tree(self, morphisms_G, inverse_morphisms_G, palindromes_trees):
+        r"""
+        Return tree graph that contains data about `G`-palindromic
+        classes of equivalence of factors of ``self``.
+
+        INPUT:
+
+        - ``morphisms_G`` -- list of all morphisms of `G`
+        - ``inverse_morphisms_G`` -- list of inverses of all morphisms of `G`
+        - ``palindromes_trees`` -- list of tree graphs that contain data
+          about palindromic factors of ``self``; contains one tree graph for
+          every antimorphism of `G`
+
+        OUTPUT:
+
+        a tree graph that contains data about `G`-palindromic
+        classes of equivalence of factors of ``self``
+
+        EXAMPLES:
+
+            sage: Word('abbaba')._g_defect_build_g_palindromes_tree(
+            ....: [WordMorphism('a->a,b->b'), WordMorphism('a->b,b->a')],
+            ....: [WordMorphism('a->a,b->b'), WordMorphism('a->b,b->a')],
+            ....: [([[{0: 5, 'a': 1, 'b': 9}, None, 0, False],
+            ....:   [{0: 2}, 0, 1, False],
+            ....:   [{'b': 3}, 6, 1, True],
+            ....:   [{0: 4}, 6, 3, False],
+            ....:   [{}, 6, 3, True],
+            ....:   [{'b': 6}, 1, 0, True],
+            ....:   [{0: 7}, 3, 2, False],
+            ....:   [{'a': 8}, 3, 2, True],
+            ....:   [{}, 3, 4, False],
+            ....:   [{0: 10}, 2, 1, False],
+            ....:   [{'a': 11}, 2, 1, True],
+            ....:   [{}, 8, 3, False]], WordMorphism('a->a,b->b')),
+            ....:  ([[{0: 1}, None, 0, False],
+            ....:   [{'a': 2, 'b': 5}, 1, 0, True],
+            ....:   [{0: 3}, 1, 2, False],
+            ....:   [{'b': 4}, 7, 2, True],
+            ....:   [{}, 7, 4, False],
+            ....:   [{0: 6}, 5, 2, False],
+            ....:   [{}, 5, 2, True]], WordMorphism('a->b,b->a'))])
+            [[{('b', 'b'): 1, (0, 0): 5},
+            [{('a', 'a'): (1, 1), ('b', 'b'): (1, 0), (0, 0): (5, 1)},
+            {('a', 'a'): (1, 1), ('b', 'b'): (1, 0), (0, 0): (5, 1)}],
+            [0, 0],
+            False],
+            [{(0, 0): 2}, [{(0, 0): (2, 0)}, {(0, 0): (2, 1)}], [0, 1], False],
+            [{('a', 'a'): 3}, [{('a', 'a'): (3, 0)}, {('b', 'b'): (3, 1)}], [0, 1], True],
+            [{(0, 0): 4}, [{(0, 0): (4, 0)}, {(0, 0): (4, 1)}], [0, 1], False],
+            [{}, [{}, {}], [0, 1], True],
+            [{('a', 'a'): 6, ('a', 'b'): 9},
+            [{('a', 'a'): (6, 0), ('a', 'b'): (9, 0), ('b', 'a'): (9, 1), ('b', 'b'): (6, 1)},
+            {('a', 'a'): (6, 0), ('a', 'b'): (9, 0), ('b', 'a'): (9, 1), ('b', 'b'): (6, 1)}],
+            [0, 0],
+            True],
+            [{(0, 0): 7}, [{(0, 0): (7, 0)}, {(0, 0): (7, 1)}], [0, 1], False],
+            [{('b', 'b'): 8}, [{('b', 'b'): (8, 0)}, {('a', 'a'): (8, 1)}], [0, 1], True],
+            [{}, [{}, {}], [0, 1], False],
+            [{(0, 0): 10}, [{(0, 0): (10, 0)}, {(0, 0): (10, 1)}], [0, 1], False],
+            [{('b', 'a'): 11}, [{('b', 'a'): (11, 0)}, {('a', 'b'): (11, 1)}], [0, 1], True],
+            [{}, [{}, {}], [0, 1], False]]
+            sage: Word('abcacbaab')._g_defect_build_g_palindromes_tree(
+            ....: [WordMorphism('a->a,b->b,c->c')], [WordMorphism('a->a,b->b,c->c')],
+            ....: [([[{0: 1, 'c': 5}, None, 0, False],
+            ....:   [{'a': 2, 'b': 3}, 1, 0, True],
+            ....:   [{}, 1, 2, False],
+            ....:   [{0: 4}, 11, 2, False],
+            ....:   [{}, 11, 2, True],
+            ....:   [{0: 6}, 4, 1, False],
+            ....:   [{'a': 9, 'b': 7}, 4, 1, True],
+            ....:   [{0: 8}, 4, 3, False],
+            ....:   [{}, 4, 3, True],
+            ....:   [{0: 10}, 8, 3, False],
+            ....:   [{}, 8, 3, True]], WordMorphism('a->b,b->a,c->c'))])
+            [[{('c', 'c'): 1, (0, 0): 7}, [{('c', 'c'): (1, 0), (0, 0): (7, 0)}], [0], False],
+            [{(0, 0): 2}, [{(0, 0): (2, 0)}], [0], False],
+            [{('a', 'b'): 5, ('b', 'a'): 3}, [{('a', 'b'): (5, 0), ('b', 'a'): (3, 0)}], [0], True],
+            [{(0, 0): 4}, [{(0, 0): (4, 0)}], [0], False],
+            [{}, [{}], [0], True],
+            [{(0, 0): 6}, [{(0, 0): (6, 0)}], [0], False],
+            [{}, [{}], [0], True],
+            [{('a', 'b'): 10, ('b', 'a'): 8}, [{('a', 'b'): (10, 0), ('b', 'a'): (8, 0)}], [0], True],
+            [{(0, 0): 9}, [{(0, 0): (9, 0)}], [0], False],
+            [{}, [{}], [0], True],
+            [{}, [{}], [0], False]]
+        """
+        domain = set(morphisms_G[0].domain().alphabet())
+        special_letter = self._not_used_letter(prohibited_letters=domain)
+        empty_string_dict = dict()
+        empty_string_dict_list = []
+        empty_string_dict_local_indexes_list = []
+        for morphism in morphisms_G:
+            empty_string_dict_list.append(empty_string_dict)
+            empty_string_dict_local_indexes_list.append(0)
+        g_palindromes_tree = [[dict(), empty_string_dict_list, empty_string_dict_local_indexes_list, False]]
+        for palindromes_tree, antimorphism in palindromes_trees:
+            current_G_nodes_path = [(g_palindromes_tree[0], 0)]
+            current_palindromes = [palindrome for palindrome in palindromes_tree[0][0].items()]
+            while current_palindromes:
+                if current_palindromes[-1] is None:
+                    current_palindromes.pop()
+                    current_G_nodes_path.pop()
+                else:
+                    left_letter, palindrome_index = current_palindromes.pop()
+                    palindrome = palindromes_tree[palindrome_index]
+                    actual_palindrome_length, ends_with_special_letter = palindrome[2], palindrome[3]
+                    right_letter = left_letter
+                    if ends_with_special_letter:
+                        left_letter, right_letter = special_letter, special_letter
+                    elif actual_palindrome_length != 1:
+                        right_letter = antimorphism(left_letter)[0]
+                    g_node, g_node_dict_index = current_G_nodes_path[-1]
+                    g_node_dict = g_node[1][g_node_dict_index]
+                    if (left_letter, right_letter) in g_node_dict:
+                        g_node_index, g_dict_index = g_node_dict[(left_letter, right_letter)]
+                        current_G_nodes_path.append((g_palindromes_tree[g_node_index], g_dict_index))
+                    else:
+                        new_G_node_index = len(g_palindromes_tree)
+                        inverse_morphism = inverse_morphisms_G[g_node_dict_index]
+                        equivalence_left_letter, equivalence_right_letter = special_letter, special_letter
+                        if left_letter != special_letter:
+                            equivalence_left_letter, equivalence_right_letter = inverse_morphism(left_letter)[0], inverse_morphism(right_letter)[0]
+                        g_node[0][(equivalence_left_letter, equivalence_right_letter)] = new_G_node_index
+                        for i, morphism in enumerate(morphisms_G):
+                            cur_left_letter, cur_right_letter = special_letter, special_letter
+                            if equivalence_left_letter != special_letter:
+                                cur_left_letter, cur_right_letter = morphism(equivalence_left_letter)[0], morphism(equivalence_right_letter)[0]
+                            g_node[1][i][(cur_left_letter, cur_right_letter)] = (new_G_node_index, i)
+                        cur_max_dict_index = 0
+                        next_dicts_identifiers = dict()
+                        next_dicts = []
+                        new_G_node_dict_ref_list = []
+                        new_G_node_dict_local_indexes_list = []
+                        for i, morphism in enumerate(morphisms_G):
+                            cur_left_letter, cur_right_letter = special_letter, special_letter
+                            if equivalence_left_letter != special_letter:
+                                cur_left_letter, cur_right_letter = morphism(equivalence_left_letter)[0], morphism(equivalence_right_letter)[0]
+                            if (g_node[2][i], cur_left_letter, cur_right_letter) not in next_dicts_identifiers:
+                                next_dicts_identifiers[(g_node[2][i], cur_left_letter, cur_right_letter)] = cur_max_dict_index
+                                cur_max_dict_index += 1
+                                next_dicts.append(dict())
+                            cur_dict_index = next_dicts_identifiers[(g_node[2][i], cur_left_letter, cur_right_letter)]
+                            new_G_node_dict_ref_list.append(next_dicts[cur_dict_index])
+                            new_G_node_dict_local_indexes_list.append(cur_dict_index)
+                        new_G_node = [dict(), new_G_node_dict_ref_list, new_G_node_dict_local_indexes_list, ends_with_special_letter]
+                        g_palindromes_tree.append(new_G_node)
+                        _, next_G_dict_index = g_node_dict[(left_letter, right_letter)]
+                        current_G_nodes_path.append((new_G_node, next_G_dict_index))
+                    current_palindromes.append(None)
+                    for neighbour in palindrome[0].items():
+                        current_palindromes.append(neighbour)
+        return g_palindromes_tree
+
+    def _g_defect_secondary_subtrahend(self, morphisms_G, antimorphisms_G):
+        r"""
+        Return secondary subtrahend `g_G(self)` in *G-defect* formula using already
+        generated group of morphisms and antimorphisms `G`.
+
+        INPUT:
+
+        - ``morphisms_G`` -- list of all morphisms of `G`
+        - ``antimorphisms_G`` -- list of all antimorphisms of `G`
+
+        OUTPUT: non-negative integer
+
+        EXAMPLES:
+
+            sage: Word('abc')._g_defect_secondary_subtrahend(
+            ....: [WordMorphism('a->a,b->b,c->c'), WordMorphism('a->b,b->a,c->c')],
+            ....: [WordMorphism('a->a,b->b,c->c'), WordMorphism('a->b,b->a,c->c')])
+            0
+            sage: Word('abc')._g_defect_secondary_subtrahend(
+            ....: [WordMorphism('a->a,b->b,c->c')], [WordMorphism('a->b,b->a,c->c')])
+            1
+            sage: Word('abcd')._g_defect_secondary_subtrahend(
+            ....: [WordMorphism('a->a,b->b,c->c,d->d')], [WordMorphism('a->b,b->a,c->d,d->c')])
+            2
+            sage: Word('c')._g_defect_secondary_subtrahend(
+            ....: [WordMorphism('a->a,b->b,c->c')], [WordMorphism('a->b,b->a,c->c')])
+            0
+            sage: Word('')._g_defect_secondary_subtrahend(
+            ....: [WordMorphism('a->a,b->b,c->c')], [WordMorphism('a->a,b->b,c->c')])
+            0
+        """
+        g_G = 0
+        already_found_letters = set()
+        for letter in self.letters():
+            if letter not in already_found_letters:
+                letter_contributes = True
+                already_found_letters.add(letter)
+                for antimorphism in antimorphisms_G:
+                    if letter == antimorphism(letter)[0]:
+                        letter_contributes = False
+                    already_found_letters.add(antimorphism(letter)[0])
+                for morphism in morphisms_G:
+                    already_found_letters.add(morphism(letter)[0])
+                if letter_contributes:
+                    g_G += 1
+        return g_G
+
+    def _g_defect_generate_morphisms_and_antimorpisms_group(self, morphisms, antimorphisms):
+        r"""
+        Generate group of morphisms and antimorphisms `G` that contains
+        ``morphisms`` and ``antimorphisms``.
+
+        INPUT:
+
+        - ``morphisms`` -- iterable of letter permutations (default: ``[]``)
+          on the alphabet of ``self``; letter permutations must be callable on
+          letters as well as words (e.g. :class:`~sage.combinat.words.morphism.WordMorphism`);
+          if the identity morphism is not in ``morphisms``, then it is added automatically
+        - ``antimorphisms`` -- iterable of letter permutations (default: ``[]``)
+          on the alphabet of ``self``; if ``antimorphisms`` is empty, then
+          antimorphism that acts as identity on letters is added to it;
+          letter permutations must be callable on letters as well
+          as words (e.g. :class:`~sage.combinat.words.morphism.WordMorphism`)
+
+        OUTPUT:
+
+        - list of morphisms of `G`
+        - list of antimorphisms of `G`
+        - list of inverses of morphisms of `G`
+
+        ALGORITHM:
+
+        Two letters `s_1` and `s_2` not present in ``self`` and domains
+        of (anti)morphisms are generated.
+
+        From definition of `G`, all ``morphisms`` and ``antimorpisms``
+        work as letter permutations on same domain. We update all
+        `m \in morphisms` with `m(s_1) = s_1` and `m(s_2) = s_2`,
+        and we update all `am \in antimorphisms` with
+        `am(s_1) = s_2` and `am(s_2) = s_1`.
+
+        After that we generate a permutation group from updated
+        ``morphisms`` and ``antimorphisms``, and finally,
+        remove `s_1` and `s_2` from domains of all generated
+        permutations. Permutations `p`, such that
+        `p(s_1) = s_1` and `p(s_2) = s_2`, become morphisms in `G`.
+        Permutations `p`, such that `p(s_1) = s_2` and `p(s_2) = s_1`,
+        become antimorphisms in `G`.
+
+        EXAMPLES:
+
+            sage: f = WordMorphism('a->b,b->a,c->c')
+            sage: g = WordMorphism('a->c,b->b,c->a')
+            sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([f], [])
+            sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
+            (['a->a, b->b, c->c', 'a->b, b->a, c->c'],
+            ['a->a, b->b, c->c', 'a->b, b->a, c->c'],
+            ['a->a, b->b, c->c', 'a->b, b->a, c->c'])
+            sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([], [f])
+            sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
+            (['a->a, b->b, c->c'], ['a->b, b->a, c->c'], ['a->a, b->b, c->c'])
+            sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([], [f, g])
+            sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
+            (['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'],
+            ['a->a, b->c, c->b', 'a->b, b->a, c->c', 'a->c, b->b, c->a'],
+            ['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'])
+            sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([f, g], [])
+            sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
+            (['a->a, b->b, c->c',
+            'a->a, b->c, c->b',
+            'a->b, b->a, c->c',
+            'a->b, b->c, c->a',
+            'a->c, b->a, c->b',
+            'a->c, b->b, c->a'],
+            ['a->a, b->b, c->c',
+            'a->a, b->c, c->b',
+            'a->b, b->a, c->c',
+            'a->b, b->c, c->a',
+            'a->c, b->a, c->b',
+            'a->c, b->b, c->a'],
+            ['a->a, b->b, c->c',
+            'a->a, b->c, c->b',
+            'a->b, b->a, c->c',
+            'a->b, b->c, c->a',
+            'a->c, b->a, c->b',
+            'a->c, b->b, c->a'])
+            sage: h = WordMorphism('a->b,b->c,c->a')
+            sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([], [h])
+            sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
+            (['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'],
+            ['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'],
+            ['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'])
+        """
+        from sage.combinat.words.morphism import WordMorphism
+        updated_morphisms, updated_antimorphisms, special_letter_one, special_letter_two, updated_domain = \
+            self._g_defect_update_morphisms_and_antimorpisms(morphisms, antimorphisms)
+        permutation_group_gens = []
+        for morphism in updated_morphisms:
+            current_gen = []
+            for letter in updated_domain:
+                current_gen.append(morphism(letter)[0])
+            permutation_group_gens.append(current_gen)
+        for antimorphism in updated_antimorphisms:
+            current_gen = []
+            for letter in updated_domain:
+                current_gen.append(antimorphism(letter)[0])
+            permutation_group_gens.append(current_gen)
+        from sage.groups.perm_gps.permgroup import PermutationGroup
+        permutation_group_for_G = PermutationGroup(permutation_group_gens, domain=updated_domain)
+        morphisms_G = []
+        antimorphisms_G = []
+        for permutation in permutation_group_for_G.list():
+            permutation_dict = permutation.dict()
+            if permutation_dict[special_letter_one] == special_letter_one:
+                del permutation_dict[special_letter_one]
+                del permutation_dict[special_letter_two]
+                morphisms_G.append(WordMorphism(permutation_dict))
+            else:
+                del permutation_dict[special_letter_one]
+                del permutation_dict[special_letter_two]
+                antimorphisms_G.append(WordMorphism(permutation_dict))
+        inverse_morphisms_G = []
+        for morphism in morphisms_G:
+            inverse_morphism_dict = dict()
+            for letter in morphism.domain().alphabet():
+                inverse_morphism_dict[morphism(letter)[0]] = letter
+            inverse_morphisms_G.append(WordMorphism(inverse_morphism_dict))
+        return morphisms_G, antimorphisms_G, inverse_morphisms_G
+
+    def _g_defect_update_morphisms_and_antimorpisms(self, morphisms, antimorphisms):
+        r"""
+        Return 2 letters `s_1` and `s_2` that are not present in
+        domain of ``morphisms`` and ``antimorphisms`` and return
+        updated ``morphisms`` and ``antimorphisms`` with updated domain
+        that includes `s_1` and `s_2`.
+
+        INPUT:
+
+        - ``morphisms`` -- iterable of letter permutations (default: ``[]``)
+          on the alphabet of ``self``; letter permutations must be callable on
+          letters as well as words (e.g. :class:`~sage.combinat.words.morphism.WordMorphism`);
+          if the identity morphism is not in ``morphisms``, then it is added automatically
+        - ``antimorphisms`` -- iterable of letter permutations (default: ``[]``)
+          on the alphabet of ``self``; if ``antimorphisms`` is empty, then
+          antimorphism that acts as identity on letters is added to it;
+          letter permutations must be callable on letters as well
+          as words (e.g. :class:`~sage.combinat.words.morphism.WordMorphism`)
+
+        OUTPUT:
+
+        - list of morphisms with updated domain
+        - list of antimorphisms with updated domain
+        - letter `s_1`
+        - letter `s_2`
+        - list of letters of updated domain
+
+        EXAMPLES:
+
+            sage: f = WordMorphism('a->b,b->a,c->c')
+            sage: m, am, s1, s2, al = Word()._g_defect_update_morphisms_and_antimorpisms([f], [])
+            sage: (m, am, s1, s2, sorted([str(x) for x in al]))
+            ([WordMorphism: 0->0, 1->1, a->b, b->a, c->c,
+            WordMorphism: 0->0, 1->1, a->a, b->b, c->c],
+            [WordMorphism: 0->1, 1->0, a->a, b->b, c->c],
+            0, 1, ['0', '1', 'a', 'b', 'c'])
+            sage: m, am, s1, s2, al = Word()._g_defect_update_morphisms_and_antimorpisms([], [f])
+            sage: (m, am, s1, s2, sorted([str(x) for x in al]))
+            ([WordMorphism: 0->0, 1->1, a->a, b->b, c->c],
+            [WordMorphism: 0->1, 1->0, a->b, b->a, c->c],
+            0, 1, ['0', '1', 'a', 'b', 'c'])
+            sage: g = WordMorphism('a->c,b->b,c->a')
+            sage: m, am, s1, s2, al = Word()._g_defect_update_morphisms_and_antimorpisms([], [f, g])
+            sage: (m, am, s1, s2, sorted([str(x) for x in al]))
+            ([WordMorphism: 0->0, 1->1, a->a, b->b, c->c],
+            [WordMorphism: 0->1, 1->0, a->b, b->a, c->c,
+            WordMorphism: 0->1, 1->0, a->c, b->b, c->a],
+            0, 1, ['0', '1', 'a', 'b', 'c'])
+            sage: m, am, s1, s2, al = Word('abcd')._g_defect_update_morphisms_and_antimorpisms([], [])
+            sage: (m, am, s1, s2, sorted([str(x) for x in al]))
+            ([WordMorphism: 0->0, 1->1, a->a, b->b, c->c, d->d],
+            [WordMorphism: 0->1, 1->0, a->a, b->b, c->c, d->d],
+            0, 1, ['0', '1', 'a', 'b', 'c', 'd'])
+        """
+        from sage.combinat.words.morphism import WordMorphism
+        domains = set()
+        proper_morphisms = []
+        for morphism in morphisms:
+            fixed_morphism = morphism
+            if not isinstance(morphism, WordMorphism):
+                fixed_morphism = WordMorphism(morphism)
+            if not fixed_morphism.is_letter_permutation():
+                raise ValueError("All morphisms must be letter permutations")
+            domains.add(fixed_morphism.domain())
+            proper_morphisms.append(fixed_morphism)
+        proper_antimorphisms = []
+        for antimorphism in antimorphisms:
+            fixed_antimorphism = antimorphism
+            if not isinstance(antimorphism, WordMorphism):
+                fixed_antimorphism = WordMorphism(antimorphism)
+            if not fixed_antimorphism.is_letter_permutation():
+                raise ValueError("All antimorphisms must be letter permutations")
+            domains.add(fixed_antimorphism.domain())
+            proper_antimorphisms.append(fixed_antimorphism)
+        if len(domains) >= 2:
+            raise ValueError("All morphisms and antimorphisms must have the same domain")
+        domain = set(self.letters())
+        if len(domains) == 1:
+            domain = set(domains.pop().alphabet())
+        special_letters = self._not_used_letters(2, prohibited_letters=domain)
+        special_letter_one, special_letter_two = special_letters[0], special_letters[1]
+        special_morphism = WordMorphism({special_letter_one: special_letter_one, special_letter_two: special_letter_two})
+        special_antimorphism = WordMorphism({special_letter_one: special_letter_two, special_letter_two: special_letter_one})
+        updated_morphisms = []
+        for morphism in proper_morphisms:
+            updated_morphisms.append(special_morphism.extend_by(morphism))
+        updated_antimorphisms = []
+        for antimorphism in proper_antimorphisms:
+            updated_antimorphisms.append(special_antimorphism.extend_by(antimorphism))
+        updated_morphisms.append(special_morphism.extend_by(WordMorphism({x: x for x in domain})))
+        if not updated_antimorphisms:
+            updated_antimorphisms.append(special_antimorphism.extend_by(WordMorphism({x: x for x in domain})))
+        domain = list(domain)
+        domain.append(special_letter_one)
+        domain.append(special_letter_two)
+        return updated_morphisms, updated_antimorphisms, special_letter_one, special_letter_two, domain
 
     def is_full(self, f=None):
         r"""
@@ -3129,13 +3546,11 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
-          it must be callable on letters as well as words (e.g. ``WordMorphism``)
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT:
-
-        boolean -- If ``f`` is ``None``, whether ``self`` is full;
-        otherwise, whether ``self`` is full of ``f``-palindromes.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3186,8 +3601,8 @@ class FiniteWord_class(Word_class):
 
     def palindromic_closure(self, side='right', f=None):
         r"""
-        Return the shortest palindrome having ``self`` as a prefix
-        (or as a suffix if ``side`` is ``'left'``).
+        Return the shortest palindrome (or ``f``-palindrome) having ``self``
+        as a prefix (or as a suffix if ``side`` is ``'left'``).
 
         See [DeLuca2006]_.
 
@@ -3195,15 +3610,11 @@ class FiniteWord_class(Word_class):
 
         - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) the
           direction of the  closure
-
         - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
-          it must be callable on letters as well as words (e.g. ``WordMorphism``)
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
-        OUTPUT:
-
-        a word -- If ``f`` is ``None``, the right palindromic closure of ``self``;
-        otherwise, the right ``f``-palindromic closure of ``self``.
-        If ``side`` is ``'left'``, the left palindromic closure.
+        OUTPUT: word
 
         EXAMPLES::
 
@@ -3239,27 +3650,23 @@ class FiniteWord_class(Word_class):
         """
         if f is None:
             if side == 'right':
-                l = self.lps().length()
-                # return self * self[-(l+1)::-1]
-                return self * self[:self.length() - l].reversal()
-            elif side == 'left':
-                l = self.reversal().lps().length()
-                return self[:l-1:-1] * self
-            else:
-                raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
-        else:
-            from sage.combinat.words.morphism import WordMorphism
-            f = WordMorphism(f)
-            if not f.is_involution():
-                raise ValueError("f must be an involution")
-            if side == 'right':
-                l = self.lps(f=f).length()
-                return self * f(self[-(l+1)::-1])
-            elif side == 'left':
-                l = self.reversal().lps(f=f).length()
-                return f(self[:l-1:-1]) * self
-            else:
-                raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
+                lps_length = self.lps().length()
+                return self * self[:self.length() - lps_length].reversal()
+            if side == 'left':
+                lps_length = self.reversal().lps().length()
+                return self[:lps_length - 1:-1] * self
+            raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
+        from sage.combinat.words.morphism import WordMorphism
+        f = WordMorphism(f)
+        if not f.is_involution():
+            raise ValueError("f must be an involution")
+        if side == 'right':
+            lps_length = self.lps(f=f).length()
+            return self * f(self[-(lps_length + 1)::-1])
+        if side == 'left':
+            lps_length = self.reversal().lps(f=f).length()
+            return f(self[:lps_length - 1:-1]) * self
+        raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
 
     def is_symmetric(self, f=None):
         r"""
@@ -3272,8 +3679,9 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
-          it must be callable on letters as well as words (e.g. ``WordMorphism``)
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
 
         EXAMPLES::
 
@@ -3290,7 +3698,629 @@ class FiniteWord_class(Word_class):
             True
         """
         square = self * self
-        return square.lps_lengths(f)[-1] >= self.length()
+        return square.lps(f=f).length() >= self.length()
+
+    def _not_used_letter(self, prohibited_letters=set()):
+        r"""
+        Return a letter not contained in ``self``
+        and ``prohibited_letters``.
+
+        INPUT:
+
+        - ``prohibited_letters`` -- iterable (default is empty Python set) of letters
+
+        OUTPUT:
+
+        lowest non-negative integer that is not contained
+        as a letter in ``self`` and ``prohibited_letters``
+
+        EXAMPLES::
+
+            sage: letters = ['a', 'b']
+            sage: w = Word('abcd')
+            sage: w._not_used_letter(prohibited_letters=letters)
+            0
+            sage: w._not_used_letter()
+            0
+            sage: letters = set({'a', 0, 'b', 2})
+            sage: w = Word([1, 2, 3])
+            sage: w._not_used_letter(prohibited_letters=letters)
+            4
+            sage: w._not_used_letter()
+            0
+            sage: letters = set({2, 3, 0, 5})
+            sage: w = Word([3, 1, 'ab', 0, 'c', 0])
+            sage: w._not_used_letter(prohibited_letters=letters)
+            4
+            sage: w._not_used_letter()
+            2
+        """
+        return self._not_used_letters(1, prohibited_letters=prohibited_letters)[0]
+
+    def _not_used_letters(self, n, prohibited_letters=set()):
+        r"""
+        Return ``n`` letters not contained
+        in ``self`` and ``prohibited_letters``.
+
+        INPUT:
+
+        - ``n`` -- non-negative integer, count of letters that will be returned
+        - ``prohibited_letters`` -- iterable (default is empty Python set) of letters
+
+        OUTPUT:
+
+        list of lowest non-negative integers
+        that are not contained as letters in ``self``
+        and ``prohibited_letters``
+
+        EXAMPLES::
+
+            sage: letters = ['b', 'a', 'b']
+            sage: w = Word('abcd')
+            sage: w._not_used_letters(3, prohibited_letters=letters)
+            [0, 1, 2]
+            sage: letters = set({'b', 0, 'a', 2})
+            sage: w = Word([1, 2, 3])
+            sage: w._not_used_letters(2, prohibited_letters=letters)
+            [4, 5]
+            sage: letters = set({2, 0, 5})
+            sage: w = Word([3, 'ab', 0, 'c', 2])
+            sage: w._not_used_letters(4, prohibited_letters=letters)
+            [1, 4, 6, 7]
+        """
+        if n < 0:
+            raise ValueError("Parameter `n` must be a non-negative integer")
+        letters_set = set(self.letters()).union(prohibited_letters)
+        res = []
+        num = 0
+        while len(res) < n:
+            while num in letters_set:
+                num += 1
+            res.append(num)
+            num += 1
+        return res
+
+    def _insert_not_used_letter_between_consecutive_letters(self, f=None):
+        r"""
+        Return copy of ``self`` with not used letter inserted between
+        each pair of consecutive letters of ``self`` and updated morphism.
+
+        INPUT:
+
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`);
+          the default value corresponds to usual palindromes, i.e.,
+          ``f`` equal to the identity
+
+        OUTPUT:
+
+        - word that is a copy of ``self`` with not used letter inserted
+          between each pair of consecutive letters
+        - morphism that is a copy of ``f`` with the inserted letter added
+          to its domain; image of the inserted letter is the inserted letter
+        - letter that was inserted into ``self``
+
+        EXAMPLES::
+
+            sage: Word('aba')._insert_not_used_letter_between_consecutive_letters()
+            (word: a0b0a, WordMorphism: 0->0, a->a, b->b, 0)
+        """
+        from sage.combinat.words.morphism import WordMorphism
+        special_letter = None
+        if f is not None:
+            if not isinstance(f, WordMorphism):
+                f = WordMorphism(f)
+            if not f.is_letter_permutation():
+                raise ValueError("f must be a letter permutation")
+            morphism_letters = set(f.domain().alphabet())
+            special_letter = self._not_used_letter(prohibited_letters=morphism_letters)
+        else:
+            special_letter = self._not_used_letter()
+        updated_letter_list = []
+        for letter in self:
+            updated_letter_list.append(letter)
+            updated_letter_list.append(special_letter)
+        if updated_letter_list:
+            updated_letter_list.pop()
+        from sage.combinat.words.word import Word
+        word_with_special_letter = Word(updated_letter_list)
+        special_letter_morphism = WordMorphism({special_letter: special_letter})
+        updated_morphism = None
+        if f is not None:
+            updated_morphism = special_letter_morphism.extend_by(f)
+        else:
+            updated_morphism = special_letter_morphism.extend_by(WordMorphism({x: x for x in self.letters()}))
+        return word_with_special_letter, updated_morphism, special_letter
+
+    def _find_lps_for_all_prefixes_from_maximal_palindrome_lengths(self, maximal_palindrome_lengths):
+        r"""
+        Return the lengths of lps for all prefixes of ``self``.
+
+        INPUT:
+
+        - ``maximal_palindrome_lengths`` -- lengths of maximal palindromes
+          or ``f``-palindromes centered at each symmetry axis
+
+        OUTPUT: list of non-negative integers
+
+        EXAMPLES::
+
+            sage: Word('aba')._find_lps_for_all_prefixes_from_maximal_palindrome_lengths([1, 0, 3, 0, 1])
+            [0, 1, 1, 3]
+            sage: Word('abb')._find_lps_for_all_prefixes_from_maximal_palindrome_lengths([1, 0, 1, 2, 1])
+            [0, 1, 1, 2]
+            sage: Word('abbac')._find_lps_for_all_prefixes_from_maximal_palindrome_lengths([1, 0, 1, 4, 1, 0, 1, 0, 0])
+            [0, 1, 1, 2, 4, 0]
+            sage: Word('aaaa')._find_lps_for_all_prefixes_from_maximal_palindrome_lengths([1, 2, 3, 4, 3, 2, 1])
+            [0, 1, 2, 3, 4]
+        """
+        result = [0]
+        if not maximal_palindrome_lengths:
+            return result
+        from collections import deque
+        current_indexes_with_remove_indexes = deque()
+        if maximal_palindrome_lengths[0] == 1:
+            current_indexes_with_remove_indexes.append([0, 1])
+        i = 1
+        current_pos = 0
+        while i + 1 < len(maximal_palindrome_lengths):
+            if current_indexes_with_remove_indexes:
+                res_index = current_indexes_with_remove_indexes[0][0]
+                result.append(i - res_index)
+            else:
+                result.append(0)
+            current_indexes_with_remove_indexes.append([i, current_pos + 1 + (maximal_palindrome_lengths[i] // 2)])
+            current_indexes_with_remove_indexes.append([i + 1, current_pos + 1 + ((maximal_palindrome_lengths[i + 1] + 1) // 2)])
+            i += 2
+            current_pos += 1
+            while (current_indexes_with_remove_indexes
+                   and current_indexes_with_remove_indexes[0][1] <= current_pos):
+                current_indexes_with_remove_indexes.popleft()
+        if current_indexes_with_remove_indexes:
+            res_index = current_indexes_with_remove_indexes[0][0]
+            result.append(i - res_index)
+        else:
+            result.append(0)
+        return result
+
+    def _find_lacunas_from_palindromes_tree(self, palindromes_tree):
+        r"""
+        Return all lacunas of ``self`` in ascending order using palindromes tree from
+        :meth:`_get_palindromic_factors_data` method.
+
+        INPUT:
+
+        - ``palindromes_tree`` -- data structure returned by :meth:`_get_palindromic_factors_data`
+
+        OUTPUT: list of non-negative integers
+
+        EXAMPLES::
+
+            sage: word = Word('aabab')
+            sage: palindromes_tree = [[{'a': 1, 0: 4, 'b': 6}, None, 0, False],
+            ....: [{0: 2}, 0, 1, False], [{'b': 3}, 2, 1, True], [{}, 6, 3, False],
+            ....: [{'a': 5}, 1, 0, True], [{}, 1, 2, False], [{0: 7}, 4, 1, False],
+            ....: [{'a': 8}, 4, 1, True], [{0: 9}, 4, 3, False], [{}, 4, 3, True]]
+            sage: word._find_lacunas_from_palindromes_tree(palindromes_tree)
+            []
+            sage: palindromes_tree = [[{'s': 1}, None, 0, False],
+            ....: [{'b': 2, 'a': 5}, 1, 0, True], [{'s': 3}, 5, 2, False],
+            ....: [{'a': 4}, 5, 2, True], [{}, 5, 4, False],
+            ....: [{'s': 6}, 3, 2, False], [{}, 3, 2, True]]
+            sage: word._find_lacunas_from_palindromes_tree(palindromes_tree)
+            [0, 1]
+        """
+        lacunas = [True] * self.length()
+        for palindrome in palindromes_tree:
+            minimal_center_index, actual_palindrome_length, ends_with_special_letter = palindrome[1], palindrome[2], palindrome[3]
+            if minimal_center_index is not None and not ends_with_special_letter:
+                right_letter_index = (minimal_center_index + actual_palindrome_length - 1) // 2
+                lacunas[right_letter_index] = False
+        return [i for i,lac in enumerate(lacunas) if lac]
+
+    @cached_method
+    def _get_palindromic_factors_data(self, f=None):
+        r"""
+        Return some data that provides information about palindromic
+        factors or ``f``-palindromic factors of ``self``.
+
+        INPUT:
+
+        - ``f`` -- letter permutation (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          :class:`~sage.combinat.words.morphism.WordMorphism`)
+
+        OUTPUT:
+
+        - list of lengths of the maximal palindromes (or ``f``-palindrome)
+          for each symmetry axis (letter or space between two letters)
+        - tree graph that contains data about palindromic
+          (or ``f``-palindromic) factors as described in [Rom2024]_;
+          represented as Python list, the first node is the root
+
+        ALGORITHM:
+
+        Algorithm is described in [Rom2024]_.
+
+        Time complexity is linear from length of ``self``.
+
+        EXAMPLES::
+
+            sage: Word('abcacba')._get_palindromic_factors_data()
+            ([1, 0, 1, 0, 1, 0, 7, 0, 1, 0, 1, 0, 1],
+             [[{0: 2, 'a': 1, 'b': 3, 'c': 5}, None, 0, False],
+              [{0: 7}, 0, 1, False],
+              [{}, 1, 0, True],
+              [{0: 4}, 2, 1, False],
+              [{}, 2, 1, True],
+              [{0: 6}, 4, 1, False],
+              [{}, 4, 1, True],
+              [{'c': 8}, 6, 1, True],
+              [{0: 9}, 6, 3, False],
+              [{'b': 10}, 6, 3, True],
+              [{0: 11}, 6, 5, False],
+              [{'a': 12}, 6, 5, True],
+              [{}, 6, 7, False]])
+
+        ::
+
+            sage: f = WordMorphism('a->b,b->a')
+            sage: Word('a')._get_palindromic_factors_data(f)
+            ([0], [[{}, None, 0, False]])
+            sage: Word('ab')._get_palindromic_factors_data(f)
+            ([0, 2, 0],
+             [[{0: 1}, None, 0, False], [{'a': 2}, 1, 0, True], [{}, 1, 2, False]])
+            sage: Word('aa')._get_palindromic_factors_data(f)
+            ([0, 0, 0], [[{0: 1}, None, 0, False], [{}, 1, 0, True]])
+            sage: Word('abbaba')._get_palindromic_factors_data(f)
+            ([0, 2, 0, 0, 0, 2, 0, 4, 0, 2, 0],
+             [[{0: 1}, None, 0, False],
+              [{'a': 2, 'b': 5}, 1, 0, True],
+              [{0: 3}, 1, 2, False],
+              [{'b': 4}, 7, 2, True],
+              [{}, 7, 4, False],
+              [{0: 6}, 5, 2, False],
+              [{}, 5, 2, True]])
+
+        ::
+
+            sage: f = WordMorphism('a->b,b->a,c->c')
+            sage: Word('cabc')._get_palindromic_factors_data(f)
+            ([1, 0, 0, 4, 0, 0, 1],
+             [[{0: 2, 'c': 1}, None, 0, False],
+              [{}, 0, 1, False],
+              [{'a': 3}, 1, 0, True],
+              [{0: 4}, 3, 2, False],
+              [{'c': 5}, 3, 2, True],
+              [{}, 3, 4, False]])
+            sage: Word('abcaab')._get_palindromic_factors_data(f)
+            ([0, 2, 0, 0, 3, 0, 0, 0, 0, 2, 0],
+             [[{0: 1, 'c': 3}, None, 0, False],
+              [{'a': 2}, 1, 0, True],
+              [{}, 1, 2, False],
+              [{0: 4}, 4, 1, False],
+              [{'b': 5}, 4, 1, True],
+              [{0: 6}, 4, 3, False],
+              [{}, 4, 3, True]])
+        """
+        word_with_special_letter, updated_morphism, special_letter = \
+            self._insert_not_used_letter_between_consecutive_letters(f=f)
+        maximal_palindrome_radii, maximal_palindrome_lengths, initial_palindrome_radii, previous_positions = \
+            self._get_data_from_manachers_algorithm(word_with_special_letter, updated_morphism)
+        diff_forest = self._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            maximal_palindrome_radii, initial_palindrome_radii, previous_positions)
+        palindromes_tree = self._build_palindromes_tree(diff_forest, word_with_special_letter, special_letter)
+        return maximal_palindrome_lengths, palindromes_tree
+
+    def _build_palindromes_tree(self, diff_forest, word_with_special_letter, special_letter):
+        r"""
+        Using data extracted from applying Manacher's algorithm
+        on ``word_with_special_letter``, build
+        tree graph that contains data about palindromic factors
+        of ``word_with_special_letter``.
+
+        INPUT:
+
+        - ``diff_forest`` -- forest graph that contains data extracted
+          from apply of Manacher's algorithm on ``word_with_special_letter``
+        - ``word_with_special_letter`` -- word such that
+          every second letter of it is the same letter and all other letters
+          are different from this letter
+        - ``special_letter`` -- letter that is the every second letter
+          of ``word_with_special_letter``
+
+        OUTPUT:
+
+        a tree graph that contains data about
+        palindromic factors of ``word_with_special_letter``
+
+        EXAMPLES::
+
+            sage: Word()._build_palindromes_tree([[[0, 0, 1, []]], [[1, 0, 1, []]],
+            ....: [[2, 0, 2, []]], [[4, 0, 2, []]], [[6, 0, 7, []]]],
+            ....: Word('a0b0c0a0c0b0a'), '0')
+            [[{'0': 2, 'a': 1, 'b': 3, 'c': 5}, None, 0, False],
+             [{'0': 7}, 0, 1, False],
+             [{}, 1, 0, True],
+             [{'0': 4}, 2, 1, False],
+             [{}, 2, 1, True],
+             [{'0': 6}, 4, 1, False],
+             [{}, 4, 1, True],
+             [{'c': 8}, 6, 1, True],
+             [{'0': 9}, 6, 3, False],
+             [{'b': 10}, 6, 3, True],
+             [{'0': 11}, 6, 5, False],
+             [{'a': 12}, 6, 5, True],
+             [{}, 6, 7, False]]
+
+        ::
+
+            sage: Word()._build_palindromes_tree([], 'a', '0')
+            [[{}, None, 0, False]]
+            sage: Word()._build_palindromes_tree([[[1, 0, 2, []]]], 'a0b', '0')
+            [[{'0': 1}, None, 0, False], [{'a': 2}, 1, 0, True], [{}, 1, 2, False]]
+            sage: Word()._build_palindromes_tree([[[1, 0, 1, []]]], 'a0a', '0')
+            [[{'0': 1}, None, 0, False], [{}, 1, 0, True]]
+            sage: Word()._build_palindromes_tree([[[1, 0, 2, []]],
+            ....: [[3, 0, 1, [1]], [7, 1, 4, []]], [[5, 0, 3, []]]], 'a0b0b0a0b0a', '0')
+            [[{'0': 1}, None, 0, False],
+             [{'a': 2, 'b': 5}, 1, 0, True],
+             [{'0': 3}, 1, 2, False],
+             [{'b': 4}, 7, 2, True],
+             [{}, 7, 4, False],
+             [{'0': 6}, 5, 2, False],
+             [{}, 5, 2, True]]
+
+        ::
+
+            sage: Word()._build_palindromes_tree([[[0, 0, 1, []]],
+            ....: [[1, 0, 1, []]], [[3, 0, 4, []]]], 'c0a0b0c', '0')
+            [[{'0': 2, 'c': 1}, None, 0, False],
+             [{}, 0, 1, False],
+             [{'a': 3}, 1, 0, True],
+             [{'0': 4}, 3, 2, False],
+             [{'c': 5}, 3, 2, True],
+             [{}, 3, 4, False]]
+            sage: Word()._build_palindromes_tree([[[1, 0, 2, []]],
+            ....: [[3, 0, 1, []]], [[4, 0, 4, []]], [[9, 0, 2, []]]], 'a0b0c0a0a0b', '0')
+            [[{'0': 1, 'c': 3}, None, 0, False],
+             [{'a': 2}, 1, 0, True],
+             [{}, 1, 2, False],
+             [{'0': 4}, 4, 1, False],
+             [{'b': 5}, 4, 1, True],
+             [{'0': 6}, 4, 3, False],
+             [{}, 4, 3, True]]
+        """
+        palindromes_tree = [[dict(), None, 0, False]]
+        for tree in diff_forest:
+            node_indexes_to_traverse = [[0]]
+            palindrome_indexes = [0]
+            while node_indexes_to_traverse:
+                if node_indexes_to_traverse[-1]:
+                    current_node_index = node_indexes_to_traverse[-1].pop()
+                    current_node = tree[current_node_index]
+                    current_palindrome_index = palindrome_indexes[-1]
+                    current_palindrome = palindromes_tree[current_palindrome_index]
+                    center_index, initial_radius, max_radius, neighbour_indexes = (
+                        current_node[0], current_node[1], current_node[2], current_node[3])
+                    i = initial_radius
+                    while i < max_radius:
+                        node_indexes_to_traverse.append([])
+                        left_letter = word_with_special_letter[center_index - i]
+                        if left_letter in current_palindrome[0].keys():
+                            next_palindrome_index = current_palindrome[0][left_letter]
+                            current_palindrome = palindromes_tree[next_palindrome_index]
+                            palindrome_indexes.append(next_palindrome_index)
+                            current_palindrome[1] = min(current_palindrome[1], center_index)
+                        else:
+                            next_palindrome_index = len(palindromes_tree)
+                            current_palindrome[0][left_letter] = next_palindrome_index
+                            current_actual_length = current_palindrome[2]
+                            next_actual_length = current_actual_length
+                            ends_with_special_letter = (True if left_letter == special_letter else False)
+                            if not ends_with_special_letter:
+                                if current_actual_length == 0:
+                                    next_actual_length = 2 if current_palindrome[3] else 1
+                                else:
+                                    next_actual_length += 2
+                            palindromes_tree.append([dict(), center_index, next_actual_length, ends_with_special_letter])
+                            current_palindrome = palindromes_tree[next_palindrome_index]
+                            palindrome_indexes.append(next_palindrome_index)
+                        i += 1
+                    for neighbour_index in neighbour_indexes:
+                        neighbour_initial_radius = tree[neighbour_index][1]
+                        node_indexes_to_traverse[neighbour_initial_radius].append(neighbour_index)
+                else:
+                    node_indexes_to_traverse.pop()
+                    palindrome_indexes.pop()
+        return palindromes_tree
+
+    def _get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            self, maximal_palindrome_radii, initial_palindrome_radii, previous_positions):
+        r"""
+        Return accumulated data about applied Manacher's algorithm
+        in format of forest graph.
+
+        INPUT:
+
+        - ``maximal_palindrome_radii`` -- list of radii of maximal
+          palindromes for each symmetry axis (letter or space between
+          two letters)
+        - ``initial_palindrome_radii`` -- for each symmetry axis (letter
+          or space between two letters) a radius of the palindrome that
+          was initial palindrome from which Manacher's algorithm
+          started to increment radius in this symmetry axis
+        - ``previous_positions`` -- for each symmetry axis (letter or space
+          between two letters) an index of ``word_with_special_letter`` from
+          which Manacher's algorithm copied initial radius in this
+          symmetry axis (``None`` if radius was not copied in this
+          symmetry axis)
+
+        OUTPUT:
+
+        a forest graph that contains accumulated data
+        about applied Manacher's algorithm
+
+        EXAMPLES::
+
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [1, 1, 2, 1, 2, 1, 7, 1, 2, 1, 2, 1, 1],
+            ....: [0, 0, 0, 1, 0, 1, 0, 1, 2, 1, 2, 1, 1],
+            ....: [None, None, None, 1, None, 1, None, 1, 4, 1, 2, 1, 0])
+            [[[0, 0, 1, []]],
+             [[1, 0, 1, []]],
+             [[2, 0, 2, []]],
+             [[4, 0, 2, []]],
+             [[6, 0, 7, []]]]
+
+        ::
+
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [0], [0], [None])
+            []
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [0, 2, 0], [0, 0, 0], [None, None, None])
+            [[[1, 0, 2, []]]]
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [0, 1, 0], [0, 0, 0], [None, None, None])
+            [[[1, 0, 1, []]]]
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [0, 2, 0, 1, 0, 3, 0, 4, 0, 2, 0],
+            ....: [0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0],
+            ....: [None, None, None, None, None, None, None, 3, None, 5, None])
+            [[[1, 0, 2, []]], [[3, 0, 1, [1]], [7, 1, 4, []]], [[5, 0, 3, []]]]
+
+        ::
+
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [1, 1, 0, 4, 0, 1, 1],
+            ....: [0, 0, 0, 0, 0, 1, 1],
+            ....: [None, None, None, None, None, 1, 0])
+            [[[0, 0, 1, []]], [[1, 0, 1, []]], [[3, 0, 4, []]]]
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [0, 2, 0, 1, 4, 1, 0, 1, 0, 2, 0],
+            ....: [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+            ....: [None, None, None, None, None, 3, None, 1, None, None, None])
+            [[[1, 0, 2, []]], [[3, 0, 1, []]], [[4, 0, 4, []]], [[9, 0, 2, []]]]
+        """
+        diff_forest = []
+        tree_and_node_indexes = [None] * len(previous_positions)
+        for i, prev_pos in enumerate(previous_positions):
+            if initial_palindrome_radii[i] != maximal_palindrome_radii[i]:
+                if prev_pos is None:
+                    tree_index, node_index = len(diff_forest), 0
+                    diff_forest.append([[i, initial_palindrome_radii[i], maximal_palindrome_radii[i], []]])
+                    tree_and_node_indexes[i] = (tree_index, node_index)
+                else:
+                    previous_position_index = prev_pos
+                    tree_index, node_index = tree_and_node_indexes[previous_position_index]
+                    tree = diff_forest[tree_index]
+                    new_node_index = len(tree)
+                    tree[node_index][3].append(new_node_index)
+                    tree.append([i, initial_palindrome_radii[i], maximal_palindrome_radii[i], []])
+                    tree_and_node_indexes[i] = (tree_index, new_node_index)
+        return diff_forest
+
+    def _get_data_from_manachers_algorithm(self, word, morphism):
+        r"""
+        Return some data about ``word`` that is collected
+        during apply of Manacher's algorithm on ``word``.
+
+        INPUT:
+
+        - ``word`` -- word such that every second letter of it
+          is the same letter and all other letters are different from
+          this letter
+        - ``morphism`` -- morphism that will be used for defining
+          which factors of ``word`` are palindromes
+
+        OUTPUT:
+
+        - list of radii of the maximal palindromes
+          for each symmetry axis (letter or space between two letters)
+        - list of lengths of the maximal palindromes
+          for each symmetry axis (letter or space between two letters)
+        - list of radii of the palindrome for each symmetry axis
+          (letter or space between two letters), which
+          was the initial palindrome from which Manacher's algorithm
+          started to increment radius in this symmetry axis
+        - list of indices of ``word`` for each symmetry axis
+          (letter or space between two letters), from
+          which Manacher's algorithm copied initial radius in this
+          symmetry axis (``None`` if radius was not copied in this
+          symmetry axis)
+
+        ALGORITHM:
+
+        Manacher's algorithm from [Man1975]_.
+
+        EXAMPLES::
+
+            sage: f = WordMorphism('a->a,b->b,c->c,0->0')
+            sage: Word()._get_data_from_manachers_algorithm(Word('a0b0c0a0c0b0a'), f)
+            ([1, 1, 2, 1, 2, 1, 7, 1, 2, 1, 2, 1, 1],
+             [1, 0, 1, 0, 1, 0, 7, 0, 1, 0, 1, 0, 1],
+             [0, 0, 0, 1, 0, 1, 0, 1, 2, 1, 2, 1, 1],
+             [None, None, None, 1, None, 1, None, 1, 4, 1, 2, 1, 0])
+
+        ::
+
+            sage: f = WordMorphism('a->b,b->a,0->0')
+            sage: Word()._get_data_from_manachers_algorithm(Word('a'), f)
+            ([0], [0], [0], [None])
+            sage: Word()._get_data_from_manachers_algorithm(Word('a0b'), f)
+            ([0, 2, 0], [0, 2, 0], [0, 0, 0], [None, None, None])
+            sage: Word()._get_data_from_manachers_algorithm(Word('a0a'), f)
+            ([0, 1, 0], [0, 0, 0], [0, 0, 0], [None, None, None])
+            sage: Word()._get_data_from_manachers_algorithm(Word('a0b0b0a0b0a'), f)
+            ([0, 2, 0, 1, 0, 3, 0, 4, 0, 2, 0],
+             [0, 2, 0, 0, 0, 2, 0, 4, 0, 2, 0],
+             [0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0],
+             [None, None, None, None, None, None, None, 3, None, 5, None])
+
+        ::
+
+            sage: f = WordMorphism('a->b,b->a,c->c,0->0')
+            sage: Word()._get_data_from_manachers_algorithm(Word('c0a0b0c'), f)
+            ([1, 1, 0, 4, 0, 1, 1],
+             [1, 0, 0, 4, 0, 0, 1],
+             [0, 0, 0, 0, 0, 1, 1],
+             [None, None, None, None, None, 1, 0])
+            sage: Word()._get_data_from_manachers_algorithm(Word('a0b0c0a0a0b'), f)
+            ([0, 2, 0, 1, 4, 1, 0, 1, 0, 2, 0],
+             [0, 2, 0, 0, 3, 0, 0, 0, 0, 2, 0],
+             [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+             [None, None, None, None, None, 3, None, 1, None, None, None])
+        """
+        maximal_palindrome_radii = [0] * word.length()
+        maximal_palindrome_lengths = [0] * word.length()
+        initial_palindrome_radii = [0] * word.length()
+        previous_positions = [None] * word.length()
+        center, right = 0, 0
+        for i in range(word.length()):
+            if i < right:
+                maximal_palindrome_radii[i] = min(right - i, maximal_palindrome_radii[2 * center - i])
+                initial_palindrome_radii[i] = maximal_palindrome_radii[i]
+                previous_positions[i] = 2 * center - i
+                if initial_palindrome_radii[2 * center - i] == maximal_palindrome_radii[2 * center - i]:
+                    previous_positions[i] = previous_positions[2 * center - i]
+            l, r = i - maximal_palindrome_radii[i], i + maximal_palindrome_radii[i]
+            while (l >= 0 and r < word.length()
+                   and morphism(word[l])[0] == word[r]
+                   and word[l] == morphism(word[r])[0]):
+                maximal_palindrome_radii[i] += 1
+                l -= 1
+                r += 1
+            if i + maximal_palindrome_radii[i] > right:
+                center = i
+                right = i + maximal_palindrome_radii[i]
+        even_pos_results = [max(x + x % 2 - 1, 0) for x in maximal_palindrome_radii[::2]]
+        odd_pos_results = [x - x % 2 for x in maximal_palindrome_radii[1::2]]
+        maximal_palindrome_lengths[::2] = even_pos_results
+        maximal_palindrome_lengths[1::2] = odd_pos_results
+        return (maximal_palindrome_radii, maximal_palindrome_lengths,
+                initial_palindrome_radii, previous_positions)
 
     def length_border(self):
         r"""
@@ -5258,7 +6288,7 @@ class FiniteWord_class(Word_class):
             sage: Word('aab').iterated_left_palindromic_closure(f=f)
             Traceback (most recent call last):
             ...
-            TypeError: self (=a->b, b->b) is not an endomorphism
+            ValueError: f must be an involution
 
         See [DeLuca2006]_.
         """
