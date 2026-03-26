@@ -582,6 +582,30 @@ Installation steps
     contains errors to the [sage-support mailing list](https://groups.google.com/group/sage-support).
     If there are numerous failures, there was a serious problem with your build.
 
+#. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
+    can be built by running `make doc-html` and resides in
+    `build/sage-distro/src/doc/`. You may want to bookmark it in your browser.
+
+#. Optional: If you want to build the PDF version of the documentation,
+    run `make doc-pdf` (this requires LaTeX to be installed).
+
+#. Optional: Install optional packages of interest to you:
+    get a list by typing `./sage --optional` or by visiting the
+    [packages documentation page](https://doc.sagemath.org/html/en/reference/spkg/).
+
+#. Optional: Create a symlink to the installed `sage` script in a
+    directory in your `PATH`, for example `/usr/local`. This will
+    allow you to start Sage by typing `sage` from anywhere rather than
+    having to either type the full path or navigate to the Sage
+    directory and type `./sage`. This can be done by running:
+
+        $ sudo ln -s $(pwd)/sage /usr/local/bin
+
+#. Optional: Set up SageMath as a Jupyter kernel in an existing Jupyter notebook
+    or JupyterLab installation, as described in the section
+    [Launching SageMath](https://doc.sagemath.org/html/en/installation/launching.html)
+    in the Sage Installation Guide.
+
 #. If you wish to prepare for having to build Sage in an environment
    without sufficient Internet connectivity:
 
@@ -1181,9 +1205,9 @@ Environment variables controlling the documentation build
 
 .. envvar:: SAGE_DOCBUILD_OPTS
 
-  The contents of this variable are passed as additional arguments to
-  the documentation builder when you run ``make``, ``make doc``, or
-  ``make doc-pdf``.  For example:
+  The value of this variable is passed as an
+  argument to ``sage --docbuild all html`` or ``sage --docbuild all pdf`` when
+  you run ``make``, ``make doc``, or ``make doc-pdf``.  For example:
 
   - add ``--no-plot`` to this variable to avoid building the graphics coming from
     the ``.. PLOT`` directive within the documentation,
@@ -1191,8 +1215,7 @@ Environment variables controlling the documentation build
   - add ``--include-tests-blocks`` to include all "TESTS" blocks in the reference
     manual.
 
-  A full list of valid options can be found at the top of
-  ``src/sage_docbuild/__main__.py``.
+  Run ``sage --docbuild help`` to see the full list of options.
 
 .. envvar:: SAGE_SPKG_INSTALL_DOCS
 

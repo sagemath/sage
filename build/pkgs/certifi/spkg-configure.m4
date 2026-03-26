@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([certifi], [SAGE_PYTHON_PACKAGE_CHECK([certifi])])

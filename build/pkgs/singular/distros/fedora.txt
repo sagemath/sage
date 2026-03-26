@@ -1,3 +1,0 @@
-Singular
-Singular-devel
-Singular-doc

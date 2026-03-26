@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([mistune], [SAGE_PYTHON_PACKAGE_CHECK([mistune])])

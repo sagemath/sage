@@ -1,3 +1,0 @@
-# building pGroupCohomology
-cd `ls -d src/pGroupCohomology*`
-sdh_pip_install .

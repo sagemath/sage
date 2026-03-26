@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([texttable], [SAGE_PYTHON_PACKAGE_CHECK([texttable])])

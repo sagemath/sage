@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([pexpect], [SAGE_PYTHON_PACKAGE_CHECK([pexpect])])

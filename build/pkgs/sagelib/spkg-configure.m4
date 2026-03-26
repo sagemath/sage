@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([sagelib], [SAGE_PYTHON_PACKAGE_CHECK([sagelib])])

@@ -1,2 +1,0 @@
-perl:term-readline-gnu
-perl:termreadline-gnu

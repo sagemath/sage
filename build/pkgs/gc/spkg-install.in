@@ -1,7 +1,0 @@
-cd src
-
-GC_CONFIGURE="--enable-large-config"
-
-sdh_configure $GC_CONFIGURE
-sdh_make
-sdh_make_install

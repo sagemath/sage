@@ -1,2 +1,0 @@
-libplanarity-dev
-planarity

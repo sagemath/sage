@@ -1,1 +1,0 @@
-gap_jupyter >=0.9

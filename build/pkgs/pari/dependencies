@@ -1,4 +1,0 @@
-readline $(MP_LIBRARY) | pari_galdata pari_seadata_small
-
-----------
-All lines of this file are ignored except the first.

@@ -1,1 +1,0 @@
-libterm-readline-gnu-perl

@@ -1,2 +1,0 @@
-pari-devel
-pari-gp

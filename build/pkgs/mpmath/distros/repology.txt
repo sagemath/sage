@@ -1,2 +1,0 @@
-mpmath
-python:mpmath

@@ -1,2 +1,0 @@
-ptyprocess
-python:ptyprocess

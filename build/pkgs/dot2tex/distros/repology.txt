@@ -1,2 +1,0 @@
-dot2tex
-python:dot2tex

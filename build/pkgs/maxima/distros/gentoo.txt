@@ -1,1 +1,0 @@
-sci-mathematics/maxima[-sbcl,-clozurecl,-clozurecl64,-gcl,-clisp,ecl]

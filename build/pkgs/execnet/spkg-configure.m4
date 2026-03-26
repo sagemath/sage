@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([execnet], [SAGE_PYTHON_PACKAGE_CHECK([execnet])])

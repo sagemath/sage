@@ -1,5 +1,0 @@
-cd src
-cp "$SAGE_ROOT"/config/config.* build-aux/
-sdh_configure $LIBHOMFLY_CONFIGURE
-sdh_make
-sdh_make_install -j1

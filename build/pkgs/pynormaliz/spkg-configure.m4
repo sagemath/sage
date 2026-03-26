@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([pynormaliz], [SAGE_PYTHON_PACKAGE_CHECK([pynormaliz])])

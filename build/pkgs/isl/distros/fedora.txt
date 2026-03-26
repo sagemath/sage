@@ -1,2 +1,0 @@
-isl
-isl-devel

@@ -1,2 +1,0 @@
-python312
-python312-devel

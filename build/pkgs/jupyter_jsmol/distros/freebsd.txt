@@ -1,1 +1,0 @@
-science/py-jupyter_jsmol

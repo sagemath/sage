@@ -1,2 +1,0 @@
-maxima-ecl
-maxima-src

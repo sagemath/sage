@@ -1,4 +1,0 @@
-POLYTOPES_DIR="$SAGE_SHARE"/reflexive_polytopes
-mkdir -p "$POLYTOPES_DIR"
-cd src/src
-cp -r -p Hodge4d  "$POLYTOPES_DIR"/

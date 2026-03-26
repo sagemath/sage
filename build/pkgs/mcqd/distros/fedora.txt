@@ -1,2 +1,0 @@
-mcqd
-mcqd-devel

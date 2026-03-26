@@ -1,2 +1,0 @@
-TARGET="${SAGE_SHARE}/mathjax"
-sdh_install src/* "${TARGET}"

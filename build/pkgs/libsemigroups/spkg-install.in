@@ -1,4 +1,0 @@
-cd src
-sdh_configure --disable-eigen
-sdh_make
-sdh_make_install

@@ -1,3 +1,0 @@
-gcc10
-gcc10-c++
-gcc10-fortran

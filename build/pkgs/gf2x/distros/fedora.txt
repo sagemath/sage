@@ -1,2 +1,0 @@
-gf2x
-gf2x-devel

@@ -1,3 +1,0 @@
-# deprecated in Fedora 40
-tachyon
-tachyon-devel

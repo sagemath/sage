@@ -1,1 +1,0 @@
-sci-mathematics/flint[ntl]

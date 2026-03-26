@@ -1,2 +1,0 @@
-openblas
-blas=2.*=openblas

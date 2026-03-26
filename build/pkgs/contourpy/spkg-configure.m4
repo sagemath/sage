@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([contourpy], [SAGE_PYTHON_PACKAGE_CHECK([contourpy])])

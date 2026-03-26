@@ -1,2 +1,0 @@
-primecount
-primecount-devel

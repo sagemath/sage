@@ -1,5 +1,0 @@
-cd src
-
-sdh_configure --with-python=no
-sdh_make
-sdh_make_install -j1

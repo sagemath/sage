@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([pyparsing], [SAGE_PYTHON_PACKAGE_CHECK([pyparsing])])

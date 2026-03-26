@@ -1,2 +1,0 @@
-sage-data-cremona-ellcurve
-sagemath-database-cremona-elliptic-curves

@@ -1,4 +1,0 @@
-$(BLAS) gfortran | $(PYTHON_TOOLCHAIN) pkgconfig cython $(PYTHON)
-
-----------
-All lines of this file are ignored except the first.
