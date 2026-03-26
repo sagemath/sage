@@ -318,10 +318,10 @@ For more details, see the documentation for ``._sage_()``.
 
 OTHER Examples::
 
-    sage: def math_bessel_K(nu, x):
-    ....:     return mathics(nu).BesselK(x).N(20)
-    sage: math_bessel_K(2,I)                      # optional - mathics
-    CompoundExpression[2.7182818284590452354 ^ (-1.0000000000000000000 internals`bessel`u$1) / internals`bessel`u$1 ^ 1.0000000000000000000, internals`bessel`While[True, CompoundExpression[0.50000000000000000000, (-1.0000000000000000000 2.7182818284590452354 ^ (-1.0000000000000000000 internals`bessel`u$1) / internals`bessel`u$1 ^ 2.0000000000000000000 - 1.0000000000000000000 2.7182818284590452354 ^ (-1.0000000000000000000 internals`bessel`u$1) / internals`bessel`u$1 ^ 1.0000000000000000000) / internals`bessel`u$1 ^ 1.0000000000000000000]], 1.7317959997692363070 - 0.37745896303183014917 I]
+    sage: def math_binomial(n, k):
+    ....:     return mathics(n).Binomial(k).N(20)
+    sage: math_binomial(2, I)                     # optional - mathics
+    0.73521558207499549196 + 2.2056467462249865041 I
 
 ::
 
