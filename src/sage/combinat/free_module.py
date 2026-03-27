@@ -1380,10 +1380,21 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
             sage: F = CombinatorialFreeModule(ZZ, [1,2]); F
             F
+            sage: m1 = CombinatorialFreeModule(QQ, ["a", "b", "c"], prefix="m1")
+            sage: m2 = CombinatorialFreeModule(QQ, ["x", "y", "z"], prefix="m2")
+            sage: t = tensor([m1, m2])
+            sage: t(("a", "x"))
+            m1['a'] # m2['x']
+            sage: t(("b", "z"))
+            m1['b'] # m2['z']
+            sage: ("a", "x") in t.basis().keys()
+            True
+            sage: ("a", "w") in t.basis().keys()
+            False
         """
         self._sets = modules
-        indices = CartesianProduct_iters(*[module.basis().keys()
-                                           for module in modules]).map(tuple, is_injective=True)
+        cp = CartesianProduct_iters(*[module.basis().keys() for module in modules])
+        indices = cp.map(tuple, is_injective=True, inverse=cp._element_constructor_)
         CombinatorialFreeModule.__init__(self, modules[0].base_ring(), indices, **options)
         # the following is not the best option, but it's better than nothing.
         if 'tensor_symbol' in options:
@@ -1405,12 +1416,12 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
         Conversion from an existing element still works::
 
-            sage: elt = m1["a"].tensor(m2["x"])
+            sage: elt = m1.basis()["a"].tensor(m2.basis()["x"])
             sage: t(elt) == t(("a", "x"))
             True
         """
         if isinstance(x, tuple) and len(x) == len(self._sets):
-            if all(xi in s.basis().keys() for xi, s in zip(x, self._sets)):
+            if x in self.basis().keys():
                 return self.monomial(x)
             raise ValueError(f"{x} is not a valid index")
         return super()._element_constructor_(x)
@@ -1698,7 +1709,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             sage: T(tensor((p,p)))
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            TypeError: do not know how to make x (= ...) an element of self (=...)
             sage: T = tensor((D,D))
             sage: p = C.an_element()
             sage: T(tensor((p,p)))
