@@ -4284,6 +4284,8 @@ cdef class Matrix(Matrix1):
           - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
+          - ``'full_pivoting'`` -- uses an echelon-like matrix from
+            Gaussian elimination with full pivoting
 
         - ``basis`` -- (default: ``'default'``) a keyword that describes
           the format of the basis returned.  Allowable values are:
@@ -8378,7 +8380,6 @@ cdef class Matrix(Matrix1):
             scaled partial pivoting (if base ring has valuation)
 
           - ``'full_pivoting'``: Gauss elimination, using full pivoting
-            (see :meth:`_echelon_in_place_fp`)
 
           - ``'strassen'``: use a Strassen divide and conquer
             algorithm (if available)
@@ -8392,11 +8393,12 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        The matrix ``self`` is put into echelon form, returning nothing by
-        default. If ``transformation=True`` is specified, returns a
-        transformation matrix `T`. If ``algorithm='full_pivoting'`` is
-        specified, returns a permutation `s` of the columns in the form
-        `s` or `(s,T)` depending on ``transformation``.
+        The matrix ``self`` is put into echelon form, returning nothing
+        by default. If ``transformation=True`` is specified, returns a
+        transformation matrix ``T``.
+
+        If ``algorithm='full_pivoting'`` is specified, the matrix ``self`` is 
+        put into a row-equivalent column permutation of an echelon matrix instead.
 
         EXAMPLES::
 
@@ -8570,14 +8572,13 @@ cdef class Matrix(Matrix1):
           - ``'partial_pivoting'``: Gauss elimination, using partial pivoting
             (if base ring has absolute value)
 
-          - ``'scaled_partial_pivoting'`` -- Gauss elimination, using scaled
+          - ``'scaled_partial_pivoting'``: Gauss elimination, using scaled
             partial pivoting (if base ring has absolute value)
 
           - ``'scaled_partial_pivoting_valuation'``: Gauss elimination, using
             scaled partial pivoting (if base ring has valuation)
 
           - ``'full_pivoting'``: Gauss elimination, using full pivoting
-            (see :meth:`_echelon_in_place_fp`)
 
           - ``'strassen'``: use a Strassen divide and conquer
             algorithm (if available)
@@ -8599,9 +8600,8 @@ cdef class Matrix(Matrix1):
         where `E` is the echelon form of ``self`` and `T` is the
         transformation matrix.
 
-        If ``algorithm='full_pivoting'`` is specified, then the output
-        contains a permutation `s` representing the column swaps done,
-        in the form `(E,s)` or `(E,s,T)` depending on ``transformation``.
+        If ``algorithm='full_pivoting'`` is specified, returns ``E`` as
+        a row-equivalent column permutation of an echelon matrix instead.
 
         EXAMPLES::
 
@@ -9127,9 +9127,8 @@ cdef class Matrix(Matrix1):
 
     cpdef _echelon_in_place_fp(self, bint transformation):
         r"""
-        Transforms ``self`` into echelon form with leftmost pivots via full
-        pivoting, returning permutation ``sigma`` representing the
-        column permutations done.
+        Transforms ``self`` into a row-equivalent matrix with
+        pivot columns through full pivoting Gaussian elimination.
 
         INPUT:
 
@@ -9138,23 +9137,59 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        If ``self`` is an `m\times n` matrix, then puts it in echelon form
-        via full pivoting, and returns permutation element ``s`` in `S_n`
-        corresponding to the column swaps done during full pivoting.
+        Returns nothing, unless ``transformation=True``, in which case
+        returns row transformation matrix ``T``.
 
-        If ``transformation=True`` is given, returns ``(s, T)``
-        where ``T`` is the row transformation matrix.
+        .. NOTE::
+
+            This caches the tuple ``p`` of the columns with pivots in order,
+            and permutation element ``s`` corresponding to the swaps done
+            during full pivoting, so that ``self.with_permuted_columns(s)``
+            is in echelon form.
 
         EXAMPLES:
 
-        The following relation should hold for ``s`` and ``T``. Note that
-        ``permute_columns`` permutes ``mc`` according to `s^{-1}`. ::
+        The following relations should hold for ``p``, ``s``, and ``T``. ::
 
-            sage: F = Qp(5); m = matrix.random(F, 10)
-            sage: mc = copy(m)
-            sage: s, T = mc._echelon_in_place_fp(True)
-            sage: mc.with_permuted_columns(s) == T*m
+            sage: F = Qp(5, 5, print_mode='val-unit');
+            sage: m = matrix.random(F, 10); mc = copy(m)
+            sage: T = mc._echelon_in_place_fp(True)
+            sage: p = mc.pivots()
+            sage: s = mc._cache['echelon_full_pivoting_columnperm']
+
+            sage: rank = mc.rank()
+            sage: I = identity_matrix(F, mc.nrows())
+            sage: all(mc[:,v] == I[:,i] for i,v in enumerate(p))
             True
+
+            sage: echelon = mc.with_permuted_columns(s)
+            sage: echelon[:,:rank] == identity_matrix(F, 10)
+            True
+
+            sage: mc == T*m
+            True
+
+        An example of precision gain in a `3\times5` matrix of rank `2`. ::
+
+            sage: m = matrix(F, [
+            ....:     [  F(1609/5, 4),     F(5*3016, 6),  F(5*101, 5),     F(5*598, 6),      F(2268, 5)],
+            ....:     [  F(5*1908, 6),   F(2547/5^2, 3),  F(816/5, 4),   F(24/5^6, -2),     F(5*556, 5)],
+            ....:     [   F(5*382, 5),      F(126/5, 3),    F(528, 4),  F(317/5^5, -1),   F(5^2*347, 6)]
+            ....: ])
+            sage: ef = m.echelon_form(algorithm='full_pivoting', basis='computed'); ef
+            [            O(5^11)   5^4 * 28 + O(5^8)   5^5 * 34 + O(5^9)          1 + O(5^4) 5^7 * 249 + O(5^11)]
+            [         1 + O(5^5) 5^2 * 1624 + O(5^7)  5^2 * 439 + O(5^6)              O(5^5)    5 * 452 + O(5^6)]
+            [             O(5^5)              O(5^3)              O(5^4)             O(5^-1)              O(5^6)]
+            sage: ed = m.echelon_form(algorithm='default', basis='computed'); ed # Scaled partial pivoting
+            [         1 + O(5^5)              O(5^7)  5^2 * 579 + O(5^6) 5^-2 * 567 + O(5^2)   5 * 2327 + O(5^6)]
+            [             O(5^6)          1 + O(5^5)   5 * 1028 + O(5^6)  5^-4 * 67 + O(5^0)  5^3 * 433 + O(5^7)]
+            [             O(5^5)              O(5^3)              O(5^4)             O(5^-1)              O(5^6)]
+
+            sage: min(x.precision_absolute() for x in ef.list() if x != 0 and x != 1) # Ignoring pivot cols and zero rows
+            6
+            sage: min(x.precision_absolute() for x in ed.list() if x != 0 and x != 1)
+            0
+
         """
         s = self.fetch('echelon_full_pivoting_columnperm')
         if s is not None:
