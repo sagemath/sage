@@ -55,6 +55,16 @@ if TYPE_CHECKING:
 def _clean_killing_name(name):
     r"""
     Return a symbolic name for the unknowns in the Killing equation.
+
+    EXAMPLES::
+
+        sage: from sage.manifolds.differentiable.metric import _clean_killing_name
+        sage: _clean_killing_name('A-B')
+        'A_B'
+        sage: _clean_killing_name('---')
+        'X'
+        sage: _clean_killing_name('1+v')
+        '_1_v'
     """
     name = ''.join(ch if (ch.isalnum() or ch == '_')
                    else '_'
@@ -70,8 +80,27 @@ def _clean_killing_name(name):
 def _killing_equations(metric, chart=None, vector_name='X', latex_name=None,
                        return_vector=False):
     r"""
-    Shared methods of :meth:`PseudoRiemannianMetric.killing_equations`
-    and :meth:`DegenerateMetric.killing_equations`.
+    Shared helper for :meth:`_MetricKillingEquations.killing_equations`.
+
+    EXAMPLES::
+
+        sage: from sage.manifolds.differentiable.metric import _killing_equations
+        sage: M = Manifold(2, 'R^2')
+        sage: C.<x,y> = M.chart()
+        sage: g = M.metric('g')
+        sage: g[0,0], g[1,1] = 1, 1
+        sage: lhs = [eq.lhs() for eq in _killing_equations(g)]
+        sage: lhs[0]
+        2*diff(X_x(x, y), x)
+        sage: lhs[1]
+        diff(X_x(x, y), y) + diff(X_y(x, y), x)
+        sage: lhs[2]
+        2*diff(X_y(x, y), y)
+        sage: eqs, X = _killing_equations(g, return_vector=True)
+        sage: len(eqs)
+        3
+        sage: X.display()
+        X = X_x(x, y) ∂/∂x + X_y(x, y) ∂/∂y
     """
     from sage.manifolds.differentiable.chart import DiffChart
     from sage.symbolic.function_factory import function
@@ -146,7 +175,244 @@ def _killing_equations(metric, chart=None, vector_name='X', latex_name=None,
     return eqs, X
 
 
-class PseudoRiemannianMetric(TensorField):
+class _MetricKillingEquations:
+    r"""
+    Common Killing-equation support for metric tensor fields.
+    """
+
+    def killing_equations(self, chart=None, vector_name='X', latex_name=None,
+                          return_vector=False):
+        r"""
+        Return the coordinate Killing equations `(\mathcal L_X g)_{ij} = 0`
+        for the pairs `(i,j)` with `i \leq j`.
+
+        In the selected chart, this forms the PDE system for an unknown
+        vector field `X`. The system is created from the coordinate formula
+        for `\mathcal L_X g`. The returned expressions are normalized in
+        the symbolic ring. The equations are in lexicographic order of the
+        pairs `(i,j)` with `i \leq j`, on the chart domain.
+
+        INPUT:
+
+        - ``chart`` -- (default: ``None``) chart used for the coordinate
+          expression of the equations. If ``None``, the default chart of the
+          metric's domain is used.
+        - ``vector_name`` -- (default: ``'X'``) name of the unknown vector
+          field. If ``None``, ``'X'`` is used for the name of the vector field
+          and the prefix of the unknown component.
+        - ``latex_name`` -- (default: ``None``) LaTeX name of the unknown
+          vector field
+        - ``return_vector`` -- boolean (default: ``False``). If ``True``,
+          return both the equations and the symbolic vector field.
+
+        OUTPUT:
+
+        - list of symbolic equalities ``expr == 0`` for the pairs `(i,j)` with
+          `i \leq j`. If ``return_vector`` is ``True``, the output is
+          ``(eqs, X)``.
+
+        EXAMPLES:
+
+        Killing equations of the Euclidean metric on `\RR^2`::
+
+            sage: M = Manifold(2, 'R^2')
+            sage: C.<x,y> = M.chart()
+            sage: g = M.metric('g')
+            sage: g[0,0], g[1,1] = 1, 1
+            sage: eqs, XX = g.killing_equations(return_vector=True)
+            sage: eqs[0].lhs()
+            2*diff(X_x(x, y), x)
+            sage: eqs[1].lhs()
+            diff(X_x(x, y), y) + diff(X_y(x, y), x)
+            sage: eqs[2].lhs()
+            2*diff(X_y(x, y), y)
+            sage: XX.display()
+            X = X_x(x, y) ∂/∂x + X_y(x, y) ∂/∂y
+
+        The same formula applies to degenerate metrics because it only uses
+        the Lie derivative of a symmetric `(0,2)` tensor field::
+
+            sage: Md = Manifold(2, 'Md', structure='degenerate_metric')
+            sage: Cd.<x,y> = Md.chart()
+            sage: gd = Md.metric('gd')
+            sage: gd[0,0] = 1
+            sage: [eq.lhs() for eq in gd.killing_equations()]
+            [2*diff(X_x(x, y), x), diff(X_x(x, y), y), 0]
+
+        The returned equations are in line with the coordinate components of
+        `\mathcal{L}_X g`::
+
+            sage: LXg = g.lie_derivative(XX)
+            sage: pairs = [(0, 0), (0, 1), (1, 1)]
+            sage: lhs = [eq.lhs() for eq in eqs]
+            sage: rhs = [C.simplify(
+            ....:            LXg.comp(C.frame())[i, j, C].expr(method='SR'),
+            ....:            method='SR')
+            ....:        for (i, j) in pairs]
+            sage: lhs == rhs
+            True
+
+        In another chart (with an inverse transition)::
+
+            sage: Y.<u,v> = M.chart()
+            sage: _ = C.transition_map(Y, (x+y, x-y)).inverse()
+            sage: eqs_uv = g.killing_equations(chart=Y)
+            sage: eqs_uv[0].lhs()
+            diff(X_u(u, v), u)
+            sage: eqs_uv[1].lhs()
+            1/2*diff(X_u(u, v), v) + 1/2*diff(X_v(u, v), u)
+            sage: eqs_uv[2].lhs()
+            diff(X_v(u, v), v)
+
+        The name prefix with ``None`` or only punctuation falls back to
+        ``X``::
+
+            sage: eqs_ab = g.killing_equations(vector_name='A-B')
+            sage: eqs_ab[1].lhs()
+            diff(A_B_x(x, y), y) + diff(A_B_y(x, y), x)
+            sage: _, X0 = g.killing_equations(vector_name=None,
+            ....:                              return_vector=True)
+            sage: X0.display()
+            X = X_x(x, y) ∂/∂x + X_y(x, y) ∂/∂y
+            sage: _, Xbad = g.killing_equations(vector_name='---',
+            ....:                                return_vector=True)
+            sage: Xbad.display()
+            X = X_x(x, y) ∂/∂x + X_y(x, y) ∂/∂y
+
+        The method also works for charts that are defined on proper open
+        subsets::
+
+            sage: U = M.open_subset('U', coord_def={C: x>0})
+            sage: CU = C.restrict(U)
+            sage: [eq.lhs() for eq in g.killing_equations(chart=CU)] == lhs
+            True
+
+        The method uses a nonzero start index convention::
+
+            sage: M1 = Manifold(2, 'M1', start_index=1)
+            sage: C1.<x,y> = M1.chart()
+            sage: g1 = M1.metric('g1')
+            sage: g1[1,1], g1[2,2] = 1, 1
+            sage: [eq.lhs() for eq in g1.killing_equations()] == lhs
+            True
+
+        Mixed metric terms contribute to the system in the following way::
+
+            sage: M3 = Manifold(2, 'M3')
+            sage: C3.<x,y> = M3.chart()
+            sage: g3 = M3.metric('g3')
+            sage: g3[0,0], g3[0,1], g3[1,1] = 1, x, 1
+            sage: Xx = function('X_x')(x, y)
+            sage: Xy = function('X_y')(x, y)
+            sage: eqs3 = g3.killing_equations()
+            sage: bool(eqs3[0].lhs() == 2*x*diff(Xy, x) + 2*diff(Xx, x))
+            True
+            sage: bool(eqs3[1].lhs() == (
+            ....:     x*diff(Xx, x) + x*diff(Xy, y) + Xx
+            ....:     + diff(Xx, y) + diff(Xy, x)))
+            True
+            sage: bool(eqs3[2].lhs() == 2*x*diff(Xx, y) + 2*diff(Xy, y))
+            True
+
+        Calling without any chart leads to an error::
+
+            sage: M0 = Manifold(2, 'M0')
+            sage: g0 = M0.metric('g0')
+            sage: try:
+            ....:     g0.killing_equations()
+            ....: except ValueError as err:
+            ....:     print(str(err) == "no default chart has been defined "
+            ....:           "on 2-dimensional differentiable manifold M0")
+            True
+
+        A chart beyond the metric domain is not accepted::
+
+            sage: N0 = Manifold(2, 'N0')
+            sage: Y0.<u,v> = N0.chart()
+            sage: try:
+            ....:     g.killing_equations(chart=Y0)
+            ....: except ValueError as err:
+            ....:     print(str(err) == "the chart must be defined on "
+            ....:           "2-dimensional differentiable manifold R^2 "
+            ....:           "or on an open subset of it")
+            True
+
+        A non-chart input is also rejected::
+
+            sage: g.killing_equations(chart=1)
+            Traceback (most recent call last):
+            ...
+            TypeError: chart must be a differentiable chart
+
+        Metrics along destination maps (non-identity) are not supported::
+
+            sage: N = Manifold(3, 'N')
+            sage: cN.<u,v,w> = N.chart()
+            sage: R = Manifold(2, 'R')
+            sage: cR.<x,y> = R.chart()
+            sage: Phi = R.diff_map(N, {(cR, cN): (x, y, x+y)}, name='Phi')
+            sage: h = R.metric('h', dest_map=Phi)
+            sage: try:
+            ....:     h.killing_equations(chart=cR)
+            ....: except NotImplementedError as err:
+            ....:     print(str(err) == "killing_equations is only "
+            ....:           "implemented for metrics on their own domain")
+            True
+
+        Reporting failures in metric computation::
+
+            sage: M = Manifold(2, 'M')
+            sage: U = M.open_subset('U'); V = M.open_subset('V')
+            sage: M.declare_union(U, V)
+            sage: CU.<x,y> = U.chart()
+            sage: CV.<u,v> = V.chart()
+            sage: g = M.metric('g')
+            sage: g[CU.frame(),0,0], g[CU.frame(),1,1] = 1, 1
+            sage: try:
+            ....:     g.killing_equations(chart=CV)
+            ....: except ValueError as err:
+            ....:     print(str(err) == "unable to compute metric "
+            ....:           "components in chart Chart (V, (u, v))")
+            True
+
+        A simple sanity check::
+
+            sage: M2 = Manifold(2, 'M2')
+            sage: C2.<x,y> = M2.chart()
+            sage: M2.set_calculus_method('sympy')
+            sage: g2 = M2.metric('g2')
+            sage: g2[0,0], g2[1,1] = 1, 1
+            sage: eqs2, X2 = g2.killing_equations(return_vector=True)
+            sage: len(eqs2)
+            3
+            sage: all(eq.lhs().parent() is SR for eq in eqs2)
+            True
+            sage: [eq.lhs() for eq in eqs2] == lhs
+            True
+            sage: X2.display()
+            X = X_x(x, y) ∂/∂x + X_y(x, y) ∂/∂y
+
+        A call on `S^2`::
+
+            sage: M = Manifold(2, 'S^2')
+            sage: U = M.open_subset('U')
+            sage: C.<th,ph> = U.chart(r'th:(0,pi):\theta ph:(0,2*pi):\phi')
+            sage: g = M.metric('g')
+            sage: gU = g.restrict(U)
+            sage: gU[0,0], gU[1,1] = 1, sin(th)^2
+            sage: len(g.killing_equations(chart=C))
+            3
+            sage: Xph = U.vector_field(0, 1, name='Xph')
+            sage: gU.lie_derivative(Xph) == 0
+            True
+        """
+        return _killing_equations(
+            self, chart=chart, vector_name=vector_name,
+            latex_name=latex_name, return_vector=return_vector
+        )
+
+
+class PseudoRiemannianMetric(_MetricKillingEquations, TensorField):
     r"""
     Pseudo-Riemannian metric with values on an open subset of a
     differentiable manifold.
@@ -1068,227 +1334,6 @@ class PseudoRiemannianMetric(TensorField):
               index_labels=index_labels, index_latex_labels=index_latex_labels,
               coordinate_labels=coordinate_labels, only_nonzero=only_nonzero,
               only_nonredundant=only_nonredundant)
-
-    def killing_equations(self, chart=None, vector_name='X', latex_name=None,
-                          return_vector=False):
-        r"""
-        Return the coordinate Killing equations `(\mathcal L_X g)_{ij} = 0`
-        for the pairs `(i,j)` with `i \leq j`.
-
-        In the selected chart, this forms the PDE system for an unknown
-        vector field `X`. The system is created from
-        the coordinate formula for `\mathcal L_X g`. The returned
-        expressions are normalized in the symbolic ring.
-        The equations are in lexicographic
-        order of the pairs `(i,j)` with `i \leq j`, on the chart domain.
-
-        INPUT:
-
-        - ``chart`` -- (default: ``None``) chart used for the coordinate
-          expression of the equations. If ``None``, the default chart of the
-          metric's domain is used.
-        - ``vector_name`` -- (default: ``'X'``) name of the unknown vector
-          field. If ``None``, ``'X'`` is used for the name of the vector field and
-          the prefix of the unknown component.
-        - ``latex_name`` -- (default: ``None``) LaTeX name of the unknown
-          vector field
-        - ``return_vector`` -- boolean (default: ``False``). If ``True``,
-          return both the equations and the symbolic vector field.
-
-        OUTPUT:
-
-        - list of symbolic equalities ``expr == 0`` for the pairs `(i,j)` with
-          `i \leq j`. If ``return_vector`` is ``True``, the output is
-          ``(eqs, X)``.
-
-        EXAMPLES:
-
-        Killing equations of the Euclidean metric on `\RR^2`::
-
-            sage: M = Manifold(2, 'R^2')
-            sage: C.<x,y> = M.chart()
-            sage: g = M.metric('g')
-            sage: g[0,0], g[1,1] = 1, 1
-            sage: eqs, XX = g.killing_equations(return_vector=True)
-            sage: eqs[0].lhs()
-            2*diff(X_x(x, y), x)
-            sage: eqs[1].lhs()
-            diff(X_x(x, y), y) + diff(X_y(x, y), x)
-            sage: eqs[2].lhs()
-            2*diff(X_y(x, y), y)
-            sage: XX.display()
-            X = X_x(x, y) ∂/∂x + X_y(x, y) ∂/∂y
-
-        The returned equations are in line with the coordinate components of
-        `\mathcal{L}_X g`::
-
-            sage: LXg = g.lie_derivative(XX)
-            sage: pairs = [(0, 0), (0, 1), (1, 1)]
-            sage: lhs = [eq.lhs() for eq in eqs]
-            sage: rhs = [C.simplify(
-            ....:            LXg.comp(C.frame())[i, j, C].expr(method='SR'),
-            ....:            method='SR')
-            ....:        for (i, j) in pairs]
-            sage: lhs == rhs
-            True
-
-        In another chart (with an inverse transition)::
-
-            sage: Y.<u,v> = M.chart()
-            sage: _ = C.transition_map(Y, (x+y, x-y)).inverse()
-            sage: eqs_uv = g.killing_equations(chart=Y)
-            sage: eqs_uv[0].lhs()
-            diff(X_u(u, v), u)
-            sage: eqs_uv[1].lhs()
-            1/2*diff(X_u(u, v), v) + 1/2*diff(X_v(u, v), u)
-            sage: eqs_uv[2].lhs()
-            diff(X_v(u, v), v)
-
-        The name prefix with ``None`` or only punctuation falls back to
-        ``X``::
-
-            sage: eqs_ab = g.killing_equations(vector_name='A-B')
-            sage: eqs_ab[1].lhs()
-            diff(A_B_x(x, y), y) + diff(A_B_y(x, y), x)
-            sage: _, X0 = g.killing_equations(vector_name=None,
-            ....:                              return_vector=True)
-            sage: X0.display()
-            X = X_x(x, y) ∂/∂x + X_y(x, y) ∂/∂y
-            sage: _, Xbad = g.killing_equations(vector_name='---',
-            ....:                                return_vector=True)
-            sage: Xbad.display()
-            X = X_x(x, y) ∂/∂x + X_y(x, y) ∂/∂y
-
-        The method also works for charts that are defined on proper open subsets::
-
-            sage: U = M.open_subset('U', coord_def={C: x>0})
-            sage: CU = C.restrict(U)
-            sage: [eq.lhs() for eq in g.killing_equations(chart=CU)] == lhs
-            True
-
-        The method uses a nonzero start index convention::
-
-            sage: M1 = Manifold(2, 'M1', start_index=1)
-            sage: C1.<x,y> = M1.chart()
-            sage: g1 = M1.metric('g1')
-            sage: g1[1,1], g1[2,2] = 1, 1
-            sage: [eq.lhs() for eq in g1.killing_equations()] == lhs
-            True
-
-        Mixed metric terms contribute to the system in the following way::
-
-            sage: M3 = Manifold(2, 'M3')
-            sage: C3.<x,y> = M3.chart()
-            sage: g3 = M3.metric('g3')
-            sage: g3[0,0], g3[0,1], g3[1,1] = 1, x, 1
-            sage: Xx = function('X_x')(x, y)
-            sage: Xy = function('X_y')(x, y)
-            sage: eqs3 = g3.killing_equations()
-            sage: bool(eqs3[0].lhs() == 2*x*diff(Xy, x) + 2*diff(Xx, x))
-            True
-            sage: bool(eqs3[1].lhs() == (
-            ....:     x*diff(Xx, x) + x*diff(Xy, y) + Xx
-            ....:     + diff(Xx, y) + diff(Xy, x)))
-            True
-            sage: bool(eqs3[2].lhs() == 2*x*diff(Xx, y) + 2*diff(Xy, y))
-            True
-
-        Calling without any chart leads to an error::
-
-            sage: M0 = Manifold(2, 'M0')
-            sage: g0 = M0.metric('g0')
-            sage: try:
-            ....:     g0.killing_equations()
-            ....: except ValueError as err:
-            ....:     print(str(err) == "no default chart has been defined "
-            ....:           "on 2-dimensional differentiable manifold M0")
-            True
-
-        A chart beyond the metric domain is not accepted::
-
-            sage: N0 = Manifold(2, 'N0')
-            sage: Y0.<u,v> = N0.chart()
-            sage: try:
-            ....:     g.killing_equations(chart=Y0)
-            ....: except ValueError as err:
-            ....:     print(str(err) == "the chart must be defined on "
-            ....:           "2-dimensional differentiable manifold R^2 "
-            ....:           "or on an open subset of it")
-            True
-
-        A non-chart input is also rejected::
-
-            sage: g.killing_equations(chart=1)
-            Traceback (most recent call last):
-            ...
-            TypeError: chart must be a differentiable chart
-
-        Metrics along destination maps (non-identity) are not supported::
-
-            sage: N = Manifold(3, 'N')
-            sage: cN.<u,v,w> = N.chart()
-            sage: R = Manifold(2, 'R')
-            sage: cR.<x,y> = R.chart()
-            sage: Phi = R.diff_map(N, {(cR, cN): (x, y, x+y)}, name='Phi')
-            sage: h = R.metric('h', dest_map=Phi)
-            sage: try:
-            ....:     h.killing_equations(chart=cR)
-            ....: except NotImplementedError as err:
-            ....:     print(str(err) == "killing_equations is only "
-            ....:           "implemented for metrics on their own domain")
-            True
-
-        Reporting failures in metric computation::
-
-            sage: M = Manifold(2, 'M')
-            sage: U = M.open_subset('U'); V = M.open_subset('V')
-            sage: M.declare_union(U, V)
-            sage: CU.<x,y> = U.chart()
-            sage: CV.<u,v> = V.chart()
-            sage: g = M.metric('g')
-            sage: g[CU.frame(),0,0], g[CU.frame(),1,1] = 1, 1
-            sage: try:
-            ....:     g.killing_equations(chart=CV)
-            ....: except ValueError as err:
-            ....:     print(str(err) == "unable to compute metric "
-            ....:           "components in chart Chart (V, (u, v))")
-            True
-
-        A simple sanity check::
-
-            sage: M2 = Manifold(2, 'M2')
-            sage: C2.<x,y> = M2.chart()
-            sage: M2.set_calculus_method('sympy')
-            sage: g2 = M2.metric('g2')
-            sage: g2[0,0], g2[1,1] = 1, 1
-            sage: eqs2, X2 = g2.killing_equations(return_vector=True)
-            sage: len(eqs2)
-            3
-            sage: all(eq.lhs().parent() is SR for eq in eqs2)
-            True
-            sage: [eq.lhs() for eq in eqs2] == lhs
-            True
-            sage: X2.display()
-            X = X_x(x, y) ∂/∂x + X_y(x, y) ∂/∂y
-
-        A call on `S^2`::
-
-            sage: M = Manifold(2, 'S^2')
-            sage: U = M.open_subset('U')
-            sage: C.<th,ph> = U.chart(r'th:(0,pi):\theta ph:(0,2*pi):\phi')
-            sage: g = M.metric('g')
-            sage: gU = g.restrict(U)
-            sage: gU[0,0], gU[1,1] = 1, sin(th)^2
-            sage: len(g.killing_equations(chart=C))
-            3
-            sage: Xph = U.vector_field(0, 1, name='Xph')
-            sage: gU.lie_derivative(Xph) == 0
-            True
-        """
-        return _killing_equations(
-            self, chart=chart, vector_name=vector_name,
-            latex_name=latex_name, return_vector=return_vector
-        )
 
     def riemann(self, name=None, latex_name=None):
         r"""
@@ -2830,7 +2875,7 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
 #****************************************************************************************************
 
 
-class DegenerateMetric(TensorField):
+class DegenerateMetric(_MetricKillingEquations, TensorField):
     r"""
     Degenerate (or null or lightlike) metric with values on an open subset of a
     differentiable manifold.
@@ -3011,30 +3056,6 @@ class DegenerateMetric(TensorField):
             (0, 2, 1)
         """
         return self._signature
-
-    def killing_equations(self, chart=None, vector_name='X', latex_name=None,
-                          return_vector=False):
-        r"""
-        Return the coordinate Killing equations `(\mathcal L_X g)_{ij} = 0`
-        for the pairs `(i,j)` with `i \leq j`.
-
-        The same coordinate formula applies to degenerate metrics because it
-        only uses the Lie derivative of a symmetric `(0,2)` tensor field. See
-        :meth:`PseudoRiemannianMetric.killing_equations` for INPUT and OUTPUT.
-
-        EXAMPLES::
-
-            sage: M = Manifold(2, 'M', structure='degenerate_metric')
-            sage: C.<x,y> = M.chart()
-            sage: g = M.metric('g')
-            sage: g[0,0] = 1
-            sage: [eq.lhs() for eq in g.killing_equations()]
-            [2*diff(X_x(x, y), x), diff(X_x(x, y), y), 0]
-        """
-        return _killing_equations(
-            self, chart=chart, vector_name=vector_name,
-            latex_name=latex_name, return_vector=return_vector
-        )
 
     def set(self, symbiform):
         r"""
