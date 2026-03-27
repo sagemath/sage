@@ -2178,8 +2178,8 @@ REFERENCES:
              and Intersection Algorithms. SIAM Journal on Computing
              1986 15:4, 948-957.
 
-- [CvL] P. Cameron, J. H. van Lint, Designs, graphs, codes and
-        their links, London Math. Soc., 1991.
+.. [CvL] P. Cameron, J. H. van Lint, Designs, graphs, codes and
+         their links, London Math. Soc., 1991.
 
 .. [CVV2019] Xavier Caruso, Tristan Vaccon and Thibaut Verron,
              *Gröbner bases over Tate algebras*, :arxiv:`1901.09574` (2019)
