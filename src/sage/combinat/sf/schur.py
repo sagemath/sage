@@ -680,10 +680,75 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 sage: x.principal_specialization(q=var("q"))                            # needs sage.symbolic
                 -2/(q - 1) + 3*q^2/((q^3 - 1)*(q^2 - 1)^2*(q - 1)) + 1
 
+            For ``n = 1`` there is a single variable `x_1 = q^0 = 1` and
+            `x_i = 0` for `i \geq 2`.  Since `s_\lambda` requires at
+            least `\ell(\lambda)` nonzero variables to be nonzero,
+            `ps_{1,q}(s_\lambda) = s_\lambda(1, 0, 0, \ldots)` equals
+            `1` when `\lambda` has at most one part (a single row), and
+            `0` when `\ell(\lambda) \geq 2`::
+
+                sage: s = SymmetricFunctions(QQ).s()
+                sage: s[3].principal_specialization(1)
+                1
+                sage: s[1].principal_specialization(1)
+                1
+                sage: s[].principal_specialization(1)
+                1
+                sage: s[2,1].principal_specialization(1)
+                0
+                sage: s[1,1].principal_specialization(1)
+                0
+                sage: (s[3] + 2*s[2,1] + s[1,1,1]).principal_specialization(1)
+                1
+
+            The last example reflects that the only Schur term with a nonzero
+            specialization at `n = 1` is `s[3]` (coefficient 1); the
+            multi-row terms `s[2,1]` and `s[1,1,1]` both contribute 0.
+
+            This behaviour is consistent with the hook-length formula at
+            `q = 1` (Corollary 7.21.4 of [EnumComb2]_):
+
+            .. MATH::
+
+                ps_{n,1}(s_\lambda) = \prod_{u \in \lambda}
+                \frac{n + c(u)}{h(u)},
+
+            where `c(u) = j - i` is the content and `h(u)` is the hook
+            length of cell `u = (i, j)`.  For `n = 1` and any partition
+            with two or more rows, the cell in row 2 column 1 has content
+            `c = 1 - 2 = -1`, giving a factor `(1 + (-1)) / h(u) = 0`
+            that kills the entire product.
+
             TESTS::
 
                 sage: s.zero().principal_specialization(3)
                 0
+
+            The hook-length formula (Corollary 7.21.4 of [EnumComb2]_)
+            agrees with the implementation for all partitions of sizes 1
+            through 5 and `n \in \{2, 3, 4\}`::
+
+                sage: from sage.misc.misc_c import prod
+                sage: s = SymmetricFunctions(QQ).s()
+                sage: def ps_hook(lam, n):
+                ....:     num = prod(n + j - i for i, j in lam.cells())
+                ....:     den = prod(h for h in lam.hooks())
+                ....:     return QQ(num) / QQ(den)
+                sage: all(
+                ....:     s(lam).principal_specialization(n, q=1) == ps_hook(lam, n)
+                ....:     for size in range(1, 6)
+                ....:     for lam in Partitions(size)
+                ....:     for n in [2, 3, 4])
+                True
+
+            The same formula at `n = 1` predicts the zero/one dichotomy
+            verified in the examples above::
+
+                sage: all(
+                ....:     s(lam).principal_specialization(1) == ps_hook(lam, 1)
+                ....:     for size in range(1, 6)
+                ....:     for lam in Partitions(size))
+                True
             """
             if n == 1:
                 R = self.base_ring()
