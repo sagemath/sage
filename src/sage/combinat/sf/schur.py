@@ -528,6 +528,76 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 sage: all( s(h(lam)).verschiebung(3) == s(h(lam).verschiebung(3))
                 ....:      for lam in Partitions(9) )
                 True
+
+            The `n`-th Verschiebung operator is adjoint to the `n`-th Frobenius
+            operator with respect to the Hall scalar product (:meth:`scalar`).
+            That is, for all symmetric functions `f` and `g`:
+
+            .. MATH::
+
+                \langle \mathbf{V}_n(f),\, g \rangle
+                = \langle f,\, \mathbf{f}_n(g) \rangle.
+
+            We verify this exhaustively for `n = 2` over all pairs of Schur
+            basis elements of degree 4::
+
+                sage: Sym = SymmetricFunctions(QQ)
+                sage: s = Sym.s()
+                sage: all(
+                ....:     s(mu).verschiebung(2).scalar(s(nu))
+                ....:     == s(mu).scalar(s(nu).frobenius(2))
+                ....:     for mu in Partitions(4)
+                ....:     for nu in Partitions(4))
+                True
+
+            And for `n = 3` over all pairs of degree 6::
+
+                sage: all(
+                ....:     s(mu).verschiebung(3).scalar(s(nu))
+                ....:     == s(mu).scalar(s(nu).frobenius(3))
+                ....:     for mu in Partitions(6)
+                ....:     for nu in Partitions(6))
+                True
+
+            The identity has a concrete coefficient-extraction form: the
+            coefficient of `s_\nu` in `\mathbf{V}_n(s_\mu)` equals the
+            coefficient of `s_\mu` in `\mathbf{f}_n(s_\nu)`.  We check
+            two nontrivial cases where both sides equal 1 (so the test
+            carries genuine content and is not vacuously ``0 == 0``)::
+
+                sage: s = SymmetricFunctions(QQ).s()
+                sage: lhs = s[6,3].verschiebung(3).scalar(s[2,1])
+                sage: rhs = s[6,3].scalar(s[2,1].frobenius(3))
+                sage: lhs == rhs
+                True
+                sage: lhs
+                1
+
+                sage: lhs = s[4,2].verschiebung(2).scalar(s[2,1])
+                sage: rhs = s[4,2].scalar(s[2,1].frobenius(2))
+                sage: lhs == rhs
+                True
+                sage: lhs
+                1
+
+            When `\mathbf{V}_n(s_\mu) = 0` (i.e., `\mu` has a nonempty
+            `n`-core), both sides of the adjointness identity vanish for
+            every `g`, because `\mathbf{V}_n` maps `s_\mu` to zero and
+            `\langle s_\mu, \mathbf{f}_n(s_\nu) \rangle = 0` for all `\nu`
+            (as `\mathbf{f}_n(s_\nu)` is concentrated in degrees divisible
+            by `n`, while `|\mu|` is not)::
+
+                sage: s = SymmetricFunctions(QQ).s()
+                sage: s[5].verschiebung(2)
+                0
+                sage: all(
+                ....:     s[5].verschiebung(2).scalar(s(nu)) == 0
+                ....:     for nu in Partitions(5))
+                True
+                sage: all(
+                ....:     s[5].scalar(s(nu).frobenius(2)) == 0
+                ....:     for nu in Partitions(5))
+                True
             """
             # Extra hack for the n == 1 case, since lam.quotient(1)
             # (for lam being a partition) returns a partition rather than
