@@ -8635,22 +8635,21 @@ cdef class Matrix(Matrix1):
         """
         cdef bint transformation = ('transformation' in kwds and kwds['transformation'])
         if algorithm != 'full_pivoting':
-            x = self.fetch('echelon_form')
-            if x is not None:
+            E = self.fetch('echelon_form')
+            if E is not None:
                 if not transformation:
-                    return x
-                y = self.fetch('echelon_transformation')
-                if y:
-                    return x, y
+                    return E
+                T = self.fetch('echelon_transformation')
+                if T is not None:
+                    return E, T
         else:
-            x = self.fetch('echelon_form_full_pivoting')
-            if x is not None:
-                s = self.fetch('echelon_full_pivoting_columnperm')
+            E = self.fetch('echelon_full_pivoting')
+            if E is not None:
                 if not transformation:
-                    return x
-                y = self.fetch('echelon_full_pivoting_transformation')
-                if y:
-                    return x, y
+                    return E
+                T = self.fetch('echelon_full_pivoting_transformation')
+                if T is not None:
+                    return E, T
 
         E = self.__copy__()
         if algorithm == 'default':
@@ -8670,13 +8669,15 @@ cdef class Matrix(Matrix1):
             else:
                 return E
         else:
-            self.cache('echelon_form_full_pivoting', E)
-            self.cache('pivots', v[0])
-            self.cache('echelon_full_pivoting_columnperm', v[1])
+            self.cache('echelon_full_pivoting', E)
+            if v is not None:
+                self.cache('echelon_full_pivoting_transformation', v)
+            self.cache('pivots', E.pivots())
+
             if transformation:
-                self.cache('echelon_full_pivoting_transformation', v[2])
-                return E, v[2]
-            return E
+                return E, v
+            else:
+                return E
 
     cpdef _echelon(self, str algorithm):
         """
@@ -9157,11 +9158,9 @@ cdef class Matrix(Matrix1):
         """
         s = self.fetch('echelon_full_pivoting_columnperm')
         if s is not None:
-            if not transformation:
-                return s
             T = self.fetch('echelon_full_pivoting_transformation')
             if T is not None:
-                return s, T
+                return T
 
         self.check_mutability()
         cdef Py_ssize_t nr, nc, piv, pivi, pivj
@@ -9190,13 +9189,13 @@ cdef class Matrix(Matrix1):
                     for i in range(piv, nr):
                         a = self.get_unsafe(i, j).abs()
                         if a > current:
-                            pivi = i; pivj = j
+                            pivi = i
+                            pivj = j
                             current = a
                 if current == 0:
                     break
             else:
-                pivi, pivj, seen = _find_pivot_dvf_fp(self, piv, piv,
-                                                      nr, nc, seen)
+                pivi, pivj, seen = _find_pivot_dvf_fp(self, piv, seen)
                 if pivi == -1:
                     break
 
@@ -9229,15 +9228,13 @@ cdef class Matrix(Matrix1):
         pivots = s.tuple()[:piv]
         pivots = tuple([n-1 for n in pivots])
         self.cache('pivots', pivots)
-        self.cache('rank', piv)
-        self.cache('echelon_form_full_pivoting', self)
         self.cache('echelon_full_pivoting_columnperm', s)
         if transformation:
             self.cache('echelon_full_pivoting_transformation', T)
+        self.cache('echelon_full_pivoting', self)
 
         if transformation:
-            return pivots, s, T
-        return pivots, s
+            return T
 
     #####################################################################################
     # Functions for symmetries of a matrix under row and column permutations
@@ -21319,21 +21316,24 @@ cdef inline bint _block_ldlt_pivot1x1(Matrix A, Py_ssize_t k) except 1:
 
     return 0
 
-cdef inline _find_pivot_dvf_fp(Matrix A, Py_ssize_t starti, Py_ssize_t startj,
-                               Py_ssize_t nr, Py_ssize_t nc, seen):
+cdef inline _find_pivot_dvf_fp(Matrix A, Py_ssize_t start, seen):
     r"""
-    Finds location of pivot in full pivoting step over a DVF.
-    Returns a tuple ``(pivi, pivj, seen)`` where ``(pivi, pivj)``
-    is the pivot's position and ``seen`` is the lowest seen valuation.
+    Finds location of pivot in full pivoting step over a DVF,
+    ignoring elements indistinguishable from 0. Returns a tuple
+    ``(pivi, pivj, seen)`` where ``(pivi, pivj)`` is the pivot's
+    position and ``seen`` is the lowest seen valuation.
 
-    If no pivot is found, returns ``-1`` in the first coordinate.
+    If no pivot is found, returns ``(-1, 0, 0)``.
     """
+    nr = A._nrows
+    nc = A._ncols
     current = None
-    for j in range(startj, nc):
-        for i in range(starti, nr):
+    for j in range(start, nc):
+        for i in range(start, nr):
             v = A.get_unsafe(i, j).valuation()
             if A.get_unsafe(i, j) and (current is None or v < current):
-                pivi = i; pivj = j
+                pivi = i
+                pivj = j
                 current = v
                 if current == seen:
                     break
