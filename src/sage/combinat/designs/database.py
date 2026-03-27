@@ -3957,7 +3957,7 @@ def DM_57_8_1():
 def DM_60_6_1():
     r"""
     Return a `(60,6,1)`-difference matrix.
-    http://onlinelibrary.wiley.com/doi/10.1002/jcd.21384/abstract
+    This construction is described in [JulianAbel13]_ (`link <http://onlinelibrary.wiley.com/doi/10.1002/jcd.21384/abstract>`_).
 
     EXAMPLES::
 
