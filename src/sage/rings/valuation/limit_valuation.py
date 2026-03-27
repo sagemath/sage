@@ -70,7 +70,7 @@ Limits of inductive valuations are discussed in [Mac1936I]_ and [Mac1936II]_. An
 overview can also be found in Section 4.6 of [Rüt2014]_.
 """
 # ****************************************************************************
-#       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C) 2016-2026 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -375,6 +375,9 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         LimitValuation_generic.__init__(self, parent, approximation)
         InfiniteDiscretePseudoValuation.__init__(self, parent)
 
+        # This valuation sends an irreducible factor of _G to infinity.
+        # We update _G when we find a smaller factor of _G with that property, e.g.,
+        # when we determine the irreducible factor that is sent to infinity.
         self._G = G
         self._next_coefficients = None
         self._next_valuations = None
@@ -666,13 +669,16 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                 # v<w can hold everywhere.
                 # They are equal iff they approximate the same factor of their
                 # defining G. Note that they can be equal even if the defining
-                # G is different, so we need to make sure that this can not be
-                # the case.
-                self._improve_approximation_for_call(other._G)
-                other._improve_approximation_for_call(self._G)
-                if self._G != other._G:
-                    assert self._G.gcd(other._G).is_one()
-                    return False
+                # Gs are different but share a common factor.
+                # We therefore refine the defining Gs until they are either
+                # equal or coprime which is guaranteed to happen in a finite
+                # number of steps, see _improve_approximation_for_call.
+                while self._G != other._G:
+                    if self._G.gcd(other._G).is_one():
+                        return False
+
+                    self._improve_approximation_for_call(other._G)
+                    other._improve_approximation_for_call(self._G)
 
                 # If the valuations are comparable, they must approximate the
                 # same factor of G (see the documentation of LimitValuation:
