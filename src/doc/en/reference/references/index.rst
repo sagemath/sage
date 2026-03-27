@@ -7138,7 +7138,6 @@ REFERENCES:
 
 .. [Wi72] \R. M. Wilson "Cyclotomy and difference families in elementary Abelian
           groups", J. Number Theory, 4 (1972) 17--47.
-          
 .. [Wich1997] Tim Wichmann. Der FGLM Algorithmus - verallgemeinert und implementiert in Singular
               Diploma Thesis (University of Kaiserslautern), 1997.
 
