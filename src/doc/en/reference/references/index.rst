@@ -4009,6 +4009,7 @@ REFERENCES:
                   R. Julian R. Abel
                   Journal of Combinatorial Designs
                   2013
+                  :doi:`10.1002/jcd.21384`.
 
 .. [JV2000] \J. Justin, L. Vuillon, *Return words in Sturmian and
             episturmian words*, Theor. Inform. Appl. 34 (2000)
