@@ -367,6 +367,41 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
             raise TypeError(msg.format(A))
         return VectorSpaceMorphism(self, A, side=side)
 
+    def natural_map(self):
+        r"""
+        Return the natural morphism from the domain into the codomain.
+
+        If the codomain coerces elements of the domain (for example an
+        ambient vector space coercing from a subspace), return that coercion
+        map so the result is a matrix-based morphism with methods such as
+        :meth:`~sage.modules.matrix_morphism.MatrixMorphism_abstract.matrix`,
+        :meth:`~sage.categories.morphism.Morphism.restrict_domain`, and
+        :meth:`~sage.categories.morphism.Morphism.restrict_codomain`.
+        Otherwise fall back to the default homset implementation
+        (typically a formal coercion morphism or a :exc:`TypeError`).
+
+        EXAMPLES::
+
+            sage: from sage.modules.matrix_morphism import MatrixMorphism_abstract
+            sage: V = QQ^2
+            sage: W = V.span([V.0])
+            sage: f = W.hom(V)
+            sage: isinstance(f, MatrixMorphism_abstract)
+            True
+            sage: f.matrix()
+            [1 0]
+            sage: f.restrict_domain(W).matrix() == f.matrix()
+            True
+            sage: U = V.span([V.0])
+            sage: f.restrict_codomain(U).matrix()
+            [1]
+        """
+        C = self.codomain()
+        phi = C.coerce_map_from(self.domain())
+        if phi is not None:
+            return phi
+        return super().natural_map()
+
     def _repr_(self):
         r"""
         Text representation of a space of vector space morphisms.
