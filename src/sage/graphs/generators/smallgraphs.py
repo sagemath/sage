@@ -1600,7 +1600,6 @@ def BuckyBall(immutable=False):
     The Bucky Ball can also be created by extracting the 1-skeleton of the Bucky
     Ball polyhedron, but this is much slower::
 
-        sage: # needs sage.geometry.polyhedron sage.groups sage.rings.number_field
         sage: g = polytopes.buckyball().vertex_graph()
         sage: g.remove_loops()
         sage: h = graphs.BuckyBall()
@@ -1972,7 +1971,6 @@ def CameronGraph(immutable=False):
 
     EXAMPLES::
 
-        sage: # needs sage.groups
         sage: g = graphs.CameronGraph()
         sage: g.order()
         231
@@ -2336,11 +2334,16 @@ def DejterGraph(immutable=False):
     return g
 
 
-def DesarguesGraph():
+def DesarguesGraph(immutable=False):
     """
     Return the Desargues graph.
 
     PLOTTING: The layout chosen is the same as on the cover of [Har1969]_.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2351,16 +2354,20 @@ def DesarguesGraph():
         sage: D.show()                          # long time                             # needs sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
-    G = GeneralizedPetersenGraph(10, 3)
-    G.name("Desargues Graph")
-    return G
+    return GeneralizedPetersenGraph(10, 3, immutable=immutable,
+                                    name="Desargues Graph")
 
 
-def DurerGraph():
+def DurerGraph(immutable=False):
     r"""
     Return the Dürer graph.
 
     For more information, see the :wikipedia:`D%C3%BCrer_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -2392,9 +2399,8 @@ def DurerGraph():
         True
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
-    G = GeneralizedPetersenGraph(6, 2)
-    G.name("Durer graph")
-    return G
+    return GeneralizedPetersenGraph(6, 2, immutable=immutable,
+                                    name="Durer graph")
 
 
 def DyckGraph(immutable=False):
@@ -3504,7 +3510,6 @@ def HigmanSimsGraph(relabel=True, immutable=False):
     The automorphism group contains only one nontrivial proper normal subgroup,
     which is of index 2 and is simple.  It is known as the Higman-Sims group::
 
-        sage: # needs sage.groups
         sage: H = graphs.HigmanSimsGraph()
         sage: G = H.automorphism_group()
         sage: g = G.order(); g
@@ -4093,7 +4098,6 @@ def M22Graph(immutable=False):
 
     EXAMPLES::
 
-        sage: # needs sage.groups
         sage: g = graphs.M22Graph()
         sage: g.order()
         77
@@ -4297,7 +4301,7 @@ def McLaughlinGraph(immutable=False):
     return g
 
 
-def MoebiusKantorGraph():
+def MoebiusKantorGraph(immutable=False):
     """
     Return a Möbius-Kantor Graph.
 
@@ -4311,6 +4315,11 @@ def MoebiusKantorGraph():
 
     PLOTTING: See the plotting section for the generalized Petersen graphs.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: MK = graphs.MoebiusKantorGraph()
@@ -4321,9 +4330,8 @@ def MoebiusKantorGraph():
         sage: (graphs.MoebiusKantorGraph()).show()      # long time                     # needs sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
-    G = GeneralizedPetersenGraph(8, 3)
-    G.name("Moebius-Kantor Graph")
-    return G
+    return GeneralizedPetersenGraph(8, 3, immutable=immutable,
+                                    name="Moebius-Kantor Graph")
 
 
 def MoserSpindle(immutable=False):
@@ -4341,7 +4349,6 @@ def MoserSpindle(immutable=False):
 
     The Moser spindle is a planar graph having 7 vertices and 11 edges::
 
-        sage: # needs sage.symbolic
         sage: G = graphs.MoserSpindle(); G
         Moser spindle: Graph on 7 vertices
         sage: G.is_planar()
@@ -4353,7 +4360,6 @@ def MoserSpindle(immutable=False):
 
     It is a Hamiltonian graph with radius 2, diameter 2, and girth 3::
 
-        sage: # needs sage.symbolic
         sage: G.is_hamiltonian()                                                        # needs sage.numerical.mip
         True
         sage: G.radius()
@@ -4367,7 +4373,6 @@ def MoserSpindle(immutable=False):
     has chromatic number 4, and its automorphism group is isomorphic to
     the dihedral group `D_4`::
 
-        sage: # needs sage.symbolic
         sage: pos = G.get_pos()
         sage: all(sum((ui-vi)**2 for ui, vi in zip(pos[u], pos[v])) == 1
         ....:         for u, v in G.edge_iterator(labels=None))
@@ -4482,7 +4487,7 @@ def MurtyGraph(immutable=False):
                  name="Murty Graph", immutable=immutable)
 
 
-def NauruGraph(embedding=2):
+def NauruGraph(embedding=2, immutable=False):
     """
     Return the Nauru Graph.
 
@@ -4492,6 +4497,9 @@ def NauruGraph(embedding=2):
 
     - ``embedding`` -- integer (default: `2`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -4516,19 +4524,15 @@ def NauruGraph(embedding=2):
         sage: graphs.NauruGraph(embedding=1).is_isomorphic(g)
         True
     """
-
     if embedding == 1:
         from sage.graphs.generators.families import LCFGraph
-        g = LCFGraph(24, [5, -9, 7, -7, 9, -5], 4)
-        g.name('Nauru Graph')
-        return g
-    elif embedding == 2:
+        return LCFGraph(24, [5, -9, 7, -7, 9, -5], 4,
+                        immutable=immutable, name="Nauru Graph")
+    if embedding == 2:
         from sage.graphs.generators.families import GeneralizedPetersenGraph
-        g = GeneralizedPetersenGraph(12, 5)
-        g.name("Nauru Graph")
-        return g
-    else:
-        raise ValueError("the value of embedding must be 1 or 2")
+        return GeneralizedPetersenGraph(12, 5, immutable=immutable,
+                                        name="Nauru Graph")
+    raise ValueError("the value of embedding must be 1 or 2")
 
 
 def PappusGraph(immutable=False):
@@ -5797,13 +5801,16 @@ def _EllipticLinesProjectivePlaneScheme(k):
             for x in mats]
 
 
-def MathonStronglyRegularGraph(t):
+def MathonStronglyRegularGraph(t, immutable=False):
     r"""
     Return one of Mathon's graphs on 784 vertices.
 
     INPUT:
 
     - ``t`` -- integer; the number of the graph, from 0 to 2
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -5825,7 +5832,7 @@ def MathonStronglyRegularGraph(t):
     """
     from sage.graphs.generators.families import MathonPseudocyclicMergingGraph
     ES = _EllipticLinesProjectivePlaneScheme(3)
-    return MathonPseudocyclicMergingGraph(ES, t)
+    return MathonPseudocyclicMergingGraph(ES, t, immutable=immutable)
 
 
 def JankoKharaghaniGraph(v, immutable=False):

@@ -1,21 +1,6 @@
 r"""
 Gelfand-Tsetlin patterns
 
-REFERENCES:
-
-.. [BBF] \B. Brubaker, D. Bump, and S. Friedberg.
-   Weyl Group Multiple Dirichlet Series: Type A Combinatorial Theory.
-   Ann. of Math. Stud., vol. 175, Princeton Univ. Press, New Jersey, 2011.
-
-.. [GC50] \I. M. Gelfand and M. L. Cetlin.
-   Finite-Dimensional Representations of the Group of Unimodular Matrices.
-   Dokl. Akad. Nauk SSSR **71**, pp. 825--828, 1950.
-
-.. [Tok88] \T. Tokuyama.
-   A Generating Function of Strict Gelfand Patterns and Some Formulas on
-   Characters of General Linear Groups.
-   J. Math. Soc. Japan **40** (4), pp. 671--685, 1988.
-
 AUTHORS:
 
 - Travis Scrimshaw (2013-15-03): initial version

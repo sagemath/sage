@@ -112,7 +112,7 @@ from sage.misc.randstate import set_random_seed
 from sage.misc.prandom import randint
 
 
-def BalancedTree(r, h):
+def BalancedTree(r, h, immutable=False):
     r"""
     Return the perfectly balanced tree of height `h \geq 1`,
     whose root has degree `r \geq 2`.
@@ -126,6 +126,9 @@ def BalancedTree(r, h):
     - ``r`` -- positive integer `\geq 2`; the degree of the root node
 
     - ``h`` -- positive integer `\geq 1`; the height of the balanced tree
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -194,6 +197,16 @@ def BalancedTree(r, h):
         sage: N = Graph(networkx.balanced_tree(r, h), name="Balanced tree")
         sage: T.is_isomorphic(N)
         True
+
+    Check the behavior of parameter immutable::
+
+        sage: r = randint(2, 3); h = randint(1, 4)
+        sage: A = graphs.BalancedTree(r, h, immutable=False)
+        sage: B = graphs.BalancedTree(r, h, immutable=True)
+        sage: not A.is_immutable() and B.is_immutable()
+        True
+        sage: A.is_isomorphic(B)
+        True
     """
     # Compute the number of vertices per level of the tree
     order = [r**l for l in range(h + 1)]
@@ -201,18 +214,20 @@ def BalancedTree(r, h):
     begin = [0]
     begin.extend(begin[-1] + val for val in order)
     # The number of vertices of the tree is the first index of level h + 1
-    T = Graph(begin[-1], name="Balanced tree")
+    n = begin[-1]
 
     # Add edges of the r-ary tree
-    for level in range(h):
-        start = begin[level + 1]
-        for u in range(begin[level], begin[level + 1]):
-            T.add_edges((u, v) for v in range(start, start + r))
-            start += r
-    return T
+    def edges():
+        for level in range(h):
+            start = begin[level + 1]
+            for u in range(begin[level], begin[level + 1]):
+                yield from ((u, v) for v in range(start, start + r))
+                start += r
+    return Graph([range(n), edges()], format="vertices_and_edges",
+                 immutable=immutable, name="Balanced tree")
 
 
-def FibonacciTree(n):
+def FibonacciTree(n, immutable=False):
     r"""
     Return the graph of the Fibonacci Tree `F_{n}`.
 
@@ -223,6 +238,9 @@ def FibonacciTree(n):
     INPUT:
 
     - ``n`` -- the recursion depth of the Fibonacci Tree
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -237,15 +255,25 @@ def FibonacciTree(n):
         sage: l1 == l2                                                                  # needs sage.libs.pari
         True
 
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: d = randint(2, 5)
+        sage: A = graphs.FibonacciTree(d, immutable=False)
+        sage: B = graphs.FibonacciTree(d, immutable=True)
+        sage: not A.is_immutable() and B.is_immutable()
+        True
+        sage: A.is_isomorphic(B)
+        True
+
     AUTHORS:
 
     - Harald Schilly and Yann Laigle-Chapuy (2010-03-25)
     """
-    T = Graph(name="Fibonacci-Tree-%d" % n)
-    if n == 1:
-        T.add_vertex(0)
+    name = f"Fibonacci-Tree-{n}"
     if n < 2:
-        return T
+        return Graph(n, immutable=immutable, name=name)
 
     from sage.combinat.combinat import fibonacci_sequence
     F = list(fibonacci_sequence(n + 2))
@@ -259,22 +287,22 @@ def FibonacciTree(n):
         level -= 1
         y -= s
         diff = F[level]
-        T.add_edge(node, node - diff)
+        yield (node, node - diff)
         if level == 1:  # only one child
             pos[node - diff] = (node, y)
             return
-        T.add_edge(node, node + diff)
-        fib(level, node - diff, y)
-        fib(level - 1, node + diff, y)
+        yield (node, node + diff)
+        yield from fib(level, node - diff, y)
+        yield from fib(level - 1, node + diff, y)
 
-    T.add_vertices(range(sum(F[:-1])))
-    fib(n, F[n + 1] - 1, 0)
+    T = Graph([range(sum(F[:-1])), fib(n, F[n + 1] - 1, 0)],
+              format="vertices_and_edges", name=name,
+              immutable=immutable)
     T.set_pos(pos)
-
     return T
 
 
-def Caterpillar(spine):
+def Caterpillar(spine, immutable=False):
     r"""
     Return the caterpillar tree with given spine sequence.
 
@@ -286,6 +314,9 @@ def Caterpillar(spine):
        `[a_1, a_2, \dots, a_n]`, where `a_i` is the number of leaves adjacent
        to the `i`-th vertex on the spine (except for the first and last vertex,
        which have `a_1 + 1` and `a_n + 1` leaf-neighbors, respectively)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -332,27 +363,43 @@ def Caterpillar(spine):
         5
         sage: graphs.Caterpillar([0,1,1,0]).diameter()
         5
+
+    Check the behavior of parameter immutable::
+
+        sage: spine = [randint(0, 3) for _ in range(randint(0, 4))]
+        sage: A = graphs.Caterpillar(spine, immutable=False)
+        sage: B = graphs.Caterpillar(spine, immutable=True)
+        sage: not A.is_immutable() and B.is_immutable()
+        True
+        sage: A.is_isomorphic(B)
+        True
     """
     spine = list(spine)
     cdef int spine_len = len(spine)
     cdef int n_vertices = spine_len + 2 + sum(spine)
-    T = Graph(n_vertices, name=f"Caterpillar({','.join(map(str, spine))})")
+    name = f"Caterpillar({','.join(map(str, spine))})"
 
     # add spine
-    for i in range(spine_len - 1):
-        T._backend.add_edge(i, i + 1, None, False)
+    E1 = ((i, i + 1) for i in range(spine_len - 1))
 
     # add a leaf at both ends of the spine
-    T._backend.add_edge(spine_len + 1, 0, None, False)
     if spine:
-        T._backend.add_edge(spine_len - 1, spine_len, None, False)
+        E2 = ((spine_len + 1, 0), (spine_len - 1, spine_len))
+    else:
+        E2 = ((spine_len + 1, 0),)
 
     # add leaves
-    cdef int v = spine_len + 2
-    for i, d in enumerate(spine):
-        for j in range(d):
-            T._backend.add_edge(i, v + j, None, False)
-        v += d
+    def E3():
+        v = spine_len + 2
+        for i, d in enumerate(spine):
+            for j in range(v, v + d):
+                yield (i, j)
+            v += d
+
+    from itertools import chain
+    T = Graph([range(n_vertices), chain(E1, E2, E3())],
+              format="vertices_and_edges", name=name,
+              immutable=immutable)
 
     # add embedding
     cdef int max_leaves = max(spine, default=0)
@@ -370,7 +417,7 @@ def Caterpillar(spine):
     return T
 
 
-def RandomLobster(n, p, q, seed=None):
+def RandomLobster(n, p, q, seed=None, immutable=False):
     r"""
     Return a random lobster.
 
@@ -388,6 +435,9 @@ def RandomLobster(n, p, q, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -412,14 +462,27 @@ def RandomLobster(n, p, q, seed=None):
 
         sage: G = graphs.RandomLobster(9, .6, .3)                                       # needs networkx
         sage: G.show()                          # long time                             # needs networkx sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: seed = int(current_randstate().long_seed() % sys.maxsize)
+        sage: A = graphs.RandomLobster(12, .7, .3, seed=seed, immutable=False)
+        sage: B = graphs.RandomLobster(12, .7, .3, seed=seed, immutable=True)
+        sage: not A.is_immutable() and B.is_immutable()
+        True
+        sage: A.is_isomorphic(B)
+        True
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.random_lobster(n, p, q, seed=seed))
+    return Graph(networkx.random_lobster(n, p, q, seed=seed),
+                 immutable=immutable)
 
 
-def RandomTree(n, seed=None):
+def RandomTree(n, seed=None, immutable=False):
     r"""
     Return a random tree on `n` nodes numbered `0` through `n-1`.
 
@@ -440,6 +503,9 @@ def RandomTree(n, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -462,10 +528,19 @@ def RandomTree(n, seed=None):
         Graph on 0 vertices
         sage: graphs.RandomTree(1)
         Graph on 1 vertex
+
+    Check the behavior of parameter immutable::
+
+        sage: seed = int(current_randstate().long_seed() % sys.maxsize)
+        sage: A = graphs.RandomTree(12, seed=seed, immutable=False)
+        sage: B = graphs.RandomTree(12, seed=seed, immutable=True)
+        sage: not A.is_immutable() and B.is_immutable()
+        True
+        sage: A.is_isomorphic(B)
+        True
     """
-    g = Graph(n)
     if n <= 1:
-        return g
+        return Graph(n, immutable=immutable)
 
     if seed is not None:
         set_random_seed(seed)
@@ -488,21 +563,23 @@ def RandomTree(n, seed=None):
     zeros = [x for x in range(n) if not count[x]]
     heapify(zeros)
 
-    for s in code:
-        x = heappop(zeros)
-        g.add_edge(x, s)
-        count[x] = -1
-        count[s] -= 1
-        if not count[s]:
-            heappush(zeros, s)
+    def edges():
+        for s in code:
+            x = heappop(zeros)
+            yield (x, s)
+            count[x] = -1
+            count[s] -= 1
+            if not count[s]:
+                heappush(zeros, s)
 
-    # Adding as an edge the last two available vertices
-    g.add_edge(zeros)
+        # Adding as an edge the last two available vertices
+        yield zeros
 
-    return g
+    return Graph([range(n), edges()], format="vertices_and_edges",
+                 immutable=immutable)
 
 
-def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
+def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None, immutable=False):
     """
     Return a tree with a power law degree distribution, or ``False`` on failure.
 
@@ -521,6 +598,9 @@ def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES:
 
     We check that the generated graph is a tree::
@@ -536,12 +616,26 @@ def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
         sage: G = graphs.RandomTreePowerlaw(15, 2)                                      # needs networkx
         sage: if G:                             # random output         # long time, needs networkx sage.plot
         ....:     G.show()
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: # needs networkx
+        sage: seed = int(current_randstate().long_seed() % sys.maxsize)
+        sage: A = graphs.RandomTreePowerlaw(10, 3, seed=seed, immutable=False)
+        sage: B = graphs.RandomTreePowerlaw(10, 3, seed=seed, immutable=True)
+        sage: not A.is_immutable() and B.is_immutable()
+        True
+        sage: A.is_isomorphic(B)
+        True
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
     try:
-        return Graph(networkx.random_powerlaw_tree(n, gamma, seed=seed, tries=tries))
+        return Graph(networkx.random_powerlaw_tree(n, gamma, seed=seed, tries=tries),
+                     immutable=immutable)
     except networkx.NetworkXError:
         return False
 
@@ -884,7 +978,7 @@ cdef class TreeIterator:
         return 0
 
 
-def nauty_gentreeg(options='', debug=False):
+def nauty_gentreeg(options='', debug=False, immutable=False):
     r"""
     Return a generator which creates non-isomorphic trees from nauty's gentreeg
     program.
@@ -903,6 +997,9 @@ def nauty_gentreeg(options='', debug=False):
       line leading with ">A" indicates a successful initiation of the program
       with some information on the arguments, while a line beginning with ">E"
       indicates an error with the input.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     The possible options, obtained as output of ``gentreeg -help``::
 
@@ -984,6 +1081,15 @@ def nauty_gentreeg(options='', debug=False):
         ['>E Usage: ...gentreeg [-D#] [-Z#:#] [-ulps] [-q] n... [res/mod] ...
         sage: list(graphs.nauty_gentreeg("3", debug=True))
         ['>A ...gentreeg ...\n', Graph on 3 vertices]
+
+    Check the behavior of parameter immutable::
+
+        sage: gen = graphs.nauty_gentreeg("4", immutable=False)
+        sage: all(not g.is_immutable() for g in gen)
+        True
+        sage: gen = graphs.nauty_gentreeg("4", immutable=True)
+        sage: all(g.is_immutable() for g in gen)
+        True
     """
     import shlex
     import subprocess
@@ -1005,5 +1111,5 @@ def nauty_gentreeg(options='', debug=False):
             except StopIteration:
                 # Exhausted list of graphs from nauty geng
                 return
-            G = Graph(s[:-1], format='sparse6', loops=False, multiedges=False)
-            yield G
+            yield Graph(s[:-1], format='sparse6', loops=False, multiedges=False,
+                        immutable=immutable)

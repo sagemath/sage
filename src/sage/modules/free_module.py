@@ -911,7 +911,10 @@ class Module_free_ambient(Module):
         Create an element of this module from ``x``.
 
         The ``coerce`` and ``copy`` arguments are passed on to the underlying
-        element constructor.
+        element constructor. When ``check`` is ``True``, this verifies that
+        entries are in the base ring and calls :meth:`_check_element_membership`
+        to perform any additional membership checks (e.g., submodule membership
+        via Gröbner bases).
 
         EXAMPLES::
 
@@ -928,6 +931,68 @@ class Module_free_ambient(Module):
             (0, 1)
             sage: _ in Q
             True
+
+        Submodule membership is checked automatically::
+
+            sage: P.<a,b> = PolynomialRing(QQ, 2)
+            sage: q = P.quotient([a^11, b^10])
+            sage: M = FreeModule(q, 10)
+            sage: s = M.submodule([M.0])
+            sage: s(M.0)
+            (1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            sage: s(M.1)
+            Traceback (most recent call last):
+            ...
+            TypeError: element (0, 1, 0, 0, 0, 0, 0, 0, 0, 0) is not in this submodule
+            sage: M.0 in s
+            True
+            sage: M.1 in s
+            False
+
+        Over a polynomial ring::
+
+            sage: S.<x,y,z> = PolynomialRing(QQ)
+            sage: M = S**2
+            sage: N = M.submodule([vector([x - y, z]), vector([y*z, x*z])])
+            sage: N(vector([x - y, z]))
+            (x - y, z)
+            sage: N(vector([1, 0]))
+            Traceback (most recent call last):
+            ...
+            TypeError: element (1, 0) is not in this submodule
+
+        When the ambient module is a quotient module (subquotient)::
+
+            sage: S.<x,y,z> = PolynomialRing(QQ)
+            sage: M = S**2
+            sage: N = M.submodule([vector([x - y, z]), vector([y*z, x*z])])
+            sage: Q = M.quotient_module(N)
+            sage: NQ = Q.submodule([Q([1, x])])
+            sage: NQ([1, x])
+            (1, x)
+            sage: NQ([3, 3*x])
+            (3, 3*x)
+            sage: NQ([0, 1])
+            Traceback (most recent call last):
+            ...
+            TypeError: element (0, 1) is not in this submodule
+            sage: NQ([x, x^2])
+            (x, x^2)
+            sage: NQ([y, 0])
+            Traceback (most recent call last):
+            ...
+            TypeError: element (y, 0) is not in this submodule
+
+        TESTS::
+
+            sage: P.<a,b> = PolynomialRing(QQ, 2)
+            sage: q = P.quotient([a^11, b^10])
+            sage: M = FreeModule(q, 3)
+            sage: s = M.submodule([M.0])
+            sage: s(vector(q, [0,0,0]))
+            (0, 0, 0)
+            sage: s(vector(q, [a+1, 0, 0]))
+            (abar + 1, 0, 0)
         """
         if isinstance(x, (int, sage.rings.integer.Integer)) and x == 0:
             return self.zero_vector()
@@ -939,7 +1004,7 @@ class Module_free_ambient(Module):
                     return x
             x = x.list()
         if check and self.coordinate_ring().is_exact():
-            # No check if x belongs to this module as there is no algorithm.
+            # Check entries are in the base ring
             try:
                 R = self.base_ring()
                 for d in x:
@@ -947,7 +1012,25 @@ class Module_free_ambient(Module):
                         raise ArithmeticError
             except ArithmeticError:
                 raise TypeError("element {!r} is not in free module".format(x))
+            # Additional membership check (e.g., submodule membership)
+            self._check_element_membership(x)
         return self.element_class(self, x, coerce, copy)
+
+    def _check_element_membership(self, x):
+        r"""
+        Check additional membership constraints for ``x``.
+
+        For ambient free modules, this is a no-op. Subclasses (e.g.,
+        :class:`~sage.modules.submodule.Submodule_free_ambient`) override
+        this to check submodule membership.
+
+        EXAMPLES::
+
+            sage: S.<x,y,z> = PolynomialRing(QQ)
+            sage: M = S**2
+            sage: M._check_element_membership([x, y])  # no-op for ambient
+        """
+        pass
 
     def degree(self):
         """
@@ -5832,7 +5915,7 @@ class FreeModule_ambient(FreeModule_generic):
             w = []
             for n in range(self.rank()):
                 v = ZERO.__copy__()
-                v.set(n, one)
+                v[n] = one
                 w.append(v)
             self.__basis = basis_seq(self, w)
             return self.__basis

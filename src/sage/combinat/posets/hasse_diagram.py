@@ -2863,7 +2863,7 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``a`` -- a join-irreducible element of the lattice
+        - ``a`` -- a meet-irreducible element of the lattice
 
         OUTPUT:
 

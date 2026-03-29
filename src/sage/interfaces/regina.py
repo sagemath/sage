@@ -920,6 +920,7 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
             if locals:
                 lc.update(locals)
             from sage.misc.sage_eval import sage_eval
+            from sage.repl.preparse import implicit_mul
             s = self.detail().split('\n')[0]
             s = s.replace(' ', '')
             v = list(lc)
@@ -955,7 +956,6 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
                 lc = R.gens_dict()
             return from_detail_str(lc)
         elif isinstance(inst, nspc.GroupExpression):
-            from sage.repl.preparse import implicit_mul
             num_gens = max(t.generator for t in inst.terms()) + 1
             if self._sage_parent:
                 F = self._sage_parent

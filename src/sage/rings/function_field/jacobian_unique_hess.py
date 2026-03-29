@@ -305,7 +305,9 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         If the Jacobian model was not initialized to use caching, this method does nothing.
 
-        TESTS::
+        TESTS:
+
+        Verify that caching is temporarily disabled when initializing objects provided by the user::
 
             sage: K = GF(2)
             sage: Kx.<x> = FunctionField(K)
@@ -313,28 +315,43 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             sage: F.<y> = Kx.extension(t^3 + (x^2 + x + 1)*t^2 + (x^3 + x + 1)*t + x^5 + x^4)
             sage: J = F.jacobian(model='unique_hess', extra_caching=True)
             sage: G = J.group()
-            sage: len(G._infinite_ideal_mult.cache)
+            sage: len(G._cached_ideal_mult.cache)
             0
-            sage: len(G._inverse_infinite_matrix.cache)
+            sage: len(G._cached_inverse_infinite_matrix.cache)
             0
             sage: zero = J(0)
-            sage: len(G._infinite_ideal_mult.cache)
+            sage: len(G._cached_ideal_mult.cache)
             0
-            sage: len(G._inverse_infinite_matrix.cache)
+            sage: len(G._cached_inverse_infinite_matrix.cache)
             0
             sage: D1, D2, D3 = G.get_points(3)
-            sage: len(G._infinite_ideal_mult.cache)
+            sage: len(G._cached_ideal_mult.cache)
             0
-            sage: len(G._inverse_infinite_matrix.cache)
+            sage: len(G._cached_inverse_infinite_matrix.cache)
             0
             sage: _ = D2 + D3
-            sage: len(G._infinite_ideal_mult.cache) > 0
+            sage: len(G._cached_ideal_mult.cache) > 0
             True
-            sage: len(G._inverse_infinite_matrix.cache) > 0
+            sage: len(G._cached_inverse_infinite_matrix.cache) > 0
             True
+
+        Verify that we do not perform caching when it is turned off (:issue:`41749`)::
+
+            sage: K = GF(2)
+            sage: Kx.<x> = FunctionField(K)
+            sage: t = polygen(Kx)
+            sage: F.<y> = Kx.extension(t^3 + (x^2 + x + 1)*t^2 + (x^3 + x + 1)*t + x^5 + x^4)
+            sage: J = F.jacobian(model='unique_hess', extra_caching=False)
+            sage: G = J.group()
+            sage: G.zero() + G.zero()
+            0
+            sage: len(G._cached_ideal_mult.cache)
+            0
+            sage: len(G._cached_inverse_infinite_matrix.cache)
+            0
         """
         if not self._cache_infinite_ideals:
-            pass
+            return
 
         if caching:
             self._infinite_ideal_mult = self._cached_ideal_mult
@@ -342,7 +359,6 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         else:
             self._infinite_ideal_mult = self._noncaching_infinite_ideal_mult
             self._inverse_infinite_matrix = self._noncaching_inverse_infinite_matrix
-
 
     @cached_method
     def _cached_inverse_infinite_matrix(self, J):

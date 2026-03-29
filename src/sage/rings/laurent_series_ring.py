@@ -116,7 +116,6 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
     Laurent series rings are determined by their variable and the base
     ring, and are globally unique::
 
-        sage: # needs sage.rings.padics
         sage: K = Qp(5, prec=5)
         sage: L = Qp(5, prec=200)
         sage: R.<x> = LaurentSeriesRing(K)
@@ -450,7 +449,6 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: R.<u> = LaurentSeriesRing(Qp(5, 10))
             sage: S.<t> = LaurentSeriesRing(RationalField())
             sage: R(t + t^2 + O(t^3))
@@ -468,7 +466,6 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
 
         Rational functions are accepted::
 
-            sage: # needs sage.rings.number_field sage.symbolic
             sage: I = sqrt(-1)
             sage: K.<I> = QQ[I]
             sage: P.<t> = PolynomialRing(K)
@@ -517,7 +514,6 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
 
         Various conversions from PARI (see also :issue:`2508`)::
 
-            sage: # needs sage.libs.pari
             sage: L.<q> = LaurentSeriesRing(QQ, default_prec=10)
             sage: L(pari('1/x'))
             q^-1
@@ -764,7 +760,6 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x> = LaurentSeriesRing(GF(17))
             sage: S.<y> = LaurentSeriesRing(GF(19))
             sage: R.hom([y], S) # indirect doctest

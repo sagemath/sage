@@ -739,7 +739,6 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpER(5)
             sage: R._get_element_class()
             <class 'sage.rings.padics.padic_relaxed_element.pAdicRelaxedElement'>
@@ -793,7 +792,6 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpER(5)
             sage: R.is_secure()
             False
@@ -802,7 +800,6 @@ class pAdicRelaxedGeneric(pAdicGeneric):
             sage: x == y
             True
 
-            sage: # needs sage.libs.flint
             sage: S = ZpER(5, secure=True)
             sage: S.is_secure()
             True
@@ -825,7 +822,6 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpER(5, print_mode='digits')
             sage: R.default_prec()
             20
@@ -875,7 +871,6 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpER(5)
             sage: K = R.fraction_field()
             sage: K.has_coerce_map_from(R)   # indirect doctest
@@ -899,7 +894,6 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpER(7, prec=5)
             sage: a = R(17/71); a
             3 + 3*7^2 + 4*7^3 + 4*7^4 + ...
@@ -1042,16 +1036,16 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         EXAMPLES:
 
-            sage: R = ZpER(5, prec=10)                                                  # needs sage.libs.flint
+            sage: R = ZpER(5, prec=10)
 
         We declare a self-referent number::
 
-            sage: a = R.unknown()                                                       # needs sage.libs.flint
+            sage: a = R.unknown()
 
         So far, we do not know anything on `a` (except that it has nonnegative
         valuation)::
 
-            sage: a                                                                     # needs sage.libs.flint
+            sage: a
             O(5^0)
 
         We can now use the method :meth:`sage.rings.padics.relaxed_template.RelaxedElement_unknown.set`
@@ -1059,18 +1053,17 @@ class pAdicRelaxedGeneric(pAdicGeneric):
         agree with the digits of `1 + 5 a`. Note that the factor `5` shifts the
         digits; the `n`-th digit of `a` is then defined by the previous ones::
 
-            sage: a.set(1 + 5*a)                                                        # needs sage.libs.flint
+            sage: a.set(1 + 5*a)
             True
 
         After this, `a` contains the solution of the equation `a = 1 + 5 a`, that
         is `a = -1/4`::
 
-            sage: a                                                                     # needs sage.libs.flint
+            sage: a
             1 + 5 + 5^2 + 5^3 + 5^4 + 5^5 + 5^6 + 5^7 + 5^8 + 5^9 + ...
 
         Here is another example with an equation of degree `2`::
 
-            sage: # needs sage.libs.flint
             sage: b = R.unknown()
             sage: b.set(1 - 5*b^2)
             True
@@ -1081,7 +1074,6 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         Cross self-referent definitions are also allowed::
 
-            sage: # needs sage.libs.flint
             sage: u = R.unknown()
             sage: v = R.unknown()
             sage: w = R.unknown()
@@ -1100,7 +1092,6 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: a = R.unknown()
             sage: a.set(1 + 3*a)
             True
@@ -1251,14 +1242,12 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
         We check that :issue:`13439` has been fixed::
 
-            sage: # needs sage.libs.ntl
             sage: R.<x> = Zp(3,3)[]
             sage: f = 3*x + 7
             sage: g = 5*x + 9
             sage: f.xgcd(f*g)
             ((3 + O(3^4))*x + 1 + 2*3 + O(3^3), 1 + O(3^3), 0)
 
-            sage: # needs sage.libs.ntl
             sage: R.<x> = Zp(3)[]
             sage: f = 357555295953*x + 257392844
             sage: g = 225227399*x - 511940255230575
@@ -1271,7 +1260,6 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
         We check low precision computations::
 
-            sage: # needs sage.libs.ntl
             sage: R.<x> = Zp(3,1)[]
             sage: h = 3*x + 7
             sage: i = 4*x + 9
@@ -1308,7 +1296,6 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(27)
             sage: K.<x> = R[]
             sage: h = 3*x + a

@@ -3953,25 +3953,56 @@ class SimplicialComplex(Parent, GenericCellComplex):
         faces = sorted(faces, key=str)
         done = False
         new_facets = sorted(subcomplex._facets, key=str)
+        new_facet_sets = [f.set() for f in new_facets]
+        face_sets = {f: f.set() for f in faces}
+        # Track nonempty intersections incrementally to avoid recomputing all
+        # intersections from scratch in every pass.
+        intersections = {
+            f: {
+                inter
+                for a_set in new_facet_sets
+                if (inter := a_set.intersection(face_sets[f]))
+            }
+            for f in faces
+        }
+        # Cache contractibility tests for repeated intersection complexes.
+        contractible_intersections = {}
         while not done:
             done = True
             remove_these = []
             if verbose:
                 print(f"  looping through {len(faces)} facets")
             for f in faces:
-                f_set = f.set()
-                int_facets = {a.set().intersection(f_set) for a in new_facets}
-                intersection = SimplicialComplex(int_facets)
-                if not intersection._facets[0].is_empty():
-                    if (len(intersection._facets) == 1 or
-                            intersection == intersection._contractible_subcomplex()):
+                int_facets = intersections[f]
+                if int_facets:
+                    if len(int_facets) == 1:
+                        is_contractible = True
+                    else:
+                        key = frozenset(int_facets)
+                        is_contractible = contractible_intersections.get(key)
+                        if is_contractible is None:
+                            intersection = SimplicialComplex(int_facets)
+                            is_contractible = (intersection == intersection._contractible_subcomplex())
+                            contractible_intersections[key] = is_contractible
+                    if is_contractible:
                         new_facets.append(f)
+                        f_set = face_sets[f]
+                        new_facet_sets.append(f_set)
                         remove_these.append(f)
                         done = False
+                        for g in faces:
+                            if g != f:
+                                inter = face_sets[g].intersection(f_set)
+                                if inter:
+                                    intersections[g].add(inter)
             if verbose and not done:
                 print("    added %s facets" % len(remove_these))
-            for f in remove_these:
-                faces.remove(f)
+            if remove_these:
+                remove_set = set(remove_these)
+                faces = [f for f in faces if f not in remove_set]
+                for f in remove_set:
+                    intersections.pop(f, None)
+                    face_sets.pop(f, None)
         if verbose:
             print("  now constructing a simplicial complex with {} vertices and {} facets".format(len(self.vertices()), len(new_facets)))
         L = SimplicialComplex(new_facets, maximality_check=False,

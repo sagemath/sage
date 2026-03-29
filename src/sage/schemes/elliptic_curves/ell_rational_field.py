@@ -4036,11 +4036,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: type(e.torsion_order())
             <... 'sage.rings.integer.Integer'>
         """
-        try:
-            return self.__torsion_order
-        except AttributeError:
-            self.__torsion_order = self.torsion_subgroup().order()
-            return self.__torsion_order
+        if not hasattr(self, '_cached_torsion_subgroup'):
+            try:
+                return self.__torsion_order
+            except AttributeError:
+                pass
+        return self.torsion_subgroup().order()
 
     def _torsion_bound(self, number_of_places=20):
         r"""
@@ -4075,53 +4076,6 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 return bound
             k += 1
         return bound
-
-    def torsion_subgroup(self):
-        r"""
-        Return the torsion subgroup of this elliptic curve.
-
-        OUTPUT: the EllipticCurveTorsionSubgroup instance associated to
-        this elliptic curve.
-
-        .. NOTE::
-
-            To see the torsion points as a list, use :meth:`.torsion_points`.
-
-        EXAMPLES::
-
-            sage: EllipticCurve('11a').torsion_subgroup()
-            Torsion Subgroup isomorphic to Z/5 associated to the
-             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
-            sage: EllipticCurve('37b').torsion_subgroup()
-            Torsion Subgroup isomorphic to Z/3 associated to the
-             Elliptic Curve defined by y^2 + y = x^3 + x^2 - 23*x - 50 over Rational Field
-
-        ::
-
-            sage: e = EllipticCurve([-1386747,368636886]); e
-            Elliptic Curve defined by y^2 = x^3 - 1386747*x + 368636886 over Rational Field
-            sage: G = e.torsion_subgroup(); G
-            Torsion Subgroup isomorphic to Z/8 + Z/2 associated to the
-             Elliptic Curve defined by y^2 = x^3 - 1386747*x + 368636886 over
-             Rational Field
-            sage: G.0*3 + G.1
-            (1227 : 22680 : 1)
-            sage: G.1
-            (282 : 0 : 1)
-            sage: list(G)
-            [(0 : 1 : 0), (147 : -12960 : 1), (2307 : -97200 : 1), (-933 : -29160 : 1),
-             (1011 : 0 : 1), (-933 : 29160 : 1), (2307 : 97200 : 1), (147 : 12960 : 1),
-             (-1293 : 0 : 1), (1227 : 22680 : 1), (-285 : 27216 : 1), (8787 : 816480 : 1),
-             (282 : 0 : 1), (8787 : -816480 : 1), (-285 : -27216 : 1), (1227 : -22680 : 1)]
-        """
-        try:
-            G = self.__torsion_subgroup
-        except AttributeError:
-            G = ell_torsion.EllipticCurveTorsionSubgroup(self)
-            self.__torsion_subgroup = G
-
-        self.__torsion_order = G.order()
-        return self.__torsion_subgroup
 
     def torsion_points(self):
         r"""

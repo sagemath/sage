@@ -6,11 +6,6 @@ Just as the Schur functions are the irreducible characters of `Gl_n`
 and form a basis of the symmetric functions, the irreducible
 symmetric group character basis are the irreducible characters of
 of `S_n` when the group is realized as the permutation matrices.
-
-REFERENCES:
-
-.. [OZ2015] \R. Orellana, M. Zabrocki, *Symmetric group characters
-   as symmetric functions*, :arxiv:`1510.00438`.
 """
 
 # ****************************************************************************
