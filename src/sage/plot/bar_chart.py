@@ -120,7 +120,7 @@ class BarChart(GraphicPrimitive):
         import numpy
         ind = numpy.array(self.ind, dtype=float)
         datalist = numpy.array(self.datalist, dtype=float)
-        subplot.bar(ind, datalist, color=color, width=width, label=options['legend_label'])
+        subplot.bar(ind, datalist, color=color, width=width, label=options['legend_label'], zorder=options.get('zorder'))
 
 
 @rename_keyword(color='rgbcolor')
@@ -177,6 +177,12 @@ def bar_chart(datalist, **options):
     .. PLOT::
 
         sphinx_plot(bar_chart([-2,8,-7,3], rgbcolor=(1,0,0), axes=False))
+
+    Check that :issue:`41207` is fixed::
+
+        sage: b = bar_chart([1, 2, 3], zorder=5)
+        sage: b.matplotlib().axes[0].containers[0][0].get_zorder()
+        5
     """
     dl = len(datalist)
     if dl == 3:
