@@ -48,7 +48,7 @@ class BinaryDihedralGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap
 
         BD_n = \langle x, y, z | x^2 = y^2 = z^n = x y z \rangle.
 
-    (The `x`, `y` and `z` in this presentations correspond to the
+    (The `x`, `y` and `z` in this presentation correspond to the
     `g_2`, `g_2 g_1^{-1}` and `g_1` in the matrix group
     avatar.)
 
@@ -125,8 +125,8 @@ class BinaryDihedralGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap
 
         TESTS::
 
-            sage: for i in range(1, 10):
-            ....:     G = groups.matrix.BinaryDihedral(5)
+            sage: for n in range(1, 10):
+            ....:     G = groups.matrix.BinaryDihedral(n)
             ....:     assert len(list(G)) == G.order()
         """
         return ZZ(4 * self._n)
