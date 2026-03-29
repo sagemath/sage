@@ -1356,7 +1356,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
     square_root = sqrt
 
-    def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False):
+    def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False,
+                 order_factorization=None):
         r"""
         Return an `n`-th root of ``self``.
 
@@ -1383,6 +1384,15 @@ cdef class IntegerMod_abstract(FiniteRingElement):
           ``sage.rings.factorint.factor_cunningham`` for more information. You
           need to install an optional package to use this method, this can be
           done with the following command line: ``sage -i cunningham_tables``.
+
+        - ``order_factorization`` -- (optional) list of pairs ``(p, e)`` giving
+          the factorization of the multiplicative group order `q-1`, where `q`
+          is the cardinality of the parent ring (a prime field `\ZZ/p\ZZ` in the
+          case where this option applies). If provided, this factorization is
+          used instead of factoring `\gcd(n, q-1)` inside the core algorithm.
+          The product `\prod p^e` must equal `q-1`. Ignored for composite
+          modulus (Chinese remainder reduction). Incompatible with
+          ``cunningham=True``.
 
         OUTPUT:
 
@@ -1494,6 +1504,22 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: a = Mod(9,11)
             sage: a.nth_root(2, False, True, 'Johnston', cunningham=True)   # optional - cunningham_tables
             [3, 8]
+
+        Precomputed factorization of `q-1` for a prime modulus (`11 - 1 = 2 \cdot 5`)::
+
+            sage: Mod(9, 11).nth_root(2, order_factorization=[(2, 1), (5, 1)])
+            3
+
+        TESTS for ``order_factorization``::
+
+            sage: Mod(9, 11).nth_root(2, order_factorization=[(2, 2)])
+            Traceback (most recent call last):
+            ...
+            ValueError: order_factorization does not multiply to q-1
+            sage: Mod(9, 11).nth_root(2, order_factorization=[(2, 1), (5, 1)], cunningham=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: order_factorization cannot be used with cunningham=True
 
         ALGORITHM:
 
@@ -1617,7 +1643,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 return ans
             else:
                 return sign[0] * K(R.teichmuller(modp) * (plog // n).exp())
-        return self._nth_root_common(n, all, algorithm, cunningham)
+        return self._nth_root_common(n, all, algorithm, cunningham, order_factorization)
 
     def _nth_root_naive(self, n):
         """

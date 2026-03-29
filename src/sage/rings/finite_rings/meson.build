@@ -30,6 +30,7 @@ py.install_sources(
   'integer_mod_limits.h',
   'integer_mod_ring.py',
   'maps_finite_field.py',
+  'nth_root_utils.py',
   'residue_field.pxd',
   'residue_field.pyx',
   'residue_field_givaro.pyx',
