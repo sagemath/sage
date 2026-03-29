@@ -1037,6 +1037,67 @@ class SpechtRepresentations(SymmetricGroupRepresentations_class):
         """
         return "Specht representations of the symmetric group of order %s! over %s" % (self._n, self._ring)
 
+
+def _choose_canonical_invariant_symmetric_form(matrices):
+    r"""
+    Combine a basis of `G`-invariant bilinear forms into one canonical matrix.
+
+    The null space of the linear system for invariant forms is computed with a
+    deterministic reduced-row-echelon basis. Taking the sum of the corresponding
+    matrices uses the entire invariant space in a fixed way and avoids picking
+    an arbitrary single basis vector. (Different choices of basis for the same
+    space would give different sums; this is a practical, reproducible
+    convention tied to Sage's kernel basis.)
+
+    If the sum vanishes, each basis matrix with nonzero trace is scaled by
+    `1/\mathrm{trace}` and the results are summed; if that sum is still zero,
+    the first basis matrix is returned.
+
+    .. TODO::
+
+        Explore more intrinsic choices, for example an orthogonal or
+        Frobenius-normalized basis of the invariant space.
+
+    INPUT:
+
+    - ``matrices`` -- nonempty list of square matrices of the same size over a
+      common ring
+
+    OUTPUT: a single matrix of that size
+
+    EXAMPLES::
+
+        sage: from sage.combinat.symmetric_group_representations import _choose_canonical_invariant_symmetric_form
+        sage: R = QQ
+        sage: A = matrix(R, 2, 2, [1, 0, 0, 0])
+        sage: B = matrix(R, 2, 2, [0, 0, 0, 1])
+        sage: _choose_canonical_invariant_symmetric_form([A])
+        [1 0]
+        [0 0]
+        sage: _choose_canonical_invariant_symmetric_form([A, B])
+        [1 0]
+        [0 1]
+    """
+    if not matrices:
+        raise ValueError("matrices must be a nonempty list")
+    if len(matrices) == 1:
+        return matrices[0]
+    U = sum(matrices[1:], matrices[0])
+    if not U.is_zero():
+        return U
+    normalized = []
+    for M in matrices:
+        t = M.trace()
+        if t:
+            normalized.append(M / t)
+        else:
+            normalized.append(M)
+    U2 = sum(normalized[1:], normalized[0])
+    if not U2.is_zero():
+        return U2
+    return matrices[0]
+
+
 # #### Unitary Representation ###############################################
 
 
@@ -1126,18 +1187,27 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
 
     @lazy_attribute
     def _canonical_invariant_form(self):
-        """
+        r"""
         Select a deterministic `G`-invariant symmetric bilinear form.
 
         The invariant space may have dimension greater than one in modular
-        settings (for example when `p|n!`). We currently pick the first basis
-        element returned by Sage's kernel basis routine.
+        settings (for example when `p \mid n!`). We combine all vectors in the
+        kernel basis into matrices and pass them to
+        :func:`_choose_canonical_invariant_symmetric_form` (sum of basis
+        matrices, with trace-normalized fallback if that sum is zero).
 
-        TODO: Improve this choice with a stronger canonical normalization.
+        EXAMPLES::
+
+            sage: U = SymmetricGroupRepresentation([3,1], 'unitary', ring=GF(7**2))
+            sage: M = U._canonical_invariant_form
+            sage: M.is_zero()
+            False
         """
         d_rho = self._specht.dimension()
         null_space = matrix(self._ring, self._invariant_form_linear_system).right_kernel()
-        return matrix(self._ring, d_rho, d_rho, null_space.basis()[0])
+        basis = null_space.basis()
+        mats = [matrix(self._ring, d_rho, d_rho, v) for v in basis]
+        return _choose_canonical_invariant_symmetric_form(mats)
 
     @lazy_attribute
     def _invariant_form_linear_system(self):
@@ -1190,9 +1260,7 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             [       1        4]
             [       0 2*z2 + 2]
         """
-        # Compute a deterministic invariant form from the full invariant space.
-        # When this space has dimension > 1 (possible in modular settings),
-        # we use the first basis vector as a stable fallback.
+        # Deterministic invariant form; see _canonical_invariant_form.
         U = self._canonical_invariant_form
         return U.cholesky(extended=True).H
 
