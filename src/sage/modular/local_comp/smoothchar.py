@@ -736,9 +736,9 @@ class SmoothCharacterGroupGeneric(Parent):
         n = self.exponents(level)
         for i in range(len(S)):
             if n[i] != 0 and not S[i]**n[i] == 1:
-                raise ValueError( "value on generator %s (=%s) should be a root of unity of order %s" % (self.unit_gens(level)[i], S[i], n[i]) )
+                raise ValueError("value on generator %s (=%s) should be a root of unity of order %s" % (self.unit_gens(level)[i], S[i], n[i]))
             elif n[i] == 0 and not S[i].is_unit():
-                raise ValueError( "value on uniformiser %s (=%s) should be a unit" % (self.unit_gens(level)[i], S[i]) )
+                raise ValueError("value on uniformiser %s (=%s) should be a unit" % (self.unit_gens(level)[i], S[i]))
         return self.element_class(self, level, S)
 
     def norm_character(self):
@@ -1011,7 +1011,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         """
         x = self.number_field().coerce(x)
         if x == 0:
-            raise ValueError( "cannot evaluate at zero" )
+            raise ValueError("cannot evaluate at zero")
         s = x.valuation(self.prime())
         return Zmod(self.prime()**level)(x / self.prime()**s).generalised_log() + [s]
 
@@ -1151,7 +1151,7 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
         """
         x = self.number_field().coerce(x)
         if x == 0:
-            raise ValueError( "cannot evaluate at zero" )
+            raise ValueError("cannot evaluate at zero")
         if gens is None:
             n1 = x.valuation(self.ideal(1))
             x1 = x / self.unit_gens(0)[-1] ** n1
@@ -1653,7 +1653,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
         """
         prime = ZZ(prime)
         if prime == 2:
-            raise NotImplementedError( "Wildly ramified extensions not supported" )
+            raise NotImplementedError("Wildly ramified extensions not supported")
         SmoothCharacterGroupGeneric.__init__(self, prime, base_ring)
         self._name = names
         if flag not in [0, 1]:
@@ -1665,7 +1665,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
             if (not a % prime) or (not ZZ(a).is_squarefree()) or ((a * prime) % 4 == 1):
                 continue
             if (flag == 0 and Zmod(prime)(a).is_square()) or \
-                (flag == 1 and not Zmod(prime)(a).is_square()):
+                    (flag == 1 and not Zmod(prime)(a).is_square()):
                 self._unif_sqr = a * prime
                 break
         else:

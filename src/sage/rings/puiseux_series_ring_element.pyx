@@ -218,7 +218,6 @@ cdef class PuiseuxSeries(AlgebraElement):
         """
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = PuiseuxSeriesRing(ZZ)
             sage: p = x^(1/3) + x**3
             sage: t = p._im_gens_(QQbar, [2])
@@ -1022,7 +1021,6 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = PuiseuxSeriesRing(QQbar)
             sage: p = x**(3/2) - QQbar(I)*x**(1/2)
             sage: p.power_series()

@@ -104,7 +104,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cdef long _hash_(self) except -1:
+    cdef Py_hash_t _hash_(self) except -1:
         """
         Return the hash of this matrix.
 
@@ -155,7 +155,8 @@ cdef class Matrix_sparse(matrix.Matrix):
         cdef long C[5]
         self.get_hash_constants(C)
 
-        cdef long h = 0, k, l
+        cdef Py_hash_t h = 0
+        cdef long k, l
         cdef Py_ssize_t i, j
         for ij, x in D.items():
             sig_check()
@@ -669,7 +670,6 @@ cdef class Matrix_sparse(matrix.Matrix):
 
             sage: m = matrix(ZZ, 10000, {(1,2): 17}, sparse=True)
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: f = lambda x: k(x)
             sage: n = m.apply_map(f)
@@ -1186,7 +1186,6 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         Check that the bug in :issue:`13854` has been fixed::
 
-            sage: # needs sage.combinat sage.libs.singular
             sage: A.<x,y> = FreeAlgebra(QQ, 2)
             sage: P.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')
             sage: M = Matrix([[x]], sparse=True)

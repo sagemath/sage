@@ -342,7 +342,6 @@ def plot_hyperplane(hyperplane, **kwds):
         sage: b.plot(**opts)                                                            # needs sage.plot
         Graphics object consisting of 2 graphics primitives
 
-        sage: # needs sage.plot
         sage: H3.<x,y,z> = HyperplaneArrangements(QQ)
         sage: c = 2*x + 3*y + 4*z + 5
         sage: c.plot()

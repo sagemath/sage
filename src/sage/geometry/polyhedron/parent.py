@@ -271,7 +271,6 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: P.cardinality()
             +Infinity
 
-            sage: # needs sage.rings.number_field
             sage: P = Polyhedra(AA, 0)
             sage: P.category()
             Category of finite enumerated polyhedral sets over Algebraic Real Field
@@ -595,7 +594,6 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         Check that :issue:`21270` is fixed::
 
-            sage: # needs sage.rings.number_field
             sage: poly = polytopes.regular_polygon(7)
             sage: lp, x = poly.to_linear_program(solver='InteractiveLP',
             ....:                                return_variable=True)
@@ -624,7 +622,6 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         When the parent of the object is not ``self``, the default is not to copy::
 
-            sage: # needs sage.rings.number_field
             sage: Q = P.base_extend(AA)
             sage: q = Q._element_constructor_(p)
             sage: q is p

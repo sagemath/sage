@@ -71,7 +71,6 @@ class Polynomial_generic_sparse(Polynomial):
 
     A more extensive example::
 
-        sage: # needs sage.libs.pari
         sage: A.<T> = PolynomialRing(Integers(5), sparse=True)
         sage: f = T^2 + 1; B = A.quo(f)
         sage: C.<s> = PolynomialRing(B)
@@ -202,7 +201,6 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<w> = PolynomialRing(GF(9, 'a'), sparse=True)
             sage: f = w^1997 - w^10000
             sage: f.valuation()
@@ -370,7 +368,6 @@ class Polynomial_generic_sparse(Polynomial):
         r"""
         EXAMPLES::
 
-            sage: # needs sage.rings.complex_double sage.symbolic
             sage: R.<w> = PolynomialRing(CDF, sparse=True)
             sage: f = CDF(1,2) + w^5 - CDF(pi)*w + CDF(e)
             sage: f._repr()   # abs tol 1e-15
@@ -433,7 +430,6 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: R.<w> = PolynomialRing(RDF, sparse=True)
             sage: e = RDF(e)
             sage: f = sum(e^n*w^n for n in range(4)); f   # abs tol 1.1e-14
@@ -503,7 +499,6 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.real_mpfr
             sage: R.<z> = PolynomialRing(CC, sparse=True)
             sage: f = z^2 + CC.0; f
             1.00000000000000*z^2 + 1.00000000000000*I
@@ -567,7 +562,6 @@ class Polynomial_generic_sparse(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQbar, sparse=True)
             sage: f = (1+2*x)^3 + 3*x; f
             8*x^3 + 12*x^2 + 9*x + 1
@@ -845,7 +839,6 @@ class Polynomial_generic_sparse(Polynomial):
 
         Polynomials over noncommutative rings are also allowed::
 
-            sage: # needs sage.combinat sage.modules
             sage: HH = QuaternionAlgebra(QQ, -1, -1)
             sage: P.<x> = PolynomialRing(HH, sparse=True)
             sage: f = P.random_element(5)
@@ -1098,7 +1091,6 @@ class Polynomial_generic_field(Polynomial_singular_repr,
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<y> = PolynomialRing(QQ)
             sage: K.<t> = NumberField(y^2 - 2)
             sage: P.<x> = PolynomialRing(K)
@@ -1175,7 +1167,6 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: # needs sage.geometry.polyhedron sage.rings.padics
             sage: K = Qp(5)
             sage: R.<t> = K[]
             sage: f = 5 + 3*t + t^4 + 25*t^10
@@ -1203,7 +1194,6 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: # needs sage.geometry.polyhedron sage.rings.padics
             sage: K = Qp(5)
             sage: R.<t> = K[]
             sage: f = 5 + 3*t + t^4 + 25*t^10
@@ -1258,7 +1248,6 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: K = Qp(5, 10)
             sage: P.<x> = PolynomialRing(K)
             sage: f = x^2 + 1
@@ -1307,7 +1296,6 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: K = Qp(5)
             sage: R.<x> = K[]
             sage: K = Qp(5)
@@ -1372,7 +1360,6 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: # needs sage.geometry.polyhedron sage.rings.padics
             sage: K = Qp(5)
             sage: R.<x> = K[]
             sage: K = Qp(5)
@@ -1440,7 +1427,6 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         EXAMPLES::
 
-            sage: # needs sage.geometry.polyhedron sage.rings.padics
             sage: K = Qp(5)
             sage: R.<x> = K[]
             sage: K = Qp(5)
@@ -1515,7 +1501,6 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron sage.rings.padics
             sage: R = Zp(2)
             sage: S.<x> = R[]
             sage: P = (x-1) * (x-2) * (x-4) * (x-8) * (x-16)

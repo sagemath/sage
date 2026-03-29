@@ -1567,7 +1567,6 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         We check that the bug described in :issue:`8406` is gone::
 
-            sage: # needs sage.rings.finite_rings
             sage: G = Graph()
             sage: R.<a> = GF(3**3)
             sage: S.<x> = R[]

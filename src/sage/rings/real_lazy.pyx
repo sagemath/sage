@@ -740,7 +740,6 @@ cdef class LazyFieldElement(FieldElement):
 
         When the absolute value is involved, the result might be real::
 
-            sage: # needs sage.symbolic
             sage: z = exp(CLF(1 + I/2)); z
             2.38551673095914? + 1.303213729686996?*I
             sage: r = z.abs(); r
@@ -877,7 +876,6 @@ cdef class LazyFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: a = RLF(sqrt(2)) + RLF(sqrt(3))
             sage: cf = a.continued_fraction()
             sage: cf

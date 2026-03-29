@@ -405,7 +405,6 @@ class DoubleDescriptionPair:
             sage: DD.matrix_space(3,2)
             Full MatrixSpace of 3 by 2 dense matrices over Rational Field
 
-            sage: # needs sage.rings.number_field
             sage: K.<sqrt2> = QuadraticField(2)
             sage: A = matrix([[1,sqrt2],[2,0]])
             sage: DD, _  = Problem(A).initial_pair()

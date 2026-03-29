@@ -38,8 +38,8 @@ form of an element `x` with respect to `I` (i.e., we have
     ....:     def reduce(self, x):
     ....:         R = self.ring()
     ....:         return add([c*R(m) for m,c in x if len(m)<self._power],R(0))
-    sage: F.<x,y,z> = FreeAlgebra(QQ, 3)                                                # needs sage.combinat sage.modules
-    sage: I3 = PowerIdeal(F,3); I3                                                      # needs sage.combinat sage.modules
+    sage: F.<x,y,z> = FreeAlgebra(QQ, 3)
+    sage: I3 = PowerIdeal(F,3); I3
     Twosided Ideal (x^3, x^2*y, x^2*z, x*y*x, x*y^2, x*y*z, x*z*x, x*z*y,
     x*z^2, y*x^2, y*x*y, y*x*z, y^2*x, y^3, y^2*z, y*z*x, y*z*y, y*z^2,
     z*x^2, z*x*y, z*x*z, z*y*x, z*y^2, z*y*z, z^2*x, z^2*y, z^3) of
@@ -49,7 +49,6 @@ Free algebras have a custom quotient method that serves at creating
 finite dimensional quotients defined by multiplication matrices. We
 are bypassing it, so that we obtain the default quotient::
 
-    sage: # needs sage.combinat sage.modules
     sage: Q3.<a,b,c> = F.quotient(I3)
     sage: Q3
     Quotient of Free Algebra on 3 generators (x, y, z) over Rational Field by
@@ -64,13 +63,12 @@ are bypassing it, so that we obtain the default quotient::
 Even though `Q_3` is not commutative, there is commutativity for
 products of degree three::
 
-    sage: a*(b*c)-(b*c)*a==F.zero()                                                     # needs sage.combinat sage.modules
+    sage: a*(b*c)-(b*c)*a==F.zero()
     True
 
 If we quotient out all terms of degree two then of course the resulting
 quotient ring is commutative::
 
-    sage: # needs sage.combinat sage.modules
     sage: I2 = PowerIdeal(F,2); I2
     Twosided Ideal (x^2, x*y, x*z, y*x, y^2, y*z, z*x, z*y, z^2) of Free Algebra
     on 3 generators (x, y, z) over Rational Field
@@ -85,7 +83,6 @@ based on Singular's implementation of the Letterplace Algebra. Our
 letterplace wrapper allows to provide the above toy example more
 easily::
 
-    sage: # needs sage.combinat sage.libs.singular sage.modules
     sage: from itertools import product
     sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
     sage: Q3 = F.quo(F*[F.prod(m) for m in product(F.gens(), repeat=3)]*F)
@@ -183,7 +180,6 @@ def QuotientRing(R, I, names=None, **kwds):
     With polynomial rings (note that the variable name of the quotient
     ring can be specified as shown below)::
 
-        sage: # needs sage.libs.pari
         sage: P.<x> = QQ[]
         sage: R.<xx> = QuotientRing(P, P.ideal(x^2 + 1))
         sage: R
@@ -200,7 +196,6 @@ def QuotientRing(R, I, names=None, **kwds):
 
     ::
 
-        sage: # needs sage.libs.pari
         sage: P.<x> = QQ[]
         sage: S = QuotientRing(P, P.ideal(x^2 - 2))
         sage: S
@@ -216,7 +211,7 @@ def QuotientRing(R, I, names=None, **kwds):
     Sage coerces objects into ideals when possible::
 
         sage: P.<x> = QQ[]
-        sage: R = QuotientRing(P, x^2 + 1); R                                           # needs sage.libs.pari
+        sage: R = QuotientRing(P, x^2 + 1); R
         Univariate Quotient Polynomial Ring in xbar over Rational Field
          with modulus x^2 + 1
 
@@ -225,7 +220,6 @@ def QuotientRing(R, I, names=None, **kwds):
     example, we end up modding out the ideal `(x)` from the ring
     `\QQ[x,y]`::
 
-        sage: # needs sage.libs.pari sage.libs.singular
         sage: R.<x,y> = PolynomialRing(QQ, 2)
         sage: S.<a,b> = QuotientRing(R, R.ideal(1 + y^2))
         sage: T.<c,d> = QuotientRing(S, S.ideal(a))
@@ -255,7 +249,6 @@ def QuotientRing(R, I, names=None, **kwds):
     Here is an example of the quotient of a free algebra by a
     twosided homogeneous ideal (see :issue:`7797`)::
 
-        sage: # needs sage.combinat sage.libs.singular sage.modules
         sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
         sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
         sage: Q.<a,b,c> = F.quo(I); Q
@@ -364,7 +357,6 @@ def is_QuotientRing(x):
 
     ::
 
-        sage: # needs sage.combinat sage.libs.singular sage.modules
         sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
         sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
         sage: Q = F.quo(I)
@@ -396,7 +388,6 @@ class QuotientRing_nc(Parent):
 
     Here is a quotient of a free algebra by a twosided homogeneous ideal::
 
-        sage: # needs sage.combinat sage.libs.singular sage.modules
         sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
         sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2]*F
         sage: Q.<a,b,c> = F.quo(I); Q
@@ -410,7 +401,6 @@ class QuotientRing_nc(Parent):
     A quotient of a quotient is just the quotient of the original top
     ring by the sum of two ideals::
 
-        sage: # needs sage.combinat sage.libs.singular sage.modules
         sage: J = Q * [a^3 - b^3] * Q
         sage: R.<i,j,k> = Q.quo(J); R
         Quotient of
@@ -436,10 +426,10 @@ class QuotientRing_nc(Parent):
     ::
 
         sage: R.<x,y> = PolynomialRing(QQ)
-        sage: S.<a,b> = R.quo(x^2 + y^2)                                                # needs sage.libs.singular
-        sage: a^2 + b^2 == 0                                                            # needs sage.libs.singular
+        sage: S.<a,b> = R.quo(x^2 + y^2)
+        sage: a^2 + b^2 == 0
         True
-        sage: S(0) == a^2 + b^2                                                         # needs sage.libs.singular
+        sage: S(0) == a^2 + b^2
         True
 
     Again, a quotient of a quotient is just the quotient of the original top
@@ -447,7 +437,6 @@ class QuotientRing_nc(Parent):
 
     ::
 
-        sage: # needs sage.libs.singular
         sage: R.<x,y> = PolynomialRing(QQ, 2)
         sage: S.<a,b> = R.quo(1 + y^2)
         sage: T.<c,d> = S.quo(a)
@@ -473,7 +462,6 @@ class QuotientRing_nc(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.libs.singular sage.modules
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
             sage: Q.<a,b,c> = F.quo(I); Q
@@ -528,7 +516,6 @@ class QuotientRing_nc(Parent):
             sage: R.quotient_ring(I).construction()
             (QuotientFunctor, Univariate Polynomial Ring in x over Integer Ring)
 
-            sage: # needs sage.combinat sage.libs.singular sage.modules
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
             sage: Q = F.quo(I)
@@ -615,7 +602,6 @@ class QuotientRing_nc(Parent):
 
         The non-commutative case is more interesting::
 
-            sage: # needs sage.combinat sage.libs.singular sage.modules
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
             sage: Q = F.quo(I)
@@ -626,7 +612,6 @@ class QuotientRing_nc(Parent):
 
         In the next example, the generators apparently commute::
 
-            sage: # needs sage.combinat sage.libs.singular sage.modules
             sage: J = F * [x*y - y*x, x*z - z*x, y*z - z*y, x^3 - y^3] * F
             sage: R = F.quo(J)
             sage: R.is_commutative()
@@ -668,7 +653,6 @@ class QuotientRing_nc(Parent):
 
         ::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y>  = PolynomialRing(QQ)
             sage: Q = R.quo((x^2, y^2))
             sage: pi = Q.cover()
@@ -703,7 +687,6 @@ class QuotientRing_nc(Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: S = R.quotient(x^2 + y^2)
             sage: pi = S.cover(); pi
@@ -726,17 +709,16 @@ class QuotientRing_nc(Parent):
         Note that some reduction may be applied so that the lift of a
         reduction need not equal the original element::
 
-            sage: z = pi(x^3 + 2*y^2); z                                                # needs sage.libs.singular
+            sage: z = pi(x^3 + 2*y^2); z
             -xbar*ybar^2 + 2*ybar^2
-            sage: L(z)                                                                  # needs sage.libs.singular
+            sage: L(z)
             -x*y^2 + 2*y^2
-            sage: L(z) == x^3 + 2*y^2                                                   # needs sage.libs.singular
+            sage: L(z) == x^3 + 2*y^2
             False
 
         Test that there also is a lift for rings that are no
         instances of :class:`~sage.rings.ring.Ring` (see :issue:`11068`)::
 
-            sage: # needs sage.modules
             sage: MS = MatrixSpace(GF(5), 2, 2)
             sage: I = MS * [MS.0*MS.1, MS.2 + MS.3] * MS
             sage: Q = MS.quo(I)
@@ -781,13 +763,13 @@ class QuotientRing_nc(Parent):
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: S = R.quotient(x^2 + y^2)
-            sage: S.lift()                                                              # needs sage.libs.singular
+            sage: S.lift()
             Set-theoretic ring morphism:
               From: Quotient of Multivariate Polynomial Ring in x, y over Rational Field
                     by the ideal (x^2 + y^2)
               To:   Multivariate Polynomial Ring in x, y over Rational Field
               Defn: Choice of lifting map
-            sage: S.lift(S.0) == x                                                      # needs sage.libs.singular
+            sage: S.lift(S.0) == x
             True
         """
         if x is None:
@@ -808,7 +790,7 @@ class QuotientRing_nc(Parent):
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: S = R.quotient(x^2 + y^2)
-            sage: S.retract((x+y)^2)                                                    # needs sage.libs.singular
+            sage: S.retract((x+y)^2)
             2*xbar*ybar
         """
         return self.cover()(x)
@@ -847,7 +829,6 @@ class QuotientRing_nc(Parent):
         homomorphism theorems, this is actually a quotient by a sum of two
         ideals::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: S.<a,b> = QuotientRing(R, R.ideal(1 + y^2))
             sage: T.<c,d> = QuotientRing(S, S.ideal(a))
@@ -900,11 +881,11 @@ class QuotientRing_nc(Parent):
         EXAMPLES::
 
             sage: R.<x,y> = QQ[]
-            sage: R.quo(x^2 - y).is_integral_domain()                                   # needs sage.libs.singular
+            sage: R.quo(x^2 - y).is_integral_domain()
             True
-            sage: R.quo(x^2 - y^2).is_integral_domain()                                 # needs sage.libs.singular
+            sage: R.quo(x^2 - y^2).is_integral_domain()
             False
-            sage: R.quo(x^2 - y^2).is_integral_domain(proof=False)                      # needs sage.libs.singular
+            sage: R.quo(x^2 - y^2).is_integral_domain(proof=False)
             False
             sage: R.<a,b,c> = ZZ[]
             sage: Q = R.quotient_ring([a, b])
@@ -933,7 +914,7 @@ class QuotientRing_nc(Parent):
             True
 
             sage: P.<x> = QQ[]
-            sage: R = QuotientRing(P, x^2 + 1)                                          # needs sage.libs.pari
+            sage: R = QuotientRing(P, x^2 + 1)
             sage: R.is_noetherian()
             True
 
@@ -971,8 +952,8 @@ class QuotientRing_nc(Parent):
         ::
 
             sage: P.<x> = QQ[]
-            sage: Q = QuotientRing(P, x^2 + 1)                                          # needs sage.libs.pari
-            sage: Q.cover_ring()                                                        # needs sage.libs.pari
+            sage: Q = QuotientRing(P, x^2 + 1)
+            sage: Q.cover_ring()
             Univariate Polynomial Ring in x over Rational Field
         """
         return self.__R
@@ -988,10 +969,10 @@ class QuotientRing_nc(Parent):
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = R.quotient_ring(x^2 + y^2)
-            sage: S.ideal()                                                             # needs sage.libs.singular
+            sage: S.ideal()
             Ideal (0) of Quotient of Multivariate Polynomial Ring in x, y
              over Rational Field by the ideal (x^2 + y^2)
-            sage: S.ideal(x + y + 1)                                                    # needs sage.libs.singular
+            sage: S.ideal(x + y + 1)
             Ideal (xbar + ybar + 1) of Quotient of Multivariate Polynomial Ring in x, y
              over Rational Field by the ideal (x^2 + y^2)
 
@@ -1034,9 +1015,9 @@ class QuotientRing_nc(Parent):
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = R.quotient_ring(x^2 + y^2)
-            sage: S(x)  # indirect doctest                                              # needs sage.libs.singular
+            sage: S(x)  # indirect doctest
             xbar
-            sage: S(x^2 + y^2)                                                          # needs sage.libs.singular
+            sage: S(x^2 + y^2)
             0
 
         The rings that coerce into the quotient ring canonically, are:
@@ -1048,7 +1029,6 @@ class QuotientRing_nc(Parent):
 
         ::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: S.<a,b> = R.quotient(x^2 + y^2)
             sage: S.coerce(0)
@@ -1065,7 +1045,7 @@ class QuotientRing_nc(Parent):
 
         TESTS::
 
-            sage: S(x, coerce=False)                                                    # needs sage.libs.singular
+            sage: S(x, coerce=False)
             a
         """
         if isinstance(x, quotient_ring_element.QuotientRingElement):
@@ -1093,10 +1073,10 @@ class QuotientRing_nc(Parent):
             True
             sage: S.has_coerce_map_from(QQ)
             True
-            sage: T = S.quotient_ring(x^3 - y)                                          # needs sage.libs.singular
-            sage: S.has_coerce_map_from(T)                                              # needs sage.libs.singular
+            sage: T = S.quotient_ring(x^3 - y)
+            sage: S.has_coerce_map_from(T)
             False
-            sage: T.has_coerce_map_from(R)                                              # needs sage.libs.singular
+            sage: T.has_coerce_map_from(R)
             True
 
         TESTS:
@@ -1109,7 +1089,6 @@ class QuotientRing_nc(Parent):
             sage: S = R.quotient(I)
             sage: T = R.quotient(J)
 
-            sage: # needs sage.libs.singular
             sage: I < J
             True
             sage: T.has_coerce_map_from(S)
@@ -1130,9 +1109,9 @@ class QuotientRing_nc(Parent):
             True
             sage: Sp.has_coerce_map_from(Sp)
             True
-            sage: T.has_coerce_map_from(Sp)                                             # needs sage.libs.singular
+            sage: T.has_coerce_map_from(Sp)
             True
-            sage: Sp.has_coerce_map_from(T)                                             # needs sage.libs.singular
+            sage: Sp.has_coerce_map_from(T)
             False
         """
         C = self.cover_ring()
@@ -1164,7 +1143,7 @@ class QuotientRing_nc(Parent):
         equal, but since the generators are different, the corresponding
         quotient rings are not equal::
 
-            sage: R.ideal(x^2 + y^2) == R.ideal(-x^2 - y^2)                             # needs sage.libs.singular
+            sage: R.ideal(x^2 + y^2) == R.ideal(-x^2 - y^2)
             True
             sage: R.quotient_ring(x^2 + y^2) == R.quotient_ring(-x^2 - y^2)
             False
@@ -1195,7 +1174,6 @@ class QuotientRing_nc(Parent):
 
         ::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ,2)
             sage: S.<a,b> = QuotientRing(R, R.ideal(1 + y^2))
             sage: T.<c,d> = QuotientRing(S, S.ideal(a))
@@ -1225,7 +1203,6 @@ class QuotientRing_nc(Parent):
 
         ::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ,2)
             sage: S.<a,b> = QuotientRing(R, R.ideal(1 + y^2))
             sage: T.<c,d> = QuotientRing(S, S.ideal(a))
@@ -1279,7 +1256,7 @@ class QuotientRing_nc(Parent):
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = R.quotient_ring(x^2 + y^2)
-            sage: S._singular_()                                                        # needs sage.libs.singular
+            sage: S._singular_()
             polynomial ring, over a field, global ordering
             // coefficients: QQ...
             // number of vars : 2
@@ -1313,10 +1290,10 @@ class QuotientRing_nc(Parent):
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = R.quotient_ring(x^2 + y^2)
-            sage: T = S._singular_init_()                                               # needs sage.libs.singular
+            sage: T = S._singular_init_()
             sage: parent(S)
             <class 'sage.rings.quotient_ring.QuotientRing_generic_with_category'>
-            sage: parent(T)                                                             # needs sage.libs.singular
+            sage: parent(T)
             Singular
         """
         if singular is None:
@@ -1555,7 +1532,6 @@ class QuotientRingIdeal_generic(ideal.Ideal_generic):
 
         ::
 
-            sage: # needs sage.libs.pari
             sage: R.<T> = QQ[]
             sage: S.<t> = R.quotient(T^3 - 1)
             sage: 1 in S.ideal(t^2 - 1)
