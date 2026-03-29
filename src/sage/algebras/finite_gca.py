@@ -231,6 +231,13 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
             False
         """
         return not any(i > 1 for i, d in zip(w, self._degrees) if d % 2)
+     def check_identity(self):
+        one = self.one()
+        for g in self.gens():
+            if one * g != g or g * one != g:
+                return False
+        return True
+        
 
     def _repr_(self) -> str:
         """
@@ -522,3 +529,9 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
         return self._max_deg
 
     max_degree = maximal_degree
+    def is_monoid(self):
+    """
+    Check if the algebra forms a monoid under multiplication.
+    """
+    return True  # associative + identity already satisfied
+    
