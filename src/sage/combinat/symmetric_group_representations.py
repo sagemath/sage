@@ -49,6 +49,54 @@ lazy_import("sage.groups.perm_gps.constructor", "PermutationGroupElement", as_='
 lazy_import("sage.symbolic.ring", "SR")
 
 
+def choose_canonical_invariant_form(forms_basis):
+    r"""
+    Choose a canonical vector from a basis of a space of `G`-invariant
+    symmetric bilinear forms (represented as coordinate vectors).
+
+    INPUT:
+
+    - ``forms_basis`` -- iterable of vectors forming a basis of the solution
+      space (e.g. ``subspace.basis()``)
+
+    When the space is one-dimensional, return its sole basis vector. When the
+    dimension is greater than one, return the sum of all basis vectors. This is
+    deterministic, uses every basis direction, and does not single out an
+    arbitrary coordinate. The result still depends on which basis the linear
+    algebra backend returns (e.g. reduced echelon form), but is independent of
+    the ordering of those basis vectors.
+
+    If the sum is zero (possible in positive characteristic), fall back to the
+    first non-zero basis vector.
+
+    .. TODO::
+
+        Explore more intrinsic choices (e.g. orthogonal or trace-normalized
+        combinations of basis matrices).
+
+    EXAMPLES::
+
+        sage: from sage.combinat.symmetric_group_representations import choose_canonical_invariant_form
+        sage: V = VectorSpace(GF(5), 2)
+        sage: choose_canonical_invariant_form(V.basis())
+        (1, 1)
+        sage: choose_canonical_invariant_form([V([1, 0]), V([0, 1])])
+        (1, 1)
+    """
+    basis = list(forms_basis)
+    if not basis:
+        raise ValueError("empty basis for invariant symmetric bilinear forms")
+    if len(basis) == 1:
+        return basis[0]
+    v = sum(basis)
+    if not v.is_zero():
+        return v
+    for b in basis:
+        if not b.is_zero():
+            return b
+    raise ValueError("could not choose a non-zero invariant symmetric bilinear form")
+
+
 # #### Constructor function ################################################
 
 
@@ -1076,9 +1124,6 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
                     and parent._ring.is_finite()
                     and parent._ring.order().is_square()):
                 raise ValueError("the base ring must be a finite field of square order")
-            from sage.arith.misc import factorial
-            if parent._ring.characteristic().divides(factorial(parent._n)):
-                raise NotImplementedError("not implemented when p|n!; dimension of invariant forms may be greater than one")
             self._q = parent._ring.order().sqrt()
             self._specht = Permutations(sum(partition)).algebra(parent._ring).specht_module(partition)
         super().__init__(parent, partition)
@@ -1118,6 +1163,13 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             sage: all(A * A.H == 1 for A in [unitary_specht.representation_matrix(g)
             ....:                            for g in Permutations(4)])
             True
+
+        Modular case where `p \mid n!` (here `p = 3` and `n = 3`)::
+
+            sage: U = SymmetricGroupRepresentation([2,1], 'unitary', GF(3**2))
+            sage: all(U.representation_matrix(g) * U.representation_matrix(g).H == 1
+            ....:     for g in Permutations(3))
+            True
         """
         ret = self._representation_matrix_uncached(permutation)
         ret.set_immutable()
@@ -1132,8 +1184,10 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
         to the equation `\rho(g)^T U \rho(g) = U` for all `g` in `G`. We can
         solve this equation by computing the null space of the matrix of coefficients of the linear
         equations. Generically, this null space will be one dimensional (it may have higher dimension
-        in the modular case when the decomposition factors have multiplicity). We then take the
-        extended Cholesky decomposition of the unique solution to the equation.
+        in the modular case when `p \mid n!`). In that case we pick a canonical invariant form via
+        :func:`choose_canonical_invariant_form` (sum of echelon basis vectors, or a deterministic
+        fallback) instead of an arbitrary basis coordinate. We then take the extended Cholesky
+        decomposition.
 
         EXAMPLES::
 
@@ -1171,7 +1225,8 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
 
         total_system = sum((augmented_matrix(g) for g in G), [])
         null_space = matrix(F, total_system).right_kernel()
-        U = matrix(F, d_rho, d_rho, null_space.basis()[0])
+        U_vec = choose_canonical_invariant_form(null_space.basis())
+        U = matrix(F, d_rho, d_rho, U_vec)
         return U.cholesky(extended=True).H
 
     def _representation_matrix_uncached(self, permutation):
