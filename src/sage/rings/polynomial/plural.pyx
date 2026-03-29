@@ -2606,7 +2606,6 @@ cdef class NCPolynomial_plural(RingElement):
 
         Check if :issue:`7152` is fixed::
 
-            sage: # needs sage.symbolic
             sage: x = var('x')
             sage: K.<rho> = NumberField(x**2 + 1)
             sage: R.<x,y> = QQ[]

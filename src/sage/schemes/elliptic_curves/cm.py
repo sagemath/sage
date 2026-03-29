@@ -318,7 +318,7 @@ def OrderClassNumber(D0, h0, f):
         sage: h = D0.class_number()
         sage: [OrderClassNumber(D0,h,f) for f in srange(1,20)]
         [1, 1, 2, 2, 2, 4, 4, 4, 6, 4, 6, 8, 6, 8, 8, 8, 8, 12, 10]
-        sage: all([OrderClassNumber(D0,h,f) == (D0*f**2).class_number() for f in srange(1,20)])
+        sage: all(OrderClassNumber(D0,h,f) == (D0*f**2).class_number() for f in srange(1,20))
         True
     """
     if not D0.is_fundamental_discriminant():

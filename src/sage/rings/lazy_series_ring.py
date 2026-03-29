@@ -305,7 +305,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         Converting various series from a univariate power series::
 
-            sage: # needs sage.rings.finite_rings
             sage: L = LazyLaurentSeriesRing(GF(2), 'z')
             sage: R = LazyPowerSeriesRing(ZZ, 'z')
             sage: L.has_coerce_map_from(R)
@@ -676,7 +675,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: s = SymmetricFunctions(ZZ).s()
             sage: L = LazySymmetricFunctions(s)
             sage: m = L._terms_of_degree(3, ZZ); m
@@ -736,7 +734,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         Some more examples over different rings::
 
-            sage: # needs sage.symbolic
             sage: L.<z> = LazyPowerSeriesRing(SR)
             sage: G = L.undefined(0)
             sage: L.define_implicitly([(G, [ln(2)])], [diff(G) - exp(-G(-z))])
@@ -1243,7 +1240,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.has_coerce_map_from(GF(2))
             True
 
-            sage: # needs sage.modules sage.rings.finite_rings
             sage: s = SymmetricFunctions(GF(2)).s()
             sage: L = LazySymmetricFunctions(s)
             sage: L.has_coerce_map_from(ZZ)
@@ -1675,7 +1671,6 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
     Lazy Laurent series ring over a finite field::
 
-        sage: # needs sage.rings.finite_rings
         sage: L.<z> = LazyLaurentSeriesRing(GF(3)); L
         Lazy Laurent Series Ring in z over Finite Field of size 3
         sage: e = 1 / (1 + z)
@@ -3433,7 +3428,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
         sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
         sage: S = NCSF.Complete()
         sage: L = S.formal_series_ring(); L
@@ -3467,7 +3461,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
             sage: LazySymmetricFunctions.options.halting_precision(6)
 
-            sage: # needs sage.modules
             sage: s = SymmetricFunctions(QQ).s()
             sage: L = LazySymmetricFunctions(s)
             sage: TestSuite(L).run()                                                    # needs lrcalc_python
@@ -3477,7 +3470,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         Reversion will only work when the base ring is a field::
 
-            sage: # needs sage.modules
             sage: s = SymmetricFunctions(ZZ).s()
             sage: L = LazySymmetricFunctions(s)
             sage: TestSuite(L).run(skip=['_test_revert'])                               # needs lrcalc_python
@@ -3568,7 +3560,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: m = SymmetricFunctions(ZZ).m()
             sage: s = SymmetricFunctions(ZZ).s()
             sage: L = LazySymmetricFunctions(m)
@@ -3585,7 +3576,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: s = SymmetricFunctions(ZZ).s()
             sage: L = LazySymmetricFunctions(s)
             sage: m = L._terms_of_degree(3, QQ["x"]); m
@@ -3637,7 +3627,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: m = SymmetricFunctions(GF(2)).m()
             sage: L = LazySymmetricFunctions(m)
             sage: L(2)
@@ -3645,7 +3634,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: L(3)
             m[]
 
-            sage: # needs sage.modules
             sage: m = SymmetricFunctions(ZZ).m()
             sage: L = LazySymmetricFunctions(m)
             sage: f = L(lambda i: m([i]), valuation=5, degree=10); f
@@ -3664,7 +3652,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         Finally, ``x`` can be a symmetric function::
 
-            sage: # needs sage.modules
             sage: m = SymmetricFunctions(ZZ).m()
             sage: s = SymmetricFunctions(ZZ).s()
             sage: L = LazySymmetricFunctions(m)
@@ -3673,14 +3660,12 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: e = SymmetricFunctions(ZZ).e()
             sage: h = SymmetricFunctions(ZZ).h()
             sage: L = LazySymmetricFunctions(tensor([h, e]))
             sage: L(lambda n: 0)
             O^7
 
-            sage: # needs sage.modules
             sage: L(lambda n: tensor([h[n], e([])]) + tensor([h([]), e[n]]), degree=3)
             (2*h[]#e[]) + (h[]#e[1]+h[1]#e[]) + (h[]#e[2]+h[2]#e[])
             sage: L(lambda n: n)[3];
@@ -3836,7 +3821,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
                    + (2*m[2,2,1,1]+m[2,2,2]+2*m[3,2,1]+2*m[3,3]+m[4,1,1]+3*m[4,2]+4*m[5,1]+4*m[6])
                    + O^7]
 
-            sage: # needs sage.modules
             sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
             sage: S = NCSF.Complete()
             sage: L = S.formal_series_ring()
@@ -4306,7 +4290,6 @@ def _skip_leading_zeros(iterator):
         sage: [x for x, _ in zip(_skip_leading_zeros(it), range(10))]
         [10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
 
-        sage: # needs sage.rings.finite_rings
         sage: it = map(GF(3), NN)
         sage: [x for x, _ in zip(it, range(10))]
         [0, 1, 2, 0, 1, 2, 0, 1, 2, 0]

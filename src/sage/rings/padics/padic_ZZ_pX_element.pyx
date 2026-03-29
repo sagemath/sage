@@ -457,7 +457,6 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = ZpCA(5,5)
             sage: S.<x> = ZZ[]
             sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
@@ -549,7 +548,6 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         Check that :issue:`13647` has been fixed::
 
-            sage: # needs sage.libs.flint
             sage: K = ZpCA(3)
             sage: R.<u> = K[]
             sage: L.<u> = K.extension(u^2 + 1)

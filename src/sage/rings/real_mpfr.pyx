@@ -152,8 +152,6 @@ from sage.structure.richcmp cimport rich_to_bool_sgn
 cdef bin_op
 from sage.structure.element import bin_op
 
-from sage.libs.mpmath.utils cimport mpfr_to_mpfval
-
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.rings.real_double cimport RealDoubleElement
@@ -1326,7 +1324,6 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
         TESTS::
 
-            sage: # needs sage.libs.pari
             sage: k = RealField(100)
             sage: R.<x> = k[]
             sage: k._factor_univariate_polynomial( x )
@@ -3347,7 +3344,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: R = RealField(100)
             sage: R(pi)
             3.1415926535897932384626433833
@@ -3380,7 +3376,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
         Pari does maintain the same 250-bit number on both 32-bit and
         64-bit platforms::
 
-            sage: # needs sage.libs.pari
             sage: RealField(250).pi().__pari__()
             3.14159265358979
             sage: RR(0.0).__pari__()
@@ -3412,7 +3407,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
         Check that the largest and smallest exponents representable by
         PARI convert correctly::
 
-            sage: # needs sage.libs.pari
             sage: a = pari(0.5) << (sys.maxsize+1)/4
             sage: RR(a) >> (sys.maxsize+1)/4
             0.500000000000000
@@ -3800,7 +3794,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(3/4).nearby_rational(max_denominator=2)
             1
 
-            sage: # needs sage.symbolic
             sage: RR(pi).nearby_rational(max_denominator=120)
             355/113
             sage: RR(pi).nearby_rational(max_denominator=10000)

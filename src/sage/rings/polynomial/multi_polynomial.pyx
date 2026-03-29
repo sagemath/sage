@@ -38,7 +38,6 @@ cdef class MPolynomial(CommutativePolynomial):
         r"""
         TESTS::
 
-            sage: # needs sage.rings.real_mpfr
             sage: ZZ(RR['x,y'](0))  # indirect doctest
             0
             sage: ZZ(RR['x,y'](0.5))
@@ -50,7 +49,6 @@ cdef class MPolynomial(CommutativePolynomial):
             ...
             TypeError: unable to convert non-constant polynomial x to Integer Ring
 
-            sage: # needs sage.rings.real_mpfr
             sage: RR(RR['x,y'](0))  # indirect doctest
             0.000000000000000
             sage: RR(ZZ['x,y'].gen(0))
@@ -58,7 +56,6 @@ cdef class MPolynomial(CommutativePolynomial):
             ...
             TypeError: unable to convert non-constant polynomial x to Real Field with 53 bits of precision
 
-            sage: # needs sage.rings.real_mpfr
             sage: CC(RR['x,y'](0))  # indirect doctest
             0.000000000000000
             sage: CC(ZZ['x,y'].gen(0))
@@ -66,7 +63,6 @@ cdef class MPolynomial(CommutativePolynomial):
             ...
             TypeError: unable to convert non-constant polynomial x to Complex Field with 53 bits of precision
 
-            sage: # needs sage.rings.real_mpfr
             sage: RDF(RR['x,y'](0))
             0.0
             sage: RDF(ZZ['x,y'].gen(0))
@@ -74,7 +70,6 @@ cdef class MPolynomial(CommutativePolynomial):
             ...
             TypeError: unable to convert non-constant polynomial x to Real Double Field
 
-            sage: # needs sage.rings.real_mpfr
             sage: CDF(RR['x,y'](0))  # indirect doctest
             0.0
             sage: CDF(ZZ['x,y'].gen(0))
@@ -82,7 +77,6 @@ cdef class MPolynomial(CommutativePolynomial):
             ...
             TypeError: unable to convert non-constant polynomial x to Complex Double Field
 
-            sage: # needs sage.libs.flint sage.rings.real_mpfr
             sage: a = RR['x,y'](1)
             sage: RBF(a)
             1.000000000000000
@@ -182,7 +176,6 @@ cdef class MPolynomial(CommutativePolynomial):
         r"""
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: R.<x,y> = QQ[]
             sage: f = x^3 + y
             sage: g = f._symbolic_(SR); g
@@ -363,7 +356,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Polynomials implemented via Singular::
 
-            sage: # needs sage.libs.singular
             sage: R.<x, y> = PolynomialRing(FiniteField(5))
             sage: f = x^3*y^5 + x^7*y
             sage: type(f)
@@ -397,7 +389,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Polynomials over the symbolic ring (just for fun....)::
 
-            sage: # needs sage.symbolic
             sage: x = var("x")
             sage: S.<u, v> = PolynomialRing(SR)
             sage: f = u*v*x
@@ -495,7 +486,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: # needs sage.rings.padics
             sage: R = Qp(7)['x,y,z,t,p']; S = ZZ['x,z,t']['p']
             sage: R(S.0)
             p
@@ -904,14 +894,12 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y> = GF(9,'a')[]
             sage: (x+2*y).change_ring(GF(3))
             x - y
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(7^2)
             sage: R.<x,y> = F[]
             sage: f = x^2 + a^2*y^2 + a*x + a^3*y
@@ -922,7 +910,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: K.<z> = CyclotomicField(3)
             sage: R.<x,y> = K[]
             sage: f = x^2 + z*y
@@ -931,7 +918,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: K.<w> = CyclotomicField(5)
             sage: R.<x,y> = K[]
             sage: f = x^2 + w*y
@@ -942,7 +928,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Check that :issue:`25022` is fixed::
 
-            sage: # needs sage.rings.number_field sage.symbolic
             sage: K.<x,y> = ZZ[]
             sage: (x*y).change_ring(SR).monomials()
             [x*y]
@@ -970,7 +955,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: R.<x,y,z> = QQ[]
             sage: p = (x+y+z)**2 - 3 * (x+y)*(x+z)*(y+z)
             sage: p.is_symmetric()
@@ -1058,7 +1042,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Multivariate polynomial over integers::
 
-            sage: # needs sage.libs.gap
             sage: R.<x,y,z> = ZZ[]
             sage: gap(-x*y + 3*z)   # indirect doctest
             -x*y+3*z
@@ -1077,7 +1060,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Multivariate polynomial over a cyclotomic field::
 
-            sage: # needs sage.libs.gap sage.rings.number_field
             sage: F.<zeta> = CyclotomicField(8)
             sage: P.<x,y> = F[]
             sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y
@@ -1088,7 +1070,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Multivariate polynomial over a polynomial ring over a cyclotomic field::
 
-            sage: # needs sage.libs.gap sage.rings.number_field
             sage: S.<z> = F[]
             sage: P.<x,y> = S[]
             sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z
@@ -1121,7 +1102,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: # optional - magma, needs sage.rings.finite_rings
+            sage: # optional - magma
             sage: k.<b> = GF(25); R.<x,y> = k[]
             sage: f = y*x^2*b + x*(b+1) + 1
             sage: magma = Magma()                       # so var names same below
@@ -1385,7 +1366,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Examples with different base ring::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<r> = GF(9); S.<s> = GF(81)
             sage: h = Hom(R,S)[0]; h
             Ring morphism:
@@ -1428,7 +1408,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: R.<x,y> = PolynomialRing(k)
             sage: f = (x-a) * (y-a)
@@ -1502,7 +1481,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Polynomials must be defined over compatible base rings::
 
-            sage: # needs sage.modules
             sage: K.<x, y> = QQ[]
             sage: f = x + y
             sage: L.<x, y> = ZZ[]
@@ -1531,7 +1509,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Corner cases::
 
-            sage: # needs sage.modules
             sage: K.<x, y> = QQ[]
             sage: f = x^2 + 1
             sage: g = K(0)
@@ -1636,7 +1613,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Test polynomials over QQbar (:issue:`25265`)::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
             sage: f = x^5*y + 3*x^2*y^2 - 2*x + y - 1
             sage: f.discriminant(y)                                                     # needs sage.libs.singular
@@ -1851,7 +1827,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.number_field sage.symbolic
             sage: R.<x,y> = NumberField(symbolic_expression(x^2+3),'a')['x,y']
             sage: f = (1/17)*x^19 + (1/6)*y - (2/3)*x + 1/3; f
             1/17*x^19 - 2/3*x + 1/6*y + 1/3
@@ -1864,7 +1839,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.real_mpfr
             sage: R.<a,b,c> = RR[]
             sage: f = a + b + RR('0.3'); f
             a + b + 0.300000000000000
@@ -1930,7 +1904,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.number_field sage.symbolic
             sage: R.<x,y> = NumberField(symbolic_expression(x^2+3), 'a')['x,y']
             sage: f = (1/17)*y^19 - (2/3)*x + 1/3; f
             1/17*y^19 - 2/3*x + 1/3
@@ -1955,7 +1928,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.number_field sage.symbolic
             sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['x']['s,t']
             sage: f = K.random_element()
             sage: f.numerator() / f.denominator() == f
@@ -1978,7 +1950,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.real_mpfr
             sage: A.<x,y> = PolynomialRing(CC, 2, order='degrevlex')
             sage: I = A.ideal([x^10 + x^9*y^2, y^8 - x^2*y^7 ])
             sage: f = x*y^13 + y^12
@@ -2102,7 +2073,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: R = PolynomialRing(QQ, 'a', 5)
             sage: f = R.random_element(terms=20)
             sage: w = random_vector(ZZ,5)
@@ -2642,7 +2612,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
             sage: (x + y).is_unit()
             False
@@ -2819,7 +2788,6 @@ cdef class MPolynomial(CommutativePolynomial):
         is not a subring of the real numbers, as the notion is not defined in
         this case::
 
-            sage: # needs sage.rings.real_mpfr
             sage: Q.<z,w> = CC[]
             sage: q = z^2 + w^2
             sage: q.is_lorentzian()

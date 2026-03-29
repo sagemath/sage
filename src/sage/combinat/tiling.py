@@ -272,10 +272,6 @@ rectangles. Obviously, there is one solution::
      [25], [26], [27], [28], [29], [30], [31]]
     sage: T.number_of_solutions()                       # long time (fast)
     1
-
-REFERENCES:
-
-.. [Knuth1] Knuth, Donald (2000). "Dancing links". :arxiv:`cs/0011047`.
 """
 # ****************************************************************************
 #       Copyright (C) 2011-2015 Sébastien Labbé <slabqc@gmail.com>

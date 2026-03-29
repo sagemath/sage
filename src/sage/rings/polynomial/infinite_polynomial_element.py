@@ -373,7 +373,6 @@ class InfinitePolynomial(CommutativePolynomial,
 
         The substitution can also handle matrices::
 
-            sage: # needs sage.modules
             sage: M = matrix([[1,0], [0,2]])
             sage: N = matrix([[0,3], [4,0]])
             sage: g = x[0]^2 + 3*x[1]
@@ -398,7 +397,6 @@ class InfinitePolynomial(CommutativePolynomial,
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: g.subs(fixed=x[0], x_1=N)
             Traceback (most recent call last):
             ...

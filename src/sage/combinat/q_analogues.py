@@ -588,13 +588,13 @@ def q_pochhammer(n, a, q=None):
         sage: q_pochhammer(3, 1)
         0
 
-        sage: R.<q> = ZZ[]
+        sage: R.<q,a> = ZZ[]
         sage: q_pochhammer(4, q)
         q^10 - q^9 - q^8 + 2*q^5 - q^2 - q + 1
         sage: q_pochhammer(4, q^2)
         q^14 - q^12 - q^11 - q^10 + q^8 + 2*q^7 + q^6 - q^4 - q^3 - q^2 + 1
-        sage: q_pochhammer(-3, q)
-        1/(-q^9 + q^7 + q^6 + q^5 - q^4 - q^3 - q^2 + 1)
+        sage: q_pochhammer(-3, a, q)
+        q^6/(q^6 - q^5*a - q^4*a + q^3*a^2 - q^3*a + q^2*a^2 + q*a^2 - a^3)
 
     TESTS::
 
@@ -621,7 +621,7 @@ def q_pochhammer(n, a, q=None):
     R = parent(q)
     one = R(1)
     if n < 0:
-        return R.prod(one / (one - a/q**-k) for k in range(1, -n+1))
+        return R.prod(one / (one - a/q**k) for k in range(1, -n+1))
     return R.prod((one - a*q**k) for k in range(n))
 
 

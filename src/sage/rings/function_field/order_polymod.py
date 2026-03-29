@@ -41,7 +41,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -137,7 +136,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 - x*Y + x^2 + 1)
             sage: O = L.maximal_order()
@@ -180,7 +178,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^3 - 1)
             sage: O = L.maximal_order(); O
@@ -196,7 +193,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         There is no check if the resulting object is really an ideal::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^3 - 1)
             sage: O = L.equation_order()
@@ -220,7 +216,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^3 - 1)
             sage: O = L.maximal_order()
@@ -254,7 +249,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^3 - 1)
             sage: O = L.maximal_order()
@@ -320,7 +314,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: O = K.maximal_order()
             sage: I = O.ideal(x^2 - 4)
@@ -364,7 +357,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.equation_order()
@@ -386,7 +378,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.equation_order()
@@ -410,7 +401,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: L.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: O = L.maximal_order()
@@ -423,7 +413,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: L.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: O = L.maximal_order()
@@ -443,7 +432,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: L.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = L.maximal_order()
@@ -458,7 +446,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -479,7 +466,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -528,7 +514,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -545,7 +530,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -566,7 +550,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -595,7 +578,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); R.<t> = K[]
             sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: o = K.maximal_order()
@@ -743,7 +725,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = PolynomialRing(K)
             sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)
             sage: O = F.maximal_order_infinite()
@@ -768,7 +749,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -804,7 +784,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: L.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = L.maximal_order_infinite()
@@ -813,7 +792,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -830,7 +808,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: L.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = L.maximal_order_infinite()
@@ -856,7 +833,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: L.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = L.maximal_order_infinite()
@@ -875,7 +851,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = F.maximal_order_infinite()
@@ -885,7 +860,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -979,7 +953,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -1001,7 +974,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = F.maximal_order_infinite()
@@ -1013,7 +985,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -1061,7 +1032,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -1082,7 +1052,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -1111,7 +1080,6 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
@@ -1146,7 +1114,6 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
@@ -1168,7 +1135,6 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
             sage: F.<y> = K.extension(t^3 - x^2 * (x^2 + x + 1)^2)
             sage: o = K.maximal_order()
@@ -1231,7 +1197,6 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2)); R.<t> = K[]
             sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: o = K.maximal_order()

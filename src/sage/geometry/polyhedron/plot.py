@@ -346,7 +346,6 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: p = polytopes.icosahedron(exact=False)
             sage: from sage.geometry.polyhedron.plot import Projection
             sage: Projection(p)
@@ -412,7 +411,6 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: p = polytopes.icosahedron(exact=False)
             sage: from sage.geometry.polyhedron.plot import Projection
             sage: pproj = Projection(p)
@@ -437,7 +435,6 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: p = polytopes.icosahedron(exact=False)
             sage: from sage.geometry.polyhedron.plot import Projection
             sage: pproj = Projection(p)
@@ -954,7 +951,6 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: hex = polytopes.regular_polygon(6)
             sage: proj = hex.projection()
             sage: hex_points = proj.render_points_2d()                                  # needs sage.plot
@@ -1172,7 +1168,6 @@ class Projection(SageObject):
 
         It correctly handles various degenerate cases::
 
-            sage: # needs sage.plot
             sage: Polyhedron(lines=[[1,0,0], [0,1,0], [0,0,1]]).plot()  # whole space
             Graphics3d Object
             sage: Polyhedron(vertices=[[1,1,1]], rays=[[1,0,0]],
@@ -1294,7 +1289,6 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.plot sage.rings.number_field
             sage: P1 = polytopes.small_rhombicuboctahedron()
             sage: Image1 = P1.projection().tikz([1,3,5], 175, scale=4,
             ....:                               output_type='TikzPicture')
@@ -1349,7 +1343,6 @@ class Projection(SageObject):
 
         The second example using a LatexExpr as output type::
 
-            sage: # needs sage.plot
             sage: Image2 = P2.projection().tikz(scale=3, edge_color='blue!95!black',
             ....:                               facet_color='orange!95!black', opacity=0.4,
             ....:                               vertex_color='yellow', axis=True,
@@ -1366,7 +1359,6 @@ class Projection(SageObject):
 
         A third example::
 
-            sage: # needs sage.plot
             sage: P3 = Polyhedron(vertices=[[-1, -1, 2], [-1, 2, -1], [2, -1, -1]]); P3
             A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 3 vertices
             sage: Image3 = P3.projection().tikz([0.5, -1, -0.1], 55, scale=3,
@@ -1612,7 +1604,6 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.plot
             sage: P = Polyhedron(vertices=[[-1, -1, 2], [-1, 2, -1], [2, -1, -1]]); P
             A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 3 vertices
             sage: Image = P.projection()._tikz_2d_in_3d(view=[0.5, -1, -0.5], angle=55, scale=3,
@@ -1764,7 +1755,6 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.plot sage.rings.number_field
             sage: P = polytopes.small_rhombicuboctahedron()
             sage: Image = P.projection()._tikz_3d_in_3d([3, 7, 5], 100, scale=3,
             ....:                                       edge_color='blue', facet_color='orange',
@@ -1781,7 +1771,6 @@ class Projection(SageObject):
 
         ::
 
-            sage: # needs sage.plot
             sage: Associahedron = Polyhedron(vertices=[[1, 0, 1], [1, 0, 0], [1, 1, 0],
             ....:                                      [0, 0, -1], [0, 1, 0], [-1, 0, 0],
             ....:                                      [0, 1, 1], [0, 0, 1], [0, -1, 0]]).polar()
@@ -1942,7 +1931,6 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.plot sage.rings.number_field
             sage: P = polytopes.small_rhombicuboctahedron()
             sage: from sage.geometry.polyhedron.plot import Projection
             sage: proj = Projection(P)

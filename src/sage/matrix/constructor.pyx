@@ -606,7 +606,6 @@ def matrix(*args, **kwds):
 
     Check :issue:`24459`::
 
-        sage: # needs sage.libs.linbox
         sage: Matrix(ZZ, sys.maxsize, sys.maxsize)
         Traceback (most recent call last):
         ...

@@ -1286,10 +1286,10 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 phi = RR.hom([1, 0, z0, z1, z2], SS)
                 J = phi(I)
                 if J.dimension() > 0:
-                    raise ValueError( "cannot distinguish points in the degenerate fiber")
+                    raise ValueError("cannot distinguish points in the degenerate fiber")
                 V = phi(I).variety()
                 if len(V) > 1:
-                    raise ValueError( "cannot distinguish points in the degenerate fiber")
+                    raise ValueError("cannot distinguish points in the degenerate fiber")
                 a, b, c = [V[0][z0], V[0][z1], V[0][z2]]
 
         Point = [P[0][0], P[0][1], P[0][2], a, b, c]

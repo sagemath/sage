@@ -2438,7 +2438,6 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1, 2).relative_diameter()
             0.666666666666667
 
-            sage: # needs sage.symbolic
             sage: RIF(pi).diameter()
             1.41357985842823e-16
             sage: RIF(pi).absolute_diameter()
@@ -2478,7 +2477,6 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(5/7).fp_rank_diameter()
             1
 
-            sage: # needs sage.symbolic
             sage: RIF(pi).fp_rank_diameter()
             1
             sage: RIF(-sqrt(2)).fp_rank_diameter()
@@ -2496,7 +2494,6 @@ cdef class RealIntervalFieldElement(RingElement):
         Just because we have the best possible interval, doesn't mean the
         interval is actually small::
 
-            sage: # needs sage.symbolic
             sage: a = RIF(pi)^12345678901234567890
             sage: a  # needs 32_bit
             [2.0985787164673874e323228496 .. +infinity]
@@ -2590,7 +2587,6 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: b.lower(), b.upper()
             (1.50000000000000, 2.00000000000000)
 
-            sage: # needs sage.symbolic
             sage: I = RIF(e, pi)
             sage: a, b = I.bisection()
             sage: a.intersection(b) == RIF(I.center())
@@ -4622,7 +4618,6 @@ cdef class RealIntervalFieldElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: t = RIF(pi)/2
             sage: t.cos()
             0.?e-15
