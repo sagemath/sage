@@ -72,6 +72,7 @@ from sage.rings.integer_ring import ZZ
 from sage.categories.morphism import Morphism
 from sage.structure.element import parent
 from sage.structure.sequence import Sequence
+from sage.structure.richcmp import richcmp_method
 from sage.modules.free_module_element import vector
 
 
@@ -168,6 +169,7 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
         return repr(self.element())
 
 
+@richcmp_method
 class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
     """
     This class is used to wrap a subgroup of an existing
@@ -282,6 +284,89 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         if parent(x) is self.universe():
             return self.element_class(self, self.discrete_log(x), element=x)
         return addgp.AdditiveAbelianGroup_fixed_gens._element_constructor_(self, x, check)
+
+    def __richcmp__(self, other, op):
+        r"""
+        Compare two :class:`AdditiveAbelianGroupWrapper` objects with the same
+        :meth:`universe`, i.e., two subgroups of the same ambient group.
+
+        The groups are compared with respect to inclusion.
+
+        EXAMPLES::
+
+            sage: F.<a> = GF(62207^2, modulus=[5,-2,1])
+            sage: E = EllipticCurve(F, [1,0])
+            sage: Ps = [E.lift_x(x) for x in [34789*a + 13138, 43545*a + 31802]]
+            sage: G = AdditiveAbelianGroupWrapper(E.point_homset(), Ps, [P.order() for P in Ps]); G
+            Additive abelian group isomorphic to Z/5184 + Z/576
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+                over Finite Field in a of size 62207^2
+            sage: Qs = [E.lift_x(x) for x in [30667*a + 2860, 27471*a + 52482, 49898*a + 31857, 24324]]
+            sage: H = AdditiveAbelianGroupWrapper(E.point_homset(), Qs, [Q.order() for Q in Qs]); H
+            Additive abelian group isomorphic to Z/64 + Z/64 + Z/81 + Z/9
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+                over Finite Field in a of size 62207^2
+            sage: G == H
+            True
+            sage: Qs2 = [2^i*Q for i,Q in enumerate(Qs)]
+            sage: H2 = AdditiveAbelianGroupWrapper(E.point_homset(), Qs2, [Q.order() for Q in Qs2]); H2
+            Additive abelian group isomorphic to Z/64 + Z/32 + Z/81 + Z/9
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+                over Finite Field in a of size 62207^2
+            sage: G == H2
+            False
+            sage: G != H2
+            True
+            sage: G <= H2
+            False
+            sage: G < H2
+            False
+            sage: G >= H2
+            True
+            sage: G > H2
+            True
+            sage: T2 = E.abelian_group().torsion_subgroup(2^99)
+            sage: T2 <= G
+            False
+            sage: T2 >= G
+            False
+        """
+        if not isinstance(other, AdditiveAbelianGroupWrapper):
+            return NotImplemented
+        if other.universe() != self.universe():
+            raise TypeError('can only compare subgroups of the same ambient group')
+
+        def leq(G, H):
+            # some quick checks (orders, invariants)
+            if G.order() > H.order():
+                return False
+            if H.is_finite():
+                if not G.order().divides(H.order()):
+                    return False
+                if len(G.invariants()) > len(H.invariants()):
+                    return False
+                dsG = G.invariants()[::-1]  # descending
+                dsH = H.invariants()[::-1]  # descending
+                if not all(iG.divides(iH) for iG,iH in zip(dsG, dsH)):
+                    return False
+            # test if generating set of G is contained in H
+            return all(g.element() in H for g in G.gens())
+
+        from sage.structure.richcmp import op_LT, op_LE, op_EQ, op_NE, op_GE, op_GT
+        if op == op_LE:
+            return leq(self, other)
+        if op == op_GE:
+            return leq(other, self)
+        if op == op_EQ:
+            return leq(self, other) and leq(other, self)
+        if op == op_NE:
+            return not (leq(self, other) and leq(other, self))
+        if op == op_LT:
+            return leq(self, other) and not leq(other, self)
+        if op == op_GT:
+            return leq(other, self) and not leq(self, other)
+
+        raise RuntimeError('_richcmp_ received unexpected op')
 
     def discrete_exp(self, v):
         r"""

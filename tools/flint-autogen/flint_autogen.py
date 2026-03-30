@@ -15,5 +15,5 @@ import os
 from flint import AUTOGEN_DIR, write_flint_cython_headers
 
 
-OUTPUT_DIR = os.path.realpath(os.path.join(AUTOGEN_DIR, os.path.pardir, os.path.pardir, os.path.pardir, 'sage', 'libs', 'flint'))
+OUTPUT_DIR = os.path.realpath(os.path.join(AUTOGEN_DIR, os.path.pardir, os.path.pardir, os.path.pardir, 'src', 'sage', 'libs', 'flint'))
 write_flint_cython_headers(OUTPUT_DIR, documentation=False)

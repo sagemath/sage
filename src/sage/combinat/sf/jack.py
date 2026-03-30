@@ -2,22 +2,10 @@
 r"""
 Jack symmetric functions
 
-Jack's symmetric functions appear in [Ma1995]_ Chapter VI, section 10.
-Zonal polynomials are the subject of [Ma1995]_ Chapter VII.
+Jack's symmetric functions appear in [Mac1995]_ Chapter VI, section 10.
+Zonal polynomials are the subject of [Mac1995]_ Chapter VII.
 The parameter `\alpha` in that reference is the parameter `t` in this
 implementation in sage.
-
-REFERENCES:
-
-.. [Jack1970] \H. Jack,
-   *A class of symmetric functions with a parameter*,
-   Proc. R. Soc. Edinburgh (A), 69, 1-18.
-
-.. [Ma1995] \I. G. Macdonald,
-   *Symmetric functions and Hall polynomials*,
-   second ed.,
-   The Clarendon Press, Oxford University Press, New York, 1995, With contributions
-   by A. Zelevinsky, Oxford Science Publications.
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>

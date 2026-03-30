@@ -314,6 +314,17 @@ another commit, repeat until finished. As long as you do not
 ``git checkout`` another branch, all commits that you make will be part of
 the branch that you created.
 
+.. tip::
+
+    Consider activating the pre-commit hook so that your code is automatically
+    checked before each commit:
+
+    .. code-block:: console
+
+        $ git config core.hooksPath git-hooks
+
+    This only needs to be done once after cloning the repository.
+
 Open pull request
 =================
 

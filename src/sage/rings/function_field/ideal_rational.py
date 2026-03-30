@@ -243,7 +243,6 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4))
             sage: O = K.maximal_order()
             sage: I = O.ideal(x^2 + x)
@@ -258,7 +257,6 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4))
             sage: O = K.maximal_order()
             sage: I = O.ideal(x^2 + x)
@@ -274,7 +272,6 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4))
             sage: O = K.maximal_order()
             sage: I = O.ideal(x^2 + x)
@@ -337,7 +334,6 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4))
             sage: O = K.maximal_order()
             sage: I = O.ideal(x^3*(x+1)^2)
@@ -375,7 +371,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x)
@@ -390,7 +385,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x)
@@ -429,7 +423,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x + 1)
@@ -449,7 +442,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x/(x^2+1))
@@ -470,7 +462,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x/(x^2+1))
@@ -491,7 +482,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x/(x^2+1))
@@ -507,7 +497,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x/(x^2 + 1))
@@ -523,7 +512,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x/(x^2 + 1))
@@ -539,7 +527,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal((x+1)/(x^3+x), (x^2+1)/x^4)
@@ -554,7 +541,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal((x+1)/(x^3+x), (x^2+1)/x^4)
@@ -570,7 +556,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal((x+1)/(x^3+x), (x^2+1)/x^4)
@@ -612,7 +597,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal((x+1)/(x^3+1))

@@ -2997,15 +2997,16 @@ cdef class Matroid(SageObject):
             flags = self._extend_flags(flags)
         return flags
 
-    cpdef SetSystem flats(self, long k):
+    cpdef SetSystem flats(self, long k=-1):
         r"""
-        Return the collection of flats of the matroid of specified rank.
+        Return the flats of the matroid.
 
         A *flat* is a closed set.
 
         INPUT:
 
-        - ``k`` -- integer
+        - ``k`` -- integer (optional); if specified, return the rank-`k`
+          flats of the matroid
 
         OUTPUT: :class:`SetSystem`
 
@@ -3020,8 +3021,22 @@ cdef class Matroid(SageObject):
             [['a', 'b', 'f'], ['a', 'c', 'e'], ['a', 'd', 'g'],
             ['b', 'c', 'd'], ['b', 'e', 'g'], ['c', 'f', 'g'],
             ['d', 'e', 'f']]
+
+        TESTS::
+
+            sage: M = matroids.catalog.Vamos()
+            sage: M.flats(2)
+            SetSystem of 28 sets over 8 elements
+            sage: M.flats()
+            SetSystem of 79 sets over 8 elements
         """
-        return SetSystem(self.groundset(), subsets=[f[0] for f in self._flags(k)])
+        cdef list F = []
+        if k == -1:
+            for i in range(self.rank() + 1):
+                F.extend([f[0] for f in self._flags(i)])
+        else:
+            F.extend([f[0] for f in self._flags(k)])
+        return SetSystem(self.groundset(), F)
 
     cpdef SetSystem coflats(self, long k):
         r"""

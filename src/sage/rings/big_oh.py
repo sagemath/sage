@@ -75,7 +75,6 @@ def O(*x, **kwds):
     the right precision cap to use. If you cast explicitly or use
     other means of element creation, you can get around this issue::
 
-        sage: # needs sage.rings.padics
         sage: K = Qp(11, 30)
         sage: K(11^-12) + O(11^15)
         11^-12 + O(11^15)

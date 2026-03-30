@@ -1634,7 +1634,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = Curve(x^2 + y^2)
-            sage: C.genus()  # indirect test
+            sage: C.genus()  # indirect doctest
             -1
         """
         return self.defining_ideal().genus()
@@ -2131,6 +2131,19 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
             sage: D = C.divisor([ (3, pts[0]), (-1,pts[1]), (10, pts[5]) ])
             sage: C.riemann_roch_basis(D)
             [(-2*x + y)/(x + y), (-x + z)/(x + y)]
+
+        TESTS:
+
+        We check that issue:`41793` is fixed:
+
+            sage: F = GF(13)
+            sage: PP.<X,Y,Z> = PolynomialRing(F,3)
+            sage: F = Y^2*Z - X^3 - X*Z^2
+            sage: C = Curve(F)
+            sage: Points = C.rational_points()
+            sage: G = C.divisor([(1, Points[0]), (3, Points[0])])
+            sage: C.riemann_roch_basis(G)
+            [1, Z/X, Y*Z/X^2, Z^2/X^2]
 
         .. NOTE::
 

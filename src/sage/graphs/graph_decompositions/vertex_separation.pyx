@@ -805,7 +805,6 @@ def vertex_separation(G, algorithm='BAB', cut_off=None, upper_bound=None, verbos
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: vs,L = vertex_separation(G, algorithm='BAB'); vs
         2
@@ -1456,7 +1455,6 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
 
     Vertex separation of a De Bruijn digraph::
 
-        sage: # needs sage.combinat
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = digraphs.DeBruijn(2,3)
         sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs                   # needs sage.numerical.mip

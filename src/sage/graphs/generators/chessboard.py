@@ -18,7 +18,7 @@ AUTHORS:
 #           Copyright (C) 2012 David Coudert <david.coudert@inria.fr>
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+#                         https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from itertools import product

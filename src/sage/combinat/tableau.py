@@ -2616,8 +2616,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if len(self) == 0:
             return other
 
-        l = len(self[0])
-        st = [(None,) * l + row for row in other]
+        pfx = (None,) * len(self[0])
+        st = [pfx + row for row in other]
         st.extend(self)
 
         from sage.combinat.skew_tableau import SkewTableau
@@ -2644,7 +2644,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         new_st = self.to_list()
         spotl, spotc = c
-        while [spotl, spotc] != [0, 0]:
+        while spotl or spotc:
             # once moving box is in first column, just move letters up
             # (French notation!)
             if spotc == 0:
@@ -2652,24 +2652,22 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                 spotl -= 1
                 continue
             # once moving box is in first row, just move letters up
-            elif spotl == 0:
+            if spotl == 0:
                 new_st[spotl][spotc] = new_st[spotl][spotc-1]
                 spotc -= 1
                 continue
-            else:
-                # If we get to this stage, we need to compare
-                below = new_st[spotl-1][spotc]
-                left = new_st[spotl][spotc-1]
-                if below >= left:
-                    # Swap with the cell below
-                    new_st[spotl][spotc] = new_st[spotl-1][spotc]
-                    spotl -= 1
-                    continue
-                else:
-                    # Swap with the cell to the left
-                    new_st[spotl][spotc] = new_st[spotl][spotc-1]
-                    spotc -= 1
-                    continue
+            # If we get to this stage, we need to compare
+            below = new_st[spotl-1][spotc]
+            left = new_st[spotl][spotc-1]
+            if below >= left:
+                # Swap with the cell below
+                new_st[spotl][spotc] = new_st[spotl-1][spotc]
+                spotl -= 1
+                continue
+            # Swap with the cell to the left
+            new_st[spotl][spotc] = new_st[spotl][spotc-1]
+            spotc -= 1
+            continue
         # set box in position (0,0) to 0
         new_st[0][0] = 0
         return Tableau(new_st)
