@@ -18,6 +18,8 @@ from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.sets.family import Family
+from sage.categories.sets_cat import Sets
+from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.infinity import Infinity
@@ -301,14 +303,46 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         if self._is_category_initialized():
             return
         if category is None:
-            # try to guess if the result is infinite or not.
-            if self._family in InfiniteEnumeratedSets():
-                category = InfiniteEnumeratedSets()
-            elif self._family.last().cardinality() == Infinity:
-                category = InfiniteEnumeratedSets()
-            else:
-                category = FiniteEnumeratedSets()
+            category = EnumeratedSets()
         Parent.__init__(self, facade=facade, category=category)
+
+    def is_finite(self):
+        """
+        Return whether this set is finite.
+
+        EXAMPLES::
+
+            sage: DisjointUnionEnumeratedSets({1: FiniteEnumeratedSet([1,2,3]),
+            ....:                              2: FiniteEnumeratedSet([4,5,6])}).is_finite()
+            True
+            sage: DisjointUnionEnumeratedSets({1: Set([]),
+            ....:                              2: ZZ,
+            ....:                              3: FiniteEnumeratedSet([4,5,6])}).is_finite()
+            False
+
+        TESTS::
+
+            sage: DisjointUnionEnumeratedSets(Family(ZZ, lambda x: Set([x]))).is_finite()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot determine finiteness of disjoint union of infinite family, specify category in constructor if you know
+            sage: DisjointUnionEnumeratedSets(Family(ZZ, lambda x: Set([x])), category=Sets().Finite()).is_finite()
+            True
+        """
+        category = self.category()
+        if category.is_subcategory(Sets().Finite()):
+            return True
+        if category.is_subcategory(Sets().Infinite()):
+            return False
+        if self._family.is_finite():
+            result = all(x.is_finite() for x in self._family)
+            if result:
+                self._refine_category_(category.Finite())
+            else:
+                self._refine_category_(category.Infinite())
+            return result
+        raise NotImplementedError('cannot determine finiteness of disjoint union of infinite family, '
+                                  'specify category in constructor if you know')
 
     def _repr_(self):
         """

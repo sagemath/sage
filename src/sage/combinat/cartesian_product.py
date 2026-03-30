@@ -99,7 +99,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         category = EnumeratedSets()
         try:
             category = category.Finite() if self.is_finite() else category.Infinite()
-        except ValueError:  # Unable to determine if it is finite or not
+        except (ValueError, NotImplementedError):  # Unable to determine if it is finite or not
             pass
 
         def iterfunc():

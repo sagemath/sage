@@ -2060,7 +2060,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: L.some_elements()[:7]
             [0, 1, z,
              z^-4 + z^-3 + z^2 + z^3,
-             z^-2,
+             0,
              1 + z + z^3 + z^4 + z^6 + O(z^7),
              z^-1 + z + z^3 + O(z^5)]
 
@@ -2068,7 +2068,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: L.some_elements()[:7]
             [0, 1, z,
              z^-3 + z^-1 + 2 + z + z^2 + z^3,
-             z^-2,
+             0,
              z^-3 + z^-2 + z^-1 + 2 + 2*z + 2*z^2 + O(z^3),
              z^-2 + z^-1 + z + z^2 + z^4 + O(z^5)]
         """
