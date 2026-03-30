@@ -410,6 +410,11 @@ def import_statements(*objects, **kwds):
 
     We test different objects which have no appropriate answer::
 
+        sage: import_statements('NonExistentObject')
+        Traceback (most recent call last):
+        ...
+        LookupError: no object named 'NonExistentObject'
+
         sage: import_statements('my_tailor_is_rich')
         Traceback (most recent call last):
         ...
@@ -537,17 +542,16 @@ def import_statements(*objects, **kwds):
                 for mod in sorted(modules):
                     print("#   - {}".format(mod))
 
-            # choose a random object among the potentially enormous list of
+            # choose an object among the potentially enormous list of
             # objects we get from "name"
-            try:
-                obj = obj[0]
-            except IndexError:
+            if not obj:
                 if deprecation:
                     raise LookupError(
                         "object named {!r} is deprecated (see Issue #"
                         "{})".format(name, deprecation))
                 else:
                     raise LookupError("no object named {!r}".format(name))
+            obj = obj[0]
 
         # 1'. if obj is a LazyImport we recover the real object
         if isinstance(obj, LazyImport):
