@@ -469,6 +469,79 @@ lazy_import('sage.matrix.constructor', 'matrix')
 
 to_hex = LazyImport('matplotlib.colors', 'to_hex')
 
+def _initialize_graph_backend(data_structure, sparse, immutable,
+                              multiedges, weighted, directed,
+                              sparse_alias_error, dense_multiedge_error):
+    """
+    Normalize backend options and construct the initial backend.
+
+    INPUT:
+
+    - ``data_structure`` -- string
+    - ``sparse`` -- boolean
+    - ``immutable`` -- boolean
+    - ``multiedges`` -- boolean or ``None``
+    - ``weighted`` -- boolean or ``None``
+    - ``directed`` -- boolean
+    - ``sparse_alias_error`` -- error message for conflicting ``sparse`` /
+      ``data_structure`` arguments
+    - ``dense_multiedge_error`` -- error message for invalid dense backend use
+
+    OUTPUT:
+
+    A pair ``(data_structure, backend)`` where ``data_structure`` is the
+    normalized backend name and ``backend`` is an initialized backend object.
+
+    TESTS::
+
+        sage: from sage.graphs.generic_graph import _initialize_graph_backend
+        sage: ds, B = _initialize_graph_backend(
+        ....:     'sparse', True, False, False, False, False,
+        ....:     "bad sparse alias", "bad dense backend")
+        sage: ds
+        'sparse'
+        sage: B is not None
+        True
+
+        sage: ds, B = _initialize_graph_backend(
+        ....:     'sparse', True, True, False, False, True,
+        ....:     "bad sparse alias", "bad dense backend")
+        sage: ds
+        'static_sparse'
+        sage: B is not None
+        True
+
+        sage: _initialize_graph_backend(
+        ....:     'dense', True, False, True, False, False,
+        ....:     "bad sparse alias", "bad dense backend")
+        Traceback (most recent call last):
+        ...
+        RuntimeError: bad dense backend
+    """
+    if sparse is False:
+        if data_structure != "sparse":
+            raise ValueError(sparse_alias_error)
+        data_structure = "dense"
+
+    if multiedges or weighted:
+        if data_structure == "dense":
+            raise RuntimeError(dense_multiedge_error)
+
+    if immutable:
+        data_structure = "static_sparse"
+
+    from sage.graphs.base.sparse_graph import SparseGraphBackend
+    from sage.graphs.base.dense_graph import DenseGraphBackend
+
+    if data_structure in ["sparse", "static_sparse"]:
+        backend_class = SparseGraphBackend
+    elif data_structure == "dense":
+        backend_class = DenseGraphBackend
+    else:
+        raise ValueError("data_structure must be equal to 'sparse', "
+                         "'static_sparse' or 'dense'")
+
+    return data_structure, backend_class(0, directed=directed)
 
 class GenericGraph(GenericGraph_pyx):
     """

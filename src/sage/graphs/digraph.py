@@ -177,7 +177,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from itertools import product
 import sage.graphs.generic_graph_pyx as generic_graph_pyx
-from sage.graphs.generic_graph import GenericGraph
+from sage.graphs.generic_graph import GenericGraph, _initialize_graph_backend
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.graphs.views import EdgesView
 
@@ -506,6 +506,13 @@ class DiGraph(GenericGraph):
         True
         sage: type(J_imm._backend) == type(G_imm._backend)                              # needs networkx
         True
+        sage: D = DiGraph({0: [1, 2], 2: [3]})
+        sage: D_imm = DiGraph(D, immutable=True)
+        sage: D_static = DiGraph(D, data_structure='static_sparse')
+        sage: D_imm == D_static == D
+        True
+        sage: type(D_imm._backend) == type(D_static._backend)
+        True
 
     From a list of vertices and a list of edges::
 
@@ -641,32 +648,20 @@ class DiGraph(GenericGraph):
         GenericGraph.__init__(self)
         from sage.structure.element import Matrix
 
-        if sparse is False:
-            if data_structure != "sparse":
-                raise ValueError("the 'sparse' argument is an alias for "
-                                 "'data_structure', please do not define both")
-            data_structure = "dense"
-
-        if multiedges or weighted:
-            if data_structure == "dense":
-                raise RuntimeError("multiedge and weighted c_graphs must be sparse")
-
-        if immutable:
-            data_structure = 'static_sparse'
-
         # If the data structure is static_sparse, we first build a graph
         # using the sparse data structure, then re-encode the resulting graph
         # as a static sparse graph.
-        from sage.graphs.base.sparse_graph import SparseGraphBackend
-        from sage.graphs.base.dense_graph import DenseGraphBackend
-        if data_structure in ["sparse", "static_sparse"]:
-            CGB = SparseGraphBackend
-        elif data_structure == "dense":
-            CGB = DenseGraphBackend
-        else:
-            raise ValueError("data_structure must be equal to 'sparse', "
-                             "'static_sparse' or 'dense'")
-        self._backend = CGB(0, directed=True)
+        data_structure, self._backend = _initialize_graph_backend(
+            data_structure=data_structure,
+            sparse=sparse,
+            immutable=immutable,
+            multiedges=multiedges,
+            weighted=weighted,
+            directed=True,
+            sparse_alias_error=("the 'sparse' argument is an alias for "
+                                "'data_structure', please do not define both"),
+            dense_multiedge_error="multiedge and weighted c_graphs must be sparse",
+        )
 
         if format is None and isinstance(data, str):
             format = 'dig6'
