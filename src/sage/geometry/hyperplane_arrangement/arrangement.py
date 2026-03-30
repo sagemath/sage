@@ -65,7 +65,6 @@ supported::
 
 Number fields are also possible::
 
-    sage: # needs sage.rings.number_field
     sage: x = polygen(QQ, 'x')
     sage: NF.<a> = NumberField(x**4 - 5*x**2 + 5, embedding=1.90)
     sage: H.<y,z> = HyperplaneArrangements(NF)
@@ -107,7 +106,6 @@ Notation (v): from the bounding hyperplanes of a polyhedron::
 
 New arrangements from old::
 
-    sage: # needs sage.graphs
     sage: a = hyperplane_arrangements.braid(3)
     sage: b = a.add_hyperplane([4, 1, 2, 3])
     sage: b
@@ -116,7 +114,6 @@ New arrangements from old::
     sage: a == c
     True
 
-    sage: # needs sage.combinat sage.graphs
     sage: a = hyperplane_arrangements.braid(3)
     sage: b = a.union(hyperplane_arrangements.semiorder(3))
     sage: b == a | hyperplane_arrangements.semiorder(3)    # alternate syntax
@@ -141,7 +138,6 @@ The essentialization is formed by intersecting the hyperplanes by this
 normal space (actually, it is a bit more complicated over finite
 fields)::
 
-    sage: # needs sage.graphs
     sage: a = hyperplane_arrangements.braid(4);  a
     Arrangement of 6 hyperplanes of dimension 4 and rank 3
     sage: a.is_essential()
@@ -206,7 +202,6 @@ in `\RR^n` are called the *regions* of the arrangement::
 The distance between regions is defined as the number of hyperplanes
 separating them. For example::
 
-    sage: # needs sage.combinat
     sage: r1 = b.regions()[0]
     sage: r2 = b.regions()[1]
     sage: b.distance_between_regions(r1, r2)
@@ -227,7 +222,6 @@ of all nonempty intersections of hyperplanes in the arrangement,
 ordered by reverse inclusion.  It includes the ambient space of the
 arrangement (as the intersection over the empty set)::
 
-    sage: # needs sage.graphs
     sage: a = hyperplane_arrangements.braid(3)
     sage: p = a.intersection_poset()
     sage: p.is_ranked()
@@ -398,7 +392,6 @@ class HyperplaneArrangementElement(Element):
 
         It is possible to specify a backend for polyhedral computations::
 
-            sage: # needs sage.rings.number_field
             sage: R.<sqrt5> = QuadraticField(5)
             sage: H = HyperplaneArrangements(R, names='xyz')
             sage: x, y, z = H.gens()
@@ -563,7 +556,6 @@ class HyperplaneArrangementElement(Element):
             sage: A.rank()
             2
 
-            sage: # needs sage.graphs
             sage: B = hyperplane_arrangements.braid(3)
             sage: B.hyperplanes()
             (Hyperplane 0*t0 + t1 - t2 + 0,
@@ -711,7 +703,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: a.<x,y,z> = hyperplane_arrangements.semiorder(3)
             sage: b = a.cone()
             sage: a.characteristic_polynomial().factor()
@@ -782,7 +773,6 @@ class HyperplaneArrangementElement(Element):
 
         ::
 
-            sage: # needs sage.combinat
             sage: A = hyperplane_arrangements.semiorder(3)
             sage: L = A.intersection_poset(); L
             Finite poset containing 19 elements
@@ -1070,7 +1060,6 @@ class HyperplaneArrangementElement(Element):
 
         We verify Equation (4) in [BHS2023]_ on some examples::
 
-            sage: # needs sage.graphs
             sage: R.<x> = ZZ[]
             sage: Arr = [hyperplane_arrangements.braid(n) for n in range(2,6)]
             sage: all(R(A.cocharacteristic_polynomial()(1/(x-1)) * (x-1)^A.dimension())
@@ -1079,7 +1068,6 @@ class HyperplaneArrangementElement(Element):
 
         We compute types `H_3` and `F_4` in Table 1 of [BHS2023]_::
 
-            sage: # needs sage.libs.gap
             sage: W = CoxeterGroup(['H',3], implementation='matrix')
             sage: A = HyperplaneArrangements(W.base_ring(), tuple(f'x{s}' for s in range(W.rank())))
             sage: H = A([[0] + list(r) for r in W.positive_roots()])
@@ -1109,7 +1097,6 @@ class HyperplaneArrangementElement(Element):
         general, the graphical arrangement of a cycle graph corresponds
         to the arrangements in Example 9.4)::
 
-            sage: # needs sage.graphs
             sage: H = hyperplane_arrangements.graphical(graphs.CycleGraph(5))
             sage: pep = H.primitive_eulerian_polynomial(); pep
             z^4 + 6*z^3 - 4*z^2 + z
@@ -1221,7 +1208,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: A.<u,x,y,z> = hyperplane_arrangements.braid(4);  A
             Arrangement of 6 hyperplanes of dimension 4 and rank 3
             sage: H = A[0];  H
@@ -1359,7 +1345,6 @@ class HyperplaneArrangementElement(Element):
 
         Check that :issue:`30749` is fixed::
 
-            sage: # needs sage.rings.number_field
             sage: R.<y> = QQ[]
             sage: v1 = AA.polynomial_root(AA.common_polynomial(y^2 - 3),
             ....:                         RIF(RR(1.7320508075688772), RR(1.7320508075688774)))
@@ -1432,7 +1417,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: a = hyperplane_arrangements.semiorder(3)
             sage: a.has_good_reduction(5)
             True
@@ -1878,7 +1862,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: A = hyperplane_arrangements.Shi(3).essentialization()
             sage: A.dimension()
             2
@@ -2035,7 +2018,6 @@ class HyperplaneArrangementElement(Element):
 
         It is possible to specify the backend::
 
-            sage: # needs sage.rings.number_field
             sage: K.<q> = CyclotomicField(9)
             sage: L.<r9> = NumberField((q + q**(-1)).minpoly(),
             ....:                      embedding=AA(q + q**-1))
@@ -2161,7 +2143,6 @@ class HyperplaneArrangementElement(Element):
             sage: A.poset_of_regions()                                                  # needs sage.combinat
             Finite poset containing 4 elements
 
-            sage: # needs sage.combinat sage.graphs
             sage: A = hyperplane_arrangements.braid(3)
             sage: A.poset_of_regions()
             Finite poset containing 6 elements
@@ -2280,7 +2261,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: a = hyperplane_arrangements.braid(2)
             sage: a.hyperplanes()
             (Hyperplane t0 - t1 + 0,)
@@ -2330,7 +2310,6 @@ class HyperplaneArrangementElement(Element):
              ((-1, -1), A 2-dimensional polyhedron in QQ^2 defined
                         as the convex hull of 1 vertex and 2 rays,  (-1, -2))]
 
-            sage: # needs sage.graphs
             sage: a = hyperplane_arrangements.braid(3)
             sage: a.hyperplanes()
             (Hyperplane 0*t0 + t1 - t2 + 0,
@@ -2512,7 +2491,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: a = hyperplane_arrangements.braid(3)
             sage: a.hyperplanes()
             (Hyperplane 0*t0 + t1 - t2 + 0,
@@ -2608,7 +2586,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: a = hyperplane_arrangements.braid(3)
             sage: [(i, F[0]) for i, F in enumerate(a.closed_faces())]
             [(0, (0, 0, 0)),
@@ -2657,7 +2634,6 @@ class HyperplaneArrangementElement(Element):
 
         The ``names`` keyword works::
 
-            sage: # needs sage.graphs
             sage: a = hyperplane_arrangements.braid(3)
             sage: U = a.face_semigroup_algebra(names='x'); U
             Finite-dimensional algebra of degree 13 over Rational Field
@@ -2797,7 +2773,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: A = hyperplane_arrangements.semiorder(3)
             sage: A.bounded_regions()
             (A 3-dimensional polyhedron in QQ^3 defined
@@ -2837,7 +2812,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: A = hyperplane_arrangements.semiorder(3)
             sage: B = A.essentialization()
             sage: B.n_regions() - B.n_bounded_regions()
@@ -2890,7 +2864,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: A = hyperplane_arrangements.Shi(3)
             sage: A.whitney_data()
             (
@@ -2941,7 +2914,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: A = hyperplane_arrangements.Shi(3)
             sage: A.doubly_indexed_whitney_number(0, 2)
             9
@@ -2992,7 +2964,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: A = hyperplane_arrangements.Shi(3)
             sage: A.whitney_number(0)
             1
@@ -3286,7 +3257,6 @@ class HyperplaneArrangementElement(Element):
 
         Check that :issue:`26705` is fixed::
 
-            sage: # needs sage.combinat sage.groups
             sage: w = WeylGroup(['A', 4]).from_reduced_word([3, 4, 2, 1])
             sage: I = w.inversion_arrangement()
             sage: I
@@ -3375,7 +3345,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.groups
             sage: W = WeylGroup(['A',3], prefix='s')
             sage: A = W.long_element().inversion_arrangement()
             sage: for M in A.derivation_module_free_chain(): print("%s\n"%M)
@@ -3531,7 +3500,6 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.groups
             sage: W = WeylGroup(['A', 2], prefix='s')
             sage: A = W.long_element().inversion_arrangement()
             sage: A.derivation_module_basis()

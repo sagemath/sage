@@ -30,7 +30,6 @@ is called an infinite order. Thus a function field has one maximal finite order
 `O` and one maximal infinite order `O_\infty`. There are other non-maximal
 orders such as equation orders::
 
-    sage: # needs sage.rings.function_field
     sage: K.<x> = FunctionField(GF(3)); R.<y> = K[]
     sage: L.<y> = K.extension(y^3 - y - x)
     sage: O = L.equation_order()
@@ -49,7 +48,6 @@ function field in an extension::
     sage: p.is_prime()                                                                  # needs sage.libs.pari
     True
 
-    sage: # needs sage.rings.function_field
     sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
     sage: O = F.maximal_order()
     sage: O.decomposition(p)
@@ -58,7 +56,6 @@ function field in an extension::
      (Ideal (x + 1, (1/(x^3 + x^2 + x))*y^2 + y + 1) of Maximal order
      of Function field in y defined by y^3 + x^6 + x^4 + x^2, 2, 1)]
 
-    sage: # needs sage.rings.function_field
     sage: p1, relative_degree,ramification_index = O.decomposition(p)[1]
     sage: p1.parent()
     Monoid of ideals of Maximal order of Function field in y
@@ -71,7 +68,6 @@ function field in an extension::
 When the base constant field is the algebraic field `\QQbar`, the only prime ideals
 of the maximal order of the rational function field are linear polynomials. ::
 
-    sage: # needs sage.rings.function_field sage.rings.number_field
     sage: K.<x> = FunctionField(QQbar)
     sage: R.<y> = K[]
     sage: L.<y> = K.extension(y^2 - (x^3-x^2))

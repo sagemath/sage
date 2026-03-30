@@ -1951,15 +1951,48 @@ class EllipticCurve_number_field(EllipticCurve_field):
         Fv = OK.residue_field(place)
         return self.change_ring(Fv)
 
-    @cached_method
-    def torsion_subgroup(self):
+    def torsion_subgroup(self, n=None, **kwds):
         r"""
-        Return the torsion subgroup of this elliptic curve.
+        Return the torsion subgroup of this elliptic curve
+        if ``n`` is ``None``, or the `n`-torsion subgroup
+        if `n` is an integer. In the latter case, if ``extend``
+        is set to ``True``, the base field is extended as
+        needed to find all `n`-torsion points that exist over
+        the algebraic closure.
 
-        OUTPUT: the :class:`EllipticCurveTorsionSubgroup` associated to this elliptic
-        curve.
+        OUTPUT: the :class:`EllipticCurveTorsionSubgroup` associated
+        to this elliptic curve in case ``n`` is ``None``, or an
+        :class:`AdditiveAbelianGroupWrapper` object representing
+        the `n`-torsion subgroup.
 
         EXAMPLES::
+
+            sage: EllipticCurve('11a').torsion_subgroup()
+            Torsion Subgroup isomorphic to Z/5 associated to the
+             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+            sage: EllipticCurve('37b').torsion_subgroup()
+            Torsion Subgroup isomorphic to Z/3 associated to the
+             Elliptic Curve defined by y^2 + y = x^3 + x^2 - 23*x - 50 over Rational Field
+
+        ::
+
+            sage: e = EllipticCurve([-1386747,368636886]); e
+            Elliptic Curve defined by y^2 = x^3 - 1386747*x + 368636886 over Rational Field
+            sage: G = e.torsion_subgroup(); G
+            Torsion Subgroup isomorphic to Z/8 + Z/2 associated to the
+             Elliptic Curve defined by y^2 = x^3 - 1386747*x + 368636886 over
+             Rational Field
+            sage: G.0*3 + G.1
+            (1227 : 22680 : 1)
+            sage: G.1
+            (282 : 0 : 1)
+            sage: list(G)
+            [(0 : 1 : 0), (147 : -12960 : 1), (2307 : -97200 : 1), (-933 : -29160 : 1),
+             (1011 : 0 : 1), (-933 : 29160 : 1), (2307 : 97200 : 1), (147 : 12960 : 1),
+             (-1293 : 0 : 1), (1227 : 22680 : 1), (-285 : 27216 : 1), (8787 : 816480 : 1),
+             (282 : 0 : 1), (8787 : -816480 : 1), (-285 : -27216 : 1), (1227 : -22680 : 1)]
+
+        ::
 
             sage: E = EllipticCurve('11a1')
             sage: x = polygen(ZZ, 'x')
@@ -2006,9 +2039,18 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
             Use :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field`
             to determine the field of definition of the `\ell`-torsion subgroup.
+
+        ALGORITHM: If ``n`` is ``None``, constructs and returns the
+        :class:`EllipticCurveTorsionSubgroup` of this curve. If ``n``
+        is an integer, calls :meth:`EllipticCurve_field.torsion_subgroup`.
         """
-        from .ell_torsion import EllipticCurveTorsionSubgroup
-        return EllipticCurveTorsionSubgroup(self)
+        if n is None:
+            if not hasattr(self, '_cached_torsion_subgroup'):
+                from .ell_torsion import EllipticCurveTorsionSubgroup
+                self._cached_torsion_subgroup = EllipticCurveTorsionSubgroup(self)
+            return self._cached_torsion_subgroup
+
+        return super().torsion_subgroup(n, **kwds)
 
     @cached_method
     def torsion_order(self):

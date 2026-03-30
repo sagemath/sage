@@ -29,7 +29,7 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
     cdef dict _t_dict
     cdef _c_coeff
     cdef _d_coeff
-    cdef long _hash
+    cdef Py_hash_t _hash
 
     cpdef _add_(self, other)
     cpdef _sub_(self, other)
@@ -56,7 +56,7 @@ cdef class LieGenerator(LieObject):
 cdef class LieBracket(LieObject):
     cdef public LieObject _left
     cdef public LieObject _right
-    cdef long _hash
+    cdef Py_hash_t _hash
 
     cpdef lift(self, dict UEA_gens_dict)
 

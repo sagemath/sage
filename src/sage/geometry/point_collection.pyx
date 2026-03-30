@@ -84,32 +84,6 @@ from sage.matrix.constructor import matrix
 from sage.misc.latex import latex
 
 
-def is_PointCollection(x):
-    r"""
-    Check if ``x`` is a :class:`point collection <PointCollection>`.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is a point collection and ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.point_collection import PointCollection
-        sage: isinstance(1, PointCollection)
-        False
-        sage: c = Cone([(0,0,1), (1,0,1), (0,1,1), (1,1,1)])
-        sage: isinstance(c.rays(), PointCollection)
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38126,
-                       "The function is_PointCollection is deprecated; "
-                       "use 'isinstance(..., PointCollection)' instead.")
-    return isinstance(x, PointCollection)
-
-
 _output_format = "default"
 
 

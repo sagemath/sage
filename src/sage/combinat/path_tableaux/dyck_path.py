@@ -327,14 +327,14 @@ class DyckPath(PathTableau):
             ValueError: [1, 2, 1, 2, 1, 0, 1] does not start at 0
         """
         if self.is_skew():
-            raise ValueError( "%s does not start at 0" % (str(self)) )
+            raise ValueError("%s does not start at 0" % (str(self)))
         w = self.to_word()
         y = DyckWord(w)
         pairs = set()
         for i, a in enumerate(y):
             c = y.associated_parenthesis(i)
             if i < c:
-                pairs.add((i,c))
+                pairs.add((i, c))
         return PerfectMatching(pairs)
 
     def to_tableau(self):

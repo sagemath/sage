@@ -878,7 +878,6 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
              An inequality (0, 1, 0) x + 0 >= 0,
              An inequality (0, 0, 1) x + 0 >= 0)
 
-            sage: # needs sage.combinat
             sage: p3 = Polyhedron(vertices=Permutations([1, 2, 3, 4]))
             sage: ieqs = p3.inequalities()
             sage: ieqs[0]
@@ -904,7 +903,6 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: p.inequalities_list()[0:3]
             [[0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
 
-            sage: # needs sage.combinat
             sage: p3 = Polyhedron(vertices=Permutations([1, 2, 3, 4]))
             sage: ieqs = p3.inequalities_list()
             sage: ieqs[0]

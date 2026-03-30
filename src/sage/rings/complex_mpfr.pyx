@@ -54,6 +54,7 @@ from sage.rings.integer_ring import ZZ
 
 cimport gmpy2
 gmpy2.import_gmpy2()
+from mpmath import mp
 
 try:
     from cypari2.gen import Gen as pari_gen
@@ -144,7 +145,6 @@ def is_ComplexNumber(x):
     while elements of the class :class:`ComplexField_class`
     are of type :class:`ComplexNumber`::
 
-        sage: # needs sage.symbolic
         sage: c = 1 + 2*I
         sage: is_ComplexNumber(c)
         False
@@ -869,7 +869,6 @@ class ComplexField_class(sage.rings.abc.ComplexField):
 
         TESTS::
 
-            sage: # needs sage.libs.pari
             sage: k = ComplexField(100)
             sage: R.<x> = k[]
             sage: k._factor_univariate_polynomial(x)
@@ -984,7 +983,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
                 real, imag = real
             elif isinstance(real, complex):
                 real, imag = real.real, real.imag
-            elif type(real) is gmpy2.mpc:
+            elif isinstance(real, (gmpy2.mpc, mp.mpc)):
                 real, imag = (<gmpy2.mpc>real).real, (<gmpy2.mpc>real).imag
             else:
                 imag = 0
@@ -1287,7 +1286,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: a = CC(pi + I*e); a
             3.14159265358979 + 2.71828182845905*I
             sage: a.str(truncate=True)
@@ -1412,7 +1410,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         Coerce the object using the ``pari`` function::
 
-            sage: # needs sage.libs.pari
             sage: a = ComplexNumber(2,1)
             sage: pari(a)
             2.00000000000000 + 1.00000000000000*I
@@ -2266,7 +2263,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: (1+CC(I)).cot()
             0.217621561854403 - 0.868014142895925*I
             sage: i = ComplexField(200).0
@@ -2890,7 +2886,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: C, i = ComplexField(30).objgen()
             sage: (1+i).gamma_inc(2 + 3*i)  # abs tol 2e-10
             0.0020969149 - 0.059981914*I

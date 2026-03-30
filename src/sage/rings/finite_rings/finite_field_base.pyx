@@ -1009,7 +1009,6 @@ cdef class FiniteField(Field):
             sage: f(F.gen())
             0
 
-            sage: # needs sage.libs.ntl
             sage: k.<a> = GF(2^20, implementation='ntl')
             sage: k.polynomial()
             a^20 + a^10 + a^9 + a^7 + a^6 + a^5 + a^4 + a + 1
@@ -1132,7 +1131,6 @@ cdef class FiniteField(Field):
             sage: GF(27,'a').vector_space(map=False)                                    # needs sage.modules
             Vector space of dimension 3 over Finite Field of size 3
 
-            sage: # needs sage.modules
             sage: F = GF(8)
             sage: E = GF(64)
             sage: V, from_V, to_V = E.vector_space(F, map=True)
@@ -1147,7 +1145,6 @@ cdef class FiniteField(Field):
             sage: all(to_V(c * e) == c * to_V(e) for e in E for c in F)
             True
 
-            sage: # needs sage.modules
             sage: basis = [E.gen(), E.gen() + 1]
             sage: W, from_W, to_W = E.vector_space(F, basis, map=True)
             sage: all(from_W(to_W(e)) == e for e in E)
@@ -1160,7 +1157,6 @@ cdef class FiniteField(Field):
             (1, 0)
             (0, 1)
 
-            sage: # needs sage.modules
             sage: x = polygen(ZZ)
             sage: F = GF(9, 't', modulus=x^2 + x - 1)
             sage: E = GF(81)
@@ -2003,7 +1999,6 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: G = GF(3^6).galois_group(); G
             Galois group C6 of GF(3^6)
             sage: F = G.gen()
@@ -2067,7 +2062,6 @@ cdef class FiniteField(Field):
         property of a dual basis:
         `\mathrm{Tr}(e_i d_j) = \delta_{i,j}, 0 \leq i,j \leq n-1` ::
 
-            sage: # needs sage.modules
             sage: F.<a> = GF(7^4)
             sage: e = [4*a^3, 2*a^3 + a^2 + 3*a + 5,
             ....:      3*a^3 + 5*a^2 + 4*a + 2, 2*a^3 + 2*a^2 + 2]
@@ -2081,7 +2075,6 @@ cdef class FiniteField(Field):
         We can test that if `d` is the dual basis of `e`, then `e` is the dual
         basis of `d`::
 
-            sage: # needs sage.modules
             sage: F.<a> = GF(7^8)
             sage: e = [a^0, a^1, a^2, a^3, a^4, a^5, a^6, a^7]
             sage: d = F.dual_basis(e, check=False); d

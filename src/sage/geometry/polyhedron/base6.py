@@ -195,7 +195,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         By default, the wireframe is rendered in blue and the fill in green::
 
-            sage: # needs sage.plot
             sage: square.plot()
             Graphics object consisting of 6 graphics primitives
             sage: point.plot()
@@ -209,7 +208,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         Draw the lines in red and nothing else::
 
-            sage: # needs sage.plot
             sage: square.plot(point=False, line='red', polygon=False)
             Graphics object consisting of 4 graphics primitives
             sage: point.plot(point=False, line='red', polygon=False)
@@ -223,7 +221,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         Draw points in red, no lines, and a blue polygon::
 
-            sage: # needs sage.plot
             sage: square.plot(point={'color':'red'}, line=False, polygon=(0,0,1))
             Graphics object consisting of 2 graphics primitives
             sage: point.plot(point={'color':'red'}, line=False, polygon=(0,0,1))
@@ -238,7 +235,6 @@ class Polyhedron_base6(Polyhedron_base5):
         If we instead use the ``fill`` and ``wireframe`` options, the
         coloring depends on the dimension of the object::
 
-            sage: # needs sage.plot
             sage: square.plot(fill='green', wireframe='red')
             Graphics object consisting of 6 graphics primitives
             sage: point.plot(fill='green', wireframe='red')
@@ -339,7 +335,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         We try to draw the polytope in 2 or 3 dimensions::
 
-            sage: # needs sage.plot
             sage: type(Polyhedron(ieqs=[(1,)]).plot())
             <class 'sage.plot.graphics.Graphics'>
             sage: type(polytopes.hypercube(1).plot())
@@ -360,7 +355,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         If the polyhedron is not full-dimensional, the :meth:`affine_hull_projection` is used if necessary::
 
-            sage: # needs sage.plot
             sage: type(Polyhedron([(0,), (1,)]).plot())
             <class 'sage.plot.graphics.Graphics'>
             sage: type(Polyhedron([(0,0), (1,1)]).plot())
@@ -389,7 +383,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         Check that :issue:`31802` is fixed::
 
-            sage: # needs sage.plot
             sage: halfspace = Polyhedron(rays=[(0, 0, 1)], lines=[(1, 0, 0), (0, 1, 0)])
             sage: len(halfspace.projection().arrows)
             5
@@ -551,7 +544,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         EXAMPLES::
 
-            sage: # needs sage.plot
             sage: co = polytopes.cuboctahedron()
             sage: Img = co.tikz([0, 0, 1], 0, output_type='TikzPicture')
             sage: Img
@@ -589,7 +581,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         When output type is a :class:`sage.misc.latex_standalone.TikzPicture`::
 
-            sage: # needs sage.plot
             sage: co = polytopes.cuboctahedron()
             sage: t = co.tikz([674, 108, -731], 112, output_type='TikzPicture'); t
             \documentclass[tikz]{standalone}
@@ -871,7 +862,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         A different values of ``position`` changes the projection::
 
-            sage: # needs sage.symbolic
             sage: sp = tfcube.schlegel_projection(tfcube.facets()[4], 1/2)
             sage: sp.plot()                                                             # needs sage.plot
             Graphics3d Object
@@ -1234,7 +1224,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         With the parameter ``minimal`` one can get a minimal base ring::
 
-            sage: # needs sage.rings.number_field
             sage: s = polytopes.simplex(3)
             sage: s_AA = s.affine_hull_projection(orthonormal=True, extend=True)
             sage: s_AA.base_ring()
@@ -1259,7 +1248,6 @@ class Polyhedron_base6(Polyhedron_base5):
             ....:             orthonormal=True, extend=True).faces(1)]) == {sqrt(AA(2))}
             True
 
-            sage: # needs sage.rings.number_field
             sage: D = polytopes.dodecahedron()
             sage: F = D.faces(2)[0].as_polyhedron()
             sage: F.affine_hull_projection(orthogonal=True)
@@ -1270,7 +1258,6 @@ class Polyhedron_base6(Polyhedron_base5):
             sage: F.affine_hull_projection(orthonormal=True, extend=True)
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 5 vertices
 
-            sage: # needs sage.rings.number_field
             sage: K.<sqrt2> = QuadraticField(2)
             sage: P = Polyhedron([2*[K.zero()],2*[sqrt2]]); P
             A 1-dimensional polyhedron in
@@ -1287,7 +1274,6 @@ class Polyhedron_base6(Polyhedron_base5):
             sage: A.vertices()
             (A vertex at (0), A vertex at (2))
 
-            sage: # needs sage.rings.number_field
             sage: K.<sqrt3> = QuadraticField(3)
             sage: P = Polyhedron([2*[K.zero()], 2*[sqrt3]]); P
             A 1-dimensional polyhedron in
@@ -1321,7 +1307,6 @@ class Polyhedron_base6(Polyhedron_base5):
         The ``orthonormal=True`` parameter preserves volumes;
         it provides an isometric copy of the polyhedron::
 
-            sage: # needs sage.rings.number_field
             sage: Pentagon = polytopes.dodecahedron().faces(2)[0].as_polyhedron()
             sage: P = Pentagon.affine_hull_projection(orthonormal=True, extend=True)
             sage: _, c= P.is_inscribed(certificate=True)
@@ -1343,7 +1328,6 @@ class Polyhedron_base6(Polyhedron_base5):
         by the square root of the determinant of the linear part of the
         affine transformation times its transpose::
 
-            sage: # needs sage.rings.number_field
             sage: Pentagon = polytopes.dodecahedron().faces(2)[0].as_polyhedron()
             sage: Pnormal = Pentagon.affine_hull_projection(orthonormal=True,
             ....:                                           extend=True)
@@ -1362,7 +1346,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         Another example with ``as_affine_map=True``::
 
-            sage: # needs sage.combinat sage.rings.number_field
             sage: P = polytopes.permutahedron(4)
             sage: Q    = P.affine_hull_projection(orthonormal=True, extend=True)
             sage: A, b = P.affine_hull_projection(orthonormal=True, extend=True,
@@ -1609,7 +1592,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: triangle = Polyhedron([(1, 0, 0), (0, 1, 0), (0, 0, 1)]);  triangle
             A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 3 vertices
             sage: A = triangle.affine_hull_manifold(name='A'); A
@@ -1645,7 +1627,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
         Arrangement of affine hull of facets::
 
-            sage: # needs sage.rings.number_field sage.symbolic
             sage: D = polytopes.dodecahedron()
             sage: E3 = EuclideanSpace(3)
             sage: submanifolds = [              # long time

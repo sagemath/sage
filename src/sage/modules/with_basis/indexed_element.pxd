@@ -2,7 +2,7 @@ from sage.structure.element cimport Element, ModuleElement
 
 cdef class IndexedFreeModuleElement(ModuleElement):
     cdef public dict _monomial_coefficients
-    cdef long _hash
+    cdef Py_hash_t _hash
     cdef bint _hash_set
 
     cpdef _add_(self, other)

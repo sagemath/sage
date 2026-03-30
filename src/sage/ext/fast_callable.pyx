@@ -288,7 +288,7 @@ AUTHOR:
 """
 
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #       Copyright (C) 2009 Carl Witty <Carl.Witty@gmail.com>
 #
@@ -301,8 +301,8 @@ AUTHOR:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 import operator
 from copy import copy
@@ -337,6 +337,28 @@ def fast_callable(x, domain=None, vars=None,
     specified (unless ``x`` is a symbolic expression with only one variable,
     and ``expect_one_var`` is ``True``, in which case we will use that variable).
 
+    INPUT:
+
+    - ``x`` -- an expression, element of ``SR``, or polynomial to compile
+
+    - ``domain`` -- (default: ``None``) a Sage parent or Python type; arithmetic
+      will be done in this domain. Supports fast interpreters for ``RDF``,
+      :class:`float`, etc.
+
+    - ``vars`` -- (default: ``None``) a list of variables to use; required unless
+      ``x`` is a polynomial (in which case the generators of ``parent(x)`` are
+      used) or a symbolic expression with a single variable and
+      ``expect_one_var=True``
+
+    - ``expect_one_var`` -- boolean (default: ``False``); if ``True``, allows
+      skipping ``vars`` when ``x`` is a symbolic expression with exactly one
+      variable
+
+    OUTPUT:
+
+    A callable object that can be evaluated rapidly by calling it
+    with the appropriate variable values.
+    
     EXAMPLES::
 
         sage: # needs sage.symbolic
@@ -1974,7 +1996,6 @@ cpdef generate_code(Expression expr, InstructionStream stream):
     cdef ExpressionConstant econst
     cdef ExpressionVariable evar
     cdef ExpressionCall ecall
-    cdef ExpressionChoice echoice
 
     # Maintain our own stack to avoid crashing on deeply-nested expressions.
     cdef list todo = [expr]
@@ -2015,7 +2036,7 @@ cpdef generate_code(Expression expr, InstructionStream stream):
             if ipow_range is True:
                 use_ipow = True
             elif isinstance(ipow_range, tuple):
-                a,b = ipow_range
+                a, b = ipow_range
                 use_ipow = (a <= exponent <= b)
             else:
                 use_ipow = False
@@ -2221,12 +2242,12 @@ cdef class InstructionStream:
                 # XXX bad for strict-mode floating-point constants
                 # (doesn't handle signed 0, NaN)
                 arg = args[i]
-                if (arg,parent(arg)) in self._constant_locs:
-                    self._bytecode.append(self._constant_locs[(arg,parent(arg))])
+                if (arg, parent(arg)) in self._constant_locs:
+                    self._bytecode.append(self._constant_locs[(arg, parent(arg))])
                 else:
                     loc = len(self._constants)
                     self._constants.append(arg)
-                    self._constant_locs[(arg,parent(arg))] = loc
+                    self._constant_locs[(arg, parent(arg))] = loc
                     self._bytecode.append(loc)
             elif spec.parameters[i] == 'args':
                 self._bytecode.append(args[i])

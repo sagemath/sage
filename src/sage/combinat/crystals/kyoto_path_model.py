@@ -224,9 +224,9 @@ class KyotoPathModel(TensorProductOfCrystals):
         ct = crystals[0].cartan_type()
         if P is None:
             P = weight.parent()
-        if sum( ct.dual().c()[i] * weight.scalar(h) for i,h in
-                enumerate(P.simple_coroots()) ) != level:
-            raise ValueError( "{} is not a level {} weight".format(weight, level) )
+        if sum(ct.dual().c()[i] * weight.scalar(h)
+               for i, h in enumerate(P.simple_coroots())) != level:
+            raise ValueError(f"{weight} is not a level {level} weight")
 
         return super().__classcall__(cls, crystals, weight, P)
 
