@@ -625,7 +625,6 @@ from sage.structure.richcmp import (
 )
 from sage.structure.sage_object import SageObject
 
-
 class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
     r"""
     Common base class for the classes :class:`~AlgebraicRealField` and
@@ -8660,25 +8659,34 @@ class ANBinaryExpr(ANDescr):
 
     def exactify(self):
         """
-        Trigger exact computation for this binary expression, combining
-        the exact fields of both operands into a single number field.
+        Return an exact representation of this binary expression.
 
+        This method recursively calls ``exactify()`` on both operands. The 
+        resulting number fields are then combined into a single field containing 
+        the result of the binary operation.
+    
         EXAMPLES::
 
-            sage: rt2 = AA(sqrt(2)); rt3 = AA(sqrt(3))
-            sage: x = rt2 + rt3 - rt3
-            sage: x.exactify()
-            sage: x
-            1.414213562373095?
+            We create a binary expression by adding two algebraic numbers. Initially, 
+            the result is a deferred expression (ANBinaryExpr). Calling exactify()
+            computes the minimal polynomial and interval enclosure::
+
+                sage: a = QQbar(sqrt(2)) + QQbar(sqrt(3))
+                sage: type(a.as_number())  # This triggers a binary expression
+                <class 'sage.rings.qqbar.ANBinaryExpr'>
+                sage: a.exactify()
+                sage: a
+                3.146264369941973?
 
         TESTS::
 
-            sage: rt2c = QQbar.zeta(3) + AA(sqrt(2)) - QQbar.zeta(3)                    
-            sage: rt2c.exactify()                                                      
+            sage: rt2c = QQbar.zeta(3) + AA(sqrt(2)) - QQbar.zeta(3)                    # needs sage.symbolic
+            sage: rt2c.exactify()                                                       # needs sage.symbolic
 
-        To ensure this method still works: Increase the recursion level at each step and
-        decrease it before return.
-        Lower the recursion limit for this test to allow
+        We check to make sure that this method still works even. We
+        do this by increasing the recursion level at each step and
+        decrease it before we return.
+        We lower the recursion limit for this test to allow
         a test in reasonable time::
 
             sage: import sys
