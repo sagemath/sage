@@ -665,6 +665,21 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, G)) == (v == w)
             ....:         assert (valuations.LimitValuation(w, G) >= valuations.LimitValuation(v, F)) == (v == w)
 
+        An example with several valuations that correspond to factors of F over Q2 that are not rational::
+
+            sage: R.<x> = QQ[]
+            sage: F = (x^2 - 17) * (x^2 - 25) * (x^7 - 1)
+            sage: G = (x^2 - 25) * (x^7 - 1)
+            sage: V = QQ.valuation(2).mac_lane_approximants(F, require_incomparability=True)
+
+            sage: for v in V:
+            ....:     for w in V:
+            ....:         print(v,w)
+            ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, F)) == (v == w)
+            ....:         if valuations.LimitValuation(w, F)(G) != oo: continue
+            ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, G)) == (v == w)
+            ....:         assert (valuations.LimitValuation(w, G) >= valuations.LimitValuation(v, F)) == (v == w)
+
         """
         if other.is_trivial():
             return other.is_discrete_valuation()
