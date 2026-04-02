@@ -671,8 +671,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                 # defining G. Note that they can be equal even if the defining
                 # Gs are different but share a common factor.
                 # We therefore refine the defining Gs until they are either
-                # equal or coprime which is guaranteed to happen in a finite
-                # number of steps, see _improve_approximation_for_call.
+                # equal or we can otherwise decide that the valuations must be distinct.
                 while self._G != other._G:
                     if self._G.gcd(other._G).is_one():
                         # The valuations cannot approximate the same factor of
@@ -685,13 +684,15 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                         # The valuations differ on other._G, they must be different.
                         return False
 
-                    # Since self sends other._G to infinity, self._G divides other._G. (*)
+                    # Since self sends other._G to infinity, self._G divides
+                    # other._G, see _improve_approximation_for_call. (*)
 
                     if other(self._G) is not infinity:
                         # The valuations differ on self._G, they must be different.
                         return False
 
-                    # Since other send self._G to infinity, other._G divides self._G. (**)
+                    # Since other send self._G to infinity, other._G divides
+                    # self._G, _improve_approximation_for_call. (**)
 
                     # Therefore, at least one of self._G and other._G has been
                     # replaced by one of its factors in this iteration of the
@@ -699,7 +700,11 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                     # to terminate.
                     # Note that (*) and (**) do not imply that self._G ==
                     # other._G since other._G might have been mutated so (*)
-                    # might not hold anymore.
+                    # might not hold anymore. (However, due to exact
+                    # construction performed by
+                    # _improve_approximation_for_call, self._G == other._G
+                    # actually should hold now but we consider this an
+                    # implementation detail that we do not want to rely on.)
 
                 # If the valuations are comparable, they must approximate the
                 # same factor of G (see the documentation of LimitValuation:
