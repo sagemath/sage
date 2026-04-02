@@ -675,10 +675,31 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                 # number of steps, see _improve_approximation_for_call.
                 while self._G != other._G:
                     if self._G.gcd(other._G).is_one():
+                        # The valuations cannot approximate the same factor of
+                        # their defining Gs. They must be distinct.
                         return False
 
-                    self._improve_approximation_for_call(other._G)
-                    other._improve_approximation_for_call(self._G)
+                    from sage.rings.infinity import infinity
+
+                    if self(other._G) is not infinity:
+                        # The valuations differ on other._G, they must be different.
+                        return False
+
+                    # Since self sends other._G to infinity, self._G divides other._G. (*)
+
+                    if other(self._G) is not infinity:
+                        # The valuations differ on self._G, they must be different.
+                        return False
+
+                    # Since other send self._G to infinity, other._G divides self._G. (**)
+
+                    # Therefore, at least one of self._G and other._G has been
+                    # replaced by one of its factors in this iteration of the
+                    # while loop which means that the loop is eventually going
+                    # to terminate.
+                    # Note that (*) and (**) do not imply that self._G ==
+                    # other._G since other._G might have been mutated so (*)
+                    # might not hold anymore.
 
                 # If the valuations are comparable, they must approximate the
                 # same factor of G (see the documentation of LimitValuation:
