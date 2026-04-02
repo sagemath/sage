@@ -1836,7 +1836,7 @@ etc. This can be applied to generate:
 -  lattices (not implemented in ``Sage``), via the bijection with the
    meet semi-lattice obtained by deleting the maximal vertex; in this
    case an augmentation by vertices rather than by edges is used.
-   
+
 .. [1]
    Or at least that should be the case; there are still many corners to
    clean up.
