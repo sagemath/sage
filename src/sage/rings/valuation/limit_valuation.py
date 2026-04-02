@@ -655,10 +655,16 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: V = QQ.valuation(2).mac_lane_approximants(F, require_incomparability=True)
             sage: valuations.LimitValuation(V[0], F) >= valuations.LimitValuation(V[1], F)
             False
-            sage: valuations.LimitValuation(V[1], F) >= valuations.LimitValuation(V[1], G)
-            True
-            sage: valuations.LimitValuation(V[2], F) >= valuations.LimitValuation(V[2], G)
-            True
+
+        TESTS::
+
+            sage: for v in V:
+            ....:     for w in V:
+            ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, F)) == (v == w)
+            ....:         if valuations.LimitValuation(w, F)(G) != oo: continue
+            ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, G)) == (v == w)
+            ....:         assert (valuations.LimitValuation(w, G) >= valuations.LimitValuation(v, F)) == (v == w)
+
         """
         if other.is_trivial():
             return other.is_discrete_valuation()
