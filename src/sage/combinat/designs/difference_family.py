@@ -1059,6 +1059,7 @@ def mcfarland_1973_construction(q, s):
         The function :func:`are_mcfarland_1973_parameters` makes the translation
         between the parameters `(q,s)` corresponding to a given triple
         `(v,k,\lambda)`.
+
     EXAMPLES::
 
         sage: from sage.combinat.designs.difference_family import (
