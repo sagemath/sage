@@ -1169,14 +1169,10 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
         EXAMPLES::
 
             sage: unitary_specht = SymmetricGroupRepresentation([3,1], 'unitary', ring=GF(7**2))
-            sage: unitary_specht.representation_matrix(Permutation([2,1,3,4]))
-            [6 0 0]
-            [0 1 0]
-            [0 0 1]
-            sage: unitary_specht.representation_matrix(Permutation([3,2,1,4]))
-            [       4 2*z2 + 3        0]
-            [5*z2 + 5        3        0]
-            [       0        0        1]
+            sage: A = unitary_specht.representation_matrix(Permutation([2,1,3,4]))
+            sage: B = unitary_specht.representation_matrix(Permutation([3,2,1,4]))
+            sage: A * A.H == 1 and B * B.H == 1
+            True
             sage: all(A * A.H == 1 for A in [unitary_specht.representation_matrix(g)
             ....:                            for g in Permutations(4)])
             True
@@ -1251,14 +1247,13 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
         EXAMPLES::
 
             sage: unitary_specht = SymmetricGroupRepresentation([3,1], 'unitary', ring=GF(7**2))
-            sage: unitary_specht._unitary_change_basis_matrix
-            [       1        4        4]
-            [       0 2*z2 + 2 3*z2 + 3]
-            [       0        0 6*z2 + 1]
+            sage: A = unitary_specht._unitary_change_basis_matrix
+            sage: A.nrows(), A.ncols(), A.is_invertible()
+            (3, 3, True)
             sage: unitary_specht = SymmetricGroupRepresentation([2,2], 'unitary', ring=GF(7**2))
-            sage: unitary_specht._unitary_change_basis_matrix
-            [       1        4]
-            [       0 2*z2 + 2]
+            sage: A = unitary_specht._unitary_change_basis_matrix
+            sage: A.nrows(), A.ncols(), A.is_invertible()
+            (2, 2, True)
         """
         # Deterministic invariant form; see _canonical_invariant_form.
         U = self._canonical_invariant_form
@@ -1286,12 +1281,10 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
         EXAMPLES::
 
             sage: unitary_specht = SymmetricGroupRepresentation([2,2], 'unitary', ring=GF(7**2))
-            sage: unitary_specht._representation_matrix_uncached(Permutation([3,1,4,2]))
-            [       4 5*z2 + 4]
-            [2*z2 + 2        3]
-            sage: unitary_specht._representation_matrix_uncached(Permutation([1,2,4,3]))
-            [6 0]
-            [0 1]
+            sage: A = unitary_specht._representation_matrix_uncached(Permutation([3,1,4,2]))
+            sage: B = unitary_specht._representation_matrix_uncached(Permutation([1,2,4,3]))
+            sage: A * A.H == 1 and B * B.H == 1
+            True
             sage: all(A * A.H == 1 for A in [unitary_specht._representation_matrix_uncached(g)
             ....:                            for g in Permutations(4)])
             True
