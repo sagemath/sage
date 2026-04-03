@@ -1323,51 +1323,6 @@ class Factorization(SageObject):
         else:
             raise NotImplementedError("gcd is not implemented for non-commutative factorizations")
 
-    def gcd_with_exponent(self, n_exp, q=None):
-        r"""
-        Return the gcd of ``self`` with an integer exponent.
-
-        This is a convenience wrapper for computing the factorization of
-        ``\gcd(n_{\text{exp}}, N)`` when ``self`` is a factorization of
-        the integer ``N``.  It is implemented using :meth:`gcd` and the
-        existing factorization of ``n_{\text{exp}}``.
-
-        INPUT:
-
-        - ``n_exp`` -- integer; the exponent whose gcd with the value of
-          ``self`` is required
-
-        - ``q`` -- (optional) integer; if given, this method assumes that
-          ``self`` is a factorization of ``q-1`` and raises a
-          :class:`ValueError` if ``self.value()`` is not equal to ``q-1``.
-
-        EXAMPLES::
-
-            sage: from sage.structure.factorization import Factorization
-            sage: F = Factorization([(2, 4)])    # 16
-            sage: F.gcd_with_exponent(4, q=17)
-            2^2
-            sage: F.gcd_with_exponent(8, q=17)
-            2^3
-            sage: F.gcd_with_exponent(3, q=17)
-            1
-
-        The optional ``q`` parameter checks consistency of the cached
-        factorization (:issue:`41911`)::
-
-            sage: F = Factorization([(2, 3)])    # 8, not 16
-            sage: F.gcd_with_exponent(4, q=17)
-            Traceback (most recent call last):
-            ...
-            ValueError: order_factorization does not multiply to q-1
-        """
-        from sage.rings.integer_ring import ZZ
-
-        if q is not None and self.value() != ZZ(q) - 1:
-            raise ValueError("order_factorization does not multiply to q-1")
-
-        return self.gcd(ZZ(n_exp).factor())
-
     def lcm(self, other):
         r"""
         Return the lcm of two factorizations.

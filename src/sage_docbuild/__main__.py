@@ -160,7 +160,8 @@ def help_documents():
     shortcut 'all' for all documents, available to the Sage
     documentation builder.
     """
-    docs = get_documents()
+    source_dir = Path(os.environ.get('SAGE_DOC_SRC', 'src/doc')).absolute()
+    docs = get_all_documents(source_dir)
     s = "DOCUMENTs:\n"
     s += format_columns(docs)
     s += "\n"
@@ -179,7 +180,7 @@ def get_formats():
     will accept on the command-line.
     """
     tut_b = DocBuilder('en/tutorial', BuildOptions())
-    formats = tut_b._output_formats()
+    formats = list(tut_b._output_formats())
     formats.remove('html')
     return ['html', 'pdf'] + formats
 
@@ -255,7 +256,12 @@ class help_wrapper(argparse.Action):
         if option_string in ['-F', '--formats']:
             print(help_formats(), end="")
         if self.dest == 'commands':
-            print(help_commands(values), end="")
+            cmd_name = 'all'
+            if isinstance(values, str):
+                cmd_name = values
+            elif values:
+                cmd_name = values[0] if isinstance(values, (list, tuple)) else str(values)
+            print(help_commands(cmd_name), end="")
         setattr(namespace, 'printed_list', 1)
         sys.exit(0)
 

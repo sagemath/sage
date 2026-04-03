@@ -94,10 +94,12 @@ cdef class FiniteRingElement(CommutativeRingElement):
             from sage.rings.factorint import factor_cunningham
             F = factor_cunningham(n)
         else:
-            # Reuse the cached factorization of q-1 provided by the parent,
-            # intersected with the factorization of n via Factorization.gcd.
+            # Use the cached factorization of q-1 and :meth:`Factorization.gcd`
+            # with ``factor(n_exponent)`` (see :issue:`41911`).
             order_fac = K.factored_unit_order()[0]
-            F = order_fac.gcd_with_exponent(n_exponent, q=q)
+            if order_fac.value() != ZZ(q) - 1:
+                raise ValueError("order_factorization does not multiply to q-1")
+            F = order_fac.gcd(ZZ(n_exponent).factor())
         from sage.groups.generic import discrete_log
         if algorithm is None or algorithm == 'Johnston':
             # In the style of the Adleman-Manders-Miller algorithm,
