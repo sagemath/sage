@@ -26,7 +26,7 @@ from sage.rings.integer import Integer
 
 
 cdef class FiniteRingElement(CommutativeRingElement):
-    def _nth_root_common(self, n, all, algorithm, cunningham, order_factorization=None):
+    def _nth_root_common(self, n, all, algorithm, cunningham):
         """
         This function exists to reduce code duplication between finite field
         `n`-th roots and ``integer_mod`` `n`-th roots. It assumes that ``self``
@@ -42,10 +42,12 @@ cdef class FiniteRingElement(CommutativeRingElement):
             sage: sorted(a._nth_root_common(4, True, "Johnston", cunningham=True))  # optional - cunningham_tables
             [3, 5, 12, 14]
 
-        Precomputed factorization of `q-1`::
+        Precomputed factorization of `q-1` via :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.factored_unit_order`::
 
-            sage: a = Zmod(17)(13)
-            sage: sorted(a._nth_root_common(4, True, "Johnston", False, order_factorization=[(2, 4)]))
+            sage: K = GF(17)
+            sage: K.factored_unit_order.set_cache((factor(16),))
+            sage: a = K(13)
+            sage: sorted(a._nth_root_common(4, True, "Johnston", False))
             [3, 5, 12, 14]
 
         Test various prime powers::
@@ -89,15 +91,13 @@ cdef class FiniteRingElement(CommutativeRingElement):
             raise ValueError("no nth root")
         self = self**alpha
         if cunningham:
-            if order_factorization is not None:
-                raise ValueError("order_factorization cannot be used with cunningham=True")
             from sage.rings.factorint import factor_cunningham
             F = factor_cunningham(n)
-        elif order_factorization is not None:
-            from sage.rings.finite_rings.nth_root_utils import gcd_factorization_from_order_factorization
-            F = gcd_factorization_from_order_factorization(order_factorization, n_exponent, q)
         else:
-            F = n.factor()
+            # Reuse the cached factorization of q-1 provided by the parent,
+            # intersected with the factorization of n via Factorization.gcd.
+            order_fac = K.factored_unit_order()[0]
+            F = order_fac.gcd_with_exponent(n_exponent, q=q)
         from sage.groups.generic import discrete_log
         if algorithm is None or algorithm == 'Johnston':
             # In the style of the Adleman-Manders-Miller algorithm,
@@ -826,8 +826,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         return self.square_root(extend=extend, all=all)
 
-    def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False,
-                 order_factorization=None):
+    def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False):
         r"""
         Return an `n`-th root of ``self``.
 
@@ -848,12 +847,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
           is reduced to the prime modulus case using CRT and `p`-adic logs,
           and then this algorithm used.
 
-        - ``order_factorization`` -- (optional) list of pairs ``(p, e)`` giving
-          the factorization of the multiplicative group order `q-1`, where `q`
-          is the cardinality of the parent field. If provided, this factorization
-          is used instead of factoring `\gcd(n, q-1)` internally (which may call
-          expensive routines such as ECM). The product `\prod p^e` must equal
-          `q-1`. Incompatible with ``cunningham=True``.
+        If you already know a factorization of the multiplicative order `q-1`,
+        install it with ``parent.factored_unit_order.set_cache(...)`` (see EXAMPLES).
 
         OUTPUT:
 
@@ -876,6 +871,11 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             5
             sage: K(23).nth_root(3)
             29
+
+            sage: K = GF(31)
+            sage: K.factored_unit_order.set_cache((factor(30),))
+            sage: K(22).nth_root(7)
+            13
 
             sage: K.<a> = GF(625)
             sage: (3*a^2+a+1).nth_root(13)**13
@@ -904,13 +904,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             ValueError: no nth root
             sage: b.nth_root(4, all=True)
             []
-
-        Precomputed factorization of `q-1` (here `31 - 1 = 2 \cdot 3 \cdot 5`)::
-
-            sage: K = GF(31)
-            sage: fac = [(2, 1), (3, 1), (5, 1)]
-            sage: K(22).nth_root(7, order_factorization=fac)
-            13
 
         TESTS::
 
@@ -960,7 +953,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         if extend:
             raise NotImplementedError
         n = Integer(n)
-        return self._nth_root_common(n, all, algorithm, cunningham, order_factorization)
+        return self._nth_root_common(n, all, algorithm, cunningham)
 
     def pth_power(self, int k=1):
         """

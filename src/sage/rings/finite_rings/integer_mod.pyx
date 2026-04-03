@@ -1356,8 +1356,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
     square_root = sqrt
 
-    def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False,
-                 order_factorization=None):
+    def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False):
         r"""
         Return an `n`-th root of ``self``.
 
@@ -1385,14 +1384,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
           need to install an optional package to use this method, this can be
           done with the following command line: ``sage -i cunningham_tables``.
 
-        - ``order_factorization`` -- (optional) list of pairs ``(p, e)`` giving
-          the factorization of the multiplicative group order `q-1`, where `q`
-          is the cardinality of the parent ring (a prime field `\ZZ/p\ZZ` in the
-          case where this option applies). If provided, this factorization is
-          used instead of factoring `\gcd(n, q-1)` inside the core algorithm.
-          The product `\prod p^e` must equal `q-1`. Ignored for composite
-          modulus (Chinese remainder reduction). Incompatible with
-          ``cunningham=True``.
+        For a prime modulus, if you already know the factorization of `q-1`,
+        install it with ``parent.factored_unit_order.set_cache(...)`` before
+        calling :meth:`nth_root` (see EXAMPLES).
 
         OUTPUT:
 
@@ -1507,19 +1501,19 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         Precomputed factorization of `q-1` for a prime modulus (`11 - 1 = 2 \cdot 5`)::
 
-            sage: Mod(9, 11).nth_root(2, order_factorization=[(2, 1), (5, 1)])
+            sage: R = IntegerModRing(11)
+            sage: R.factored_unit_order.set_cache([factor(10)])
+            sage: Mod(9, 11).nth_root(2)
             3
 
-        TESTS for ``order_factorization``::
+        TESTS for ``factored_unit_order`` cache::
 
-            sage: Mod(9, 11).nth_root(2, order_factorization=[(2, 2)])
+            sage: R = IntegerModRing(11)
+            sage: R.factored_unit_order.set_cache([factor(9)])
+            sage: Mod(9, 11).nth_root(2)
             Traceback (most recent call last):
             ...
             ValueError: order_factorization does not multiply to q-1
-            sage: Mod(9, 11).nth_root(2, order_factorization=[(2, 1), (5, 1)], cunningham=True)
-            Traceback (most recent call last):
-            ...
-            ValueError: order_factorization cannot be used with cunningham=True
 
         ALGORITHM:
 
@@ -1643,7 +1637,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 return ans
             else:
                 return sign[0] * K(R.teichmuller(modp) * (plog // n).exp())
-        return self._nth_root_common(n, all, algorithm, cunningham, order_factorization)
+        return self._nth_root_common(n, all, algorithm, cunningham)
 
     def _nth_root_naive(self, n):
         """

@@ -994,11 +994,17 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return factor(self.__order, int_=(self.__order < 2**31))
 
+    @cached_method
     def factored_unit_order(self):
         r"""
         Return a list of :class:`Factorization` objects, each the factorization
         of the order of the units in a `\ZZ / p^n \ZZ` component of this group
         (using the Chinese Remainder Theorem).
+
+        This method is cached so that users may replace the default computation
+        with a known factorization of each unit-group order via
+        :meth:`sage.misc.cachefunc.CachedFunction.set_cache` (see
+        :meth:`~sage.rings.finite_rings.element_base.FiniteRingElement.nth_root`).
 
         EXAMPLES::
 
