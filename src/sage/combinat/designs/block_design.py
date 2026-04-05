@@ -12,6 +12,7 @@ deemed useful for a particular application. See :wikipedia:`Block_design`.
   http://designtheory.org/library/extrep/extrep-1.1-html/node4.html (in 'The
   External Representation of Block Designs' by Peter J. Cameron, Peter
   Dobcsanyi, John P. Morgan, Leonard H. Soicher)
+
 AUTHORS:
 
 - Quentin Honoré (2015): construction of Hughes plane :issue:`18527`

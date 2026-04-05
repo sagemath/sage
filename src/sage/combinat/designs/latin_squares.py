@@ -106,6 +106,7 @@ Comparison with the results from the Handbook of Combinatorial Designs (2ed)
 .. TODO::
 
     Look at [ColDin01]_.
+
 Functions
 ---------
 """

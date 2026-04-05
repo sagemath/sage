@@ -26,6 +26,7 @@ The main function of this module is
     :func:`v_4_1_rbibd` | Return a `(v,4,1)`-RBIBD
     :func:`PBD_4_7` | Return a `(v,\{4,7\})`-PBD
     :func:`PBD_4_7_from_Y` | Return a `(3v+1,\{4,7\})`-PBD from a `(v,\{4,5,7\},\NN-\{3,6,10\})`-GDD.
+
 Functions
 ---------
 """
