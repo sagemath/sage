@@ -41,10 +41,11 @@ def banner_text(full: bool = True) -> LiteralString:
 
     EXAMPLES::
 
-        sage: print(sage.misc.banner.banner_text(full=True))
+        sage: from sage.misc.banner import banner_text
+        sage: print(banner_text(full=True))
         ┌────────────────────────────────────────────────────────────────────┐
         │ SageMath version ...
-        sage: print(sage.misc.banner.banner_text(full=False))
+        sage: print(banner_text(full=False))
         SageMath version ..., Release Date: ...
     """
     if not full:
