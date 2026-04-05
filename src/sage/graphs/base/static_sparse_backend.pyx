@@ -448,7 +448,6 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         ::
 
-            sage: # needs sage.combinat
             sage: g = DiGraph(digraphs.DeBruijn(4, 3), data_structure='static_sparse')
             sage: gi = DiGraph(g, data_structure='static_sparse')
             sage: gi.edges(sort=True)[0]

@@ -2997,15 +2997,16 @@ cdef class Matroid(SageObject):
             flags = self._extend_flags(flags)
         return flags
 
-    cpdef SetSystem flats(self, long k):
+    cpdef SetSystem flats(self, long k=-1):
         r"""
-        Return the collection of flats of the matroid of specified rank.
+        Return the flats of the matroid.
 
         A *flat* is a closed set.
 
         INPUT:
 
-        - ``k`` -- integer
+        - ``k`` -- integer (optional); if specified, return the rank-`k`
+          flats of the matroid
 
         OUTPUT: :class:`SetSystem`
 
@@ -3020,8 +3021,22 @@ cdef class Matroid(SageObject):
             [['a', 'b', 'f'], ['a', 'c', 'e'], ['a', 'd', 'g'],
             ['b', 'c', 'd'], ['b', 'e', 'g'], ['c', 'f', 'g'],
             ['d', 'e', 'f']]
+
+        TESTS::
+
+            sage: M = matroids.catalog.Vamos()
+            sage: M.flats(2)
+            SetSystem of 28 sets over 8 elements
+            sage: M.flats()
+            SetSystem of 79 sets over 8 elements
         """
-        return SetSystem(self.groundset(), subsets=[f[0] for f in self._flags(k)])
+        cdef list F = []
+        if k == -1:
+            for i in range(self.rank() + 1):
+                F.extend([f[0] for f in self._flags(i)])
+        else:
+            F.extend([f[0] for f in self._flags(k)])
+        return SetSystem(self.groundset(), F)
 
     cpdef SetSystem coflats(self, long k):
         r"""
@@ -8305,6 +8320,8 @@ cdef class Matroid(SageObject):
 
         TESTS::
 
+            sage: M = matroids.catalog.Fano()
+            sage: assert M.broken_circuit_complex().is_immutable()                      # needs sage.graphs
             sage: for M in matroids.AllMatroids(5):  # optional - matroid_database
             ....:     r = M.rank()
             ....:     if r > 0 and not M.dual().loops():
@@ -8323,7 +8340,7 @@ cdef class Matroid(SageObject):
         for S in self.no_broken_circuits_sets_iterator(ordering):
             if len(S) == r:
                 facets.append(S)
-        return SimplicialComplex(facets, maximality_check=False)
+        return SimplicialComplex(facets, maximality_check=False, is_immutable=True)
 
     cpdef automorphism_group(self):
         r"""
@@ -8644,5 +8661,4 @@ cdef class Matroid(SageObject):
             X_inv = frozenset([d_inv[x] for x in X])
             return self._rank(X_inv)
 
-        M = RankMatroid(groundset=E, rank_function=f_relabel)
-        return M
+        return RankMatroid(groundset=E, rank_function=f_relabel)

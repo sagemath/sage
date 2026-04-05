@@ -93,38 +93,14 @@ from sage.rings.cc import CC
 TUNE_CHARPOLY_NF = 25
 
 
-def is_NumberFieldElement(x):
-    """
-    Return ``True`` if `x` is of type :class:`NumberFieldElement`, i.e., an element of
-    a number field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field_element import is_NumberFieldElement
-        sage: is_NumberFieldElement(2)
-        doctest:warning...
-        DeprecationWarning: is_NumberFieldElement is deprecated;
-        use isinstance(..., sage.rings.number_field.number_field_element_base.NumberFieldElement_base) instead
-        See https://github.com/sagemath/sage/issues/34931 for details.
-        False
-        sage: x = polygen(ZZ, 'x')
-        sage: k.<a> = NumberField(x^7 + 17*x + 1)
-        sage: is_NumberFieldElement(a+1)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34931,
-                'is_NumberFieldElement is deprecated; '
-                'use isinstance(..., sage.rings.number_field.number_field_element_base.NumberFieldElement_base) instead')
-    return isinstance(x, NumberFieldElement)
-
-
 def _inverse_mod_generic(elt, I):
     r"""
-    Return an inverse of ``elt`` modulo the given ideal. This is a separate
-    function called from each of the ``OrderElement_xxx`` classes, since
-    otherwise we'd have to have the same code three times over (there
-    is no ``OrderElement_generic`` class - no multiple inheritance). See
+    Return an inverse of ``elt`` modulo the given ideal ``I``.
+
+    This is a separate function called from each of the
+    ``OrderElement_xxx`` classes, since otherwise we'd have to have
+    the same code three times over (there is no
+    ``OrderElement_generic`` class - no multiple inheritance). See
     :issue:`4190`.
 
     EXAMPLES::
@@ -483,7 +459,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: (a**2 - a + 1)._gap_init_()
@@ -538,7 +513,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: F = CyclotomicField(8)
             sage: F.gen()._libgap_()
             E(8)
@@ -578,7 +552,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
-            sage: # needs sage.libs.pari
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K.zero()._pari_polynomial('x')
@@ -610,7 +583,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K(1).__pari__()
@@ -2912,7 +2884,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: K.<a> = QuadraticField(2)
             sage: SR(a)         # indirect doctest
             sqrt(2)

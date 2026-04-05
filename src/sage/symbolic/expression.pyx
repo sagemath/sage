@@ -5989,18 +5989,18 @@ cdef class Expression(Expression_abc):
         is identity::
 
             sage: x = SR.var("x")
-            sage: all([bool(u(x).exponentialize().demoivre(force=True) == u(x))
-            ....:      for u in (sin, cos, tan, csc, sec, cot,
-            ....:                sinh, cosh, tanh, csch, sech, coth)])
+            sage: all(bool(u(x).exponentialize().demoivre(force=True) == u(x))
+            ....:     for u in (sin, cos, tan, csc, sec, cot,
+            ....:               sinh, cosh, tanh, csch, sech, coth))
             True
 
         Check that differentiation and exponentialization commute::
 
             sage: x = SR.var("x")
-            sage: all([bool(u(x).diff(x).exponentialize() ==
-            ....:           u(x).exponentialize().diff(x))
-            ....:      for u in (sin, cos, tan, csc, sec, cot,
-            ....:                sinh, cosh, tanh, csch, sech, coth)])
+            sage: all(bool(u(x).diff(x).exponentialize() ==
+            ....:          u(x).exponentialize().diff(x))
+            ....:     for u in (sin, cos, tan, csc, sec, cot,
+            ....:               sinh, cosh, tanh, csch, sech, coth))
             True
         """
         from sage.symbolic.expression_conversions import Exponentialize
@@ -13160,7 +13160,8 @@ cdef class Expression(Expression_abc):
             integrate(log(4/5*sin(x) + 1), x, -3.14150000000000,
             3.14150000000000)
             sage: # needs sage.libs.giac
-            sage: integrate(f, x, -3.1415, 3.1415)  # tol 10e-6
+            sage: ans = integrate(f, x, -3.1415, 3.1415)  # random
+            sage: ans  # tol 10e-6
             -1.40205228301000
         """
         from sage.symbolic.integration.integral import \

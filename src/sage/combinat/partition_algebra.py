@@ -1718,28 +1718,27 @@ def is_planar(sp):
                     if row[s] + 1 == row[s + 1]:
                         # No gap, continue on
                         continue
-                    else:
-                        rng = list(range(row[s] + 1, row[s + 1]))
+                    rng = list(range(row[s] + 1, row[s + 1]))
 
-                        # Go through and make sure any parts that
-                        # contain numbers in this range are completely
-                        # contained in this range
-                        for j in range(n):
-                            if i == j:
-                                continue
+                    # Go through and make sure any parts that
+                    # contain numbers in this range are completely
+                    # contained in this range
+                    for j in range(n):
+                        if i == j:
+                            continue
 
-                            # Make sure we make the numbers negative again
-                            # if we are in the bottom row
-                            if row is ap:
-                                sr = Set(rng)
-                            else:
-                                sr = Set(-x for x in rng)
+                        # Make sure we make the numbers negative again
+                        # if we are in the bottom row
+                        if row is ap:
+                            sr = Set(rng)
+                        else:
+                            sr = Set(-x for x in rng)
 
-                            sj = Set(to_consider[j])
-                            intersection = sr.intersection(sj)
-                            if intersection:
-                                if sj != intersection:
-                                    return False
+                        sj = Set(to_consider[j])
+                        intersection = sr.intersection(sj)
+                        if intersection:
+                            if sj != intersection:
+                                return False
 
     return True
 

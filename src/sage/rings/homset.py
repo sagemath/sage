@@ -139,7 +139,6 @@ class RingHomset_generic(HomsetWithBase):
 
         You can provide a morphism on the base::
 
-            sage: # needs sage.rings.finite_rings
             sage: k = GF(9)
             sage: z2 = k.gen()
             sage: cc = k.frobenius_endomorphism()
@@ -271,7 +270,6 @@ class RingHomset_quo_ring(RingHomset_generic):
 
     ::
 
-        sage: # needs sage.libs.singular
         sage: R.<x,y> = PolynomialRing(QQ, 2)
         sage: S.<a,b> = R.quotient(x^2 + y^2)
         sage: H = S.Hom(R)
@@ -293,7 +291,6 @@ class RingHomset_quo_ring(RingHomset_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: S.<a,b> = R.quotient(x^2 + y^2)
             sage: H = S.Hom(R)

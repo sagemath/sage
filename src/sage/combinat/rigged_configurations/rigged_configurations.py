@@ -597,9 +597,9 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
             C = itertools.product(*L)
             for curBlocks in C:
-                module_gens.append( self.element_class(self, KT_constructor=[shapes[:],
-                                         self._blocks_to_values(curBlocks[:]),
-                                         vac_nums[:]]) )
+                module_gens.append(self.element_class(self, KT_constructor=[shapes[:],
+                                        self._blocks_to_values(curBlocks[:]),
+                                        vac_nums[:]]))
 
         return tuple(module_gens)
 
@@ -1271,8 +1271,8 @@ class RCNonSimplyLaced(RiggedConfigurations):
 
             C = itertools.product(*L)
             for cur_blocks in C:
-                module_gens.append( self.element_class(self, KT_constructor=[shapes[:],
-                                         self._blocks_to_values(cur_blocks[:]), vac_nums[:]]) )
+                module_gens.append(self.element_class(self, KT_constructor=[shapes[:],
+                                         self._blocks_to_values(cur_blocks[:]), vac_nums[:]]))
 
         return tuple(module_gens)
 
@@ -1791,8 +1791,8 @@ class RCTypeA2Dual(RCTypeA2Even):
 
             C = itertools.product(*L)
             for curBlocks in C:
-                module_gens.append( self.element_class(self, KT_constructor=[shapes[:],
-                                         self._blocks_to_values(curBlocks[:]), vac_nums[:]]) )
+                module_gens.append(self.element_class(self, KT_constructor=[shapes[:],
+                                        self._blocks_to_values(curBlocks[:]), vac_nums[:]]))
 
         return tuple(module_gens)
 

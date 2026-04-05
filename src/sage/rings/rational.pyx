@@ -318,7 +318,6 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5):
         sage: all(rational_power_parts(-1, i/77) == (1,-1) for i in range(1,9))
         True
 
-        sage: # needs sage.symbolic
         sage: (-1)^(-1/3)
         -(-1)^(2/3)
         sage: 1 / ((-1)^(1/3))
@@ -1389,7 +1388,6 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.real_mpfr
             sage: a = QQ(6/25)
             sage: a.global_height_arch() + a.global_height_non_arch()
             3.21887582486820
@@ -1458,7 +1456,6 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x^2 - 2, 'beta')
             sage: (1/7).is_norm(K)
@@ -1485,7 +1482,6 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         A non-Galois number field::
 
-            sage: # needs sage.rings.number_field
             sage: K.<a> = NumberField(x^3 - 2)
             sage: B, e = (3/5).is_norm(K, element=True); B
             True
@@ -1952,7 +1948,6 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: n.sqrt()                                                              # needs sage.symbolic
             sqrt(2/3)
 
-            sage: # needs sage.rings.real_mpfr
             sage: n.sqrt(prec=10)
             0.82
             sage: n.sqrt(prec=100)
@@ -3288,7 +3283,6 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: gamma(1/2)
             sqrt(pi)
             sage: gamma(7/2)

@@ -134,6 +134,7 @@ py.install_sources(
   'tableau_residues.py',
   'tableau_tuple.py',
   'tamari_lattices.py',
+  'tamari_blossoming_tree.py',
   'tiling.py',
   'tools.py',
   'triangles_FHM.py',

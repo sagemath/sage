@@ -149,13 +149,20 @@ developed for number fields in [Mac1936I]_ and [Mac1936II]_.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.factory import UniqueFactory
-from sage.rings.rational_field import QQ
 from sage.misc.cachefunc import cached_method
-
-from sage.rings.valuation.valuation import DiscreteValuation, DiscretePseudoValuation, InfiniteDiscretePseudoValuation, NegativeInfiniteDiscretePseudoValuation
+from sage.rings.rational_field import QQ
+from sage.rings.valuation.mapped_valuation import (
+    FiniteExtensionFromLimitValuation,
+    MappedValuation_base,
+)
 from sage.rings.valuation.trivial_valuation import TrivialValuation
-from sage.rings.valuation.mapped_valuation import FiniteExtensionFromLimitValuation, MappedValuation_base
+from sage.rings.valuation.valuation import (
+    DiscretePseudoValuation,
+    DiscreteValuation,
+    InfiniteDiscretePseudoValuation,
+    NegativeInfiniteDiscretePseudoValuation,
+)
+from sage.structure.factory import UniqueFactory
 
 
 class FunctionFieldValuationFactory(UniqueFactory):
@@ -505,7 +512,6 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
 
         Iterated extensions over the infinite place::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2))
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 + y + x^3)
@@ -533,7 +539,6 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
 
         Test that this works in towers::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2))
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y - x)
@@ -569,8 +574,8 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
                     return [L.valuation(w) for w in self.mac_lane_approximants(L.polynomial(), require_incomparability=True)]
                 elif L.base() is not L and K.is_subring(L):
                     # recursively call this method for the tower of fields
-                    from operator import add
                     from functools import reduce
+                    from operator import add
                     A = [base_valuation.extensions(L) for base_valuation in self.extensions(L.base())]
                     return reduce(add, A, [])
                 elif L.constant_base_field() is not K.constant_base_field() and K.constant_base_field().is_subring(L):
@@ -598,7 +603,6 @@ class RationalFunctionFieldValuation_base(FunctionFieldValuation_base):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 6)
             sage: v = K.valuation(2)
@@ -807,7 +811,6 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: K.<x> = FunctionField(QQ)
             sage: v = K.valuation(x^2 + 1)
             sage: L.<x> = FunctionField(GaussianIntegers().fraction_field())
@@ -1096,7 +1099,6 @@ class FunctionFieldFromLimitValuation(FiniteExtensionFromLimitValuation, Discret
         r"""
         TESTS::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - (x^2 + x + 1))
@@ -1115,7 +1117,6 @@ class FunctionFieldFromLimitValuation(FiniteExtensionFromLimitValuation, Discret
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - (x^2 + x + 1))
@@ -1132,7 +1133,6 @@ class FunctionFieldFromLimitValuation(FiniteExtensionFromLimitValuation, Discret
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - (x^2 + x + 1))
@@ -1249,7 +1249,6 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^4 - 1)
@@ -1407,7 +1406,6 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2))
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 + y + x^3)
@@ -1415,7 +1413,6 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
             sage: w = v.extension(L); w
             Valuation at the infinite place
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - 1/x^2 - 1)
@@ -1435,7 +1432,6 @@ class FunctionFieldExtensionMappedValuation(FunctionFieldMappedValuationRelative
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2))
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 + y + x^3)

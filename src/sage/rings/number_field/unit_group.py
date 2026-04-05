@@ -296,7 +296,6 @@ class UnitGroup(AbelianGroupWithValues_class):
         Conversion from unit group to a number field and back
         gives the right results (:issue:`25874`)::
 
-            sage: # needs sage.libs.linbox
             sage: K = QuadraticField(-3).composite_fields(QuadraticField(2))[0]
             sage: U = K.unit_group()
             sage: tuple(U(K(u)) for u in U.gens()) == U.gens()

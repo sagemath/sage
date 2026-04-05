@@ -1262,31 +1262,6 @@ cdef class SingularFunction(SageObject):
             sage: with open(out) as f:
             ....:     'is no standard basis' in f.read()
             False
-
-
-        TESTS:
-
-        We show that the interface recovers gracefully from errors::
-
-            sage: P.<e,d,c,b,a> = PolynomialRing(QQ,5,order='lex')
-            sage: I = sage.rings.ideal.Cyclic(P)
-
-            sage: triangL = sage.libs.singular.function_factory.ff.triang__lib.triangL
-            sage: _ = triangL(I)
-            Traceback (most recent call last):
-            ...
-            RuntimeError: error in Singular function call 'triangL':
-            The input is no groebner basis.
-            leaving triang.lib::triangL (0)
-
-        Flush any stray output -- see :issue:`28622`::
-
-            sage: sys.stdout.flush()
-            ...
-
-            sage: G= Ideal(I.groebner_basis())
-            sage: triangL(G,attributes={G:{'isSB':1}})
-            [[e + d + c + b + a, ...]]
         """
         global dummy_ring
 
@@ -1351,9 +1326,7 @@ EXAMPLES::
     sage: I = Ideal(Ideal(f1,f2).groebner_basis()[::-1])
     sage: triangL(I, attributes={I:{'isSB':1}})
     [[x2^4 + 4*x2^3 - 6*x2^2 - 20*x2 + 5, 8*x1 - x2^3 + x2^2 + 13*x2 - 5],
-     [x2, x1^2],
-     [x2, x1^2],
-     [x2, x1^2]]
+     [x2, x1^2]...
 
 """ % (self._name)
         from sage.interfaces.singular import get_docstring

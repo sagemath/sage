@@ -168,7 +168,6 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
 
        There is a unique Laurent polynomial ring with each term order::
 
-           sage: # needs sage.modules
            sage: R = LaurentPolynomialRing(QQ, 'x,y,z', order='degrevlex'); R
            Multivariate Laurent Polynomial Ring in x, y, z over Rational Field
            sage: S = LaurentPolynomialRing(QQ, 'x,y,z', order='invlex'); S
@@ -327,7 +326,6 @@ def _split_laurent_polynomial_dict_(P, M, d):
 
     TESTS::
 
-        sage: # needs sage.modules
         sage: L.<a, b, c, d> = LaurentPolynomialRing(ZZ)
         sage: M = LaurentPolynomialRing(ZZ, 'c, d')
         sage: N = LaurentPolynomialRing(M, 'a, b')
@@ -386,7 +384,6 @@ def from_fraction_field(L, x):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
         sage: from sage.rings.polynomial.laurent_polynomial_ring import from_fraction_field
         sage: L.<x, y> = LaurentPolynomialRing(ZZ)
         sage: F = L.fraction_field()
@@ -457,7 +454,6 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
         ::
 
-            sage: # needs sage.modules
             sage: U = LaurentPolynomialRing(QQ, 'a')
             sage: V = LaurentPolynomialRing(QQ, 'c')
             sage: L.<a, b, c, d> = LaurentPolynomialRing(QQ)
@@ -470,7 +466,6 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             sage: V(Mc)
             c
 
-            sage: # needs sage.modules
             sage: M(L(0))
             0
             sage: N(L(0))
@@ -600,7 +595,6 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: L = LaurentPolynomialRing(QQ, 'x', 2)
             sage: L.monomial(-3, 5)
             x0^-3*x1^5
@@ -663,7 +657,6 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
         ::
 
-            sage: # needs sage.modules
             sage: L.<a, b, c, d> = LaurentPolynomialRing(QQ)
             sage: M = LaurentPolynomialRing(QQ, 'c, d')
             sage: Mc, Md = M.gens()
@@ -680,7 +673,6 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             sage: L(Nb)
             b
 
-            sage: # needs sage.modules
             sage: M(L(0))
             0
             sage: N(L(0))
@@ -690,7 +682,6 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             sage: L(N(0))
             0
 
-            sage: # needs sage.modules
             sage: U = LaurentPolynomialRing(QQ, 'a')
             sage: Ua = U.gen()
             sage: V = LaurentPolynomialRing(QQ, 'c')
@@ -704,7 +695,6 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             sage: M(Vc)
             c
 
-            sage: # needs sage.modules
             sage: P = LaurentPolynomialRing(QQ, 'a, b')
             sage: Q = LaurentPolynomialRing(P, 'c, d')
             sage: Q(P.0)
@@ -712,7 +702,6 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
         ::
 
-            sage: # needs sage.modules
             sage: A.<a> = LaurentPolynomialRing(QQ)
             sage: B.<b> = LaurentPolynomialRing(A)
             sage: C = LaurentPolynomialRing(QQ, 'a, b')
@@ -725,7 +714,6 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
         ::
 
-            sage: # needs sage.modules
             sage: from sage.rings.polynomial.polydict import ETuple
             sage: R.<x,y,z> = LaurentPolynomialRing(QQ)
             sage: mon = ETuple({}, int(3))
@@ -737,7 +725,6 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
         ::
 
-            sage: # needs sage.modules
             sage: RL = R.localization(x + 1)
             sage: xi = RL(~x)
             sage: R(xi) == ~x     # indirect doctests

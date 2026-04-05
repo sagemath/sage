@@ -199,9 +199,8 @@ def dual_GQ_ovoid(GQ, O):
         sage: t = dual_GQ_ovoid(*t)
         sage: t[0].is_generalized_quadrangle(parameters=True)
         (3, 9)
-        sage: all([x in t[0] for x in t[1]])
+        sage: all(x in t[0] for x in t[1])
         True
-
 
     TESTS::
 

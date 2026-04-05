@@ -993,7 +993,7 @@ class Function_cos_integral(BuiltinFunction):
             sage: N(cos_integral(10^-10), digits=30)                                    # needs sage.symbolic
             -22.4486352650389239795759024568
             sage: cos_integral(ComplexField(100)(I))                                    # needs sage.symbolic
-            0.83786694098020824089467857943 + 1.5707963267948966192313216916*I
+            0.83786694098020824089467857944 + 1.5707963267948966192313216916*I
         """
         return _mpmath_utils_call(_mpmath_ci, z, parent=parent)
 

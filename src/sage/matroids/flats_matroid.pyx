@@ -405,18 +405,18 @@ cdef class FlatsMatroid(Matroid):
         for i in self._k_F:
             F[i] = []
             F[i] += [[d[y] for y in x] for x in self._k_F[i]]
-        M = FlatsMatroid(groundset=E, flats=F)
-        return M
+        return FlatsMatroid(groundset=E, flats=F)
 
     # enumeration
 
-    cpdef SetSystem flats(self, long k):
+    cpdef SetSystem flats(self, long k=-1):
         r"""
-        Return the flats of the matroid of specified rank.
+        Return the flats of the matroid.
 
         INPUT:
 
-        - ``k`` -- integer
+        - ``k`` -- integer (optional); if specified, return the rank-`k`
+          flats of the matroid
 
         OUTPUT: :class:`SetSystem`
 
@@ -432,9 +432,13 @@ cdef class FlatsMatroid(Matroid):
              frozenset({1, 3}),
              frozenset({2, 3})]
         """
+        cdef list F = []
+        if k == -1:
+            for i in self._k_F:
+                F.extend(self._k_F[i])
         if k in self._k_F:
-            return SetSystem(self._groundset, self._k_F[k])
-        return SetSystem(self._groundset)
+            F.extend(self._k_F[k])
+        return SetSystem(self._groundset, F)
 
     def flats_iterator(self, k):
         r"""

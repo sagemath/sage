@@ -251,6 +251,7 @@ def carlitz_factorial(A, n):
 
 carlitz_series = {}
 
+
 def carlitz_bernoulli(A, n):
     r"""
     Return the `n`-th Bernoulli-Carlitz number attached

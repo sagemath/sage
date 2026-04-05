@@ -2008,9 +2008,8 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             for mx, cx in x._monomial_coefficients.items():
                 if mx not in y._monomial_coefficients:
                     continue
-                else:
-                    # cy = y[mx]
-                    cy = y._monomial_coefficients[mx]
+                # cy = y[mx]
+                cy = y._monomial_coefficients[mx]
                 # might as well call f(mx)
                 res += cx * cy * f(mx, mx)
             return res
