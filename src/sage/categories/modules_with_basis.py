@@ -64,7 +64,6 @@ class ModulesWithBasisHomset(Homset):
         """
         if category is None:
             from sage.categories.modules import Modules
-
             category = Modules(X.base_ring().category()).or_subcategory(Y.category())
         Homset.__init__(self, X, Y, category=category)
 
