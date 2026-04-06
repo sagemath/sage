@@ -8660,12 +8660,17 @@ class ANBinaryExpr(ANDescr):
     def exactify(self):
         """
         Force the resolution of this deferred binary expression into an exact representation.
+
         This method performs two primary steps to resolve the expression:
         1. Recursively calls ``exactify()`` on the left and right operands to ensure both are fully resolved into exact algebraic numbers.
         2. Combines the resulting number fields from both operands into a single common field and performs the binary operation within that unified field.
+
         If the expression is already exact, this method does nothing.
+
         EXAMPLES::
+
             We resolve a deferred addition of two algebraic numbers::
+
                 sage: a = AA(2)**(1/2) + AA(3)**(1/2)
                 sage: type(a.as_number())
                 <class 'sage.rings.qqbar.ANBinaryExpr'>
