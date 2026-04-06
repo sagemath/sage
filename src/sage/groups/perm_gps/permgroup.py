@@ -4951,9 +4951,11 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: G = SymmetricGroup(5)
             sage: G.poincare_series(2, 10)                             # optional - gap_package_hap
+            The series is guaranteed correct for group cohomology in degrees < 11
             (x^2 + 1)/(x^4 - x^3 - x + 1)
             sage: G = SymmetricGroup(3)
             sage: G.poincare_series(2, 10)                             # optional - gap_package_hap
+            The series is guaranteed correct for group cohomology in degrees < 11
             -1/(x - 1)
 
         AUTHORS:

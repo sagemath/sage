@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat
 r"""
 Univariate skew polynomial rings
 
@@ -112,7 +111,6 @@ def _minimal_vanishing_polynomial(R, eval_pts):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.polynomial.skew_polynomial_ring import _minimal_vanishing_polynomial
         sage: k.<t> = GF(5^3)
         sage: Frob = k.frobenius_endomorphism()
@@ -166,7 +164,6 @@ def _lagrange_polynomial(R, eval_pts, values):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.polynomial.skew_polynomial_ring import _lagrange_polynomial
         sage: k.<t> = GF(5^3)
         sage: Frob = k.frobenius_endomorphism()
@@ -182,9 +179,9 @@ def _lagrange_polynomial(R, eval_pts, values):
     points are linearly dependent over the fixed field of the twisting morphism, and the
     corresponding values do not match::
 
-        sage: eval_pts = [t, 2*t]                                                       # needs sage.rings.finite_rings
+        sage: eval_pts = [t, 2*t]
         sage: values = [1, 3]
-        sage: _lagrange_polynomial(S, eval_pts, values)                                 # needs sage.rings.finite_rings
+        sage: _lagrange_polynomial(S, eval_pts, values)
         Traceback (most recent call last):
         ...
         ValueError: the given evaluation points are linearly dependent over the fixed field of the twisting morphism,
@@ -269,7 +266,6 @@ class SkewPolynomialRing(OrePolynomialRing):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
@@ -280,16 +276,16 @@ class SkewPolynomialRing(OrePolynomialRing):
         The minimal vanishing polynomial evaluates to 0 at each of
         the evaluation points::
 
-            sage: eval = b.multi_point_evaluation(eval_pts); eval                       # needs sage.rings.finite_rings
+            sage: eval = b.multi_point_evaluation(eval_pts); eval
             [0, 0, 0]
 
         If the evaluation points are linearly dependent over the fixed
         field of the twisting morphism, then the returned polynomial has
         lower degree than the number of evaluation points::
 
-            sage: S.minimal_vanishing_polynomial([t])                                   # needs sage.rings.finite_rings
+            sage: S.minimal_vanishing_polynomial([t])
             x + 3*t^2 + 3*t
-            sage: S.minimal_vanishing_polynomial([t, 3*t])                              # needs sage.rings.finite_rings
+            sage: S.minimal_vanishing_polynomial([t, 3*t])
             x + 3*t^2 + 3*t
         """
         return _minimal_vanishing_polynomial(_base_ring_to_fraction_field(self), eval_pts)
@@ -321,7 +317,6 @@ class SkewPolynomialRing(OrePolynomialRing):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
@@ -373,7 +368,6 @@ class SectionSkewPolynomialCenterInjection(Section):
 
     TESTS::
 
-        sage: # needs sage.rings.finite_rings
         sage: k.<a> = GF(5^3)
         sage: S.<x> = SkewPolynomialRing(k, k.frobenius_endomorphism())
         sage: Z = S.center()
@@ -387,7 +381,6 @@ class SectionSkewPolynomialCenterInjection(Section):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: S.<x> = SkewPolynomialRing(k, k.frobenius_endomorphism())
             sage: Z = S.center()
@@ -422,7 +415,6 @@ class SectionSkewPolynomialCenterInjection(Section):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: S.<x> = SkewPolynomialRing(k, k.frobenius_endomorphism())
             sage: Z = S.center()
@@ -450,7 +442,6 @@ class SkewPolynomialCenterInjection(RingHomomorphism):
 
     TESTS::
 
-        sage: # needs sage.rings.finite_rings
         sage: k.<a> = GF(5^3)
         sage: S.<x> = SkewPolynomialRing(k, k.frobenius_endomorphism())
         sage: Z = S.center()
@@ -463,7 +454,6 @@ class SkewPolynomialCenterInjection(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: S.<x> = SkewPolynomialRing(k, k.frobenius_endomorphism())
             sage: Z = S.center()
@@ -482,7 +472,6 @@ class SkewPolynomialCenterInjection(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: S.<x> = SkewPolynomialRing(k, k.frobenius_endomorphism())
             sage: Z = S.center()
@@ -500,7 +489,6 @@ class SkewPolynomialCenterInjection(RingHomomorphism):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: S.<x> = SkewPolynomialRing(k, k.frobenius_endomorphism())
             sage: Z.<z> = S.center()
@@ -521,7 +509,6 @@ class SkewPolynomialCenterInjection(RingHomomorphism):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: S.<x> = SkewPolynomialRing(k, k.frobenius_endomorphism())
             sage: Z = S.center()
@@ -546,7 +533,6 @@ class SkewPolynomialCenterInjection(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: S.<x> = SkewPolynomialRing(k, k.frobenius_endomorphism())
             sage: Z = S.center()
@@ -574,7 +560,6 @@ class SkewPolynomialRing_finite_order(SkewPolynomialRing):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]; S
@@ -587,7 +572,6 @@ class SkewPolynomialRing_finite_order(SkewPolynomialRing):
         :meth:`sage.rings.polynomial.skew_polynomial_finite_order.SkewPolynomial_finite_order.is_central`
         does not affect the behaviour of default central variable names::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(7^4)
             sage: phi = k.frobenius_endomorphism()
             sage: S.<x> = k['x', phi]
@@ -640,7 +624,6 @@ class SkewPolynomialRing_finite_order(SkewPolynomialRing):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]; S
@@ -653,19 +636,18 @@ class SkewPolynomialRing_finite_order(SkewPolynomialRing):
 
         We can pass in another variable name::
 
-            sage: S.center(name='y')                                                    # needs sage.rings.finite_rings
+            sage: S.center(name='y')
             Univariate Polynomial Ring in y over Finite Field of size 5
 
         or use the bracket notation::
 
-            sage: Zy.<y> = S.center(); Zy                                               # needs sage.rings.finite_rings
+            sage: Zy.<y> = S.center(); Zy
             Univariate Polynomial Ring in y over Finite Field of size 5
-            sage: y.parent() is Zy                                                      # needs sage.rings.finite_rings
+            sage: y.parent() is Zy
             True
 
         A coercion map from the center to the skew polynomial ring is set::
 
-            sage: # needs sage.rings.finite_rings
             sage: S.has_coerce_map_from(Zy)
             True
             sage: P = y + x; P
@@ -678,19 +660,19 @@ class SkewPolynomialRing_finite_order(SkewPolynomialRing):
 
         together with a conversion map in the reverse direction::
 
-            sage: Zy(x^6 + 2*x^3 + 3)                                                   # needs sage.rings.finite_rings
+            sage: Zy(x^6 + 2*x^3 + 3)
             y^2 + 2*y + 3
 
-            sage: Zy(x^2)                                                               # needs sage.rings.finite_rings
+            sage: Zy(x^2)
             Traceback (most recent call last):
             ...
             ValueError: x^2 is not in the center
 
         Two different skew polynomial rings can share the same center::
 
-            sage: S1.<x1> = k['x1', Frob]                                               # needs sage.rings.finite_rings
-            sage: S2.<x2> = k['x2', Frob]                                               # needs sage.rings.finite_rings
-            sage: S1.center() is S2.center()                                            # needs sage.rings.finite_rings
+            sage: S1.<x1> = k['x1', Frob]
+            sage: S2.<x2> = k['x2', Frob]
+            sage: S1.center() is S2.center()
             True
 
         .. RUBRIC:: About the default name of the central variable
@@ -700,7 +682,6 @@ class SkewPolynomialRing_finite_order(SkewPolynomialRing):
         However, a variable name is given the first time this method is
         called, the given name become the default for the next calls::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<t> = GF(11^3)
             sage: phi = K.frobenius_endomorphism()
             sage: A.<X> = K['X', phi]
@@ -715,7 +696,6 @@ class SkewPolynomialRing_finite_order(SkewPolynomialRing):
         We can update the default variable name by passing in the argument
         ``default=True``::
 
-            sage: # needs sage.rings.finite_rings
             sage: D.<v> = A.center(default=True)
             sage: D
             Univariate Polynomial Ring in v over Finite Field of size 11
@@ -726,7 +706,7 @@ class SkewPolynomialRing_finite_order(SkewPolynomialRing):
 
         TESTS::
 
-            sage: C.<a,b> = S.center()                                                  # needs sage.rings.finite_rings
+            sage: C.<a,b> = S.center()
             Traceback (most recent call last):
             ...
             IndexError: the number of names must equal the number of generators
@@ -798,9 +778,9 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
 
         EXAMPLES::
 
-            sage: k.<t> = GF(5^3)                                                       # needs sage.rings.finite_rings
-            sage: Frob = k.frobenius_endomorphism()                                     # needs sage.rings.finite_rings
-            sage: T.<x> = k['x', Frob]; T                                               # needs sage.rings.finite_rings
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: T.<x> = k['x', Frob]; T
             Ore Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
         """
         if self.Element is None:
@@ -825,7 +805,6 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(11^4)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
@@ -835,7 +814,6 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
 
         We can specify a seed::
 
-            sage: # needs sage.rings.finite_rings
             sage: S._new_retraction_map(seed=a)
             sage: S._matrix_retraction
             [ 0  6  3 10]
@@ -878,7 +856,6 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(11^4)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
@@ -887,18 +864,18 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
 
         Note that a retraction map has been automatically created::
 
-            sage: S._matrix_retraction   # random                                       # needs sage.rings.finite_rings
+            sage: S._matrix_retraction   # random
             [ 0  6  3 10]
 
         If we call again the method :meth:`_retraction`,
         the same retraction map is used::
 
-            sage: S._retraction(a)   # random                                           # needs sage.rings.finite_rings
+            sage: S._retraction(a)   # random
             6
 
         We can specify a seed::
 
-            sage: S._retraction(a^2, seed=a)  # random                                  # needs sage.rings.finite_rings
+            sage: S._retraction(a^2, seed=a)  # random
             10
         """
         # Better to return the retraction map but more difficult

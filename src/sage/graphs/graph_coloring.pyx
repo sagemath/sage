@@ -1380,7 +1380,6 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
 
     The Petersen graph has chromatic index 4::
 
-        sage: # needs sage.numerical.mip
         sage: from sage.graphs.graph_coloring import edge_coloring
         sage: g = graphs.PetersenGraph()
         sage: edge_coloring(g, value_only=True, solver='GLPK')

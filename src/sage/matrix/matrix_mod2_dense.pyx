@@ -280,7 +280,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             se = <SparseEntry>t
             mzd_write_bit(self._entries, se.i, se.j, se.entry)
 
-    cdef long _hash_(self) except -1:
+    cdef Py_hash_t _hash_(self) except -1:
         r"""
         EXAMPLES::
 
@@ -328,7 +328,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         cdef long C[5]
         self.get_hash_constants(C)
 
-        cdef long h = 0, k, l
+        cdef Py_hash_t h = 0
+        cdef long k, l
         cdef Py_ssize_t i, j
         sig_on()
         for i in range(self._nrows):

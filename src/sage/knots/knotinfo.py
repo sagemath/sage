@@ -263,7 +263,7 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
         '{3, {-2, -2, -1, 2, -1}}'
         sage: eval_knotinfo(_)
         (3, (-2, -2, -1, 2, -1))
-        sage: KnotInfo.K13a_1.kauffman_polynomial()  # optional - database_knotinfo # indirect doctest
+        sage: eval_knotinfo('')
         Traceback (most recent call last):
         ...
         NotImplementedError: this value is not provided by the database
@@ -791,7 +791,7 @@ class KnotInfoBase(Enum):
             # in some cases there are a pair of braid representations
             # in the database. If this is the case we select the
             # corresponding to the braid index.
-            if type(braid_notation[0]) is tuple:
+            if type(braid_notation[0]) in (list, tuple):
                 i = self.braid_index()
                 for b in braid_notation:
                     if -i < min(b) and max(b) < i:
@@ -864,9 +864,9 @@ class KnotInfoBase(Enum):
             sage: K.braid()
             s^3
             sage: K.braid_notation()
-            (1, 1, 1)
+            [1, 1, 1]
             sage: KnotInfo.K13n_1448.braid()    # optional - database_knotinfo
-            s0^-1*s1*s2*s3*s4*s3^2*s2^-1*s1^-1*s0*s2^-1*s1*(s3*s2)^2*s4^-1*s3*s2*s1^-1*s3*s2^-1*s3
+            s0^-1*s1*s0^-1*s2*s1^2*s3^2*s2^-1*s3*s2*s1^3
         """
         return self._braid_group()(self.braid_notation())
 
@@ -1391,7 +1391,7 @@ class KnotInfoBase(Enum):
             sage: PK3_1 = K3_1.homfly_polynomial(); PK3_1
             -v^4 + v^2*z^2 + 2*v^2
             sage: K3_1.homfly_polynomial(original=True)
-            '(2*v^2-v^4)+v^2*z^2'
+            '(2*v^2-v^4)+ v^2*z^2'
             sage: PK3_1 == K3_1.link().homfly_polynomial(normalization='vz')
             True
 
@@ -1489,17 +1489,19 @@ class KnotInfoBase(Enum):
 
             sage: L.kauffman_polynomial()
             a^-1*z - a^-1*z^-1 + a^-2 + a^-3*z - a^-3*z^-1
-            sage: K.kauffman_polynomial()
+            sage: kp1 = K.kauffman_polynomial(); kp1
             a^2*z^2 + a*z^3 - a^2 - a*z + 2*z^2 + a^-1*z^3 - 1 - a^-1*z + a^-2*z^2 - a^-2
+            sage: kp2 = KnotInfo.K13a_1.kauffman_polynomial()            # optional database_knotinfo
+            sage: (kp2.degree(), len(kp2.coefficients()))                # optional database_knotinfo
+            (16, 69)
 
         Comparison with Jones polynomial::
 
             sage: # needs sage.symbolic
-            sage: k    = _
-            sage: a, z = k.variables()
+            sage: a, z = kp1.variables()
             sage: j    = K.jones_polynomial(skein_normalization=True)
             sage: t,   = j.variables()
-            sage: k.subs(a=-t^3, z=~t+t) == j.subs(t=t^4)
+            sage: kp1.subs(a=-t^3, z=~t+t) == j.subs(t=t^4)
             True
 
         Check the skein relation::

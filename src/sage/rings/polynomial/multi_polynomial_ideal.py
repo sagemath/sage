@@ -1095,7 +1095,6 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y> = PolynomialRing(GF(2147483659^2), order='lex')
             sage: I = R.ideal([x*y, x*y + 1])
             sage: I.dimension()
@@ -1230,7 +1229,6 @@ class MPolynomialIdeal_singular_repr(
 
         Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: # needs sage.rings.number_field
             sage: P.<x,y,z> = QQbar[]
             sage: I = ideal(x^2-y,x^3-QQbar(-1),z-y)
             sage: I.dimension()
@@ -1532,7 +1530,6 @@ class MPolynomialIdeal_singular_repr(
 
         Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: # needs sage.rings.number_field
             sage: P.<x,y> = QQbar[]
             sage: I = ideal(y^3*z + x^3*y + x*z^3)
             sage: I.genus()
@@ -1594,7 +1591,6 @@ class MPolynomialIdeal_singular_repr(
 
         Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
             sage: I = x*R
             sage: J = y*R
@@ -1677,7 +1673,6 @@ class MPolynomialIdeal_singular_repr(
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y,z> = PolynomialRing(GF(37), 3)
             sage: p = z^2 + 1; q = z^3 + 2
             sage: I = (p*q^2, y - z^2) * R
@@ -1767,7 +1762,6 @@ class MPolynomialIdeal_singular_repr(
 
         Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
             sage: f = 2*x^2 + y
             sage: g = y
@@ -1953,7 +1947,6 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)
             sage: I = sage.rings.ideal.Cyclic(R, 4)
             sage: I.basis_is_groebner()
@@ -2028,7 +2021,6 @@ class MPolynomialIdeal_singular_repr(
 
         Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: # needs sage.rings.number_field
             sage: R.<a,b,c,d,e,f,g,h,i,j> = QQbar[]
             sage: I = sage.rings.ideal.Cyclic(R,4)
             sage: I.basis_is_groebner()
@@ -2139,7 +2131,6 @@ class MPolynomialIdeal_singular_repr(
         Check that this method works over QQbar (:issue:`25351`).  We are not currently
         able to specify other_ring, due to the limitations of @handle_AA_and_QQbar::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x,y,z> = QQbar[]
             sage: I = Ideal([y^3 + x^2, x^2*y + x^2, x^3 - x^2, z^4 - x^2 - y])
             sage: I = Ideal(I.groebner_basis())
@@ -2235,7 +2226,7 @@ class MPolynomialIdeal_singular_repr(
 
         Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: # needs sage.libs.giac sage.rings.number_field
+            sage: # needs sage.libs.giac
             sage: R.<x,y,t,s,z> = QQbar[]
             sage: I = R * [x - t, y - t^2, z - t^3, s - x + y^3]
             sage: J = I.elimination_ideal([t, s]); J
@@ -2311,7 +2302,6 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y,z> = PolynomialRing(GF(181), 3)
             sage: I = Ideal([x^2 + x*y*z, y^2 - z^3*y, z^3 + y^5*x*z])
             sage: J = Ideal([x])
@@ -2335,7 +2325,6 @@ class MPolynomialIdeal_singular_repr(
 
         Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x,y,z> = QQbar[]
             sage: I = ideal(x, z)
             sage: J = ideal(R(1))
@@ -2391,7 +2380,6 @@ class MPolynomialIdeal_singular_repr(
 
         Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x, y, z> = QQbar[]
             sage: I = R.ideal(x^5*z^3, x*y*z, y*z^4)
             sage: J = R.ideal(z)
@@ -2450,7 +2438,6 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<w> = GF(27)  # this example is from the MAGMA handbook
             sage: P.<x, y> = PolynomialRing(K, 2, order='lex')
             sage: I = Ideal([x^8 + y + 2, y^6 + x*y^5 + x^2])
@@ -2544,7 +2531,6 @@ class MPolynomialIdeal_singular_repr(
         If the ground field's characteristic is too large for
         Singular, we resort to a toy implementation::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y> = PolynomialRing(GF(2147483659^3), order='lex')
             sage: I = ideal([x^3 - 2*y^2, 3*x + y^4])
             sage: I.variety()
@@ -2558,7 +2544,6 @@ class MPolynomialIdeal_singular_repr(
         But the mapping will also accept generators of the original ring,
         or even generator names as strings, when provided as keys::
 
-            sage: # needs sage.rings.number_field
             sage: K.<x,y> = QQ[]
             sage: I = ideal([x^2 + 2*y - 5, x + y + 3])
             sage: v = I.variety(AA)[0]; v[x], v[y]
@@ -2710,7 +2695,6 @@ class MPolynomialIdeal_singular_repr(
         that this circle and this hyperbola have two real intersections and
         two more complex ones::
 
-            sage: # needs sage.rings.number_field
             sage: K.<x, y> = PolynomialRing(AA)
             sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
             sage: len(I.variety())
@@ -3002,7 +2986,6 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS::
 
-            sage: # needs sage.libs.flint
             sage: I.hilbert_series() == I.hilbert_series(algorithm='singular')
             True
             sage: J.hilbert_series() == J.hilbert_series(algorithm='singular')
@@ -3288,7 +3271,6 @@ class MPolynomialIdeal_singular_repr(
 
         Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x,y,z> = QQbar[]
             sage: I = R.ideal(x^2+y^2+z^2-4, x^2+2*y^2-5, x*z-1)
             sage: I.normal_basis()
@@ -3384,7 +3366,6 @@ class MPolynomialIdeal_macaulay2_repr:
         Over finite fields, Macaulay2 supports different algorithms to compute
         Gröbner bases::
 
-            sage: # needs sage.rings.finite_rings
             sage: R = PolynomialRing(GF(101), 'x', 4)
             sage: I = sage.rings.ideal.Cyclic(R)
             sage: gb1 = I.groebner_basis('macaulay2:gb')        # optional - macaulay2
@@ -3457,7 +3438,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.modules
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
             sage: H.inject_variables()
@@ -3499,7 +3479,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.modules
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
             sage: H.inject_variables()
@@ -3525,7 +3504,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.modules
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
             sage: H.inject_variables()
@@ -3543,7 +3521,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         Groebner basis. But if it is a two-sided ideal, then
         the output of :meth:`std` and :meth:`twostd` coincide::
 
-            sage: # needs sage.combinat sage.modules
             sage: JL = H.ideal([x^3, y^3, z^3 - 4*z])
             sage: JL  #random
             Left Ideal (x^3, y^3, z^3 - 4*z) of
@@ -3600,7 +3577,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.modules
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
             sage: H.inject_variables()
@@ -3619,7 +3595,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.modules
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
             sage: H.inject_variables()
@@ -3656,7 +3631,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.modules
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
             sage: H.inject_variables()
@@ -3684,7 +3658,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-           sage: # needs sage.combinat sage.modules
            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
            sage: H.<x,y,z> = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
            sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)
@@ -3709,7 +3682,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.modules
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: H.<x,y,z> = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
             sage: I = H.ideal([y^2, x^2, z^2 - H.one()],
@@ -3741,7 +3713,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         We define a left and a two-sided ideal::
 
-            sage: # needs sage.combinat sage.modules
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: H.<x,y,z> = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
             sage: JL = H.ideal([x^3, y^3, z^3 - 4*z])
@@ -3780,7 +3751,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.modules
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
             sage: H.inject_variables()
@@ -3836,7 +3806,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.modules
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
             sage: H.inject_variables()
@@ -3856,7 +3825,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.modules
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
             sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
             sage: H.inject_variables()
@@ -3980,7 +3948,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y> = GF(32003)[]
             sage: I = R*[x^2 + x, y]
             sage: J = R*[x + 1, y]
@@ -3991,7 +3958,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y> = GF(32003)[]
             sage: I = R*[x^2 + x, y]
             sage: J = R*[x + 1, y]
@@ -4035,7 +4001,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         We test to make sure that pickling works with the cached
         Groebner basis::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y> = GF(32003)[]
             sage: I = R*[x^2 + x, y]
             sage: J = R*[x + 1, y]
@@ -4609,7 +4574,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: # needs sage.rings.number_field
             sage: P.<a,b,c> = PolynomialRing(QQbar, 3, order='lex')
             sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: I.groebner_basis()
@@ -4630,14 +4594,13 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: I.groebner_basis('libsingular:slimgb')
             [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
 
-            sage: # needs sage.libs.giac sage.rings.number_field
+            sage: # needs sage.libs.giac
             sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: J = I.change_ring(P.change_ring(order='degrevlex'))
             sage: gb = J.groebner_basis('giac')  # random
             sage: gb
             [c^3 + (-79/210)*c^2 + 1/30*b + 1/70*c, b^2 + (-3/5)*c^2 + (-1/5)*b + 1/5*c, b*c + 6/5*c^2 + (-1/10)*b + (-2/5)*c, a + 2*b + 2*c - 1]
 
-            sage: # needs sage.rings.number_field
             sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: I.groebner_basis('toy:buchberger2')
             [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
@@ -5355,7 +5318,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         We return some element in the ideal with no guarantee on the distribution::
 
-            sage: # needs sage.rings.finite_rings
             sage: P = PolynomialRing(GF(127), 10, 'x')
             sage: I = sage.rings.ideal.Katsura(P)
             sage: f = I.random_element(degree=3)
@@ -5366,7 +5328,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         We show that the default method does not sample uniformly at random from the ideal::
 
-            sage: # needs sage.rings.finite_rings
             sage: P.<x,y,z> = GF(127)[]
             sage: G = Sequence([x + 7, y - 2, z + 110])
             sage: I = Ideal([sum(P.random_element() * g for g in G)
@@ -5435,7 +5396,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(2^2)
             sage: P.<x,y> = PolynomialRing(k, 2)
             sage: I = Ideal([x*y + 1, a*x + 1])
@@ -5453,7 +5413,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
              x0^2 + x0, x1^2 + x1, y0^2 + y0, y1^2 + y1) of Multivariate
              Polynomial Ring in x0, x1, y0, y1 over Finite Field of size 2
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(3^5)
             sage: P.<x,y,z> = PolynomialRing(k)
             sage: I = sage.rings.ideal.Katsura(P)
@@ -5555,7 +5514,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         Example for relative number fields::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<w> = NumberField(x^5 - 2)
             sage: R.<x> = K[]

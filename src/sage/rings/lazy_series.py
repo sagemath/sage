@@ -534,7 +534,6 @@ class LazyModuleElement(Element):
 
         Similarly for lazy symmetric functions::
 
-            sage: # needs sage.combinat
             sage: p = SymmetricFunctions(QQ).p()
             sage: L = LazySymmetricFunctions(p)
             sage: f = 1/(1-2*L(p[1])); f
@@ -1106,7 +1105,6 @@ class LazyModuleElement(Element):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: L.<z> = LazyLaurentSeriesRing(GF(2))
             sage: bool(z - z)
             False
@@ -1124,7 +1122,6 @@ class LazyModuleElement(Element):
         With the `secure` option, we raise an error if we cannot know
         whether the series is zero or not::
 
-            sage: # needs sage.rings.finite_rings
             sage: L.options.secure = True
             sage: bool(M)
             Traceback (most recent call last):
@@ -1135,7 +1132,6 @@ class LazyModuleElement(Element):
             sage: bool(M)
             True
 
-            sage: # needs sage.rings.finite_rings
             sage: L.<z> = LazyLaurentSeriesRing(GF(2), sparse=True)
             sage: M = L(lambda n: 2*n if n < 10 else 1, valuation=0); M
             O(z^7)
@@ -1151,7 +1147,6 @@ class LazyModuleElement(Element):
 
         Uninitialized series::
 
-            sage: # needs sage.rings.finite_rings
             sage: g = L.undefined(valuation=0)
             sage: bool(g)
             True
@@ -1159,7 +1154,6 @@ class LazyModuleElement(Element):
             sage: bool(g)
             False
 
-            sage: # needs sage.rings.finite_rings
             sage: g = L.undefined(valuation=0)
             sage: bool(g)
             True
@@ -1167,7 +1161,6 @@ class LazyModuleElement(Element):
             sage: bool(g)
             True
 
-            sage: # needs sage.rings.finite_rings
             sage: g = L.undefined(valuation=0)
             sage: bool(g)
             True
@@ -1177,14 +1170,12 @@ class LazyModuleElement(Element):
 
         Comparison with finite halting precision::
 
-            sage: # needs sage.rings.finite_rings
             sage: M = L(lambda n: 2*n if n < 10 else 0, valuation=0)
             sage: bool(M)
             True
             sage: M.is_zero()
             False
 
-            sage: # needs sage.rings.finite_rings
             sage: L.options.halting_precision = 20
             sage: bool(M)
             False
@@ -1195,14 +1186,12 @@ class LazyModuleElement(Element):
         be indistinguishable from zero until possibly enough
         coefficients are computed::
 
-            sage: # needs sage.rings.finite_rings
             sage: L.<z> = LazyLaurentSeriesRing(GF(2))
             sage: L.options.halting_precision = 20
             sage: f = L(lambda n: 0, valuation=0)
             sage: f.is_zero()
             True
 
-            sage: # needs sage.rings.finite_rings
             sage: g = L(lambda n: 0 if n < 50 else 1, valuation=2)
             sage: bool(g)  # checks up to degree 22 = 2 + 20
             False
@@ -1430,7 +1419,6 @@ class LazyModuleElement(Element):
 
         We can compute the Frobenius character of unlabeled trees::
 
-            sage: # needs sage.combinat
             sage: m = SymmetricFunctions(QQ).m()
             sage: s = SymmetricFunctions(QQ).s()
             sage: L = LazySymmetricFunctions(m)
@@ -1553,7 +1541,6 @@ class LazyModuleElement(Element):
             sage: f
             1 + 2*t + 12*t^3 + 32*t^4 + 368*t^5 + 2192*t^6 + O(t^7)
 
-            sage: # needs sage.combinat
             sage: s = SymmetricFunctions(QQ).s()
             sage: L = LazySymmetricFunctions(s)
             sage: f = L.undefined()
@@ -1714,7 +1701,6 @@ class LazyModuleElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.modules
             sage: e = SymmetricFunctions(QQ).e()
             sage: L.<z> = LazyLaurentSeriesRing(e)
             sage: L.options.display_length = 3
@@ -1738,7 +1724,6 @@ class LazyModuleElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat sage.modules
             sage: e = SymmetricFunctions(QQ).e()
             sage: L.<z> = LazyLaurentSeriesRing(e)
             sage: L.options.display_length = 3
@@ -1868,7 +1853,6 @@ class LazyModuleElement(Element):
 
         Similarly for Dirichlet series::
 
-            sage: # needs sage.symbolic
             sage: L = LazyDirichletSeriesRing(ZZ, "z")
             sage: s = L(lambda n: n)
             sage: s
@@ -2092,7 +2076,6 @@ class LazyModuleElement(Element):
 
         Similarly for Dirichlet series::
 
-            sage: # needs sage.symbolic
             sage: L = LazyDirichletSeriesRing(ZZ, "z")
             sage: g = L([0,1])
             sage: 2 * g
@@ -3006,7 +2989,6 @@ class LazyModuleElement(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: D = LazyDirichletSeriesRing(QQ, 's')
             sage: Z = D(constant=1)
             sage: Z^2
@@ -3070,7 +3052,6 @@ class LazyModuleElement(Element):
 
         This also works for Dirichlet series::
 
-            sage: # needs sage.symbolic
             sage: D = LazyDirichletSeriesRing(SR, "s")
             sage: Z = D(constant=1)
             sage: f = sqrt(Z);  f
@@ -3184,7 +3165,6 @@ class LazyCauchyProductSeries(LazyModuleElement):
         Multiplication of series with eventually constant
         coefficients may yield another such series::
 
-            sage: # needs sage.symbolic
             sage: L.<z> = LazyLaurentSeriesRing(SR)
             sage: var("a b c d e u v w")
             (a, b, c, d, e, u, v, w)
@@ -3408,7 +3388,6 @@ class LazyCauchyProductSeries(LazyModuleElement):
         We can also compute the multiplicative inverse of a symmetric
         function::
 
-            sage: # needs sage.modules
             sage: h = SymmetricFunctions(QQ).h()
             sage: p = SymmetricFunctions(QQ).p()
             sage: L = LazySymmetricFunctions(p)
@@ -4015,7 +3994,6 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: Z.<x> = ZZ[]
             sage: K.<i> = NumberField(x^2 + 1)
             sage: R.<t> = LazyLaurentSeriesRing(K)
@@ -5247,7 +5225,6 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         We perform the composition with a lazy Dirichlet series::
 
-            sage: # needs sage.symbolic
             sage: D = LazyDirichletSeriesRing(QQ, "s")
             sage: g = D(constant=1)-1
             sage: g
@@ -6441,7 +6418,6 @@ class LazyPowerSeries_gcd_mixin:
             sage: g == s * a + t * b
             True
 
-            sage: # needs sage.rings.finite_rings
             sage: L.<x> = LazyPowerSeriesRing(GF(2))
             sage: a = L(lambda n: n % 2, valuation=3); a
             x^3 + x^5 + x^7 + x^9 + O(x^10)
@@ -6497,7 +6473,6 @@ class LazyCompletionGradedAlgebraElement(LazyCauchyProductSeries):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: h = SymmetricFunctions(ZZ).h()
             sage: e = SymmetricFunctions(ZZ).e()
             sage: L = LazySymmetricFunctions(tensor([h, e]))
@@ -6582,7 +6557,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: m = SymmetricFunctions(ZZ).m()
             sage: L = LazySymmetricFunctions(m)
             sage: L(2*m[1]).is_unit()
@@ -6636,7 +6610,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: P.<q> = QQ[]
             sage: s = SymmetricFunctions(P).s()
             sage: L = LazySymmetricFunctions(s)
@@ -6658,7 +6631,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         The Frobenius character of the permutation action on set
         partitions is a plethysm::
 
-            sage: # needs sage.modules
             sage: s = SymmetricFunctions(QQ).s()
             sage: S = LazySymmetricFunctions(s)
             sage: E1 = S(lambda n: s[n], valuation=1)
@@ -6669,7 +6641,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         The plethysm with a tensor product is also implemented::
 
-            sage: # needs sage.modules
             sage: s = SymmetricFunctions(QQ).s()
             sage: X = tensor([s[1],s[[]]])
             sage: Y = tensor([s[[]],s[1]])
@@ -6694,7 +6665,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: s = SymmetricFunctions(QQ).s()
             sage: S = LazySymmetricFunctions(s)
             sage: f = 1 / (1 - S(s[2]))
@@ -6720,7 +6690,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         Check that composing the zero series with anything yields
         zero in the correct parent::
 
-            sage: # needs sage.modules
             sage: e = SymmetricFunctions(QQ).e()
             sage: h = SymmetricFunctions(QQ).h()
             sage: s = SymmetricFunctions(QQ).s()
@@ -6825,7 +6794,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: h = SymmetricFunctions(QQ).h()
             sage: L = LazySymmetricFunctions(h)
             sage: f = L(lambda n: h[n]) - 1
@@ -6841,7 +6809,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             ...
             ValueError: compositional inverse does not exist
 
-            sage: # needs sage.modules
             sage: R.<a,b> = QQ[]
             sage: p = SymmetricFunctions(R.fraction_field()).p()
             sage: L = LazySymmetricFunctions(p)
@@ -7002,7 +6969,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         The species `E` of sets satisfies the relationship `E' = E`::
 
-            sage: # needs sage.modules
             sage: h = SymmetricFunctions(QQ).h()
             sage: T = LazySymmetricFunctions(h)
             sage: E = T(lambda n: h[n])
@@ -7012,7 +6978,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         The species `C` of cyclic orderings and the species `L` of linear
         orderings satisfy the relationship `C' = L`::
 
-            sage: # needs sage.modules
             sage: p = SymmetricFunctions(QQ).p()
             sage: C = T(lambda n: (sum(euler_phi(k)*p([k])**(n//k)
             ....:                      for k in divisors(n))/n if n > 0 else 0))
@@ -7022,7 +6987,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: T = LazySymmetricFunctions(p)
             sage: a = T(p([1,1,1]))
             sage: a.derivative_with_respect_to_p1()
@@ -7109,7 +7073,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         \mathfrak{p}_{2}`, where `\mathfrak{p}` is the
         :class:`~sage.combinat.species.subset_species.SubsetSpecies`.::
 
-            sage: # needs sage.modules
             sage: R.<q> = QQ[]
             sage: h = SymmetricFunctions(R).h()
             sage: m = SymmetricFunctions(R).m()
@@ -7137,7 +7100,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         The symmetric function `h_1 \sum_n h_n` is the neutral
         element with respect to functorial composition::
 
-            sage: # needs sage.modules
             sage: p = SymmetricFunctions(QQ).p()
             sage: h = SymmetricFunctions(QQ).h()
             sage: e = SymmetricFunctions(QQ).e()
@@ -7151,13 +7113,11 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         The symmetric function `\sum_n h_n` is a left absorbing element::
 
-            sage: # needs sage.modules
             sage: H.functorial_composition(f) - H
             O^7
 
         The functorial composition distributes over the sum::
 
-            sage: # needs sage.modules
             sage: F1 = L(lambda n: h[n])
             sage: F2 = L(lambda n: e[n])
             sage: f1 = F1.functorial_composition(f)
@@ -7176,7 +7136,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         Check an instance of a non-group action::
 
-            sage: # needs sage.modules
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
             sage: L = LazySymmetricFunctions(p)
@@ -7332,14 +7291,13 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         consistent for all the lists in the structure. ::
 
             sage: R.<q> = QQ[]
-            sage: p = SymmetricFunctions(R).p()                                         # needs sage.modules
-            sage: m = SymmetricFunctions(R).m()                                         # needs sage.modules
-            sage: L = LazySymmetricFunctions(m)                                         # needs sage.modules
+            sage: p = SymmetricFunctions(R).p()
+            sage: m = SymmetricFunctions(R).m()
+            sage: L = LazySymmetricFunctions(m)
 
-            sage: # needs sage.modules
             sage: c = LazyCombinatorialSpecies(QQ, "X").Cycles().cycle_index_series()
             sage: Lplus = L(lambda n: p([1]*n), valuation=1)
-            sage: r = c.arithmetic_product(Lplus); r                                    # needs sage.libs.pari
+            sage: r = c.arithmetic_product(Lplus); r
             m[1] + (3*m[1,1]+2*m[2])
              + (8*m[1,1,1]+4*m[2,1]+2*m[3])
              + (42*m[1,1,1,1]+21*m[2,1,1]+12*m[2,2]+7*m[3,1]+3*m[4])
@@ -7349,7 +7307,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         In particular, the number of regular octopuses is::
 
-            sage: [r[n].coefficient([1]*n) for n in range(8)]                           # needs sage.libs.pari sage.modules
+            sage: [r[n].coefficient([1]*n) for n in range(8)]
             [0, 1, 3, 8, 42, 144, 1440, 5760]
 
         It is shown in [MM2008]_ that the exponential generating
@@ -7357,7 +7315,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         (x) = \sum_{n \geq 1} \sigma (n) (n - 1)! \frac{x^{n}}{n!}`
         (where `\sigma (n)` is the sum of the divisors of `n`). ::
 
-            sage: [sum(divisors(i))*factorial(i-1) for i in range(1,8)]                 # needs sage.modules
+            sage: [sum(divisors(i))*factorial(i-1) for i in range(1,8)]
             [1, 3, 8, 42, 144, 1440, 5760]
 
         AUTHORS:
@@ -7372,7 +7330,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         Check that the product with zero works::
 
-            sage: # needs sage.modules
             sage: s = SymmetricFunctions(QQ).s()
             sage: L = LazySymmetricFunctions(s)
             sage: L(0).arithmetic_product(s[2])
@@ -7383,27 +7340,27 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         Check that the arithmetic product of symmetric functions of
         finite support works::
 
-            sage: L(s([2])).arithmetic_product(s([1,1,1]))                              # needs sage.modules
+            sage: L(s([2])).arithmetic_product(s([1,1,1]))
             s[2, 2, 1, 1] + s[3, 1, 1, 1] + s[3, 2, 1] + s[3, 3] + 2*s[4, 1, 1]
 
-            sage: f = 1/(1-L(s[1]))                                                     # needs sage.modules
-            sage: f.arithmetic_product(s[1]) - f                                        # needs lrcalc_python sage.modules
+            sage: f = 1/(1-L(s[1]))
+            sage: f.arithmetic_product(s[1]) - f                                        # needs lrcalc_python
             O^7
 
         Check that the arithmetic product of symmetric functions with
         constant a term works as advertised::
 
-            sage: p = SymmetricFunctions(QQ).p()                                        # needs sage.modules
-            sage: L = LazySymmetricFunctions(p)                                         # needs sage.modules
-            sage: L(5).arithmetic_product(3*p[2,1])                                     # needs sage.modules
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: L = LazySymmetricFunctions(p)
+            sage: L(5).arithmetic_product(3*p[2,1])
             15*p[]
 
         Check the arithmetic product of symmetric functions over a
         finite field works::
 
-            sage: s = SymmetricFunctions(FiniteField(2)).s()                            # needs sage.modules
-            sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
-            sage: L(s([2])).arithmetic_product(s([1,1,1]))                              # needs sage.modules
+            sage: s = SymmetricFunctions(FiniteField(2)).s()
+            sage: L = LazySymmetricFunctions(s)
+            sage: L(s([2])).arithmetic_product(s([1,1,1]))
             s[2, 2, 1, 1] + s[3, 1, 1, 1] + s[3, 2, 1] + s[3, 3]
         """
         if len(args) != self.parent()._arity:
@@ -7494,7 +7451,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: s = SymmetricFunctions(QQ).s()
             sage: S = LazySymmetricFunctions(s)
             sage: elt = S(s[2])
@@ -7503,7 +7459,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: s = SymmetricFunctions(QQ).s()
             sage: S = LazySymmetricFunctions(s)
             sage: elt = S(s[2])
@@ -7517,7 +7472,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             ...
             ValueError: not a symmetric function
 
-            sage: # needs sage.modules
             sage: f4 = f.truncate(5); f4                                                # needs lrcalc_python
             s[] + s[2] + (s[2,2]+s[3,1]+s[4])
             sage: f4.symmetric_function()                                               # needs lrcalc_python
@@ -7763,7 +7717,6 @@ class LazyDirichletSeries(LazyModuleElement):
             sage: Z(s)*Z(s-1)/Z(2*s-2) - (1/Psi).map_coefficients(abs)                  # needs sage.symbolic
             O(1/(8^s))
 
-            sage: # needs sage.symbolic
             sage: Z(5)
             zeta(5)
             sage: Z(1+I)
@@ -7842,7 +7795,6 @@ class LazyDirichletSeries(LazyModuleElement):
 
         TESTS::
 
-            sage: # needs sage.symbolic
             sage: L = LazyDirichletSeriesRing(QQ, "s")
             sage: f = L(constant=1)
             sage: f._format_series(repr)

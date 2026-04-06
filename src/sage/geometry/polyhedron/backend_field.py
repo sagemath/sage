@@ -7,7 +7,6 @@ allows you to define polyhedra.
 
 EXAMPLES::
 
-    sage: # needs sage.rings.number_field
     sage: p0 = (0, 0)
     sage: p1 = (1, 0)
     sage: p2 = (1/2, AA(3).sqrt()/2)
@@ -59,7 +58,6 @@ class Polyhedron_field(Polyhedron_base):
 
     Check that :issue:`19013` is fixed::
 
-        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
         sage: K.<phi> = NumberField(x^2 - x - 1, embedding=1.618)
         sage: P1 = Polyhedron([[0,1], [1,1], [1,-phi+1]])

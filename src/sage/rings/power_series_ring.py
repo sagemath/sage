@@ -60,7 +60,6 @@ Sage can compute with power series over the symbolic ring.
 
 ::
 
-    sage: # needs sage.symbolic
     sage: K.<t> = PowerSeriesRing(SR, default_prec=5)
     sage: a, b, c = var('a,b,c')
     sage: f = a + b*t + c*t^2 + O(t^3)
@@ -807,7 +806,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
 
         Conversion from symbolic series::
 
-            sage: # needs sage.symbolic
             sage: x,y = var('x,y')
             sage: s = (1/(1-x)).series(x,3); s
             1 + 1*x + 1*x^2 + Order(x^3)

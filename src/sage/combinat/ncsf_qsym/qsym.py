@@ -1,72 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Quasisymmetric functions
-
-REFERENCES:
-
-.. [Ges] \I. Gessel, *Multipartite P-partitions and inner products of skew Schur
-   functions*, Contemp. Math. **34** (1984), 289-301.
-   http://people.brandeis.edu/~gessel/homepage/papers/multipartite.pdf
-
-.. [MR] \C. Malvenuto and C. Reutenauer, *Duality between quasi-symmetric
-   functions and the Solomon descent algebra*, J. Algebra **177** (1995),
-   no. 3, 967-982. http://www.mat.uniroma1.it/people/malvenuto/Duality.pdf
-
-.. [GriRei18]_
-
-.. [Mal1993] Claudia Malvenuto, *Produits et coproduits des fonctions
-   quasi-symétriques et de l'algèbre des descentes*,
-   thesis, November 1993.
-   http://www1.mat.uniroma1.it/people/malvenuto/Thesis.pdf
-
-.. [Haz2004] Michiel Hazewinkel, *Explicit polynomial generators for the
-   ring of quasisymmetric functions over the integers*.
-   :arxiv:`math/0410366v1`
-
-.. [Rad1979] David E. Radford, *A natural ring basis for the shuffle algebra
-   and an application to group schemes*, J. Algebra **58** (1979), 432-454.
-
-.. [NCSF1] Israel Gelfand, D. Krob, Alain Lascoux, B. Leclerc,
-   V. S. Retakh, J.-Y. Thibon,
-   *Noncommutative symmetric functions*.
-   :arxiv:`hep-th/9407124v1`
-
-.. [NCSF2] \D. Krob, B. Leclerc, J.-Y. Thibon,
-   *Noncommutative symmetric functions II: Transformations of alphabets*.
-   http://www-igm.univ-mlv.fr/~jyt/ARTICLES/NCSF2.ps
-
-.. [HLNT09] \F. Hivert, J.-G. Luque, J.-C. Novelli, J.-Y. Thibon,
-   *The (1-E)-transform in combinatorial Hopf algebras*.
-   :arxiv:`math/0912.0184v2`
-
-.. [LMvW13] Kurt Luoto, Stefan Mykytiuk and Stephanie van Willigenburg,
-   *An introduction to quasisymmetric Schur functions -- Hopf algebras,
-   quasisymmetric functions, and Young composition tableaux*,
-   May 23, 2013, Springer.
-   http://www.math.ubc.ca/%7Esteph/papers/QuasiSchurBook.pdf
-
-.. [BBSSZ2012] Chris Berg, Nantel Bergeron, Franco Saliola,
-   Luis Serrano, Mike Zabrocki,
-   *A lift of the Schur and Hall-Littlewood bases to
-   non-commutative symmetric functions*,
-   :arxiv:`1208.5191v3`.
-
-.. [Hoff2015] Michael Hoffman.
-   *Quasi-symmetric functions and mod* `p` *multiple harmonic sums*.
-   Kyushu J. Math. **69** (2015), pp. 345-366.
-   :doi:`10.2206/kyushujm.69.345`, :arxiv:`math/0401319v3`.
-
-.. [BDHMN2017] Cristina Ballantine, Zajj Daugherty, Angela Hicks, Sarah Mason,
-   Elizabeth Niese. *Quasisymmetric power sums*. :arxiv:`1710.11613`.
-
-.. [AHM2018] Edward Allen, Joshua Hallam, Sarah Mason, *Dual Immaculate
-   Quasisymmetric Functions Expand Positively into Young Quasisymmetric
-   Schur Functions*. :arxiv:`1606.03519`
-
-.. [SW2010] John Shareshian and Michelle Wachs.
-   *Eulerian quasisymmetric functions*. (2010).
-   :arxiv:`0812.0764v2`
-
 AUTHOR:
 
 - Jason Bandlow
@@ -561,7 +495,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
         """
         # change the line below to assert R in Rings() once MRO issues from #15536, #15475 are resolved
         assert R in Fields() or R in Rings()  # side effect of this statement assures MRO exists for R
-        self._base = R # Won't be needed once CategoryObject won't override base_ring
+        self._base = R  # Won't be needed once CategoryObject won't override base_ring
         category = GradedHopfAlgebras(R).Commutative()
         self._category = category
         Parent.__init__(self, category=category.WithRealizations())
@@ -579,28 +513,30 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
         Monomial   .module_morphism(Fundamental.alternating_sum_of_finer_compositions,
                                     codomain=Fundamental, category=category
                                     ).register_as_coercion()
-        #This changes dualImmaculate into Monomial
+        # This changes dualImmaculate into Monomial
         dualImmaculate.module_morphism(dualImmaculate._to_Monomial_on_basis,
-                                          codomain=Monomial, category=category
-                                          ).register_as_coercion()
-        #This changes Monomial into dualImmaculate
+                                       codomain=Monomial, category=category
+                                       ).register_as_coercion()
+        # This changes Monomial into dualImmaculate
         Monomial.module_morphism(dualImmaculate._from_Monomial_on_basis,
-                                          codomain=dualImmaculate, category=category
-                                          ).register_as_coercion()
-        #This changes Quasisymmetric Schur into Monomial
+                                 codomain=dualImmaculate, category=category
+                                 ).register_as_coercion()
+        # This changes Quasisymmetric Schur into Monomial
         QS         .module_morphism(QS._to_monomial_on_basis,
                                     codomain=Monomial, category=category
                                     ).register_as_coercion()
-        #This changes Monomial into Quasisymmetric Schur
+        # This changes Monomial into Quasisymmetric Schur
         Monomial.module_morphism(QS._from_monomial_on_basis,
-                                    codomain=QS, category=category
-                                    ).register_as_coercion()
+                                 codomain=QS, category=category
+                                 ).register_as_coercion()
 
         # Embedding of Sym into QSym in the monomial bases
         Sym = SymmetricFunctions(self.base_ring())
         Sym_m_to_M = Sym.m().module_morphism(Monomial.sum_of_partition_rearrangements,
-                                           triangular='upper', inverse_on_support=Monomial._comp_to_par,
-                                           codomain=Monomial, category=category)
+                                             triangular='upper',
+                                             inverse_on_support=Monomial._comp_to_par,
+                                             codomain=Monomial,
+                                             category=category)
         Sym_m_to_M.register_as_coercion()
         self.to_symmetric_function = Sym_m_to_M.section()
 
@@ -1150,8 +1086,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 parent = self.parent()
                 M = parent.realization_of().M()
                 C = parent._indices
-                dct = {C([n * i for i in I]): coeff
-                       for (I, coeff) in M(self)}
+                dct = {C([n * i for i in I]): coeff for I, coeff in M(self)}
                 result_in_M_basis = M._from_dict(dct)
                 return parent(result_in_M_basis)
 
@@ -1227,7 +1162,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # involution componentwise, then convert back.
                 parent = self.parent()
                 M = parent.realization_of().M()
-                dct = {I.reversed(): coeff for (I, coeff) in M(self)}
+                dct = {I.reversed(): coeff for I, coeff in M(self)}
                 return parent(M._from_dict(dct))
 
             def omega_involution(self):
@@ -1386,7 +1321,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # involution componentwise, then convert back.
                 parent = self.parent()
                 F = parent.realization_of().F()
-                dct = {I.complement(): coeff for (I, coeff) in F(self)}
+                dct = {I.complement(): coeff for I, coeff in F(self)}
                 return parent(F._from_dict(dct))
 
             def dendriform_less(self, other):
@@ -1597,9 +1532,9 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     1
                 """
                 M = self.parent().realization_of().Monomial()
-                return M(self).expand(n,alphabet)
+                return M(self).expand(n, alphabet)
 
-            def is_symmetric(self):
+            def is_symmetric(self) -> bool:
                 r"""
                 Return ``True`` if ``self`` is an element of the symmetric
                 functions.
@@ -1654,7 +1589,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 """
                 if self.is_symmetric():
                     M = self.parent().realization_of().Monomial()
-                    return M( self ).to_symmetric_function()
+                    return M(self).to_symmetric_function()
                 else:
                     raise ValueError("%s is not a symmetric function" % self)
 
@@ -1798,7 +1733,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             """
             return self.tensor_square().sum_of_monomials((self._indices(compo[:i]),
                                                           self._indices(compo[i:]))
-                                                         for i in range(len(compo)+1))
+                                                         for i in range(len(compo) + 1))
 
         def lambda_of_monomial(self, I, n):
             r"""
@@ -1910,9 +1845,8 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                                                for k in lam])
             QQ_result *= (-1) ** n
             # QQ_result is now \lambda^n(M_I) over QQ.
-            result = self.sum_of_terms([(J, ZZ(coeff)) for (J, coeff) in QQ_result],
-                                        distinct=True)
-            return result
+            return self.sum_of_terms([(J, ZZ(coeff)) for J, coeff in QQ_result],
+                                     distinct=True)
 
         class Element(CombinatorialFreeModule.Element):
             r"""
@@ -1983,10 +1917,10 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     True
                 """
                 parent = self.parent()
-                return parent.sum( (-1) ** (I.size() - len(I)) * coeff
-                                   * parent.sum_of_fatter_compositions(I)
-                                   for I, coeff in
-                                   self._monomial_coefficients.items() )
+                return parent.sum((-1) ** (I.size() - len(I)) * coeff
+                                  * parent.sum_of_fatter_compositions(I)
+                                  for I, coeff in
+                                  self._monomial_coefficients.items())
 
             def expand(self, n, alphabet='x'):
                 r"""
@@ -2033,15 +1967,16 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 def on_basis(comp, i):
                     if not comp:
                         return P.one()
-                    elif len(comp) > i:
+                    if len(comp) > i:
                         return P.zero()
-                    else:
-                        return x[i-1]**comp[-1] * on_basis(comp[:-1], i-1) + \
-                                                  on_basis(comp, i-1)
-                return M._apply_module_morphism(self, lambda comp: on_basis(comp,n),
+                    return x[i - 1]**comp[-1] * on_basis(comp[:-1], i - 1) + \
+                        on_basis(comp, i - 1)
+
+                return M._apply_module_morphism(self,
+                                                lambda comp: on_basis(comp, n),
                                                 codomain=P)
 
-            def is_symmetric( self ):
+            def is_symmetric(self) -> bool:
                 r"""
                 Determine if a quasi-symmetric function, written in the Monomial basis,
                 is symmetric.
@@ -2074,7 +2009,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # and how many rearrangements of the composition we've seen.
                 from sage.combinat.permutation import Permutations_mset
                 d = {}
-                for (I, coeff) in self:
+                for I, coeff in self:
                     partition = I.to_partition()
                     if partition not in d:
                         d[partition] = [coeff, 1]
@@ -2085,7 +2020,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                             d[partition][1] += 1
                 # make sure we've seen each rearrangement of the composition
                 return all(d[partition][1] == Permutations_mset(partition).cardinality()
-                            for partition in d)
+                           for partition in d)
 
             def to_symmetric_function(self):
                 r"""
@@ -2133,9 +2068,9 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 if self.is_symmetric():
                     return m._from_dict({_Partitions(list(I)): coeff
                                          for I, coeff in self
-                        if list(I) in _Partitions}, remove_zeros=False)
-                else:
-                    raise ValueError("%s is not a symmetric function" % self)
+                                         if list(I) in _Partitions},
+                                        remove_zeros=False)
+                raise ValueError("%s is not a symmetric function" % self)
 
     M = Monomial
 
@@ -2210,7 +2145,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             n = la.size()
             for T in StandardTableaux(la):
                 des = T.standard_descents()
-                comp = C.from_descents([d-1 for d in des], n)
+                comp = C.from_descents([d - 1 for d in des], n)
                 res += self.monomial(comp)
             return res
 
@@ -2282,10 +2217,13 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             """
             T = self.tensor_square()
             C = Composition
-            return T.sum_of_monomials( ( C(compo[:i]), C(compo[i:]) ) for i in range(len(compo)+1) ) + \
-                   T.sum_of_monomials( ( C(compo[:i]+[j]), C([compo[i]-j]+compo[i+1:]) )
+            resu = T.sum_of_monomials((C(compo[:i]), C(compo[i:]))
+                                      for i in range(len(compo) + 1))
+            resu += T.sum_of_monomials((C(compo[:i] + [j]),
+                                        C([compo[i] - j] + compo[i + 1:]))
                                        for i in range(len(compo))
-                                       for j in range(1, compo[i]) )
+                                       for j in range(1, compo[i]))
+            return resu
 
         @cached_method
         def Eulerian(self, n, j, k=None):
@@ -2398,11 +2336,11 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             for p in Permutations(n):
                 dex = []
                 exc = 0
-                for i in range(n-1):
+                for i in range(n - 1):
                     if p[i] > i + 1:
                         exc += 1
-                    if (p[i] > p[i+1] or (p[i] <= i+1 and p[i+1] > i+2)) \
-                            and not (p[i] > i+1 and p[i+1] <= i+2):
+                    if (p[i] > p[i + 1] or (p[i] <= i + 1 and p[i + 1] > i + 2)) \
+                            and not (p[i] > i + 1 and p[i + 1] <= i + 2):
                         dex.append(i)
 
                 if exc != j:
@@ -2413,8 +2351,9 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     continue
 
                 # Converting to a composition
-                d = [-1] + dex + [n-1]
-                monomials.append(Compositions()( [d[i+1]-d[i] for i in range(len(d)-1)] ))
+                d = [-1] + dex + [n - 1]
+                monomials.append(Compositions()([d[i + 1] - d[i]
+                                                 for i in range(len(d) - 1)]))
 
             return self.sum_of_monomials(monomials)
 
@@ -2597,7 +2536,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     0
                 """
                 parent = self.parent()
-                dct = {I.reversed(): coeff for (I, coeff) in self}
+                dct = {I.reversed(): coeff for I, coeff in self}
                 return parent._from_dict(dct)
 
     F = Fundamental
@@ -2749,7 +2688,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             """
             return self.tensor_square().sum_of_monomials((self._indices(compo[:i]),
                                                           self._indices(compo[i:]))
-                                                         for i in range(len(compo)+1))
+                                                         for i in range(len(compo) + 1))
 
         def product_on_basis(self, I, J):
             r"""
@@ -2919,9 +2858,8 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 return self.one()
             T, comps = self._from_monomial_transition_matrix(comp.size())
             i = comps.index(comp)
-            return self._from_dict({c: T[i,j] for j,c in enumerate(comps)
-                                    if T[i,j] != 0},
-                                   remove_zeros=False)
+            return self._from_dict({c: T[i, j] for j, c in enumerate(comps)
+                                    if T[i, j] != 0}, remove_zeros=False)
 
         @cached_method
         def _to_monomial_on_basis(self, comp_shape):
@@ -2948,10 +2886,10 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             M = self.realization_of().Monomial()
             if not comp_shape:
                 return M([])
-            return M.sum_of_terms(((comp_content,
-                    number_of_SSRCT(comp_content, comp_shape))
-                    for comp_content in Compositions(sum(comp_shape))),
-                    distinct=True )
+            return M.sum_of_terms(
+                ((comp_content, number_of_SSRCT(comp_content, comp_shape))
+                 for comp_content in Compositions(sum(comp_shape))),
+                distinct=True)
 
         def dual(self):
             r"""
@@ -3092,7 +3030,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 YQS[1, 1, 1, 1, 1] - YQS[1, 2, 1, 1] - YQS[1, 2, 2] + YQS[1, 3, 1]
             """
             elt = self._QS(self._M.monomial(comp.reversed()))
-            return self._from_dict({al.reversed(): c for al,c in elt},
+            return self._from_dict({al.reversed(): c for al, c in elt},
                                    coerce=False, remove_zeros=False)
 
     YQS = Young_Quasisymmetric_Schur
@@ -3150,8 +3088,8 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 return M([])
             C = Compositions()
             C_size = Compositions(J.size())
-            return M.sum_of_terms( ( (C(I), number_of_fCT(C(I), J)) for I in C_size ),
-                                   distinct=True )
+            return M.sum_of_terms(((C(I), number_of_fCT(C(I), J))
+                                   for I in C_size), distinct=True)
 
         @cached_method
         def _matrix_monomial_to_dual_immaculate(self, n):
@@ -3216,9 +3154,8 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             C_n = Compositions(n)
             mat = self._matrix_monomial_to_dual_immaculate(n)
             column = C_n.list().index(J)
-            return self.sum_of_terms( ( (C(I), mat[C_n.list().index(I)][column])
-                                        for I in C_n ),
-                                      distinct=True )
+            return self.sum_of_terms(((C(I), mat[C_n.list().index(I)][column])
+                                      for I in C_n), distinct=True)
 
     dI = dualImmaculate
 
@@ -3351,12 +3288,12 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             category = self.realization_of()._category
             # This changes Monomial into Hazewinkel Lambda
             M.module_morphism(self._from_Monomial_on_basis,
-                                              codomain=self, category=category
-                                              ).register_as_coercion()
+                              codomain=self, category=category
+                              ).register_as_coercion()
             # This changes Hazewinkel Lambda into Monomial
             self.module_morphism(self._to_Monomial_on_basis,
-                                              codomain=M, category=category
-                                              ).register_as_coercion()
+                                 codomain=M, category=category
+                                 ).register_as_coercion()
 
             # cache for the coordinates of the elements
             # of the monomial basis with respect to the HWL basis
@@ -3512,14 +3449,14 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             if n == 0:
                 part = self._indices([])
                 one = base_ring.one()
-                to_self_cache[ part ] = { part: one }
-                from_self_cache[ part ] = { part: one }
+                to_self_cache[part] = {part: one}
+                from_self_cache[part] = {part: one}
                 transition_matrices[n] = matrix(base_ring, [[one]])
                 inverse_transition_matrices[n] = matrix(base_ring, [[one]])
                 return
 
             compositions_n = Compositions(n).list()
-            len_compositions_n = 2 ** (n-1)     # since n > 0 by now.
+            len_compositions_n = 2 ** (n - 1)     # since n > 0 by now.
             M = self.realization_of().M()
 
             # The monomial basis will be called M from now on.
@@ -3571,10 +3508,10 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             for i in range(len_compositions_n):
                 self_coeffs = {}
                 for j in range(len_compositions_n):
-                    if inverse_transition[i,j] != zero:
-                        self_coeffs[ compositions_n[j] ] = inverse_transition[i,j]
+                    if inverse_transition[i, j] != zero:
+                        self_coeffs[compositions_n[j]] = inverse_transition[i, j]
 
-                to_self_cache[ compositions_n[i] ] = self_coeffs
+                to_self_cache[compositions_n[i]] = self_coeffs
 
             transition_matrices[n] = inverse_transition
 
@@ -3877,7 +3814,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
             def z(J):
                 return R(J.to_partition().centralizer_size())
-            return self._from_dict({J: minus_one**(len(I)-len(J)) / z(J) * coeff_lp(I, J)
+            return self._from_dict({J: minus_one**(len(I) - len(J)) / z(J) * coeff_lp(I, J)
                                     for J in I.fatter()})
 
         def _to_Monomial_on_basis(self, I):
@@ -3901,7 +3838,8 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             R = self.base_ring()
             z = R(I.to_partition().centralizer_size())
             Monomial = self.realization_of().Monomial()
-            return Monomial._from_dict({J: z / coeff_pi(I,J) for J in I.fatter()})
+            return Monomial._from_dict({J: z / coeff_pi(I, J)
+                                        for J in I.fatter()})
 
     class phi(CombinatorialFreeModule, BindableClass):
         r"""
@@ -4016,7 +3954,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
             def z(J):
                 return R(J.to_partition().centralizer_size())
-            return self._from_dict({J: minus_one**(len(I)-len(J)) * R.prod(J) / (coeff_ell(I, J) * z(J))
+            return self._from_dict({J: minus_one**(len(I) - len(J)) * R.prod(J) / (coeff_ell(I, J) * z(J))
                                     for J in I.fatter()})
 
         def _to_Monomial_on_basis(self, I):
@@ -4040,4 +3978,5 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             R = self.base_ring()
             z = R(I.to_partition().centralizer_size())
             Monomial = self.realization_of().Monomial()
-            return Monomial._from_dict({J: z / coeff_sp(I,J) for J in I.fatter()})
+            return Monomial._from_dict({J: z / coeff_sp(I, J)
+                                        for J in I.fatter()})
