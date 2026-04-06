@@ -709,7 +709,6 @@ def linear_transformation(arg0, arg1=None, arg2=None, side="left"):
         sage: phi = linear_transformation(V, V, identity_matrix(3))                    # needs sage.modules
         sage: phi(V.basis()[0])                                                         # needs sage.modules
         B[0]
-
     """
     from sage.categories.homset import Hom
     from sage.matrix.constructor import matrix
