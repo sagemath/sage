@@ -1,5 +1,5 @@
 libpath = meson.current_build_dir() + '/dist/usr/local/lib64'
-ecldir = meson.current_build_dir() + '/dist/usr/local/lib64/ecl-24.5.10'
+ecldir = meson.current_build_dir() + '/dist/usr/local/lib64/ecl-26.3.26'
 include_path = meson.current_build_dir() + '/build'
 
 proj = mod.add_project('configure',

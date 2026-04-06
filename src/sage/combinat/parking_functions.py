@@ -33,22 +33,6 @@ if `D[i+1] = D[i]+1` then `L[i+1] > L[i]`.
 
 The number of parking functions of size `n` is equal to the number of
 rooted forests on `n` vertices and is equal to `(n+1)^{n-1}`.
-
-REFERENCES:
-
-.. [Beck] \M. Beck, Stanford Math Circle - Parking Functions, October 2010,
-    http://math.stanford.edu/circle/parkingBeck.pdf
-
-.. [Hag08] The `q,t` -- Catalan Numbers and the Space of Diagonal Harmonics:
-    With an Appendix on the Combinatorics of Macdonald Polynomials, James Haglund,
-    University of Pennsylvania, Philadelphia -- AMS, 2008, 167 pp.
-
-.. [Shin] \H. Shin, Forests and Parking Functions, slides from talk September 24, 2008,
-    http://www.emis.de/journals/SLC/wpapers/s61vortrag/shin.pdf
-
-.. [GXZ] \A. M. Garsia, G. Xin, M. Zabrocki, A three shuffle case of the
-    compositional parking function conjecture, :arxiv:`1208.5796v1`
-
 AUTHORS:
 
 - used non-decreasing_parking_functions code by Florent Hivert (2009 - 04)

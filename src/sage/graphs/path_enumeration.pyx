@@ -446,7 +446,6 @@ def shortest_simple_paths(self, source, target, weight_function=None,
          [1, 6, 9, 3, 4, 5],
          [1, 6, 9, 11, 10, 5]]
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2, 3)
         sage: for u,v in G.edges(sort=True, labels=False):
         ....:     G.set_edge_label(u, v, 1)
@@ -478,7 +477,6 @@ def shortest_simple_paths(self, source, target, weight_function=None,
 
     Check for consistency of results of Yen's and Feng's::
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2, 4)
         sage: s = set()
         sage: for p in G.shortest_simple_paths('0000', '1111', by_weight=False, algorithm='Yen'):

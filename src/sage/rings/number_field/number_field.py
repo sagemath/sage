@@ -159,7 +159,7 @@ lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldEl
 _NumberFields = NumberFields()
 
 
-def is_NumberFieldHomsetCodomain(codomain, category=None):
+def is_NumberFieldHomsetCodomain(codomain, category=None) -> bool:
     """
     Return whether ``codomain`` is a valid codomain for a
     :class:`NumberFieldHomset` in ``category``.
@@ -370,7 +370,6 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
         sage: CC(a)
         -0.629960524947436 + 1.09112363597172*I
 
-        sage: # needs sage.rings.padics
         sage: L = Qp(5)
         sage: f = polygen(L)^3 - 2
         sage: K.<a> = NumberField(x^3 - 2, embedding=f.roots()[0][0])
@@ -511,7 +510,6 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
     Another problem that was found while working on :issue:`11670`,
     ``maximize_at_primes`` and ``assume_disc_small`` were lost when pickling::
 
-        sage: # needs sage.symbolic
         sage: K.<a> = NumberField(x^3 - 2, assume_disc_small=True,
         ....:                     maximize_at_primes=[2],
         ....:                     latex_name='\\alpha', embedding=2^(1/3))
@@ -1004,37 +1002,6 @@ def GaussianField():
     return QuadraticField(-1, 'I', latex_name='i')
 
 
-def is_AbsoluteNumberField(x):
-    r"""
-    Return ``True`` if ``x`` is an absolute number field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field import is_AbsoluteNumberField
-        sage: x = polygen(ZZ, 'x')
-        sage: is_AbsoluteNumberField(NumberField(x^2 + 1, 'a'))
-        doctest:warning...
-        DeprecationWarning: The function is_AbsoluteNumberField is deprecated; use 'isinstance(..., NumberField_absolute)' instead.
-        See https://github.com/sagemath/sage/issues/38124 for details.
-        True
-        sage: is_AbsoluteNumberField(NumberField([x^3 + 17, x^2 + 1], 'a'))
-        False
-
-    The rationals are a number field, but they're not of the absolute
-    number field class.
-
-    ::
-
-        sage: is_AbsoluteNumberField(QQ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38124,
-                "The function is_AbsoluteNumberField is deprecated; "
-                "use 'isinstance(..., NumberField_absolute)' instead.")
-    return isinstance(x, NumberField_absolute)
-
-
 class CyclotomicFieldFactory(UniqueFactory):
     r"""
     Return the `n`-th cyclotomic field, where `n` is a positive integer,
@@ -1191,14 +1158,10 @@ class CyclotomicFieldFactory(UniqueFactory):
         if n == 0:
             from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             return UniversalCyclotomicField()
-        else:
-            return NumberField_cyclotomic(n, names, embedding=embedding)
+        return NumberField_cyclotomic(n, names, embedding=embedding)
 
 
 CyclotomicField = CyclotomicFieldFactory("sage.rings.number_field.number_field.CyclotomicField")
-
-
-is_NumberField = number_field_base.is_NumberField
 
 
 class NumberField_generic(WithEqualityById, number_field_base.NumberField):
@@ -1691,7 +1654,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         Check that :issue:`30961` is fixed::
 
-            sage: # needs sage.symbolic
             sage: QQi = i.parent()
             sage: x = SR.var('x')
             sage: QQi((x, x))
@@ -1820,7 +1782,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         We can convert symbolic expressions::
 
-            sage: # needs sage.symbolic
             sage: I = sqrt(-1); parent(I)
             Symbolic Ring
             sage: GaussianIntegers()(2 + I)
@@ -2520,7 +2481,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         raise NotImplementedError
 
-    def is_relative(self):
+    def is_relative(self) -> bool:
         """
         EXAMPLES::
 
@@ -2698,7 +2659,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         else:
             return res
 
-    def is_totally_real(self):
+    def is_totally_real(self) -> bool:
         """
         Return ``True`` if ``self`` is totally real, and ``False`` otherwise.
 
@@ -2717,7 +2678,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         return self.signature()[1] == 0
 
-    def is_totally_imaginary(self):
+    def is_totally_imaginary(self) -> bool:
         """
         Return ``True`` if ``self`` is totally imaginary, and ``False`` otherwise.
 
@@ -2736,7 +2697,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         return self.signature()[0] == 0
 
-    def is_CM(self):
+    def is_CM(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a CM field (i.e., a totally imaginary
         quadratic extension of a totally real field).
@@ -3230,7 +3191,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         This function only returns complex embeddings::
 
-            sage: # needs sage.rings.padics
             sage: K.<a> = NumberField(x^2 - 2, embedding=Qp(7)(2).sqrt())
             sage: K.specified_complex_embedding() is None
             True
@@ -3295,6 +3255,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     def conductor(self, check_abelian=True):
         r"""
         Compute the conductor of the abelian field `K`.
+
         If ``check_abelian`` is set to ``False`` and the field is not an
         abelian extension of `\QQ`, the output is not meaningful.
 
@@ -3307,7 +3268,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: K = CyclotomicField(27)
             sage: k = K.subfields(9)[0][0]
             sage: k.conductor()
@@ -3378,7 +3338,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: # needs sage.groups sage.modular
             sage: x = polygen(QQ, 'x')
             sage: K.<t> = NumberField(x^3 + x^2 - 36*x - 4)
             sage: K.conductor()
@@ -3388,7 +3347,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
              Dirichlet character modulo 109 of conductor 109 mapping 6 |--> zeta3,
              Dirichlet character modulo 109 of conductor 109 mapping 6 |--> -zeta3 - 1]
 
-            sage: # needs sage.modular
             sage: K = CyclotomicField(44)
             sage: L = K.subfields(5)[0][0]
             sage: X = L.dirichlet_group(); X  # optional - gap_package_polycyclic
@@ -3556,7 +3514,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         This is the example from the pari page on ``idealchinese``::
 
-            sage: # needs sage.symbolic
             sage: K.<sqrt2> = NumberField(sqrt(2).minpoly())
             sage: ideals = [K.ideal(4), K.ideal(3)]
             sage: residues = [sqrt2, 1]
@@ -3567,7 +3524,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         The result may be non-integral if the results are non-integral::
 
-            sage: # needs sage.symbolic
             sage: K.<sqrt2> = NumberField(sqrt(2).minpoly())
             sage: ideals = [K.ideal(4), K.ideal(21)]
             sage: residues = [1/sqrt2, 1]
@@ -3697,10 +3653,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                 [[1], [2, 2], [3, 3], [4, 4, 4], [], [6, 6, 6, 6], [], [8, 8, 8, 8], [9, 9, 9], []]
         """
         hnf_ideals = self.pari_nf().ideallist(bound)
-        d = {}
-        for i in range(bound):
-            d[i+1] = [self.ideal(hnf) for hnf in hnf_ideals[i]]
-        return d
+        return {i + 1: [self.ideal(hnf) for hnf in hnf_ideals[i]]
+                for i in range(bound)}
 
     def primes_above(self, x, degree=None):
         r"""
@@ -4522,7 +4476,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: z = QQ['z'].0
             sage: K.<zeta> = NumberField(z^2 - 2)
             sage: K._gap_init_()  # random (the variable name $sage1 represents F.base_ring() in gap and is random)
@@ -4537,7 +4490,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         ``E`` is used as a local variable in the above GAP
         ``CallFuncList``::
 
-            sage: # needs sage.libs.gap
             sage: P.<E> = QQ[]
             sage: L.<tau> = NumberField(E^3 - 2)
             sage: l = gap(L); l
@@ -4679,7 +4631,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         Class groups of Hecke polynomials tend to be very small::
 
-            sage: # needs sage.modular
             sage: f = ModularForms(97, 2).T(2).charpoly()
             sage: f.factor()
             (x - 3) * (x^3 + 4*x^2 + 3*x - 1) * (x^4 - 3*x^3 - x^2 + 6*x - 1)
@@ -4905,12 +4856,19 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             True
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:issue:`252`)::
+        polynomials are supported (:issue:`252`). The units returned
+        below differ slightly depending on the CPU::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
-            sage: K._S_class_group_and_units(tuple(K.primes_above(2) + K.primes_above(3)))
-            ([6*a + 2, -6*a + 3, -1, -12*a - 5], [])  # 64-bit
-            ([6*a + 2, -6*a - 3, -1, -12*a - 5], [])  # 32-bit
+            sage: ps = tuple(K.primes_above(2) + K.primes_above(3))
+            sage: units, gens = K._S_class_group_and_units(ps)
+            sage: gens
+            []
+            sage: units  # needs 32_bit
+            [6*a + 2, -6*a - 3, -1, -12*a - 5]
+            sage: units  # needs !32_bit
+            [6*a + 2, -6*a + 3, -1, -12*a - 5]
+
         """
         K_pari = self.pari_bnf(proof=proof)
         S_pari = [p.pari_prime() for p in sorted(set(S))]
@@ -5351,7 +5309,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         into the compositum, if the fields are endowed with a real or
         complex embedding::
 
-            sage: # needs sage.symbolic
             sage: K1 = NumberField(x^4 - 2, 'a', embedding=RR(2^(1/4)))
             sage: K2 = NumberField(x^4 - 2, 'a', embedding=RR(-2^(1/4)))
             sage: K1.composite_fields(K2)
@@ -6198,7 +6155,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         ret.set_immutable()
         return ret
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``True`` since a number field is a field.
 
@@ -6211,14 +6168,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         return True
 
     @cached_method
-    def is_galois(self):
+    def is_galois(self) -> bool:
         r"""
         Return ``True`` if this number field is a Galois extension of
         `\QQ`.
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 1, 'i').is_galois()
             True
@@ -6245,7 +6201,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: x = polygen(QQ, 'x')
             sage: NumberField(x^2 + 1, 'i').is_abelian()
             True
@@ -6303,7 +6258,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: x = polygen(QQ, 'x')
             sage: k.<b> = NumberField(x^2 - 14)  # a Galois extension
             sage: G = k.galois_group(); G
@@ -6315,7 +6269,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: G.artin_symbol(k.primes_above(3)[0])
             (1,2)
 
-            sage: # needs sage.groups
             sage: k.<b> = NumberField(x^3 - x + 1)  # not Galois
             sage: G = k.galois_group(names='c'); G
             Galois group 3T2 (S3) with order 6 of x^3 - x + 1
@@ -6331,7 +6284,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         ::
 
-            sage: # needs sage.groups
             sage: K.<a> = NumberField(x^3 - 2)
             sage: L.<b1> = K.galois_closure(); L
             Number Field in b1 with defining polynomial x^6 + 108
@@ -6355,7 +6307,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         change in the future, so it's better to explicitly call :meth:`absolute_field` if that is
         the desired behavior::
 
-            sage: # needs sage.groups
             sage: x = polygen(QQ)
             sage: K.<a> = NumberField(x^2 + 1)
             sage: R.<t> = PolynomialRing(K)
@@ -7493,7 +7444,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: x = polygen(QQ, 'x')
             sage: K.<xi> = NumberField(x^2 + x + 1)
             sage: S = K.primes_above(3)
@@ -7502,7 +7452,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         You can get the exponent vectors::
 
-            sage: # needs sage.rings.padics
             sage: K.S_unit_solutions(S, include_exponents=True)  # random, due to ordering
             [((2, 1), (4, 0), xi + 2, -xi - 1),
              ((5, -1), (4, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
@@ -7511,7 +7460,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         And the computed bound::
 
-            sage: # needs sage.rings.padics
             sage: solutions, bound = K.S_unit_solutions(S, prec=100, include_bound=True)
             sage: bound
             6
@@ -7889,7 +7837,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         `G` to infinity. This lets us specify which extension of the 5-adic
         valuation we care about in the above example::
 
-            sage: # needs sage.rings.padics
             sage: R.<x> = QQ[]
             sage: G5 = GaussValuation(R, QQ.valuation(5))
             sage: v = K.valuation(G5.augmentation(x + 2, infinity))
@@ -7900,7 +7847,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         Note that you get the same valuation, even if you write down the
         pseudo-valuation differently::
 
-            sage: # needs sage.rings.padics
             sage: ww = K.valuation(G5.augmentation(x + 3, infinity))
             sage: w is ww
             True
@@ -7911,7 +7857,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         completion, i.e., if it is not possible to write down one of the factors
         within the number field::
 
-            sage: # needs sage.rings.padics
             sage: v = G5.augmentation(x + 3, 1)
             sage: K.valuation(v)
             [ 5-adic valuation, v(x + 3) = 1 ]-adic valuation
@@ -8259,7 +8204,6 @@ class NumberField_absolute(NumberField_generic):
 
         Embeddings can also be `p`-adic::
 
-            sage: # needs sage.rings.padics
             sage: F = Qp(73)
             sage: K.<a> = NumberField(x^4 + 6*x^2 + 1,
             ....:                     embedding=F(1290990671961076190983179596556712119))
@@ -9214,7 +9158,6 @@ class NumberField_absolute(NumberField_generic):
         For medium-sized Galois groups of fields with small discriminants,
         this computation is feasible::
 
-            sage: # needs sage.groups
             sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^6 + 4*x^2 + 2)
             sage: K.galois_group().order()
@@ -9263,7 +9206,6 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^4 - 2)
             sage: M = K.galois_closure('b'); M
@@ -9275,14 +9217,12 @@ class NumberField_absolute(NumberField_generic):
 
         ::
 
-            sage: # needs sage.groups
             sage: phi = K.embeddings(L)[0]
             sage: phi(K.0)
             1/120*a2^5 + 19/60*a2
             sage: phi(K.0).minpoly()
             x^4 - 2
 
-            sage: # needs sage.groups
             sage: L, phi = K.galois_closure('b', map=True)
             sage: L
             Number Field in b with defining polynomial x^8 + 28*x^4 + 2500
@@ -9294,7 +9234,6 @@ class NumberField_absolute(NumberField_generic):
 
         A cyclotomic field is already Galois::
 
-            sage: # needs sage.groups
             sage: K.<a> = NumberField(cyclotomic_polynomial(23))
             sage: L.<z> = K.galois_closure()
             sage: L
@@ -9306,7 +9245,6 @@ class NumberField_absolute(NumberField_generic):
 
         Let's make sure we're renaming correctly::
 
-            sage: # needs sage.groups
             sage: K.<a> = NumberField(x^4 - 2)
             sage: L, phi = K.galois_closure('cc', map=True)
             sage: L
@@ -9387,7 +9325,6 @@ class NumberField_absolute(NumberField_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: L.<a1> = K.galois_closure(); L
@@ -11048,7 +10985,6 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
         TESTS::
 
-            sage: # needs sage.libs.gap
             sage: K = CyclotomicField(8)
             sage: gap(K)   # indirect doctest
             CF(8)
@@ -11062,7 +10998,6 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         a genuine representation of cyclotomic fields in the
         GAP interface -- see :issue:`5618`. ::
 
-            sage: # needs sage.groups
             sage: H = AlternatingGroup(4)
             sage: g = H((1,4,3))
             sage: K = H.subgroup([g])
@@ -11083,7 +11018,6 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
         TESTS::
 
-            sage: # needs sage.libs.gap
             sage: K = CyclotomicField(8)
             sage: K._libgap_()
             CF(8)
@@ -11232,7 +11166,6 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
         Check that custom embeddings are respected (:issue:`13765`)::
 
-            sage: # needs sage.symbolic
             sage: z105 = CDF(exp(2*pi*I/105))
             sage: Ka.<a> = CyclotomicField(105, embedding=z105^11)
             sage: Kb.<b> = CyclotomicField(35, embedding=z105^6)
@@ -11322,7 +11255,6 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: K._log_gen(CDF(a^4))
             4
 
-            sage: # needs sage.symbolic
             sage: zeta105 = CC(exp(2*pi*i/105))
             sage: K.<a> = CyclotomicField(105, embedding=zeta105^13)
             sage: zeta105^13, CC(a)
@@ -11345,7 +11277,6 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: K._log_gen(CDF(.5, -.8)) is None
             True
 
-            sage: # needs sage.rings.padics
             sage: zeta5 = cyclotomic_polynomial(5).change_ring(Qp(11)).roots()[0][0]
             sage: zeta5 ^ 5
             1 + O(11^20)
@@ -11551,7 +11482,6 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
         It also works with the old pexpect interface to GAP::
 
-            sage: # needs sage.libs.gap
             sage: a = gap(z + 1/z)
             sage: b = gap(Matrix(F,[[z^2,1],[0,a+1]])); b
             [ [ E(4), 1 ], [ 0, 1+E(8)-E(8)^3 ] ]
@@ -12296,7 +12226,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         else:
             return NumberField_generic.discriminant(self, v)
 
-    def is_galois(self):
+    def is_galois(self) -> bool:
         """
         Return ``True`` since all quadratic fields are automatically Galois.
 
@@ -12731,11 +12661,11 @@ def refine_embedding(e, prec=None):
     # Now we determine which is an extension of the old one; this
     # relies on the fact that coercing a high-precision root into a
     # field with lower precision will equal the lower-precision root!
-    diffs = [(RC(ee(K.gen()))-old_root).abs() for ee in elist]
+    diffs = [(RC(ee(K.gen())) - old_root).abs() for ee in elist]
     return elist[min(zip(diffs, count()))[1]]
 
 
-def is_real_place(v):
+def is_real_place(v) -> bool:
     r"""
     Return ``True`` if `v` is real, ``False`` if `v` is complex.
 

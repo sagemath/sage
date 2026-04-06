@@ -8,8 +8,9 @@ Sage-the-distribution (classical build)
 .. note::
 
    This section describes the classical build process using
-   ``./configure && make``.
-   It is recommended to use the modern Meson build system instead;
+   ``./configure && make``, which at the end will invoke Meson build system
+   to build the main sagelib Python module. However,
+   it is recommended to use the modern Meson build system directly;
    see :ref:`section-build-source`.
 
 
@@ -986,9 +987,9 @@ Environment variables controlling the documentation build
 
 .. envvar:: SAGE_DOCBUILD_OPTS
 
-  The value of this variable is passed as an
-  argument to ``sage --docbuild all html`` or ``sage --docbuild all pdf`` when
-  you run ``make``, ``make doc``, or ``make doc-pdf``.  For example:
+  The contents of this variable are passed as additional arguments to
+  the documentation builder when you run ``make``, ``make doc``, or
+  ``make doc-pdf``.  For example:
 
   - add ``--no-plot`` to this variable to avoid building the graphics coming from
     the ``.. PLOT`` directive within the documentation,
@@ -996,7 +997,8 @@ Environment variables controlling the documentation build
   - add ``--include-tests-blocks`` to include all "TESTS" blocks in the reference
     manual.
 
-  Run ``sage --docbuild help`` to see the full list of options.
+  A full list of valid options can be found at the top of
+  ``src/sage_docbuild/__main__.py``.
 
 .. envvar:: SAGE_SPKG_INSTALL_DOCS
 

@@ -32,14 +32,16 @@ EXAMPLES::
     sage: C.divisor([(3, pts[0]), (-1, pts[1]), (10, pts[5])])
     3*(x, y) - (x, z) + 10*(x + 2*z, y + z)
 """
-#*******************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu.au>
 #  Copyright (C) 2005 William Stein
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+
+from bisect import bisect_left
 
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
@@ -83,45 +85,14 @@ def CurvePointToIdeal(C, P):
             else:
                 polys.append(a_m*x[i]-ai*x_m)
     elif isinstance(A, AffineSpace_generic):
-        for i in range(m+1):
+        for i in range(m + 1):
             ai = P[i]
             if ai == 0:
                 polys.append(x[i])
             else:
-                polys.append(x[i]-ai)
+                polys.append(x[i] - ai)
     polys.extend(x[i] for i in range(m + 1, n))
     return R.ideal(polys)
-
-
-def is_Divisor(x):
-    r"""
-    Test whether ``x`` is an instance of :class:`Divisor_generic`.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: from sage.schemes.generic.divisor import is_Divisor
-        sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
-        sage: C = Curve(y^2 - x^9 - x)
-        sage: is_Divisor(C.divisor([]))
-        doctest:warning...
-        DeprecationWarning: The function is_Divisor is deprecated;
-        use 'isinstance(..., Divisor_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38277 for details.
-        True
-        sage: is_Divisor("Ceci n'est pas un diviseur")
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38277,
-                "The function is_Divisor is deprecated; "
-                "use 'isinstance(..., Divisor_generic)' instead.")
-    return isinstance(x, Divisor_generic)
 
 
 class Divisor_generic(FormalSum):
@@ -213,7 +184,8 @@ class Divisor_generic(FormalSum):
         # straight - as the test above demonstrates, it results in the first
         # generator being in front of the second one
         terms.sort(key=lambda x: x[1], reverse=True)
-        return repr_lincomb([(r"\mathrm{V}\left(%s\right)" % latex(v), c) for c,v in terms],
+        return repr_lincomb([(r"\mathrm{V}\left(%s\right)" % latex(v), c)
+                             for c, v in terms],
                             is_latex=True)
 
     def _repr_(self):
@@ -240,7 +212,7 @@ class Divisor_generic(FormalSum):
         # straight - as the test above demonstrates, it results in the first
         # generator being in front of the second one
         terms.sort(key=lambda x: x[1], reverse=True)
-        return repr_lincomb([("V(%s)" % v, c) for c,v in terms])
+        return repr_lincomb([("V(%s)" % v, c) for c, v in terms])
 
     def scheme(self):
         """
@@ -318,7 +290,7 @@ class Divisor_curve(Divisor_generic):
         """
         from sage.schemes.generic.divisor_group import DivisorGroup_curve
         if not isinstance(v, (list, tuple)):
-            v = [(1,v)]
+            v = [(1, v)]
 
         if parent is None:
             if v:
@@ -352,21 +324,28 @@ class Divisor_curve(Divisor_generic):
                 if isinstance(t, tuple) and len(t) == 2:
                     n = ZZ(t[0])
                     I = t[1]
-                    points.append((n,I))
+                    points.append((n, I))
                 else:
                     n = ZZ(1)
                     I = t
                 if isinstance(I, SchemeMorphism):
-                    I = CurvePointToIdeal(C,I)
+                    I = CurvePointToIdeal(C, I)
                 else:
                     know_points = False
-                w.append((n,I))
+                w.append((n, I))
             v = w
         Divisor_generic.__init__(
             self, v, check=False, reduce=True, parent=parent)
 
         if know_points:
             self._points = points
+        else:
+            # TODO: in the next line, we should probably replace
+            # rational_points() with irreducible_components()
+            # once Sage can deal with divisors that are not only
+            # rational points (see trac #16225)
+            self._points = [(m, self.scheme().ambient_space().subscheme(p).rational_points()[0]) for (m, p) in self]
+        self._sort_points()
 
     def _repr_(self):
         r"""
@@ -381,6 +360,40 @@ class Divisor_curve(Divisor_generic):
             '(x, y)'
         """
         return repr_lincomb([(tuple(I.gens()), c) for c, I in self])
+
+    def _sort_points(self):
+        """
+        Sort the list of the points of this divisor, and combine duplicates if
+        needed.
+
+        EXAMPLES::
+
+            sage: F = GF(13)
+            sage: PP.<X,Y,Z> = PolynomialRing(F,3)
+            sage: F = Y^2*Z - X^3 - X*Z^2
+            sage: C = Curve(F)
+            sage: Points = C.rational_points()
+            sage: G = C.divisor([(1, Points[0]), (3, Points[0])])
+            sage: G.support()  # indirect doctest
+            [(0 : 0 : 1)]
+            sage: G = C.divisor([(3, Points[1]), (1, Points[0])])
+            sage: G.support()  # indirect doctest
+            [(0 : 0 : 1), (0 : 1 : 0)]
+        """
+        sorted_points = []
+        for coefficient, point in self._points:
+            try:
+                position = bisect_left(sorted_points, point, key=lambda l: l[1])
+            except TypeError:
+                # Some sets of points cannot be sorted, ignore
+                return
+            if position == len(sorted_points):
+                sorted_points.append([coefficient, point])
+            elif sorted_points[position][1] != point:
+                sorted_points.insert(position, [coefficient, point])
+            else:
+                sorted_points[position][0] += coefficient
+        self._points = [tuple(l) for l in sorted_points]
 
     def support(self) -> list:
         """
@@ -420,16 +433,7 @@ class Divisor_curve(Divisor_generic):
         try:
             return self._support
         except AttributeError:
-            try:
-                pts = self._points
-            except AttributeError:
-                # TODO: in the next line, we should probably replace
-                # rational_points() with irreducible_components()
-                # once Sage can deal with divisors that are not only
-                # rational points (see trac #16225)
-                self._points = [(m, self.scheme().ambient_space().subscheme(p).rational_points()[0]) for (m, p) in self]
-                pts = self._points
-            self._support = [s[1] for s in pts]
+            self._support = [s[1] for s in self._points]
             return self._support
 
     def coefficient(self, P):
@@ -451,12 +455,24 @@ class Divisor_curve(Divisor_generic):
             3
             sage: D.coefficient(pts[1])
             -1
+
+            sage: F = GF(13)
+            sage: PP.<X,Y,Z> = PolynomialRing(F,3)
+            sage: F = Y^2*Z - X^3 - X*Z^2
+            sage: C = Curve(F)
+            sage: Points = C.rational_points()
+            sage: G = C.divisor([(1, Points[0]), (3, Points[0])])
+            sage: G.coefficient(Points[0])
+            4
+            sage: G.coefficient(Points[1])
+            0
         """
         P = self.parent().scheme()(P)
         if P not in self.support():
             return self.base_ring().zero()
         t, i = search(self.support(), P)
-        assert t
+        if not t:
+            return Integer(0)
         try:
             return self._points[i][0]
         except AttributeError:

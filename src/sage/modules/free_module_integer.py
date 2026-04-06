@@ -545,7 +545,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
     @cached_method
     def shortest_vector(self, update_reduced_basis=True, algorithm='fplll', *args, **kwds):
         r"""
-        Return a shortest vector.
+        Return a shortest vector by solving the Shortest Vector Problem (SVP) exactly.
 
         INPUT:
 
@@ -591,7 +591,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
                 B = self.reduced_basis.LLL()
                 qf = B*B.transpose()
 
-            count, length, vectors = qf.__pari__().qfminim()
+            count, length, vectors = qf.__pari__().qfminim(m=1)
             v = vectors.sage().columns()[0]
             w = v*B
         elif algorithm == "fplll":

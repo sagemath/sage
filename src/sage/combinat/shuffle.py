@@ -33,13 +33,6 @@ EXAMPLES::
      ['a', 1, 'b', 'c', 2],
      [1, 'a', 'b', 'c', 2]]
 
-References:
-
-.. [EilLan53] On the groups `H(\pi, n)`, I,
-    Samuel Eilenberg and
-    Saunders Mac Lane,
-    1953.
-
 Author:
 
 - Jean-Baptiste Priez

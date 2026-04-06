@@ -112,7 +112,7 @@ if test "$enable_meson_check" != no; then
   AC_MSG_CHECKING([for Arch Linux])
   if grep -qi 'arch' /etc/os-release 2>/dev/null || test -f /etc/arch-release; then
     AC_MSG_RESULT([yes])
-    AC_MSG_ERROR([Building on Arch Linux using make is not recommended. Please use Meson as described at https://doc.sagemath.org/html/en/installation/meson.html. Use --disable-meson-check to override.])
+    AC_MSG_ERROR([Building on Arch Linux using make is not recommended. Please use Meson as described at https://doc.sagemath.org/html/en/installation/source.html. Use --disable-meson-check to override.])
   else
     AC_MSG_RESULT([no])
   fi
@@ -335,16 +335,32 @@ m4_pushdef([SAGE_PREREQ_URL],[See https://doc.sagemath.org/html/en/reference/spk
     ], [AC_MSG_ERROR([could not find bzlib.h - the header of libbz2 library. $SAGE_PREREQ_URL])
    ])
 
+# choose BLAS/LAPACK on Darwin
+AC_ARG_WITH([darwin-accelerate],
+            [AS_HELP_STRING([--with-darwin-accelerate={no (default)},yes}],
+                            [use Darwin (macOS) Accelerate BLAS/LAPACK])],
+            [SAGE_DARWIN_ACCELERATE="$withval"],
+            [SAGE_DARWIN_ACCELERATE="no"])
+AC_SUBST([SAGE_DARWIN_ACCELERATE])
+
 SAGE_DARWIN_PKG_CONFIG_PATH=
+case $host in
+    *-*-darwin*)
+   AS_IF([test x$SAGE_DARWIN_ACCELERATE = xyes],
+    [SAGE_DARWIN_PKG_CONFIG_PATH=`pwd`"/build/platform/darwin/accelerate/pkgconfig:"])
+    ;;
+    *)
+esac
+
 # Check for zlib
     PKG_CHECK_MODULES([zlib], [zlib >= 1.2.11], [], [
       case $host in
          *-*-darwin*)
-         SAGE_DARWIN_PKG_CONFIG_PATH=`pwd`"/build/platform/darwin/pkgconfig:"
+	 SAGE_DARWIN_PKG_CONFIG_PATH="$SAGE_DARWIN_PKG_CONFIG_PATH"`pwd`"/build/platform/darwin/zlib/pkgconfig:"
          ;;
          *)
          AC_MSG_ERROR([could not find pkg-config zlib.pc file. $SAGE_PREREQ_URL])
-         esac 
+      esac
     ]) 
     AC_CHECK_LIB([z], [inflateEnd], [],
          [AC_MSG_ERROR([could not find libz. $SAGE_PREREQ_URL])])
@@ -506,7 +522,7 @@ AC_ARG_ENABLE([cvxopt],
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
-    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 jupyter_sphinx notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client httpx httpcore h11; do
+    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 jupyter_sphinx notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client httpx httpcore h11 rpds_py; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])

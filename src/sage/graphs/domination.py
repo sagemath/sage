@@ -300,7 +300,7 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
         sage: G = graphs.PetersenGraph()
         sage: G.dominating_set(total=True, value_only=True)                             # needs sage.numerical.mip
         4
-        sage: sorted(G.dominating_sets(k=1))                                            # needs sage.numerical.mip
+        sage: sorted(sorted(d) for d in G.dominating_sets(k=1))                         # needs sage.numerical.mip
         [[0, 2, 6],
          [0, 3, 9],
          [0, 7, 8],
@@ -314,11 +314,10 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
 
     Independent distance-`k` dominating sets of a Path graph::
 
-        sage: # needs sage.numerical.mip
         sage: G = graphs.PathGraph(6)
-        sage: sorted(G.dominating_sets(k=1, independent=True))
+        sage: sorted(sorted(d) for d in G.dominating_sets(k=1, independent=True))
         [[1, 4]]
-        sage: sorted(G.dominating_sets(k=2, independent=True))
+        sage: sorted(sorted(d) for d in G.dominating_sets(k=2, independent=True))
         [[0, 3], [0, 4], [0, 5], [1, 3], [1, 4], [1, 5], [2, 4], [2, 5]]
         sage: sorted(G.dominating_sets(k=3, independent=True))
         [[2], [3]]
@@ -326,11 +325,10 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
     The dominating set is calculated for both the directed and undirected graphs
     (modification introduced in :issue:`17905`)::
 
-        sage: # needs sage.numerical.mip
         sage: g = digraphs.Path(3)
         sage: g.dominating_set(value_only=True)
         2
-        sage: list(g.dominating_sets())
+        sage: sorted(sorted(d) for d in g.dominating_sets())
         [[0, 1], [0, 2]]
         sage: list(g.dominating_sets(k=2))
         [[0]]
@@ -345,7 +343,7 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
         sage: G = graphs.PetersenGraph()
         sage: G.dominating_set(total=True, value_only=True)                             # needs sage.numerical.mip
         4
-        sage: sorted(G.dominating_sets(k=1, connected=True))                            # needs sage.numerical.mip
+        sage: sorted(sorted(d) for d in G.dominating_sets(k=1, connected=True))         # needs sage.numerical.mip
         [[0, 1, 2, 6],
          [0, 1, 4, 5],
          [0, 3, 4, 9],
@@ -367,8 +365,8 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
     Minimum distance-k connected dominating sets of the Tietze graph::
 
         sage: G = graphs.TietzeGraph()
-        sage: sorted(G.dominating_sets(k=2, connected=True))
-        [[0, 9], [1, 0], [2, 3], [4, 3], [5, 6], [7, 6], [8, 0], [10, 3], [11, 6]]
+        sage: sorted(sorted(d) for d in G.dominating_sets(k=2, connected=True))
+        [[0, 1], [0, 8], [0, 9], [2, 3], [3, 4], [3, 10], [5, 6], [6, 7], [6, 11]]
         sage: sorted(G.dominating_sets(k=3, connected=True))
         [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11]]
 

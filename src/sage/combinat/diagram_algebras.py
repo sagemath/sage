@@ -27,28 +27,31 @@ AUTHORS:
 
 import itertools
 
+from sage.arith.misc import integer_ceil as ceil
+from sage.arith.misc import integer_floor as floor
+from sage.arith.power import generic_power
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.arith.power import generic_power
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.combinat import bell_number, catalan_number
-from sage.structure.global_options import GlobalOptions
-from sage.combinat.combinat_cython import (perfect_matchings_iterator,
-                                           set_partition_composition)
-from sage.combinat.set_partition import SetPartitions, AbstractSetPartition
-from sage.combinat.set_partition_iterator import set_partition_iterator
+from sage.combinat.combinat_cython import (
+    perfect_matchings_iterator,
+    set_partition_composition,
+)
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
+from sage.combinat.set_partition import AbstractSetPartition, SetPartitions
+from sage.combinat.set_partition_iterator import set_partition_iterator
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
+from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.misc import integer_floor as floor
-from sage.arith.misc import integer_ceil as ceil
+from sage.structure.global_options import GlobalOptions
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.graphs.graph', 'Graph')
 lazy_import('sage.combinat.symmetric_group_algebra', 'SymmetricGroupAlgebra_n')
@@ -4833,15 +4836,14 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
             insert_pairing([-P[1], -P[0], False, False], intervals)
         elif P[0] > 0:  # Top matching
             insert_pairing([P[0], P[1], True, True], top_intervals)
-        else:  # Propogating line
-            if -P[0] == P[1]:
-                vertical.append(P[1])
+        elif -P[0] == P[1]:
+            vertical.append(P[1])
+        else:
+            if -P[0] < P[1]:
+                num_right += 1
             else:
-                if -P[0] < P[1]:
-                    num_right += 1
-                else:
-                    num_left += 1
-                propogating.append(P)
+                num_left += 1
+            propogating.append(P)
 
     # Now piece together the intervals together
     total_prop = max(num_left, num_right)
@@ -4935,7 +4937,6 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
     """
     # these allow the view command to work (maybe move them
     # somewhere more appropriate?)
-    from sage.misc.latex import latex
     latex.add_package_to_preamble_if_available('tikz')
 
     if fill:
@@ -5187,9 +5188,8 @@ class PottsRepresentation(CombinatorialFreeModule):
             if y not in ZZ or y < 1 or y > self._d:
                 raise ValueError(f"the magnetic field direction must be an integer in [1, {self._d}]")
             y = ZZ(y)
-        else:
-            if y is not None:
-                raise ValueError("the magnetic field direction should not be given for integer rank")
+        elif y is not None:
+            raise ValueError("the magnetic field direction should not be given for integer rank")
         self._y = y
         # _order is used to define the ordering of the basis elements
         self._num_factors = ZZ(order)
@@ -5395,11 +5395,10 @@ class PottsRepresentation(CombinatorialFreeModule):
                 if i > 0:
                     if word[i] != color:
                         return self.zero()
-                else:  # i < 0
-                    if -i == order + 1:
-                        assert color == self._y
-                    else:
-                        fixed[-i-1] = color  # convert 1-based to 0-based
+                elif -i == order + 1:
+                    assert color == self._y
+                else:
+                    fixed[-i-1] = color  # convert 1-based to 0-based
         if not neg_parts:
             return self._monomial(fixed)
 

@@ -43,7 +43,8 @@ Sage example in ./integration.tex, line 162::
 
 Sage example in ./integration.tex, line 522::
 
-    sage: N(integrate(cos(log(cos(x))), x, 0, pi/4))  # rel tol 2e-12
+    sage: ans = N(integrate(cos(log(cos(x))), x, 0, pi/4))  # random - ignore giac stderr output
+    sage: ans  # rel tol 2e-12
     0.7766520331543109
 
 Sage example in ./integration.tex, line 536::
@@ -67,12 +68,14 @@ Sage example in ./integration.tex, line 600::
 
 Sage example in ./integration.tex, line 612::
 
-    sage: integrate(cos(log(cos(x))), x, 0, pi/4)
+    sage: ans = integrate(cos(log(cos(x))), x, 0, pi/4)  # random - ignore giac stderr output
+    sage: ans
     integrate(cos(log(cos(x))), x, 0, 1/4*pi)
 
 Sage example in ./integration.tex, line 622::
 
-    sage: N(integrate(cos(log(cos(x))), x, 0, pi/4), digits=60) # abs tol 2e-12
+    sage: ans = N(integrate(cos(log(cos(x))), x, 0, pi/4), digits=60)  # random - ignore giac stderr output
+    sage: ans  # abs tol 2e-12
     0.7766520331543109
 
 Sage example in ./integration.tex, line 628::
@@ -151,7 +154,7 @@ Sage example in ./integration.tex, line 846::
     sage: mpmath.quad(f, [0, 1])
     Traceback (most recent call last):
     ...
-    TypeError: no canonical coercion from <class 'sage.libs.mpmath.ext_main.mpf'> to ...
+    TypeError: no canonical coercion from <class '...mpf'> to ...
 
 Sage example in ./integration.tex, line 866::
 
