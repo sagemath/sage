@@ -705,9 +705,9 @@ def linear_transformation(arg0, arg1=None, arg2=None, side="left"):
     Linear transformations for vector spaces with combinatorial bases are
     supported by delegating to :meth:`module_morphism`::
 
-        sage: V = VectorSpace(QQ, IntegerRange(3))                                      # needs sage.modules
-        sage: phi = linear_transformation(V, V, identity_matrix(3))                    # needs sage.modules
-        sage: phi(V.basis()[0])                                                         # needs sage.modules
+        sage: V = VectorSpace(QQ, IntegerRange(3))
+        sage: phi = linear_transformation(V, V, identity_matrix(3))
+        sage: phi(V.basis()[0])
         B[0]
     """
     from sage.categories.homset import Hom
