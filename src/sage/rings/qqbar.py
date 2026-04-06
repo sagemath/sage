@@ -8659,36 +8659,24 @@ class ANBinaryExpr(ANDescr):
 
     def exactify(self):
         """
-        Return an exact representation of this binary expression.
-
-        This method recursively calls ``exactify()`` on both operands. The 
-        resulting number fields are then combined into a single field containing 
-        the result of the binary operation.
-    
+        Force the resolution of this deferred binary expression into an exact representation.
+        This method performs two primary steps to resolve the expression:
+        1. Recursively calls ``exactify()`` on the left and right operands to ensure both are fully resolved into exact algebraic numbers.
+        2. Combines the resulting number fields from both operands into a single common field and performs the binary operation within that unified field.
+        If the expression is already exact, this method does nothing.
         EXAMPLES::
-
-            We create a binary expression by adding two algebraic numbers. Initially, 
-            the result is a deferred expression (ANBinaryExpr). Calling exactify()
-            computes the minimal polynomial and interval enclosure::
-
-                sage: a = QQbar(sqrt(2)) + QQbar(sqrt(3))
-                sage: type(a.as_number())  # This triggers a binary expression
+            We resolve a deferred addition of two algebraic numbers::
+                sage: a = AA(2)**(1/2) + AA(3)**(1/2)
+                sage: type(a.as_number())
                 <class 'sage.rings.qqbar.ANBinaryExpr'>
                 sage: a.exactify()
                 sage: a
                 3.146264369941973?
-
         TESTS::
-
-            sage: rt2c = QQbar.zeta(3) + AA(sqrt(2)) - QQbar.zeta(3)                    # needs sage.symbolic
-            sage: rt2c.exactify()                                                       # needs sage.symbolic
-
-        We check to make sure that this method still works even. We
-        do this by increasing the recursion level at each step and
-        decrease it before we return.
-        We lower the recursion limit for this test to allow
-        a test in reasonable time::
-
+            sage: rt2c = QQbar.zeta(3) + AA(sqrt(2)) - QQbar.zeta(3) # needs sage.symbolic
+            sage: rt2c.exactify() # needs sage.symbolic
+        We check to make sure that this method still works even. We do this by increasing the recursion level at each step and decrease it before we return.
+        We lower the recursion limit for this test to allow a test in reasonable time::
             sage: import sys
             sage: old_recursion_limit = sys.getrecursionlimit()
             sage: sys.setrecursionlimit(1000)
