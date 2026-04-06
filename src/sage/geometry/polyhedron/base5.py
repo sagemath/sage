@@ -1414,7 +1414,6 @@ class Polyhedron_base5(Polyhedron_base4):
 
         Check that :issue:`19012` is fixed::
 
-            sage: # needs sage.rings.number_field
             sage: K.<a> = QuadraticField(5)
             sage: P = Polyhedron([[0, 0], [0, a], [1, 1]])
             sage: Q = Polyhedron(ieqs=[[-1, a, 1]])
@@ -1777,7 +1776,6 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: b3_proj = proj_mat * b3; b3_proj
             A 3-dimensional polyhedron in ZZ^4 defined as the convex hull of 5 vertices
 
-            sage: # needs sage.rings.number_field
             sage: square = polytopes.regular_polygon(4)
             sage: square.vertices_list()
             [[0, -1], [1, 0], [-1, 0], [0, 1]]
@@ -1790,7 +1788,6 @@ class Polyhedron_base5(Polyhedron_base4):
 
         Specifying the new base ring may avoid coercion failure::
 
-            sage: # needs sage.rings.number_field
             sage: K.<sqrt2> = QuadraticField(2)
             sage: L.<sqrt3> = QuadraticField(3)
             sage: P = polytopes.cube()*sqrt2
@@ -2191,7 +2188,6 @@ class Polyhedron_base5(Polyhedron_base4):
             (1, 9, 16, 9, 1)
             sage: stacked_square_large = cube.stack(square_face, position=10)
 
-            sage: # needs sage.rings.number_field
             sage: hexaprism = polytopes.regular_polygon(6).prism()
             sage: hexaprism.f_vector()
             (1, 12, 18, 8, 1)
@@ -2320,7 +2316,6 @@ class Polyhedron_base5(Polyhedron_base4):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: P_4 = polytopes.regular_polygon(4)
             sage: W1 = P_4.wedge(P_4.faces(1)[0]); W1
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 6 vertices
@@ -2443,7 +2438,6 @@ class Polyhedron_base5(Polyhedron_base4):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: pentagon  = polytopes.regular_polygon(5)
             sage: f = pentagon.faces(1)[0]
             sage: fsplit_pentagon = pentagon.face_split(f)
@@ -2641,7 +2635,6 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: ops_cube.f_vector()
             (1, 9, 24, 24, 9, 1)
 
-            sage: # needs sage.rings.number_field
             sage: pentagon  = polytopes.regular_polygon(5)
             sage: v = pentagon.vertices()[0]
             sage: ops_pentagon = pentagon.one_point_suspension(v)

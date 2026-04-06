@@ -247,7 +247,6 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         Conversion from symbolic variables::
 
-            sage: # needs sage.symbolic
             sage: x,y,z = var('x,y,z')
             sage: R = QQ['x,y,z']
             sage: type(x)
@@ -266,7 +265,6 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         ::
 
-            sage: # needs sage.symbolic
             sage: R = QQ['x,y,z']
             sage: f = (x^3 + y^3 - z^3)^10; f
             (x^3 + y^3 - z^3)^10

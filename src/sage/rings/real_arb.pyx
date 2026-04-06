@@ -671,7 +671,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             sage: RealBallField().characteristic()
             0
         """
-        return 0
+        return ZZ.zero()
 
     def some_elements(self):
         """
@@ -1647,7 +1647,6 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: mypi = RBF(pi)
             sage: RR(mypi)
             3.14159265358979
@@ -2875,7 +2874,6 @@ cdef class RealBall(RingElement):
         """
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: RBF(e)^17
             [24154952.7535753 +/- ...e-8]
             sage: RBF(e)^(-1)
@@ -3989,7 +3987,6 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: RBF(pi).chebyshev_T(0)
             1.000000000000000
             sage: RBF(pi).chebyshev_T(1)
@@ -4022,7 +4019,6 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: RBF(pi).chebyshev_U(0)
             1.000000000000000
             sage: RBF(pi).chebyshev_U(1)

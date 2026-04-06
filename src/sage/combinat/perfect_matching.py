@@ -5,8 +5,8 @@ Perfect matchings
 A perfect matching of a set `S` is a partition into 2-element sets. If `S` is
 the set `\{1,...,n\}`, it is equivalent to fixpoint-free involutions. These
 simple combinatorial objects appear in different domains such as combinatorics
-of orthogonal polynomials and of the hyperoctaedral groups (see [MV]_, [McD]_
-and also [CM]_):
+of orthogonal polynomials and of the hyperoctahedral groups (see [MV]_, Chapter VII of [Mac1995]_
+and [CM]_):
 
 AUTHOR:
 
@@ -32,20 +32,6 @@ List the perfect matchings of a given ground set::
 
     sage: PerfectMatchings(4).list()
     [[(1, 2), (3, 4)], [(1, 3), (2, 4)], [(1, 4), (2, 3)]]
-
-REFERENCES:
-
-.. [MV] combinatorics of orthogonal polynomials (A. de Medicis et
-   X.Viennot, Moments des q-polynômes de Laguerre et la bijection de
-   Foata-Zeilberger, Adv. Appl. Math., 15 (1994), 262-304)
-
-.. [McD] combinatorics of hyperoctahedral group, double coset algebra and
-   zonal polynomials (I. G. Macdonald, Symmetric functions and Hall
-   polynomials, Oxford University Press, second edition, 1995, chapter
-   VII).
-
-.. [CM] Benoit Collins, Sho Matsumoto, *On some properties of
-   orthogonal Weingarten functions*, :arxiv:`0903.5143`.
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Valentin Feray <feray@labri.fr>

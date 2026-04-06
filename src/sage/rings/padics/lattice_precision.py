@@ -1084,7 +1084,6 @@ class DifferentialPrecisionGeneric(SageObject):
             [WeakProxy#...,
              WeakProxy#...]
 
-            sage: # needs sage.rings.padics
             sage: u = x + y
             sage: v = x - y
             sage: prec.tracked_elements()

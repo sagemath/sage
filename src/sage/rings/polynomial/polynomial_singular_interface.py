@@ -276,7 +276,7 @@ class PolynomialRing_singular_repr:
             sage: R = IntegerModRing(15)['x,y']
             sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a ring (with zero-divisors), global ordering
-            // coefficients: ZZ/(15)...
+            // coefficients: ZZ/...(15)...
             // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
@@ -300,7 +300,6 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = FiniteField(25)
             sage: R = k['x']
             sage: K = R.fraction_field()
@@ -407,7 +406,6 @@ def can_convert_to_singular(R):
 
     Check for :issue:`33319`::
 
-        sage: # needs sage.rings.finite_rings
         sage: R.<x,y> = GF((2^31-1)^3)[]
         sage: R._has_singular
         True
@@ -491,7 +489,6 @@ def _singular_func(self, singular=None):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.singular
         sage: P.<a,b> = PolynomialRing(GF(7), 2)
         sage: f = (a^3 + 2*b^2*a)^7; f
         a^21 + 2*a^7*b^14
@@ -502,7 +499,6 @@ def _singular_func(self, singular=None):
         sage: P(h^20) == f^20
         True
 
-        sage: # needs sage.libs.singular
         sage: R.<x> = PolynomialRing(GF(7))
         sage: f = (x^3 + 2*x^2*x)^7
         sage: f

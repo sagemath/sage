@@ -1142,69 +1142,252 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         self.gens.set_cache(gens)
         return AdditiveAbelianGroupWrapper(self.point_homset(), gens, orders)
 
-    def torsion_basis(self, n):
+    def torsion_subgroup(self, n, *, extend=False, algorithm=None):
         r"""
-        Return a basis of the `n`-torsion subgroup of this elliptic curve,
-        assuming it is fully rational.
+        Return a the `n`-torsion subgroup of this elliptic curve
+        as an :class:`AdditiveAbelianGroupWrapper`.
+
+        If ``extend`` is set to ``False`` (the default), this
+        method returns the *rational* `n`-torsion subgroup.
+        Otherwise (if ``extend`` is ``True``), it first extends
+        the base field as much as needed to represent the full
+        `n`-torsion that exists over the algebraic closure.
+
+        INPUT:
+
+        - ``n`` -- integer
+
+        - ``extend`` -- boolean (default: ``False``): Extend the base
+          field to the `n`-division field (:meth:`division_field`)
+          prior to computing the `n`-torsion subgroup.
+
+        - ``algorithm`` -- string (default: ``None``).
+          Currently available choices are ``"random"``, ``"structure"``,
+          and ``"divpoly"``. If ``algorithm`` is ``None``, the method
+          attempts to select the most suitable algorithm automatically.
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
-            sage: E = EllipticCurve(GF(62207^2), [1,0])
-            sage: E.abelian_group()
-            Additive abelian group isomorphic to Z/62208 + Z/62208 embedded in
-             Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
-              over Finite Field in z2 of size 62207^2
-            sage: PA,QA = E.torsion_basis(2^8)
-            sage: PA.weil_pairing(QA, 2^8).multiplicative_order()
-            256
-            sage: PB,QB = E.torsion_basis(3^5)
-            sage: PB.weil_pairing(QB, 3^5).multiplicative_order()
-            243
+            sage: E = EllipticCurve(GF(2^31-1), [1767054656, 143637714])
+            sage: E.torsion_subgroup(42)
+            Additive abelian group isomorphic to Z/42 + Z/14
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
+                over Finite Field of size 2147483647
+            sage: E.torsion_subgroup(42, algorithm='random')
+            Additive abelian group isomorphic to Z/42 + Z/14
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
+                over Finite Field of size 2147483647
+            sage: E.torsion_subgroup(42, algorithm='divpoly')
+            Additive abelian group isomorphic to Z/42 + Z/14
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
+                over Finite Field of size 2147483647
+            sage: E.torsion_subgroup(42, algorithm='structure')
+            Additive abelian group isomorphic to Z/42 + Z/14
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
+                over Finite Field of size 2147483647
+            sage: E.torsion_subgroup(42, extend=True)
+            Additive abelian group isomorphic to Z/42 + Z/42
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
+                over Finite Field in t of size 2147483647^3
+            sage: E.torsion_subgroup(42, extend=True, algorithm='random')
+            Additive abelian group isomorphic to Z/42 + Z/42
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
+                over Finite Field in t of size 2147483647^3
+            sage: E.torsion_subgroup(42, extend=True, algorithm='divpoly')
+            Additive abelian group isomorphic to Z/42 + Z/14
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
+                over Finite Field of size 2147483647
+            sage: E.torsion_subgroup(42, extend=True, algorithm='structure')
+            Additive abelian group isomorphic to Z/42 + Z/42
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
+                over Finite Field in t of size 2147483647^3
 
         ::
 
-            sage: E = EllipticCurve(GF(101), [4,4])
-            sage: E.torsion_basis(23)
-            Traceback (most recent call last):
-            ...
-            ValueError: curve does not have full rational 23-torsion
-            sage: F = E.division_field(23); F
-            Finite Field in t of size 101^11
-            sage: EE = E.change_ring(F)
-            sage: P, Q = EE.torsion_basis(23)
-            sage: P  # random
-            (89*z11^10 + 51*z11^9 + 96*z11^8 + 8*z11^7 + 67*z11^6
-             + 31*z11^5 + 55*z11^4 + 59*z11^3 + 28*z11^2 + 8*z11 + 88
-             : 40*z11^10 + 33*z11^9 + 80*z11^8 + 87*z11^7 + 97*z11^6
-             + 69*z11^5 + 56*z11^4 + 17*z11^3 + 26*z11^2 + 69*z11 + 11
-             : 1)
-            sage: Q  # random
-            (25*z11^10 + 61*z11^9 + 49*z11^8 + 17*z11^7 + 80*z11^6
-             + 20*z11^5 + 49*z11^4 + 52*z11^3 + 61*z11^2 + 27*z11 + 61
-             : 60*z11^10 + 91*z11^9 + 89*z11^8 + 7*z11^7 + 63*z11^6
-             + 55*z11^5 + 23*z11^4 + 17*z11^3 + 90*z11^2 + 91*z11 + 68
-             : 1)
+            sage: E = EllipticCurve(GF(2^127-1), [1, 0])
+            sage: E.torsion_subgroup(2^99)
+            Additive abelian group isomorphic to Z/633825300114114700748351602688
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+                over Finite Field of size 170141183460469231731687303715884105727
+            sage: E.torsion_subgroup(2^99, algorithm='random')
+            Additive abelian group isomorphic to Z/633825300114114700748351602688
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+                over Finite Field of size 170141183460469231731687303715884105727
+            sage: E.torsion_subgroup(2^99, algorithm='divpoly')
+            Additive abelian group isomorphic to Z/633825300114114700748351602688
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+                over Finite Field of size 170141183460469231731687303715884105727
+            sage: E.torsion_subgroup(2^99, algorithm='structure')
+            Additive abelian group isomorphic to Z/633825300114114700748351602688
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+                over Finite Field of size 170141183460469231731687303715884105727
+            sage: EE = E.change_ring(E.base_field().extension(2,'t'))
+            sage: EE.torsion_subgroup(2^99)
+            Additive abelian group isomorphic to Z/633825300114114700748351602688 + Z/633825300114114700748351602688
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+                over Finite Field in t of size 170141183460469231731687303715884105727^2
+            sage: EE.torsion_subgroup(2^99, algorithm='random')
+            Additive abelian group isomorphic to Z/633825300114114700748351602688 + Z/633825300114114700748351602688
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+                over Finite Field in t of size 170141183460469231731687303715884105727^2
+            sage: EE.torsion_subgroup(2^99, algorithm='divpoly')  # long time -- 6s
+            Additive abelian group isomorphic to Z/633825300114114700748351602688 + Z/633825300114114700748351602688
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+                over Finite Field in t of size 170141183460469231731687303715884105727^2
+            sage: EE.torsion_subgroup(2^99, algorithm='structure')
+            Additive abelian group isomorphic to Z/633825300114114700748351602688 + Z/633825300114114700748351602688
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
+                over Finite Field in t of size 170141183460469231731687303715884105727^2
+
+        A relatively tricky case for ``algorithm="random"``::
+
+            sage: E = EllipticCurve(GF(67^2), [14, 33])
+            sage: A1 = E.torsion_subgroup(12, algorithm='random'); A1
+            Additive abelian group isomorphic to Z/12 + Z/4
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 14*x + 33
+                over Finite Field in z2 of size 67^2
+            sage: A2 = E.torsion_subgroup(12, algorithm='divpoly'); A2
+            Additive abelian group isomorphic to Z/12 + Z/4
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 14*x + 33
+                over Finite Field in z2 of size 67^2
+            sage: A3 = E.torsion_subgroup(12, algorithm='structure'); A3
+            Additive abelian group isomorphic to Z/12 + Z/4
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 14*x + 33
+                over Finite Field in z2 of size 67^2
+            sage: A1 == A2 == A3
+            True
+
+        TESTS:
+
+        Check on random curves that all three algorithms return
+        equivalent results::
+
+            sage: p = random_prime(100)
+            sage: e = randrange(1,4)
+            sage: E = choice(EllipticCurve(j=GF((p,e)).random_element()).twists())
+            sage: n = ZZ(randrange(2, 50))
+            sage: A1 = E.torsion_subgroup(n, algorithm='random')
+            sage: A2 = E.torsion_subgroup(n, algorithm='structure')
+            sage: A3 = E.torsion_subgroup(n, algorithm='divpoly')
+            sage: assert A1 == A2 == A3
 
         .. SEEALSO::
 
             Use :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field`
-            to determine a field extension containing the full `\ell`-torsion subgroup.
+            to determine a field extension containing the full `n`-torsion subgroup.
 
         ALGORITHM:
 
-        This method currently uses :meth:`abelian_group` and
+        If ``algorithm`` is ``"random"``, this method repeatedly samples
+        random points on the curve and distills a generating set of the
+        `n`-torsion from them. This involves point counting.
+
+        If ``algorithm`` is ``divpoly``, this method uses division
+        polynomials to construct a generating set of the `n`-torsion.
+        The complexity of this approach scales with the size of the
+        prime factors of `n`. This algorithm is usually much slower
+        than the others, but there might be situations in which it is
+        useful.
+
+        If ``algorithm`` is ``"structure"``, this method calls
+        :meth:`abelian_group` and
         :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`.
+        Theoretically, this involves performing a superset of the work
+        of the ``"random"`` method, so it should never be the best
+        choice, but due to implementation details (PARI vs. Sage) this
+        approach can be faster than the ``"random"`` algorithm in
+        practice.
         """
-        # TODO: In many cases this is not the fastest algorithm.
-        # Alternatives include factoring division polynomials and
-        # random sampling (like PARI's ellgroup, but with a milder
-        # termination condition). We should implement these too
-        # and figure out when to use which.
-        T = self.abelian_group().torsion_subgroup(n)
-        if T.invariants() != (n, n):
-            raise ValueError(f'curve does not have full rational {n}-torsion')
-        return tuple(P.element() for P in T.gens())
+        n = ZZ(n)
+        if n <= 0:
+            raise ValueError('n must be a positive integer')
+
+        if algorithm is None:
+            if self.abelian_group.is_in_cache():
+                algorithm = 'structure'
+            else:
+                algorithm = 'random'
+
+        E = self
+        if extend:
+            E = E.change_ring(E.division_field(n))
+
+        if algorithm == 'random':
+            # similar to AdditiveAbelianGroupWrapper.from_generators()
+            from sage.arith.misc import xlcm
+
+            N = E.cardinality()
+            M = N // N.prime_to_m_part(n)
+
+            P = Q = E.zero()
+            P._order = ZZ(1)
+
+            for step in range(999):
+                # check P,Q is a basis of the subgroup <P,Q> with ord(Q) | ord(P)
+                assert Q._order.divides(P._order)
+#                assert generic.has_order(P.weil_pairing(Q, P._order), Q._order, operation='*')
+
+                if n.divides(Q._order):
+                    P *= P._order // n
+                    Q *= Q._order // n
+                    break
+
+                if P._order * Q._order == M:
+                    P *= P._order // n.gcd(P._order)
+                    Q *= Q._order // n.gcd(Q._order)
+                    break
+
+                cof = N.prime_to_m_part(n)
+                T = cof * E.random_point()
+                T.set_order(multiple=N//cof, check=False)
+
+                # extend P using T as much as possible
+                m, k1, k2 = xlcm(P._order, T._order)
+                m1 = P._order // k1
+                m2 = T._order // k2
+                P = m1 * P + m2 * T
+                P._order = m
+
+                if not step:
+                    continue
+
+                # remove the P component from T
+                l = generic.order_from_multiple(P.weil_pairing(T, P._order), P._order, operation='*')
+                x = (l * T).log(l * P)
+                T -= x * P
+                T.set_order(multiple=P._order, check=False)
+
+                # extend Q as much as possible
+                Q, m = generic.merge_points((Q, Q._order), (T, T._order))
+                Q._order = m
+
+                # remove the P component from Q
+                l = generic.order_from_multiple(P.weil_pairing(Q, P._order), P._order, operation='*')
+                y = (l * Q).log(l * P)
+                Q -= y * P
+                Q.set_order(multiple=P._order, check=False)
+
+            else:
+                raise RuntimeError('overwhelmingly unlikely event, or (more likely) a bug in EllipticCurve_finite_field.torsion_subgroup()')
+
+            assert hasattr(P, '_order')
+            assert hasattr(Q, '_order')
+
+#            if P and Q:
+#                assert Q._order.divides(P._order)
+#                assert generic.has_order(P.weil_pairing(Q, P._order), Q._order, operation='*')
+
+            gens = list(filter(bool, [P, Q]))
+            return AdditiveAbelianGroupWrapper(E.point_homset(), gens, [pt._order for pt in gens])
+
+        elif algorithm == 'divpoly':
+            # NB: we already handled extend= above
+            return super().torsion_subgroup(n, extend=False, algorithm='divpoly')
+
+        elif algorithm == 'structure':
+            return E.abelian_group().torsion_subgroup(n)
+
+        raise ValueError(f'unknown algorithm {algorithm!r}')
 
     def is_isogenous(self, other, field=None, proof=True):
         """

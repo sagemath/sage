@@ -903,7 +903,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             15*x_2 + 6*x_3
         """
         P = self.parent()
-        return P(dict([(id,b*coeff) for (id, coeff) in self._f.items()]))
+        return P({id: b * coeff for id, coeff in self._f.items()})
 
     cpdef _acted_upon_(self, x, bint self_on_left):
         """

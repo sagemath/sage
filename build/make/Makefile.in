@@ -280,7 +280,7 @@ all-sage-docs:  $(SAGE_DOCS_INSTALLED_PACKAGE_INSTS) $(SAGE_DOCS_UNINSTALLED_PAC
 # Download all packages which should be inside an sdist tarball (the -B
 # option to make forces all targets to be built unconditionally)
 download-for-sdist:
-	+env SAGE_INSTALL_FETCH_ONLY=yes $(MAKE_REC) -B SAGERUNTIME= \
+	+env SAGE_INSTALL_FETCH_ONLY=yes SAGE_DOWNLOAD_ALL_WHEELS=yes $(MAKE_REC) -B SAGERUNTIME= \
 		$(SDIST_PACKAGES)
 
 # TOOLCHAIN consists of dependencies determined by configure.

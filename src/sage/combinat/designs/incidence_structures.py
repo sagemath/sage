@@ -1109,7 +1109,7 @@ class IncidenceStructure(SageObject):
         gB = [[x + 1 for x in b] for b in self._blocks]
         return libgap.BlockDesign(v, gB)
 
-    def intersection_graph(self, sizes=None):
+    def intersection_graph(self, sizes=None, immutable=False):
         r"""
         Return the intersection graph of the incidence structure.
 
@@ -1122,6 +1122,9 @@ class IncidenceStructure(SageObject):
         - ``sizes`` -- list/set of integers; for convenience, setting
           ``sizes`` to ``5`` has the same effect as ``sizes=[5]``. When set to
           ``None`` (default), behaves as ``sizes=PositiveIntegers()``.
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or a mutable graph
 
         EXAMPLES:
 
@@ -1143,7 +1146,8 @@ class IncidenceStructure(SageObject):
         elif sizes in PositiveIntegers():
             sizes = (sizes,)
         V = [Set(v) for v in self]
-        return Graph([V, lambda x, y: len(x & y) in sizes], loops=False)
+        return Graph([V, lambda x, y: len(x & y) in sizes], format="rule",
+                     loops=False, immutable=immutable)
 
     def incidence_matrix(self):
         r"""

@@ -95,7 +95,6 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         r"""
         TESTS::
 
-            sage: # needs sage.rings.number_field
             sage: K.<a> = QuadraticField(2)
             sage: p = Polyhedron(vertices=[(0, 1, a), (3, a, 5)],
             ....:                rays=[(a, 2, 3), (0, 0, 1)],
@@ -607,7 +606,6 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         The point need not have coordinates in the same field as the
         polyhedron::
 
-            sage: # needs sage.symbolic
             sage: ray = Polyhedron(vertices=[(0,0)], rays=[(1,0)], base_ring=QQ)
             sage: ray.contains([sqrt(2)/3,0])        # irrational coordinates are ok
             True
