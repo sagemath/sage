@@ -50,7 +50,6 @@ class ModulesWithBasisHomset(Homset):
     r"""
     The homset for modules with a distinguished basis.
     """
-
     def __init__(self, X, Y, category=None):
         r"""
         Initialize ``self``.
