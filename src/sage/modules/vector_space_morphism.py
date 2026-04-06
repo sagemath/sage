@@ -575,7 +575,6 @@ def linear_transformation(arg0, arg1=None, arg2=None, side="left"):
     For vector spaces built from a combinatorial basis, a matrix-defined
     linear transformation returns the appropriate module morphism::
 
-        sage: # needs sage.modules
         sage: V = CombinatorialFreeModule(QQ, [1, 2, 3])
         sage: phi = linear_transformation(V, V, identity_matrix(3))
         sage: phi.matrix()
