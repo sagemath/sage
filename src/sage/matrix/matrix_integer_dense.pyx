@@ -3211,16 +3211,16 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ....:     [0, 1, 100],
             ....: ])
             sage: w = [1, 10, 1]
-            sage: R_weight = B.LLL(weight=w)
+            sage: R_weights = B.LLL(weights=w)
             sage: R_manual = (B * diagonal_matrix(w)).LLL() * diagonal_matrix([1/x for x in w])
-            sage: R_weight == R_manual
+            sage: R_weights == R_manual
             True
 
             sage: B = Matrix(ZZ, [[1,2],[3,4]])
-            sage: B.LLL(weight=[1,2,3])
+            sage: B.LLL(weights=[1,2,3])
             Traceback (most recent call last):
             ...
-            ValueError: Length of weight must equal number of columns
+            ValueError: Length of weights must equal number of columns
 
         .. NOTE::
 
@@ -3257,44 +3257,29 @@ cdef class Matrix_integer_dense(Matrix_dense):
             []
         """
 
-        weight = kwds.pop('weight', None)
-        solution_scale = kwds.pop('solution_scale', None)
-
-        if weight is not None and solution_scale is not None:
-            raise ValueError("Specify at most one of weight or solution_scale")
-
-        n = self.ncols()
-
-        if weight is not None:
-            if len(weight) != n:
-                raise ValueError("Length of weight must equal number of columns")
-            if any(w < 0 for w in weight):
-                raise ValueError("All weights must be nonnegative")
-
-        if solution_scale is not None:
-            if len(solution_scale) != n:
-                raise ValueError("Length of solution_scale must equal number of columns")
-            if any(s <= 0 for s in solution_scale):
-                raise ValueError("All solution_scale values must be positive")
-
-        if weight is not None or solution_scale is not None:
+        weights = kwds.pop('weights', None)
+        if weights is not None:
+            if len(weights) != self.ncols():
+                raise ValueError("Length of weights must equal number of columns")
+            if any(w <= 0 for w in weights):
+                raise ValueError("All weights must be positive")
             from sage.matrix.constructor import diagonal_matrix
-
-            if weight is not None:
-                W = diagonal_matrix(weight)
-                Winv = diagonal_matrix([1/w if w != 0 else 0 for w in weight])
-            else:
-                Winv = diagonal_matrix(solution_scale)
-                W = diagonal_matrix([1/s for s in solution_scale])
+            W = diagonal_matrix(weights)
+            Winv = diagonal_matrix([1/w for w in weights])
 
             B_scaled = self * W
-            B_reduced = B_scaled.LLL(
+            res = B_scaled.LLL(
                 delta=delta, eta=eta, algorithm=algorithm,
                 fp=fp, prec=prec, early_red=early_red,
                 use_givens=use_givens, use_siegel=use_siegel,
                 transformation=transformation, **kwds
             )
-            return B_reduced * Winv
+
+            if transformation:
+                B_reduced, U = res
+                return B_reduced * Winv, U
+            else:
+                return res * Winv
 
         if self.ncols() == 0 or self.nrows() == 0:
             verbose("Trivial matrix, nothing to do")
