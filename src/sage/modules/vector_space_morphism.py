@@ -571,6 +571,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side="left"):
         sage: psi.matrix()
         [ 1  1]
         [ 1 -1]
+
     For vector spaces built from a combinatorial basis, a matrix-defined
     linear transformation returns the appropriate module morphism::
 
