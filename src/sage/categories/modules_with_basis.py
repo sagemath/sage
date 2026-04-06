@@ -56,7 +56,6 @@ class ModulesWithBasisHomset(Homset):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: X = CombinatorialFreeModule(QQ, [1, 2])
             sage: Y = CombinatorialFreeModule(QQ, [1, 2, 3])
             sage: H = Hom(X, Y)
