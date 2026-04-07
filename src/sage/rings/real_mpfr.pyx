@@ -3042,28 +3042,86 @@ cdef class RealNumber(sage.structure.element.RingElement):
                         (<RealField_class>(<RealNumber>left)._parent).rnd)
         return x
 
-    def round(self):
+    def round(self, rnd=None):
         """
-         Round ``self`` to the nearest representable integer, rounding halfway
-         cases away from zero.
+        Round ``self`` to the nearest integer.
 
-         .. NOTE::
+        INPUT:
 
-             The rounding mode of the parent field does not affect the result.
+        - ``rnd`` -- string or ``None`` (default: ``None``); the rounding
+          mode to use for ``mpfr_rint``. If ``None``, uses MPFR's
+          ``mpfr_round`` which rounds halfway cases away from zero.
+          Valid rounding modes are:
 
-         EXAMPLES::
+          - ``'RNDN'`` -- round to nearest, ties to even (banker's rounding)
+          - ``'RNDZ'`` -- round toward zero
+          - ``'RNDU'`` -- round toward plus infinity (ceiling)
+          - ``'RNDD'`` -- round toward minus infinity (floor)
+          - ``'RNDA'`` -- round away from zero
 
-             sage: RR(0.49).round()
-             0
-             sage: RR(0.5).round()
-             1
-             sage: RR(-0.49).round()
-             0
-             sage: RR(-0.5).round()
-             -1
-         """
+        EXAMPLES::
+
+            sage: RR(0.49).round()
+            0
+            sage: RR(0.5).round()
+            1
+            sage: RR(-0.49).round()
+            0
+            sage: RR(-0.5).round()
+            -1
+
+        Using round-to-even (banker's rounding)::
+
+            sage: RR(0.5).round('RNDN')
+            0
+            sage: RR(1.5).round('RNDN')
+            2
+            sage: RR(2.5).round('RNDN')
+            2
+            sage: RR(-0.5).round('RNDN')
+            0
+            sage: RR(-1.5).round('RNDN')
+            -2
+
+        Other rounding modes::
+
+            sage: RR(0.5).round('RNDU')
+            1
+            sage: RR(0.5).round('RNDD')
+            0
+            sage: RR(0.5).round('RNDZ')
+            0
+            sage: RR(0.5).round('RNDA')
+            1
+
+        Invalid rounding mode raises an error::
+
+            sage: RR(0.5).round('RNDF')
+            Traceback (most recent call last):
+            ...
+            ValueError: rounding mode (=RNDF) must be one of
+            ['RNDA', 'RNDD', 'RNDN', 'RNDU', 'RNDZ']
+            sage: RR(0.5).round('foo')
+            Traceback (most recent call last):
+            ...
+            ValueError: rounding mode (=foo) must be one of
+            ['RNDA', 'RNDD', 'RNDN', 'RNDU', 'RNDZ']
+        """
+        cdef mpfr_rnd_t rnd_mode
         cdef RealNumber x = self._new()
-        mpfr_round(x.value, self.value)
+        if rnd is None:
+            mpfr_round(x.value, self.value)
+        else:
+            _valid_rnd = ['RNDA', 'RNDD', 'RNDN', 'RNDU', 'RNDZ']
+            if isinstance(rnd, str):
+                if rnd not in _valid_rnd:
+                    raise ValueError(
+                        "rounding mode (=%s) must be one of\n%s" % (rnd, _valid_rnd))
+                rnd_mode = rounding_modes[rnd]
+            else:
+                raise ValueError(
+                    "rounding mode (=%s) must be one of\n%s" % (rnd, _valid_rnd))
+            mpfr_rint(x.value, self.value, rnd_mode)
         return x.integer_part()
 
     def floor(self):

@@ -2410,9 +2410,9 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             ....:    assert a.round() == round(K2(a)), a
             ....:    assert a.round() == round(K3(a)), a
             ....:    assert a.round() == round(K5(a)), a
-            ....:    assert round(a+b*sqrt(2.)) == round(a+b*sqrt2), (a, b)
-            ....:    assert round(a+b*sqrt(3.)) == round(a+b*sqrt3), (a, b)
-            ....:    assert round(a+b*sqrt(5.)) == round(a+b*sqrt5), (a, b)
+            ....:    assert (a+b*sqrt(2.)).round('RNDN') == round(a+b*sqrt2), (a, b)
+            ....:    assert (a+b*sqrt(3.)).round('RNDN') == round(a+b*sqrt3), (a, b)
+            ....:    assert (a+b*sqrt(5.)).round('RNDN') == round(a+b*sqrt5), (a, b)
         """
         n = self.floor()
         test = 2 * (self - n)
