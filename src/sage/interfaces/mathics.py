@@ -33,7 +33,6 @@ wrapping the Mathics expression/variable, so that you can use the
 Mathics variable from within Sage. You can then call Mathics
 functions on the new object; for example::
 
-    sage: from sage.interfaces.mathics import mathics
     sage: mobj = mathics(x^2-1); mobj       # optional - mathics
     -1 + x ^ 2
     sage: mobj.Factor()                     # optional - mathics
@@ -519,14 +518,32 @@ class Mathics(Interface):
             <class 'mathics.session.MathicsSession'>
         """
         if not self._session:
-            from mathics.session import MathicsSession
-            from mathics.core.load_builtin import import_and_load_builtins
-            import_and_load_builtins()
-            self._session = MathicsSession()
-            from sage.interfaces.sympy import sympy_init
-            sympy_init()
-            from sympy import Symbol
-            Symbol._sage_ = _mathics_sympysage_symbol
+            import warnings
+
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore")
+                from mathics.session import MathicsSession
+                import sys, os
+
+                with open(os.devnull, "w") as devnull:
+                    old_stdout = sys.stdout
+                    old_stderr = sys.stderr
+                    sys.stdout = devnull
+                    sys.stderr = devnull
+                    try:
+                        from mathics.core.load_builtin import import_and_load_builtins
+
+                        import_and_load_builtins()
+                    finally:
+                        sys.stdout = old_stdout
+                        sys.stderr = old_stderr
+                self._session = MathicsSession()
+                from sage.interfaces.sympy import sympy_init
+
+                sympy_init()
+                from sympy import Symbol
+
+                Symbol._sage_ = _mathics_sympysage_symbol
 
     def _read_in_file_command(self, filename):
         r"""
@@ -1105,9 +1122,10 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
             def conv(i):
                 if is_complex_tuple(i):
-                    from sage.rings.complex_double import CDF
+                    from sage.symbolic.ring import SR
+                    from sage.symbolic.constants import I
 
-                    return CDF(complex(get_python_num(i[0]), get_python_num(i[1])))
+                    return SR(get_python_num(i[0])) + SR(get_python_num(i[1])) * I
                 return self.parent()(i).sage()
             if isinstance(p, list):
                 return [conv(i) for i in p]
@@ -1346,5 +1364,5 @@ def mathics_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%mathics magics instead.')
-    from mathics import main
+    from mathics import __main__ as main
     main.main()
