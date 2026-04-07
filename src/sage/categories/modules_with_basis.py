@@ -8,13 +8,13 @@ AUTHORS:
 - Christian Stump (2010): :issue:`9648` module_morphism's to a wider class
   of codomains
 """
-# *****************************************************************************
+#*****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2014 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
-# ******************************************************************************
+#******************************************************************************
 
 from sage.misc.lazy_import import LazyImport, lazy_import
 from sage.misc.lazy_attribute import lazy_attribute
@@ -33,17 +33,13 @@ from sage.categories.map import Map
 from sage.structure.element import Element, parent, Matrix
 
 
-lazy_import(
-    "sage.modules.with_basis.morphism",
-    [
-        "ModuleMorphismByLinearity",
-        "ModuleMorphismFromMatrix",
-        "ModuleMorphismFromFunction",
-        "DiagonalModuleMorphism",
-        "TriangularModuleMorphismByLinearity",
-        "TriangularModuleMorphismFromFunction",
-    ],
-)
+lazy_import('sage.modules.with_basis.morphism',
+            ['ModuleMorphismByLinearity',
+             'ModuleMorphismFromMatrix',
+             'ModuleMorphismFromFunction',
+             'DiagonalModuleMorphism',
+             'TriangularModuleMorphismByLinearity',
+             'TriangularModuleMorphismFromFunction'])
 
 
 class ModulesWithBasisHomset(Homset):
@@ -67,7 +63,7 @@ class ModulesWithBasisHomset(Homset):
             category = Modules(X.base_ring().category()).or_subcategory(Y.category())
         Homset.__init__(self, X, Y, category=category)
 
-    def __call__(self, *args, **kwds):
+    def _element_constructor_(self, x=None, **options):
         r"""
         Construct a morphism in this homset.
 
@@ -86,25 +82,21 @@ class ModulesWithBasisHomset(Homset):
             sage: H(m) == psi
             True
         """
-        if len(args) == 1 and isinstance(args[0], Matrix) and not kwds:
-            kwds = {"matrix": args[0]}
-            args = ()
-        if kwds.keys() & {
-            "on_basis",
-            "matrix",
-            "function",
-            "diagonal",
-            "triangular",
-            "unitriangular",
-            "side",
-            "zero",
-            "position",
-        }:
-            kwds.setdefault("codomain", self.codomain())
-            phi = self.domain().module_morphism(*args, **kwds)
+        if isinstance(x, Matrix):
+            options.setdefault("codomain", self.codomain())
+            phi = self.domain().module_morphism(matrix=x, **options)
             phi._parent = self
             return phi
-        return super().__call__(*args, **kwds)
+
+        if options.keys() & {"on_basis", "matrix", "function", "diagonal"}:
+            options.setdefault("codomain", self.codomain())
+            if x is None:
+                phi = self.domain().module_morphism(**options)
+            else:
+                phi = self.domain().module_morphism(x, **options)
+            phi._parent = self
+            return phi
+        return super()._element_constructor_(x, **options)
 
 
 class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
@@ -258,20 +250,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
         """
         return self.base_ring().is_field()
 
-    FiniteDimensional = LazyImport(
-        "sage.categories.finite_dimensional_modules_with_basis",
-        "FiniteDimensionalModulesWithBasis",
-        at_startup=True,
-    )
-    Filtered = LazyImport(
-        "sage.categories.filtered_modules_with_basis", "FilteredModulesWithBasis"
-    )
-    Graded = LazyImport(
-        "sage.categories.graded_modules_with_basis", "GradedModulesWithBasis"
-    )
-    Super = LazyImport(
-        "sage.categories.super_modules_with_basis", "SuperModulesWithBasis"
-    )
+    FiniteDimensional = LazyImport('sage.categories.finite_dimensional_modules_with_basis', 'FiniteDimensionalModulesWithBasis', at_startup=True)
+    Filtered = LazyImport('sage.categories.filtered_modules_with_basis', 'FilteredModulesWithBasis')
+    Graded = LazyImport('sage.categories.graded_modules_with_basis', 'GradedModulesWithBasis')
+    Super = LazyImport('sage.categories.super_modules_with_basis', 'SuperModulesWithBasis')
 
     # To implement a module_with_basis you need to implement the
     #   following methods:
@@ -317,19 +299,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
             """
             from sage.sets.family import Family
-
             return Family(self._indices, self.monomial)
 
-        def module_morphism(
-            self,
-            on_basis=None,
-            matrix=None,
-            function=None,
-            diagonal=None,
-            triangular=None,
-            unitriangular=False,
-            **keywords,
-        ):
+        def module_morphism(self, on_basis=None, matrix=None, function=None,
+                            diagonal=None, triangular=None, unitriangular=False,
+                            **keywords):
             r"""
             Construct a module morphism from ``self`` to ``codomain``.
 
@@ -660,49 +634,32 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 ...
                 ValueError: diagonal (=3) should be a function
             """
-            if (
-                len(
-                    [x for x in [matrix, on_basis, function, diagonal] if x is not None]
-                )
-                != 1
-            ):
-                raise ValueError(
-                    "module_morphism() takes exactly one option out of `matrix`, `on_basis`, `function`, `diagonal`"
-                )
+            if len([x for x in [matrix, on_basis, function, diagonal] if x is not None]) != 1:
+                raise ValueError("module_morphism() takes exactly one option out of `matrix`, `on_basis`, `function`, `diagonal`")
             if matrix is not None:
                 return ModuleMorphismFromMatrix(domain=self, matrix=matrix, **keywords)
             if diagonal is not None:
-                return DiagonalModuleMorphism(
-                    domain=self, diagonal=diagonal, **keywords
-                )
+                return DiagonalModuleMorphism(domain=self, diagonal=diagonal, **keywords)
             if unitriangular in ["upper", "lower"] and triangular is None:
                 triangular = unitriangular
                 unitriangular = True
             if triangular is not None:
                 if on_basis is not None:
                     return TriangularModuleMorphismByLinearity(
-                        domain=self,
-                        on_basis=on_basis,
-                        triangular=triangular,
-                        unitriangular=unitriangular,
-                        **keywords,
-                    )
+                        domain=self, on_basis=on_basis,
+                        triangular=triangular, unitriangular=unitriangular,
+                        **keywords)
                 else:
                     return TriangularModuleMorphismFromFunction(
-                        domain=self,
-                        function=function,
-                        triangular=triangular,
-                        unitriangular=unitriangular,
-                        **keywords,
-                    )
+                        domain=self, function=function,
+                        triangular=triangular, unitriangular=unitriangular,
+                        **keywords)
             if on_basis is not None:
                 return ModuleMorphismByLinearity(
-                    domain=self, on_basis=on_basis, **keywords
-                )
+                    domain=self, on_basis=on_basis, **keywords)
             else:
                 return ModuleMorphismFromFunction(  # Or just SetMorphism?
-                    domain=self, function=function, **keywords
-                )
+                    domain=self, function=function, **keywords)
 
         _module_morphism = module_morphism
 
@@ -832,7 +789,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             order = self._compute_support_order(elements, order)
 
             from sage.matrix.constructor import matrix
-
             mat = matrix(self.base_ring(), [[g[s] for s in order] for g in elements])
             # Echelonizing a matrix over a field returned the rref
             if row_reduced and self.base_ring() not in Fields():
@@ -842,26 +798,13 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     raise ValueError("unable to compute the row reduced echelon form")
             else:
                 mat.echelonize()
-            return [
-                self._from_dict(
-                    {order[i]: c for i, c in enumerate(vec) if c}, remove_zeros=False
-                )
-                for vec in mat
-                if vec
-            ]
+            return [self._from_dict({order[i]: c for i, c in enumerate(vec) if c},
+                                    remove_zeros=False)
+                    for vec in mat if vec]
 
-        def submodule(
-            self,
-            gens,
-            check=True,
-            already_echelonized=False,
-            unitriangular=False,
-            support_order=None,
-            category=None,
-            submodule_class=None,
-            *args,
-            **opts,
-        ):
+        def submodule(self, gens, check=True, already_echelonized=False,
+                      unitriangular=False, support_order=None, category=None,
+                      submodule_class=None, *args, **opts):
             r"""
             The submodule spanned by a finite set of elements.
 
@@ -1032,7 +975,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             # Make sure gens consists of elements of ``self``
             from sage.sets.family import Family, AbstractFamily
-
             if isinstance(gens, AbstractFamily):
                 gens = gens.map(self)
             elif isinstance(gens, dict):
@@ -1044,22 +986,13 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 gens = self.echelon_form(gens, unitriangular, order=support_order)
 
             if submodule_class is None:
-                from sage.modules.with_basis.subquotient import (
-                    SubmoduleWithBasis as submodule_class,
-                )
-            return submodule_class(
-                gens,
-                ambient=self,
-                support_order=support_order,
-                unitriangular=unitriangular,
-                category=category,
-                *args,
-                **opts,
-            )
+                from sage.modules.with_basis.subquotient import SubmoduleWithBasis as submodule_class
+            return submodule_class(gens, ambient=self,
+                                   support_order=support_order,
+                                   unitriangular=unitriangular,
+                                   category=category, *args, **opts)
 
-        def quotient_module(
-            self, submodule, check=True, already_echelonized=False, category=None
-        ):
+        def quotient_module(self, submodule, check=True, already_echelonized=False, category=None):
             r"""
             Construct the quotient module ``self`` / ``submodule``.
 
@@ -1110,18 +1043,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                  - :meth:`Rings.ParentMethods.quotient`
                  - :class:`sage.modules.with_basis.subquotient.QuotientModuleWithBasis`
             """
-            from sage.modules.with_basis.subquotient import (
-                SubmoduleWithBasis,
-                QuotientModuleWithBasis,
-            )
-
+            from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModuleWithBasis
             if not isinstance(submodule, SubmoduleWithBasis):
-                submodule = self.submodule(
-                    submodule,
-                    check=check,
-                    unitriangular=True,
-                    already_echelonized=already_echelonized,
-                )
+                submodule = self.submodule(submodule, check=check,
+                                           unitriangular=True,
+                                           already_echelonized=already_echelonized)
             return QuotientModuleWithBasis(submodule, category=category)
 
         def tensor(*parents, **kwargs):
@@ -1136,7 +1062,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 A # A # A
                 sage: A.rename(None)                                                    # needs sage.combinat sage.modules
             """
-            constructor = kwargs.pop("constructor", tensor)
+            constructor = kwargs.pop('constructor', tensor)
             cat = constructor.category_from_parents(parents)
             return parents[0].__class__.Tensor(parents, category=cat)
 
@@ -1206,12 +1132,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 1
             """
             from sage.rings.infinity import Infinity
-
             if self.dimension() == Infinity:
                 return Infinity
             if self.dimension() == 0:
                 from sage.rings.integer_ring import ZZ
-
                 return ZZ.one()
             return self.base_ring().cardinality() ** self.dimension()
 
@@ -1231,7 +1155,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: GroupAlgebra(AbelianGroup(1), IntegerModRing(10)).is_finite()     # needs sage.groups sage.modules
                 False
             """
-            return self.base_ring().is_finite() and self.basis().keys().is_finite()
+            return (self.base_ring().is_finite() and self.basis().keys().is_finite())
 
         def monomial(self, i):
             """
@@ -1402,12 +1326,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if x == self.zero():
                 if not codomain:
                     from sage.sets.family import Family
-
                     B = Family(self.basis())
                     try:
                         z = B.first()
                     except StopIteration:
-                        raise ValueError("codomain could not be determined")
+                        raise ValueError('codomain could not be determined')
                     codomain = on_basis(z).parent()
                 return codomain.zero()
 
@@ -1417,13 +1340,12 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 try:
                     codomain = on_basis(key).parent()
                 except Exception:
-                    raise ValueError("codomain could not be determined")
+                    raise ValueError('codomain could not be determined')
 
-            if hasattr(codomain, "linear_combination"):
+            if hasattr(codomain, 'linear_combination'):
                 mc = x.monomial_coefficients(copy=False)
-                return codomain.linear_combination(
-                    (on_basis(key), coeff) for key, coeff in mc.items()
-                )
+                return codomain.linear_combination((on_basis(key), coeff)
+                                                   for key, coeff in mc.items())
             else:
                 return_sum = codomain.zero()
                 mc = x.monomial_coefficients(copy=False)
@@ -1444,9 +1366,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 2*s[2, 1] + 2*s[3]
             """
             mc = x.monomial_coefficients(copy=False)
-            return self.linear_combination(
-                (on_basis(key), coeff) for key, coeff in mc.items()
-            )
+            return self.linear_combination((on_basis(key), coeff)
+                                           for key, coeff in mc.items())
 
         def dimension(self):
             """
@@ -1462,7 +1383,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 return self.basis().cardinality()
             except (AttributeError, TypeError):
                 from sage.rings.integer_ring import ZZ
-
                 return ZZ(len(self.basis()))
 
         def rank(self):
@@ -1590,9 +1510,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             a = self.zero()
             if not indices.is_empty():
                 for i in range(n):
-                    a += self.term(
-                        indices.random_element(), self.base_ring().random_element()
-                    )
+                    a += self.term(indices.random_element(),
+                                   self.base_ring().random_element())
             return a
 
     class ElementMethods:
@@ -1674,13 +1593,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 d = self.monomial_coefficients()
             except NotImplementedError:
                 return
-            tester.assertTrue(all(value.parent() == base_ring for value in d.values()))
-            tester.assertEqual(
-                self,
-                self.parent().linear_combination(
-                    (basis[index], coefficient) for index, coefficient in d.items()
-                ),
-            )
+            tester.assertTrue(all(value.parent() == base_ring
+                                  for value in d.values()))
+            tester.assertEqual(self, self.parent().linear_combination(
+                (basis[index], coefficient)
+                for index, coefficient in d.items()))
 
         def __getitem__(self, m):
             """
@@ -1807,9 +1724,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 True
             """
             zero = self.parent().base_ring().zero()
-            return all(
-                v == zero for v in self.monomial_coefficients(copy=False).values()
-            )
+            return all(v == zero for v in self.monomial_coefficients(copy=False).values())
 
         def __len__(self):
             """
@@ -1885,7 +1800,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 return self._support_view
             except AttributeError:
                 from sage.structure.support_view import SupportView
-
                 zero = self.parent().base_ring().zero()
                 mc = self.monomial_coefficients(copy=False)
                 support_view = SupportView(mc, zero=zero)
@@ -1938,11 +1852,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             P = self.parent()
             zero = P.base_ring().zero()
-            return [
-                P.term(key, value)
-                for key, value in self.monomial_coefficients(copy=False).items()
-                if value != zero
-            ]
+            return [P.term(key, value)
+                    for key, value in self.monomial_coefficients(copy=False).items()
+                    if value != zero]
 
         def coefficients(self, sort=True):
             """
@@ -1982,7 +1894,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if not sort:
                 return [value for key, value in mc.items() if value != zero]
 
-            v = sorted([(key, value) for key, value in mc.items() if value != zero])
+            v = sorted([(key, value) for key, value in mc.items()
+                        if value != zero])
             return [value for key, value in v]
 
         def support_of_term(self):
@@ -2556,11 +2469,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: y.parent() is B                                                   # needs sage.modules
                 True
             """
-            return self.parent().sum_of_terms(
-                (fm, c)
-                for fm, c in ((f(m), c) for m, c in self.items())
-                if fm is not None
-            )
+            return self.parent().sum_of_terms((fm, c)
+                                              for fm, c in ((f(m), c) for m, c in self.items())
+                                              if fm is not None)
 
         def map_item(self, f):
             """
@@ -2683,9 +2594,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: H.zero().category_for()
                     Category of finite dimensional vector spaces with basis over Rational Field
                 """
-                return self.domain().module_morphism(
-                    codomain=self.codomain(), **options
-                )
+                return self.domain().module_morphism(codomain=self.codomain(),
+                                                     **options)
 
     class MorphismMethods:
         @cached_method
@@ -2739,7 +2649,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
         The category of modules with basis constructed by Cartesian products
         of modules with basis.
         """
-
         @cached_method
         def extra_super_categories(self):
             """
@@ -2755,6 +2664,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             return [self.base_category()]
 
         class ParentMethods:
+
             def _an_element_(self):
                 """
                 EXAMPLES::
@@ -2777,17 +2687,13 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     2*B[(0, word: )] + 2*B[(1, ())] + 3*B[(1, (1,3,2))]
                 """
                 from .cartesian_product import cartesian_product
-
-                return cartesian_product(
-                    [module.an_element() for module in self.modules]
-                )
+                return cartesian_product([module.an_element() for module in self.modules])
 
     class TensorProducts(TensorProductsCategory):
         """
         The category of modules with basis constructed by tensor product of
         modules with basis.
         """
-
         @cached_method
         def extra_super_categories(self):
             """
@@ -2806,7 +2712,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             Implement operations on tensor products of modules with basis.
             """
-
             pass
 
         class ElementMethods:
@@ -2936,21 +2841,17 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     except AttributeError:
                         codomain = f(*[module.zero() for module in modules]).parent()
                 if codomain in ModulesWithBasis(K):
-                    return codomain.linear_combination(
-                        (f(*[module.monomial(t) for module, t in zip(modules, m)]), c)
-                        for m, c in self.items()
-                    )
+                    return codomain.linear_combination((f(*[module.monomial(t)
+                                                            for module, t in zip(modules, m)]), c)
+                                                       for m, c in self.items())
                 else:
-                    return sum(
-                        (
-                            c
-                            * f(*[module.monomial(t) for module, t in zip(modules, m)])
-                            for m, c in self.items()
-                        ),
-                        codomain.zero(),
-                    )
+                    return sum((c * f(*[module.monomial(t)
+                                        for module, t in zip(modules, m)])
+                                for m, c in self.items()),
+                               codomain.zero())
 
     class DualObjects(DualObjectsCategory):
+
         @cached_method
         def extra_super_categories(self):
             """

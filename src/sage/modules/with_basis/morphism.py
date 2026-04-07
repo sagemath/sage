@@ -113,12 +113,9 @@ sage.categories.modules_with_basis; see :issue:`8678` for the complete log.
 from sage.categories.fields import Fields
 from sage.categories.modules import Modules
 from sage.misc.call import attrcall
-
 # The identity function would deserve a more canonical location
 from sage.misc.c3_controlled import identity
-from sage.categories.commutative_additive_semigroups import (
-    CommutativeAdditiveSemigroups,
-)
+from sage.categories.commutative_additive_semigroups import CommutativeAdditiveSemigroups
 from sage.categories.homset import Hom
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.morphism import SetMorphism, Morphism
@@ -165,7 +162,6 @@ class ModuleMorphism(Morphism):
     - handles the proper inheritance from categories by updating the
       class of ``self`` upon construction.
     """
-
     def __init__(self, domain, codomain=None, category=None, affine=False):
         """
         Initialization of module morphisms.
@@ -183,10 +179,8 @@ class ModuleMorphism(Morphism):
                 raise ValueError("domain(=%s) should be a module with basis" % codomain)
             base_ring = domain.base_ring()
 
-            if not hasattr(codomain, "base_ring"):
-                raise ValueError(
-                    "codomain(=%s) needs to have a base_ring attribute" % codomain
-                )
+            if not hasattr(codomain, 'base_ring'):
+                raise ValueError("codomain(=%s) needs to have a base_ring attribute" % codomain)
             # codomain should be a module over base_ring
             # The natural test would be ``codomains in Modules(base_ring)``
             # But this is not properly implemented yet::
@@ -199,33 +193,25 @@ class ModuleMorphism(Morphism):
             #     False
 
             # The test below is a bit more restrictive
-            if (not codomain.base_ring().has_coerce_map_from(base_ring)) and (
-                not codomain.has_coerce_map_from(base_ring)
-            ):
-                raise ValueError(
-                    "codomain(=%s) should be a module over the base ring of the domain(=%s)"
-                    % (codomain, domain)
-                )
+            if (not codomain.base_ring().has_coerce_map_from(base_ring)) \
+               and (not codomain.has_coerce_map_from(base_ring)):
+                raise ValueError("codomain(=%s) should be a module over the base ring of the domain(=%s)" % (codomain, domain))
 
             if affine:
                 # We don't yet have a category whose morphisms are affine morphisms
                 category = Sets()
             else:
                 C = Modules(base_ring)
-                for D in [
-                    C.WithBasis().FiniteDimensional(),
-                    C.WithBasis(),
-                    C,
-                    # QQ is not in Modules(QQ)!
-                    CommutativeAdditiveSemigroups(),
-                ]:
+                for D in [C.WithBasis().FiniteDimensional(),
+                          C.WithBasis(),
+                          C,
+                          # QQ is not in Modules(QQ)!
+                          CommutativeAdditiveSemigroups()]:
                     if codomain in D and domain in D:
                         category = D
                         break
                 if category is None:
-                    raise ValueError(
-                        "codomain=(%s) should at least be a commutative additive semigroup"
-                    )
+                    raise ValueError("codomain=(%s) should at least be a commutative additive semigroup")
 
         H = Hom(domain, codomain, category=category)
         Morphism.__init__(self, H)
@@ -309,10 +295,8 @@ class ModuleMorphismByLinearity(ModuleMorphism):
         by passing ``None`` as argument, and implementing or setting
         the attribute ``_on_basis``
     """
-
-    def __init__(
-        self, domain, on_basis=None, codomain=None, category=None, position=0, zero=None
-    ):
+    def __init__(self, domain, on_basis=None, codomain=None, category=None,
+                 position=0, zero=None):
         """
         TESTS::
 
@@ -326,7 +310,7 @@ class ModuleMorphismByLinearity(ModuleMorphism):
         # Might want to assert that domain is a module with basis
         base_ring = domain.base_ring()
 
-        if codomain is None and hasattr(on_basis, "codomain"):
+        if codomain is None and hasattr(on_basis, 'codomain'):
             codomain = on_basis.codomain()
         if zero is None:
             zero = codomain.zero()
@@ -335,13 +319,12 @@ class ModuleMorphismByLinearity(ModuleMorphism):
         if on_basis is not None:
             self._on_basis = on_basis
 
-        self._is_module_with_basis_over_same_base_ring = (
+        self._is_module_with_basis_over_same_base_ring = \
             codomain in ModulesWithBasis(base_ring) and zero == codomain.zero()
-        )
 
-        ModuleMorphism.__init__(
-            self, domain, codomain, category=category, affine=(zero != codomain.zero())
-        )
+        ModuleMorphism.__init__(self, domain, codomain,
+                                category=category,
+                                affine=(zero != codomain.zero()))
 
     def _richcmp_(self, other, op):
         r"""
@@ -360,14 +343,11 @@ class ModuleMorphismByLinearity(ModuleMorphism):
             (True, False, False, False, False, False)
         """
         if op == op_EQ:
-            return (
-                self.__class__ is other.__class__
-                and self._zero == other._zero
-                and self._on_basis == other._on_basis
-                and self._position == other._position
-                and self._is_module_with_basis_over_same_base_ring
-                == other._is_module_with_basis_over_same_base_ring
-            )
+            return (self.__class__ is other.__class__
+                    and self._zero == other._zero
+                    and self._on_basis == other._on_basis
+                    and self._position == other._position
+                    and self._is_module_with_basis_over_same_base_ring == other._is_module_with_basis_over_same_base_ring)
         if op == op_NE:
             return not (self == other)
         return NotImplemented
@@ -414,8 +394,8 @@ class ModuleMorphismByLinearity(ModuleMorphism):
 
             Add more tests for multi-parameter module morphisms.
         """
-        before = args[0 : self._position]
-        after = args[self._position + 1 : len(args)]
+        before = args[0:self._position]
+        after = args[self._position + 1:len(args)]
         x = args[self._position]
         assert x.parent() is self.domain()
 
@@ -423,16 +403,10 @@ class ModuleMorphismByLinearity(ModuleMorphism):
         if self._is_module_with_basis_over_same_base_ring:
             return self.codomain().linear_combination(
                 (self._on_basis(*(before + (index,) + after)), coeff)
-                for (index, coeff) in mc.items()
-            )
+                for (index, coeff) in mc.items())
         else:
-            return sum(
-                (
-                    coeff * self._on_basis(*(before + (index,) + after))
-                    for (index, coeff) in mc.items()
-                ),
-                self._zero,
-            )
+            return sum((coeff * self._on_basis(*(before + (index,) + after))
+                        for (index, coeff) in mc.items()), self._zero)
 
     # As per the specs of Map, we should in fact implement _call_.
     # However we currently need to abuse Map.__call__ (which strict
@@ -655,16 +629,8 @@ class TriangularModuleMorphism(ModuleMorphism):
         sage: [phi.preimage(x[i]) for i in range(1, 4)]
         [-1/3*B[1] + B[2] - 1/12*B[3], 1/4*B[3], 1/3*B[1] - 1/6*B[3]]
     """
-
-    def __init__(
-        self,
-        triangular="upper",
-        unitriangular=False,
-        key=None,
-        inverse=None,
-        inverse_on_support=identity,
-        invertible=None,
-    ):
+    def __init__(self, triangular='upper', unitriangular=False,
+                 key=None, inverse=None, inverse_on_support=identity, invertible=None):
         """
         TESTS::
 
@@ -715,21 +681,14 @@ class TriangularModuleMorphism(ModuleMorphism):
         self._inverse = inverse
 
         if inverse_on_support == "compute":
-            inverse_on_support = {
-                self._dominant_item(on_basis(i))[0]: i
-                for i in self.domain().basis().keys()
-            }.get
+            inverse_on_support = {self._dominant_item(on_basis(i))[0]: i
+                                  for i in self.domain().basis().keys()
+                                  }.get
 
         self._inverse_on_support = inverse_on_support
 
-        if (
-            invertible is None
-            and (domain.basis().keys() == codomain.basis().keys())
-            and (
-                self._inverse_on_support == identity
-                or domain in Modules.FiniteDimensional
-            )
-        ):
+        if invertible is None and (domain.basis().keys() == codomain.basis().keys()) and \
+           (self._inverse_on_support == identity or domain in Modules.FiniteDimensional):
             invertible = True
         self._invertible = invertible
 
@@ -756,14 +715,12 @@ class TriangularModuleMorphism(ModuleMorphism):
             False
         """
         if op == op_EQ:
-            return (
-                self.__class__ is other.__class__
-                and self._triangular == other._triangular
-                and self._unitriangular == other._unitriangular
-                and self._inverse_on_support == other._inverse_on_support
-                and self._invertible == other._invertible
-                and self._dominant_item == other._dominant_item
-            )
+            return (self.__class__ is other.__class__
+                    and self._triangular == other._triangular
+                    and self._unitriangular == other._unitriangular
+                    and self._inverse_on_support == other._inverse_on_support
+                    and self._invertible == other._invertible
+                    and self._dominant_item == other._dominant_item)
         if op == op_NE:
             return not (self == other)
         return NotImplemented
@@ -805,22 +762,17 @@ class TriangularModuleMorphism(ModuleMorphism):
             AssertionError: morphism is not unitriangular on 1
         """
         from sage.misc.lazy_format import LazyFormat
-
         tester = self._tester(**options)
         on_basis = self.on_basis()
         for x in self.domain().basis().keys().some_elements():
             # is there any better set to use ?
             bs, co = self._dominant_item(on_basis(x))
             if self._unitriangular:
-                tester.assertEqual(
-                    co,
-                    self.domain().base_ring().one(),
-                    LazyFormat("morphism is not unitriangular on %s") % x,
-                )
+                tester.assertEqual(co, self.domain().base_ring().one(),
+                    LazyFormat("morphism is not unitriangular on %s") % x)
             xback = self._inverse_on_support(bs)
-            tester.assertEqual(
-                x, xback, LazyFormat("morphism is not triangular on %s") % x
-            )
+            tester.assertEqual(x, xback,
+                LazyFormat("morphism is not triangular on %s") % x)
 
     def __invert__(self):
         """
@@ -856,9 +808,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         elif self._invertible is False:
             raise ValueError("Non invertible morphism")
         else:
-            raise ValueError(
-                "Morphism not known to be invertible; see the invertible option of module_morphism"
-            )
+            raise ValueError("Morphism not known to be invertible; see the invertible option of module_morphism")
 
     def section(self):
         """
@@ -903,20 +853,14 @@ class TriangularModuleMorphism(ModuleMorphism):
             return self.__class__(
                 domain=self.codomain(),
                 on_basis=self._invert_on_basis,
-                codomain=self.domain(),
-                category=self.category_for(),
-                unitriangular=self._unitriangular,
-                triangular=self._triangular,
-                inverse=self,
-                inverse_on_support=retract_dom,
-                invertible=self._invertible,
-                **self._key_kwds,
-            )
+                codomain=self.domain(), category=self.category_for(),
+                unitriangular=self._unitriangular, triangular=self._triangular,
+                inverse=self, inverse_on_support=retract_dom,
+                invertible=self._invertible, **self._key_kwds)
         else:
-            return SetMorphism(
-                Hom(self.codomain(), self.domain(), SetsWithPartialMaps()),
-                self.preimage,
-            )
+            return SetMorphism(Hom(self.codomain(), self.domain(),
+                                   SetsWithPartialMaps()),
+                               self.preimage)
 
     # This should be removed and optimized as soon as triangular
     # morphisms not defined by linearity are available
@@ -1010,11 +954,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         G = self.codomain()
         on_basis = self.on_basis()
         if f not in G:
-            raise ValueError(
-                "f(={}) must be in the codomain of the morphism to have a preimage under the latter".format(
-                    f
-                )
-            )
+            raise ValueError("f(={}) must be in the codomain of the morphism to have a preimage under the latter".format(f))
 
         remainder = f
 
@@ -1027,11 +967,7 @@ class TriangularModuleMorphism(ModuleMorphism):
                 raise ValueError("{} is not in the image".format(f))
             s = on_basis(j_preimage)
             if not j == self._dominant_item(s)[0]:
-                raise ValueError(
-                    "The morphism (={}) is not triangular at {}, and therefore a preimage cannot be computed".format(
-                        f, s
-                    )
-                )
+                raise ValueError("The morphism (={}) is not triangular at {}, and therefore a preimage cannot be computed".format(f, s))
 
             if not self._unitriangular:
                 # What's the appropriate way to request an exact
@@ -1114,9 +1050,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         """
         G = self.codomain()
         if G.base_ring() not in Fields() and not self._unitriangular:
-            raise NotImplementedError(
-                "coreduce for a triangular but not unitriangular morphism over a ring"
-            )
+            raise NotImplementedError("coreduce for a triangular but not unitriangular morphism over a ring")
         on_basis = self.on_basis()
         assert y in G
 
@@ -1189,18 +1123,10 @@ class TriangularModuleMorphism(ModuleMorphism):
         """
         R = self.domain().base_ring()
         if R not in Fields() and not self._unitriangular:
-            raise NotImplementedError(
-                "cokernel_basis_indices for a triangular but not unitriangular morphism over a ring"
-            )
+            raise NotImplementedError("cokernel_basis_indices for a triangular but not unitriangular morphism over a ring")
         if self.codomain() not in Modules(R).FiniteDimensional():
-            raise NotImplementedError(
-                "cokernel_basis_indices implemented only for morphisms with a finite dimensional codomain"
-            )
-        return [
-            i
-            for i in self.codomain().basis().keys()
-            if self._inverse_on_support(i) is None
-        ]
+            raise NotImplementedError("cokernel_basis_indices implemented only for morphisms with a finite dimensional codomain")
+        return [i for i in self.codomain().basis().keys() if self._inverse_on_support(i) is None]
 
     def cokernel_projection(self, category=None):
         """
@@ -1231,14 +1157,11 @@ class TriangularModuleMorphism(ModuleMorphism):
         """
         codomain = self.codomain()
         category = ModulesWithBasis(codomain.base_ring()).or_subcategory(category)
-        return codomain.module_morphism(
-            function=self.coreduced, codomain=codomain, category=category
-        )
+        return codomain.module_morphism(function=self.coreduced,
+                                        codomain=codomain, category=category)
 
 
-class TriangularModuleMorphismByLinearity(
-    ModuleMorphismByLinearity, TriangularModuleMorphism
-):
+class TriangularModuleMorphismByLinearity(ModuleMorphismByLinearity, TriangularModuleMorphism):
     r"""
     A concrete class for triangular module morphisms obtained by extending a function by linearity.
 
@@ -1251,7 +1174,6 @@ class TriangularModuleMorphismByLinearity(
         - :class:`ModuleMorphismByLinearity` and
           :class:`TriangularModuleMorphism`.
     """
-
     def __init__(self, domain, on_basis, codomain=None, category=None, **keywords):
         r"""
         TESTS::
@@ -1264,9 +1186,8 @@ class TriangularModuleMorphismByLinearity(
             ....:           X, on_basis=on_basis, codomain=X)
             sage: TestSuite(phi).run(skip=["_test_nonzero_equal"])
         """
-        ModuleMorphismByLinearity.__init__(
-            self, on_basis=on_basis, domain=domain, codomain=codomain, category=category
-        )
+        ModuleMorphismByLinearity.__init__(self, on_basis=on_basis,
+                                           domain=domain, codomain=codomain, category=category)
         TriangularModuleMorphism.__init__(self, **keywords)
 
     def _richcmp_(self, other, op):
@@ -1284,17 +1205,14 @@ class TriangularModuleMorphismByLinearity(
             True
         """
         if op == op_EQ:
-            return ModuleMorphismByLinearity._richcmp_(
-                self, other, op
-            ) and TriangularModuleMorphism._richcmp_(self, other, op)
+            return (ModuleMorphismByLinearity._richcmp_(self, other, op)
+                    and TriangularModuleMorphism._richcmp_(self, other, op))
         if op == op_NE:
             return not (self == other)
         return NotImplemented
 
 
-class TriangularModuleMorphismFromFunction(
-    ModuleMorphismFromFunction, TriangularModuleMorphism
-):
+class TriangularModuleMorphismFromFunction(ModuleMorphismFromFunction, TriangularModuleMorphism):
     r"""
     A concrete class for triangular module morphisms implemented by a function.
 
@@ -1307,7 +1225,6 @@ class TriangularModuleMorphismFromFunction(
         - :class:`ModuleMorphismFromFunction` and
           :class:`TriangularModuleMorphism`.
     """
-
     def __init__(self, domain, function, codomain=None, category=None, **keywords):
         r"""
         TESTS::
@@ -1320,9 +1237,9 @@ class TriangularModuleMorphismFromFunction(
             ....:           X, function=f, codomain=X)
             sage: TestSuite(phi).run()
         """
-        ModuleMorphismFromFunction.__init__(
-            self, function=function, domain=domain, codomain=codomain, category=category
-        )
+        ModuleMorphismFromFunction.__init__(self, function=function,
+                                            domain=domain, codomain=codomain,
+                                            category=category)
         TriangularModuleMorphism.__init__(self, **keywords)
 
 
@@ -1384,8 +1301,7 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
         Possibly implement rank, addition, multiplication, matrix,
         etc, from the stored matrix.
     """
-
-    def __init__(self, domain, matrix, codomain=None, category=None, side="left"):
+    def __init__(self, domain, matrix, codomain=None, category=None, side='left'):
         r"""
         Initialize ``self``.
 
@@ -1432,34 +1348,23 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
         if not isinstance(matrix, Matrix):
             raise ValueError("matrix (=%s) should be a matrix" % matrix)
         import sage.combinat.ranker
-
         indices = tuple(domain.basis().keys())
         rank_domain = sage.combinat.ranker.rank_from_list(indices)
         if side == "left":
             matrix = matrix.transpose()
         if matrix.nrows() != len(indices):
-            raise ValueError(
-                "The dimension of the matrix (%s) does not match with the dimension of the domain (%s)"
-                % (matrix.nrows(), len(indices))
-            )
+            raise ValueError("The dimension of the matrix (%s) does not match with the dimension of the domain (%s)"
+                             % (matrix.nrows(), len(indices)))
         if matrix.ncols() != codomain.dimension():
-            raise ValueError(
-                "The dimension of the matrix (%s) does not match with the dimension of the codomain (%s)"
-                % (matrix.ncols(), codomain.dimension())
-            )
+            raise ValueError("The dimension of the matrix (%s) does not match with the dimension of the codomain (%s)"
+                             % (matrix.ncols(), codomain.dimension()))
         self._matrix = matrix
-        d = {
-            xt: codomain.from_vector(matrix.row(rank_domain(xt)))
-            for xt in domain.basis().keys()
-        }
+        d = {xt: codomain.from_vector(matrix.row(rank_domain(xt)))
+             for xt in domain.basis().keys()}
 
-        ModuleMorphismByLinearity.__init__(
-            self,
-            on_basis=d.__getitem__,
-            domain=domain,
-            codomain=codomain,
-            category=category,
-        )
+        ModuleMorphismByLinearity.__init__(self, on_basis=d.__getitem__,
+                                           domain=domain, codomain=codomain,
+                                           category=category)
 
     def _richcmp_(self, other, op):
         r"""
@@ -1484,14 +1389,11 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
         """
         if op == op_EQ:
             # We skip the on_basis check since the matrix defines the morphism
-            return (
-                self.__class__ is other.__class__
-                and self._zero == other._zero
-                and self._position == other._position
-                and self._is_module_with_basis_over_same_base_ring
-                == other._is_module_with_basis_over_same_base_ring
-                and self._matrix == other._matrix
-            )
+            return (self.__class__ is other.__class__
+                    and self._zero == other._zero
+                    and self._position == other._position
+                    and self._is_module_with_basis_over_same_base_ring == other._is_module_with_basis_over_same_base_ring
+                    and self._matrix == other._matrix)
         if op == op_NE:
             return not (self == other)
         return NotImplemented
@@ -1535,7 +1437,6 @@ class DiagonalModuleMorphism(ModuleMorphismByLinearity):
         sage: phi(x[1]), phi(x[2]), phi(x[3])
         (B[1], 2*B[2], 6*B[3])
     """
-
     def __init__(self, domain, diagonal, codomain=None, category=None):
         r"""
         Initialize ``self``.
@@ -1550,23 +1451,17 @@ class DiagonalModuleMorphism(ModuleMorphismByLinearity):
         """
         if codomain is None:
             raise ValueError("The codomain should be specified")
-        if not (
-            domain.basis().keys() == codomain.basis().keys()
-            and domain.base_ring() == codomain.base_ring()
-        ):
-            raise ValueError(
-                "The domain and codomain should have the same base ring "
-                "and the same basis indexing"
-            )
+        if not (domain.basis().keys() == codomain.basis().keys() and
+                domain.base_ring() == codomain.base_ring()):
+            raise ValueError("The domain and codomain should have the same base ring "
+                             "and the same basis indexing")
         from collections.abc import Callable
-
         if not isinstance(diagonal, Callable):
             raise ValueError("diagonal (=%s) should be a function" % diagonal)
         if category is None:
             category = ModulesWithBasis(domain.base_ring())
         ModuleMorphismByLinearity.__init__(
-            self, domain=domain, codomain=codomain, category=category
-        )
+            self, domain=domain, codomain=codomain, category=category)
         self._diagonal = diagonal
 
     def _richcmp_(self, other, op):
@@ -1584,9 +1479,8 @@ class DiagonalModuleMorphism(ModuleMorphismByLinearity):
             False
         """
         if op == op_EQ:
-            return (
-                self.__class__ is other.__class__ and self._diagonal == other._diagonal
-            )
+            return (self.__class__ is other.__class__
+                    and self._diagonal == other._diagonal)
         if op == op_NE:
             return not (self == other)
         return NotImplemented
@@ -1627,9 +1521,7 @@ class DiagonalModuleMorphism(ModuleMorphismByLinearity):
         """
         return self.codomain().module_morphism(
             diagonal=pointwise_inverse_function(self._diagonal),
-            codomain=self.domain(),
-            category=self.category_for(),
-        )
+            codomain=self.domain(), category=self.category_for())
 
 
 def pointwise_inverse_function(f):
@@ -1677,7 +1569,6 @@ class PointwiseInverseFunction(SageObject):
         sage: f(0), f(1), f(2), f(3)
         (1, 1, 1/2, 1/6)
     """
-
     def __init__(self, f):
         """
         TESTS::
@@ -1704,10 +1595,8 @@ class PointwiseInverseFunction(SageObject):
             sage: f == g
             True
         """
-        return (
-            self.__class__ is other.__class__
-            and self._pointwise_inverse == other._pointwise_inverse
-        )
+        return (self.__class__ is other.__class__
+                and self._pointwise_inverse == other._pointwise_inverse)
 
     def __ne__(self, other):
         r"""
