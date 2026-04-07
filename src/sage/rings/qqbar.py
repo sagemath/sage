@@ -8671,7 +8671,7 @@ class ANBinaryExpr(ANDescr):
 
             We resolve a deferred addition of two algebraic numbers::
 
-                sage: a = AA(2)**(1/2) + AA(3)**(1/2)
+                sage: a = AA(2)**(1/2) + AA(3)**(1/2) # needs sage.symbolic
                 sage: type(a.as_number())
                 <class 'sage.rings.qqbar.ANBinaryExpr'>
                 sage: a.exactify()
