@@ -3055,9 +3055,16 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
           - ``'RNDN'`` -- round to nearest, ties to even (banker's rounding)
           - ``'RNDZ'`` -- round toward zero
-          - ``'RNDU'`` -- round toward plus infinity (ceiling)
-          - ``'RNDD'`` -- round toward minus infinity (floor)
+          - ``'RNDU'`` -- round toward plus infinity
+          - ``'RNDD'`` -- round toward minus infinity
           - ``'RNDA'`` -- round away from zero
+
+        .. NOTE::
+
+            The rounding mode of the parent field does not affect the result.
+            When ``rnd`` is specified, it only controls tie-breaking for
+            half-integer values; non-half-integer values are always rounded
+            to the nearest integer.
 
         EXAMPLES::
 
@@ -3083,7 +3090,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(-1.5).round('RNDN')
             -2
 
-        Other rounding modes::
+        Other rounding modes only affect half-integer ties::
 
             sage: RR(0.5).round('RNDU')
             1
@@ -3093,6 +3100,18 @@ cdef class RealNumber(sage.structure.element.RingElement):
             0
             sage: RR(0.5).round('RNDA')
             1
+
+        Non-half-integer values are always rounded to the nearest integer,
+        regardless of the rounding mode::
+
+            sage: RR(0.51).round('RNDD')
+            1
+            sage: RR(0.49).round('RNDU')
+            0
+            sage: RR(-0.51).round('RNDU')
+            -1
+            sage: RR(-0.49).round('RNDD')
+            0
 
         Invalid rounding mode raises an error::
 
@@ -3109,6 +3128,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         cdef mpfr_rnd_t rnd_mode
         cdef RealNumber x = self._new()
+        cdef mpfr_t t
         if rnd is None:
             mpfr_round(x.value, self.value)
         else:
@@ -3121,7 +3141,17 @@ cdef class RealNumber(sage.structure.element.RingElement):
             else:
                 raise ValueError(
                     "rounding mode (=%s) must be one of\n%s" % (rnd, _valid_rnd))
-            mpfr_rint(x.value, self.value, rnd_mode)
+            # The rounding mode only affects tie-breaking for half-integers.
+            # For non-half-integer values, always round to nearest (away from zero).
+            mpfr_init2(t, mpfr_get_prec(self.value) + 1)
+            mpfr_mul_2ui(t, self.value, 1, MPFR_RNDN)  # t = 2 * self
+            if mpfr_integer_p(t) and not mpfr_integer_p(self.value):
+                # self is a half-integer: use the specified rounding mode
+                mpfr_rint(x.value, self.value, rnd_mode)
+            else:
+                # not a half-integer: standard rounding (nearest, ties away from zero)
+                mpfr_round(x.value, self.value)
+            mpfr_clear(t)
         return x.integer_part()
 
     def floor(self):
