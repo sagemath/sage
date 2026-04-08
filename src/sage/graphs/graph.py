@@ -418,7 +418,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 import sage.graphs.generic_graph_pyx as generic_graph_pyx
-from sage.graphs.generic_graph import GenericGraph
+from sage.graphs.generic_graph import GenericGraph, _initialize_graph_backend
 from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 from sage.graphs.views import EdgesView
@@ -875,6 +875,14 @@ class Graph(GenericGraph):
           True
           sage: {G_imm:1}[H_imm]
           1
+          sage: G = graphs.PetersenGraph()
+          sage: G_imm = Graph(G, immutable=True)
+          sage: G_static = Graph(G, data_structure='static_sparse')
+          sage: G_imm == G_static == G
+          True
+          sage: type(G_imm._backend) == type(G_static._backend)
+          True
+
 
     TESTS::
 
@@ -1046,34 +1054,22 @@ class Graph(GenericGraph):
             {0: 'foo'}
         """
         GenericGraph.__init__(self)
-
         from sage.structure.element import Matrix
-
-        if sparse is False:
-            if data_structure != "sparse":
-                raise ValueError("The 'sparse' argument is an alias for "
-                                 "'data_structure'. Please do not define both.")
-            data_structure = "dense"
-
-        if multiedges or weighted:
-            if data_structure == "dense":
-                raise RuntimeError("Multiedge and weighted c_graphs must be sparse.")
-        if immutable:
-            data_structure = 'static_sparse'
 
         # If the data structure is static_sparse, we first build a graph
         # using the sparse data structure, then re-encode the resulting graph
         # as a static sparse graph.
-        from sage.graphs.base.sparse_graph import SparseGraphBackend
-        from sage.graphs.base.dense_graph import DenseGraphBackend
-        if data_structure in ["sparse", "static_sparse"]:
-            CGB = SparseGraphBackend
-        elif data_structure == "dense":
-            CGB = DenseGraphBackend
-        else:
-            raise ValueError("data_structure must be equal to 'sparse', "
-                             "'static_sparse' or 'dense'")
-        self._backend = CGB(0, directed=False)
+        data_structure, self._backend = _initialize_graph_backend(
+            data_structure=data_structure,
+            sparse=sparse,
+            immutable=immutable,
+            multiedges=multiedges,
+            weighted=weighted,
+            directed=False,
+            sparse_alias_error=("The 'sparse' argument is an alias for "
+                                "'data_structure'. Please do not define both."),
+            dense_multiedge_error="Multiedge and weighted c_graphs must be sparse.",
+        )
 
         if format is None and isinstance(data, str):
             if data.startswith(">>graph6<<"):
