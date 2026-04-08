@@ -3049,8 +3049,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
         INPUT:
 
         - ``rnd`` -- string or ``None`` (default: ``None``); the rounding
-          mode to use for ``mpfr_rint``. If ``None``, uses MPFR's
-          ``mpfr_round`` which rounds halfway cases away from zero.
+          mode to use for tie-breaking when ``self`` is a half-integer.
+          If ``None``, uses MPFR's ``mpfr_round`` which rounds halfway
+          cases away from zero. For half-integer values, ``mpfr_rint``
+          is called with the specified mode; for all other values,
+          ``mpfr_round`` is used regardless of this parameter.
           Valid rounding modes are:
 
           - ``'RNDN'`` -- round to nearest, ties to even (banker's rounding)
