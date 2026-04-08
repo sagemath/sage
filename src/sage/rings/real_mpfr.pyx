@@ -3143,7 +3143,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
                     "rounding mode (=%s) must be one of\n%s" % (rnd, _valid_rnd))
             # The rounding mode only affects tie-breaking for half-integers.
             # For non-half-integer values, always round to nearest (away from zero).
-            mpfr_init2(t, mpfr_get_prec(self.value) + 1)
+            mpfr_init2(t, mpfr_get_prec(self.value))
             mpfr_mul_2ui(t, self.value, 1, MPFR_RNDN)  # t = 2 * self
             if mpfr_integer_p(t) and not mpfr_integer_p(self.value):
                 # self is a half-integer: use the specified rounding mode
