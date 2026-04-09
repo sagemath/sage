@@ -1053,15 +1053,14 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
             return (P, R)
 
-        elif method == "block":
+        if method == "block":
             data_list, R = self._primitive_block_decomposition_data()
             P = prod((G.V(v[0])**v[1] for v in data_list), G.I())
 
             return (P, R)
 
-        else:
-            raise ValueError("if the element is not elliptic, then method must "
-                             "be either be 'cf' or 'block'")
+        raise ValueError("if the element is not elliptic, then method must "
+                         "be either be 'cf' or 'block'")
 
     def primitive_part(self, method='cf'):
         r"""
@@ -1212,8 +1211,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         if primitive:
             return P
-        else:
-            return R.inverse().acton(self)
+        return R.inverse().acton(self)
 
     def sign(self):
         r"""
@@ -1253,16 +1251,14 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         if sgn > 0:
             return self.parent().I()
-        elif sgn < 0:
+        if sgn < 0:
             return -self.parent().I()
-        else:
-            sgnc = coerce_AA(self.c()).sign()
-            if sgnc > 0:
-                return self.parent().I()
-            elif sgnc < 0:
-                return -self.parent().I()
-            else:
-                raise AssertionError("This shouldn't happen!")
+        sgnc = coerce_AA(self.c()).sign()
+        if sgnc > 0:
+            return self.parent().I()
+        if sgnc < 0:
+            return -self.parent().I()
+        raise AssertionError("This shouldn't happen!")
 
     @cached_method
     def primitive_power(self, method='cf'):
@@ -1352,37 +1348,35 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             data, R = self._primitive_block_decomposition_data()
             if data[0] == 0:
                 return one
+            G = self.parent()
+            U = G.U()
+            U_power = R.inverse() * self * R
+
+            Uj = G.I()
+            for j in range(1, G.n()):
+                Uj *= U
+                if U_power == Uj:
+                    # L = [one, ZZ(j)]
+                    break
+                if U_power == -Uj:
+                    # L = [one, ZZ(-j)]
+                    break
             else:
-                G = self.parent()
-                U = G.U()
-                U_power = R.inverse() * self * R
+                raise RuntimeError("There is a problem in the method "
+                                   "'primitive_power'. Please contact sage-devel@googlegroups.com")
 
-                Uj = G.I()
-                for j in range(1, G.n()):
-                    Uj *= U
-                    if U_power == Uj:
-                        # L = [one, ZZ(j)]
-                        break
-                    if U_power == -Uj:
-                        # L = [one, ZZ(-j)]
-                        break
-                else:
-                    raise RuntimeError("There is a problem in the method "
-                                       "'primitive_power'. Please contact sage-devel@googlegroups.com")
-
-                if abs(j) < G.n()/two:
-                    return j
-                elif two*j == G.n():
-                    return j
-                # for the cases from here on the sign has to be adjusted
-                # to the
-                # sign of self (in self._block_decomposition_data())
-                elif two*j == -G.n():
-                    return -j
-                elif j > 0:
-                    return j - G.n()
-                else:
-                    return j + G.n()
+            if abs(j) < G.n()/two:
+                return j
+            if two*j == G.n():
+                return j
+            # for the cases from here on the sign has to be adjusted
+            # to the
+            # sign of self (in self._block_decomposition_data())
+            if two*j == -G.n():
+                return -j
+            if j > 0:
+                return j - G.n()
+            return j + G.n()
 
         primitive_part = self.primitive_part(method=method)
         if method == "cf" and self.is_parabolic():
@@ -1509,8 +1503,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                 raise NotImplementedError
 
             return abs(L[1])
-        else:
-            return sum(abs(v[1]) for v in L)
+        return sum(abs(v[1]) for v in L)
 
     # @cached_method
     def _block_decomposition_data(self):
@@ -1768,8 +1761,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             else:
                 P = G.U()
             return ((P**L[1],), R, sgn)
-        else:
-            return (tuple(G.V(v[0])**v[1] for v in L), R, sgn)
+        return (tuple(G.V(v[0])**v[1] for v in L), R, sgn)
 
     def conjugacy_type(self, ignore_sign=True, primitive=False):
         r"""
@@ -2350,8 +2342,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             # if this is not up-to-sign then a factor 2 should
             # be added before (the second) self.parent().n()
             return (pow % (2*self.parent().n())).gcd(self.parent().n()) == 1
-        else:
-            return abs(pow) <= 1
+        return abs(pow) <= 1
 
     def is_reduced(self, require_primitive=True,
                    require_hyperbolic=True) -> bool:
@@ -2415,12 +2406,11 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         if self.is_identity() or self.is_elliptic():
             return False
-        elif require_hyperbolic and not self.is_hyperbolic():
+        if require_hyperbolic and not self.is_hyperbolic():
             return False
-        elif require_primitive and not self.is_primitive():
+        if require_primitive and not self.is_primitive():
             return False
-        else:
-            return self.continued_fraction()[0] == ()
+        return self.continued_fraction()[0] == ()
 
     def is_simple(self) -> bool:
         r"""
@@ -2828,15 +2818,13 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         if self.is_elliptic():
             if L[0] == 0:
                 return ZZ(0)
-            elif 2*L[1] == n:
+            if 2*L[1] == n:
                 return ZZ(0)
-            else:
-                return ZZ(-2*L[1])
-        else:
-            t = sum(v[1] for v in L)
-            u = sum((v[0]-1) for v in L)
+            return ZZ(-2*L[1])
+        t = sum(v[1] for v in L)
+        u = sum((v[0]-1) for v in L)
 
-            return ZZ((n-2)*t - 2*u)
+        return ZZ((n-2)*t - 2*u)
 
     def root_extension_field(self):
         r"""
@@ -3037,49 +3025,48 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         """
         if self.c() == 0:
             return (infinity, infinity)
+        D = self.discriminant()
+        if D.is_square():
+            e = D.sqrt()
         else:
-            D = self.discriminant()
-            if D.is_square():
-                e = D.sqrt()
-            else:
-                e = self.root_extension_field().gen()
+            e = self.root_extension_field().gen()
 
-            a, b, c, d = self._matrix.list()
+        a, b, c, d = self._matrix.list()
 
-            if order == "none":
-                sgn = ZZ(1)
-            elif order == "sign":
+        if order == "none":
+            sgn = ZZ(1)
+        elif order == "sign":
+            sgn = coerce_AA(c).sign()
+        elif order == "default":
+            if self.is_elliptic() or self.trace() == 0:
                 sgn = coerce_AA(c).sign()
-            elif order == "default":
-                if self.is_elliptic() or self.trace() == 0:
-                    sgn = coerce_AA(c).sign()
-                else:
-                    sgn = coerce_AA(self.trace()).sign()
-            elif order == "trace":
-                if self.trace() == 0:
-                    sgn = coerce_AA(c).sign()
-                else:
-                    sgn = coerce_AA(self.trace()).sign()
             else:
-                raise NotImplementedError
+                sgn = coerce_AA(self.trace()).sign()
+        elif order == "trace":
+            if self.trace() == 0:
+                sgn = coerce_AA(c).sign()
+            else:
+                sgn = coerce_AA(self.trace()).sign()
+        else:
+            raise NotImplementedError
 
-            if embedded:
-                e = coerce_AA(D).sqrt()
-                e.simplify()
-                a = coerce_AA(a)
-                d = coerce_AA(d)
-                c = coerce_AA(c)
+        if embedded:
+            e = coerce_AA(D).sqrt()
+            e.simplify()
+            a = coerce_AA(a)
+            d = coerce_AA(d)
+            c = coerce_AA(c)
 
-            root1 = (a-d)/(2*c) + sgn*e/(2*c)
-            root2 = (a-d)/(2*c) - sgn*e/(2*c)
+        root1 = (a-d)/(2*c) + sgn*e/(2*c)
+        root2 = (a-d)/(2*c) - sgn*e/(2*c)
 
-            if embedded:
-                root1.simplify()
-                root1.exactify()
-                root2.simplify()
-                root2.exactify()
+        if embedded:
+            root1.simplify()
+            root1.exactify()
+            root2.simplify()
+            root2.exactify()
 
-            return (root1, root2)
+        return (root1, root2)
 
     def acton(self, tau):
         r"""
@@ -3179,8 +3166,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         if model is None:
             return result
-        else:
-            return HyperbolicPlane().UHP().get_point(result).to_model(model)
+        return HyperbolicPlane().UHP().get_point(result).to_model(model)
 
     def _act_on_(self, other, self_on_left):
         r"""

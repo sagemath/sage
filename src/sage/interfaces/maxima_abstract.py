@@ -168,8 +168,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             res = res[res.find('\n')+1:]
 
             return AsciiArtString(res)
-        else:
-            subprocess.check_call(cmd, shell=True, env=env)
+        subprocess.check_call(cmd, shell=True, env=env)
 
     def help(self, s):
         r"""
@@ -438,8 +437,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         if t:
             return float(self.eval('elapsed_run_time()')) - t
-        else:
-            return float(self.eval('elapsed_run_time()'))
+        return float(self.eval('elapsed_run_time()'))
 
     def version(self):
         r"""
@@ -1205,9 +1203,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         try:
             if P.eval("is (%s < %s)" % (self.name(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, -1)
-            elif P.eval("is (%s > %s)" % (self.name(), other.name())) == P._true_symbol():
+            if P.eval("is (%s > %s)" % (self.name(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, 1)
-            elif P.eval("is (%s = %s)" % (self.name(), other.name())) == P._true_symbol():
+            if P.eval("is (%s = %s)" % (self.name(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, 0)
         except TypeError:
             pass
@@ -1600,10 +1598,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         I = InterfaceElement.__getattr__(self, 'integrate')
         if min is None:
             return I(var)
-        else:
-            if max is None:
-                raise ValueError("neither or both of min/max must be specified.")
-            return I(var, min, max)
+        if max is None:
+            raise ValueError("neither or both of min/max must be specified.")
+        return I(var, min, max)
 
     integrate = integral
 
@@ -1708,15 +1705,13 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             start, stop, step = i.start or 0, i.stop or len(self), i.step or 1
             if start >= 0 and stop >= 0 and step >= 0:
                 return list(islice(self, start, stop, step))
-            else:
-                # Hard to tackle slices esp with negative step
-                return list(self)[i]
-        else:
-            i = operator.index(i)
-            if i < 0 or i >= len(self):
-                raise IndexError("i = (%s) must be between %s and %s" % (i, 0, len(self)-1))
-            # If you change the i+1 to i below, better change __iter__ as well.
-            return InterfaceElement.__getitem__(self, i+1)
+            # Hard to tackle slices esp with negative step
+            return list(self)[i]
+        i = operator.index(i)
+        if i < 0 or i >= len(self):
+            raise IndexError("i = (%s) must be between %s and %s" % (i, 0, len(self)-1))
+        # If you change the i+1 to i below, better change __iter__ as well.
+        return InterfaceElement.__getitem__(self, i+1)
 
     def __iter__(self):
         """
@@ -2113,8 +2108,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         """
         if self.__latex is None:
             return r'\mathrm{%s}' % self.__defn
-        else:
-            return self.__latex
+        return self.__latex
 
     def arguments(self, split=True):
         r"""
@@ -2143,8 +2137,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         """
         if split:
             return self.__args.split(',') if self.__args != '' else []
-        else:
-            return self.__args
+        return self.__args
 
     def definition(self):
         """

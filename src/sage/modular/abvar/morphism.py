@@ -440,12 +440,11 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         from .finite_subgroup import FiniteSubgroup
         if isinstance(X, TorsionPoint):
             return self._image_of_element(X)
-        elif isinstance(X, ModularAbelianVariety_abstract):
+        if isinstance(X, ModularAbelianVariety_abstract):
             return self._image_of_abvar(X)
-        elif isinstance(X, FiniteSubgroup):
+        if isinstance(X, FiniteSubgroup):
             return self._image_of_finite_subgroup(X)
-        else:
-            raise TypeError("X must be an abelian variety or finite subgroup")
+        raise TypeError("X must be an abelian variety or finite subgroup")
 
     def _image_of_element(self, x):
         """

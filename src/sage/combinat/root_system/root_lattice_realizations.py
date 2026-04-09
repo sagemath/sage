@@ -1324,8 +1324,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             if self.root_system.is_finite() and self.root_system.is_irreducible():
                 return Family(self.index_set(), self.simple_coroot,
                               hidden_keys=[0], hidden_function=lambda i: - self.cohighest_root())
-            else:
-                return self.simple_coroots()
+            return self.simple_coroots()
 
         @cached_method
         def cohighest_root(self):
@@ -1751,8 +1750,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             def tau_epsilon(alpha):
                 if alpha in other_negative_simple_roots:
                     return alpha
-                else:
-                    return t.action(alpha)
+                return t.action(alpha)
             return tau_epsilon
 
         def tau_plus_minus(self):
@@ -1888,10 +1886,9 @@ class RootLatticeRealizations(Category_over_base_ring):
             R = self.cartan_type().classical().root_system()
             if isinstance(self, RootSpace):
                 return R.root_space(self.base_ring())
-            elif isinstance(self, WeightSpace):
+            if isinstance(self, WeightSpace):
                 return R.weight_space(self.base_ring())
-            else:
-                return R.ambient_space(self.base_ring())
+            return R.ambient_space(self.base_ring())
 
         @lazy_attribute
         def _to_classical(self):
@@ -2148,8 +2145,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             if len(args) == 1 and "plot_options" in args:
                 return args["plot_options"]
-            else:
-                return PlotOptions(self, **args)
+            return PlotOptions(self, **args)
 
         def _plot_projection(self, x):
             r"""
@@ -2758,8 +2754,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 position = plot_options.projection(w.action(rho))
                 if position in plot_options.bounding_box:
                     return plot_options.text(label, position)
-                else:
-                    return plot_options.empty()
+                return plot_options.empty()
 
             G = plot_options.empty()
             if alcoves is not True:
@@ -3287,13 +3282,11 @@ class RootLatticeRealizations(Category_over_base_ring):
             if isinstance(self, RootSpace):
                 if self.root_system.dual_side:
                     return self.cartan_type().root_system().root_space(self.base_ring())
-                else:
-                    return self.cartan_type().dual().root_system().coroot_space(self.base_ring())
+                return self.cartan_type().dual().root_system().coroot_space(self.base_ring())
             if isinstance(self, WeightSpace):
                 if self.root_system.dual_side:
                     return self.cartan_type().root_system().weight_space(self.base_ring())
-                else:
-                    return self.cartan_type().dual().root_system().coweight_space(self.base_ring())
+                return self.cartan_type().dual().root_system().coweight_space(self.base_ring())
             raise TypeError("Not implemented for %s" % self)
 
         @abstract_method(optional=True)
@@ -3635,8 +3628,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             if use_coroot:
                 return self - self.scalar(root) * root.associated_coroot()
-            else:
-                return self - self.scalar(root.associated_coroot()) * root
+            return self - self.scalar(root.associated_coroot()) * root
 
         ##########################################################################
         # Descents
@@ -3674,8 +3666,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             s = self.scalar(self.parent().simple_coroots()[i])
             if positive:
                 return s > 0
-            else:
-                return s < 0
+            return s < 0
 
         def first_descent(self, index_set=None, positive=False):
             """
@@ -3807,12 +3798,10 @@ class RootLatticeRealizations(Category_over_base_ring):
                 if i is None:
                     if reduced_word:
                         return self, direction
-                    else:
-                        return self
-                else:
-                    if reduced_word:
-                        direction.append(i)
-                    self = self.simple_reflection(i)
+                    return self
+                if reduced_word:
+                    direction.append(i)
+                self = self.simple_reflection(i)
 
         def reduced_word(self, index_set=None, positive=True):
             r"""
@@ -4188,8 +4177,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 j = F[self]
                 if reduced_word:
                     return (j, ())
-                else:
-                    return j
+                return j
             except KeyError:
                 pass
             j = self.first_descent(positive=True)
@@ -4198,8 +4186,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             result = self.simple_reflection(j).to_simple_root(reduced_word=reduced_word)
             if reduced_word:
                 return (result[0], (j,) + result[1])
-            else:
-                return result
+            return result
 
         @cached_in_parent_method
         def associated_reflection(self):
@@ -4329,11 +4316,10 @@ class RootLatticeRealizations(Category_over_base_ring):
                     if inverse is True:
                         element = element.inverse()
                     return element.action(self)
-                else:
-                    # Action by an element of an isomorphic Coxeter or Weyl group
-                    if not (W in CoxeterGroups() and W.cartan_type() == self.parent().cartan_type()):
-                        raise TypeError("%s should be an element of a Coxeter group of type %s" % (element, self.parent().cartan_type()))
-                    the_word = element.reduced_word()
+                # Action by an element of an isomorphic Coxeter or Weyl group
+                if not (W in CoxeterGroups() and W.cartan_type() == self.parent().cartan_type()):
+                    raise TypeError("%s should be an element of a Coxeter group of type %s" % (element, self.parent().cartan_type()))
+                the_word = element.reduced_word()
             if inverse is False:
                 the_word.reverse()
             for i in the_word:

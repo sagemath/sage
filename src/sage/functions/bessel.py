@@ -377,13 +377,13 @@ class Function_Bessel_J(BuiltinFunction):
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return ZZ.one()
-            elif n.real() > 0 or n in ZZ:
+            if n.real() > 0 or n in ZZ:
                 return ZZ.zero()
-            elif n.real() < 0:
+            if n.real() < 0:
                 return unsigned_infinity
         if n == QQ((1, 2)):
             return sqrt(2 / pi / x) * sin(x)
-        elif n == QQ((-1, 2)):
+        if n == QQ((-1, 2)):
             return sqrt(2 / pi / x) * cos(x)
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
@@ -438,8 +438,7 @@ class Function_Bessel_J(BuiltinFunction):
         """
         if diff_param == 1:
             return (bessel_J(n - 1, x) - bessel_J(n + 1, x)) / Integer(2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
     def _print_latex_(self, n, z):
         """
@@ -598,11 +597,11 @@ class Function_Bessel_Y(BuiltinFunction):
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return -infinity
-            elif n.real() > 0 or n.real() < 0:
+            if n.real() > 0 or n.real() < 0:
                 return unsigned_infinity
         if n == QQ((1, 2)):
             return -sqrt(2 / pi / x) * cos(x)
-        elif n == QQ((-1, 2)):
+        if n == QQ((-1, 2)):
             return sqrt(2 / pi / x) * sin(x)
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
@@ -657,8 +656,7 @@ class Function_Bessel_Y(BuiltinFunction):
         """
         if diff_param == 1:
             return (bessel_Y(n - 1, x) - bessel_Y(n + 1, x)) / Integer(2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
     def _print_latex_(self, n, z):
         """
@@ -812,13 +810,13 @@ class Function_Bessel_I(BuiltinFunction):
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return ZZ.one()
-            elif n.real() > 0 or n in ZZ:
+            if n.real() > 0 or n in ZZ:
                 return ZZ.zero()
-            elif n.real() < 0:
+            if n.real() < 0:
                 return unsigned_infinity
         if n == QQ((1, 2)):
             return sqrt(2 / (pi * x)) * sinh(x)
-        elif n == QQ((-1, 2)):
+        if n == QQ((-1, 2)):
             return sqrt(2 / (pi * x)) * cosh(x)
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
@@ -851,8 +849,7 @@ class Function_Bessel_I(BuiltinFunction):
         """
         if diff_param == 1:
             return (bessel_I(n - 1, x) + bessel_I(n + 1, x)) / Integer(2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
     def _print_latex_(self, n, z):
         """
@@ -1012,7 +1009,7 @@ class Function_Bessel_K(BuiltinFunction):
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return infinity
-            elif n.real() > 0 or n.real() < 0:
+            if n.real() > 0 or n.real() < 0:
                 return unsigned_infinity
         if n == QQ((1, 2)) or n == QQ((-1, 2)) and x > 0:
             return sqrt(pi / 2) * exp(-x) * x ** (-Integer(1) / Integer(2))
@@ -1048,8 +1045,7 @@ class Function_Bessel_K(BuiltinFunction):
         """
         if diff_param == 1:
             return -(bessel_K(n - 1, x) + bessel_K(n + 1, x)) / Integer(2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
     def _print_latex_(self, n, z):
         """
@@ -1232,8 +1228,7 @@ def Bessel(*args, **kwds):
     _f = bessel_type_dict[_type]
     if _nargs == 1:
         return lambda x: _f(_order, x)
-    else:
-        return _f
+    return _f
 
 
 class Function_Struve_H(BuiltinFunction):
@@ -1549,8 +1544,7 @@ class Function_Hankel1(BuiltinFunction):
         """
         if diff_param == 1:
             return (nu * hankel1(nu, z)) / z - hankel1(nu + 1, z)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
 
 hankel1 = Function_Hankel1()
@@ -1636,8 +1630,7 @@ class Function_Hankel2(BuiltinFunction):
         """
         if diff_param == 1:
             return (Integer(1) / 2) * (hankel2(nu - 1, z) - hankel2(nu + 1, z))
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
 
 hankel2 = Function_Hankel2()
@@ -1738,8 +1731,7 @@ class SphericalBesselJ(BuiltinFunction):
         if diff_param == 1:
             return (spherical_bessel_J(n - 1, z) -
                     ((n + 1) / z) * spherical_bessel_J(n, z))
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
 
 spherical_bessel_J = SphericalBesselJ()
@@ -1839,8 +1831,7 @@ class SphericalBesselY(BuiltinFunction):
             return (-spherical_bessel_Y(n, z) / (2 * z) +
                     (spherical_bessel_Y(n - 1, z) -
                      spherical_bessel_Y(n + 1, z)) / 2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
 
 spherical_bessel_Y = SphericalBesselY()
@@ -1937,8 +1928,7 @@ class SphericalHankel1(BuiltinFunction):
             return (-spherical_hankel1(n, z) / (2 * z) +
                     (spherical_hankel1(n - 1, z) -
                      spherical_hankel1(n + 1, z)) / 2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
 
 spherical_hankel1 = SphericalHankel1()
@@ -2047,8 +2037,7 @@ class SphericalHankel2(BuiltinFunction):
             return (-spherical_hankel2(n, z) / (2 * z) +
                     (spherical_hankel2(n - 1, z) -
                      spherical_hankel2(n + 1, z)) / 2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
 
 spherical_hankel2 = SphericalHankel2()

@@ -1072,6 +1072,39 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         return R(h).monic()
 
     @cached_method
+    def as_EllipticCurveIsogeny(self):
+        r"""
+        Return the mathematically identical isogeny represented as a
+        :class:`EllipticCurveIsogeny` object.
+
+        .. NOTE::
+
+            The result is computed by :class:`EllipticCurveIsogeny`,
+            hence it obviously does not benefit from the square-root
+            Vélu speedup.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
+            sage: K = E.cardinality() // 11 * E.gens()[0]
+            sage: phi = E.isogeny(K, algorithm='velusqrt'); phi
+            Elliptic-curve isogeny (using square-root Vélu) of degree 11:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
+            sage: psi = phi.as_EllipticCurveIsogeny(); psi
+            Isogeny of degree 11
+              from Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+              to Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
+            sage: phi == psi
+            True
+        """
+        ker = self.kernel_polynomial()
+        phi = self.domain().isogeny(ker, degree=self.degree(), codomain=self.codomain(), check=False)
+        from sage.schemes.elliptic_curves.hom import find_post_isomorphism
+        iso = find_post_isomorphism(self, phi)
+        return iso * phi
+
+    # not explicitly cached here since .as_EllipticCurveIsogeny() and EllipticCurveIsogeny.dual() already cache their results
     def dual(self):
         r"""
         Return the dual of this square-root Vélu
@@ -1082,6 +1115,10 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             The dual is computed by :class:`EllipticCurveIsogeny`,
             hence it does not benefit from the square-root Vélu speedup.
 
+        ALGORITHM: In the separable case, similar to :meth:`EllipticCurveIsogeny.dual`.
+        In the inseparable case, converts to an :class:`EllipticCurveIsogeny` using
+        :meth:`as_EllipticCurveIsogeny`, then runs :meth:`EllipticCurveIsogeny.dual`.
+
         EXAMPLES::
 
             sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
@@ -1091,13 +1128,34 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
               To:   Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
             sage: phi.dual()
-            Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2 to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+            Isogeny of degree 11
+              from Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
+              to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
             sage: phi.dual() * phi == phi.domain().scalar_multiplication(11)
             True
             sage: phi * phi.dual() == phi.codomain().scalar_multiplication(11)
             True
+
+        Inseparable duals are computed correctly::
+
+            sage: # needs sage.rings.finite_rings
+            sage: z2 = GF(71^2).gen()
+            sage: E = EllipticCurve(j=57*z2+51)
+            sage: E.isogeny(3*E.lift_x(0), algorithm='velusqrt').dual()
+            Composite morphism of degree 71 = 71*1^2:
+              From: Elliptic Curve defined by y^2 = x^3 + (8*z2+70)*x + (3*z2+49) over Finite Field in z2 of size 71^2
+              To:   Elliptic Curve defined by y^2 = x^3 + (41*z2+56)*x + (18*z2+42) over Finite Field in z2 of size 71^2
+            sage: E.isogeny(E.lift_x(0), algorithm='velusqrt').dual()
+            Composite morphism of degree 213 = 71*3:
+              From: Elliptic Curve defined by y^2 = x^3 + (50*z2+61)*x + (22*z2+25) over Finite Field in z2 of size 71^2
+              To:   Elliptic Curve defined by y^2 = x^3 + (41*z2+56)*x + (18*z2+42) over Finite Field in z2 of size 71^2
         """
-        # FIXME: This code fails if the degree is divisible by the characteristic.
+        if self.base_ring().characteristic().divides(self.degree()):
+            # The dual is inseparable.
+            #TODO: This is a lazy workaround; it could be optimized more.
+            return self.as_EllipticCurveIsogeny().dual()
+
+        # The dual is separable.
         F = self._raw_domain.base_ring()
         from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
         isom = ~WeierstrassIsomorphism(self._raw_domain, (~F(self._degree), 0, 0, 0))

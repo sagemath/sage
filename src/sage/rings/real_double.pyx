@@ -2046,29 +2046,6 @@ def RealDoubleField():
     return _RDF
 
 
-def is_RealDoubleElement(x):
-    """
-    Check if ``x`` is an element of the real double field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.real_double import is_RealDoubleElement
-        sage: is_RealDoubleElement(RDF(3))
-        doctest:warning...
-        DeprecationWarning: The function is_RealDoubleElement is deprecated;
-        use 'isinstance(..., RealDoubleElement)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_RealDoubleElement(RIF(3))
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_RealDoubleElement is deprecated; "
-                       "use 'isinstance(..., RealDoubleElement)' instead.")
-    return isinstance(x, RealDoubleElement)
-
-
 # ################ FAST CREATION CODE ######################
 #            Based on fast integer creation code
 #         There is nothing to see here, move along

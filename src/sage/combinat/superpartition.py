@@ -149,12 +149,11 @@ class SuperPartition(ClonableArray,
         SPs = SuperPartitions()
         if not lst:
             return SPs([[], []])
-        elif isinstance(lst[0], (list, tuple)):
+        if isinstance(lst[0], (list, tuple)):
             return SPs([[Integer(a) for a in lst[0]],
                         [Integer(a) for a in lst[1]]])
-        else:
-            return SPs([[-a for a in lst if a <= 0],
-                        [a for a in lst if a > 0]])
+        return SPs([[-a for a in lst if a <= 0],
+                    [a for a in lst if a > 0]])
 
     def __init__(self, parent, lst, check=True, immutable=True):
         """
@@ -197,8 +196,7 @@ class SuperPartition(ClonableArray,
         """
         if isinstance(other, SuperPartition):
             return richcmp(list(self), list(other), op)
-        else:
-            return richcmp(list(self), other, op)
+        return richcmp(list(self), other, op)
 
     def _repr_(self) -> str:
         r"""
@@ -236,10 +234,10 @@ class SuperPartition(ClonableArray,
             asp = ', '.join(str(a) for a in self.antisymmetric_part())
             sp = ', '.join(str(a) for a in self.symmetric_part())
             return '[' + asp + '; ' + sp + ']'
-        elif display == "pair":
+        if display == "pair":
             return self._repr_pair()
-        else:  # "list"
-            return self._repr_list()
+        # "list"
+        return self._repr_list()
 
     def _repr_pair(self) -> str:
         r"""
@@ -817,10 +815,10 @@ class SuperPartitions(UniqueRepresentation, Parent):
         """
         if n is None:
             return SuperPartitions_all()
-        elif n in ZZ:
+        if n in ZZ:
             if m is None:
                 return SuperPartitions_n(n)
-            elif m in ZZ:
+            if m in ZZ:
                 return SuperPartitions_n_m(n, m)
             raise ValueError("m must be an integer")
         raise ValueError("n must be an integer")
@@ -909,10 +907,9 @@ class SuperPartitions(UniqueRepresentation, Parent):
         if isinstance(lst[0], (list, tuple)):
             return self.element_class(self, [lst[0], [a for a in lst[1] if a > 0]],
                                       check=check)
-        else:
-            return self.element_class(self, [[-a for a in lst if a <= 0],
-                                             [a for a in lst if a > 0]],
-                                      check=check)
+        return self.element_class(self, [[-a for a in lst if a <= 0],
+                                         [a for a in lst if a > 0]],
+                                  check=check)
 
     def __contains__(self, x) -> bool:
         """
@@ -945,7 +942,7 @@ class SuperPartitions(UniqueRepresentation, Parent):
             sp = [a for a in x if a <= 0]
             return (all(sp[i] > sp[i - 1] for i in range(1, len(sp)))
                     and [a for a in x if a > 0] in _Partitions)
-        elif (len(x) == 2 and
+        if (len(x) == 2 and
               isinstance(x[0], (list, tuple)) and
               isinstance(x[1], (list, tuple))):
             for i in chain(x[0], x[1]):
@@ -956,8 +953,7 @@ class SuperPartitions(UniqueRepresentation, Parent):
             return (all(x[0][i] > x[0][i + 1] for i in range(len(x[0]) - 1))
                     and all(x[1][i] >= x[1][i + 1] for i in range(len(x[1]) - 1))
                     and ((not x[0]) or x[0][-1] >= 0) and ((not x[1]) or x[1][-1] >= 0))
-        else:
-            return False
+        return False
 
 
 class SuperPartitions_n_m(SuperPartitions):
@@ -1018,8 +1014,7 @@ class SuperPartitions_n_m(SuperPartitions):
                 n = sum(abs(a) for a in x)
                 m = len([a for a in x if a <= 0])
             return n == self.n and m == self.m
-        else:
-            return False
+        return False
 
     def __iter__(self):
         r"""
@@ -1091,8 +1086,7 @@ class SuperPartitions_n(SuperPartitions):
             else:
                 n = sum(abs(a) for a in x)
             return n == self.n
-        else:
-            return False
+        return False
 
     def __iter__(self):
         r"""

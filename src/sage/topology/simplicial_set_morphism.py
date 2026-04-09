@@ -577,8 +577,7 @@ class SimplicialSetMorphism(Morphism):
             return (self.domain() == other.domain()
                     and self.codomain() == other.codomain()
                     and self._dictionary == other._dictionary)
-        else:
-            return False
+        return False
 
     def __ne__(self, other):
         """
@@ -1367,10 +1366,9 @@ class SimplicialSetMorphism(Morphism):
             return ChainComplexMorphism(matrices,
                     self.domain().chain_complex(base_ring=base_ring, augmented=augmented, cochain=False),
                     self.codomain().chain_complex(base_ring=base_ring, augmented=augmented, cochain=False))
-        else:
-            return ChainComplexMorphism(matrices,
-                    self.codomain().chain_complex(base_ring=base_ring, augmented=augmented, cochain=True),
-                    self.domain().chain_complex(base_ring=base_ring, augmented=augmented, cochain=True))
+        return ChainComplexMorphism(matrices,
+                self.codomain().chain_complex(base_ring=base_ring, augmented=augmented, cochain=True),
+                self.domain().chain_complex(base_ring=base_ring, augmented=augmented, cochain=True))
 
     def induced_homology_morphism(self, base_ring=None, cohomology=False):
         """

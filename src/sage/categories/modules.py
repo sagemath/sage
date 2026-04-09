@@ -540,8 +540,7 @@ class Modules(Category_module):
                     base_ring.is_subcategory(FiniteSets)) or \
                 base_ring in FiniteSets:
                 return [FiniteSets]
-            else:
-                return []
+            return []
 
         class TensorProducts(TensorProductsCategory):
 
@@ -589,8 +588,7 @@ class Modules(Category_module):
                     base_ring.is_subcategory(FiniteSets)) or \
                 base_ring in FiniteSets:
                 return [FiniteSets]
-            else:
-                return []
+            return []
 
     Filtered = LazyImport('sage.categories.filtered_modules', 'FilteredModules')
     Graded = LazyImport('sage.categories.graded_modules', 'GradedModules')
@@ -628,9 +626,8 @@ class Modules(Category_module):
             if factor_on_left:
                 return self.sum(coeff * element
                                 for element, coeff in iter_of_elements_coeff)
-            else:
-                return self.sum(element * coeff
-                                for element, coeff in iter_of_elements_coeff)
+            return self.sum(element * coeff
+                            for element, coeff in iter_of_elements_coeff)
 
         @cached_method
         def tensor_square(self):

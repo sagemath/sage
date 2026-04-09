@@ -775,9 +775,9 @@ class VermaModule(CombinatorialFreeModule):
                                         for m, mc in scalar._monomial_coefficients.items()
                                         for n, nc in self._monomial_coefficients.items())
 
-        def is_weight_vector(self):
+        def is_weight_vector(self) -> bool:
             r"""
-            Return if ``self`` is a weight vector.
+            Return whether ``self`` is a weight vector.
 
             EXAMPLES::
 

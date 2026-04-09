@@ -532,25 +532,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return integer.Integer(0)
 
-    def extension(self, poly, name=None, names=None, **kwds):
-        """
-        Return an algebraic extension of ``self``. See
-        :meth:`sage.rings.ring.CommutativeRing.extension()` for more
-        information.
-
-        EXAMPLES::
-
-            sage: R.<t> = QQ[]
-            sage: Integers(8).extension(t^2 - 3)
-            Univariate Quotient Polynomial Ring in t
-             over Ring of integers modulo 8 with modulus t^2 + 5
-        """
-        if self.modulus() == 1:
-            return self
-
-        from sage.rings.ring import CommutativeRing
-        return CommutativeRing.extension(self, poly, name, names, **kwds)
-
     @cached_method
     def is_prime_field(self) -> bool:
         """
