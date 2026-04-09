@@ -625,7 +625,6 @@ from sage.structure.richcmp import (
 )
 from sage.structure.sage_object import SageObject
 
-
 class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
     r"""
     Common base class for the classes :class:`~AlgebraicRealField` and
@@ -8610,17 +8609,29 @@ class ANBinaryExpr(ANDescr):
 
     def exactify(self):
         """
+        Force the resolution of this deferred binary expression into an exact representation.
+
+        This method performs two primary steps to resolve the expression:
+        1. Recursively calls ``exactify()`` on the left and right operands to ensure both are fully resolved into exact algebraic numbers.
+        2. Combines the resulting number fields from both operands into a single common field and performs the binary operation within that unified field.
+
+        If the expression is already exact, this method does nothing.
+
+        EXAMPLES::
+
+            We resolve a deferred addition of two algebraic numbers::
+
+                sage: a = AA(2)**(1/2) + AA(3)**(1/2) # needs sage.symbolic
+                sage: type(a.as_number())
+                <class 'sage.rings.qqbar.ANBinaryExpr'>
+                sage: a.exactify()
+                sage: a
+                3.146264369941973?
         TESTS::
-
-            sage: rt2c = QQbar.zeta(3) + AA(sqrt(2)) - QQbar.zeta(3)                    # needs sage.symbolic
-            sage: rt2c.exactify()                                                       # needs sage.symbolic
-
-        We check to make sure that this method still works even. We
-        do this by increasing the recursion level at each step and
-        decrease it before we return.
-        We lower the recursion limit for this test to allow
-        a test in reasonable time::
-
+            sage: rt2c = QQbar.zeta(3) + AA(sqrt(2)) - QQbar.zeta(3) # needs sage.symbolic
+            sage: rt2c.exactify() # needs sage.symbolic
+        We check to make sure that this method still works even. We do this by increasing the recursion level at each step and decrease it before we return.
+        We lower the recursion limit for this test to allow a test in reasonable time::
             sage: import sys
             sage: old_recursion_limit = sys.getrecursionlimit()
             sage: sys.setrecursionlimit(1000)
