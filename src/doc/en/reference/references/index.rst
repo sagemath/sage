@@ -381,6 +381,10 @@ REFERENCES:
             of crystals for the quantum queer superalgebra*.
             Preprint (2018). :arxiv:`1803.06317`
 
+.. [AS2020] \S. Assaf, D. Speyer, *Specht modules decompose as alternating
+            sums of restrictions of Schur modules*, Proceedings of the AMS,
+            148 (2020), no. 3, 1015-1029.
+
 .. [AS2003] Jean-Paul Allouche, Jeffrey Shallit,
             *Automatic Sequences: Theory, Applications, Generalizations*,
             Cambridge University Press, 2003.
@@ -2984,6 +2988,10 @@ REFERENCES:
                50(2):259-273, 1995.
                :doi:`10.1006/jcss.1995.1022`
 
+.. [Gal2018] Steven D Galbraith. *Mathematics of Public Key Cryptography*.
+             Version 2.0, October 31, 2018.
+             https://www.math.auckland.ac.nz/~sgal018/crypto-book/main.pdf
+
 .. [Gallai] \T. Gallai, *Elementare Relationen bezueglich der
             Glieder und trennenden Punkte von Graphen*, Magyar
             Tud. Akad. Mat. Kutato Int. Kozl. 9 (1964) 235-236
@@ -3071,6 +3079,10 @@ REFERENCES:
 .. [GHJV1994] \E. Gamma, R. Helm, R. Johnson, J. Vlissides, *Design
               Patterns: Elements of Reusable Object-Oriented
               Software*. Addison-Wesley (1994). ISBN 0-201-63361-2.
+              
+.. [GHM2008] \S. Galbraith, M. Harrison, D. Mireles Morales,
+             *Efficient hyperelliptic arithmetic using balanced representation for divisors*,
+             Algorithmic Number Theory: 8th International Symposium, ANTS-VIII Banff, Canada, May 17-22, 2008 Proceedings 8.
 
 .. [Gil1959] Edgar Nelson Gilbert. *Random Graphs*, Annals of Mathematical
              Statistics. 30 (4): 1141-1144, 1959.
@@ -5245,6 +5257,10 @@ REFERENCES:
              LexDFS, LexUP and LexDown orderings*. (2017)
              :arxiv:`1701.00305`
 
+.. [Mireles2008] David J. Mireles Morales, *Efficient Arithmetic on Hyperelliptic Curves With Real Representation*,
+                 PhD thesis, University of London, UK, 2008.
+                 https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+
 .. [MirMor2009] \R. Miranda, D.R. Morrison, "Embeddings of Integral Quadratic Forms"
                 http://www.math.ucsb.edu/~drm/manuscripts/eiqf.pdf .
 
@@ -5459,6 +5475,9 @@ REFERENCES:
 .. [Mu1997] Murty, M. Ram. *Congruences between modular forms*. In "Analytic
             Number Theory" (ed. Y. Motohashi), London Math. Soc. Lecture Notes
             247 (1997), 313-320, Cambridge Univ. Press.
+
+.. [Mue2010] Jan Steffen Mueller, *Explicit Kummer surface formulas for arbitrary characteristic*.
+             LMS Journal of Computation and Mathematics, Volume 13, 47--64, 2010.
 
 .. [Mul2004] Siguna Muller, *On the Computation of Square Roots in
              Finite Fields*, in Designs, Codes and Cryptography,
@@ -5727,6 +5746,10 @@ REFERENCES:
 
 .. [OZ2015] \R. Orellana, M. Zabrocki, *Symmetric group characters
             as symmetric functions*, :arxiv:`1510.00438`.
+
+.. [OZ2019] \R. Orellana, M. Zabrocki, *The Hopf structure of symmetric
+            group characters as symmetric functions*, Algebr. Combin.,
+            **4** (2021), no. 3, 551-574. :arxiv:`1901.00378`
 
 .. _ref-P:
 

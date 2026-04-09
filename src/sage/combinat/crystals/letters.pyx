@@ -133,7 +133,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
     used intensively as building blocks. Therefore, we explicitly build
     in memory the list of all elements, the crystal graph and its
     transitive closure, so as to make the following operations constant
-    time: ``list``, ``cmp``, (todo: ``phi``, ``epsilon``, ``e``, and
+    time: ``list``, ``richcmp``, (todo: ``phi``, ``epsilon``, ``e``, and
     ``f`` with caching)
     """
     def __init__(self, cartan_type, element_class,
@@ -271,7 +271,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
         """
         return self.digraph().transitive_closure()
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -283,7 +283,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
         """
         return x in self._list
 
-    def lt_elements(self, x, y):
+    def lt_elements(self, x, y) -> bool:
         r"""
         Return ``True`` if and only if there is a path from ``x`` to ``y`` in
         the crystal graph, when ``x`` is not equal to ``y``.

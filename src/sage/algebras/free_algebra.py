@@ -1573,12 +1573,11 @@ class AssociativeFunctor(ConstructionFunctor):
                 raise CoercionException("Overlapping variables (%s,%s)" %
                                         (self.vars, other.vars))
             return AssociativeFunctor(other.vars + self.vars)
-        elif (isinstance(other, CompositeConstructionFunctor) and
+        if (isinstance(other, CompositeConstructionFunctor) and
               isinstance(other.all[-1], AssociativeFunctor)):
             return CompositeConstructionFunctor(other.all[:-1],
                                                 self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def merge(self, other):
         """

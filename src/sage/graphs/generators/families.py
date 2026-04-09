@@ -4108,10 +4108,9 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None, immutable=False):
             def f(i, j):
                 if i == j:
                     return 0 * I
-                elif (a[j] - a[i]).is_square():
+                if (a[j] - a[i]).is_square():
                     return I + F
-                else:
-                    return J - F
+                return J - F
         elif m < 2*t:
             def f(i, j):
                 return F * P[a.index(g**(2*m) * (a[i] + a[j]))]

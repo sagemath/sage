@@ -92,14 +92,13 @@ class LaTeX(Executable):
         # return
         if result.returncode == 0:
             return FeatureTestResult(self, True)
-        else:
-            return FeatureTestResult(self, False, reason="Running latex on "
-                                     "a sample file (with command='{}') returned nonzero "
-                                     "exit status='{}' with stderr='{}' "
-                                     "and stdout='{}'".format(result.args,
-                                                              result.returncode,
-                                                              result.stderr.strip(),
-                                                              result.stdout.strip()))
+        return FeatureTestResult(self, False, reason="Running latex on "
+                                 "a sample file (with command='{}') returned nonzero "
+                                 "exit status='{}' with stderr='{}' "
+                                 "and stdout='{}'".format(result.args,
+                                                          result.returncode,
+                                                          result.stderr.strip(),
+                                                          result.stdout.strip()))
 
 
 class latex(LaTeX):

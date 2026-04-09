@@ -1679,8 +1679,7 @@ class CycleSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             [(1, 2, 3), (1, 3, 2)]
         """
         labels = _label_sets(self.parent()._arity, [labels])
-        # TODO: CyclicPermutations should yield hashable objects, not lists
-        yield from map(tuple, CyclicPermutations(labels[0]))
+        yield from CyclicPermutations(labels[0])
 
     def generating_series(self):
         r"""
@@ -1844,6 +1843,72 @@ class ChainSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
                 for pi in itertools.permutations(rest):
                     yield (a,) + pi + (b,)
 
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of the
+        species of chains.
+
+        This is `(1/(1-x) + 1 + x)/2`.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: L.Chains().generating_series().truncate(7)
+            1 + X + 1/2*X^2 + 1/2*X^3 + 1/2*X^4 + 1/2*X^5 + 1/2*X^6
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        x = L.gen()
+        return (1 / (1 - x) + 1 + x) / 2
+
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of the species of
+        chains.
+
+        This is the geometric series '1/(1-x)'.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: L.Chains().isotype_generating_series().truncate(4)
+            1 + X + X^2 + X^3
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        return L(constant=1)
+
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series of the species of chains.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: L.Chains().cycle_index_series()[3]
+            1/2*p[1, 1, 1] + 1/2*p[2, 1]
+            sage: L.Chains().cycle_index_series()[4]
+            1/2*p[1, 1, 1, 1] + 1/2*p[2, 2]
+        """
+        P = self.parent()
+        p = SymmetricFunctions(P.base_ring().fraction_field()).p()
+        L = LazySymmetricFunctions(p)
+
+        def coefficient(n):
+            if not n:
+                return p.one()
+            if n == 1:
+                return p[1]
+            identity = p[[1] * n]
+            if n % 2 == 0:
+                reversal = p[[2] * (n // 2)]
+            else:
+                reversal = p[[2] * ((n - 1) // 2) + [1]]
+            return (identity + reversal) / 2
+
+        return L(coefficient)
 
 class GraphSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
                    LazyCombinatorialSpeciesElement, UniqueRepresentation,

@@ -206,47 +206,6 @@ def Ideal(*args, **kwds):
     return I
 
 
-def is_Ideal(x):
-    r"""
-    Return ``True`` if object is an ideal of a ring.
-
-    EXAMPLES:
-
-    A simple example involving the ring of integers. Note
-    that Sage does not interpret rings objects themselves as ideals.
-    However, one can still explicitly construct these ideals::
-
-        sage: from sage.rings.ideal import is_Ideal
-        sage: R = ZZ
-        sage: is_Ideal(R)
-        doctest:warning...
-        DeprecationWarning: The function is_Ideal is deprecated; use 'isinstance(..., Ideal_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38266 for details.
-        False
-        sage: 1*R; is_Ideal(1*R)
-        Principal ideal (1) of Integer Ring
-        True
-        sage: 0*R; is_Ideal(0*R)
-        Principal ideal (0) of Integer Ring
-        True
-
-    Sage recognizes ideals of polynomial rings as well::
-
-        sage: R = PolynomialRing(QQ, 'x'); x = R.gen()
-        sage: I = R.ideal(x^2 + 1); I
-        Principal ideal (x^2 + 1) of Univariate Polynomial Ring in x over Rational Field
-        sage: is_Ideal(I)
-        True
-        sage: is_Ideal((x^2 + 1)*R)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38266,
-                "The function is_Ideal is deprecated; "
-                "use 'isinstance(..., Ideal_generic)' instead.")
-    return isinstance(x, Ideal_generic)
-
-
 class Ideal_generic(MonoidElement):
     """
     An ideal.

@@ -230,8 +230,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
         S = self.sub_field()
         if R and S in Fields():
             return "[%s, %s, %s] linear Gabidulin code over GF(%s)/GF(%s)" % (self.length(), self.dimension(), self.minimum_distance(), R.cardinality(), S.cardinality())
-        else:
-            return "[%s, %s, %s] linear Gabidulin code over %s/%s" % (self.length(), self.dimension(), self.minimum_distance(), R, S)
+        return "[%s, %s, %s] linear Gabidulin code over %s/%s" % (self.length(), self.dimension(), self.minimum_distance(), R, S)
 
     def _latex_(self):
         r"""
@@ -726,10 +725,9 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
         codeword = p.multi_point_evaluation(eval_pts)
         if form == "vector":
             return vector(codeword)
-        elif form == "matrix":
+        if form == "matrix":
             return C.matrix_form_of_vector(vector(codeword))
-        else:
-            return ValueError("the argument 'form' takes only either 'vector' or 'matrix' as valid input")
+        return ValueError("the argument 'form' takes only either 'vector' or 'matrix' as valid input")
 
     def unencode_nocheck(self, c):
         """

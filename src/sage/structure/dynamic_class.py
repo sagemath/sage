@@ -325,14 +325,14 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     #    assert(cls is None or issubtype(type(cls), type) or type(cls) is classobj)
     if cache is True:
         return dynamic_class_internal(name, bases, cls, reduction, doccls, prepend_cls_bases)
-    elif cache is False:
+    if cache is False:
         # bypass the cached method
         return dynamic_class_internal.f(name, bases, cls, reduction, doccls, prepend_cls_bases)
-    else:  # cache = "ignore_reduction"
-        result = dynamic_class_internal(name, bases, cls, False, doccls, prepend_cls_bases)
-        if result._reduction is False:
-            result._reduction = reduction
-        return result
+    # cache = "ignore_reduction"
+    result = dynamic_class_internal(name, bases, cls, False, doccls, prepend_cls_bases)
+    if result._reduction is False:
+        result._reduction = reduction
+    return result
 
 
 @weak_cached_function

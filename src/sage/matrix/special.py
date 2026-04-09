@@ -120,8 +120,7 @@ def matrix_method(func=None, name=None):
         func.__doc__ = "%s\n\n%s" % (prefix, func.__doc__)
         setattr(matrix, name, func)
         return func
-    else:
-        return lambda func: matrix_method(func, name=name)
+    return lambda func: matrix_method(func, name=name)
 
 
 @matrix_method
@@ -658,22 +657,21 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         else:
             A.randomize(density=density, nonzero=True, *args, **kwds)
         return A
-    elif algorithm == 'echelon_form':
+    if algorithm == 'echelon_form':
         return random_rref_matrix(parent, *args, **kwds)
-    elif algorithm == 'echelonizable':
+    if algorithm == 'echelonizable':
         return random_echelonizable_matrix(parent, *args, **kwds)
-    elif algorithm == 'diagonalizable':
+    if algorithm == 'diagonalizable':
         return random_diagonalizable_matrix(parent, *args, **kwds)
-    elif algorithm == 'subspaces':
+    if algorithm == 'subspaces':
         return random_subspaces_matrix(parent, *args, **kwds)
-    elif algorithm == 'unimodular':
+    if algorithm == 'unimodular':
         return random_unimodular_matrix(parent, *args, **kwds)
-    elif algorithm == 'unitary':
+    if algorithm == 'unitary':
         return random_unitary_matrix(parent, *args, **kwds)
-    elif algorithm == 'bistochastic':
+    if algorithm == 'bistochastic':
         return random_bistochastic_matrix(parent, *args, **kwds)
-    else:
-        raise ValueError('random matrix algorithm "%s" is not recognized' % algorithm)
+    raise ValueError('random matrix algorithm "%s" is not recognized' % algorithm)
 
 
 @matrix_method
@@ -904,8 +902,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     # Ship ring, matrix size, dictionary to matrix constructor
     if ring is None:
         return matrix(nrows, nrows, w, sparse=sparse)
-    else:
-        return matrix(ring, nrows, nrows, w, sparse=sparse)
+    return matrix(ring, nrows, nrows, w, sparse=sparse)
 
 
 @matrix_method
@@ -1518,8 +1515,7 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         elem[row1, row1] = scale
     if rowop:
         return elem
-    else:
-        return elem.transpose()
+    return elem.transpose()
 
 
 @matrix_method
@@ -2032,8 +2028,7 @@ def block_matrix(*args, **kwds):
     if not args:
         if sparse is not None:
             return matrix_space.MatrixSpace(ZZ, 0, 0, sparse=sparse)([])
-        else:
-            return matrix_space.MatrixSpace(ZZ, 0, 0)([])
+        return matrix_space.MatrixSpace(ZZ, 0, 0)([])
 
     if len(args) >= 1 and args[0] in Rings():
         # A ring is specified
@@ -3138,7 +3133,7 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
     if upper_bound is None:
         # random_echelonizable_matrix() always returns a determinant one matrix if given full rank.
         return random_matrix(ring, size, algorithm='echelonizable', rank=size)
-    elif upper_bound is not None and (ring == ZZ or ring == QQ):
+    if upper_bound is not None and (ring == ZZ or ring == QQ):
         return random_matrix(ring, size,algorithm='echelonizable',rank=size, upper_bound=upper_bound, max_tries=max_tries)
 
 

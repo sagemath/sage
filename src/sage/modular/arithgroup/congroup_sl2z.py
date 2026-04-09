@@ -202,28 +202,27 @@ class SL2Z_class(Gamma0_class):
         d = ZZ.random_element(1-bound, bound, *args, **kwds)
         if gcd(c,d) != 1: # try again
             return self.random_element(bound, *args, **kwds)
-        else:
-            a,b,c,d = lift_to_sl2z(c,d,0)
-            whi = bound
-            wlo = bound
-            if c > 0:
-                whi = min(whi, ((bound - a)/ZZ(c)).ceil())
-                wlo = min(wlo, ((bound + a)/ZZ(c)).ceil())
-            elif c < 0:
-                whi = min(whi, ((bound + a)/ZZ(-c)).ceil())
-                wlo = min(wlo, ((bound - a)/ZZ(-c)).ceil())
+        a,b,c,d = lift_to_sl2z(c,d,0)
+        whi = bound
+        wlo = bound
+        if c > 0:
+            whi = min(whi, ((bound - a)/ZZ(c)).ceil())
+            wlo = min(wlo, ((bound + a)/ZZ(c)).ceil())
+        elif c < 0:
+            whi = min(whi, ((bound + a)/ZZ(-c)).ceil())
+            wlo = min(wlo, ((bound - a)/ZZ(-c)).ceil())
 
-            if d > 0:
-                whi = min(whi, ((bound - b)/ZZ(d)).ceil())
-                wlo = min(wlo, ((bound + b)/ZZ(d)).ceil())
-            elif d < 0:
-                whi = min(whi, ((bound + b)/ZZ(-d)).ceil())
-                wlo = min(wlo, ((bound - b)/ZZ(-d)).ceil())
+        if d > 0:
+            whi = min(whi, ((bound - b)/ZZ(d)).ceil())
+            wlo = min(wlo, ((bound + b)/ZZ(d)).ceil())
+        elif d < 0:
+            whi = min(whi, ((bound + b)/ZZ(-d)).ceil())
+            wlo = min(wlo, ((bound - b)/ZZ(-d)).ceil())
 
-            w = ZZ.random_element(1-wlo, whi, *args, **kwds)
-            a += c*w
-            b += d*w
-            return self([a,b,c,d])
+        w = ZZ.random_element(1-wlo, whi, *args, **kwds)
+        a += c*w
+        b += d*w
+        return self([a,b,c,d])
 
 
 SL2Z = SL2Z_class()

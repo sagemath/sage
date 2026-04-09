@@ -1006,7 +1006,7 @@ The ``local-homebrew-macos-standard-python3_xcode`` environment
 installs the same packages, but uses XCode's ``/usr/bin/python3``.
 
 The ``local-homebrew-macos-standard-python3_pythonorg`` expects an
-installation of Python 3.10 in
+installation of a supported Python 3.12+ release in
 ``/Library/Frameworks/Python.framework``; this is where the binary
 packages provided by python.org install themselves.
 
@@ -1409,4 +1409,3 @@ dev container, to use Sage in a terminal, `open a new terminal in VS Code
 <https://code.visualstudio.com/docs/terminal/basics>`_, type ``sage`` and hit
 :kbd:`Enter`. (Do not use ``./sage``; this will not work because the source
 tree is not configured.)
-

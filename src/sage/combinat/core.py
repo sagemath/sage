@@ -412,11 +412,10 @@ class Core(CombinatorialElement):
             raise ValueError("t_0 and t_1 cannot be equal mod k")
         if t[0] > t[1]:
             return self._transposition_to_reduced_word([t[1], t[0]])
-        else:
-            resu = [i % k for i in range(t[0], t[1] - (t[1] - t[0]) // k)]
-            resu += [(t[1] - (t[1] - t[0]) // k - 2 - i) % k
-                     for i in range(t[1] - (t[1] - t[0]) // k - t[0] - 1)]
-            return resu
+        resu = [i % k for i in range(t[0], t[1] - (t[1] - t[0]) // k)]
+        resu += [(t[1] - (t[1] - t[0]) // k - 2 - i) % k
+                 for i in range(t[1] - (t[1] - t[0]) // k - t[0] - 1)]
+        return resu
 
     def weak_le(self, other):
         r"""

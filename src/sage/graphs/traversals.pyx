@@ -1027,7 +1027,7 @@ def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
 
             # We check if there is a chain u = w_1, w_2, ..., w_{p+1} = v with
             # w_j unnumbered and label(w_j) < label(v) for all j in {2, ..., p}
-            active = set([w for w in unnumbered_vertices if label[w] < label[v]])
+            active = {w for w in unnumbered_vertices if label[w] < label[v]}
             active.add(v)
             reach = set([u])
             while active and reach and v not in reach:

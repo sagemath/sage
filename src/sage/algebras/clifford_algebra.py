@@ -141,8 +141,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
         """
         if not isinstance(el, Element):
             return self._element_constructor_(el)
-        else:
-            return Parent.__call__(self, el)
+        return Parent.__call__(self, el)
 
     def cardinality(self):
         r"""
@@ -2881,7 +2880,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         # comparison for >= and > : swap the arguments
         if op == op_GE:
             return other.__richcmp__(self, op_LE)
-        elif op == op_GT:
+        if op == op_GT:
             return other.__richcmp__(self, op_LT)
 
         s_gens = {g for g in self.gens() if g}

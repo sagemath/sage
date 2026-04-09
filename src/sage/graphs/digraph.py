@@ -612,6 +612,16 @@ class DiGraph(GenericGraph):
             sage: copy(g) is g    # copy is mutable again
             False
 
+        When the input provides an explicit vertex list, creating an immutable
+        digraph preserves this order::
+
+            sage: D = DiGraph([['b', 'a'], []])
+            sage: list(D)
+            ['b', 'a']
+            sage: Dim = DiGraph([['b', 'a'], []], immutable=True)
+            sage: list(Dim)
+            ['b', 'a']
+
         Unknown input format::
 
             sage: DiGraph(4, format='HeyHeyHey')
@@ -864,7 +874,8 @@ class DiGraph(GenericGraph):
             from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             ib = StaticSparseBackend(self,
                                      loops=self.allows_loops(),
-                                     multiedges=self.allows_multiple_edges())
+                                     multiedges=self.allows_multiple_edges(),
+                                     sort=(format != "vertices_and_edges"))
             self._backend = ib
             self._immutable = True
 
@@ -1318,7 +1329,7 @@ class DiGraph(GenericGraph):
         """
         if vertices in self:
             return self._backend.in_degree(vertices)
-        elif labels:
+        if labels:
             return dict(self.in_degree_iterator(vertices, labels=labels))
         return list(self.in_degree_iterator(vertices, labels=labels))
 
@@ -1388,7 +1399,7 @@ class DiGraph(GenericGraph):
         """
         if vertices in self:
             return self._backend.out_degree(vertices)
-        elif labels:
+        if labels:
             return dict(self.out_degree_iterator(vertices, labels=labels))
         return list(self.out_degree_iterator(vertices, labels=labels))
 
@@ -2361,8 +2372,7 @@ class DiGraph(GenericGraph):
                 algo = 'standard'
                 if with_labels:
                     return dict(zip(v, eccentricity(self, algorithm=algo, vertex_list=v)))
-                else:
-                    return eccentricity(self, algorithm=algo, vertex_list=v)
+                return eccentricity(self, algorithm=algo, vertex_list=v)
 
             if algorithm in ['Floyd-Warshall-Python', 'Floyd-Warshall-Cython', 'Johnson_Boost']:
                 dist_dict = self.shortest_path_all_pairs(by_weight=by_weight, algorithm=algorithm,
@@ -2624,11 +2634,10 @@ class DiGraph(GenericGraph):
             if not by_weight:
                 from sage.graphs.distances_all_pairs import diameter
                 return diameter(self, algorithm=algorithm)
-            else:
-                from sage.graphs.base.boost_graph import diameter
-                return diameter(self, algorithm=algorithm,
-                                weight_function=weight_function,
-                                check_weight=False)
+            from sage.graphs.base.boost_graph import diameter
+            return diameter(self, algorithm=algorithm,
+                            weight_function=weight_function,
+                            check_weight=False)
 
         if algorithm == 'BFS':
             from sage.graphs.distances_all_pairs import diameter
@@ -2874,8 +2883,7 @@ class DiGraph(GenericGraph):
             b, ordering = self._backend.is_directed_acyclic(certificate=True)
             if b:
                 return ordering
-            else:
-                raise TypeError('digraph is not acyclic; there is no topological sort')
+            raise TypeError('digraph is not acyclic; there is no topological sort')
 
         elif implementation == "NetworkX":
             import networkx

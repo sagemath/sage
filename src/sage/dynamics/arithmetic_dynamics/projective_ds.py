@@ -554,8 +554,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         F = self.as_scheme_morphism().dehomogenize(n)
         if F.domain() == F.codomain():
             return F.as_dynamical_system()
-        else:
-            return F
+        return F
 
     def dynatomic_polynomial(self, period):
         r"""
@@ -1503,9 +1502,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         R = RealField(prec=prec)
         if self.is_morphism():
             return R(self.degree())
-        else:
-            D = self.nth_iterate_map(N, normalize=True).degree()
-            return R(D).nth_root(N)
+        D = self.nth_iterate_map(N, normalize=True).degree()
+        return R(D).nth_root(N)
 
     def orbit(self, P, N, **kwds):
         r"""
@@ -1814,55 +1812,53 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 F = copy(self)
                 F.normalize_coordinates()
                 return (K(F.resultant()).support())
+            #For the rationals, we can use groebner basis, as it is quicker in practice
+            R = self.coordinate_ring()
+            F = self._polys
+
+            if R.base_ring().is_field():
+                J = R.ideal(F)
             else:
-                #For the rationals, we can use groebner basis, as it is quicker in practice
-                R = self.coordinate_ring()
-                F = self._polys
+                S = PolynomialRing(R.base_ring().fraction_field(), R.gens(), R.ngens())
+                J = S.ideal([S.coerce(F[i]) for i in range(R.ngens())])
+            if J.dimension() > 0:
+                raise TypeError("not a morphism")
+            #normalize to coefficients in the ring not the fraction field.
+            F = [F[i] * lcm([F[j].denominator() for j in range(len(F))]) for i in range(len(F))]
 
-                if R.base_ring().is_field():
-                    J = R.ideal(F)
-                else:
-                    S = PolynomialRing(R.base_ring().fraction_field(), R.gens(), R.ngens())
-                    J = S.ideal([S.coerce(F[i]) for i in range(R.ngens())])
-                if J.dimension() > 0:
-                    raise TypeError("not a morphism")
-                #normalize to coefficients in the ring not the fraction field.
-                F = [F[i] * lcm([F[j].denominator() for j in range(len(F))]) for i in range(len(F))]
+            #move the ideal to the ring of integers
+            if R.base_ring().is_field():
+                S = PolynomialRing(R.base_ring().ring_of_integers(), R.gens(), R.ngens())
+                F = [F[i].change_ring(R.base_ring().ring_of_integers()) for i in range(len(F))]
+                J = S.ideal(F)
+            else:
+                J = R.ideal(F)
+            GB = J.groebner_basis()
+            badprimes = []
 
-                #move the ideal to the ring of integers
-                if R.base_ring().is_field():
-                    S = PolynomialRing(R.base_ring().ring_of_integers(), R.gens(), R.ngens())
-                    F = [F[i].change_ring(R.base_ring().ring_of_integers()) for i in range(len(F))]
-                    J = S.ideal(F)
-                else:
-                    J = R.ideal(F)
-                GB = J.groebner_basis()
-                badprimes = []
+            #get the primes dividing the coefficients of the monomials x_i^k_i
+            for i in range(len(GB)):
+                LT = GB[i].lt().degrees()
+                power = 0
+                for j in range(R.ngens()):
+                    if LT[j] != 0:
+                        power += 1
+                if power == 1:
+                    badprimes = badprimes + GB[i].lt().coefficients()[0].support()
+            badprimes = sorted(set(badprimes))
 
-                #get the primes dividing the coefficients of the monomials x_i^k_i
-                for i in range(len(GB)):
-                    LT = GB[i].lt().degrees()
-                    power = 0
-                    for j in range(R.ngens()):
-                        if LT[j] != 0:
-                            power += 1
-                    if power == 1:
-                        badprimes = badprimes + GB[i].lt().coefficients()[0].support()
-                badprimes = sorted(set(badprimes))
-
-                #check to return only the truly bad primes
-                if check:
-                    index = 0
-                    while index < len(badprimes):  #figure out which primes are really bad primes...
-                        S = PolynomialRing(GF(badprimes[index]), R.gens(), R.ngens())
-                        J = S.ideal([S.coerce(F[j]) for j in range(R.ngens())])
-                        if J.dimension() == 0:
-                            badprimes.pop(index)
-                        else:
-                            index += 1
-                return badprimes
-        else:
-            raise TypeError("base ring must be number field or number field ring")
+            #check to return only the truly bad primes
+            if check:
+                index = 0
+                while index < len(badprimes):  #figure out which primes are really bad primes...
+                    S = PolynomialRing(GF(badprimes[index]), R.gens(), R.ngens())
+                    J = S.ideal([S.coerce(F[j]) for j in range(R.ngens())])
+                    if J.dimension() == 0:
+                        badprimes.pop(index)
+                    else:
+                        index += 1
+            return badprimes
+        raise TypeError("base ring must be number field or number field ring")
 
     def conjugate(self, M, adjugate=False, normalize=False):
         r"""
@@ -2702,22 +2698,19 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             if n == 1:
                 # Base case of recursion
                 return D, points
-            else:
-                # For each preimage point of Q, use recursion to find that point's preimages
-                # and update the dictionary
-                for pt in pre:
-                    D.update(self._nth_preimage_tree_helper(pt, n-1, m+1, **kwds)[0])
+            # For each preimage point of Q, use recursion to find that point's preimages
+            # and update the dictionary
+            for pt in pre:
+                D.update(self._nth_preimage_tree_helper(pt, n-1, m+1, **kwds)[0])
             return D, points
-        else:
-            if n == 1:
-                # Base case of recursion
-                return D
-            else:
-                # For each preimage point of Q, use recursion to find that point's preimages
-                # and update the dictionary
-                for pt in pre:
-                    D.update(self._nth_preimage_tree_helper(pt, n-1, m+1, **kwds))
+        if n == 1:
+            # Base case of recursion
             return D
+        # For each preimage point of Q, use recursion to find that point's preimages
+        # and update the dictionary
+        for pt in pre:
+            D.update(self._nth_preimage_tree_helper(pt, n-1, m+1, **kwds))
+        return D
 
     def nth_preimage_tree(self, Q, n, **kwds):
         r"""
@@ -2851,8 +2844,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         if return_points:
             return GraphPlot(G, options), points
-        else:
-            return GraphPlot(G, options)
+        return GraphPlot(G, options)
 
     def possible_periods(self, **kwds):
         r"""
@@ -3712,7 +3704,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             if self.degree() <= 12:
                 return automorphism_group_QQ_fixedpoints(F, return_functions, iso_type)
             return automorphism_group_QQ_CRT(F, p, return_functions, iso_type)
-        elif alg == 'CRT':
+        if alg == 'CRT':
             return automorphism_group_QQ_CRT(F, p, return_functions, iso_type)
         return automorphism_group_QQ_fixedpoints(F, return_functions, iso_type)
 
@@ -4631,8 +4623,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         good_points.append(Q)
                 good_points.sort()
                 return good_points
-            else:
-                raise NotImplementedError("ring must a number field or finite field")
+            raise NotImplementedError("ring must a number field or finite field")
         else: #a higher dimensional scheme
             raise TypeError("use return_scheme=True")
 
@@ -4904,8 +4895,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         if n % m == 0:
                             points = points + cycle[:-1]
                 return points
-            else:
-                raise TypeError("ring must be finite to generate cyclegraph")
+            raise TypeError("ring must be finite to generate cyclegraph")
         elif algorithm == 'variety':
             if formal and N == 2 and dom == PS:
                 X = PS.subscheme([f.dynatomic_polynomial(n)])
@@ -4984,8 +4974,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                             good_points.append(Q)
                     good_points.sort()
                     return good_points
-                else:
-                    raise NotImplementedError("ring must be a number field or finite field")
+                raise NotImplementedError("ring must be a number field or finite field")
             else: #a higher dimensional scheme
                 raise TypeError("use return_scheme=True")
         else:
@@ -6441,12 +6430,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 if return_period:
                     m = orbit.index(Q)
                     return (m, n - m)
-                else:
-                    return True
+                return True
         if return_period:
             return (0,0)
-        else:
-            return False
+        return False
 
     def postcritical_set(self, check=True):
         r"""
@@ -7406,8 +7393,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             DS = self.change_ring(ring)
             # ensures that the correct method is run, in case user switches to a finite field
             return DS.all_periodic_points(**kwds)
-        else:
-            DS = self
+        DS = self
         PS = DS.domain()
         K = PS.base_ring()
         if K in NumberFields():
@@ -7458,67 +7444,65 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                             if Q2 == Q:
                                 periodic_points = periodic_points.union(orb)
                 return list(periodic_points)
+            primebound = kwds.pop("prime_bound", [1, 20])
+            p = kwds.pop("lifting_prime", 23)
+            pd_bounds = kwds.pop("period_degree_bounds", [4,4])
+            alg = kwds.pop("algorithm", None)
+            periods = kwds.pop("periods", None)
+            badprimes = kwds.pop("bad_primes", None)
+            num_cpus = kwds.pop("ncpus", ncpus())
+            if alg is not None and alg not in ['dynatomic', 'lifting']:
+                raise ValueError("algorithm must be 'dynatomic' or 'lifting'")
+
+            if not isinstance(primebound, (list, tuple)):
+                try:
+                    primebound = [1, ZZ(primebound)]
+                except TypeError:
+                    raise TypeError("bound on primes must be an integer")
             else:
-                primebound = kwds.pop("prime_bound", [1, 20])
-                p = kwds.pop("lifting_prime", 23)
-                pd_bounds = kwds.pop("period_degree_bounds", [4,4])
-                alg = kwds.pop("algorithm", None)
-                periods = kwds.pop("periods", None)
-                badprimes = kwds.pop("bad_primes", None)
-                num_cpus = kwds.pop("ncpus", ncpus())
-                if alg is not None and alg not in ['dynatomic', 'lifting']:
-                    raise ValueError("algorithm must be 'dynatomic' or 'lifting'")
+                try:
+                    primebound[0] = ZZ(primebound[0])
+                    primebound[1] = ZZ(primebound[1])
+                except TypeError:
+                    raise TypeError("prime bounds must be integers")
 
-                if not isinstance(primebound, (list, tuple)):
-                    try:
-                        primebound = [1, ZZ(primebound)]
-                    except TypeError:
-                        raise TypeError("bound on primes must be an integer")
-                else:
-                    try:
-                        primebound[0] = ZZ(primebound[0])
-                        primebound[1] = ZZ(primebound[1])
-                    except TypeError:
-                        raise TypeError("prime bounds must be integers")
+            if badprimes is None:
+                badprimes = DS.primes_of_bad_reduction()
+            if periods is None:
+                periods = DS.possible_periods(prime_bound=primebound, bad_primes=badprimes, ncpus=num_cpus)
+            PS = DS.domain()
+            periodic = set()
+            N = PS.ambient_space().dimension_relative()
 
-                if badprimes is None:
-                    badprimes = DS.primes_of_bad_reduction()
-                if periods is None:
-                    periods = DS.possible_periods(prime_bound=primebound, bad_primes=badprimes, ncpus=num_cpus)
-                PS = DS.domain()
-                periodic = set()
-                N = PS.ambient_space().dimension_relative()
+            if alg != 'lifting':
+                for i in periods[:]:
+                    if (alg == 'dynatomic') or ((N == 1)
+                            and i <= pd_bounds[0] and DS.degree() <= pd_bounds[1]):
+                        periodic.update(DS.periodic_points(i))
+                        periods.remove(i)
+                if not periods:
+                    return list(periodic)
+            while p in badprimes:
+                p = next_prime(p + 1)
 
-                if alg != 'lifting':
-                    for i in periods[:]:
-                        if (alg == 'dynatomic') or ((N == 1)
-                                and i <= pd_bounds[0] and DS.degree() <= pd_bounds[1]):
-                            periodic.update(DS.periodic_points(i))
-                            periods.remove(i)
-                    if not periods:
-                        return list(periodic)
-                while p in badprimes:
-                    p = next_prime(p + 1)
+            from sage.symbolic.constants import e
 
-                from sage.symbolic.constants import e
-
-                B = e ** DS.height_difference_bound()
-                f = DS.change_ring(GF(p))
-                all_points = f.possible_periods(True) # return the list of points and their periods.
-                pos_points = []
-                # check period, remove duplicates
-                for i in range(len(all_points)):
-                    if all_points[i][1] in periods and all_points[i] not in pos_points:
-                        pos_points.append(all_points[i])
-                periodic_points = DS.lift_to_rational_periodic(pos_points,B)
-                for p,n in periodic_points:
-                    for k in range(n):
-                        p.normalize_coordinates()
-                        periodic.add(p)
-                        p = DS(p)
-                return list(periodic)
-        else:
-            raise TypeError("base field must be an absolute number field")
+            B = e ** DS.height_difference_bound()
+            f = DS.change_ring(GF(p))
+            all_points = f.possible_periods(True) # return the list of points and their periods.
+            pos_points = []
+            # check period, remove duplicates
+            for i in range(len(all_points)):
+                if all_points[i][1] in periods and all_points[i] not in pos_points:
+                    pos_points.append(all_points[i])
+            periodic_points = DS.lift_to_rational_periodic(pos_points,B)
+            for p,n in periodic_points:
+                for k in range(n):
+                    p.normalize_coordinates()
+                    periodic.add(p)
+                    p = DS(p)
+            return list(periodic)
+        raise TypeError("base field must be an absolute number field")
 
     def all_rational_preimages(self, points):
         r"""
@@ -7771,14 +7755,13 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                                                 bad_primes=badprimes, ncpus=num_cpus)
             if periods == []:
                 return []  #no rational preperiodic points
-            else:
-                p = kwds.pop("lifting_prime", 23)
-                #find the rational preperiodic points
-                T = DS.all_periodic_points(prime_bound=primebound, lifting_prime=p,
-                                                  periods=periods, bad_primes=badprimes,
-                                                  ncpus=num_cpus, **kwds)
-                preper = DS.all_rational_preimages(T) #find the preperiodic points
-                preper = list(preper)
+            p = kwds.pop("lifting_prime", 23)
+            #find the rational preperiodic points
+            T = DS.all_periodic_points(prime_bound=primebound, lifting_prime=p,
+                                              periods=periods, bad_primes=badprimes,
+                                              ncpus=num_cpus, **kwds)
+            preper = DS.all_rational_preimages(T) #find the preperiodic points
+            preper = list(preper)
         return preper
 
     def rational_preperiodic_graph(self, **kwds):
@@ -8195,17 +8178,16 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                                 minimal=True)
                     if K == base:
                         return [matrix(K, M, M, mK)]
-                    else: #may be a subfield
-                        embeds = K.embeddings(base)
-                        if len(embeds) == 0:
-                            #not a subfield
-                            return []
-                        else:
-                            for emb in embeds:
-                                m_emb = matrix(base, M,M, [emb(u) for u in mK])
-                                #check that it is the right embedding
-                                if f.conjugate(m_emb) == g:
-                                    return [m_emb]
+                    #may be a subfield
+                    embeds = K.embeddings(base)
+                    if len(embeds) == 0:
+                        #not a subfield
+                        return []
+                    for emb in embeds:
+                        m_emb = matrix(base, M,M, [emb(u) for u in mK])
+                        #check that it is the right embedding
+                        if f.conjugate(m_emb) == g:
+                            return [m_emb]
                 else: #finite field case
                     #always comes from prime field so can coerce
                     m = matrix(base, M, M, [base(u.as_finite_field_element()[1]) for t in list(m) for u in t])
@@ -8917,9 +8899,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             if valuation < 0:
                 if return_conjugation:
                     return (False, None, None)
-                else:
-                    return (False, None)
-            elif valuation == 0:
+                return (False, None)
+            if valuation == 0:
                 indifferent_point = fixed_points[multipliers.index(mult)]
         if indifferent_point is not None:
             point = indifferent_point
@@ -8950,8 +8931,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         if check_value != 0:
             if return_conjugation:
                 return (False, None, None)
-            else:
-                return (False, None)
+            return (False, None)
         if return_conjugation:
             return (True, new_system, conjugation)
         return (True, new_system)
@@ -9091,8 +9071,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         if sigma_1 != Newton_sigma:
             if return_conjugation:
                 return False, None
-            else:
-                return False
+            return False
         from sage.rings.qqbar import QQbar
         Fbar = self.change_ring(QQbar)
         Pbar = Fbar.domain()
@@ -9121,10 +9100,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         if return_conjugation:
             if Npoly.derivative(z) == (z - N_aff[0]).denominator():
                 return True, M
-            else:
-                return False, None
-        else:
-            return Npoly.derivative(z) == (z - N_aff[0]).denominator()
+            return False, None
+        return Npoly.derivative(z) == (z - N_aff[0]).denominator()
 
 
 class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
@@ -9186,8 +9163,7 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
         return_period = kwds.pop('return_period', False)
         if return_period:
             return self.orbit_structure(P)
-        else:
-            return True
+        return True
 
     def orbit_structure(self, P):
         r"""
@@ -9492,9 +9468,8 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
         num_cpus = kwds.get('num_cpus', 2)
         if self.domain().dimension_relative() != 1:
             return self.conjugating_set(self, num_cpus)
-        else:
-            f = self.dehomogenize(1)
-            z = f[0].parent().gen()
+        f = self.dehomogenize(1)
+        z = f[0].parent().gen()
         self.normalize_coordinates()
         if (self.degree() == 1) or (self.degree() == 0):
             raise NotImplementedError("rational function of degree 1 not implemented")

@@ -1185,7 +1185,7 @@ def fast_wedge_power(form, n):
     """
     if n == 0:
         return form._domain._one_scalar_field
-    elif n < 0:
+    if n < 0:
         raise ValueError("'n' must be nonnegative")
     val = form
     while not (n & 1):

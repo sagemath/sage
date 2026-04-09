@@ -1,177 +1,229 @@
-"""
+r"""
 Jacobian of a general hyperelliptic curve
+
+AUTHORS:
+
+- David Kohel (2006): initial version
+- Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
 """
 
 # ****************************************************************************
-#  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
-#  Distributed under the terms of the GNU General Public License (GPL)
+#       Copyright (C) 2025 Sabrina Kunzweiler <sabrina.kunzweiler@math.u-bordeaux.fr>
+#                     2025 Gareth Ma <grhkm21@gmail.com>
+#                     2025 Giacomo Pope <giacomopope@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
-from sage.misc.lazy_attribute import lazy_attribute
+from sage.schemes.hyperelliptic_curves import (
+    jacobian_homset_inert,
+    jacobian_homset_ramified,
+    jacobian_homset_split,
+    jacobian_morphism,
+)
 from sage.schemes.jacobians.abstract_jacobian import Jacobian_generic
-from . import jacobian_homset
-from . import jacobian_morphism
-from sage.misc.lazy_import import lazy_import
-from .jacobian_endomorphism_utils import get_is_geom_field, is_geom_trivial_when_field
-lazy_import('sage.interfaces.genus2reduction', ['genus2reduction', 'Genus2reduction'])
 
 
 class HyperellipticJacobian_generic(Jacobian_generic):
+    r"""
+    This is the base class for Jacobians of hyperelliptic curves.
+
+    We represent elements of the Jacobian by tuples of the form
+    `(u, v : n)`, where
+
+    - `(u,v)` is the Mumford representative of a divisor `P_1 + ... + P_r`,
+
+    - `n` is a non-negative integer
+
+    This tuple represents the equivalence class
+
+    .. MATH::
+
+        [P_1 + ... + P_r + n \cdot \infty_+ + m\cdot \infty_- - D_\infty],
+
+    where  `m = g - \deg(u) - n`, and `\infty_+`, `\infty_-` are the
+    points at infinity of the hyperelliptic curve,
+
+    .. MATH::
+        D_\infty =
+        \lceil g/2 \rceil \infty_+ + \lfloor g/2 \rfloor \infty_-.
+
+    Here, `\infty_- = \infty_+`, if the hyperelliptic curve is ramified.
+
+    Such a representation exists and is unique, unless the genus `g` is odd
+    and the curve is inert.
+
+    If the hyperelliptic curve is ramified or inert, then `n` can be deduced
+    from `\deg(u)` and `g`. In these cases, `n` is omitted in the description.
     """
-    EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
-        sage: FF = FiniteField(2003)
-        sage: R.<x> = PolynomialRing(FF)
-        sage: f = x**5 + 1184*x**3 + 1846*x**2 + 956*x + 560
-        sage: C = HyperellipticCurve(f)
-        sage: J = C.jacobian()
-        sage: a = x**2 + 376*x + 245; b = 1015*x + 1368
-        sage: X = J(FF)
-        sage: D = X([a,b])
-        sage: D
-        (x^2 + 376*x + 245, y + 988*x + 635)
-        sage: J(0)
-        (1)
-        sage: D == J([a,b])
-        True
-        sage: D == D + J(0)
-        True
-
-    A more extended example, demonstrating arithmetic in J(QQ) and
-    J(K) for a number field K/QQ.
-
-    ::
-
-        sage: P.<x> = PolynomialRing(QQ)
-        sage: f = x^5 - x + 1; h = x
-        sage: C = HyperellipticCurve(f,h,'u,v'); C
-        Hyperelliptic Curve over Rational Field defined by v^2 + u*v = u^5 - u + 1
-        sage: PP = C.ambient_space(); PP
-        Projective Space of dimension 2 over Rational Field
-        sage: C.defining_polynomial()
-        -x0^5 + x0*x1*x2^3 + x1^2*x2^3 + x0*x2^4 - x2^5
-        sage: C(QQ)
-        Set of rational points of Hyperelliptic Curve over Rational Field
-         defined by v^2 + u*v = u^5 - u + 1
-        sage: K.<t> = NumberField(x^2 - 2)                                              # needs sage.rings.number_field
-        sage: C(K)                                                                      # needs sage.rings.number_field
-        Set of rational points of Hyperelliptic Curve
-         over Number Field in t with defining polynomial x^2 - 2
-         defined by v^2 + u*v = u^5 - u + 1
-        sage: P = C(QQ)(0,1,1); P
-        (0 : 1 : 1)
-        sage: P == C(0,1,1)
-        True
-        sage: C(0,1,1).parent()
-        Set of rational points of Hyperelliptic Curve over Rational Field
-         defined by v^2 + u*v = u^5 - u + 1
-
-        sage: # needs sage.rings.number_field
-        sage: P1 = C(K)(P)
-        sage: P2 = C(K)([2, 4*t - 1, 1])
-        sage: P3 = C(K)([-1/2, 1/8*(7*t+2), 1])
-        sage: P1, P2, P3
-        ((0 : 1 : 1), (2 : 4*t - 1 : 1), (-1/2 : 7/8*t + 1/4 : 1))
-
-        sage: J = C.jacobian(); J
-        Jacobian of Hyperelliptic Curve over Rational Field
-        defined by v^2 + u*v = u^5 - u + 1
-        sage: Q = J(QQ)(P); Q
-        (u, v - 1)
-        sage: for i in range(6): Q*i
-        (1)
-        (u, v - 1)
-        (u^2, v + u - 1)
-        (u^2, v + 1)
-        (u, v + 1)
-        (1)
-
-        sage: # needs sage.rings.number_field
-        sage: Q1 = J(K)(P1); print("%s -> %s"%( P1, Q1 ))
-        (0 : 1 : 1) -> (u, v - 1)
-        sage: Q2 = J(K)(P2); print("%s -> %s"%( P2, Q2 ))
-        (2 : 4*t - 1 : 1) -> (u - 2, v - 4*t + 1)
-        sage: Q3 = J(K)(P3); print("%s -> %s"%( P3, Q3 ))
-        (-1/2 : 7/8*t + 1/4 : 1) -> (u + 1/2, v - 7/8*t - 1/4)
-        sage: R.<x> = PolynomialRing(K)
-        sage: Q4 = J(K)([x^2 - t, R(1)])
-        sage: for i in range(4): Q4*i
-        (1)
-        (u^2 - t, v - 1)
-        (u^2 + (-3/4*t - 9/16)*u + 1/2*t + 1/4, v + (-1/32*t - 57/64)*u + 1/2*t + 9/16)
-        (u^2 + (1352416/247009*t - 1636930/247009)*u - 1156544/247009*t + 1900544/247009,
-         v + (-2326345442/122763473*t + 3233153137/122763473)*u
-                                      + 2439343104/122763473*t - 3350862929/122763473)
-        sage: R2 = Q2*5; R2
-        (u^2 - 3789465233/116983808*u - 267915823/58491904,
-         v + (-233827256513849/1789384327168*t + 1/2)*u - 15782925357447/894692163584*t)
-        sage: R3 = Q3*5; R3
-        (u^2 + 5663300808399913890623/14426454798950909645952*u
-             - 26531814176395676231273/28852909597901819291904,
-         v + (253155440321645614070860868199103/2450498420175733688903836378159104*t + 1/2)*u
-           + 2427708505064902611513563431764311/4900996840351467377807672756318208*t)
-        sage: R4 = Q4*5; R4
-        (u^2 - 3789465233/116983808*u - 267915823/58491904,
-         v + (233827256513849/1789384327168*t + 1/2)*u + 15782925357447/894692163584*t)
-
-    Thus we find the following identity::
-
-        sage: 5*Q2 + 5*Q4                                                               # needs sage.rings.number_field
-        (1)
-
-    Moreover the following relation holds in the 5-torsion subgroup::
-
-        sage: Q2 + Q4 == 2*Q1                                                           # needs sage.rings.number_field
-        True
-
-    TESTS::
-
-        sage: # needs sage.rings.finite_rings
-        sage: k.<a> = GF(9); R.<x> = k[]
-        sage: J1 = HyperellipticCurve(x^3 + x - 1, x + a).jacobian()
-        sage: FF = FiniteField(2003)
-        sage: R.<x> = PolynomialRing(FF)
-        sage: f = x**5 + 1184*x**3 + 1846*x**2 + 956*x + 560
-        sage: J2 = HyperellipticCurve(f).jacobian()
-        sage: J1 == J1
-        True
-        sage: J1 == J2
-        False
-    """
-    def dimension(self):
-        """
+    def dimension(self) -> Integer:
+        r"""
         Return the dimension of this Jacobian.
-
-        OUTPUT: integer
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
-            sage: k.<a> = GF(9); R.<x> = k[]
-            sage: HyperellipticCurve(x^3 + x - 1, x + a).jacobian().dimension()
-            1
-            sage: g = HyperellipticCurve(x^6 + x - 1, x + a).jacobian().dimension(); g
-            2
-            sage: type(g)
-            <... 'sage.rings.integer.Integer'>
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurve(x^2, x^4+1); H
+            Hyperelliptic Curve over Rational Field defined by y^2 + (x^4 + 1)*y = x^2
+            sage: J = Jacobian(H)
+            sage: J.dimension()
+            3
         """
-        return Integer(self.curve().genus())
+        return self.curve().genus()
 
-    def point(self, mumford, check=True):
+    def is_parent_of(self, element):
+        r"""
+        Return whether ``self`` is the parent of ``element``.
+
+        TESTS::
+
+            sage: R.<x> = GF(19)[]
+            sage: H = HyperellipticCurve(x^5 + x, x^2 + 1)
+            sage: J = H.jacobian()
+            sage: J.is_parent_of(J.zero())
+            True
+        """
+        from sage.structure.element import parent as get_parent
+        p = get_parent(element)
+        return p == self or p == self.point_homset()
+
+    def point(self, *mumford, check=True, **kwargs):
+        r"""
+        Return a point on the Jacobian, given:
+
+        1. No arguments or the integer `0`; return `0 \in J`;
+
+        2. A point `P` on `J = Jac(C)`, return `P`;
+
+        3. A point `P` on the curve `H` such that `J = Jac(H)`;
+           return `[P - P_0]`, where `P_0` is the distinguished point of `H`.
+           By default, `P_0 = \infty`;
+
+        4. Two points `P, Q` on the curve `H` such that `J = Jac(H)`;
+           return `[P - Q]`;
+
+        5. Polynomials `(u, v)` such that `v^2 + hv - f \equiv 0 \pmod u`;
+           return `[(u(x), y - v(x))]`.
+
+        .. SEEALSO::
+
+            :mod:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic`.
+        """
         try:
-            return self(self.base_ring())(mumford)
+            return self.point_homset()(*mumford, check=check)
         except AttributeError:
             raise ValueError("Arguments must determine a valid Mumford divisor.")
 
     def _point_homset(self, *args, **kwds):
-        return jacobian_homset.JacobianHomset_divisor_classes(*args, **kwds)
+        r"""
+        Create the Hom-Set of the Jacobian according to the type of `self`.
+        """
+        # TODO: make a constructor for this??
+        H = self.curve()
+        if H.is_ramified():
+            return jacobian_homset_ramified.HyperellipticJacobianHomsetRamified(
+                *args, **kwds
+            )
+        if H.is_split():
+            return jacobian_homset_split.HyperellipticJacobianHomsetSplit(*args, **kwds)
+        return jacobian_homset_inert.HyperellipticJacobianHomsetInert(*args, **kwds)
 
     def _point(self, *args, **kwds):
-        return jacobian_morphism.JacobianMorphism_divisor_class_field(*args, **kwds)
+        H = self.curve()
+        if H.is_ramified():
+            return jacobian_morphism.MumfordDivisorClassFieldRamified(*args, **kwds)
+        if H.is_split():
+            return jacobian_morphism.MumfordDivisorClassFieldSplit(*args, **kwds)
+        return jacobian_morphism.MumfordDivisorClassFieldInert(*args, **kwds)
+
+    @cached_method
+    def order(self):
+        r"""
+        Compute the order of the Jacobian.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(3663031)[]
+            sage: HyperellipticCurve(x^5 + 1758294*x^4 + 1908793*x^3 + 3033920*x^2 + 3445698*x + 3020661).jacobian().cardinality()
+            13403849798842
+
+        .. SEEALSO::
+
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.order`.
+        """
+        return self.point_homset().order()
+
+    cardinality = order
+
+    def count_points(self, *args, **kwds):
+        r"""
+        .. SEEALSO::
+
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.count_points`.
+        """
+        return self.point_homset().count_points(*args, **kwds)
+
+    def lift_u(self, *args, **kwds):
+        r"""
+        Return one or all points with given `u`-coordinate.
+
+        .. SEEALSO::
+
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.lift_u`.
+        """
+        return self.point_homset().lift_u(*args, **kwds)
+
+    def random_element(self, *args, **kwds):
+        r"""
+        Return a random element of the Jacobian.
+
+        .. SEEALSO::
+
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.random_element`.
+        """
+        return self.point_homset().random_element(*args, **kwds)
+
+    def some_elements(self) -> list[jacobian_morphism.MumfordDivisorClassField]:
+        return [self.zero()] + [self.random_element(), self.random_element(), self.random_element()]
+
+    def points(self, *args, **kwds):
+        r"""
+        Return all points on the Jacobian.
+
+        .. SEEALSO::
+
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.points`.
+        """
+
+        return self.point_homset().points(*args, **kwds)
+
+    def list(self):
+        r"""
+        Return all rational elements of the Jacobian.
+
+        .. SEEALSO::
+
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.points`.
+        """
+
+        return self.point_homset().points()
+
+    def __iter__(self):
+        r"""
+        Return an iterator over the elements of the Jacobian.
+        """
+        yield from self.point_homset().points()
+
+    rational_points = points
 
     ####################################################################
     # Some properties of geometric Endomorphism ring and algebra
@@ -282,17 +334,27 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             sage: J.geometric_endomorphism_algebra_is_field()
             True
         """
+        from sage.interfaces.genus2reduction import genus2reduction
+
+        from .jacobian_endomorphism_utils import get_is_geom_field
+
         if self._have_established_geometrically_field:
             return True
         C = self.curve()
         if C.genus() != 2:
-            raise NotImplementedError("Current implementation requires the curve to be of genus 2")
+            raise NotImplementedError(
+                "Current implementation requires the curve to be of genus 2"
+            )
         if C.base_ring() != QQ:
-            raise NotImplementedError("Current implementation requires the curve to be defined over the rationals")
+            raise NotImplementedError(
+                "Current implementation requires the curve to be defined over the rationals"
+            )
         f, h = C.hyperelliptic_polynomials()
         if h != 0:
-            raise NotImplementedError("Current implementation requires the curve to be in the form y^2 = f(x)")
-        red_data = genus2reduction(0,f)
+            raise NotImplementedError(
+                "Current implementation requires the curve to be in the form y^2 = f(x)"
+            )
+        red_data = genus2reduction(0, f)
         cond_C = red_data.conductor  # WARNING: this is only the prime_to_2 conductor.
         bad_primes = cond_C.prime_divisors()
         self._bad_primes = bad_primes
@@ -305,7 +367,9 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             self._have_established_geometrically_field = True
             return True
         if proof:
-            raise NotImplementedError("Rigorous computation of lower bounds of endomorphism algebras has not yet been implemented.")
+            raise NotImplementedError(
+                "Rigorous computation of lower bounds of endomorphism algebras has not yet been implemented."
+            )
         return False
 
     def geometric_endomorphism_ring_is_ZZ(self, B=200, proof=False):
@@ -406,6 +470,8 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             sage: J.geometric_endomorphism_ring_is_ZZ()
             False
         """
+        from .jacobian_endomorphism_utils import is_geom_trivial_when_field
+
         if self._have_established_geometrically_trivial:
             return True
         is_abs_simple = self.geometric_endomorphism_algebra_is_field(B=B, proof=proof)
@@ -414,23 +480,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         if is_abs_simple and is_geom_trivial_when_field(self.curve(), self._bad_primes):
             return True
         if proof:
-            raise NotImplementedError("Rigorous computation of lower bounds of endomorphism rings has not yet been implemented.")
+            raise NotImplementedError(
+                "Rigorous computation of lower bounds of endomorphism rings has not yet been implemented."
+            )
         return False
-
-    def cardinality(self):
-        """
-        Return the cardinality of the Jacobian.
-        Use the formula in `<https://math.stackexchange.com/a/2190894>`_.
-
-        Currently only implemented over finite fields.
-
-        EXAMPLES::
-
-            sage: R.<x> = GF(3663031)[]
-            sage: HyperellipticCurve(x^5 + 1758294*x^4 + 1908793*x^3 + 3033920*x^2 + 3445698*x + 3020661).jacobian().cardinality()
-            13403849798842
-        """
-        from sage.categories.finite_fields import FiniteFields
-        if self.curve().base_ring() not in FiniteFields():
-            raise NotImplementedError
-        return self.curve().frobenius_polynomial()(1)

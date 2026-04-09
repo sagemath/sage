@@ -382,7 +382,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: F.structures([1,2,3]).list()
             Traceback (most recent call last):
             ...
-            ValueError: Stream is not yet defined
+            ValueError: stream is not yet defined
         """
         return StructuresWrapper(self, labels, structure_class)
 
@@ -394,7 +394,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: F.isotypes([1,2,3]).list()
             Traceback (most recent call last):
             ...
-            ValueError: Stream is not yet defined
+            ValueError: stream is not yet defined
         """
         return IsotypesWrapper(self, labels, structure_class=structure_class)
 
@@ -680,8 +680,7 @@ class GenericCombinatorialSpecies(SageObject):
         """
         if self.is_weighted():
             return self._weight.parent()
-        else:
-            return QQ
+        return QQ
 
     def _common_parent(self, parents):
         """

@@ -473,8 +473,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 return self.sum(coeff * y[IJ[1-v]] * self[IJ[v]]
                                 for (IJ, coeff) in x.coproduct()
                                 if IJ[1-v] in y.support())
-            else:
-                return self._skew_by_coercion(x, y, side=side)
+            return self._skew_by_coercion(x, y, side=side)
 
         def _skew_by_coercion(self, x, y, side='left'):
             r"""
@@ -576,8 +575,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 x = self(x)
                 y = self.dual()(y)
                 return self.base_ring().sum(coeff * y[I] for (I, coeff) in x)
-            else:
-                return self.duality_pairing_by_coercion(x, y)
+            return self.duality_pairing_by_coercion(x, y)
 
         def duality_pairing_by_coercion(self, x, y):
             r"""
@@ -739,8 +737,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             """
             if I:
                 return self.base_ring().zero()
-            else:
-                return self.base_ring().one()
+            return self.base_ring().one()
 
         def degree_negation(self, element):
             r"""
@@ -1241,8 +1238,7 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
                                                      position=0,
                                                      codomain=self),
                                 position=1)
-            else:
-                return self.internal_product_by_coercion
+            return self.internal_product_by_coercion
 
         itensor = internal_product
         kronecker_product = internal_product

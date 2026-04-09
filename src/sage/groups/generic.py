@@ -496,8 +496,7 @@ class multiples:
         self.Q = self.op(self.Q, self.P)
         if self.indexed:
             return (i, val)
-        else:
-            return val
+        return val
 
     next = __next__
 
@@ -806,8 +805,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
                     res = sage.rings.integer.Integer((ay - ax) / (bx - by))
                     if power(base, res) == a:
                         return res
-                    else:
-                        break
+                    break
             # should we remember this value?
             elif i >= nextsigma:
                 if sigma[i0][1] is not None:
@@ -1067,9 +1065,9 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         if ord == Infinity:
             if algorithm == 'bsgs':
                 return bsgs(base, a, bounds, identity=identity, inverse=inverse, op=op, operation=operation)
-            elif algorithm == 'lambda':
+            if algorithm == 'lambda':
                 return discrete_log_lambda(base, a, bounds, inverse=inverse, identity=identity, op=op, operation=operation)
-            elif algorithm == 'rho':
+            if algorithm == 'rho':
                 raise ValueError('pollard rho algorithm does not work with infinite order elements')
             else:
                 raise ValueError(f"unknown algorithm {algorithm}")
@@ -1450,25 +1448,24 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
             if Q != identity:
                 e0 += 1
             return p**e0
-        else:
-            # try to split the list wisely
-            sum_left = 0
-            for k in range(l):
-                p, e = L[k]
-                # multiplying by p**e require roughly 'e log_2(p) / 2' additions
-                v = e * sage.functions.log.log(float(p))
-                if abs(sum_left + v - (S / 2)) > abs(sum_left - (S / 2)):
-                    break
-                sum_left += v
-            if not 0 < k < l:
-                k = l // 2
-            L1 = L[:k]
-            L2 = L[k:]
-            # recursive calls
-            o1 = _order_from_multiple_helper(
-                _multiple(Q, prod([p**e for p, e in L2])), L1, sum_left)
-            o2 = _order_from_multiple_helper(_multiple(Q, o1), L2, S - sum_left)
-            return o1 * o2
+        # try to split the list wisely
+        sum_left = 0
+        for k in range(l):
+            p, e = L[k]
+            # multiplying by p**e require roughly 'e log_2(p) / 2' additions
+            v = e * sage.functions.log.log(float(p))
+            if abs(sum_left + v - (S / 2)) > abs(sum_left - (S / 2)):
+                break
+            sum_left += v
+        if not 0 < k < l:
+            k = l // 2
+        L1 = L[:k]
+        L2 = L[k:]
+        # recursive calls
+        o1 = _order_from_multiple_helper(
+            _multiple(Q, prod([p**e for p, e in L2])), L1, sum_left)
+        o2 = _order_from_multiple_helper(_multiple(Q, o1), L2, S - sum_left)
+        return o1 * o2
 
     return _order_from_multiple_helper(P, F, sage.functions.log.log(float(M)))
 

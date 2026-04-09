@@ -42,12 +42,11 @@ def normalize_input(a):
     """
     if isinstance(a, tuple) and len(a) == 2 and isinstance(a[0], tuple) and isinstance(a[1], dict):
         return a
-    elif isinstance(a, tuple):
+    if isinstance(a, tuple):
         return (a, {})
-    elif isinstance(a, dict):
+    if isinstance(a, dict):
         return (tuple(), a)
-    else:
-        return ((a,), {})
+    return ((a,), {})
 
 
 class Parallel:

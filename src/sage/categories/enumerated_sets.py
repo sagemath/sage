@@ -233,13 +233,12 @@ class EnumeratedSets(CategoryWithAxiom):
                  self.next != self._next_from_iterator ):
                 return self._iterator_from_next()
             #Check to see if .unrank() is overridden in the subclass
-            elif self.unrank != self._unrank_from_iterator:
+            if self.unrank != self._unrank_from_iterator:
                 return self._iterator_from_unrank()
             #Finally, check to see if .list() is overridden in the subclass
-            elif self.list != self._list_default:
+            if self.list != self._list_default:
                 return self._iterator_from_list()
-            else:
-                raise NotImplementedError("iterator called but not implemented")
+            raise NotImplementedError("iterator called but not implemented")
 
         def is_empty(self):
             r"""

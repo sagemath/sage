@@ -320,8 +320,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         base_category_class = cls._base_category_class[0]
         if isinstance(category, base_category_class):
             return super().__classcall__(cls, category, *args)
-        else:
-            return cls.category_of(base_category_class(category, *args))
+        return cls.category_of(base_category_class(category, *args))
 
     @staticmethod
     def __classget__(cls, base_category, base_category_class):
@@ -416,8 +415,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         functor_category = getattr(category.__class__, cls._functor_category)
         if isinstance(functor_category, type) and issubclass(functor_category, Category):
             return functor_category(category, *args)
-        else:
-            return cls.default_super_categories(category, *args)
+        return cls.default_super_categories(category, *args)
 
     def __init__(self, category, *args):
         r"""
@@ -654,8 +652,7 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
         """
         if self.is_construction_defined_by_base():
             return self
-        else:
-            return None
+        return None
 
 
 class RegressiveCovariantConstructionCategory(CovariantConstructionCategory):

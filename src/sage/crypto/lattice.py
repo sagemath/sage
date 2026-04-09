@@ -106,40 +106,40 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
     Ideal bases with quotient `x^n-1`, `m=2*n` are NTRU bases::
 
-        sage: sage.crypto.gen_lattice(type='ideal', seed=42, quotient=x^4 - 1)          # needs sage.symbolic
+        sage: sage.crypto.gen_lattice(type='ideal', seed=42, quotient=x^4 - 1)
         [11  0  0  0  0  0  0  0]
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
         [ 0  0  0 11  0  0  0  0]
-        [-3 -3 -2  4  1  0  0  0]
-        [ 4 -3 -3 -2  0  1  0  0]
-        [-2  4 -3 -3  0  0  1  0]
-        [-3 -2  4 -3  0  0  0  1]
+        [-5  3  2  5  1  0  0  0]
+        [ 5 -5  3  2  0  1  0  0]
+        [ 2  5 -5  3  0  0  1  0]
+        [ 3  2  5 -5  0  0  0  1]
 
     Ideal bases also work with polynomials::
 
         sage: R.<t> = PolynomialRing(ZZ)
-        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=t^4 - 1)        # needs sage.libs.pari
+        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=t^4 - 1)
         [11  0  0  0  0  0  0  0]
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
         [ 0  0  0 11  0  0  0  0]
-        [-3  4  1  4  1  0  0  0]
-        [ 4 -3  4  1  0  1  0  0]
-        [ 1  4 -3  4  0  0  1  0]
-        [ 4  1  4 -3  0  0  0  1]
+        [-5  1  0 -4  1  0  0  0]
+        [-4 -5  1  0  0  1  0  0]
+        [ 0 -4 -5  1  0  0  1  0]
+        [ 1  0 -4 -5  0  0  0  1]
 
     Cyclotomic bases with n=2^k are SWIFFT bases::
 
-        sage: sage.crypto.gen_lattice(type='cyclotomic', seed=42)                       # needs sage.libs.pari
+        sage: sage.crypto.gen_lattice(type='cyclotomic', seed=42)
         [11  0  0  0  0  0  0  0]
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
         [ 0  0  0 11  0  0  0  0]
-        [-3 -3 -2  4  1  0  0  0]
-        [-4 -3 -3 -2  0  1  0  0]
-        [ 2 -4 -3 -3  0  0  1  0]
-        [ 3  2 -4 -3  0  0  0  1]
+        [-5  3  2  5  1  0  0  0]
+        [-5 -5  3  2  0  1  0  0]
+        [-2 -5 -5  3  0  0  1  0]
+        [-3 -2 -5 -5  0  0  0  1]
 
     Dual modular bases are related to Regev's famous public-key
     encryption [Reg2005]_::

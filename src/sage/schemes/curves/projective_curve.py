@@ -807,19 +807,6 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             Graphics object consisting of 1 graphics primitive
             sage: C.plot(patch=1)
             Graphics object consisting of 1 graphics primitive
-
-        A hyperelliptic curve::
-
-            sage: # needs sage.plot
-            sage: P.<x> = QQ[]
-            sage: f = 4*x^5 - 30*x^3 + 45*x - 22
-            sage: C = HyperellipticCurve(f)
-            sage: C.plot()
-            Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=0)
-            Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=1)
-            Graphics object consisting of 1 graphics primitive
         """
         # if user has not specified a favorite affine patch, take the
         # one avoiding "infinity", i.e. the one corresponding to the
@@ -2391,9 +2378,11 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         Sampling from points on a hyperelliptic curve::
 
-            sage: R.<x,y> = GF(13)[]
-            sage: C = HyperellipticCurve(y^2 + 3*x^2*y - (x^5 + x + 1))
-            sage: P = C.random_element(); P  # random
+            sage: R.<x> = GF(13)[]
+            sage: f = x^5 + x + 1
+            sage: h = 3*x^2
+            sage: C = HyperellipticCurve(f, h)
+            sage: P = C.random_point(); P  # random
             (0 : 1 : 0)
             sage: P in C
             True
