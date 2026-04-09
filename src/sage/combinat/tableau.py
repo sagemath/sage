@@ -299,8 +299,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         if isinstance(other, Tableau):
             return richcmp(list(self), list(other), op)
-        else:
-            return richcmp(list(self), other, op)
+        return richcmp(list(self), other, op)
 
     def __hash__(self):
         """
@@ -2370,8 +2369,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         if left:
             return self._left_schensted_insert(i)
-        else:
-            return self.bump(i)
+        return self.bump(i)
 
     def _left_schensted_insert(self, letter):
         """
@@ -3211,11 +3209,10 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         # attempt to return a tableau of the same type as self
         if tab in self.parent():
             return self.parent()(tab)
-        else:
-            try:
-                return self.parent().Element(tab)
-            except ValueError:
-                return Tableau(tab)
+        try:
+            return self.parent().Element(tab)
+        except ValueError:
+            return Tableau(tab)
 
     ##############
     # catabolism #
@@ -3240,9 +3237,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         h = self.height()
         if h == 0:
             return self
-        else:
-            # Remove the top row and insert it back in
-            return Tableau(self[1:]).insert_word(self[0], left=True)
+        # Remove the top row and insert it back in
+        return Tableau(self[1:]).insert_word(self[0], left=True)
 
     def catabolism_sequence(self):
         """
@@ -3366,8 +3362,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         if t_part == tt_part:
             return res
-        else:
-            return 0
+        return 0
 
     def catabolism_projector(self, parts):
         """
@@ -3391,8 +3386,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         if res == []:
             return self
-        else:
-            return Tableau([])
+        return Tableau([])
 
     def promotion_operator(self, i):
         r"""
@@ -5546,10 +5540,9 @@ class Tableaux(UniqueRepresentation, Parent):
 
         if n is None:
             return Tableaux_all()
-        else:
-            if not isinstance(n, (int, Integer)) or n < 0:
-                raise ValueError("the argument to Tableaux() must be a nonnegative integer")
-            return Tableaux_size(n)
+        if not isinstance(n, (int, Integer)) or n < 0:
+            raise ValueError("the argument to Tableaux() must be a nonnegative integer")
+        return Tableaux_size(n)
 
     Element = Tableau
 
@@ -5717,8 +5710,7 @@ class Tableaux(UniqueRepresentation, Parent):
                 return False
             # any list of lists of partition shape is a tableau
             return [len(row) for row in x] in _Partitions
-        else:
-            return False
+        return False
 
 
 class Tableaux_all(Tableaux):
@@ -6198,7 +6190,7 @@ class SemistandardTableaux(Tableaux):
         """
         if isinstance(r, (int, Integer)):
             return self.unrank(r)
-        elif isinstance(r, slice):
+        if isinstance(r, slice):
             start = 0 if r.start is None else r.start
             stop = r.stop
             if stop is None and not self.is_finite():
@@ -6264,8 +6256,7 @@ class SemistandardTableaux(Tableaux):
                 if not all(row[c] < next[c] for c in range(len(next))):
                     return False
             return self.max_entry is None or max(max(row) for row in t) <= self.max_entry
-        else:
-            return False
+        return False
 
 
 class SemistandardTableaux_all(SemistandardTableaux, DisjointUnionEnumeratedSets):
@@ -6923,7 +6914,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
                     num *= self.max_entry + j - i
                     den *= l + conj[j] - i - j - 1
             return Integer(num / den)
-        elif algorithm == 'sum':
+        if algorithm == 'sum':
             c = 0
             for comp in integer_vectors_nk_fast_iter(sum(self.shape), self.max_entry):
                 c += SemistandardTableaux_shape_weight(self.shape, Composition(comp)).cardinality()
@@ -7250,10 +7241,10 @@ class RowStandardTableaux(Tableaux):
         if n is None:
             return RowStandardTableaux_all()
 
-        elif n in _Partitions:
+        if n in _Partitions:
             return RowStandardTableaux_shape(_Partitions(n))
 
-        elif n in SkewPartitions():
+        if n in SkewPartitions():
             # from sage.combinat.skew_tableau import RowStandardSkewTableaux
             # return RowStandardSkewTableaux(n)
             raise NotImplementedError("row standard skew tableaux not yet implemented")
@@ -7424,10 +7415,9 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
         """
         if self._size == 0:
             return self.element_class(self, [])
-        elif self._size == 1:
+        if self._size == 1:
             return self.element_class(self, [[1]])
-        else:
-            return self.element_class(self, [range(1, self._size + 1)])
+        return self.element_class(self, [range(1, self._size + 1)])
 
 
 class RowStandardTableaux_shape(RowStandardTableaux):
@@ -7650,10 +7640,10 @@ class StandardTableaux(SemistandardTableaux):
         if n is None:
             return StandardTableaux_all()
 
-        elif n in _Partitions:
+        if n in _Partitions:
             return StandardTableaux_shape(_Partitions(n))
 
-        elif n in SkewPartitions():
+        if n in SkewPartitions():
             from sage.combinat.skew_tableau import StandardSkewTableaux
             return StandardSkewTableaux(n)
 
@@ -8724,7 +8714,7 @@ class IncreasingTableaux(Tableaux):
         """
         if isinstance(r, (int, Integer)):
             return self.unrank(r)
-        elif isinstance(r, slice):
+        if isinstance(r, slice):
             start = 0 if r.start is None else r.start
             stop = r.stop
             if stop is None and not self.is_finite():

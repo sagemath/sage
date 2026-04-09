@@ -1,27 +1,51 @@
+r"""
+Hyperelliptic curves (smooth model) over the rationals
+
+AUTHORS:
+
+- David Kohel (2006): initial version
+- Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
 """
-Hyperelliptic curves over the rationals
-"""
-#*****************************************************************************
-#  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+
+# ****************************************************************************
+#       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
+#                     2025 Sabrina Kunzweiler <sabrina.kunzweiler@math.u-bordeaux.fr>
+#                     2025 Gareth Ma <grhkm21@gmail.com>
+#                     2025 Giacomo Pope <giacomopope@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.rings.abc
-
-from sage.misc.lazy_import import lazy_import
-from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
-
-lazy_import('sage.rings.padics.factory', 'Qp', as_='pAdicField')
-
-from . import hyperelliptic_generic
+from sage.rings.integer import Integer
+from sage.rings.padics.factory import Qp as pAdicField
+from sage.schemes.hyperelliptic_curves import hyperelliptic_generic
 
 
-class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve_generic,
-                                        ProjectivePlaneCurve_field):
+class HyperellipticCurve_rational_field(
+    hyperelliptic_generic.HyperellipticCurve_generic
+):
+    def __init__(
+        self, projective_model, f, h, genus: Integer, names=["x", "y"]
+    ) -> None:
+        r"""
+        Create a hyperelliptic curve over the rationals.
+
+        TESTS::
+
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurve(-x^2, x^3 + 1)
+            sage: H
+            Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + 1)*y = -x^2
+        """
+        super().__init__(projective_model, f, h, genus, names)
 
     def matrix_of_frobenius(self, p, prec=20):
-        """
+        r"""
         Compute the matrix of Frobenius on Monsky-Washnitzer cohomology using
         the `p`-adic field with precision ``prec``.
 
@@ -30,11 +54,11 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
 
         INPUT:
 
-        - ``p`` -- prime integer or pAdic ring / field; if ``p`` is an integer,
+        - ``p`` (prime integer or pAdic ring / field ) -- if ``p`` is an integer,
           constructs a ``pAdicField`` with ``p`` to compute the matrix of
-          Frobenius, otherwise uses the supplied pAdic ring or field
+          Frobenius, otherwise uses the supplied pAdic ring or field.
 
-        - ``prec`` -- (optional) if ``p`` is an prime integer, the `p`-adic
+        - ``prec`` (optional) -- if ``p`` is an prime integer, the `p`-adic
           precision of the coefficient ring constructed
 
         EXAMPLES::
@@ -57,17 +81,20 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
             [  2*3 + O(3^2)         O(3^2)         O(3^2)    3^-1 + O(3)]
             [        O(3^2)         O(3^2)     3 + O(3^2)         O(3^2)]
         """
-        import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
+        from sage.schemes.hyperelliptic_curves import monsky_washnitzer
+
         if isinstance(p, (sage.rings.abc.pAdicField, sage.rings.abc.pAdicRing)):
             K = p
         else:
             K = pAdicField(p, prec)
-        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self.change_ring(K))
+        frob_p, _ = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(
+            self.change_ring(K)
+        )
         return frob_p
 
     def lseries(self, prec=53):
-        """
-        Return the `L`-series of this hyperelliptic curve of genus 2.
+        r"""
+        Return the L-series of this hyperelliptic curve of genus 2.
 
         EXAMPLES::
 
@@ -78,6 +105,7 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
             over Rational Field defined by y^2 + (x^3 + x^2 + 1)*y = x^2 + x
         """
         from sage.lfunctions.pari import LFunction, lfun_genus2
+
         L = LFunction(lfun_genus2(self), prec=prec)
-        L.rename('PARI L-function associated to %s' % self)
+        L.rename("PARI L-function associated to %s" % self)
         return L

@@ -675,7 +675,6 @@ class Knots(Singleton, Parent):
 
             G = BraidGroup(m)
             return Knot(G(word))
-        else:
-            raise ValueError('not found in the knot table')
+        raise ValueError('not found in the knot table')
 
     Element = Knot

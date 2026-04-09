@@ -1859,10 +1859,10 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             z = 0*libgap.Z(q)*([0]*self.length())     # GAP zero vector
             w = libgap(Gmat).DistancesDistributionMatFFEVecFFE(libgap.GF(q), z)
             return w.sage()
-        elif algorithm == "binary":
+        if algorithm == "binary":
             from sage.coding.binary_code import weight_dist
             return weight_dist(self.generator_matrix())
-        elif algorithm == "leon":
+        if algorithm == "leon":
             if F.order() not in [2, 3, 5, 7]:
                 raise NotImplementedError("The algorithm 'leon' is only implemented for q = 2,3,5,7.")
             # The GAP command DirectoriesPackageLibrary tells the location of the latest
@@ -1881,8 +1881,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                         wt, num = L.split()
                         wts[eval(wt)] = eval(num)
             return wts
-        else:
-            raise NotImplementedError("The only algorithms implemented currently are 'gap', 'leon' and 'binary'.")
+        raise NotImplementedError("The only algorithms implemented currently are 'gap', 'leon' and 'binary'.")
 
     spectrum = weight_distribution
 
@@ -1955,10 +1954,9 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             R = PolynomialRing(ZZ, 2, names)
             x, y = R.gens()
             return sum(spec[i]*x**i*y**(n-i) for i in range(n+1))
-        else:
-            R = PolynomialRing(ZZ, names)
-            x, = R.gens()
-            return sum(spec[i]*x**i for i in range(n+1))
+        R = PolynomialRing(ZZ, names)
+        x, = R.gens()
+        return sum(spec[i]*x**i for i in range(n+1))
 
     def zeta_polynomial(self, name='T'):
         r"""
@@ -2382,8 +2380,7 @@ class LinearCode(AbstractLinearCode):
         R = self.base_ring()
         if R in Fields():
             return "[%s, %s] linear code over GF(%s)" % (self.length(), self.dimension(), R.cardinality())
-        else:
-            return "[%s, %s] linear code over %s" % (self.length(), self.dimension(), R)
+        return "[%s, %s] linear code over %s" % (self.length(), self.dimension(), R)
 
     def _latex_(self) -> str:
         r"""

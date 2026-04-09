@@ -357,23 +357,22 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
     if basis_name == 'milnor':
         return milnor_basis(n, p, **kwds)
     # Serre-Cartan basis
-    elif basis_name == 'serre-cartan':
+    if basis_name == 'serre-cartan':
         return serre_cartan_basis(n, p, **kwds)
     # Atomic bases, p odd:
-    elif generic and (basis_name.find('pst') >= 0
+    if generic and (basis_name.find('pst') >= 0
                       or basis_name.find('comm') >= 0):
         return atomic_basis_odd(n, basis_name, p, **kwds)
     # Atomic bases, p=2
-    elif not generic and (basis_name == 'woody' or basis_name == 'woodz'
+    if not generic and (basis_name == 'woody' or basis_name == 'woodz'
                           or basis_name == 'wall' or basis_name == 'arnona'
                           or basis_name.find('pst') >= 0
                           or basis_name.find('comm') >= 0):
         return atomic_basis(n, basis_name, **kwds)
     # Arnon 'C' basis
-    elif not generic and basis == 'arnonc':
+    if not generic and basis == 'arnonc':
         return arnonC_basis(n)
-    else:
-        raise ValueError("unknown basis: %s at the prime %s" % (basis, p))
+    raise ValueError("unknown basis: %s at the prime %s" % (basis, p))
 
 
 # helper functions for producing bases
@@ -577,8 +576,7 @@ def milnor_basis(n, p=2, **kwds):
     if n == 0:
         if not generic:
             return ((),)
-        else:
-            return (((), ()),)
+        return (((), ()),)
 
     from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
     from sage.rings.infinity import Infinity
@@ -715,7 +713,7 @@ def serre_cartan_basis(n, p=2, bound=1, **kwds):
 
     if n == 0:
         return ((),)
-    elif not generic:
+    if not generic:
         # Build basis recursively.  last = last term.
         # last is >= bound, and we will append (last,) to the end of
         # elements from serre_cartan_basis (n - last, bound=2 * last).
@@ -889,16 +887,16 @@ def atomic_basis(n, basis, **kwds):
     def sorting_pair(s, t, basis):   # pair used for sorting the basis
         if basis.find('wood') >= 0 and basis.find('z') >= 0:
             return (-s-t, -s)
-        elif basis.find('wood') >= 0 or basis.find('wall') >= 0 or \
+        if basis.find('wood') >= 0 or basis.find('wall') >= 0 or \
                 basis.find('arnon') >= 0:
             return (-s, -t)
-        elif basis.find('rlex') >= 0:
+        if basis.find('rlex') >= 0:
             return (t, s)
-        elif basis.find('llex') >= 0:
+        if basis.find('llex') >= 0:
             return (s, t)
-        elif basis.find('deg') >= 0:
+        if basis.find('deg') >= 0:
             return (s+t, t)
-        elif basis.find('revz') >= 0:
+        if basis.find('revz') >= 0:
             return (s+t, s)
 
     from sage.rings.infinity import Infinity
@@ -909,30 +907,29 @@ def atomic_basis(n, basis, **kwds):
 
     if n == 0:
         return ((),)
-    else:
-        result = []
-        degrees_etc = degree_dictionary(n, basis)
-        degrees = list(degrees_etc)
-        for sigma in restricted_partitions(n, degrees, no_repeats=True):
-            big_list = [degrees_etc[part] for part in sigma]
-            big_list.sort(key=lambda x: sorting_pair(x[0], x[1], basis))
-            # reverse = True)
-            # arnon: sort like wall, then reverse end result
-            if basis.find('arnon') >= 0:
-                big_list.reverse()
+    result = []
+    degrees_etc = degree_dictionary(n, basis)
+    degrees = list(degrees_etc)
+    for sigma in restricted_partitions(n, degrees, no_repeats=True):
+        big_list = [degrees_etc[part] for part in sigma]
+        big_list.sort(key=lambda x: sorting_pair(x[0], x[1], basis))
+        # reverse = True)
+        # arnon: sort like wall, then reverse end result
+        if basis.find('arnon') >= 0:
+            big_list.reverse()
 
-            # check profile:
-            okay = True
-            if basis.find('pst') >= 0:
-                if profile is not None and len(profile) > 0:
-                    for s, t in big_list:
-                        if ((len(profile) > t-1 and profile[t-1] <= s)
-                            or (len(profile) <= t-1 and trunc < Infinity)):
-                            okay = False
-                            break
-            if okay:
-                result.append(tuple(big_list))
-        return tuple(result)
+        # check profile:
+        okay = True
+        if basis.find('pst') >= 0:
+            if profile is not None and len(profile) > 0:
+                for s, t in big_list:
+                    if ((len(profile) > t-1 and profile[t-1] <= s)
+                        or (len(profile) <= t-1 and trunc < Infinity)):
+                        okay = False
+                        break
+        if okay:
+            result.append(tuple(big_list))
+    return tuple(result)
 
 
 @cached_function
@@ -1031,19 +1028,18 @@ def atomic_basis_odd(n, basis, p, **kwds):
     def sorting_pair(s, t, basis):   # pair used for sorting the basis
         if basis.find('rlex') >= 0:
             return (t, s)
-        elif basis.find('llex') >= 0:
+        if basis.find('llex') >= 0:
             return (s, t)
-        elif basis.find('deg') >= 0:
+        if basis.find('deg') >= 0:
             return (s + t, t)
-        elif basis.find('revz') >= 0:
+        if basis.find('revz') >= 0:
             return (s + t, s)
 
     generic = kwds.get('generic', p != 2)
     if n == 0:
         if not generic:
             return ((),)
-        else:
-            return (((), ()),)
+        return (((), ()),)
 
     from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
     from sage.rings.infinity import Infinity

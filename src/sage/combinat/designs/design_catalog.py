@@ -118,4 +118,6 @@ lazy_import('sage.combinat.designs.orthogonal_arrays',
             'OAMainFunctions', as_='orthogonal_arrays')
 
 lazy_import('sage.combinat.designs.gen_quadrangles_with_spread',
-            ('generalised_quadrangle_with_spread', 'generalised_quadrangle_hermitian_with_ovoid'))
+            ('generalised_quadrangle_with_spread',
+             'generalised_quadrangle_symplectic_with_spread',
+             'generalised_quadrangle_hermitian_with_ovoid'))

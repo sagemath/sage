@@ -463,7 +463,7 @@ class Function_ceil(BuiltinFunction):
         except AttributeError:
             if isinstance(x, int):
                 return Integer(x)
-            elif isinstance(x, (float, complex)):
+            if isinstance(x, (float, complex)):
                 return Integer(math.ceil(x))
         return None
 
@@ -631,7 +631,7 @@ class Function_floor(BuiltinFunction):
         except AttributeError:
             if isinstance(x, int):
                 return Integer(x)
-            elif isinstance(x, (float, complex)):
+            if isinstance(x, (float, complex)):
                 return Integer(math.floor(x))
         return None
 
@@ -766,9 +766,9 @@ class Function_frac(BuiltinFunction):
         except AttributeError:
             if isinstance(x, int):
                 return Integer(0)
-            elif isinstance(x, (float, complex)):
+            if isinstance(x, (float, complex)):
                 return x - Integer(math.floor(x))
-            elif isinstance(x, Expression):
+            if isinstance(x, Expression):
                 ret = floor(x)
                 if not hasattr(ret, "operator") or not ret.operator() == floor:
                     return x - ret
@@ -900,8 +900,7 @@ class Function_real_nth_root(BuiltinFunction):
 
         if negative:
             return -r
-        else:
-            return r
+        return r
 
     def _eval_(self, base, exp):
         """
@@ -1206,8 +1205,7 @@ class Function_real_part(GinacFunction):
         """
         if isinstance(x, complex):
             return x.real
-        else:
-            return GinacFunction.__call__(self, x, **kwargs)
+        return GinacFunction.__call__(self, x, **kwargs)
 
 
 real = real_part = Function_real_part()
@@ -1270,8 +1268,7 @@ class Function_imag_part(GinacFunction):
         """
         if isinstance(x, complex):
             return x.imag
-        else:
-            return GinacFunction.__call__(self, x, **kwargs)
+        return GinacFunction.__call__(self, x, **kwargs)
 
 
 imag = imag_part = imaginary = Function_imag_part()

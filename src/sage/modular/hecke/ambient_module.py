@@ -763,8 +763,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         if d is None or d == 0:
             self.__is_new[p] = True
             return self
-        else:
-            self.__is_new[p] = False
+        self.__is_new[p] = False
         ns = self.submodule(d.kernel(), check=False)
         ns.__is_new = {p: True}
         ns._is_full_hecke_module = True

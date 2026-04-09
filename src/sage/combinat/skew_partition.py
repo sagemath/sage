@@ -722,31 +722,30 @@ class SkewPartition(CombinatorialElement):
 
         if l_out == 0:
             return True
-        else:
-            # Find the least u for which lam[u]>mu[u], if it exists
-            # If it does not exist then u will equal l_out
-            u = 0
-            u_test = True
-            while u_test:
-                if u >= l_out or lam[u] > mu[u]:
-                    u_test = False
-                else:
-                    u += 1
+        # Find the least u for which lam[u]>mu[u], if it exists
+        # If it does not exist then u will equal l_out
+        u = 0
+        u_test = True
+        while u_test:
+            if u >= l_out or lam[u] > mu[u]:
+                u_test = False
+            else:
+                u += 1
 
-            # Find the least v strictly greater than u for which
-            # lam[v] != mu[v-1]+1
-            v = u + 1
-            v_test = True
-            while v_test:
-                if v >= l_out or lam[v] != mu[v-1] + 1:
-                    v_test = False
-                else:
-                    v += 1
+        # Find the least v strictly greater than u for which
+        # lam[v] != mu[v-1]+1
+        v = u + 1
+        v_test = True
+        while v_test:
+            if v >= l_out or lam[v] != mu[v-1] + 1:
+                v_test = False
+            else:
+                v += 1
 
-            # Check if lam[i]==mu[i] for all i >= v
-            for i in range(v, l_out):
-                if lam[i] != mu[i]:
-                    return False
+        # Check if lam[i]==mu[i] for all i >= v
+        for i in range(v, l_out):
+            if lam[i] != mu[i]:
+                return False
 
         return True
 
@@ -804,8 +803,7 @@ class SkewPartition(CombinatorialElement):
         if inner == []:
             if outer == []:
                 return []
-            else:
-                return [(0,0)]
+            return [(0,0)]
         icorners = [(0, inner[0])]
         nn = len(inner)
         for i in range(1,nn):
@@ -1127,8 +1125,7 @@ class SkewPartition(CombinatorialElement):
             rqinner = self.inner().quotient(k)
             rqouter = self.outer().quotient(k)
             return [ SkewPartitions()([rqouter[i],rqinner[i]]) for i in range(k) ]
-        else:
-            raise ValueError("quotient map is only defined for skew partitions with inner and outer partitions having the same core")
+        raise ValueError("quotient map is only defined for skew partitions with inner and outer partitions having the same core")
 
     def rows_intersection_set(self):
         r"""
@@ -1341,8 +1338,7 @@ def row_lengths_aux(skp):
     """
     if skp[0] == []:
         return []
-    else:
-        return [x[0] - x[1] for x in zip(skp[0], skp[1])]
+    return [x[0] - x[1] for x in zip(skp[0], skp[1])]
 
 
 class SkewPartitions(UniqueRepresentation, Parent):
@@ -1385,10 +1381,9 @@ class SkewPartitions(UniqueRepresentation, Parent):
             if row_lengths is not None:
                 raise ValueError("you can only specify one of n or row_lengths")
             return SkewPartitions_n(n, overlap)
-        elif row_lengths is not None:
+        if row_lengths is not None:
             return SkewPartitions_rowlengths(row_lengths, overlap)
-        else:
-            return SkewPartitions_all()
+        return SkewPartitions_all()
 
     def __init__(self, is_infinite=False):
         """

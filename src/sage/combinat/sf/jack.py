@@ -475,8 +475,7 @@ def normalize_coefficients(self, c):
         numer = numer // l
 
         return c.parent()(numer, denom)
-    else:
-        return c
+    return c
 
 ####################################################################
 
@@ -834,8 +833,7 @@ def part_scalar_jack(part1, part2, t):
     """
     if part1 != part2:
         return 0
-    else:
-        return part1.centralizer_size()*t**len(part1)
+    return part1.centralizer_size()*t**len(part1)
 
 #P basis
 
@@ -1040,8 +1038,7 @@ class JackPolynomials_p(JackPolynomials_generic):
             if isinstance(x, JackPolynomials_p) and t is None:
                 P = self.parent()
                 return P._apply_multi_module_morphism(self, x, P.scalar_jack_basis, orthogonal=True)
-            else:
-                return JackPolynomials_generic.Element.scalar_jack(self, x, t)
+            return JackPolynomials_generic.Element.scalar_jack(self, x, t)
 
 #J basis
 
@@ -1207,9 +1204,8 @@ class JackPolynomials_qp(JackPolynomials_generic):
         """
         if n in self._self_to_h_cache:
             return
-        else:
-            self._self_to_h_cache[n] = {}
-            self._h_to_self_cache[n] = {}
+        self._self_to_h_cache[n] = {}
+        self._h_to_self_cache[n] = {}
         self._P._m_cache(n)
         from_cache_1 = self._P._self_to_m_cache[n]
         to_cache_1 = self._self_to_h_cache[n]

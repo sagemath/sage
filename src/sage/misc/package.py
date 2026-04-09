@@ -115,8 +115,7 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
             import warnings
             warnings.warn("failed to fetch the version of pkg={!r} at {}".format(pkg, url))
             return
-        else:
-            raise
+        raise
 
     info = json.loads(text)
     stable_releases = [v for v in info['releases'] if 'a' not in v and 'b' not in v]
@@ -200,10 +199,9 @@ def pip_installed_packages(normalization=None):
         def normalize(name: str) -> str:
             if normalization is None:
                 return name
-            elif normalization == 'spkg':
+            if normalization == 'spkg':
                 return name.lower().replace('-', '_').replace('.', '_')
-            else:
-                raise NotImplementedError(f'normalization {normalization} is not implemented')
+            raise NotImplementedError(f'normalization {normalization} is not implemented')
         try:
             return {normalize(package['name']): package['version']
                     for package in json.loads(stdout)}

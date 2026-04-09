@@ -2259,7 +2259,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         cdef int u_int
         cdef int v_int = self.get_vertex(v)
         if (v_int == -1 or v_int >= self.cg().active_vertices.size
-                or not bitset_in(self.cg().active_vertices,v_int)):
+                or not bitset_in(self.cg().active_vertices, v_int)):
             raise LookupError("vertex ({0}) is not a vertex of the graph".format(v))
 
         for u_int in self.cg().in_neighbors(v_int):
@@ -2300,7 +2300,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         cdef int u_int
         cdef int v_int = self.get_vertex(v)
         if (v_int == -1 or v_int >= self.cg().active_vertices.size
-                or not bitset_in(self.cg().active_vertices,v_int)):
+                or not bitset_in(self.cg().active_vertices, v_int)):
             raise LookupError("vertex ({0}) is not a vertex of the graph".format(v))
 
         for u_int in self.cg().out_neighbors(v_int):
@@ -3725,7 +3725,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         elif not isinstance(exclude_vertices, set):
             exclude_vertices = set(exclude_vertices)
         if source in exclude_vertices:
-            raise ValueError(f"source must not be in exclude_vertices.")
+            raise ValueError("source must not be in exclude_vertices.")
         cdef PairingHeap[int, double] pq = PairingHeap[int, double]()
         cdef dict dist = {}
         cdef dict pred = {}
@@ -3772,7 +3772,7 @@ cdef class CGraphBackend(GenericGraphBackend):
                         pq.push(u_int, new_dist)
 
         # no path found
-        raise ValueError(f"no path found from source to targets.")
+        raise ValueError("no path found from source to targets.")
 
     def bidirectional_dijkstra_special(self, x, y, weight_function=None,
                                        exclude_vertices=None, exclude_edges=None,
@@ -5037,7 +5037,7 @@ cdef class Search_iterator:
                 u_id = self.graph.get_vertex(u)
                 if u_id != -1:
                     if u_id == v_id:
-                        raise ValueError(f"the start vertex is in the set of forbidden vertices")
+                        raise ValueError("the start vertex is in the set of forbidden vertices")
                     bitset_add(self.seen, u_id)
 
         if direction == 0:

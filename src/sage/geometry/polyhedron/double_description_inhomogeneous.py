@@ -263,9 +263,8 @@ class Hrep2Vrep(PivotedInequalities):
                 L1.append(l)
         if len(L1) == 0:
             return None, L0
-        else:
-            l1 = L1.pop()
-            return l1, L0 + [l - l[0] * l1 for l in L1]
+        l1 = L1.pop()
+        return l1, L0 + [l - l[0] * l1 for l in L1]
 
     def _extract_Vrep(self, DD):
         r"""

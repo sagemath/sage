@@ -410,8 +410,7 @@ class ModularForm_abstract(ModuleElement):
         if not isinstance(other, ModularFormElement) or \
            self.ambient_module() != other.ambient_module():
             return False
-        else:
-            return self.element() == other.element()
+        return self.element() == other.element()
 
     def __ne__(self, other):
         """
@@ -529,10 +528,8 @@ class ModularForm_abstract(ModuleElement):
         if isinstance(n, slice):
             if n.stop is None:
                 return self.q_expansion().list()[n]
-            else:
-                return self.q_expansion(n.stop + 1).list()[n]
-        else:
-            return self.q_expansion(n + 1)[int(n)]
+            return self.q_expansion(n.stop + 1).list()[n]
+        return self.q_expansion(n + 1)[int(n)]
 
     def coefficient(self, n):
         r"""
@@ -612,17 +609,17 @@ class ModularForm_abstract(ModuleElement):
         chi = self.parent().character()
         if (chi is not None) or (not compute):
             return chi
-        else:  # do the expensive computation
-            G = DirichletGroup(self.parent().level(), base_ring=self.parent().base_ring())
-            gens = G.unit_gens()
-            i = self.valuation()
-            vals = []
-            for g in gens:
-                df = self.parent().diamond_bracket_operator(g)(self)
-                if df != (df[i] / self[i]) * self:
-                    raise ValueError("Form is not an eigenvector for <%s>" % g)
-                vals.append(df[i] / self[i])
-            return G(vals)
+        # do the expensive computation
+        G = DirichletGroup(self.parent().level(), base_ring=self.parent().base_ring())
+        gens = G.unit_gens()
+        i = self.valuation()
+        vals = []
+        for g in gens:
+            df = self.parent().diamond_bracket_operator(g)(self)
+            if df != (df[i] / self[i]) * self:
+                raise ValueError("Form is not an eigenvector for <%s>" % g)
+            vals.append(df[i] / self[i])
+        return G(vals)
 
     def __bool__(self):
         """
@@ -701,12 +698,11 @@ class ModularForm_abstract(ModuleElement):
 
         if current_prec == prec:
             return f
-        elif current_prec > prec:
+        if current_prec > prec:
             return f.add_bigoh(prec)
-        else:
-            f = self._compute_q_expansion(prec)
-            self.__q_expansion = (prec, f)
-            return f
+        f = self._compute_q_expansion(prec)
+        self.__q_expansion = (prec, f)
+        return f
 
     def serre_derivative(self):
         """
@@ -2263,25 +2259,24 @@ class Newform(ModularForm_abstract):
 
         if normalization == 'arithmetic':
             return embedding(w)
-        else:
-            # get rid of the normalisation factors
-            from sage.modular.dirichlet import trivial_character
+        # get rid of the normalisation factors
+        from sage.modular.dirichlet import trivial_character
 
-            epsd = prod([eps.extend(d) for eps in self.character().decomposition() if eps.modulus().divides(d)], trivial_character(d))
-            epsd = epsd.primitive_character()
-            d0 = epsd.modulus()
-            epsdR = epsd.change_ring(embedding)
-            if d0 > 1:
-                try:
-                    G = epsdR.gauss_sum()
-                except NotImplementedError:
-                    raise ValueError("Unable to compute Gauss sum. Try specifying an embedding into a larger ring")
-            else:
-                G = R(1)
-            if not R(d**(self.weight() - 2)).is_square():
-                raise ValueError("Unable to compute square root. Try specifying an embedding into a larger ring")
-            ratio = R(d**(self.weight() - 2)).sqrt() * embedding(self.character()(crt(1, d // d0, d, N // d))) / G
-            return embedding(w) / ratio
+        epsd = prod([eps.extend(d) for eps in self.character().decomposition() if eps.modulus().divides(d)], trivial_character(d))
+        epsd = epsd.primitive_character()
+        d0 = epsd.modulus()
+        epsdR = epsd.change_ring(embedding)
+        if d0 > 1:
+            try:
+                G = epsdR.gauss_sum()
+            except NotImplementedError:
+                raise ValueError("Unable to compute Gauss sum. Try specifying an embedding into a larger ring")
+        else:
+            G = R(1)
+        if not R(d**(self.weight() - 2)).is_square():
+            raise ValueError("Unable to compute square root. Try specifying an embedding into a larger ring")
+        ratio = R(d**(self.weight() - 2)).sqrt() * embedding(self.character()(crt(1, d // d0, d, N // d))) / G
+        return embedding(w) / ratio
 
     def twist(self, chi, level=None, check=True):
         r"""
@@ -2470,7 +2465,7 @@ class Newform(ModularForm_abstract):
         if (r == c) or (r == 1 and c == 0):
             # easy cases
             return (self, DirichletGroup(1, self.base_ring())(1))
-        elif r < 2 * c:
+        if r < 2 * c:
             # In this case we know that there is a unique chi of conductor p^u
             # such that self x chi has level N/p^u, where u = r-c, and this
             # twist is minimal.
@@ -2493,36 +2488,35 @@ class Newform(ModularForm_abstract):
                 if l > 10000 or not candidates:
                     raise RuntimeError("bug finding minimal twist")
             return candidates[0]
+        # The hard case. Now f might be ramified principal series, twist of
+        # Steinberg, or supercuspidal, and the minimal twist is not unique
+        # any more. So we use the slow, but very general, type-space
+        # algorithm.
+        from sage.modular.local_comp.type_space import TypeSpace
+        T = TypeSpace(self, p)
+        if T.is_minimal():
+            return (self, DirichletGroup(1, self.base_ring())(1))
+
+        g = T.minimal_twist()
+        epsg = g.character().extend(N)
+        chisq = (epsg / self.character()).restrict(p**(r // 2))
+        K = coercion_model.common_parent(self.base_ring(), g.base_ring())
+        chis = [chi for chi in DirichletGroup(p**(r // 2), K) if chi**2 == chisq]
+
+        if g.has_cm() and g.cm_discriminant().prime_divisors() == [p]:
+            # Quicker to test g than self, because g has smaller level.
+            t = 2
         else:
-            # The hard case. Now f might be ramified principal series, twist of
-            # Steinberg, or supercuspidal, and the minimal twist is not unique
-            # any more. So we use the slow, but very general, type-space
-            # algorithm.
-            from sage.modular.local_comp.type_space import TypeSpace
-            T = TypeSpace(self, p)
-            if T.is_minimal():
-                return (self, DirichletGroup(1, self.base_ring())(1))
-
-            g = T.minimal_twist()
-            epsg = g.character().extend(N)
-            chisq = (epsg / self.character()).restrict(p**(r // 2))
-            K = coercion_model.common_parent(self.base_ring(), g.base_ring())
-            chis = [chi for chi in DirichletGroup(p**(r // 2), K) if chi**2 == chisq]
-
-            if g.has_cm() and g.cm_discriminant().prime_divisors() == [p]:
-                # Quicker to test g than self, because g has smaller level.
-                t = 2
-            else:
-                t = 1
-            l = ZZ.one()
-            while len(chis) > t:
-                l = l.next_prime()
-                if l == p:
-                    continue
-                chis = [chi for chi in chis if g[l] == chi(l) * self[l]]
-                if l > 10000 or not chis:
-                    raise RuntimeError("bug finding minimal twist")
-            return (g, chis[0])
+            t = 1
+        l = ZZ.one()
+        while len(chis) > t:
+            l = l.next_prime()
+            if l == p:
+                continue
+            chis = [chi for chi in chis if g[l] == chi(l) * self[l]]
+            if l > 10000 or not chis:
+                raise RuntimeError("bug finding minimal twist")
+        return (g, chis[0])
 
     def local_component(self, p, twist_factor=None):
         """
@@ -2791,8 +2785,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         t = f.element()[w] / self.element()[w]
         if f.element() == self.element() * t:
             return t
-        else:
-            raise ValueError("%r is not an eigenform for W_%r" % (self, d))
+        raise ValueError("%r is not an eigenform for W_%r" % (self, d))
 
     def twist(self, chi, level=None):
         r"""
@@ -3112,8 +3105,8 @@ class EisensteinSeries(ModularFormElement):
         """
         if self.weight() == 2 and (self.__chi.is_trivial() and self.__psi.is_trivial()):
             return self.__compute_weight2_trivial_character(X)
-        else:  # general case
-            return self.__compute_general_case(X)
+        # general case
+        return self.__compute_general_case(X)
 
     def __compute_weight2_trivial_character(self, X):
         r"""
@@ -3853,8 +3846,7 @@ class GradedModularFormElement(ModuleElement):
             if self.is_zero():
                 return ZZ.zero()
             return next(iter(self._forms_dictionary))
-        else:
-            raise ValueError("the given graded form is not homogeneous (not a modular form)")
+        raise ValueError("the given graded form is not homogeneous (not a modular form)")
 
     def weights_list(self):
         r"""

@@ -119,14 +119,13 @@ class CharacterArtFactory(SageObject):
             baseline = 0
         if isinstance(obj, tuple):
             return self.build_tuple(obj, baseline)
-        elif isinstance(obj, dict):
+        if isinstance(obj, dict):
             return self.build_dict(obj, baseline)
-        elif isinstance(obj, list):
+        if isinstance(obj, list):
             return self.build_list(obj, baseline)
-        elif isinstance(obj, set):
+        if isinstance(obj, set):
             return self.build_set(obj, baseline)
-        else:
-            return self.build_from_string(obj, baseline)
+        return self.build_from_string(obj, baseline)
 
     def build_empty(self):
         """
@@ -473,9 +472,8 @@ class CharacterArtFactory(SageObject):
             top1 = obj._h - bot1
             if i >= top1 or i < -bot1:
                 return ' ' * obj._l
-            else:
-                line = obj._matrix[top1 - 1 - i]
-                return line + ' ' * (obj._l - len(line))
+            line = obj._matrix[top1 - 1 - i]
+            return line + ' ' * (obj._l - len(line))
 
         # Note that this scales linearly with the length of the string
         new_matrix = [padded_line(separator, i).join(

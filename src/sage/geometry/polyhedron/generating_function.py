@@ -477,8 +477,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
         result = Factorization([], unit=0)
         if result_as_tuple:
             return (result,)
-        else:
-            return result
+        return result
 
     if polyhedron.base_ring() not in (ZZ, QQ):
         raise TypeError('base ring {} of the polyhedron not '
@@ -507,11 +506,10 @@ def generating_function_of_integral_points(polyhedron, split=False,
         result = _generating_function_of_integral_points_(polyhedron, name=name, **kwds)
         if result_as_tuple:
             return result
-        else:
-            if len(result) != 1:
-                raise ValueError("cannot unpack result "
-                                 "(set 'result_as_tuple=True')")
-            return result[0]
+        if len(result) != 1:
+            raise ValueError("cannot unpack result "
+                             "(set 'result_as_tuple=True')")
+        return result[0]
 
     if d <= 1:
         raise ValueError('cannot do splitting with only '

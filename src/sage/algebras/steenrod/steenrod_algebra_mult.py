@@ -367,8 +367,7 @@ def multinomial(list):
         i = i + 1
     if okay:
         return old_sum
-    else:
-        return None
+    return None
 
 # Milnor, p odd
 
@@ -660,10 +659,9 @@ def binomial_mod2(n, k):
     """
     if n < k:
         return 0
-    elif ((n-k) & k) == 0:
+    if ((n-k) & k) == 0:
         return 1
-    else:
-        return 0
+    return 0
 
 
 def binomial_modp(n, k, p):
@@ -771,9 +769,9 @@ def adem(a, b, c=0, p=2, generic=None):
     if not generic:
         if b == 0:
             return {(a,): 1}
-        elif a == 0:
+        if a == 0:
             return {(b,): 1}
-        elif a >= 2*b:
+        if a >= 2*b:
             return {(a, b): 1}
         result = {}
         for c in range(1 + a//2):

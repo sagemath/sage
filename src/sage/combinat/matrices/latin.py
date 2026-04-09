@@ -1993,18 +1993,17 @@ def elementary_abelian_2group(s):
         L[1, 1] = 0
 
         return L
-    else:
-        L_prev = elementary_abelian_2group(s-1)
-        L = LatinSquare(2**s, 2**s)
+    L_prev = elementary_abelian_2group(s-1)
+    L = LatinSquare(2**s, 2**s)
 
-        offset = L.nrows() // 2
+    offset = L.nrows() // 2
 
-        for r in range(L_prev.nrows()):
-            for c in range(L_prev.ncols()):
-                L[r, c] = L_prev[r, c]
-                L[r+offset, c] = L_prev[r, c] + offset
-                L[r, c+offset] = L_prev[r, c] + offset
-                L[r+offset, c+offset] = L_prev[r, c]
+    for r in range(L_prev.nrows()):
+        for c in range(L_prev.ncols()):
+            L[r, c] = L_prev[r, c]
+            L[r+offset, c] = L_prev[r, c] + offset
+            L[r, c+offset] = L_prev[r, c] + offset
+            L[r+offset, c+offset] = L_prev[r, c]
     return L
 
 

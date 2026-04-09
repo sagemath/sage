@@ -1,3 +1,0 @@
-| xz
-
-# xz is only needed to unpack the tarball when sage-bootstrap-python is Python < 3.3

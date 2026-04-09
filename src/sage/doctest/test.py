@@ -619,10 +619,10 @@ Test that random tests are reproducible::
     ...
     1
     sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
-    ....:      "--random-seed=1", "--optional=sage", "random_seed.rst"], **kwds)
+    ....:      "--random-seed=4", "--optional=sage", "random_seed.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    ... --warn-long 0.0 --random-seed=1 random_seed.rst
+    ... --warn-long 0.0 --random-seed=4 random_seed.rst
         [1 test, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!

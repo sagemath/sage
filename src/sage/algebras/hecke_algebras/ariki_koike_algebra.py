@@ -1408,8 +1408,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             if i == 1:
                 if self._r == 1:
                     return self.from_base_ring(self._u[0])
-                else:
-                    return self.T(0)
+                return self.T(0)
             T = self.T()
             return self._q**-1 * T[i-1] * self.L(i-1) * T[i-1]
 

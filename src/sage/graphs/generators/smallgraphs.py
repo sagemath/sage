@@ -231,10 +231,9 @@ def HarriesGraph(embedding=1, immutable=False):
 
         return g
 
-    elif embedding == 2:
+    if embedding == 2:
         return g
-    else:
-        raise ValueError("the value of embedding must be 1 or 2")
+    raise ValueError("the value of embedding must be 1 or 2")
 
 
 def HarriesWongGraph(embedding=1, immutable=False):
@@ -346,10 +345,9 @@ def HarriesWongGraph(embedding=1, immutable=False):
 
         return g
 
-    elif embedding == 2:
+    if embedding == 2:
         return g
-    else:
-        raise ValueError("the value of embedding must be 1 or 2")
+    raise ValueError("the value of embedding must be 1 or 2")
 
 
 def WellsGraph(immutable=False):
@@ -917,7 +915,7 @@ def Balaban10Cage(embedding=1, immutable=False):
 
     if embedding == 2:
         return g
-    elif embedding != 1:
+    if embedding != 1:
         raise ValueError("the value of embedding must be 1 or 2")
 
     L3 = [5, 24, 35, 46, 29, 40, 51, 34, 45, 56]

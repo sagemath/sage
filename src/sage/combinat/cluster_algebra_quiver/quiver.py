@@ -1186,8 +1186,7 @@ class ClusterQuiver(SageObject):
                 Q._mutation_type = QuiverMutationType(Q._mutation_type)
         if certificate:
             return Q, iso
-        else:
-            return Q
+        return Q
 
     def is_acyclic(self) -> bool:
         """

@@ -436,14 +436,12 @@ class OrderedTree(AbstractClonableTree, ClonableList,
         def W(path):
             if path in w_coordinate:
                 return w_coordinate[path]
-            else:
-                return w_coordinate[path[:-1]]
+            return w_coordinate[path[:-1]]
 
         def H(path):
             if path in h_coordinate:
                 return h_coordinate[path]
-            else:
-                return h_coordinate[path[:-1]]
+            return h_coordinate[path[:-1]]
 
         lower_path = []
         for i in range(1, len(lower_nodes)):
@@ -824,11 +822,10 @@ class OrderedTree(AbstractClonableTree, ClonableList,
                     resl[i] = resl[i].normalize()
                 resl.sort(key=lambda t: t.sort_key())
             return res
-        else:
-            resl = self._get_list()
-            for i in range(len(resl)):
-                resl[i] = resl[i].normalize()
-            resl.sort(key=lambda t: t.sort_key())
+        resl = self._get_list()
+        for i in range(len(resl)):
+            resl[i] = resl[i].normalize()
+        resl.sort(key=lambda t: t.sort_key())
 
 
 # Abstract class to serve as a Factory no instance are created.
@@ -878,10 +875,9 @@ class OrderedTrees(UniqueRepresentation, Parent):
         """
         if n is None:
             return OrderedTrees_all()
-        else:
-            if not (isinstance(n, (Integer, int)) and n >= 0):
-                raise ValueError("n must be a nonnegative integer")
-            return OrderedTrees_size(Integer(n))
+        if not (isinstance(n, (Integer, int)) and n >= 0):
+            raise ValueError("n must be a nonnegative integer")
+        return OrderedTrees_size(Integer(n))
 
     @cached_method
     def leaf(self):
@@ -1077,9 +1073,8 @@ class OrderedTrees_size(OrderedTrees):
         """
         if self._size == 0:
             return Integer(0)
-        else:
-            from .combinat import catalan_number
-            return catalan_number(self._size - 1)
+        from .combinat import catalan_number
+        return catalan_number(self._size - 1)
 
     def random_element(self):
         """
