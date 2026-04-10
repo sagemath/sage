@@ -88,8 +88,8 @@ jobs:
           # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
           # Rebuild cypari2 from source to link against the system PARI library,
           # avoiding a conflict between the system PARI and the one bundled in the cypari2 wheel
-          uv sync --frozen --inexact --no-install-project --no-binary-package cypari2 -v
-          uv sync --frozen --inexact --no-build-isolation -v
+          uv sync --frozen --inexact --no-install-project --no-binary-package cypari2 --extra extra -v
+          uv sync --frozen --inexact --no-build-isolation --extra extra -v
 
       - name: Test
         run: |
