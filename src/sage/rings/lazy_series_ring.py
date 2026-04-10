@@ -13,6 +13,7 @@ We provide lazy implementations for various `\NN`-graded rings.
     :class:`LazyCompletionGradedAlgebra` | The completion of a graded algebra consisting of formal series.
     :class:`LazySymmetricFunctions` | The ring of (possibly multivariate) lazy symmetric functions.
     :class:`LazyDirichletSeriesRing` | The ring of lazy Dirichlet series.
+    :class:`LazyPseudoDifferentialOperatorRing` | The ring of lazy (formal) pseudo-differential operators.
 
 .. SEEALSO::
 
@@ -39,6 +40,7 @@ AUTHORS:
 - Kwankyu Lee (2019-02-24): initial version
 - Tejasvi Chebrolu, Martin Rubey, Travis Scrimshaw (2021-08):
   refactored and expanded functionality
+- Travis Scrimshaw (2025-02): added pseudo-differential operators
 """
 
 # ****************************************************************************
@@ -79,7 +81,8 @@ from sage.rings.lazy_series import (LazyModuleElement,
                                     LazyPowerSeries_gcd_mixin,
                                     LazyCompletionGradedAlgebraElement,
                                     LazySymmetricFunction,
-                                    LazyDirichletSeries)
+                                    LazyDirichletSeries,
+                                    LazyPseudoDifferentialOperator)
 from sage.structure.global_options import GlobalOptions
 
 from sage.data_structures.stream import (
@@ -98,6 +101,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
     """
     Abstract base class for lazy series.
     """
+    _twisted_base_ring_multiplication = False
+
     # This will never be called directly (as it is an ABC), but we copy it
     #   for use in other subclasses.
     @staticmethod
@@ -3094,7 +3099,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             # TODO: the following is nonsense, think of an iterator
 #            if self._arity > 1 and valuation != 0:
 #                raise ValueError(f"valuation must not be specified for multivariate Taylor series (for {x}), but was set to {valuation}")
-        if self._arity > 1:
+        elif self._arity > 1:
             valuation = 0
 
         R = self._laurent_poly_ring
@@ -4277,6 +4282,308 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         return self(coefficients=lambda n: z ** n)
 
     polylog = polylogarithm
+
+
+######################################################################
+
+
+class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
+    r"""
+    Ring of lazy (formal) pseudo-differential operators.
+
+    INPUT:
+
+    - ``variable`` -- the variable the differential operators act on
+    - ``sparse`` -- boolean (default: ``True``); whether the implementation
+      of the series is sparse or not
+    - ``base_ring`` -- (default: parent of ``variable``) the base ring
+
+    .. WARNING::
+
+        For technical reaasons, we implement the ring of pseudo-differential
+        operators as a Laurent polynomial ring in `\partial^{-1}`. So for
+        an element ``P``, the coefficient ``P[k]`` is the coefficient of
+        `\partial^{-k}`.
+
+    Multiplication is given by the (noncommutative) product
+
+    .. MATH::
+
+        (a \partial^i) (b \partial^j) = \sum_{k=0}^{\infty} \binom{i}{k}
+        D^k(b) \partial^{i+j-k},
+
+    where `D` is any derivation of the coefficient ring.
+    The binomial coefficient is defined by
+
+    .. MATH::
+
+        \binom{i}{k} = \frac{i (i-1) \cdots (i-k+1)}{k!},
+
+    which is (generically) nonzero for all values `i` and all `k \geq 0`.
+    This is also a division ring (i.e., skew field).
+
+    .. TODO::
+
+        Extend this implementation to allow for derivations that are not
+        the usual derivative with respect to a fixed variable.
+
+    EXAMPLES::
+
+        sage: a, b = PolynomialRing(QQ, 'a,b').gens()
+        sage: P = PseudoDifferentialOperatorRing(a)
+        sage: D = P.gen()
+        sage: D * a^5
+        a^5*Da + 5*a^4
+        sage: D * b
+        b*Da
+        sage: phi = P(lambda n: (n-2) * a^(n+2) * b^(n+2), valuation=-2); phi
+        -4*Da^2 - 3*a*b*Da - 2*a^2*b^2 - a^3*b^3*Da^-1 + a^5*b^5*Da^-3
+         + 2*a^6*b^6*Da^-4 + O(Da^-5)
+        sage: psi = ~phi; psi
+        -1/4*Da^-2 + 3/16*a*b*Da^-3 + (-1/64*a^2*b^2 - 3/8*b)*Da^-4
+         + (-5/256*a^3*b^3 + 13/64*a*b^2)*Da^-5
+         + (-25/1024*a^4*b^4 + 45/256*a^2*b^3 - 3/8*b^2)*Da^-6
+         + (-125/4096*a^5*b^5 + 75/512*a^3*b^4 - 117/256*a*b^3)*Da^-7
+         + (-625/16384*a^6*b^6 + 125/1024*a^4*b^5 - 327/1024*a^2*b^4 + 9/16*b^3)*Da^-8
+         + O(Da^-9)
+        sage: phi * psi
+        1 + O(Da^-7)
+        sage: psi * phi
+        1 + O(Da^-7)
+
+    Next, we compute the Lax formulation of the KdV hierarchy. First, we
+    construct the operator `L`::
+
+        sage: x = SR.var('x')
+        sage: P = PseudoDifferentialOperatorRing(x)
+        sage: D = P.gen()
+        sage: u = function('u', nargs=1)(x)
+        sage: L = D^2 + u
+
+    Now we compute the operator `P_m` using the general formalism of
+    `P_m = (L^{m/n})_+`, where `L` is a differential operator of order `n`
+    and `D_+` denotes the nonnegative part (i.e., taking the coefficients of
+    `\partial^j` for `j \geq 0`). Here, we specifically take `P_3` and
+    recover the KdV equation (after setting the final result to `u_t`)::
+
+        sage: P3 = (L^(3/2)).truncate(1)
+        sage: P3
+        Dx^3 + 3/2*u(x)*Dx + 3/4*diff(u(x), x)
+        sage: 4 * (P3 * L - L * P3)  # long time
+        (6*u(x)*diff(u(x), x) + diff(u(x), x, x, x))
+
+    We perform the same computation for the Boussinesq equation::
+
+        sage: v = function('v', nargs=1)(x)
+        sage: L = D^3 + u*D + v
+        sage: P2 = (L^(2/3)).truncate(1)
+        sage: P2
+        Dx^2 + 2/3*u(x)
+        sage: P2 * L - L * P2  # long time
+        (-diff(u(x), x, x) + 2*diff(v(x), x))*Dx
+         + (-2/3*u(x)*diff(u(x), x) - 2/3*diff(u(x), x, x, x) + diff(v(x), x, x))
+    """
+    _twisted_base_ring_multiplication = True
+    Element = LazyPseudoDifferentialOperator
+
+    @staticmethod
+    def __classcall_private__(cls, variable, sparse=True, base_ring=None):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: t = QQ['t'].gen()
+            sage: L1 = PseudoDifferentialOperatorRing(t)
+            sage: L2 = PseudoDifferentialOperatorRing(t, True, t.parent())
+            sage: L1 is L2
+            True
+
+            sage: R = PolynomialRing(QQ, 'x,t')
+            sage: L3 = PseudoDifferentialOperatorRing(t, base_ring=R)
+            sage: L1 is L3
+            False
+            sage: L3.base_ring() is R
+            True
+        """
+        if base_ring is None:
+            base_ring = variable.parent()
+        else:
+            variable = base_ring(variable)
+        return cls.__classcall__(cls, variable, sparse, base_ring)
+
+    def __init__(self, variable, sparse, base_ring):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: t = SR.var('t')
+            sage: P = PseudoDifferentialOperatorRing(t)
+            sage: TestSuite(P).run()
+
+            sage: a = QQ['a'].gen()
+            sage: R = PseudoDifferentialOperatorRing(a)
+            sage: TestSuite(R).run()
+
+            sage: x = QQ['x'].fraction_field().gen()
+            sage: S = PseudoDifferentialOperatorRing(x)
+            sage: TestSuite(S).run()
+        """
+        self._sparse = sparse
+        self._arity = 1
+        self._minimal_valuation = None
+
+        self._laurent_poly_ring = base_ring
+        self._internal_poly_ring = LaurentPolynomialRing(base_ring, "PARTIAL", sparse=sparse)
+        self._variable = variable
+
+        category = Algebras(base_ring.category())
+
+        if base_ring in Fields():
+            category = category.Division()
+
+        if base_ring.is_zero():
+            category = category.Finite()
+        else:
+            category = category.Infinite()
+
+        from sage.structure.category_object import normalize_names
+        try:
+            names = normalize_names(1, (str(variable),))
+            names += ("d" + names[0],)
+        except ValueError:
+            names = None
+
+        Parent.__init__(self, base=base_ring, category=category, names=names)
+
+    def _repr_(self):
+        r"""
+        String representation of ``self``.
+
+        EXAMPLES::
+
+            sage: t = ZZ['t'].gen()
+            sage: PseudoDifferentialOperatorRing(t)
+            Pseudo-Differential Operator Ring in t over
+             Univariate Polynomial Ring in t over Integer Ring
+        """
+        v = self._variable
+        CR = self.base_ring()
+        return "Pseudo-Differential Operator Ring in {} over {}".format(v, CR)
+
+    def _latex_(self):
+        r"""
+        Return a LaTeX representation of ``self``.
+
+        EXAMPLES::
+
+            sage: t = QQ['t'].gen()
+            sage: L = PseudoDifferentialOperatorRing(t)
+            sage: latex(L)
+            \Bold{Q}[t] (\!(\partial_{t}^{-1})\!)
+        """
+        from sage.misc.latex import latex
+        v = latex(self._variable)
+        CR = latex(self.base_ring())
+        return CR + r"(\!(\partial_{{{}}}^{{-1}})\!)".format(v)
+
+    def variable(self):
+        r"""
+        Return the variable that ``self`` is taking differential operators
+        with respect to.
+
+        EXAMPLES::
+
+            sage: R = PolynomialRing(QQ, 'a,x,t')
+            sage: L = PseudoDifferentialOperatorRing(R.gen(0))
+            sage: L.variable()
+            a
+            sage: L.variable().parent() is R
+            True
+        """
+        return self._variable
+
+    def _monomial(self, c, n):
+        r"""
+        Return the interpretation of the coefficient ``c`` at index ``n``.
+
+        EXAMPLES::
+
+            sage: t = LaurentPolynomialRing(QQ, 't').gen()
+            sage: L = PseudoDifferentialOperatorRing(t)
+            sage: L._monomial(2*(t + t^2)/(t^2 + t^3), 3)
+            2*t^-1
+        """
+        return self._laurent_poly_ring(c)
+
+    @cached_method
+    def _terms_of_degree(self, n, R):
+        r"""
+        Return the list of monomials of degree ``n`` in the polynomial
+        ring with base ring ``R``.
+
+        EXAMPLES::
+
+            sage: L.<x, y> = PolynomialRing(QQ)
+            sage: P = PseudoDifferentialOperatorRing(x)
+            sage: m = P._terms_of_degree(3, L); m
+            [1]
+            sage: m[0].parent()
+            Multivariate Polynomial Ring in x, y over Rational Field
+        """
+        return [R.one()]
+
+    @cached_method
+    def gen(self, n=0):
+        """
+        Return the ``n``-th generator of ``self``.
+
+        EXAMPLES::
+
+            sage: t = ZZ['t'].gen()
+            sage: L = PseudoDifferentialOperatorRing(t)
+            sage: L.gen(0)
+            Dt
+            sage: L.gen(3)
+            Traceback (most recent call last):
+            ...
+            IndexError: there is only one generator
+        """
+        if n != 0:
+            raise IndexError("there is only one generator")
+        R = self.base_ring()
+        coeff_stream = Stream_exact([R.one()], constant=R.zero(), order=-1)
+        return self.element_class(self, coeff_stream)
+
+    def ngens(self):
+        r"""
+        Return the number of generators of ``self``.
+
+        EXAMPLES::
+
+            sage: t = QQ['t'].gen()
+            sage: L = PseudoDifferentialOperatorRing(t)
+            sage: L.ngens()
+            1
+        """
+        return ZZ.one()
+
+    def gens(self) -> tuple:
+        """
+        Return the generators of ``self``.
+
+        EXAMPLES::
+
+            sage: t = QQ['t'].gen()
+            sage: L = PseudoDifferentialOperatorRing(t)
+            sage: L.gens()
+            (Dt,)
+        """
+        return (self.gen(),)
+
+
+######################################################################
 
 
 def _skip_leading_zeros(iterator):

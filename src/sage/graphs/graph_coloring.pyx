@@ -309,7 +309,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
             coloring = [[] for _ in range(n)]
             used_colors = set()
             if count_only:
-                used_colors = set(colormap[x][1] for x in a if x in colormap)
+                used_colors = {colormap[x][1] for x in a if x in colormap}
             else:
                 for x in a:
                     if x in colormap:
@@ -1613,7 +1613,7 @@ def _vizing_edge_coloring(g):
         fan_center, rear = edge
         cdef set rear_colors = colors_of(rear)
         cdef list neighbors = [n for n in g.neighbor_iterator(fan_center)
-                                   if e_colors[frozenset((n, fan_center))] is not None]
+                               if e_colors[frozenset((n, fan_center))] is not None]
         cdef list fan = [rear]
         cdef bint can_extend_fan = True
         while can_extend_fan:

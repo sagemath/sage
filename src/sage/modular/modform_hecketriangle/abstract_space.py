@@ -257,8 +257,7 @@ class FormsSpace_abstract(FormsRing_abstract):
                           LazyLaurentSeriesRing, LazyPowerSeriesRing)):
             if self.is_modular():
                 return self.construct_form(el)
-            else:
-                return self.construct_quasi_form(el)
+            return self.construct_quasi_form(el)
         if isinstance(el, FreeModuleElement) and (self.module() is P or self.ambient_module() is P):
             return self.element_from_ambient_coordinates(el)
         if not self.is_ambient() and isinstance(el, (list, tuple, FreeModuleElement)) and len(el) == self.rank():
@@ -326,17 +325,15 @@ class FormsSpace_abstract(FormsRing_abstract):
             if (self.ambient_space().has_coerce_map_from(S.ambient_space())):
                 S2 = S.change_ambient_space(self.ambient_space())
                 return self.module().has_coerce_map_from(S2.module())
-            else:
-                return False
-        elif (isinstance(S, FormsSpace_abstract)
+            return False
+        if (isinstance(S, FormsSpace_abstract)
               and self.graded_ring().has_coerce_map_from(S.graded_ring())
               and S.weight() == self._weight
               and S.ep() == self._ep
               and not isinstance(self, SubSpaceForms)):
             return True
-        else:
-            return self.contains_coeff_ring() \
-                and self.coeff_ring().has_coerce_map_from(S)
+        return self.contains_coeff_ring() \
+            and self.coeff_ring().has_coerce_map_from(S)
 
     # Since forms spaces are modules instead of rings
     # we have to manually define one().
@@ -486,8 +483,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         if (self.is_ambient()):
             return (ambient_space_functor, BaseFacade(self._base_ring))
-        else:
-            return (FormsSubSpaceFunctor(ambient_space_functor, self._basis), BaseFacade(self._base_ring))
+        return (FormsSubSpaceFunctor(ambient_space_functor, self._basis), BaseFacade(self._base_ring))
 
     @cached_method
     def weight(self):
@@ -627,8 +623,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         if (k == self._weight and ep == self._ep):
             return self
-        else:
-            raise ValueError("{} already is homogeneous with degree ({}, {}) != ({}, {})!".format(self, self._weight, self._ep, k, ep))
+        raise ValueError("{} already is homogeneous with degree ({}, {}) != ({}, {})!".format(self, self._weight, self._ep, k, ep))
 
     def weight_parameters(self):
         r"""
@@ -749,15 +744,14 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         if (gamma.is_translation()):
             return ZZ(1)
-        elif (gamma.is_reflection()):
+        if (gamma.is_reflection()):
             return self._ep * (t/QQbar(I))**self._weight
-        else:
-            L = list(gamma.word_S_T()[0])
-            aut_f = ZZ(1)
-            while (len(L) > 0):
-                M = L.pop(-1)
-                aut_f *= self.aut_factor(M, t)
-                t = M.acton(t)
+        L = list(gamma.word_S_T()[0])
+        aut_f = ZZ(1)
+        while (len(L) > 0):
+            M = L.pop(-1)
+            aut_f *= self.aut_factor(M, t)
+            t = M.acton(t)
         return aut_f
 
     @cached_method
@@ -1819,7 +1813,7 @@ class FormsSpace_abstract(FormsRing_abstract):
                 verbose("Encountered a base change matrix with not-yet-maximal rank (rare, please report)!")
             incr_prec_by += column_size//ZZ(5) + 1
             return self._quasi_form_matrix(min_exp=min_exp, order_1=order_1, incr_prec_by=incr_prec_by)
-        elif (incr_prec_by == 0):
+        if (incr_prec_by == 0):
             return A
 
         # At this point the matrix has maximal rank but might be too big.
@@ -2130,8 +2124,7 @@ class FormsSpace_abstract(FormsRing_abstract):
                     q_basis += [el]
 
                 return q_basis
-            else:
-                raise ValueError("Unfortunately a q_basis doesn't exist in this case (this is rare/interesting, please report)")
+            raise ValueError("Unfortunately a q_basis doesn't exist in this case (this is rare/interesting, please report)")
         else:
             if (m < min_exp):
                 raise ValueError("Index out of range: m={} < {}=min_exp".format(m, min_exp))
@@ -2267,8 +2260,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         if (isinstance(base_ring.base(), PolynomialRing_generic)):
             if (self.coeff_ring().has_coerce_map_from(base_ring)):
                 return laurent_series
-            else:
-                raise ValueError("The Laurent coefficients don't coerce into the coefficient ring of self!")
+            raise ValueError("The Laurent coefficients don't coerce into the coefficient ring of self!")
         # Else the case that the Laurent series is exact but the group is non-arithmetic
         # shouldn't occur (except for trivial cases)
         elif (base_ring.is_exact() and not self.group().is_arithmetic()):
@@ -2299,17 +2291,16 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         if (first_coeff < 0):
             return -self.rationalize_series(-laurent_series, coeff_bound=coeff_bound)
-        elif (first_exp + d_power != 0):
+        if (first_exp + d_power != 0):
             cor_factor = dvalue**(-(first_exp + d_power))
             return d**(first_exp + d_power) * self.rationalize_series(cor_factor * laurent_series, coeff_bound=coeff_bound)
+        if (base_ring.is_exact() and self.group().is_arithmetic()):
+            tolerance = 0
         else:
-            if (base_ring.is_exact() and self.group().is_arithmetic()):
-                tolerance = 0
-            else:
-                tolerance = 10*ZZ(1).n(prec).ulp()
+            tolerance = 10*ZZ(1).n(prec).ulp()
 
-            if (first_coeff * dvalue**first_exp - ZZ(1)) > tolerance:
-                raise ValueError("The Laurent series is not normalized correctly!")
+        if (first_coeff * dvalue**first_exp - ZZ(1)) > tolerance:
+            raise ValueError("The Laurent series is not normalized correctly!")
 
         # TODO: This is not a good enough estimate, see e.g. E12
         # (however for exact base rings + arithmetic groups we don't need it)
@@ -2519,5 +2510,4 @@ class FormsSpace_abstract(FormsRing_abstract):
         k = ZZ(k)
         if k >= 0 and k < self.dimension():
             return self.gens()[k]
-        else:
-            raise ValueError("Invalid index: k={} does not satisfy 0 <= k <= {}!".format(k, self.dimension()))
+        raise ValueError("Invalid index: k={} does not satisfy 0 <= k <= {}!".format(k, self.dimension()))

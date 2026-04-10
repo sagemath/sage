@@ -529,7 +529,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self.inverse()
 
-    def is_invertible(self):
+    def is_invertible(self) -> bool:
         """
         Return ``True`` if ``self`` has a two-sided multiplicative
         inverse.
@@ -617,7 +617,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             raise ZeroDivisionError("element is not invertible")
         return self._inverse
 
-    def is_zerodivisor(self):
+    def is_zerodivisor(self) -> bool:
         """
         Return ``True`` if ``self`` is a left or right zero-divisor.
 
@@ -632,7 +632,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self.matrix().det() == 0 or self.left_matrix().det() == 0
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         """
         Return ``True`` if ``self`` is nilpotent.
 

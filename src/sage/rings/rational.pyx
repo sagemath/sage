@@ -384,33 +384,6 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5):
     return (c, d) if not b_negative else (c, ~d)
 
 
-def is_Rational(x):
-    """
-    Return ``True`` if ``x`` is of the Sage :class:`Rational` type.
-
-    EXAMPLES::
-
-        sage: from sage.rings.rational import is_Rational
-        sage: is_Rational(2)
-        doctest:warning...
-        DeprecationWarning: The function is_Rational is deprecated;
-        use 'isinstance(..., Rational)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        False
-        sage: is_Rational(2/1)
-        True
-        sage: is_Rational(int(2))
-        False
-        sage: is_Rational('5')
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_Rational is deprecated; "
-                       "use 'isinstance(..., Rational)' instead.")
-    return isinstance(x, Rational)
-
-
 cdef class Rational(sage.structure.element.FieldElement):
     """
     A rational number.

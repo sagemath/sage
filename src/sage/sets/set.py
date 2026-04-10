@@ -190,10 +190,9 @@ def Set(X=None, category=None):
     elif isinstance(X, CategoryObject):
         if isinstance(X, Set_generic) and category is None:
             return X
-        elif X in Sets().Finite():
+        if X in Sets().Finite():
             return Set_object_enumerated(X, category=category)
-        else:
-            return Set_object(X, category=category)
+        return Set_object(X, category=category)
 
     if isinstance(X, Element) and not isinstance(X, Set_base):
         raise TypeError("Element has no defined underlying set")
@@ -1665,7 +1664,7 @@ class Set_object_intersection(Set_object_binary):
         """
         if self._X.is_finite():
             return True
-        elif self._Y.is_finite():
+        if self._Y.is_finite():
             return True
         raise NotImplementedError
 
@@ -1840,7 +1839,7 @@ class Set_object_difference(Set_object_binary):
         """
         if self._X.is_finite():
             return True
-        elif self._Y.is_finite():
+        if self._Y.is_finite():
             return False
         raise NotImplementedError
 
@@ -2017,7 +2016,7 @@ class Set_object_symmetric_difference(Set_object_binary):
         """
         if self._X.is_finite():
             return self._Y.is_finite()
-        elif self._Y.is_finite():
+        if self._Y.is_finite():
             return False
         raise NotImplementedError
 

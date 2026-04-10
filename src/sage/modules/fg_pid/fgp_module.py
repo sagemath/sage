@@ -1313,10 +1313,9 @@ class FGP_Module_class(Module):
             return b.parent()([b[i] if I[i] == 0 else b[i] % I[i]
                                for i in range(len(I))])
 
-        else:
-            # Don't know (or not requested) canonical way to reduce
-            # each entry yet, or how to compute invariants.
-            return b
+        # Don't know (or not requested) canonical way to reduce
+        # each entry yet, or how to compute invariants.
+        return b
 
     def gen(self, i):
         """
@@ -1576,8 +1575,7 @@ class FGP_Module_class(Module):
 
         if self.gens() == self.smith_form_gens():
             return self._hom_from_smith(im_gens, check)
-        else:
-            return self._hom_general(im_gens, check)
+        return self._hom_general(im_gens, check)
 
     def _hom_general(self, im_gens, check=True):
         """

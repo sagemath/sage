@@ -84,9 +84,14 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
         if check:
             # check parent
-            from sage.schemes.weighted_projective.weighted_projective_homset import SchemeHomset_points_weighted_projective_ring
+            from sage.schemes.weighted_projective.weighted_projective_homset import (
+                SchemeHomset_points_weighted_projective_ring,
+            )
+
             if not isinstance(X, SchemeHomset_points_weighted_projective_ring):
-                raise TypeError(f"ambient space {X} must be a weighted projective space")
+                raise TypeError(
+                    f"ambient space {X} must be a weighted projective space"
+                )
 
             d = X.codomain().ambient_space().ngens()
             if isinstance(v, SchemeMorphism):
@@ -98,22 +103,28 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                 except AttributeError:
                     pass
             if not isinstance(v, (list, tuple)):
-                raise TypeError("argument v (= %s) must be a scheme point, list, or tuple" % str(v))
-            if len(v) != d and len(v) != d-1:
+                raise TypeError(
+                    "argument v (= %s) must be a scheme point, list, or tuple" % str(v)
+                )
+            if len(v) != d and len(v) != d - 1:
                 raise TypeError("v (=%s) must have %s components" % (v, d))
 
             R = X.value_ring()
             if not R.is_integral_domain():
-                raise ValueError("cannot validate point over a ring that is not an integral domain, "
-                                 "pass check=False to construct the point")
+                raise ValueError(
+                    "cannot validate point over a ring that is not an integral domain, "
+                    "pass check=False to construct the point"
+                )
             v = Sequence(v, R)
             if len(v) == d - 1:  # very common special case
                 v.append(R.one())
 
             # (0 : 0 : ... : 0) is not a valid (weighted) projective point
             if not any(v):
-                raise ValueError(f"{v} does not define a valid projective "
-                                 "point since all entries are zero")
+                raise ValueError(
+                    f"{v} does not define a valid projective "
+                    "point since all entries are zero"
+                )
 
             X.extended_codomain()._check_satisfies_equations(v)
 
@@ -176,24 +187,28 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             return op == op_NE
 
         if op in (op_EQ, op_NE):
-            weights = space._weights
+            weights = space.weights()
             # (other[i] / self[i])^(1 / weight[i]) all equal
             # check weights
-            if (weights == other.codomain()._weights) != (op == op_EQ):
+            if (weights == other.codomain().weights()) != (op == op_EQ):
                 return False
 
             # check zeros
-            b1 = all(c1 == c2
-                     for c1, c2 in zip(self._coords, other._coords)
-                     if c1 == 0 or c2 == 0)
+            b1 = all(
+                c1 == c2
+                for c1, c2 in zip(self._coords, other._coords)
+                if c1 == 0 or c2 == 0
+            )
             if b1 != (op == op_EQ):
                 return False
 
             # check nonzeros
             prod_weights = prod(weights)
-            ratio = [(c1 / c2) ** (prod_weights // w)
-                     for c1, c2, w in zip(self._coords, other._coords, weights)
-                     if c1 != 0 and c2 != 0]
+            ratio = [
+                (c1 / c2) ** (prod_weights // w)
+                for c1, c2, w in zip(self._coords, other._coords, weights)
+                if c1 != 0 and c2 != 0
+            ]
             r0 = ratio[0]
             b2 = all(r == r0 for r in ratio)
             return b2 == (op == op_EQ)
@@ -259,7 +274,9 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         if t.is_zero():
             raise ValueError("Cannot scale by 0")
         R = self.codomain().base_ring()
-        self._coords = tuple([R(u * t**w) for u, w in zip(self._coords, self.codomain()._weights)])
+        self._coords = tuple(
+            R(u * t**w) for u, w in zip(self._coords, self.codomain().weights())
+        )
         self._normalized = False
 
     def normalize_coordinates(self) -> None:
@@ -292,7 +309,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             return
 
         if self.base_ring() in Fields():
-            weights = self.codomain()._weights
+            weights = self.codomain().weights()
             coords = self._coords
             for i in reversed(range(len(coords))):
                 w, c = weights[i], coords[i]

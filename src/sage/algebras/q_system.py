@@ -563,10 +563,11 @@ class QSystem(CombinatorialFreeModule):
                  + Q^(2)[1]^2*Q^(4)[1] - Q^(2)[1]*Q^(3)[1]^2
             """
             return self.parent().sum_of_terms((tl*tr, cl*cr)
-                                              for tl,cl in self for tr,cr in x)
+                                              for tl, cl in self
+                                              for tr, cr in x)
 
 
-def is_tamely_laced(ct):
+def is_tamely_laced(ct) -> bool:
     r"""
     Check if the Cartan type ``ct`` is tamely-laced.
 

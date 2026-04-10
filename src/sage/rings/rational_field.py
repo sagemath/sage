@@ -1671,29 +1671,6 @@ QQ = RationalField()
 Q = QQ
 
 
-def is_RationalField(x) -> bool:
-    """
-    Check to see if ``x`` is the rational field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.rational_field import is_RationalField as is_RF
-        sage: is_RF(QQ)
-        doctest:warning...
-        DeprecationWarning: The function is_RationalField is deprecated;
-        use 'isinstance(..., RationalField)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_RF(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38128,
-                "The function is_RationalField is deprecated; "
-                "use 'isinstance(..., RationalField)' instead.")
-    return isinstance(x, RationalField)
-
-
 def frac(n, d):
     """
     Return the fraction ``n/d``.

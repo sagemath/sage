@@ -510,12 +510,10 @@ class TensorWithIndices(SageObject):
         if self._con == '':
             if self._cov == '':
                 return 'scalar'
-            else:
-                return name + '_' + self._cov
-        elif self._cov == '':
+            return name + '_' + self._cov
+        if self._cov == '':
             return name + '^' + self._con
-        else:
-            return name + '^' + self._con + '_' + self._cov
+        return name + '^' + self._con + '_' + self._cov
 
     def update(self):
         r"""
@@ -542,8 +540,7 @@ class TensorWithIndices(SageObject):
         """
         if self._changed:
             return self._tensor
-        else:
-            return self
+        return self
 
     def __eq__(self, other):
         r"""
@@ -819,8 +816,7 @@ class TensorWithIndices(SageObject):
             result = +self
             result.__init__(self._tensor, args)
             return result
-        else:
-            return self._tensor[args]
+        return self._tensor[args]
 
     def __setitem__(self, args, value):
         r"""

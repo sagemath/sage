@@ -4700,27 +4700,27 @@ cdef class Matroid(SageObject):
             ....:                               [frozenset(M.groundset())])
             set()
         """
-        final_list = set()
-        temp_list = set([self.closure(X) for X in subsets])  # Checks validity
-        while temp_list:
-            F = temp_list.pop()
+        final_set = set()
+        temp_set = {self.closure(X) for X in subsets}  # Checks validity
+        while temp_set:
+            F = temp_set.pop()
             r = self._rank(F)
             # Check modular pairs
-            for FF in final_list:
+            for FF in final_set:
                 H = FF.intersection(F)
                 rH = self._rank(H)
                 if rH < r:
                     if rH + self._rank(FF.union(F)) == self._rank(FF) + r:
-                        if H not in final_list:
-                            temp_list.add(H)
+                        if H not in final_set:
+                            temp_set.add(H)
             # Check upper closure (going just one level up)
             if r < self.full_rank() - 1:
                 for e in self.groundset().difference(F):
                     FF = self.closure(F.union([e]))
-                    if self._rank(FF) > r and FF not in final_list:
-                        temp_list.add(FF)
-            final_list.add(F)
-        return final_list
+                    if self._rank(FF) > r and FF not in final_set:
+                        temp_set.add(FF)
+            final_set.add(F)
+        return final_set
 
     cpdef linear_subclasses(self, line_length=None, subsets=None):
         r"""
@@ -6091,7 +6091,7 @@ cdef class Matroid(SageObject):
         if not (self.is_connected() and self.is_simple() and self.is_cosimple()):
             return False
         basis = self.basis()
-        fund_cocircuits = set([self._fundamental_cocircuit(basis, e) for e in basis])
+        fund_cocircuits = {self._fundamental_cocircuit(basis, e) for e in basis}
         return self._is_3connected_BC_recursion(self.basis(), fund_cocircuits)
 
     cpdef _is_3connected_BC_recursion(self, basis, fund_cocircuits):
@@ -6183,10 +6183,10 @@ cdef class Matroid(SageObject):
             N = M.simplify()
             new_basis = basis & (B | Y)
             # the set of fundamental cocircuit that might be separating for N
-            cocirc = set([M._fundamental_cocircuit(new_basis, e) for e in new_basis])
+            cocirc = {M._fundamental_cocircuit(new_basis, e) for e in new_basis}
             cocirc &= fund_cocircuits
             fund_cocircuits -= cocirc
-            cocirc = set([x & N.groundset() for x in cocirc])
+            cocirc = {x & N.groundset() for x in cocirc}
             if not N._is_3connected_BC_recursion(new_basis, cocirc):
                 return False
         return True

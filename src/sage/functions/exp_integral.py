@@ -200,14 +200,12 @@ class Function_exp_integral_e(BuiltinFunction):
             if n.is_trivial_zero():
                 if z_zero:
                     return None
-                else:
-                    return exp(-z)/z
+                return exp(-z)/z
         else:
             if not n:
                 if z_zero:
                     return None
-                else:
-                    return exp(-z)/z
+                return exp(-z)/z
 
         return None  # leaves the expression unevaluated
 
@@ -1498,9 +1496,8 @@ def exponential_integral_1(x, n=0):
     if isinstance(x, Expression):
         if x.is_trivial_zero():
             return Infinity
-        else:
-            raise NotImplementedError("Use the symbolic exponential integral " +
-                                      "function: exp_integral_e1.")
+        raise NotImplementedError("Use the symbolic exponential integral " +
+                                  "function: exp_integral_e1.")
 
     # x == 0  =>  return Infinity
     if not x:
@@ -1519,10 +1516,9 @@ def exponential_integral_1(x, n=0):
         inprec = prec + 5 + math.ceil(math.log(prec))
         x = RealField(inprec)(x).__pari__()
         return R(x.eint1())
-    else:
-        # PARI's algorithm is less precise as n grows larger:
-        # add extra bits.
-        # (experimentally verified -- Jeroen Demeyer)
-        inprec = prec + 1 + math.ceil(1.4427 * math.log(n))
-        x = RealField(inprec)(x).__pari__()
-        return [R(z) for z in x.eint1(n)]
+    # PARI's algorithm is less precise as n grows larger:
+    # add extra bits.
+    # (experimentally verified -- Jeroen Demeyer)
+    inprec = prec + 1 + math.ceil(1.4427 * math.log(n))
+    x = RealField(inprec)(x).__pari__()
+    return [R(z) for z in x.eint1(n)]

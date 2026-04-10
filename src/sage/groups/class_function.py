@@ -358,8 +358,7 @@ class ClassFunction(SageObject):
         if isinstance(other, ClassFunction):
             p = self._gap_classfunction * other._gap_classfunction
             return ClassFunction(self._group, p)
-        else:
-            return ClassFunction(self._group, other * self._gap_classfunction)
+        return ClassFunction(self._group, other * self._gap_classfunction)
 
     def __rmul__(self, other):
         r"""

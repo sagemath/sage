@@ -357,10 +357,9 @@ def instance_tester(instance, tester=None, **options):
     """
     if tester is None:
         return InstanceTester(instance, **options)
-    else:
-        assert not options
-        assert tester._instance is instance
-        return tester
+    assert not options
+    assert tester._instance is instance
+    return tester
 
 
 class InstanceTester(unittest.TestCase):

@@ -381,12 +381,11 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
             hom_cycl_gen = self.base_ring().hom([e3], codomain=e3.parent(), check=check, base_map=base_map)
             verbose("hom_cycl_gen %s" % hom_cycl_gen, level=2)
             return super().hom(im_remain, codomain=codomain, check=check, base_map=hom_cycl_gen)
-        else:
-            if base_map is None:
-                raise ValueError('number of images must be four (including a '
-                                 'third root of unity at first position) or a '
-                                 'base_map (on %s) must be given' % self.base_ring())
-            return super().hom(im_gens, codomain=codomain, check=check, base_map=base_map)
+        if base_map is None:
+            raise ValueError('number of images must be four (including a '
+                             'third root of unity at first position) or a '
+                             'base_map (on %s) must be given' % self.base_ring())
+        return super().hom(im_gens, codomain=codomain, check=check, base_map=base_map)
 
     def _an_element_(self):
         r"""

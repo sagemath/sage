@@ -150,7 +150,7 @@ def nullspace_ZZ(n=200, min=0, max=2**32, system='sage'):
         t = cputime()
         v = A.kernel()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := RMatrixSpace(RationalField(), n+1,n)![Random(%s,%s) : i in [1..n*(n+1)]];
@@ -162,8 +162,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def charpoly_ZZ(n=100, min=0, max=9, system='sage'):
@@ -190,7 +189,7 @@ def charpoly_ZZ(n=100, min=0, max=9, system='sage'):
         t = cputime()
         v = A.charpoly()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
@@ -202,8 +201,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def rank_ZZ(n=700, min=0, max=9, system='sage'):
@@ -230,7 +228,7 @@ def rank_ZZ(n=700, min=0, max=9, system='sage'):
         t = cputime()
         v = A.rank()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := RMatrixSpace(IntegerRing(), n, n+10)![Random(%s,%s) : i in [1..n*(n+10)]];
@@ -242,8 +240,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def rank2_ZZ(n=400, min=0, max=2**64, system='sage'):
@@ -270,7 +267,7 @@ def rank2_ZZ(n=400, min=0, max=2**64, system='sage'):
         t = cputime()
         v = A.rank()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := RMatrixSpace(IntegerRing(), n+10, n)![Random(%s,%s) : i in [1..n*(n+10)]];
@@ -282,8 +279,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 # Smith Form
 
@@ -312,7 +308,7 @@ def smithform_ZZ(n=128, min=0, max=9, system='sage'):
         t = cputime()
         v = A.elementary_divisors()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
@@ -324,8 +320,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def matrix_multiply_ZZ(n=300, min=-9, max=9, system='sage', times=1):
@@ -355,7 +350,7 @@ def matrix_multiply_ZZ(n=300, min=-9, max=9, system='sage', times=1):
         for z in range(times):
             v = A * B
         return cputime(t)/times
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
@@ -370,8 +365,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def matrix_add_ZZ(n=200, min=-9, max=9, system='sage', times=50):
@@ -401,7 +395,7 @@ def matrix_add_ZZ(n=200, min=-9, max=9, system='sage', times=50):
         for z in range(times):
             v = A + B
         return cputime(t)/times
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 min := %s;
@@ -418,8 +412,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def matrix_add_ZZ_2(n=200, bits=16, system='sage', times=50):
@@ -469,7 +462,7 @@ def det_ZZ(n=200, min=1, max=100, system='sage'):
         t = cputime()
         d = A.determinant()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
@@ -481,8 +474,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def det_QQ(n=300, num_bound=10, den_bound=10, system='sage'):
@@ -510,7 +502,7 @@ def det_QQ(n=300, num_bound=10, den_bound=10, system='sage'):
         t = cputime()
         d = A.determinant()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := MatrixAlgebra(RationalField(), n)![Random(%s,%s)/Random(1,%s) : i in [1..n^2]];
@@ -522,8 +514,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def vecmat_ZZ(n=300, min=-9, max=9, system='sage', times=200):
@@ -555,7 +546,7 @@ def vecmat_ZZ(n=300, min=-9, max=9, system='sage', times=200):
         for z in range(times):
             w = v * A
         return cputime(t)/times
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := MatrixAlgebra(IntegerRing(), n)![Random(%s,%s) : i in [1..n^2]];
@@ -570,8 +561,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 #######################################################################
@@ -635,7 +625,7 @@ def nullspace_GF(n=300, p=16411, system='sage'):
         t = cputime()
         v = A.kernel()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := Random(RMatrixSpace(GF(%s), n, n+1));
@@ -647,8 +637,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return magma.eval('s')
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 # Characteristic Polynomial over GF
@@ -675,7 +664,7 @@ def charpoly_GF(n=100, p=16411, system='sage'):
         t = cputime()
         v = A.charpoly()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := Random(MatrixAlgebra(GF(%s), n));
@@ -687,8 +676,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return magma.eval('s')
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def matrix_add_GF(n=1000, p=16411, system='sage', times=100):
@@ -715,7 +703,7 @@ def matrix_add_GF(n=1000, p=16411, system='sage', times=100):
         for n in range(times):
             v = A + B
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := Random(MatrixAlgebra(GF(%s), n));
@@ -730,8 +718,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return magma.eval('s')
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 # Matrix multiplication over GF(p)
@@ -761,7 +748,7 @@ def matrix_multiply_GF(n=100, p=16411, system='sage', times=3):
         for n in range(times):
             v = A * B
         return cputime(t) / times
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := Random(MatrixAlgebra(GF(%s), n));
@@ -776,8 +763,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def rank_GF(n=500, p=16411, system='sage'):
@@ -802,7 +788,7 @@ def rank_GF(n=500, p=16411, system='sage'):
         t = cputime()
         v = A.rank()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := Random(MatrixAlgebra(GF(%s), n));
@@ -814,8 +800,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def rank2_GF(n=500, p=16411, system='sage'):
@@ -840,7 +825,7 @@ def rank2_GF(n=500, p=16411, system='sage'):
         t = cputime()
         v = A.rank()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := Random(MatrixAlgebra(GF(%s), n));
@@ -852,8 +837,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def det_GF(n=400, p=16411 , system='sage'):
@@ -879,7 +863,7 @@ def det_GF(n=400, p=16411 , system='sage'):
         t = cputime()
         d = A.determinant()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := Random(MatrixAlgebra(GF(%s), n));
@@ -891,8 +875,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 #######################################################################
@@ -943,7 +926,7 @@ def echelon_QQ(n=100, min=0, max=9, system='sage'):
         t = cputime()
         v = A.echelon_form()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := RMatrixSpace(RationalField(), n, 2*n)![Random(%s,%s) : i in [1..n*2*n]];
@@ -955,8 +938,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 # Invert a matrix over QQ.
 
@@ -984,7 +966,7 @@ def inverse_QQ(n=100, min=0, max=9, system='sage'):
         t = cputime()
         v = ~A
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := MatrixAlgebra(RationalField(), n)![Random(%s,%s) : i in [1..n*n]];
@@ -996,8 +978,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 # Matrix multiplication over QQ
@@ -1027,7 +1008,7 @@ def matrix_multiply_QQ(n=100, bnd=2, system='sage', times=1):
         for z in range(times):
             v = A * B
         return cputime(t)/times
-    elif system == 'magma':
+    if system == 'magma':
         A = magma(random_matrix(QQ, n, n, num_bound=bnd, den_bound=bnd))
         code = """
 n := %s;
@@ -1043,8 +1024,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))/times
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 # Determinant of Hilbert matrix
@@ -1069,7 +1049,7 @@ def det_hilbert_QQ(n=80, system='sage'):
         t = cputime()
         d = A.determinant()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 h := HilbertMatrix(%s);
 tinit := Cputime();
@@ -1106,7 +1086,7 @@ def invert_hilbert_QQ(n=40, system='sage'):
         t = cputime()
         d = A**(-1)
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 h := HilbertMatrix(%s);
 tinit := Cputime();
@@ -1146,7 +1126,7 @@ def MatrixVector_QQ(n=1000, h=100, system='sage', times=1):
         for i in range(times):
             w = M*v
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
             n:=%s;
             h:=%s;
@@ -1163,8 +1143,7 @@ def MatrixVector_QQ(n=1000, h=100, system='sage', times=1):
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 #######################################################################
@@ -1200,7 +1179,7 @@ def nullspace_RR(n=300, min=0, max=10, system='sage'):
         t = cputime()
         v = A.kernel()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := RMatrixSpace(RealField(16), n+1,n)![Random(%s,%s) : i in [1..n*(n+1)]];
@@ -1212,8 +1191,7 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)
 
 
 def nullspace_RDF(n=300, min=0, max=10, system='sage'):
@@ -1241,7 +1219,7 @@ def nullspace_RDF(n=300, min=0, max=10, system='sage'):
         t = cputime()
         v = A.kernel()
         return cputime(t)
-    elif system == 'magma':
+    if system == 'magma':
         code = """
 n := %s;
 A := RMatrixSpace(RealField(16), n+1,n)![Random(%s,%s) : i in [1..n*(n+1)]];
@@ -1253,5 +1231,4 @@ s := Cputime(t);
             print(code)
         magma.eval(code)
         return float(magma.eval('s'))
-    else:
-        raise ValueError('unknown system "%s"' % system)
+    raise ValueError('unknown system "%s"' % system)

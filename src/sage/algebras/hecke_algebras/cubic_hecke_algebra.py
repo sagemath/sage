@@ -1253,7 +1253,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
                     xbv = xb.to_vector()
                     img_xbv = vector([self.base_ring()(cf) for cf in xbv])
                     return self.from_vector(img_xbv)
-                elif other_ngens < ngens:
+                if other_ngens < ngens:
                     sub_alg = self.cubic_hecke_subalgebra(other_ngens+1)
                     return self(sub_alg(xb))
 
@@ -1474,12 +1474,11 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         if n == 2:
             c1, = first_gens
             return const + v*c1
-        elif n == 3:
+        if n == 3:
             c1, c2 = first_gens
             return const + v*c1 - w*c1*~c2 + u*c2
-        else:
-            c1, c2, c3 = first_gens
-            return const + v*c1*~c3 - w*c1*~c2 + u*c3*c2
+        c1, c2, c3 = first_gens
+        return const + v*c1*~c3 - w*c1*~c2 + u*c3*c2
 
     @cached_method
     def chevie(self):
@@ -2574,10 +2573,9 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         if list(cubic_braid_tietze) in tietze_list:
             verbose('cubic_braid_tietze: %s in basis' % str(cubic_braid_tietze), level=2)
             return cubic_braid_tietze
-        else:
-            if cubic_braid in self._finite_sub_basis_tuples.keys():
-                verbose('cubic_braid: %s in finite_sub_basis' % cubic_braid, level=2)
-                return self._finite_sub_basis_tuples[cubic_braid]
+        if cubic_braid in self._finite_sub_basis_tuples.keys():
+            verbose('cubic_braid: %s in finite_sub_basis' % cubic_braid, level=2)
+            return self._finite_sub_basis_tuples[cubic_braid]
 
         for tup in tietze_list:
             cb_tup = self.cubic_braid_group()(tup)
@@ -2781,9 +2779,10 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         """
         return self._filecache.section
 
-    def is_filecache_empty(self, section=None):
+    def is_filecache_empty(self, section=None) -> bool:
         r"""
         Return ``True`` if the file cache of the given ``section`` is empty.
+
         If no ``section`` is given the answer is given for the complete
         file cache.
 
@@ -3052,8 +3051,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         """
         if generic:
             return self._generic_cubic_equation_roots
-        else:
-            return self._cubic_equation_roots
+        return self._cubic_equation_roots
 
     # --------------------------------------------------------------------------
     # cubic_equation_roots
@@ -3081,8 +3079,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         """
         if generic:
             return self._generic_cubic_equation_parameters
-        else:
-            return self._cubic_equation_parameters
+        return self._cubic_equation_parameters
 
     # --------------------------------------------------------------------------
     # base_ring
@@ -3107,8 +3104,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         """
         if generic:
             return self._ring_of_definition
-        else:
-            return super().base_ring()
+        return super().base_ring()
 
     # --------------------------------------------------------------------------
     # extension_ring
@@ -3139,8 +3135,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         """
         if generic:
             return self._generic_extension_ring
-        else:
-            return self._extension_ring
+        return self._extension_ring
 
     # --------------------------------------------------------------------------
     # cyclotomic_generator
@@ -3170,8 +3165,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         e3gen = self.extension_ring(generic=True).cyclotomic_generator()
         if generic:
             return e3gen
-        else:
-            return self._generic_extension_ring_map(e3gen)
+        return self._generic_extension_ring_map(e3gen)
 
     # --------------------------------------------------------------------------
     # braid_group
@@ -3446,9 +3440,8 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         generic_result = [GER(s) for s in gap3_result]
         if generic:
             return list(generic_result)
-        else:
-            ER = self.extension_ring()
-            return [ER(s) for s in generic_result]
+        ER = self.extension_ring()
+        return [ER(s) for s in generic_result]
 
     # --------------------------------------------------------------------------
     # Schur element

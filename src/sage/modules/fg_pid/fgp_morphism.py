@@ -284,17 +284,16 @@ class FGP_Morphism(Morphism):
             # perhaps can be optimized with a matrix multiply; but note
             # the subtlety of optimized representations.
             return self.codomain().submodule([self(y) for y in x.smith_form_gens()])
+        C = self.codomain()
+        D = self.domain()
+        O, X = D.optimized()
+        x = D(x)
+        if O is D:
+            x = x.lift()
         else:
-            C = self.codomain()
-            D = self.domain()
-            O, X = D.optimized()
-            x = D(x)
-            if O is D:
-                x = x.lift()
-            else:
-                # Now we have to transform x so that it is in the optimized representation.
-                x = D.V().coordinate_vector(x.lift()) * X
-            return C(self._phi(x))
+            # Now we have to transform x so that it is in the optimized representation.
+            x = D.V().coordinate_vector(x.lift()) * X
+        return C(self._phi(x))
 
     def kernel(self):
         """

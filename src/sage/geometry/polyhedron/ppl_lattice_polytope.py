@@ -1239,12 +1239,11 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         ambient, subreflexive, hom = self._find_isomorphism_to_subreflexive_polytope()
         if output == 'hom':
             return hom
-        elif output == 'polytope':
+        if output == 'polytope':
             return ambient
-        elif output == 'points':
+        if output == 'points':
             points = dict()
             for p in subreflexive.integral_points():
                 points[ tuple(hom(p)) ] = p
             return points
-        else:
-            raise ValueError('output='+str(output)+' is not valid.')
+        raise ValueError('output='+str(output)+' is not valid.')

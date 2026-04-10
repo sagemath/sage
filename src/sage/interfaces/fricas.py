@@ -710,8 +710,7 @@ http://fricas.sourceforge.net.
             lines = m.groups()[0].split("\n")
             if max(len(line) for line in lines) < FRICAS_LINE_LENGTH:
                 return "\n".join(line[FRICAS_SINGLE_LINE_START:] for line in lines)
-            else:
-                return "\n".join(line[FRICAS_MULTI_LINE_START:] for line in lines)
+            return "\n".join(line[FRICAS_MULTI_LINE_START:] for line in lines)
 
         self._check_errors(var, output)
 
@@ -1318,10 +1317,9 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         if s[a] == FriCASElement._LEFTBRACKET:
             return FriCASElement._parse_list(s, start=a)
-        elif s[a] == FriCASElement._STRINGMARKER:
+        if s[a] == FriCASElement._STRINGMARKER:
             return FriCASElement._parse_string(s, start=a)
-        else:
-            return FriCASElement._parse_other(s, start=a)
+        return FriCASElement._parse_other(s, start=a)
 
     @staticmethod
     def _parse_list(s, start=0):

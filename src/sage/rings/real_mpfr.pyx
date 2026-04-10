@@ -5954,34 +5954,6 @@ def create_RealNumber(s, int base=10, int pad=0, rnd='RNDN', int min_prec=53):
     return RealLiteral(R, s, base)
 
 
-def is_RealNumber(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`RealNumber`, meaning that it
-    is an element of the MPFR real field with some precision.
-
-    EXAMPLES::
-
-        sage: from sage.rings.real_mpfr import is_RealNumber
-        sage: is_RealNumber(2.5)
-        doctest:warning...
-        DeprecationWarning: The function is_RealNumber is deprecated;
-        use 'isinstance(..., RealNumber)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_RealNumber(float(2.3))
-        False
-        sage: is_RealNumber(RDF(2))
-        False
-        sage: is_RealNumber(pi)                                                         # needs sage.symbolic
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_RealNumber is deprecated; "
-                       "use 'isinstance(..., RealNumber)' instead.")
-    return isinstance(x, RealNumber)
-
-
 def __create__RealField_version0(prec, sci_not, rnd):
     """
     Create a :class:`RealField_class` by calling :func:`RealField()`.

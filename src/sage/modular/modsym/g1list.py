@@ -64,8 +64,7 @@ class G1list(SageObject):
         """
         if not isinstance(other, G1list):
             return NotImplemented
-        else:
-            return richcmp(self.__N, other.__N, op)
+        return richcmp(self.__N, other.__N, op)
 
     def __getitem__(self, i):
         """

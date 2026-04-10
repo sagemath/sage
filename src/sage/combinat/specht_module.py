@@ -395,8 +395,7 @@ class SpechtModule(SymmetricGroupRepresentation, SubmoduleWithBasis):
             if x in P._semigroup_algebra or x in P._semigroup_algebra.group():
                 if self_on_left:  # it is only a left module
                     return None
-                else:
-                    return P.retract(P._semigroup_algebra(x) * self.lift())
+                return P.retract(P._semigroup_algebra(x) * self.lift())
             return None
 
 

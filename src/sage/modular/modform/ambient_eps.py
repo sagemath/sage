@@ -162,9 +162,8 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         if self._eis_only:
             return "Modular Forms space of character %s and weight %s over %s" % (
                         self.character()._repr_short_(), self.weight(), self.base_ring())
-        else:
-            return "Modular Forms space of dimension %s, character %s and weight %s over %s" % (
-            self.dimension(), self.character()._repr_short_(), self.weight(), self.base_ring())
+        return "Modular Forms space of dimension %s, character %s and weight %s over %s" % (
+        self.dimension(), self.character()._repr_short_(), self.weight(), self.base_ring())
 
     @cached_method
     def cuspidal_submodule(self):
@@ -183,8 +182,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         """
         if self.weight() > 1:
             return cuspidal_submodule.CuspidalSubmodule_eps(self)
-        else:
-            return cuspidal_submodule.CuspidalSubmodule_wt1_eps(self)
+        return cuspidal_submodule.CuspidalSubmodule_wt1_eps(self)
 
     def change_ring(self, base_ring):
         """
@@ -284,10 +282,9 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         from . import constructor
         if N % self.level() == 0:
             return constructor.ModularForms(self.character().extend(N), self.weight(), self.base_ring(), prec=self.prec())
-        elif self.level() % N == 0:
+        if self.level() % N == 0:
             return constructor.ModularForms(self.character().restrict(N), self.weight(), self.base_ring(), prec=self.prec())
-        else:
-            raise ValueError("N (=%s) must be a divisor or a multiple of the level of self (=%s)" % (N, self.level()))
+        raise ValueError("N (=%s) must be a divisor or a multiple of the level of self (=%s)" % (N, self.level()))
 
     def _pari_init_(self):
         """

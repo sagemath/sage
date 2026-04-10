@@ -1279,8 +1279,7 @@ class GraphLatex(SageObject):
         else:
             if option_name in self._options:
                 return self._options[option_name]
-            else:
-                return GraphLatex.__graphlatex_options[option_name]
+            return GraphLatex.__graphlatex_options[option_name]
 
     def latex(self):
         r"""
@@ -1358,7 +1357,7 @@ class GraphLatex(SageObject):
         format = self.get_option('format')
         if format == "tkz_graph":
             return self.tkz_picture()
-        elif format == "dot2tex":
+        if format == "dot2tex":
             return self.dot2tex_picture()
 
     def dot2tex_picture(self):
