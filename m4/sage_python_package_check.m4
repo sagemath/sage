@@ -28,8 +28,7 @@
 #   nothing, since the default value of sage_spkg_install_$package
 #   is "no" (to use the system copy).
 #
-#   The SAGE_SPKG_CONFIGURE_PYTHON3() macro is AC_REQUIRE'd to ensure
-#   that $PYTHON_FOR_VENV is available, if it is going to be available.
+#   The $PYTHON_FOR_VENV variable is set in configure.ac.
 #   The check is run inside a new venv, and with the PYTHONUSERBASE
 #   variable poisoned in the same manner as sage-env poisons it, to
 #   ensure that the ./configure- and run-time views of the system
@@ -44,7 +43,6 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
   AC_MSG_CHECKING([if --enable-system-site-packages was used])
   AS_IF([test "${enable_system_site_packages}" = "yes"], [
     AC_MSG_RESULT(yes)
-    AC_REQUIRE([SAGE_SPKG_CONFIGURE_PYTHON3])
 
     dnl We run this check inside a python venv, because that's ultimately
     dnl how the system $PYTHON_FOR_VENV will be used.

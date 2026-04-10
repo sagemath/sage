@@ -272,7 +272,6 @@ def cyclotomic_value(n, x):
         sage: cyclotomic_value(30, -1.0)                                                # needs sage.rings.real_mpfr
         1.00000000000000
 
-        sage: # needs sage.libs.pari
         sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))
         sage: cyclotomic_value(15, t)
         0

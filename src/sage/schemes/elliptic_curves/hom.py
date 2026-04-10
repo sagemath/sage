@@ -29,6 +29,7 @@ AUTHORS:
 - Lorenz Panny (2023): :meth:`~EllipticCurveHom.trace`, :meth:`~EllipticCurveHom.characteristic_polynomial`
 """
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.richcmp import richcmp_not_equal, richcmp, op_EQ, op_NE
 
 from sage.categories.morphism import Morphism
@@ -39,8 +40,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings import finite_field_base
 from sage.rings.number_field import number_field_base
 
-import sage.schemes.elliptic_curves.weierstrass_morphism as wm
-
+lazy_import('sage.schemes.elliptic_curves', 'weierstrass_morphism', as_='wm')
 
 class EllipticCurveHom(Morphism):
     """

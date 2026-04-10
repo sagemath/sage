@@ -263,8 +263,7 @@ class SimplicialComplexMorphism(Morphism):
             else:
                 oriented = 1
             return (Simplex(set(fx)), oriented)
-        else:
-            return Simplex(set(fx))
+        return Simplex(set(fx))
 
     def _repr_type(self) -> str:
         """

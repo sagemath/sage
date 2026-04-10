@@ -1835,7 +1835,7 @@ class ArgumentGroupFactory(UniqueFactory):
                 return (RootsOfUnityGroup, ()), kwds
             if specification == 'Signs':
                 return (SignGroup, ()), kwds
-            elif specification.startswith('UU_'):
+            if specification.startswith('UU_'):
                 from sage.rings.asymptotic.misc import repr_short_to_parent
                 exponents = repr_short_to_parent(specification[3:])
             elif specification.startswith('Arg_') or specification.startswith('arg_'):
@@ -1850,20 +1850,18 @@ class ArgumentGroupFactory(UniqueFactory):
                                       sage.rings.abc.RealIntervalField,
                                       sage.rings.abc.RealBallField)):
                 return (SignGroup, ()), kwds
-            elif isinstance(domain, (sage.rings.abc.ComplexField,
+            if isinstance(domain, (sage.rings.abc.ComplexField,
                                      sage.rings.abc.ComplexIntervalField,
                                      sage.rings.abc.ComplexBallField)):
                 return (UnitCircleGroup, (domain._real_field(),)), kwds
-            else:
-                return (ArgumentByElementGroup, (domain,)), kwds
+            return (ArgumentByElementGroup, (domain,)), kwds
 
-        elif exponents is not None:
+        if exponents is not None:
             if exponents == ZZ:
                 return (SignGroup, ()), kwds
-            elif exponents == QQ:
+            if exponents == QQ:
                 return (RootsOfUnityGroup, ()), kwds
-            else:
-                return (UnitCircleGroup, (exponents,)), kwds
+            return (UnitCircleGroup, (exponents,)), kwds
 
     def create_object(self, version, key, **kwds):
         r"""

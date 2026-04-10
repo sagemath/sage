@@ -729,7 +729,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         Check that :issue:`28741` is fixed::
 
-            sage: # needs sage.graphs
             sage: p = LatticePolytope([], lattice=ToricLattice(3).dual()); p
             -1-d lattice polytope in 3-d lattice M
             sage: a = p.faces()[0][0]
@@ -881,14 +880,13 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             for point in r:
                 point.set_immutable()
             return PointCollection(r, M)
-        elif isinstance(data, Matrix):
+        if isinstance(data, Matrix):
             r = self._embedding_matrix * data
             for i, col in enumerate(r.columns(copy=False)):
                 r.set_column(i, col + self._shift_vector)
             return r
-        else:
-            return M(self._embedding_matrix * vector(QQ, data) +
-                     self._shift_vector)
+        return M(self._embedding_matrix * vector(QQ, data) +
+                 self._shift_vector)
 
     def _latex_(self) -> str:
         r"""
@@ -1479,7 +1477,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             sage: o.ambient() is o
             True
 
-            sage: # needs sage.graphs
             sage: face = o.faces(1)[0]
             sage: face
             1-d face of 3-d reflexive polytope in 3-d lattice M
@@ -1506,7 +1503,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         But each of its other faces is contained in one or more facets::
 
-            sage: # needs sage.graphs
             sage: face = o.faces(1)[0]
             sage: face.ambient_facet_indices()
             (4, 5)
@@ -1809,7 +1805,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: o = lattice_polytope.cross_polytope(4)
             sage: e = o.edges()[0]; e
             1-d face of 4-d reflexive polytope in 4-d lattice M
@@ -1938,7 +1933,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         However, you can achieve some of this functionality using
         :meth:`facets`, :meth:`facet_of`, and :meth:`adjacent` methods::
 
-            sage: # needs sage.graphs
             sage: face = square.faces(0)[0]
             sage: face
             0-d face of 2-d lattice polytope in 2-d lattice M
@@ -1960,7 +1954,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         Note that if ``p`` is a face of ``superp``, then the face
         lattice of ``p`` consists of (appropriate) faces of ``superp``::
 
-            sage: # needs sage.graphs
             sage: superp = LatticePolytope([(1,2,3,4), (5,6,7,8),
             ....:                           (1,2,4,8), (1,3,9,7)])
             sage: superp.face_lattice()
@@ -1996,46 +1989,45 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
             return lattice_from_incidences(
                 vertex_to_facets, facet_to_vertices, LPFace, key=id(self))
-        else:
-            # Get face lattice as a sublattice of the ambient one
-            allowed_indices = frozenset(self._ambient_vertex_indices)
-            from sage.graphs.digraph import DiGraph
-            L = DiGraph()
-            empty = self._ambient.face_lattice().bottom()
-            L.add_vertex(0)  # In case it is the only one
-            dfaces = [empty]
-            faces = [empty]
-            face_to_index = {empty: 0}
-            next_index = 1
-            next_d = 0  # Dimension of faces to be considered next.
-            while next_d < self.dim():
-                ndfaces = []
-                for face in dfaces:
-                    face_index = face_to_index[face]
-                    for new_face in face.facet_of():
-                        if not allowed_indices.issuperset(
-                                new_face._ambient_vertex_indices):
-                            continue
-                        if new_face in ndfaces:
-                            new_face_index = face_to_index[new_face]
-                        else:
-                            ndfaces.append(new_face)
-                            face_to_index[new_face] = next_index
-                            new_face_index = next_index
-                            next_index += 1
-                        L.add_edge(face_index, new_face_index)
-                faces.extend(ndfaces)
-                dfaces = ndfaces
-                next_d += 1
-            if self.dim() > 0:
-                # Last level is very easy to build, so we do it separately
-                # even though the above cycle could do it too.
-                faces.append(self)
-                for face in dfaces:
-                    L.add_edge(face_to_index[face], next_index)
-            D = dict(enumerate(faces))
-            L.relabel(D)
-            return FinitePoset(L, faces, key=id(self))
+        # Get face lattice as a sublattice of the ambient one
+        allowed_indices = frozenset(self._ambient_vertex_indices)
+        from sage.graphs.digraph import DiGraph
+        L = DiGraph()
+        empty = self._ambient.face_lattice().bottom()
+        L.add_vertex(0)  # In case it is the only one
+        dfaces = [empty]
+        faces = [empty]
+        face_to_index = {empty: 0}
+        next_index = 1
+        next_d = 0  # Dimension of faces to be considered next.
+        while next_d < self.dim():
+            ndfaces = []
+            for face in dfaces:
+                face_index = face_to_index[face]
+                for new_face in face.facet_of():
+                    if not allowed_indices.issuperset(
+                            new_face._ambient_vertex_indices):
+                        continue
+                    if new_face in ndfaces:
+                        new_face_index = face_to_index[new_face]
+                    else:
+                        ndfaces.append(new_face)
+                        face_to_index[new_face] = next_index
+                        new_face_index = next_index
+                        next_index += 1
+                    L.add_edge(face_index, new_face_index)
+            faces.extend(ndfaces)
+            dfaces = ndfaces
+            next_d += 1
+        if self.dim() > 0:
+            # Last level is very easy to build, so we do it separately
+            # even though the above cycle could do it too.
+            faces.append(self)
+            for face in dfaces:
+                L.add_edge(face_to_index[face], next_index)
+        D = dict(enumerate(faces))
+        L.relabel(D)
+        return FinitePoset(L, faces, key=id(self))
 
     def faces(self, dim=None, codim=None):
         r"""
@@ -2123,8 +2115,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
                                     self.face_lattice().level_sets()))
         if dim is None:
             return self._faces
-        else:
-            return self._faces[dim + 1] if -1 <= dim <= self.dim() else ()
+        return self._faces[dim + 1] if -1 <= dim <= self.dim() else ()
 
     def facet_constant(self, i):
         r"""
@@ -2326,7 +2317,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: square = LatticePolytope([(0,0), (1,0), (1,1), (0,1)])
             sage: square.facet_of()
             ()
@@ -3218,8 +3208,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         out = _palp_canonical_order(self.vertices(), PM_max, permutations)
         if permutation:
             return out
-        else:
-            return out[0]
+        return out[0]
 
     def _palp_native_normal_form(self, permutation=False):
         r"""
@@ -3263,8 +3252,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         out = _palp_canonical_order(self.vertices(), PM_max, permutations)
         if permutation:
             return out
-        else:
-            return out[0]
+        return out[0]
 
     def _palp_PM_max(self, check=False):
         r"""
@@ -3796,8 +3784,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         if hasattr(self, "_points"):
             if args or kwds:
                 return self._points(*args, **kwds)
-            else:
-                return self._points
+            return self._points
         M = self.lattice()
         nv = self.n_vertices()
         points = self._vertices
@@ -3831,8 +3818,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             self._points = points
         if args or kwds:
             return self._points(*args, **kwds)
-        else:
-            return self._points
+        return self._points
 
     def _some_elements_(self):
         r"""
@@ -4575,8 +4561,7 @@ class NefPartition(SageObject, Hashable):
         """
         if i is None:
             return self._Delta_polar.polar()
-        else:
-            return self.dual().nabla(i)
+        return self.dual().nabla(i)
 
     def Delta_polar(self):
         r"""
@@ -4770,8 +4755,7 @@ class NefPartition(SageObject, Hashable):
         """
         if i is None:
             return self.dual().Delta()
-        else:
-            return self.nablas()[i]
+        return self.nablas()[i]
 
     def nabla_polar(self):
         r"""
@@ -5091,8 +5075,7 @@ def _palp(command, polytopes, reduce_dimension=False):
         dot = command.find(".")
         command = command[:dot] + "-%dd" % _palp_dimension + command[dot:]
     executable, args = command.split(" ", 1)
-    if executable.endswith('.x'):
-        executable = executable[:-2]
+    executable = executable.removesuffix('.x')
     executable = PalpExecutable(executable).absolute_filename()
     command = " ".join([shlex.quote(executable), args])
     input_file_name = tmp_filename()
@@ -5800,8 +5783,7 @@ def read_palp_matrix(data, permutation=False):
             raise ValueError('PALP did not return a permutation.')
         p = _palp_convert_permutation(last_piece[1])
         return (mat, p)
-    else:
-        return mat
+    return mat
 
 
 def set_palp_dimension(d):

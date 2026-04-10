@@ -586,7 +586,6 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         Fairly complicated code (from Michel Vandenbergh)::
 
-            sage: # needs sage.rings.number_field
             sage: z = polygen(QQ, 'z')
             sage: W.<s> = NumberField(z^2 + 1)
             sage: Q.<u,v,w> = W[]
@@ -738,7 +737,6 @@ cdef class MPolynomialRing_base(CommutativeRing):
         """
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: T.<t> = ZZ[]
             sage: K.<i> = NumberField(t^2 + 1)
             sage: R.<x,y> = K[]
@@ -774,7 +772,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         A complicated nested example::
 
-            sage: # optional - magma, needs sage.rings.finite_rings
+            sage: # optional - magma
             sage: R.<a,b,c> = PolynomialRing(GF(9,'a')); S.<T,W> = R[]; S
             Multivariate Polynomial Ring in T, W over Multivariate
             Polynomial Ring in a, b, c over Finite Field in a of size 3^2
@@ -811,7 +809,6 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap sage.rings.number_field
             sage: F = CyclotomicField(8)
             sage: P.<x,y> = F[]
             sage: gap(P)     # indirect doctest
@@ -1243,7 +1240,6 @@ cdef class MPolynomialRing_base(CommutativeRing):
         Default values apply if no degree and/or number of terms is
         provided::
 
-            sage: # needs sage.modules
             sage: M = random_matrix(QQ['x,y,z'], 2, 2)
             sage: all(a.degree() <= 2 for a in M.list())
             True
@@ -1483,7 +1479,6 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: R.<x,y,z> = ZZ[]
             sage: mons = R.monomials_of_degree(2)
             sage: mons

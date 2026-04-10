@@ -807,19 +807,6 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             Graphics object consisting of 1 graphics primitive
             sage: C.plot(patch=1)
             Graphics object consisting of 1 graphics primitive
-
-        A hyperelliptic curve::
-
-            sage: # needs sage.plot
-            sage: P.<x> = QQ[]
-            sage: f = 4*x^5 - 30*x^3 + 45*x - 22
-            sage: C = HyperellipticCurve(f)
-            sage: C.plot()
-            Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=0)
-            Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=1)
-            Graphics object consisting of 1 graphics primitive
         """
         # if user has not specified a favorite affine patch, take the
         # one avoiding "infinity", i.e. the one corresponding to the
@@ -1634,7 +1621,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = Curve(x^2 + y^2)
-            sage: C.genus()  # indirect test
+            sage: C.genus()  # indirect doctest
             -1
         """
         return self.defining_ideal().genus()
@@ -2132,6 +2119,19 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
             sage: C.riemann_roch_basis(D)
             [(-2*x + y)/(x + y), (-x + z)/(x + y)]
 
+        TESTS:
+
+        We check that issue:`41793` is fixed:
+
+            sage: F = GF(13)
+            sage: PP.<X,Y,Z> = PolynomialRing(F,3)
+            sage: F = Y^2*Z - X^3 - X*Z^2
+            sage: C = Curve(F)
+            sage: Points = C.rational_points()
+            sage: G = C.divisor([(1, Points[0]), (3, Points[0])])
+            sage: C.riemann_roch_basis(G)
+            [1, Z/X, Y*Z/X^2, Z^2/X^2]
+
         .. NOTE::
 
             Currently this only works over prime field and divisors
@@ -2378,9 +2378,11 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         Sampling from points on a hyperelliptic curve::
 
-            sage: R.<x,y> = GF(13)[]
-            sage: C = HyperellipticCurve(y^2 + 3*x^2*y - (x^5 + x + 1))
-            sage: P = C.random_element(); P  # random
+            sage: R.<x> = GF(13)[]
+            sage: f = x^5 + x + 1
+            sage: h = 3*x^2
+            sage: C = HyperellipticCurve(f, h)
+            sage: P = C.random_point(); P  # random
             (0 : 1 : 0)
             sage: P in C
             True

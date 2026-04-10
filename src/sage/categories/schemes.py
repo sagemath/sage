@@ -149,12 +149,11 @@ class Schemes(Category):
         from sage.schemes.generic.spec import Spec
         if x in CommutativeRings():
             return Spec(x)
-        elif isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
+        if isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
             # x is a morphism of Rings
             A = Spec(x.codomain())
             return A.hom(x)
-        else:
-            raise TypeError("No way to create an object or morphism in %s from %s" % (self, x))
+        raise TypeError("No way to create an object or morphism in %s from %s" % (self, x))
 
 
 class Schemes_over_base(Category_over_base):

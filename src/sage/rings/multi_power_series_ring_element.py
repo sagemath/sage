@@ -167,40 +167,8 @@ lazy_import('sage.rings.multi_power_series_ring', 'MPowerSeriesRing_generic')
 lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
-def is_MPowerSeries(f):
-    """
-    Return ``True`` if ``f`` is a multivariate power series.
-
-    TESTS::
-
-        sage: from sage.rings.power_series_ring_element import is_PowerSeries
-        sage: from sage.rings.multi_power_series_ring_element import is_MPowerSeries
-        sage: M = PowerSeriesRing(ZZ,4,'v')
-        sage: is_PowerSeries(M.random_element(10))
-        doctest:warning...
-        DeprecationWarning: The function is_PowerSeries is deprecated; use 'isinstance(..., PowerSeries)' instead.
-        See https://github.com/sagemath/sage/issues/38266 for details.
-        True
-        sage: is_MPowerSeries(M.random_element(10))
-        doctest:warning...
-        DeprecationWarning: The function is_MPowerSeries is deprecated; use 'isinstance(..., MPowerSeries)' instead.
-        See https://github.com/sagemath/sage/issues/38266 for details.
-        True
-        sage: T.<v> = PowerSeriesRing(RR)
-        sage: is_MPowerSeries(1 - v + v^2 +O(v^3))
-        False
-        sage: is_PowerSeries(1 - v + v^2 +O(v^3))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38266,
-                "The function is_MPowerSeries is deprecated; "
-                "use 'isinstance(..., MPowerSeries)' instead.")
-    return isinstance(f, MPowerSeries)
-
-
 class MPowerSeries(PowerSeries):
-    ### methods from PowerSeries that we *don't* override:
+    # ## methods from PowerSeries that we *don't* override:
     #
     # __hash__ : works just fine
     #
@@ -293,7 +261,6 @@ class MPowerSeries(PowerSeries):
 
     Convert elements from polynomial rings::
 
-        sage: # needs sage.rings.finite_rings
         sage: R = PolynomialRing(ZZ, 5, T.variable_names())
         sage: t = R.gens()
         sage: r = -t[2]*t[3] + t[3]^2 + t[4]^2
@@ -472,7 +439,6 @@ class MPowerSeries(PowerSeries):
 
         Since :issue:`26105` you can specify a map on the base ring::
 
-            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
             sage: K.<i> = NumberField(x^2 + 1)
             sage: cc = K.hom([-i])
@@ -931,7 +897,6 @@ class MPowerSeries(PowerSeries):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<a,b,c> = PowerSeriesRing(ZZ)
             sage: f = 1 + a + b - a*b + R.O(3)
             sage: g = 1 + 2*a - 3*a*b + R.O(3)
@@ -958,7 +923,6 @@ class MPowerSeries(PowerSeries):
         algorithm would never terminate). Here, default precision
         comes to our help::
 
-            sage: # needs sage.libs.singular
             sage: (1 + a^3).quo_rem(a + a^2)
             (a^2 - a^3 + a^4 - a^5 + a^6 - a^7 + a^8 - a^9 + a^10 + O(a, b, c)^11,
              1 + O(a, b, c)^12)
@@ -983,7 +947,6 @@ class MPowerSeries(PowerSeries):
 
         Illustrating the dependency on the ordering of variables::
 
-            sage: # needs sage.libs.singular
             sage: (1 + a + b).quo_rem(b + c)
             (1 + O(a, b, c)^11, 1 + a - c + O(a, b, c)^12)
             sage: (1 + b + c).quo_rem(c + a)
@@ -1441,7 +1404,6 @@ class MPowerSeries(PowerSeries):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<a,b> = PowerSeriesRing(GF(4949717)); R
             Multivariate Power Series Ring in a, b
              over Finite Field of size 4949717

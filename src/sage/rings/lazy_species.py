@@ -171,8 +171,8 @@ def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
 
     - ``n_vec`` -- a `k`-tuple of non-negative integers
 
-    - ``d`` -- a non-negative integer, the total sum of the parts in
-      all components
+    - ``d`` -- a non-negative integer, the total weighted sum of the
+      parts in all components
 
     - ``weight_multiplicities_vec`` -- `k`-tuple of iterables, where
       ``weight_multiplicities_vec[j][i]`` is the number of
@@ -193,6 +193,22 @@ def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
          ([1, 2], [0, 1]),
          ([0, 3], [1, 0]),
          ([0, 3], [0, 1])]
+
+    In the following example, we obtain pairs of compositions, one of
+    `3` and one of `2`.  In the first composition, the first `2`
+    positions have weight one, there is no position of weight two,
+    and the next position has weight `3`.  In the second composition,
+    the first position has weight `1` and the second position has
+    weight `2`.  The total weight is `7`.::
+
+        sage: list(weighted_vector_compositions([3,2], 7, [[2,0,1], [1,1]]))
+        [([2, 0, 1], [2]),
+         ([1, 1, 1], [2]),
+         ([0, 2, 1], [2]),
+         ([3, 0], [0, 2]),
+         ([2, 1], [0, 2]),
+         ([1, 2], [0, 2]),
+         ([0, 3], [0, 2])]
     """
     k = len(n_vec)
     from sage.combinat.integer_lists.invlex import IntegerListsBackend_invlex
@@ -1663,8 +1679,7 @@ class CycleSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             [(1, 2, 3), (1, 3, 2)]
         """
         labels = _label_sets(self.parent()._arity, [labels])
-        # TODO: CyclicPermutations should yield hashable objects, not lists
-        yield from map(tuple, CyclicPermutations(labels[0]))
+        yield from CyclicPermutations(labels[0])
 
     def generating_series(self):
         r"""
@@ -1828,6 +1843,72 @@ class ChainSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
                 for pi in itertools.permutations(rest):
                     yield (a,) + pi + (b,)
 
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of the
+        species of chains.
+
+        This is `(1/(1-x) + 1 + x)/2`.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: L.Chains().generating_series().truncate(7)
+            1 + X + 1/2*X^2 + 1/2*X^3 + 1/2*X^4 + 1/2*X^5 + 1/2*X^6
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        x = L.gen()
+        return (1 / (1 - x) + 1 + x) / 2
+
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of the species of
+        chains.
+
+        This is the geometric series '1/(1-x)'.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: L.Chains().isotype_generating_series().truncate(4)
+            1 + X + X^2 + X^3
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        return L(constant=1)
+
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series of the species of chains.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: L.Chains().cycle_index_series()[3]
+            1/2*p[1, 1, 1] + 1/2*p[2, 1]
+            sage: L.Chains().cycle_index_series()[4]
+            1/2*p[1, 1, 1, 1] + 1/2*p[2, 2]
+        """
+        P = self.parent()
+        p = SymmetricFunctions(P.base_ring().fraction_field()).p()
+        L = LazySymmetricFunctions(p)
+
+        def coefficient(n):
+            if not n:
+                return p.one()
+            if n == 1:
+                return p[1]
+            identity = p[[1] * n]
+            if n % 2 == 0:
+                reversal = p[[2] * (n // 2)]
+            else:
+                reversal = p[[2] * ((n - 1) // 2) + [1]]
+            return (identity + reversal) / 2
+
+        return L(coefficient)
 
 class GraphSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
                    LazyCombinatorialSpeciesElement, UniqueRepresentation,

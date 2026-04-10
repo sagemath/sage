@@ -60,7 +60,6 @@ Sage can compute with power series over the symbolic ring.
 
 ::
 
-    sage: # needs sage.symbolic
     sage: K.<t> = PowerSeriesRing(SR, default_prec=5)
     sage: a, b, c = var('a,b,c')
     sage: f = a + b*t + c*t^2 + O(t^3)
@@ -458,38 +457,6 @@ def _single_variate():
     pass
 
 
-def is_PowerSeriesRing(R):
-    """
-    Return ``True`` if this is a *univariate* power series ring.  This is in
-    keeping with the behavior of ``is_PolynomialRing``
-    versus ``is_MPolynomialRing``.
-
-    EXAMPLES::
-
-        sage: from sage.rings.power_series_ring import is_PowerSeriesRing
-        sage: is_PowerSeriesRing(10)
-        doctest:warning...
-        DeprecationWarning: The function is_PowerSeriesRing is deprecated;
-        use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.
-        See https://github.com/sagemath/sage/issues/38290 for details.
-        False
-        sage: is_PowerSeriesRing(QQ[['x']])
-        True
-        sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x'))
-        True
-        sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x, y'))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38290,
-                "The function is_PowerSeriesRing is deprecated; "
-                "use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.")
-    if isinstance(R, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
-        return R.ngens() == 1
-    else:
-        return False
-
-
 class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
     """
     A power series ring.
@@ -807,7 +774,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
 
         Conversion from symbolic series::
 
-            sage: # needs sage.symbolic
             sage: x,y = var('x,y')
             sage: s = (1/(1-x)).series(x,3); s
             1 + 1*x + 1*x^2 + Order(x^3)

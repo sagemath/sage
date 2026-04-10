@@ -57,34 +57,6 @@ lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_generic')
 lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
-def is_LaurentSeriesRing(x):
-    """
-    Return ``True`` if this is a *univariate* Laurent series ring.
-
-    This is in keeping with the behavior of ``is_PolynomialRing``
-    versus ``is_MPolynomialRing``.
-
-    TESTS::
-
-        sage: from sage.rings.laurent_series_ring import is_LaurentSeriesRing
-        sage: K.<q> = LaurentSeriesRing(QQ)
-        sage: is_LaurentSeriesRing(K)
-        doctest:warning...
-        DeprecationWarning: The function is_LaurentSeriesRing is deprecated;
-        use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
-        See https://github.com/sagemath/sage/issues/38290 for details.
-        True
-        sage: L.<z> = LazyLaurentSeriesRing(QQ)
-        sage: is_LaurentSeriesRing(L)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38290,
-                "The function is_LaurentSeriesRing is deprecated; "
-                "use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.")
-    return isinstance(x, (LaurentSeriesRing, LazyLaurentSeriesRing))
-
-
 class LaurentSeriesRing(UniqueRepresentation, Parent):
     r"""
     Univariate Laurent Series Ring.
@@ -116,7 +88,6 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
     Laurent series rings are determined by their variable and the base
     ring, and are globally unique::
 
-        sage: # needs sage.rings.padics
         sage: K = Qp(5, prec=5)
         sage: L = Qp(5, prec=200)
         sage: R.<x> = LaurentSeriesRing(K)
@@ -450,7 +421,6 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padics
             sage: R.<u> = LaurentSeriesRing(Qp(5, 10))
             sage: S.<t> = LaurentSeriesRing(RationalField())
             sage: R(t + t^2 + O(t^3))
@@ -468,7 +438,6 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
 
         Rational functions are accepted::
 
-            sage: # needs sage.rings.number_field sage.symbolic
             sage: I = sqrt(-1)
             sage: K.<I> = QQ[I]
             sage: P.<t> = PolynomialRing(K)
@@ -517,7 +486,6 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
 
         Various conversions from PARI (see also :issue:`2508`)::
 
-            sage: # needs sage.libs.pari
             sage: L.<q> = LaurentSeriesRing(QQ, default_prec=10)
             sage: L(pari('1/x'))
             q^-1
@@ -764,7 +732,6 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x> = LaurentSeriesRing(GF(17))
             sage: S.<y> = LaurentSeriesRing(GF(19))
             sage: R.hom([y], S) # indirect doctest

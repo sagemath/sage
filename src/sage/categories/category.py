@@ -1894,10 +1894,9 @@ class Category(UniqueRepresentation, SageObject):
         assert isinstance(category, Category)
         if join:
             return Category.join([self, category])
-        else:
-            if not category.is_subcategory(self):
-                raise ValueError("Subcategory of `{}` required; got `{}`".format(self, category))
-            return category
+        if not category.is_subcategory(self):
+            raise ValueError("Subcategory of `{}` required; got `{}`".format(self, category))
+        return category
 
     def _is_subclass(self, c):
         """
@@ -1966,14 +1965,13 @@ class Category(UniqueRepresentation, SageObject):
         """
         if self is other:  # useful? fast pathway
             return self
-        elif self.is_subcategory(other):
+        if self.is_subcategory(other):
             return other
-        elif other.is_subcategory(self):
+        if other.is_subcategory(self):
             # Useful fast pathway; try:
             # %time L = EllipticCurve('960d1').prove_BSD()
             return self
-        else:
-            return Category.join(self._meet_(sup) for sup in other._super_categories)
+        return Category.join(self._meet_(sup) for sup in other._super_categories)
 
     @staticmethod
     def meet(categories):
@@ -2216,8 +2214,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         if axiom not in self.axioms():
             return self
-        else:
-            raise ValueError("Cannot remove axiom {} from {}".format(axiom, self))
+        raise ValueError("Cannot remove axiom {} from {}".format(axiom, self))
 
     def _without_axioms(self, named=False) -> Self:
         r"""
@@ -2489,19 +2486,16 @@ class Category(UniqueRepresentation, SageObject):
         if not categories:
             if as_list:
                 return []
-            else:
-                # Since Objects() is the top category, it is the neutral element of join
-                from .objects import Objects
-                return Objects()
-        elif len(categories) == 1:
+            # Since Objects() is the top category, it is the neutral element of join
+            from .objects import Objects
+            return Objects()
+        if len(categories) == 1:
             category = categories[0]
             if as_list:
                 if isinstance(category, JoinCategory):
                     return category.super_categories()
-                else:
-                    return categories
-            else:
-                return category
+                return categories
+            return category
 
         # Get the cache key, and look into the cache
         # Ensure associativity and commutativity by flattening

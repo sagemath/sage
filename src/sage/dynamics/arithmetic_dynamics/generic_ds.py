@@ -412,8 +412,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         if isinstance(K, (AlgebraicClosureFiniteField_generic, AlgebraicField_common)):
             if return_embedding:
                 return (K, K.hom(K))
-            else:
-                return K
+            return K
         if space.is_projective():
             ds = ds.dehomogenize(1)
         f,g = ds[0].numerator(), ds[0].denominator()
@@ -425,19 +424,16 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         poly = (g*CR(f).derivative(x) - f*CR(g).derivative(x)).univariate_polynomial()
         if isinstance(ds.base_ring(), FiniteField):
             return poly.splitting_field(names, map=return_embedding)
+        K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
+        if return_embedding:
+            N = K[0]
         else:
-            K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
+            N = K
+        if N.absolute_degree() == 1:
             if return_embedding:
-                N = K[0]
-            else:
-                N = K
-            if N.absolute_degree() == 1:
-                if return_embedding:
-                    return (QQ,ds.base_ring().embeddings(QQ)[0])
-                else:
-                    return QQ
-            else:
-                return K
+                return (QQ,ds.base_ring().embeddings(QQ)[0])
+            return QQ
+        return K
 
     def field_of_definition_periodic(self, n, formal=False, return_embedding=False, simplify_all=False, names='a'):
         r"""
@@ -531,8 +527,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         if isinstance(K, (AlgebraicClosureFiniteField_generic, AlgebraicField_common)):
             if return_embedding:
                 return (K, K.hom(K))
-            else:
-                return K
+            return K
         if space.is_projective():
             ds = ds.dehomogenize(1)
         CR = space.coordinate_ring()
@@ -549,19 +544,16 @@ class DynamicalSystem(SchemeMorphism_polynomial,
             poly = (f - g*x).univariate_polynomial()
         if isinstance(ds.base_ring(), FiniteField):
             return poly.splitting_field(names, map=return_embedding)
+        K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
+        if return_embedding:
+            N = K[0]
         else:
-            K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
+            N = K
+        if N.absolute_degree() == 1:
             if return_embedding:
-                N = K[0]
-            else:
-                N = K
-            if N.absolute_degree() == 1:
-                if return_embedding:
-                    return (QQ,ds.base_ring().embeddings(QQ)[0])
-                else:
-                    return QQ
-            else:
-                return K
+                return (QQ,ds.base_ring().embeddings(QQ)[0])
+            return QQ
+        return K
 
     def field_of_definition_preimage(self, point, n, return_embedding=False, simplify_all=False, names='a'):
         r"""
@@ -647,16 +639,13 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         poly = (f*point[1] - g*CR(point[0])).univariate_polynomial()
         if isinstance(ds.base_ring(), FiniteField):
             return poly.splitting_field(names, map=return_embedding)
+        K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
+        if return_embedding:
+            N = K[0]
         else:
-            K = poly.splitting_field(names, map=return_embedding, simplify_all=simplify_all)
+            N = K
+        if N.absolute_degree() == 1:
             if return_embedding:
-                N = K[0]
-            else:
-                N = K
-            if N.absolute_degree() == 1:
-                if return_embedding:
-                    return (QQ, ds.base_ring().embeddings(QQ)[0])
-                else:
-                    return QQ
-            else:
-                return K
+                return (QQ, ds.base_ring().embeddings(QQ)[0])
+            return QQ
+        return K

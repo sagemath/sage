@@ -186,8 +186,7 @@ def ReedMullerCode(base_field, order, num_of_var):
     q = base_field.cardinality()
     if q == 2:
         return BinaryReedMullerCode(order, num_of_var)
-    else:
-        return QAryReedMullerCode(base_field, order, num_of_var)
+    return QAryReedMullerCode(base_field, order, num_of_var)
 
 
 class QAryReedMullerCode(AbstractLinearCode):

@@ -69,7 +69,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         We check that the problem related to :issue:`9049` is not an issue any
         more::
 
-            sage: # needs sage.rings.number_field
             sage: S.<t> = PolynomialRing(QQ)
             sage: F.<q> = QQ.extension(t^4 + 1)
             sage: R.<x,y> = PolynomialRing(F)
@@ -255,7 +254,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
@@ -279,7 +277,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])

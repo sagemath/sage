@@ -497,11 +497,10 @@ class TransducerGenerators:
             if starts_with(block_as_tuple, current) \
                     and len(block_as_tuple) > len(current):
                 return (current, 0)
-            else:
-                k = 1
-                while not starts_with(block_as_tuple, current[k:]):
-                    k += 1
-                return (current[k:], int(block_as_tuple == current))
+            k = 1
+            while not starts_with(block_as_tuple, current[k:]):
+                k += 1
+            return (current[k:], int(block_as_tuple == current))
 
         T = Transducer(
             transition_function,
@@ -1230,10 +1229,9 @@ class TransducerGenerators:
         def to_list(output):
             if output == 0:
                 return []
-            elif word_function is not None and output.operator() == word_function:
+            if word_function is not None and output.operator() == word_function:
                 return [convert_output(_) for _ in output.operands()]
-            else:
-                return [convert_output(output)]
+            return [convert_output(output)]
 
         base_ring = base.parent()
 
@@ -1932,8 +1930,7 @@ class TransducerGenerators:
             result = base**rule.k * m + rule.s
             if result >= 0:
                 return [(result, rule.t)]
-            else:
-                return []
+            return []
 
         def f(n):
             """

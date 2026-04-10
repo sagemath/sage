@@ -274,7 +274,7 @@ cdef class GraphicMatroid(Matroid):
         """
         cdef DisjointSet_of_hashables DS_vertices
         cdef list edges = self.groundset_to_edges(X)
-        cdef set vertices = set([u for u, _, _ in edges]).union(
+        cdef set vertices = {u for u, _, _ in edges}.union(
             [v for _, v, _ in edges])
         # This counts components:
         DS_vertices = DisjointSet_of_hashables(vertices)
@@ -755,7 +755,7 @@ cdef class GraphicMatroid(Matroid):
         """
         cdef DisjointSet_of_hashables DS_vertices
         cdef list edges = self.groundset_to_edges(X)
-        cdef set vertices = set([u for u, _, _ in edges])
+        cdef set vertices = {u for u, _, _ in edges}
         vertices.update([v for _, v, _ in edges])
 
         cdef set our_set = set()
@@ -850,7 +850,6 @@ cdef class GraphicMatroid(Matroid):
         """
         cdef list edges = self.groundset_to_edges(X)
         cdef set vertices = set()
-        cdef list leaves
         cdef tuple leaf
         cdef set edge_set = set()
         cdef DisjointSet_of_hashables DS_vertices
@@ -1793,11 +1792,9 @@ cdef class GraphicMatroid(Matroid):
 
         # Determine the vertices
         X_edges = self.groundset_to_edges(X)
-        X_vertices = set([e[0] for e in X_edges]).union(
-            [e[1] for e in X_edges])
+        X_vertices = {e[0] for e in X_edges}.union([e[1] for e in X_edges])
         Y_edges = self.groundset_to_edges(self.groundset().difference(set(X)))
-        Y_vertices = set([e[0] for e in Y_edges]).union(
-            [e[1] for e in Y_edges])
+        Y_vertices = {e[0] for e in Y_edges}.union([e[1] for e in Y_edges])
         vertices = X_vertices.intersection(Y_vertices)
         if len(vertices) != 2:
             raise ValueError("too many vertices in the intersection")
@@ -1927,13 +1924,11 @@ cdef class GraphicMatroid(Matroid):
 
         # Determine the vertex
         X_edges = self.groundset_to_edges(X)
-        X_vertices = set([e[0] for e in X_edges]).union(
-            [e[1] for e in X_edges])
+        X_vertices = {e[0] for e in X_edges}.union([e[1] for e in X_edges])
         if u not in X_vertices:
             raise ValueError("first vertex must be spanned by the input")
         Y_edges = self.groundset_to_edges(self.groundset().difference(set(X)))
-        Y_vertices = set([e[0] for e in Y_edges]).union(
-            [e[1] for e in Y_edges])
+        Y_vertices = {e[0] for e in Y_edges}.union([e[1] for e in Y_edges])
         if v not in Y_vertices:
             raise ValueError("second vertex must be spanned by the rest of the graph")
         vertices = X_vertices.intersection(Y_vertices)

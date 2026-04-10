@@ -357,7 +357,6 @@ def PolynomialRing(base_ring, *args, **kwds):
     You can alternatively create a polynomial ring over a ring `R` with
     square brackets::
 
-        sage: # needs sage.rings.real_mpfr
         sage: RR["x"]
         Univariate Polynomial Ring in x over Real Field with 53 bits of precision
         sage: RR["x,y"]
@@ -420,13 +419,11 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R is S
         True
 
-        sage: # needs sage.rings.number_field
         sage: R = PolynomialRing(QQbar, 'j,k', implementation='generic')
         sage: S = PolynomialRing(QQbar, 'j,k', implementation=None)
         sage: R is S
         True
 
-        sage: # needs sage.libs.singular
         sage: R = PolynomialRing(ZZ, 'j,k', implementation='singular')
         sage: S = PolynomialRing(ZZ, 'j,k', implementation=None)
         sage: R is S
@@ -492,7 +489,6 @@ def PolynomialRing(base_ring, *args, **kwds):
     Polynomial rings over double-precision real and complex fields are supported
     by the ``'singular'`` implementation::
 
-        sage: # needs sage.libs.singular
         sage: R.<x> = PolynomialRing(RDF, implementation='singular')
         sage: x^2 + 1
         x^2 + (1.000e + 00)
@@ -503,7 +499,6 @@ def PolynomialRing(base_ring, *args, **kwds):
     The ring printing via libsingular matches the output of the Singular
     interface::
 
-        sage: # needs sage.libs.singular
         sage: from sage.libs.singular.function import singular_function
         sage: print(singular_function("print")(R))
         polynomial ring, over a field, global ordering

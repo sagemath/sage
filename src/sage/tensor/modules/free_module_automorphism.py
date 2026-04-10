@@ -622,8 +622,8 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
                     raise TypeError("the second argument must be a module" +
                                     " element")
                 return linform(vector)
-            else: # self is not the identity automorphism:
-                return FreeModuleTensor.__call__(self, *arg)
+            # self is not the identity automorphism:
+            return FreeModuleTensor.__call__(self, *arg)
         # The automorphism acting as such, on a module element, returning a
         # module element:
         vector = arg[0]
@@ -921,8 +921,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
         """
         if isinstance(other, FreeModuleAutomorphism):
             return self._mul_(other)  # general linear group law
-        else:
-            return FreeModuleTensor.__mul__(self, other)  # tensor product
+        return FreeModuleTensor.__mul__(self, other)  # tensor product
 
     def matrix(self, basis1=None, basis2=None):
         r"""

@@ -174,16 +174,14 @@ class FiniteSetMaps(UniqueRepresentation, Parent):
         if codomain is None:
             if isinstance(domain, (int, Integer)):
                 return FiniteSetEndoMaps_N(domain, action, category)
-            else:
-                if domain not in Sets():
-                    domain = FiniteEnumeratedSet(domain)
-                return FiniteSetEndoMaps_Set(domain, action, category)
+            if domain not in Sets():
+                domain = FiniteEnumeratedSet(domain)
+            return FiniteSetEndoMaps_Set(domain, action, category)
 
         if isinstance(domain, (int, Integer)):
             if isinstance(codomain, (int, Integer)):
                 return FiniteSetMaps_MN(domain, codomain, category)
-            else:
-                domain = IntegerRange(domain)
+            domain = IntegerRange(domain)
         if isinstance(codomain, (int, Integer)):
             codomain = IntegerRange(codomain)
 
@@ -280,11 +278,10 @@ class FiniteSetMaps_MN(FiniteSetMaps):
         """
         if isinstance(x, self.element_class):
             return x.parent() is self and len(x) == self._m
-        else:
-            x = list(x)
-            if len(x) != self._m:
-                return False
-            return all(0 <= i < self._n for i in x)
+        x = list(x)
+        if len(x) != self._m:
+            return False
+        return all(0 <= i < self._n for i in x)
 
     def an_element(self):
         """

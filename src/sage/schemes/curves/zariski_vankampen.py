@@ -1365,8 +1365,8 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
     end_braid_computation = False
     while not end_braid_computation:
         try:
-            braidscomputed = (braid_in_segment([(glist, seg[0], seg[1])
-                                                for seg in segs]))
+            braidscomputed = braid_in_segment([(glist, seg[0], seg[1])
+                                               for seg in segs])
             segsbraids = {}
             for braidcomputed in braidscomputed:
                 seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
@@ -1647,12 +1647,42 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         rel_h = [r[1] for r in relations_h]
         rel_h = flatten(rel_h, max_level=1)
     rel_v = []
+    B = BraidGroup(d)
+    cox = tuple(range(1, d + 1))
+    coxm = tuple([-j for j in reversed(cox)])
+    cnjdelta = []
+    for j in range(d):
+        a = tuple(range(1, d - j))
+        a1 = tuple([-j for j in reversed(a)])
+        cnjdelta.append(a + (d - j,) + a1)
+    homcnjdelta = F.hom(codomain=F, im_gens=cnjdelta)
     for j, k in enumerate(vertical0):
         l1 = d + j + 1
         br = bm[k]
+        rnf = rightnormalform(br)
+        rnf1 = rnf[: -1]
+        xp = rnf[-1][0]
+        if rnf1:
+            elt = prod(B(m) for m in rnf1)
+        else:
+            elt = B.one()
+        parity = xp % 2
+        yp = xp // 2
+        if yp == 0:
+            cnja = ()
+            cnjb = ()
+        elif yp > 0:
+            cnja = yp * cox
+            cnjb = yp * coxm
+        else:
+            cnja = abs(yp) * coxm
+            cnjb = abs(yp) * cox
         for gen in F.gens():
             j0 = gen.Tietze()[0]
-            rl = (l1,) + (gen * br).Tietze() + (-l1, -j0)
+            gen0 = gen * elt
+            if parity:
+                gen0 = homcnjdelta(gen0)
+            rl = (l1,) + cnja + gen0.Tietze() + cnjb + (-l1, -j0)
             rel_v.append(rl)
     rel = rel_h + rel_v
     if projective:
@@ -1815,7 +1845,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
       each of these paths is the conjugated of a loop around one of the points
       in the discriminant of the projection of ``f``.
 
-    - A dictionary attaching to ``j`` a tuple a list of elements
+    - A dictionary attaching to ``j`` a list of elements
       of the group  which are meridians of the curve in position ``j``.
       If ``projective`` is ``False`` and the `y`-degree of the horizontal
       components coincide with the total degree, another key is added
@@ -1924,5 +1954,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
     n = g1.ngens()
     rels = [rel.Tietze() for rel in g1.relations()]
     g1 = FreeGroup(n) / rels
-    dic1 = {i: list({g1(el.Tietze()) for el in dic1[i]}) for i in dic1}
+    dic1 = {i: [*{t: g1(t) for el in dic1[i] for t in (el.Tietze(),)}.values()] for i in dic1}
+    # each list in dic1.values() may have duplicates, but deduplicating it properly
+    # requires solving the group problem on g1 which can be prohibitive
     return (g1, dic1)

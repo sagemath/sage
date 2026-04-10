@@ -826,8 +826,7 @@ class Maxima(MaximaAbstract, Expect):
             # batchmode doesn't display expressions to screen.
             a = self(line)
             return repr(a)
-        else:
-            self._sendline(line)
+        self._sendline(line)
 
         line_echo = self._readline()
         if not wait_for_prompt:

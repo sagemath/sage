@@ -163,19 +163,19 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
 
     if backend == 'ppl' and base_ring is QQ:
         return Polyhedra_QQ_ppl(base_ring, ambient_dim, backend)
-    elif backend == 'ppl' and base_ring is ZZ:
+    if backend == 'ppl' and base_ring is ZZ:
         return Polyhedra_ZZ_ppl(base_ring, ambient_dim, backend)
-    elif backend == 'normaliz' and base_ring is QQ:
+    if backend == 'normaliz' and base_ring is QQ:
         return Polyhedra_QQ_normaliz(base_ring, ambient_dim, backend)
-    elif backend == 'normaliz' and base_ring is ZZ:
+    if backend == 'normaliz' and base_ring is ZZ:
         return Polyhedra_ZZ_normaliz(base_ring, ambient_dim, backend)
-    elif backend == 'normaliz' and (isinstance(base_ring, sage.rings.abc.SymbolicRing) or base_ring.is_exact()):
+    if backend == 'normaliz' and (isinstance(base_ring, sage.rings.abc.SymbolicRing) or base_ring.is_exact()):
         return Polyhedra_normaliz(base_ring, ambient_dim, backend)
-    elif backend == 'cdd' and base_ring in (ZZ, QQ):
+    if backend == 'cdd' and base_ring in (ZZ, QQ):
         return Polyhedra_QQ_cdd(QQ, ambient_dim, backend)
-    elif backend == 'cdd' and base_ring is RDF:
+    if backend == 'cdd' and base_ring is RDF:
         return Polyhedra_RDF_cdd(RDF, ambient_dim, backend)
-    elif backend == 'polymake':
+    if backend == 'polymake':
         base_field = base_ring.fraction_field()
         try:
             from sage.interfaces.polymake import polymake, PolymakeElement
@@ -184,15 +184,14 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         except TypeError:
             raise ValueError(f"the 'polymake' backend for polyhedron cannot be used with {base_field}")
         return Polyhedra_polymake(base_field, ambient_dim, backend)
-    elif backend == 'number_field':
+    if backend == 'number_field':
         return Polyhedra_number_field(base_ring.fraction_field(), ambient_dim, backend)
-    elif backend == 'field':
+    if backend == 'field':
         if not base_ring.is_exact():
             raise ValueError("the 'field' backend for polyhedron cannot be used with non-exact fields")
         return Polyhedra_field(base_ring.fraction_field(), ambient_dim, backend)
-    else:
-        raise ValueError('No such backend (=' + str(backend) +
-                         ') implemented for given basering (=' + str(base_ring) + ').')
+    raise ValueError('No such backend (=' + str(backend) +
+                     ') implemented for given basering (=' + str(base_ring) + ').')
 
 
 class Polyhedra_base(UniqueRepresentation, Parent):
@@ -271,7 +270,6 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: P.cardinality()
             +Infinity
 
-            sage: # needs sage.rings.number_field
             sage: P = Polyhedra(AA, 0)
             sage: P.category()
             Category of finite enumerated polyhedral sets over Algebraic Real Field
@@ -595,7 +593,6 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         Check that :issue:`21270` is fixed::
 
-            sage: # needs sage.rings.number_field
             sage: poly = polytopes.regular_polygon(7)
             sage: lp, x = poly.to_linear_program(solver='InteractiveLP',
             ....:                                return_variable=True)
@@ -624,7 +621,6 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         When the parent of the object is not ``self``, the default is not to copy::
 
-            sage: # needs sage.rings.number_field
             sage: Q = P.base_extend(AA)
             sage: q = Q._element_constructor_(p)
             sage: q is p
@@ -1182,8 +1178,7 @@ class Polyhedra_ZZ_ppl(Polyhedra_base):
         from copy import copy
         if polyhedron.backend() == "ppl":
             return self._element_constructor_(None, None, ppl_polyhedron=copy(polyhedron._ppl_polyhedron), **kwds)
-        else:
-            return Polyhedra_base._element_constructor_polyhedron(self, polyhedron, **kwds)
+        return Polyhedra_base._element_constructor_polyhedron(self, polyhedron, **kwds)
 
 
 class Polyhedra_ZZ_normaliz(Polyhedra_base):
@@ -1216,8 +1211,7 @@ class Polyhedra_QQ_ppl(Polyhedra_base):
         from copy import copy
         if polyhedron.backend() == "ppl":
             return self._element_constructor_(None, None, ppl_polyhedron=copy(polyhedron._ppl_polyhedron), **kwds)
-        else:
-            return Polyhedra_base._element_constructor_polyhedron(self, polyhedron, **kwds)
+        return Polyhedra_base._element_constructor_polyhedron(self, polyhedron, **kwds)
 
 
 class Polyhedra_QQ_normaliz(Polyhedra_base):

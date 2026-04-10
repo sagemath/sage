@@ -1,20 +1,58 @@
+"""r
+Hyperelliptic curves of genus 2 in the smooth model
+
+AUTHORS:
+
+- David Kohel (2006): initial version
+- Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
 """
-Hyperelliptic curves of genus 2 over a general ring
-"""
+
 # ****************************************************************************
-#  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
-#  Distributed under the terms of the GNU General Public License (GPL)
+#       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
+#                     2025 Sabrina Kunzweiler <sabrina.kunzweiler@math.u-bordeaux.fr>
+#                     2025 Gareth Ma <grhkm21@gmail.com>
+#                     2025 Giacomo Pope <giacomopope@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import hyperelliptic_generic
-from . import jacobian_g2
-from . import invariants
+from sage.misc.cachefunc import cached_method
+from sage.schemes.hyperelliptic_curves import (
+    hyperelliptic_generic,
+    invariants,
+)
+from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import (
+    HyperellipticCurve_finite_field,
+)
+from sage.schemes.hyperelliptic_curves.hyperelliptic_padic_field import (
+    HyperellipticCurve_padic_field,
+)
+from sage.schemes.hyperelliptic_curves.hyperelliptic_rational_field import (
+    HyperellipticCurve_rational_field,
+)
+from sage.schemes.hyperelliptic_curves.jacobian_g2_generic import (
+    HyperellipticJacobian_g2_generic,
+)
+
+"""
+TODO List
+
+### Invariants
+
+There seems to be massive redundancy in having these methods and the ones imported into
+invariants. I think we should fix this by putting the methods themseleves into this class.
+"""
 
 
-class HyperellipticCurve_g2(hyperelliptic_generic.HyperellipticCurve_generic):
+class HyperellipticCurve_g2(
+    hyperelliptic_generic.HyperellipticCurve_generic
+):
     def is_odd_degree(self):
-        """
+        r"""
         Return ``True`` if the curve is an odd degree model.
 
         EXAMPLES::
@@ -28,57 +66,102 @@ class HyperellipticCurve_g2(hyperelliptic_generic.HyperellipticCurve_generic):
         df = f.degree()
         if h.degree() < 3:
             return df % 2 == 1
-        elif df < 6:
+        if df < 6:
             return False
-
         a0 = f.leading_coefficient()
         c0 = h.leading_coefficient()
-        return (c0**2 + 4*a0) == 0
+        return (c0**2 + 4 * a0) == 0
 
+    @cached_method
     def jacobian(self):
-        """
+        r"""
         Return the Jacobian of the hyperelliptic curve.
 
-        EXAMPLES::
+        Elements of the Jacobian are represented by tuples
+        of the form `(u, v : n)`, where
 
-            sage: R.<x> = QQ[]
-            sage: f = x^5 - x^4 + 3
-            sage: HyperellipticCurve(f).jacobian()
-            Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - x^4 + 3
+        - `(u,v)` is the Mumford representative of a divisor `P_1 + ... + P_r`,
+        - `n` is a non-negative integer
 
-        TESTS:
+        This tuple represents the equivalence class
+        `[P_1 + ... + P_r + n \cdot \infty_+ + m \cdot \infty_- - D_\infty]`,
+        where  `m = g - \deg(u) - n`, and `\infty_+`, `\infty_-` are the
+        points at infinity of the hyperelliptic curve,
 
-        Ensure that :issue:`37612` is fixed::
+        .. MATH::
 
-            sage: R.<x> = QQ[]
-            sage: f = x^5 - x^4 + 3
-            sage: type(HyperellipticCurve(f).jacobian())
-            <class 'sage.schemes.hyperelliptic_curves.jacobian_g2.HyperellipticJacobian_g2_with_category'>
-        """
-        return jacobian_g2.HyperellipticJacobian_g2(self)
+            D_\infty =
+            \lceil g/2 \rceil \infty_+ + \lfloor g/2 \rfloor \infty_-.
 
-    def kummer_morphism(self):
-        """
-        Return the morphism of an odd degree hyperelliptic curve to the Kummer
-        surface of its Jacobian.
+        Here, `\infty_- = \infty_+`, if the hyperelliptic curve is ramified.
 
-        This could be extended to an even degree model
-        if a prescribed embedding in its Jacobian is fixed.
 
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: f = x^5 - x^4 + 3
-            sage: HyperellipticCurve(f).kummer_morphism()  # not tested
+            sage: H = HyperellipticCurve(2*x^5 + 4*x^4 + x^3 - x, x^3 + x + 1)
+            sage: J = H.jacobian(); J
+            Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x + 1)*y = 2*x^5 + 4*x^4 + x^3 - x
+
+        The points `P = (0, 0)` and `Q = (-1, -1)` are on `H`. We construct the
+        element `D_1 = [P - Q] = [P + (-Q) - D_\infty]` on the Jacobian::
+
+            sage: P = H.point([0, 0])
+            sage: Q = H.point([-1, -1])
+            sage: D1 = J(P,Q); D1
+            (x^2 + x, -2*x : 0)
+
+        Elements of the Jacobian can also be constructed by directly providing
+        the Mumford representation::
+
+            sage: D1 == J(x^2 + x, -2*x, 0)
+            True
+
+        We can also embed single points into the Jacobian. Below we construct
+        `D_2 = [P - P_0]`, where `P_0` is the distinguished point of `H`
+        (by default one of the points at infinity)::
+
+            sage: D2 = J(P); D2
+            (x, 0 : 0)
+            sage: P0 = H.distinguished_point(); P0
+            (1 : 0 : 0)
+            sage: D2 == J(P, P0)
+            True
+
+        We may add elements, or multiply by integers::
+
+            sage: 2*D1
+            (x, -1 : 1)
+            sage: D1 + D2
+            (x^2 + x, -1 : 0)
+            sage: -D2
+            (x, -1 : 1)
+
+        Note that the neutral element is given by `[D_\infty - D_\infty]`,
+        in particular `n = 1`::
+
+            sage: J.zero()
+            (1, 0 : 1)
+
+        There are two more elements of the Jacobian that are only supported
+        at infinity: `[\infty_+ - \infty_-]` and `[\infty_- - \infty_+]`::
+
+            sage: [P_plus, P_minus] = H.points_at_infinity()
+            sage: P_plus == P0
+            True
+            sage: J(P_plus,P_minus)
+            (1, 0 : 2)
+            sage: J(P_minus, P_plus)
+            (1, 0 : 0)
         """
-        try:
-            return self._kummer_morphism
-        except AttributeError:
-            pass
-        if not self.is_odd_degree():
-            raise TypeError("Kummer embedding not determined for even degree model curves.")
-        self.jacobian().kummer_surface()
-        return self._kummer_morphism
+        return HyperellipticJacobian_g2_generic(self)
+
+    # -----------------------------------
+    # Genus Two invariant computations
+    #
+    # TODO: should we move logic from functions in `invariants()`
+    # into this file rather than import them
+    # -----------------------------------
 
     def clebsch_invariants(self):
         r"""
@@ -115,7 +198,7 @@ class HyperellipticCurve_g2(hyperelliptic_generic.HyperellipticCurve_generic):
             [ -512/15, 71696384/5625, -6072014209024/140625, -451865844002031331704832/7119140625 ]
         """
         f, h = self.hyperelliptic_polynomials()
-        return invariants.clebsch_invariants(4*f + h**2)
+        return invariants.clebsch_invariants(4 * f + h**2)
 
     def igusa_clebsch_invariants(self):
         r"""
@@ -152,7 +235,7 @@ class HyperellipticCurve_g2(hyperelliptic_generic.HyperellipticCurve_generic):
             [ -40960, 73400320, -515547070464, 56274284941110411264 ]
         """
         f, h = self.hyperelliptic_polynomials()
-        return invariants.igusa_clebsch_invariants(4*f + h**2)
+        return invariants.igusa_clebsch_invariants(4 * f + h**2)
 
     def absolute_igusa_invariants_wamelen(self):
         r"""
@@ -167,7 +250,7 @@ class HyperellipticCurve_g2(hyperelliptic_generic.HyperellipticCurve_generic):
             (0, 0, 0)
         """
         f, h = self.hyperelliptic_polynomials()
-        return invariants.absolute_igusa_invariants_wamelen(4*f + h**2)
+        return invariants.absolute_igusa_invariants_wamelen(4 * f + h**2)
 
     def absolute_igusa_invariants_kohel(self):
         r"""
@@ -188,4 +271,22 @@ class HyperellipticCurve_g2(hyperelliptic_generic.HyperellipticCurve_generic):
             (-1030567/178769, 259686400/178769, 20806400/178769)
         """
         f, h = self.hyperelliptic_polynomials()
-        return invariants.absolute_igusa_invariants_kohel(4*f + h**2)
+        return invariants.absolute_igusa_invariants_kohel(4 * f + h**2)
+
+
+class HyperellipticCurve_g2_padic_field(
+    HyperellipticCurve_g2, HyperellipticCurve_padic_field
+):
+    pass
+
+
+class HyperellipticCurve_g2_finite_field(
+    HyperellipticCurve_g2, HyperellipticCurve_finite_field
+):
+    pass
+
+
+class HyperellipticCurve_g2_rational_field(
+    HyperellipticCurve_g2, HyperellipticCurve_rational_field
+):
+    pass

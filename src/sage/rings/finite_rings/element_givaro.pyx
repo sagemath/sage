@@ -340,6 +340,28 @@ cdef class Cache_givaro(Cache_base):
             ...
             TypeError: unable to coerce from a finite field other than the prime subfield
 
+        Incompatible extension degrees (no field embedding exists when the source
+        extension degree does not divide the target degree; see :issue:`41899`)::
+
+            sage: GF(101^2)(GF(101^3).gen())
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot coerce element: source field is not a subfield of the target field
+
+            sage: L = GF(101^2, implementation='givaro')
+            sage: K = GF(101^3, implementation='pari_ffelt')
+            sage: L(K.gen())
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot coerce element: source field is not a subfield of the target field
+
+        A subfield embeds into a larger field with compatible degrees::
+
+            sage: L = GF(5^4)
+            sage: K, inc = L.subfield(2, map=True)
+            sage: inc(K.gen()).parent() is L
+            True
+
         For more examples, see
         ``finite_field_givaro.FiniteField_givaro._element_constructor_``
         """
@@ -411,7 +433,14 @@ cdef class Cache_givaro(Cache_base):
             pass  # handle this in next if clause
 
         elif isinstance(e, FiniteFieldElement_pari_ffelt):
-            # Reduce to pari
+            # Reduce to PARI only when a field embedding of the source into
+            # ``self.parent`` exists: GF(p^m) -> GF(p^n) iff m | n.  Otherwise
+            # FF_to_FpXQ below silently builds an unrelated element.
+            F = self.parent
+            E = e.parent()
+            if not E.degree().divides(F.degree()):
+                raise TypeError(
+                    "cannot coerce element: source field is not a subfield of the target field")
             e = e.__pari__()
 
         elif isinstance(e, GapElement):

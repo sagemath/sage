@@ -596,10 +596,9 @@ def _encode_attribute(string):
     """
     if pattern_integer.match(string):
         return int(string)
-    elif pattern_decimal.match(string):
+    if pattern_decimal.match(string):
         return float(string)
-    else:
-        return string
+    return string
 
 
 class XTree:
@@ -697,25 +696,21 @@ class XTree:
 
         if attr in self.xt_attributes:
             return self.xt_attributes[attr]
-        else:
-            for child in self.xt_children:
-                name, attributes, children = child
-                if name == attr:
-                    if len(attributes) > 0:
-                        return XTree(child)
-                    else:
-                        if len(children) == 0:
-                            # need this to get an empty Xtree, for append
-                            return XTree(child)
-                        grandchild = children[0]
-                        if isinstance(grandchild, tuple):
-                            if len(grandchild[1]) == 0 and \
-                                len(grandchild[2]) == 0:
-                                return grandchild[0]
-                            else:
-                                return XTree(child)
-                        else:
-                            return grandchild
+        for child in self.xt_children:
+            name, attributes, children = child
+            if name == attr:
+                if len(attributes) > 0:
+                    return XTree(child)
+                if len(children) == 0:
+                    # need this to get an empty Xtree, for append
+                    return XTree(child)
+                grandchild = children[0]
+                if isinstance(grandchild, tuple):
+                    if len(grandchild[1]) == 0 and \
+                        len(grandchild[2]) == 0:
+                        return grandchild[0]
+                    return XTree(child)
+                return grandchild
         msg = '"%s" is not found in attributes of %s or its children.' % \
               (attr, self)
         raise AttributeError(msg)
@@ -748,17 +743,13 @@ class XTree:
             name, attributes, children = child
             if len(attributes) > 0:
                 return XTree(child)
-            else:
-                grandchild = children[0]
-                if isinstance(grandchild, tuple):
-                    if len(grandchild[1]) == 0 and len(grandchild[2]) == 0:
-                        return grandchild[0]
-                    else:
-                        return XTree(child)
-                else:
-                    return grandchild
-        else:
-            return child
+            grandchild = children[0]
+            if isinstance(grandchild, tuple):
+                if len(grandchild[1]) == 0 and len(grandchild[2]) == 0:
+                    return grandchild[0]
+                return XTree(child)
+            return grandchild
+        return child
 
     def __len__(self):
         """

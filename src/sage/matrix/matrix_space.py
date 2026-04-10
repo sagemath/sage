@@ -571,7 +571,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     Check that different implementations play together as expected::
 
-        sage: # needs sage.libs.linbox
         sage: M1 = MatrixSpace(ZZ, 2, implementation='flint')
         sage: M2 = MatrixSpace(ZZ, 2, implementation='generic')
         sage: type(M1(range(4)))
@@ -590,7 +589,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     Check that libgap matrices over finite fields are working properly::
 
-        sage: # needs sage.libs.gap
         sage: M2 = MatrixSpace(GF(2), 5, implementation='gap')
         sage: M2.one()
         [1 0 0 0 0]
@@ -929,8 +927,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         if not self.__nrows or not self.__ncols:
             from sage.rings.integer_ring import ZZ
             return ZZ.one()
-        else:
-            return self.base_ring().cardinality() ** (self.__nrows * self.__ncols)
+        return self.base_ring().cardinality() ** (self.__nrows * self.__ncols)
 
     def characteristic(self):
         r"""
@@ -1032,9 +1029,9 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         if self.__is_sparse:
             return False
-        elif self.Element is sage.matrix.matrix_mod2_dense.Matrix_mod2_dense:
+        if self.Element is sage.matrix.matrix_mod2_dense.Matrix_mod2_dense:
             return False
-        elif self.Element is sage.matrix.matrix_rational_dense.Matrix_rational_dense:
+        if self.Element is sage.matrix.matrix_rational_dense.Matrix_rational_dense:
             return False
         return self.__nrows <= 40 or self.__ncols <= 40
 
@@ -1076,7 +1073,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
             [1 2]
             [3 4]
 
-            sage: # needs sage.modular
             sage: MS = MatrixSpace(ZZ, 2)
             sage: g = Gamma0(5)([1,1,0,1])
             sage: MS(g)
@@ -1275,26 +1271,23 @@ class MatrixSpace(UniqueRepresentation, Parent):
                     if isinstance(S, MatrixSpace):
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(self, S)
-                    elif isinstance(S, sage.modules.free_module.FreeModule_generic):
+                    if isinstance(S, sage.modules.free_module.FreeModule_generic):
                         return matrix_action.MatrixVectorAction(self, S)
-                    elif isinstance(S, SchemeHomset_points):
+                    if isinstance(S, SchemeHomset_points):
                         return matrix_action.MatrixSchemePointAction(self, S)
-                    elif isinstance(S, SchemeHomset_generic):
+                    if isinstance(S, SchemeHomset_generic):
                         return matrix_action.MatrixPolymapAction(self, S)
-                    else:
-                        # action of base ring
-                        return sage.structure.coerce_actions.RightModuleAction(S, self)
-                else:
-                    if isinstance(S, MatrixSpace):
-                        # matrix multiplications
-                        return matrix_action.MatrixMatrixAction(S, self)
-                    elif isinstance(S, sage.modules.free_module.FreeModule_generic):
-                        return matrix_action.VectorMatrixAction(self, S)
-                    elif isinstance(S, SchemeHomset_generic):
-                        return matrix_action.PolymapMatrixAction(self, S)
-                    else:
-                        # action of base ring
-                        return sage.structure.coerce_actions.LeftModuleAction(S, self)
+                    # action of base ring
+                    return sage.structure.coerce_actions.RightModuleAction(S, self)
+                if isinstance(S, MatrixSpace):
+                    # matrix multiplications
+                    return matrix_action.MatrixMatrixAction(S, self)
+                if isinstance(S, sage.modules.free_module.FreeModule_generic):
+                    return matrix_action.VectorMatrixAction(self, S)
+                if isinstance(S, SchemeHomset_generic):
+                    return matrix_action.PolymapMatrixAction(self, S)
+                # action of base ring
+                return sage.structure.coerce_actions.LeftModuleAction(S, self)
         except TypeError:
             return None
 
@@ -2174,7 +2167,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         Check that :issue:`38221` is fixed::
 
-            sage: # needs sage.groups
             sage: G = CyclicPermutationGroup(7)
             sage: R = GF(2)
             sage: A = G.algebra(R)
@@ -2266,7 +2258,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
             [1]
             [2]
 
-            sage: # needs sage.rings.real_mpfr
             sage: MS = MatrixSpace(CC, 2, 1)
             sage: x = polygen(ZZ, 'x')
             sage: F = NumberField(x^2 + 1, name='x')                                    # needs sage.rings.number_field
@@ -2301,7 +2292,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
         One-rowed matrices over combinatorial free modules used to break
         the constructor (:issue:`17124`). Check that this is fixed::
 
-            sage: # needs sage.combinat
             sage: Sym = SymmetricFunctions(ZZ)
             sage: h = Sym.h()
             sage: MatrixSpace(h, 1,1)([h[1]])
@@ -2646,10 +2636,9 @@ class MatrixSpace(UniqueRepresentation, Parent):
         if order is None:
             if self.is_dense():
                 return self.element_class(self, vector, coerce=coerce)
-            else:
-                nc = self.ncols()
-                d = {(k // nc, k % nc): c for k, c in vector.dict().items()}
-                return self.element_class(self, d, coerce=coerce)
+            nc = self.ncols()
+            d = {(k // nc, k % nc): c for k, c in vector.dict().items()}
+            return self.element_class(self, d, coerce=coerce)
         return super().from_vector(vector, order=order, coerce=coerce)
 
     def _from_dict(self, d, coerce=True, remove_zeros=True):

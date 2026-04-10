@@ -697,16 +697,16 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
                 return EnumeratedSetFromIterator(self.f, args, kwds, name=name, **self.options)
             return EnumeratedSetFromIterator(self.f, args, kwds, **self.options)
 
-        else:  # potential global options
-            if args == ():
-                f, = kwds.values()
-            else:
-                assert len(args) == 1
-                f = args[0]
-            return EnumeratedSetFromIterator_function_decorator(
-                f,
-                name=getattr(self, 'name', None),
-                **self.options)
+        # potential global options
+        if args == ():
+            f, = kwds.values()
+        else:
+            assert len(args) == 1
+            f = args[0]
+        return EnumeratedSetFromIterator_function_decorator(
+            f,
+            name=getattr(self, 'name', None),
+            **self.options)
 
 
 set_from_function = EnumeratedSetFromIterator_function_decorator
