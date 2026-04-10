@@ -130,6 +130,9 @@ from sage.rings.abc import RealDoubleField, ComplexDoubleField
 from sage.rings.integer cimport Integer, smallInteger
 from sage.arith.numerical_approx cimport digits_to_bits
 
+from sage.rings.integer import Integer
+from sage.categories.rings import Rings
+
 # For the norm function, we cache Sage integers 1 and 2
 __one__ = smallInteger(1)
 __two__ = smallInteger(2)
@@ -156,6 +159,8 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         4. vector(ring, degree, object)
 
         5. vector(ring, degree)
+
+        6. vector(degree, object)
 
     INPUT:
 
@@ -198,6 +203,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         (1, 2, 3)
         sage: v.parent()
         Ambient free module of rank 3 over the principal ideal domain Integer Ring
+
         sage: v = vector([1,2,3/5]); v
         (1, 2, 3/5)
         sage: v.parent()
@@ -460,6 +466,18 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
 
     TESTS:
 
+    Check that providing multiple rings or ambiguous integers raises an error (see :issue:`6769`)::
+
+        sage: vector(ZZ, QQ, [1, 2])
+        Traceback (most recent call last):
+        ...
+        TypeError: Multiple rings provided; ambiguity in base ring selection.
+
+        sage: vector(3, 5)
+        Traceback (most recent call last):
+        ...
+        TypeError: Multiple integers provided; ambiguity in degree selection.
+
     We check that :issue:`31470` is fixed::
 
         sage: k.<a> = GF(5^3)                                                           # needs sage.rings.finite_rings
@@ -513,6 +531,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
 
     # consider a possible degree specified in second argument
     degree = None
+    data_object = None
     maxindex = None
     if arg1_integer:
         if arg1 < 0:
@@ -532,24 +551,38 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         else:
             if not isinstance(arg2, dict) and len(arg2) != degree:
                 raise ValueError("incompatible degrees in vector constructor")
-            arg1 = arg2
+            data_object = arg2
 
-    # Analyze arg0 and arg1 to create a ring (R) and entries (v)
-    if arg0 in Rings():
+    # Categorize arguments to resolve constructor ambiguity (see :issue:`6769`)
+    # This prevents edge cases where rings or integers are misidentified as data objects
+    arg0_is_ring = arg0 in Rings()
+    arg1_is_ring = arg1 in Rings()
+    arg0_is_int = isinstance(arg0, (int, Integer)) and not arg0_is_ring
+    arg1_is_int = isinstance(arg1, (int, Integer)) and not arg1_is_ring
+
+    # Guard against ambiguous call formats (e.g., passing two rings or two degrees)
+    if arg0_is_ring and arg1_is_ring:
+        raise TypeError("Multiple rings provided; ambiguity in base ring selection.")
+
+    if arg0_is_int and arg1_is_int and arg2 is None:
+        raise TypeError("Multiple integers provided; ambiguity in degree selection.")
+
+    # Determine the base ring (R) and the entry data (v)
+    # Priority is given to arg0 as the ring in 'vector(ring, object)' format
+    if arg0_is_ring:
         R = arg0
-        v = arg1
-    elif arg1 in Rings():
+        v = data_object if data_object is not None else arg1
+    elif arg1_is_ring:
         R = arg1
         v = arg0
     else:
-        v = arg0
+        # Fallback for 'vector(object)' or 'vector(degree, object)' formats
         R = None
+        v = data_object if data_object is not None else arg0
 
     try:
         import numpy
         from numpy import ndarray
-        if int(numpy.version.short_version[0]) > 1:
-            numpy.set_printoptions(legacy="1.25")
 
     except ImportError:
         pass
