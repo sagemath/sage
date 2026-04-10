@@ -142,29 +142,6 @@ def FractionField(R, names=None):
     return R.fraction_field()
 
 
-def is_FractionField(x) -> bool:
-    """
-    Test whether or not ``x`` inherits from :class:`FractionField_generic`.
-
-    EXAMPLES::
-
-        sage: from sage.rings.fraction_field import is_FractionField
-        sage: is_FractionField(Frac(ZZ['x']))
-        doctest:warning...
-        DeprecationWarning: The function is_FractionField is deprecated;
-        use 'isinstance(..., FractionField_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_FractionField(QQ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38128,
-                "The function is_FractionField is deprecated; "
-                "use 'isinstance(..., FractionField_generic)' instead.")
-    return isinstance(x, FractionField_generic)
-
-
 class FractionField_generic(ring.Field):
     """
     The fraction field of an integral domain.

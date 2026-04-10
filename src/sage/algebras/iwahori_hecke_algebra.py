@@ -769,7 +769,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                     return self.one()
                 return self(W.from_reduced_word(i))
 
-            def is_field(self, proof=True):
+            def is_field(self, proof=True) -> bool:
                 """
                 Return whether this Iwahori-Hecke algebra is a field.
 
@@ -1506,8 +1506,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 # 10% faster than a plain addition on the example of #12528
                 return self.sum_of_terms(((w, A._q_sum), (wi, A._q_prod)),
                                          distinct=True)
-            else:
-                return self.monomial(wi)
+            return self.monomial(wi)
 
         def product_by_generator(self, x, i, side='right'):
             r"""
@@ -2010,9 +2009,10 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 return
 
             # check if products can be computed directly using ``coxeter3``
-            try:
+            from sage.features.coxeter3 import Coxeter3
+            if Coxeter3().is_present():
                 from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
-            except ImportError:
+            else:
                 return
 
             self._delta = v + ~v

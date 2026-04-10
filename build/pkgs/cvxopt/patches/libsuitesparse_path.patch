@@ -1,17 +1,23 @@
 diff --git a/setup.py b/setup.py
-index d312416..4fa14c4 100644
 --- a/setup.py
 +++ b/setup.py
-@@ -58,9 +58,9 @@ if sys.platform.startswith("darwin"):
-     SUITESPARSE_LIB_DIR = '/usr/local/lib'
-     SUITESPARSE_INC_DIR = '/usr/local/include'
+@@ -48,14 +48,11 @@
  else:
+     SUITESPARSE_INC_DIR = "/usr/include/suitesparse"
+     PREFIX= '/usr'
 -    if glob("/usr/lib/x86_64-linux-gnu/libsuitesparse*"):
 -        # Ubuntu/Debian
--        SUITESPARSE_LIB_DIR = "/usr/lib/x86_64-linux-gnu"
+-        BLAS_LIB_DIR = PREFIX + "/lib/x86_64-linux-gnu"
+-        SUITESPARSE_LIB_DIR = PREFIX + "/lib/x86_64-linux-gnu"
+-    elif glob("/usr/lib/aarch64-linux-gnu/libsuitesparse*"):
+-        # Ubuntu/Debian
+-        BLAS_LIB_DIR = PREFIX + "/lib/aarch64-linux-gnu"
+-        SUITESPARSE_LIB_DIR = PREFIX + "/lib/aarch64-linux-gnu"
 +    SUITESPARSE_LIB_SUFF = glob("/usr/lib/*/libsuitesparse*")
-+    if SUITESPARSE_LIB_SUFF: # Ubuntu/Debian
-+        SUITESPARSE_LIB_DIR = "/usr/lib/"+SUITESPARSE_LIB_SUFF[0].split('/')[3]
-         SUITESPARSE_INC_DIR = "/usr/include/suitesparse"
++    if SUITESPARSE_LIB_SUFF:
++        # Ubuntu/Debian (any architecture)
++        BLAS_LIB_DIR = "/usr/lib/" + SUITESPARSE_LIB_SUFF[0].split('/')[3]
++        SUITESPARSE_LIB_DIR = BLAS_LIB_DIR
      elif glob("/usr/lib64/libsuitesparse*"):
-         # CentOS/Fedora/RedHat
+         # CentOS/Fedora/RedHat/AlmaLinux x86_64
+         BLAS_LIB_DIR = PREFIX + "/lib64"

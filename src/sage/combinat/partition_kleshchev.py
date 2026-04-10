@@ -209,7 +209,7 @@ class KleshchevPartition(Partition):
         conormal_cells = self.conormal_cells(i)
         if i is None:
             return {i: conormal_cells[i][-1] for i in conormal_cells}
-        elif not conormal_cells:
+        if not conormal_cells:
             return None
 
         return conormal_cells[-1]
@@ -316,7 +316,7 @@ class KleshchevPartition(Partition):
         normal_cells = self.normal_cells(i)
         if i is None:
             return {j: normal_cells[j][0] for j in normal_cells}
-        elif not normal_cells:
+        if not normal_cells:
             return None
 
         return normal_cells[0]
@@ -605,7 +605,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         conormal_cells = self.conormal_cells(i)
         if i is None:
             return {j: conormal_cells[j][-1] for j in conormal_cells}
-        elif not conormal_cells:
+        if not conormal_cells:
             return None
 
         return conormal_cells[-1]
@@ -725,7 +725,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         normal_cells = self.normal_cells(i)
         if i is None:
             return {j: normal_cells[j][0] for j in normal_cells}
-        elif not normal_cells:
+        if not normal_cells:
             return None
 
         return normal_cells[0]

@@ -430,16 +430,14 @@ class Polyhedron_base6(Polyhedron_base5):
         def project(polyhedron, ortho):
             if polyhedron.ambient_dim() <= 3:
                 return polyhedron.projection()
-            elif polyhedron.dim() <= 3:
+            if polyhedron.dim() <= 3:
                 if ortho:
                     return polyhedron.affine_hull_projection(orthonormal=True, extend=True).projection()
-                else:
-                    return polyhedron.affine_hull_projection().projection()
-            elif polyhedron.dimension() == 4:
+                return polyhedron.affine_hull_projection().projection()
+            if polyhedron.dimension() == 4:
                 # For 4d-polyhedron, we can use schlegel projections:
                 return polyhedron.schlegel_projection(position=position)
-            else:
-                return polyhedron.projection()
+            return polyhedron.projection()
 
         projection = project(self, orthonormal)
         try:

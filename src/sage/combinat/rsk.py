@@ -778,9 +778,8 @@ class RuleEG(Rule):
                 n = max(list(lower_row)) + 1
             from sage.combinat.permutation import Permutations
             return Permutations(n).from_reduced_word(list(lower_row))
-        else:
-            return super()._backward_format_output(lower_row, upper_row, output,
-                                                   p_is_standard, q_is_standard)
+        return super()._backward_format_output(lower_row, upper_row, output,
+                                               p_is_standard, q_is_standard)
 
 
 class RuleHecke(Rule):
@@ -1465,9 +1464,8 @@ class RuleDualRSK(Rule):
                 raise TypeError("p must be standard to have a valid permutation as output")
             from sage.combinat.permutation import Permutation
             return Permutation(reversed(lower_row))
-        else:
-            return super()._backward_format_output(lower_row, upper_row, output,
-                                                   p_is_standard, q_is_standard)
+        return super()._backward_format_output(lower_row, upper_row, output,
+                                               p_is_standard, q_is_standard)
 
     def _forward_format_output(self, p, q, check_standard):
         r"""
@@ -2466,9 +2464,8 @@ class RuleSuperRSK(RuleRSK):
             if q_is_standard:
                 from sage.combinat.words.word import Word
                 return Word(reversed(lower_row))
-            else:
-                raise TypeError("q must be standard to have a %s as "
-                                "valid output" % output)
+            raise TypeError("q must be standard to have a %s as "
+                            "valid output" % output)
         raise ValueError("invalid output option")
 
 
@@ -2921,12 +2918,11 @@ class RuleStar(Rule):
             raise ValueError(f"{obj1} and {obj2} are of different lengths")
         if output == 'array':
             return [obj1, obj2]
-        elif output == 'word':
+        if output == 'word':
             if obj1 == list(range(1, len(obj1)+1)):
                 from sage.combinat.words.word import Word
                 return Word(obj2)
-            else:
-                raise TypeError("upper row must be standard")
+            raise TypeError("upper row must be standard")
         elif output == 'DecreasingHeckeFactorization':
             from sage.combinat.crystals.fully_commutative_stable_grothendieck import DecreasingHeckeFactorization
             obj1.reverse()

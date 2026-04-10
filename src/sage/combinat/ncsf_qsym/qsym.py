@@ -1590,8 +1590,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 if self.is_symmetric():
                     M = self.parent().realization_of().Monomial()
                     return M(self).to_symmetric_function()
-                else:
-                    raise ValueError("%s is not a symmetric function" % self)
+                raise ValueError("%s is not a symmetric function" % self)
 
     class Monomial(CombinatorialFreeModule, BindableClass):
         r"""
@@ -2016,8 +2015,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     else:
                         if d[partition][0] != coeff:
                             return False
-                        else:
-                            d[partition][1] += 1
+                        d[partition][1] += 1
                 # make sure we've seen each rearrangement of the composition
                 return all(d[partition][1] == Permutations_mset(partition).cardinality()
                            for partition in d)

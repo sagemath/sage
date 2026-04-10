@@ -166,6 +166,83 @@ cdef class FiniteRingElement(CommutativeRingElement):
             return (R.one(), self)
         return NotImplemented
 
+    def minpoly_over(self, F, var='x'):
+        r"""
+        Return the minimal polynomial of this finite-field element over
+        the given base field, which must be a subfield of the parent of
+        this element.
+
+        EXAMPLES::
+
+            sage: f = GF(101^2).gen().minpoly_over(GF(101^2)); f
+            x + 100*z2
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field in z2 of size 101^2
+
+        ::
+
+            sage: f = GF(101^4).gen().minpoly_over(GF(101^2)); f
+            x^2 + (31*z2 + 39)*x + z2
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field in z2 of size 101^2
+
+        ::
+
+            sage: GF(101^3).gen().minpoly_over(GF(101^2))
+            Traceback (most recent call last):
+            ...
+            ValueError: Finite Field in z2 of size 101^2 does not embed into Finite Field in z3 of size 101^3
+
+        ::
+
+            sage: f = GF(101)(42).minpoly_over(GF(101)); f
+            x + 59
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field of size 101
+
+        ::
+
+            sage: GF(101)(42).minpoly_over(GF(101^2))
+            Traceback (most recent call last):
+            ...
+            ValueError: Finite Field in z2 of size 101^2 does not embed into Finite Field of size 101
+
+        ::
+
+            sage: f = (GF(101^2).gen()^102).minpoly_over(GF(101^2)); f
+            x + 99
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field in z2 of size 101^2
+
+        ::
+
+            sage: f = (GF(101^2).gen()^102).minpoly_over(GF(101)); f
+            x + 99
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field of size 101
+
+        ::
+
+            sage: f = (GF(101^2).gen()^100).minpoly_over(GF(101)); f
+            x^2 + 95*x + 1
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field of size 101
+        """
+        # workaround for #34907: if this element lies in F, then .minpoly() for extensions is buggy
+        try:
+            emb = F.hom(self.parent())
+        except TypeError:
+            raise ValueError(f'{F} does not embed into {self.parent()}')
+        try:
+            a = emb.section()(self)
+        except ValueError:
+            ext = self.parent().over(F)
+            return ext(self).minpoly(var=var)
+        else:
+            from sage.rings.polynomial.polynomial_ring import polygen
+            return polygen(F, var) - a
+
+
 
 cdef class FinitePolyExtElement(FiniteRingElement):
     """

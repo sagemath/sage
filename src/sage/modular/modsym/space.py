@@ -559,8 +559,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         """
         if not self.is_ambient():
             return self.ambient_hecke_module().set_default_prec(prec)
-        else:
-            self.__default_prec = Integer(prec)
+        self.__default_prec = Integer(prec)
 
     def set_precision(self, prec):
         """
@@ -686,16 +685,15 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             algorithm = 'hecke'
         if algorithm == 'hecke':
             return Sequence(self._q_expansion_basis_hecke_dual(prec), cr=True)
-        elif algorithm == 'eigen':
+        if algorithm == 'eigen':
             return Sequence(self._q_expansion_basis_eigen(prec, 'alpha'), cr=True)
-        elif algorithm == 'all':
+        if algorithm == 'all':
             B1 = self._q_expansion_basis_hecke_dual(prec)
             B2 = self._q_expansion_basis_eigen(prec, 'alpha')
             if B1 != B2:
                 raise RuntimeError("There is a bug in q_expansion_basis -- basis computed differently with two algorithms:\n%s\n%s\n" % (B1, B2,))
             return Sequence(B1, cr=True)
-        else:
-            raise ValueError("no algorithm '%s'" % algorithm)
+        raise ValueError("no algorithm '%s'" % algorithm)
 
     def q_expansion_module(self, prec=None, R=None):
         r"""
@@ -868,13 +866,12 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             prec = self.default_prec()
         if R == ZZ and self.base_ring() == QQ:
             return self._q_expansion_module_integral(prec)
-        elif R == QQ:
+        if R == QQ:
             return self._q_expansion_module_rational(prec)
-        elif R is None or R == self.base_ring():
+        if R is None or R == self.base_ring():
             # names is never used in this case
             return self._q_expansion_module(prec)
-        else:
-            raise NotImplementedError("R must be ZZ, QQ, or the base ring of the modular symbols space.")
+        raise NotImplementedError("R must be ZZ, QQ, or the base ring of the modular symbols space.")
 
     def _q_eigenform_images(self, A, prec, names):
         """
@@ -957,9 +954,8 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             if d == 1:
                 # X is just a list of elements of R
                 return [X]
-            else:
-                # X is a list of elements of a poly quotient ring
-                return [[X[i][j] for i in range(prec)] for j in range(d)]
+            # X is a list of elements of a poly quotient ring
+            return [[X[i][j] for i in range(prec)] for j in range(d)]
 
         if self.sign() == 0:
             X = self.plus_submodule(compute_dual=True)
@@ -1024,12 +1020,11 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             X = f.padded_list(prec)
             if d == 1:
                 return [[X[i][j] for i in range(prec)] for j in range(n)]
-            else:
-                # This looks like it might be really slow -- though
-                # perhaps it's nothing compared to the time taken by
-                # whatever computed this in the first place.
-                return [[(X[i].list())[j][k] for i in range(prec)]
-                        for j in range(d) for k in range(n)]
+            # This looks like it might be really slow -- though
+            # perhaps it's nothing compared to the time taken by
+            # whatever computed this in the first place.
+            return [[(X[i].list())[j][k] for i in range(prec)]
+                    for j in range(d) for k in range(n)]
         if self.sign() == 0:
             X = self.plus_submodule(compute_dual=True)
         else:
@@ -1222,8 +1217,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             f = R(f.padded_list(f.prec()) + ext)
             self._q_expansion_dict[names] = f.add_bigoh(prec)
             return self._q_expansion_dict[names]
-        else:
-            return f.O(prec)
+        return f.O(prec)
 
     def _q_expansion_basis_eigen(self, prec, names):
         r"""

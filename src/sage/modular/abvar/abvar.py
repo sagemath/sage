@@ -780,8 +780,7 @@ class ModularAbelianVariety_abstract(Parent):
             cat = ModularAbelianVarieties(F)
         if self is B:
             return self.endomorphism_ring(cat)
-        else:
-            return homspace.Homspace(self, B, cat)
+        return homspace.Homspace(self, B, cat)
 
     def in_same_ambient_variety(self, other) -> bool:
         """
@@ -1234,10 +1233,9 @@ class ModularAbelianVariety_abstract(Parent):
             if other.abelian_variety() != self:
                 other = self.finite_subgroup(other)
             return self._quotient_by_finite_subgroup(other)
-        elif isinstance(other, ModularAbelianVariety_abstract) and other.is_subvariety(self):
+        if isinstance(other, ModularAbelianVariety_abstract) and other.is_subvariety(self):
             return self._quotient_by_abelian_subvariety(other)
-        else:
-            raise TypeError("other must be a subgroup or abelian subvariety")
+        raise TypeError("other must be a subgroup or abelian subvariety")
 
     def degeneracy_map(self, M_ls, t_ls):
         """
@@ -2270,8 +2268,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         if positive_rank:
             return infinity
-        else:
-            return self.rational_torsion_subgroup().order()
+        return self.rational_torsion_subgroup().order()
 
     def frobenius_polynomial(self, p, var='x'):
         """
@@ -3133,7 +3130,7 @@ class ModularAbelianVariety_abstract(Parent):
         except AttributeError:
             if none_if_not_known:
                 return None
-            elif self.dimension() > 0 and self.is_simple():
+            if self.dimension() > 0 and self.is_simple():
                 self.__degen_t = self.decomposition()[0].degen_t()
                 return self.__degen_t
             raise ValueError("self must be simple")
@@ -3186,11 +3183,10 @@ class ModularAbelianVariety_abstract(Parent):
         except AttributeError:
             if none_if_not_known:
                 return None
-            elif self.is_simple():
+            if self.is_simple():
                 self.__isogeny_number = self.decomposition()[0].isogeny_number()
                 return self.__isogeny_number
-            else:
-                raise ValueError("self must be simple")
+            raise ValueError("self must be simple")
 
     def is_simple(self, none_if_not_known=False) -> bool:
         """

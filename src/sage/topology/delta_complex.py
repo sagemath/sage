@@ -554,8 +554,7 @@ class DeltaComplex(GenericCellComplex):
                     l = len(cells[d])
                     cells[d] = [None] * l   # get rid of all cells
                 return cells
-            else:
-                raise ValueError("this is not a subcomplex of self")
+            raise ValueError("this is not a subcomplex of self")
         else:
             subcomplex_cells = subcomplex._is_subcomplex_of[self]
             for d in range(max(subcomplex_cells) + 1):
@@ -674,9 +673,8 @@ class DeltaComplex(GenericCellComplex):
                 cochain_diffs[dim - 1] = differentials[dim].transpose()
             return ChainComplex(data=cochain_diffs, degree=1,
                                 base_ring=base_ring, check=check)
-        else:
-            return ChainComplex(data=differentials, degree=-1,
-                                base_ring=base_ring, check=check)
+        return ChainComplex(data=differentials, degree=-1,
+                            base_ring=base_ring, check=check)
 
     def alexander_whitney(self, cell, dim_left):
         r"""
@@ -1525,8 +1523,7 @@ class DeltaComplex(GenericCellComplex):
         n_cells = tuple(enumerate(self.n_cells(n)))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)
-        else:
-            return Chains(self, n, n_cells, base_ring)
+        return Chains(self, n, n_cells, base_ring)
 
     # the second barycentric subdivision is a simplicial complex.  implement this somehow?
 #     def simplicial_complex(self):

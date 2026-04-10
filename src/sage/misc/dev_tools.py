@@ -112,28 +112,26 @@ def import_statement_string(module, names, lazy):
                 if name is None:
                     raise ValueError("cannot lazy import modules")
                 return "lazy_import('%s', '%s')" % (module, name)
-            else:
-                return "lazy_import('%s', '%s', '%s')" % (module, name, alias)
+            return "lazy_import('%s', '%s', '%s')" % (module, name, alias)
         obj_names = "[" + ", ".join("'" + name[0] + "'" for name in names) + "]"
         obj_aliases = "[" + ", ".join("'" + name[1] + "'" for name in names) + "]"
         return "lazy_import('%s', %s, %s)" % (module, obj_names, obj_aliases)
-    else:
-        import_module = False
-        name_list = []
-        for name, alias in names:
-            if name == alias:
-                if name is None:
-                    import_module = True
-                    continue
-                name_list.append(name)
-            else:
-                name_list.append("%s as %s" % (name, alias))
-        res = []
-        if import_module:
-            res.append("import %s" % module)
-        if name_list:
-            res.append("from %s import %s" % (module, ', '.join(name_list)))
-        return "\n".join(res)
+    import_module = False
+    name_list = []
+    for name, alias in names:
+        if name == alias:
+            if name is None:
+                import_module = True
+                continue
+            name_list.append(name)
+        else:
+            name_list.append("%s as %s" % (name, alias))
+    res = []
+    if import_module:
+        res.append("import %s" % module)
+    if name_list:
+        res.append("from %s import %s" % (module, ', '.join(name_list)))
+    return "\n".join(res)
 
 
 def load_submodules(module=None, exclude_pattern=None):
@@ -666,5 +664,4 @@ def import_statements(*objects, **kwds):
 
     if answer_as_str:
         return '\n'.join(res)
-    else:
-        print('\n'.join(res))
+    print('\n'.join(res))

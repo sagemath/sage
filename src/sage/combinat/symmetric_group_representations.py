@@ -285,14 +285,13 @@ def SymmetricGroupRepresentations(n, implementation='specht', ring=None,
     """
     if implementation == "seminormal":
         return YoungRepresentations_Seminormal(n, ring=ring, cache_matrices=cache_matrices)
-    elif implementation == "orthogonal":
+    if implementation == "orthogonal":
         return YoungRepresentations_Orthogonal(n, ring=ring, cache_matrices=cache_matrices)
-    elif implementation == "specht":
+    if implementation == "specht":
         return SpechtRepresentations(n, ring=ring, cache_matrices=cache_matrices)
-    elif implementation == "unitary":
+    if implementation == "unitary":
         return UnitaryRepresentations(n, ring=ring, cache_matrices=cache_matrices)
-    else:
-        raise NotImplementedError("only seminormal, orthogonal and specht are implemented")
+    raise NotImplementedError("only seminormal, orthogonal and specht are implemented")
 
 # #### Generic classes for symmetric group representations #################
 
@@ -931,8 +930,7 @@ class SpechtRepresentation(SymmetricGroupRepresentation_generic_class):
         uv = [a + v[i] + 1 for i, a in enumerate(u)]
         if uv not in Permutations():
             return 0
-        else:
-            return Permutation(uv).signature()
+        return Permutation(uv).signature()
 
     def scalar_product_matrix(self, permutation=None):
         r"""

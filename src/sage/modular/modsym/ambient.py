@@ -444,26 +444,25 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
                                 f"dimension {self.dimension()}")
             return self.element_class(self, x)
 
-        elif isinstance(x, (ManinSymbol, element.ModularSymbolsElement)):
+        if isinstance(x, (ManinSymbol, element.ModularSymbolsElement)):
             return self.element(x)
 
-        elif isinstance(x, modular_symbols.ModularSymbol):
+        if isinstance(x, modular_symbols.ModularSymbol):
             return self(x.manin_symbol_rep())
 
-        elif isinstance(x, (int, Integer)) and x == 0:
+        if isinstance(x, (int, Integer)) and x == 0:
             return self.element_class(self, self.free_module()(0))
 
-        elif isinstance(x, tuple):
+        if isinstance(x, tuple):
             return self.manin_symbol(x)
 
-        elif isinstance(x, FormalSum):
+        if isinstance(x, FormalSum):
             return sum([c * self(y) for c, y in x], self(0))
 
-        elif isinstance(x, list):
+        if isinstance(x, list):
             if len(x) == 3 and isinstance(x[0], MPolynomial):
                 return self.modular_symbol_sum(x)
-            else:
-                return self.modular_symbol(x)
+            return self.modular_symbol(x)
 
         raise TypeError("No coercion of %s into %s defined." % (x, self))
 
@@ -495,8 +494,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         """
         if self.character() is None:
             return modsym.ModularSymbols(self.group(), self.weight(), self.sign(), R)
-        else:
-            return modsym.ModularSymbols(self.character(), self.weight(), self.sign(), R)
+        return modsym.ModularSymbols(self.character(), self.weight(), self.sign(), R)
 
     def _action_on_modular_symbols(self, g):
         r"""
@@ -1436,11 +1434,10 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         """
         if t == 1:
             return self._degeneracy_raising_matrix_1(M)
-        else:
-            # use Hecke operator and t=1 case.
-            d1 = self.degeneracy_map(M, 1).matrix()
-            T = M.hecke_matrix(t)
-            return (~self.base_ring()(t)) * d1 * T
+        # use Hecke operator and t=1 case.
+        d1 = self.degeneracy_map(M, 1).matrix()
+        T = M.hecke_matrix(t)
+        return (~self.base_ring()(t)) * d1 * T
 
     def _degeneracy_raising_matrix_1(self, M):
         r"""
@@ -1577,15 +1574,14 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
                 v = self.manin_gens_to_basis().row(t)
             return self.element_class(self, v)
 
-        elif isinstance(x, element.ModularSymbolsElement):
+        if isinstance(x, element.ModularSymbolsElement):
             M = x.parent()
             if M.ambient_hecke_module() != self:
                 # TODO -- sometimes do something more sophisticated here.
                 raise TypeError("Modular symbol (%s) does not lie in this space." % x)
             return self(x.element())
 
-        else:
-            raise ValueError("Cannot create element of %s from %s." % (x, self))
+        raise ValueError("Cannot create element of %s from %s." % (x, self))
 
     def dual_star_involution_matrix(self):
         """
@@ -2568,12 +2564,10 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
                 return None
             if k % 2:
                 return 0
-            elif k > 2:
+            if k > 2:
                 return 2 * self.group().dimension_cusp_forms(k) + self.group().ncusps()
-            else:
-                return 2*self.group().dimension_cusp_forms(k) + self.group().ncusps() - 1
-        else:
-            raise NotImplementedError
+            return 2*self.group().dimension_cusp_forms(k) + self.group().ncusps() - 1
+        raise NotImplementedError
 
     def _repr_(self):
         r"""
@@ -2608,8 +2602,7 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
             else:
                 m = 1
             return m * self.group().dimension_cusp_forms(k)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def _degeneracy_raising_matrix_1(self, M):
         r"""
@@ -2688,8 +2681,7 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
             else:
                 m = 1
             return m * self.group().dimension_new_cusp_forms(k)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def boundary_space(self):
         r"""
@@ -2860,8 +2852,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             if self.sign() != 0:
                 return None
             return 2*self.group().dimension_cusp_forms(2) + self.group().ncusps() - 1
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def _cuspidal_submodule_dimension_formula(self):
         r"""
@@ -2881,8 +2872,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             else:
                 m = 1
             return m * self.group().dimension_cusp_forms(2)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def _cuspidal_new_submodule_dimension_formula(self):
         r"""
@@ -2902,8 +2892,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             else:
                 m = 1
             return m * self.group().dimension_new_cusp_forms(2)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def _compute_hecke_matrix_prime(self, p, rows=None):
         r"""

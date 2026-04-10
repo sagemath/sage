@@ -176,19 +176,18 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
         L._set_extra_kwds(kwds)
         L._extra_kwds['thickness'] = thickness  # remove this line if json_repr is defined
         return L
+    v = []
+    if 'texture' in kwds:
+        kwds = kwds.copy()
+        texture = kwds.pop('texture')
     else:
-        v = []
-        if 'texture' in kwds:
-            kwds = kwds.copy()
-            texture = kwds.pop('texture')
-        else:
-            texture = Texture(kwds)
-        for i in range(len(points) - 1):
-            line = shapes.arrow3d if i == len(points)-2 and arrow_head else shapes.LineSegment
-            v.append(line(points[i], points[i+1], texture=texture, radius=radius, **kwds))
-        w = sum(v)
-        w._set_extra_kwds(kwds)
-        return w
+        texture = Texture(kwds)
+    for i in range(len(points) - 1):
+        line = shapes.arrow3d if i == len(points)-2 and arrow_head else shapes.LineSegment
+        v.append(line(points[i], points[i+1], texture=texture, radius=radius, **kwds))
+    w = sum(v)
+    w._set_extra_kwds(kwds)
+    return w
 
 
 @rename_keyword(alpha='opacity')
@@ -1262,47 +1261,45 @@ class Line(PrimitiveObject):
             # corners everywhere
             return self.points[:-1]
 
-        elif corner_cutoff <= -1:
+        if corner_cutoff <= -1:
             # no corners
             if max_len is not None:
                 # forced by the maximal number of consecutive smooth points
                 return self.points[:-1][::max_len - 1]
-            else:
-                return [self.points[0]]
+            return [self.points[0]]
 
-        else:
-            if max_len is None:
-                max_len = len(self.points) + 1
-            count = 2
-            # ... -- prev -- cur -- next -- ...
-            cur = self.points[0]
-            next = self.points[1]
+        if max_len is None:
+            max_len = len(self.points) + 1
+        count = 2
+        # ... -- prev -- cur -- next -- ...
+        cur = self.points[0]
+        next = self.points[1]
+        next_dir = [next[i] - cur[i] for i in range(3)]
+        corners = [cur]
+        cur, prev_dir = next, next_dir
+
+        # quicker than making them vectors first
+        def dot(x0_y0_z0, x1_y1_z1):
+            (x0, y0, z0) = x0_y0_z0
+            (x1, y1, z1) = x1_y1_z1
+            return x0 * x1 + y0 * y1 + z0 * z1
+
+        for next in self.points[2:]:
+            if next == cur:
+                corners.append(cur)
+                cur = next
+                count = 1
+                continue
             next_dir = [next[i] - cur[i] for i in range(3)]
-            corners = [cur]
+            cos_angle = (dot(prev_dir, next_dir) /
+                         math.sqrt(dot(prev_dir, prev_dir) *
+                                   dot(next_dir, next_dir)))
+            if cos_angle <= corner_cutoff or count > max_len - 1:
+                corners.append(cur)
+                count = 1
             cur, prev_dir = next, next_dir
-
-            # quicker than making them vectors first
-            def dot(x0_y0_z0, x1_y1_z1):
-                (x0, y0, z0) = x0_y0_z0
-                (x1, y1, z1) = x1_y1_z1
-                return x0 * x1 + y0 * y1 + z0 * z1
-
-            for next in self.points[2:]:
-                if next == cur:
-                    corners.append(cur)
-                    cur = next
-                    count = 1
-                    continue
-                next_dir = [next[i] - cur[i] for i in range(3)]
-                cos_angle = (dot(prev_dir, next_dir) /
-                             math.sqrt(dot(prev_dir, prev_dir) *
-                                       dot(next_dir, next_dir)))
-                if cos_angle <= corner_cutoff or count > max_len - 1:
-                    corners.append(cur)
-                    count = 1
-                cur, prev_dir = next, next_dir
-                count += 1
-            return corners
+            count += 1
+        return corners
 
     def threejs_repr(self, render_params):
         r"""

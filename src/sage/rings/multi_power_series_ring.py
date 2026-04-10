@@ -225,46 +225,6 @@ lazy_import('sage.rings.lazy_series_ring', ('LazyPowerSeriesRing',
                                             'LazyLaurentSeriesRing'))
 
 
-def is_MPowerSeriesRing(x):
-    """
-    Return ``True`` if input is a multivariate power series ring.
-
-    TESTS::
-
-        sage: from sage.rings.power_series_ring import is_PowerSeriesRing
-        sage: from sage.rings.multi_power_series_ring import is_MPowerSeriesRing
-        sage: M = PowerSeriesRing(ZZ, 4, 'v')
-        sage: is_PowerSeriesRing(M)
-        doctest:warning...
-        DeprecationWarning: The function is_PowerSeriesRing is deprecated;
-        use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.
-        See https://github.com/sagemath/sage/issues/38290 for details.
-        False
-        sage: is_MPowerSeriesRing(M)
-        doctest:warning...
-        DeprecationWarning: The function is_MPowerSeriesRing is deprecated;
-        use 'isinstance(..., (MPowerSeriesRing_generic, LazyPowerSeriesRing))' instead.
-        See https://github.com/sagemath/sage/issues/38290 for details.
-        True
-        sage: T = PowerSeriesRing(RR, 'v')
-        sage: is_PowerSeriesRing(T)
-        True
-        sage: is_MPowerSeriesRing(T)
-        False
-        sage: L = LazyPowerSeriesRing(QQ, 'x')
-        sage: is_MPowerSeriesRing(L)
-        True
-        sage: L = LazyPowerSeriesRing(QQ, 'x, y')
-        sage: is_MPowerSeriesRing(L)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38290,
-                "The function is_MPowerSeriesRing is deprecated; "
-                "use 'isinstance(..., (MPowerSeriesRing_generic, LazyPowerSeriesRing))' instead.")
-    return isinstance(x, (MPowerSeriesRing_generic, LazyPowerSeriesRing))
-
-
 class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
     r"""
     A multivariate power series ring.

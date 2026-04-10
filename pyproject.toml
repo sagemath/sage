@@ -104,7 +104,9 @@ sage = "sage.cli.__main__:main"
 platforms = ['linux-64', 'linux-aarch64', 'osx-64', 'osx-arm64']
 
 [tool.pytest.ini_options]
-norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin tools subprojects"
+# sage.libs.giac is a stub to keep the old imports working; all
+# it does is try to import sagemath_giac.
+norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage/libs/giac tools subprojects"
 python_files = "*_test.py"
 # The "no:warnings" is to stop pytest from capturing warnings so that they are printed to the output of the doctest
 addopts = "--import-mode importlib -p no:warnings"
@@ -284,22 +286,25 @@ ignore = [
 ]
 
 select = [
-  "F", # pyflakes -- https://docs.astral.sh/ruff/rules/#pyflakes-f
+  "F", # pyflakes - https://docs.astral.sh/ruff/rules/#pyflakes-f
   "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i
   "W", # pycodestyle warnings - https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
 
-  # ruff-specific rules -- https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
+  # flake8-pie - https://docs.astral.sh/ruff/rules/#flake8-pie-pie
+  "PIE808",
+
+  # ruff-specific rules - https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
   "RUF013",
   "RUF036",
 
   "TC", # flake8-type-checking - https://docs.astral.sh/ruff/rules/#flake8-type-checking-tc
 
-  # perflint -- https://docs.astral.sh/ruff/rules/#perflint-perf
+  # perflint - https://docs.astral.sh/ruff/rules/#perflint-perf
   "PERF101",
   "PERF102",
   "PERF403",
 
-  # pyupgrade -- https://docs.astral.sh/ruff/rules/#pyupgrade-up
+  # pyupgrade - https://docs.astral.sh/ruff/rules/#pyupgrade-up
   "UP004",
   "UP006",
   "UP008",
@@ -308,6 +313,9 @@ select = [
   "UP022",
   "UP034",
   "UP035",
+
+  # refurb - https://docs.astral.sh/ruff/rules/#refurb-furb
+  "FURB188",
 
   # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
   # Ideally we would enable (almost) all of the E rules, but too
@@ -327,6 +335,9 @@ select = [
   "E731",
   "E742",
   "E902",
+
+  # pydocstyle - https://docs.astral.sh/ruff/rules/#pydocstyle-d
+  "D211",
 
   # pylint - https://docs.astral.sh/ruff/rules/#pylint-pl
   # Like with the E rules, this isn't stable enough yet to enable all of PL

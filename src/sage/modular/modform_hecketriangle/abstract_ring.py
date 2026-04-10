@@ -438,8 +438,7 @@ class FormsRing_abstract(Parent):
 
         if ring or not self.is_homogeneous():
             return FormsRing(analytic_type, group=self.group(), base_ring=self.base_ring(), red_hom=self.has_reduce_hom())
-        else:
-            return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=self.weight(), ep=self.ep())
+        return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=self.weight(), ep=self.ep())
 
     def reduce_type(self, analytic_type=None, degree=None):
         r"""
@@ -484,13 +483,12 @@ class FormsRing_abstract(Parent):
 
         if degree is None and not self.is_homogeneous():
             return FormsRing(analytic_type, group=self.group(), base_ring=self.base_ring(), red_hom=self.has_reduce_hom())
-        elif degree is None:
+        if degree is None:
             return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=self.weight(), ep=self.ep())
-        else:
-            weight, ep = degree
-            if self.is_homogeneous() and (weight != self.weight() or ep != self.ep()):
-                analytic_type = self._analytic_type.reduce_to([])
-            return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=weight, ep=ep)
+        weight, ep = degree
+        if self.is_homogeneous() and (weight != self.weight() or ep != self.ep()):
+            analytic_type = self._analytic_type.reduce_to([])
+        return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=weight, ep=ep)
 
     @cached_method
     def contains_coeff_ring(self):
@@ -1075,8 +1073,7 @@ class FormsRing_abstract(Parent):
 
         if self.hecke_n() == infinity:
             return self.extend_type("weak", ring=True)(x/(x-y**2)).reduce()
-        else:
-            return self.extend_type("weak", ring=True)(x**self._group.n()/(x**self._group.n()-y**2)).reduce()
+        return self.extend_type("weak", ring=True)(x**self._group.n()/(x**self._group.n()-y**2)).reduce()
 
     @cached_method
     def j_inv(self):
@@ -1485,8 +1482,7 @@ class FormsRing_abstract(Parent):
         if ZZ(2).divides(self._group.n()):
             x, y, z, d = self._pol_ring.gens()
             return self.extend_type("weak", ring=True)(1/d*y*x**(self._group.n()/ZZ(2))/(x**self._group.n()-y**2)).reduce()
-        else:
-            raise ArithmeticError("g_inv doesn't exist for odd n(={}).".format(self._group.n()))
+        raise ArithmeticError("g_inv doesn't exist for odd n(={}).".format(self._group.n()))
 
     @cached_method
     def E4(self):

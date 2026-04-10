@@ -119,46 +119,6 @@ def set_global_complex_round_mode(n):
     rnd = n
 
 
-def is_ComplexNumber(x):
-    r"""
-    Return ``True`` if ``x`` is a complex number. In particular, if ``x`` is
-    of the :class:`ComplexNumber` type.
-
-    EXAMPLES::
-
-        sage: from sage.rings.complex_mpfr import is_ComplexNumber
-        sage: a = ComplexNumber(1, 2); a
-        1.00000000000000 + 2.00000000000000*I
-        sage: is_ComplexNumber(a)
-        doctest:warning...
-        DeprecationWarning: The function is_ComplexNumber is deprecated;
-        use 'isinstance(..., ComplexNumber)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: b = ComplexNumber(1); b
-        1.00000000000000
-        sage: is_ComplexNumber(b)
-        True
-
-    Note that the global element ``I`` is a number field element, of type
-    :class:`sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian`,
-    while elements of the class :class:`ComplexField_class`
-    are of type :class:`ComplexNumber`::
-
-        sage: c = 1 + 2*I
-        sage: is_ComplexNumber(c)
-        False
-        sage: d = CC(1 + 2*I)
-        sage: is_ComplexNumber(d)
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_ComplexNumber is deprecated; "
-                       "use 'isinstance(..., ComplexNumber)' instead.")
-    return isinstance(x, ComplexNumber)
-
-
 cache = {}
 
 

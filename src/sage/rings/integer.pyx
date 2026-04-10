@@ -321,33 +321,6 @@ mpz_init(PARI_PSEUDOPRIME_LIMIT)
 mpz_ui_pow_ui(PARI_PSEUDOPRIME_LIMIT, 2, 64)
 
 
-def is_Integer(x):
-    """
-    Return ``True`` if ``x`` is of the Sage :class:`Integer` type.
-
-    EXAMPLES::
-
-        sage: from sage.rings.integer import is_Integer
-        sage: is_Integer(2)
-        doctest:warning...
-        DeprecationWarning: The function is_Integer is deprecated;
-        use 'isinstance(..., Integer)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_Integer(2/1)
-        False
-        sage: is_Integer(int(2))
-        False
-        sage: is_Integer('5')
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_Integer is deprecated; "
-                       "use 'isinstance(..., Integer)' instead.")
-    return isinstance(x, Integer)
-
-
 cdef inline Integer as_Integer(x):
     if isinstance(x, Integer):
         return <Integer>x
@@ -874,9 +847,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return (<Integer>x)._xor(y)
         return coercion_model.bin_op(x, y, operator.xor)
 
-    def __richcmp__(left, right, int op):
+    def __richcmp__(left, right, int op) -> bool:
         """
-        ``cmp`` for integers.
+        ``richcmp`` for integers.
 
         EXAMPLES::
 

@@ -13,6 +13,10 @@ make
 m4
 # a system python is needed for downloading the sage packages, https://github.com/sagemath/sage/issues/29090
 python3
+# python3-devel is needed for Python.h header used in configure checks
+python3-devel
+# python3-setuptools is needed for configure checks (Python 3.12+ removed distutils)
+python3-setuptools
 perl
 perl-ExtUtils-MakeMaker
 tar

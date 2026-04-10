@@ -117,18 +117,16 @@ def setprint_s(X, toplevel=False):
     """
     if isinstance(X, (frozenset, set)):
         return '{' + ', '.join(sorted(setprint_s(x) for x in X)) + '}'
-    elif isinstance(X, dict):
+    if isinstance(X, dict):
         return '{' + ', '.join(sorted(setprint_s(key) + ': ' + setprint_s(val)
                                       for key, val in X.items())) + '}'
-    elif isinstance(X, str):
+    if isinstance(X, str):
         if toplevel:
             return X
-        else:
-            return "'" + X + "'"
-    elif isinstance(X, Iterable) and not isinstance(X, SageObject):
+        return "'" + X + "'"
+    if isinstance(X, Iterable) and not isinstance(X, SageObject):
         return '[' + ', '.join(sorted(setprint_s(x) for x in X)) + ']'
-    else:
-        return repr(X)
+    return repr(X)
 
 
 def newlabel(groundset):

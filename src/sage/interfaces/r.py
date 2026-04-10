@@ -405,8 +405,7 @@ def _setup_r_to_sage_converter():
     def list_to_singleton_if_possible(l):
         if len(l) == 1:
             return l[0]
-        else:
-            return l
+        return l
 
     def _vector(vec):
         attrs = vec.list_attrs()
@@ -423,9 +422,8 @@ def _setup_r_to_sage_converter():
                 '_Names': names,
                 '_r_class': rclass,
             }
-        else:
-            # if no names are present, convert to a normal list or a single value
-            return data
+        # if no names are present, convert to a normal list or a single value
+        return data
     rpy2py.register(SexpVector, _vector)
 
     def _matrix(mat):
@@ -1600,18 +1598,17 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         if isinstance(n, str):
             n = n.replace('self', self._name)
             return P.new('%s[%s]' % (self._name, n))
-        elif parent(n) is P:  # the key is RElement itself
+        if parent(n) is P:  # the key is RElement itself
             return P.new('%s[%s]' % (self._name, n.name()))
-        elif not isinstance(n, tuple):
+        if not isinstance(n, tuple):
             return P.new('%s[%s]' % (self._name, n))
-        else:
-            L = []
-            for i in range(len(n)):
-                if parent(n[i]) is P:
-                    L.append(n[i].name())
-                else:
-                    L.append(str(n[i]))
-            return P.new('%s[%s]' % (self._name, ','.join(L)))
+        L = []
+        for i in range(len(n)):
+            if parent(n[i]) is P:
+                L.append(n[i].name())
+            else:
+                L.append(str(n[i]))
+        return P.new('%s[%s]' % (self._name, ','.join(L)))
 
     def __bool__(self):
         """

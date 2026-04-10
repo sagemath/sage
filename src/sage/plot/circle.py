@@ -223,9 +223,8 @@ class Circle(GraphicPrimitive):
         if fill:
             from .polygon import Polygon
             return Polygon(xdata, ydata, options).plot3d(z)
-        else:
-            from .line import Line
-            return Line(xdata, ydata, options).plot3d().translate((0,0,z))
+        from .line import Line
+        return Line(xdata, ydata, options).plot3d().translate((0,0,z))
 
 
 @rename_keyword(color='rgbcolor')
@@ -428,7 +427,7 @@ def circle(center, radius, **options):
         g._legend_colors = [options['legend_color']]
     if len(center) == 2:
         return g
-    elif len(center) == 3:
+    if len(center) == 3:
         return g[0].plot3d(z=center[2])
     raise ValueError('the center of a plotted circle should have '
                      'two or three coordinates')

@@ -557,15 +557,14 @@ class Polyhedron_base4(Polyhedron_base3):
         flag = self._flag_f_vector()
         if len(args) == 0:
             return flag
-        elif len(args) == 1:
+        if len(args) == 1:
             return flag[(args[0],)]
-        else:
-            dim = self.dimension()
-            if args[0] == -1:
-                args = args[1:]
-            if args[-1] == dim:
-                args = args[:-1]
-            return flag[tuple(args)]
+        dim = self.dimension()
+        if args[0] == -1:
+            args = args[1:]
+        if args[-1] == dim:
+            args = args[:-1]
+        return flag[tuple(args)]
 
     @cached_method(do_pickle=True)
     def _flag_f_vector(self):
@@ -1019,7 +1018,7 @@ class Polyhedron_base4(Polyhedron_base3):
         permgroup = G.automorphism_group(edge_labels=True)
         if output == "permutation":
             return permgroup
-        elif output == "matrix":
+        if output == "matrix":
             permgroup = permgroup.gens()
 
         # Compute V+ = Vt Q+ as list of row vectors
@@ -1045,9 +1044,8 @@ class Polyhedron_base4(Polyhedron_base3):
 
         if output == "matrixlist":
             return tuple(matrices)
-        else:
-            from sage.groups.matrix_gps.finitely_generated import MatrixGroup
-            return MatrixGroup(matrices)
+        from sage.groups.matrix_gps.finitely_generated import MatrixGroup
+        return MatrixGroup(matrices)
 
     def is_combinatorially_isomorphic(self, other, algorithm='bipartite_graph'):
         r"""
@@ -1177,8 +1175,7 @@ class Polyhedron_base4(Polyhedron_base3):
             G_other = other.vertex_facet_graph(False)
 
             return G_self.is_isomorphic(G_other)
-        else:
-            return self.face_lattice().is_isomorphic(other.face_lattice())
+        return self.face_lattice().is_isomorphic(other.face_lattice())
 
     def _test_is_combinatorially_isomorphic(self, tester=None, **options):
         """

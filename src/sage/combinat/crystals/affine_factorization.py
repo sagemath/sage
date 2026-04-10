@@ -435,22 +435,17 @@ def affine_factorizations(w, l, weight=None):
         if l == 0:
             if w.is_one():
                 return [[]]
-            else:
-                return []
-        else:
-            return [[u] + p for u, v in w.left_pieri_factorizations()
-                    for p in affine_factorizations(v, l - 1)]
-    else:
-        if l != len(weight):
             return []
-        if l == 0:
-            if w.is_one():
-                return [[]]
-            else:
-                return []
-        else:
-            return [[u] + p for u, v in w.left_pieri_factorizations(max_length=weight[0]) if u.length() == weight[0]
-                    for p in affine_factorizations(v, l - 1, weight[1:])]
+        return [[u] + p for u, v in w.left_pieri_factorizations()
+                for p in affine_factorizations(v, l - 1)]
+    if l != len(weight):
+        return []
+    if l == 0:
+        if w.is_one():
+            return [[]]
+        return []
+    return [[u] + p for u, v in w.left_pieri_factorizations(max_length=weight[0]) if u.length() == weight[0]
+            for p in affine_factorizations(v, l - 1, weight[1:])]
 
 #####################################################################
 #  Crystal isomorphisms

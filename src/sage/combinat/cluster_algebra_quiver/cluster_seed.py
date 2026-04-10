@@ -996,11 +996,11 @@ class ClusterSeed(SageObject):
         """
         if self._use_fpolys:
             return hash(tuple(self.cluster()))
-        elif self._use_g_vec:
+        if self._use_g_vec:
             return hash(self.g_matrix())
-        elif self._use_c_vec:
+        if self._use_c_vec:
             return hash(self.c_matrix())
-        elif self._use_d_vec:
+        if self._use_d_vec:
             return hash(self.d_matrix())
 
     def _repr_(self):
@@ -1368,8 +1368,7 @@ class ClusterSeed(SageObject):
         """
         if self._track_mut:
             return copy(self._mut_path)
-        else:
-            raise ValueError("Not recording mutation sequence.  Need to track mutations.")
+        raise ValueError("Not recording mutation sequence.  Need to track mutations.")
 
     def cluster_variable(self, k):
         r"""
@@ -1398,8 +1397,7 @@ class ClusterSeed(SageObject):
                 cluster_variable = g_mon * F_num * F_den
 
                 return ClusterVariable(FractionField(self._R), cluster_variable.numerator(), cluster_variable.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable', xdim=self._n)
-            else:
-                raise ValueError('No cluster variable with index or label ' + str(k) + '.')
+            raise ValueError('No cluster variable with index or label ' + str(k) + '.')
         elif self._track_mut:  # if we can recreate the clusters
             catchup = ClusterSeed(self._b_initial, user_labels=self._user_labels, user_labels_prefix=self._user_labels_prefix)
             catchup.use_c_vectors(use=self._use_c_vec, bot_is_c=self._bot_is_c)
@@ -1437,8 +1435,7 @@ class ClusterSeed(SageObject):
                 catchup.use_c_vectors(use=self._use_c_vec, bot_is_c=self._bot_is_c)
                 catchup.mutate(self.mutations())
                 return catchup.cluster()
-            else:
-                raise ValueError('Clusters not being tracked')
+            raise ValueError('Clusters not being tracked')
         elif self._cluster is None:
             self._cluster = [self.cluster_variable(k) for k in range(self._n)]
         return copy(self._cluster)
@@ -1522,14 +1519,13 @@ class ClusterSeed(SageObject):
                 raise ValueError("The cluster seed does not have a cluster variable of index %s." % k)
 
             return self._F[IE[k]]
-        elif self._track_mut:
+        if self._track_mut:
             catchup = ClusterSeed(self._b_initial, user_labels=self._user_labels, user_labels_prefix=self._user_labels_prefix)
             catchup.use_c_vectors(use=self._use_c_vec, bot_is_c=self._bot_is_c)
             catchup.mutate(self.mutations())
 
             return catchup.f_polynomial(k)
-        else:
-            raise ValueError("Turn on use_fpolys to get F polynomial %s." % k)
+        raise ValueError("Turn on use_fpolys to get F polynomial %s." % k)
 
     def f_polynomials(self):
         r"""
@@ -1577,19 +1573,19 @@ class ClusterSeed(SageObject):
 
         if self._use_g_vec:  # This implies the g-matrix is maintained by the mutate function and will always be up to date
             return copy(self._G.column(k))
-        elif self._use_fpolys and self._cluster:
+        if self._use_fpolys and self._cluster:
             f = copy(self.cluster_variable(k))
             eval_dict = {self.y(i): 0 for i in range(self._m)}
             f0 = f.subs(eval_dict)
             d1 = f0.numerator().degrees()
             d2 = f0.denominator().degrees()
             return tuple(d1[i] - d2[i] for i in range(self._n))
-        else:  # in the is_principal=True case
-            try:
-                # ensure that we cannot create a loop by calling g_matrix() here by filtering out loop causing conditions in the previous if-elif sections
-                return self.g_matrix().column(k)
-            except ValueError:
-                raise ValueError("Unable to calculate g-vectors. Need to use g vectors.")
+        # in the is_principal=True case
+        try:
+            # ensure that we cannot create a loop by calling g_matrix() here by filtering out loop causing conditions in the previous if-elif sections
+            return self.g_matrix().column(k)
+        except ValueError:
+            raise ValueError("Unable to calculate g-vectors. Need to use g vectors.")
 
     def g_matrix(self, show_warnings=True):
         r"""
@@ -1636,12 +1632,12 @@ class ClusterSeed(SageObject):
         from sage.matrix.constructor import matrix
         if self._use_g_vec:
             return copy(self._G)
-        elif self._use_fpolys and self._cluster:  # This only calls g_vector when it will not create a loop.
+        if self._use_fpolys and self._cluster:  # This only calls g_vector when it will not create a loop.
             return matrix([self.g_vector(k) for k in range(self._n)]).transpose()
-        elif self._use_c_vec:
+        if self._use_c_vec:
             if self.b_matrix().is_skew_symmetric():
                 return copy(self._C).inverse().transpose()
-            elif self._track_mut:
+            if self._track_mut:
                 BC1 = copy(self._b_initial[0:self._n])
                 BC1 = -BC1.transpose()
                 BC1 = BC1.stack(matrix.identity(self._n))
@@ -1649,8 +1645,7 @@ class ClusterSeed(SageObject):
                 for k in seq:
                     BC1.mutate(k)
                 return copy(BC1[self._n:2 * self._n]).inverse().transpose()
-            else:
-                raise ValueError("Unable to calculate g-vectors. Need to use g vectors.")
+            raise ValueError("Unable to calculate g-vectors. Need to use g vectors.")
         elif self._track_mut:
             catchup = ClusterSeed(self._b_initial)
             catchup.use_fpolys(False)
@@ -1762,20 +1757,19 @@ class ClusterSeed(SageObject):
 
         if self._bot_is_c:
             return copy(self._M[self._m:(self._n + self._m), :self._n])
-        elif self._use_c_vec:
+        if self._use_c_vec:
             return copy(self._C)
-        elif self._use_g_vec or self._use_fpolys:  # both of these will populate g_matrix() successfully
+        if self._use_g_vec or self._use_fpolys:  # both of these will populate g_matrix() successfully
             if self.b_matrix().is_skew_symmetric():
                 return self.g_matrix().inverse().transpose()
-            elif self._track_mut:
+            if self._track_mut:
                 BC1 = copy(self._b_initial[0:self._n])
                 BC1 = BC1.stack(matrix.identity(self._n))
                 seq = iter(self.mutations())
                 for k in seq:
                     BC1.mutate(k)
                 return copy(BC1[self._n:2 * self._n])
-            else:
-                raise ValueError("Unable to calculate c-vectors. Need to use c vectors.")
+            raise ValueError("Unable to calculate c-vectors. Need to use c vectors.")
         elif self._track_mut:
             BC1 = copy(self._b_initial[0:self._n])
             BC1 = BC1.stack(matrix.identity(self._n))
@@ -1804,12 +1798,12 @@ class ClusterSeed(SageObject):
 
         if self._use_d_vec:
             return copy(self._D).column(k)
-        elif self._use_fpolys:
+        if self._use_fpolys:
             f = self.cluster_variable(k)
             if f in self._R.gens():
                 return -vector(f.numerator().monomials()[0].exponents()[0][:self._n])
             return vector(f.denominator().monomials()[0].exponents()[0][:self._n])
-        elif self._track_mut:
+        if self._track_mut:
             catchup = ClusterSeed(self._b_initial)
             catchup.use_fpolys(False)
             catchup.use_g_vectors(False)
@@ -1817,8 +1811,7 @@ class ClusterSeed(SageObject):
 
             catchup.mutate(self.mutations())
             return copy(catchup._D).column(k)
-        else:
-            raise ValueError("Unable to calculate d-vector %s. Need to use d vectors." % k)
+        raise ValueError("Unable to calculate d-vector %s. Need to use d vectors." % k)
 
     def d_matrix(self, show_warnings=True):
         r"""
@@ -1842,9 +1835,9 @@ class ClusterSeed(SageObject):
             raise ValueError("Unable to calculate d-vectors. Need to use d vectors.")
         if self._use_d_vec:
             return copy(self._D)
-        elif self._use_fpolys:
+        if self._use_fpolys:
             return matrix([self.d_vector(k) for k in range(self._n)]).transpose()
-        elif self._track_mut:
+        if self._track_mut:
             catchup = ClusterSeed(self._b_initial)
             catchup.use_fpolys(False)
             catchup.use_g_vectors(False)
@@ -1853,7 +1846,7 @@ class ClusterSeed(SageObject):
 
             catchup.mutate(self.mutations())
             return catchup.d_matrix()
-        elif show_warnings:
+        if show_warnings:
             raise ValueError("No valid way to calculate d-vectors")
 
     def _d_mutate(self, k):
@@ -1909,13 +1902,12 @@ class ClusterSeed(SageObject):
             raise ValueError("The cluster seed does not have a coefficient of index %s." % k)
         if self._m == 0:
             return self.x(0)**0
-        else:
-            try:    # are c vectors being tracked?
-                exp = self.c_vector(k)
-            except Exception:    # if not try and reconstruct them
-                exp = self.c_matrix().column(k)
+        try:    # are c vectors being tracked?
+            exp = self.c_vector(k)
+        except Exception:    # if not try and reconstruct them
+            exp = self.c_matrix().column(k)
 
-            return prod(self.y(i)**exp[i] for i in range(self._m))
+        return prod(self.y(i)**exp[i] for i in range(self._m))
 
     def coefficients(self):
         r"""
@@ -2762,12 +2754,11 @@ class ClusterSeed(SageObject):
 
         if return_output == 'seed':
             return seed_sequence
-        elif return_output == 'matrix':
+        if return_output == 'matrix':
             return [s._M for s in seed_sequence]
-        elif return_output == 'var':
+        if return_output == 'var':
             return new_clust_var
-        else:
-            raise ValueError('The parameter `return_output` can only be `seed`, `matrix`, or `var`.')
+        raise ValueError('The parameter `return_output` can only be `seed`, `matrix`, or `var`.')
 
     def mutation_analysis(self, options=['all'], filter=None):
         r"""
@@ -4091,8 +4082,7 @@ class ClusterSeed(SageObject):
         mt = self.mutation_type()
         if isinstance(mt, str):
             return False
-        else:
-            return mt.is_finite()
+        return mt.is_finite()
 
     def is_mutation_finite(self, nr_of_checks=None, return_path=False):
         r"""
@@ -4130,8 +4120,7 @@ class ClusterSeed(SageObject):
         is_finite, path = is_mutation_finite(copy(self._M), nr_of_checks=nr_of_checks)
         if return_path:
             return is_finite, path
-        else:
-            return is_finite
+        return is_finite
 
     def mutation_type(self):
         r"""
@@ -4254,7 +4243,7 @@ class ClusterSeed(SageObject):
                         if p != 0 or q != 0:
                             ans += self._R(coeff_recurs(p, q, a1, a2, b, c))*self.x(0)**(b*p-a1)*self.x(1)**(c*q-a2)
                 return ans
-            elif algorithm == 'by_combinatorics':
+            if algorithm == 'by_combinatorics':
                 if b == 0:
                     S = ClusterSeed([['A', 1], ['A', 1]])
                 else:
@@ -4277,16 +4266,15 @@ class ClusterSeed(SageObject):
                         ans = ans + S.x(0)**(b*len(oddT)) * S.x(1)**(c*len(evenT))
                 ans = ans*S.x(0)**(-a1)*S.x(1)**(-a2)
                 return ans
-            elif algorithm == 'just_numbers':
+            if algorithm == 'just_numbers':
                 ans = 1
                 for p in range(max(a2, 0)+1):
                     for q in range(max(a1, 0)+1):
                         if p != 0 or q != 0:
                             ans += coeff_recurs(p, q, a1, a2, b, c)
                 return ans
-            else:
-                raise ValueError("The third input should be 'by_recursion', "
-                                 "'by_combinatorics', or 'just_numbers'.")
+            raise ValueError("The third input should be 'by_recursion', "
+                             "'by_combinatorics', or 'just_numbers'.")
         else:
             raise ValueError("Greedy elements are only currently "
                              "defined for cluster seeds of rank two.")
@@ -4452,20 +4440,19 @@ class ClusterSeed(SageObject):
                     print(f'Verified that there are no new elements in {spend} seconds')
                     print('Returning a presentation for the upper bound')
                 return R.quotient_ring(ISat)
-            else:
-                gens.append('z' + str(len(gens) - 2 * rank))
-                new_gen_found = False
-                i = 0
-                M_gens = M.gens()
-                while not new_gen_found and i < len(M_gens):
-                    f = initial_product_ideal.reduce(M_gens[i])
-                    if f != 0:
-                        rels.append('z' + str(len(gens) - 2 * rank - 1) + '*' + initial_product + '-(' + str(f) + ')')
-                        new_gen_found = True
-                        if verbose:
-                            print('Found a new element in', spend, 'seconds!')
-                            print()
-                    i += 1
+            gens.append('z' + str(len(gens) - 2 * rank))
+            new_gen_found = False
+            i = 0
+            M_gens = M.gens()
+            while not new_gen_found and i < len(M_gens):
+                f = initial_product_ideal.reduce(M_gens[i])
+                if f != 0:
+                    rels.append('z' + str(len(gens) - 2 * rank - 1) + '*' + initial_product + '-(' + str(f) + ')')
+                    new_gen_found = True
+                    if verbose:
+                        print('Found a new element in', spend, 'seconds!')
+                        print()
+                i += 1
 
     def get_upper_cluster_algebra_element(self, a):
         r"""
@@ -5204,5 +5191,4 @@ class ClusterVariable(FractionFieldElement):
                 return -Phiplus[self.numerator().degrees().index(1) + 1]
             root = self.denominator().degrees()
             return sum([root[i] * Phiplus[i + 1] for i in range(self._n)])
-        else:
-            raise ValueError('The cluster algebra for %s is not of finite type.' % self._repr_())
+        raise ValueError('The cluster algebra for %s is not of finite type.' % self._repr_())

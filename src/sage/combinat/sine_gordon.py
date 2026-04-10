@@ -523,7 +523,7 @@ class SineGordonYsystem(SageObject):
                             radius_arc * sin(t) + center[1])
                 return parametric_plot(f(t), (t, center_angle_p,
                                               center_angle_q), **opts)
-            elif self.type() == 'D':
+            if self.type() == 'D':
                 if p >= q:
                     q += self.r()
                 px = -2 * pi * p / self.r() + pi / 2

@@ -1,4 +1,4 @@
-idna sniffio exceptiongroup typing_extensions | pip $(PYTHON)
+idna sniffio typing_extensions | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

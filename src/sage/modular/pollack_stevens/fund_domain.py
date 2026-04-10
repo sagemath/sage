@@ -307,8 +307,7 @@ class PollackStevensModularDomain(SageObject):
         """
         if n is None:
             return self._indices
-        else:
-            return self._indices[n]
+        return self._indices[n]
 
     def reps(self, n=None):
         r"""
@@ -348,8 +347,7 @@ class PollackStevensModularDomain(SageObject):
         """
         if n is None:
             return self._reps
-        else:
-            return self._reps[n]
+        return self._reps[n]
 
     def relations(self, A=None):
         r"""
@@ -460,10 +458,9 @@ class PollackStevensModularDomain(SageObject):
         """
         if A is None:
             return self._rels
-        elif isinstance(A, (int, Integer, slice)):
+        if isinstance(A, (int, Integer, slice)):
             return self._rels[A]
-        else:
-            return self._rel_dict[A]
+        return self._rel_dict[A]
 
     def equivalent_index(self, A):
         r"""
@@ -1565,5 +1562,4 @@ def basic_hecke_matrix(a, l):
     """
     if a < l:
         return M2Z([1, a, 0, l])
-    else:
-        return M2Z([l, 0, 0, 1])
+    return M2Z([l, 0, 0, 1])
