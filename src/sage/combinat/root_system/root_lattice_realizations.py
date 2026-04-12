@@ -908,9 +908,9 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: L = RootSystem(['C',2]).root_lattice()
                 sage: L.positive_roots_by_height()                                      # needs sage.graphs
-                [alpha[2], alpha[1], alpha[1] + alpha[2], 2*alpha[1] + alpha[2]]
+                [alpha[1], alpha[2], alpha[1] + alpha[2], 2*alpha[1] + alpha[2]]
                 sage: L.positive_roots_by_height(increasing=False)                      # needs sage.graphs
-                [2*alpha[1] + alpha[2], alpha[1] + alpha[2], alpha[2], alpha[1]]
+                [2*alpha[1] + alpha[2], alpha[1] + alpha[2], alpha[1], alpha[2]]
 
                 sage: L = RootSystem(['A',2,1]).root_lattice()
                 sage: L.positive_roots_by_height()                                      # needs sage.graphs
@@ -921,13 +921,10 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             if not self.cartan_type().is_finite():
                 raise NotImplementedError("Only implemented for finite Cartan type")
-            ranks = self.root_poset().level_sets()
-            if not increasing:
-                ranks.reverse()
-            roots = []
-            for x in ranks:
-                roots += x
-            return [x.element for x in roots]
+            roots = sorted(self.positive_roots(),
+                           key=lambda x: x.height(),
+                           reverse=not increasing)
+            return roots
 
         @cached_method
         def positive_roots_parabolic(self, index_set=None):
