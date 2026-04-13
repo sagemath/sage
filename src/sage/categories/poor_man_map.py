@@ -23,8 +23,8 @@ class PoorManMap(SageObject):
     INPUT:
 
     - ``function`` -- a callable or an iterable of callables. This represents
-      the underlying function used to implement this map. If it is an iterable,
-      then the callables will be composed to implement this map.
+      the underlying function used to implement this map. If it is an iterable
+      but not a callable, then the callables will be composed to implement this map.
 
     - ``domain`` -- the domain of this map or ``None`` if the domain is not
       known or should remain unspecified
@@ -67,8 +67,7 @@ class PoorManMap(SageObject):
             sage: TestSuite(f).run()
             sage: TestSuite(f*g).run()
         """
-        from collections.abc import Iterable
-        if not isinstance(function, Iterable):
+        if callable(function):
             function = (function,)
         self._functions = tuple(function)
         self._domain = domain
