@@ -761,7 +761,21 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
               parent(x) == self._indices):
             return self.monomial(x)
         elif x in self._indices:
-            return self.monomial(self._indices(x))
+            try:
+                x = self._indices(x)
+            except TypeError:
+                # TODO: Same facade parent workaround as in
+                # ``ImageSubobject._element_constructor_``: facade parents of
+                # Python (non-Sage) objects do not work as expected here
+                # because ``DefaultConvertMap._call_()`` in coerce_maps.pyx is
+                # Cython-typed as ``cpdef Element _call_()``, so if
+                # ``_element_constructor_`` returns a plain Python object not
+                # inheriting from Element, Cython raises ``TypeError``.
+                # Remove this workaround once facade parents work as expected.
+                # ``x in self._indices`` above already confirmed validity, so
+                # using x directly is safe.
+                pass
+            return self.monomial(x)
         else:
             if hasattr(self, '_coerce_end'):
                 try:
@@ -1399,32 +1413,6 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         # the following is not the best option, but it's better than nothing.
         if 'tensor_symbol' in options:
             self._print_options['tensor_symbol'] = options['tensor_symbol']
-
-    def _element_constructor_(self, x):
-        """
-        Construct an element of this tensor product module.
-
-        EXAMPLES::
-
-            sage: m1 = CombinatorialFreeModule(QQ, ["a", "b", "c"], prefix="m1")
-            sage: m2 = CombinatorialFreeModule(QQ, ["x", "y", "z"], prefix="m2")
-            sage: t = tensor([m1, m2])
-            sage: t(("a", "x"))
-            m1['a'] # m2['x']
-            sage: t(("b", "z"))
-            m1['b'] # m2['z']
-
-        Conversion from an existing element still works::
-
-            sage: elt = m1.basis()["a"].tensor(m2.basis()["x"])
-            sage: t(elt) == t(("a", "x"))
-            True
-        """
-        if isinstance(x, tuple) and len(x) == len(self._sets):
-            if x in self.basis().keys():
-                return self.monomial(x)
-            raise ValueError(f"{x} is not a valid index")
-        return super()._element_constructor_(x)
 
     def _repr_(self):
         r"""

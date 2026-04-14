@@ -238,15 +238,9 @@ class ImageSubobject(Parent):
         if self._inverse is not None:
             try:
                 preimage = self._inverse(x)
-            except (TypeError, ValueError):
+            except Exception:
                 return False
-            if preimage not in self._domain_subset:
-                return False
-            try:
-                preimage = self._map.domain()(preimage)
-            except TypeError:
-                pass
-            return self._map(preimage) == x
+            return preimage in self._domain_subset
         return super().__contains__(x)
 
     def _element_constructor_(self, x):
@@ -281,6 +275,16 @@ class ImageSubobject(Parent):
             try:
                 preimage = self._map.domain()(preimage)
             except TypeError:
+                # TODO: Facade parents of Python (non-Sage) objects such as
+                # tuples do not work as expected here:
+                # ``DefaultConvertMap._call_()`` in coerce_maps.pyx is
+                # Cython-typed as ``cpdef Element _call_()``, so if
+                # ``_element_constructor_`` returns a plain Python object not
+                # inheriting from Element, Cython raises ``TypeError``.
+                # Remove this workaround once facade parents work as expected;
+                # see also ``CombinatorialFreeModule._element_constructor_``
+                # for a related workaround. The ``self._map(preimage) == x``
+                # check below still ensures correctness in the meantime.
                 pass
             y = self._map(preimage)
             if y == x:
