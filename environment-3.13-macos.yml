@@ -46,7 +46,7 @@ dependencies:
   - cctools=1030.6.3=llvm19_1_hd01ab73_4
   - cctools_impl_osx-arm64=1030.6.3=llvm19_1_he8a363d_4
   - cctools_osx-arm64=1030.6.3=llvm19_1_hd01ab73_4
-  - cddlib=1!0.94m=h6d7a090_0
+  - "cddlib=1!0.94m=h6d7a090_0"
   - certifi=2026.2.25=pyhd8ed1ab_0
   - cffi=2.0.0=py313h224173a_1
   - charset-normalizer=3.4.5=pyhd8ed1ab_0
