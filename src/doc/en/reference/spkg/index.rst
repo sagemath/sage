@@ -44,6 +44,7 @@ Features
    sage/features/csdp
    sage/features/databases
    sage/features/dvipng
+   sage/features/eclib
    sage/features/ffmpeg
    sage/features/four_ti_2
    sage/features/gap
