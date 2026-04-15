@@ -53,8 +53,7 @@ if gap_exe.found()
     else
       gap_root_paths = '${prefix}/lib/gap;${prefix}/share/gap'
       message(
-        'Warning: Unable to determine system GAP root paths because host binaries cannot be run. '
-        + 'Using the default GAP_ROOT_PATHS=' + gap_root_paths + '.',
+        'Warning: Unable to determine system GAP root paths because host binaries cannot be run. ' + 'Using the default GAP_ROOT_PATHS=' + gap_root_paths + '.',
       )
     endif
   endif
