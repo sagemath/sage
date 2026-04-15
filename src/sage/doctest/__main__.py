@@ -1,3 +1,38 @@
+r"""
+Entrypoint for testing the SageMath library
+
+This file is executed when you run ``sage -t``, it runs doctests and unit tests
+through pytest.
+"""
+
+# ****************************************************************************
+#       Copyright (C) 2012-2023 David Roe <roed.math@gmail.com>
+#                     2013-2018 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                     2015      Nathann Cohen <nathann.cohen@gmail.com>
+#                     2016-2020 John H. Palmieri <palmieri@math.washington.edu>
+#                     2016-2023 Kwankyu Lee <ekwankyu@gmail.com>
+#                     2017-2019 Erik M. Bray <erik.bray@lri.fr>
+#                     2017-2025 Frédéric Chapoton <chapoton@math.univ-lyon1.fr>
+#                     2017      Volker Braun <vbraun.name@gmail.com>
+#                     2018      François Bissey <frp.bissey@gmail.com>
+#                     2018-2026 Julian Rüth <julian.rueth@fsfe.org>
+#                     2019      Antonio Rojas <arojas@archlinux.org>
+#                     2020      Dima Pasechnik <dima@pasechnik.info>
+#                     2020-2021 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#                     2020-2024 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+#                     2020-2026 Tobias Diez <code@tobiasdiez.com>
+#                     2021-2023 Michael Orlitzky <michael@orlitzky.com>
+#                     2021      Sébastien Labbé <sebastien.labbe@labri.fr>
+#                     2022      Gonzalo Tornaría <tornaria@cmat.edu.uy>
+#                     2022-2023 Sebastian Oehms <seb.oehms@gmail.com>
+#                     2023      Enrique Artal <artal@unizar.es>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import argparse
 import os
 import shlex

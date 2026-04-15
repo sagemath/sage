@@ -18,6 +18,7 @@ AUTHORS:
 #                     2017      Erik M. Bray
 #                     2017-2021 Frédéric Chapoton
 #                     2018      Sébastien Labbé
+#                     2018-2026 Julian Rüth <julian.rueth@fsfe.org>
 #                     2019      François Bissey
 #                     2020-2023 Matthias Koeppe
 #                     2022      Michael Orlitzky

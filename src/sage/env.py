@@ -7,8 +7,9 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2013 R. Andrew Ohana <andrew.ohana@gmail.com>
-#       Copyright (C) 2019 Jeroen Demeyer <J.Demeyer@UGent.be>
+#       Copyright (C) 2012-2013 R. Andrew Ohana <andrew.ohana@gmail.com>
+#                     2019      Jeroen Demeyer <J.Demeyer@UGent.be>
+#                     2013-2026 Julian Rüth <julian.rueth@fsfe.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
