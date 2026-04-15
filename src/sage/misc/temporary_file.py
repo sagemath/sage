@@ -14,7 +14,8 @@ AUTHORS:
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun@stp.dias.ie>
-#       Copyright (C) 2012 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                     2012 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                     2026 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -148,8 +149,10 @@ class atomic_write:
 
     INPUT:
 
-    - ``target_filename`` -- the name of the file to be written
-      Normally, the contents of this file will be overwritten
+    - ``target_filename`` -- the name of the file to be written.
+      Normally, the contents of this file will be overwritten.
+      The directory containing this file must exist already unless ``makedirs``
+      is set.
 
     - ``append`` -- boolean (default: ``False``); if ``True`` and
       ``target_filename`` is an existing file, then copy the current
@@ -167,6 +170,10 @@ class atomic_write:
       the underlying file is opened in binary mode.  If ``False`` then it is
       opened in text mode and an encoding with which to write the file may be
       supplied.
+
+    - ``makedirs`` -- (default: ``None``) mode bits or ``None``; if set, the
+      containing directory is created with this mode, e.g., ``0o700``, if it
+      does not exist yet.
 
     - ``**kwargs`` -- additional keyword arguments passed to the underlying
       `io.open` call
@@ -297,9 +304,27 @@ class atomic_write:
         ValueError: binary mode doesn't take an encoding argument
         sage: os.path.exists(writer.tempname)
         False
+
+    The containing directory must exist already unless ``makedirs`` is set::
+
+        sage: from sage.misc.temporary_file import tmp_dir
+        sage: parent = os.path.join(tmp_dir(), "directory")
+        sage: target = os.path.join(parent, "file.tmp")
+        sage: with atomic_write(target) as f:
+        ....:     _ = f.write(u"Hello")
+        Traceback (most recent call last):
+        ...
+        FileNotFoundError: ...
+
+        sage: with atomic_write(target, makedirs=0o700) as f:
+        ....:     _ = f.write(u"Hello")
+
+        sage: os.path.exists(target)
+        True
+
     """
     def __init__(self, target_filename, append=False, mode=0o666,
-                 binary=False, **kwargs) -> None:
+                 binary=False, makedirs=None, **kwargs) -> None:
         """
         TESTS::
 
@@ -314,6 +339,7 @@ class atomic_write:
         """
         self.target = os.path.realpath(target_filename)
         self.tmpdir = os.path.dirname(self.target)
+
         self.append = append
         # Remove umask bits from mode
         umask = os.umask(0)
@@ -322,6 +348,7 @@ class atomic_write:
 
         # 'text' mode is the default on Python 3
         self.binary = binary
+        self.makedirs = makedirs
         self.kwargs = kwargs
 
     def __enter__(self) -> IO:
@@ -342,7 +369,8 @@ class atomic_write:
             ....:     os.path.dirname(aw.target) == os.path.dirname(f.name)
             True
         """
-
+        if self.makedirs is not None:
+            os.makedirs(self.tmpdir, mode=self.makedirs, exist_ok=True)
         fd, name = tempfile.mkstemp(dir=self.tmpdir)
         self.tempname = os.path.abspath(name)
 

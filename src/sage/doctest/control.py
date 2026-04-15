@@ -772,7 +772,7 @@ class DocTestController(SageObject):
             {'walltime': 1.0}
         """
         from sage.misc.temporary_file import atomic_write
-        with atomic_write(filename) as stats_file:
+        with atomic_write(filename, makedirs=0o700) as stats_file:
             json.dump(self.stats, stats_file, sort_keys=True, indent=4)
 
     def log(self, s, end='\n'):
