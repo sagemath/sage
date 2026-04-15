@@ -5,13 +5,7 @@ import sys
 
 import pytest
 
-# Note: the DOT_SAGE and SAGE_STARTUP_FILE environment variables have already been set by sage-env
-DOT_SAGE = os.environ.get('DOT_SAGE', os.path.join(os.environ.get('HOME'),
-                                                   '.sage'))
-
-# Override to not pick up user configuration, see Issue #20270
-os.environ['SAGE_STARTUP_FILE'] = os.path.join(DOT_SAGE, 'init-doctests.sage')
-
+import sage.env
 
 def _get_optional_defaults():
     """Return the default value for the --optional flag."""
@@ -111,19 +105,19 @@ def _make_parser():
     parser.add_argument("--valgrind", "--memcheck", action="store_true", default=False,
                         help="run doctests using Valgrind's memcheck tool.  The log "
                         "files are named sage-memcheck.PID and can be found in " +
-                        os.path.join(DOT_SAGE, "valgrind"))
+                        os.path.join(sage.env.DOT_SAGE, "valgrind"))
     parser.add_argument("--massif", action="store_true", default=False,
                         help="run doctests using Valgrind's massif tool.  The log "
                         "files are named sage-massif.PID and can be found in " +
-                        os.path.join(DOT_SAGE, "valgrind"))
+                        os.path.join(sage.env.DOT_SAGE, "valgrind"))
     parser.add_argument("--cachegrind", action="store_true", default=False,
                         help="run doctests using Valgrind's cachegrind tool.  The log "
                         "files are named sage-cachegrind.PID and can be found in " +
-                        os.path.join(DOT_SAGE, "valgrind"))
+                        os.path.join(sage.env.DOT_SAGE, "valgrind"))
     parser.add_argument("--omega", action="store_true", default=False,
                         help="run doctests using Valgrind's omega tool.  The log "
                         "files are named sage-omega.PID and can be found in " +
-                        os.path.join(DOT_SAGE, "valgrind"))
+                        os.path.join(sage.env.DOT_SAGE, "valgrind"))
 
     parser.add_argument("-f", "--failed", action="store_true", default=False,
         help="doctest only those files that failed in the previous run")
@@ -132,7 +126,7 @@ def _make_parser():
     parser.add_argument("--show-skipped", "--show_skipped", action="store_true", default=False,
         help="print a summary at the end of each file of optional tests that were skipped")
 
-    parser.add_argument("--stats_path", "--stats-path", default=os.path.join(DOT_SAGE, "timings2.json"),
+    parser.add_argument("--stats_path", "--stats-path", default=os.path.join(sage.env.DOT_SAGE, "timings2.json"),
                         help="path to a json dictionary for timings and failure status for each file from previous runs; it will be updated in this run")
     parser.add_argument("--baseline_stats_path", "--baseline-stats-path", default=None,
                         help="path to a json dictionary for timings and failure status for each file, to be used as a baseline; it will not be updated")
@@ -162,7 +156,9 @@ def _make_parser():
 
 def main():
     from sage.doctest.control import DocTestController
-    from sage.env import SAGE_SRC
+
+    # Override to not pick up user configuration, see Issue #20270
+    os.environ['SAGE_STARTUP_FILE'] = sage.env.SAGE_STARTUP_FILE = os.path.join(sage.env.DOT_SAGE, "init-doctests.sage")
 
     parser = _make_parser()
     # custom treatment to separate properly
@@ -206,7 +202,7 @@ def main():
 
     # #35999: no filename in arguments defaults to "src"
     if not args.filenames:
-        filenames = [SAGE_SRC]
+        filenames = [sage.env.SAGE_SRC]
     else:
         # #31924: Do not run pytest on individual Python files unless
         # they match the pytest file pattern.  However, pass names
