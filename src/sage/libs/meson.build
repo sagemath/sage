@@ -15,38 +15,67 @@ if not ecl.found() and not is_windows
 endif
 ecl_bin = find_program('ecl', required: false)
 if ecl_bin.found()
-  maxima_check = run_command(
-    ecl_bin,
-    '--eval',
-    '(require \'maxima)',
-    '--eval',
-    '(quit)',
-    check: false,
-  )
-  if maxima_check.returncode() == 0
-    # ecl does not have any problems with Maxima, so nothing needs to be set here:
-    conf_data.set('SAGE_MAXIMA_FAS', '')
-  else
-    # Try Sage's custom maxima location
-    sage_maxima = join_paths(
-      get_option('SAGE_LOCAL'),
-      'lib',
-      'ecl',
-      'maxima.fas',
-    )
-    maxima_check = run_command(
-      ecl_bin,
-      '--eval',
-      '(require \'maxima "' + sage_maxima + '")',
-      '--eval',
-      '(quit)',
-      check: false,
-    )
-    conf_data.set('SAGE_MAXIMA_FAS', sage_maxima)
-  endif
-
   maxima_bin = find_program('maxima', required: false, disabler: true)
-  maxima_present = maxima_check.returncode() == 0 and maxima_bin.found()
+  if maxima_bin.found()
+    maxima_fas = get_option('MAXIMA_FAS')
+
+    # Try to run maxima with the configured MAXIMA_FAS
+    if maxima_fas != ''
+      if meson.can_run_host_binaries()
+        maxima_check = run_command(
+          ecl_bin,
+          '--eval',
+          '(require \'maxima "' + maxima_fas + '")',
+          '--eval',
+          '(quit)',
+          check: false,
+        )
+        maxima_present = maxima_check.returncode() == 0
+      else
+        # We cannot execute ecl so we assume that maxima is functional
+        maxima_present = true
+      endif
+    else
+      if meson.can_run_host_binaries()
+        maxima_check = run_command(
+          ecl_bin,
+          '--eval',
+          '(require \'maxima)',
+          '--eval',
+          '(quit)',
+          check: false,
+        )
+        if maxima_check.returncode() == 0
+          # ecl does not have any problems with Maxima, so nothing needs to be set here:
+          maxima_present = true
+        else
+          # try the custom SageMath maxima.fas location
+          maxima_fas = join_paths(
+            get_option('SAGE_LOCAL'),
+            'lib',
+            'ecl',
+            'maxima.fas',
+          )
+          maxima_check = run_command(
+            ecl_bin,
+            '--eval',
+            '(require \'maxima "' + maxima_fas + '")',
+            '--eval',
+            '(quit)',
+            check: false,
+          )
+          maxima_present = maxima_check.returncode() == 0
+        endif
+      else
+        # We cannot execute ecl so we assume that maxima is functional without any special setup
+        maxima_present = true
+      endif
+    endif
+
+    conf_data.set('SAGE_MAXIMA_FAS', maxima_fas)
+  else
+    maxima_present = false
+  endif
 else
   maxima_present = false
 endif
