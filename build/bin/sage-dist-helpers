@@ -404,6 +404,10 @@ sdh_actually_pip_install_wheel() {
     fi
     $sudo sage-pip-install "$@" || \
         sdh_die "Error installing $distname"
+    python3 "$SAGE_ROOT"/build/sage_bootstrap/shebang.py \
+        --distribution "$distname" \
+        --scripts-dir "${SAGE_DESTDIR}${SAGE_VENV}/bin" || \
+        sdh_die "Error rewriting shebangs for $distname"
 }
 
 sdh_pip_uninstall() {
