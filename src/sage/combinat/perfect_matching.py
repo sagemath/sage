@@ -705,8 +705,7 @@ class PerfectMatchings(SetPartitions_set):
         n = len(self._set)
         if n % 2:
             return Integer(0)
-        else:
-            return Integer(prod(range(1, n, 2)))
+        return Integer(prod(range(1, n, 2)))
 
     def random_element(self):
         r"""

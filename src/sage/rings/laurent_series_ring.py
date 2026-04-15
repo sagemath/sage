@@ -57,34 +57,6 @@ lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_generic')
 lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
-def is_LaurentSeriesRing(x):
-    """
-    Return ``True`` if this is a *univariate* Laurent series ring.
-
-    This is in keeping with the behavior of ``is_PolynomialRing``
-    versus ``is_MPolynomialRing``.
-
-    TESTS::
-
-        sage: from sage.rings.laurent_series_ring import is_LaurentSeriesRing
-        sage: K.<q> = LaurentSeriesRing(QQ)
-        sage: is_LaurentSeriesRing(K)
-        doctest:warning...
-        DeprecationWarning: The function is_LaurentSeriesRing is deprecated;
-        use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
-        See https://github.com/sagemath/sage/issues/38290 for details.
-        True
-        sage: L.<z> = LazyLaurentSeriesRing(QQ)
-        sage: is_LaurentSeriesRing(L)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38290,
-                "The function is_LaurentSeriesRing is deprecated; "
-                "use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.")
-    return isinstance(x, (LaurentSeriesRing, LazyLaurentSeriesRing))
-
-
 class LaurentSeriesRing(UniqueRepresentation, Parent):
     r"""
     Univariate Laurent Series Ring.

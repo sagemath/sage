@@ -749,8 +749,7 @@ class ShiftedPrimedTableau(ClonableArray,
         """
         if self._skew is None:
             return Partition(self.restriction_outer_shape(n))
-        else:
-            return SkewPartition([self.restriction_outer_shape(n), self._skew])
+        return SkewPartition([self.restriction_outer_shape(n), self._skew])
 
     def to_chain(self):
         """
@@ -1052,12 +1051,11 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
             if len(ones) == 0:
                 return None
             # otherwise, f_{-1} changes last 1 in first row to 2' (if off diagonal) or 2 (if on diagonal)
-            else:
-                r, c = ones[-1]
-                assert r == 0
-                T[r][c] = PrimedEntry('2p') if r != c else PrimedEntry(2)
-                T = [tuple(elmt for elmt in row if elmt is not None) for row in T]
-                return type(self)(self.parent(), T, check=False, preprocessed=True)
+            r, c = ones[-1]
+            assert r == 0
+            T[r][c] = PrimedEntry('2p') if r != c else PrimedEntry(2)
+            T = [tuple(elmt for elmt in row if elmt is not None) for row in T]
+            return type(self)(self.parent(), T, check=False, preprocessed=True)
 
         read_word = [num for num in self._reading_word_with_positions()
                      if num[1] == ind or num[1] == ind+1]
@@ -1224,8 +1222,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
                 if T[0][0] != PrimedEntry(2):
                     return None
                 # if tableau has no 2' but first diagonal entry is 2, then e_{-1} changes this to 1
-                else:
-                    T[0][0] = PrimedEntry(1)
+                T[0][0] = PrimedEntry(1)
             # if tableau has at least one 2', then e_{-1} changes the first 2' to 1
             else:
                 r, c = two_primes[0]
@@ -1432,8 +1429,7 @@ class PrimedEntry(SageObject):
         """
         if self.is_unprimed():
             return repr(self._entry // 2)
-        else:
-            return repr((self._entry+1) // 2) + "'"
+        return repr((self._entry+1) // 2) + "'"
 
     def integer(self):
         """
@@ -1570,8 +1566,7 @@ class PrimedEntry(SageObject):
         """
         if self.is_unprimed():
             return self
-        else:
-            return PrimedEntry(double=self._entry + 1)
+        return PrimedEntry(double=self._entry + 1)
 
     def primed(self):
         """
@@ -1586,8 +1581,7 @@ class PrimedEntry(SageObject):
         """
         if self.is_unprimed():
             return PrimedEntry(double=self._entry - 1)
-        else:
-            return self
+        return self
 
     def increase_half(self):
         """
@@ -1836,17 +1830,15 @@ class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
                 if max_entry is not None:
                     raise ValueError("specify shape or weight argument")
                 return ShiftedPrimedTableaux_all(skew=skew, primed_diagonal=primed_diagonal)
-            else:
-                return ShiftedPrimedTableaux_weight(weight, skew=skew, primed_diagonal=primed_diagonal)
-        else:
-            if weight is None:
-                return ShiftedPrimedTableaux_shape(shape, max_entry=max_entry, skew=skew, primed_diagonal=primed_diagonal)
+            return ShiftedPrimedTableaux_weight(weight, skew=skew, primed_diagonal=primed_diagonal)
+        if weight is None:
+            return ShiftedPrimedTableaux_shape(shape, max_entry=max_entry, skew=skew, primed_diagonal=primed_diagonal)
 
-            if (skew is not None and sum(shape) - sum(skew) != sum(weight)
-                    or skew is None and sum(shape) != sum(weight)):
-                raise ValueError("weight and shape are incompatible")
+        if (skew is not None and sum(shape) - sum(skew) != sum(weight)
+                or skew is None and sum(shape) != sum(weight)):
+            raise ValueError("weight and shape are incompatible")
 
-            return ShiftedPrimedTableaux_weight_shape(weight, shape, skew=skew, primed_diagonal=primed_diagonal)
+        return ShiftedPrimedTableaux_weight_shape(weight, shape, skew=skew, primed_diagonal=primed_diagonal)
 
     def __init__(self, skew=None, primed_diagonal=False):
         """

@@ -1406,9 +1406,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         other_affine_root_system = self.cartan_type().classical().dual().affine().root_system()
         if isinstance(L, WeightSpace): # TODO: make a nicer test
             return other_affine_root_system.coweight_space(L.base_ring(), extended=True)
-        else:
-            assert isinstance(L, AmbientSpace)
-            return other_affine_root_system.coambient_space(L.base_ring())
+        assert isinstance(L, AmbientSpace)
+        return other_affine_root_system.coambient_space(L.base_ring())
 
     @cached_method
     def L_prime(self):
@@ -1467,8 +1466,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         ct = self.cartan_type()
         if ct.is_untwisted_affine():
             return self.L_check()
-        else:
-            return self.L()
+        return self.L()
 
     @cached_method
     def L0(self):

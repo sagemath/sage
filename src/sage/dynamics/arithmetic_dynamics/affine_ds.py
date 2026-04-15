@@ -255,7 +255,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             if isinstance(R, FiniteField):
                 return DynamicalSystem_affine_finite_field(polys, domain)
             return DynamicalSystem_affine_field(polys, domain)
-        elif isinstance(morphism_or_polys, (list, tuple)):
+        if isinstance(morphism_or_polys, (list, tuple)):
             polys = list(morphism_or_polys)
         else:
             polys = [morphism_or_polys]
@@ -536,14 +536,13 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             from sage.symbolic.ring import var
             u = var(self.domain().coordinate_ring().variable_name())
             return F.subs({F.variables()[0]: u, F.variables()[1]: 1})
-        elif T(F.denominator()).degree() == 0:
+        if T(F.denominator()).degree() == 0:
             R = F.parent()
             phi = R.hom([S.gen(0), 1], S)
             return phi(F)
-        else:
-            R = F.numerator().parent()
-            phi = R.hom([S.gen(0), 1], S)
-            return phi(F.numerator()) / phi(F.denominator())
+        R = F.numerator().parent()
+        phi = R.hom([S.gen(0), 1], S)
+        return phi(F.numerator()) / phi(F.denominator())
 
     def nth_iterate_map(self, n):
         r"""

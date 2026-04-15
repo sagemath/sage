@@ -705,9 +705,9 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
             val = p[i]
             if val == -1:
                 return 'psid%s' % i
-            elif val == 1:
+            if val == 1:
                 return 'psi%s' % i
-            elif val == 2:
+            if val == 2:
                 return 'psi%s*psid%s' % (i,i)
 
         rp = '*'.join(ppr(i) for i in range(self._n) if p[i] != 0)
@@ -746,9 +746,9 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
             val = p[i]
             if val == -1:
                 return '\\psi^{\\dagger}_{%s}' % i
-            elif val == 1:
+            if val == 1:
                 return '\\psi_{%s}' % i
-            elif val == 2:
+            if val == 2:
                 return '\\psi_{%s}\\psi^{\\dagger}_{%s}' % (i, i)
 
         rp = ''.join(ppr(i) for i in range(self._n) if p[i] != 0)

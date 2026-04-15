@@ -244,11 +244,9 @@ def gap_command(use_workspace_cache=True, local=True):
     if use_workspace_cache:
         if local:
             return "%s -L %s" % (gap_cmd, WORKSPACE), False
-        else:
-            # TO DO: Use remote workspace
-            return gap_cmd, False
-    else:
-        return gap_cmd, True
+        # TO DO: Use remote workspace
+        return gap_cmd, False
+    return gap_cmd, True
 
 
 # ########### Classes with methods for both the GAP3 and GAP4 interface
@@ -743,10 +741,8 @@ class Gap_generic(ExtraTabCompletion, Expect):
                 self._start()
                 if line != '':
                     return self._eval_line(line, allow_use_file=allow_use_file)
-                else:
-                    return ''
-            else:
-                raise exc
+                return ''
+            raise exc
 
         except KeyboardInterrupt:
             self._keyboard_interrupt()
@@ -902,7 +898,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             res = self.eval(cmd)
         if self.eval(self._identical_function + '(last,__SAGE_LAST__)') != 'true':
             return self.new('last2;')
-        elif res.strip():
+        if res.strip():
             from sage.interfaces.interface import AsciiArtString
             return AsciiArtString(res)
 
@@ -1002,10 +998,9 @@ class GapElement_generic(ModuleElement, ExtraTabCompletion, ExpectElement):
         P = self.parent()
         if P.eval('%s = true' % self.name()) == 'true':
             return 1
-        elif P.eval('%s = false' % self.name()) == 'true':
+        if P.eval('%s = false' % self.name()) == 'true':
             return 0
-        else:
-            return int(self.Length())
+        return int(self.Length())
 
     def is_string(self):
         """
@@ -1385,8 +1380,7 @@ class Gap(Gap_generic):
             r = r.strip().replace("\\\n", "")
             os.unlink(tmp)
             return r
-        else:
-            return self.eval('Print(%s);' % var, newlines=False)
+        return self.eval('Print(%s);' % var, newlines=False)
 
     def _pre_interact(self):
         """
@@ -1564,8 +1558,7 @@ class GapElement(GapElement_generic, sage.interfaces.abc.GapElement):
         if use_file:
             P = self._check_valid()
             return P.get(self.name(), use_file=True)
-        else:
-            return repr(self)
+        return repr(self)
 
     def _latex_(self):
         r"""

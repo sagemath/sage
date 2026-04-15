@@ -129,6 +129,11 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
                         message="module 'sre_constants' is deprecated",
                         module='pyparsing')
 
+# triggered by mpmath 1.4.1
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message='bitcount function is deprecated',
+                        module='mpmath\\.libmp\\.libintmath')
+
 # importlib.resources.path and ...read_binary are deprecated in python 3.11,
 # but the replacement importlib.resources.files needs python 3.9
 warnings.filterwarnings('ignore', category=DeprecationWarning,

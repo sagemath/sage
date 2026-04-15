@@ -870,7 +870,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         return m.submodule_with_basis(ambientbasis)
 
     @cached_method
-    def is_ideal(self, A):
+    def is_ideal(self, A) -> bool:
         """
         Return if ``self`` is an ideal of ``A``.
 

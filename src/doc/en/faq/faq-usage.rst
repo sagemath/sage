@@ -89,43 +89,42 @@ in case of crashes or hangs.
 More details may be found in `Installation Manual <https://doc.sagemath.org/html/en/installation/index.html>`_.
 
 
-How to get Sage's Python to recognize my system's Tcl/Tk install?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+How to get Sage to recognize my system's Tcl/Tk install?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-It may be that you have Tcl/Tk installed and that your system's Python
-recognizes it but Sage's Python does not. Normally speaking, there is little
-need to build Sage's Python nowadays (anno 2023), but if you do, here it is.
-Make sure you installed the Tcl/Tk development library.  On Ubuntu, this is the
-command
+Sage uses the Python interpreter selected at build time. To use Tcl/Tk
+libraries in Sage, make sure that this Python installation provides the
+``tkinter`` module. On Ubuntu, this is usually done by installing
 
 .. code-block:: console
 
-    $ sudo apt-get install tk8.5-dev
+    $ sudo apt-get install python3-tk
 
-or something along that line. Next, reinstall Sage's Python:
+or a similarly named package such as ``python3-tkinter``.
+
+If you are using an external Python, first check that exact interpreter:
 
 .. code-block:: console
 
-    $ make python3-clean python3-uninstall && make python3
+    $ "$PYTHON3" -c "import tkinter"
 
-This will pick up the Tcl/Tk library automatically. After successfully
-reinstalling Sage's Python, from within the Sage command line interface,
-issue these commands:
+After rebuilding or reinstalling Sage against that Python, you can also check
+from the Sage command line interface that Tcl/Tk is available:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
-    import _tkinter
-    import Tkinter
+    import tkinter
 
-If they do not raise an :class:`ImportError` then it worked.
+If this does not raise an :class:`ImportError`, then it worked.
 
 
 How do I import Sage into a Python script?
 """"""""""""""""""""""""""""""""""""""""""
 
 You can import Sage as a library in a Python script. One caveat is
-that you need to run that Python script using the version of Python
-that is bundled with Sage (Sage 9.2 ships with Python 3.7.x).
+that you need to run that Python script inside Sage's Python
+environment. In a source build, Sage creates this environment from the
+external Python selected at build time.
 To import Sage, put the following in your Python script:
 
 .. CODE-BLOCK:: python
@@ -133,9 +132,8 @@ To import Sage, put the following in your Python script:
     from sage.all import *
 
 When you want to run your script, you need to invoke Sage with the
-option ``-python`` which would run your script using the version of
-Python that comes with Sage. For example, if Sage is in your ``PATH``
-variable then you can do this:
+option ``-python`` which runs your script inside that environment. For
+example, if Sage is in your ``PATH`` variable then you can do this:
 
 .. code-block:: console
 

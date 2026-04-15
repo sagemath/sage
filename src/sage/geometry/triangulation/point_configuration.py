@@ -444,10 +444,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             points = tuple( p.affine() for p in self )
             return (PointConfiguration, (points, False,
                                          self._connected, self._fine, self._regular, self._star))
-        else:
-            points = tuple( p.projective() for p in self )
-            return (PointConfiguration, (points, True,
-                                         self._connected, self._fine, self._regular, self._star))
+        points = tuple( p.projective() for p in self )
+        return (PointConfiguration, (points, True,
+                                     self._connected, self._fine, self._regular, self._star))
 
     def an_element(self):
         """
@@ -1749,8 +1748,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         """
         if self.is_affine():
             return self.distance_affine(x,y)
-        else:
-            return self.distance_FS(x,y)
+        return self.distance_FS(x,y)
 
     def farthest_point(self, points, among=None):
         """

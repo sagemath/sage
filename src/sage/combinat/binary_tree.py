@@ -232,8 +232,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         """
         if not self:
             return "."
-        else:
-            return super()._repr_()
+        return super()._repr_()
 
     def _ascii_art_(self):
         r"""
@@ -765,12 +764,12 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
                 if not tr:  # tr is a leaf.
                     emb[idx] = []
                     return
-                else:  # tr is a node.
-                    nbl = 2 * tr[0].number_of_nodes() + 1
-                    res.add_edges([[idx, idx + 1], [idx, idx + 1 + nbl]])
-                    emb[idx] = [idx + 1 + nbl, idx + 1]
-                    rec(tr[0], idx + 1)
-                    rec(tr[1], idx + nbl + 1)
+                # tr is a node.
+                nbl = 2 * tr[0].number_of_nodes() + 1
+                res.add_edges([[idx, idx + 1], [idx, idx + 1 + nbl]])
+                emb[idx] = [idx + 1 + nbl, idx + 1]
+                rec(tr[0], idx + 1)
+                rec(tr[1], idx + nbl + 1)
 
             rec(self, 0)
             for i in res:
@@ -779,44 +778,44 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             res.set_embedding(emb)
             return res
 
-        else:   # We want only the nodes.
+        # We want only the nodes.
 
-            # Special treatment for the case when self has only 1 node.
-            # In this case, the general DiGraph construction would
-            # falsely yield an empty graph (since it adds nodes only
-            # implicitly by adding edges).
-            if self.number_of_nodes() == 1:
-                res = DiGraph({0: []})
-                res.set_embedding({0: []})
-                return res
-
-            res = DiGraph()
-            emb = {}
-            # The edge set of res will be built up step by step using the
-            # following function:
-
-            def rec(tr, idx):
-                if not tr:  # tr is a leaf.
-                    return
-                else:  # tr is a node.
-                    nbl = tr[0].number_of_nodes()
-                    if nbl > 0:
-                        res.add_edge([idx, idx + 1])
-                        emb[idx] = [idx + 1]
-                        rec(tr[0], idx + 1)
-                    else:
-                        emb[idx] = []
-                    if tr[1].number_of_nodes() > 0:
-                        res.add_edge([idx, idx + nbl + 1])
-                        emb[idx] = [idx + nbl + 1] + emb[idx]
-                        rec(tr[1], idx + nbl + 1)
-
-            rec(self, 0)
-            for i in res:
-                if i != 0:
-                    emb[i].append(res.neighbors_in(i)[0])
-            res.set_embedding(emb)
+        # Special treatment for the case when self has only 1 node.
+        # In this case, the general DiGraph construction would
+        # falsely yield an empty graph (since it adds nodes only
+        # implicitly by adding edges).
+        if self.number_of_nodes() == 1:
+            res = DiGraph({0: []})
+            res.set_embedding({0: []})
             return res
+
+        res = DiGraph()
+        emb = {}
+        # The edge set of res will be built up step by step using the
+        # following function:
+
+        def rec(tr, idx):
+            if not tr:  # tr is a leaf.
+                return
+            # tr is a node.
+            nbl = tr[0].number_of_nodes()
+            if nbl > 0:
+                res.add_edge([idx, idx + 1])
+                emb[idx] = [idx + 1]
+                rec(tr[0], idx + 1)
+            else:
+                emb[idx] = []
+            if tr[1].number_of_nodes() > 0:
+                res.add_edge([idx, idx + nbl + 1])
+                emb[idx] = [idx + nbl + 1] + emb[idx]
+                rec(tr[1], idx + nbl + 1)
+
+        rec(self, 0)
+        for i in res:
+            if i != 0:
+                emb[i].append(res.neighbors_in(i)[0])
+        res.set_embedding(emb)
+        return res
 
     def canonical_labelling(self, shift=1):
         r"""
@@ -982,8 +981,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
                 elif l == "0":
                     w += [0]
             return w
-        else:
-            return []
+        return []
 
     @combinatorial_map(name="to the Tamari corresponding Dyck path")
     def to_dyck_word_tamari(self):
@@ -1420,10 +1418,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             left.extend(right)
             left.append(label)
             return left
-        else:
-            right.extend(left)
-            right.append(label)
-            return right
+        right.extend(left)
+        right.append(label)
+        return right
 
     def tamari_sorting_tuple(self, reverse=False):
         r"""
@@ -1543,9 +1540,8 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         if self in LabelledBinaryTrees():
             from sage.combinat.ordered_tree import LabelledOrderedTree
             return LabelledOrderedTree(children, label=self.label())
-        else:
-            from sage.combinat.ordered_tree import OrderedTree
-            return OrderedTree(children)
+        from sage.combinat.ordered_tree import OrderedTree
+        return OrderedTree(children)
 
     @combinatorial_map(name="To graph")
     def to_undirected_graph(self, with_leaves=False):
@@ -2610,7 +2606,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             return res
         if side == 'left':
             return _comb(0)
-        elif side == 'right':
+        if side == 'right':
             return _comb(1)
 
     def hook_number(self):
@@ -3192,8 +3188,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         if hasattr(self, "label"):
             lab = self.label()
             return B([self[0], self[1].over(bt)], lab)
-        else:
-            return B([self[0], self[1].over(bt)])
+        return B([self[0], self[1].over(bt)])
 
     __truediv__ = over
 
@@ -3290,8 +3285,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         if hasattr(bt, "label"):
             lab = bt.label()
             return B([self.under(bt[0]), bt[1]], lab)
-        else:
-            return B([self.under(bt[0]), bt[1]])
+        return B([self.under(bt[0]), bt[1]])
 
     def under_decomposition(self):
         r"""
@@ -3923,7 +3917,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             if dL == dR:
                 return self[1].is_complete()
             # else R is perfect with depth equals depth of L - 1
-            elif dL == dR + 1:
+            if dL == dR + 1:
                 return self[1].is_perfect()
             return False
         # L is not perfect then R is perfect and the depth of L = the depth of
@@ -4017,18 +4011,14 @@ class BinaryTrees(UniqueRepresentation, Parent):
         if n is None:
             if full:
                 return FullBinaryTrees_all()
-            else:
-                return BinaryTrees_all()
-        else:
-            if not (isinstance(n, (Integer, int)) and n >= 0):
-                raise ValueError("n must be a nonnegative integer")
-            if not full:
-                return BinaryTrees_size(Integer(n))
-            else:
-                if n % 2 == 1 or n == 0:
-                    return FullBinaryTrees_size(Integer(n))
-                else:
-                    raise ValueError("n must be 0 or odd")
+            return BinaryTrees_all()
+        if not (isinstance(n, (Integer, int)) and n >= 0):
+            raise ValueError("n must be a nonnegative integer")
+        if not full:
+            return BinaryTrees_size(Integer(n))
+        if n % 2 == 1 or n == 0:
+            return FullBinaryTrees_size(Integer(n))
+        raise ValueError("n must be 0 or odd")
 
     @cached_method
     def leaf(self):
@@ -4768,10 +4758,8 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
         if not self:
             if self._label is not None:
                 return repr(self._label)
-            else:
-                return "."
-        else:
-            return "%s%s" % (self._label, self[:])
+            return "."
+        return "%s%s" % (self._label, self[:])
 
     def _sort_key(self):
         """
@@ -4895,13 +4883,11 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
         LT = self.parent()._element_constructor_
         if not self:
             return LT([], label=letter, check=False)
-        else:
-            if letter <= self.label():
-                fils = self[0].binary_search_insert(letter)
-                return LT([fils, self[1]], label=self.label(), check=False)
-            else:
-                fils = self[1].binary_search_insert(letter)
-                return LT([self[0], fils], label=self.label(), check=False)
+        if letter <= self.label():
+            fils = self[0].binary_search_insert(letter)
+            return LT([fils, self[1]], label=self.label(), check=False)
+        fils = self[1].binary_search_insert(letter)
+        return LT([self[0], fils], label=self.label(), check=False)
 
     def semistandard_insert(self, letter):
         r"""
@@ -4990,14 +4976,12 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
         LT = self.parent()._element_constructor_
         if not self:
             return LT([], label=letter)
-        else:
-            root_label = self.label()
-            if letter < root_label:
-                fils = self[0].semistandard_insert(root_label)
-                return LT([fils, self[1]], label=letter)
-            else:
-                fils = self[1].semistandard_insert(letter)
-                return LT([self[0], fils], label=root_label)
+        root_label = self.label()
+        if letter < root_label:
+            fils = self[0].semistandard_insert(root_label)
+            return LT([fils, self[1]], label=letter)
+        fils = self[1].semistandard_insert(letter)
+        return LT([self[0], fils], label=root_label)
 
     def right_rotate(self):
         r"""

@@ -216,8 +216,7 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         if i == "delta" or i == "deltacheck":
             return self.classical().zero()
-        else:
-            return self.classical().monomial(i)
+        return self.classical().monomial(i)
 
     def is_extended(self):
         r"""
@@ -362,8 +361,7 @@ class AmbientSpace(CombinatorialFreeModule):
         special_node = cartan_type.special_node()
         if i == special_node:
             return self(self._classical_alpha_0()) + self.monomial("delta")
-        else:
-            return self(self.classical().simple_root(i))
+        return self(self.classical().simple_root(i))
 
     @cached_method
     def simple_coroot(self, i):

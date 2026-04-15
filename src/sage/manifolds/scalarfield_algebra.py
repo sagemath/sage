@@ -452,7 +452,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
         try:
             if coord_expression.is_trivial_zero():
                 return self.zero()
-            elif (coord_expression - 1).is_trivial_zero():
+            if (coord_expression - 1).is_trivial_zero():
                 return self.one()
         except AttributeError:
             if coord_expression == 0:
@@ -524,12 +524,11 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
                          # algebra unit, i.e. self.one())
                          # cf. ScalarField._lmul_() for the implementation of
                          # the coercion map
-        elif isinstance(other, ScalarFieldAlgebra):
+        if isinstance(other, ScalarFieldAlgebra):
             return self._domain.is_subset(other._domain)
-        elif isinstance(other, ChartFunctionRing):
+        if isinstance(other, ChartFunctionRing):
             return self._domain.is_subset(other._chart.domain())
-        else:
-            return False
+        return False
 
     #### End of methods required for any Parent
 

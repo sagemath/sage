@@ -1072,8 +1072,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                                          distinct=True) / i
                     if i % 2:
                         return p(h[g]).plethysm(L_i.omega())
-                    else:
-                        return p(e[g]).plethysm(L_i.omega())
+                    return p(e[g]).plethysm(L_i.omega())
 
                 return self(p.prod(component(i, g) for i, g in m.items()))
 
@@ -2013,11 +2012,10 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
                 # might as well call f(mx)
                 res += cx * cy * f(mx, mx)
             return res
-        else:
-            for mx, cx in x._monomial_coefficients.items():
-                for my, cy in y._monomial_coefficients.items():
-                    res += cx * cy * f(mx, my)
-            return res
+        for mx, cx in x._monomial_coefficients.items():
+            for my, cy in y._monomial_coefficients.items():
+                res += cx * cy * f(mx, my)
+        return res
 
     def _from_element(self, x):
         r"""
@@ -4221,43 +4219,42 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             f = lambda part1, part2: zee(part1) * p(part1)
             return parent(p._apply_multi_module_morphism(p(self), p(x), f,
                                                          orthogonal=True))
-        else:
-            # comp_parent is the parent that is going to be used for
-            # computations. In most cases it will just be parent.
-            # Similarly for comp_self and comp_x.
-            comp_parent = parent
-            comp_self = self
-            # Now let's try to find out what basis self is in, and
-            # construct the corresponding basis of symmetric functions
-            # over QQ.
-            try:
-                corresponding_parent_over_QQ = parent.change_ring(QQ)
-            except (NotImplementedError, TypeError):
-                # This is the case where the corresponding basis
-                # over QQ cannot be found. This can have two reasons:
-                # Either the basis depends on variables (like the
-                # Macdonald symmetric functions), or its basis_name()
-                # is not identical to the name of the method on
-                # SymmetricFunctions(QQ) that builds it. Either way,
-                # give up looking for the corresponding parent, and
-                # transform everything into the Schur basis (very
-                # slow!) instead.
-                comp_parent = parent.realization_of().schur()
-                comp_self = comp_parent(self)
-                from sage.combinat.sf.sf import SymmetricFunctions
-                corresponding_parent_over_QQ = SymmetricFunctions(QQ).schur()
-            comp_x = comp_parent(x)    # For simplicity, let self and x be in the same basis.
-            result = comp_parent.zero()
-            for lam, a in comp_self:
-                # lam is a partition, a is an element of the base ring.
-                for mu, b in comp_x:
-                    # mu is a partition, b is an element of the base ring.
-                    lam_star_mu = corresponding_parent_over_QQ(lam).itensor(corresponding_parent_over_QQ(mu))
-                    # lam_star_mu is now a symmetric function over QQ.
-                    for nu, c in lam_star_mu:
-                        # nu is a partition, c is an element of QQ.
-                        result += a * b * comp_parent.base_ring()(c) * comp_parent(nu)
-            return parent(result)    # just in case comp_parent != parent.
+        # comp_parent is the parent that is going to be used for
+        # computations. In most cases it will just be parent.
+        # Similarly for comp_self and comp_x.
+        comp_parent = parent
+        comp_self = self
+        # Now let's try to find out what basis self is in, and
+        # construct the corresponding basis of symmetric functions
+        # over QQ.
+        try:
+            corresponding_parent_over_QQ = parent.change_ring(QQ)
+        except (NotImplementedError, TypeError):
+            # This is the case where the corresponding basis
+            # over QQ cannot be found. This can have two reasons:
+            # Either the basis depends on variables (like the
+            # Macdonald symmetric functions), or its basis_name()
+            # is not identical to the name of the method on
+            # SymmetricFunctions(QQ) that builds it. Either way,
+            # give up looking for the corresponding parent, and
+            # transform everything into the Schur basis (very
+            # slow!) instead.
+            comp_parent = parent.realization_of().schur()
+            comp_self = comp_parent(self)
+            from sage.combinat.sf.sf import SymmetricFunctions
+            corresponding_parent_over_QQ = SymmetricFunctions(QQ).schur()
+        comp_x = comp_parent(x)    # For simplicity, let self and x be in the same basis.
+        result = comp_parent.zero()
+        for lam, a in comp_self:
+            # lam is a partition, a is an element of the base ring.
+            for mu, b in comp_x:
+                # mu is a partition, b is an element of the base ring.
+                lam_star_mu = corresponding_parent_over_QQ(lam).itensor(corresponding_parent_over_QQ(mu))
+                # lam_star_mu is now a symmetric function over QQ.
+                for nu, c in lam_star_mu:
+                    # nu is a partition, c is an element of QQ.
+                    result += a * b * comp_parent.base_ring()(c) * comp_parent(nu)
+        return parent(result)    # just in case comp_parent != parent.
 
     internal_product = itensor
     kronecker_product = itensor
@@ -5031,11 +5028,10 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             s_self = s(self)
             s_x = s(x)
             return s_self.scalar(s_x)
-        else:
-            p = self.parent().realization_of().power()
-            p_self = p(self)
-            p_x = p(x)
-            return sum(zee(mu)*p_x.coefficient(mu)*p_self.coefficient(mu) for mu in p_self.support())
+        p = self.parent().realization_of().power()
+        p_self = p(self)
+        p_x = p(x)
+        return sum(zee(mu)*p_x.coefficient(mu)*p_self.coefficient(mu) for mu in p_self.support())
 
     def scalar_qt(self, x, q=None, t=None):
         r"""
@@ -5663,8 +5659,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         def f(part):
             if not part:
                 return resPR.one()
-            else:
-                return resPR.zero() if condition(part) else resPR(e(part, n, alphabet))
+            return resPR.zero() if condition(part) else resPR(e(part, n, alphabet))
         return parent._apply_module_morphism(self, f)
 
     def is_schur_positive(self):
@@ -6800,8 +6795,7 @@ def _nonnegative_coefficients(x):
     """
     if isinstance(x, (Polynomial, MPolynomial)):
         return all(c >= 0 for c in x.coefficients(sparse=False))
-    else:
-        return x >= 0
+    return x >= 0
 
 
 def _variables_recursive(R, include=None, exclude=None):

@@ -376,8 +376,7 @@ class DocTestSource:
                 i = random.randint(0, len(doctests) - 1)
                 randomized.append(doctests.pop(i))
             return randomized, extras
-        else:
-            return doctests, extras
+        return doctests, extras
 
 
 class StringDocTestSource(DocTestSource):
@@ -653,12 +652,10 @@ class FileDocTestSource(DocTestSource):
         """
         if self.options.abspath:
             return os.path.abspath(self.path)
-        else:
-            relpath = os.path.relpath(self.path)
-            if relpath.startswith(".." + os.path.sep):
-                return self.path
-            else:
-                return relpath
+        relpath = os.path.relpath(self.path)
+        if relpath.startswith(".." + os.path.sep):
+            return self.path
+        return relpath
 
     @lazy_attribute
     def basename(self):

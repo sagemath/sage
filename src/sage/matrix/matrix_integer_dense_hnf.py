@@ -177,17 +177,16 @@ def det_given_divisor(A, d, proof=True, stabilize=2):
             p = previous_prime(p)
             cnt += 1
         return dd
-    else:
-        val = []
-        while True:
-            if d % p:
-                tm = cputime()
-                dd, z_so_far, N_so_far = det_from_modp_and_divisor(A, d, p, z_mod, moduli, z_so_far, N_so_far)
-                verbose("computed det mod %s" % p, tm)
-                val.append(dd)
-                if len(val) >= stabilize and len(set(val[-stabilize:])) == 1:
-                    return val[-1]
-            p = previous_prime(p)
+    val = []
+    while True:
+        if d % p:
+            tm = cputime()
+            dd, z_so_far, N_so_far = det_from_modp_and_divisor(A, d, p, z_mod, moduli, z_so_far, N_so_far)
+            verbose("computed det mod %s" % p, tm)
+            val.append(dd)
+            if len(val) >= stabilize and len(set(val[-stabilize:])) == 1:
+                return val[-1]
+        p = previous_prime(p)
 
 
 def det_padic(A, proof=True, stabilize=2):
@@ -447,8 +446,7 @@ def add_column(B, H_B, a, proof):
 
     if B.rank() < B.nrows():
         return add_column_fallback(B, a, proof)
-    else:
-        z = solve_system_with_difficult_last_row(B, a)
+    z = solve_system_with_difficult_last_row(B, a)
 
     zd, d = z._clear_denom()
     x = H_B * zd
@@ -805,8 +803,7 @@ def extract_ones_data(H, pivots):
             C = D = E = None
         verbose("done inverting", tt, level=1)
         return C, D, E, onecol, onerow, non_onecol, non_onerow
-    else:
-        return None, None, None, onecol, onerow, non_onecol, non_onerow
+    return None, None, None, onecol, onerow, non_onecol, non_onerow
 
 
 def is_in_hnf_form(H, pivots) -> bool:

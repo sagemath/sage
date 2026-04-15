@@ -193,16 +193,6 @@ def init_sage(controller: DocTestController | None = None) -> None:
     import sage.doctest
     sage.doctest.DOCTEST_MODE = True
 
-    # Set the Python PRNG class to the Python 2 implementation for consistency
-    # of 'random' test results that use it; see
-    # https://github.com/sagemath/sage/issues/24508
-    # We use the baked in copy of the random module for both Python 2 and 3
-    # since, although the upstream copy is unlikely to change, this further
-    # ensures consistency of test results
-    import sage.misc.randstate
-    from sage.cpython._py2_random import Random
-    sage.misc.randstate.DEFAULT_PYTHON_RANDOM = Random
-
     # IPython's pretty printer sorts the repr of dicts by their keys by default
     # (or their keys' str() if they are not otherwise orderable).  However, it
     # disables this for CPython 3.6+ opting to instead display dicts' "natural"
@@ -1728,8 +1718,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         if hasattr(self, 'failures'):
             D['failures'] = self.failures
             return self.failures
-        else:
-            return False
+        return False
 
 
 def dummy_handler(sig, frame):

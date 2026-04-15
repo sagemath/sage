@@ -835,10 +835,9 @@ def schur(ambient_dim=None, lattice=None):
     def _f(i, j):
         if i == j:
             return 1
-        elif j - i == 1:
+        if j - i == 1:
             return -1
-        else:
-            return 0
+        return 0
 
     # The "max" below catches the trivial case where ambient_dim == 0.
     S = matrix(ZZ, max(0, ambient_dim-1), ambient_dim, _f)

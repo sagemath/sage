@@ -33,7 +33,7 @@ MAKE="${MAKE:-make}"
 
 
 bootstrap () {
-    for pkgname in cypari cysignals cython gmpy2 jupyter_core memory_allocator numpy pkgconfig pplpy setuptools wheel; do
+    for pkgname in cypari cysignals cython gmpy2 jupyter_core memory_allocator meson numpy pkgconfig pplpy setuptools wheel; do
         # Write the version_requirements.txt files for dependencies declared in pyproject.toml
         target=build/pkgs/${pkgname}/version_requirements.txt
         if [ "${BOOTSTRAP_QUIET}" = "no" ]; then

@@ -75,8 +75,7 @@ class PuzzlePiece:
         """
         if isinstance(other, PuzzlePiece):
             return self.border() == other.border()
-        else:
-            return False
+        return False
 
     def __hash__(self):
         r"""
@@ -155,8 +154,7 @@ class PuzzlePiece:
         """
         if label in ('0', '1', '2'):
             return text(label, coords, color=fontcolor, fontsize=fontsize, rotation=rotation)
-        else:
-            return Graphics()
+        return Graphics()
 
     def _plot_piece(self, coords, border_color=(0.5, 0.5, 0.5),
                     border_thickness=1, style='fill'):
@@ -171,7 +169,7 @@ class PuzzlePiece:
             P = polygon(coords, color=self.color())
             P += polygon(coords, fill=False, color=border_color, thickness=border_thickness)
             return P
-        elif style == 'edges':
+        if style == 'edges':
             if isinstance(self, DeltaPiece):
                 edges = ('north_west', 'south', 'north_east')
             elif isinstance(self, NablaPiece):
@@ -184,8 +182,7 @@ class PuzzlePiece:
                           color=self.edge_color(edge),
                           thickness=border_thickness)
             return P
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def edge_color(self, edge) -> str:
         r"""
@@ -277,8 +274,7 @@ class NablaPiece(PuzzlePiece):
         if isinstance(other, NablaPiece):
             return (self.border() == other.border() and
                     self._edge_labels == other._edge_labels)
-        else:
-            return False
+        return False
 
     def __hash__(self):
         r"""
@@ -395,8 +391,7 @@ class DeltaPiece(PuzzlePiece):
         if isinstance(other, DeltaPiece):
             return (self.border() == other.border() and
                     self._edge_labels == other._edge_labels)
-        else:
-            return False
+        return False
 
     def __hash__(self):
         r"""
@@ -524,8 +519,7 @@ class RhombusPiece(PuzzlePiece):
                     self._north_piece == other._north_piece and
                     self._south_piece == other._south_piece and
                     self._edge_labels == other._edge_labels)
-        else:
-            return False
+        return False
 
     def __hash__(self):
         r"""
@@ -685,8 +679,7 @@ class PuzzlePieces:
         """
         if isinstance(other, type(self)):
             return self.__dict__ == other.__dict__
-        else:
-            return False
+        return False
 
     def __hash__(self):
         r"""
@@ -2014,7 +2007,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         lamda, mu = tuple(lamda), tuple(mu)
         if algorithm == 'pieces':
             return list(self._fill_puzzle_by_pieces(lamda, mu))
-        elif algorithm == 'strips':
+        if algorithm == 'strips':
             return list(self._fill_puzzle_by_strips(lamda, mu))
 
     solutions = __call__
@@ -2279,5 +2272,4 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
             z[p.south_labels()] += p.contribution()
         if nu is None:
             return dict(z)
-        else:
-            return z[tuple(nu)]
+        return z[tuple(nu)]

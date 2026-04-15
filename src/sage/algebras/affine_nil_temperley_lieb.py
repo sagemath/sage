@@ -256,7 +256,6 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         redword = t.reduced_word()
         if len(redword) == 0:
             return "1"
-        elif short_display:
+        if short_display:
             return "*".join("%s%d" % (self._prefix, i) for i in redword)
-        else:
-            return "*".join("%s[%d]" % (self._prefix, i) for i in redword)
+        return "*".join("%s[%d]" % (self._prefix, i) for i in redword)

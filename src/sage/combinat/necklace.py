@@ -543,7 +543,7 @@ def _lyn(w):
         a = w[:i]
         if b < a[i - p] or b > k - 1:
             return p
-        elif b == a[i - p]:
+        if b == a[i - p]:
             pass
         else:
             p = i + 1

@@ -267,7 +267,7 @@ class Gamma0_class(GammaH_class):
         if isinstance(right, Gamma1_class):
             if right.level() >= 3:
                 return False
-            elif right.level() == 2:
+            if right.level() == 2:
                 return self.level() == 2
             # case level 1 dealt with above
         else:
@@ -349,10 +349,10 @@ class Gamma0_class(GammaH_class):
             # reasons, which aren't the ones the Farey symbol code gives
             return [ self([0,-1,1,0]), self([1,1,0,1]) ]
 
-        elif algorithm == "farey":
+        if algorithm == "farey":
             return self.farey_symbol().generators()
 
-        elif algorithm == "todd-coxeter":
+        if algorithm == "todd-coxeter":
             from sage.modular.modsym.p1list import P1List
 
             from .congroup import generators_helper
@@ -362,8 +362,7 @@ class Gamma0_class(GammaH_class):
             gen_list = generators_helper(P1List(level), level)
             return [self(g, check=False) for g in gen_list]
 
-        else:
-            raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
+        raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
 
     def gamma_h_subgroups(self):
         r"""
@@ -603,61 +602,53 @@ class Gamma0_class(GammaH_class):
             # function s_0^#
             if a == 1:
                 return 1 - 1/q
-            elif a == 2:
+            if a == 2:
                 return 1 - 1/q - 1/q**2
-            else:
-                return (1 - 1/q) * (1 - 1/q**2)
+            return (1 - 1/q) * (1 - 1/q**2)
 
         def vinf(q, a):
             # function v_oo^#
             if a % 2:
                 return 0
-            elif a == 2:
+            if a == 2:
                 return q - 2
-            else:
-                return q**(a/2 - 2) * (q - 1)**2
+            return q**(a/2 - 2) * (q - 1)**2
 
         def v2(q, a):
             # function v_2^#
             if q % 4 == 1:
                 if a == 2:
                     return -1
-                else:
-                    return 0
-            elif q % 4 == 3:
+                return 0
+            if q % 4 == 3:
                 if a == 1:
                     return -2
-                elif a == 2:
+                if a == 2:
                     return 1
-                else:
-                    return 0
-            elif a in (1, 2):
-                return -1
-            elif a == 3:
-                return 1
-            else:
                 return 0
+            if a in (1, 2):
+                return -1
+            if a == 3:
+                return 1
+            return 0
 
         def v3(q, a):
             # function v_3^#
             if q % 3 == 1:
                 if a == 2:
                     return -1
-                else:
-                    return 0
-            elif q % 3 == 2:
+                return 0
+            if q % 3 == 2:
                 if a == 1:
                     return -2
-                elif a == 2:
+                if a == 2:
                     return 1
-                else:
-                    return 0
-            elif a in (1, 2):
-                return -1
-            elif a == 3:
-                return 1
-            else:
                 return 0
+            if a in (1, 2):
+                return -1
+            if a == 3:
+                return 1
+            return 0
 
         res = (k - 1) / 12 * N * prod(s0(q, a) for q, a in factors)
         res -= prod(vinf(q, a) for q, a in factors) / ZZ(2)

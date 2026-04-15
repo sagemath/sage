@@ -2212,8 +2212,8 @@ class NumberField_relative(NumberField_generic):
             [Relative number field morphism:
                From: Number Field in b with defining polynomial x^2 - 5 over its base field
                To:   Real Field with 106 bits of precision
-               Defn: b |--> -2.236067977499789696409173668937
-                     c |--> -1.213411662762229634132131377426,
+               Defn: b |--> -2.236067977499789696409173668431
+                     c |--> -1.213411662762229634132131377317,
              Relative number field morphism:
                From: Number Field in b with defining polynomial x^2 - 5 over its base field
                To:   Real Field with 106 bits of precision
@@ -2222,8 +2222,8 @@ class NumberField_relative(NumberField_generic):
              Relative number field morphism:
                From: Number Field in b with defining polynomial x^2 - 5 over its base field
                To:   Complex Field with 53 bits of precision
-               Defn: b |--> -2.23606797749979 ...e-1...*I
-                     c |--> 0.606705831381... - 1.45061224918844*I,
+               Defn: b |--> -2.23606797749979 - 2.22044604925031e-16*I
+                     c |--> 0.606705831381115 - 1.45061224918844*I,
              Relative number field morphism:
                From: Number Field in b with defining polynomial x^2 - 5 over its base field
                To:   Complex Field with 53 bits of precision

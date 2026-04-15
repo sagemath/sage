@@ -387,21 +387,21 @@ class GenericDeclaration(UniqueRepresentation):
             return False
         if self._assumption == 'integer':
             return value not in ZZ
-        elif self._assumption == 'noninteger':
+        if self._assumption == 'noninteger':
             return value in ZZ
-        elif self._assumption == 'even':
+        if self._assumption == 'even':
             return value not in ZZ or bool(ZZ(value) % 2)
-        elif self._assumption == 'odd':
+        if self._assumption == 'odd':
             return value not in ZZ or not (ZZ(value) % 2)
-        elif self._assumption == 'rational':
+        if self._assumption == 'rational':
             return value not in QQ
-        elif self._assumption == 'irrational':
+        if self._assumption == 'irrational':
             return value in QQ
-        elif self._assumption == 'real':
+        if self._assumption == 'real':
             return value not in RR
-        elif self._assumption == 'imaginary':
+        if self._assumption == 'imaginary':
             return value not in CC or CC(value).real() != 0
-        elif self._assumption == 'complex':
+        if self._assumption == 'complex':
             return value not in CC
 
 

@@ -118,16 +118,16 @@ cdef class ProbabilityDistribution:
             sage: X = GeneralDiscreteDistribution(P)
             sage: h, b = X.generate_histogram_data(bins=10)
             sage: h  # rel tol 1e-08
-            [1.6299999999999999,
+            [1.445,
              0.0,
              0.0,
              0.0,
              0.0,
-             1.9049999999999985,
+             2.044999999999998,
              0.0,
              0.0,
              0.0,
-             1.4650000000000003]
+             1.5100000000000002]
             sage: b
             [0.0,
              0.2,

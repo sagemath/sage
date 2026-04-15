@@ -591,9 +591,9 @@ def shortened_000_111_extended_binary_Golay_code_graph():
         vs_and_es[0][i].set_immutable()
     for i in range(21504):
         # edge i = (v1, v2, l)
-        vs_and_es[1][i][0] = V(vs_and_es[1][i][0]) # v1
+        vs_and_es[1][i][0] = V(vs_and_es[1][i][0])  # v1
         vs_and_es[1][i][0].set_immutable()
-        vs_and_es[1][i][1] = V(vs_and_es[1][i][1]) # v2
+        vs_and_es[1][i][1] = V(vs_and_es[1][i][1])  # v2
         vs_and_es[1][i][1].set_immutable()
 
     G = Graph(vs_and_es, format='vertices_and_edges')
@@ -1367,6 +1367,9 @@ def graph_from_GQ_spread(const int s, const int t, immutable=False):
 
          sage: from sage.graphs.generators.distance_regular import \
          ....: graph_from_GQ_spread
+         sage: G = graph_from_GQ_spread(2, 2)                                           # needs sage.libs.pari
+         sage: G.is_distance_regular(True)                                              # needs sage.libs.pari
+         ([4, 2, 1, None], [None, 1, 1, 4])
          sage: G = graph_from_GQ_spread(4, 16)                                          # needs sage.libs.pari
          sage: G.is_distance_regular(True)                                              # needs sage.libs.pari
          ([64, 60, 1, None], [None, 1, 15, 64])

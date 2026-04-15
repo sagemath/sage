@@ -939,11 +939,10 @@ class Projection(SageObject):
         """
         if len(self.lines) == 0:
             return Graphics()
-        elif len(self.lines) == 1:
+        if len(self.lines) == 1:
             line = self.coordinates_of(self.lines[0])
             return line2d([line[0] + [0], line[1] + [0]], **kwds)
-        else:
-            assert False   # unreachable
+        assert False   # unreachable
 
     def render_points_2d(self, **kwds):
         """
@@ -1050,8 +1049,7 @@ class Projection(SageObject):
         if col == 'rainbow':
             t_list = [Texture(rainbow(n, 'rgbtuple')[i]) for i in range(n)]
             return polygons3d(polys, coords, texture_list=t_list, **kwds)
-        else:
-            return polygons3d(polys, coords, color=col, **kwds)
+        return polygons3d(polys, coords, color=col, **kwds)
 
     def render_0d(self, point_opts=None, line_opts=None, polygon_opts=None):
         """
@@ -1080,8 +1078,7 @@ class Projection(SageObject):
             point_opts.setdefault('pointsize', 10)
         if self.points:
             return point2d([0, 0], **point_opts)
-        else:
-            return Graphics()
+        return Graphics()
 
     def render_1d(self, point_opts=None, line_opts=None, polygon_opts=None):
         """
