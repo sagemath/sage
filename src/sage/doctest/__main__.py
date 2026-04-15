@@ -1,8 +1,8 @@
 r"""
 Entrypoint for testing the SageMath library
 
-This file is executed when you run ``sage -t``, it runs doctests and unit tests
-through pytest.
+This file is executed when you run ``sage -t``, it runs doctests with some
+heavily customized SageMath logic and also uses pytest to run unit tests.
 """
 
 # ****************************************************************************
