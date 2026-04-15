@@ -9,7 +9,7 @@ For more computational details, see the paper at https://www.tandfonline.com/doi
 
 .. NOTE::
 
-    For some of the functions provided, you must have ``Macaulay2`` with the package ``SpecialFanoFourfolds`` (version 2.7.1 or later)
+    For some of the functions provided, you must have ``Macaulay2`` with the package ``SpecialFanoFourfolds`` (version 2.8 or later)
     installed on your computer; see https://macaulay2.com/doc/Macaulay2/share/doc/Macaulay2/SpecialFanoFourfolds/html/index.html.
 
 AUTHORS:
@@ -3783,11 +3783,10 @@ def fourfold(S, X=None, V=None, check=True):
 
         sage: # optional - macaulay2
         sage: macaulay2('needsPackage "SpecialFanoFourfolds";')
-        sage: G = macaulay2('specialGushelMukaiFourfold schubertCycle({3,1},GG(1,4))')
+        sage: G = macaulay2('gushelMukaiFourfold schubertCycle({3,1},GG(1,4))')
         sage: G.describe()
         Special Gushel-Mukai fourfold of discriminant 10('')
-        containing a surface in PP^8 of degree 1 and sectional genus 0
-        cut out by 6 hypersurfaces of degree 1
+        containing a plane
         and with class in G(1,4) given by s_(3,1)
         Type: ordinary
         (case 6 of Table 1 in arXiv:2002.07026)
@@ -4078,26 +4077,36 @@ def _print_partial_M2_output(m2_str):
 def _update_macaulay2_packages():
     r"""Update some ``Macaulay2`` packages to their latest version.
 
-    Execute the command ``_update_macaulay2_packages()`` to download in your current directory
-    all the ``Macaulay2`` packages needed to the functions of this module.
-    You don't need to do this if you are using a recent version of ``Macaulay2``.
+    To use this function, first import it and then execute it as follows:
+
+    from sage.schemes.hodge_special_fourfolds.sff import _update_macaulay2_packages
+    _update_macaulay2_packages()
+
+    This command downloads into your current directory all the ``Macaulay2``
+    packages required for the functions of this module.
+    You do not need to do this if you are using a recent version of ``Macaulay2``.
     """
     os = importlib.import_module("os")
     inp = input('Do you want to download or update all the needed files in the current directory: ' + os.getcwd() + "? (y/n) ")
     if inp not in ('y', 'Y', 'yes', 'Yes', 'YES'):
         print('## Update not executed. ##')
         return
+    base_url = "https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/"
+    single_packages = ["K3Surfaces.m2", "SpecialFanoFourfolds.m2"]
+    sff_aux_files = ["AssociatedSurfaces.m2", "CubicFourfolds.m2", "DSCF.m2", "FanoMaps.m2", "HodgeSpecialFourfolds.m2", "IntersectionOfThreeQuadrics.m2", "tests.m2", "Congruences.m2", "docs.m2", "examples.m2", "GushelMukai.m2", "HodgeSpecialSurfaces.m2", "mirrorFourfolds.m2", "contractionMaps.m2", "LatticePolarizedK3.m2", "utils.m2"]
     print('Downloading files in ' + os.getcwd() + '...')
-    s1 = "curl -s -o Cremona.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona.m2 && mkdir -p Cremona && curl -s -o Cremona/tests.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/tests.m2 && curl -s -o Cremona/documentation.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/documentation.m2 && curl -s -o Cremona/examples.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/examples.m2 &&curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2 && curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2"
-    os.system(s1)
-    s2 = "curl -s -o Resultants.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Resultants.m2 && curl -s -o SparseResultants.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SparseResultants.m2"
-    os.system(s2)
-    s3 = "curl -s -o PrebuiltExamplesOfRationalFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/PrebuiltExamplesOfRationalFourfolds/main/PrebuiltExamplesOfRationalFourfolds.m2"
-    os.system(s3)
-    if os.path.isfile('Cremona.m2') and os.path.isdir('Cremona') and os.path.isfile('Cremona/tests.m2') and os.path.isfile('Cremona/documentation.m2') and os.path.isfile('Cremona/examples.m2') and os.path.isfile('MultiprojectiveVarieties.m2') and os.path.isfile('SpecialFanoFourfolds.m2') and os.path.isfile('Resultants.m2') and os.path.isfile('SparseResultants.m2') and os.path.isfile('PrebuiltExamplesOfRationalFourfolds.m2'):
+    for pkg in single_packages:
+        os.system("curl -s -o " + pkg + " " + base_url + pkg)
+    if not os.path.exists("SpecialFanoFourfolds"):
+        os.makedirs("SpecialFanoFourfolds")
+    for f in sff_aux_files:
+        os.system("curl -s -o SpecialFanoFourfolds/" + f + " " + base_url + "SpecialFanoFourfolds/" + f)
+    success = all(os.path.isfile(pkg) for pkg in single_packages)
+    success = success and all(os.path.isfile("SpecialFanoFourfolds/" + af) for af in sff_aux_files)
+    if success:
         print('Download successfully completed.')
     else:
-        raise FileNotFoundError("something went wrong")
+        raise FileNotFoundError("Something went wrong during the download process.")
     print('## You should restart Sage and reload this module.')
 
 
