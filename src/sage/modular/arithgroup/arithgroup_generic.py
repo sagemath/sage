@@ -154,14 +154,13 @@ class ArithmeticSubgroup(Group):
             if a*d - b*c != 1:
                 return False
             return self._contains_sl2(a, b, c, d)
-        else:
-            if parent(x) is not SL2Z:
-                try:
-                    y = SL2Z(x)
-                except TypeError:
-                    return False
-                x = y
-            return self._contains_sl2(x.a(), x.b(), x.c(), x.d())
+        if parent(x) is not SL2Z:
+            try:
+                y = SL2Z(x)
+            except TypeError:
+                return False
+            x = y
+        return self._contains_sl2(x.a(), x.b(), x.c(), x.d())
 
     def _contains_sl2(self, a, b, c, d):
         r"""
@@ -625,8 +624,7 @@ class ArithmeticSubgroup(Group):
         """
         if self.is_even():
             return self
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def order(self):
         r"""
@@ -789,13 +787,11 @@ class ArithmeticSubgroup(Group):
             if dy * SL2Z([1,i,0,1])*(~dx) in self:
                 if trans:
                     return dy * SL2Z([1,i,0,1]) * ~dx
-                else:
-                    return True
-            elif (self.is_odd() and dy * SL2Z([-1,-i,0,-1]) * ~dx in self):
+                return True
+            if (self.is_odd() and dy * SL2Z([-1,-i,0,-1]) * ~dx in self):
                 if trans:
                     return dy * SL2Z([-1,-i,0,-1]) * ~dx
-                else:
-                    return True
+                return True
         return False
 
     def cusp_data(self, c) -> tuple:
@@ -821,7 +817,7 @@ class ArithmeticSubgroup(Group):
         for d in range(1,1+self.index()):
             if g * SL2Z([1, d, 0, 1]) * (~g) in self:
                 return (g * SL2Z([1,d,0,1]) * (~g), d, 1)
-            elif g * SL2Z([-1, -d, 0, -1]) * (~g) in self:
+            if g * SL2Z([-1, -d, 0, -1]) * (~g) in self:
                 return (g * SL2Z([-1, -d, 0, -1]) * (~g), d, -1)
         raise ArithmeticError("Can't get here!")
 
@@ -922,8 +918,7 @@ class ArithmeticSubgroup(Group):
         """
         if self.is_even():
             return self.index()
-        else:
-            return self.index() // 2
+        return self.index() // 2
 
     def is_congruence(self) -> bool:
         r"""
@@ -1011,10 +1006,9 @@ class ArithmeticSubgroup(Group):
         """
         if algorithm == "farey":
             return self.farey_symbol().generators()
-        elif algorithm == "todd-coxeter":
+        if algorithm == "todd-coxeter":
             return self.todd_coxeter()[1]
-        else:
-            raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
+        raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
 
     def gens(self, *args, **kwds) -> tuple:
         r"""
@@ -1188,24 +1182,21 @@ class ArithmeticSubgroup(Group):
             if k == 2:
                 return self.genus()
 
-            else:
-                return (k-1) * (self.genus() - 1) + (k // ZZ(4))*self.nu2() + (k // ZZ(3))*self.nu3() + (k // ZZ(2) - 1)*self.ncusps()
+            return (k-1) * (self.genus() - 1) + (k // ZZ(4))*self.nu2() + (k // ZZ(3))*self.nu3() + (k // ZZ(2) - 1)*self.ncusps()
 
         # k odd
 
-        elif self.is_even():
+        if self.is_even():
             return ZZ.zero()
 
-        else:
-            e_reg = self.nregcusps()
-            e_irr = self.nirregcusps()
+        e_reg = self.nregcusps()
+        e_irr = self.nirregcusps()
 
-            if k > 1:
-                return (k-1)*(self.genus()-1) + (k // ZZ(3)) * self.nu3() + (k-2)/ZZ(2) * e_reg + (k-1)/ZZ(2) * e_irr
-            elif e_reg > 2*self.genus() - 2:
-                return ZZ.zero()
-            else:
-                raise NotImplementedError("Computation of dimensions of weight 1 cusp forms spaces not implemented in general")
+        if k > 1:
+            return (k-1)*(self.genus()-1) + (k // ZZ(3)) * self.nu3() + (k-2)/ZZ(2) * e_reg + (k-1)/ZZ(2) * e_irr
+        if e_reg > 2*self.genus() - 2:
+            return ZZ.zero()
+        raise NotImplementedError("Computation of dimensions of weight 1 cusp forms spaces not implemented in general")
 
     def dimension_eis(self, k=2):
         r"""
@@ -1236,16 +1227,16 @@ class ArithmeticSubgroup(Group):
         if not (k % 2):  # k even
             if k > 2:
                 return self.ncusps()
-            else:  # k = 2
-                return self.ncusps() - 1
+            # k = 2
+            return self.ncusps() - 1
 
-        else:  # k odd
-            if self.is_even():
-                return ZZ.zero()
-            if k > 1:
-                return self.nregcusps()
-            else:  # k = 1
-                return ZZ(self.nregcusps() // ZZ(2))
+        # k odd
+        if self.is_even():
+            return ZZ.zero()
+        if k > 1:
+            return self.nregcusps()
+        # k = 1
+        return ZZ(self.nregcusps() // ZZ(2))
 
     def as_permutation_group(self):
         r"""

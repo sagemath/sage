@@ -256,7 +256,7 @@ def algebraic_dependency(z, degree, known_bits=None,
                     if norm(LLL[0]) <= 2**((n - 1) / 2) * n.sqrt() * height_bound:
                         raise ValueError("insufficient precision for non-existence proof")
                 return None
-            elif proof and norm(LLL[1]) < 2**((n - 1) / 2) * max(norm(LLL[0]), n.sqrt() * height_bound):
+            if proof and norm(LLL[1]) < 2**((n - 1) / 2) * max(norm(LLL[0]), n.sqrt() * height_bound):
                 raise ValueError("insufficient precision for uniqueness proof")
         if coeffs[degree] < 0:
             coeffs = -coeffs
@@ -371,29 +371,28 @@ def bernoulli(n, algorithm='default', num_threads=1):
     if algorithm == 'arb':
         import sage.libs.arb.arith as arb_arith
         return arb_arith.bernoulli(n)
-    elif algorithm == 'flint':
+    if algorithm == 'flint':
         if n >= 100000:
             from warnings import warn
             warn("flint is known to not be accurate for large Bernoulli numbers")
         from sage.libs.flint.arith_sage import bernoulli_number as flint_bernoulli
         return flint_bernoulli(n)
-    elif algorithm == 'pari' or algorithm == 'gp':
+    if algorithm == 'pari' or algorithm == 'gp':
         from sage.libs.pari import pari
         x = pari(n).bernfrac()         # Use the PARI C library
         return Rational(x)
-    elif algorithm == 'gap':
+    if algorithm == 'gap':
         from sage.libs.gap.libgap import libgap
         x = libgap.Bernoulli(n).sage()
         return Rational(x)
-    elif algorithm == 'magma':
+    if algorithm == 'magma':
         import sage.interfaces.magma
         x = sage.interfaces.magma.magma('Bernoulli(%s)' % n)
         return Rational(x)
-    elif algorithm == 'bernmm':
+    if algorithm == 'bernmm':
         import sage.rings.bernmm
         return sage.rings.bernmm.bernmm_bern_rat(n, num_threads)
-    else:
-        raise ValueError("invalid choice of algorithm")
+    raise ValueError("invalid choice of algorithm")
 
 
 def factorial(n, algorithm='gmp'):
@@ -469,11 +468,10 @@ def factorial(n, algorithm='gmp'):
         raise ValueError("factorial -- must be nonnegative")
     if algorithm == 'gmp':
         return ZZ(n).factorial()
-    elif algorithm == 'pari':
+    if algorithm == 'pari':
         from sage.libs.pari import pari
         return pari.factorial(n)
-    else:
-        raise ValueError('unknown algorithm')
+    raise ValueError('unknown algorithm')
 
 
 def is_prime(n) -> bool:
@@ -996,7 +994,7 @@ def eratosthenes(n):
 
     if n < 2:
         return []
-    elif n == 2:
+    if n == 2:
         return [ZZ(2)]
 
     s = list(range(3, n + 3, 2))
@@ -1843,8 +1841,7 @@ def gcd(a, b=None, **kwargs):
     seq = Sequence(py_scalar_to_element(el) for el in a)
     if seq.universe() is ZZ:
         return GCD_list(seq)
-    else:
-        return __GCD_sequence(seq, **kwargs)
+    return __GCD_sequence(seq, **kwargs)
 
 
 GCD = gcd
@@ -2244,10 +2241,9 @@ def get_gcd(order):
     """
     if order <= 46340:   # todo: don't hard code
         return arith_int().gcd_int
-    elif order <= 2147483647:   # todo: don't hard code
+    if order <= 2147483647:   # todo: don't hard code
         return arith_llong().gcd_longlong
-    else:
-        return gcd
+    return gcd
 
 
 def get_inverse_mod(order):
@@ -2266,10 +2262,9 @@ def get_inverse_mod(order):
     """
     if order <= 46340:   # todo: don't hard code
         return arith_int().inverse_mod_int
-    elif order <= 2147483647:   # todo: don't hard code
+    if order <= 2147483647:   # todo: don't hard code
         return arith_llong().inverse_mod_longlong
-    else:
-        return inverse_mod
+    return inverse_mod
 
 # def sqrt_mod(a, m):
 #     """A square root of a modulo m."""
@@ -2451,8 +2446,7 @@ def rational_reconstruction(a, m, algorithm='fast'):
     """
     if algorithm == 'fast':
         return ZZ(a).rational_reconstruction(ZZ(m))
-    else:
-        raise ValueError("unknown algorithm %r" % algorithm)
+    raise ValueError("unknown algorithm %r" % algorithm)
 
 
 def mqrr_rational_reconstruction(u, m, T):
@@ -2496,8 +2490,7 @@ def mqrr_rational_reconstruction(u, m, T):
     if u == 0:
         if m > T:
             return (0, 1)
-        else:
-            return None
+        return None
     n, d = 0, 0
     t0, r0 = 0, m
     t1, r1 = 1, u
@@ -2556,8 +2549,7 @@ def trial_division(n, bound=None):
     """
     if bound is None:
         return ZZ(n).trial_division()
-    else:
-        return ZZ(n).trial_division(bound)
+    return ZZ(n).trial_division(bound)
 
 
 def factor(n, proof=None, int_=False, algorithm=None, verbose=0, **kwds):
@@ -3002,8 +2994,7 @@ def is_square(n, root=False):
         except TypeError:
             if m():
                 return True, n.sqrt()
-            else:
-                return False, None
+            return False, None
     return m()
 
 
@@ -3645,8 +3636,7 @@ def CRT_list(values, moduli=None):
         values, moduli = vs, ms
     if return_mod:
         return Mod(values[0], moduli[0])
-    else:
-        return values[0] % moduli[0]
+    return values[0] % moduli[0]
 
 
 def CRT_basis(moduli, *, require_coprime_moduli=True):
@@ -4228,8 +4218,7 @@ def multinomial_coefficients(m, n):
     if not m:
         if n:
             return {}
-        else:
-            return {(): 1}
+        return {(): 1}
 
     m = py_scalar_to_element(m)
     n = py_scalar_to_element(n)
@@ -4991,7 +4980,7 @@ def hilbert_symbol(a, b, p, algorithm='pari'):
         from sage.libs.pari import pari
         return ZZ(pari(a).hilbert(b, p))
 
-    elif algorithm == 'direct':
+    if algorithm == 'direct':
         if a == 0 or b == 0:
             return ZZ(0)
 
@@ -5010,7 +4999,7 @@ def hilbert_symbol(a, b, p, algorithm='pari'):
         if a % p == 0:
             if b % p == 0:
                 return hilbert_symbol(p, -(b // p), p) * hilbert_symbol(a // p, b, p)
-            elif p == 2 and (b % 4) == 3:
+            if p == 2 and (b % 4) == 3:
                 if kronecker(a + b, p) == -1:
                     return -one
             elif kronecker(b, p) == -1:
@@ -5024,14 +5013,13 @@ def hilbert_symbol(a, b, p, algorithm='pari'):
         elif p == 2 and (a % 4) == 3 and (b % 4) == 3:
             return -one
         return one
-    elif algorithm == 'all':
+    if algorithm == 'all':
         ans_pari = hilbert_symbol(a, b, p, algorithm='pari')
         ans_direct = hilbert_symbol(a, b, p, algorithm='direct')
         if ans_pari != ans_direct:
             raise RuntimeError("there is a bug in hilbert_symbol; two ways of computing the Hilbert symbol (%s,%s)_%s disagree" % (a, b, p))
         return ans_pari
-    else:
-        raise ValueError(f"algorithm {algorithm} not defined")
+    raise ValueError(f"algorithm {algorithm} not defined")
 
 
 def hilbert_conductor(a, b):
@@ -5148,20 +5136,19 @@ def hilbert_conductor_inverse(d):
         while q % 4 != 3 or kronecker_symbol(d, q) != -1:
             q = next_prime(q)
         return (Z(-q), -d)
+    mo = moebius(d)
+    if mo == 0:
+        raise ValueError("d needs to be squarefree")
+    if d % 2 == 0 and mo * d % 16 != 2:
+        dd = mo * d / 2
     else:
-        mo = moebius(d)
-        if mo == 0:
-            raise ValueError("d needs to be squarefree")
-        if d % 2 == 0 and mo * d % 16 != 2:
-            dd = mo * d / 2
-        else:
-            dd = mo * d
-        q = 1
-        while hilbert_conductor(-q, dd) != d:
-            q += 1
-        if dd % q == 0:
-            dd /= q
-        return (Z(-q), Z(dd))
+        dd = mo * d
+    q = 1
+    while hilbert_conductor(-q, dd) != d:
+        q += 1
+    if dd % q == 0:
+        dd /= q
+    return (Z(-q), Z(dd))
 
 
 ##############################################################################
@@ -5461,8 +5448,7 @@ def integer_trunc(i):
     """
     if i >= 0:
         return integer_floor(i)
-    else:
-        return integer_ceil(i)
+    return integer_ceil(i)
 
 
 def two_squares(n):
@@ -5724,10 +5710,9 @@ def three_squares(n):
 
     if x >= b:
         return (a * m, b * m, x * m)
-    elif x >= a:
+    if x >= a:
         return (a * m, x * m, b * m)
-    else:
-        return (x * m, a * m, b * m)
+    return (x * m, a * m, b * m)
 
 
 def four_squares(n):
@@ -6121,8 +6106,7 @@ def sort_complex_numbers_for_display(nums):
 
     if isinstance(nums[0], tuple):
         return sorted(nums, key=lambda t: _key_complex_for_display(t[0]))
-    else:
-        return sorted(nums, key=_key_complex_for_display)
+    return sorted(nums, key=_key_complex_for_display)
 
 
 def fundamental_discriminant(D):

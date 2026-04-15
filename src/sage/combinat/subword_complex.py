@@ -567,8 +567,7 @@ class SubwordComplexFacet(Simplex, Element):
             if self._extended_weight_conf is None:
                 self._extended_weight_conf = V_weights
             return V_weights
-        else:
-            return self._extended_weight_conf
+        return self._extended_weight_conf
 
     def weight_configuration(self):
         r"""
@@ -730,8 +729,7 @@ class SubwordComplexFacet(Simplex, Element):
         new_facet._extended_root_conf_indices = tuple(R)
         if return_position:
             return new_facet, j
-        else:
-            return new_facet
+        return new_facet
 
     # plot and show
 
@@ -1187,8 +1185,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         if self._cartan_type is None:
             return "Subword complex of unknown type for Q = {} and pi = {}".format(self._Q, self._pi.reduced_word())
-        else:
-            return 'Subword complex of type {} for Q = {} and pi = {}'.format(self.cartan_type(), self._Q, self._pi.reduced_word())
+        return 'Subword complex of type {} for Q = {} and pi = {}'.format(self.cartan_type(), self._Q, self._pi.reduced_word())
 
     def __call__(self, F, facet_test=True):
         r"""
@@ -1378,8 +1375,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         if self._facets_dict:
             return [self._facets_dict[tuple(F)] for F in self._facets]
-        else:
-            return [self(F, facet_test=False) for F in self._facets]
+        return [self(F, facet_test=False) for F in self._facets]
 
     def __iter__(self):
         r"""
@@ -1991,7 +1987,7 @@ def _greedy_facet(Q, w, side='negative', n=None, pos=0, l=None, elems=[]):
 
     if l == 0:
         return elems + list(range(pos, n))
-    elif n < l:
+    if n < l:
         return []
 
     s = Q[pos]

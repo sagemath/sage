@@ -129,13 +129,13 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
         """
         if self.basis_matrix() == other.basis_matrix():
             return op == op_EQ or op == op_LE or op == op_GE
-        elif op == op_EQ:
+        if op == op_EQ:
             return False
-        elif op == op_NE:
+        if op == op_NE:
             return True
         if op == op_LE or op == op_LT:
             return self.vector_space().is_subspace(other.vector_space())
-        elif op == op_GE or op == op_GT:
+        if op == op_GE or op == op_GT:
             return other.vector_space().is_subspace(self.vector_space())
 
     def __contains__(self, elt) -> bool:

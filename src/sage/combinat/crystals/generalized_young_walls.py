@@ -466,8 +466,7 @@ class GeneralizedYoungWall(CombinatorialElement):
                 else:
                     newdata.append(list(self.data[r]))
             return self.__class__(self.parent(), newdata)
-        else:
-            return None
+        return None
 
     def f(self, i):
         r"""

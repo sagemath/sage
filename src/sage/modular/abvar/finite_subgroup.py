@@ -320,8 +320,7 @@ class FiniteSubgroup(Module):
             C = A + B
             lattice += C.lattice()
             return FiniteSubgroup_lattice(C, lattice, field_of_definition=K)
-        else:
-            return FiniteSubgroup_lattice(self.abelian_variety(), lattice, field_of_definition=K)
+        return FiniteSubgroup_lattice(self.abelian_variety(), lattice, field_of_definition=K)
 
     def exponent(self):
         """

@@ -112,8 +112,7 @@ def is_globally_equivalent_to(self, other, return_matrix=False) -> bool | Any:
 
     if return_matrix:
         return mat.sage()
-    else:
-        return True
+    return True
 
 
 def is_locally_equivalent_to(self, other, check_primes_only=False,
@@ -235,7 +234,7 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p) -> bool:
         return True
 
     # For p = 2:  Check that all Jordan Invariants are the same.
-    elif p == 2:
+    if p == 2:
 
         # Useful definition
         t = len(self_jordan)          # Define t = Number of Jordan components
@@ -297,8 +296,7 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p) -> bool:
         # All tests passed for the prime 2.
         return True
 
-    else:
-        raise TypeError("this should not have happened")
+    raise TypeError("this should not have happened")
 
 
 def is_rationally_isometric(self, other, return_matrix=False) -> bool | Any:

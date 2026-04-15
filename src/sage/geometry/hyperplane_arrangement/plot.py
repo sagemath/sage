@@ -271,15 +271,14 @@ def plot(hyperplane_arrangement, **kwds):
         if hyperplane_legend: # there are more options than T/F
             p.legend(True)
         return p
-    elif dim == 2:
+    if dim == 2:
         if hyperplane_legend: # there are more options than T/F
             p.legend(True)
         return p
-    else: # dim==3
-        if hyperplane_legend: # there are more options than T/F
-            return p, legend3d
-        else:
-            return p
+    # dim==3
+    if hyperplane_legend: # there are more options than T/F
+        return p, legend3d
+    return p
 
 
 def plot_hyperplane(hyperplane, **kwds):

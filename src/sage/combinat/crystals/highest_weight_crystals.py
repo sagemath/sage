@@ -224,7 +224,7 @@ def HighestWeightCrystal(dominant_weight, model=None):
             raise ValueError("only for finite type E")
         if cartan_type.rank() == 6:
             return FiniteDimensionalHighestWeightCrystal_TypeE6(dominant_weight)
-        elif cartan_type.rank() == 7:
+        if cartan_type.rank() == 7:
             return FiniteDimensionalHighestWeightCrystal_TypeE7(dominant_weight)
         raise NotImplementedError
 

@@ -452,8 +452,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         x = R(x)
         if x == 0:
             return self.element_class(self, {})
-        else:
-            return self.from_base_ring_from_one_basis(x)
+        return self.from_base_ring_from_one_basis(x)
 
     def _coerce_map_from_(self, R):
         r"""

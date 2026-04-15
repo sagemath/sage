@@ -1174,8 +1174,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         if self.is_compact():
             return self.graph().is_connected()    # faster than using poset?
-        else:
-            return self.face_poset().is_connected()
+        return self.face_poset().is_connected()
 
     def connected_component(self, cell=None):
         """
@@ -1453,11 +1452,10 @@ class PolyhedralComplex(GenericCellComplex):
             return PolyhedralComplex(self.relative_boundary_cells(),
                                      is_immutable=self._is_immutable,
                                      backend=self._backend)
-        else:
-            ans = copy(self)
-            if self._is_immutable:
-                ans.set_immutable()
-            return ans
+        ans = copy(self)
+        if self._is_immutable:
+            ans.set_immutable()
+        return ans
 
     def relative_boundary_cells(self) -> list:
         r"""
@@ -1902,8 +1900,7 @@ class PolyhedralComplex(GenericCellComplex):
         num = len(list(self.maximal_cell_iterator()))
         if num == 1:
             return "Polyhedral complex with %s maximal cell" % num
-        else:
-            return "Polyhedral complex with %s maximal cells" % num
+        return "Polyhedral complex with %s maximal cells" % num
 
     def set_immutable(self) -> None:
         """
@@ -2400,7 +2397,7 @@ class PolyhedralComplex(GenericCellComplex):
                 cells = new
             return PolyhedralComplex(cells, maximality_check=False,
                                      backend=self._backend)
-        elif self.is_polyhedral_fan():
+        if self.is_polyhedral_fan():
             if new_vertices and any(vi != 0 for v in new_vertices for vi in v):
                 raise ValueError("new vertices cannot be used for subdivision")
             # mimic :meth:`~sage.geometry.fan <RationalPolyhedralFan>.subdivide`
@@ -2471,13 +2468,12 @@ class PolyhedralComplex(GenericCellComplex):
                 cones = new
             return PolyhedralComplex(cones, maximality_check=False,
                                      backend=self._backend)
-        else:
-            # TODO: ``self`` is unbounded, make it projectively simplicial.
-            # (1) homogenize self of dim d to fan in space of dim d+1;
-            # (2) call fan.subdivide(make_simplicial=True);
-            # (3) take section back to the space of dim d.
-            raise NotImplementedError('subdivision of a non-compact polyhedral ' +
-                                      'complex that is not a fan is not supported')
+        # TODO: ``self`` is unbounded, make it projectively simplicial.
+        # (1) homogenize self of dim d to fan in space of dim d+1;
+        # (2) call fan.subdivide(make_simplicial=True);
+        # (3) take section back to the space of dim d.
+        raise NotImplementedError('subdivision of a non-compact polyhedral ' +
+                                  'complex that is not a fan is not supported')
 
 ############################################################
 # Helper functions

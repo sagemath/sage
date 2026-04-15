@@ -524,7 +524,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
                        I((0, 0, 0, 0, 1, 0)): 1 - q**-2}     # -q^-1(q^-1-q) b
                 rel = self.element_class(self, rel)
                 return self.monomial(I(lhs+[0]*3)) * (rel * self.monomial(I(rhs)))
-            elif rhs[1] > 0:  # rhs has a B to commute with C
+            if rhs[1] > 0:  # rhs has a B to commute with C
                 lhs[2] -= 1
                 rhs[1] -= 1
                 rel = {I((0, 1, 1, 0, 0, 0)): q**2,           # q^2 BC
@@ -532,13 +532,13 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
                        I((0, 0, 0, 1, 0, 0)): -q**2 + 1}     # -q(q-q^-1) a
                 rel = self.element_class(self, rel)
                 return self.monomial(I(lhs+[0]*3)) * (rel * self.monomial(I(rhs)))
-            else:  # nothing to commute as rhs has no A nor B
-                rhs[2] += lhs[2]
-                rhs[1] = lhs[1]
-                rhs[0] = lhs[0]
-                return self.monomial(I(rhs))
+            # nothing to commute as rhs has no A nor B
+            rhs[2] += lhs[2]
+            rhs[1] = lhs[1]
+            rhs[0] = lhs[0]
+            return self.monomial(I(rhs))
 
-        elif lhs[1] > 0:  # lhs has a B
+        if lhs[1] > 0:  # lhs has a B
             if rhs[0] > 0:  # rhs has an A to commute with B
                 lhs[1] -= 1
                 rhs[0] -= 1
@@ -547,12 +547,12 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
                        I((0, 0, 0, 0, 0, 1)): -q**2 + 1}     # -q(q-q^-1) g
                 rel = self.element_class(self, rel)
                 return self.monomial(I(lhs+[0]*3)) * (rel * self.monomial(I(rhs)))
-            else:  # nothing to commute as rhs has no A
-                rhs[1] += lhs[1]
-                rhs[0] = lhs[0]
-                return self.monomial(I(rhs))
+            # nothing to commute as rhs has no A
+            rhs[1] += lhs[1]
+            rhs[0] = lhs[0]
+            return self.monomial(I(rhs))
 
-        elif lhs[0] > 0:  # lhs has an A
+        if lhs[0] > 0:  # lhs has an A
             rhs[0] += lhs[0]
             return self.monomial(I(rhs))
 

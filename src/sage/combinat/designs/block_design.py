@@ -480,12 +480,11 @@ def normalize_hughes_plane_point(p, q):
     for i in [2,1,0]:
         if p[i].is_one():
             return tuple(p)
-        elif not p[i].is_zero():
+        if not p[i].is_zero():
             k = ~p[i]
             if k.is_square():
                 return (p[0] * k,p[1] * k,p[2] * k)
-            else:
-                return ((p[0] * k)**q,(p[1]*k)**q,(p[2]*k)**q)
+            return ((p[0] * k)**q,(p[1]*k)**q,(p[2]*k)**q)
 
 
 def HughesPlane(q2, check=True):
@@ -780,8 +779,7 @@ def projective_plane(n, check=True, existence=False):
 
     if existence:
         return True
-    else:
-        return DesarguesianProjectivePlaneDesign(n, point_coordinates=False, check=check)
+    return DesarguesianProjectivePlaneDesign(n, point_coordinates=False, check=check)
 
 
 def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):

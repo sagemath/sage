@@ -201,8 +201,7 @@ class FreeModuleHomset(Homset, metaclass=ClasscallMetaclass):
         """
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def __call__(self, *args, **kwds):
         r"""
@@ -585,9 +584,8 @@ class FreeModuleEndset(FreeModuleHomset):
                                           name=tensor._name,
                                           latex_name=tensor._latex_name,
                                           is_identity=is_identity)
-            else:
-                raise TypeError("cannot coerce the {}".format(tensor) +
-                                " to an element of {}".format(self))
+            raise TypeError("cannot coerce the {}".format(tensor) +
+                            " to an element of {}".format(self))
         return super()._element_constructor_(matrix_rep, bases=bases,
                                              name=name, latex_name=latex_name,
                                              is_identity=is_identity)

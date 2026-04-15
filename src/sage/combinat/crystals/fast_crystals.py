@@ -295,10 +295,9 @@ class FastCrystal(UniqueRepresentation, Parent):
         assert x.parent() == self and y.parent() == self
         if self._digraph_closure.has_edge(x,y):
             return -1
-        elif self._digraph_closure.has_edge(y,x):
+        if self._digraph_closure.has_edge(y,x):
             return 1
-        else:
-            return 0
+        return 0
 
     class Element(Element):
         def __init__(self, parent, value, format):
@@ -350,12 +349,11 @@ class FastCrystal(UniqueRepresentation, Parent):
             """
             if self.format == "string":
                 return repr(self.parent().delpat[self.value])
-            elif self.format == "dual_string":
+            if self.format == "dual_string":
                 return repr(self.parent().gampat[self.value])
-            elif self.format == "simple":
+            if self.format == "simple":
                 return repr(self.value)
-            else:
-                raise NotImplementedError
+            raise NotImplementedError
 
         def __hash__(self):
             r"""

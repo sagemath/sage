@@ -186,8 +186,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
                 s += str(x_i) + '^' + str(v_i)
         if s:
             return s
-        else:
-            return '1'
+        return '1'
 
     def _richcmp_(self, other, op):
         """
@@ -241,8 +240,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         N = LCM([order[i]/GCD(order[i],L[i]) for i in range(len(order)) if L[i] != 0])
         if N == 0:
             return infinity
-        else:
-            return ZZ(N)
+        return ZZ(N)
 
     multiplicative_order = order
 

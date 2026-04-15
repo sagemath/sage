@@ -155,15 +155,14 @@ class DynamicalSystem_product_projective(DynamicalSystem,
             raise TypeError("must be a forward orbit")
         if n == 0:
             return self
-        else:
-            Q = self(P)
+        Q = self(P)
+        if normalize:
+            Q.normalize_coordinates()
+        for i in range(2,n+1):
+            Q = self(Q)
             if normalize:
                 Q.normalize_coordinates()
-            for i in range(2,n+1):
-                Q = self(Q)
-                if normalize:
-                    Q.normalize_coordinates()
-            return Q
+        return Q
 
     def orbit(self, P, N, **kwds):
         r"""

@@ -126,7 +126,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         """
         if _print_mode == "vector":
             return str(self.element())
-        elif _print_mode == "manin":
+        if _print_mode == "manin":
             m = self.manin_symbol_rep()
         elif _print_mode == "modular":
             m = self.modular_symbol_rep()
@@ -153,7 +153,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
         if _print_mode == "vector":
             return self.element()._latex_()
-        elif _print_mode == "manin":
+        if _print_mode == "manin":
             m = self.manin_symbol_rep()
         elif _print_mode == "modular":
             m = self.modular_symbol_rep()

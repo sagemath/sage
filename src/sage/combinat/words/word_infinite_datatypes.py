@@ -254,34 +254,31 @@ class WordDatatype_callable(WordDatatype):
                 fcn = lambda x: self._func(start + x*step)
                 if length is None:
                     return self._parent(fcn, length=length)
-                elif length is Infinity:
+                if length is Infinity:
                     return self._parent.shift()(fcn)
-                else:
-                    return self._parent.factors()(fcn, length=length)
+                return self._parent.factors()(fcn, length=length)
             # Finite words
+            ## For testing: expand as a list and slice it
+            #return self._parent(map(self._func, range(self._len))[key])
+            step = 1 if key.step is None else key.step
+            if step > 0:
+                start, stop, step = slice(key.start, key.stop,
+                        step).indices(self._len)
+                length = int((stop-start)/float(step))
             else:
-                ## For testing: expand as a list and slice it
-                #return self._parent(map(self._func, range(self._len))[key])
-                step = 1 if key.step is None else key.step
-                if step > 0:
-                    start, stop, step = slice(key.start, key.stop,
-                            step).indices(self._len)
-                    length = int((stop-start)/float(step))
-                else:
-                    start, stop, step = slice(key.start, key.stop,
-                            step).indices(self._len)
-                    length = int(max(0, ceil((stop-start)/float(step))))
-                fcn = lambda x: self._func(start + x*step)
-                return self._parent(fcn, length=length)
-        else:
-            if key < 0:
-                if self._len is Infinity:
-                    raise IndexError("cannot use a negative index with an infinite word")
-                else:
-                    key = self._len + key
-            elif key >= self._len:
-                raise IndexError("word index out of range")
-            return self._func(key)
+                start, stop, step = slice(key.start, key.stop,
+                        step).indices(self._len)
+                length = int(max(0, ceil((stop-start)/float(step))))
+            fcn = lambda x: self._func(start + x*step)
+            return self._parent(fcn, length=length)
+        if key < 0:
+            if self._len is Infinity:
+                raise IndexError("cannot use a negative index with an infinite word")
+            else:
+                key = self._len + key
+        elif key >= self._len:
+            raise IndexError("word index out of range")
+        return self._func(key)
 
     def __reduce__(self):
         r"""
@@ -305,13 +302,11 @@ class WordDatatype_callable(WordDatatype):
         except Exception:
             if self.is_finite():
                 return self._parent, (list(self),)
-            else:
-                return self._parent, (self._func, 'callable', False)
+            return self._parent, (self._func, 'callable', False)
         else:
             if self.is_finite():
                 return self._parent, (s, self._len, 'pickled_function', False)
-            else:
-                return self._parent, (s, 'pickled_function', False)
+            return self._parent, (s, 'pickled_function', False)
 
 
 class WordDatatype_callable_with_caching(WordDatatype_callable):
@@ -517,11 +512,10 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
         """
         if isinstance(key, slice):
             return super().__getitem__(key)
-        else:
-            if key not in self._letter_cache:
-                self._letter_cache[key] = \
-                    super().__getitem__(key)
-            return self._letter_cache[key]
+        if key not in self._letter_cache:
+            self._letter_cache[key] = \
+                super().__getitem__(key)
+        return self._letter_cache[key]
 
     def __reduce__(self):
         r"""
@@ -552,13 +546,11 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
         except Exception:
             if self.is_finite():
                 return self._parent, (list(self),)
-            else:
-                return self._parent, (self._func, 'callable', True)
+            return self._parent, (self._func, 'callable', True)
         else:
             if self.is_finite():
                 return self._parent, (s, self._len, 'pickled_function', True)
-            else:
-                return self._parent, (s, 'pickled_function', True)
+            return self._parent, (s, 'pickled_function', True)
 
     def flush(self):
         r"""
@@ -855,47 +847,44 @@ class WordDatatype_iter(WordDatatype):
 
                 if length is None or length is Infinity:
                     return self._parent(data)
-                else:
-                    return self._parent.factors()(data, length=length)
-            else:
-                start = 0 if key.start is None else int(key.start)
-                stop = int(self._len) if key.stop is None else int(key.stop)
-                step = 1 if key.step is None else int(key.step)
-                # If either key.start or key.stop is negative,
-                # then we need to expand the word.
-                if start < 0 or (stop is not None and stop < 0):
-                    data = list(self)[key]
-                    length = None
-                # If key.step is negative, then we need to expand a prefix.
-                elif step < 0:
-                    if key.start is None:
-                        data = list(self)[key]
-                    else:
-                        data = list(itertools.islice(self, int(start+1)))[start:stop:step]
-                    length = None
-                else: # start >= 0, step >= 1, stop >= 0 or None
-                    data = itertools.islice(self, start, stop, step)
-                    length = "unknown" if stop is None else int(max(0, ((stop-start)/float(step))))
-
                 return self._parent.factors()(data, length=length)
-        else:
-            if key < 0:
-                if self._len is Infinity:
-                    raise IndexError("cannot use negative indices with infinite words")
-                elif self._len is None:
-                    raise IndexError("cannot use negative indices with words of unknown length")
+            start = 0 if key.start is None else int(key.start)
+            stop = int(self._len) if key.stop is None else int(key.stop)
+            step = 1 if key.step is None else int(key.step)
+            # If either key.start or key.stop is negative,
+            # then we need to expand the word.
+            if start < 0 or (stop is not None and stop < 0):
+                data = list(self)[key]
+                length = None
+            # If key.step is negative, then we need to expand a prefix.
+            elif step < 0:
+                if key.start is None:
+                    data = list(self)[key]
                 else:
-                    key = self.length() + key
-            it = iter(self)
-            a = next(it)
-            counter = 0
-            while counter < key:
-                try:
-                    a = next(it)
-                    counter += 1
-                except StopIteration:
-                    raise IndexError("word index out of range")
-            return a
+                    data = list(itertools.islice(self, int(start+1)))[start:stop:step]
+                length = None
+            else: # start >= 0, step >= 1, stop >= 0 or None
+                data = itertools.islice(self, start, stop, step)
+                length = "unknown" if stop is None else int(max(0, ((stop-start)/float(step))))
+
+            return self._parent.factors()(data, length=length)
+        if key < 0:
+            if self._len is Infinity:
+                raise IndexError("cannot use negative indices with infinite words")
+            elif self._len is None:
+                raise IndexError("cannot use negative indices with words of unknown length")
+            else:
+                key = self.length() + key
+        it = iter(self)
+        a = next(it)
+        counter = 0
+        while counter < key:
+            try:
+                a = next(it)
+                counter += 1
+            except StopIteration:
+                raise IndexError("word index out of range")
+        return a
 
     def __reduce__(self):
         r"""
@@ -1164,17 +1153,15 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
         """
         if isinstance(key, slice):
             return super().__getitem__(key)
-        else:
-            if key < 0:
-                return super().__getitem__(key)
-            else:
-                while self._last_index < key:
-                    try:
-                        self._list.append(next(self._gen))
-                        self._last_index += 1
-                    except StopIteration:
-                        raise IndexError("word index out of range")
-                return self._list[key]
+        if key < 0:
+            return super().__getitem__(key)
+        while self._last_index < key:
+            try:
+                self._list.append(next(self._gen))
+                self._last_index += 1
+            except StopIteration:
+                raise IndexError("word index out of range")
+        return self._list[key]
 
     def __reduce__(self):
         r"""
@@ -1195,8 +1182,7 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
         """
         if self.is_finite():
             return self._parent, (list(self),)
-        else:
-            return self._parent, (iter(self), 'iter', True)
+        return self._parent, (iter(self), 'iter', True)
 
     def flush(self):
         r"""

@@ -1512,10 +1512,9 @@ class Polytopes:
 
         if exact:
             return Polyhedron(vertices=verts, base_ring=K, backend=backend)
-        else:
-            from sage.rings.real_mpfr import RR
-            verts = [(RR(x), RR(y), RR(z)) for x, y, z in verts]
-            return Polyhedron(vertices=verts, backend=backend)
+        from sage.rings.real_mpfr import RR
+        verts = [(RR(x), RR(y), RR(z)) for x, y, z in verts]
+        return Polyhedron(vertices=verts, backend=backend)
 
     def icosidodecahedron_V2(self, exact=True, base_ring=None, backend=None):
         r"""
@@ -2578,24 +2577,23 @@ class Polytopes:
         if project:
             verts = project_points(*verts)
             return Polyhedron(vertices=verts, backend=backend)
-        else:
-            parent = Polyhedra(ZZ, n, backend=backend)
+        parent = Polyhedra(ZZ, n, backend=backend)
 
-            def tri(m):
-                return (m * (m + 1)) // 2
+        def tri(m):
+            return (m * (m + 1)) // 2
 
-            # Each proper `S \subset [n]` corresponds exactly to
-            # a facet that minimizes the coordinates in `S`.
-            # The minimal sum for `m` coordinates is `(m*(m+1))/2`.
-            ieqs = ((-tri(sum(x)),) + x
-                    for x in itertools.product([0, 1], repeat=n)
-                    if 0 < sum(x) < n)
+        # Each proper `S \subset [n]` corresponds exactly to
+        # a facet that minimizes the coordinates in `S`.
+        # The minimal sum for `m` coordinates is `(m*(m+1))/2`.
+        ieqs = ((-tri(sum(x)),) + x
+                for x in itertools.product([0, 1], repeat=n)
+                if 0 < sum(x) < n)
 
-            # Adding the defining equality.
-            eqns = ((-tri(n),) + tuple(1 for _ in range(n)),)
+        # Adding the defining equality.
+        eqns = ((-tri(n),) + tuple(1 for _ in range(n)),)
 
-            return parent([verts, [], []], [ieqs, eqns],
-                          Vrep_minimal=True, Hrep_minimal=True, pref_rep='Hrep')
+        return parent([verts, [], []], [ieqs, eqns],
+                      Vrep_minimal=True, Hrep_minimal=True, pref_rep='Hrep')
 
     def generalized_permutahedron(self, coxeter_type, point=None, exact=True, regular=False, backend=None):
         r"""
@@ -3199,10 +3197,9 @@ class Polytopes:
 
             return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-        elif construction == 'as_permutahedron':
+        if construction == 'as_permutahedron':
             return self.generalized_permutahedron(['H', 4], point=[0, 0, 0, 1], exact=exact, backend=backend, regular=True)
-        else:
-            raise ValueError("construction (={}) must be either 'coxeter' or 'as_permutahedron' ".format(construction))
+        raise ValueError("construction (={}) must be either 'coxeter' or 'as_permutahedron' ".format(construction))
 
     def hypercube(self, dim, intervals=None, backend=None):
         r"""

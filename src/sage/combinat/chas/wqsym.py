@@ -121,12 +121,11 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         if display == 'tight':
             disp = disp.replace(", ", ",")
             return disp
-        elif display == 'compact':
+        if display == 'compact':
             disp = disp.replace("}, ", ".").replace("}", "").replace("{", "")
             return disp.replace(", ", "")
-        else:
-            # treat display as 'normal'
-            return disp
+        # treat display as 'normal'
+        return disp
 
     def _repr_words(self, osp):
         """
@@ -158,11 +157,10 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         disp = repr(list(osp.to_packed_word()))
         if display == 'tight':
             return disp.replace(", ", ",")
-        elif display == 'compact':
+        if display == 'compact':
             return disp.replace(", ", "")
-        else:
-            # treat display as 'normal'
-            return disp
+        # treat display as 'normal'
+        return disp
 
     def _coerce_map_from_(self, R):
         r"""

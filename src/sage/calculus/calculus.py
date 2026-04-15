@@ -636,7 +636,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
     if algorithm == 'maxima':
         return maxima.sr_sum(expression,v,a,b)
 
-    elif algorithm == 'mathematica':
+    if algorithm == 'mathematica':
         try:
             sum = "Sum[%s, {%s, %s, %s}]" % tuple([repr(expr._mathematica_()) for expr in (expression, v, a, b)])
         except TypeError:
@@ -648,7 +648,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
             raise ValueError("Mathematica cannot make sense of: %s" % sum)
         return result.sage()
 
-    elif algorithm == 'maple':
+    if algorithm == 'maple':
         sum = "sum(%s, %s=%s..%s)" % tuple([repr(expr._maple_()) for expr in (expression, v, a, b)])
         from sage.interfaces.maple import maple
         try:
@@ -657,7 +657,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
             raise ValueError("Maple cannot make sense of: %s" % sum)
         return result.sage()
 
-    elif algorithm == 'giac':
+    if algorithm == 'giac':
         sum = "sum(%s, %s, %s, %s)" % tuple([repr(expr._giac_()) for expr in (expression, v, a, b)])
         from sage.interfaces.giac import giac
         try:
@@ -666,7 +666,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
             raise ValueError("Giac cannot make sense of: %s" % sum)
         return result.sage()
 
-    elif algorithm == 'sympy':
+    if algorithm == 'sympy':
         expression,v,a,b = (expr._sympy_() for expr in (expression, v, a, b))
         from sympy import summation
 
@@ -899,7 +899,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
     if algorithm == 'maxima':
         return maxima.sr_prod(expression,v,a,b)
 
-    elif algorithm == 'mathematica':
+    if algorithm == 'mathematica':
         try:
             prod = "Product[%s, {%s, %s, %s}]" % tuple([repr(expr._mathematica_()) for expr in (expression, v, a, b)])
         except TypeError:
@@ -911,7 +911,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
             raise ValueError("Mathematica cannot make sense of: %s" % sum)
         return result.sage()
 
-    elif algorithm == 'giac':
+    if algorithm == 'giac':
         prod = "product(%s, %s, %s, %s)" % tuple([repr(expr._giac_()) for expr in (expression, v, a, b)])
         from sage.interfaces.giac import giac
         try:
@@ -920,7 +920,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
             raise ValueError("Giac cannot make sense of: %s" % sum)
         return result.sage()
 
-    elif algorithm == 'sympy':
+    if algorithm == 'sympy':
         expression,v,a,b = (expr._sympy_() for expr in (expression, v, a, b))
         from sympy import product as sproduct
 
@@ -1142,9 +1142,9 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
                             if g(ex).simplify_trig().canonicalize_radical() == 0:
                                 return g
                             # Otherwise fall back to numerical guess
-                            elif epsilon and error < epsilon:
+                            if epsilon and error < epsilon:
                                 return g
-                            elif algorithm is not None:
+                            if algorithm is not None:
                                 raise NotImplementedError("Could not prove minimal polynomial %s (epsilon %s)" % (g, RR(error).str(no_sci=False)))
 
         if algorithm is not None:
@@ -1915,7 +1915,7 @@ def laplace(ex, t, s, algorithm='maxima'):
     if algorithm == 'maxima':
         return ex.parent()(ex._maxima_().laplace(var(t), var(s)))
 
-    elif algorithm == 'sympy':
+    if algorithm == 'sympy':
         ex_sy, t, s = (expr._sympy_() for expr in (ex, t, s))
         from sympy import laplace_transform
 
@@ -1942,8 +1942,7 @@ def laplace(ex, t, s, algorithm='maxima'):
             raise ValueError("Giac cannot make sense of: %s" % ex)
         if 'integrate' in format(result) or 'integration' in format(result):
             return dummy_laplace(ex, t, s)
-        else:
-            return result.sage()
+        return result.sage()
 
     else:
         raise ValueError("Unknown algorithm: %s" % algorithm)
@@ -2101,7 +2100,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
     if algorithm == 'maxima':
         return ex.parent()(ex._maxima_().ilt(var(s), var(t)))
 
-    elif algorithm == 'sympy':
+    if algorithm == 'sympy':
         ex_sy, s, t = (expr._sympy_() for expr in (ex, s, t))
         from sympy import inverse_laplace_transform
 
@@ -2113,9 +2112,8 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
         except AttributeError:
             if 'InverseLaplaceTransform' in format(result):
                 return dummy_inverse_laplace(ex, t, s)
-            else:
-                raise AttributeError("Unable to convert SymPy result (={}) into"
-                                    " Sage".format(result))
+            raise AttributeError("Unable to convert SymPy result (={}) into"
+                                " Sage".format(result))
 
     elif algorithm == 'giac':
         from sage.interfaces.giac import giac
@@ -2125,8 +2123,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
             raise ValueError("Giac cannot make sense of: %s" % ex)
         if 'ilaplace' in format(result):
             return dummy_inverse_laplace(ex, t, s)
-        else:
-            return result.sage()
+        return result.sage()
 
     else:
         raise ValueError("Unknown algorithm: %s" % algorithm)
@@ -2255,8 +2252,7 @@ def dummy_integrate(*args):
     """
     if len(args) == 4:
         return definite_integral(*args, hold=True)
-    else:
-        return indefinite_integral(*args, hold=True)
+    return indefinite_integral(*args, hold=True)
 
 
 def dummy_laplace(*args):
@@ -2724,8 +2720,7 @@ def _find_func(name, create_when_missing=True):
     except (KeyError, TypeError):
         if create_when_missing:
             return function_factory(name)
-        else:
-            return None
+        return None
 
 
 parser_make_var = LookupNameMaker({}, fallback=_find_var)

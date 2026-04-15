@@ -274,9 +274,8 @@ class FiniteWord_class(Word_class):
             letters = [str(a) for a in self]
             if all(len(a) == 1 for a in letters):
                 return ''.join(letters)
-            else:
-                return ls.join(letters)
-        elif word_options['display'] == 'list':
+            return ls.join(letters)
+        if word_options['display'] == 'list':
             return str(list(self))
 
     def _repr_(self):
@@ -422,8 +421,7 @@ class FiniteWord_class(Word_class):
         if length == Infinity:
             parent = parent.shift()
             return parent(f, datatype='callable', caching=True)
-        else:
-            return parent(f, length=length, datatype='callable', caching=True)
+        return parent(f, length=length, datatype='callable', caching=True)
 
     __mul__ = concatenate
 
@@ -1244,10 +1242,9 @@ class FiniteWord_class(Word_class):
         """
         if algorithm == 'suffix tree':
             return ZZ(self.suffix_tree().number_of_factors(n))
-        elif algorithm == 'naive':
+        if algorithm == 'naive':
             return ZZ(len(self.factor_set(n, algorithm='naive')))
-        else:
-            raise ValueError(f'unknown algorithm (={algorithm})')
+        raise ValueError(f'unknown algorithm (={algorithm})')
 
     def factor_iterator(self, n=None):
         r"""
@@ -1410,20 +1407,18 @@ class FiniteWord_class(Word_class):
         """
         if algorithm == 'suffix tree':
             return Set(self.factor_iterator(n))
-        elif algorithm == 'naive':
+        if algorithm == 'naive':
             if n is None:
                 S = {self[0:0]}
                 for n in range(1, self.length()+1):
                     for i in range(self.length()-n+1):
                         S.add(self[i:i+n])
                 return Set(S)
-            else:
-                S = set()
-                for i in range(self.length()-n+1):
-                    S.add(self[i:i+n])
-                return Set(S)
-        else:
-            raise ValueError(f'unknown algorithm (={algorithm})')
+            S = set()
+            for i in range(self.length()-n+1):
+                S.add(self[i:i+n])
+            return Set(S)
+        raise ValueError(f'unknown algorithm (={algorithm})')
 
     def topological_entropy(self, n):
         r"""
@@ -2474,13 +2469,12 @@ class FiniteWord_class(Word_class):
         l = self.length()
         if f is None:
             return self[:l//2] == self[l//2 + l % 2:].reversal()
-        else:
-            from sage.combinat.words.morphism import WordMorphism
-            if not isinstance(f, WordMorphism):
-                f = WordMorphism(f)
-            if not f.is_involution():
-                raise ValueError("f must be an involution")
-            return self[:l//2 + l % 2] == f(self[l//2:].reversal())
+        from sage.combinat.words.morphism import WordMorphism
+        if not isinstance(f, WordMorphism):
+            f = WordMorphism(f)
+        if not f.is_involution():
+            raise ValueError("f must be an involution")
+        return self[:l//2 + l % 2] == f(self[l//2:].reversal())
 
     def lps(self, f=None, l=None):
         r"""
@@ -2572,16 +2566,13 @@ class FiniteWord_class(Word_class):
         if f is None:
             if g == d:
                 return self[-l-2:]
-            else:
-                # Otherwise, the length of the lps of self is smallest than l+2
-                return self[-l-1:].lps()
-        else:
-            from sage.combinat.words.morphism import WordMorphism
-            f = WordMorphism(f)
-            if f(g)[0] == d:
-                return self[-l-2:]
-            else:
-                return self[-l-1:].lps(f=f)
+            # Otherwise, the length of the lps of self is smallest than l+2
+            return self[-l-1:].lps()
+        from sage.combinat.words.morphism import WordMorphism
+        f = WordMorphism(f)
+        if f(g)[0] == d:
+            return self[-l-2:]
+        return self[-l-1:].lps(f=f)
 
     @cached_method
     def palindromic_lacunas_study(self, f=None):
@@ -3242,11 +3233,10 @@ class FiniteWord_class(Word_class):
                 l = self.lps().length()
                 # return self * self[-(l+1)::-1]
                 return self * self[:self.length() - l].reversal()
-            elif side == 'left':
+            if side == 'left':
                 l = self.reversal().lps().length()
                 return self[:l-1:-1] * self
-            else:
-                raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
+            raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
         else:
             from sage.combinat.words.morphism import WordMorphism
             f = WordMorphism(f)
@@ -3255,11 +3245,10 @@ class FiniteWord_class(Word_class):
             if side == 'right':
                 l = self.lps(f=f).length()
                 return self * f(self[-(l+1)::-1])
-            elif side == 'left':
+            if side == 'left':
                 l = self.reversal().lps(f=f).length()
                 return f(self[:l-1:-1]) * self
-            else:
-                raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
+            raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
 
     def is_symmetric(self, f=None):
         r"""
@@ -4739,8 +4728,7 @@ class FiniteWord_class(Word_class):
         from sage.combinat.partition import Partition
         if 0 in p:
             return Partition(p[:p.index(0)])
-        else:
-            return Partition(p)
+        return Partition(p)
 
     def overlap_partition(self, other, delay=0, p=None, involution=None):
         r"""
@@ -5264,10 +5252,9 @@ class FiniteWord_class(Word_class):
         """
         if f is None:
             return self.reversal().iterated_right_palindromic_closure(f=f)
-        else:
-            from sage.combinat.words.morphism import WordMorphism
-            f = WordMorphism(f)
-            return f(self).reversal().iterated_right_palindromic_closure(f=f)
+        from sage.combinat.words.morphism import WordMorphism
+        f = WordMorphism(f)
+        return f(self).reversal().iterated_right_palindromic_closure(f=f)
 
     def balance(self):
         r"""
@@ -5631,29 +5618,28 @@ class FiniteWord_class(Word_class):
         # at this point, previous_letter is the suffix letter and current_run_length is the suffix length
         if not (is_isolated[alphabet[0]] or is_isolated[alphabet[1]]):
             return self
-        elif is_isolated[alphabet[0]] and is_isolated[alphabet[1]]:
+        if is_isolated[alphabet[0]] and is_isolated[alphabet[1]]:
             return W()
+        if is_isolated[alphabet[0]]:
+            l_isolated = alphabet[0]  # the isolated letter
+            l_running = alphabet[1]  # the running letter (non-isolated)
         else:
-            if is_isolated[alphabet[0]]:
-                l_isolated = alphabet[0]  # the isolated letter
-                l_running = alphabet[1]  # the running letter (non-isolated)
-            else:
-                l_isolated = alphabet[1]
-                l_running = alphabet[0]
-            w_isolated = word_from_letter[l_isolated]  # the word associated to the isolated letter
-            w_running = word_from_letter[l_running]  # the word associated to the running letter
-            min_run = minimal_run[l_running]
-            if prefix_letter == l_isolated or prefix_length <= min_run:
-                desubstitued_word = W()
-            else:
-                desubstitued_word = w_running ** (prefix_length - min_run)
-            for i in runs[l_running]:
-                desubstitued_word = desubstitued_word + w_isolated + w_running ** (i - min_run)
-            if current_run_length > 0:
-                desubstitued_word = desubstitued_word + w_isolated
-                if previous_letter == l_running and current_run_length > min_run:
-                    desubstitued_word = desubstitued_word + w_running ** (current_run_length - min_run)
-            return desubstitued_word.sturmian_desubstitute_as_possible()
+            l_isolated = alphabet[1]
+            l_running = alphabet[0]
+        w_isolated = word_from_letter[l_isolated]  # the word associated to the isolated letter
+        w_running = word_from_letter[l_running]  # the word associated to the running letter
+        min_run = minimal_run[l_running]
+        if prefix_letter == l_isolated or prefix_length <= min_run:
+            desubstitued_word = W()
+        else:
+            desubstitued_word = w_running ** (prefix_length - min_run)
+        for i in runs[l_running]:
+            desubstitued_word = desubstitued_word + w_isolated + w_running ** (i - min_run)
+        if current_run_length > 0:
+            desubstitued_word = desubstitued_word + w_isolated
+            if previous_letter == l_running and current_run_length > min_run:
+                desubstitued_word = desubstitued_word + w_running ** (current_run_length - min_run)
+        return desubstitued_word.sturmian_desubstitute_as_possible()
 
     def is_sturmian_factor(self) -> bool:
         r"""
@@ -5830,8 +5816,7 @@ class FiniteWord_class(Word_class):
         key = self._parent.sortkey_letters
         if key(self[i]) > key(self[i + 1]):
             return self.swap(i)
-        else:
-            return self
+        return self
 
     def swap_decrease(self, i):
         r"""
@@ -5855,8 +5840,7 @@ class FiniteWord_class(Word_class):
         key = self._parent.sortkey_letters
         if key(self[i]) < key(self[i + 1]):
             return self.swap(i)
-        else:
-            return self
+        return self
 
     def abelian_vector(self):
         r"""
@@ -5993,7 +5977,7 @@ class FiniteWord_class(Word_class):
         if overlap is True:
             from sage.combinat.shuffle import ShuffleProduct_overlapping
             return ShuffleProduct_overlapping(self, other, self.parent())
-        elif isinstance(overlap, (int, Integer)):
+        if isinstance(overlap, (int, Integer)):
             from sage.combinat.shuffle import ShuffleProduct_overlapping_r
             return ShuffleProduct_overlapping_r(self, other, overlap, self.parent())
         raise ValueError('overlapping must be True or an integer')
@@ -6037,8 +6021,7 @@ class FiniteWord_class(Word_class):
         if shift is None:
             from sage.combinat.words.shuffle_product import ShuffleProduct_shifted
             return ShuffleProduct_shifted(self, other)
-        else:
-            return self.shuffle(self._parent([x + shift for x in other], check=False))
+        return self.shuffle(self._parent([x + shift for x in other], check=False))
 
     ######################################################################
     # XXX TODO: The description is inconsistent w.r.t. "W" and "alphabet".
@@ -6630,9 +6613,8 @@ class FiniteWord_class(Word_class):
         """
         if self.length() % 2:
             return False
-        else:
-            l = self.length() // 2
-            return self[:l] == self[l:]
+        l = self.length() // 2
+        return self[:l] == self[l:]
 
     def is_square_free(self) -> bool:
         r"""

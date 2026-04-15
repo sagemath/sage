@@ -96,20 +96,19 @@ def GraphPaths(g, source=None, target=None):
 
     if source is None and target is None:
         return GraphPaths_all(g)
-    elif source is not None and target is None:
+    if source is not None and target is None:
         if source not in g:
             raise ValueError("source must be in g")
         return GraphPaths_s(g, source)
-    elif source is None and target is not None:
+    if source is None and target is not None:
         if target not in g:
             raise ValueError("target must be in g")
         return GraphPaths_t(g, target)
-    else:
-        if source not in g:
-            raise ValueError("source must be in g")
-        if target not in g:
-            raise ValueError("target must be in g")
-        return GraphPaths_st(g, source, target)
+    if source not in g:
+        raise ValueError("source must be in g")
+    if target not in g:
+        raise ValueError("target must be in g")
+    return GraphPaths_st(g, source, target)
 
 
 class GraphPaths_common:

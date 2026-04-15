@@ -166,9 +166,9 @@ def symbolic_expression(x):
     """
     if isinstance(x, Expression):
         return x
-    elif hasattr(x, '_symbolic_'):
+    if hasattr(x, '_symbolic_'):
         return x._symbolic_(SR)
-    elif isinstance(x, (tuple, list, FreeModuleElement)):
+    if isinstance(x, (tuple, list, FreeModuleElement)):
         expressions = [symbolic_expression(item) for item in x]
         if not expressions:
             # Make sure it is symbolic also when length is 0
@@ -176,14 +176,14 @@ def symbolic_expression(x):
         if isinstance(expressions[0], FreeModuleElement):
             return matrix(expressions)
         return vector(expressions)
-    elif isinstance(x, Matrix):
+    if isinstance(x, Matrix):
         if not x.nrows() or not x.ncols():
             # Make sure it is symbolic and of correct dimensions
             # also when a matrix dimension is 0
             return matrix(SR, x.nrows(), x.ncols())
         rows = [symbolic_expression(row) for row in x.rows()]
         return matrix(rows)
-    elif callable(x):
+    if callable(x):
         from inspect import signature, Parameter
         try:
             s = signature(x)
@@ -196,6 +196,5 @@ def symbolic_expression(x):
                 result = x(*vars)
                 if isinstance(result, (tuple, list)):
                     return vector(SR, result).function(*vars)
-                else:
-                    return SR(result).function(*vars)
+                return SR(result).function(*vars)
     return SR(x)

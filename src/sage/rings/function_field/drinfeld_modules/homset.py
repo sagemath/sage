@@ -719,7 +719,7 @@ class DrinfeldModuleHomset(Homset):
 
         # We write the linear system and solve it
         sys = Matrix(Fq, (d + r + 1) * n, (d + 1) * n)
-        for k in range(0, d + r + 1):
+        for k in range(d + r + 1):
             for i in range(max(0, k - r), min(k, d) + 1):
                 # We represent multiplication and Frobenius
                 # as operators acting on K as a vector space

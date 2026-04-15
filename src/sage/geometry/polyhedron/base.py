@@ -275,8 +275,7 @@ class Polyhedron_base(Polyhedron_base7):
 
         if return_variable:
             return p, x
-        else:
-            return p
+        return p
 
     def boundary_complex(self):
         """
@@ -330,8 +329,7 @@ class Polyhedron_base(Polyhedron_base7):
                             for i in range(self.n_Hrepresentation())
                             if self.Hrepresentation()[i].is_inequality()]
             return SimplicialComplex(ineq_indices, maximality_check=False)
-        else:
-            raise NotImplementedError("this function is only implemented for simplicial polytopes")
+        raise NotImplementedError("this function is only implemented for simplicial polytopes")
 
     @cached_method
     def center(self):
@@ -357,12 +355,11 @@ class Polyhedron_base(Polyhedron_base7):
         """
         if self.dim() == 0:
             return self.vertices()[0].vector()
-        else:
-            vertex_sum = vector(self.base_ring(), [0] * self.ambient_dim())
-            for v in self.vertex_generator():
-                vertex_sum += v.vector()
-            vertex_sum.set_immutable()
-            return vertex_sum / self.n_vertices()
+        vertex_sum = vector(self.base_ring(), [0] * self.ambient_dim())
+        for v in self.vertex_generator():
+            vertex_sum += v.vector()
+        vertex_sum.set_immutable()
+        return vertex_sum / self.n_vertices()
 
     @cached_method
     def radius_square(self):
@@ -574,10 +571,8 @@ class Polyhedron_base(Polyhedron_base7):
         if certificate:
             if is_inscribed:
                 return (True, circumcenter)
-            else:
-                return (False, None)
-        else:
-            return is_inscribed
+            return (False, None)
+        return is_inscribed
 
     def hyperplane_arrangement(self):
         """
@@ -694,10 +689,9 @@ class Polyhedron_base(Polyhedron_base7):
             raise NotImplementedError('normal fan handles only polytopes over the rationals')
         if direction == 'inner':
             return NormalFan(self)
-        elif direction == 'outer':
+        if direction == 'outer':
             return NormalFan(-self)
-        else:
-            raise TypeError("the direction should be 'inner' or 'outer'")
+        raise TypeError("the direction should be 'inner' or 'outer'")
 
     @cached_method
     def face_fan(self):
