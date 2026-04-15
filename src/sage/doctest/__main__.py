@@ -12,7 +12,7 @@ heavily customized SageMath logic and also uses pytest to run unit tests.
 #                     2016-2020 John H. Palmieri <palmieri@math.washington.edu>
 #                     2016-2023 Kwankyu Lee <ekwankyu@gmail.com>
 #                     2017-2019 Erik M. Bray <erik.bray@lri.fr>
-#                     2017-2025 Frédéric Chapoton <chapoton@math.univ-lyon1.fr>
+#                     2017-2025 Frédéric Chapoton <chapoton@unistra.fr>
 #                     2017      Volker Braun <vbraun.name@gmail.com>
 #                     2018      François Bissey <frp.bissey@gmail.com>
 #                     2018-2026 Julian Rüth <julian.rueth@fsfe.org>
