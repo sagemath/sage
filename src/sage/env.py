@@ -188,7 +188,7 @@ def _create_tmp_dotsage() -> str:
 
     EXAMPLES::
 
-        sage: from sage.misc.env import _create_tmp_dotsage
+        sage: from sage.env import _create_tmp_dotsage
         sage: name = _create_tmp_dotsage()
 
         sage: import os.path
