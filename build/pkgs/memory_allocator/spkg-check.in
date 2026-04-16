@@ -1,1 +1,0 @@
-python3 -c "import memory_allocator.test; import os; os.chdir('src'); exec(open('test.py').read())"

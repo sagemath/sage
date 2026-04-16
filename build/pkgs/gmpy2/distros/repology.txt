@@ -1,2 +1,0 @@
-python:gmpy2
-python:gmpy2-devel

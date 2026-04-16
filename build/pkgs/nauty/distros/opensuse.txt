@@ -1,2 +1,0 @@
-nauty
-nauty-devel

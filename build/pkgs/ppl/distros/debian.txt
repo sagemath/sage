@@ -1,2 +1,0 @@
-libppl-dev
-ppl-dev

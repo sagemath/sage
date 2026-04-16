@@ -1,2 +1,0 @@
-traitlets
-python:traitlets

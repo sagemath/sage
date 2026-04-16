@@ -1,1 +1,0 @@
-py3-hatch-fancy-pypi-readme

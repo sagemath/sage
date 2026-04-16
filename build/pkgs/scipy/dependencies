@@ -1,4 +1,0 @@
- $(BLAS) gfortran numpy pybind11 cython pythran | $(PYTHON_TOOLCHAIN) $(PYTHON)
-
-----------
-All lines of this file are ignored except the first.

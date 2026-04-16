@@ -1,4 +1,0 @@
-qdldl_python numpy scipy jinja2 joblib | $(PYTHON_TOOLCHAIN) cmake $(PYTHON)
-
-----------
-All lines of this file are ignored except the first.

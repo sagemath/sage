@@ -1,8 +1,0 @@
-gd
-# shared library dependencies of gd
-fontconfig
-libXpm
-libX11
-libxcb
-libXau
-libXdmcp

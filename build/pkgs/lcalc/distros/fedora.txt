@@ -1,3 +1,0 @@
-## Is not accepted by spkg-configure on Fedora-32
-L-function-devel
-L-function

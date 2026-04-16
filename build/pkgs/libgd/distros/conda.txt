@@ -1,3 +1,0 @@
-# expat is needed for pkg-config file of libgd
-libgd
-expat

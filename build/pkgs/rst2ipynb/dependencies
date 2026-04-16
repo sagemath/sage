@@ -1,4 +1,0 @@
- pandoc pandocfilters | $(PYTHON_TOOLCHAIN) notedown $(PYTHON)
-
-----------
-All lines of this file are ignored except the first.

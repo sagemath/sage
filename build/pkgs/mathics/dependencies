@@ -1,4 +1,0 @@
-numpy pillow mpmath dateutil requests sympy pyyaml charset_normalizer typing_extensions | $(PYTHON_TOOLCHAIN) $(PYTHON)
-
-----------
-All lines of this file are ignored except the first.

@@ -1,2 +1,0 @@
-zeromq
-zeromq-devel

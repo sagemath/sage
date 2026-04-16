@@ -1,2 +1,0 @@
-pexpect
-python:pexpect

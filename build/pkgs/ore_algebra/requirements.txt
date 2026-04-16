@@ -1,1 +1,0 @@
-ore_algebra @ git+https://github.com/mkauers/ore_algebra

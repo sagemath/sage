@@ -1,2 +1,0 @@
-jupyter-jsmol
-python:jupyter-jsmol

@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([ipykernel], [SAGE_PYTHON_PACKAGE_CHECK([ipykernel])])

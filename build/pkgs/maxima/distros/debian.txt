@@ -1,4 +1,0 @@
-# For ecl integration
-maxima-sage
-# For binary
-maxima

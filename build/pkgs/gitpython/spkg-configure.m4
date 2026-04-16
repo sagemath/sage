@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([gitpython], [SAGE_PYTHON_PACKAGE_CHECK([gitpython])])

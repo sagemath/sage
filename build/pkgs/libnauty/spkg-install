@@ -1,3 +1,0 @@
-#! /usr/bin/env bash
-# Actual installation is done by the nauty spkg
-# via a tricky dependency in libnauty/dependencies.

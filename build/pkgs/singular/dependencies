@@ -1,4 +1,0 @@
-$(MP_LIBRARY) ntl flint readline mpfr cddlib
-
-----------
-All lines of this file are ignored except the first.

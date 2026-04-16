@@ -1,7 +1,0 @@
-# Additional packages needed for ./bootstrap
-autoconf
-automake
-libtool
-# Python packages needed for configure and build
-python3
-xz

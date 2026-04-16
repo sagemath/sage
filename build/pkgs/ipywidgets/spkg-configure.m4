@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([ipywidgets], [SAGE_PYTHON_PACKAGE_CHECK([ipywidgets])])

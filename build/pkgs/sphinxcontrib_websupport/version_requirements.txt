@@ -1,1 +1,0 @@
-sphinxcontrib_websupport >=1.2.1

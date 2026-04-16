@@ -1,3 +1,0 @@
-csdp
-csdp-devel
-csdp-tools

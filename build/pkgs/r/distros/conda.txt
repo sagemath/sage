@@ -1,3 +1,0 @@
-r
-r-essentials
-r-lattice

@@ -1,2 +1,0 @@
-# see spkg-configure.m4
-tox >= 4.2.7

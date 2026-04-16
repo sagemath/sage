@@ -1,2 +1,0 @@
-libsemigroups
-libsemigroups-devel

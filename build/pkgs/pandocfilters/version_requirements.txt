@@ -1,1 +1,0 @@
-pandocfilters >=1.4.2

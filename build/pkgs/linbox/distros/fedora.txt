@@ -1,2 +1,0 @@
-linbox
-linbox-devel

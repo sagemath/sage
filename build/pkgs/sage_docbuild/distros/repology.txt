@@ -1,2 +1,0 @@
-sage-docbuild
-python:sage-docbuild

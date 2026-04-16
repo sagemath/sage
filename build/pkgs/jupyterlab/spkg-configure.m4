@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([jupyterlab], [SAGE_PYTHON_PACKAGE_CHECK([jupyterlab])])

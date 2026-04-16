@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([fonttools], [SAGE_PYTHON_PACKAGE_CHECK([fonttools])])
