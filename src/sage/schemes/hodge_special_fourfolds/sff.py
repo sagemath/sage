@@ -2798,7 +2798,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
     ::
 
-        sage: T = X.K3(verbose=False); T                                                            # optional - macaulay2
+        sage: T = X.K3(verbose=False, building=True); T                                             # optional - macaulay2
         surface in PP^8 of degree 14 and sectional genus 8 cut out by 15 hypersurfaces of degree 2
         sage: building = T.building() # a tuple of 4 objects obtained in the construction of T      # optional - macaulay2
         sage: building[0] # the first of which is the Fano map                                      # optional - macaulay2
@@ -2811,7 +2811,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
         sage: # optional - macaulay2
         sage: X = fourfold('6'); X
         Gushel-Mukai fourfold of discriminant 10('') containing a plane in PP^8, class of the surface in GG(1,4): (1, 0)
-        sage: T = X.K3(verbose=False); T
+        sage: T = X.K3(verbose=False, building=True); T
         surface in PP^6 of degree 10 and sectional genus 6 cut out by 6 hypersurfaces of degree 2
         sage: building = T.building() # a tuple of 4 objects obtained in the construction of T
         sage: building[0] # the first of which is the Fano map
@@ -2825,7 +2825,7 @@ class Hodge_special_fourfold(Embedded_projective_variety):
 
         sage: X = fourfold(surface(1,ambient=7)); X
         Complete intersection of 3 quadrics in PP^7 of discriminant 31 = 8*4-1^2 containing a plane in PP^7
-        sage: T = X.Castelnuovo(verbose=False); T                                                             # optional - macaulay2
+        sage: T = X.Castelnuovo(verbose=False, building=True); T                                              # optional - macaulay2
         surface in PP^4 of degree 9 and sectional genus 9 cut out by 4 hypersurfaces of degrees (3, 4, 4, 4)
         sage: building = T.building() # a tuple of 4 objects obtained in the construction of T                # optional - macaulay2
         sage: building[0] # the first of which is the Fano map                                                # optional - macaulay2
@@ -3361,33 +3361,68 @@ class Hodge_special_fourfold(Embedded_projective_variety):
                 print("-- function parameterCount() has terminated. --")
             return self._macaulay2_parameter_count
 
-    def _associated_surface_construction(self, verbose=None):
-        r"""Construction via Macaulay2 of Hodge-associated K3 surfaces for rational cubic fourfolds and rational Gushel-Mukai fourfolds,
-        and of Castelnuovo surfaces associated to rational complete intersections of three quadrics in PP^7 (for internal use only).
+    def _hodge_associated_surface(self, verbose=None, building=False):
+        r"""
+        Return the Hodge-associated surface via Macaulay2.
+
+        The surface is a K3 surface for rational cubic fourfolds and rational
+        Gushel-Mukai fourfolds, or a Castelnuovo surface for rational complete
+        intersections of three quadrics in PP^7.
+
+        INPUT:
+
+        - building -- boolean (default: ``False``); if ``True``, the output
+          surface will have an additional .building() method that returns
+          the full construction data: a tuple (mu, U, (L, C), f).
+
+        - verbose -- boolean (default: ``None``); whether to print
+          information about the Macaulay2 computation.
+
+        OUTPUT:
+
+        :class:`Embedded_projective_variety`, the Hodge-associated surface to ``self``.
+
         For detailed documentation, see :meth:`fourfold`.
         """
         if verbose is None:
             verbose = get_verbose() >= 1
-        s = "associatedK3surface" if not isinstance(self,_Intersection_of_three_quadrics_in_P7) else "associatedCastelnuovoSurface"
         try:
-            return self._macaulay2_associated_surface_construction
+            return self._hodge_associated_surface_data
         except AttributeError:
             if verbose:
-                print("-- running Macaulay2 function " + s + "()... --")
+                print("-- running Macaulay2 computation... --")
             X = macaulay2(self,'X')
+            s = "E = associatedK3surface" if not isinstance(self,_Intersection_of_three_quadrics_in_P7) else "E = associatedCastelnuovoSurface"
+            s = s + "(X,Verbose=>true);" if verbose else s + "(X,Verbose=>false);"
+            _print_partial_M2_output(s) if verbose else macaulay2.eval(s)
+            E = macaulay2('E')
+            B = E.building()
+            if B[3]._operator('===',macaulay2('null')).sage():
+                if verbose:
+                    print("-- re-running Macaulay2 computation to complete data... --")
+                _print_partial_M2_output(s) if verbose else macaulay2.eval(s)
+                E = macaulay2('E')
+                B = E.building()
+            assert not B[3]._operator('===',macaulay2('null')).sage()
             if verbose:
-                _print_partial_M2_output(s + "(X,Verbose=>true);")
-            U = X.associatedK3surface() if not isinstance(self,_Intersection_of_three_quadrics_in_P7) else X.associatedCastelnuovoSurface()
-            mu = _from_macaulay2map_to_sagemap(U.building()[0].removeUnderscores(),Sage_Source=self.ambient_fivefold())
-            U_non_minimal = _from_macaulay2_to_sage(U.building()[1].removeUnderscores(),Sage_Ambient_Space=mu.target().ambient_space())
-            L = _from_macaulay2_to_sage(U.building()[2][0].removeUnderscores(),Sage_Ambient_Space=mu.target().ambient_space())
-            C = _from_macaulay2_to_sage(U.building()[2][1].removeUnderscores(),Sage_Ambient_Space=mu.target().ambient_space())
-            f = _from_macaulay2map_to_sagemap(U.building()[3].removeUnderscores(),Sage_Source=U_non_minimal)
-            assert mu.source() is self.ambient_fivefold() and U_non_minimal.is_subset(mu.target()) and L.is_subset(U_non_minimal) and C.is_subset(U_non_minimal) and f.source() is U_non_minimal and f.image().dimension() == 2
-            self._macaulay2_associated_surface_construction = (mu, U_non_minimal, (L,C), f)
-            if verbose:
-                print("-- function " + s + "() has terminated. --")
-            return self._macaulay2_associated_surface_construction
+                print("-- retrieving data from Macaulay2 computation... --")
+            if building:
+                mu = _from_macaulay2map_to_sagemap(B[0].removeUnderscores(),Sage_Source=self.ambient_fivefold())
+                W = mu.target().ambient_space()
+                U = _from_macaulay2_to_sage(B[1].removeUnderscores(),Sage_Ambient_Space=W)
+                L = _from_macaulay2_to_sage(B[2][0].removeUnderscores(),Sage_Ambient_Space=W)
+                C = _from_macaulay2_to_sage(B[2][1].removeUnderscores(),Sage_Ambient_Space=W)
+                assert mu.source() is self.ambient_fivefold() and U.is_subset(mu.target()) and L.is_subset(U) and C.is_subset(U)
+                f = _from_macaulay2map_to_sagemap(B[3].removeUnderscores(),Sage_Source=U)
+                assert f.source() is U and f.image().dimension() == 2
+                self._macaulay2_associated_surface_construction = (mu, U, (L,C), f)
+                self._hodge_associated_surface_data = f.image()
+                self._hodge_associated_surface_data.building = lambda : self._macaulay2_associated_surface_construction
+            else:
+                T = B[3].image().removeUnderscores()
+                self._hodge_associated_surface_data = _from_macaulay2_to_sage(T,ProjectiveSpace(T.ambient().ring().sage()))
+                self._hodge_associated_surface_data.building = lambda : print("surface was computed using building=False")
+            return self._hodge_associated_surface_data
 
     def _detect_congruence_using_macaulay2(self, Degree=None, verbose=None):
         r"""Detect and return a congruence of secant curves using ``Macaulay2``."""
@@ -3517,19 +3552,24 @@ class _Intersection_of_three_quadrics_in_P7(Hodge_special_fourfold):
             self._ambient_fivefold = self.random(2,2)
             return self._ambient_fivefold
 
-    def Castelnuovo(self, verbose=None):
+    def Castelnuovo(self, verbose=None, building=False):
         r"""
-        Compute the Castelnuovo surface associated to a rational complete intersections of three quadrics in ``PP^7``.
-        See :class:`Hodge_special_fourfold` for usage examples.
+        Compute the Castelnuovo surface associated to a rational complete intersection of three quadrics in ``PP^7``.
+
+        INPUT:
+
+        - building -- boolean (default: ``False``); if ``True``, the output
+          surface will have a .building() method to retrieve construction data.
+
+        - verbose -- boolean; whether to print Macaulay2 output.
 
         OUTPUT:
 
-        :class:`Embedded_projective_variety`, the (minimal) Castelnuovo surface associated to ``self``.
+        :class:`Embedded_projective_variety`, the Castelnuovo surface associated to ``self``.
+
+        See :class:`Hodge_special_fourfold` for usage examples.
         """
-        self._associated_surface_construction(verbose=verbose)
-        T = self._macaulay2_associated_surface_construction[3].image()
-        T.building = lambda : self._macaulay2_associated_surface_construction
-        return T
+        return self._hodge_associated_surface(verbose=verbose, building=building)
 
 
 class _Virtual_intersection_of_three_quadrics_in_P7(_Intersection_of_three_quadrics_in_P7):
@@ -3645,19 +3685,101 @@ class _Cubic_fourfold(Hodge_special_fourfold):
         """
         return "\\mbox{Cubic fourfold of discriminant }" + latex(self.discriminant(verbose=False)) + " = \\det " + latex(self._lattice_intersection_matrix()) + "\\mbox{ containing a }" + latex(self.surface())
 
-    def K3(self, verbose=None):
+    def K3(self, verbose=None, building=False):
         r"""
         Compute the K3 surface associated to a rational cubic fourfold.
-        See :class:`Hodge_special_fourfold` for usage examples.
+
+        INPUT:
+
+        - building -- boolean (default: ``False``); if ``True``, the output
+          surface will have a .building() method to retrieve construction data.
+
+        - verbose -- boolean; whether to print Macaulay2 output.
 
         OUTPUT:
 
-        :class:`Embedded_projective_variety`, the (minimal) K3 surface associated to ``self``.
+        :class:`Embedded_projective_variety`, the K3 surface associated to ``self``.
+
+        See :class:`Hodge_special_fourfold` for usage examples.
         """
-        self._associated_surface_construction(verbose=verbose)
-        T = self._macaulay2_associated_surface_construction[3].image()
-        T.building = lambda : self._macaulay2_associated_surface_construction
-        return T
+        return self._hodge_associated_surface(verbose=verbose, building=building)
+
+
+class _Doubly_special_cubic_fourfold(_Cubic_fourfold):
+    r"""
+    The class of doubly special cubic fourfolds.
+
+    EXAMPLES::
+
+        sage: # optional - macaulay2
+        sage: X = fourfold('DSCF-6'); X
+        Cubic fourfold in C_20 ∩ C_8 containing two surfaces:
+        (1) surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2
+        (2) plane in PP^5
+        sage: T = X.K3(verbose=False, building=True); T
+        surface in PP^4 of degree 6 and sectional genus 4 cut out by 2 hypersurfaces of degrees (2, 3)
+        sage: building = T.building()
+        sage: building[0]
+        dominant rational map defined by forms of degree 2
+        source: PP^5
+        target: PP^4
+    """
+    def __init__(self, S, T, X, check=True):
+        r"""See :class:`_Doubly_special_cubic_fourfold` for documentation."""
+        Y = _Cubic_fourfold(T, X, check=check)
+        super().__init__(S, Y, check=check)
+        self._surface2 = T
+        self._parent_cubic_fourfold = Y
+
+    def _repr_(self) -> str:
+        r"""Return a string representation of the fourfold."""
+        d1 = self.discriminant(verbose=False)
+        d2 = self._parent_cubic_fourfold.discriminant(verbose=False)
+        Cd1d2 = "C_" + str(d1)
+        if d1 != d2:
+            Cd1d2 = Cd1d2 + " ∩ C_" + str(d2)
+        return "Cubic fourfold in " + Cd1d2 + " containing two surfaces:\n(1) " + str(self.surface()) + "\n(2) " + str(self._surface2)
+
+    def _latex_(self) -> str:
+        r"""
+        Return the LaTeX representation of the fourfold.
+
+        OUTPUT:
+
+        A string.
+
+        EXAMPLES::
+
+            sage: S = surface((2))
+            sage: T = (S.point() + S.point() + S.point()).linear_span()
+            sage: X = fourfold([S,T]); X
+            Cubic fourfold in C_20 ∩ C_8 containing two surfaces:
+            (1) rational surface in PP^5 of degree 4 and sectional genus 0 cut out by 6 hypersurfaces of degree 2 (the image of the plane via the linear system [2])
+            (2) plane in PP^5
+            sage: latex(X)
+            \mbox{Cubic fourfold in }\mathcal C_{20} \cap \mathcal C_{8}
+        """
+        d1 = self.discriminant(verbose=False)
+        d2 = self._parent_cubic_fourfold.discriminant(verbose=False)
+        Cd1d2 = "\\mathcal C_{" + str(d1) + "}"
+        if d1 != d2:
+            Cd1d2 = Cd1d2 + " \\cap \\mathcal C_" + "{" + str(d2) + "}"
+        return "\\mbox{Cubic fourfold in }" + Cd1d2
+
+    def _macaulay2_init_(self, macaulay2=None):
+        r"""Get the corresponding doubly special cubic fourfold in Macaulay2."""
+        if macaulay2 is None:
+            macaulay2 = globals()['macaulay2']
+        _set_macaulay2_()
+        try:
+            return self._macaulay2_object
+        except AttributeError:
+            X = Embedded_projective_variety._macaulay2_init_(self)
+            S1 = macaulay2(self.surface())
+            S2 = macaulay2(self._surface2)
+            self._macaulay2_object = (S1._operator('&', S2)).specialFourfold(X)
+            self._macaulay2_object._sage_object = self
+            return self._macaulay2_object
 
 
 class _Virtual_cubic_fourfold(_Cubic_fourfold):
@@ -3741,19 +3863,24 @@ class _GushelMukai_fourfold(Hodge_special_fourfold):
         r"""Return the LaTeX representation of the Gushel-Mukai fourfold."""
         return "\\mbox{Gushel-Mukai fourfold of discriminant }" + latex(self.discriminant(verbose=False)) + "\\mbox{ containing a }" + latex(self.surface())
 
-    def K3(self, verbose=None):
+    def K3(self, verbose=None, building=False):
         r"""
         Compute the K3 surface associated to a rational Gushel-Mukai fourfold.
-        See :class:`Hodge_special_fourfold` for usage examples.
+
+        INPUT:
+
+        - building -- boolean (default: ``False``); if ``True``, the output
+          surface will have a .building() method to retrieve construction data.
+
+        - verbose -- boolean; whether to print Macaulay2 output.
 
         OUTPUT:
 
-        :class:`Embedded_projective_variety`, the (minimal) K3 surface associated to ``self``.
+        :class:`Embedded_projective_variety`, the K3 surface associated to ``self``.
+
+        See :class:`Hodge_special_fourfold` for usage examples.
         """
-        self._associated_surface_construction(verbose=verbose)
-        T = self._macaulay2_associated_surface_construction[3].image()
-        T.building = lambda : self._macaulay2_associated_surface_construction
-        return T
+        return self._hodge_associated_surface(verbose=verbose, building=building)
 
 
 def fourfold(S, X=None, V=None, check=True):
@@ -3837,6 +3964,14 @@ def fourfold(S, X=None, V=None, check=True):
         if S.ambient().dimension() == 7:
             return _Virtual_intersection_of_three_quadrics_in_P7(S, check=check)
         raise NotImplementedError("Hodge-special fourfold containing a virtual surface in PP^" + str(S.ambient().dimension()))
+    if isinstance(S, (tuple,list)):
+        if len(S) != 2:
+            raise ValueError("expected a tuple of exactly 2 surfaces")
+        S1, S2 = S
+        if X is None:
+            X = (S1 + S2).random(3)
+        Y = fourfold(S2, X, V, check=check)
+        return _Doubly_special_cubic_fourfold(S1, S2, Y, check=check)
     S = _check_type_embedded_projective_variety(S)
     if X is not None:
         X = _check_type_embedded_projective_variety(X)
@@ -3992,6 +4127,19 @@ def _from_macaulay2_to_sage(X, Sage_Ambient_Space):
     try:
         return X._sage_object
     except AttributeError:
+        if X.instance('DoublySpecialCubicFourfold').sage():
+            varX = _from_macaulay2_to_sage(X.ring().projectiveVariety(), Sage_Ambient_Space)
+            varS1 = _from_macaulay2_to_sage(X.surfaces().first(), Sage_Ambient_Space)
+            varS2 = _from_macaulay2_to_sage(X.surfaces().last(), Sage_Ambient_Space)
+            if not hasattr(varS1,"_finite_number_of_nodes"):
+                varS1._finite_number_of_nodes = X.surfaces().first().numberNodes().sage()
+                assert isinstance(varS1._finite_number_of_nodes,(int,Integer))
+            if not hasattr(varS2,"_finite_number_of_nodes"):
+                varS2._finite_number_of_nodes = X.surfaces().last().numberNodes().sage()
+                assert isinstance(varS2._finite_number_of_nodes,(int,Integer))
+            X._sage_object = fourfold([varS1,varS2],varX,check=False)
+            X._sage_object._macaulay2_object = X
+            return X._sage_object
         if X.instance('HodgeSpecialFourfold').sage():
             varX = _from_macaulay2_to_sage(X.ring().projectiveVariety(), Sage_Ambient_Space)
             varS = _from_macaulay2_to_sage(X.surface(), Sage_Ambient_Space)
@@ -4141,6 +4289,7 @@ removeUnderscores EmbeddedProjectiveVariety := X -> (
     if codim Y > 0 then assert (ambient Y === projectiveVariety P) else assert (ambient Y == projectiveVariety P);
     if X.cache#?"euler" then Y.cache#"euler" = X.cache#"euler";
     if X.cache#?"FiniteNumberOfNodes" then Y.cache#"FiniteNumberOfNodes" = X.cache#"FiniteNumberOfNodes";
+    if X.cache#?"rationalParametrization" then Y.cache#"rationalParametrization" = removeUnderscores(X.cache#"rationalParametrization");
     if codim ambientVariety X > 0 then Y % removeUnderscores(ambientVariety X);
     Y.cache#"removeUnderscores" = Y;
     X.cache#"removeUnderscores" = Y
@@ -4171,6 +4320,11 @@ removeUnderscores (EmbeddedProjectiveVariety,RationalMap) := (X,f) -> (
     g := toRationalMap removeUnderscores(X,multirationalMap f);
     g#"map".cache#("removeUnderscores",X) = g;
     f#"map".cache#("removeUnderscores",X) = g
+);
+removeUnderscores DoublySpecialCubicFourfold := X -> (
+    if X.cache#?("removeUnderscores",surfaces X) then return X.cache#("removeUnderscores",surfaces X);
+    Y := specialFourfold((removeUnderscores first surfaces X) & (removeUnderscores last surfaces X), removeUnderscores projectiveVariety ring X, InputCheck=>0);
+    X.cache#("removeUnderscores",surfaces X) = Y
 );
 removeUnderscores HodgeSpecialFourfold := X -> (
     if X.cache#?("removeUnderscores",surface X, ambientFivefold X) then return X.cache#("removeUnderscores",surface X, ambientFivefold X);
