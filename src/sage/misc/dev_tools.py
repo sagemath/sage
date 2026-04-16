@@ -293,6 +293,52 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     return obj
 
 
+def _find_name_in_sage_modules(name):
+    """
+    Search Sage modules for an attribute called ``name``.
+
+    This is a fallback for :func:`import_statements` when ``name`` is not
+    currently available from loaded modules.
+
+    OUTPUT:
+
+    A dictionary ``module -> object`` for modules exposing ``name``.
+    """
+    import importlib
+
+    import sage
+
+    from .package_dir import walk_packages
+
+    # Keep in sync with the heavy exclusions used by ``load_submodules``.
+    exclude = re.compile(
+        r"^sage\.libs|^sage\.tests|tests$|^sage\.all_|all$|"
+        r"sage\.interacts$|^sage\.misc\.benchmark$"
+    )
+
+    matches = {}
+    for _, module_name, ispkg in walk_packages(sage.__path__, sage.__name__ + '.'):
+        if ispkg or exclude.search(module_name):
+            continue
+        try:
+            module = sys.modules.get(module_name)
+            if module is None:
+                module = importlib.import_module(module_name)
+        except Exception:
+            # Some optional/broken modules can fail to import in developer
+            # environments; ignore them while searching.
+            continue
+
+        try:
+            obj = getattr(module, name)
+        except AttributeError:
+            continue
+
+        matches[module_name] = obj
+
+    return matches
+
+
 def import_statements(*objects, **kwds):
     r"""
     Print import statements for the given objects.
@@ -365,6 +411,13 @@ def import_statements(*objects, **kwds):
         #   - sage.calculus.predefined
         #   - sage.rings.integer_ring
         from sage.rings.integer_ring import Z
+
+        sage: IntegerLattice
+        Traceback (most recent call last):
+        ...
+        NameError: name 'IntegerLattice' is not defined
+        sage: import_statements("IntegerLattice")
+        from sage.modules.free_module_integer import IntegerLattice
 
     The strings are allowed to be comma-separated names, and parenthesis
     are stripped for convenience::
@@ -516,6 +569,18 @@ def import_statements(*objects, **kwds):
                 if not obj:
                     # 1.c. object from something already imported
                     obj = find_objects_from_name(name, include_lazy_imports=True)
+                if not obj:
+                    # 1.d. object from Sage modules not loaded yet
+                    module_matches = _find_name_in_sage_modules(name)
+                    if module_matches:
+                        if verbose and len(module_matches) > 1:
+                            print("# **Warning**: distinct objects with name '{}' "
+                                  "in:".format(name))
+                            for mod in sorted(module_matches):
+                                print("#   - {}".format(mod))
+                        for module_name in sorted(module_matches):
+                            answer[module_name].append((name, name))
+                        continue
 
             # remove lazy imported objects from list obj
             i = 0
