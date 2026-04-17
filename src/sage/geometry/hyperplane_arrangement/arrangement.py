@@ -516,7 +516,7 @@ class HyperplaneArrangementElement(Element):
         """
         if len(self) == 0:
             return 'Empty hyperplane arrangement of dimension {0}'.format(self.dimension())
-        elif len(self) < 5:
+        if len(self) < 5:
             hyperplanes = ' | '.join(h._repr_linear(include_zero=False) for h in self._hyperplanes)
             return 'Arrangement <{0}>'.format(hyperplanes)
         return 'Arrangement of {0} hyperplanes of dimension {1} and rank {2}'.format(
@@ -1534,8 +1534,7 @@ class HyperplaneArrangementElement(Element):
                 from sage.geometry.polyhedron.parent import Polyhedra
                 pp = Polyhedra(R, self.dimension(), backend=self._backend)
                 return (True, pp.universe())
-            else:
-                return True
+            return True
         # The center is the set of points contained in all hyperplanes,
         # expressible as the solution set of m*x=b with m and b as follows:
         m = matrix(R, [h.normal() for h in self])
@@ -1548,8 +1547,7 @@ class HyperplaneArrangementElement(Element):
                 from sage.geometry.polyhedron.parent import Polyhedra
                 pp = Polyhedra(R, self.dimension(), backend=self._backend)
                 return (False, pp.empty())
-            else:
-                return False
+            return False
         # The center is the kernel of m translated by x.
         if certificate:
             Ker = m.right_kernel()
@@ -1557,8 +1555,7 @@ class HyperplaneArrangementElement(Element):
             return (True, Polyhedron(base_ring=R, vertices=[x],
                                      lines=Ker.basis(),
                                      backend=self._backend))
-        else:
-            return True
+        return True
 
     def center(self):
         r"""
@@ -2112,8 +2109,7 @@ class HyperplaneArrangementElement(Element):
         if self.is_linear() and self.n_hyperplanes():
             # We have treated so far only the positive half space w.r. to the first hyperplane.
             return tuple(regions) + tuple(-x for x in regions)
-        else:
-            return tuple(regions)
+        return tuple(regions)
 
     @cached_method
     def poset_of_regions(self, B=None, numbered_labels=True):
@@ -2196,8 +2192,7 @@ class HyperplaneArrangementElement(Element):
 
         if numbered_labels:
             return Poset([range(len(RX)), edges])
-        else:
-            return Poset([RX, edges])
+        return Poset([RX, edges])
 
     @cached_method
     def closed_faces(self, labelled=True):
@@ -2929,7 +2924,7 @@ class HyperplaneArrangementElement(Element):
         if 0 <= i and j <= self.dimension():
             if kind == 1:
                 return self.whitney_data()[0][i, j]
-            elif kind == 2:
+            if kind == 2:
                 return self.whitney_data()[1][i, j]
         raise ValueError('argument out of range')
 
@@ -2983,7 +2978,7 @@ class HyperplaneArrangementElement(Element):
         if k >= 0 and k <= self.dimension():
             if kind == 1:
                 return self.whitney_data()[0][0, k]
-            elif kind == 2:
+            if kind == 2:
                 return self.whitney_data()[1][0, k]
         raise ValueError('argument out of range')
 
@@ -3452,10 +3447,9 @@ class HyperplaneArrangementElement(Element):
                 if size_val == 0:  # Trailing zero module
                     resolution_length -= 1
             return resolution_length <= 2
-        elif algorithm == "BC":
+        if algorithm == "BC":
             return self.derivation_module_free_chain() is not None
-        else:
-            raise ValueError("invalid algorithm")
+        raise ValueError("invalid algorithm")
 
     def derivation_module_basis(self, algorithm='singular'):
         """
@@ -3553,8 +3547,7 @@ class HyperplaneArrangementElement(Element):
                 from sage.misc.misc_c import prod
                 return prod(reversed(C)).rows()
             return None
-        else:
-            raise ValueError("invalid algorithm")
+        raise ValueError("invalid algorithm")
 
 
 class HyperplaneArrangements(Parent, UniqueRepresentation):

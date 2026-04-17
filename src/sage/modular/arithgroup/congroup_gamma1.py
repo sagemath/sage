@@ -167,8 +167,7 @@ class Gamma1_class(GammaH_class):
             return True
         if isinstance(right, GammaH_class):
             return self.level() % right.level() == 0
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     @cached_method
     def generators(self, algorithm='farey'):
@@ -207,15 +206,14 @@ class Gamma1_class(GammaH_class):
         """
         if algorithm == "farey":
             return self.farey_symbol().generators()
-        elif algorithm == "todd-coxeter":
+        if algorithm == "todd-coxeter":
             from sage.modular.modsym.g1list import G1list
 
             from .congroup import generators_helper
             level = self.level()
             gen_list = generators_helper(G1list(level), level)
             return [self(g, check=False) for g in gen_list]
-        else:
-            raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
+        raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
 
     def _contains_sl2(self, a, b, c, d):
         r"""
@@ -257,7 +255,7 @@ class Gamma1_class(GammaH_class):
         N = self.level()
         if N > 2:
             return 0
-        elif N == 2 or N == 1:
+        if N == 2 or N == 1:
             return 1
 
     def nu3(self):
@@ -279,8 +277,7 @@ class Gamma1_class(GammaH_class):
         N = self.level()
         if N > 3 or N == 2:
             return 0
-        else:
-            return 1
+        return 1
 
     def ncusps(self):
         r"""
@@ -463,12 +460,12 @@ class Gamma1_class(GammaH_class):
                 dim = dim + moebius(d)*G.dimension_cusp_forms(k)
             return dim//phi(n)
 
-        elif algorithm == "CohenOesterle":
+        if algorithm == "CohenOesterle":
             from sage.modular.dims import CohenOesterle
             return ZZ( K(Gamma0(N).index() * (k-1)/ZZ(12)) + CohenOesterle(eps,k) )
 
-        else:  # algorithm not in ["CohenOesterle", "Quer"]:
-            raise ValueError("Unrecognised algorithm in dimension_cusp_forms")
+        # algorithm not in ["CohenOesterle", "Quer"]:
+        raise ValueError("Unrecognised algorithm in dimension_cusp_forms")
 
     def dimension_eis(self, k=2, eps=None, algorithm='CohenOesterle'):
         r"""
@@ -541,7 +538,7 @@ class Gamma1_class(GammaH_class):
                 dim = dim + moebius(d)*G.dimension_eis(k)
             return dim//phi(n)
 
-        elif algorithm == "CohenOesterle":
+        if algorithm == "CohenOesterle":
             from sage.modular.dims import CohenOesterle
             j = 2-k
             # We use the Cohen-Oesterle formula in a subtle way to
@@ -550,11 +547,10 @@ class Gamma1_class(GammaH_class):
             alpha = -ZZ( K(Gamma0(N).index()*(j-1)/ZZ(12)) + CohenOesterle(eps,j) )
             if k == 1:
                 return alpha
-            else:
-                return alpha - self.dimension_cusp_forms(k, eps)
+            return alpha - self.dimension_cusp_forms(k, eps)
 
-        else:  # algorithm not in ["CohenOesterle", "Quer"]:
-            raise ValueError("Unrecognised algorithm in dimension_eis")
+        # algorithm not in ["CohenOesterle", "Quer"]:
+        raise ValueError("Unrecognised algorithm in dimension_eis")
 
     def dimension_new_cusp_forms(self, k=2, eps=None, p=0, algorithm='CohenOesterle'):
         r"""

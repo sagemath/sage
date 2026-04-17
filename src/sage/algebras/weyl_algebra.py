@@ -121,8 +121,7 @@ def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
     if not monomials:
         if use_latex:
             return latex(0)
-        else:
-            return '0'
+        return '0'
 
     ret = ''
     for m, c in monomials:
@@ -374,10 +373,9 @@ class DifferentialWeylAlgebraElement(IndexedFreeModuleElement):
             d = half_term(m[1], False)
             if p == '1':  # No polynomial part
                 return d
-            elif d == '1':  # No differential part
+            if d == '1':  # No differential part
                 return p
-            else:
-                return p + ' ' + d
+            return p + ' ' + d
         return repr_from_monomials(self.list(), term, True)
 
     def _mul_(self, other):

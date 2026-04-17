@@ -1128,8 +1128,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
             # use __getitem__ to return these options
             if len(get_value) == 1:
                 return self[get_value[0]]
-            else:
-                return [self[option] for option in get_value]
+            return [self[option] for option in get_value]
 
         # use __setitem__ to set these options
         if set_value:
@@ -1156,7 +1155,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         if option in self._linked_value:
             link, linked_opt = self._linked_value[option]
             return link[linked_opt]
-        elif option in self._value:
+        if option in self._value:
             if option in self._display_values:
                 return self._display_values[option][self._value[option]]
             return self._value[option]
@@ -1198,7 +1197,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
             print('%s\nCurrent value: %s' % (self._doc[option], self[option]))
             return      # we do not want to call the setter below
 
-        elif option in self._linked_value:
+        if option in self._linked_value:
             link, linked_opt = self._linked_value[option]
             link[linked_opt] = value
 
@@ -1526,13 +1525,12 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         matches = [opt for opt in self._doc if opt.lower().startswith(loption)]
         if matches and all(m.startswith(matches[0]) for m in matches):
             return matches[0]
-        elif len(matches) > 1:
+        if len(matches) > 1:
             # as there is more than one match check case as well
             matches = [mat for mat in matches if mat.startswith(option)]
             if matches and all(m.startswith(matches[0]) for m in matches):
                 return matches[0]
-            else:
-                raise ValueError('%s is an ambiguous option for %s' % (option, self._name))
+            raise ValueError('%s is an ambiguous option for %s' % (option, self._name))
 
         # if we are still here this is not a good option!
         raise ValueError('%s is not an option for %s' % (option, self._name))
@@ -1617,9 +1615,8 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         option = self._match_option(option)
         if option in self.__default_value:
             return self.__default_value[option]
-        else:
-            link, linked_opt = self._linked_value[option]
-            return link._default_value(linked_opt)
+        link, linked_opt = self._linked_value[option]
+        return link._default_value(linked_opt)
 
     def _dispatch(self, obj, dispatch_to, option, *args, **kargs):
         r"""

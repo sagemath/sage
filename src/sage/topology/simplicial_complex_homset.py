@@ -172,7 +172,6 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
         except StopIteration:
             if not X_vertices:
                 return {}
-            else:
-                raise TypeError("there are no morphisms from a non-empty simplicial complex to an empty simplicial complex")
+            raise TypeError("there are no morphisms from a non-empty simplicial complex to an empty simplicial complex")
         f = {x: i for x in X_vertices}
         return SimplicialComplexMorphism(f, self._domain, self._codomain)

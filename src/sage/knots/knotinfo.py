@@ -332,7 +332,7 @@ def knotinfo_bool(string):
         raise NotImplementedError('this boolean is not provided by the database')
     if string == 'Y':
         return True
-    elif string == 'N':
+    if string == 'N':
         return False
     raise ValueError('%s is not a KnotInfo boolean')
 
@@ -388,11 +388,11 @@ class SymmetryMutant(Enum):
         """
         if self is SymmetryMutant.itself:
             return SymmetryMutant.reverse
-        elif self is SymmetryMutant.reverse:
+        if self is SymmetryMutant.reverse:
             return SymmetryMutant.itself
-        elif self is SymmetryMutant.mirror_image:
+        if self is SymmetryMutant.mirror_image:
             return SymmetryMutant.concordance_inverse
-        elif self is SymmetryMutant.concordance_inverse:
+        if self is SymmetryMutant.concordance_inverse:
             return SymmetryMutant.mirror_image
         return self
 
@@ -408,11 +408,11 @@ class SymmetryMutant(Enum):
         """
         if self is SymmetryMutant.itself:
             return SymmetryMutant.mirror_image
-        elif self is SymmetryMutant.reverse:
+        if self is SymmetryMutant.reverse:
             return SymmetryMutant.concordance_inverse
-        elif self is SymmetryMutant.mirror_image:
+        if self is SymmetryMutant.mirror_image:
             return SymmetryMutant.itself
-        elif self is SymmetryMutant.concordance_inverse:
+        if self is SymmetryMutant.concordance_inverse:
             return SymmetryMutant.reverse
         return self
 
@@ -604,8 +604,7 @@ class KnotInfoBase(Enum):
 
         if n == 1:
             return BraidGroup(2)
-        else:
-            return BraidGroup(n)
+        return BraidGroup(n)
 
     @cached_method
     def _homfly_pol_ring(self, var1, var2):
@@ -829,10 +828,9 @@ class KnotInfoBase(Enum):
         """
         if self.is_knot():
             return knotinfo_int(self[self.items.braid_index])
-        else:
-            braid_notation = self[self.items.braid_notation]
-            braid_notation = eval_knotinfo(braid_notation)
-            return knotinfo_int(braid_notation[0])
+        braid_notation = self[self.items.braid_notation]
+        braid_notation = eval_knotinfo(braid_notation)
+        return knotinfo_int(braid_notation[0])
 
     @cached_method
     def braid_length(self):
@@ -2068,11 +2066,9 @@ class KnotInfoBase(Enum):
         if not khovanov_polynomial and self.crossing_number() == 0:
             if reduced or odd:
                 return R.one()
-            else:
-                if integral:
-                    return R({(1, 0, 0): 1, (-1, 0, 0): 1})
-                else:
-                    return R({(1, 0): 1, (-1, 0): 1})
+            if integral:
+                return R({(1, 0, 0): 1, (-1, 0, 0): 1})
+            return R({(1, 0): 1, (-1, 0): 1})
 
         if not khovanov_polynomial:
             # given just for links with less than 12 crossings
@@ -2225,18 +2221,18 @@ class KnotInfoBase(Enum):
 
         if use_item == self.items.pd_notation:
             return Link(self.pd_notation())
-        elif use_item == self.items.braid_notation:
+        if use_item == self.items.braid_notation:
             return Link(self.braid())
-        elif use_item == self.items.name and snappy:
+        if use_item == self.items.name and snappy:
             if not self.is_knot():
                 use_item = self.items.name_unoriented
             return Link(self[use_item])
-        elif self.is_knot() and not snappy:
+        if self.is_knot() and not snappy:
             # Construction via Gauss and DT-Code only possible for knots
             from sage.knots.knot import Knots
             if use_item == self.items.dt_notation:
                 return Knots().from_dowker_code(self.dt_notation())
-            elif use_item == self.items.gauss_notation:
+            if use_item == self.items.gauss_notation:
                 return Knots().from_gauss_code(self.gauss_notation())
 
         raise ValueError('link construction using %s not possible' % use_item)
@@ -2357,8 +2353,7 @@ class KnotInfoBase(Enum):
                 return False
             if unique:
                 return check_result(res)
-            else:
-                return any(check_result(r) for r in res)
+            return any(check_result(r) for r in res)
 
         from sage.misc.misc import some_tuples
         if SymmetryMutant.unknown.matches(self):
@@ -2453,8 +2448,7 @@ class KnotInfoBase(Enum):
 
         if single:
             return webbrowser.open(filename.diagram_url(self[self.items.diagram], single=single), new=new, autoraise=autoraise)
-        else:
-            return webbrowser.open(filename.diagram_url(self[self.items.name]), new=new, autoraise=autoraise)
+        return webbrowser.open(filename.diagram_url(self[self.items.name]), new=new, autoraise=autoraise)
 
     def knot_atlas_webpage(self, new=0, autoraise=True):
         r"""
@@ -2702,8 +2696,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         """
         if self._is_knot:
             return 'Series of knots %s' % (self._name())
-        else:
-            return 'Series of links %s' % (self._name())
+        return 'Series of links %s' % (self._name())
 
     def __getitem__(self, item):
         r"""

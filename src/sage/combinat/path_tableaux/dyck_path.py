@@ -356,8 +356,7 @@ class DyckPath(PathTableau):
         bot = [i + 1 for i, a in enumerate(w) if a == 0]
         if self.is_skew():
             return SkewTableau([[None]*self[0]+top, bot])
-        else:
-            return StandardTableau([top, bot])
+        return StandardTableau([top, bot])
 
 
 class DyckPaths(PathTableaux):

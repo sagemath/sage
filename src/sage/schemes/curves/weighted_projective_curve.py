@@ -34,7 +34,12 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.schemes.curves.curve import Curve_generic
-from sage.schemes.weighted_projective.weighted_projective_space import WeightedProjectiveSpace_ring
+from sage.schemes.projective.projective_subscheme import (
+    AlgebraicScheme_subscheme_projective,
+)
+from sage.schemes.weighted_projective.weighted_projective_space import (
+    WeightedProjectiveSpace_ring,
+)
 
 
 class WeightedProjectiveCurve(Curve_generic):
@@ -49,6 +54,7 @@ class WeightedProjectiveCurve(Curve_generic):
         sage: C = Curve(y^2 - x^5 * z - 3 * x^2 * z^4 - 2 * z^6, WP); C
         Weighted Projective Curve over Rational Field defined by y^2 - x^5*z - 3*x^2*z^4 - 2*z^6
     """
+
     def __init__(self, A, X, *kwargs):
         if not isinstance(A, WeightedProjectiveSpace_ring):
             raise TypeError(f"A(={A}) is not a weighted projective space")
@@ -94,12 +100,108 @@ class WeightedProjectiveCurve(Curve_generic):
         from sage.schemes.projective.projective_space import ProjectiveSpace
 
         WP = self.ambient_space()
-        PP = ProjectiveSpace(WP.dimension_relative(), WP.base_ring(), WP.variable_names())
+        PP = ProjectiveSpace(
+            WP.dimension_relative(), WP.base_ring(), WP.variable_names()
+        )
         PP_ring = PP.coordinate_ring()
-        subs_dict = {name: var**weight for (name, var), weight in
-                     zip(WP.gens_dict().items(), WP.weights())}
+        subs_dict = {
+            name: var**weight
+            for (name, var), weight in zip(WP.gens_dict().items(), WP.weights())
+        }
 
         wp_polys = self.defining_polynomials()
         pp_polys = [PP_ring(poly.subs(**subs_dict)) for poly in wp_polys]
 
         return PP.curve(pp_polys)
+
+    def affine_patch(self, i, AA=None):
+        r"""
+        Return the `i`-th affine patch of this projective curve.
+
+        INPUT:
+
+        - ``i`` -- affine coordinate chart of the projective ambient space of
+          this curve to compute affine patch with respect to
+
+        - ``AA`` -- (default: ``None``) ambient affine space, this is constructed
+          if it is not given
+
+        .. TODO:
+
+            Implement this directly for weighted projective space, this code currently
+            just computes the related projective model and continues the computation from
+            there.
+
+        OUTPUT: a curve in affine space
+
+        EXAMPLES::
+
+            sage: WP.<x,y,z> = WeightedProjectiveSpace([1, 1, 1], QQ)
+            sage: C = WP.curve(x^3 - x^2*y + y^3 - x^2*z)
+            sage: C.affine_patch(1)
+            Affine Plane Curve over Rational Field defined by x^3 - x^2*z - x^2 + 1
+        """
+        from .constructor import Curve
+
+        projective_curve = self.projective_curve()
+        return Curve(
+            AlgebraicScheme_subscheme_projective.affine_patch(projective_curve, i, AA)
+        )
+
+    def riemann_surface(self, **kwargs):
+        r"""
+        Return the complex Riemann surface determined by this curve.
+
+        .. TODO:
+
+            Implement this directly for weighted projective space, this code currently
+            just computes the related projective model and continues the computation from
+            there.
+
+        OUTPUT: a :class:`~sage.schemes.riemann_surfaces.riemann_surface.RiemannSurface` object
+
+        EXAMPLES::
+
+            sage: WP.<x,y,z> = WeightedProjectiveSpace([1, 1, 1], QQ)
+            sage: C = WP.curve(x^3 + 3*y^3 + 5*z^3)
+            sage: C.riemann_surface()
+            Riemann surface defined by polynomial f = x^3 + 3*y^3 + 5 = 0,
+            with 53 bits of precision
+        """
+        return self.affine_patch(2).riemann_surface(**kwargs)
+
+    def plot(self, *args, **kwds):
+        """
+        Plot the real points of an affine patch of the associated projective
+        plane curve.
+
+        INPUT:
+
+        - ``self`` -- an affine plane curve
+
+        - ``patch`` -- (optional) the affine patch to be plotted; if not
+          specified, the patch corresponding to the last projective
+          coordinate being nonzero
+
+        - ``*args`` -- (optional) tuples (variable, minimum, maximum) for
+          plotting dimensions
+
+        - ``**kwds`` -- optional keyword arguments passed on to ``implicit_plot``
+
+        EXAMPLES:
+
+        A hyperelliptic curve::
+
+            sage: # needs sage.plot
+            sage: P.<x> = QQ[]
+            sage: f = 4*x^5 - 30*x^3 + 45*x - 22
+            sage: C = HyperellipticCurve(f)
+            sage: C.plot()
+            Graphics object consisting of 1 graphics primitive
+            sage: C.plot(patch=0)
+            Graphics object consisting of 1 graphics primitive
+            sage: C.plot(patch=1)
+            Graphics object consisting of 1 graphics primitive
+        """
+        projective_curve = self.projective_curve()
+        return projective_curve.plot(*args, **kwds)

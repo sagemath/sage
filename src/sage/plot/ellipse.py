@@ -370,5 +370,5 @@ def ellipse(center, r1, r2, angle=0, **options):
         g._legend_colors = [options['legend_color']]
     if len(center) == 2:
         return g
-    elif len(center) == 3:
+    if len(center) == 3:
         raise NotImplementedError("plotting ellipse in 3D is not implemented")

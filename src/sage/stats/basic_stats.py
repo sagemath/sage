@@ -248,8 +248,7 @@ def std(v, bias=False):
         # accounts for numpy arrays
         if bias:
             return v.std()
-        else:
-            return v.std(ddof=1)
+        return v.std(ddof=1)
 
     if not v:
         # standard deviation of empty set defined as NaN
@@ -345,8 +344,7 @@ def variance(v, bias=False):
         # accounts for numpy arrays
         if bias:
             return v.var()
-        else:
-            return v.var(ddof=1)
+        return v.var(ddof=1)
     if not v:
         # variance of empty set defined as NaN
         return NaN
@@ -359,11 +357,10 @@ def variance(v, bias=False):
         if isinstance(x, int):
             return x / ZZ(len(v))
         return x / len(v)
-    else:
-        # sample variance
-        if isinstance(x, int):
-            return x / ZZ(len(v)-1)
-        return x / (len(v)-1)
+    # sample variance
+    if isinstance(x, int):
+        return x / ZZ(len(v)-1)
+    return x / (len(v)-1)
 
 
 def median(v):
@@ -415,10 +412,9 @@ def median(v):
     values = sorted(v)
     if len(values) % 2:
         return values[((len(values))+1)//2-1]
-    else:
-        lower = values[(len(values)+1)//2-1]
-        upper = values[len(values)//2]
-        return (lower + upper) / ZZ(2)
+    lower = values[(len(values)+1)//2-1]
+    upper = values[len(values)//2]
+    return (lower + upper) / ZZ(2)
 
 
 def moving_average(v, n):

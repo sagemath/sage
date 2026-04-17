@@ -505,8 +505,7 @@ class TableauTuple(CombinatorialElement):
 
         if TableauTuples.options('convention') == "English":
             return '\n'.join(diag)
-        else:
-            return '\n'.join(diag[::-1])
+        return '\n'.join(diag[::-1])
 
     def _ascii_art_(self):
         """
@@ -2184,16 +2183,14 @@ class TableauTuples(UniqueRepresentation, Parent):
         if level == 1:
             if size is not None:
                 return Tableaux_size(size)
-            else:
-                return Tableaux_all()
-        elif level is not None and size is not None:
+            return Tableaux_all()
+        if level is not None and size is not None:
             return TableauTuples_level_size(level=level, size=size)
-        elif level is not None:
+        if level is not None:
             return TableauTuples_level(level=level)
-        elif size is not None:
+        if size is not None:
             return TableauTuples_size(size=size)
-        else:
-            return TableauTuples_all()
+        return TableauTuples_all()
 
     def _element_constructor_(self, t):
         r"""
@@ -2243,8 +2240,7 @@ class TableauTuples(UniqueRepresentation, Parent):
         if tab in self:
             if len(tab) == 1:
                 return self.level_one_parent_class().element_class(self.level_one_parent_class(), tab[0])
-            else:
-                return self.element_class(self, tab)
+            return self.element_class(self, tab)
 
         raise ValueError('%s is not an element of %s' % (t, self))
 
@@ -2280,10 +2276,9 @@ class TableauTuples(UniqueRepresentation, Parent):
         """
         if isinstance(t, (Tableau, TableauTuple)):
             return True
-        elif isinstance(t, (tuple, list)):
+        if isinstance(t, (tuple, list)):
             return all(s in Tableaux() for s in t) or t in Tableaux()
-        else:
-            return False
+        return False
 
     # defaults for level, size and shape
     _level = None
@@ -2440,13 +2435,11 @@ class TableauTuples_level(TableauTuples):
         """
         if isinstance(t, self.element_class):
             return self.level() == t.level()
-        elif TableauTuples.__contains__(self, t) or isinstance(t, (list, tuple)):
+        if TableauTuples.__contains__(self, t) or isinstance(t, (list, tuple)):
             if all(s in Tableaux() for s in t):
                 return len(t) == self.level()
-            else:
-                return self.level() == 1
-        else:
-            return False
+            return self.level() == 1
+        return False
 
     def _repr_(self):
         """
@@ -2521,13 +2514,11 @@ class TableauTuples_size(TableauTuples):
         """
         if isinstance(t, self.element_class):
             return self.size() == t.size()
-        elif TableauTuples.__contains__(self, t) or isinstance(t, (list, tuple)):
+        if TableauTuples.__contains__(self, t) or isinstance(t, (list, tuple)):
             if all(s in Tableaux() for s in t):
                 return sum(sum(map(len, s)) for s in t) == self.size()
-            else:
-                return self.size() == sum(map(len, t))
-        else:
-            return False
+            return self.size() == sum(map(len, t))
+        return False
 
     def _repr_(self):
         """
@@ -2554,9 +2545,8 @@ class TableauTuples_size(TableauTuples):
         """
         if self.size() == 0:
             return self.element_class(self, [[], [], []])
-        else:
-            return self.element_class(self, [[],
-                                             [range(1, self.size() + 1)], []])
+        return self.element_class(self, [[],
+                                         [range(1, self.size() + 1)], []])
 
 
 class TableauTuples_level_size(TableauTuples):
@@ -2604,13 +2594,11 @@ class TableauTuples_level_size(TableauTuples):
         """
         if isinstance(t, self.element_class):
             return t.level() == self.level() and t.size() == self.size()
-        elif TableauTuples.__contains__(self, t) or isinstance(t, (list, tuple)):
+        if TableauTuples.__contains__(self, t) or isinstance(t, (list, tuple)):
             if all(s in Tableaux() for s in t):
                 return len(t) == self.level() and sum(sum(map(len, s)) for s in t) == self.size()
-            else:
-                return self.level() == 1 and self.size() == sum(map(len, t))
-        else:
-            return False
+            return self.level() == 1 and self.size() == sum(map(len, t))
+        return False
 
     def _repr_(self):
         """
@@ -2832,20 +2820,18 @@ class RowStandardTableauTuples(TableauTuples):
                 shape = shape[0]
             if shape is not None:
                 return RowStandardTableaux_shape(shape)
-            elif size is not None:
+            if size is not None:
                 return RowStandardTableaux_size(size)
-            else:
-                return RowStandardTableaux_all()
-        elif shape is not None:
+            return RowStandardTableaux_all()
+        if shape is not None:
             return RowStandardTableauTuples_shape(shape)
-        elif level is not None and size is not None:
+        if level is not None and size is not None:
             return RowStandardTableauTuples_level_size(level, size)
-        elif level is not None:
+        if level is not None:
             return RowStandardTableauTuples_level(level)
-        elif size is not None:
+        if size is not None:
             return RowStandardTableauTuples_size(size)
-        else:
-            return RowStandardTableauTuples_all()
+        return RowStandardTableauTuples_all()
 
     def __getitem__(self, r):
         r"""
@@ -2873,7 +2859,7 @@ class RowStandardTableauTuples(TableauTuples):
         """
         if isinstance(r, (int, Integer)):
             return self.unrank(r)
-        elif isinstance(r, slice):
+        if isinstance(r, slice):
             start = 0 if r.start is None else r.start
             stop = r.stop
             if stop is None and not self.is_finite():
@@ -2923,17 +2909,15 @@ class RowStandardTableauTuples(TableauTuples):
         """
         if isinstance(t, (RowStandardTableau, RowStandardTableauTuple)):
             return True
-        elif TableauTuples.__contains__(self, t) or isinstance(t, (list, tuple)):
+        if TableauTuples.__contains__(self, t) or isinstance(t, (list, tuple)):
             if all(s in Tableaux() for s in t):
                 flatt = sorted(sum((list(row) for s in t for row in s), []))
                 return (flatt == list(range(1, len(flatt) + 1))
                         and all(len(s) == 0 or all(row[i] < row[i + 1]
                                                    for row in s for i in range(len(row) - 1))
                                 for s in t))
-            else:
-                return t in RowStandardTableaux()
-        else:
-            return False
+            return t in RowStandardTableaux()
+        return False
 
     # set the default shape
     _shape = None
@@ -3081,13 +3065,11 @@ class RowStandardTableauTuples_level(RowStandardTableauTuples, DisjointUnionEnum
         """
         if isinstance(t, RowStandardTableauTuple):
             return self.level() == t.level()
-        elif RowStandardTableauTuples.__contains__(self, t):
+        if RowStandardTableauTuples.__contains__(self, t):
             if all(s in Tableaux() for s in t):
                 return len(t) == self.level()
-            else:
-                return self.level() == 1
-        else:
-            return False
+            return self.level() == 1
+        return False
 
     def an_element(self):
         r"""
@@ -3177,13 +3159,11 @@ class RowStandardTableauTuples_size(RowStandardTableauTuples, DisjointUnionEnume
         """
         if isinstance(t, self.element_class):
             return self.size() == t.size()
-        elif t in RowStandardTableauTuples():
+        if t in RowStandardTableauTuples():
             if all(s in Tableaux() for s in t):
                 return sum(sum(map(len, s)) for s in t) == self.size()
-            else:
-                return self.size() == sum(map(len, t))
-        else:
-            return False
+            return self.size() == sum(map(len, t))
+        return False
 
     def an_element(self):
         r"""
@@ -3198,7 +3178,7 @@ class RowStandardTableauTuples_size(RowStandardTableauTuples, DisjointUnionEnume
         """
         if self.size() == 0:
             return self.element_class(self, [[], [], [], []])
-        elif self.size() == 1:
+        if self.size() == 1:
             return self.element_class(self, [[[1]], [], [], []])
         return self.element_class(self, [[[1]], [range(2, self.size() + 1)],
                                          [], []])
@@ -3291,13 +3271,11 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
         """
         if isinstance(t, self.element_class):
             return self.size() == t.size() and self.level() == t.level()
-        elif t in RowStandardTableauTuples():
+        if t in RowStandardTableauTuples():
             if all(s in Tableaux() for s in t):
                 return len(t) == self.level() and sum(sum(map(len, s)) for s in t) == self.size()
-            else:
-                return self.level() == 1 and self.size() == sum(map(len, t))
-        else:
-            return False
+            return self.level() == 1 and self.size() == sum(map(len, t))
+        return False
 
     def an_element(self):
         r"""
@@ -3312,9 +3290,9 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
         """
         if self.size() == 0:
             return self.element_class(self, [[] for _ in range(self.level())])
-        elif self.size() == 1:
+        if self.size() == 1:
             return self.element_class(self, sum([[[[1]]]], [[] for _ in range(self.level() - 1)]))
-        elif self.size() == 2:
+        if self.size() == 2:
             return self.element_class(self, sum([[[[1], [2]]]], [[] for _ in range(self.level() - 1)]))
         return self.element_class(self, sum([[[[1]]],
             [[range(2, self.size()),
@@ -3372,13 +3350,11 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
         """
         if isinstance(t, self.element_class):
             return self.shape() == t.shape()
-        elif t in RowStandardTableauTuples():
+        if t in RowStandardTableauTuples():
             if all(s in Tableaux() for s in t):
                 return [[len(l) for l in s] for s in t] == self.shape()
-            else:
-                return list(self.shape()) == sum(map(len, t))
-        else:
-            return False
+            return list(self.shape()) == sum(map(len, t))
+        return False
 
     def _repr_(self):
         """
@@ -3939,8 +3915,7 @@ class RowStandardTableauTuples_residue_shape(RowStandardTableauTuples_residue):
         """
         if self._level == 1:
             return self.__iter__level_one
-        else:
-            return self.__iter__higher_levels
+        return self.__iter__higher_levels
 
 
 # -------------------------------------------------
@@ -4121,20 +4096,18 @@ class StandardTableauTuples(RowStandardTableauTuples):
                 shape = shape[0]
             if shape is not None:
                 return StandardTableaux_shape(shape)
-            elif size is not None:
+            if size is not None:
                 return StandardTableaux_size(size)
-            else:
-                return StandardTableaux_all()
-        elif shape is not None:
+            return StandardTableaux_all()
+        if shape is not None:
             return StandardTableauTuples_shape(shape)
-        elif level is not None and size is not None:
+        if level is not None and size is not None:
             return StandardTableauTuples_level_size(level, size)
-        elif level is not None:
+        if level is not None:
             return StandardTableauTuples_level(level)
-        elif size is not None:
+        if size is not None:
             return StandardTableauTuples_size(size)
-        else:
-            return StandardTableauTuples_all()
+        return StandardTableauTuples_all()
 
     def __getitem__(self, r):
         r"""
@@ -4162,7 +4135,7 @@ class StandardTableauTuples(RowStandardTableauTuples):
         """
         if isinstance(r, (int, Integer)):
             return self.unrank(r)
-        elif isinstance(r, slice):
+        if isinstance(r, slice):
             start = 0 if r.start is None else r.start
             stop = r.stop
             if stop is None and not self.is_finite():
@@ -4212,17 +4185,15 @@ class StandardTableauTuples(RowStandardTableauTuples):
         """
         if isinstance(t, (StandardTableau, StandardTableauTuple)):
             return True
-        elif TableauTuples.__contains__(self, t) or isinstance(t, (list, tuple)):
+        if TableauTuples.__contains__(self, t) or isinstance(t, (list, tuple)):
             if all(s in Tableaux() for s in t):
                 flatt = sorted(sum((list(row) for s in t for row in s), []))
                 return flatt == list(range(1, len(flatt)+1)) and all(len(x) == 0 or
                   (all(row[i] < row[i+1] for row in x for i in range(len(row)-1))
                       and all(x[r][c] < x[r+1][c] for c in range(len(x[0]))
                               for r in range(len(x)-1) if len(x[r+1]) > c)) for x in t)
-            else:
-                return t in StandardTableaux()
-        else:
-            return False
+            return t in StandardTableaux()
+        return False
 
     # set the default shape
     _shape = None
@@ -4383,13 +4354,11 @@ class StandardTableauTuples_level(StandardTableauTuples, DisjointUnionEnumerated
         """
         if isinstance(t, StandardTableauTuple):
             return self.level() == t.level()
-        elif StandardTableauTuples.__contains__(self, t):
+        if StandardTableauTuples.__contains__(self, t):
             if all(s in Tableaux() for s in t):
                 return len(t) == self.level()
-            else:
-                return self.level() == 1
-        else:
-            return False
+            return self.level() == 1
+        return False
 
     def __iter__(self):
         """
@@ -4495,13 +4464,11 @@ class StandardTableauTuples_size(StandardTableauTuples, DisjointUnionEnumeratedS
         """
         if isinstance(t, self.element_class):
             return self.size() == t.size()
-        elif t in StandardTableauTuples():
+        if t in StandardTableauTuples():
             if all(s in Tableaux() for s in t):
                 return sum(sum(map(len, s)) for s in t) == self.size()
-            else:
-                return self.size() == sum(map(len, t))
-        else:
-            return False
+            return self.size() == sum(map(len, t))
+        return False
 
     def __iter__(self):
         """
@@ -4556,7 +4523,7 @@ class StandardTableauTuples_size(StandardTableauTuples, DisjointUnionEnumeratedS
         """
         if self.size() == 0:
             return self.element_class(self, [[], [], [], []])
-        elif self.size() == 1:
+        if self.size() == 1:
             return self.element_class(self, [[[1]], [], [], []])
         return self.element_class(self, [[[1]],
                                          [list(range(2, self.size() + 1))],
@@ -4629,13 +4596,11 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
         """
         if isinstance(t, self.element_class):
             return self.size() == t.size() and self.level() == t.level()
-        elif t in StandardTableauTuples():
+        if t in StandardTableauTuples():
             if all(s in Tableaux() for s in t):
                 return len(t) == self.level() and sum(sum(map(len, s)) for s in t) == self.size()
-            else:
-                return self.level() == 1 and self.size() == sum(map(len, t))
-        else:
-            return False
+            return self.level() == 1 and self.size() == sum(map(len, t))
+        return False
 
     def cardinality(self):
         """
@@ -4697,9 +4662,9 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
         """
         if self.size() == 0:
             return self.element_class(self, [[] for _ in range(self.level())])
-        elif self.size() == 1:
+        if self.size() == 1:
             return self.element_class(self, sum([[[[1]]]], [[] for _ in range(self.level() - 1)]))
-        elif self.size() == 2:
+        if self.size() == 2:
             return self.element_class(self, sum([[[[1], [2]]]], [[] for _ in range(self.level() - 1)]))
 
         return self.element_class(self, sum([[[[1]]],
@@ -4756,8 +4721,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
         if t in StandardTableauTuples():
             if all(s in Tableaux() for s in t):
                 return [[len(l) for l in s] for s in t] == self.shape()
-            else:
-                return list(self.shape()) == sum(map(len, t))
+            return list(self.shape()) == sum(map(len, t))
         return False
 
     def _repr_(self):

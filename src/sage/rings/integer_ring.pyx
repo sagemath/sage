@@ -86,33 +86,6 @@ cdef int number_of_integer_rings = 0
 _prev_discrete_gaussian_integer_sampler = (None, None)
 
 
-def is_IntegerRing(x):
-    r"""
-    Internal function: return ``True`` iff ``x`` is the ring `\ZZ` of integers.
-
-    TESTS::
-
-        sage: from sage.rings.integer_ring import is_IntegerRing
-        sage: is_IntegerRing(ZZ)
-        doctest:warning...
-        DeprecationWarning: The function is_IntegerRing is deprecated;
-        use 'isinstance(..., IntegerRing_class)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_IntegerRing(QQ)
-        False
-        sage: is_IntegerRing(parent(3))
-        True
-        sage: is_IntegerRing(parent(1/3))
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_IntegerRing is deprecated; "
-                       "use 'isinstance(..., IntegerRing_class)' instead.")
-    return isinstance(x, IntegerRing_class)
-
-
 cdef class IntegerRing_class(CommutativeRing):
     r"""
     The ring of integers.

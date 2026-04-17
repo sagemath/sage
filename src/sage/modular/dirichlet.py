@@ -332,8 +332,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         m = m % N
         if self.values.is_in_cache() or m != N - 1:
             return self.values()[m]
-        else:
-            return self.__eval_at_minus_one()
+        return self.__eval_at_minus_one()
 
     def change_ring(self, R):
         """
@@ -758,7 +757,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             Z = LFunction(lfun_character(self), prec=prec)
             Z.rename('PARI L-function associated to %s' % self)
             return Z
-        elif algorithm == 'lcalc':
+        if algorithm == 'lcalc':
             from sage.libs.lcalc.lcalc_Lfunction import Lfunction_from_character
             return Lfunction_from_character(self)
 
@@ -978,7 +977,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             xx = S.gen()
             return matrix(m).charpoly(xx)
 
-        elif algorithm == "pari":
+        if algorithm == "pari":
             # Use pari
             G, chi = self._pari_init_()
             K = pari.charker(G, chi)
@@ -987,8 +986,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             x = P.gen()
             return H.sage({"x": x})
 
-        else:
-            raise NotImplementedError("algorithm must be one of 'pari' or 'sage'")
+        raise NotImplementedError("algorithm must be one of 'pari' or 'sage'")
 
     def fixed_field(self):
         r"""
@@ -1355,7 +1353,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         m = G.modulus()
         if isinstance(K, sage.rings.abc.ComplexField):
             return self.gauss_sum_numerical(a=a)
-        elif isinstance(K, sage.rings.abc.AlgebraicField):
+        if isinstance(K, sage.rings.abc.AlgebraicField):
             L = K
             zeta = L.zeta(m)
         elif isinstance(K, (sage.rings.abc.NumberField_cyclotomic,
@@ -2072,7 +2070,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         mod = self.parent().modulus()
         if mod == 1:
             return [R.one()]
-        elif mod == 2:
+        if mod == 2:
             return [R.zero(), R.one()]
 
         result_list = [R.zero()] * mod
@@ -2802,7 +2800,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
             pass
         if isinstance(x, list):  # list of values on each unit generator
             return self.element_class(self, x)
-        elif not isinstance(x, DirichletCharacter):
+        if not isinstance(x, DirichletCharacter):
             raise TypeError("cannot convert %s to an element of %s" % (x, self))
         elif not x.conductor().divides(self.modulus()):
             raise TypeError("conductor must divide modulus")

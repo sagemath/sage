@@ -1252,8 +1252,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             # "self()" we return just "self", which seems to be more natural
             # and convenient for ToricVariety.fan() method.
             return self
-        else:
-            return self.cones(dim, codim)
+        return self.cones(dim, codim)
 
     def __richcmp__(self, right, op):
         r"""
@@ -1294,8 +1293,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
                             self.generating_cones()],
                            [right.rays(), right.virtual_rays(),
                             right.generating_cones()], op)
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def __contains__(self, cone) -> bool:
         r"""
@@ -1785,8 +1783,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
                                              for rtc in ray_to_cones)
         if i is None:
             return self._ray_to_cones_tuple
-        else:
-            return self._ray_to_cones_tuple[i]
+        return self._ray_to_cones_tuple[i]
 
     def _repr_(self) -> str:
         r"""
@@ -2734,8 +2731,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         if self.lattice_dim() == 2:
             if self._2d_echelon_forms.cache is None:
                 return self._2d_echelon_form() in other._2d_echelon_forms()
-            else:
-                return other._2d_echelon_form() in self._2d_echelon_forms()
+            return other._2d_echelon_form() in self._2d_echelon_forms()
         generator = fan_isomorphism_generator(self, other)
         try:
             next(generator)
@@ -3165,8 +3161,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             self._virtual_rays = virtual
         if args:
             return virtual(*args)
-        else:
-            return virtual
+        return virtual
 
     def primitive_collections(self):
         r"""
@@ -3381,8 +3376,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             assert x != 0
             if x > 0:
                 return 1
-            else:
-                return -1
+            return -1
         N_QQ = self.lattice().base_extend(QQ)
         dim = self.lattice_dim()
         outward_vectors = {}

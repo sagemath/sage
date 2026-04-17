@@ -1278,8 +1278,7 @@ def greedy_dominating_set(G, k=1, vertices=None, ordering=None, return_sets=Fals
 
     if return_sets:
         return dom
-    else:
-        return list(dom)
+    return list(dom)
 
 
 def maximum_leaf_number(G, solver=None, verbose=0, integrality_tolerance=1e-3):

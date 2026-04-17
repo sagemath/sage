@@ -703,8 +703,7 @@ class Sequence_generic(SageObject, list):
         """
         if self.__cr:
             return '[\n' + ',\n'.join(repr(x) for x in self) + '\n]'
-        else:
-            return list.__repr__(self)
+        return list.__repr__(self)
 
     def _repr_pretty_(self, p, cycle):
         """
@@ -752,8 +751,7 @@ class Sequence_generic(SageObject, list):
         """
         if self.__cr_str:
             return '[\n' + ',\n'.join(str(x) for x in self) + '\n]'
-        else:
-            return list.__str__(self)
+        return list.__str__(self)
 
     def universe(self):
         """

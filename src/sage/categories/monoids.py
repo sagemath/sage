@@ -716,9 +716,8 @@ class Monoids(CategoryWithAxiom):
                 orders = [x.multiplicative_order() for x in self.cartesian_factors()]
                 if any(o is Infinity for o in orders):
                     return Infinity
-                else:
-                    from sage.arith.functions import LCM_list
-                    return LCM_list(orders)
+                from sage.arith.functions import LCM_list
+                return LCM_list(orders)
 
             def __invert__(self):
                 """

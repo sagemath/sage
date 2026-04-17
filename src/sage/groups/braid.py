@@ -926,14 +926,13 @@ class Braid(FiniteTypeArtinGroupElement):
             pstr = pstr.replace('t0', v1).replace('t1', v2)
             F = R.fraction_field()  # to make coercion work
             return R(F(pstr))
-        else:
-            ltemp = ptemp.lift().constant_coefficient()
-            # Since the result of the calculation is known to be a Laurent polynomial
-            # in t0 and t1 all exponents of ltemp must be divisible by 2
-            L = ltemp.parent()
-            lred = L({(k[0]/2, k[1]/2): v for k, v in ltemp.monomial_coefficients().items()})
-            t0, t1 = R.gens()
-            return lred(t0, t1)
+        ltemp = ptemp.lift().constant_coefficient()
+        # Since the result of the calculation is known to be a Laurent polynomial
+        # in t0 and t1 all exponents of ltemp must be divisible by 2
+        L = ltemp.parent()
+        lred = L({(k[0]/2, k[1]/2): v for k, v in ltemp.monomial_coefficients().items()})
+        t0, t1 = R.gens()
+        return lred(t0, t1)
 
     def tropical_coordinates(self) -> list:
         r"""
@@ -1165,16 +1164,14 @@ class Braid(FiniteTypeArtinGroupElement):
         if skein_normalization:
             if variab is None:
                 return self._jones_polynomial
-            else:
-                return self._jones_polynomial(variab)
-        else:
-            if variab is None:
-                variab = 't'
-            if not isinstance(variab, Expression):
-                from sage.symbolic.ring import SR
-                variab = SR(variab)
-            # We force the result to be in the symbolic ring because of the expand
-            return self._jones_polynomial(variab**(ZZ(1)/ZZ(4))).expand()
+            return self._jones_polynomial(variab)
+        if variab is None:
+            variab = 't'
+        if not isinstance(variab, Expression):
+            from sage.symbolic.ring import SR
+            variab = SR(variab)
+        # We force the result to be in the symbolic ring because of the expand
+        return self._jones_polynomial(variab**(ZZ(1)/ZZ(4))).expand()
 
     @cached_method
     def _enhanced_states(self):
@@ -1553,7 +1550,7 @@ class Braid(FiniteTypeArtinGroupElement):
             lnf = leftnormalform(self)
             B = self.parent()
             return tuple([B.delta()**lnf[0][0]] + [B(b) for b in lnf[1:]])
-        elif algorithm == 'artin':
+        if algorithm == 'artin':
             return FiniteTypeArtinGroupElement.left_normal_form.f(self)
         raise ValueError("invalid algorithm")
 
@@ -3021,28 +3018,27 @@ class BraidGroup_class(FiniteTypeArtinGroup):
                 else:
                     A[n2.index(Set([j, k])), m] = 1
             return A
-        else:
-            i = -braid[0]-1
-            for m in range(len(n2)):
-                j = min(n2[m])
-                k = max(n2[m])
-                if i == j-1:
-                    A[n2.index(Set([j-1, k])), m] = 1
-                elif i == j and not j == k-1:
-                    A[n2.index(Set([j+1, k])), m] = q**(-1)
-                    A[n2.index(Set([j, k])), m] = 1-q**(-1)
-                    A[n2.index(Set([j, j+1])), m] = t**(-1)*q**(-1)-t**(-1)*q**(-2)
-                elif k-1 == i and not k-1 == j:
-                    A[n2.index(Set([j, k-1])), m] = 1
-                elif i == k:
-                    A[n2.index(Set([j, k+1])), m] = q**(-1)
-                    A[n2.index(Set([j, k])), m] = 1-q**(-1)
-                    A[n2.index(Set([k, k+1])), m] = -q**(-1)+q**(-2)
-                elif i == j and j == k-1:
-                    A[n2.index(Set([j, k])), m] = -t**(-1)*q**(-2)
-                else:
-                    A[n2.index(Set([j, k])), m] = 1
-            return A
+        i = -braid[0]-1
+        for m in range(len(n2)):
+            j = min(n2[m])
+            k = max(n2[m])
+            if i == j-1:
+                A[n2.index(Set([j-1, k])), m] = 1
+            elif i == j and not j == k-1:
+                A[n2.index(Set([j+1, k])), m] = q**(-1)
+                A[n2.index(Set([j, k])), m] = 1-q**(-1)
+                A[n2.index(Set([j, j+1])), m] = t**(-1)*q**(-1)-t**(-1)*q**(-2)
+            elif k-1 == i and not k-1 == j:
+                A[n2.index(Set([j, k-1])), m] = 1
+            elif i == k:
+                A[n2.index(Set([j, k+1])), m] = q**(-1)
+                A[n2.index(Set([j, k])), m] = 1-q**(-1)
+                A[n2.index(Set([k, k+1])), m] = -q**(-1)+q**(-2)
+            elif i == j and j == k-1:
+                A[n2.index(Set([j, k])), m] = -t**(-1)*q**(-2)
+            else:
+                A[n2.index(Set([j, k])), m] = 1
+        return A
 
     def dimension_of_TL_space(self, drain_size):
         """

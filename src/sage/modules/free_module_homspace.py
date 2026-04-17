@@ -249,7 +249,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
         R = self.codomain().base_ring()
         if side == "left":
             return MatrixSpace(R, self.domain().rank(), self.codomain().rank())
-        elif side == "right":
+        if side == "right":
             return MatrixSpace(R, self.codomain().rank(), self.domain().rank())
 
     @cached_method

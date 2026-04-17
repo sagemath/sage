@@ -121,7 +121,7 @@ def q_factorial(n, q=None):
     if n in ZZ:
         if n == 0:
             return q_int(1, q)
-        elif n >= 1:
+        if n >= 1:
             return prod(q_int(i, q) for i in range(1, n + 1))
     raise ValueError("argument (%s) must be a nonnegative integer" % n)
 
@@ -386,8 +386,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         return prod(cyclotomic_value(d, q)
                     for d in range(2, n + 1)
                     if (n//d) != (k//d) + ((n-k)//d))
-    else:
-        raise ValueError("unknown algorithm {!r}".format(algorithm))
+    raise ValueError("unknown algorithm {!r}".format(algorithm))
 
 
 def gaussian_binomial(n, k, q=None, algorithm='auto'):
@@ -550,8 +549,7 @@ def qt_catalan_number(n):
             tup = (dw.area(), dw.bounce())
             d[tup] = d.get(tup, 0) + 1
         return ZZqt(d)
-    else:
-        raise ValueError("argument (%s) must be a nonnegative integer" % n)
+    raise ValueError("argument (%s) must be a nonnegative integer" % n)
 
 
 def q_pochhammer(n, a, q=None):

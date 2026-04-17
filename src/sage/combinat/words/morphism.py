@@ -786,12 +786,11 @@ class WordMorphism(SageObject):
             parent = parent.shift()
             return parent(iterator)
 
-        elif order is Infinity:
+        if order is Infinity:
             if isinstance(w, (tuple, str, list, FiniteWord_class)):
                 if len(w) == 0:
                     return self.codomain()()
-                else:
-                    letter = w[0]
+                letter = w[0]
             elif isinstance(w, Iterable):
                 try:
                     letter = next(w)
@@ -803,14 +802,13 @@ class WordMorphism(SageObject):
                 raise TypeError("do not know how to handle an input (=%s) that is not iterable or not in the domain alphabet" % w)
             return self.fixed_point(letter=letter)
 
-        elif isinstance(order, (int, Integer)) and order > 1:
+        if isinstance(order, (int, Integer)) and order > 1:
             return self(self(w, order - 1))
 
-        elif order == 0:
+        if order == 0:
             return self._domain(w)
 
-        else:
-            raise TypeError("order (%s) must be a nonnegative integer or plus Infinity" % order)
+        raise TypeError("order (%s) must be a nonnegative integer or plus Infinity" % order)
 
     def latex_layout(self, layout=None):
         r"""
@@ -840,9 +838,8 @@ class WordMorphism(SageObject):
             if not hasattr(self, '_latex_layout'):
                 self._latex_layout = 'array'
             return self._latex_layout
-        else:
-            # change the layout
-            self._latex_layout = layout
+        # change the layout
+        self._latex_layout = layout
 
     def _latex_(self):
         r"""
@@ -1123,8 +1120,7 @@ class WordMorphism(SageObject):
         """
         if R is None:
             return self.incidence_matrix()
-        else:
-            return self.incidence_matrix().change_ring(R)
+        return self.incidence_matrix().change_ring(R)
 
     def incidence_matrix(self):
         r"""
@@ -1452,7 +1448,7 @@ class WordMorphism(SageObject):
             img = self.image(letter)
             if img.length() != 1:
                 return False
-            elif img[0] != letter:
+            if img[0] != letter:
                 return False
         return True
 
@@ -1905,15 +1901,14 @@ class WordMorphism(SageObject):
             from sage.combinat.words.word import InfiniteWord_morphic
             return InfiniteWord_morphic(parent.shift(), self, letter,
                                         coding=None, length=Infinity)
-        else:
-            from sage.combinat.words.word import FiniteWord_morphic
-            w = FiniteWord_morphic(parent, self, letter,
-                                   coding=None, length='finite')
-            # since FiniteWord_morphic uses the method __getitem__
-            # from FiniteWord_callable, the length must be precomputed
-            # for __getitem__ to work properly
-            w.length()
-            return w
+        from sage.combinat.words.word import FiniteWord_morphic
+        w = FiniteWord_morphic(parent, self, letter,
+                               coding=None, length='finite')
+        # since FiniteWord_morphic uses the method __getitem__
+        # from FiniteWord_callable, the length must be precomputed
+        # for __getitem__ to work properly
+        w.length()
+        return w
 
     def fixed_points(self):
         r"""
@@ -1983,7 +1978,7 @@ class WordMorphism(SageObject):
                 w = self(w)
             return w
 
-        elif self.is_erasing():
+        if self.is_erasing():
             raise NotImplementedError("self should be non erasing")
 
         else:
@@ -3140,8 +3135,7 @@ class WordMorphism(SageObject):
         """
         if not letter:
             return self.domain().alphabet().cardinality() == len(self.growing_letters())
-        else:
-            return letter in self.growing_letters()
+        return letter in self.growing_letters()
 
     def growing_letters(self):
         r"""

@@ -624,12 +624,12 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         if prec == 0:
             z = self._q_expansion_ring()(0, prec)
             return Sequence([z] * int(self.dimension()), immutable=True, cr=True)
-        elif prec != -1:
+        if prec != -1:
             try:
                 current_prec, B = self.__q_expansion_basis
                 if current_prec == prec:
                     return B
-                elif current_prec > prec:
+                if current_prec > prec:
                     return Sequence([f.add_bigoh(prec) for f in B], immutable=True, cr=True)
             except AttributeError:
                 pass
@@ -697,7 +697,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             current_prec, B = -1, []
         if current_prec == prec:
             return B
-        elif current_prec > prec:
+        if current_prec > prec:
             return Sequence([f.add_bigoh(prec) for f in B], cr=True)
 
         B = self.q_expansion_basis(prec)
@@ -745,7 +745,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         if current_prec == prec:
             return B
-        elif current_prec > prec:
+        if current_prec > prec:
             return Sequence([f.add_bigoh(prec) for f in B], cr=True)
 
         B = self.q_expansion_basis(prec)
@@ -899,7 +899,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         if isinstance(from_par, ModularFormsSpace):
             if from_par.ambient() == self:
                 return True
-            elif self.is_ambient() and self.group().is_subgroup(from_par.group()) and self.weight() == from_par.weight():
+            if self.is_ambient() and self.group().is_subgroup(from_par.group()) and self.weight() == from_par.weight():
                 return True
 
         return False
@@ -1030,12 +1030,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             return self(x.q_expansion(self._q_expansion_module().degree()))
 
-        elif isinstance(x, PowerSeries):
+        if isinstance(x, PowerSeries):
             if x.prec() == PlusInfinity():
                 if x == 0:
                     return self.element_class(self, self.free_module().zero())
-                else:
-                    raise TypeError("unable to create modular form from exact nonzero polynomial")
+                raise TypeError("unable to create modular form from exact nonzero polynomial")
             W = self._q_expansion_module()
             if W.degree() <= x.prec():
                 try:
@@ -1048,8 +1047,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
                     if x_potential[i] != x[i]:
                         raise ValueError("q-expansion does not correspond to a form in self")
                 return x_potential
-            else:
-                raise TypeError("q-expansion needed to at least precision %s" % W.degree())
+            raise TypeError("q-expansion needed to at least precision %s" % W.degree())
 
         return self.element_class(self, self.free_module()(x, check))
 
@@ -1086,8 +1084,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             if self.group() == other.group() and self.base_ring() == other.base_ring():
                 if self.weight() == other.weight():
                     return self
-                else:
-                    return ModularFormsRing(self.group(), base_ring=self.base_ring())
+                return ModularFormsRing(self.group(), base_ring=self.base_ring())
         if isinstance(other, ModularFormsRing) and other.has_coerce_map_from(self):
             return other
 
@@ -1131,8 +1128,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             return richcmp_not_equal(lx, rx, op)
         if self.is_ambient() or x.is_ambient():
             return richcmp(self.dimension(), x.dimension(), op)
-        else:
-            return self.free_module()._echelon_matrix_richcmp(x.free_module(), op)
+        return self.free_module()._echelon_matrix_richcmp(x.free_module(), op)
 
     def span_of_basis(self, B):
         """
@@ -1273,15 +1269,14 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         if hasattr(self, '_compute_q_expansion_basis') and self.character() is not None:
             return hecke.HeckeModule_generic._compute_hecke_matrix(self, n)
 
+        # Try to avoid doing unnecessary computations where possible.
+        if self.is_cuspidal():
+            M = self.ambient().cuspidal_submodule().hecke_matrix(n).block_sum(zero_matrix(self.base_ring(), self.ambient().eisenstein_submodule().rank()))
+        elif self.is_eisenstein():
+            M = zero_matrix(self.base_ring(), self.ambient().cuspidal_submodule().rank()).block_sum(self.ambient().eisenstein_submodule().hecke_matrix(n))
         else:
-            # Try to avoid doing unnecessary computations where possible.
-            if self.is_cuspidal():
-                M = self.ambient().cuspidal_submodule().hecke_matrix(n).block_sum(zero_matrix(self.base_ring(), self.ambient().eisenstein_submodule().rank()))
-            elif self.is_eisenstein():
-                M = zero_matrix(self.base_ring(), self.ambient().cuspidal_submodule().rank()).block_sum(self.ambient().eisenstein_submodule().hecke_matrix(n))
-            else:
-                M = self.ambient().hecke_matrix(n)
-            return M.restrict(self.free_module(), check=(gcd(n, self.level()) > 1))
+            M = self.ambient().hecke_matrix(n)
+        return M.restrict(self.free_module(), check=(gcd(n, self.level()) > 1))
 
     @cached_method
     def basis(self):

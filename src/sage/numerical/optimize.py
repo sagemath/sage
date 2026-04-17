@@ -119,8 +119,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
             if val < rtol:
                 if full_output:
                     return s, "No extra data"
-                else:
-                    return s
+                return s
             raise RuntimeError("f appears to have no zero on the interval")
         # If we found such an s, then we just instead find
         # a root between left and s or s and right.
@@ -133,8 +132,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
             if abs(val) < rtol:
                 if full_output:
                     return s, "No extra data"
-                else:
-                    return s
+                return s
             raise RuntimeError("f appears to have no zero on the interval")
         a = s
 

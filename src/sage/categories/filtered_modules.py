@@ -173,8 +173,7 @@ class FilteredModules(FilteredModulesCategory):
         base_ring = self.base_ring()
         if base_ring in Fields() or (isinstance(base_ring, Category) and base_ring.is_subcategory(Fields())):
             return [Modules(base_ring)]
-        else:
-            return []
+        return []
 
     class SubcategoryMethods:
 

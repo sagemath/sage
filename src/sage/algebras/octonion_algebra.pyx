@@ -288,7 +288,7 @@ cdef class Octonion_generic(AlgebraElement):
         qf = (<Octonion_generic> other).quadratic_form()
         return self.__class__(self._parent, temp.vec / qf)
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         r"""
         Return if ``self`` is a unit or not.
 

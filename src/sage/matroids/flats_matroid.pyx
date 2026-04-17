@@ -683,7 +683,6 @@ cdef class FlatsMatroid(Matroid):
         cdef long i, j
         cdef frozenset F1, F2
         cdef list ranks, cover, flats_lst, sorted_flats, r
-        cdef bint flag
 
         # check flats dictionary for repeated flats
         flats_lst = [F for i in self._k_F for F in self._k_F[i]]

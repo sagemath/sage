@@ -2143,8 +2143,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         """
         if isinstance(self.base(), LaurentPolynomialRing_generic):
             return tuple(map(self.retract, self.base().gens()))
-        else:
-            return ()
+        return ()
 
     def coefficient_names(self) -> tuple:
         r"""

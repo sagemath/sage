@@ -343,13 +343,13 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         if isinstance(x, bool):
             return self(self._true_symbol() if x else self._false_symbol())
-        elif isinstance(x, int):
+        if isinstance(x, int):
             from sage.rings.integer import Integer
             return self(Integer(x))
-        elif isinstance(x, float):
+        if isinstance(x, float):
             from sage.rings.real_double import RDF
             return self(RDF(x))
-        elif isinstance(x, complex):
+        if isinstance(x, complex):
             from sage.rings.complex_double import CDF
             return self(CDF(x))
         if use_special:
@@ -1275,8 +1275,7 @@ class InterfaceElement(Element):
         P = self._check_valid()
         if not isinstance(n, tuple):
             return P.new('%s[%s]' % (self._name, n))
-        else:
-            return P.new('%s[%s]' % (self._name, str(n)[1:-1]))
+        return P.new('%s[%s]' % (self._name, str(n)[1:-1]))
 
     def __int__(self):
         """
