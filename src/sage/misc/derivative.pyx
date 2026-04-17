@@ -163,7 +163,7 @@ def derivative_parse(args):
                 raise ValueError("derivative counts must be nonnegative")
             if not got_var:
                 var = None
-            for i from 0 <= i < count:
+            for i in range(count):
                 output.append(var)
             got_var = 0
         else:

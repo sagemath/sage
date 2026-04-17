@@ -1,12 +1,12 @@
 r"""
-External Representations of Block Designs
+External representations of block designs
 
-The "ext_rep" module is an API to the abstract tree represented by
+This module is an API to the abstract tree represented by
 an XML document containing the External Representation of a list of
 block designs. The module also provides the related I/O operations for
-reading/writing ext-rep files or data. The parsing is based on expat.
+reading/writing ``ext-rep`` files or data. The parsing is based on expat.
 
-This is a modified form of the module ext_rep.py (version 0.8)
+This is a modified form of the module ``ext_rep.py`` (version 0.8)
 written by Peter Dobcsanyi [Do2009]_ peter@designtheory.org.
 
 .. TODO::
@@ -15,12 +15,9 @@ written by Peter Dobcsanyi [Do2009]_ peter@designtheory.org.
     information about things like automorphism groups, transitivity, cycle type
     representatives, etc, but none of this data is made available through the
     current implementation.
-
-Functions
----------
 """
 
-###########################################################################
+# ***********************************************************************
 # This software is released under the terms of the GNU General Public
 # License, version 2 or above (your choice). For details on licensing,
 # see the accompanying documentation.
@@ -28,9 +25,9 @@ Functions
 # This is a modified form of the module ext_rep.py (version 0.8)
 # written by Peter Dobcsanyi peter@designtheory.org.
 #
-# Copyright 2004 by Peter Dobcsanyi peter@designtheory.org, and copyright
-# 2009 Carlo Hamalainen carlo.hamalainen@gmail.com
-###########################################################################
+# Copyright 2004 Peter Dobcsanyi peter@designtheory.org
+#           2009 Carlo Hamalainen carlo.hamalainen@gmail.com
+# ***********************************************************************
 
 import sys
 import xml.parsers.expat
@@ -597,21 +594,18 @@ def _encode_attribute(string):
         sage: _encode_attribute('E')
         'E'
     """
-
     if pattern_integer.match(string):
         return int(string)
-    elif pattern_decimal.match(string):
+    if pattern_decimal.match(string):
         return float(string)
-    else:
-        return string
+    return string
 
 
 class XTree:
     '''
     A lazy class to wrap a rooted tree representing an XML document.
     The tree's nodes are tuples of the structure:
-
-        (name, {dictionary of attributes}, [list of children])
+    (name, {dictionary of attributes}, [list of children])
 
     Methods and services of an XTree object ``t``:
 
@@ -702,25 +696,21 @@ class XTree:
 
         if attr in self.xt_attributes:
             return self.xt_attributes[attr]
-        else:
-            for child in self.xt_children:
-                name, attributes, children = child
-                if name == attr:
-                    if len(attributes) > 0:
-                        return XTree(child)
-                    else:
-                        if len(children) == 0:
-                            # need this to get an empty Xtree, for append
-                            return XTree(child)
-                        grandchild = children[0]
-                        if isinstance(grandchild, tuple):
-                            if len(grandchild[1]) == 0 and \
-                                len(grandchild[2]) == 0:
-                                return grandchild[0]
-                            else:
-                                return XTree(child)
-                        else:
-                            return grandchild
+        for child in self.xt_children:
+            name, attributes, children = child
+            if name == attr:
+                if len(attributes) > 0:
+                    return XTree(child)
+                if len(children) == 0:
+                    # need this to get an empty Xtree, for append
+                    return XTree(child)
+                grandchild = children[0]
+                if isinstance(grandchild, tuple):
+                    if len(grandchild[1]) == 0 and \
+                        len(grandchild[2]) == 0:
+                        return grandchild[0]
+                    return XTree(child)
+                return grandchild
         msg = '"%s" is not found in attributes of %s or its children.' % \
               (attr, self)
         raise AttributeError(msg)
@@ -753,17 +743,13 @@ class XTree:
             name, attributes, children = child
             if len(attributes) > 0:
                 return XTree(child)
-            else:
-                grandchild = children[0]
-                if isinstance(grandchild, tuple):
-                    if len(grandchild[1]) == 0 and len(grandchild[2]) == 0:
-                        return grandchild[0]
-                    else:
-                        return XTree(child)
-                else:
-                    return grandchild
-        else:
-            return child
+            grandchild = children[0]
+            if isinstance(grandchild, tuple):
+                if len(grandchild[1]) == 0 and len(grandchild[2]) == 0:
+                    return grandchild[0]
+                return XTree(child)
+            return grandchild
+        return child
 
     def __len__(self):
         """

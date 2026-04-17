@@ -49,7 +49,6 @@ Functions
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-cimport cython
 from cysignals.signals cimport sig_check, sig_on, sig_off
 from libcpp.set cimport set as cset
 from libcpp.pair cimport pair
@@ -80,7 +79,7 @@ cdef boost_graph_from_sage_graph(BoostGenGraph *g, g_sage, vertex_to_int, revers
     if g.num_verts():
         raise AssertionError("the given Boost graph must be empty")
 
-    cdef int N = g_sage.num_verts()
+    cdef int N = g_sage.n_vertices()
     cdef int i
 
     for i in range(N):
@@ -136,7 +135,7 @@ cdef boost_weighted_graph_from_sage_graph(BoostWeightedGraph *g,
     if g.num_verts():
         raise AssertionError("the given Boost graph must be empty")
 
-    cdef int N = g_sage.num_verts()
+    cdef int N = g_sage.n_vertices()
     cdef int i
 
     for i in range(N):
@@ -273,7 +272,7 @@ cdef boost_clustering_coeff(BoostGenGraph *g, vertices):
             result_d = g[0].clustering_coeff(vi)
             sig_off()
             clust_of_v[v] = result_d
-        return ((sum(clust_of_v.itervalues()) / len(clust_of_v)), clust_of_v)
+        return ((sum(clust_of_v.values()) / len(clust_of_v)), clust_of_v)
 
 
 cpdef clustering_coeff(g, vertices=None):
@@ -342,7 +341,6 @@ cpdef clustering_coeff(g, vertices=None):
     return (average_clustering, clust_v_sage)
 
 
-@cython.binding(True)
 cpdef dominator_tree(g, root, return_dict=False, reverse=False):
     r"""
     Use Boost to compute the dominator tree of ``g``, rooted at ``root``.
@@ -745,7 +743,7 @@ cpdef min_spanning_tree(g,
     return [(u, v, g.edge_label(u, v)) for u, v in edges]
 
 
-cpdef blocks_and_cut_vertices(g):
+cpdef blocks_and_cut_vertices(g, forbidden_vertices=None):
     r"""
     Compute the blocks and cut vertices of the graph.
 
@@ -755,6 +753,9 @@ cpdef blocks_and_cut_vertices(g):
     INPUT:
 
     - ``g`` -- the input Sage graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     OUTPUT:
 
@@ -773,9 +774,28 @@ cpdef blocks_and_cut_vertices(g):
         sage: blocks_and_cut_vertices(g)
         ([[8, 9], [7, 8], [0, 1, 2, 3, 5, 4, 6, 7]], [8, 7])
 
-        sage: G = Graph([(0,1,{'name':'a','weight':1}), (0,2,{'name':'b','weight':3}), (1,2,{'name':'b','weight':1})])
+        sage: G = Graph([(0,1,{'name':'a','weight':1}),
+        ....:            (0,2,{'name':'b','weight':3}),
+        ....:            (1,2,{'name':'b','weight':1})])
         sage: blocks_and_cut_vertices(G)
         ([[0, 1, 2]], [])
+
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.WindmillGraph(4, 3)
+        sage: blocks_and_cut_vertices(G)
+        ([[0, 1, 2, 3], [0, 4, 5, 6], [0, 7, 8, 9]], [0])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=[0])
+        ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], [])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=[1])
+        ([[0, 2, 3], [0, 4, 5, 6], [0, 7, 8, 9]], [0])
+        sage: G = graphs.PathGraph(3)
+        sage: blocks_and_cut_vertices(G)
+        ([[1, 2], [0, 1]], [1])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=[0])
+        ([[1, 2]], [])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=[1])
+        ([[0], [2]], [])
 
     TESTS:
 
@@ -791,8 +811,17 @@ cpdef blocks_and_cut_vertices(g):
     if not isinstance(g, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    if g.allows_loops() or g.allows_multiple_edges() or g.is_directed():
-        g = g.to_simple()
+    cdef set forbidden = set() if forbidden_vertices is None else set(forbidden_vertices)
+
+    if (g.allows_loops() or g.allows_multiple_edges()
+            or g.is_directed() or forbidden):
+        # Build the underlying undirected graph without loops or multiple edges,
+        # and without the forbidden vertices
+        V = [v for v in g if v not in forbidden]
+        E = [(u, v) for u, v in g.edge_iterator(vertices=V, labels=False, sort_vertices=False)
+             if u != v and u not in forbidden and v not in forbidden]
+        from sage.graphs.graph import Graph
+        g = Graph([V, E], format='vertices_and_edges')
 
     cdef BoostVecGraph g_boost
     cdef vector[vector[v_index]] result
@@ -1549,7 +1578,7 @@ cpdef min_cycle_basis(g_sage, weight_function=None, by_weight=False):
     """
     cdef Py_ssize_t u_int, v_int, i, j
     cdef object u, v
-    cdef Py_ssize_t n = g_sage.num_verts()
+    cdef Py_ssize_t n = g_sage.n_vertices()
     cdef list int_to_vertex = list(g_sage)
     cdef dict vertex_to_int = {u: u_int for u_int, u in enumerate(int_to_vertex)}
     cdef list edgelist

@@ -159,7 +159,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
             sage: K.<i> = NumberField(x^2 + 1)
             sage: cc = K.hom([-i])
@@ -452,7 +451,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<alpha> = R.quotient(x^3 - 2)
             sage: F.<a>, f, g = alpha.field_extension()
@@ -467,7 +465,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         Over a finite field, the corresponding field extension is not a
         number field::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x> = GF(25,'b')['x']
             sage: S.<a> = R.quo(x^3 + 2*x + 1)
             sage: F.<b>, g, h = a.field_extension()
@@ -478,7 +475,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         We do an example involving a relative number field::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ['x']
             sage: K.<a> = NumberField(x^3 - 2)
             sage: S.<X> = K['X']
@@ -487,7 +483,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         Another more awkward example::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ['x']
             sage: K.<a> = NumberField(x^3 - 2)
             sage: S.<X> = K['X']
@@ -689,7 +684,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         polynomial of a finite-field element over an intermediate extension,
         rather than the absolute minimal polynomial over the prime field::
 
-            sage: # needs sage.rings.finite_rings
             sage: F2.<i> = GF((431,2), modulus=[1,0,1])
             sage: F6.<u> = F2.extension(3)
             sage: (u + 1).minpoly()                                                     # needs sage.modules
@@ -702,7 +696,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         We make sure that the previous example works on random examples::
 
-            sage: # long time, needs sage.rings.finite_rings
+            sage: # long time
             sage: p = random_prime(50)
             sage: K.<u> = GF((p, randrange(1,20)))
             sage: L.<v> = K.extension(randrange(2,20))
@@ -760,7 +754,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x> = GF(65537)[]
             sage: m = (x^11 + 25345*x^10 + 10956*x^9 + 13873*x^8 + 23962*x^7
             ....:      + 17496*x^6 + 30348*x^5 + 7440*x^4 + 65438*x^3 + 7676*x^2

@@ -236,8 +236,8 @@ def integral(f, *args, **kwds):
     `(1,1)`::
 
         sage: t = var('t')
-        sage: (x,y) = (t^4,t)
-        sage: (dx,dy) = (diff(x,t), diff(y,t))
+        sage: x, y = t^4, t
+        sage: dx, dy = diff(x,t), diff(y,t)
         sage: integral(sin(x)*dx, t,-1, 1)
         0
         sage: restore('x,y')   # restore the symbolic variables x and y
@@ -259,7 +259,8 @@ def integral(f, *args, **kwds):
 
     Sage cannot do this elliptic integral (yet)::
 
-        sage: integral(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)
+        sage: ans = integral(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)  # random - ignore giac stderr output
+        sage: ans
         integrate(1/(sqrt(2*t^2 + 1)*sqrt(t^2 - 2)), t, 2, 3)
 
     A double integral::

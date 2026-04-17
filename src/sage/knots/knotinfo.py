@@ -4,8 +4,8 @@ Access to the KnotInfo database
 
 This module contains the class :class:`KnotInfoBase` which is derived from
 :class:`Enum` and provides knots and links listed in the databases at the
-web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__
-and `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__ as its items.
+web-pages `KnotInfo <https://knotinfo.org/>`__
+and `LinkInfo <https://link-info-repo.onrender.com/>`__ as its items.
 
 This interface contains a set of about twenty knots and links statically as
 demonstration cases. The complete database can be installed as an optional Sage
@@ -209,8 +209,8 @@ in the KnotInfo database::
 
 REFERENCES:
 
-- `KnotInfo <https://knotinfo.math.indiana.edu/>`__
-- `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__
+- `KnotInfo <https://knotinfo.org/>`__
+- `LinkInfo <https://link-info-repo.onrender.com/>`__
 
 
 AUTHORS:
@@ -263,7 +263,7 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
         '{3, {-2, -2, -1, 2, -1}}'
         sage: eval_knotinfo(_)
         (3, (-2, -2, -1, 2, -1))
-        sage: KnotInfo.K13a_1.kauffman_polynomial()  # optional - database_knotinfo # indirect doctest
+        sage: eval_knotinfo('')
         Traceback (most recent call last):
         ...
         NotImplementedError: this value is not provided by the database
@@ -332,7 +332,7 @@ def knotinfo_bool(string):
         raise NotImplementedError('this boolean is not provided by the database')
     if string == 'Y':
         return True
-    elif string == 'N':
+    if string == 'N':
         return False
     raise ValueError('%s is not a KnotInfo boolean')
 
@@ -388,11 +388,11 @@ class SymmetryMutant(Enum):
         """
         if self is SymmetryMutant.itself:
             return SymmetryMutant.reverse
-        elif self is SymmetryMutant.reverse:
+        if self is SymmetryMutant.reverse:
             return SymmetryMutant.itself
-        elif self is SymmetryMutant.mirror_image:
+        if self is SymmetryMutant.mirror_image:
             return SymmetryMutant.concordance_inverse
-        elif self is SymmetryMutant.concordance_inverse:
+        if self is SymmetryMutant.concordance_inverse:
             return SymmetryMutant.mirror_image
         return self
 
@@ -408,11 +408,11 @@ class SymmetryMutant(Enum):
         """
         if self is SymmetryMutant.itself:
             return SymmetryMutant.mirror_image
-        elif self is SymmetryMutant.reverse:
+        if self is SymmetryMutant.reverse:
             return SymmetryMutant.concordance_inverse
-        elif self is SymmetryMutant.mirror_image:
+        if self is SymmetryMutant.mirror_image:
             return SymmetryMutant.itself
-        elif self is SymmetryMutant.concordance_inverse:
+        if self is SymmetryMutant.concordance_inverse:
             return SymmetryMutant.reverse
         return self
 
@@ -435,10 +435,7 @@ class SymmetryMutant(Enum):
         achp = link.is_amphicheiral(positive=True)
         ach = link.is_amphicheiral()
         if self is SymmetryMutant.unknown:
-            if rev is None or ach is None or achp is None:
-                return True
-            else:
-                return False
+            return rev is None or ach is None or achp is None
         res = []
         if rev:
             res.append(self.rev())
@@ -472,7 +469,7 @@ class SymmetryMutant(Enum):
 class KnotInfoBase(Enum):
     r"""
     Enum class to select the knots and links listed in the databases at the web-pages
-    `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__.
+    `KnotInfo <https://knotinfo.org/>`__ and `LinkInfo <https://link-info-repo.onrender.com/>`__.
 
     EXAMPLES::
 
@@ -607,8 +604,7 @@ class KnotInfoBase(Enum):
 
         if n == 1:
             return BraidGroup(2)
-        else:
-            return BraidGroup(n)
+        return BraidGroup(n)
 
     @cached_method
     def _homfly_pol_ring(self, var1, var2):
@@ -794,7 +790,7 @@ class KnotInfoBase(Enum):
             # in some cases there are a pair of braid representations
             # in the database. If this is the case we select the
             # corresponding to the braid index.
-            if type(braid_notation[0]) is tuple:
+            if type(braid_notation[0]) in (list, tuple):
                 i = self.braid_index()
                 for b in braid_notation:
                     if -i < min(b) and max(b) < i:
@@ -832,10 +828,9 @@ class KnotInfoBase(Enum):
         """
         if self.is_knot():
             return knotinfo_int(self[self.items.braid_index])
-        else:
-            braid_notation = self[self.items.braid_notation]
-            braid_notation = eval_knotinfo(braid_notation)
-            return knotinfo_int(braid_notation[0])
+        braid_notation = self[self.items.braid_notation]
+        braid_notation = eval_knotinfo(braid_notation)
+        return knotinfo_int(braid_notation[0])
 
     @cached_method
     def braid_length(self):
@@ -867,9 +862,9 @@ class KnotInfoBase(Enum):
             sage: K.braid()
             s^3
             sage: K.braid_notation()
-            (1, 1, 1)
+            [1, 1, 1]
             sage: KnotInfo.K13n_1448.braid()    # optional - database_knotinfo
-            s0^-1*s1*s2*s3*s4*s3^2*s2^-1*s1^-1*s0*s2^-1*s1*(s3*s2)^2*s4^-1*s3*s2*s1^-1*s3*s2^-1*s3
+            s0^-1*s1*s0^-1*s2*s1^2*s3^2*s2^-1*s3*s2*s1^3
         """
         return self._braid_group()(self.braid_notation())
 
@@ -1082,9 +1077,7 @@ class KnotInfoBase(Enum):
             symmetry_type = self.symmetry_type()
             if symmetry_type == 'reversible':
                 return True
-            if symmetry_type == 'fully amphicheiral':
-                return True
-            return False
+            return symmetry_type == 'fully amphicheiral'
 
         # revert orientation
         b = self.braid()
@@ -1150,9 +1143,7 @@ class KnotInfoBase(Enum):
                 if symmetry_type == 'negative amphicheiral':
                     return True
 
-            if symmetry_type == 'fully amphicheiral':
-                return True
-            return False
+            return symmetry_type == 'fully amphicheiral'
 
         h = self.homfly_polynomial()
         v, z = h.parent().gens()
@@ -1196,9 +1187,7 @@ class KnotInfoBase(Enum):
             True
         """
         geometric_type = self[self.items.geometric_type]
-        if geometric_type == 'hyperbolic':
-            return True
-        return False
+        return geometric_type == 'hyperbolic'
 
     @cached_method
     def is_alternating(self) -> bool:
@@ -1332,7 +1321,7 @@ class KnotInfoBase(Enum):
         Return whether the Cosmetic Crossing Conjecture has been verified
         for ``self``.
 
-        From the KnotInfo `description page <https://knotinfo.math.indiana.edu/descriptions/cosmetic_crossing.html>`__:
+        From the KnotInfo `description page <https://knotinfo.org/descriptions/cosmetic_crossing.html>`__:
 
             A crossing change in a diagram of a knot ``K`` is called cosmetic if
             the resulting diagram also represents ``K``. The cosmetic crossing
@@ -1368,7 +1357,7 @@ class KnotInfoBase(Enum):
 
         The HOMFLY-PT polynomial `P(L)` of a link `L` satisfies the following skein
         relation (see the corresponding `KnotInfo description page
-        <https://knotinfo.math.indiana.edu/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html>`__):
 
         .. MATH::
 
@@ -1400,7 +1389,7 @@ class KnotInfoBase(Enum):
             sage: PK3_1 = K3_1.homfly_polynomial(); PK3_1
             -v^4 + v^2*z^2 + 2*v^2
             sage: K3_1.homfly_polynomial(original=True)
-            '(2*v^2-v^4)+v^2*z^2'
+            '(2*v^2-v^4)+ v^2*z^2'
             sage: PK3_1 == K3_1.link().homfly_polynomial(normalization='vz')
             True
 
@@ -1469,7 +1458,7 @@ class KnotInfoBase(Enum):
         under regular isotopy `\Delta (L) = a^{w(L)} F(L)` where `w(L)` is the
         writhe of the link `L` satisfies the following skein relation
         (see the corresponding `KnotInfo description page
-        <https://knotinfo.math.indiana.edu/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html>`__):
 
         .. MATH::
 
@@ -1498,17 +1487,19 @@ class KnotInfoBase(Enum):
 
             sage: L.kauffman_polynomial()
             a^-1*z - a^-1*z^-1 + a^-2 + a^-3*z - a^-3*z^-1
-            sage: K.kauffman_polynomial()
+            sage: kp1 = K.kauffman_polynomial(); kp1
             a^2*z^2 + a*z^3 - a^2 - a*z + 2*z^2 + a^-1*z^3 - 1 - a^-1*z + a^-2*z^2 - a^-2
+            sage: kp2 = KnotInfo.K13a_1.kauffman_polynomial()            # optional database_knotinfo
+            sage: (kp2.degree(), len(kp2.coefficients()))                # optional database_knotinfo
+            (16, 69)
 
         Comparison with Jones polynomial::
 
             sage: # needs sage.symbolic
-            sage: k    = _
-            sage: a, z = k.variables()
+            sage: a, z = kp1.variables()
             sage: j    = K.jones_polynomial(skein_normalization=True)
             sage: t,   = j.variables()
-            sage: k.subs(a=-t^3, z=~t+t) == j.subs(t=t^4)
+            sage: kp1.subs(a=-t^3, z=~t+t) == j.subs(t=t^4)
             True
 
         Check the skein relation::
@@ -1556,7 +1547,7 @@ class KnotInfoBase(Enum):
 
         The Jones polynomial `V(L)` of a link `L` satisfies the following skein
         relation (see the corresponding `KnotInfo description page
-        <https://knotinfo.math.indiana.edu/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html>`__):
 
         .. MATH::
 
@@ -1890,30 +1881,37 @@ class KnotInfoBase(Enum):
         return R(eval_knotinfo(conway_polynomial, locals=lc))
 
     @cached_method
-    def khovanov_polynomial(self, var1='q', var2='t', base_ring=ZZ, original=False, reduced=False, odd=False, KhoHo=False):
+    def khovanov_polynomial(self, var1='q', var2='t', torsion='T', ring=None, original=False,
+                            reduced=False, odd=False, base_ring=None):
         r"""
-        Return the Khovanov polynomial according to the value of column
-        ``khovanov_polynomial`` for this knot or link as an instance of
+        Return the Khovanov polynomial according to the value of columns
+        ``khovanov_*`` for this knot or link as an instance of
         :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
 
         INPUT:
 
-        - ``var1`` -- (default: ``'q'``) the first variable
-        - ``var2`` -- (default: ``'t'``) the second variable
-        - ``base_ring`` -- (default: ``ZZ``) the ring of the polynomial's
-          coefficients
+        - ``var1`` -- (default: ``'q'``) the first variable; its exponents
+          correspond to the height of Khovanov homology
+        - ``var2`` -- (default: ``'t'``) the second variable; its exponents
+          correspond to the degree of Khovanov homology
+        - ``torsion`` -- (default: ``'T'``) additional variable to indicate
+          the torsion of the integral homology group corresponding to the
+          monomial; monomials without it correspond to torsion free ``ring``
+          modules; if it appears, its exponents stands for the modulus of
+          the torsion
+        - ``ring`` -- (default: ``ZZ`` for knots and ``QQ`` for proper links)
+          the ring for the homology
         - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
         - ``reduced`` -- boolean (default: ``False``); if set to ``True``
           the reduced version of the homology is used
         - ``odd`` -- boolean (default: ``False``); if set to ``True``
           the odd version of the homology is used
-        - ``KhoHo`` -- boolean (deprecated). The corresponding values have
-          disappeared from the database since January 2024
 
         OUTPUT:
 
-        A Laurent polynomial over the integers, more precisely an instance of
+        A two or three (for integral homology) variate Laurent polynomial over
+        ``ZZ``, more precisely an instance of
         :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
         If ``original`` is set to ``True`` then a string is returned.
 
@@ -1930,11 +1928,9 @@ class KnotInfoBase(Enum):
 
             sage: K = KnotInfo.K6_3
             sage: Kk = K.khovanov_polynomial(); Kk
-            q^7*t^3 + q^5*t^2 + q^3*t^2 + q^3*t + q*t + 2*q + 2*q^-1 + q^-1*t^-1
-            + q^-3*t^-1 + q^-3*t^-2 + q^-5*t^-2 + q^-7*t^-3
-            sage: Kk2 = K.khovanov_polynomial(var1='p', base_ring=GF(2)); Kk2
-            p^7*t^3 + p^5*t^3 + p^5*t^2 + p^3*t + p^-1 + p^-1*t^-1 + p^-3*t^-2 + p^-7*t^-3
-
+            q^7*t^3 + q^5*t^3*T^2 + q^5*t^2 + q^3*t^2*T^2 + q^3*t^2 + q^3*t + q*t*T^2 + q*t
+             + 2*q + q^-1*T^2 + 2*q^-1 + q^-1*t^-1 + q^-3*t^-1*T^2 + q^-3*t^-1 + q^-3*t^-2
+             + q^-5*t^-2*T^2 + q^-5*t^-2 + q^-7*t^-3
             sage: L = KnotInfo.L5a1_0
             sage: Lk = L.khovanov_polynomial(); Lk
             q^4*t^2 + t + 2 + 2*q^-2 + q^-2*t^-1 + q^-4*t^-2 + q^-6*t^-2 + q^-8*t^-3
@@ -1945,10 +1941,10 @@ class KnotInfoBase(Enum):
 
             sage: Kkr = K.khovanov_polynomial(reduced=True); Kkr
             q^6*t^3 + 2*q^4*t^2 + 2*q^2*t + 3 + 2*q^-2*t^-1 + 2*q^-4*t^-2 + q^-6*t^-3
-            sage: K.khovanov_polynomial(base_ring=QQ, reduced=True) == Kkr
+            sage: K.khovanov_polynomial(ring=QQ, reduced=True) == Kkr
             True
-            sage: Kkr2 = K.khovanov_polynomial(base_ring=GF(2), reduced=True); Kkr2
-            q^6*t^3 + 1 + q^-6*t^-3
+            sage: Kkr2 = K.khovanov_polynomial(var1='p', ring=GF(2), reduced=True); Kkr2
+            p^6*t^3 + 2*p^4*t^2 + 2*p^2*t + 3 + 2*p^-2*t^-1 + 2*p^-4*t^-2 + p^-6*t^-3
             sage: KnotInfo.K8_19.inject()                               # optional database_knotinfo
             Defining K8_19
             sage: K8kr = K8_19.khovanov_polynomial(reduced=True); K8kr  # optional database_knotinfo
@@ -1958,23 +1954,27 @@ class KnotInfoBase(Enum):
 
             sage: K.khovanov_polynomial(odd=True) == Kkr
             True
-            sage: K.khovanov_polynomial(base_ring=QQ, odd=True) == Kkr
+            sage: K.khovanov_polynomial(ring=QQ, odd=True) == Kkr
             True
-            sage: K.khovanov_polynomial(base_ring=GF(2), odd=True) == Kkr2
+            sage: K.khovanov_polynomial(var1='p', ring=GF(2), odd=True) == Kkr2
             True
             sage: K8ko = K8_19.khovanov_polynomial(odd=True); K8ko     # optional database_knotinfo
-            q^16*t^5 + q^10*t^2 + q^6
+            q^14*t^5*T^3 + q^16*t^5 + q^12*t^4*T^2 + q^10*t^2 + q^6
             sage: K8kr == K8ko                                         # optional database_knotinfo
             False
 
+        Caution::
+
+            sage: Kk2 = K.khovanov_polynomial(ring=GF(2))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: unreduced Khovanov polynomial available only for integral homology
 
         Comparison to Sage's results::
 
             sage: Kk == K.link().khovanov_polynomial()
             True
-            sage: Kk2 == K.link().khovanov_polynomial(var1='p', base_ring=GF(2))
-            True
-            sage: Lk == L.link().khovanov_polynomial()
+            sage: Lk == L.link().khovanov_polynomial(ring=QQ)
             True
 
         TESTS::
@@ -1987,36 +1987,47 @@ class KnotInfoBase(Enum):
             1
             sage: K0_1.khovanov_polynomial(odd=True)
             1
-            sage: K0_1.khovanov_polynomial(base_ring=GF(3), reduced=True)
+            sage: K0_1.khovanov_polynomial(ring=GF(3), reduced=True)
             Traceback (most recent call last):
             ...
-            ValueError: characteristic 3 of base ring is not valid
-            sage: K0_1.khovanov_polynomial(base_ring=GF(3), odd=True)
+            ValueError: characteristic 3 of ring is not valid
+            sage: K0_1.khovanov_polynomial(ring=GF(3), odd=True)
             Traceback (most recent call last):
             ...
-            ValueError: characteristic 3 of base ring is not valid
-            sage: L.khovanov_polynomial(base_ring=GF(2))
+            ValueError: characteristic 3 of ring is not valid
+            sage: L.khovanov_polynomial(ring=GF(2))
             Traceback (most recent call last):
             ...
-            NotImplementedError: Khovanov polynomial available only for knots in characteristic 2
+            NotImplementedError: Khovanov polynomial not available for multi-component links for this ring
 
         REFERENCES:
 
         - :wikipedia:`Khovanov_homology`
         - :wikipedia:`Reduced_homology`
         - [ORS2013]_
+        - `KnotInfo <https://knotinfo.org/descriptions/khovanov_unreduced_integral_polynomial.html>`__
         """
-        ch = base_ring.characteristic()
-        integral = ch == 0 and base_ring.is_field()
+        if not ring:
+            if self.is_knot():
+                ring = ZZ
+            else:
+                from sage.rings.rational_field import QQ
+                ring = QQ
+
+        if base_ring:
+            ring = base_ring
+            from sage.misc.superseded import deprecation
+            deprecation(40149, "base_ring is deprecated, use argument ring instead.")
+
+        ch = ring.characteristic()
+        integral = (ch == 0) and (not ring.is_field())
         if not self.is_knot():
             # KnotJob calculated results only available for knots
-            khovanov_polynomial = self[self.items.khovanov_polynomial]
-            KhoHo = True
+            if ch == 0 and ring.is_field():
+                khovanov_polynomial = self[self.items.khovanov_polynomial]
+            else:
+                raise NotImplementedError('Khovanov polynomial not available for multi-component links for this ring')
         else:
-            if KhoHo:
-                KhoHo = False
-                from sage.misc.superseded import deprecation
-                deprecation(37014, "the KhoHo option is deprecated and ignored.")
             if reduced:
                 if integral:
                     khovanov_polynomial = self[self.items.khovanov_reduced_integral_polynomial]
@@ -2025,7 +2036,7 @@ class KnotInfoBase(Enum):
                 elif ch == 2:
                     khovanov_polynomial = self[self.items.khovanov_reduced_mod2_polynomial]
                 else:
-                    raise ValueError('characteristic %s of base ring is not valid' % ch)
+                    raise ValueError('characteristic %s of ring is not valid' % ch)
             elif odd:
                 if integral:
                     khovanov_polynomial = self[self.items.khovanov_odd_integral_polynomial]
@@ -2034,30 +2045,30 @@ class KnotInfoBase(Enum):
                 elif ch == 2:
                     khovanov_polynomial = self[self.items.khovanov_odd_mod2_polynomial]
                 else:
-                    raise ValueError('characteristic %s of base ring is not valid' % ch)
+                    raise ValueError('characteristic %s of ring is not valid' % ch)
             else:
-                khovanov_polynomial = self[self.items.khovanov_unreduced_integral_polynomial]
+                if integral:
+                    khovanov_polynomial = self[self.items.khovanov_unreduced_integral_polynomial]
+                else:
+                    raise NotImplementedError('unreduced Khovanov polynomial available only for integral homology')
 
         if original:
             return khovanov_polynomial
 
         from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-        var_names = [var1, var2]
-        R = LaurentPolynomialRing(base_ring, var_names)
+        if integral:
+            var_names = [var1, var2, torsion]
+        else:
+            var_names = [var1, var2]
+
+        R = LaurentPolynomialRing(ZZ, var_names)
 
         if not khovanov_polynomial and self.crossing_number() == 0:
             if reduced or odd:
                 return R.one()
-            else:
-                return R({(1, 0): 1, (-1, 0): 1})
-
-        if ch == 2:
-            if not self.is_knot():
-                raise NotImplementedError('Khovanov polynomial available only for knots in characteristic 2')
-            if KhoHo:
-                khovanov_torsion_polynomial = self[self.items.khovanov_torsion_polynomial]
-                khovanov_torsion_polynomial = khovanov_torsion_polynomial.replace('Q', 'q')
-                khovanov_polynomial = '%s + %s' % (khovanov_polynomial, khovanov_torsion_polynomial)
+            if integral:
+                return R({(1, 0, 0): 1, (-1, 0, 0): 1})
+            return R({(1, 0): 1, (-1, 0): 1})
 
         if not khovanov_polynomial:
             # given just for links with less than 12 crossings
@@ -2074,10 +2085,8 @@ class KnotInfoBase(Enum):
         lc = {}
         lc['q'] = gens[var1]
         lc['t'] = gens[var2]
-        if ch == 2:
-            lc['T'] = 1
-        else:
-            lc['T'] = 0
+        if integral:
+            lc['T'] = gens[torsion]
 
         return R(eval_knotinfo(khovanov_polynomial, locals=lc))
 
@@ -2212,18 +2221,18 @@ class KnotInfoBase(Enum):
 
         if use_item == self.items.pd_notation:
             return Link(self.pd_notation())
-        elif use_item == self.items.braid_notation:
+        if use_item == self.items.braid_notation:
             return Link(self.braid())
-        elif use_item == self.items.name and snappy:
+        if use_item == self.items.name and snappy:
             if not self.is_knot():
                 use_item = self.items.name_unoriented
             return Link(self[use_item])
-        elif self.is_knot() and not snappy:
+        if self.is_knot() and not snappy:
             # Construction via Gauss and DT-Code only possible for knots
             from sage.knots.knot import Knots
             if use_item == self.items.dt_notation:
                 return Knots().from_dowker_code(self.dt_notation())
-            elif use_item == self.items.gauss_notation:
+            if use_item == self.items.gauss_notation:
                 return Knots().from_gauss_code(self.gauss_notation())
 
         raise ValueError('link construction using %s not possible' % use_item)
@@ -2344,8 +2353,7 @@ class KnotInfoBase(Enum):
                 return False
             if unique:
                 return check_result(res)
-            else:
-                return any(check_result(r) for r in res)
+            return any(check_result(r) for r in res)
 
         from sage.misc.misc import some_tuples
         if SymmetryMutant.unknown.matches(self):
@@ -2440,8 +2448,7 @@ class KnotInfoBase(Enum):
 
         if single:
             return webbrowser.open(filename.diagram_url(self[self.items.diagram], single=single), new=new, autoraise=autoraise)
-        else:
-            return webbrowser.open(filename.diagram_url(self[self.items.name]), new=new, autoraise=autoraise)
+        return webbrowser.open(filename.diagram_url(self[self.items.name]), new=new, autoraise=autoraise)
 
     def knot_atlas_webpage(self, new=0, autoraise=True):
         r"""
@@ -2689,8 +2696,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         """
         if self._is_knot:
             return 'Series of knots %s' % (self._name())
-        else:
-            return 'Series of links %s' % (self._name())
+        return 'Series of links %s' % (self._name())
 
     def __getitem__(self, item):
         r"""

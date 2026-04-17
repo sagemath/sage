@@ -24,7 +24,11 @@ interpreters = custom_target(
     '__init__.py',
   ],
   input: '../../../sage_setup/autogen/interpreters/internal/__init__.py',
-  command: ['../../../sage_setup/autogen/interpreters/__main__.py', '@OUTDIR@'],
+  command: [
+    py,
+    files('../../../sage_setup/autogen/interpreters/__main__.py'),
+    '@OUTDIR@',
+  ],
   # Manually install the generated files instead of using install_sources
   # this is a workaround for https://github.com/mesonbuild/meson/issues/7372
   install: true,
@@ -41,12 +45,12 @@ interpreters = custom_target(
 #endforeach
 
 extension_data = {
-  'wrapper_cc' : interpreters[7],
-  'wrapper_cdf' : interpreters[9],
-  'wrapper_el' : interpreters[11],
-  'wrapper_py' : interpreters[13],
-  'wrapper_rdf' : interpreters[15],
-  'wrapper_rr' : interpreters[17],
+  'wrapper_cc': interpreters[7],
+  'wrapper_cdf': interpreters[9],
+  'wrapper_el': interpreters[11],
+  'wrapper_py': interpreters[13],
+  'wrapper_rdf': interpreters[15],
+  'wrapper_rr': interpreters[17],
 }
 
 interpreters_dep = declare_dependency(
@@ -67,6 +71,6 @@ foreach name, pyx : extension_data
     subdir: 'sage/ext/interpreters',
     install: true,
     include_directories: [inc_cpython, inc_ext, inc_rings, inc_src],
-    dependencies: [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr, pari],
+    dependencies: [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr],
   )
 endforeach

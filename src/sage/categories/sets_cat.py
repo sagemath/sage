@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Sets
 """
@@ -36,9 +35,9 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.misc.lazy_format import LazyFormat
+# Do not use sage.categories.all here to avoid initialization loop
 from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
-# Do not use sage.categories.all here to avoid initialization loop
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 from sage.categories.subquotients import SubquotientsCategory
 from sage.categories.quotients import QuotientsCategory
@@ -74,8 +73,7 @@ def print_compare(x, y):
     """
     if x == y:
         return LazyFormat("%s == %s") % (x, y)
-    else:
-        return LazyFormat("%s != %s") % (x, y)
+    return LazyFormat("%s != %s") % (x, y)
 
 
 class EmptySetError(ValueError):
@@ -288,17 +286,16 @@ class Sets(Category_singleton):
         if choice is None:
             from sage.categories.examples.sets_cat import PrimeNumbers
             return PrimeNumbers()
-        elif choice == "inherits":
+        if choice == "inherits":
             from sage.categories.examples.sets_cat import PrimeNumbers_Inherits
             return PrimeNumbers_Inherits()
-        elif choice == "facade":
+        if choice == "facade":
             from sage.categories.examples.sets_cat import PrimeNumbers_Facade
             return PrimeNumbers_Facade()
-        elif choice == "wrapper":
+        if choice == "wrapper":
             from sage.categories.examples.sets_cat import PrimeNumbers_Wrapper
             return PrimeNumbers_Wrapper()
-        else:
-            raise ValueError("unknown choice")
+        raise ValueError("unknown choice")
 
     class SubcategoryMethods:
 
@@ -985,8 +982,7 @@ class Sets(Category_singleton):
             """
             if hasattr(self, "element_class"):
                 return self._element_constructor_from_element_class
-            else:
-                return NotImplemented
+            return NotImplemented
 
         def _element_constructor_from_element_class(self, *args, **keywords):
             """
@@ -1038,7 +1034,7 @@ class Sets(Category_singleton):
             return parent(element) == self
 
         @abstract_method
-        def __contains__(self, x):
+        def __contains__(self, x) -> bool:
             """
             Test whether the set ``self`` contains the object ``x``.
 
@@ -1889,6 +1885,21 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
     from sage.categories.facade_sets import FacadeSets as Facade
 
     class Infinite(CategoryWithAxiom):
+        class SubcategoryMethods:
+
+            def Finite(self):
+                """
+                Incompatible axiom.
+
+                EXAMPLES::
+
+                    sage: C = NN.category()
+                    sage: C.Finite()
+                    Traceback (most recent call last):
+                    ...
+                    TypeError: incompatible axioms: finite and infinite
+                """
+                raise TypeError("incompatible axioms: finite and infinite")
 
         class ParentMethods:
 
@@ -2517,7 +2528,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     if is_empty:
                         from sage.rings.integer_ring import ZZ
                         return ZZ.zero()
-                    elif any(c in Sets().Infinite() for c in f):
+                    if any(c in Sets().Infinite() for c in f):
                         from sage.rings.infinity import Infinity
                         return Infinity
 
@@ -2780,9 +2791,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 """
                 if hasattr(self, "_name"):
                     return self._name + " over {}".format(self.base_ring())
-                else:
-                    return 'Algebra of {} over {}'.format(self.basis().keys(),
-                                                          self.base_ring())
+                return 'Algebra of {} over {}'.format(self.basis().keys(),
+                                                      self.base_ring())
 
     class WithRealizations(WithRealizationsCategory):
 
@@ -2966,6 +2976,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                       irreducible symmetric group character basis
                     Defining w as shorthand for
                      Symmetric Functions over Integer Ring in the Witt basis
+                    Defining xt as shorthand for
+                     Symmetric Functions over Integer Ring in the irreducible rook monoid character basis
 
                 The messages can be silenced by setting ``verbose=False``::
 
@@ -3117,7 +3129,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 return self.a_realization().an_element()
 
             # TODO: maybe this could be taken care of by Sets.Facade()?
-            def __contains__(self, x):
+            def __contains__(self, x) -> bool:
                 r"""
                 Test whether ``x`` is in ``self``, that is if it is an
                 element of some realization of ``self``.

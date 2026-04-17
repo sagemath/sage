@@ -1,14 +1,24 @@
 from pathlib import Path
 from warnings import warn
 
-from sage.rings.polynomial.pbori.pbori import mod_mon_set
-from .pbori import (BooleSet, GroebnerStrategy, ReductionStrategy,
-                    parallel_reduce, easy_linear_factors)
-from .PyPolyBoRi import (Monomial, Polynomial, Variable,
-                         BoolePolynomialVector)
-from .easy_polynomials import (easy_linear_polynomials as
-                               easy_linear_polynomials_func)
-from .statistics import used_vars_set
+from sage.rings.polynomial.pbori.easy_polynomials import (
+    easy_linear_polynomials as easy_linear_polynomials_func,
+)
+from sage.rings.polynomial.pbori.pbori import (
+    BooleSet,
+    GroebnerStrategy,
+    Monomial,
+    Polynomial,
+    ReductionStrategy,
+    Variable,
+    easy_linear_factors,
+    mod_mon_set,
+    parallel_reduce,
+)
+from sage.rings.polynomial.pbori.PyPolyBoRi import (
+    BoolePolynomialVector,
+)
+from sage.rings.polynomial.pbori.statistics import used_vars_set
 
 
 class GeneratorLimitExceeded(Exception):
@@ -136,8 +146,7 @@ def build_and_print_matrices_deg_colored(v, strat):
     polys_in_mat.sort(key=pkey)
     global mat_counter
     mat_counter = mat_counter + 1
-    from PIL import Image
-    from PIL import ImageColor
+    from PIL import Image, ImageColor
 
     rows = len(polys_in_mat)
     cols = len(m2i)

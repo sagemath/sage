@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Bases for `NCSym`
+Bases for ``NCSym``
 
 AUTHORS:
 
-- Travis Scrimshaw (08-04-2013): Initial version
+- Travis Scrimshaw (08-04-2013): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
@@ -488,7 +488,7 @@ class NCSymBases(Category_realization_of_parent):
             if self.internal_coproduct_on_basis is not NotImplemented:
                 return Hom(self, tensor([self, self]),
                            ModulesWithBasis(self.base_ring()))(on_basis=self.internal_coproduct_on_basis)
-            elif hasattr(self, "internal_coproduct_by_coercion"):
+            if hasattr(self, "internal_coproduct_by_coercion"):
                 return self.internal_coproduct_by_coercion
 
         def internal_coproduct_by_coercion(self, x):

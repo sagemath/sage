@@ -310,8 +310,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             (mins,maxs) = solve_degree2_to_integer_range(n, n-2*(l+1)*(n-tau), (k-1)*l*(l+1))
             if maxs > 0 and maxs >= mins:
                 return max(1, mins)
-            else:
-                return None
+            return None
         s, l = None, 0
         while s is None:
             l += 1
@@ -393,11 +392,10 @@ class GRSGuruswamiSudanDecoder(Decoder):
             if real_max in ZZ:
                 int_max = ZZ(real_max)
                 return (int_max, f(int_max))
-            else:
-                x_f = floor(real_max)
-                x_c = x_f + 1
-                f_f, f_c = f(x_f), f(x_c)
-                return (x_f, f_f) if f_f >= f_c else (x_c, f_c)
+            x_f = floor(real_max)
+            x_c = x_f + 1
+            f_f, f_c = f(x_f), f(x_c)
+            return (x_f, f_f) if f_f >= f_c else (x_c, f_c)
 
         if s is not None:
             # maximising tau under condition

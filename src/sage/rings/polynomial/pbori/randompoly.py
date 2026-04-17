@@ -1,10 +1,16 @@
-from random import Random
 from pprint import pformat
+from random import Random
 
-from .PyPolyBoRi import (Monomial, Polynomial, Variable)
-from .pbori import random_set, set_random_seed, ll_red_nf_redsb
-from .ll import ll_encode
-from .blocks import declare_ring
+from sage.rings.polynomial.pbori.blocks import declare_ring
+from sage.rings.polynomial.pbori.ll import ll_encode
+from sage.rings.polynomial.pbori.pbori import (
+    Monomial,
+    Polynomial,
+    Variable,
+    ll_red_nf_redsb,
+    random_set,
+    set_random_seed,
+)
 
 
 def gen_random_poly(ring, l, deg, vars_set, seed=123):

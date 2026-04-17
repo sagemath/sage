@@ -34,7 +34,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.structure.factory import UniqueFactory
@@ -158,7 +158,6 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
         Verify that :issue:`16530` has been resolved::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
@@ -171,9 +170,9 @@ class FunctionFieldExtensionFactory(UniqueFactory):
         """
         if names is None:
             names = polynomial.variable_name()
-        if not isinstance(names,tuple):
+        if not isinstance(names, tuple):
             names = (names,)
-        return (polynomial,names,polynomial.base_ring())
+        return (polynomial, names, polynomial.base_ring())
 
     def create_object(self, version, key, **extra_args):
         """
@@ -197,7 +196,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
         base_field = f.base_ring()
         if isinstance(base_field, function_field_rational.RationalFunctionField):
             k = base_field.constant_field()
-            if k.is_finite(): # then we are in positive characteristic
+            if k.is_finite():  # then we are in positive characteristic
                 # irreducible and separable
                 if f.is_irreducible() and not all(e % k.characteristic() == 0 for e in f.exponents()):
                     # monic and integral

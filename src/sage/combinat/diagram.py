@@ -346,15 +346,14 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             if r == 0:
                 return "".join(r'\cline{%s-%s}' % (i+1, i+1)
                                for i, j in enumerate(array[0]) if j is not None)
-            elif r == len(array):
+            if r == len(array):
                 return r"\\" + "".join(r'\cline{%s-%s}' % (i+1, i+1)
                                        for i, j in enumerate(array[r-1]) if j is not None)
-            else:
-                out = r"\\" + "".join(r'\cline{%s-%s}' % (i+1, i+1)
-                                      for i, j in enumerate(array[r-1]) if j is not None)
-                out += "".join(r'\cline{%s-%s}' % (i+1, i+1)
-                               for i, j in enumerate(array[r]) if j is not None)
-                return out
+            out = r"\\" + "".join(r'\cline{%s-%s}' % (i+1, i+1)
+                                  for i, j in enumerate(array[r-1]) if j is not None)
+            out += "".join(r'\cline{%s-%s}' % (i+1, i+1)
+                           for i, j in enumerate(array[r]) if j is not None)
+            return out
 
         tex = r'\raisebox{-.6ex}{$\begin{array}[b]{*{%s}{p{0.6ex}}}' % (max(map(len, array)))
         tex += end_line(0)+'\n'
@@ -670,7 +669,7 @@ class Diagrams(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, cells, n_rows=None, n_cols=None, check=True):
         r"""
-        Cosntruct an element of ``self``.
+        Construct an element of ``self``.
 
         EXAMPLES::
 
@@ -1261,7 +1260,7 @@ class NorthwestDiagrams(Diagrams):
         O . . . . . .
 
     It is also possible to turn a Ferrers diagram of a skew partition into a
-    northwest diagram, altough it is more subtle than just using the skew
+    northwest diagram, although it is more subtle than just using the skew
     diagram itself. One must first reflect the partition about a vertical axis
     so that the skew partition looks "backwards"::
 

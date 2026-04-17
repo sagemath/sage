@@ -319,7 +319,6 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(37^8)
             sage: R.has_root_of_unity(144)
             True

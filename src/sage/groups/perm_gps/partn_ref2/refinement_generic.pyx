@@ -345,7 +345,7 @@ cdef class LabelledBranching:
             sig_free(self.father)
             raise MemoryError('allocating LabelledBranching')
         cdef int i
-        for i from 0 <= i < self.n:
+        for i in range(self.n):
             self.father[i] = -1
 
     def __dealloc__(self):
@@ -402,10 +402,10 @@ cdef class LabelledBranching:
         [Feu13]_.
         """
         cdef int i, j, k
-        for i from 0 <= i < self.n:
+        for i in range(self.n):
             self.act_perm[part.entries[i]] = i
 
-        for i from 0 <= i < self.n:
+        for i in range(self.n):
             j = self.father[i]
             if j != -1:
                 j = self.act_perm[j]
@@ -735,7 +735,7 @@ cdef class PartitionRefinement_generic:
         while i>=0:
             pos = self._fixed_not_minimized[i]
             if self._minimization_allowed_on_col(pos):
-                for j from 0 <= j < self._n:
+                for j in range(self._n):
                     if self._part.entries[j] == pos:
                         my_final_pos = j
                         break

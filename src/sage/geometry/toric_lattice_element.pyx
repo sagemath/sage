@@ -85,14 +85,14 @@ Or you can create a homomorphism from one lattice to any other::
 # The "tutorial" above is a truncated version of one in toric_lattice.py.
 
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.libs.gmp.mpz cimport *
 
@@ -101,39 +101,6 @@ from sage.structure.coerce_exceptions import CoercionException
 from sage.structure.element cimport Vector
 from sage.rings.integer cimport Integer
 from sage.structure.richcmp cimport richcmp_not_equal
-
-
-def is_ToricLatticeElement(x):
-    r"""
-    Check if ``x`` is an element of a toric lattice.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is an element of a toric lattice, ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.toric_lattice_element import (
-        ....:   is_ToricLatticeElement)
-        sage: is_ToricLatticeElement(1)
-        doctest:warning...
-        DeprecationWarning: The function is_ToricLatticeElement is deprecated;
-        use 'isinstance(..., ToricLatticeElement)' instead.
-        See https://github.com/sagemath/sage/issues/38126 for details.
-        False
-        sage: e = ToricLattice(3).an_element()
-        sage: e
-        N(1, 0, 0)
-        sage: is_ToricLatticeElement(e)
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38126,
-                       "The function is_ToricLatticeElement is deprecated; "
-                       "use 'isinstance(..., ToricLatticeElement)' instead.")
-    return isinstance(x, ToricLatticeElement)
 
 
 # Why do we need a special class:

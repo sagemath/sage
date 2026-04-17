@@ -148,7 +148,7 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
         ....:         assert are_hyperplanes_in_projective_geometry_parameters(v,k,l+1) is False
         ....:         assert are_hyperplanes_in_projective_geometry_parameters(v,k,l-1) is False
     """
-    import sage.arith.all as arith
+    from sage.arith.misc import gcd
 
     q1 = Integer(v - k)
     q2 = Integer(k - lmbda)
@@ -161,7 +161,7 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
     p1,e1 = q1.factor()[0]
     p2,e2 = q2.factor()[0]
 
-    k = arith.gcd(e1,e2)
+    k = gcd(e1,e2)
     d = e1//k
     q = p1**k
     if e2//k != d-1 or lmbda != (q**(d-1)-1)//(q-1):
@@ -480,12 +480,11 @@ def normalize_hughes_plane_point(p, q):
     for i in [2,1,0]:
         if p[i].is_one():
             return tuple(p)
-        elif not p[i].is_zero():
+        if not p[i].is_zero():
             k = ~p[i]
             if k.is_square():
                 return (p[0] * k,p[1] * k,p[2] * k)
-            else:
-                return ((p[0] * k)**q,(p[1]*k)**q,(p[2]*k)**q)
+            return ((p[0] * k)**q,(p[1]*k)**q,(p[2]*k)**q)
 
 
 def HughesPlane(q2, check=True):
@@ -780,8 +779,7 @@ def projective_plane(n, check=True, existence=False):
 
     if existence:
         return True
-    else:
-        return DesarguesianProjectivePlaneDesign(n, point_coordinates=False, check=check)
+    return DesarguesianProjectivePlaneDesign(n, point_coordinates=False, check=check)
 
 
 def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
@@ -909,10 +907,10 @@ def CremonaRichmondConfiguration():
 
     EXAMPLES::
 
-        sage: H = designs.CremonaRichmondConfiguration(); H                             # needs networkx
+        sage: H = designs.CremonaRichmondConfiguration(); H
         Incidence structure with 15 points and 15 blocks
-        sage: g = graphs.TutteCoxeterGraph()                                            # needs networkx
-        sage: H.incidence_graph().is_isomorphic(g)                                      # needs networkx
+        sage: g = graphs.TutteCoxeterGraph()
+        sage: H.incidence_graph().is_isomorphic(g)
         True
     """
     from sage.graphs.generators.smallgraphs import TutteCoxeterGraph

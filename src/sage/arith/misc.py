@@ -256,7 +256,7 @@ def algebraic_dependency(z, degree, known_bits=None,
                     if norm(LLL[0]) <= 2**((n - 1) / 2) * n.sqrt() * height_bound:
                         raise ValueError("insufficient precision for non-existence proof")
                 return None
-            elif proof and norm(LLL[1]) < 2**((n - 1) / 2) * max(norm(LLL[0]), n.sqrt() * height_bound):
+            if proof and norm(LLL[1]) < 2**((n - 1) / 2) * max(norm(LLL[0]), n.sqrt() * height_bound):
                 raise ValueError("insufficient precision for uniqueness proof")
         if coeffs[degree] < 0:
             coeffs = -coeffs
@@ -371,29 +371,28 @@ def bernoulli(n, algorithm='default', num_threads=1):
     if algorithm == 'arb':
         import sage.libs.arb.arith as arb_arith
         return arb_arith.bernoulli(n)
-    elif algorithm == 'flint':
+    if algorithm == 'flint':
         if n >= 100000:
             from warnings import warn
             warn("flint is known to not be accurate for large Bernoulli numbers")
         from sage.libs.flint.arith_sage import bernoulli_number as flint_bernoulli
         return flint_bernoulli(n)
-    elif algorithm == 'pari' or algorithm == 'gp':
+    if algorithm == 'pari' or algorithm == 'gp':
         from sage.libs.pari import pari
         x = pari(n).bernfrac()         # Use the PARI C library
         return Rational(x)
-    elif algorithm == 'gap':
+    if algorithm == 'gap':
         from sage.libs.gap.libgap import libgap
         x = libgap.Bernoulli(n).sage()
         return Rational(x)
-    elif algorithm == 'magma':
+    if algorithm == 'magma':
         import sage.interfaces.magma
         x = sage.interfaces.magma.magma('Bernoulli(%s)' % n)
         return Rational(x)
-    elif algorithm == 'bernmm':
+    if algorithm == 'bernmm':
         import sage.rings.bernmm
         return sage.rings.bernmm.bernmm_bern_rat(n, num_threads)
-    else:
-        raise ValueError("invalid choice of algorithm")
+    raise ValueError("invalid choice of algorithm")
 
 
 def factorial(n, algorithm='gmp'):
@@ -469,11 +468,10 @@ def factorial(n, algorithm='gmp'):
         raise ValueError("factorial -- must be nonnegative")
     if algorithm == 'gmp':
         return ZZ(n).factorial()
-    elif algorithm == 'pari':
+    if algorithm == 'pari':
         from sage.libs.pari import pari
         return pari.factorial(n)
-    else:
-        raise ValueError('unknown algorithm')
+    raise ValueError('unknown algorithm')
 
 
 def is_prime(n) -> bool:
@@ -996,7 +994,7 @@ def eratosthenes(n):
 
     if n < 2:
         return []
-    elif n == 2:
+    if n == 2:
         return [ZZ(2)]
 
     s = list(range(3, n + 3, 2))
@@ -1705,7 +1703,7 @@ class Sigma:
             124.0
         """
         v = [(n, sigma(n, k)) for n in range(xmin, xmax + 1)]
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
         P = list_plot(v, pointsize=pointsize, rgbcolor=rgbcolor, **kwds)
         if join:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7, 0.7, 0.7), **kwds)
@@ -1843,8 +1841,7 @@ def gcd(a, b=None, **kwargs):
     seq = Sequence(py_scalar_to_element(el) for el in a)
     if seq.universe() is ZZ:
         return GCD_list(seq)
-    else:
-        return __GCD_sequence(seq, **kwargs)
+    return __GCD_sequence(seq, **kwargs)
 
 
 GCD = gcd
@@ -2164,14 +2161,14 @@ def xkcd(n=""):
         # default to last comic
         url = "https://xkcd.com/info.0.json"
     else:
-        url = "https://xkcd.com/{}/info.0.json".format(n)
+        url = f"https://xkcd.com/{n}/info.0.json"
 
     try:
         with contextlib.closing(urlopen(url, context=default_context())) as f:
             data = f.read()
     except HTTPError as error:
         if error.getcode() == 400:  # this error occurs when asking for a non valid comic number
-            raise RuntimeError("could not obtain comic data from {}".format(url))
+            raise RuntimeError(f"could not obtain comic data from {url}")
     except URLError:
         pass
 
@@ -2183,8 +2180,8 @@ def xkcd(n=""):
         img = data['img']
         alt = data['alt']
         title = data['safe_title']
-        link = "http://xkcd.com/{}".format(data['num'])
-        return html('<h1>{}</h1><img src="{}" title="{}">'.format(title, img, alt)
+        link = f"http://xkcd.com/{data['num']}"
+        return html(f'<h1>{title}</h1><img src="{img}" title="{alt}">'
                     + '<div>Source: <a href="{0}" target="_blank">{0}</a></div>'.format(link))
 
     # TODO: raise this error in such a way that it's not clear that
@@ -2236,18 +2233,17 @@ def get_gcd(order):
     EXAMPLES::
 
         sage: sage.arith.misc.get_gcd(4000)
-        <built-in method gcd_int of sage.rings.fast_arith.arith_int object at ...>
+        <bound method arith_int.gcd_int of <sage.rings.fast_arith.arith_int object at ...>
         sage: sage.arith.misc.get_gcd(400000)
-        <built-in method gcd_longlong of sage.rings.fast_arith.arith_llong object at ...>
+        <bound method arith_llong.gcd_longlong of <sage.rings.fast_arith.arith_llong object at ...>
         sage: sage.arith.misc.get_gcd(4000000000)
         <function gcd at ...>
     """
     if order <= 46340:   # todo: don't hard code
         return arith_int().gcd_int
-    elif order <= 2147483647:   # todo: don't hard code
+    if order <= 2147483647:   # todo: don't hard code
         return arith_llong().gcd_longlong
-    else:
-        return gcd
+    return gcd
 
 
 def get_inverse_mod(order):
@@ -2258,18 +2254,17 @@ def get_inverse_mod(order):
     EXAMPLES::
 
         sage: sage.arith.misc.get_inverse_mod(6000)
-        <built-in method inverse_mod_int of sage.rings.fast_arith.arith_int object at ...>
+        <bound method arith_int.inverse_mod_int of <sage.rings.fast_arith.arith_int object at ...>
         sage: sage.arith.misc.get_inverse_mod(600000)
-        <built-in method inverse_mod_longlong of sage.rings.fast_arith.arith_llong object at ...>
+        <bound method arith_llong.inverse_mod_longlong of <sage.rings.fast_arith.arith_llong object at ...>
         sage: sage.arith.misc.get_inverse_mod(6000000000)
         <function inverse_mod at ...>
     """
     if order <= 46340:   # todo: don't hard code
         return arith_int().inverse_mod_int
-    elif order <= 2147483647:   # todo: don't hard code
+    if order <= 2147483647:   # todo: don't hard code
         return arith_llong().inverse_mod_longlong
-    else:
-        return inverse_mod
+    return inverse_mod
 
 # def sqrt_mod(a, m):
 #     """A square root of a modulo m."""
@@ -2451,8 +2446,7 @@ def rational_reconstruction(a, m, algorithm='fast'):
     """
     if algorithm == 'fast':
         return ZZ(a).rational_reconstruction(ZZ(m))
-    else:
-        raise ValueError("unknown algorithm %r" % algorithm)
+    raise ValueError("unknown algorithm %r" % algorithm)
 
 
 def mqrr_rational_reconstruction(u, m, T):
@@ -2496,8 +2490,7 @@ def mqrr_rational_reconstruction(u, m, T):
     if u == 0:
         if m > T:
             return (0, 1)
-        else:
-            return None
+        return None
     n, d = 0, 0
     t0, r0 = 0, m
     t1, r1 = 1, u
@@ -2556,11 +2549,10 @@ def trial_division(n, bound=None):
     """
     if bound is None:
         return ZZ(n).trial_division()
-    else:
-        return ZZ(n).trial_division(bound)
+    return ZZ(n).trial_division(bound)
 
 
-def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
+def factor(n, proof=None, int_=False, algorithm=None, verbose=0, **kwds):
     """
     Return the factorization of ``n``.  The result depends on the
     type of ``n``.
@@ -2734,6 +2726,11 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
         sage: len(factor(2^2203-1,proof=false))
         1
+
+    Test ``limit``::
+
+        sage: factor(2990, limit=10)
+        2 * 5 * 299
     """
     try:
         m = n.factor
@@ -2770,9 +2767,7 @@ def radical(n, *args, **kwds):
         sage: radical(2 * 3^2 * 5^5)
         30
         sage: radical(0)
-        Traceback (most recent call last):
-        ...
-        ArithmeticError: radical of 0 is not defined
+        0
         sage: K.<i> = QuadraticField(-1)                                                # needs sage.rings.number_field
         sage: radical(K(2))                                                             # needs sage.rings.number_field
         i - 1
@@ -2999,8 +2994,7 @@ def is_square(n, root=False):
         except TypeError:
             if m():
                 return True, n.sqrt()
-            else:
-                return False, None
+            return False, None
     return m()
 
 
@@ -3193,7 +3187,7 @@ class Euler_Phi:
             46.0
         """
         v = [(n, euler_phi(n)) for n in range(xmin, xmax + 1)]
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
         P = list_plot(v, pointsize=pointsize, rgbcolor=rgbcolor, **kwds)
         if join:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7, 0.7, 0.7), **kwds)
@@ -3600,6 +3594,13 @@ def CRT_list(values, moduli=None):
         [1, 2, 3]
         sage: ms
         [5, 7, 9]
+
+    Tests for call with length 1 lists (:issue:`40074`)::
+
+        sage: x = CRT_list([1], [2]); x
+        1
+        sage: x = CRT_list([int(1)], [int(2)]); x
+        1
     """
     if not isinstance(values, list) or (moduli is not None and not isinstance(moduli, list)):
         raise ValueError("arguments to CRT_list should be lists")
@@ -3621,10 +3622,11 @@ def CRT_list(values, moduli=None):
         if not values:
             return ZZ.zero()
         if len(values) == 1:
-            return moduli[0].parent()(values[0])
+            return parent(moduli[0])(values[0])
 
     # The result is computed using a binary tree. In typical cases,
     # this scales much better than folding the list from one side.
+    # See also sage.misc.misc_c.balanced_list_prod
     from sage.arith.functions import lcm
     while len(values) > 1:
         vs, ms = values[::2], moduli[::2]
@@ -3634,8 +3636,7 @@ def CRT_list(values, moduli=None):
         values, moduli = vs, ms
     if return_mod:
         return Mod(values[0], moduli[0])
-    else:
-        return values[0] % moduli[0]
+    return values[0] % moduli[0]
 
 
 def CRT_basis(moduli, *, require_coprime_moduli=True):
@@ -3672,7 +3673,7 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
 
     A polynomial example::
 
-        sage: x=polygen(QQ)
+        sage: x = polygen(QQ)
         sage: mods = [x,x^2+1,2*x-3]
         sage: b = CRT_basis(mods)
         sage: b
@@ -3710,8 +3711,7 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
         partial_prod_table = [1]
         for i in range(1, n):
             partial_prod_table.append((1 - e[-i]) * partial_prod_table[-1])
-        for i in range(n):
-            cs.append(e[i] * partial_prod_table[-i-1])
+        cs.extend(e[i] * partial_prod_table[-i - 1] for i in range(n))
         # also return a boolean flag to report that the moduli are not coprime
         return [cs, False]
 
@@ -3762,8 +3762,8 @@ def CRT_vectors(X, moduli):
                  for j in range(len(X[0]))]
     if not res[1] and any((X[i][j] - candidate[j]) % moduli[i] != 0
                           for i in range(n)
-        for j in range(len(X[i]))):
-            raise ValueError("solution does not exist")
+                          for j in range(len(X[i]))):
+        raise ValueError("solution does not exist")
     return candidate
 
 
@@ -4025,7 +4025,7 @@ def binomial(x, m, **kwds):
             pass
         else:
             if c > 0 and any(c.gcd(k) > 1 for k in range(2, m + 1)):
-                raise ZeroDivisionError("factorial({}) not invertible in {}".format(m, P))
+                raise ZeroDivisionError(f"factorial({m}) not invertible in {P}")
         return P(x.binomial(m, **kwds))
 
     # case 3: rational, real numbers, complex numbers -> use pari
@@ -4106,7 +4106,7 @@ def multinomial(*ks):
     return c
 
 
-def binomial_coefficients(n):
+def binomial_coefficients(n) -> dict:
     r"""
     Return a dictionary containing pairs
     `\{(k_1,k_2) : C_{k,n}\}` where `C_{k_n}` are
@@ -4218,8 +4218,7 @@ def multinomial_coefficients(m, n):
     if not m:
         if n:
             return {}
-        else:
-            return {(): 1}
+        return {(): 1}
 
     m = py_scalar_to_element(m)
     n = py_scalar_to_element(n)
@@ -4606,7 +4605,7 @@ def quadratic_residues(n):
         [0, 1, 3, 4, 5, 9]
     """
     n = abs(int(n))
-    return sorted(set(ZZ((a * a) % n) for a in range(n // 2 + 1)))
+    return sorted({ZZ((a * a) % n) for a in range(n // 2 + 1)})
 
 
 class Moebius:
@@ -4735,7 +4734,7 @@ class Moebius:
         """
         values = self.range(xmin, xmax + 1)
         v = [(n, values[n - xmin]) for n in range(xmin, xmax + 1)]
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
         P = list_plot(v, pointsize=pointsize, rgbcolor=rgbcolor, **kwds)
         if join:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7, 0.7, 0.7), **kwds)
@@ -4981,7 +4980,7 @@ def hilbert_symbol(a, b, p, algorithm='pari'):
         from sage.libs.pari import pari
         return ZZ(pari(a).hilbert(b, p))
 
-    elif algorithm == 'direct':
+    if algorithm == 'direct':
         if a == 0 or b == 0:
             return ZZ(0)
 
@@ -5000,7 +4999,7 @@ def hilbert_symbol(a, b, p, algorithm='pari'):
         if a % p == 0:
             if b % p == 0:
                 return hilbert_symbol(p, -(b // p), p) * hilbert_symbol(a // p, b, p)
-            elif p == 2 and (b % 4) == 3:
+            if p == 2 and (b % 4) == 3:
                 if kronecker(a + b, p) == -1:
                     return -one
             elif kronecker(b, p) == -1:
@@ -5014,14 +5013,13 @@ def hilbert_symbol(a, b, p, algorithm='pari'):
         elif p == 2 and (a % 4) == 3 and (b % 4) == 3:
             return -one
         return one
-    elif algorithm == 'all':
+    if algorithm == 'all':
         ans_pari = hilbert_symbol(a, b, p, algorithm='pari')
         ans_direct = hilbert_symbol(a, b, p, algorithm='direct')
         if ans_pari != ans_direct:
             raise RuntimeError("there is a bug in hilbert_symbol; two ways of computing the Hilbert symbol (%s,%s)_%s disagree" % (a, b, p))
         return ans_pari
-    else:
-        raise ValueError(f"algorithm {algorithm} not defined")
+    raise ValueError(f"algorithm {algorithm} not defined")
 
 
 def hilbert_conductor(a, b):
@@ -5063,14 +5061,14 @@ def hilbert_conductor(a, b):
     - Gonzalo Tornaria (2009-03-02)
     """
     a, b = ZZ(a), ZZ(b)
-    return ZZ.prod(p for p in set([2]).union(prime_divisors(a),
-                                             prime_divisors(b))
+    return ZZ.prod(p for p in {2}.union(a.prime_divisors(),
+                                        b.prime_divisors())
                    if hilbert_symbol(a, b, p) == -1)
 
 
 def hilbert_conductor_inverse(d):
     r"""
-    Finds a pair of integers `(a,b)` such that ``hilbert_conductor(a,b) == d``.
+    Find a pair of integers `(a,b)` such that ``hilbert_conductor(a,b) == d``.
 
     The quaternion algebra `(a,b)` over `\QQ` will then have (reduced)
     discriminant `d`.
@@ -5110,7 +5108,7 @@ def hilbert_conductor_inverse(d):
         sage: for i in range(100):                                                      # needs sage.libs.pari
         ....:     d = ZZ.random_element(2**32).squarefree_part()
         ....:     if hilbert_conductor(*hilbert_conductor_inverse(d)) != d:
-        ....:         print("hilbert_conductor_inverse failed for d = {}".format(d))
+        ....:         print(f"hilbert_conductor_inverse failed for d = {d}")
 
     Tests with numpy and gmpy2 numbers::
 
@@ -5138,20 +5136,19 @@ def hilbert_conductor_inverse(d):
         while q % 4 != 3 or kronecker_symbol(d, q) != -1:
             q = next_prime(q)
         return (Z(-q), -d)
+    mo = moebius(d)
+    if mo == 0:
+        raise ValueError("d needs to be squarefree")
+    if d % 2 == 0 and mo * d % 16 != 2:
+        dd = mo * d / 2
     else:
-        mo = moebius(d)
-        if mo == 0:
-            raise ValueError("d needs to be squarefree")
-        if d % 2 == 0 and mo * d % 16 != 2:
-            dd = mo * d / 2
-        else:
-            dd = mo * d
-        q = 1
-        while hilbert_conductor(-q, dd) != d:
-            q += 1
-        if dd % q == 0:
-            dd /= q
-        return (Z(-q), Z(dd))
+        dd = mo * d
+    q = 1
+    while hilbert_conductor(-q, dd) != d:
+        q += 1
+    if dd % q == 0:
+        dd /= q
+    return (Z(-q), Z(dd))
 
 
 ##############################################################################
@@ -5263,7 +5260,7 @@ def falling_factorial(x, a):
         (isinstance(a, Expression) and
          a.is_integer())) and a >= 0:
         return prod(((x - i) for i in range(a)), z=x.parent().one())
-    from sage.functions.all import gamma
+    from sage.functions.gamma import gamma
     return gamma(x + 1) / gamma(x - a + 1)
 
 
@@ -5355,7 +5352,7 @@ def rising_factorial(x, a):
         (isinstance(a, Expression) and
          a.is_integer())) and a >= 0:
         return prod(((x + i) for i in range(a)), z=x.parent().one())
-    from sage.functions.all import gamma
+    from sage.functions.gamma import gamma
     return gamma(x + a) / gamma(x)
 
 
@@ -5451,8 +5448,7 @@ def integer_trunc(i):
     """
     if i >= 0:
         return integer_floor(i)
-    else:
-        return integer_ceil(i)
+    return integer_ceil(i)
 
 
 def two_squares(n):
@@ -5714,10 +5710,9 @@ def three_squares(n):
 
     if x >= b:
         return (a * m, b * m, x * m)
-    elif x >= a:
+    if x >= a:
         return (a * m, x * m, b * m)
-    else:
-        return (x * m, a * m, b * m)
+    return (x * m, a * m, b * m)
 
 
 def four_squares(n):
@@ -5878,15 +5873,15 @@ def sum_of_k_squares(k, n):
                 x, r = n.sqrtrem()
                 if not r:
                     return (x,)
-            raise ValueError("%s is not a sum of 1 square" % n)
+            raise ValueError(f"{n} is not a sum of 1 square")
         if k == 0:
             if n == 0:
-                return tuple()
-            raise ValueError("%s is not a sum of 0 squares" % n)
-        raise ValueError("k = %s must be nonnegative" % k)
+                return ()
+            raise ValueError(f"{n} is not a sum of 0 squares")
+        raise ValueError(f"k = {k} must be nonnegative")
 
     if n < 0:
-        raise ValueError("%s is not a sum of %s squares" % (n, k))
+        raise ValueError(f"{n} is not a sum of {k} squares")
 
     # Recursively subtract the largest square
     t: list[int] = []
@@ -6111,8 +6106,7 @@ def sort_complex_numbers_for_display(nums):
 
     if isinstance(nums[0], tuple):
         return sorted(nums, key=lambda t: _key_complex_for_display(t[0]))
-    else:
-        return sorted(nums, key=_key_complex_for_display)
+    return sorted(nums, key=_key_complex_for_display)
 
 
 def fundamental_discriminant(D):

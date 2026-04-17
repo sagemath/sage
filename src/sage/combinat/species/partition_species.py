@@ -1,8 +1,8 @@
 # sage.doctest: needs sage.libs.flint
 """
-Partition Species
+Partition species
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -15,7 +15,7 @@ Partition Species
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from .species import GenericCombinatorialSpecies
 from sage.arith.misc import factorial
@@ -33,6 +33,9 @@ class PartitionSpeciesStructure(GenericSpeciesStructure):
 
             sage: from sage.combinat.species.partition_species import PartitionSpeciesStructure
             sage: P = species.PartitionSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: s = PartitionSpeciesStructure(P, ['a','b','c'], [[1,2],[3]]); s
             {{'a', 'b'}, {'c'}}
             sage: s == loads(dumps(s))

@@ -396,13 +396,12 @@ Willis of the University of Nebraska at Kearney.
 import warnings
 
 import sage.rings.abc
-
 from sage.arith.misc import rising_factorial
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.symbolic.function import BuiltinFunction, GinacFunction
 from sage.structure.element import Expression, parent
+from sage.symbolic.function import BuiltinFunction, GinacFunction
 
 lazy_import('sage.functions.other', ['factorial', 'binomial'])
 
@@ -455,8 +454,8 @@ class OrthogonalFunction(BuiltinFunction):
             except KeyError:
                 pass
         super().__init__(name=name, nargs=nargs,
-                                                 latex_name=latex_name,
-                                                 conversions=conversions)
+                         latex_name=latex_name,
+                         conversions=conversions)
 
     def eval_formula(self, *args):
         """
@@ -502,9 +501,11 @@ class OrthogonalFunction(BuiltinFunction):
 
     def __call__(self, *args, **kwds):
         """
-        This overides the call method from SageObject to avoid problems with coercions,
-        since the _eval_ method is able to handle more data types than symbolic functions
-        would normally allow.
+        This overrides the call method from SageObject to avoid
+        problems with coercions, since the _eval_ method is able to
+        handle more data types than symbolic functions would normally
+        allow.
+
         Thus we have the distinction between algebraic objects (if n is an integer),
         and else as symbolic function.
 
@@ -523,9 +524,9 @@ class OrthogonalFunction(BuiltinFunction):
         algorithm = kwds.get('algorithm', None)
         if algorithm == 'pari':
             return self.eval_pari(*args, **kwds)
-        elif algorithm == 'recursive':
+        if algorithm == 'recursive':
             return self.eval_recursive(*args, **kwds)
-        elif algorithm == 'maxima':
+        if algorithm == 'maxima':
             kwds['hold'] = True
             return _maxima(self._eval_(*args, **kwds))._sage_()
 
@@ -543,9 +544,11 @@ class ChebyshevFunction(OrthogonalFunction):
     """
     def __call__(self, n, *args, **kwds):
         """
-        This overides the call method from :class:`SageObject` to avoid problems with coercions,
-        since the ``_eval_`` method is able to handle more data types than symbolic functions
-        would normally allow.
+        This overrides the call method from :class:`SageObject` to
+        avoid problems with coercions, since the ``_eval_`` method is
+        able to handle more data types than symbolic functions would
+        normally allow.
+
         Thus we have the distinction between algebraic objects (if n is an integer),
         and else as symbolic function.
 
@@ -603,7 +606,7 @@ class ChebyshevFunction(OrthogonalFunction):
             2*t^2 - 1
             sage: chebyshev_U(2, t)
             4*t^2 - 1
-            sage: parent(chebyshev_T(4, RIF(5)))                                        # needs sage.rings.real_interval_field
+            sage: parent(chebyshev_T(4, RIF(5)))
             Real Interval Field with 53 bits of precision
             sage: RR2 = RealField(5)                                                    # needs sage.rings.real_mpfr
             sage: chebyshev_T(100000, RR2(2))                                           # needs sage.rings.real_mpfr
@@ -835,7 +838,7 @@ class Func_chebyshev_T(ChebyshevFunction):
         """
         if n < 0:
             return self.eval_formula(-n, x)
-        elif n == 0:
+        if n == 0:
             return parent(x).one()
 
         res = parent(x).zero()
@@ -910,8 +913,7 @@ class Func_chebyshev_T(ChebyshevFunction):
         a, b = self._eval_recursive_((n+1)//2, x, both or n % 2)
         if n % 2 == 0:
             return 2*a*a - 1, both and 2*a*b - x
-        else:
-            return 2*a*b - x, both and 2*b*b - 1
+        return 2*a*b - x, both and 2*b*b - 1
 
     def _eval_numpy_(self, n, x):
         """
@@ -1136,8 +1138,7 @@ class Func_chebyshev_U(ChebyshevFunction):
         a, b = self._eval_recursive_((n-1)//2, x, True)
         if n % 2 == 0:
             return (b+a)*(b-a), both and 2*b*(x*b-a)
-        else:
-            return 2*a*(b-x*a), both and (b+a)*(b-a)
+        return 2*a*(b-x*a), both and (b+a)*(b-a)
 
     def _evalf_(self, n, x, **kwds):
         """
@@ -1372,9 +1373,9 @@ class Func_legendre_Q(BuiltinFunction):
             -29113619535/131072*log(-(x + 1)/(x - 1))
         """
         BuiltinFunction.__init__(self, "legendre_Q", nargs=2, latex_name=r"Q",
-                conversions={'maxima': 'legendre_q',
-                             'mathematica': 'LegendreQ',
-                             'maple': 'LegendreQ'})
+                                 conversions={'maxima': 'legendre_q',
+                                              'mathematica': 'LegendreQ',
+                                              'maple': 'LegendreQ'})
 
     def _eval_(self, n, x, *args, **kwds):
         r"""
@@ -1476,7 +1477,7 @@ class Func_legendre_Q(BuiltinFunction):
         from sage.functions.log import ln
         if n == 0:
             return (ln(1+arg)-ln(1-arg))/2
-        elif n == 1:
+        if n == 1:
             return arg/2*(ln(1+arg)-ln(1-arg))-1
 
         x, l = PolynomialRing(QQ, 'x,l').gens()
@@ -1520,7 +1521,7 @@ class Func_legendre_Q(BuiltinFunction):
         from sage.functions.log import ln
         if n == 0:
             return (ln(1+arg)-ln(1-arg))/2
-        elif n == 1:
+        if n == 1:
             return arg/2*(ln(1+arg)-ln(1-arg))-1
 
         arg = SR(arg)
@@ -1879,9 +1880,6 @@ class Func_assoc_legendre_P(BuiltinFunction):
         ex2 = sum(b * arg**a for a, b in enumerate(p))
         return (-1)**(m+n)*ex1*ex2
 
-    from sage.misc.superseded import deprecated_function_alias
-    eval_poly = deprecated_function_alias(25034, eval_gen_poly)
-
     def _derivative_(self, n, m, x, *args, **kwds):
         """
         Return the derivative of ``gen_legendre_P(n,m,x)``.
@@ -1961,7 +1959,7 @@ class Func_assoc_legendre_Q(BuiltinFunction):
             from .trig import sin
             if m in QQ and n in QQ:
                 return -(sqrt(SR.pi()))*sin(SR.pi()/2*(m+n))*gamma(QQ(m+n+1)/2)/gamma(QQ(n-m)/2 + 1)*2**(m-1)
-            elif isinstance(n, Expression) or isinstance(m, Expression):
+            if isinstance(n, Expression) or isinstance(m, Expression):
                 return -(sqrt(SR.pi()))*sin(SR.pi()/2*(m+n))*gamma((m+n+1)/2)/gamma((n-m)/2 + 1)*2**(m-1)
 
     def _evalf_(self, n, m, x, parent=None, **kwds):
@@ -2007,10 +2005,8 @@ class Func_assoc_legendre_Q(BuiltinFunction):
                 denom = sqrt(1 - x**2)*(1 - x**2)**((m-1)/2)
             if m == n + 1:
                 return (-1)**m*(m-1).factorial()*2**n/denom
-            else:
-                return (-1)**m*(m-1).factorial()*((x+1)**m - (x-1)**m)/(2*denom)
-        else:
-            return ((n-m+1)*x*gen_legendre_Q(n, m-1, x)-(n+m-1)*gen_legendre_Q(n-1, m-1, x))/sqrt(1-x**2)
+            return (-1)**m*(m-1).factorial()*((x+1)**m - (x-1)**m)/(2*denom)
+        return ((n-m+1)*x*gen_legendre_Q(n, m-1, x)-(n+m-1)*gen_legendre_Q(n-1, m-1, x))/sqrt(1-x**2)
 
     def _derivative_(self, n, m, x, *args, **kwds):
         """
@@ -2117,11 +2113,12 @@ class Func_hermite(GinacFunction):
             32 x  - 160 x  + 120 x
         """
         GinacFunction.__init__(self, "hermite", nargs=2, latex_name=r"H",
-                conversions={'maxima': 'hermite',
-                             'mathematica': 'HermiteH',
-                             'maple': 'HermiteH',
-                             'fricas': 'hermiteH',
-                             'sympy': 'hermite'}, preserved_arg=2)
+                               conversions={'maxima': 'hermite',
+                                            'mathematica': 'HermiteH',
+                                            'maple': 'HermiteH',
+                                            'fricas': 'hermiteH',
+                                            'sympy': 'hermite'},
+                               preserved_arg=2)
 
 
 hermite = Func_hermite()
@@ -2175,11 +2172,11 @@ class Func_jacobi_P(OrthogonalFunction):
                2
         """
         OrthogonalFunction.__init__(self, "jacobi_P", nargs=4, latex_name=r"P",
-                conversions={'maxima': 'jacobi_p',
-                             'mathematica': 'JacobiP',
-                             'maple': 'JacobiP',
-                             'fricas': 'jacobiP',
-                             'sympy': 'jacobi'})
+                                    conversions={'maxima': 'jacobi_p',
+                                                 'mathematica': 'JacobiP',
+                                                 'maple': 'JacobiP',
+                                                 'fricas': 'jacobiP',
+                                                 'sympy': 'jacobi'})
 
     def _eval_(self, n, a, b, x):
         """
@@ -2416,11 +2413,11 @@ class Func_laguerre(OrthogonalFunction):
             laguerre
         """
         OrthogonalFunction.__init__(self, "laguerre", nargs=2, latex_name=r"L",
-                conversions={'maxima': 'laguerre',
-                             'mathematica': 'LaguerreL',
-                             # 'fricas': 'laguerreL',  3 arguments ?
-                             'maple': 'LaguerreL',
-                             'sympy': 'laguerre'})
+                                    conversions={'maxima': 'laguerre',
+                                                 'mathematica': 'LaguerreL',
+                                                 # 'fricas': 'laguerreL',  3 arguments ?
+                                                 'maple': 'LaguerreL',
+                                                 'sympy': 'laguerre'})
 
     def _eval_(self, n, x, *args, **kwds):
         r"""
@@ -2442,15 +2439,15 @@ class Func_laguerre(OrthogonalFunction):
             sage: laguerre(-9,2)                                                        # needs sage.symbolic
             66769/315*e^2
         """
-        from sage.rings.integer import Integer
         from sage.functions.log import exp
+        from sage.rings.integer import Integer
         ret = self._eval_special_values_(n, x)
         if ret is not None:
             return ret
         if isinstance(n, (Integer, int)):
             if n >= 0 and not hasattr(x, 'prec'):
                 return self._pol_laguerre(n, x)
-            elif n < 0:
+            if n < 0:
                 return exp(x)*laguerre(-n-1, -x)
 
     def _eval_special_values_(self, n, x):
@@ -2513,8 +2510,7 @@ class Func_laguerre(OrthogonalFunction):
             # work around mpmath issue 307
             from sage.functions.log import exp
             return exp(x) * _mpmath_utils_call(_mpmath_laguerre, -n-1, 0, -x, parent=the_parent)
-        else:
-            return _mpmath_utils_call(_mpmath_laguerre, n, 0, x, parent=the_parent)
+        return _mpmath_utils_call(_mpmath_laguerre, n, 0, x, parent=the_parent)
 
     def _derivative_(self, n, x, *args, **kwds):
         """
@@ -2556,6 +2552,7 @@ class Func_gen_laguerre(OrthogonalFunction):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: # needs sage.symbolic
             sage: a, n, x = var('a, n, x')
             sage: gen_laguerre(x, x, x)._sympy_()                                       # needs sympy
@@ -2563,7 +2560,7 @@ class Func_gen_laguerre(OrthogonalFunction):
             sage: maxima(gen_laguerre(1, 2, x, hold=True))
             3*(1-_SAGE_VAR_x/3)
             sage: maxima(gen_laguerre(n, a, gen_laguerre(n, a, x)))
-            gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a, gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,_SAGE_VAR_x))
+            gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,gen_laguerre(_SAGE_VAR_n,_SAGE_VAR_a,_SAGE_VAR_x))
 
         TESTS::
 
@@ -2825,7 +2822,7 @@ class Func_krawtchouk(OrthogonalFunction):
         """
         if j == 0:
             return parent(x).one()
-        elif j == 1:
+        if j == 1:
             return x - n * p
         q = 1 - p
         tm2 = p * q * (n - (j-1) + 1) * krawtchouk.eval_recursive(j-2, x, n, p)
@@ -2912,8 +2909,8 @@ class Func_meixner(OrthogonalFunction):
         if kwds.get('hold', False):
             return None
         if n not in ZZ or n < 0:
-            from sage.functions.hypergeometric import hypergeometric
             from sage.functions.gamma import gamma
+            from sage.functions.hypergeometric import hypergeometric
             return gamma(b + n) / gamma(b) * hypergeometric([-n, -x], [b], 1 - 1/c)
         try:
             return self.eval_formula(n, x, b, c)
@@ -2952,7 +2949,7 @@ class Func_meixner(OrthogonalFunction):
         """
         if n == 0:
             return parent(x).one()
-        elif n == 1:
+        if n == 1:
             return (1 - 1/c) * x + b
         tm2 = (b+n-1) * (b+n-2) * (n - 1) * meixner.eval_recursive(n-2, x, b, c)
         tm1 = (b+n-1) * ((c-1) * x + n-1 + (n-1+b) * c) * meixner.eval_recursive(n-1, x, b, c)
@@ -3089,7 +3086,7 @@ class Func_hahn(OrthogonalFunction):
         """
         if k == 0:
             return parent(x).one()
-        elif k == 1:
+        if k == 1:
             return -(a+b+2) / ((a+1)*n) * x + 1
         A = (k+a+b) * (k+a) * (n-k+1) / ((2*k+a+b-1) * (2*k+a+b))
         C = (k-1) * (k+b-1) * (k+a+b+n) / ((2*k+a+b-2) * (2*k+a+b-1))

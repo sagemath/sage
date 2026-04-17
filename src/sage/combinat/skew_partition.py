@@ -1,5 +1,5 @@
 r"""
-Skew Partitions
+Skew partitions
 
 A skew partition ``skp`` of size `n` is a pair of
 partitions `[p_1, p_2]` where `p_1` is a
@@ -127,7 +127,7 @@ AUTHORS:
 - Travis Scrimshaw (2013-02-11): Factored out ``CombinatorialClass``
 - Trevor K. Karn (2022-08-03): Add ``outside_corners``
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -139,8 +139,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
@@ -589,7 +589,7 @@ class SkewPartition(CombinatorialElement):
         """
         return sum(self.row_lengths())
 
-    def is_connected(self):
+    def is_connected(self) -> bool:
         """
         Return ``True`` if ``self`` is a connected skew partition.
 
@@ -634,16 +634,16 @@ class SkewPartition(CombinatorialElement):
             sage: SkewPartition([[10,10],[1]]).overlap()
             9
         """
-        p,q = self
+        p, q = self
         if len(p) <= 1:
             from sage.rings.infinity import PlusInfinity
             return PlusInfinity()
         if len(q) == 0:
             return min(p)
         q = [q[0]] + list(q)
-        return min(row_lengths_aux([p,q]))
+        return min(row_lengths_aux([p, q]))
 
-    def is_overlap(self, n):
+    def is_overlap(self, n) -> bool:
         r"""
         Return ``True`` if the overlap of ``self`` is at most ``n``.
 
@@ -658,7 +658,7 @@ class SkewPartition(CombinatorialElement):
         """
         return n <= self.overlap()
 
-    def is_ribbon(self):
+    def is_ribbon(self) -> bool:
         r"""
         Return ``True`` if and only if ``self`` is a ribbon.
 
@@ -722,31 +722,30 @@ class SkewPartition(CombinatorialElement):
 
         if l_out == 0:
             return True
-        else:
-            # Find the least u for which lam[u]>mu[u], if it exists
-            # If it does not exist then u will equal l_out
-            u = 0
-            u_test = True
-            while u_test:
-                if u >= l_out or lam[u] > mu[u]:
-                    u_test = False
-                else:
-                    u += 1
+        # Find the least u for which lam[u]>mu[u], if it exists
+        # If it does not exist then u will equal l_out
+        u = 0
+        u_test = True
+        while u_test:
+            if u >= l_out or lam[u] > mu[u]:
+                u_test = False
+            else:
+                u += 1
 
-            # Find the least v strictly greater than u for which
-            # lam[v] != mu[v-1]+1
-            v = u + 1
-            v_test = True
-            while v_test:
-                if v >= l_out or lam[v] != mu[v-1] + 1:
-                    v_test = False
-                else:
-                    v += 1
+        # Find the least v strictly greater than u for which
+        # lam[v] != mu[v-1]+1
+        v = u + 1
+        v_test = True
+        while v_test:
+            if v >= l_out or lam[v] != mu[v-1] + 1:
+                v_test = False
+            else:
+                v += 1
 
-            # Check if lam[i]==mu[i] for all i >= v
-            for i in range(v, l_out):
-                if lam[i] != mu[i]:
-                    return False
+        # Check if lam[i]==mu[i] for all i >= v
+        for i in range(v, l_out):
+            if lam[i] != mu[i]:
+                return False
 
         return True
 
@@ -804,8 +803,7 @@ class SkewPartition(CombinatorialElement):
         if inner == []:
             if outer == []:
                 return []
-            else:
-                return [(0,0)]
+            return [(0,0)]
         icorners = [(0, inner[0])]
         nn = len(inner)
         for i in range(1,nn):
@@ -1127,8 +1125,7 @@ class SkewPartition(CombinatorialElement):
             rqinner = self.inner().quotient(k)
             rqouter = self.outer().quotient(k)
             return [ SkewPartitions()([rqouter[i],rqinner[i]]) for i in range(k) ]
-        else:
-            raise ValueError("quotient map is only defined for skew partitions with inner and outer partitions having the same core")
+        raise ValueError("quotient map is only defined for skew partitions with inner and outer partitions having the same core")
 
     def rows_intersection_set(self):
         r"""
@@ -1341,8 +1338,7 @@ def row_lengths_aux(skp):
     """
     if skp[0] == []:
         return []
-    else:
-        return [x[0] - x[1] for x in zip(skp[0], skp[1])]
+    return [x[0] - x[1] for x in zip(skp[0], skp[1])]
 
 
 class SkewPartitions(UniqueRepresentation, Parent):
@@ -1385,10 +1381,9 @@ class SkewPartitions(UniqueRepresentation, Parent):
             if row_lengths is not None:
                 raise ValueError("you can only specify one of n or row_lengths")
             return SkewPartitions_n(n, overlap)
-        elif row_lengths is not None:
+        if row_lengths is not None:
             return SkewPartitions_rowlengths(row_lengths, overlap)
-        else:
-            return SkewPartitions_all()
+        return SkewPartitions_all()
 
     def __init__(self, is_infinite=False):
         """
@@ -1551,10 +1546,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
         if x[1] not in p:
             return False
 
-        if not p(x[0]).contains(p(x[1])):
-            return False
-
-        return True
+        return p(x[0]).contains(p(x[1]))
 
     def from_row_and_column_length(self, rowL, colL):
         """

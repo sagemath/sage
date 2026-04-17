@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Bialgebras with basis
 """
@@ -12,7 +11,6 @@ Bialgebras with basis
 
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.tensor import tensor
-from sage.misc.superseded import deprecated_function_alias
 
 
 class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
@@ -213,9 +211,6 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             else:
                 T = lambda x: x
             return self.convolution_product([T] * n)
-
-        adams_operator = deprecated_function_alias(36396,
-                                                   convolution_power_of_id)
 
         def convolution_product(self, *maps):
             r"""

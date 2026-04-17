@@ -305,7 +305,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: ASMs = AlternatingSignMatrices(3).list()
         sage: ncp = FullyPackedLoop(ASMs[1]).link_pattern() # fpl's gyration orbit size is 2
         sage: rotated_ncp=[]
-        sage: for (a,b) in ncp:
+        sage: for a, b in ncp:
         ....:     for i in range(5):
         ....:         a,b=a%6+1,b%6+1;
         ....:     rotated_ncp.append((a,b))
@@ -316,7 +316,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: fpl = FullyPackedLoop(ASMs[0])
         sage: ncp = fpl.link_pattern() # fpl's gyration size is 3
         sage: rotated_ncp=[]
-        sage: for (a,b) in ncp:
+        sage: for a, b in ncp:
         ....:     for i in range(5):
         ....:         a,b=a%6+1,b%6+1;
         ....:     rotated_ncp.append((a,b))
@@ -329,7 +329,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: fpl = FullyPackedLoop(mat) # n=7
         sage: ncp = fpl.link_pattern()
         sage: rotated_ncp=[]
-        sage: for (a,b) in ncp:
+        sage: for a, b in ncp:
         ....:     for i in range(13):
         ....:         a,b=a%14+1,b%14+1;
         ....:     rotated_ncp.append((a,b))
@@ -342,7 +342,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: fpl = FullyPackedLoop(mat) # n =6
         sage: ncp = fpl.link_pattern()
         sage: rotated_ncp=[]
-        sage: for (a,b) in ncp:
+        sage: for a, b in ncp:
         ....:     for i in range(11):
         ....:         a,b=a%12+1,b%12+1;
         ....:     rotated_ncp.append((a,b))
@@ -760,7 +760,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
           its order. Setting this option to ``True`` makes it unlikely to
           have two neighboring links with the same color.
 
-        - ``loop_fill`` -- (boolean, optional) whether to fill the interior of the loops
+        - ``loop_fill`` -- boolean (default: ``False``); whether to fill the interior of the loops
 
         EXAMPLES:
 
@@ -1028,8 +1028,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
                 assert orbit2[0] == (i1, j1) and orbit2[1] == (i0, j0)
                 return orbit2[:1:-1] + orbit
             return orbit
-        else:
-            return orbit
+        return orbit
 
     def link_pattern(self):
         r"""
@@ -1080,7 +1079,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: ASMs = AlternatingSignMatrices(3).list()
             sage: ncp = FullyPackedLoop(ASMs[1]).link_pattern()
             sage: rotated_ncp=[]
-            sage: for (a,b) in ncp:
+            sage: for a, b in ncp:
             ....:     for i in range(5):
             ....:         a,b=a%6+1,b%6+1;
             ....:     rotated_ncp.append((a,b))
@@ -1091,7 +1090,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: fpl = FullyPackedLoop(ASMs[0])
             sage: ncp = fpl.link_pattern()
             sage: rotated_ncp=[]
-            sage: for (a,b) in ncp:
+            sage: for a, b in ncp:
             ....:     for i in range(5):
             ....:         a,b=a%6+1,b%6+1;
             ....:     rotated_ncp.append((a,b))
@@ -1104,7 +1103,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: fpl = FullyPackedLoop(mat) # n=7
             sage: ncp = fpl.link_pattern()
             sage: rotated_ncp=[]
-            sage: for (a,b) in ncp:
+            sage: for a, b in ncp:
             ....:     for i in range(13):
             ....:         a,b=a%14+1,b%14+1;
             ....:     rotated_ncp.append((a,b))
@@ -1117,7 +1116,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: fpl = FullyPackedLoop(mat)
             sage: ncp = fpl.link_pattern()
             sage: rotated_ncp=[]
-            sage: for (a,b) in ncp:
+            sage: for a, b in ncp:
             ....:     for i in range(11):
             ....:         a,b=a%12+1,b%12+1;
             ....:     rotated_ncp.append((a,b))
@@ -1487,11 +1486,11 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
         i, j = pos
         if i == -1:
             return j//2
-        elif j == n:
+        if j == n:
             return (n + 1) // 2 + i // 2
-        elif i == n:
+        if i == n:
             return n + (n - j) // 2
-        elif j == -1:
+        if j == -1:
             return 3 * n // 2 + (n - i) // 2
 
     def _boundaries(self):

@@ -285,8 +285,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             def val(x):
                 if x == -1:
                     return 2
-                else:
-                    return E(2 * x) + ~E(2 * x)
+                return E(2 * x) + ~E(2 * x)
         elif isinstance(base_ring, sage.rings.abc.NumberField_quadratic):
             from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 
@@ -295,22 +294,20 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             def val(x):
                 if x == -1:
                     return 2
-                else:
-                    return base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
+                return base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
         else:
             def val(x):
                 if x == -1:
                     return 2
-                elif x == 1:
+                if x == 1:
                     return -2
-                elif x == 2:
+                if x == 2:
                     return 0
-                elif x == 3:
+                if x == 3:
                     return 1
-                else:
-                    from sage.functions.trig import cos
-                    from sage.symbolic.constants import pi
-                    return base_ring(2 * cos(pi / x))
+                from sage.functions.trig import cos
+                from sage.symbolic.constants import pi
+                return base_ring(2 * cos(pi / x))
         gens = [one + MS([SparseEntry(i, j, val(coxeter_matrix[index_set[i], index_set[j]]))
                           for j in range(n)])
                 for i in range(n)]
@@ -417,7 +414,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         """
         return self._matrix.bilinear_form(self.base_ring().fraction_field())
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``True`` if this group is finite.
 
@@ -448,7 +445,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         # the category of ``self``.
         return "Finite" in self.category().axioms()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Return whether ``self`` is commutative.
 
@@ -734,7 +731,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         def first_descent(self, side='right', index_set=None, positive=False):
             """
             Return the first left (resp. right) descent of ``self``, as
-            ane element of ``index_set``, or ``None`` if there is none.
+            an element of ``index_set``, or ``None`` if there is none.
 
             See :meth:`descents` for a description of the options.
 
@@ -810,7 +807,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                 return [I[i] for i in index_set if not _matrix_test_right_descent(M, i, n, zero)]
             return [I[i] for i in index_set if _matrix_test_right_descent(M, i, n, zero)]
 
-        def has_right_descent(self, i):
+        def has_right_descent(self, i) -> bool:
             r"""
             Return whether ``i`` is a right descent of ``self``.
 
@@ -921,6 +918,6 @@ def _matrix_test_right_descent(M, i, n, zero):
         c = M[j, i]
         if c < zero:
             return True
-        elif c > zero:
+        if c > zero:
             return False
     raise AssertionError('a zero column, so there must be a bug')

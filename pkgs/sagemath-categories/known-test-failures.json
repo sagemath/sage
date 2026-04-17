@@ -803,10 +803,6 @@
     "sage.cpython.type": {
         "ntests": 7
     },
-    "sage.cpython.wrapperdescr": {
-        "failed": true,
-        "ntests": 0
-    },
     "sage.doctest.check_tolerance": {
         "failed": true,
         "ntests": 19

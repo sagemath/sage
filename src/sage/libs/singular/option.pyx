@@ -166,7 +166,7 @@ cdef class LibSingularOptions_abstract:
             sage: opt['degBound']
             2
         """
-        for k,v in kwds.iteritems():
+        for k, v in kwds.items():
             self[k] = v
 
     def __getitem__(self, name):
@@ -196,7 +196,7 @@ cdef class LibSingularOptions_abstract:
         try:
             return bool(self.global_options[0] & self.name_map[name])
         except KeyError:
-            raise NameError("Option '%s' unknown."%(name,))
+            raise NameError("Option '%s' unknown." % (name,))
 
     def __setitem__(self, name, value):
         """
@@ -226,7 +226,7 @@ cdef class LibSingularOptions_abstract:
                 global Kstd1_mu
                 Kstd1_mu = value
         except KeyError:
-            raise NameError("Option '%s' unknown."%(name,))
+            raise NameError("Option '%s' unknown." % (name,))
 
     def __int__(self):
         """
@@ -295,7 +295,7 @@ cdef class LibSingularOptions_abstract:
             sage: sopt
             general options for libSingular (current value 0x06000082)
         """
-        return "%s options for libSingular (current value 0x%08x)"%(self.name, self.global_options[0])
+        return "%s options for libSingular (current value 0x%08x)" % (self.name, self.global_options[0])
 
 
 cdef class LibSingularOptions(LibSingularOptions_abstract):
@@ -615,7 +615,7 @@ cdef class LibSingularOptionsContext:
         self.bck_degBound.append(Kstd1_deg)
         self.bck_multBound.append(Kstd1_mu)
         opt = self.opt.__class__()
-        for k,v in self.options.iteritems():
+        for k, v in self.options.items():
             opt[k] = v
 
     def __call__(self, **kwds):
@@ -631,8 +631,7 @@ cdef class LibSingularOptionsContext:
             ....:   opt['redTail']
             False
         """
-        new = self.__class__(self.opt, **kwds)
-        return new
+        return self.__class__(self.opt, **kwds)
 
     def __exit__(self, typ, value, tb):
         """
@@ -651,7 +650,7 @@ cdef class LibSingularOptionsContext:
         Kstd1_deg = self.bck_degBound.pop()
         Kstd1_mu  = self.bck_multBound.pop()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -659,7 +658,7 @@ cdef class LibSingularOptionsContext:
             sage: opt_ctx
             general options context for libSingular
         """
-        return "%s options context for libSingular"%(self.opt.name)
+        return "%s options context for libSingular" % (self.opt.name)
 
 
 opt = LibSingularOptions()

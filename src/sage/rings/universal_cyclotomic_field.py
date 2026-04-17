@@ -581,7 +581,6 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         Using a non-standard embedding::
 
-            sage: # needs sage.symbolic
             sage: CF = CyclotomicField(5, embedding=CC(exp(4*pi*i/5)))
             sage: x = E(5)
             sage: CC(x)

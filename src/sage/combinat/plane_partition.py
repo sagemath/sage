@@ -1,11 +1,11 @@
 r"""
-Plane Partitions
+Plane partitions
 
 AUTHORS:
 
-- Jang Soo Kim (2016): Initial implementation
-- Jessica Striker (2016): Added additional methods
-- Kevin Dilks (2021): Added symmetry classes
+- Jang Soo Kim (2016): initial implementation
+- Jessica Striker (2016): added additional methods
+- Kevin Dilks (2021): added symmetry classes
 """
 # ****************************************************************************
 #       Copyright (C) 2016 Jang Soo Kim <jangsookim@skku.edu>,
@@ -25,8 +25,7 @@ AUTHORS:
 # ****************************************************************************
 
 from __future__ import annotations
-from typing import NewType
-from collections.abc import Iterator
+from typing import NewType, TYPE_CHECKING
 
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -43,6 +42,9 @@ from sage.arith.misc import Sigma, binomial, factorial
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.modules.free_module_element', 'vector')
 
@@ -139,7 +141,7 @@ class PlanePartition(ClonableArray,
                 self._max_y = 0
                 self._max_z = 0
         else:
-            (self._max_x, self._max_y, self._max_z) = self.parent()._box
+            self._max_x, self._max_y, self._max_z = self.parent()._box
 
     def __richcmp__(self, other, op):
         r"""
@@ -838,7 +840,7 @@ class PlanePartition(ClonableArray,
         P = self.parent()
         if tableau_only:
             return T
-        elif P._box is None or P._box[0] == P._box[1]:
+        if P._box is None or P._box[0] == P._box[1]:
             return P.element_class(P, T, check=False)
         new_box = (P._box[1], P._box[0], P._box[2])
         newP = PlanePartitions(new_box, symmetry=P._symmetry)
@@ -912,9 +914,7 @@ class PlanePartition(ClonableArray,
             sage: PlanePartition([]).is_CSPP()
             True
         """
-        if self.z_tableau() == self.y_tableau():
-            return True
-        return False
+        return self.z_tableau() == self.y_tableau()
 
     def is_TSPP(self) -> bool:
         r"""
@@ -1100,17 +1100,14 @@ class PlanePartition(ClonableArray,
             [(0, 0, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (2, 0, 0)]
         """
         from sage.combinat.posets.poset_examples import posets
-        (a, b, c) = (self._max_x, self._max_y, self._max_z)
-        Q = posets.ProductOfChains([a, b, c])
-        count = 0
+        abc = [self._max_x, self._max_y, self._max_z]
+        Q = posets.ProductOfChains(abc)
         generate = []
         for i, row in enumerate(self):
             for j, val in enumerate(row):
                 if val > 0:
-                    generate.append((i, j, val-1))
-            count += 1
-        oi = Q.order_ideal(generate)
-        return oi
+                    generate.append((i, j, val - 1))
+        return Q.order_ideal(generate)
 
     def maximal_boxes(self) -> list:
         r"""
@@ -1360,30 +1357,29 @@ class PlanePartitions(UniqueRepresentation, Parent):
             if isinstance(args[0], (int, Integer)):
                 if symmetry is None:
                     return PlanePartitions_n(args[0])
-                else:
-                    raise ValueError("the number of boxes may only be specified if no symmetry is required")
+                raise ValueError("the number of boxes may only be specified if no symmetry is required")
             box_size = args[0]
 
         box_size = tuple(box_size)
         if symmetry is None:
             return PlanePartitions_box(box_size)
-        elif symmetry == 'SPP':
+        if symmetry == 'SPP':
             return PlanePartitions_SPP(box_size)
-        elif symmetry == 'CSPP':
+        if symmetry == 'CSPP':
             return PlanePartitions_CSPP(box_size)
-        elif symmetry == 'TSPP':
+        if symmetry == 'TSPP':
             return PlanePartitions_TSPP(box_size)
-        elif symmetry == 'SCPP':
+        if symmetry == 'SCPP':
             return PlanePartitions_SCPP(box_size)
-        elif symmetry == 'TCPP':
+        if symmetry == 'TCPP':
             return PlanePartitions_TCPP(box_size)
-        elif symmetry == 'SSCPP':
+        if symmetry == 'SSCPP':
             return PlanePartitions_SSCPP(box_size)
-        elif symmetry == 'CSTCPP':
+        if symmetry == 'CSTCPP':
             return PlanePartitions_CSTCPP(box_size)
-        elif symmetry == 'CSSCPP':
+        if symmetry == 'CSSCPP':
             return PlanePartitions_CSSCPP(box_size)
-        elif symmetry == 'TSSCPP':
+        if symmetry == 'TSSCPP':
             return PlanePartitions_TSSCPP(box_size)
 
         raise ValueError("invalid symmetry class option")
@@ -2673,26 +2669,23 @@ class PlanePartitions_SCPP(PlanePartitions):
                                         for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+1))
                                    * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
                                           for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+1)))
-                else:
-                    T = (t-1) // 2
-                    return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                        for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+1))
-                                   * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                          for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+2)))
-            else:
-                S = (s-1) // 2
-                if t % 2 == 0:
-                    T = t // 2
-                    return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                        for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+1))
-                                   * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                          for i in range(1, R+1) for j in range(1, S+2) for k in range(1, T+1)))
-                else:
-                    T = (t-1) // 2
-                    return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                        for i in range(1, R+1) for j in range(1, S+2) for k in range(1, T+1))
-                                   * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                          for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+2)))
+                T = (t-1) // 2
+                return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
+                                    for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+1))
+                               * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
+                                      for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+2)))
+            S = (s-1) // 2
+            if t % 2 == 0:
+                T = t // 2
+                return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
+                                    for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+1))
+                               * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
+                                      for i in range(1, R+1) for j in range(1, S+2) for k in range(1, T+1)))
+            T = (t-1) // 2
+            return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
+                                for i in range(1, R+1) for j in range(1, S+2) for k in range(1, T+1))
+                           * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
+                                  for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+2)))
         # r is odd
         R = (r-1) // 2
         if s % 2 == 0:
@@ -2703,12 +2696,11 @@ class PlanePartitions_SCPP(PlanePartitions):
                                     for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+1))
                                * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
                                       for i in range(1, R+2) for j in range(1, S+1) for k in range(1, T+1)))
-            else:
-                T = (t-1) // 2
-                return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                    for i in range(1, R+2) for j in range(1, S+1) for k in range(1, T+1))
-                               * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
-                                      for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+2)))
+            T = (t-1) // 2
+            return Integer(prod(Integer(i+j+k-1) / Integer(i+j+k-2)
+                                for i in range(1, R+2) for j in range(1, S+1) for k in range(1, T+1))
+                           * prod(Integer(i+j+k-1) / Integer(i+j+k-2)
+                                  for i in range(1, R+1) for j in range(1, S+1) for k in range(1, T+2)))
         # r and s are both odd
         S = (s-1) // 2
         if t % 2 == 0:

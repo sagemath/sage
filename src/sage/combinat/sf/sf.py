@@ -2,7 +2,7 @@
 """
 Symmetric functions, with their multiple realizations
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2009-2012 Jason Bandlow <jbandlow@gmail.com>
 #                     2012 Anne Schilling <anne at math.ucdavis.edu>
@@ -18,28 +18,30 @@ Symmetric functions, with their multiple realizations
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
+from sage.categories.fields import Fields
 from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
-from sage.categories.fields import Fields
 from sage.categories.rings import Rings
-from sage.combinat.partition import Partitions
+from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.partition import Partitions
 from sage.rings.rational_field import QQ
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
-from . import schur
-from . import monomial
-from . import powersum
-from . import elementary
-from . import homogeneous
-from . import hall_littlewood
-from . import jack
-from . import macdonald
-from . import llt
+from . import (
+    elementary,
+    hall_littlewood,
+    homogeneous,
+    jack,
+    llt,
+    macdonald,
+    monomial,
+    powersum,
+    schur,
+)
 
 
 class SymmetricFunctions(UniqueRepresentation, Parent):
@@ -58,10 +60,11 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     .. rubric:: The algebra of symmetric functions
 
-    The algebra of symmetric functions is the unique free commutative graded
-    connected algebra over the given ring, with one generator in each degree.  It
-    can also be thought of as the inverse limit (in the category of graded
-    algebras) of the algebra of symmetric polynomials in `n` variables as `n \rightarrow \infty`.
+    The algebra of symmetric functions is the unique free commutative
+    graded connected algebra over the given ring, with one generator
+    in each degree.  It can also be thought of as the inverse limit
+    (in the category of graded algebras) of the algebra of symmetric
+    polynomials in `n` variables as `n \rightarrow \infty`.
     Sage allows us to construct the algebra of symmetric functions over
     any ring.  We will use a base ring of rational numbers in these first
     examples::
@@ -99,7 +102,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     the power sum basis.  The basis itself is accessible through::
 
         sage: p.basis()
-        Lazy family (Term map from Partitions to Symmetric Functions over Rational Field in the powersum basis(i))_{i in Partitions}
+        Lazy family (Term map from Partitions to Symmetric Functions over
+        Rational Field in the powersum basis(i))_{i in Partitions}
         sage: p.basis().keys()
         Partitions
 
@@ -135,16 +139,18 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         sage: p[[]]
         p[]
 
-    .. NOTE:: When elements are constructed using the ``p[something ]`` syntax ,
-       an error will be raised if the input cannot be interpreted as a partition.
-       This is *not* the case when ``p.basis()`` is used::
+    .. NOTE::
 
-        sage: p['something']
-        Traceback (most recent call last):
-        ...
-        ValueError: all parts of 'something' should be nonnegative integers
-        sage: p.basis()['something']
-        p'something'
+        When elements are constructed using the ``p[something ]`` syntax, an
+        error will be raised if the input cannot be interpreted as a partition.
+        This is *not* the case when ``p.basis()`` is used::
+
+            sage: p['something']
+            Traceback (most recent call last):
+            ...
+            ValueError: all parts of 'something' should be nonnegative integers
+            sage: p.basis()['something']
+            p'something'
 
     Elements of ``p`` are linear combinations of such compositions::
 
@@ -774,7 +780,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     Here is an example of its use::
 
         sage: QQqt = QQ['q','t'].fraction_field()
-        sage: (q,t) = QQqt.gens()
+        sage: q, t = QQqt.gens()
         sage: st = SFA_st(SymmetricFunctions(QQqt),t)
         sage: st
         Symmetric Functions over Fraction Field of Multivariate Polynomial
@@ -795,32 +801,32 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-        .. [FD06] Francois Descouens, Making research on symmetric functions using MuPAD-Combinat.
-                 In Andres Iglesias and Nobuki Takayama, editors, 2nd International Congress on Mathematical Software (ICMS'06),
-                 volume 4151 of LNCS, pages 407-418, Castro Urdiales, Spain, September 2006. Springer-Verlag.
-                 :arxiv:`0806.1873`
+    .. [FD06] Francois Descouens, Making research on symmetric functions using MuPAD-Combinat.
+             In Andres Iglesias and Nobuki Takayama, editors, 2nd International Congress on Mathematical Software (ICMS'06),
+             volume 4151 of LNCS, pages 407-418, Castro Urdiales, Spain, September 2006. Springer-Verlag.
+             :arxiv:`0806.1873`
 
-        .. [HT04] Florent Hivert and Nicolas M. Thiery,
-                 MuPAD-Combinat, an open-source package for research in algebraic combinatorics.
-                 Sem. Lothar. Combin., 51 :Art. B51z, 70 pp. (electronic), 2004.
-                 http://mupad-combinat.sf.net/.
+    .. [HT04] Florent Hivert and Nicolas M. Thiery,
+             MuPAD-Combinat, an open-source package for research in algebraic combinatorics.
+             Sem. Lothar. Combin., 51 :Art. B51z, 70 pp. (electronic), 2004.
+             http://mupad-combinat.sf.net/.
 
-        .. [MAC] Ian Macdonald, Symmetric Functions and Orthogonal Polynomials,
-                 Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs.
-                 Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp.
-                 ISBN: 0-19-853489-2
+    .. [MAC] Ian Macdonald, Symmetric Functions and Orthogonal Polynomials,
+             Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs.
+             Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp.
+             ISBN: 0-19-853489-2
 
-        .. [STA] Richard Stanley, Enumerative combinatorics. Vol. 2.
-                 With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin.
-                 Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp.
-                 ISBN: 0-521-56069-1; 0-521-78987-7
+    .. [STA] Richard Stanley, Enumerative combinatorics. Vol. 2.
+             With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin.
+             Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp.
+             ISBN: 0-521-56069-1; 0-521-78987-7
 
-        .. [ST94]  Scharf, Thomas, Thibon, Jean-Yves,
-                 A Hopf-algebra approach to inner plethysm.
-                 Adv. Math.  104  (1994),  no. 1, 30-58.
-                 :doi:`10.1006/aima.1994.1019`
+    .. [ST94]  Scharf, Thomas, Thibon, Jean-Yves,
+             A Hopf-algebra approach to inner plethysm.
+             Adv. Math.  104  (1994),  no. 1, 30-58.
+             :doi:`10.1006/aima.1994.1019`
 
-    .. rubric:: Further tests
+    .. RUBRIC:: Further tests
 
     TESTS::
 
@@ -883,7 +889,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.schur()
 
-    def _repr_(self): # could be taken care of by the category
+    def _repr_(self):  # could be taken care of by the category
         r"""
         Representation of ``self``
 
@@ -905,7 +911,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         """
         return schur.SymmetricFunctionAlgebra_schur(self)
     s = schur
-    Schur = schur # Currently needed by SymmetricFunctions.__init_extra__
+    Schur = schur  # Currently needed by SymmetricFunctions.__init_extra__
 
     def powersum(self):
         r"""
@@ -918,7 +924,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         """
         return powersum.SymmetricFunctionAlgebra_power(self)
     p = powersum
-    power = powersum # Todo: get rid of this one when it won't be needed anymore
+    power = powersum
+    # Todo: get rid of the line above when it won't be needed anymore
 
     def complete(self):
         r"""
@@ -957,7 +964,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         return monomial.SymmetricFunctionAlgebra_monomial(self)
     m = monomial
 
-    def witt(self, coerce_h=None, coerce_e=None, coerce_p=None):
+    def witt(self):
         r"""
         The Witt basis of the symmetric functions.
 
@@ -965,22 +972,12 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
             sage: SymmetricFunctions(QQ).witt()
             Symmetric Functions over Rational Field in the Witt basis
-
-        TESTS::
-
-            sage: SymmetricFunctions(QQ).witt(coerce_p=True)
-            doctest:warning
-            ...
-            DeprecationWarning: the coerce_* inputs are deprecated and ignored
-            See https://github.com/sagemath/sage/issues/37736 for details.
-            Symmetric Functions over Rational Field in the Witt basis
         """
-        if coerce_h is not None or coerce_e is not None or coerce_p is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(37736, "the coerce_* inputs are deprecated and ignored")
         from . import witt
         return witt.SymmetricFunctionAlgebra_witt(self)
+
     w = witt
+
     Witt = witt
 
     def irreducible_symmetric_group_character(self):
@@ -1082,6 +1079,68 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         return InducedTrivialCharacterBasis(self)
 
     ht = induced_trivial_character
+
+    def irreducible_rook_character(self):
+        r"""
+        The irreducible character basis of the rook monoid as
+        symmetric functions.
+
+        It might also be called the induced irreducible character
+        basis because it is the character of an irreducible
+        `S_k` module induced to `S_n` where `n > k`.
+
+        The formula for the rook irreducible character basis indexed by the
+        partition ``lam`` is given by the formula
+
+        .. MATH::
+
+            \sum_{\gamma} \left\langle s_\lambda, p_\gamma \right\rangle
+            \frac{{\overline {\mathbf p}}_\gamma}{z_\gamma},
+
+        where if `\gamma = (1^{m_1}2^{m_2}\cdots \ell^{m_\ell})` then
+
+        .. MATH::
+
+            {\overline {\mathbf p}}_\gamma =
+            \prod_{i \ge 1} i^{m_i} \prod_{n = 0}^{m_i-1} \left(
+            \Big( \frac{1}{i} \sum_{d|i} \mu(i/d) p_d \Big) - n \right) .
+
+        Let `\phi_n` be the Frobenius image of the symmetric function
+        as a character, then
+
+        .. MATH::
+
+            \phi_n( {\tilde x}_{\lambda} ) = s_{\lambda} s_{n - |\lambda|}
+
+        This basis appears implicitly in a paper by Assaf and Speyer [AS2020]_.
+        The basis appears explicitly in a paper by Orellana and Zabrocki [OZ2019]_.
+
+        .. SEEALSO::
+
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.character_to_frobenius_image`,
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.eval_at_permutation_roots`
+
+        EXAMPLES::
+
+            sage: SymmetricFunctions(QQ).irreducible_rook_character()
+            Symmetric Functions over Rational Field in the irreducible rook monoid character basis
+            sage: xt = SymmetricFunctions(QQ).xt()
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(xt([3,2]).character_to_frobenius_image(7)) == s[3,2] * s[2]
+            True
+            sage: xt[1, 1] * xt[3]
+            xt[1, 1, 1] + xt[2, 1] + xt[2, 1, 1] + xt[2, 2] + 2*xt[3, 1] + xt[3, 1, 1] + xt[4] + xt[4, 1]
+            sage: xt[3,2].coproduct().monomial_coefficients()==s[3,2].coproduct().monomial_coefficients()
+            True
+            sage: xt(s[3])
+            xt[1] + xt[1, 1] + xt[2] + xt[3]
+            sage: s(xt[3,1])
+            -s[1] + s[1, 1] - s[1, 1, 1] + 2*s[2] - 2*s[2, 1] - s[3] + s[3, 1]
+        """
+        from .character import RookIrreducibleCharacterBasis
+        return RookIrreducibleCharacterBasis(self)
+
+    xt = irreducible_rook_character
 
     def forgotten(self):
         r"""
@@ -1250,7 +1309,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             q^2*s[1, 1, 1, 1] + (q^2*t+q*t+q)*s[2, 1, 1] + (q^2*t^2+1)*s[2, 2] + (q*t^2+q*t+t)*s[3, 1] + t^2*s[4]
 
             sage: Sym = SymmetricFunctions(QQ['z','q'].fraction_field())
-            sage: (z,q) = Sym.base_ring().gens()
+            sage: z, q = Sym.base_ring().gens()
             sage: Hzq = Sym.macdonald(q=z,t=q).H()
             sage: H1z = Sym.macdonald(q=1,t=z).H()
             sage: s = Sym.schur()
@@ -1281,15 +1340,18 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: P = Sym.hall_littlewood().P(); P
-            Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Hall-Littlewood P basis
+            Symmetric Functions over Fraction Field of Univariate Polynomial
+            Ring in t over Rational Field in the Hall-Littlewood P basis
             sage: P[2]
             HLP[2]
             sage: Q = Sym.hall_littlewood().Q(); Q
-            Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Hall-Littlewood Q basis
+            Symmetric Functions over Fraction Field of Univariate Polynomial
+            Ring in t over Rational Field in the Hall-Littlewood Q basis
             sage: Q[2]
             HLQ[2]
             sage: Qp = Sym.hall_littlewood().Qp(); Qp
-            Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Hall-Littlewood Qp basis
+            Symmetric Functions over Fraction Field of Univariate Polynomial
+            Ring in t over Rational Field in the Hall-Littlewood Qp basis
             sage: Qp[2]
             HLQp[2]
         """
@@ -1319,7 +1381,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: JQp = Sym.jack().Qp(); JQp
             Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Jack Qp basis
         """
-        return jack.Jack( self, t=t )
+        return jack.Jack(self, t=t)
 
     def abreu_nigro(self, q='q'):
         """
@@ -1343,7 +1405,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: SymmetricFunctions(QQ).zonal()
             Symmetric Functions over Rational Field in the zonal basis
         """
-        return jack.SymmetricFunctionAlgebra_zonal( self )
+        return jack.SymmetricFunctionAlgebra_zonal(self)
 
     def llt(self, k, t='t'):
         """
@@ -1359,15 +1421,19 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: llt3 = SymmetricFunctions(QQ['t'].fraction_field()).llt(3); llt3
-            level 3 LLT polynomials over Fraction Field of Univariate Polynomial Ring in t over Rational Field
+            level 3 LLT polynomials over Fraction Field of Univariate
+            Polynomial Ring in t over Rational Field
             sage: llt3.hspin()
-            Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the level 3 LLT spin basis
+            Symmetric Functions over Fraction Field of Univariate Polynomial
+            Ring in t over Rational Field in the level 3 LLT spin basis
             sage: llt3.hcospin()
-            Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the level 3 LLT cospin basis
+            Symmetric Functions over Fraction Field of Univariate Polynomial
+            Ring in t over Rational Field in the level 3 LLT cospin basis
             sage: llt3.hcospin()
-            Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the level 3 LLT cospin basis
+            Symmetric Functions over Fraction Field of Univariate Polynomial
+            Ring in t over Rational Field in the level 3 LLT cospin basis
         """
-        return llt.LLT_class( self, k, t=t )
+        return llt.LLT_class(self, k, t=t)
 
     def from_polynomial(self, f):
         """
@@ -1428,8 +1494,9 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         else:
             morphism.codomain().register_coercion(morphism)
 
-    _shorthands = ['e', 'f', 'h', 'm', 'p', 's']
-    _shorthands_all = sorted(_shorthands + ['ht', 'o', 'sp', 'st', 'w'])
+    # keep them sorted in alphabetic order
+    _shorthands = ('e', 'f', 'h', 'm', 'p', 's')
+    _shorthands_all = ('e', 'f', 'h', 'ht', 'm', 'o', 'p', 's', 'sp', 'st', 'w', 'xt')
 
     def __init_extra__(self):
         """
@@ -1450,11 +1517,11 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: f(p.an_element()) == p.an_element()
             True
         """
-        #powersum   = self.powersum  ()
-        #complete   = self.complete  ()
-        #elementary = self.elementary()
-        #schur      = self.schur     ()
-        #monomial   = self.monomial  ()
+        # powersum   = self.powersum  ()
+        # complete   = self.complete  ()
+        # elementary = self.elementary()
+        # schur      = self.schur     ()
+        # monomial   = self.monomial  ()
 
         iso = self.register_isomorphism
 
@@ -1463,7 +1530,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         for (basis1_name, basis2_name) in conversion_functions:
             basis1 = getattr(self, basis1_name)()
             basis2 = getattr(self, basis2_name)()
-            on_basis = SymmetricaConversionOnBasis(t=conversion_functions[basis1_name,basis2_name], domain=basis1, codomain=basis2)
+            on_basis = SymmetricaConversionOnBasis(t=conversion_functions[basis1_name, basis2_name], domain=basis1, codomain=basis2)
             from sage.rings.rational_field import RationalField
             if basis2_name != "powersum" or self._base.has_coerce_map_from(RationalField()):
                 iso(basis1._module_morphism(on_basis, codomain=basis2))
@@ -1487,8 +1554,9 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         The subspace of the ring of symmetric functions spanned by
         `\{ s_{\lambda}[X/(1-t)] \}_{\lambda_1\le k} = \{ s_{\lambda}^{(k)}[X,t]\}_{\lambda_1 \le k}`
-        over the base ring `\QQ[t]`. When `t=1`, this space is in fact a subalgebra of
-        the ring of symmetric functions generated by the complete homogeneous symmetric functions
+        over the base ring `\QQ[t]`. When `t=1`, this space is in fact
+        a subalgebra of the ring of symmetric functions generated by
+        the complete homogeneous symmetric functions
         `h_i` for `1\le i \le k`.
 
         .. SEEALSO:: :meth:`sage.combinat.sf.new_kschur.KBoundedSubspace`
@@ -1596,14 +1664,15 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
 
 class SymmetricaConversionOnBasis:
-    def __init__(self, t, domain, codomain):
+    def __init__(self, t, domain, codomain) -> None:
         """
         Initialization of ``self``.
 
         INPUT:
 
-        - ``t`` -- a function taking a monomial in CombinatorialFreeModule(QQ, Partitions()),
-          and returning a (partition, coefficient) list
+        - ``t`` -- a function taking a monomial in
+          CombinatorialFreeModule(QQ, Partitions()), and returning
+          a (partition, coefficient) list
 
         - ``domain``, ``codomain`` -- parents
 
@@ -1616,7 +1685,7 @@ class SymmetricaConversionOnBasis:
 
             sage: Sym = SymmetricFunctions(QQ['x'])
             sage: p = Sym.p(); s = Sym.s()
-            sage: def t(x) : [(p, c)] = x; return [ (p, 2*c), (p.conjugate(), c) ]
+            sage: def t(x): (p, c), = x; return [(p, 2*c), (p.conjugate(), c)]
             sage: f = sage.combinat.sf.sf.SymmetricaConversionOnBasis(t, p, s)
             sage: f(Partition([3,1]))
             s[2, 1, 1] + 2*s[3, 1]

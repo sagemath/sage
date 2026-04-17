@@ -60,7 +60,6 @@ Sage can compute with power series over the symbolic ring.
 
 ::
 
-    sage: # needs sage.symbolic
     sage: K.<t> = PowerSeriesRing(SR, default_prec=5)
     sage: a, b, c = var('a,b,c')
     sage: f = a + b*t + c*t^2 + O(t^3)
@@ -458,45 +457,13 @@ def _single_variate():
     pass
 
 
-def is_PowerSeriesRing(R):
-    """
-    Return ``True`` if this is a *univariate* power series ring.  This is in
-    keeping with the behavior of ``is_PolynomialRing``
-    versus ``is_MPolynomialRing``.
-
-    EXAMPLES::
-
-        sage: from sage.rings.power_series_ring import is_PowerSeriesRing
-        sage: is_PowerSeriesRing(10)
-        doctest:warning...
-        DeprecationWarning: The function is_PowerSeriesRing is deprecated;
-        use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.
-        See https://github.com/sagemath/sage/issues/38290 for details.
-        False
-        sage: is_PowerSeriesRing(QQ[['x']])
-        True
-        sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x'))
-        True
-        sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x, y'))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38290,
-                "The function is_PowerSeriesRing is deprecated; "
-                "use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.")
-    if isinstance(R, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
-        return R.ngens() == 1
-    else:
-        return False
-
-
 class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
     """
     A power series ring.
     """
 
     def __init__(self, base_ring, name=None, default_prec=None, sparse=False,
-                 implementation=None, category=None):
+                 implementation=None, category=None) -> None:
         """
         Initialize a power series ring.
 
@@ -518,8 +485,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         If the base ring is a polynomial ring, then the option
         ``implementation='mpoly'`` causes computations to be done with
         multivariate polynomials instead of a univariate polynomial
-        ring over the base ring.  Only use this for dense power series
-        where you won't do too much arithmetic, but the arithmetic you
+        ring over the base ring. Only use this for dense power series
+        where you will not do too much arithmetic, but the arithmetic you
         do must be fast.  You must explicitly call
         ``f.do_truncation()`` on an element for it to truncate away
         higher order terms (this is called automatically before
@@ -527,9 +494,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
 
         EXAMPLES:
 
-        This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
-        Since :issue:`11900`, it is also initialised as such, and since :issue:`14084`
-        it is actually initialised as an integral domain::
+        Since :issue:`11900`, it is in the category of commutative rings,
+        and since :issue:`14084` it is actually an integral domain::
 
             sage: R.<x> = ZZ[[]]
             sage: R.category()
@@ -808,7 +774,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
 
         Conversion from symbolic series::
 
-            sage: # needs sage.symbolic
             sage: x,y = var('x,y')
             sage: s = (1/(1-x)).series(x,3); s
             1 + 1*x + 1*x^2 + Order(x^3)
@@ -1240,7 +1205,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             prec = self.default_prec()
         return self(self.__poly_ring.random_element(prec-1, *args, **kwds), prec)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if x is an element of this power series ring or
         canonically coerces to this ring.
@@ -1262,7 +1227,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return self.has_coerce_map_from(parent(x))
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``False`` since the ring of power series over any ring is never
         a field.
@@ -1275,7 +1240,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return False
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``False`` since the ring of power series over any ring is never
         finite.

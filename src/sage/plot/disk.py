@@ -237,9 +237,8 @@ class Disk(GraphicPrimitive):
         if fill:
             from .polygon import Polygon
             return Polygon(xdata, ydata, options).plot3d(z)
-        else:
-            from .line import Line
-            return Line(xdata, ydata, options).plot3d().translate((0, 0, z))
+        from .line import Line
+        return Line(xdata, ydata, options).plot3d().translate((0, 0, z))
 
 
 @rename_keyword(color='rgbcolor')
@@ -348,7 +347,7 @@ def disk(point, radius, angle, **options):
 
         sage: D = disk((0, 0), 5, (0, pi/2), legend_label='test')
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     g = Graphics()
 
     # Reset aspect_ratio to 'automatic' in case scale is 'semilog[xy]'.
@@ -366,7 +365,7 @@ def disk(point, radius, angle, **options):
         g._legend_colors = [options['legend_color']]
     if len(point) == 2:
         return g
-    elif len(point) == 3:
+    if len(point) == 3:
         return g[0].plot3d(z=point[2])
     raise ValueError('the center point of a plotted disk should have '
                      'two or three coordinates')

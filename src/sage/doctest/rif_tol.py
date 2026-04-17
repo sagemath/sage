@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Helpers for tolerance checking in doctests
 """
@@ -25,12 +24,12 @@ Helpers for tolerance checking in doctests
 # ****************************************************************************
 
 from sage.doctest.marked_output import MarkedOutput
+from sage.rings.real_mpfi import RealIntervalField, RealIntervalFieldElement
+
+_RIFtol: 'RealIntervalField | None' = None
 
 
-_RIFtol = None
-
-
-def RIFtol(*args):
+def RIFtol(*args) -> RealIntervalFieldElement:
     """
     Create an element of the real interval field used for doctest tolerances.
 
@@ -57,18 +56,7 @@ def RIFtol(*args):
     """
     global _RIFtol
     if _RIFtol is None:
-        try:
-            # We need to import from sage.all to avoid circular imports.
-            from sage.rings.real_mpfi import RealIntervalField
-        except ImportError:
-            from warnings import warn
-            warn("RealIntervalField not available, ignoring all tolerance specifications in doctests")
-
-            def fake_RIFtol(*args):
-                return 0
-            _RIFtol = fake_RIFtol
-        else:
-            _RIFtol = RealIntervalField(1044)
+        _RIFtol = RealIntervalField(1044)
     return _RIFtol(*args)
 
 
@@ -113,11 +101,9 @@ def add_tolerance(wantval, want: MarkedOutput):
     if want.tol:
         if wantval == 0:
             return RIFtol(want.tol) * RIFtol(-1, 1)
-        else:
-            return wantval * (1 + RIFtol(want.tol) * RIFtol(-1, 1))
-    elif want.abs_tol:
+        return wantval * (1 + RIFtol(want.tol) * RIFtol(-1, 1))
+    if want.abs_tol:
         return wantval + RIFtol(want.abs_tol) * RIFtol(-1, 1)
-    elif want.rel_tol:
+    if want.rel_tol:
         return wantval * (1 + RIFtol(want.rel_tol) * RIFtol(-1, 1))
-    else:
-        return wantval
+    return wantval

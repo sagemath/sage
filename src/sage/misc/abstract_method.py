@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Abstract methods
 """
@@ -135,8 +134,7 @@ def abstract_method(f=None, optional=False):
     """
     if f is None:
         return lambda f: AbstractMethod(f, optional=optional)
-    else:
-        return AbstractMethod(f, optional)
+    return AbstractMethod(f, optional)
 
 
 class AbstractMethod:
@@ -194,7 +192,7 @@ class AbstractMethod:
             sage: src[0]
             'def version():\n'
             sage: lines
-            20
+            19
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self._f)
@@ -215,10 +213,9 @@ class AbstractMethod:
         """
         if instance is None:
             return self
-        elif self._optional:
+        if self._optional:
             return NotImplemented
-        else:
-            raise NotImplementedError(repr(self))
+        raise NotImplementedError(repr(self))
 
     def is_optional(self):
         """

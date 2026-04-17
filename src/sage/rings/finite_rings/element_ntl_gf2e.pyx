@@ -144,7 +144,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         TESTS::
 
-            sage: k.<a> = GF(2^8, impl='ntl')
+            sage: k.<a> = GF(2^8, implementation="ntl")
         """
         self._parent = <FiniteField?>parent
         self._zero_element = self._new()
@@ -262,12 +262,21 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         We can coerce from PARI finite field implementations::
 
-            sage: K.<a> = GF(2^19, impl='ntl')
+            sage: K.<a> = GF(2^19, implementation="ntl")
             sage: a^20
             a^6 + a^3 + a^2 + a
-            sage: M.<c> = GF(2^19, impl='pari_ffelt')
+            sage: M.<c> = GF(2^19, implementation="pari_ffelt")
             sage: K(c^20)
             a^6 + a^3 + a^2 + a
+
+        But not between extensions of incompatible degrees (see :issue:`41899`)::
+
+            sage: L = GF(2^2, implementation='ntl')
+            sage: P = GF(2^3, implementation='pari_ffelt')
+            sage: L(P.gen())
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot coerce element: source field is not a subfield of the target field
         """
         if isinstance(e, FiniteField_ntl_gf2eElement) and e.parent() is self._parent: return e
         cdef FiniteField_ntl_gf2eElement res = self._new()
@@ -330,7 +339,12 @@ cdef class Cache_ntl_gf2e(Cache_base):
             pass # handle this in next if clause
 
         elif isinstance(e, FiniteFieldElement_pari_ffelt):
-            # Reduce to pari
+            # Require a field embedding GF(p^m) -> GF(p^n), i.e. m | n (same as Givaro).
+            F = self._parent
+            E = e.parent()
+            if not E.degree().divides(F.degree()):
+                raise TypeError(
+                    "cannot coerce element: source field is not a subfield of the target field")
             e = e.__pari__()
 
         elif isinstance(e, GapElement):
@@ -501,7 +515,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^8, impl='ntl') # indirect doctest
+            sage: k.<a> = GF(2^8, implementation="ntl") # indirect doctest
         """
         if parent is None:
             return
@@ -998,7 +1012,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^8, impl='ntl')
+            sage: k.<a> = GF(2^8, implementation="ntl")
             sage: b = a^3 + a
             sage: b.minpoly()
             x^4 + x^3 + x^2 + x + 1
@@ -1131,7 +1145,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         """
         return self
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return a string that evaluates to the GAP representation of
         this element.

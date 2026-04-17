@@ -1,1 +1,3 @@
+zeromq
+zeromq-tools
 pkgconfig(libzmq)

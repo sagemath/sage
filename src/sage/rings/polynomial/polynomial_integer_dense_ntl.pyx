@@ -158,8 +158,8 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: PolynomialRing(ZZ, 'x', implementation='NTL')({sys.maxsize>>1: 1})
             Traceback (most recent call last):
             ...
-            OverflowError: Dense NTL integer polynomials have a maximum degree of 268435455    # 32-bit
-            OverflowError: Dense NTL integer polynomials have a maximum degree of 1152921504606846975    # 64-bit
+            OverflowError: Dense NTL integer polynomials have a maximum degree of ...
+
         """
         Polynomial.__init__(self, parent, is_gen=is_gen)
 

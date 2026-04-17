@@ -18,9 +18,9 @@ function).
 
     sage: RealField(9).pi()                                                             # needs sage.rings.real_mpfr
     3.1
-    sage: QQ(RealField(9).pi())                                                         # needs sage.rings.real_interval_field sage.rings.real_mpfr
+    sage: QQ(RealField(9).pi())
     22/7
-    sage: QQ(RealField().pi())                                                          # needs sage.rings.real_interval_field sage.rings.real_mpfr
+    sage: QQ(RealField().pi())
     245850922/78256779
     sage: QQ(35)
     35
@@ -58,9 +58,8 @@ from sage.rings.rational import Rational
 
 ZZ = None
 
-import sage.rings.number_field.number_field_base as number_field_base
 from sage.misc.fast_methods import Singleton
-from sage.misc.superseded import deprecated_function_alias
+from sage.rings.number_field import number_field_base
 from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 
@@ -110,7 +109,6 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     ::
 
-        sage: # needs sage.rings.real_mpfr
         sage: QQ(23.2, 2)
         6530219459687219/281474976710656
         sage: 6530219459687219.0/281474976710656
@@ -122,7 +120,6 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     Here's a nice example involving elliptic curves::
 
-        sage: # needs sage.rings.real_mpfr sage.schemes
         sage: E = EllipticCurve('11a')
         sage: L = E.lseries().at1(300)[0]; L
         0.2538418608559106843377589233...
@@ -690,13 +687,12 @@ class RationalField(Singleton, number_field_base.NumberField):
                 from sage.rings.qqbar import QQbar as domain
             else:
                 from sage.rings.qqbar import AA as domain
+        elif all_complex:
+            from sage.rings.complex_mpfr import ComplexField
+            domain = ComplexField(prec)
         else:
-            if all_complex:
-                from sage.rings.complex_mpfr import ComplexField
-                domain = ComplexField(prec)
-            else:
-                from sage.rings.real_mpfr import RealField
-                domain = RealField(prec)
+            from sage.rings.real_mpfr import RealField
+            domain = RealField(prec)
         return [self.hom([domain(1)])]
 
     def complex_embedding(self, prec=53):
@@ -976,7 +972,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return Integer(1)
 
-    def is_absolute(self):
+    def is_absolute(self) -> bool:
         r"""
         `\QQ` is an absolute extension of `\QQ`.
 
@@ -987,7 +983,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return True
 
-    def is_prime_field(self):
+    def is_prime_field(self) -> bool:
         r"""
         Return ``True`` since `\QQ` is a prime field.
 
@@ -1329,16 +1325,10 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         gens = list(S)
         ords = [ZZ(m)] * len(S)
-        if m % 2 == 0:
+        if not m % 2:
             gens = [ZZ(-1)] + gens
             ords = [ZZ(2)] + ords
-        if orders:
-            return gens, ords
-        else:
-            return gens
-
-    # For backwards compatibility:
-    selmer_group = deprecated_function_alias(31345, selmer_generators)
+        return (gens, ords) if orders else gens
 
     def selmer_group_iterator(self, S, m, proof=True):
         r"""
@@ -1427,7 +1417,6 @@ class RationalField(Singleton, number_field_base.NumberField):
         In general there is one generator for each `p\in S`, and an
         additional generator of `-1` when `p=2`::
 
-            sage: # needs sage.modules sage.rings.number_field
             sage: QS2, QS2gens, fromQS2, toQS2 = QQ.selmer_space([5,7], 2)
             sage: QS2
             Vector space of dimension 3 over Finite Field of size 2
@@ -1514,7 +1503,7 @@ class RationalField(Singleton, number_field_base.NumberField):
     #################################
     #  Coercions to interfaces
     #################################
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return the GAP representation of `\QQ`.
 
@@ -1525,7 +1514,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return 'Rationals'
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return the magma representation of `\QQ`.
 
@@ -1543,7 +1532,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return 'RationalField()'
 
-    def _macaulay2_init_(self, macaulay2=None):
+    def _macaulay2_init_(self, macaulay2=None) -> str:
         r"""
         Return the macaulay2 representation of `\QQ`.
 
@@ -1554,7 +1543,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return "QQ"
 
-    def _axiom_init_(self):
+    def _axiom_init_(self) -> str:
         r"""
         Return the axiom/fricas representation of `\QQ`.
 
@@ -1569,7 +1558,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     _fricas_init_ = _axiom_init_
 
-    def _polymake_init_(self):
+    def _polymake_init_(self) -> str:
         r"""
         Return the polymake representation of `\QQ`.
 
@@ -1589,8 +1578,9 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ._sympy_()                                                          # needs sympy
             Rationals
         """
-        from sage.interfaces.sympy import sympy_init
         from sympy import Rationals
+
+        from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Rationals
 
@@ -1631,7 +1621,6 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         TESTS::
 
-            sage: # needs sage.libs.pari
             sage: R.<x> = QQ[]
             sage: QQ._factor_univariate_polynomial(x)
             x
@@ -1680,29 +1669,6 @@ class RationalField(Singleton, number_field_base.NumberField):
 
 QQ = RationalField()
 Q = QQ
-
-
-def is_RationalField(x) -> bool:
-    """
-    Check to see if ``x`` is the rational field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.rational_field import is_RationalField as is_RF
-        sage: is_RF(QQ)
-        doctest:warning...
-        DeprecationWarning: The function is_RationalField is deprecated;
-        use 'isinstance(..., RationalField)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_RF(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38128,
-                "The function is_RationalField is deprecated; "
-                "use 'isinstance(..., RationalField)' instead.")
-    return isinstance(x, RationalField)
 
 
 def frac(n, d):

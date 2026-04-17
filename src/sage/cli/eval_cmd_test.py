@@ -1,5 +1,6 @@
 from sage.cli.eval_cmd import EvalCmd
 from sage.cli.options import CliOptions
+import pytest
 
 
 def test_eval_cmd_print(capsys):
@@ -16,10 +17,6 @@ def test_eval_cmd_invalid_command(capsys):
     options = CliOptions(command="invalid_command")
     eval_cmd = EvalCmd(options)
 
-    result = eval_cmd.run()
-    captured = capsys.readouterr()
-    assert (
-        "An error occurred while executing the command: name 'invalid_command' is not defined"
-        in captured.out
-    )
-    assert result == 1
+    with pytest.raises(NameError) as err:
+        result = eval_cmd.run()
+    assert str(err.value) == "name 'invalid_command' is not defined"

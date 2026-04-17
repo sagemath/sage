@@ -475,9 +475,8 @@ class UndefSageHelper:
     def __get__(self, ins, typ):
         if ins is None:
             return lambda: _sympysage_function_by_name(typ.__name__)
-        else:
-            args = [arg._sage_() for arg in ins.args]
-            return lambda: _sympysage_function_by_name(ins.__class__.__name__)(*args)
+        args = [arg._sage_() for arg in ins.args]
+        return lambda: _sympysage_function_by_name(ins.__class__.__name__)(*args)
 
 
 def _sympysage_function(self):
@@ -1237,14 +1236,14 @@ def check_expression(expr, var_symbols, only_from_sympy=False):
     assert e_sage == SR(e_sympy)
 
 
-def test_all():
+def check_all():
     """
     Call some tests that were originally in SymPy.
 
     EXAMPLES::
 
-        sage: from sage.interfaces.sympy import test_all
-        sage: test_all()
+        sage: from sage.interfaces.sympy import check_all
+        sage: check_all()
     """
     def test_basics():
         check_expression("x", "x")
@@ -1299,7 +1298,7 @@ def test_all():
 
     def test_issue_4023():
         from sage.symbolic.ring import SR
-        from sage.functions.all import log
+        from sage.misc.functional import log
         from sympy import integrate, simplify
         a, x = SR.var("a x")
         i = integrate(log(x) / a, (x, a, a + 1))
@@ -1360,17 +1359,17 @@ def sympy_set_to_list(set, vars):
     from sympy.core.relational import Relational
     if set == S.Reals:
         return [x._sage_() < oo for x in vars]
-    elif set == S.Complexes:
+    if set == S.Complexes:
         return [x._sage_() != UnsignedInfinity for x in vars]
-    elif set is None or set == S.EmptySet:
+    if set is None or set == S.EmptySet:
         return []
     if isinstance(set, (And, Or, Relational)):
         if isinstance(set, And):
             return [[item for rel in set._args[0]
                     for item in sympy_set_to_list(rel, vars)]]
-        elif isinstance(set, Or):
+        if isinstance(set, Or):
             return [sympy_set_to_list(iv, vars) for iv in set._args[0]]
-        elif isinstance(set, Relational):
+        if isinstance(set, Relational):
             return [set._sage_()]
     elif isinstance(set, FiniteSet):
         x = vars[0]

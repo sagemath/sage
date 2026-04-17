@@ -12,7 +12,7 @@ This command is used to update the Conda environment files in the project. It au
 - `external.host-requires`: External dependencies required for running
 
 
-Within an active virtual environment where `grayskull`, `conda-lock` and `toml` are installed, run the following command:
+Within an active virtual environment where `grayskull` and `conda-lock` are installed, run the following command:
 
 ```bash
 tools/update-conda.py
@@ -49,4 +49,20 @@ Set `SAGE_ROOT` to the root directory of the Sage project and run the following 
 
 ```bash
 tools/update_version
+```
+
+## Generate cython header files for flint
+
+The flint-autogen directory contains a script (`flint_autogen.py`)
+that will automatically generate the pxd files in
+`SAGE_ROOT/src/sage/libs/flint`. It requires gitpython to be
+installed, and for `FLINT_GIT_DIR` to be set to a clone of the flint
+git repository.
+
+Example:
+
+```bash
+# don't forget to install gitpython first
+cd flint-autogen
+FLINT_GIT_DIR=/path/to/flint.git python flint_autogen.py
 ```

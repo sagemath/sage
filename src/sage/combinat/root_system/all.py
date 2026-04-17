@@ -1,5 +1,5 @@
 """
-Root Systems
+Root systems
 
 Quickref
 --------

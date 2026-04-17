@@ -1697,7 +1697,7 @@ class GraphPlot(SageObject):
         stick = [root]
         parent = {u: root for u in children[root]}
         pos = {}
-        obstruction = [0.0] * T.num_verts()
+        obstruction = [0.0] * T.n_vertices()
         if orientation == 'down':
             o = -1
         else:

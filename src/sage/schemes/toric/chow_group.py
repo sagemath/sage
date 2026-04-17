@@ -1047,7 +1047,7 @@ class ChowGroup_degree_class(SageObject):
         <class 'sage.schemes.toric.chow_group.ChowGroup_degree_class'>
     """
 
-    def __init__(self, A, d):
+    def __init__(self, A, d) -> None:
         r"""
         Construct a :class:`ChowGroup_degree_class`.
 
@@ -1184,64 +1184,3 @@ class ChowGroup_degree_class(SageObject):
             (( 0 | 0 | 1 ),)
         """
         return self._gens
-
-
-def is_ChowGroup(x) -> bool:
-    r"""
-    Return whether ``x`` is a :class:`ChowGroup_class`.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: P2 = toric_varieties.P2()
-        sage: A = P2.Chow_group()
-        sage: from sage.schemes.toric.chow_group import is_ChowGroup
-        sage: is_ChowGroup(A)
-        doctest:warning...
-        DeprecationWarning: The function is_ChowGroup is deprecated; use 'isinstance(..., ChowGroup_class)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_ChowGroup('Victoria')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_ChowGroup is deprecated; use 'isinstance(..., ChowGroup_class)' instead.")
-    return isinstance(x, ChowGroup_class)
-
-
-def is_ChowCycle(x) -> bool:
-    r"""
-    Return whether ``x`` is a :class:`ChowCycle`.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: P2 = toric_varieties.P2()
-        sage: A = P2.Chow_group()
-        sage: from sage.schemes.toric.chow_group import *
-        sage: is_ChowCycle(A)
-        doctest:warning...
-        DeprecationWarning: The function is_ChowCycle is deprecated;
-        use 'isinstance(..., ChowCycle)' instead.
-        See https://github.com/sagemath/sage/issues/38277 for details.
-        False
-        sage: is_ChowCycle(A.an_element())
-        True
-        sage: is_ChowCycle('Victoria')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38277,
-                "The function is_ChowCycle is deprecated; "
-                "use 'isinstance(..., ChowCycle)' instead.")
-    return isinstance(x, ChowCycle)

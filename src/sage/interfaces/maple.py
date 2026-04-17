@@ -237,17 +237,21 @@ loaded.
 
 import os
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
-
 import pexpect
 
+from sage.cpython.string import bytes_to_str
 from sage.env import DOT_SAGE
-from sage.misc.pager import pager
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+    gc_disabled,
+)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from sage.misc.pager import pager
 from sage.structure.richcmp import rich_to_bool
-from sage.cpython.string import bytes_to_str
-
 
 COMMANDS_CACHE = '%s/maple_commandlist_cache.sobj' % DOT_SAGE
 
@@ -270,6 +274,7 @@ class Maple(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maple import maple
             sage: maple == loads(dumps(maple))
             True
         """
@@ -1022,10 +1027,8 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
             if 'is not valid' in msg and 'to < or <=' in msg:
                 if (hash(str(self)) < hash(str(other))):
                     return rich_to_bool(op, -1)
-                else:
-                    return rich_to_bool(op, 1)
-            else:
-                raise RuntimeError(e)
+                return rich_to_bool(op, 1)
+            raise RuntimeError(e)
         if P.eval("evalb(%s %s %s)" % (self.name(), P._greaterthan_symbol(),
                                        other.name())) == P._true_symbol():
             return rich_to_bool(op, 1)
@@ -1288,16 +1291,15 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
                 variable = self.op(2).op(1)._sage_()
                 bounds = [b._sage_() for b in self.op(2).op(2).op()]
                 return symbolic_prod(term, variable, *bounds, hold=True)
-            else:
-                try:
-                    sage_fun = symbol_maple[(fun, int(self.nops()))]
-                    if self.nops() == 1:
-                        args = [self.op()._sage_()]
-                    else:
-                        args = [arg._sage_() for arg in self.op()]
-                    return sage_fun(*args)
-                except (KeyError, TypeError):
-                    pass
+            try:
+                sage_fun = symbol_maple[(fun, int(self.nops()))]
+                if self.nops() == 1:
+                    args = [self.op()._sage_()]
+                else:
+                    args = [arg._sage_() for arg in self.op()]
+                return sage_fun(*args)
+            except (KeyError, TypeError):
+                pass
         elif maple_type == "float":
             from sage.rings.real_mpfr import RealField
             mantissa = len(repr(self.op(1)))

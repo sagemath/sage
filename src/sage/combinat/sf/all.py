@@ -1,7 +1,7 @@
 r"""
-Symmetric Functions
+Symmetric functions
 
-- :class:`Introduction to Symmetric Functions <sage.combinat.sf.sf.SymmetricFunctions>`
+- :class:`Introduction to symmetric functions <sage.combinat.sf.sf.SymmetricFunctions>`
 
 - :ref:`sage.combinat.sf.sfa`
 - :ref:`sage.combinat.sf.sf`
@@ -31,6 +31,7 @@ Symmetric Functions
 """
 # install the docstring of this module to the containing package
 from sage.misc.namespace_package import install_doc
+
 install_doc(__package__, __doc__)
 
 from sage.misc.lazy_import import lazy_import

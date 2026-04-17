@@ -1,5 +1,5 @@
 """
-Coxeter Types
+Coxeter types
 """
 # ****************************************************************************
 #       Copyright (C) 2015 Travis Scrimshaw <tscrim at ucdavis.edu>,
@@ -270,7 +270,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         """
 
     @abstract_method
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return whether ``self`` is finite.
 
@@ -283,7 +283,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         """
 
     @abstract_method
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return whether ``self`` is affine.
 
@@ -295,7 +295,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             True
         """
 
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         """
         Return whether ``self`` is crystallographic.
 
@@ -315,7 +315,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         """
         return False
 
-    def is_simply_laced(self):
+    def is_simply_laced(self) -> bool:
         """
         Return whether ``self`` is simply laced.
 
@@ -386,16 +386,14 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             def val(x):
                 if x > -1:
                     return (E(2*x) + ~E(2*x)) / R(-2)
-                else:
-                    return R(x)
+                return R(x)
         elif isinstance(R, sage.rings.abc.NumberField_quadratic):
             E = UniversalCyclotomicField().gen
 
             def val(x):
                 if x > -1:
                     return R((E(2*x) + ~E(2*x)).to_cyclotomic_field()) / R(-2)
-                else:
-                    return R(x)
+                return R(x)
         else:
             from sage.functions.trig import cos
             from sage.symbolic.constants import pi
@@ -404,8 +402,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             def val(x):
                 if x > -1:
                     return -R(cos(pi / SR(x)))
-                else:
-                    return R(x)
+                return R(x)
 
         entries = [SparseEntry(i, j, val(mat[i, j]))
                    for i in range(n) for j in range(n)
@@ -547,7 +544,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.index_set()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return if ``self`` is a finite type.
 
@@ -559,7 +556,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.is_finite()
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return if ``self`` is an affine type.
 
@@ -571,7 +568,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.is_affine()
 
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         """
         Return if ``self`` is crystallographic.
 
@@ -587,7 +584,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.is_crystallographic()
 
-    def is_simply_laced(self):
+    def is_simply_laced(self) -> bool:
         """
         Return if ``self`` is simply-laced.
 
@@ -603,7 +600,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.is_simply_laced()
 
-    def is_reducible(self):
+    def is_reducible(self) -> bool:
         """
         Return if ``self`` is reducible.
 
@@ -619,7 +616,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return self._cartan_type.is_reducible()
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         """
         Return if ``self`` is irreducible.
 

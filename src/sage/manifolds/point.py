@@ -122,7 +122,7 @@ class ManifoldPoint(Element):
 
         sage: M = Manifold(2, 'M', structure='topological')
         sage: c_xy.<x,y> = M.chart()
-        sage: (a, b) = var('a b') # generic coordinates for the point
+        sage: a, b = var('a b')  # generic coordinates for the point
         sage: p = M.point((a, b), name='P'); p
         Point P on the 2-dimensional topological manifold M
         sage: p.coordinates()  # coordinates of P in the subset's default chart
@@ -329,7 +329,7 @@ class ManifoldPoint(Element):
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: c_xy.<x,y> = M.chart()
-            sage: (a, b) = var('a b') # generic coordinates for the point
+            sage: a, b = var('a b')  # generic coordinates for the point
             sage: P = M.point((a, b), name='P')
 
         Coordinates of ``P`` in the manifold's default chart::
@@ -695,7 +695,7 @@ class ManifoldPoint(Element):
             else:
                 if isinstance(diff, Expression) and not diff.is_trivial_zero():
                     return False
-                elif not (diff == 0):
+                if not (diff == 0):
                     return False
         return True
 

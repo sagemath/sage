@@ -17,18 +17,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.algebras.lie_conformal_algebras.finitely_freely_generated_lca import (
+    FinitelyFreelyGeneratedLCA,
+)
+from sage.algebras.lie_conformal_algebras.lie_conformal_algebra_element import (
+    LCAStructureCoefficientsElement,
+)
 from sage.arith.misc import binomial
-from sage.sets.family import Family
-from .lie_conformal_algebra_element import LCAStructureCoefficientsElement
 from sage.categories.lie_conformal_algebras import LieConformalAlgebras
-from .finitely_freely_generated_lca import FinitelyFreelyGeneratedLCA
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
-from sage.structure.indexed_generators import (IndexedGenerators,
-                                               standardize_names_index_set)
+from sage.sets.family import Family
+from sage.structure.indexed_generators import (
+    IndexedGenerators,
+    standardize_names_index_set,
+)
 
 
 class LieConformalAlgebraWithStructureCoefficients(
-                                        FinitelyFreelyGeneratedLCA):
+        FinitelyFreelyGeneratedLCA):
     r"""
     A Lie conformal algebra with a set of specified structure
     coefficients.
@@ -171,17 +177,17 @@ class LieConformalAlgebraWithStructureCoefficients(
             # We now add the skew-symmetric part to optimize
             # brackets computations later
             key = (mypair[1], mypair[0])
-            if index_to_parity[mypair[0]]*index_to_parity[mypair[1]]:
+            if index_to_parity[mypair[0]] * index_to_parity[mypair[1]]:
                 parsgn = -1
             else:
                 parsgn = 1
             maxpole = max(v)
             vals = {}
-            for k in range(maxpole+1):
+            for k in range(maxpole + 1):
                 kth_product = {}
-                for j in range(maxpole+1-k):
-                    if k+j in v.keys():
-                        for i in v[k+j]:
+                for j in range(maxpole + 1 - k):
+                    if k + j in v.keys():
+                        for i in v[k + j]:
                             if (i[0] not in ce) or (
                                     i[0] in ce and i[1] + j == 0):
                                 kth_product[(i[0], i[1] + j)] = \
@@ -204,7 +210,7 @@ class LieConformalAlgebraWithStructureCoefficients(
 
     def __init__(self, R, s_coeff, index_set=None, central_elements=None,
                  category=None, element_class=None, prefix=None, names=None,
-                 latex_names=None, parity=None, **kwds):
+                 latex_names=None, parity=None, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -219,15 +225,15 @@ class LieConformalAlgebraWithStructureCoefficients(
 
         if names is not None and names != tuple(index_set):
             names2 = names + tuple(central_elements)
-            index_set2 = DisjointUnionEnumeratedSets((index_set,
-                Family(tuple(central_elements))))
+            index_set2 = DisjointUnionEnumeratedSets(
+                (index_set, Family(tuple(central_elements))))
             d = {x: index_set2[i] for i, x in enumerate(names2)}
             try:
                 # If we are given a dictionary with names as keys,
                 # convert to index_set as keys
                 s_coeff = {(d[k[0]], d[k[1]]):
                            {a: {(d[x[1]], x[2]): sck[a][x] for x in sck[a]}
-                            for a in s_coeff[k]}
+                            for a in sck}
                            for k, sck in s_coeff.items()}
 
             except KeyError:
@@ -283,7 +289,7 @@ class LieConformalAlgebraWithStructureCoefficients(
         self._parity = dict(zip(self.gens(),
                                 parity + (0,) * len(central_elements)))
 
-    def structure_coefficients(self):
+    def structure_coefficients(self) -> Family:
         """
         The structure coefficients of this Lie conformal algebra.
 

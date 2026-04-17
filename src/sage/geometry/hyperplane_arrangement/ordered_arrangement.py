@@ -44,7 +44,6 @@ We see the differences in :meth:`~sage.geometry.hyperplane_arrangement.arrangeme
 
 Also in meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.cone`::
 
-    sage: # needs sage.combinat
     sage: a.<x,y,z> = hyperplane_arrangements.semiorder(3)
     sage: H.<x,y,z> = OrderedHyperplaneArrangements(QQ)
     sage: a1 = H(a)
@@ -54,7 +53,6 @@ Also in meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrang
 
 And in :meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.restriction`::
 
-    sage: # needs sage.graphs
     sage: A.<u, x, y, z> = hyperplane_arrangements.braid(4)
     sage: L.<u, x, y, z> = OrderedHyperplaneArrangements(QQ)
     sage: A1 = L(A)
@@ -158,7 +156,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             ...
             TypeError: the arrangement is not projective
 
-            sage: # needs sage.graphs
             sage: A0.<u,x,y,z> = hyperplane_arrangements.braid(4); A0
             Arrangement of 6 hyperplanes of dimension 4 and rank 3
             sage: L.<u,x,y,z> = OrderedHyperplaneArrangements(QQ)
@@ -177,7 +174,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: T1.isomorphism(M2)
             {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
 
-            sage: # needs sage.combinat
             sage: a0 = hyperplane_arrangements.semiorder(3); a0
             Arrangement of 6 hyperplanes of dimension 3 and rank 2
             sage: L.<t0, t1, t2> = OrderedHyperplaneArrangements(QQ)
@@ -400,13 +396,13 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             (0, 0, 0, 0, 0)
             sage: A4.<t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
             sage: H = A4(hyperplane_arrangements.braid(4))
-            sage: G4 = H.projective_fundamental_group(); G4.sorted_presentation()
+            sage: G4 = H.projective_fundamental_group(); G4.sorted_presentation()  # long time (:issue:`39569`)
             Finitely presented group
             < x0, x1, x2, x3, x4 | x4^-1*x3^-1*x2^-1*x3*x4*x0*x2*x0^-1,
                                    x4^-1*x2^-1*x4*x2, x4^-1*x1^-1*x0^-1*x1*x4*x0,
                                    x4^-1*x1^-1*x0^-1*x4*x0*x1,
                                    x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2, x3^-1*x1^-1*x3*x1 >
-            sage: G4.abelian_invariants()
+            sage: G4.abelian_invariants()  # long time (:issue:`39569`)
             (0, 0, 0, 0, 0)
 
             sage: # needs sirocco
@@ -494,7 +490,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
              1: [x3], 2: [x4], 3: [x1], 4: [x2], 5: [x0]}
             sage: A4.<t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
             sage: H = A4(hyperplane_arrangements.braid(4))
-            sage: H.projective_meridians()
+            sage: H.projective_meridians()  # long time
             {0: [x2^-1*x0^-1*x4^-1*x3^-1*x1^-1], 1: [x3],
              2: [x4], 3: [x0], 4: [x2], 5: [x1]}
 

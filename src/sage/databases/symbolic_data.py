@@ -91,10 +91,16 @@ class SymbolicData:
             sage: sd = SymbolicData(); sd # optional - database_symbolic_data
             SymbolicData with 372 ideals
         """
-        from sage.env import SAGE_SHARE
-        path = os.path.join(SAGE_SHARE, 'symbolic_data')
-        self.__intpath = path + "/Data/XMLResources/INTPS/"
-        self.__genpath = path + "/Data/XMLResources/GenPS/"
+        from sage.env import sage_data_paths
+        self.__intpath = self.__genpath = None
+        for path in sage_data_paths('symbolic_data'):
+            intpath = path + "/Data/XMLResources/INTPS/"
+            genpath = path + "/Data/XMLResources/GenPS/"
+            if os.path.exists(intpath) and os.path.exists(genpath):
+                self.__intpath = intpath
+                self.__genpath = genpath
+        if not self.__intpath or not self.__genpath:
+            raise FileNotFoundError('Could not find the SymbolicData database')
 
     def get_ideal(self, name, base_ring=QQ, term_order='degrevlex'):
         """
@@ -218,4 +224,4 @@ class SymbolicData:
             self.__ideals = [s.replace('.', '__') for s in __ideals]
             return self.__ideals
         except OSError:
-            raise AttributeError("Could not find symbolic data, you should perhaps install the optional package")
+            raise AttributeError("Could not find symbolic data")

@@ -1,5 +1,5 @@
 r"""
-Suffix Tries and Suffix Trees
+Suffix tries and suffix trees
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Franco Saliola <saliola@gmail.com>
@@ -22,9 +22,9 @@ from sage.rings.integer import Integer
 lazy_import('sage.graphs.digraph', 'DiGraph')
 
 
-################################################################################
+# ------------
 # Suffix Tries
-################################################################################
+# ------------
 
 
 class SuffixTrie(SageObject):
@@ -502,9 +502,10 @@ class SuffixTrie(SageObject):
         """
         self.plot(*args, **kwds).show()
 
-################################################################################
+
+# ------------
 # Suffix Trees
-################################################################################
+# ------------
 
 
 class ImplicitSuffixTree(SageObject):
@@ -681,20 +682,17 @@ class ImplicitSuffixTree(SageObject):
             (kk, pp), ss = self._find_transition(s, self._letters[k - 1])
             if letter == self._letters[kk + p - k]:
                 return (True, s)
-            else:
-                # replace transition above by transitions
-                del self._transition_function[s][(kk, pp)]
-                r = len(self._transition_function)
-                self._transition_function[r] = {}
-                self._transition_function[s][(kk, kk+p-k)] = r
-                self._transition_function[r][(kk+p-k+1, pp)] = ss
-                return (False, r)
-        else:
-            transition = self._find_transition(s, letter)
-            if transition is None:
-                return (False, s)
-            else:
-                return (True, s)
+            # replace transition above by transitions
+            del self._transition_function[s][(kk, pp)]
+            r = len(self._transition_function)
+            self._transition_function[r] = {}
+            self._transition_function[s][(kk, kk+p-k)] = r
+            self._transition_function[r][(kk+p-k+1, pp)] = ss
+            return (False, r)
+        transition = self._find_transition(s, letter)
+        if transition is None:
+            return (False, s)
+        return (True, s)
 
     def _canonize(self, s, k_p):
         r"""
@@ -718,14 +716,13 @@ class ImplicitSuffixTree(SageObject):
         k, p = k_p
         if p < k:
             return (s, k)
-        else:
-            (kk, pp), ss = self._find_transition(s, self._letters[k - 1])
-            while pp is not None and pp - kk <= p - k:
-                k = k + pp - kk + 1
-                s = ss
-                if k <= p:
-                    (kk, pp), ss = self._find_transition(s, self._letters[k-1])
-            return (s, k)
+        (kk, pp), ss = self._find_transition(s, self._letters[k - 1])
+        while pp is not None and pp - kk <= p - k:
+            k = k + pp - kk + 1
+            s = ss
+            if k <= p:
+                (kk, pp), ss = self._find_transition(s, self._letters[k-1])
+        return (s, k)
 
     def _find_transition(self, state, letter):
         r"""
@@ -768,14 +765,12 @@ class ImplicitSuffixTree(SageObject):
                     return ((k, p), s)
         return None
 
-    #####
     # The following are not necessary for constructing the implicit suffix
     # tree; they add additional functionality to the class.
-    #####
 
-    #####
+    # -------------
     # Visualization
-    #####
+    # -------------
 
     def _repr_(self) -> str:
         r"""
@@ -917,9 +912,9 @@ class ImplicitSuffixTree(SageObject):
         """
         self.plot(word_labels=word_labels, *args, **kwds).show()
 
-    #####
+    # ---------------
     # Various methods
-    #####
+    # ---------------
 
     def __eq__(self, other) -> bool:
         r"""
@@ -976,9 +971,8 @@ class ImplicitSuffixTree(SageObject):
             if word == self._word[k-1:(k-1)+word.length()]:
                 if word.length() == len(self._letters) - k + 1:
                     return "explicit", s
-                else:
-                    edge = (node, s)
-                    return "implicit", edge, word.length()
+                edge = (node, s)
+                return "implicit", edge, word.length()
         else:
             # find longest common prefix
             m = min(p-k+1, word.length())
@@ -987,9 +981,8 @@ class ImplicitSuffixTree(SageObject):
                 i += 1
             if i == p-k+1:
                 return self.transition_function(word[p-k+1:], s)
-            else:
-                edge = (node, s)
-                return "implicit", edge, i
+            edge = (node, s)
+            return "implicit", edge, i
             return "explicit", node
 
     def states(self) -> list:
@@ -1383,12 +1376,10 @@ class ImplicitSuffixTree(SageObject):
             i += trans[0][1] - trans[0][0] + 1
             if i == j:
                 return ('explicit', node)
-            else:
-                trans = self._find_transition(node, self._letters[i])
+            trans = self._find_transition(node, self._letters[i])
         if trans[0][1] is None and len(self.word()) - trans[0][0] + 1 <= j - i:
             return ('explicit', trans[1])
-        else:
-            return ('implicit', (node, trans[1]), j - i)
+        return ('implicit', (node, trans[1]), j - i)
 
     def suffix_walk(self, edge, l):
         r"""
@@ -1503,9 +1494,9 @@ class ImplicitSuffixTree(SageObject):
             l.reverse()
         return P
 
-    #####
+    # ---------------------
     # Miscellaneous methods
-    #####
+    # ---------------------
 
     def uncompactify(self):
         r"""
@@ -1571,9 +1562,10 @@ class ImplicitSuffixTree(SageObject):
                     new_node += 1
         return d
 
-################################################################################
+
+# ---------------------
 # Decorated Suffix Tree
-################################################################################
+# ---------------------
 
 
 class DecoratedSuffixTree(ImplicitSuffixTree):

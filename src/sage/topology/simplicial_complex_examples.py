@@ -827,7 +827,7 @@ def RealProjectiveSpace(n):
             name='Minimal triangulation of RP^4')
     if n >= 5:
         # Use the construction given by Datta in Example 3.21.
-        V = set(range(0, n+2))
+        V = set(range(n+2))
         S = Sphere(n).barycentric_subdivision()
         X = S.facets()
         facets = set()
@@ -1254,13 +1254,12 @@ def RandomComplex(n, d, p=0.5):
     """
     if d+1 > n:
         return Simplex(n-1)
-    else:
-        vertices = range(n)
-        facets = Subsets(vertices, d).list()
-        maybe = Subsets(vertices, d+1)
-        facets.extend([f for f in maybe if random.random() <= p])
-        return UniqueSimplicialComplex(facets,
-                                       name='Random {}-dimensional simplicial complex on {} vertices'.format(d, n))
+    vertices = range(n)
+    facets = Subsets(vertices, d).list()
+    maybe = Subsets(vertices, d+1)
+    facets.extend([f for f in maybe if random.random() <= p])
+    return UniqueSimplicialComplex(facets,
+                                   name='Random {}-dimensional simplicial complex on {} vertices'.format(d, n))
 
 
 def SumComplex(n, A):
@@ -1616,7 +1615,7 @@ def FareyMap(p):
         x, y = pair
         if x != 0 and p - x < x:
             return ((-x) % p, (-y) % p)
-        elif x == 0 and p - y < y:
+        if x == 0 and p - y < y:
             return (0, (-y) % p)
         return (x, y)
 

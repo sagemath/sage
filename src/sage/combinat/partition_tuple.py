@@ -441,8 +441,7 @@ class PartitionTuple(CombinatorialElement):
 
         if len(mu) == 1:
             return _Partitions(mu[0])
-        else:
-            return PartitionTuples_all().element_class(PartitionTuples_all(), mu)
+        return PartitionTuples_all().element_class(PartitionTuples_all(), mu)
 
     def __init__(self, parent, mu):
         """
@@ -809,8 +808,7 @@ class PartitionTuple(CombinatorialElement):
             diag.append(line.rstrip())
         if PartitionTuples.options('convention') == "English":
             return '\n'.join(map(str, diag))
-        else:
-            return '\n'.join(map(str, diag[::-1]))
+        return '\n'.join(map(str, diag[::-1]))
 
     ferrers_diagram = diagram
 
@@ -942,7 +940,7 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[2,1],[1],[1,1,1]]).cells()
             [(0, 0, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (2, 0, 0), (2, 1, 0), (2, 2, 0)]
         """
-        return [(c,a,b) for c in range(len(self)) for (a,b) in self[c].cells()]
+        return [(c, a, b) for c in range(len(self)) for a, b in self[c].cells()]
 
     def content(self, k, r, c, multicharge):
         r"""
@@ -1176,9 +1174,9 @@ class PartitionTuple(CombinatorialElement):
             - :meth:`top_garnir_tableau`
         """
         try:
-            (comp, row,col) = cell
+            comp, row, col = cell
         except ValueError:
-            (comp, row,col) = cell[0]
+            comp, row, col = cell[0]
 
         if comp >= len(self) or row+1 >= len(self[comp]) or col >= self[comp][row+1]:
             raise ValueError('(comp, row+1, col) must be inside the diagram')
@@ -1245,7 +1243,7 @@ class PartitionTuple(CombinatorialElement):
 
             - :meth:`~sage.combinat.partition.Partition_tuple.garnir_tableau`
         """
-        (comp,row,col) = cell
+        comp, row, col = cell
         if comp >= len(self) or row+1 >= len(self[comp]) or col >= self[comp][row+1]:
             raise ValueError('(comp, row+1, col) must be inside the diagram')
 
@@ -1392,7 +1390,8 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[1,1],[4,3],[2,1,1]]).removable_cells()
             [(0, 1, 0), (1, 0, 3), (1, 1, 2), (2, 0, 1), (2, 2, 0)]
         """
-        return [(k,r,c) for k in range(len(self)) for (r,c) in self[k].removable_cells()]
+        return [(k, r, c) for k in range(len(self))
+                for r, c in self[k].removable_cells()]
 
     corners = removable_cells  # for compatibility with partitions
 
@@ -1410,7 +1409,8 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[1,1],[4,3],[2,1,1]]).addable_cells()
             [(0, 0, 1), (0, 2, 0), (1, 0, 4), (1, 1, 3), (1, 2, 0), (2, 0, 2), (2, 1, 1), (2, 3, 0)]
         """
-        return [(k,r,c) for k in range(len(self)) for (r,c) in self[k].addable_cells()]
+        return [(k, r, c) for k in range(len(self))
+                for r, c in self[k].addable_cells()]
 
     outside_corners = addable_cells  # for compatibility with partitions
 
@@ -1433,8 +1433,7 @@ class PartitionTuple(CombinatorialElement):
             else:
                 mu[k][r] += 1
             return PartitionTuple(mu)
-        else:
-            raise ValueError("%s is not an addable cell" % ((k, r, c),))
+        raise ValueError("%s is not an addable cell" % ((k, r, c),))
 
     def remove_cell(self, k, r, c):
         """
@@ -1452,8 +1451,7 @@ class PartitionTuple(CombinatorialElement):
             mu = self.to_list()
             mu[k][r] -= 1
             return PartitionTuple(mu)
-        else:
-            raise ValueError("%s is not a removable cell" % ((k, r, c),))
+        raise ValueError("%s is not a removable cell" % ((k, r, c),))
 
     def to_list(self):
         r"""
@@ -1536,9 +1534,9 @@ class PartitionTuple(CombinatorialElement):
             deg = sum(mu._initial_degree(e) for mu in self)
         I = IntegerModRing(e)
         multires = [I(k) for k in multicharge]
-        for (k,r,c) in self.cells():
-            res = I(multicharge[k]-r+c)
-            for l in range(k+1, self.level()):
+        for k, r, c in self.cells():
+            res = I(multicharge[k] - r + c)
+            for l in range(k + 1, self.level()):
                 if res == multires[l]:
                     deg += 1
         return deg
@@ -1695,7 +1693,7 @@ class PartitionTuple(CombinatorialElement):
         """
         block = {}
         Ie = IntegerModRing(e)
-        for (k,r,c) in self.cells():
+        for k, r, c in self.cells():
             i = Ie(multicharge[k] + c - r)
             block[i] = block.get(i, 0) + 1
         return block
@@ -1849,7 +1847,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
                 return PartitionTuples_size(size)
             return RegularPartitionTuples_size(size, regular)
 
-        elif level == 1:
+        if level == 1:
             if isinstance(regular, (list, tuple)):
                 regular = regular[0]
             if size is None:
@@ -1988,7 +1986,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
         """
         if isinstance(r,(int,Integer)):
             return self.unrank(r)
-        elif isinstance(r,slice):
+        if isinstance(r,slice):
             start = 0 if r.start is None else r.start
             stop = r.stop
             if stop is None and not self.is_finite():

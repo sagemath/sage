@@ -31,19 +31,15 @@ different types.  The hierarchy is as follows:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.modular.modsym.p1list as p1list
-import sage.modular.modsym.g1list as g1list
-import sage.modular.modsym.ghlist as ghlist
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.misc.cachefunc import cached_method
+from sage.misc.persist import register_unpickle_override
+from sage.modular.modsym import g1list, ghlist, p1list
+from sage.modular.modsym.apply import apply_to_monomial
+from sage.modular.modsym.manin_symbol import ManinSymbol
 from sage.rings.integer import Integer
 from sage.structure.parent import Parent
-from sage.misc.persist import register_unpickle_override
-from sage.misc.cachefunc import cached_method
-from sage.structure.richcmp import richcmp_method, richcmp
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-
-from .apply import apply_to_monomial
-
-from sage.modular.modsym.manin_symbol import ManinSymbol
+from sage.structure.richcmp import richcmp, richcmp_method
 
 
 @richcmp_method
@@ -540,8 +536,7 @@ class ManinSymbolList_group(ManinSymbolList):
         k = self.index((i, -u, v))
         if i % 2 == 0:
             return k, 1
-        else:
-            return k, -1
+        return k, -1
 
     def apply_T(self, j):
         """
@@ -1047,8 +1042,7 @@ class ManinSymbolList_character(ManinSymbolList):
         k, s = self.index((self._weight - 2 - i, v, -u))
         if i % 2 == 0:
             return k, s
-        else:
-            return k, -s
+        return k, -s
 
     def _apply_S_only_0pm1(self):
         """
@@ -1098,8 +1092,7 @@ class ManinSymbolList_character(ManinSymbolList):
         k, s = self.index((i, -u, v))
         if i % 2 == 0:
             return k, s
-        else:
-            return k, -s
+        return k, -s
 
     def apply_T(self, j):
         """

@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.modules
 r"""
-Incidence Algebras
+Incidence algebras
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
@@ -526,9 +526,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             sage: R.one_basis()
             (0, 0)
         """
-        for A in self.basis().keys():
-            if A[0] == A[1]:
-                return A
+        return next(A for A in self.basis().keys() if A[0] == A[1])
 
     def delta(self):
         """
@@ -643,7 +641,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             sage: R[3, 11]
             R[(0, 1)]
 
-        TESTS:
+        TESTS::
 
             sage: R[2, 5]
             Traceback (most recent call last):
@@ -659,10 +657,10 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             if A not in self._ambient._poset.list():
                 raise ValueError("not an element of the poset")
             return self.one()
-        else:
-            A = tuple(A)
-            if len(A) != 2:
-                raise ValueError("not an interval")
+
+        A = tuple(A)
+        if len(A) != 2:
+            raise ValueError("not an interval")
         for k in self._equiv_classes:
             if A in self._equiv_classes[k]:
                 return self.monomial(k)

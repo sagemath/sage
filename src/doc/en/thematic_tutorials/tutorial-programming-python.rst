@@ -87,7 +87,7 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
       sage: set([ [1], [2] ])
       Traceback (most recent call last):
       ...
-      TypeError: unhashable type: 'list'
+      TypeError: ...unhashable type: 'list'...
 
 * A *dictionary* is an association table, which associates values to
   keys. Keys must be hashable. One creates dictionaries using the
@@ -765,7 +765,7 @@ appear once and must be immutable::
     sage: d = {[1,2,3] : 12}
     Traceback (most recent call last):
     ...
-    TypeError: unhashable type: 'list'
+    TypeError: ...unhashable type: 'list'...
 
 Another way to add items to a dictionary is with the ``update()`` method which
 updates the dictionary from another dictionary::

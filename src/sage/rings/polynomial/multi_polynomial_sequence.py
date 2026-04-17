@@ -168,8 +168,9 @@ from sage.misc.method_decorator import MethodDecorator
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.infinity import Infinity
-from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal, NCPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+from sage.rings.polynomial.plural import NCPolynomialRing_plural
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing_sparse
 from sage.rings.quotient_ring import QuotientRing_nc
@@ -182,32 +183,6 @@ try:
 except ImportError:
     singular = None
     singular_gb_standard_options = libsingular_gb_standard_options = MethodDecorator
-
-
-def is_PolynomialSequence(F):
-    """
-    Return ``True`` if ``F`` is a ``PolynomialSequence``.
-
-    INPUT:
-
-    - ``F`` -- anything
-
-    EXAMPLES::
-
-        sage: P.<x,y> = PolynomialRing(QQ)
-        sage: I = [[x^2 + y^2], [x^2 - y^2]]
-        sage: F = Sequence(I, P); F
-        [x^2 + y^2, x^2 - y^2]
-
-        sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
-        sage: isinstance(F, PolynomialSequence_generic)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38266,
-                "The function is_PolynomialSequence is deprecated; "
-                "use 'isinstance(..., PolynomialSequence_generic)' instead.")
-    return isinstance(F, PolynomialSequence_generic)
 
 
 def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
@@ -316,6 +291,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     def is_ring(r):
         return (isinstance(r, (MPolynomialRing_base,
+                               NCPolynomialRing_plural,
                                BooleanMonomialMonoid,
                                InfinitePolynomialRing_sparse))
                 or (isinstance(r, QuotientRing_nc)
@@ -330,7 +306,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     elif isinstance(arg1, Matrix):
         ring, gens = arg1.base_ring(), arg1.list()
 
-    elif isinstance(arg1, MPolynomialIdeal):
+    elif isinstance(arg1, (MPolynomialIdeal, NCPolynomialIdeal)):
         ring, gens = arg1.ring(), arg1.gens()
     else:
         gens = list(arg1)
@@ -657,7 +633,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = Sequence([x, x*y])
             sage: I = S.algebraic_dependence(); I
@@ -665,7 +640,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         ::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = Sequence([x, (x^2 + y^2 - 1)^2, x*y - 2])
             sage: I = S.algebraic_dependence(); I
@@ -677,7 +651,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         ::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(GF(7))
             sage: S = Sequence([x, (x^2 + y^2 - 1)^2, x*y - 2])
             sage: I = S.algebraic_dependence(); I
@@ -746,7 +719,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
             sage: I = sage.rings.ideal.Katsura(P)
             sage: I.gens()
@@ -787,71 +759,6 @@ class PolynomialSequence_generic(Sequence_generic):
                 except KeyError:
                     raise ValueError("order argument does not contain all monomials")
         return A, vector(v)
-
-    def coefficient_matrix(self, sparse=True):
-        """
-        Return tuple ``(A,v)`` where ``A`` is the coefficient matrix
-        of this system and ``v`` the matching monomial vector.
-
-        Thus value of ``A[i,j]`` corresponds the coefficient of the
-        monomial ``v[j]`` in the ``i``-th polynomial in this system.
-
-        Monomials are order w.r.t. the term ordering of
-        ``self.ring()`` in reverse order, i.e. such that the smallest
-        entry comes last.
-
-        INPUT:
-
-        - ``sparse`` -- construct a sparse matrix (default: ``True``)
-
-        EXAMPLES::
-
-            sage: # needs sage.libs.singular
-            sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
-            sage: I = sage.rings.ideal.Katsura(P)
-            sage: I.gens()
-            [a + 2*b + 2*c + 2*d - 1,
-             a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a,
-             2*a*b + 2*b*c + 2*c*d - b,
-             b^2 + 2*a*c + 2*b*d - c]
-            sage: F = Sequence(I)
-            sage: A,v = F.coefficient_matrix()
-            doctest:warning...
-            DeprecationWarning: the function coefficient_matrix is deprecated; use coefficients_monomials instead
-            See https://github.com/sagemath/sage/issues/37035 for details.
-            sage: A
-            [  0   0   0   0   0   0   0   0   0   1   2   2   2 126]
-            [  1   0   2   0   0   2   0   0   2 126   0   0   0   0]
-            [  0   2   0   0   2   0   0   2   0   0 126   0   0   0]
-            [  0   0   1   2   0   0   2   0   0   0   0 126   0   0]
-            sage: v
-            [a^2]
-            [a*b]
-            [b^2]
-            [a*c]
-            [b*c]
-            [c^2]
-            [b*d]
-            [c*d]
-            [d^2]
-            [  a]
-            [  b]
-            [  c]
-            [  d]
-            [  1]
-            sage: A*v
-            [        a + 2*b + 2*c + 2*d - 1]
-            [a^2 + 2*b^2 + 2*c^2 + 2*d^2 - a]
-            [      2*a*b + 2*b*c + 2*c*d - b]
-            [        b^2 + 2*a*c + 2*b*d - c]
-        """
-        from sage.matrix.constructor import matrix
-        from sage.misc.superseded import deprecation
-        deprecation(37035, "the function coefficient_matrix is deprecated; use coefficients_monomials instead")
-
-        R = self.ring()
-        A, v = self.coefficients_monomials(sparse=sparse)
-        return A, matrix(R, len(v), 1, v)
 
     def macaulay_matrix(self, degree,
                         homogeneous=False,
@@ -1078,7 +985,7 @@ class PolynomialSequence_generic(Sequence_generic):
         R_monomials_of_degree = {}
         S_monomials_of_degree = {}
         if homogeneous:
-            for poly_deg in set([poly.degree() for poly in self]):
+            for poly_deg in {poly.degree() for poly in self}:
                 deg = target_degree - poly_deg
                 R_monomials_of_degree[deg] = R.monomials_of_degree(deg)
             S_monomials_of_degree[target_degree] = S.monomials_of_degree(target_degree)
@@ -1179,7 +1086,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127))
             sage: I = sage.rings.ideal.Katsura(P)
             sage: F = Sequence(I); F
@@ -1232,7 +1138,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127))
             sage: I = sage.rings.ideal.Katsura(P)
             sage: F = Sequence(I); print(F._repr_())
@@ -1259,7 +1164,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127))
             sage: I = sage.rings.ideal.Katsura(P)
             sage: F = Sequence(I); F  # indirect doctest
@@ -1287,7 +1191,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127))
             sage: I = sage.rings.ideal.Katsura(P)
             sage: F = Sequence(I)
@@ -1313,7 +1216,7 @@ class PolynomialSequence_generic(Sequence_generic):
         if isinstance(right, PolynomialSequence_generic) and right.ring() == self.ring():
             return PolynomialSequence(self.ring(), self.parts() + right.parts())
 
-        elif isinstance(right, (tuple, list)) and all((x.parent() == self.ring() for x in right)):
+        elif isinstance(right, (tuple, list)) and all(x.parent() == self.ring() for x in right):
             return PolynomialSequence(self.ring(), self.parts() + (right,))
 
         elif isinstance(right, MPolynomialIdeal) and (right.ring() is self.ring() or right.ring() == self.ring()):
@@ -1617,7 +1520,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)
             sage: I = sage.rings.ideal.Cyclic(R, 4)
             sage: I.basis.is_groebner()
@@ -2164,7 +2066,6 @@ class PolynomialSequence_gf2e(PolynomialSequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(2^2)
             sage: P.<x,y> = PolynomialRing(k, 2)
             sage: a = P.base_ring().gen()

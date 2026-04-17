@@ -5,8 +5,9 @@ This file provides the backend for \class{Polynomial_zmod_flint} via
 templating.
 
 AUTHOR:
-    -- Martin Albrecht (2009-01) another initial implementation
-    -- Burcin Erocal (2008-11) initial implementation
+
+- Martin Albrecht (2009-01) another initial implementation
+- Burcin Erocal (2008-11) initial implementation
 """
 #*****************************************************************************
 #       Copyright (C) 2008-2009 Burcin Erocal <burcin@erocal.org>
@@ -14,7 +15,7 @@ AUTHOR:
 #
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
@@ -326,7 +327,7 @@ cdef inline int celement_mul_scalar(nmod_poly_t res, nmod_poly_t p,
         sage: (p*9836).coefficients() == [x*9836 for x in p.coefficients()]
         True
     """
-    nmod_poly_scalar_mul_nmod(res, p, (<unsigned long>c)%n)
+    nmod_poly_scalar_mul_nmod(res, p, (<unsigned long>c) % n)
 
 cdef inline int celement_mul(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
