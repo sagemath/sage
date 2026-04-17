@@ -304,17 +304,16 @@ def dimension_new_cusp_forms(X, k=2, p=0):
     """
     if isinstance(X, GammaH_class):
         return X.dimension_new_cusp_forms(k, p=p)
-    elif isinstance(X, dirichlet.DirichletCharacter):
+    if isinstance(X, dirichlet.DirichletCharacter):
         N = X.modulus()
         if N <= 2:
             return Gamma0(N).dimension_new_cusp_forms(k, p=p)
-        else:
-            # Gamma1(N) for N<=2 just returns Gamma0(N), which has no
-            # eps parameter. See trac #12640.
-            alg = 'Ross' if p == 0 and k >= 2  else 'CohenOesterle'
-            # algorithm 'Ross' is much faster, but is only implemented for p=0,k>=2.
-            return Gamma1(N).dimension_new_cusp_forms(k, eps=X, p=p, algorithm=alg)
-    elif isinstance(X, (int, Integer)):
+        # Gamma1(N) for N<=2 just returns Gamma0(N), which has no
+        # eps parameter. See trac #12640.
+        alg = 'Ross' if p == 0 and k >= 2  else 'CohenOesterle'
+        # algorithm 'Ross' is much faster, but is only implemented for p=0,k>=2.
+        return Gamma1(N).dimension_new_cusp_forms(k, eps=X, p=p, algorithm=alg)
+    if isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_new_cusp_forms(k, p=p)
     raise TypeError(f"X (={X}) must be an integer, a Dirichlet character or a congruence subgroup of type Gamma0, Gamma1 or GammaH")
 
