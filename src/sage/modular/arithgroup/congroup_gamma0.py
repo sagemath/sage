@@ -11,40 +11,16 @@ Congruence subgroup `\Gamma_0(N)`
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import kronecker_symbol, divisors, euler_phi, gcd, moebius
+from sage.arith.misc import divisors, euler_phi, gcd, kronecker_symbol, moebius
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
+from sage.modular.arithgroup.congroup_gammaH import GammaH_class
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroup
 from sage.modular.cusps import Cusp
-from sage.modular.modsym.p1list import lift_to_sl2z, P1List
+from sage.modular.modsym.p1list import P1List, lift_to_sl2z
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
-
-from .congroup_gamma1 import Gamma1_class
-from .congroup_gammaH import GammaH_class
-from .congroup_generic import CongruenceSubgroup
-
-
-def is_Gamma0(x):
-    """
-    Return ``True`` if x is a congruence subgroup of type Gamma0.
-
-    EXAMPLES::
-
-        sage: from sage.modular.arithgroup.all import is_Gamma0
-        sage: is_Gamma0(SL2Z)
-        doctest:warning...
-        DeprecationWarning: The function is_Gamma0 is deprecated; use 'isinstance(..., Gamma0_class)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        True
-        sage: is_Gamma0(Gamma0(13))
-        True
-        sage: is_Gamma0(Gamma1(6))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_Gamma0 is deprecated; use 'isinstance(..., Gamma0_class)' instead.")
-    return isinstance(x, Gamma0_class)
-
 
 _gamma0_cache = {}
 
@@ -62,7 +38,7 @@ def Gamma0_constructor(N):
         sage: G is Gamma0(51)
         True
     """
-    from .all import SL2Z
+    from sage.modular.arithgroup.all import SL2Z
     if N == 1:
         return SL2Z
     try:
@@ -114,7 +90,7 @@ class Gamma0_class(GammaH_class):
           of weight 2 with sign 1 over Rational Field
     """
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         The congruence subgroup `\Gamma_0(N)`.
 
@@ -147,7 +123,7 @@ class Gamma0_class(GammaH_class):
         #
         # GammaH_class.__init__(self, level, [int(x) for x in IntegerModRing(level).unit_gens()])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -291,7 +267,7 @@ class Gamma0_class(GammaH_class):
         if isinstance(right, Gamma1_class):
             if right.level() >= 3:
                 return False
-            elif right.level() == 2:
+            if right.level() == 2:
                 return self.level() == 2
             # case level 1 dealt with above
         else:
@@ -373,11 +349,12 @@ class Gamma0_class(GammaH_class):
             # reasons, which aren't the ones the Farey symbol code gives
             return [ self([0,-1,1,0]), self([1,1,0,1]) ]
 
-        elif algorithm == "farey":
+        if algorithm == "farey":
             return self.farey_symbol().generators()
 
-        elif algorithm == "todd-coxeter":
+        if algorithm == "todd-coxeter":
             from sage.modular.modsym.p1list import P1List
+
             from .congroup import generators_helper
             level = self.level()
             if level == 1: # P1List isn't very happy working mod 1
@@ -385,8 +362,7 @@ class Gamma0_class(GammaH_class):
             gen_list = generators_helper(P1List(level), level)
             return [self(g, check=False) for g in gen_list]
 
-        else:
-            raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
+        raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
 
     def gamma_h_subgroups(self):
         r"""
@@ -626,61 +602,53 @@ class Gamma0_class(GammaH_class):
             # function s_0^#
             if a == 1:
                 return 1 - 1/q
-            elif a == 2:
+            if a == 2:
                 return 1 - 1/q - 1/q**2
-            else:
-                return (1 - 1/q) * (1 - 1/q**2)
+            return (1 - 1/q) * (1 - 1/q**2)
 
         def vinf(q, a):
             # function v_oo^#
             if a % 2:
                 return 0
-            elif a == 2:
+            if a == 2:
                 return q - 2
-            else:
-                return q**(a/2 - 2) * (q - 1)**2
+            return q**(a/2 - 2) * (q - 1)**2
 
         def v2(q, a):
             # function v_2^#
             if q % 4 == 1:
                 if a == 2:
                     return -1
-                else:
-                    return 0
-            elif q % 4 == 3:
+                return 0
+            if q % 4 == 3:
                 if a == 1:
                     return -2
-                elif a == 2:
+                if a == 2:
                     return 1
-                else:
-                    return 0
-            elif a in (1, 2):
-                return -1
-            elif a == 3:
-                return 1
-            else:
                 return 0
+            if a in (1, 2):
+                return -1
+            if a == 3:
+                return 1
+            return 0
 
         def v3(q, a):
             # function v_3^#
             if q % 3 == 1:
                 if a == 2:
                     return -1
-                else:
-                    return 0
-            elif q % 3 == 2:
+                return 0
+            if q % 3 == 2:
                 if a == 1:
                     return -2
-                elif a == 2:
+                if a == 2:
                     return 1
-                else:
-                    return 0
-            elif a in (1, 2):
-                return -1
-            elif a == 3:
-                return 1
-            else:
                 return 0
+            if a in (1, 2):
+                return -1
+            if a == 3:
+                return 1
+            return 0
 
         res = (k - 1) / 12 * N * prod(s0(q, a) for q, a in factors)
         res -= prod(vinf(q, a) for q, a in factors) / ZZ(2)

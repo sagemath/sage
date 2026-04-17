@@ -315,11 +315,10 @@ class Polyhedron_polymake(Polyhedron_base):
                         POINTS=(  [ [1] + list(v) for v in vertices ]
                                 + [ [0] + list(r) for r in rays ]),
                         INPUT_LINEALITY=[ [0] + list(l) for l in lines ])
-        else:
-            return dict(CONE_AMBIENT_DIM=1+self.parent().ambient_dim(),
-                        VERTICES=(  [ [1] + list(v) for v in vertices ]
-                                  + [ [0] + list(r) for r in rays ]),
-                        LINEALITY_SPACE=[ [0] + list(l) for l in lines ])
+        return dict(CONE_AMBIENT_DIM=1+self.parent().ambient_dim(),
+                    VERTICES=(  [ [1] + list(v) for v in vertices ]
+                              + [ [0] + list(r) for r in rays ]),
+                    LINEALITY_SPACE=[ [0] + list(l) for l in lines ])
 
     def _init_from_Hrepresentation(self, ieqs, eqns, minimize=True, verbose=False):
         r"""
@@ -393,9 +392,8 @@ class Polyhedron_polymake(Polyhedron_base):
         if not minimal:
             return dict(EQUATIONS=eqns,
                         INEQUALITIES=ieqs)
-        else:
-            return dict(AFFINE_HULL=eqns,
-                        FACETS=ieqs)
+        return dict(AFFINE_HULL=eqns,
+                    FACETS=ieqs)
 
     def _init_from_Vrepresentation_and_Hrepresentation(self, Vrep, Hrep):
         """

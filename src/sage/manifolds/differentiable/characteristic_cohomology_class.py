@@ -281,13 +281,13 @@ that our form actually represents the Euler class appropriately.
 # *****************************************************************************
 
 from sage.algebras.finite_gca import FiniteGCAlgebra
-from sage.combinat.free_module import IndexedFreeModuleElement
 from sage.manifolds.differentiable.affine_connection import AffineConnection
 from sage.manifolds.differentiable.bundle_connection import BundleConnection
 from sage.manifolds.differentiable.levi_civita_connection import LeviCivitaConnection
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import Singleton
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.sage_object import SageObject
@@ -1185,7 +1185,7 @@ def fast_wedge_power(form, n):
     """
     if n == 0:
         return form._domain._one_scalar_field
-    elif n < 0:
+    if n < 0:
         raise ValueError("'n' must be nonnegative")
     val = form
     while not (n & 1):

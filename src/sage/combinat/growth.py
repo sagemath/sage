@@ -678,14 +678,17 @@ class GrowthDiagram(SageObject):
             labels = self._process_labels(labels)
 
             if shape is None:
-                shape = self._shape_from_labels(labels)
+                shape = self._shape_from_labels(labels, complement=False)
 
             self._lambda, self._mu = self._process_shape(shape)
             self._out_labels = labels
             self._check_labels(self._out_labels)
             self._shrink()
         else:
-            self._filling, (self._lambda, self._mu) = self._process_filling_and_shape(filling, shape)
+            if labels is not None:
+                labels = self._process_labels(labels)
+
+            self._filling, (self._lambda, self._mu) = self._process_filling_shape_labels(filling, shape, labels)
 
             if labels is None:
                 rule = self.rule
@@ -694,7 +697,6 @@ class GrowthDiagram(SageObject):
                 else:
                     self._in_labels = [rule.zero] * self.half_perimeter()
             else:
-                labels = self._process_labels(labels)
                 self._in_labels = labels
 
             self._check_labels(self._in_labels)
@@ -747,7 +749,7 @@ class GrowthDiagram(SageObject):
             sage: G.out_labels() == G.conjugate().out_labels()[::-1]
             True
         """
-        F = {(j,i): v for (i,j),v in self._filling.items()}
+        F = {(j, i): v for (i, j), v in self._filling.items()}
         return GrowthDiagram(self.rule,
                              filling=F,
                              shape=self.shape().conjugate(),
@@ -802,7 +804,7 @@ class GrowthDiagram(SageObject):
         shape_lambda = [l - p for p in self._mu] + [l] * (h - len(self._mu))
         shape_mu = [l - p for p in self._lambda]
         shape = SkewPartition([shape_lambda[::-1], shape_mu[::-1]])
-        F = {(l-i-1, h-j-1): v for (i,j),v in self._filling.items()}
+        F = {(l-i-1, h-j-1): v for (i, j), v in self._filling.items()}
         return GrowthDiagram(self.rule,
                              filling=F,
                              shape=shape)
@@ -995,7 +997,7 @@ class GrowthDiagram(SageObject):
         if not self.is_rectangular():
             raise ValueError("can only convert fillings of rectangular shapes to words")
         w = [0] * self._lambda[0]
-        for ((i,j), v) in self._filling.items():
+        for (i, j), v in self._filling.items():
             if v != 0:
                 if v == 1:
                     if w[i] == 0:
@@ -1043,7 +1045,7 @@ class GrowthDiagram(SageObject):
             raise ValueError("can only convert fillings of rectangular shapes to words")
         w1 = []
         w2 = []
-        for ((i,j), v) in sorted(self._filling.items()):
+        for (i, j), v in sorted(self._filling.items()):
             if v >= 0:
                 w1.extend([i+1]*v)
                 w2.extend([j+1]*v)
@@ -1188,18 +1190,20 @@ class GrowthDiagram(SageObject):
         if rule.has_multiple_edges:
             return [rule.normalize_vertex(val) if i % 2 == 0 else val
                     for i, val in enumerate(labels)]
-        else:
-            return [rule.normalize_vertex(la) for la in labels]
+        return [rule.normalize_vertex(la) for la in labels]
 
-    def _shape_from_labels(self, labels):
+    def _shape_from_labels(self, labels, complement=False):
         r"""
         Determine the shape of the growth diagram given a list of labels
         during initialization.
 
         The shape can be determined from the labels if the size of
-        each label differs from the size of its successor.
+        each label differs from the size of its successor. Otherwise raise
+        an error.
 
-        Otherwise raise an error.
+        If ``complement`` is ``True``, return the skew shape given by the
+        complement of the partition inferred from the labels in the rectangle
+        determined by the number of horizontal and vertical steps in the path.
 
         .. WARNING::
 
@@ -1228,34 +1232,41 @@ class GrowthDiagram(SageObject):
         rule = self.rule
         is_P_edge = getattr(rule, "is_P_edge", None)
         is_Q_edge = getattr(rule, "is_Q_edge", None)
+
+        seq = []
         if rule.has_multiple_edges:
-            def right_left_multi(la, mu, e) -> int:
+            for i in range(0, len(labels) - 2, 2):
+                la, e, mu = labels[i], labels[i+1], labels[i+2]
                 if rule.rank(la) < rule.rank(mu):
                     if is_Q_edge is not None and e not in is_Q_edge(la, mu):
                         raise ValueError("%s has smaller rank than %s but there is no edge of color %s in Q" % (la, mu, e))
-                    return 1
+                    seq.append(1)
                 elif rule.rank(la) > rule.rank(mu):
                     if is_P_edge is not None and e not in is_P_edge(mu, la):
                         raise ValueError("%s has smaller rank than %s but there is no edge of color %s in P" % (mu, la, e))
-                    return 0
-                raise ValueError("can only determine the shape of the growth"
-                                 " diagram if ranks of successive labels differ")
-            return _Partitions.from_zero_one([right_left_multi(labels[i], labels[i+2], labels[i+1])
-                                              for i in range(0, len(labels)-2, 2)])
+                    seq.append(0)
+                else:
+                    raise ValueError("can only determine the shape of the growth diagram if ranks of successive labels differ")
         else:
-            def right_left(la, mu) -> int:
+            for i in range(len(labels) - 1):
+                la, mu = labels[i], labels[i+1]
                 if rule.rank(la) < rule.rank(mu):
                     if is_Q_edge is not None and not is_Q_edge(la, mu):
                         raise ValueError("%s has smaller rank than %s but is not covered by it in Q" % (la, mu))
-                    return 1
+                    seq.append(1)
                 elif rule.rank(la) > rule.rank(mu):
                     if is_P_edge is not None and not is_P_edge(mu, la):
                         raise ValueError("%s has smaller rank than %s but is not covered by it in P" % (mu, la))
-                    return 0
-                raise ValueError("can only determine the shape of the growth"
-                                 " diagram if ranks of successive labels differ")
-            return _Partitions.from_zero_one([right_left(labels[i], labels[i+1])
-                                              for i in range(len(labels)-1)])
+                    seq.append(0)
+                else:
+                    raise ValueError("can only determine the shape of the growth diagram if ranks of successive labels differ")
+
+        inner = _Partitions.from_zero_one(seq)
+        if complement:
+            h = seq.count(0)
+            w = seq.count(1)
+            return SkewPartition([[w] * h, inner])
+        return inner
 
     def _check_labels(self, labels):
         r"""
@@ -1326,15 +1337,25 @@ class GrowthDiagram(SageObject):
                 shape = SkewPartition(shape)
             except ValueError:
                 raise ValueError("cannot make sense of shape %s" % shape)
-            return ( list(shape[0]),
-                     list(shape[1]) + [0]*(len(shape[0])-len(shape[1])) )
-        return (list(shape), [0]*len(shape))
+            return (list(shape[0]),
+                    list(shape[1]) + [0]*(len(shape[0])-len(shape[1])))
+        return list(shape), [0]*len(shape)
 
-    def _process_filling_and_shape(self, filling, shape):
+    def _process_filling_shape_labels(self, filling, shape, labels):
         r"""
         Return a dict ``F`` such that ``F[(i,j)]`` is the element in row
         ``i`` and column ``j`` and a pair of partitions describing the
         region of the growth diagram.
+
+        if ``shape`` is ``None``, we try to infer it from the
+        remaining data, as follows.
+
+        If the filling is given as a list of lists, the shape is the
+        list of the lengths of the individual lists.
+
+        Otherwise, if ``labels`` are provided, we try to infer the
+        shape from them.  If this inference fails, we use the minimal
+        bounding rectangle of ``filling``.
 
         TESTS:
 
@@ -1409,13 +1430,13 @@ class GrowthDiagram(SageObject):
                 if isinstance(v, dict):
                     # it is a dict of dicts
                     F = dict()
-                    for (i, row) in filling.items():
-                        for (j, v) in row.items():
+                    for i, row in filling.items():
+                        for j, v in row.items():
                             if v != 0:
-                                F[(i,j)] = int(v)
+                                F[(i, j)] = int(v)
                 else:
                     # it is dict of coordinates
-                    F = {(i,j): v for ((i,j), v) in filling.items()
+                    F = {(i, j): v for (i, j), v in filling.items()
                          if v != 0}
             except StopIteration:
                 # it is an empty dict of coordinates
@@ -1429,7 +1450,8 @@ class GrowthDiagram(SageObject):
                 for i, row in enumerate(filling):
                     for j, v in enumerate(row):
                         if v != 0:
-                            F[j,i] = int(v)
+                            F[j, i] = int(v)
+
                 if shape is None:
                     shape = [len(row) for row in filling]
 
@@ -1442,15 +1464,22 @@ class GrowthDiagram(SageObject):
                         F[i, -l-1] = -1
 
         if shape is None:
-            if F == {}:
-                shape = []
-            else:
-                # find bounding rectangle of ``filling``
-                max_row = max(i for i, _ in F)+1
-                max_col = max(j for _, j in F)+1
-                shape = [max_row] * max_col
+            if labels is not None:
+                try:
+                    shape = self._shape_from_labels(labels, complement=True)
+                except ValueError:
+                    pass
 
-        return (F, self._process_shape(shape))
+            if shape is None:
+                if F == {}:
+                    shape = []
+                else:
+                    # find bounding rectangle of ``filling``
+                    max_row = max(i for i, _ in F)+1
+                    max_col = max(j for _, j in F)+1
+                    shape = [max_row] * max_col
+
+        return F, self._process_shape(shape)
 
     def _grow(self):
         r"""
@@ -1824,9 +1853,9 @@ class Rule(UniqueRepresentation):
             # unfortunately, layout_acyclic will not show multiple edges
             # D.layout_default = D.layout_acyclic
             return D
-        else:
-            return Poset(([w for k in range(n) for w in self.vertices(k)],
-                          self.is_P_edge), cover_relations=True)
+
+        return Poset(([w for k in range(n) for w in self.vertices(k)],
+                      self.is_P_edge), cover_relations=True)
 
     def Q_graph(self, n):
         r"""
@@ -1852,9 +1881,9 @@ class Rule(UniqueRepresentation):
             # unfortunately, layout_acyclic will not show multiple edges
             # D.layout_default = D.layout_acyclic
             return D
-        else:
-            return Poset(([w for k in range(n) for w in self.vertices(k)],
-                          self.is_Q_edge), cover_relations=True)
+
+        return Poset(([w for k in range(n) for w in self.vertices(k)],
+                      self.is_Q_edge), cover_relations=True)
 
 ######################################################################
 # Specific rules of growth diagrams
@@ -1938,8 +1967,7 @@ class RuleShiftedShapes(Rule):
         """
         if n == 0:
             return [self.zero]
-        else:
-            return Partitions(n, max_slope=-1)
+        return Partitions(n, max_slope=-1)
 
     def rank(self, v):
         r"""
@@ -1977,11 +2005,10 @@ class RuleShiftedShapes(Rule):
             l = SkewPartition([w, v]).cells()
         except ValueError:
             return []
-        else:
-            if l[0][1] == 0:
-                return [1]   # black
-            else:
-                return [2,3] # blue, red
+
+        if l[0][1] == 0:
+            return [1]   # black
+        return [2,3] # blue, red
 
     def is_P_edge(self, v, w):
         r"""
@@ -2267,33 +2294,32 @@ class RuleShiftedShapes(Rule):
             if g != 0:
                 raise ValueError("degenerate edge g should have color 0")
             return (0, x, 0, 0)
-        elif x == z != y:
+        if x == z != y:
             return (0, y, g, 0)
-        elif x != z == y:
+        if x != z == y:
             if g != 0:
                 raise ValueError("degenerate edge g should have color 0")
             return (0, x, 0, 0)
-        else:
-            if x != y:
-                row = SkewPartition([z, x]).cells()[0][0]
-                return (0, _make_partition(y).remove_cell(row), g, 0)
-            else:
-                row, col = SkewPartition([z, x]).cells()[0]
-                if row > 0 and g in [1, 2]: # black or blue
-                    return (0, _make_partition(y).remove_cell(row-1), 2, 0)
-                elif row == 0 and g in [1, 2]: # black or blue
-                    return (0, y, 0, 1)
-                else:
-                    # find last cell in column col-1
-                    for i in range(len(y)-1,-1,-1):
-                        if i + y[i] == col + row:
-                            if y[i] == 1:
-                                t = y[:i]
-                                return (0, t, 1, 0)
-                            else:
-                                t = y[:i] + [y[i]-1] + y[i+1:]
-                                return (0, t, 3, 0)
-                    raise ValueError("this should not happen")
+
+        if x != y:
+            row = SkewPartition([z, x]).cells()[0][0]
+            return (0, _make_partition(y).remove_cell(row), g, 0)
+
+        row, col = SkewPartition([z, x]).cells()[0]
+        if row > 0 and g in [1, 2]: # black or blue
+            return (0, _make_partition(y).remove_cell(row-1), 2, 0)
+        if row == 0 and g in [1, 2]: # black or blue
+            return (0, y, 0, 1)
+        # find last cell in column col-1
+        for i in range(len(y)-1,-1,-1):
+            if i + y[i] == col + row:
+                if y[i] == 1:
+                    t = y[:i]
+                    return (0, t, 1, 0)
+
+                t = y[:i] + [y[i]-1] + y[i+1:]
+                return (0, t, 3, 0)
+        raise ValueError("this should not happen")
 
 
 class RuleLLMS(Rule):
@@ -2458,8 +2484,7 @@ class RuleLLMS(Rule):
         if w in v.strong_covers():
             T = SkewPartition([w.to_partition(), v.to_partition()])
             return [max([j-i for i,j in c]) for c in T.cell_poset().connected_components()]
-        else:
-            return []
+        return []
 
     def P_symbol(self, P_chain):
         r"""
@@ -2721,9 +2746,8 @@ class RuleBinaryWord(Rule):
         """
         if n == 0:
             return [self.zero]
-        else:
-            w1 = Word([1], [0,1])
-            return [w1 + w for w in Words([0,1], n-1)]
+        w1 = Word([1], [0,1])
+        return [w1 + w for w in Words([0,1], n-1)]
 
     def rank(self, v):
         r"""
@@ -2866,15 +2890,13 @@ class RuleBinaryWord(Rule):
         """
         if x == y == z:
             return (x, 0)
-        elif x == z != y:
+        if x == z != y:
             return (y, 0)
-        elif x != z == y:
+        if x != z == y:
             return (x, 0)
-        else:
-            if x == y and len(z) > 0 and z[-1] == 1:
-                return (x, 1)
-            else:
-                return (x[:-1], 0)
+        if x == y and len(z) > 0 and z[-1] == 1:
+            return (x, 1)
+        return (x[:-1], 0)
 
 
 class RuleSylvester(Rule):
@@ -3003,7 +3025,7 @@ class RuleSylvester(Rule):
             sage: Sylvester.rank(Sylvester.vertices(3)[0])
             3
         """
-        return v.node_number()
+        return v.number_of_nodes()
 
     def is_Q_edge(self, v, w):
         r"""
@@ -3031,13 +3053,12 @@ class RuleSylvester(Rule):
         def is_subtree(T1, T2):
             if T2.is_empty():
                 return False
-            elif T2[0].is_empty() and T2[1].is_empty():
+            if T2[0].is_empty() and T2[1].is_empty():
                 return T1.is_empty()
-            elif T1.is_empty():
+            if T1.is_empty():
                 return False
-            else:
-                return ((T1[0] == T2[0] and is_subtree(T1[1], T2[1])) or
-                        (T1[1] == T2[1] and is_subtree(T1[0], T2[0])))
+            return ((T1[0] == T2[0] and is_subtree(T1[1], T2[1])) or
+                    (T1[1] == T2[1] and is_subtree(T1[0], T2[0])))
         return is_subtree(v, w)
 
     def is_P_edge(self, v, w):
@@ -3067,8 +3088,7 @@ class RuleSylvester(Rule):
         """
         if w.is_empty():
             return False
-        else:
-            return v == RuleSylvester._delete_right_most_node(w)
+        return v == RuleSylvester._delete_right_most_node(w)
 
     def P_symbol(self, P_chain):
         r"""
@@ -3147,13 +3167,12 @@ class RuleSylvester(Rule):
         """
         def add_label(L, S, T, m):
             if L.is_empty():
-                assert T.node_number() == 1
+                assert T.number_of_nodes() == 1
                 return LabelledBinaryTree([], m)
             l = L.label()
             if T[0] == S[0]:
                 return LabelledBinaryTree([L[0], add_label(L[1], S[1], T[1], m)], l)
-            else:
-                return LabelledBinaryTree([add_label(L[0], S[0], T[0], m), L[1]], l)
+            return LabelledBinaryTree([add_label(L[0], S[0], T[0], m), L[1]], l)
 
         L = LabelledBinaryTree(Q_chain[0])
         for i in range(1, len(Q_chain)):
@@ -3188,8 +3207,7 @@ class RuleSylvester(Rule):
             raise ValueError("cannot delete right most node from empty tree")
         elif b[1].is_empty():
             return b[0]
-        else:
-            return BinaryTree([b[0], RuleSylvester._delete_right_most_node(b[1])])
+        return BinaryTree([b[0], RuleSylvester._delete_right_most_node(b[1])])
 
     def forward_rule(self, y, t, x, content):
         r"""
@@ -3344,16 +3362,14 @@ class RuleSylvester(Rule):
         """
         if x == y == z:
             return (x, 0)
-        elif x == z != y:
+        if x == z != y:
             return (y, 0)
-        elif x != z == y:
+        if x != z == y:
             return (x, 0)
-        else:
-            if x == y and z == x.over(BinaryTree([])):
-                return (x, 1)
-            else:
-                t = RuleSylvester._delete_right_most_node(y)
-                return (t, 0)
+        if x == y and z == x.over(BinaryTree([])):
+            return (x, 1)
+        t = RuleSylvester._delete_right_most_node(y)
+        return (t, 0)
 
 
 class RuleYoungFibonacci(Rule):
@@ -3454,8 +3470,7 @@ class RuleYoungFibonacci(Rule):
         """
         if n == 0:
             return [self.zero]
-        else:
-            return [Word(list(w), [1,2]) for w in Compositions(n, max_part=2)]
+        return [Word(list(w), [1,2]) for w in Compositions(n, max_part=2)]
 
     def rank(self, v):
         r"""
@@ -3587,15 +3602,16 @@ class RuleYoungFibonacci(Rule):
         """
         if x == y == z:
             return (x, 0)
-        elif x == z != y:
+        if x == z != y:
             return (y, 0)
-        elif x != z == y:
+        if x != z == y:
             return (x, 0)
-        else:
-            if z[0] == 1:
-                return (z[1:], 1)
-            elif z[0] == 2:
-                return (z[1:], 0)
+
+        if z[0] == 1:
+            return (z[1:], 1)
+        if z[0] == 2:
+            return (z[1:], 0)
+        raise ValueError("this should not happen")
 
 
 class RulePartitions(Rule):
@@ -3792,15 +3808,15 @@ class RuleRSK(RulePartitions):
             if newPart == 0:
                 # returning this as a Partition costs a lot of time
                 return z[::-1]
+
+            z = [newPart] + z
+            if t == []:
+                carry = min(row1, row3)
             else:
-                z = [newPart] + z
-                if t == []:
-                    carry = min(row1, row3)
-                else:
-                    carry = min(row1, row3) - t[0]
-                x = x[1:]
-                t = t[1:]
-                y = y[1:]
+                carry = min(row1, row3) - t[0]
+            x = x[1:]
+            t = t[1:]
+            y = y[1:]
 
     def backward_rule(self, y, z, x):
         r"""
@@ -4257,9 +4273,9 @@ class RuleDomino(Rule):
             r"""
             Return the union of the two partitions.
             """
-            return [max(p,q) for (p,q) in zip_longest(la, mu, fillvalue=0)]
+            return [max(p, q) for p, q in zip_longest(la, mu, fillvalue=0)]
 
-        if content not in [0,1,-1]:
+        if content not in [0, 1, -1]:
             raise ValueError("domino: the content of the filling must be in {-1,0,1}")
 
         if content == 1:
@@ -4293,7 +4309,7 @@ class RuleDomino(Rule):
             elif len(diff) == 1:
                 z = copy(x)
                 # diff is a single cell
-                (k,l) = diff.pop()
+                k, l = diff.pop()
                 # add (k+1, l+1) to x
                 # either (k, l+1) or (k+1, l) must also be added
                 if z[k] <= l + 1:

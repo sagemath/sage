@@ -18,14 +18,15 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-from sage.rings.rational_field import QQ
 from sage.categories.algebras import Algebras
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+from sage.rings.rational_field import QQ
 from sage.sets.family import Family
 
 
@@ -275,11 +276,11 @@ class YokonumaHeckeAlgebraGL(YokonumaHeckeAlgebra):
         self._n = n
         W = Permutations(n)
         import itertools
-        C = itertools.product(*([range(d)]*n))
+        C = itertools.product(*([range(d)] * n))
         indices = list(itertools.product(C, W))
         YokonumaHeckeAlgebra.__init__(self, d, W, q, R, indices)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -292,7 +293,7 @@ class YokonumaHeckeAlgebraGL(YokonumaHeckeAlgebra):
         return "Yokonuma-Hecke algebra of rank {} and order {} with q={} over {}".format(
             self._d, self._n, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -304,7 +305,7 @@ class YokonumaHeckeAlgebraGL(YokonumaHeckeAlgebra):
         """
         return "\\mathcal{Y}_{%s,%s}(%s)" % (self._d, self._n, self._q)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         """
         Return a string representation of the basis element indexed by ``m``.
 
@@ -316,7 +317,8 @@ class YokonumaHeckeAlgebraGL(YokonumaHeckeAlgebra):
         """
         def gen_str(e):
             return '' if e == 1 else '^%s' % e
-        lhs = '*'.join('t%s' % (j+1) + gen_str(i) for j,i in enumerate(m[0]) if i > 0)
+        lhs = '*'.join('t%s' % (j + 1) + gen_str(i)
+                       for j, i in enumerate(m[0]) if i > 0)
         redword = m[1].reduced_word()
         if not redword:
             if not lhs:
@@ -327,7 +329,7 @@ class YokonumaHeckeAlgebraGL(YokonumaHeckeAlgebra):
             return rhs
         return lhs + '*' + rhs
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a latex representation for the basis element indexed by ``m``.
 
@@ -339,7 +341,8 @@ class YokonumaHeckeAlgebraGL(YokonumaHeckeAlgebra):
         """
         def gen_str(e):
             return '' if e == 1 else '^{%s}' % e
-        lhs = ' '.join('t_{%s}' % (j+1) + gen_str(i) for j,i in enumerate(m[0]) if i > 0)
+        lhs = ' '.join('t_{%s}' % (j + 1) + gen_str(i)
+                       for j, i in enumerate(m[0]) if i > 0)
         redword = m[1].reduced_word()
         if not redword:
             if not lhs:
@@ -688,7 +691,7 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
         indices = cartesian_product([self._Q, W])
         YokonumaHeckeAlgebra.__init__(self, d, W, q, R, indices)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -701,7 +704,7 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
         return "Yokonuma-Hecke algebra of rank {} for {} with q={} over {}".format(
             self._d, self._cartan_type, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -711,10 +714,9 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
             sage: latex(Y)
             \mathcal{Y}_{5,E_6}(q)
         """
-        from sage.misc.latex import latex
         return "\\mathcal{Y}_{%s,%s}(%s)" % (self._d, latex(self._cartan_type), self._q)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         """
         Return a string representation of the basis element indexed by ``m``.
 
@@ -740,7 +742,7 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
             return rhs
         return lhs + '*' + rhs
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a latex representation for the basis element indexed by ``m``.
 

@@ -336,7 +336,6 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4))
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)

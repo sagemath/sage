@@ -173,11 +173,6 @@ The bad:
 
     Intervals ``a`` and ``b`` overlap iff ``not(a != b)``.
 
-.. WARNING::
-
-    The ``cmp(a, b)`` function should not be used to compare real
-    intervals. Note that ``cmp`` will disappear in Python3.
-
 EXAMPLES::
 
     sage: 0 < RIF(1, 2)
@@ -849,7 +844,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
             return self._convert_method_map(S, "_real_mpfi_")
         return None
 
-    def __richcmp__(self, other, int op):
+    def __richcmp__(self, other, int op) -> bool:
         """
         Compare ``self`` to ``other``.
 
@@ -1861,19 +1856,27 @@ cdef class RealIntervalFieldElement(RingElement):
 
         Check that :issue:`15166` is fixed::
 
-            sage: RIF(1.84e13).exp()
-            [2.0985787164673874e323228496 .. +infinity] # 32-bit
-            6.817557048799520?e7991018467019 # 64-bit
+            sage: v = RIF(1.84e13).exp()
+            sage: v  # needs 32_bit
+            [2.0985787164673874e323228496 .. +infinity]
+            sage: v  # needs !32_bit
+            6.817557048799520?e7991018467019
             sage: from sage.rings.real_mpfr import mpfr_get_exp_min, mpfr_get_exp_max
-            sage: v = RIF(1.0 << (mpfr_get_exp_max() - 1)); v
-            1.0492893582336939?e323228496 # 32-bit
-            2.9378268945557938?e1388255822130839282 # 64-bit
-            sage: -v
-            -1.0492893582336939?e323228496 # 32-bit
-            -2.9378268945557938?e1388255822130839282 # 64-bit
-            sage: v = RIF(1.0 >> -mpfr_get_exp_min()+1); v
-            2.3825649048879511?e-323228497 # 32-bit
-            8.5096913117408362?e-1388255822130839284 # 64-bit
+            sage: v = RIF(1.0 << (mpfr_get_exp_max() - 1))
+            sage: v  # needs 32_bit
+            1.0492893582336939?e323228496
+            sage: v  # needs !32_bit
+            2.9378268945557938?e1388255822130839282
+            sage: v = -v
+            sage: v  # needs 32_bit
+            -1.0492893582336939?e323228496
+            sage: v  # needs !32_bit
+            -2.9378268945557938?e1388255822130839282
+            sage: v = RIF(1.0 >> -mpfr_get_exp_min()+1)
+            sage: v  # needs 32_bit
+            2.3825649048879511?e-323228497
+            sage: v  # needs !32_bit
+            8.5096913117408362?e-1388255822130839284
         """
         if not(mpfr_number_p(&self.value.left) and mpfr_number_p(&self.value.right)):
             raise ValueError("_str_question_style on NaN or infinity")
@@ -2430,7 +2433,6 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1, 2).relative_diameter()
             0.666666666666667
 
-            sage: # needs sage.symbolic
             sage: RIF(pi).diameter()
             1.41357985842823e-16
             sage: RIF(pi).absolute_diameter()
@@ -2470,7 +2472,6 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(5/7).fp_rank_diameter()
             1
 
-            sage: # needs sage.symbolic
             sage: RIF(pi).fp_rank_diameter()
             1
             sage: RIF(-sqrt(2)).fp_rank_diameter()
@@ -2479,17 +2480,21 @@ cdef class RealIntervalFieldElement(RingElement):
             2.06622879260?e6137
             sage: a.fp_rank_diameter()
             30524
-            sage: (RIF(sqrt(2)) - RIF(sqrt(2))).fp_rank_diameter()
-            9671406088542672151117826            # 32-bit
-            41538374868278620559869609387229186  # 64-bit
+            sage: d = (RIF(sqrt(2)) - RIF(sqrt(2))).fp_rank_diameter()
+            sage: diam32 = 9671406088542672151117826
+            sage: diam64 = 41538374868278620559869609387229186
+            sage: d in [diam32, diam64]
+            True
 
         Just because we have the best possible interval, doesn't mean the
         interval is actually small::
 
-            sage: a = RIF(pi)^12345678901234567890; a                                   # needs sage.symbolic
-            [2.0985787164673874e323228496 .. +infinity]            # 32-bit
-            [5.8756537891115869e1388255822130839282 .. +infinity]  # 64-bit
-            sage: a.fp_rank_diameter()                                                  # needs sage.symbolic
+            sage: a = RIF(pi)^12345678901234567890
+            sage: a  # needs 32_bit
+            [2.0985787164673874e323228496 .. +infinity]
+            sage: a  # needs !32_bit
+            [5.8756537891115869e1388255822130839282 .. +infinity]
+            sage: a.fp_rank_diameter()
             1
         """
         return self.lower().fp_rank_delta(self.upper())
@@ -2577,7 +2582,6 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: b.lower(), b.upper()
             (1.50000000000000, 2.00000000000000)
 
-            sage: # needs sage.symbolic
             sage: I = RIF(e, pi)
             sage: a, b = I.bisection()
             sage: a.intersection(b) == RIF(I.center())
@@ -2615,20 +2619,13 @@ cdef class RealIntervalFieldElement(RingElement):
         TESTS::
 
             sage: RIF(1) + RR(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            2
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for +: ...
         """
         cdef RealIntervalFieldElement _left = (<RealIntervalFieldElement> left)
         if have_same_parent(left, right):
             return _left._add_(right)
-        if (type(right) is RealNumber
-                and _left._parent.prec() <= right.parent().prec()):
-            deprecation(15114, "automatic conversions from floating-point "
-                        "numbers to intervals are deprecated")
-            return left + _left._parent(right)
         elif isinstance(left, RealIntervalFieldElement):
             return Element.__add__(left, right)
         else:
@@ -2639,20 +2636,13 @@ cdef class RealIntervalFieldElement(RingElement):
         TESTS::
 
             sage: RIF(2) - RR(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            1
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for -: ...
         """
         cdef RealIntervalFieldElement _left = (<RealIntervalFieldElement> left)
         if have_same_parent(left, right):
             return _left._sub_(right)
-        if (type(right) is RealNumber
-                and _left._parent.prec() <= right.parent().prec()):
-            deprecation(15114, "automatic conversions from floating-point "
-                        "numbers to intervals are deprecated")
-            return left - _left._parent(right)
         elif isinstance(left, RealIntervalFieldElement):
             return Element.__sub__(left, right)
         else:
@@ -2663,20 +2653,13 @@ cdef class RealIntervalFieldElement(RingElement):
         TESTS::
 
             sage: RIF(1) * RR(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            1
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for *: ...
         """
         cdef RealIntervalFieldElement _left = (<RealIntervalFieldElement> left)
         if have_same_parent(left, right):
             return _left._mul_(right)
-        if (type(right) is RealNumber
-                and _left._parent.prec() <= right.parent().prec()):
-            deprecation(15114, "automatic conversions from floating-point "
-                        "numbers to intervals are deprecated")
-            return left * _left._parent(right)
         elif isinstance(left, RealIntervalFieldElement):
             return Element.__mul__(left, right)
         else:
@@ -2687,25 +2670,13 @@ cdef class RealIntervalFieldElement(RingElement):
         TESTS::
 
             sage: RIF(1) / RR(1/2)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            2
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for /: ...
         """
         cdef RealIntervalFieldElement _left = (<RealIntervalFieldElement> left)
         if have_same_parent(left, right):
             return _left._div_(right)
-        if (type(right) is RealNumber
-                and _left._parent.prec() <= right.parent().prec()):
-            deprecation(15114, "automatic conversions from floating-point "
-                        "numbers to intervals are deprecated")
-            return left / _left._parent(right)
-        elif (type(left) is RealNumber
-                and left.parent().prec() >= right.parent().prec()):
-            deprecation(15114, "automatic conversions from floating-point "
-                        "numbers to intervals are deprecated")
-            return right.parent()(left)/right
         elif isinstance(left, RealIntervalFieldElement):
             return Element.__truediv__(left, right)
         else:
@@ -4642,7 +4613,6 @@ cdef class RealIntervalFieldElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: t = RIF(pi)/2
             sage: t.cos()
             0.?e-15
@@ -5336,50 +5306,6 @@ def RealInterval(s, upper=None, int base=10, int pad=0, min_prec=53):
 
 # The default real interval field, with precision 53 bits
 RIF = RealIntervalField()
-
-
-def is_RealIntervalField(x):
-    """
-    Check if ``x`` is a :class:`RealIntervalField_class`.
-
-    EXAMPLES::
-
-        sage: sage.rings.real_mpfi.is_RealIntervalField(RIF)
-        doctest:warning...
-        DeprecationWarning: The function is_RealIntervalField is deprecated;
-        use 'isinstance(..., RealIntervalField_class)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: sage.rings.real_mpfi.is_RealIntervalField(RealIntervalField(200))
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_RealIntervalField is deprecated; "
-                       "use 'isinstance(..., RealIntervalField_class)' instead.")
-    return isinstance(x, RealIntervalField_class)
-
-
-def is_RealIntervalFieldElement(x):
-    """
-    Check if ``x`` is a :class:`RealIntervalFieldElement`.
-
-    EXAMPLES::
-
-        sage: sage.rings.real_mpfi.is_RealIntervalFieldElement(RIF(2.2))
-        doctest:warning...
-        DeprecationWarning: The function is_RealIntervalFieldElement is deprecated;
-        use 'isinstance(..., RealIntervalFieldElement)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: sage.rings.real_mpfi.is_RealIntervalFieldElement(RealIntervalField(200)(2.2))
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_RealIntervalFieldElement is deprecated; "
-                       "use 'isinstance(..., RealIntervalFieldElement)' instead.")
-    return isinstance(x, RealIntervalFieldElement)
 
 
 # pickle functions

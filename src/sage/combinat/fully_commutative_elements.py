@@ -28,8 +28,6 @@ Natalie Schoenhals for their contribution to the project and the code.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from collections import deque
-
 from sage.categories.coxeter_groups import CoxeterGroups
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.misc.lazy_import import lazy_import
@@ -158,7 +156,9 @@ class FullyCommutativeElement(NormalizedClonableList):
             False
         """
         word = list(self)
-        from sage.combinat.root_system.braid_orbit import is_fully_commutative as is_fully_comm
+        from sage.combinat.root_system.braid_orbit import (
+            is_fully_commutative as is_fully_comm,
+        )
 
         group = self.parent().coxeter_group()
         braid_rels = group.braid_relations()
@@ -231,8 +231,7 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         if not display_labeling:
             return p
-        else:
-            return p.relabel(lambda i: (i, letter(i)))
+        return p.relabel(lambda i: (i, letter(i)))
 
     # Hasse diagrams of heaps help visualize FC elements:
     def plot_heap(self):
@@ -271,7 +270,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         levels = h.level_sets()
         letters_at_level = [set(self[i] for i in level) for level in levels]
 
-        for (level_zero_index, members) in enumerate(levels):
+        for level_zero_index, members in enumerate(levels):
             level = level_zero_index + 1
             for i in members:
                 x = self[i]
@@ -439,7 +438,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         view = list(self) if side == 'left' else self[::-1]
         m = self.parent().coxeter_group().coxeter_matrix()
         out = set()
-        for (i, t) in enumerate(view):
+        for i, t in enumerate(view):
             if not any(m[x, t] > 2 for x in view[:i]):
                 out.add(t)
         return out
@@ -712,9 +711,9 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         # Perform the coset decomposition on the specified side:
         if side == 'left':
-            (string, remaining) = self.coset_decomposition(J, side=side)
+            string, remaining = self.coset_decomposition(J, side=side)
         elif side == 'right':
-            (remaining, string) = self.coset_decomposition(J, side=side)
+            remaining, string = self.coset_decomposition(J, side=side)
 
         cur_string = list(string)
 
@@ -1011,7 +1010,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
         letters = self.coxeter_group().index_set()
 
         # To make the iterator deterministic, use a dictionary rather than a
-        # set, for the keys are then ordered by default by Python 3.7+:
+        # set, for the keys are then ordered by default:
         recent_words = {empty_word: True}
         yield empty_word
         while recent_words:

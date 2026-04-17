@@ -643,22 +643,21 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
                 e_list = e.list()
                 e_list = _insert_punctured_positions(e_list, pts, one)
             else:
-                e_list = [one if i in pts else zero for i in range(Cor.length())]
+                e_list = [one if i in pts else zero
+                          for i in range(Cor.length())]
             e = vector(GF(2), e_list)
             yl = y.list()
             yl = _insert_punctured_positions(yl, pts, zero)
             y = A(yl)
             return _puncture(D.decode_to_code((y, e)), pts)
-        elif self._strategy == 'try-all':
+        if self._strategy == 'try-all':
             end = False
             yl = y.list()
             I = iter(VectorSpace(F, len(pts)))
             list_pts = list(pts)
             list_pts.sort()
-            shift = 0
-            for i in list_pts:
+            for shift, i in enumerate(list_pts):
                 yl.insert(i + shift, zero)
-                shift += 1
             values = next(I)
             while not end:
                 try:
@@ -700,14 +699,13 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         if self._strategy != 'try-all' and "error-erasure" not in D.decoder_type():
             if D.decoding_radius() - punctured >= 0:
                 return D.decoding_radius() - punctured
-            else:
-                return 0
-        elif "error-erasure" in D.decoder_type() and number_erasures is not None:
+            return 0
+        if "error-erasure" in D.decoder_type() and number_erasures is not None:
             diff = self.code().original_code().minimum_distance() - number_erasures - punctured - 1
             if diff <= 0:
                 raise ValueError("The number of erasures exceeds decoding capability")
             return diff // 2
-        elif "error-erasure" in D.decoder_type() and number_erasures is None:
+        if "error-erasure" in D.decoder_type() and number_erasures is None:
             raise ValueError("You must provide the number of erasures")
 
 

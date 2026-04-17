@@ -3,27 +3,34 @@ py.install_sources(
   'all.py',
   'binary_matrix.pxd',
   'binary_search.pxd',
+  'binary_search.pyx',
   'bitset.pxd',
+  'bitset.pyx',
   'bitset_base.pxd',
+  'bitset_base.pyx',
   'bitset_intrinsics.h',
   'blas_dict.pxd',
+  'blas_dict.pyx',
   'bounded_integer_sequences.pxd',
+  'bounded_integer_sequences.pyx',
   'list_of_pairs.pxd',
+  'list_of_pairs.pyx',
   'mutable_poset.py',
   'pairing_heap.h',
   'pairing_heap.pxd',
+  'pairing_heap.pyx',
   'sparse_bitset.pxd',
   'stream.py',
   subdir: 'sage/data_structures',
 )
 
 extension_data = {
-  'binary_search' : files('binary_search.pyx'),
-  'bitset' : files('bitset.pyx'),
-  'bitset_base' : files('bitset_base.pyx'),
-  'blas_dict' : files('blas_dict.pyx'),
-  'bounded_integer_sequences' : files('bounded_integer_sequences.pyx'),
-  'list_of_pairs' : files('list_of_pairs.pyx'),
+  'binary_search': files('binary_search.pyx'),
+  'bitset': files('bitset.pyx'),
+  'bitset_base': files('bitset_base.pyx'),
+  'blas_dict': files('blas_dict.pyx'),
+  'bounded_integer_sequences': files('bounded_integer_sequences.pyx'),
+  'list_of_pairs': files('list_of_pairs.pyx'),
 }
 
 foreach name, pyx : extension_data
@@ -42,7 +49,7 @@ foreach name, pyx : extension_data
   )
 endforeach
 
-extension_data_cpp = {'pairing_heap' : files('pairing_heap.pyx')}
+extension_data_cpp = {'pairing_heap': files('pairing_heap.pyx')}
 
 foreach name, pyx : extension_data_cpp
   py.extension_module(

@@ -289,7 +289,8 @@ class FriCAS(ExtraTabCompletion, Expect):
 
         TESTS::
 
-            sage: fricas == loads(dumps(fricas))
+            sage: a = FriCAS()
+            sage: isinstance(loads(dumps(a)), FriCAS)
             True
 
         Check that :issue:`25174` is fixed::
@@ -709,8 +710,7 @@ http://fricas.sourceforge.net.
             lines = m.groups()[0].split("\n")
             if max(len(line) for line in lines) < FRICAS_LINE_LENGTH:
                 return "\n".join(line[FRICAS_SINGLE_LINE_START:] for line in lines)
-            else:
-                return "\n".join(line[FRICAS_MULTI_LINE_START:] for line in lines)
+            return "\n".join(line[FRICAS_MULTI_LINE_START:] for line in lines)
 
         self._check_errors(var, output)
 
@@ -1317,10 +1317,9 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         if s[a] == FriCASElement._LEFTBRACKET:
             return FriCASElement._parse_list(s, start=a)
-        elif s[a] == FriCASElement._STRINGMARKER:
+        if s[a] == FriCASElement._STRINGMARKER:
             return FriCASElement._parse_string(s, start=a)
-        else:
-            return FriCASElement._parse_other(s, start=a)
+        return FriCASElement._parse_other(s, start=a)
 
     @staticmethod
     def _parse_list(s, start=0):
@@ -2108,26 +2107,6 @@ class FriCASExpectFunction(ExpectFunction):
         elif name.endswith("_e"):
             name = name[:-2] + "!"
         ExpectFunction.__init__(self, parent, name)
-
-
-def is_FriCASElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`FriCASElement`.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.fricas import is_FriCASElement
-        sage: is_FriCASElement(2)
-        doctest:...: DeprecationWarning: the function is_FriCASElement is deprecated; use isinstance(x, sage.interfaces.abc.FriCASElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_FriCASElement(fricas(2))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_FriCASElement is deprecated; use isinstance(x, sage.interfaces.abc.FriCASElement) instead")
-
-    return isinstance(x, FriCASElement)
 
 
 fricas = FriCAS()

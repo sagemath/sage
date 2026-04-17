@@ -319,6 +319,35 @@ def order_ideal_rowmotion(P):
     return InvertibleFiniteDynamicalSystem(X, phi, inverse=psi)
 
 
+def semidistributive_rowmotion(L):
+    r"""
+    Return the invertible finite discrete dynamical system
+    consisting of the elements of the semidistributive lattice ``L``,
+    evolving according to (semidistributive) rowmotion.
+
+    EXAMPLES::
+
+        sage: L = posets.TamariLattice(3)
+        sage: row = finite_dynamical_systems.semidistributive_rowmotion(L)
+        sage: all(L.rowmotion_semidistributive(a) == row.evolution()(a) for a in L)
+        True
+    """
+    H = L._hasse_diagram
+    d = L._element_to_vertex_dict
+    meet_irr = [u for u in H if sum(1 for _ in H.upper_covers_iterator(u)) == 1]
+    join_irr = [u for u in H if sum(1 for _ in H.lower_covers_iterator(u)) == 1]
+    kappa_dual = {L._vertex_to_element(u): L._vertex_to_element(H.kappa_dual(u))
+                  for u in meet_irr}
+    row0 = {a: L.join(kappa_dual[e] for e in L.canonical_meetands(a))
+            for a in L}
+
+    kappa = {L._vertex_to_element(u): L._vertex_to_element(H.kappa(u))
+             for u in join_irr}
+    row1 = {a: L.meet(kappa[e] for e in L.canonical_joinands(a))
+            for a in L}
+    return InvertibleFiniteDynamicalSystem(L, lambda a: row0[a], inverse=lambda a: row1[a])
+
+
 def bulgarian_solitaire(n):
     r"""
     Return the finite discrete dynamical system defined
@@ -369,11 +398,12 @@ def bulgarian_solitaire(n):
         sage: BS(8).is_homomesic(lambda lam: lam[-1])
         False
     """
-    from sage.combinat.partition import Partition, Partitions
+    from sage.combinat.partition import Partitions, _Partitions
     X = Partitions(n)
 
     def phi(lam):
         mu = [p - 1 for p in lam if p > 0]
         nu = sorted(mu + [len(lam)], reverse=True)
-        return Partition(nu)
+        return _Partitions(nu)
+
     return FiniteDynamicalSystem(X, phi)

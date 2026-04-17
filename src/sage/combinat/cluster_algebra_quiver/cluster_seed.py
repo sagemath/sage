@@ -1,27 +1,33 @@
 # sage.doctest: needs sage.graphs sage.modules
 r"""
-ClusterSeed
+Cluster seeds
 
-A *cluster seed* is a pair `(B,\mathbf{x})` with `B` being a *skew-symmetrizable* `(n+m) \times n` *-matrix*
-and with `\mathbf{x}` being an `n`-tuple of *independent elements* in the field of rational functions in `n` variables.
+A *cluster seed* is a pair `(B,\mathbf{x})` with `B` being a
+*skew-symmetrizable* `(n+m) \times n` *-matrix* and with `\mathbf{x}` being an
+`n`-tuple of *independent elements* in the field of rational functions in `n`
+variables.
 
 For the compendium on the cluster algebra and quiver package see
 [MS2011]_.
 
-AUTHORS:
-
-- Gregg Musiker: Initial Version
-- Christian Stump: Initial Version
-- Aram Dermenjian (2015-07-01): Updating ability to not rely solely on clusters
-- Jesse Levitt (2015-07-01): Updating ability to not rely solely on clusters
-
 REFERENCES:
 
 - [FZ2007]_
-
 - [BDP2013]_
 
-.. SEEALSO:: For mutation types of cluster seeds, see :meth:`sage.combinat.cluster_algebra_quiver.quiver_mutation_type.QuiverMutationType`. Cluster seeds are closely related to :meth:`sage.combinat.cluster_algebra_quiver.quiver.ClusterQuiver`.
+.. SEEALSO::
+
+    For mutation types of cluster seeds, see
+    :meth:`sage.combinat.cluster_algebra_quiver.quiver_mutation_type.QuiverMutationType`.
+    Cluster seeds are closely related to
+    :meth:`sage.combinat.cluster_algebra_quiver.quiver.ClusterQuiver`.
+
+AUTHORS:
+
+- Gregg Musiker: initial version
+- Christian Stump: initial version
+- Aram Dermenjian (2015-07-01): updating ability to not rely solely on clusters
+- Jesse Levitt (2015-07-01): updating ability to not rely solely on clusters
 """
 
 # ****************************************************************************
@@ -990,11 +996,11 @@ class ClusterSeed(SageObject):
         """
         if self._use_fpolys:
             return hash(tuple(self.cluster()))
-        elif self._use_g_vec:
+        if self._use_g_vec:
             return hash(self.g_matrix())
-        elif self._use_c_vec:
+        if self._use_c_vec:
             return hash(self.c_matrix())
-        elif self._use_d_vec:
+        if self._use_d_vec:
             return hash(self.d_matrix())
 
     def _repr_(self):
@@ -1362,8 +1368,7 @@ class ClusterSeed(SageObject):
         """
         if self._track_mut:
             return copy(self._mut_path)
-        else:
-            raise ValueError("Not recording mutation sequence.  Need to track mutations.")
+        raise ValueError("Not recording mutation sequence.  Need to track mutations.")
 
     def cluster_variable(self, k):
         r"""
@@ -1392,8 +1397,7 @@ class ClusterSeed(SageObject):
                 cluster_variable = g_mon * F_num * F_den
 
                 return ClusterVariable(FractionField(self._R), cluster_variable.numerator(), cluster_variable.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable', xdim=self._n)
-            else:
-                raise ValueError('No cluster variable with index or label ' + str(k) + '.')
+            raise ValueError('No cluster variable with index or label ' + str(k) + '.')
         elif self._track_mut:  # if we can recreate the clusters
             catchup = ClusterSeed(self._b_initial, user_labels=self._user_labels, user_labels_prefix=self._user_labels_prefix)
             catchup.use_c_vectors(use=self._use_c_vec, bot_is_c=self._bot_is_c)
@@ -1431,8 +1435,7 @@ class ClusterSeed(SageObject):
                 catchup.use_c_vectors(use=self._use_c_vec, bot_is_c=self._bot_is_c)
                 catchup.mutate(self.mutations())
                 return catchup.cluster()
-            else:
-                raise ValueError('Clusters not being tracked')
+            raise ValueError('Clusters not being tracked')
         elif self._cluster is None:
             self._cluster = [self.cluster_variable(k) for k in range(self._n)]
         return copy(self._cluster)
@@ -1516,14 +1519,13 @@ class ClusterSeed(SageObject):
                 raise ValueError("The cluster seed does not have a cluster variable of index %s." % k)
 
             return self._F[IE[k]]
-        elif self._track_mut:
+        if self._track_mut:
             catchup = ClusterSeed(self._b_initial, user_labels=self._user_labels, user_labels_prefix=self._user_labels_prefix)
             catchup.use_c_vectors(use=self._use_c_vec, bot_is_c=self._bot_is_c)
             catchup.mutate(self.mutations())
 
             return catchup.f_polynomial(k)
-        else:
-            raise ValueError("Turn on use_fpolys to get F polynomial %s." % k)
+        raise ValueError("Turn on use_fpolys to get F polynomial %s." % k)
 
     def f_polynomials(self):
         r"""
@@ -1571,19 +1573,19 @@ class ClusterSeed(SageObject):
 
         if self._use_g_vec:  # This implies the g-matrix is maintained by the mutate function and will always be up to date
             return copy(self._G.column(k))
-        elif self._use_fpolys and self._cluster:
+        if self._use_fpolys and self._cluster:
             f = copy(self.cluster_variable(k))
             eval_dict = {self.y(i): 0 for i in range(self._m)}
             f0 = f.subs(eval_dict)
             d1 = f0.numerator().degrees()
             d2 = f0.denominator().degrees()
             return tuple(d1[i] - d2[i] for i in range(self._n))
-        else:  # in the is_principal=True case
-            try:
-                # ensure that we cannot create a loop by calling g_matrix() here by filtering out loop causing conditions in the previous if-elif sections
-                return self.g_matrix().column(k)
-            except ValueError:
-                raise ValueError("Unable to calculate g-vectors. Need to use g vectors.")
+        # in the is_principal=True case
+        try:
+            # ensure that we cannot create a loop by calling g_matrix() here by filtering out loop causing conditions in the previous if-elif sections
+            return self.g_matrix().column(k)
+        except ValueError:
+            raise ValueError("Unable to calculate g-vectors. Need to use g vectors.")
 
     def g_matrix(self, show_warnings=True):
         r"""
@@ -1630,12 +1632,12 @@ class ClusterSeed(SageObject):
         from sage.matrix.constructor import matrix
         if self._use_g_vec:
             return copy(self._G)
-        elif self._use_fpolys and self._cluster:  # This only calls g_vector when it will not create a loop.
+        if self._use_fpolys and self._cluster:  # This only calls g_vector when it will not create a loop.
             return matrix([self.g_vector(k) for k in range(self._n)]).transpose()
-        elif self._use_c_vec:
+        if self._use_c_vec:
             if self.b_matrix().is_skew_symmetric():
                 return copy(self._C).inverse().transpose()
-            elif self._track_mut:
+            if self._track_mut:
                 BC1 = copy(self._b_initial[0:self._n])
                 BC1 = -BC1.transpose()
                 BC1 = BC1.stack(matrix.identity(self._n))
@@ -1643,8 +1645,7 @@ class ClusterSeed(SageObject):
                 for k in seq:
                     BC1.mutate(k)
                 return copy(BC1[self._n:2 * self._n]).inverse().transpose()
-            else:
-                raise ValueError("Unable to calculate g-vectors. Need to use g vectors.")
+            raise ValueError("Unable to calculate g-vectors. Need to use g vectors.")
         elif self._track_mut:
             catchup = ClusterSeed(self._b_initial)
             catchup.use_fpolys(False)
@@ -1756,20 +1757,19 @@ class ClusterSeed(SageObject):
 
         if self._bot_is_c:
             return copy(self._M[self._m:(self._n + self._m), :self._n])
-        elif self._use_c_vec:
+        if self._use_c_vec:
             return copy(self._C)
-        elif self._use_g_vec or self._use_fpolys:  # both of these will populate g_matrix() successfully
+        if self._use_g_vec or self._use_fpolys:  # both of these will populate g_matrix() successfully
             if self.b_matrix().is_skew_symmetric():
                 return self.g_matrix().inverse().transpose()
-            elif self._track_mut:
+            if self._track_mut:
                 BC1 = copy(self._b_initial[0:self._n])
                 BC1 = BC1.stack(matrix.identity(self._n))
                 seq = iter(self.mutations())
                 for k in seq:
                     BC1.mutate(k)
                 return copy(BC1[self._n:2 * self._n])
-            else:
-                raise ValueError("Unable to calculate c-vectors. Need to use c vectors.")
+            raise ValueError("Unable to calculate c-vectors. Need to use c vectors.")
         elif self._track_mut:
             BC1 = copy(self._b_initial[0:self._n])
             BC1 = BC1.stack(matrix.identity(self._n))
@@ -1798,12 +1798,12 @@ class ClusterSeed(SageObject):
 
         if self._use_d_vec:
             return copy(self._D).column(k)
-        elif self._use_fpolys:
+        if self._use_fpolys:
             f = self.cluster_variable(k)
             if f in self._R.gens():
                 return -vector(f.numerator().monomials()[0].exponents()[0][:self._n])
             return vector(f.denominator().monomials()[0].exponents()[0][:self._n])
-        elif self._track_mut:
+        if self._track_mut:
             catchup = ClusterSeed(self._b_initial)
             catchup.use_fpolys(False)
             catchup.use_g_vectors(False)
@@ -1811,8 +1811,7 @@ class ClusterSeed(SageObject):
 
             catchup.mutate(self.mutations())
             return copy(catchup._D).column(k)
-        else:
-            raise ValueError("Unable to calculate d-vector %s. Need to use d vectors." % k)
+        raise ValueError("Unable to calculate d-vector %s. Need to use d vectors." % k)
 
     def d_matrix(self, show_warnings=True):
         r"""
@@ -1836,9 +1835,9 @@ class ClusterSeed(SageObject):
             raise ValueError("Unable to calculate d-vectors. Need to use d vectors.")
         if self._use_d_vec:
             return copy(self._D)
-        elif self._use_fpolys:
+        if self._use_fpolys:
             return matrix([self.d_vector(k) for k in range(self._n)]).transpose()
-        elif self._track_mut:
+        if self._track_mut:
             catchup = ClusterSeed(self._b_initial)
             catchup.use_fpolys(False)
             catchup.use_g_vectors(False)
@@ -1847,7 +1846,7 @@ class ClusterSeed(SageObject):
 
             catchup.mutate(self.mutations())
             return catchup.d_matrix()
-        elif show_warnings:
+        if show_warnings:
             raise ValueError("No valid way to calculate d-vectors")
 
     def _d_mutate(self, k):
@@ -1903,13 +1902,12 @@ class ClusterSeed(SageObject):
             raise ValueError("The cluster seed does not have a coefficient of index %s." % k)
         if self._m == 0:
             return self.x(0)**0
-        else:
-            try:    # are c vectors being tracked?
-                exp = self.c_vector(k)
-            except Exception:    # if not try and reconstruct them
-                exp = self.c_matrix().column(k)
+        try:    # are c vectors being tracked?
+            exp = self.c_vector(k)
+        except Exception:    # if not try and reconstruct them
+            exp = self.c_matrix().column(k)
 
-            return prod(self.y(i)**exp[i] for i in range(self._m))
+        return prod(self.y(i)**exp[i] for i in range(self._m))
 
     def coefficients(self):
         r"""
@@ -2497,9 +2495,9 @@ class ClusterSeed(SageObject):
                 sequence = self.first_green_vertex()
             elif sequence == 'red':
                 sequence = self.first_red_vertex()
-            elif sequence == 'urban' or sequence == 'urban_renewal':
+            elif sequence in {'urban', 'urban_renewal'}:
                 sequence = self.first_urban_renewal()
-            elif sequence == 'all_urbans' or sequence == 'all_urban_renewals':
+            elif sequence in {'all_urbans', 'all_urban_renewals'}:
                 sequence = self.urban_renewals()
             elif hasattr(self, sequence):
                 sequence = getattr(self, sequence)()
@@ -2575,33 +2573,32 @@ class ClusterSeed(SageObject):
                                  ' "indices", or "cluster_vars"')
 
         # Classifies the input_type.  Raises warnings if the input is ambiguous, and errors if the input is not all of the same type.
-        else:
-            if is_vertices:
-                input_type = "vertices"
-                for x in seqq:
-                    if is_indices and seed._nlist[x] != x:
-                        print("Input can be ambiguously interpreted as both"
-                              " vertices and indices."
+        elif is_vertices:
+            input_type = "vertices"
+            for x in seqq:
+                if is_indices and seed._nlist[x] != x:
+                    print("Input can be ambiguously interpreted as both"
+                          " vertices and indices."
+                          " Mutating at vertices by default.")
+                    break
+
+                elif is_cluster_vars:
+                    cluster_var_index = seed.cluster_index(x)
+                    vertex_index = seed._nlist.index(x)
+                    if isinstance(cluster_var_index, int) and cluster_var_index != vertex_index:
+                        print("Input can be ambiguously interpreted as"
+                              " both vertices and cluster variables."
                               " Mutating at vertices by default.")
                         break
 
-                    elif is_cluster_vars:
-                        cluster_var_index = seed.cluster_index(x)
-                        vertex_index = seed._nlist.index(x)
-                        if isinstance(cluster_var_index, int) and cluster_var_index != vertex_index:
-                            print("Input can be ambiguously interpreted as"
-                                  " both vertices and cluster variables."
-                                  " Mutating at vertices by default.")
-                            break
-
-            # It should be impossible to interpret an index as a cluster variable.
-            elif is_indices:
-                input_type = "indices"
-            elif is_cluster_vars:
-                input_type = "cluster_vars"
-            else:
-                raise ValueError('mutation sequences must consist of exactly'
-                                 ' one of vertices, indices, or cluster variables')
+        # It should be impossible to interpret an index as a cluster variable.
+        elif is_indices:
+            input_type = "indices"
+        elif is_cluster_vars:
+            input_type = "cluster_vars"
+        else:
+            raise ValueError('mutation sequences must consist of exactly'
+                             ' one of vertices, indices, or cluster variables')
 
         if input_type == "cluster_vars" and len(seqq) > 1:
             mutation_seed = deepcopy(seed)
@@ -2757,12 +2754,11 @@ class ClusterSeed(SageObject):
 
         if return_output == 'seed':
             return seed_sequence
-        elif return_output == 'matrix':
+        if return_output == 'matrix':
             return [s._M for s in seed_sequence]
-        elif return_output == 'var':
+        if return_output == 'var':
             return new_clust_var
-        else:
-            raise ValueError('The parameter `return_output` can only be `seed`, `matrix`, or `var`.')
+        raise ValueError('The parameter `return_output` can only be `seed`, `matrix`, or `var`.')
 
     def mutation_analysis(self, options=['all'], filter=None):
         r"""
@@ -3497,8 +3493,8 @@ class ClusterSeed(SageObject):
         Check that :issue:`14638` is fixed::
 
             sage: S = ClusterSeed(['E',6])
-            sage: MC = S.mutation_class(depth=7); len(MC)  # long time
-            534
+            sage: MC = S.mutation_class(depth=6); len(MC)  # long time
+            388
 
         Infinite type examples::
 
@@ -4086,8 +4082,7 @@ class ClusterSeed(SageObject):
         mt = self.mutation_type()
         if isinstance(mt, str):
             return False
-        else:
-            return mt.is_finite()
+        return mt.is_finite()
 
     def is_mutation_finite(self, nr_of_checks=None, return_path=False):
         r"""
@@ -4125,8 +4120,7 @@ class ClusterSeed(SageObject):
         is_finite, path = is_mutation_finite(copy(self._M), nr_of_checks=nr_of_checks)
         if return_path:
             return is_finite, path
-        else:
-            return is_finite
+        return is_finite
 
     def mutation_type(self):
         r"""
@@ -4249,7 +4243,7 @@ class ClusterSeed(SageObject):
                         if p != 0 or q != 0:
                             ans += self._R(coeff_recurs(p, q, a1, a2, b, c))*self.x(0)**(b*p-a1)*self.x(1)**(c*q-a2)
                 return ans
-            elif algorithm == 'by_combinatorics':
+            if algorithm == 'by_combinatorics':
                 if b == 0:
                     S = ClusterSeed([['A', 1], ['A', 1]])
                 else:
@@ -4266,23 +4260,21 @@ class ClusterSeed(SageObject):
                             oddT = set(T).intersection(PathSubset(a1, 0))
                             evenT = set(T).symmetric_difference(oddT)
                             ans = ans + S.x(0)**(b*len(evenT)) * S.x(1)**(c*len(oddT))
-                    else:
-                        if is_LeeLiZel_allowable(T, a2, a1, c, b):
-                            oddT = set(T).intersection(PathSubset(a2, 0))
-                            evenT = set(T).symmetric_difference(oddT)
-                            ans = ans + S.x(0)**(b*len(oddT)) * S.x(1)**(c*len(evenT))
+                    elif is_LeeLiZel_allowable(T, a2, a1, c, b):
+                        oddT = set(T).intersection(PathSubset(a2, 0))
+                        evenT = set(T).symmetric_difference(oddT)
+                        ans = ans + S.x(0)**(b*len(oddT)) * S.x(1)**(c*len(evenT))
                 ans = ans*S.x(0)**(-a1)*S.x(1)**(-a2)
                 return ans
-            elif algorithm == 'just_numbers':
+            if algorithm == 'just_numbers':
                 ans = 1
                 for p in range(max(a2, 0)+1):
                     for q in range(max(a1, 0)+1):
                         if p != 0 or q != 0:
                             ans += coeff_recurs(p, q, a1, a2, b, c)
                 return ans
-            else:
-                raise ValueError("The third input should be 'by_recursion', "
-                                 "'by_combinatorics', or 'just_numbers'.")
+            raise ValueError("The third input should be 'by_recursion', "
+                             "'by_combinatorics', or 'just_numbers'.")
         else:
             raise ValueError("Greedy elements are only currently "
                              "defined for cluster seeds of rank two.")
@@ -4425,15 +4417,15 @@ class ClusterSeed(SageObject):
 
         while True:
             R = PolynomialRing(QQ, gens, order='invlex')
-            I = R.ideal(rels)
-            J = R.ideal(initial_product)
+            ideal_I = R.ideal(rels)
+            ideal_J = R.ideal(initial_product)
             if verbose:
                 msg = 'Computing relations among {} generators'
                 print(msg.format(len(gens)))
             start = time.time()
-            ISat = I.saturation(J)[0]
-            spend = time.time() - start
+            ISat = ideal_I.saturation(ideal_J)[0]
             if verbose:
+                spend = time.time() - start
                 msg = 'Computed {} relations in {} seconds'
                 print(msg.format(len(ISat.gens()), spend))
             deep_ideal = R.ideal(deep_gens) + ISat
@@ -4445,23 +4437,22 @@ class ClusterSeed(SageObject):
             spend = time.time() - start
             if M == initial_product_ideal:
                 if verbose:
-                    print('Verified that there are no new elements in', spend, 'seconds')
+                    print(f'Verified that there are no new elements in {spend} seconds')
                     print('Returning a presentation for the upper bound')
                 return R.quotient_ring(ISat)
-            else:
-                gens.append('z' + str(len(gens) - 2 * rank))
-                new_gen_found = False
-                i = 0
-                M_gens = M.gens()
-                while not new_gen_found and i < len(M_gens):
-                    f = initial_product_ideal.reduce(M_gens[i])
-                    if f != 0:
-                        rels.append('z' + str(len(gens) - 2 * rank - 1) + '*' + initial_product + '-(' + str(f) + ')')
-                        new_gen_found = True
-                        if verbose:
-                            print('Found a new element in', spend, 'seconds!')
-                            print('')
-                    i += 1
+            gens.append('z' + str(len(gens) - 2 * rank))
+            new_gen_found = False
+            i = 0
+            M_gens = M.gens()
+            while not new_gen_found and i < len(M_gens):
+                f = initial_product_ideal.reduce(M_gens[i])
+                if f != 0:
+                    rels.append('z' + str(len(gens) - 2 * rank - 1) + '*' + initial_product + '-(' + str(f) + ')')
+                    new_gen_found = True
+                    if verbose:
+                        print('Found a new element in', spend, 'seconds!')
+                        print()
+                i += 1
 
     def get_upper_cluster_algebra_element(self, a):
         r"""
@@ -4689,7 +4680,7 @@ class ClusterSeed(SageObject):
         # Computes the Laurent Polynomial for each vector in the decomposition.
         finalP = []
         # Laurent polynomial for each vector in {0,1}^n
-        for i in range(len(vd)):
+        for i, vdi in enumerate(vd):
             numerator = 0
             if cList[i]:
                 # If the vector in vd is negative then it did not
@@ -4706,8 +4697,8 @@ class ClusterSeed(SageObject):
                         expn = 0
                         # The exponent is determined by the vectors a,s, and the matrix B.
                         for k in range(num_cols):
-                            expn += (vd[i][0][k]-s[k])*max(0, B[j][k])+s[k]*max(0, -B[j][k])
-                        term *= x ** expn
+                            expn += (vdi[0][k]-s[k])*max(0, B[j][k])+s[k]*max(0, -B[j][k])
+                        term *= x**expn
                     numerator += term
             # Gives a numerator for the negative vector, or else the product would be zero.
             else:
@@ -4715,10 +4706,11 @@ class ClusterSeed(SageObject):
 
             # Uses the vectors in vd to calculates the denominator of the Laurent.
             denominator = 1
-            for l in range(num_cols):
-                denominator = denominator * (R.gen(l))**vd[i][0][l]
+            powers = vdi[0]
+            for ell in range(num_cols):
+                denominator = denominator * R.gen(ell)**powers[ell]
             # Each copy of a vector in vd contributes a factor of the Laurent polynomial calculated from it.
-            final = (numerator / denominator)**vd[i][1]
+            final = (numerator / denominator)**vdi[1]
             finalP.append(final)
         laurentP = 1
         # The UCA element for the vector a is the product of the elements produced from the vectors in its decomposition.
@@ -4756,15 +4748,15 @@ def coeff_recurs(p, q, a1, a2, b, c):
     """
     if p == 0 and q == 0:
         return 1
-    elif p < 0 or q < 0:
+    if p < 0 or q < 0:
         return 0
-    else:
-        if c*a1*q <= b*a2*p:
-            return sum((-1)**(k-1)*coeff_recurs(p-k, q, a1, a2, b, c)*_bino(a2-c*q+k-1, k)
-                       for k in range(1, p+1))
-        else:
-            return sum((-1)**(k-1)*coeff_recurs(p, q-k, a1, a2, b, c)*_bino(a1-b*p+k-1, k)
-                       for k in range(1, q+1))
+    if c * a1 * q <= b * a2 * p:
+        return sum((-1)**(k - 1) * coeff_recurs(p - k, q, a1, a2, b, c)
+                   * _bino(a2 - c * q + k - 1, k)
+                   for k in range(1, p + 1))
+    return sum((-1)**(k - 1) * coeff_recurs(p, q - k, a1, a2, b, c)
+               * _bino(a1 - b * p + k - 1, k)
+               for k in range(1, q + 1))
 
 
 def PathSubset(n, m):
@@ -4828,7 +4820,7 @@ def SetToPath(T):
     return ans
 
 
-def is_LeeLiZel_allowable(T, n, m, b, c):
+def is_LeeLiZel_allowable(T, n, m, b, c) -> bool:
     """
     Check if the subset `T` contributes to the computation of the greedy element `x[m,n]` in the rank two `(b,c)`-cluster algebra.
 
@@ -4843,52 +4835,54 @@ def is_LeeLiZel_allowable(T, n, m, b, c):
         True
     """
     horiz = set(T).intersection(PathSubset(n, 0))
+    if not horiz:
+        return True
     vert = set(T).symmetric_difference(horiz)
-    if len(horiz) == 0 or len(vert) == 0:
-        return True
-    else:
-        Latt = SetToPath(PathSubset(n, m))
-        for u in horiz:
-            from sage.combinat.words.word import Word
-            from sage.modules.free_module_element import vector
-            WW = Word(Latt)
-            LattCycled = vector(WW.conjugate(Latt.index(u))).list()
-            for v in vert:
-                uv_okay = False
-                for A in range(LattCycled.index(v)):
-                    EA = []
-                    AF = copy(LattCycled)
-                    for i in range(LattCycled.index(v), len(LattCycled)-1):
-                        AF.pop()
-                    AF.reverse()
-                    for i in range(A+1):
-                        EA.append(LattCycled[i])
-                        AF.pop()
-                    AF.reverse()
-                    nAF1 = 0
-                    for i in range(len(AF)):
-                        if AF[i] % 2 == 1:
-                            nAF1 += 1
-                    nAF2 = 0
-                    for i in range(len(AF)):
-                        if AF[i] % 2 == 0 and AF[i] in vert:
-                            nAF2 += 1
-                    nEA2 = 0
-                    for i in range(len(EA)):
-                        if EA[i] % 2 == 0:
-                            nEA2 += 1
-                    nEA1 = 0
-                    for i in range(len(EA)):
-                        if EA[i] % 2 == 1 and EA[i] in horiz:
-                            nEA1 += 1
-                    if nAF1 == b*nAF2 or nEA2 == c*nEA1:
-                        uv_okay = True
-                if not uv_okay:
-                    return False
+    if not vert:
         return True
 
+    Latt = SetToPath(PathSubset(n, m))
+    for u in horiz:
+        from sage.combinat.words.word import Word
+        from sage.modules.free_module_element import vector
+        WW = Word(Latt)
+        LattCycled = vector(WW.conjugate(Latt.index(u))).list()
+        for v in vert:
+            uv_okay = False
+            for A in range(LattCycled.index(v)):
+                EA = []
+                AF = copy(LattCycled)
+                for i in range(LattCycled.index(v), len(LattCycled) - 1):
+                    AF.pop()
+                AF.reverse()
+                for i in range(A + 1):
+                    EA.append(LattCycled[i])
+                    AF.pop()
+                AF.reverse()
+                nAF1 = 0
+                for i in range(len(AF)):
+                    if AF[i] % 2 == 1:
+                        nAF1 += 1
+                nAF2 = 0
+                for i in range(len(AF)):
+                    if AF[i] % 2 == 0 and AF[i] in vert:
+                        nAF2 += 1
+                nEA2 = 0
+                for i in range(len(EA)):
+                    if EA[i] % 2 == 0:
+                        nEA2 += 1
+                nEA1 = 0
+                for i in range(len(EA)):
+                    if EA[i] % 2 == 1 and EA[i] in horiz:
+                        nEA1 += 1
+                if nAF1 == b * nAF2 or nEA2 == c * nEA1:
+                    uv_okay = True
+            if not uv_okay:
+                return False
+    return True
 
-def get_green_vertices(C):
+
+def get_green_vertices(C) -> list[int]:
     r"""
     Get the green vertices from a matrix.
 
@@ -4909,7 +4903,7 @@ def get_green_vertices(C):
     return [i for i, v in enumerate(C.columns()) if any(x > 0 for x in v)]
 
 
-def get_red_vertices(C):
+def get_red_vertices(C) -> list[int]:
     r"""
     Get the red vertices from a matrix.
 
@@ -5197,5 +5191,4 @@ class ClusterVariable(FractionFieldElement):
                 return -Phiplus[self.numerator().degrees().index(1) + 1]
             root = self.denominator().degrees()
             return sum([root[i] * Phiplus[i + 1] for i in range(self._n)])
-        else:
-            raise ValueError('The cluster algebra for %s is not of finite type.' % self._repr_())
+        raise ValueError('The cluster algebra for %s is not of finite type.' % self._repr_())

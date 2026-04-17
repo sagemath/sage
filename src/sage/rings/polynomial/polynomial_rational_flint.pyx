@@ -263,7 +263,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 #               deg += 1
 
         elif isinstance(x, dict):
-            for deg, e in x.iteritems():
+            for deg, e in x.items():
                 c = Rational(e)
                 fmpq_poly_set_coeff_mpq(self._poly, deg, c.value)
 
@@ -1502,10 +1502,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             3
         """
         cdef Integer den = Integer.__new__(Integer)
-        if fmpq_poly_denref(self._poly) is NULL:
-            mpz_set_ui(den.value, 1)
-        else:
-            fmpz_get_mpz(den.value, <fmpz *> fmpq_poly_denref(self._poly))
+        fmpz_get_mpz(den.value, <fmpz *> fmpq_poly_denref(self._poly))
         return den
 
     def _derivative(self, var=None):
@@ -2127,7 +2124,6 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.groups sage.libs.pari
             sage: R.<x> = QQ[]
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(); G
@@ -2144,7 +2140,6 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         ::
 
-            sage: # needs sage.groups sage.libs.pari
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(pari_group=True); G
             PARI group [24, -1, 5, "S4"] of degree 4
@@ -2163,7 +2158,6 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f.galois_group(algorithm='kash')   # optional - kash
             Transitive group number 5 of degree 4
 
-            sage: # needs sage.libs.gap
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: f.galois_group(algorithm='gap')
             Transitive group number 5 of degree 4
@@ -2321,7 +2315,6 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padic
             sage: R.<x> = QQ[]
             sage: f = x^3 - 2
             sage: f.factor_padic(2)
@@ -2342,7 +2335,6 @@ cdef class Polynomial_rational_flint(Polynomial):
         the same as first coercing to `\QQ_p` and then factoring
         (see also :issue:`15422`)::
 
-            sage: # needs sage.rings.padic
             sage: f = x^2 - 3^6
             sage: f.factor_padic(3, 5)
             ((1 + O(3^5))*x + 3^3 + O(3^5)) * ((1 + O(3^5))*x + 2*3^3 + 2*3^4 + O(3^5))
@@ -2362,7 +2354,6 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         Try some bogus inputs::
 
-            sage: # needs sage.rings.padic
             sage: f.factor_padic(3, -1)
             Traceback (most recent call last):
             ...

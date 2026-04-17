@@ -27,7 +27,7 @@ from collections.abc import Iterable
 from sage.matrix.constructor import Matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.structure.all import SageObject
+from sage.structure.sage_object import SageObject
 from operator import itemgetter
 
 
@@ -117,18 +117,16 @@ def setprint_s(X, toplevel=False):
     """
     if isinstance(X, (frozenset, set)):
         return '{' + ', '.join(sorted(setprint_s(x) for x in X)) + '}'
-    elif isinstance(X, dict):
+    if isinstance(X, dict):
         return '{' + ', '.join(sorted(setprint_s(key) + ': ' + setprint_s(val)
                                       for key, val in X.items())) + '}'
-    elif isinstance(X, str):
+    if isinstance(X, str):
         if toplevel:
             return X
-        else:
-            return "'" + X + "'"
-    elif isinstance(X, Iterable) and not isinstance(X, SageObject):
+        return "'" + X + "'"
+    if isinstance(X, Iterable) and not isinstance(X, SageObject):
         return '[' + ', '.join(sorted(setprint_s(x) for x in X)) + ']'
-    else:
-        return repr(X)
+    return repr(X)
 
 
 def newlabel(groundset):
@@ -272,16 +270,8 @@ def make_regular_matroid_from_matroid(matroid):
     # First create a reduced 0-1 matrix
     B = list(M.basis())
     NB = list(M.groundset().difference(B))
-    dB = {}
-    i = 0
-    for e in B:
-        dB[e] = i
-        i += 1
-    dNB = {}
-    i = 0
-    for e in NB:
-        dNB[e] = i
-        i += 1
+    dB = {e: i for i, e in enumerate(B)}
+    dNB = {e: i for i, e in enumerate(NB)}
     A = Matrix(ZZ, len(B), len(NB), 0)
     G = BipartiteGraph(A.transpose())  # Sage's BipartiteGraph uses the column set as first color class. This is an edgeless graph.
     for e in NB:

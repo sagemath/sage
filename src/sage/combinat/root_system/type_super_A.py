@@ -411,8 +411,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
                 s = -s
             if positive:
                 return s > 0
-            else:
-                return s < 0
+            return s < 0
 
         def is_dominant_weight(self) -> bool:
             """
@@ -508,7 +507,7 @@ class CartanType(SuperCartanType_standard):
 
     AmbientSpace = AmbientSpace
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         """
         Return whether ``self`` is irreducible, which is ``True``.
 
@@ -521,7 +520,7 @@ class CartanType(SuperCartanType_standard):
 
     # A lot of these methods should be implemented by the ABCs of CartanType
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return whether ``self`` is affine or not.
 
@@ -532,7 +531,7 @@ class CartanType(SuperCartanType_standard):
         """
         return False
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return whether ``self`` is finite or not.
 

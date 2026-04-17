@@ -477,8 +477,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
         result = Factorization([], unit=0)
         if result_as_tuple:
             return (result,)
-        else:
-            return result
+        return result
 
     if polyhedron.base_ring() not in (ZZ, QQ):
         raise TypeError('base ring {} of the polyhedron not '
@@ -507,11 +506,10 @@ def generating_function_of_integral_points(polyhedron, split=False,
         result = _generating_function_of_integral_points_(polyhedron, name=name, **kwds)
         if result_as_tuple:
             return result
-        else:
-            if len(result) != 1:
-                raise ValueError("cannot unpack result "
-                                 "(set 'result_as_tuple=True')")
-            return result[0]
+        if len(result) != 1:
+            raise ValueError("cannot unpack result "
+                             "(set 'result_as_tuple=True')")
+        return result[0]
 
     if d <= 1:
         raise ValueError('cannot do splitting with only '
@@ -684,7 +682,7 @@ def __generating_function_of_integral_points__(
             return (-sum(abs(d) for d in D), D)
         terms = sorted(terms, key=key, reverse=True)
     return Factorization([(numerator, 1)] +
-                         list((1-t, -1) for t in terms),
+                         [(1 - t, -1) for t in terms],
                          sort=Factorization_sort,
                          simplify=Factorization_simplify)
 
@@ -1178,8 +1176,8 @@ class _SplitOffSimpleInequalities(_TransformHrepresentation):
                 inequalities_extra.append(tuple(coeffs))
         T = matrix(ZZ, dim, dim, D)
 
-        self.inequalities = (list(tuple(T*vector(ieq))
-                                  for ieq in inequalities_filtered)
+        self.inequalities = ([tuple(T * vector(ieq))
+                              for ieq in inequalities_filtered]
                              + inequalities_extra)
 
         rules_pre = ((y, B({tuple(row[1:]): 1}))
@@ -1465,8 +1463,8 @@ class _TransformMod(_TransformHrepresentation):
         self.factor = next(rules_pre)[1]
         self.rules = dict(rules_pre)
 
-        self.inequalities = list(tuple(vector(e)*T) for e in self.inequalities)
-        self.equations = list(tuple(vector(e)*T) for e in self.equations)
+        self.inequalities = [tuple(vector(e) * T) for e in self.inequalities]
+        self.equations = [tuple(vector(e) * T) for e in self.equations]
 
     @staticmethod
     def generate_mods(equations):

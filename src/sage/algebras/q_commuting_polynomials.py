@@ -289,7 +289,7 @@ class qCommutingPolynomials(qCommutingPolynomials_generic):
         indices = FreeAbelianMonoid(len(names), names)
         qCommutingPolynomials_generic.__init__(self, q, B, indices, indices.variable_names())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -307,7 +307,7 @@ class qCommutingPolynomials(qCommutingPolynomials_generic):
         names = ", ".join(self.variable_names())
         return "{}-commuting polynomial ring in {} over {} with matrix:\n{}".format(self._q, names, self.base_ring(), self._B)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -466,7 +466,7 @@ class qCommutingLaurentPolynomials(qCommutingPolynomials_generic):
         self._display_group = FreeGroup(names=names, abelian=True, bracket=False)
         qCommutingPolynomials_generic.__init__(self, q, B, indices, names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -484,7 +484,7 @@ class qCommutingLaurentPolynomials(qCommutingPolynomials_generic):
         names = ", ".join(self.variable_names())
         return "{}-commuting Laurent polynomial ring in {} over {} with matrix:\n{}".format(self._q, names, self.base_ring(), self._B)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -499,7 +499,7 @@ class qCommutingLaurentPolynomials(qCommutingPolynomials_generic):
         names = ", ".join(r"{}^{{\pm}}".format(v) for v in self.variable_names())
         return "{}[{}]_{{{}}}".format(latex(self.base_ring()), names, self._q)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a latex representation of the basis element indexed by ``m``.
 
@@ -519,7 +519,7 @@ class qCommutingLaurentPolynomials(qCommutingPolynomials_generic):
         G = self._display_group
         return repr(G.prod(g ** val for g, val in zip(G.gens(), m) if val != 0))
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a latex representation of the basis element indexed by ``m``.
 

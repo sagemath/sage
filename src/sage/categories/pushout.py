@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Coercion via construction functors
 """
@@ -27,6 +26,7 @@ Coercion via construction functors
 # ****************************************************************************
 
 import operator
+from typing import Self
 
 from sage.categories.functor import Functor, IdentityFunctor_generic
 from sage.misc.lazy_import import lazy_import
@@ -180,8 +180,7 @@ class ConstructionFunctor(Functor):
         """
         if self.rank > other.rank:
             return self * other
-        else:
-            return other * self
+        return other * self
 
     def __eq__(self, other):
         """
@@ -255,7 +254,7 @@ class ConstructionFunctor(Functor):
         import re
         return re.sub(r"<.*'.*\.([^.]*)'>", "\\1", s)
 
-    def merge(self, other):
+    def merge(self, other) -> Self | None:
         """
         Merge ``self`` with another construction functor, or return ``None``.
 
@@ -277,8 +276,7 @@ class ConstructionFunctor(Functor):
         """
         if self == other:
             return self
-        else:
-            return None
+        return None
 
     def commutes(self, other):
         """
@@ -515,8 +513,7 @@ class CompositeConstructionFunctor(ConstructionFunctor):
         """
         if isinstance(other, CompositeConstructionFunctor):
             return self.all == other.all
-        else:
-            return type(self) is type(other)
+        return type(self) is type(other)
 
     def __ne__(self, other):
         """
@@ -712,8 +709,7 @@ class IdentityConstructionFunctor(ConstructionFunctor):
         """
         if isinstance(self, IdentityConstructionFunctor):
             return other
-        else:
-            return self
+        return self
 
 
 class MultivariateConstructionFunctor(ConstructionFunctor):
@@ -909,10 +905,9 @@ class PolynomialFunctor(ConstructionFunctor):
         """
         if isinstance(other, PolynomialFunctor):
             return self.var == other.var
-        elif isinstance(other, MultiPolynomialFunctor):
+        if isinstance(other, MultiPolynomialFunctor):
             return (other == self)
-        else:
-            return False
+        return False
 
     def __ne__(self, other):
         """
@@ -955,13 +950,12 @@ class PolynomialFunctor(ConstructionFunctor):
         """
         if isinstance(other, MultiPolynomialFunctor):
             return other.merge(self)
-        elif self == other:
+        if self == other:
             # i.e., they only differ in sparsity
             if not self.sparse:
                 return self
             return other
-        else:
-            return None
+        return None
 
     def _repr_(self):
         """
@@ -1053,10 +1047,9 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         if isinstance(other, MultiPolynomialFunctor):
             return (self.vars == other.vars and
                     self.term_order == other.term_order)
-        elif isinstance(other, PolynomialFunctor):
+        if isinstance(other, PolynomialFunctor):
             return self.vars == (other.var,)
-        else:
-            return False
+        return False
 
     def __ne__(self, other):
         """
@@ -1098,11 +1091,10 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             if set(self.vars).intersection(other.vars):
                 raise CoercionException("Overlapping variables (%s,%s)" % (self.vars, other.vars))
             return MultiPolynomialFunctor(other.vars + self.vars, self.term_order)
-        elif (isinstance(other, CompositeConstructionFunctor)
+        if (isinstance(other, CompositeConstructionFunctor)
               and isinstance(other.all[-1], MultiPolynomialFunctor)):
             return CompositeConstructionFunctor(other.all[:-1], self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def merge(self, other):
         """
@@ -1119,8 +1111,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         """
         if self == other:
             return self
-        else:
-            return None
+        return None
 
     def expand(self):
         """
@@ -1155,8 +1146,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         """
         if len(self.vars) <= 1:
             return [self]
-        else:
-            return [MultiPolynomialFunctor((x,), self.term_order) for x in reversed(self.vars)]
+        return [MultiPolynomialFunctor((x,), self.term_order) for x in reversed(self.vars)]
 
     def _repr_(self):
         """
@@ -1434,18 +1424,14 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
                                     if i == i0 and int(n) > int(n0):  # wrong order
                                         BadOverlap = True
                                 OverlappingVars.append(x)
-                            else:
-                                if IsOverlap: # The overlap must be on the right end of the variable list
-                                    BadOverlap = True
-                        else:
-                            if IsOverlap: # The overlap must be on the right end of the variable list
+                            elif IsOverlap: # The overlap must be on the right end of the variable list
                                 BadOverlap = True
-                    else:
-                        if IsOverlap: # The overlap must be on the right end of the variable list
+                        elif IsOverlap: # The overlap must be on the right end of the variable list
                             BadOverlap = True
-                else:
-                    if IsOverlap: # The overlap must be on the right end of the variable list
+                    elif IsOverlap: # The overlap must be on the right end of the variable list
                         BadOverlap = True
+                elif IsOverlap: # The overlap must be on the right end of the variable list
+                    BadOverlap = True
 
             if BadOverlap: # the overlapping variables appear in the wrong order
                 raise CoercionException("Overlapping variables (%s,%s) are incompatible" % (self._gens, OverlappingVars))
@@ -1681,8 +1667,7 @@ class MatrixFunctor(ConstructionFunctor):
         """
         if self != other:
             return None
-        else:
-            return MatrixFunctor(self.nrows, self.ncols, self.is_sparse and other.is_sparse)
+        return MatrixFunctor(self.nrows, self.ncols, self.is_sparse and other.is_sparse)
 
 
 class LaurentPolynomialFunctor(ConstructionFunctor):
@@ -1768,8 +1753,7 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
         )
         if self.multi_variate and isinstance(R, LaurentPolynomialRing_generic):
             return LaurentPolynomialRing(R.base_ring(), list(R.variable_names()) + [self.var])
-        else:
-            return LaurentPolynomialRing(R, self.var)
+        return LaurentPolynomialRing(R, self.var)
 
     def __eq__(self, other):
         """
@@ -1836,8 +1820,7 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
         """
         if self == other or isinstance(other, PolynomialFunctor) and self.var == other.var:
             return LaurentPolynomialFunctor(self.var, (self.multi_variate or other.multi_variate))
-        else:
-            return None
+        return None
 
 
 class VectorFunctor(ConstructionFunctor):
@@ -1958,7 +1941,7 @@ class VectorFunctor(ConstructionFunctor):
             return FreeModule(R, self.n, sparse=self.is_sparse, inner_product_matrix=self.inner_product_matrix,
                               with_basis=self.with_basis, basis_keys=self.basis_keys)
         return FreeModule(R, self.n, sparse=self.is_sparse, inner_product_matrix=self.inner_product_matrix,
-                              with_basis=self.with_basis, basis_keys=self.basis_keys, name=name, latex_name=latex_name)
+                          with_basis=self.with_basis, basis_keys=self.basis_keys, name=name, latex_name=latex_name)
 
     def _apply_functor_to_morphism(self, f):
         """
@@ -2099,14 +2082,12 @@ class VectorFunctor(ConstructionFunctor):
 
         if self.with_basis != other.with_basis:
             return None
-        else:
-            with_basis = self.with_basis
+        with_basis = self.with_basis
 
         if self.basis_keys != other.basis_keys:
             # TODO: If both are enumerated families, should we try to take the union of the families?
             return None
-        else:
-            basis_keys = self.basis_keys
+        basis_keys = self.basis_keys
 
         is_sparse = self.is_sparse and other.is_sparse
 
@@ -2123,8 +2104,7 @@ class VectorFunctor(ConstructionFunctor):
 
         if self.n != other.n:
             return None
-        else:
-            n = self.n
+        n = self.n
 
         name_mapping = {}
         for base_ring, name in self.name_mapping.items():
@@ -2301,7 +2281,7 @@ class SubspaceFunctor(ConstructionFunctor):
         c = (L == R)
         if L.has_coerce_map_from(R):
             return tuple(self.basis) == tuple(L(x) for x in other.basis)
-        elif R.has_coerce_map_from(L):
+        if R.has_coerce_map_from(L):
             return tuple(other.basis) == tuple(R(x) for x in self.basis)
         return c
 
@@ -2380,8 +2360,7 @@ class SubspaceFunctor(ConstructionFunctor):
                 return None
             S = submodule(self.basis + other.basis).echelonized_basis()
             return SubspaceFunctor(S)
-        else:
-            return None
+        return None
 
 
 class FractionField(ConstructionFunctor):
@@ -2545,9 +2524,8 @@ class CompletionFunctor(ConstructionFunctor):
             if self.p == Infinity:
                 if self.type not in self._real_types:
                     raise ValueError("completion type must be one of %s" % (", ".join(self._real_types)))
-            else:
-                if self.type not in self._dvr_types:
-                    raise ValueError("completion type must be one of %s" % (", ".join(self._dvr_types[1:])))
+            elif self.type not in self._dvr_types:
+                raise ValueError("completion type must be one of %s" % (", ".join(self._dvr_types[1:])))
 
     def _repr_(self):
         """
@@ -2683,7 +2661,7 @@ class CompletionFunctor(ConstructionFunctor):
 
         We check that :issue:`12353` has been resolved::
 
-            sage: RIF(1) > RR(1)                                                        # needs sage.rings.real_interval_field
+            sage: RIF(1) > RR(1)
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for >:
@@ -2691,7 +2669,6 @@ class CompletionFunctor(ConstructionFunctor):
 
         We check that various pushouts work::
 
-            sage: # needs sage.rings.real_interval_field sage.rings.real_mpfr
             sage: R0 = RealIntervalField(30)
             sage: R1 = RealIntervalField(30, sci_not=True)
             sage: R2 = RealIntervalField(53)
@@ -2743,18 +2720,17 @@ class CompletionFunctor(ConstructionFunctor):
                                          {'type': new_type,
                                           'sci_not': new_scinot,
                                           'rnd': new_rnd})
+            new_type = self._dvr_types[min(self._dvr_types.index(self.type), self._dvr_types.index(other.type))]
+            if new_type in ('fixed-mod', 'floating-point'):
+                if self.type != other.type:
+                    return None # no coercion into fixed-mod or floating-point
+                new_prec = min(self.prec, other.prec)
             else:
-                new_type = self._dvr_types[min(self._dvr_types.index(self.type), self._dvr_types.index(other.type))]
-                if new_type in ('fixed-mod', 'floating-point'):
-                    if self.type != other.type:
-                        return None # no coercion into fixed-mod or floating-point
-                    new_prec = min(self.prec, other.prec)
-                else:
-                    new_prec = max(self.prec, other.prec) # since elements track their own precision, we don't want to truncate them
-                extras = self.extras.copy()
-                extras.update(other.extras)
-                extras['type'] = new_type
-                return CompletionFunctor(self.p, new_prec, extras)
+                new_prec = max(self.prec, other.prec) # since elements track their own precision, we don't want to truncate them
+            extras = self.extras.copy()
+            extras.update(other.extras)
+            extras['type'] = new_type
+            return CompletionFunctor(self.p, new_prec, extras)
 
 #   Completion has a lower rank than FractionField
 #   and is thus applied first. However, fact is that
@@ -3299,7 +3275,12 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
                 if latex_names[i] == latex_variable_name(name):
                     latex_names[i] = None
         self.latex_names = latex_names
-        self.kwds = kwds
+        kwds_self = dict(kwds.items())
+        if 'implementation' in kwds_self:
+            assert len(self.polys) == 1
+            self.implementations = [kwds_self['implementation']]
+            del kwds_self['implementation']
+        self.kwds = kwds_self
 
     def _apply_functor(self, R):
         """
@@ -3493,7 +3474,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         """
         if isinstance(other, AlgebraicClosureFunctor):
             return other
-        elif not isinstance(other, AlgebraicExtensionFunctor):
+        if not isinstance(other, AlgebraicExtensionFunctor):
             return None
         if self == other:
             return self
@@ -3534,11 +3515,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         # integers to encode degrees of extensions.
         from sage.rings.integer import Integer
         kwds_self = dict(self.kwds.items())
-        if 'impl' in kwds_self:
-            del kwds_self['impl']
         kwds_other = dict(other.kwds.items())
-        if 'impl' in kwds_other:
-            del kwds_other['impl']
         if (isinstance(self.polys[0], Integer)
                 and isinstance(other.polys[0], Integer)
                 and self.embeddings == other.embeddings == [None]
@@ -3577,11 +3554,10 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
                                              implementations=self.implementations + other.implementations,
                                              latex_names=self.latex_names + other.latex_names,
                                              **self.kwds)
-        elif (isinstance(other, CompositeConstructionFunctor)
+        if (isinstance(other, CompositeConstructionFunctor)
               and isinstance(other.all[-1], AlgebraicExtensionFunctor)):
             return CompositeConstructionFunctor(other.all[:-1], self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def expand(self):
         """
@@ -3940,6 +3916,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: FG = BlackBoxConstructionFunctor(gap)
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # needs sage.symbolic
             sage: FM == FG                                                              # needs sage.libs.gap sage.symbolic
@@ -3971,6 +3948,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: FG = BlackBoxConstructionFunctor(gap)
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # needs sage.symbolic
             sage: FM == FG       # indirect doctest                                     # needs sage.libs.gap sage.symbolic
@@ -3990,6 +3968,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: FG = BlackBoxConstructionFunctor(gap)
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # needs sage.symbolic
             sage: FM != FG       # indirect doctest                                     # needs sage.libs.gap sage.symbolic
@@ -4499,44 +4478,42 @@ def pushout(R, S):
                 all = apply_from(Rc)
             elif Sc[-1].rank < Rc[-1].rank:
                 all = apply_from(Sc)
-            else:
-                # the ranks are the same, so things are a bit subtler
-                if Rc[-1] == Sc[-1]:
-                    # If they are indeed the same operation, we only do it once.
-                    # The \code{merge} function here takes into account non-mathematical
-                    # distinctions (e.g. single vs. multivariate polynomials).
-                    cR = Rc.pop()
-                    cS = Sc.pop()
-                    c = cR.merge(cS) or cS.merge(cR)
-                    if c:
-                        all = c * all
-                    else:
-                        raise CoercionException("Incompatible Base Extension %r, %r (on %r, %r)" % (R, S, cR, cS))
+            # the ranks are the same, so things are a bit subtler
+            elif Rc[-1] == Sc[-1]:
+                # If they are indeed the same operation, we only do it once.
+                # The \code{merge} function here takes into account non-mathematical
+                # distinctions (e.g. single vs. multivariate polynomials).
+                cR = Rc.pop()
+                cS = Sc.pop()
+                c = cR.merge(cS) or cS.merge(cR)
+                if c:
+                    all = c * all
                 else:
-                    # Now we look ahead to see if either top functor is
-                    # applied later on in the other tower.
-                    # If this is the case for exactly one of them, we unambiguously
-                    # postpone that operation, but if both then we abort.
-                    if Rc[-1] in Sc:
-                        if Sc[-1] in Rc:
-                            raise CoercionException("Ambiguous Base Extension", R, S)
-                        else:
-                            all = apply_from(Sc)
-                    elif Sc[-1] in Rc:
-                        all = apply_from(Rc)
-                    # If, perchance, the two functors commute, then we may do them in any order.
-                    elif Rc[-1].commutes(Sc[-1]) or Sc[-1].commutes(Rc[-1]):
-                        all = Sc.pop() * Rc.pop() * all
-                    else:
-                        # try and merge (default merge is failure for unequal functors)
-                        cR = Rc.pop()
-                        cS = Sc.pop()
-                        c = cR.merge(cS) or cS.merge(cR)
-                        if c is not None:
-                            all = c * all
-                        else:
-                            # Otherwise, we cannot proceed.
-                            raise CoercionException("Ambiguous Base Extension", R, S)
+                    raise CoercionException("Incompatible Base Extension %r, %r (on %r, %r)" % (R, S, cR, cS))
+            # Now we look ahead to see if either top functor is
+            # applied later on in the other tower.
+            # If this is the case for exactly one of them, we unambiguously
+            # postpone that operation, but if both then we abort.
+            elif Rc[-1] in Sc:
+                if Sc[-1] in Rc:
+                    raise CoercionException("Ambiguous Base Extension", R, S)
+                else:
+                    all = apply_from(Sc)
+            elif Sc[-1] in Rc:
+                all = apply_from(Rc)
+            # If, perchance, the two functors commute, then we may do them in any order.
+            elif Rc[-1].commutes(Sc[-1]) or Sc[-1].commutes(Rc[-1]):
+                all = Sc.pop() * Rc.pop() * all
+            else:
+                # try and merge (default merge is failure for unequal functors)
+                cR = Rc.pop()
+                cS = Sc.pop()
+                c = cR.merge(cS) or cS.merge(cR)
+                if c is not None:
+                    all = c * all
+                else:
+                    # Otherwise, we cannot proceed.
+                    raise CoercionException("Ambiguous Base Extension", R, S)
 
         return all(Z)
 
@@ -4658,15 +4635,14 @@ def pushout_lattice(R, S):
                     lattice[i + 1, j + 1] = Sc[j](lattice[i + 1, j])
                 elif Sc[j] is None:
                     lattice[i + 1, j + 1] = Rc[i](lattice[i, j + 1])
+                # For now, we just look at the rank.
+                # TODO: be more sophisticated and query the functors themselves
+                elif Rc[i].rank < Sc[j].rank:
+                    lattice[i + 1, j + 1] = Sc[j](lattice[i + 1, j])
+                    Rc[i] = None  # force us to use pre-applied Rc[i]
                 else:
-                    # For now, we just look at the rank.
-                    # TODO: be more sophisticated and query the functors themselves
-                    if Rc[i].rank < Sc[j].rank:
-                        lattice[i + 1, j + 1] = Sc[j](lattice[i + 1, j])
-                        Rc[i] = None  # force us to use pre-applied Rc[i]
-                    else:
-                        lattice[i + 1, j + 1] = Rc[i](lattice[i, j + 1])
-                        Sc[j] = None  # force us to use pre-applied Sc[i]
+                    lattice[i + 1, j + 1] = Rc[i](lattice[i, j + 1])
+                    Sc[j] = None  # force us to use pre-applied Sc[i]
             except (AttributeError, NameError):
                 # pp(lattice)
                 for ni in range(100):

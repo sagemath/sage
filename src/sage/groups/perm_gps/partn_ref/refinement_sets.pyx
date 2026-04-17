@@ -150,8 +150,8 @@ def set_stab_py(generators, sett, relab=False):
         raise MemoryError
     bitset_init(&subset_sett.bits, n)
     subset_sett.scratch = <int *> sig_malloc((3*n+1) * sizeof(int))
-    for i from 0 <= i < len(generators):
-        for j from 0 <= j < n:
+    for i in range(len(generators)):
+        for j in range(n):
             gens[n*i + j] = generators[i][j]
     if SC_insert(supergroup, 0, gens, n_gens):
         SC_dealloc(supergroup)
@@ -170,10 +170,10 @@ def set_stab_py(generators, sett, relab=False):
     if stabilizer is NULL:
         raise MemoryError
     stab_gens = []
-    for i from 0 <= i < stabilizer.num_gens:
-        stab_gens.append([stabilizer.generators[i*n+j] for j from 0 <= j < n])
+    for i in range(stabilizer.num_gens):
+        stab_gens.append([stabilizer.generators[i*n+j] for j in range(n)])
     if relab:
-        relabeling = [stabilizer.relabeling[j] for j from 0 <= j < n]
+        relabeling = [stabilizer.relabeling[j] for j in range(n)]
     deallocate_agcl_output(stabilizer)
     if relab:
         return stab_gens, relabeling
@@ -397,9 +397,9 @@ def sets_isom_py(generators, set1, set2):
     bitset_init(&subset_sett2.bits, n)
     subset_sett1.scratch = <int *> sig_malloc((3*n+1) * sizeof(int))
     subset_sett2.scratch = <int *> sig_malloc((3*n+1) * sizeof(int))
-    for i from 0 <= i < len(generators):
-        for j from 0 <= j < n:
-            gens[n*i + j] = generators[i][j]
+    for i in range(len(generators)):
+        for j in range(n):
+            gens[n * i + j] = generators[i][j]
     if SC_insert(supergroup, 0, gens, n_gens):
         raise MemoryError
     sig_free(gens)
@@ -418,7 +418,7 @@ def sets_isom_py(generators, set1, set2):
     sig_free(subset_sett1)
     sig_free(subset_sett2)
     if isomorphic:
-        output_py = [isom[i] for i from 0 <= i < n]
+        output_py = [isom[i] for i in range(n)]
     else:
         output_py = False
     sig_free(isom)
@@ -637,7 +637,7 @@ cdef int allocate_subset_gen_2(int degree, int max_size, iterator *it) noexcept:
     if cgd is NULL:
         return 1
     cdef int i, j
-    for i from 0 <= i < max_size + 1:
+    for i in range(max_size + 1):
         cgd.object_stack[i] = allocate_subset(degree)
         cgd.parent_stack[i] = allocate_subset(degree)
         cgd.iterator_stack[i].data = allocate_sgd(degree)
@@ -645,7 +645,7 @@ cdef int allocate_subset_gen_2(int degree, int max_size, iterator *it) noexcept:
         if cgd.iterator_stack[i].data is NULL or \
            cgd.object_stack[i] is NULL or \
            cgd.parent_stack[i] is NULL:
-            for j from 0 <= j <= i:
+            for j in range(i + 1):
                 deallocate_sgd(cgd.iterator_stack[i].data)
                 free_subset(cgd.object_stack[i])
                 free_subset(cgd.parent_stack[i])
@@ -821,9 +821,9 @@ def sets_modulo_perm_group(list generators, int max_size,
         SC_dealloc(group)
         sig_free(gens)
         raise MemoryError
-    for i from 0 <= i < len(generators):
-        for j from 0 <= j < n:
-            gens[n*i + j] = generators[i][j]
+    for i in range(len(generators)):
+        for j in range(n):
+            gens[n * i + j] = generators[i][j]
     if SC_insert(group, 0, gens, n_gens):
         SC_dealloc(group)
         sig_free(gens)

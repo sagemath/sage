@@ -14,9 +14,10 @@ two words `X = (x_1,x_2,\ldots,x_{m})` and `Y = (y_1,y_2,\ldots,y_n)`.
     In the implementation here, the underlying set is the set of all shuffles
     of subsets of `\{-m,\ldots,-1\}` with subsets of `\{1,\ldots,n\}`.
 """
-from typing import Iterator
+from collections.abc import Iterator
 
-from sage.combinat.posets.lattices import LatticePoset
+from sage.categories.finite_lattice_posets import FiniteLatticePosets
+from sage.combinat.posets.lattices import LatticePoset, FiniteLatticePoset
 from sage.combinat.subset import subsets
 from sage.combinat.shuffle import ShuffleProduct
 from sage.graphs.digraph import DiGraph
@@ -141,7 +142,7 @@ def bubble_coverings(m, n, mot, transpose=True) -> Iterator[tuple[int, ...]]:
             yield tuple(mot2)
 
 
-def BubblePoset(m, n) -> LatticePoset:
+def BubblePoset(m, n) -> FiniteLatticePoset:
     r"""
     Return the Bubble lattice `B_{m,n}`.
 
@@ -154,7 +155,9 @@ def BubblePoset(m, n) -> LatticePoset:
     The Bubble poset is an extension of the Shuffle poset, by adding the
     exchange of adjacent letters from `X` and `Y`, from `xy` to `yx`.
 
-    .. SEEALSO:: :func:`ShufflePoset`
+    .. SEEALSO::
+
+        :func:`ShufflePoset`, :func:`noncrossing_bipartite_complex`
 
     EXAMPLES::
 
@@ -167,10 +170,11 @@ def BubblePoset(m, n) -> LatticePoset:
 
     dg = DiGraph([(x, y) for x in bubbles for y in bubble_coverings(m, n, x)])
     # here we have more than just the cover relations
-    return LatticePoset(dg)
+    cat = FiniteLatticePosets().CongruenceUniform().Extremal()
+    return LatticePoset(dg, category=cat)
 
 
-def ShufflePoset(m, n) -> LatticePoset:
+def ShufflePoset(m, n) -> FiniteLatticePoset:
     r"""
     Return the Shuffle lattice `S_{m,n}`.
 
@@ -197,7 +201,8 @@ def ShufflePoset(m, n) -> LatticePoset:
     dg = DiGraph([(x, y) for x in bubbles
                   for y in bubble_coverings(m, n, x, transpose=False)])
     # here we just have the cover relations
-    return LatticePoset(dg, cover_relations=True)
+    cat = FiniteLatticePosets().ChainGraded()
+    return LatticePoset(dg, cover_relations=True, check=False, category=cat)
 
 
 def noncrossing_bipartite_complex(m, n):
@@ -207,10 +212,11 @@ def noncrossing_bipartite_complex(m, n):
     This is a pure spherical simplicial complex, whose flip graph
     is isomorphic to the Hasse diagram of `B_{m,n}`.
 
+    .. SEEALSO:: :func:`BubblePoset`
+
     EXAMPLES::
 
-        sage: from sage.combinat.posets.bubble_shuffle import noncrossing_bipartite_complex
-        sage: C = noncrossing_bipartite_complex(2,1)
+        sage: C = simplicial_complexes.NoncrossingBipartiteComplex(2,1)
         sage: H = C.flip_graph()
         sage: P = posets.BubblePoset(2,1)
         sage: H.is_isomorphic(P.hasse_diagram().to_undirected())

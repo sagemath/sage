@@ -133,21 +133,20 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             if hasattr(self, "_init_from_Vrepresentation_and_Hrepresentation"):
                 self._init_from_Vrepresentation_and_Hrepresentation(Vrep, Hrep)
                 return
-            else:
-                if pref_rep is None:
-                    # Initialize from Hrepresentation if this seems simpler.
-                    Vrep = [tuple(Vrep[0]), tuple(Vrep[1]), Vrep[2]]
-                    Hrep = [tuple(Hrep[0]), Hrep[1]]
-                    if len(Hrep[0]) < len(Vrep[0]) + len(Vrep[1]):
-                        pref_rep = 'Hrep'
-                    else:
-                        pref_rep = 'Vrep'
-                if pref_rep == 'Vrep':
-                    Hrep = None
-                elif pref_rep == 'Hrep':
-                    Vrep = None
+            if pref_rep is None:
+                # Initialize from Hrepresentation if this seems simpler.
+                Vrep = [tuple(Vrep[0]), tuple(Vrep[1]), Vrep[2]]
+                Hrep = [tuple(Hrep[0]), Hrep[1]]
+                if len(Hrep[0]) < len(Vrep[0]) + len(Vrep[1]):
+                    pref_rep = 'Hrep'
                 else:
-                    raise ValueError("``pref_rep`` must be one of ``(None, 'Vrep', 'Hrep')``")
+                    pref_rep = 'Vrep'
+            if pref_rep == 'Vrep':
+                Hrep = None
+            elif pref_rep == 'Hrep':
+                Vrep = None
+            else:
+                raise ValueError("``pref_rep`` must be one of ``(None, 'Vrep', 'Hrep')``")
         if Vrep is not None:
             vertices, rays, lines = Vrep
 
@@ -446,7 +445,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         new_parent = self.parent().change_ring(base_ring, backend)
         return new_parent([vertices, rays, lines], None)
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         r"""
         Return ``True`` if the polyhedron is mutable, i.e. it can be modified in place.
 
@@ -458,7 +457,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         return False
 
-    def is_immutable(self):
+    def is_immutable(self) -> bool:
         r"""
         Return ``True`` if the polyhedron is immutable, i.e. it cannot be modified in place.
 
@@ -542,10 +541,11 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         return len(self.vertices())
 
     @cached_method
-    def n_rays(self):
+    def n_rays(self) -> int:
         """
-        Return the number of rays. The representation will
-        always be minimal.
+        Return the number of rays.
+
+        The representation will always be minimal.
 
         EXAMPLES::
 
@@ -556,10 +556,11 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         return len(self.rays())
 
     @cached_method
-    def n_lines(self):
+    def n_lines(self) -> int:
         """
-        Return the number of lines. The representation will
-        always be minimal.
+        Return the number of lines.
+
+        The representation will always be minimal.
 
         EXAMPLES::
 
@@ -569,7 +570,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         return len(self.lines())
 
-    def is_compact(self):
+    def is_compact(self) -> bool:
         """
         Test for boundedness of the polytope.
 
@@ -582,7 +583,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: p.is_compact()
             False
         """
-        return self.n_rays() == 0 and self.n_lines() == 0
+        return self.n_rays() == 0 == self.n_lines()
 
     def Hrepresentation(self, index=None):
         """
@@ -611,8 +612,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         if index is None:
             return self._Hrepresentation
-        else:
-            return self._Hrepresentation[index]
+        return self._Hrepresentation[index]
 
     def Hrepresentation_str(self, separator='\n', latex=False, style='>=', align=None, **kwds):
         r"""
@@ -726,17 +726,15 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         def pad_non_minus(s):
             if align and shift and not s.startswith('-'):
                 return ' ' + s
-            else:
-                return s
+            return s
         h_list = [h_line.format(pretty_h[0], pretty_h[1], pad_non_minus(pretty_h[2]))
                   for pretty_h in pretty_hs]
         pretty_print = separator.join(h_list)
 
         if not latex:
             return pretty_print
-        else:
-            # below we remove the 2 unnecessary backslashes at the end of pretty_print
-            return "\\begin{array}{rcl}\n" + pretty_print[:-2] + "\n\\end{array}"
+        # below we remove the 2 unnecessary backslashes at the end of pretty_print
+        return "\\begin{array}{rcl}\n" + pretty_print[:-2] + "\n\\end{array}"
 
     def Hrep_generator(self):
         """
@@ -799,8 +797,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         if index is None:
             return self._Vrepresentation
-        else:
-            return self._Vrepresentation[index]
+        return self._Vrepresentation[index]
 
     @cached_method
     def n_Vrepresentation(self):
@@ -876,7 +873,6 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
              An inequality (0, 1, 0) x + 0 >= 0,
              An inequality (0, 0, 1) x + 0 >= 0)
 
-            sage: # needs sage.combinat
             sage: p3 = Polyhedron(vertices=Permutations([1, 2, 3, 4]))
             sage: ieqs = p3.inequalities()
             sage: ieqs[0]
@@ -902,7 +898,6 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: p.inequalities_list()[0:3]
             [[0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
 
-            sage: # needs sage.combinat
             sage: p3 = Polyhedron(vertices=Permutations([1, 2, 3, 4]))
             sage: ieqs = p3.inequalities_list()
             sage: ieqs[0]

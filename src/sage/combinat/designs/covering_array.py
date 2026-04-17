@@ -1,12 +1,12 @@
 r"""
-Covering Arrays (CA)
+Covering arrays
 
-A Covering Array, denoted `CA(N;t,k,v)`, is an `N` by `k` array with
+A covering array, denoted `CA(N;t,k,v)`, is an `N` by `k` array with
 entries from a set of `v` elements with the property that in every
 selection of `t` columns, every sequence of `t` elements appears in at
 least one row.
 
-An Orthogonal Array, denoted `OA(N;t,k,v)` is a covering array with the
+An orthogonal array, denoted `OA(N;t,k,v)` is a covering array with the
 property that every sequence of `t`-elements appears in exactly one row.
 (See :mod:`sage.combinat.designs.orthogonal_arrays`).
 
@@ -212,8 +212,7 @@ def database_check(number_columns, strength, levels):
                 f = getattr(DB, CA)
                 return truncate_columns(f(), number_columns)
         return False
-    else:
-        return False
+    return False
 
 
 def covering_array(strength, number_columns, levels):
@@ -262,7 +261,6 @@ def covering_array(strength, number_columns, levels):
     if orthogonal_array(number_columns, levels, strength, existence=True) is True:
         return orthogonal_array(number_columns, levels, strength)
 
-    else:
-        print("No direct construction known and/or implemented for a CA(N; {}, {}, {})".format(
-            strength, number_columns, levels))
-        return
+    print("No direct construction known and/or implemented for a CA(N; {}, {}, {})".format(
+        strength, number_columns, levels))
+    return

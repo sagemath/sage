@@ -589,7 +589,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: T = TropicalSemiring(QQ)
             sage: R.<a,b,c,d> = PolynomialRing(T)
             sage: f = R.random_element()
-            sage: vec = f.tropical_variety().weight_vectors()[2].values()
+            sage: vec = f.tropical_variety().weight_vectors()[2].values()  # long time (:issue:`39569`)
             sage: all(a == vector([0,0,0,0]) for a in [sum(lst) for lst in vec])  # not tested (:issue:`39663`)
             True
         """
@@ -1354,7 +1354,7 @@ class TropicalCurve(TropicalVariety):
             result[vertex] = vectors
         return result
 
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Return ``True`` if ``self`` is smooth and ``False`` otherwise.
 
@@ -1377,7 +1377,7 @@ class TropicalCurve(TropicalVariety):
         """
         return len(self.vertices()) == self._poly.degree() ** 2
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return ``True`` if ``self`` is simple and ``False`` otherwise.
 

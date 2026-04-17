@@ -27,7 +27,7 @@ from sage.interfaces.macaulay2 import macaulay2
 from sage.interfaces.magma import Magma, magma
 from sage.interfaces.maple import maple
 from sage.interfaces.mathematica import mathematica
-from sage.interfaces.maxima import maxima
+from sage.interfaces.maxima_lib import maxima
 from sage.interfaces.singular import singular
 from sage.libs.gap.libgap import libgap
 from sage.libs.pari import pari
@@ -520,10 +520,9 @@ class MPolynomialMult(Benchmark):
             t = walltime()
             z0 * z1
             return False, walltime(t)
-        else:
-            t = cputime()
-            z0 * z1
-            return cputime(t)
+        t = cputime()
+        z0 * z1
+        return cputime(t)
 
     def macaulay2(self):
         """
@@ -722,10 +721,9 @@ class MPolynomialMult2(Benchmark):
             t = walltime()
             z0 * z1
             return False, walltime(t)
-        else:
-            t = cputime()
-            z0 * z1
-            return cputime(t)
+        t = cputime()
+        z0 * z1
+        return cputime(t)
 
     def magma(self):
         """

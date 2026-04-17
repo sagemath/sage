@@ -281,7 +281,8 @@ class Animation(WithEqualityById, SageObject):
             new_kwds.update(kwds)
 
         for name in ['xmin', 'xmax', 'ymin', 'ymax']:
-            values = [v for v in [kwds.get(name, None) for kwds in kwds_tuple] if v is not None]
+            values = [v for kwds in kwds_tuple
+                      if (v := kwds.get(name, None)) is not None]
             if values:
                 new_kwds[name] = getattr(builtins, name[1:])(values)
         return new_kwds
@@ -306,8 +307,7 @@ class Animation(WithEqualityById, SageObject):
         """
         if isinstance(i, slice):
             return Animation(self._frames[i], **self._kwds)
-        else:
-            return self._frames[i]
+        return self._frames[i]
 
     def _repr_(self):
         """

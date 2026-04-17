@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 SageMath version and banner info
 """
@@ -28,13 +27,13 @@ def version():
        sage: version()
        doctest:warning
        ...
-       DeprecationWarning: Use sage.version instead.
+       DeprecationWarning: Use sage.version.version instead.
        ...
        'SageMath version ..., Release Date: ...'
     """
     from sage.misc.superseded import deprecation
 
-    deprecation(39015, "Use sage.version instead.")
+    deprecation(39015, "Use sage.version.version instead.")
     return sage_banner
 
 
@@ -235,9 +234,8 @@ def require_version(major, minor=0, tiny=0, prerelease=False,
         or (vers['major'] == major and vers['minor'] == minor
             and vers['tiny'] == tiny and prerelease_checked)):
         return True
-    else:
-        if print_message:
-            txt = "This code requires at least version {} of SageMath to run correctly."
-            print(txt.format(major + 0.1 * minor + 0.01 * tiny))
-            print("You are running version {}.".format(SAGE_VERSION))
-        return False
+    if print_message:
+        txt = "This code requires at least version {} of SageMath to run correctly."
+        print(txt.format(major + 0.1 * minor + 0.01 * tiny))
+        print("You are running version {}.".format(SAGE_VERSION))
+    return False

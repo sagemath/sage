@@ -1,14 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Crystals of Generalized Young Walls
-
-AUTHORS:
-
-- Lucas David-Roesler: Initial version
-
-- Ben Salisbury: Initial version
-
-- Travis Scrimshaw: Initial version
+Crystals of generalized Young walls
 
 Generalized Young walls are certain generalizations of Young tableaux
 introduced in [KS2010]_ and designed to be a realization of the crystals
@@ -18,6 +10,12 @@ REFERENCES:
 
 - [KLRS2016]_
 - [KS2010]_
+
+AUTHORS:
+
+- Lucas David-Roesler: initial version
+- Ben Salisbury: initial version
+- Travis Scrimshaw: initial version
 """
 
 # *****************************************************************************
@@ -81,7 +79,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         self.data = data
         CombinatorialElement.__init__(self, parent, data)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -91,7 +89,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         """
         return repr(self.data)
 
-    def _repr_diagram(self):
+    def _repr_diagram(self) -> str:
         r"""
         Return a string representation of the diagram of ``self``.
 
@@ -468,8 +466,7 @@ class GeneralizedYoungWall(CombinatorialElement):
                 else:
                     newdata.append(list(self.data[r]))
             return self.__class__(self.parent(), newdata)
-        else:
-            return None
+        return None
 
     def f(self, i):
         r"""
@@ -715,24 +712,18 @@ class GeneralizedYoungWall(CombinatorialElement):
             False
         """
         if La not in self.parent().weight_lattice_realization():
-            raise TypeError("Must be an element in the weight lattice realization")
+            raise TypeError("must be an element in the weight lattice realization")
         ac = self.parent().weight_lattice_realization().simple_coroots()
         n = self.cartan_type().classical().rank()
         index_set = self.index_set()
         for k in range(1, self.cols + 1):
             for j in index_set:
-                if self.a(j, k) - self.a((j - 1) % (n + 1), k) <= 0:
+                diff = self.a(j, k) - self.a((j - 1) % (n + 1), k)
+                if diff <= 0:
                     continue
-                else:
-                    p_not_found = True
-                    for p in index_set:
-                        if (j + k - p - 1) % (n + 1) == 0 and self.a(j, k) - self.a((j - 1) % (n + 1), k) <= La.scalar(ac[p]):
-                            p_not_found = False
-                            continue
-                        else:
-                            continue
-                    if p_not_found:
-                        return False
+                if not any((j + k - p - 1) % (n + 1) == 0
+                           and diff <= La.scalar(ac[p]) for p in index_set):
+                    return False
         return True
 
 

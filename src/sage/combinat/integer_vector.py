@@ -1,16 +1,16 @@
 """
-(Non-negative) Integer vectors
+Nonnegative integer vectors
 
 AUTHORS:
 
-* Mike Hansen (2007) - original module
-* Nathann Cohen, David Joyner (2009-2010) - Gale-Ryser stuff
-* Nathann Cohen, David Joyner (2011) - Gale-Ryser bugfix
-* Travis Scrimshaw (2012-05-12) - Updated doc-strings to tell the user of
-  that the class's name is a misnomer (that they only contains non-negative
+- Mike Hansen (2007): original module
+- Nathann Cohen, David Joyner (2009-2010): Gale-Ryser stuff
+- Nathann Cohen, David Joyner (2011): Gale-Ryser bugfix
+- Travis Scrimshaw (2012-05-12): updated docstrings to tell the user of
+  that the class's name is a misnomer (that they only contains nonnegative
   entries).
-* Federico Poloni (2013) - specialized ``rank()``
-* Travis Scrimshaw (2013-02-04) - Refactored to use ``ClonableIntArray``
+- Federico Poloni (2013): specialized ``rank()``
+- Travis Scrimshaw (2013-02-04): refactored to use ``ClonableIntArray``
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -358,26 +358,25 @@ def gale_ryser_theorem(p1, p2, algorithm='gale',
         A0 = A0.matrix_from_rows_and_columns(r_permutation, s_permutation)
         return A0
 
-    elif algorithm == "gale":
+    if algorithm == "gale":
         from sage.numerical.mip import MixedIntegerLinearProgram
         k1, k2 = len(p1), len(p2)
         p = MixedIntegerLinearProgram(solver=solver)
         b = p.new_variable(binary=True)
-        for (i, c) in enumerate(p1):
+        for i, c in enumerate(p1):
             p.add_constraint(p.sum([b[i, j] for j in range(k2)]) == c)
-        for (i, c) in enumerate(p2):
+        for i, c in enumerate(p2):
             p.add_constraint(p.sum([b[j, i] for j in range(k1)]) == c)
         p.set_objective(None)
         p.solve()
         b = p.get_values(b, convert=ZZ, tolerance=integrality_tolerance)
-        M = [[0]*k2 for i in range(k1)]
+        M = [[0] * k2 for _ in range(k1)]
         for i in range(k1):
             for j in range(k2):
                 M[i][j] = b[i, j]
         return matrix(M)
 
-    else:
-        raise ValueError('the only two algorithms available are "gale" and "ryser"')
+    raise ValueError('the only two algorithms available are "gale" and "ryser"')
 
 
 def _default_function(l, default, i):
@@ -436,9 +435,8 @@ def list2func(l, default=None):
     """
     if default is None:
         return lambda i: l[i]
-    else:
-        from functools import partial
-        return partial(_default_function, l, default)
+    from functools import partial
+    return partial(_default_function, l, default)
 
 
 class IntegerVector(ClonableArray):
@@ -716,10 +714,9 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
         if isinstance(k, numbers.Integral):
             return IntegerVectors_nk(n, k)
-        elif isinstance(k, (tuple, list)):
+        if isinstance(k, (tuple, list)):
             return IntegerVectors_nnondescents(n, tuple(k))
-        else:
-            raise TypeError("'k' must be an integer or a tuple, got {}".format(type(k).__name__))
+        raise TypeError("'k' must be an integer or a tuple, got {}".format(type(k).__name__))
 
     def __init__(self, category=None):
         """
@@ -812,6 +809,24 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
                 rtn[ptr-1] += 1
             else:
                 return self._element_constructor_(rtn)
+
+    def is_finite(self):
+        """
+        Return whether ``self`` is finite.
+
+        EXAMPLES::
+
+            sage: IntegerVectors().is_finite()
+            False
+            sage: IntegerVectors(3).is_finite()
+            False
+            sage: IntegerVectors(length=5).is_finite()
+            False
+            sage: IntegerVectors(3, 5).is_finite()
+            True
+        """
+        from sage.rings.infinity import Infinity
+        return self.cardinality() < Infinity
 
 
 class IntegerVectors_all(UniqueRepresentation, IntegerVectors):
@@ -1310,10 +1325,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         if sum(x) != self.n:
             return False
 
-        if len(x) > 0 and min(x) < 0:
-            return False
-
-        return True
+        return not x or min(x) >= 0
 
     def rank(self, x):
         """
@@ -1374,6 +1386,21 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         """
         n, k = self.n, self.k
         return Integer(binomial(n + k - 1, n))
+
+    def is_finite(self):
+        """
+        Return whether ``self`` is finite.
+
+        EXAMPLES::
+
+            sage: IntegerVectors(3,5).is_finite()
+            True
+            sage: IntegerVectors(99, 3).is_finite()
+            True
+            sage: IntegerVectors(2*10^9, 10^9).is_finite()
+            True
+        """
+        return True
 
 
 class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):

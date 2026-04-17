@@ -1,14 +1,6 @@
 # sage.doctest: needs sage.graphs sage.groups sage.modules
 """
-Weyl Groups
-
-AUTHORS:
-
-- Daniel Bump (2008): initial version
-- Mike Hansen (2008): initial version
-- Anne Schilling (2008): initial version
-- Nicolas Thiéry (2008): initial version
-- Volker Braun (2013): LibGAP-based matrix groups
+Weyl groups
 
 EXAMPLES:
 
@@ -29,6 +21,14 @@ The Cayley graph of the Weyl Group of type ['D', 4]::
 .. TODO::
 
     More examples on Weyl Groups should be added here.
+
+AUTHORS:
+
+- Daniel Bump (2008): initial version
+- Mike Hansen (2008): initial version
+- Anne Schilling (2008): initial version
+- Nicolas Thiéry (2008): initial version
+- Volker Braun (2013): LibGAP-based matrix groups
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Daniel Bump <bump at match.stanford.edu>,
@@ -261,6 +261,22 @@ class WeylGroup_gens(UniqueRepresentation,
         FinitelyGeneratedMatrixGroup_gap.__init__(
             self, degree, ring, libgap_group, category=category)
 
+    def __hash__(self):
+        r"""
+        Return a hash compatible with matrix-group equality.
+
+        EXAMPLES::
+
+            sage: # needs sage.libs.gap
+            sage: W = CoxeterGroup(['A',2], implementation='matrix')
+            sage: G = MatrixGroup(W.gens())
+            sage: W == G
+            True
+            sage: hash(W) == hash(G)
+            True
+        """
+        return FinitelyGeneratedMatrixGroup_gap.__hash__(self)
+
     @cached_method
     def cartan_type(self):
         """
@@ -419,7 +435,7 @@ class WeylGroup_gens(UniqueRepresentation,
 
         EXAMPLES::
 
-            sage: WeylGroup(['A',3]).character_table()
+            sage: WeylGroup(['A',3]).character_table() # random
             CT1
             <BLANKLINE>
                  2  3  2  2  .  3

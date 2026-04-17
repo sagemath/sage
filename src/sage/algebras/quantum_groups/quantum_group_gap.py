@@ -198,7 +198,7 @@ class QuaGroupModuleElement(Element):
         """
         return self._libgap
 
-    _libgap_ = _gap_ = gap
+    _libgap_ = gap
 
     def _add_(self, other):
         r"""
@@ -432,7 +432,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
         """
         return self._libgap
 
-    _libgap_ = _gap_ = gap
+    _libgap_ = gap
 
     def cartan_type(self):
         """
@@ -1602,7 +1602,7 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
         """
         return self._libgap
 
-    _libgap_ = _gap_ = gap
+    _libgap_ = gap
 
     def _element_constructor_(self, elt):
         """
@@ -2354,8 +2354,7 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
             sage: Q = QuantumGroup(['A',2])
             sage: B = Q.lower_half()
             sage: basis = B.basis(); basis
-            Lazy family (monomial(i))_{i in The Cartesian product of
-             (Non negative integers, Non negative integers, Non negative integers)}
+            Lazy family (monomial(i))_{i in The Cartesian product of 3 copies of Non negative integers}
             sage: basis[1,2,1]
             F[a1]*F[a1+a2]^(2)*F[a2]
             sage: basis[1,2,4]
@@ -2390,8 +2389,7 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
             sage: Q = QuantumGroup(['A',2])
             sage: B = Q.lower_half()
             sage: C = B.canonical_basis_elements(); C
-            Lazy family (Canonical basis(i))_{i in The Cartesian product of
-             (Non negative integers, Non negative integers)}
+            Lazy family (Canonical basis(i))_{i in The Cartesian product of 2 copies of Non negative integers}
             sage: C[2,1]
             [F[a1]^(2)*F[a2], F[a1]*F[a1+a2] + (q^2)*F[a1]^(2)*F[a2]]
             sage: C[1,2]

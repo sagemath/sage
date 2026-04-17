@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Fields
 """
@@ -62,7 +61,7 @@ class Fields(CategoryWithAxiom):
         """
         return [EuclideanDomains(), NoetherianRings()]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -147,11 +146,12 @@ class Fields(CategoryWithAxiom):
         TESTS::
 
             sage: # needs sage.libs.pari
-            sage: P.<x> = QQ[]
-            sage: Q = P.quotient(x^2 + 2)
+            sage: Q = Zmod(13)
             sage: Q.category()
-            Category of commutative no zero divisors quotients of algebras
-             over (number fields and quotient fields and metric spaces)
+            Join of Category of finite commutative rings
+             and Category of subquotients of monoids
+             and Category of quotients of semigroups
+             and Category of finite enumerated sets
             sage: F = Fields()
             sage: F._contains_helper(Q)
             False
@@ -276,6 +276,58 @@ class Fields(CategoryWithAxiom):
                 NotImplementedError: algebraic closures of general fields not implemented
             """
             raise NotImplementedError("algebraic closures of general fields not implemented")
+
+        def an_embedding(self, K):
+            r"""
+            Return some embedding of this field into another field `K`,
+            and raise a :class:`ValueError` if none exists.
+
+            EXAMPLES::
+
+                sage: GF(2).an_embedding(GF(4))
+                Ring morphism:
+                  From: Finite Field of size 2
+                  To:   Finite Field in z2 of size 2^2
+                  Defn: 1 |--> 1
+                sage: GF(4).an_embedding(GF(8))
+                Traceback (most recent call last):
+                ...
+                ValueError: no embedding from Finite Field in z2 of size 2^2 to Finite Field in z3 of size 2^3
+                sage: GF(4).an_embedding(GF(16))
+                Ring morphism:
+                  From: Finite Field in z2 of size 2^2
+                  To:   Finite Field in z4 of size 2^4
+                  Defn: z2 |--> z4^2 + z4
+
+            ::
+
+                sage: CyclotomicField(5).an_embedding(QQbar)
+                Coercion map:
+                  From: Cyclotomic Field of order 5 and degree 4
+                  To:   Algebraic Field
+                sage: CyclotomicField(3).an_embedding(CyclotomicField(7))
+                Traceback (most recent call last):
+                ...
+                ValueError: no embedding from Cyclotomic Field of order 3 and degree 2 to Cyclotomic Field of order 7 and degree 6
+                sage: CyclotomicField(3).an_embedding(CyclotomicField(6))
+                Generic morphism:
+                  From: Cyclotomic Field of order 3 and degree 2
+                  To:   Cyclotomic Field of order 6 and degree 2
+                  Defn: zeta3 -> zeta6 - 1
+            """
+            if self.characteristic() != K.characteristic():
+                raise ValueError(f'no embedding from {self} to {K}: incompatible characteristics')
+
+            H = self.Hom(K)
+            try:
+                return H.natural_map()
+            except TypeError:
+                pass
+            from sage.categories.sets_cat import EmptySetError
+            try:
+                return H.an_element()
+            except EmptySetError:
+                raise ValueError(f'no embedding from {self} to {K}')
 
         def prime_subfield(self):
             """
@@ -477,7 +529,7 @@ class Fields(CategoryWithAxiom):
                     return (zero, zero, zero)
                 c = ~a.leading_coefficient()
                 return (c * a, R(c), zero)
-            elif not a:
+            if not a:
                 c = ~b.leading_coefficient()
                 return (c * b, zero, R(c))
             u, d, v1, v3 = (R.one(), a, zero, b)
@@ -506,8 +558,7 @@ class Fields(CategoryWithAxiom):
             """
             if self.characteristic() == 0:
                 return True
-            else:
-                raise NotImplementedError
+            raise NotImplementedError
 
         def _test_characteristic_fields(self, **options):
             """
@@ -559,6 +610,22 @@ class Fields(CategoryWithAxiom):
                 sage: F = NumberField(x^2 + 1, 'i')                                         # needs sage.rings.number_field
                 sage: F.fraction_field()                                                    # needs sage.rings.number_field
                 Number Field in i with defining polynomial x^2 + 1
+            """
+            return self
+
+        def _pseudo_fraction_field(self):
+            """
+            The fraction field of ``self`` is always available as ``self``.
+
+            EXAMPLES::
+
+                sage: QQ._pseudo_fraction_field()
+                Rational Field
+                sage: K = GF(5)
+                sage: K._pseudo_fraction_field()
+                Finite Field of size 5
+                sage: K._pseudo_fraction_field() is K
+                True
             """
             return self
 
@@ -624,6 +691,13 @@ class Fields(CategoryWithAxiom):
                 sage: f = QQbar['x'](1)                                                 # needs sage.rings.number_field
                 sage: f.squarefree_decomposition()                                      # needs sage.rings.number_field
                 1
+
+            .. NOTE::
+
+                Currently factorization over non-finite fields with positive characteristic
+                is not implemented, it would be useful to port the algorithm in
+                :meth:`sage.rings.finite_rings.finite_field_base.FiniteField._squarefree_decomposition_univariate_polynomial`
+                here.
             """
             from sage.structure.factorization import Factorization
             if f.degree() == 0:
@@ -682,22 +756,6 @@ class Fields(CategoryWithAxiom):
                 (3*a^2 + 2*a + 1) + O(5^7)
             """
             return self.free_module(*args, **kwds)
-
-        def _pseudo_fraction_field(self):
-            """
-            The fraction field of ``self`` is always available as ``self``.
-
-            EXAMPLES::
-
-                sage: QQ._pseudo_fraction_field()
-                Rational Field
-                sage: K = GF(5)
-                sage: K._pseudo_fraction_field()
-                Finite Field of size 5
-                sage: K._pseudo_fraction_field() is K
-                True
-            """
-            return self
 
     class ElementMethods:
         def euclidean_degree(self):

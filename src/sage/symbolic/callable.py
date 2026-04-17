@@ -259,10 +259,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
         """
         if isinstance(R, CallableSymbolicExpressionRing_class):
             args = self.arguments()
-            if all(a in args for a in R.arguments()):
-                return True
-            else:
-                return False
+            return all(a in args for a in R.arguments())
         return SymbolicRing._coerce_map_from_(self, R)
 
     def construction(self):
@@ -310,10 +307,9 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
         """
         if len(self._arguments) == 0:
             return "Callable function ring with no named arguments"
-        elif len(self._arguments) == 1:
+        if len(self._arguments) == 1:
             return "Callable function ring with argument {}".format(self._arguments[0])
-        else:
-            return "Callable function ring with arguments {}".format(self._arguments)
+        return "Callable function ring with arguments {}".format(self._arguments)
 
     def arguments(self):
         """
@@ -352,9 +348,8 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
         repr_x = SymbolicRing._repr_element_(self, x)
         if len(args) == 1:
             return "%s |--> %s" % (args[0], repr_x)
-        else:
-            args = ", ".join(map(str, args))
-            return "(%s) |--> %s" % (args, repr_x)
+        args = ", ".join(map(str, args))
+        return "(%s) |--> %s" % (args, repr_x)
 
     def _latex_element_(self, x):
         r"""
@@ -376,9 +371,8 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
         latex_x = SymbolicRing._latex_element_(self, x)
         if len(args) == 1:
             return r"%s \ {\mapsto}\ %s" % (args[0], latex_x)
-        else:
-            vars = ", ".join(args)
-            return r"\left( %s \right) \ {\mapsto} \ %s" % (vars, latex_x)
+        vars = ", ".join(args)
+        return r"\left( %s \right) \ {\mapsto} \ %s" % (vars, latex_x)
 
     def _call_element_(self, _the_element, *args, **kwds):
         """

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Sage Input Formatting
 
@@ -446,7 +445,7 @@ class SageInputBuilder:
         # However, we don't want to assume that hashing x is always
         # efficient, so we only try the lookup if some value of the same
         # type as x has been cached.
-        from sage.structure.all import parent
+        from sage.structure.element import parent
 
         if type(x) in self._cached_types:
             v = self._cache.get((parent(x), x))
@@ -473,15 +472,12 @@ class SageInputBuilder:
             if self._preparse is True:
                 if x < 0:
                     return -SIE_literal_stringrep(self, str(-x) + 'r')
-                else:
-                    return SIE_literal_stringrep(self, str(x) + 'r')
-            elif self._preparse is False:
+                return SIE_literal_stringrep(self, str(x) + 'r')
+            if self._preparse is False:
                 return self.int(x)
-            else:
-                if x < 0:
-                    return -self.name('int')(self.int(-x))
-                else:
-                    return self.name('int')(self.int(x))
+            if x < 0:
+                return -self.name('int')(self.int(-x))
+            return self.name('int')(self.int(x))
 
         if isinstance(x, float):
             # floats could often have prettier output,
@@ -497,8 +493,7 @@ class SageInputBuilder:
             if self._preparse is False and float(str(x)) == x:
                 if x < 0:
                     return -SIE_literal_stringrep(self, str(-x))
-                else:
-                    return SIE_literal_stringrep(self, str(x))
+                return SIE_literal_stringrep(self, str(x))
             from sage.rings.real_mpfr import RR
             from sage.rings.integer_ring import ZZ
             rrx = RR(x)
@@ -524,8 +519,7 @@ class SageInputBuilder:
             loc_name = '_sil%d' % loc
             self._locals[loc_name] = x
             return SIE_literal_stringrep(self, loc_name)
-        else:
-            raise ValueError("cannot convert {} to sage_input form".format(x))
+        raise ValueError("cannot convert {} to sage_input form".format(x))
 
     def preparse(self):
         r"""
@@ -574,8 +568,7 @@ class SageInputBuilder:
         """
         if n < 0:
             return -SIE_literal_stringrep(self, -n)
-        else:
-            return SIE_literal_stringrep(self, n)
+        return SIE_literal_stringrep(self, n)
 
     def float_str(self, n):
         r"""
@@ -649,7 +642,7 @@ class SageInputBuilder:
             GF_101 = GF(101)
             GF_101(42) + GF_101(43)
         """
-        from sage.structure.all import parent
+        from sage.structure.element import parent
 
         self._cached_types.add(type(x))
         self._cache[(parent(x), x)] = sie
@@ -1177,8 +1170,7 @@ class SageInputBuilder:
         locals = self._locals
         if len(locals):
             return SageInputAnswer(sif._commands, sif.format(e, 0), locals)
-        else:
-            return SageInputAnswer(sif._commands, sif.format(e, 0))
+        return SageInputAnswer(sif._commands, sif.format(e, 0))
 
 
 # Python's precedence levels.  Hand-transcribed from section 5.14 of
@@ -2228,11 +2220,9 @@ class SIE_tuple(SageInputExpression):
         values = [sif.format(val, 0) for val in self._sie_values]
         if self._sie_is_list:
             return '[%s]' % ', '.join(values), _prec_atomic
-        else:
-            if len(values) == 1:
-                return '(%s,)' % values[0], _prec_atomic
-            else:
-                return '(%s)' % ', '.join(values), _prec_atomic
+        if len(values) == 1:
+            return '(%s,)' % values[0], _prec_atomic
+        return '(%s)' % ', '.join(values), _prec_atomic
 
 
 class SIE_dict(SageInputExpression):
@@ -2458,8 +2448,7 @@ class SIE_binary(SageInputExpression):
             rhs = sif.format(self._sie_operands[1], _prec_exponent)
             if self._sie_builder.preparse():
                 return '%s^%s' % (lhs, rhs), _prec_exponent
-            else:
-                return '%s**%s' % (lhs, rhs), _prec_exponent
+            return '%s**%s' % (lhs, rhs), _prec_exponent
 
         if op == '*':
             prec = _prec_muldiv
@@ -3445,8 +3434,7 @@ class SageInputFormatter:
             next = self._dup_names[name] + 1
             self._dup_names[name] = next
             return name + str(next)
-        else:
-            return name
+        return name
 
 
 def verify_same(a, b):
@@ -3594,8 +3582,7 @@ class SageInputAnswer(tuple):
         """
         if locals:
             return tuple.__new__(cls, (cmds, expr, locals))
-        else:
-            return tuple.__new__(cls, (cmds, expr))
+        return tuple.__new__(cls, (cmds, expr))
 
     def __repr__(self):
         r"""

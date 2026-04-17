@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Quotient fields
 """
@@ -332,10 +331,9 @@ class QuotientFields(Category_singleton):
                 one = self.parent().one()
                 if self != zero:
                     return (one, ~self, zero)
-                elif other != zero:
+                if other != zero:
                     return (one, zero, ~other)
-                else:
-                    return (zero, zero, zero)
+                return (zero, zero, zero)
 
         def factor(self, *args, **kwds):
             """

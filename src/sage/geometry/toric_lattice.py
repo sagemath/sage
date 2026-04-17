@@ -149,7 +149,7 @@ from sage.geometry.toric_lattice_element import ToricLatticeElement
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.geometry.toric_plotter', 'ToricPlotter')
 from sage.misc.latex import latex
-from sage.structure.all import parent
+from sage.structure.element import parent
 from sage.structure.richcmp import (richcmp_method, richcmp, rich_to_bool,
                                     richcmp_not_equal)
 from sage.modules.fg_pid.fgp_element import FGP_Element
@@ -161,78 +161,6 @@ from sage.modules.free_module import (FreeModule_ambient_pid,
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.factory import UniqueFactory
-
-
-def is_ToricLattice(x):
-    r"""
-    Check if ``x`` is a toric lattice.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is a toric lattice and ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.toric_lattice import (
-        ....:   is_ToricLattice)
-        sage: is_ToricLattice(1)
-        doctest:warning...
-        DeprecationWarning: The function is_ToricLattice is deprecated;
-        use 'isinstance(..., ToricLattice_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38126 for details.
-        False
-        sage: N = ToricLattice(3)
-        sage: N
-        3-d lattice N
-        sage: is_ToricLattice(N)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38126,
-                "The function is_ToricLattice is deprecated; "
-                "use 'isinstance(..., ToricLattice_generic)' instead.")
-    return isinstance(x, ToricLattice_generic)
-
-
-def is_ToricLatticeQuotient(x):
-    r"""
-    Check if ``x`` is a toric lattice quotient.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is a toric lattice quotient and ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.toric_lattice import (
-        ....:   is_ToricLatticeQuotient)
-        sage: is_ToricLatticeQuotient(1)
-        doctest:warning...
-        DeprecationWarning: The function is_ToricLatticeQuotient is deprecated;
-        use 'isinstance(..., ToricLattice_quotient)' instead.
-        See https://github.com/sagemath/sage/issues/38126 for details.
-        False
-        sage: N = ToricLattice(3)
-        sage: N
-        3-d lattice N
-        sage: is_ToricLatticeQuotient(N)
-        False
-        sage: Q = N / N.submodule([(1,2,3), (3,2,1)])
-        sage: Q
-        Quotient with torsion of 3-d lattice N
-        by Sublattice <N(1, 2, 3), N(0, 4, 8)>
-        sage: is_ToricLatticeQuotient(Q)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38126,
-                "The function is_ToricLatticeQuotient is deprecated; "
-                "use 'isinstance(..., ToricLattice_quotient)' instead.")
-    return isinstance(x, ToricLattice_quotient)
 
 
 class ToricLatticeFactory(UniqueFactory):
@@ -483,7 +411,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             return None
         return super()._convert_map_from_(other)
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check if ``point`` is an element of ``self``.
 
@@ -588,8 +516,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
         def make_name(N1, N2, use_latex=False):
             if use_latex:
                 return latex(N1) + r' \oplus ' + latex(N2)
-            else:
-                return N1._name + '+' + N2._name
+            return N1._name + '+' + N2._name
 
         rank = self.rank() + other.rank()
         name = make_name(self, other, False)
@@ -846,7 +773,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             sage: Ns.span_of_basis([(1,2,0), (2,4,0)])
             Traceback (most recent call last):
             ...
-            ValueError: The given basis vectors must be linearly independent.
+            ValueError: the given basis vectors must be linearly independent
         """
         A = self.ambient_module()
         if base_ring is ZZ and all(g in A for g in basis):
@@ -1484,8 +1411,7 @@ class ToricLattice_quotient(FGP_Module_class):
         if self._flip_sign_of_generator:
             assert len(gens) == 1
             return (-gens[0],)
-        else:
-            return gens
+        return gens
 
     # Should be overridden in derived classes.
     Element = ToricLattice_quotient_element
@@ -1583,8 +1509,7 @@ class ToricLattice_quotient(FGP_Module_class):
         if self.is_torsion_free():
             return "%d-d lattice, quotient of %s by %s" % (self.rank(),
                                                            self.V(), self.W())
-        else:
-            return "Quotient with torsion of %s by %s" % (self.V(), self.W())
+        return "Quotient with torsion of %s by %s" % (self.V(), self.W())
 
     def _module_constructor(self, V, W, check=True):
         r"""
@@ -1738,5 +1663,4 @@ class ToricLattice_quotient(FGP_Module_class):
         if self._flip_sign_of_generator:
             assert len(coordinates) == 1, "Sign flipped for a multi-dimensional quotient!"
             return -coordinates
-        else:
-            return coordinates
+        return coordinates

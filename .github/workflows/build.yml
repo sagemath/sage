@@ -35,7 +35,7 @@ concurrency:
 #
 # each build Sage:
 #
-#  - incrementally starting from a Docker image that ci-linux.yml
+#  - incrementally starting from a Docker image that ci-distro.yml
 #    publishes on each development release to ghcr.io,
 #  - orchestrated using a tox-generated Dockerfile,
 #  - using https://github.com/marketplace/actions/build-and-push-docker-images,
@@ -94,15 +94,15 @@ jobs:
           - "src/doc src/sage_docbuild src/sage_setup"
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v10
+        uses: jlumbroso/free-disk-space@main
         with:
-          # need space in /var for Docker images
-          root-reserve-mb:      30000
-          remove-dotnet:        true
-          remove-android:       true
-          remove-haskell:       true
-          remove-codeql:        true
-          remove-docker-images: true
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
 
       - name: Checkout
         id: checkout
@@ -121,7 +121,7 @@ jobs:
         # This step needs to happen after the commit sha is put in DOCKER_TAG
         # so that multi-stage builds can work correctly.
         run: |
-          .ci/merge-fixes.sh
+          .github/workflows/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -178,13 +178,13 @@ jobs:
           cd /sage
           ./sage -python -m pip install coverage
           ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --force-lib --long -p4 --format github --random-seed=286735480429121101562228604801325644303 ${{ matrix.tests }}
-        shell: sh .ci/docker-exec-script.sh BUILD . {0}
+        shell: sh .github/workflows/docker-exec-script.sh BUILD . {0}
 
       - name: Combine coverage results
         if: (success() || failure()) && steps.container.outcome == 'success'
         run: |
           ./sage -python -m coverage combine --rcfile=src/tox.ini
-        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+        shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
 
       - name: Prepare upload
         id: copy-coverage
@@ -214,16 +214,15 @@ jobs:
           - 5000:5000
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v10
+        uses: jlumbroso/free-disk-space@main
         with:
-          # need space in /var for Docker images
-          root-reserve-mb:      30000
-          remove-dotnet:        true
-          remove-android:       true
-          remove-haskell:       true
-          remove-codeql:        true
-          remove-docker-images: true
-
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
@@ -241,7 +240,7 @@ jobs:
         # This step needs to happen after the commit sha is put in DOCKER_TAG
         # so that multi-stage builds can work correctly.
         run: |
-          .ci/merge-fixes.sh
+          .github/workflows/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -289,7 +288,7 @@ jobs:
 
       - name: Download coverage artifacts
         if: (success() || failure()) && steps.container.outcome == 'success'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: .coverage
           pattern: coverage-*
@@ -306,7 +305,7 @@ jobs:
           ./sage -python -m coverage xml --rcfile=src/tox.ini --omit="/tmp/*"
           mkdir -p .coverage/coverage-report
           mv coverage.xml .coverage/coverage-report/
-        shell: sh .ci/docker-exec-script.sh BUILD . {0}
+        shell: sh .github/workflows/docker-exec-script.sh BUILD . {0}
 
       - name: Upload coverage to codecov
         if: (success() || failure()) && steps.container.outcome == 'success'

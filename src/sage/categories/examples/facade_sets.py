@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Example of facade set
 """
@@ -117,8 +116,7 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
         object = ZZ(object)
         if object > ZZ(0):
             return object
-        else:
-            raise ValueError("%s should be positive")
+        raise ValueError("%s should be positive")
 
 
 class IntegersCompletion(UniqueRepresentation, Parent):

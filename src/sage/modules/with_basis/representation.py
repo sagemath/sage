@@ -742,28 +742,27 @@ class Representation_abstract:
             sage: CS, CF = R._composition_series_data()
             sage: [[R(b) for b in F.basis()] for F in CS]
             [[(),
-              (1,2,3,4,5,6),
-              (1,3,5)(2,4,6),
-              (1,4)(2,5)(3,6),
-              (1,5,3)(2,6,4),
-              (1,6,5,4,3,2)],
-             [() + 2*(1,6,5,4,3,2),
-              (1,2,3,4,5,6) + 2*(1,6,5,4,3,2),
-              (1,3,5)(2,4,6) + 2*(1,6,5,4,3,2),
-              (1,4)(2,5)(3,6) + 2*(1,6,5,4,3,2),
-              (1,5,3)(2,6,4) + 2*(1,6,5,4,3,2)],
-             [() + (1,5,3)(2,6,4) + (1,6,5,4,3,2),
-              (1,2,3,4,5,6) + 2*(1,5,3)(2,6,4),
-              (1,3,5)(2,4,6) + 2*(1,6,5,4,3,2),
-              (1,4)(2,5)(3,6) + (1,5,3)(2,6,4) + (1,6,5,4,3,2)],
-             [() + 2*(1,4)(2,5)(3,6),
-              (1,2,3,4,5,6) + 2*(1,5,3)(2,6,4),
-              (1,3,5)(2,4,6) + 2*(1,6,5,4,3,2)],
-             [() + 2*(1,3,5)(2,4,6) + 2*(1,4)(2,5)(3,6) + (1,6,5,4,3,2),
-              (1,2,3,4,5,6) + (1,3,5)(2,4,6) + 2*(1,5,3)(2,6,4) + 2*(1,6,5,4,3,2)],
-             [() + 2*(1,2,3,4,5,6) + (1,3,5)(2,4,6) + 2*(1,4)(2,5)(3,6)
-              + (1,5,3)(2,6,4) + 2*(1,6,5,4,3,2)],
-             []]
+             (1,2,3,4,5,6),
+             (1,3,5)(2,4,6),
+             (1,4)(2,5)(3,6),
+             (1,5,3)(2,6,4),
+             (1,6,5,4,3,2)],
+            [() + (1,6,5,4,3,2),
+             (1,2,3,4,5,6) + 2*(1,6,5,4,3,2),
+             (1,3,5)(2,4,6) + (1,6,5,4,3,2),
+             (1,4)(2,5)(3,6) + 2*(1,6,5,4,3,2),
+             (1,5,3)(2,6,4) + (1,6,5,4,3,2)],
+            [() + (1,5,3)(2,6,4) + 2*(1,6,5,4,3,2),
+             (1,2,3,4,5,6) + (1,5,3)(2,6,4),
+             (1,3,5)(2,4,6) + (1,6,5,4,3,2),
+             (1,4)(2,5)(3,6) + 2*(1,5,3)(2,6,4) + (1,6,5,4,3,2)],
+            [() + (1,4)(2,5)(3,6),
+             (1,2,3,4,5,6) + (1,5,3)(2,6,4),
+             (1,3,5)(2,4,6) + (1,6,5,4,3,2)],
+            [() + 2*(1,3,5)(2,4,6) + (1,4)(2,5)(3,6) + 2*(1,6,5,4,3,2),
+             (1,2,3,4,5,6) + 2*(1,3,5)(2,4,6) + (1,5,3)(2,6,4) + 2*(1,6,5,4,3,2)],
+            [() + (1,2,3,4,5,6) + (1,3,5)(2,4,6) + (1,4)(2,5)(3,6) + (1,5,3)(2,6,4) + (1,6,5,4,3,2)],
+            []]
             sage: [F.dimension() for F in CF]
             [1, 1, 1, 1, 1, 1]
         """
@@ -870,11 +869,11 @@ class Representation_abstract:
             sage: len(CS)
             3
             sage: [[R(b) for b in F.basis()] for F in CS]
-            [[e1, e2, e3, e4, e5], [e1 + e5, e2 + e5, e3 + e5, e4 + e5], []]
+            [[e1, e2, e3, e4, e5], [e1 + e2 + e3 + e4 + e5], []]
             sage: [F.brauer_character() for F in CS]
-            [(5, 0, 0), (4, -1, -1), (0, 0, 0)]
+            [(5, 0, 0), (1, 1, 1), (0, 0, 0)]
             sage: [F.brauer_character() for F in R.composition_factors()]
-            [(1, 1, 1), (4, -1, -1)]
+            [(4, -1, -1), (1, 1, 1)]
             sage: Reg = G.regular_representation(GF(2))
             sage: simple_brauer_chars = set([F.brauer_character()
             ....:                            for F in Reg.composition_factors()])
@@ -944,7 +943,7 @@ class Representation_abstract:
                 sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
                 sage: R = G.regular_representation()
                 sage: s1,s2 = G.gens()
-                sage: x = R.an_element(); x
+                sage: x = 2*R(s2*s1*s2) + R(s1*s2) + 3*R(s2) + R(G[0]); x
                 2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: 2 * x
                 4*s2*s1*s2 + 2*s1*s2 + 6*s2 + 2
@@ -956,7 +955,7 @@ class Representation_abstract:
                 sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
                 sage: R = G.regular_representation(side='right')
                 sage: s1,s2 = G.gens()
-                sage: x = R.an_element(); x
+                sage: x = 2*R(s2*s1*s2) + R(s1*s2) + 3*R(s2) + R(G[0]); x
                 2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: x * s1
                 2*s2*s1*s2*s1 + s1*s2*s1 + 3*s2*s1 + s1
@@ -969,7 +968,7 @@ class Representation_abstract:
                 Integer Ring
                 sage: A = G.algebra(ZZ)
                 sage: s1,s2 = A.algebra_generators()
-                sage: x = R.an_element(); x
+                sage: x = 2*R(s2*s1*s2) + R(s1*s2) + 3*R(s2) + R(G[0]); x
                 2*s2*s1*s2 + s1*s2 + 3*s2 + 1
                 sage: s1 * x
                 2*s2*s1*s2*s1 + 3*s1*s2 + s1 + s2
@@ -2515,7 +2514,7 @@ class SignRepresentationCoxeterGroup(SignRepresentation_abstract):
         sage: V = G.sign_representation()
         sage: TestSuite(V).run()
 
-        sage: # optional - gap3
+        sage: # optional - coxeter3
         sage: W = CoxeterGroup(['B', 3], implementation="coxeter3")
         sage: S = W.sign_representation()
         sage: TestSuite(S).run()
@@ -2536,7 +2535,7 @@ class SignRepresentationCoxeterGroup(SignRepresentation_abstract):
             sage: V._default_sign(elem)
             1
 
-            sage: # optional - gap3
+            sage: # optional - coxeter3
             sage: W = CoxeterGroup(['B', 3], implementation="coxeter3")
             sage: S = W.sign_representation()
             sage: elem = W.an_element()

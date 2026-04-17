@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.singular sage.modules (because all doctests need laurent_polynomial_mpair, Groebner bases)
 r"""
-Ideals in Laurent polynomial rings.
+Ideals in Laurent polynomial rings
 
 For `R` a commutative ring, ideals in the Laurent polynomial ring
 `R[x_1^{\pm 1}, x_2^{\pm 1}, \ldots, x_n^{\pm 1}]` are implemented as
@@ -28,7 +28,7 @@ from sage.arith.misc import GCD
 
 
 class LaurentPolynomialIdeal( Ideal_generic ):
-    def __init__(self, ring, gens, coerce=True, hint=None):
+    def __init__(self, ring, gens, coerce=True, hint=None) -> None:
         r"""
         Create an ideal in a Laurent polynomial ring.
 
@@ -184,7 +184,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         else:
             raise ValueError("invalid comparison")
 
-    def __contains__(self, f):
+    def __contains__(self, f) -> bool:
         """
         Implement containment testing (in) for Laurent polynomial ideals.
 
@@ -304,7 +304,6 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: K.<z> = CyclotomicField(3)
             sage: P.<x,y> = LaurentPolynomialRing(K, 2)
             sage: I = P.ideal([x + z, y - z])
@@ -339,7 +338,6 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: K.<z> = CyclotomicField(3)
             sage: P.<x,y> = LaurentPolynomialRing(K, 2)
             sage: I = P.ideal([x + 1, y - 1])
@@ -500,8 +498,8 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         """
         Determine whether every generator of ``self`` is a binomial.
 
-        If ``groebner_basis`` is True, this becomes intrinsic (for a choice of
-        term order).
+        If ``groebner_basis`` is ``True``, this becomes intrinsic (for a choice
+        of term order).
 
         EXAMPLES::
 

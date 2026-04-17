@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.groups
 r"""
-Affine Permutations
+Affine permutations
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Tom Denton <sdenton4@gmail.com>
@@ -403,8 +403,7 @@ class AffinePermutation(ClonableArray):
             D = gr.descents(side=side)
         if side == 'right':
             return (gr, fin)
-        else:
-            return (fin, gr)
+        return (fin, gr)
 
 
 class AffinePermutationTypeA(AffinePermutation):

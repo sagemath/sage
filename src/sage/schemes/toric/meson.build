@@ -3,6 +3,7 @@ py.install_sources(
   'all.py',
   'chow_group.py',
   'divisor.py',
+  'divisor_class.pyx',
   'fano_variety.py',
   'homset.py',
   'ideal.py',
@@ -17,7 +18,7 @@ py.install_sources(
   subdir: 'sage/schemes/toric',
 )
 
-extension_data = {'divisor_class' : files('divisor_class.pyx')}
+extension_data = {'divisor_class': files('divisor_class.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

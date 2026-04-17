@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Rings
 
@@ -108,10 +107,8 @@ This is to test a deprecation::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
 
-from sage.structure.coerce cimport coercion_model
 from sage.structure.parent cimport Parent
 from sage.structure.category_object cimport check_default_category
 from sage.categories.rings import Rings
@@ -305,7 +302,7 @@ cdef class Ring(ParentWithGens):
         raise RuntimeError("use ** for exponentiation, not '^', which means xor "
               "in Python, and has the wrong precedence")
 
-    def base_extend(self, R):
+    def base_extend(self, X):
         """
         EXAMPLES::
 
@@ -316,8 +313,8 @@ cdef class Ring(ParentWithGens):
             sage: ZZ.base_extend(GF(7))
             Finite Field of size 7
         """
-        if R.has_coerce_map_from(self):
-            return R
+        if X.has_coerce_map_from(self):
+            return X
         raise TypeError('no base extension defined')
 
     def category(self):
@@ -375,7 +372,6 @@ cdef class Ring(ParentWithGens):
 
         The following was implemented in :issue:`7797`::
 
-            sage: # needs sage.combinat sage.modules
             sage: A = SteenrodAlgebra(2)
             sage: A * [A.1 + A.2, A.1^2]
             Left Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
@@ -484,59 +480,6 @@ cdef class Ring(ParentWithGens):
             return 1
         raise NotImplementedError
 
-    @cached_method
-    def epsilon(self):
-        """
-        Return the precision error of elements in this ring.
-
-        EXAMPLES::
-
-            sage: RDF.epsilon()
-            2.220446049250313e-16
-            sage: ComplexField(53).epsilon()                                            # needs sage.rings.real_mpfr
-            2.22044604925031e-16
-            sage: RealField(10).epsilon()                                               # needs sage.rings.real_mpfr
-            0.0020
-
-        For exact rings, zero is returned::
-
-            sage: ZZ.epsilon()
-            0
-
-        This also works over derived rings::
-
-            sage: RR['x'].epsilon()                                                     # needs sage.rings.real_mpfr
-            2.22044604925031e-16
-            sage: QQ['x'].epsilon()
-            0
-
-        For the symbolic ring, there is no reasonable answer::
-
-            sage: SR.epsilon()                                                          # needs sage.symbolic
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        one = self.one()
-        try:
-            return one.ulp()
-        except AttributeError:
-            pass
-
-        try:
-            eps = one.real().ulp()
-        except AttributeError:
-            pass
-        else:
-            return self(eps)
-
-        B = self._base
-        if B is not None and B is not self:
-            eps = self.base_ring().epsilon()
-            return self(eps)
-        if self.is_exact():
-            return self.zero()
-        raise NotImplementedError
 
 cdef class CommutativeRing(Ring):
     """
@@ -591,91 +534,6 @@ cdef class CommutativeRing(Ring):
             K = sage.rings.fraction_field.FractionField_generic(self)
             self.__fraction_field = K
         return self.__fraction_field
-
-    def _pseudo_fraction_field(self):
-        r"""
-        This method is used by the coercion model to determine if `a / b`
-        should be treated as `a * (1/b)`, for example when dividing an element
-        of `\ZZ[x]` by an element of `\ZZ`.
-
-        The default is to return the same value as ``self.fraction_field()``,
-        but it may return some other domain in which division is usually
-        defined (for example, ``\ZZ/n\ZZ`` for possibly composite `n`).
-
-        EXAMPLES::
-
-            sage: ZZ._pseudo_fraction_field()
-            Rational Field
-            sage: ZZ['x']._pseudo_fraction_field()
-            Fraction Field of Univariate Polynomial Ring in x over Integer Ring
-            sage: Integers(15)._pseudo_fraction_field()
-            Ring of integers modulo 15
-            sage: Integers(15).fraction_field()
-            Traceback (most recent call last):
-            ...
-            TypeError: self must be an integral domain.
-        """
-        try:
-            return self.fraction_field()
-        except (NotImplementedError,TypeError):
-            return coercion_model.division_parent(self)
-
-    def extension(self, poly, name=None, names=None, **kwds):
-        """
-        Algebraically extend ``self`` by taking the quotient
-        ``self[x] / (f(x))``.
-
-        INPUT:
-
-        - ``poly`` -- a polynomial whose coefficients are coercible into
-          ``self``
-
-        - ``name`` -- (optional) name for the root of `f`
-
-        .. NOTE::
-
-            Using this method on an algebraically complete field does *not*
-            return this field; the construction ``self[x] / (f(x))`` is done
-            anyway.
-
-        EXAMPLES::
-
-            sage: R = QQ['x']
-            sage: y = polygen(R)
-            sage: R.extension(y^2 - 5, 'a')                                             # needs sage.libs.pari
-            Univariate Quotient Polynomial Ring in a over
-             Univariate Polynomial Ring in x over Rational Field with modulus a^2 - 5
-
-        ::
-
-            sage: # needs sage.rings.finite_rings
-            sage: P.<x> = PolynomialRing(GF(5))
-            sage: F.<a> = GF(5).extension(x^2 - 2)
-            sage: P.<t> = F[]
-            sage: R.<b> = F.extension(t^2 - a); R
-            Univariate Quotient Polynomial Ring in b over
-             Finite Field in a of size 5^2 with modulus b^2 + 4*a
-        """
-        from sage.rings.polynomial.polynomial_element import Polynomial
-        if not isinstance(poly, Polynomial):
-            try:
-                poly = poly.polynomial(self)
-            except (AttributeError, TypeError):
-                raise TypeError("polynomial (=%s) must be a polynomial." % repr(poly))
-        if names is not None:
-            name = names
-        if isinstance(name, tuple):
-            name = name[0]
-        if name is None:
-            name = str(poly.parent().gen(0))
-        for key, val in kwds.items():
-            if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_name', 'latex_names']:
-                raise TypeError("extension() got an unexpected keyword argument '%s'" % key)
-            if not (val is None or isinstance(val, list) and all(c is None for c in val)):
-                raise NotImplementedError("ring extension with prescribed %s is not implemented" % key)
-        R = self[name]
-        I = R.ideal(R(poly.list()))
-        return R.quotient(I, name)
 
 
 cdef class IntegralDomain(CommutativeRing):
@@ -756,58 +614,6 @@ cdef class Field(CommutativeRing):
         True
     """
     _default_category = _Fields
-
-    def an_embedding(self, K):
-        r"""
-        Return some embedding of this field into another field `K`,
-        and raise a :class:`ValueError` if none exists.
-
-        EXAMPLES::
-
-            sage: GF(2).an_embedding(GF(4))
-            Ring morphism:
-              From: Finite Field of size 2
-              To:   Finite Field in z2 of size 2^2
-              Defn: 1 |--> 1
-            sage: GF(4).an_embedding(GF(8))
-            Traceback (most recent call last):
-            ...
-            ValueError: no embedding from Finite Field in z2 of size 2^2 to Finite Field in z3 of size 2^3
-            sage: GF(4).an_embedding(GF(16))
-            Ring morphism:
-              From: Finite Field in z2 of size 2^2
-              To:   Finite Field in z4 of size 2^4
-              Defn: z2 |--> z4^2 + z4
-
-        ::
-
-            sage: CyclotomicField(5).an_embedding(QQbar)
-            Coercion map:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Algebraic Field
-            sage: CyclotomicField(3).an_embedding(CyclotomicField(7))
-            Traceback (most recent call last):
-            ...
-            ValueError: no embedding from Cyclotomic Field of order 3 and degree 2 to Cyclotomic Field of order 7 and degree 6
-            sage: CyclotomicField(3).an_embedding(CyclotomicField(6))
-            Generic morphism:
-              From: Cyclotomic Field of order 3 and degree 2
-              To:   Cyclotomic Field of order 6 and degree 2
-              Defn: zeta3 -> zeta6 - 1
-        """
-        if self.characteristic() != K.characteristic():
-            raise ValueError(f'no embedding from {self} to {K}: incompatible characteristics')
-
-        H = self.Hom(K)
-        try:
-            return H.natural_map()
-        except TypeError:
-            pass
-        from sage.categories.sets_cat import EmptySetError
-        try:
-            return H.an_element()
-        except EmptySetError:
-            raise ValueError(f'no embedding from {self} to {K}')
 
 
 cdef class Algebra(Ring):

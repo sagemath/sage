@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Widgets to be used for the Sage Jupyter notebook
 
@@ -157,8 +156,7 @@ class TransformWidget:
         f = self.__transform
         if f is None:
             return v
-        else:
-            return f(v)
+        return f(v)
 
 
 class EvalWidget(TransformWidget):

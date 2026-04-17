@@ -47,8 +47,10 @@ REFERENCES:
 
 from sage.arith.misc import factor, is_prime, valuation
 from sage.misc.misc_c import prod
-from sage.modular.arithgroup.all import (Gamma0, Gamma1, ArithmeticSubgroup,
-                                         GammaH_class)
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_constructor as Gamma1
+from sage.modular.arithgroup.congroup_gammaH import GammaH_class
+from sage.modular.arithgroup.congroup_generic import ArithmeticSubgroup
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
@@ -300,15 +302,14 @@ def dimension_new_cusp_forms(X, k=2, p=0):
     """
     if isinstance(X, GammaH_class):
         return X.dimension_new_cusp_forms(k, p=p)
-    elif isinstance(X, dirichlet.DirichletCharacter):
+    if isinstance(X, dirichlet.DirichletCharacter):
         N = X.modulus()
         if N <= 2:
             return Gamma0(N).dimension_new_cusp_forms(k, p=p)
-        else:
-            # Gamma1(N) for N<=2 just returns Gamma0(N), which has no
-            # eps parameter. See trac #12640.
-            return Gamma1(N).dimension_new_cusp_forms(k, eps=X, p=p)
-    elif isinstance(X, (int, Integer)):
+        # Gamma1(N) for N<=2 just returns Gamma0(N), which has no
+        # eps parameter. See trac #12640.
+        return Gamma1(N).dimension_new_cusp_forms(k, eps=X, p=p)
+    if isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_new_cusp_forms(k, p=p)
     raise TypeError(f"X (={X}) must be an integer, a Dirichlet character or a congruence subgroup of type Gamma0, Gamma1 or GammaH")
 
@@ -399,11 +400,10 @@ def dimension_cusp_forms(X, k=2):
         N = X.modulus()
         if N <= 2:
             return Gamma0(N).dimension_cusp_forms(k)
-        else:
-            return Gamma1(N).dimension_cusp_forms(k, X)
-    elif isinstance(X, ArithmeticSubgroup):
+        return Gamma1(N).dimension_cusp_forms(k, X)
+    if isinstance(X, ArithmeticSubgroup):
         return X.dimension_cusp_forms(k)
-    elif isinstance(X, (int, Integer)):
+    if isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_cusp_forms(k)
     raise TypeError("argument 1 must be a Dirichlet character, an integer "
                     "or a finite index subgroup of SL2Z")
@@ -473,9 +473,9 @@ def dimension_eis(X, k=2):
     """
     if isinstance(X, ArithmeticSubgroup):
         return X.dimension_eis(k)
-    elif isinstance(X, dirichlet.DirichletCharacter):
+    if isinstance(X, dirichlet.DirichletCharacter):
         return Gamma1(X.modulus()).dimension_eis(k, X)
-    elif isinstance(X, (int, Integer)):
+    if isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_eis(k)
     raise TypeError(f"argument in dimension_eis must be an integer, a Dirichlet character, or a finite index subgroup of SL2Z (got {X})")
 
@@ -521,13 +521,12 @@ def dimension_modular_forms(X, k=2):
     """
     if isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_modular_forms(k)
-    elif isinstance(X, ArithmeticSubgroup):
+    if isinstance(X, ArithmeticSubgroup):
         return X.dimension_modular_forms(k)
-    elif isinstance(X, dirichlet.DirichletCharacter):
+    if isinstance(X, dirichlet.DirichletCharacter):
         return Gamma1(X.modulus()).dimension_modular_forms(k, eps=X)
-    else:
-        raise TypeError("argument 1 must be an integer, a Dirichlet character "
-                        "or an arithmetic subgroup")
+    raise TypeError("argument 1 must be an integer, a Dirichlet character "
+                    "or an arithmetic subgroup")
 
 
 def sturm_bound(level, weight=2):

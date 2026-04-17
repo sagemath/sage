@@ -332,7 +332,7 @@ class RegularSequence(RecognizableSeries):
         return iter(self[n] for n in count())
 
     @cached_method
-    def is_degenerated(self):
+    def is_degenerated(self) -> bool:
         r"""
         Return whether this `k`-regular sequence is degenerated,
         i.e., whether this `k`-regular sequence does not satisfy
@@ -363,7 +363,7 @@ class RegularSequence(RecognizableSeries):
             False
         """
         from sage.rings.integer_ring import ZZ
-        return (self.mu[ZZ(0)] * self.right) != self.right
+        return (self.mu[ZZ.zero()] * self.right) != self.right
 
     def _error_if_degenerated_(self):
         r"""
@@ -770,9 +770,9 @@ class RegularSequence(RecognizableSeries):
         if a == 0:
             return sum(c_j * self[b_j] * self.parent().one_hadamard()
                        for b_j, c_j in b.items())
-        elif a == 1 and len(b) == 1 and zero in b:
+        if a == 1 and len(b) == 1 and zero in b:
             return b[zero] * self
-        elif a < 0:
+        if a < 0:
             raise ValueError('a={} is not nonnegative.'.format(a))
 
         from sage.matrix.constructor import Matrix
@@ -1100,10 +1100,10 @@ class RegularSequence(RecognizableSeries):
             Z = zero_matrix(C[0].dimensions()[0])
 
             def blocks(r):
-                upper = list([C[s], D[s], Z]
-                             for s in reversed(srange(max(0, r-2), r+1)))
-                lower = list([Z, C[s], D[s]]
-                             for s in reversed(srange(k-3+len(upper), k)))
+                upper = [[C[s], D[s], Z]
+                         for s in reversed(srange(max(0, r-2), r+1))]
+                lower = [[Z, C[s], D[s]]
+                         for s in reversed(srange(k-3+len(upper), k))]
                 return upper + lower
 
             return {r: Matrix.block(blocks(r)) for r in P.alphabet()}
@@ -1280,7 +1280,7 @@ class RegularSequence(RecognizableSeries):
         return result
 
     @cached_method
-    def is_bounded(self):
+    def is_bounded(self) -> bool:
         r"""
         Return whether this `k`-regular sequence is bounded.
 
@@ -2876,12 +2876,11 @@ class RecurrenceParser:
             assert op.operator() == mul_vararg and len(operands) == 2
             if operands[1].operator() == function:
                 return [operands[0], operands[1]]
-            elif operands[0].operator() == function:
+            if operands[0].operator() == function:
                 return [operands[1], operands[0]]
-            else:
-                raise ValueError('Term %s in the equation %s '
-                                 'does not contain %s.'
-                                 % (op, eq, function))
+            raise ValueError('Term %s in the equation %s '
+                             'does not contain %s.'
+                             % (op, eq, function))
 
         def parse_one_summand(summand, eq):
             if summand.operator() == mul_vararg:
@@ -3585,17 +3584,16 @@ class RecurrenceParser:
             f_n = values[n]
             if f_n is not None and f_n != "pending":
                 return f_n
-            elif f_n == "pending":
+            if f_n == "pending":
                 missing_values.append(n)
                 return 0
-            else:
-                values.update({n: "pending"})
-                q, r = ZZ(n).quo_rem(k**M)
-                if q < offset:
-                    missing_values.append(n)
-                return sum([coeff(r, j)*f(k**m*q + j)
-                            for j in srange(l, u + 1)
-                            if coeff(r, j)]) + inhomogeneity(r, q)
+            values.update({n: "pending"})
+            q, r = ZZ(n).quo_rem(k**M)
+            if q < offset:
+                missing_values.append(n)
+            return sum([coeff(r, j)*f(k**m*q + j)
+                        for j in srange(l, u + 1)
+                        if coeff(r, j)]) + inhomogeneity(r, q)
 
         for n in srange(last_value_needed + 1):
             values.update({n: f(n)})
@@ -4035,15 +4033,13 @@ class RecurrenceParser:
             j, d = ind[i]
             if j < M - 1:
                 return int(kk == ind[(j + 1, k**j*rem + d)])
-            else:
-                rem_d = k**(M-1)*rem + (d % k**M)
-                dd = d // k**M
-                if rem_d < k**M:
-                    lambd = l - ind[(m, (k**m)*dd + l)]
-                    return coeff(rem_d, kk + lambd)
-                else:
-                    lambd = l - ind[(m, k**m*dd + k**m + l)]
-                    return coeff(rem_d - k**M, kk + lambd)
+            rem_d = k**(M-1)*rem + (d % k**M)
+            dd = d // k**M
+            if rem_d < k**M:
+                lambd = l - ind[(m, (k**m)*dd + l)]
+                return coeff(rem_d, kk + lambd)
+            lambd = l - ind[(m, k**m*dd + k**m + l)]
+            return coeff(rem_d - k**M, kk + lambd)
 
         mat = Matrix(coefficient_ring, dim_without_corr, dim_without_corr, entry)
 
@@ -4060,10 +4056,9 @@ class RecurrenceParser:
                 dd = d // k**M
                 if rem_d < k**M:
                     return (rem_d, dd)
-                elif rem_d >= k**M:
+                if rem_d >= k**M:
                     return (rem_d - k**M, dd + 1)
-                else:
-                    return (None, None)
+                return (None, None)
 
             def left_for_inhomogeneity(wanted):
                 return list(chain(*[(wanted == (r, i))*inhomogeneity.left

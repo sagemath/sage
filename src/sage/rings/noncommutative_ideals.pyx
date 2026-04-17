@@ -39,7 +39,6 @@ algebras.
 
 TESTS::
 
-    sage: # needs sage.combinat
     sage: A = SteenrodAlgebra(2)
     sage: IL = A*[A.1+A.2,A.1^2]; IL
     Left Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
@@ -114,7 +113,6 @@ class IdealMonoid_nc(IdealMonoid_c):
 
         TESTS::
 
-            sage: # needs sage.combinat
             sage: A = SteenrodAlgebra(2) # indirect doctest
             sage: IL = A*[A.1+A.2,A.1^2]; IL
             Left Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
@@ -128,7 +126,6 @@ class IdealMonoid_nc(IdealMonoid_c):
 
         ::
 
-            sage: # needs sage.combinat
             sage: IL == loads(dumps(IL))
             True
             sage: IR == loads(dumps(IR))
@@ -242,7 +239,6 @@ class Ideal_nc(Ideal_generic):
 
         TESTS::
 
-            sage: # needs sage.combinat
             sage: A = SteenrodAlgebra(2)
             sage: A*[A.1+A.2,A.1^2]      # indirect doctest
             Left Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
@@ -261,7 +257,6 @@ class Ideal_nc(Ideal_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: A = SteenrodAlgebra(2)
             sage: IR = [A.1+A.2,A.1^2]*A
             sage: IL = A*[A.1+A.2,A.1^2]
@@ -288,7 +283,6 @@ class Ideal_nc(Ideal_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: A = SteenrodAlgebra(2)
             sage: IR = [A.1+A.2,A.1^2]*A
             sage: IL = A*[A.1+A.2,A.1^2]
@@ -306,7 +300,6 @@ class Ideal_nc(Ideal_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: A = SteenrodAlgebra(2)
             sage: IR = [A.1+A.2,A.1^2]*A
             sage: IL = A*[A.1+A.2,A.1^2]
@@ -324,7 +317,6 @@ class Ideal_nc(Ideal_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: A = SteenrodAlgebra(2)
             sage: IL = A*[A.1+A.2,A.1^2]
             sage: IR = [A.1+A.2,A.1^2]*A
@@ -401,7 +393,8 @@ class Ideal_nc(Ideal_generic):
         """
         if isinstance(other, Ideal_nc) and self.ring() == other.ring():
             if self.side() == "left" and other.side() == "right":
-                gens = [z for z in (x * y for x in self.gens() for y in other.gens()) if z]
+                it = (x * y for x in self.gens() for y in other.gens())
+                gens = [z for z in it if z]
                 return self.ring().ideal(gens, side='twosided')
             raise NotImplementedError("cannot multiply non-commutative ideals")
 

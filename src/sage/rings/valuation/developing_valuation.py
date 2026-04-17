@@ -142,7 +142,6 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Zp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -174,7 +173,6 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Zp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -207,7 +205,6 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -257,7 +254,6 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -287,7 +283,6 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -295,7 +290,6 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: v(f)
             0
 
-            sage: # needs sage.libs.ntl
             sage: v = v.augmentation( x^2 + x + 1, 1)
             sage: v(f)
             0
@@ -333,7 +327,6 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S, R.valuation())

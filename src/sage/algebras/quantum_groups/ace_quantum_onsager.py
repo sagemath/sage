@@ -424,14 +424,13 @@ class ACEQuantumOnsagerAlgebra(CombinatorialFreeModule):
                 Bm1 = self.quantum_onsager_pbw_generator((0, i[1]+1))
                 Bm2 = self.quantum_onsager_pbw_generator((0, i[1]+2))
                 return Bm2 + q/(q**-3-~q-q+q**3) * (Bd * Bm1 - Bm1 * Bd)
-            else:
-                if i[1] == 0:
-                    return W1
-                Bd = self.quantum_onsager_pbw_generator((1, 1))
-                Bm1 = self.quantum_onsager_pbw_generator((0, i[1]-1))
-                Bm2 = self.quantum_onsager_pbw_generator((0, i[1]-2))
-                return Bm2 - q/(q**-3-~q-q+q**3) * (Bd * Bm1 - Bm1 * Bd)
-        elif i[0] == 1:
+            if i[1] == 0:
+                return W1
+            Bd = self.quantum_onsager_pbw_generator((1, 1))
+            Bm1 = self.quantum_onsager_pbw_generator((0, i[1]-1))
+            Bm2 = self.quantum_onsager_pbw_generator((0, i[1]-2))
+            return Bm2 - q/(q**-3-~q-q+q**3) * (Bd * Bm1 - Bm1 * Bd)
+        if i[0] == 1:
             if i[1] == 1:
                 return q**-2 * W1 * W0 - W0 * W1
             if i[1] <= 0:

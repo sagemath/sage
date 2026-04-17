@@ -67,7 +67,9 @@ TESTS::
 from sage.arith.misc import is_prime, sigma
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.modular.arithgroup.all import CongruenceSubgroupBase, Gamma0_class, Gamma1_class
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
 from sage.modular.dirichlet import TrivialCharacter
 from sage.modular.hecke.ambient_module import AmbientHeckeModule
 from sage.modular.modsym.modsym import ModularSymbols
@@ -133,9 +135,8 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         if self._eis_only:
             return "Modular Forms space for %s of weight %s over %s" % (
                 self.group(), self.weight(), self.base_ring())
-        else:
-            return "Modular Forms space of dimension %s for %s of weight %s over %s" % (
-                self.dimension(), self.group(), self.weight(), self.base_ring())
+        return "Modular Forms space of dimension %s for %s of weight %s over %s" % (
+            self.dimension(), self.group(), self.weight(), self.base_ring())
 
     def _submodule_class(self):
         """
@@ -177,8 +178,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
              1 + q^3 + q^4 + 2*q^5 + O(q^6)]
         """
         from . import constructor
-        M = constructor.ModularForms(self.group(), self.weight(), base_ring, prec=self.prec(), eis_only=self._eis_only)
-        return M
+        return constructor.ModularForms(self.group(), self.weight(),
+                                        base_ring, prec=self.prec(),
+                                        eis_only=self._eis_only)
 
     @cached_method
     def dimension(self):
@@ -557,8 +559,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         if isinstance(self.group(), Gamma1_class) and self.character() is not None:
             return self.group().dimension_cusp_forms(self.weight(),
                                                      self.character())
-        else:
-            return self.group().dimension_cusp_forms(self.weight())
+        return self.group().dimension_cusp_forms(self.weight())
 
     @cached_method
     def _dim_eisenstein(self):
@@ -587,8 +588,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         if isinstance(self.group(), Gamma1_class) and self.character() is not None:
             return self.group().dimension_eis(self.weight(), self.character())
-        else:
-            return self.group().dimension_eis(self.weight())
+        return self.group().dimension_eis(self.weight())
 
     @cached_method
     def _dim_new_cuspidal(self):
@@ -609,8 +609,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         if isinstance(self.group(), Gamma1_class) and self.character() is not None:
             return self.group().dimension_new_cusp_forms(self.weight(), self.character())
-        else:
-            return self.group().dimension_new_cusp_forms(self.weight())
+        return self.group().dimension_new_cusp_forms(self.weight())
 
     @cached_method
     def _dim_new_eisenstein(self):
@@ -767,8 +766,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             Tcusp = hecke_operator_on_basis(vmb, n, k)
             return Tcusp.block_sum(matrix(self.base_ring(), 1, 1,
                                           [sigma(n, k - 1)]))
-        else:
-            return space.ModularFormsSpace._compute_hecke_matrix(self, n)
+        return space.ModularFormsSpace._compute_hecke_matrix(self, n)
 
     def _compute_hecke_matrix_prime_power(self, p, r):
         r"""
@@ -790,8 +788,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         if self.level() == 1:
             return self._compute_hecke_matrix(p**r)
-        else:
-            return space.ModularFormsSpace._compute_hecke_matrix_prime_power(self, p, r)
+        return space.ModularFormsSpace._compute_hecke_matrix_prime_power(self, p, r)
 
     def hecke_polynomial(self, n, var='x'):
         r"""

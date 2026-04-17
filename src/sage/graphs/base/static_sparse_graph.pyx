@@ -1,4 +1,3 @@
-# cython: binding=True
 # distutils: language = c++
 r"""
 Static sparse graphs
@@ -1162,7 +1161,6 @@ def spectral_radius(G, prec=1e-10):
 
     A larger example::
 
-        sage: # needs sage.modules
         sage: G = DiGraph()
         sage: G.add_edges((i,i+1) for i in range(200))
         sage: G.add_edge(200,0)
@@ -1251,8 +1249,8 @@ def spectral_radius(G, prec=1e-10):
 
     cdef double e_min, e_max
 
-    if G.num_verts() == 1:
-        e_min = e_max = G.num_edges()
+    if G.n_vertices() == 1:
+        e_min = e_max = G.n_edges()
         return (e_min, e_max)
 
     is_bipartite, colors = G.is_bipartite(certificate=True)

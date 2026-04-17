@@ -27,7 +27,7 @@ AUTHORS:
 - David Roe
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
 #
@@ -36,7 +36,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 import weakref
 from cysignals.memory cimport sig_malloc, sig_free
@@ -176,7 +176,6 @@ cdef class PowComputer_class(SageObject):
             sage: PC.pow_Integer_Integer(10)
             59049
 
-            sage: # needs sage.libs.ntl
             sage: PC = PowComputer_ext_maker(3, 5, 10, 20, False, ntl.ZZ_pX([-3,0,1], 3^10), 'big','e',ntl.ZZ_pX([1],3^10))
             sage: PC.pow_Integer_Integer(4)
             81
@@ -268,7 +267,6 @@ cdef class PowComputer_class(SageObject):
             sage: PC._pow_mpz_t_tmp_test(10)
             59049
 
-            sage: # needs sage.libs.ntl
             sage: PC = PowComputer_ext_maker(3, 5, 10, 20, False, ntl.ZZ_pX([-3,0,1], 3^10), 'big','e',ntl.ZZ_pX([1],3^10))
             sage: PC._pow_mpz_t_tmp_test(4)
             81
@@ -306,7 +304,6 @@ cdef class PowComputer_class(SageObject):
             sage: PC._pow_mpz_t_top_test()
             59049
 
-            sage: # needs sage.libs.ntl
             sage: PC = PowComputer_ext_maker(3, 5, 10, 20, False, ntl.ZZ_pX([-3,0,1], 3^10), 'big','e',ntl.ZZ_pX([1],3^10))
             sage: PC._pow_mpz_t_top_test()
             59049

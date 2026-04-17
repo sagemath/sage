@@ -80,8 +80,7 @@ if test "$SAGE_LOCAL" = NONE; then
     SAGE_LOCAL=local
     if test -x "$SAGE_LOCAL"/bin/python3; then
         # Incremental build with an existing installation of python3 spkg
-        # in SAGE_LOCAL or venv in SAGE_LOCAL.  Keep old behavior.
-        SAGE_VENV_AUTO=no
+        AC_MSG_ERROR([A stale Python3 found in SAGE_LOCAL. Please remove local/ and try again.])
     else
         SAGE_VENV_AUTO=yes
     fi
@@ -112,7 +111,7 @@ if test "$enable_meson_check" != no; then
   AC_MSG_CHECKING([for Arch Linux])
   if grep -qi 'arch' /etc/os-release 2>/dev/null || test -f /etc/arch-release; then
     AC_MSG_RESULT([yes])
-    AC_MSG_ERROR([Building on Arch Linux using make is not recommended. Please use Meson as described at https://doc.sagemath.org/html/en/installation/meson.html. Use --disable-meson-check to override.])
+    AC_MSG_ERROR([Building on Arch Linux using make is not recommended. Please use Meson as described at https://doc.sagemath.org/html/en/installation/source.html. Use --disable-meson-check to override.])
   else
     AC_MSG_RESULT([no])
   fi
@@ -189,7 +188,7 @@ dnl This will save users from running into build errors later.
 AC_MSG_CHECKING([the symbolic links in the source tree])
 AS_IF([test -L build/pkgs/liblzma/package-version.txt], [dnl OK
     AC_MSG_RESULT([intact])
-], [dnl Either replaced by a copy (OK, as done in the sage-conf_pypi sdist)
+], [dnl Either replaced by a copy (OK)
     dnl  or replaced by the name of the link target (BAD, misconfigured git clone in WSL)
     AS_IF([test ! -e build/pkgs/sagelib/src], [dnl
         AC_MSG_RESULT([intact (with links to embedded source trees pruned)])
@@ -220,6 +219,14 @@ then
     AC_MSG_ERROR([Exiting, as the archiver 'ar' can not be found.])
 fi
 
+AC_CHECK_PROG(found_patch, patch, yes, no)
+if test x$found_patch != xyes
+then
+    AC_MSG_NOTICE([Sorry, the 'patch' command must be in the path to build AC_PACKAGE_NAME])
+    AC_MSG_NOTICE([See e.g. https://www.gnu.org/software/patch/])
+    AC_MSG_ERROR([Exiting, as the utility 'patch' can not be found.])
+fi
+
 AC_CHECK_PROG(found_m4, m4, yes, no)
 if test x$found_m4 != xyes
 then
@@ -239,7 +246,11 @@ dnl Exit autoconf with exit code 16 in this case. This will be
 dnl caught by the bootstrap script.
 m4_exit(16)])
 
-PKG_PROG_PKG_CONFIG([0.29], [PKG_CONFIG=])
+PKG_PROG_PKG_CONFIG([0.29], [
+    AC_MSG_NOTICE([Sorry, the 'pkg-config' command version 0.29 or better must be in the path to build AC_PACKAGE_NAME])
+    AC_MSG_NOTICE([Please install 'pkg-config' (also known as 'pkgconf'), e.g. from http://pkgconf.org/.])
+    AC_MSG_ERROR([Exiting, as 'pkg-config' cannot be found.])
+])
 
 AC_CHECK_PROG(found_ranlib, ranlib, yes, no)
 if test x$found_ranlib != xyes
@@ -306,13 +317,145 @@ if test -z "$MAKE"; then
           [AC_MSG_ERROR([[found GNU make in $ac_cv_path_MAKE, but it's not the first "make" program in your PATH]])])
 fi
 
-# Check for system python
-AC_MSG_CHECKING([for Python])
-if SAGE_BOOTSTRAP_PYTHON=$(build/bin/sage-bootstrap-python -c "import sys; print(sys.executable)"); then
-    AC_MSG_RESULT([$SAGE_BOOTSTRAP_PYTHON])
-else
-    AC_MSG_ERROR([You do not have a suitable version of Python installed])
-fi
+m4_pushdef([SAGE_PREREQ_URL],[See https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])
+m4_pushdef([SAGE_BOOTSTRAP_URL],[See https://doc.sagemath.org/html/en/reference/spkg/_bootstrap.html])
+
+# check for boost, hopefully supporting c++17
+  AX_BOOST_BASE([1.66.0], [], [
+    AC_MSG_ERROR([could not find boost library installation. $SAGE_PREREQ_URL])
+  ])
+
+# Check for bzip2 and libbz2 
+   AC_CHECK_HEADER(bzlib.h, [
+      AC_SEARCH_LIBS([BZ2_bzCompress], [bz2], [
+        AC_PATH_PROG([bzip2_prog], [bzip2])
+        AS_IF([test x$bzip2_prog = x],
+              [AC_MSG_ERROR([could not find bzip2 executable. $SAGE_PREREQ_URL])])
+      ], [AC_MSG_ERROR([could not find libbz2 library. $SAGE_PREREQ_URL])])
+    ], [AC_MSG_ERROR([could not find bzlib.h - the header of libbz2 library. $SAGE_PREREQ_URL])
+   ])
+
+# choose BLAS/LAPACK on Darwin
+AC_ARG_WITH([darwin-accelerate],
+            [AS_HELP_STRING([--with-darwin-accelerate={no (default)},yes}],
+                            [use Darwin (macOS) Accelerate BLAS/LAPACK])],
+            [SAGE_DARWIN_ACCELERATE="$withval"],
+            [SAGE_DARWIN_ACCELERATE="no"])
+AC_SUBST([SAGE_DARWIN_ACCELERATE])
+
+SAGE_DARWIN_PKG_CONFIG_PATH=
+case $host in
+    *-*-darwin*)
+   AS_IF([test x$SAGE_DARWIN_ACCELERATE = xyes],
+    [SAGE_DARWIN_PKG_CONFIG_PATH=`pwd`"/build/platform/darwin/accelerate/pkgconfig:"])
+    ;;
+    *)
+esac
+
+# Check for zlib
+    PKG_CHECK_MODULES([zlib], [zlib >= 1.2.11], [], [
+      case $host in
+         *-*-darwin*)
+	 SAGE_DARWIN_PKG_CONFIG_PATH="$SAGE_DARWIN_PKG_CONFIG_PATH"`pwd`"/build/platform/darwin/zlib/pkgconfig:"
+         ;;
+         *)
+         AC_MSG_ERROR([could not find pkg-config zlib.pc file. $SAGE_PREREQ_URL])
+      esac
+    ]) 
+    AC_CHECK_LIB([z], [inflateEnd], [],
+         [AC_MSG_ERROR([could not find libz. $SAGE_PREREQ_URL])])
+    AC_CHECK_LIB([z], [inflateValidate], [],
+       [AC_MSG_ERROR([libz does not have inflateValidate. $SAGE_PREREQ_URL])])
+    AC_CHECK_HEADER([zlib.h], [],
+       [AC_MSG_ERROR([cannot find libz headers. $SAGE_PREREQ_URL])])
+
+# check for liblzma
+
+PKG_CHECK_MODULES([liblzma], [liblzma], [], [
+    AC_MSG_ERROR([liblzma should be provided. SAGE_BOOTSTRAP_URL])])
+
+########################################################################
+# Check for Python 3 for venv (required system package)
+########################################################################
+
+m4_pushdef([PYTHON_MIN_VERSION],               [3.12.0])
+m4_pushdef([PYTHON_LT_VERSION],                [3.15.0])
+
+AC_ARG_WITH([python],
+            [AS_HELP_STRING([--with-python=PYTHON3],
+                            [Python 3 executable to use for the Sage venv; default: python3])])
+AS_IF([test x"$with_python" = x2], [AC_MSG_ERROR([Sage cannot be built on Python 2. Exiting.])])
+AS_IF([test x"$with_python" = x3], [
+    AC_MSG_NOTICE([The meaning of the option --with-python has changed in Sage 9.2. Ignoring.])
+    with_python=''
+])
+AS_IF([test x"$with_python" = x"no"],
+      [AC_MSG_ERROR([building Sage --without-python is not supported])])
+
+ac_path_PYTHON3="$with_python"
+check_modules="sqlite3, ctypes, math, hashlib, socket, ssl, ensurepip, zlib"
+
+AC_CACHE_CHECK([for python3 >= ]PYTHON_MIN_VERSION[, < ]PYTHON_LT_VERSION[ with modules $check_modules], [ac_cv_path_PYTHON3], [
+  AS_IF([test x"$ac_path_PYTHON3" != x], [dnl checking explicitly specified $with_python
+     AC_MSG_RESULT([])
+     AC_PATH_PROG([ac_path_PYTHON3], [$ac_path_PYTHON3])
+     SAGE_CHECK_PYTHON_FOR_VENV([$ac_path_PYTHON3],
+                                     PYTHON_MIN_VERSION, PYTHON_LT_VERSION,
+                                     $check_modules, [
+              dnl It is good
+              ac_cv_path_PYTHON3="$ac_path_PYTHON3"
+              ac_path_PYTHON3_found=:
+              AC_MSG_RESULT([yes])
+              dnl introduction for AC_MSG_RESULT printed by AC_CACHE_CHECK
+              AC_MSG_CHECKING([for python3 >= ]PYTHON_MIN_VERSION[, < ]PYTHON_LT_VERSION[ with modules $check_modules])
+     ])
+     AS_IF([test -z "$ac_cv_path_PYTHON3"], [
+         AC_MSG_ERROR([the python3 selected using --with-python=$with_python is not suitable])
+     ])
+  ], [dnl checking the default system python3
+     AC_MSG_RESULT([])
+     AC_PATH_PROGS_FEATURE_CHECK([PYTHON3], [python3], [
+          SAGE_CHECK_PYTHON_FOR_VENV([$ac_path_PYTHON3],
+                                     PYTHON_MIN_VERSION, PYTHON_LT_VERSION,
+                                     $check_modules, [
+              dnl It is good
+              ac_cv_path_PYTHON3="$ac_path_PYTHON3"
+              ac_path_PYTHON3_found=:
+              AC_MSG_RESULT([yes])
+              dnl introduction for AC_MSG_RESULT printed by AC_CACHE_CHECK
+              AC_MSG_CHECKING([for python3 >= ]PYTHON_MIN_VERSION[, < ]PYTHON_LT_VERSION[ with modules $check_modules])
+          ])
+      ])
+  ])
+])
+
+AS_IF([test -z "$ac_cv_path_PYTHON3"], [
+    AC_MSG_NOTICE([No suitable system Python found.])
+    AC_MSG_NOTICE([Please install Python >= ]PYTHON_MIN_VERSION[ and < ]PYTHON_LT_VERSION[ with the following modules: $check_modules])
+    AC_MSG_NOTICE([You can also specify a Python executable using --with-python=/path/to/python3])
+    AC_MSG_ERROR([A suitable system Python is required to build Sage.])
+])
+
+PYTHON_FOR_VENV="$ac_cv_path_PYTHON3"
+AC_SUBST([PYTHON_FOR_VENV])
+
+dnl Set PYTHON_VERSION based on the found system python
+PYTHON_VERSION=$("$PYTHON_FOR_VENV" -c "import sysconfig; print(sysconfig.get_python_version())")
+AC_SUBST([PYTHON_MINOR], [$(echo $PYTHON_VERSION | cut -d. -f2)])
+export PYTHON_MINOR
+
+dnl Handle SAGE_VENV configuration
+AS_VAR_IF([SAGE_VENV], [auto], [SAGE_VENV=$SAGE_VENV_AUTO])
+AS_CASE([$SAGE_VENV],
+    [no],  [SAGE_VENV='${SAGE_LOCAL}'],dnl Quoted so that it is resolved at build time by shell/Makefile
+    [yes], [SAGE_VENV='${SAGE_LOCAL}'/var/lib/sage/venv-python$PYTHON_VERSION]
+)
+
+dnl Clean up temporary directories created by the check
+rm -rf conftest.dir conftest_venv
+
+m4_popdef([PYTHON_MIN_VERSION])
+m4_popdef([PYTHON_LT_VERSION])
 
 # Check that perl is available, with version 5.8.0 or later.
 # Some packages need perl, however it is not clear whether Sage really
@@ -448,14 +591,6 @@ AS_IF([test "x$enable_download_from_upstream_url" = "xyes"], [
 ])
 AC_SUBST([SAGE_SPKG_OPTIONS])
 
-AC_ARG_ENABLE([sage_conf],
-  AS_HELP_STRING([--disable-sage_conf],
-                 [disable build of the sage_conf package]), [
-    for pkg in sage_conf; do
-      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
-    done
-  ])
-
 AC_ARG_ENABLE([cvxopt],
   AS_HELP_STRING([--disable-cvxopt],
                  [disable build of the cvxopt package and its prerequisite suitesparse]), [
@@ -467,7 +602,7 @@ AC_ARG_ENABLE([cvxopt],
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
-    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 jupyter_sphinx notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client httpx httpcore h11; do
+    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 jupyter_sphinx notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client httpx httpcore h11 rpds_py; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -534,10 +669,11 @@ AS_VAR_SET([sage_use_system_gcc], [force])
 
 SAGE_SPKG_COLLECT()
 
+AC_SUBST(SAGE_PKG_CONFIG_PATH, [$SAGE_DARWIN_PKG_CONFIG_PATH'$SAGE_LOCAL/lib/pkgconfig'])
+
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
-
-AC_CONFIG_FILES([pkgs/sage-conf/_sage_conf/_conf.py])
+AC_CONFIG_FILES([build/platform/meson/sage-configure-native-file.ini])
 
 dnl Create basic directories needed for Sage
 AC_CONFIG_COMMANDS(mkdirs,

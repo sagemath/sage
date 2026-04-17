@@ -779,40 +779,6 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     return H(arg2)
 
 
-def is_VectorSpaceMorphism(x) -> bool:
-    r"""
-    Return ``True`` if ``x`` is a vector space morphism (a linear transformation).
-
-    This function is deprecated.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    ``True`` only if ``x`` is an instance of a vector space morphism,
-    which are also known as linear transformations.
-
-    EXAMPLES::
-
-        sage: V = QQ^2; f = V.hom([V.1,-2*V.0])
-        sage: sage.modules.vector_space_morphism.is_VectorSpaceMorphism(f)
-        doctest:warning...
-        DeprecationWarning: is_VectorSpaceMorphism is deprecated;
-        use isinstance(..., VectorSpaceMorphism) or categories instead
-        See https://github.com/sagemath/sage/issues/37731 for details.
-        True
-        sage: sage.modules.vector_space_morphism.is_VectorSpaceMorphism('junk')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37731,
-                "is_VectorSpaceMorphism is deprecated; "
-                "use isinstance(..., VectorSpaceMorphism) or categories instead")
-    return isinstance(x, VectorSpaceMorphism)
-
-
 class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
 
     def __init__(self, homspace, A, side='left'):

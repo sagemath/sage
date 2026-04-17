@@ -172,8 +172,7 @@ class TriangleFactory:
         """
         if color is None:
             return Triangle(a,b,c)
-        else:
-            return Triangle(a,b,c,color)
+        return Triangle(a,b,c,color)
 
     def smooth_triangle(self, a, b, c, da, db, dc, color=None):
         """
@@ -195,8 +194,7 @@ class TriangleFactory:
         """
         if color is None:
             return SmoothTriangle(a,b,c,da,db,dc)
-        else:
-            return SmoothTriangle(a,b,c,da,db,dc,color)
+        return SmoothTriangle(a,b,c,da,db,dc,color)
 
     def get_colors(self, list):
         """
@@ -514,10 +512,10 @@ class TrianglePlot:
         """
 
         if self._g is None:
-            for i in range(0,len(p)-1):
+            for i in range(len(p)-1):
                 self._objects.append(self._triangle_factory.triangle(p[i][0], p[i+1][0], c[i][0]))
         else:
-            for i in range(0,len(p)-1):
+            for i in range(len(p)-1):
                 self._objects.append(self._triangle_factory.smooth_triangle(p[i][0], p[i+1][0], c[i][0],p[i][1], p[i+1][1], c[i][1]))
 
     def extrema(self, list):

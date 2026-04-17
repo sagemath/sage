@@ -135,8 +135,7 @@ def convert_latex_macro_to_mathjax(macro):
     defn = macro[start_defn + 1: end_defn]
     if num_args == 0:
         return name, defn
-    else:
-        return name, [defn, num_args]
+    return name, [defn, num_args]
 
 
 # To add a new macro for use in the Sage documentation, add a list or

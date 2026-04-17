@@ -48,7 +48,7 @@ cdef class PeriodicRegion:
     # the center).
     cdef readonly bint full
 
-    def __init__(self, w1, w2, data, full=True):
+    def __init__(self, w1, w2, data, full=True) -> None:
         """
         EXAMPLES::
 
@@ -312,7 +312,7 @@ cdef class PeriodicRegion:
         """
         return ~(~self).expand(corners)
 
-    def __contains__(self, z):
+    def __contains__(self, z) -> bool:
         """
         Return whether this region contains the given point.
 
@@ -518,7 +518,7 @@ cdef class PeriodicRegion:
             right._ensure_full()
         return PeriodicRegion(left.w1, left.w2, left.data ^ right.data, left.full)
 
-    def __richcmp__(left, right, op):
+    def __richcmp__(left, right, op) -> bool:
         """
         Compare two regions.
 

@@ -245,8 +245,7 @@ class Polygon(GraphicPrimitive_xydata):
         if len(zdata) == len(self.xdata):
             return IndexFaceSet([list(zip(self.xdata, self.ydata, zdata))],
                                 **options)
-        else:
-            raise ValueError('Incorrect number of heights given')
+        raise ValueError('Incorrect number of heights given')
 
     def _render_on_subplot(self, subplot):
         """
@@ -535,7 +534,7 @@ def polygon2d(points, **options):
     - David Joyner (2006-04-14): the long list of examples above.
     """
     from sage.plot.plot import xydata_from_point_list
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     if options["thickness"] is None:   # If the user did not specify thickness
         if options["fill"] and options["edgecolor"] is None:
             # If the user chose fill

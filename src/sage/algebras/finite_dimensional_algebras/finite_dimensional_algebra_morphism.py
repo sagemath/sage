@@ -80,7 +80,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
                                   or self(A.one()) != B.one()):
             raise ValueError("homomorphism does not respect unit elements")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

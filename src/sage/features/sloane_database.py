@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of Sloane Online Encyclopedia of Integer Sequences
 """

@@ -161,7 +161,6 @@ def is_muzychuk_S6(int v, int k, int l, int mu):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari
         sage: from sage.graphs.strongly_regular_db import is_muzychuk_S6
         sage: t = is_muzychuk_S6(378, 116, 34, 36)
         sage: G = t[0](*t[1:]); G
@@ -211,7 +210,6 @@ def is_orthogonal_array_block_graph(int v, int k, int l, int mu):
 
     EXAMPLES::
 
-        sage: # needs sage.combinat sage.modules
         sage: from sage.graphs.strongly_regular_db import is_orthogonal_array_block_graph
         sage: t = is_orthogonal_array_block_graph(64, 35, 18, 20); t
         (..., 5, 8)
@@ -579,7 +577,6 @@ def is_NOodd(int v, int k, int l, int mu):
 
     All of ``NO^+(2m+1,q)`` and ``NO^-(2m+1,q)`` appear::
 
-        sage: # needs sage.libs.pari
         sage: t = is_NOodd(120, 51, 18, 24); t
         (<function NonisotropicOrthogonalPolarGraph at ...>, 5, 4, '-')
         sage: t = is_NOodd(136, 75, 42, 40); t
@@ -810,7 +807,6 @@ def is_NU(int v, int k, int l, int mu):
 
     TESTS::
 
-        sage: # needs sage.libs.pari
         sage: t = is_NU(176, 135, 102, 108); t
         (<function NonisotropicUnitaryPolarGraph at ...>, 5, 2)
         sage: t = is_NU(540, 224, 88, 96); t
@@ -1011,7 +1007,6 @@ def is_polhill(int v, int k, int l, int mu):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.graphs.strongly_regular_db import is_polhill
         sage: t = is_polhill(1024, 231,  38,  56); t
         [<cyfunction is_polhill.<locals>.<lambda> at ...>]
@@ -1161,7 +1156,7 @@ def is_RSHCD(int v, int k, int l, int mu):
 
         sage: from sage.graphs.strongly_regular_db import is_RSHCD
         sage: t = is_RSHCD(64,27,10,12); t                                              # needs sage.combinat sage.modules
-        [<built-in function SRG_from_RSHCD>, 64, 27, 10, 12]
+        [<cyfunction SRG_from_RSHCD at ...>, 64, 27, 10, 12]
         sage: g = t[0](*t[1:]); g                                                       # needs sage.combinat sage.modules
         Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)                                    # needs sage.combinat sage.modules
@@ -1283,7 +1278,6 @@ def is_unitary_polar(int v, int k, int l, int mu):
 
     All the ``U(n,q)`` appear::
 
-        sage: # needs sage.libs.pari
         sage: t = is_unitary_polar(45, 12, 3, 3); t
         (<function UnitaryPolarGraph at ...>, 4, 2)
         sage: t = is_unitary_polar(165, 36, 3, 9); t
@@ -1346,7 +1340,6 @@ def is_unitary_dual_polar(int v, int k, int l, int mu):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari
         sage: from sage.graphs.strongly_regular_db import is_unitary_dual_polar
         sage: t = is_unitary_dual_polar(297, 40, 7, 5); t
         (<function UnitaryDualPolarGraph at ...>, 5, 2)
@@ -1397,7 +1390,6 @@ def is_GQqmqp(int v, int k, int l, int mu):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari
         sage: from sage.graphs.strongly_regular_db import is_GQqmqp
         sage: t = is_GQqmqp(27,10,1,5); t
         (<function AhrensSzekeresGeneralizedQuadrangleGraph at ...>, 3, False)
@@ -1424,17 +1416,16 @@ def is_GQqmqp(int v, int k, int l, int mu):
 
     TESTS::
 
-        sage: # needs sage.libs.pari
-        sage: (S,T) = (127,129)
+        sage: S, T = 127, 129
         sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
         (<function T2starGeneralizedQuadrangleGraph at ...>, 128, False)
-        sage: (S,T) = (129,127)
+        sage: S, T = 129, 127
         sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
         (<function T2starGeneralizedQuadrangleGraph at ...>, 128, True)
-        sage: (S,T) = (124,126)
+        sage: S, T = 124, 126
         sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
         (<function AhrensSzekeresGeneralizedQuadrangleGraph at ...>, 125, False)
-        sage: (S,T) = (126,124)
+        sage: S, T = 126, 124
         sage: t = is_GQqmqp((S+1)*(S*T+1), S*(T+1), S-1, T+1); t
         (<function AhrensSzekeresGeneralizedQuadrangleGraph at ...>, 125, True)
         sage: t = is_GQqmqp(5,5,5,5); t
@@ -1552,7 +1543,6 @@ def is_taylor_twograph_srg(int v, int k, int l, int mu):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari
         sage: from sage.graphs.strongly_regular_db import is_taylor_twograph_srg
         sage: t = is_taylor_twograph_srg(28, 15, 6, 10); t
         (<function TaylorTwographSRG at ...>, 3)
@@ -1814,7 +1804,6 @@ def eigenmatrix(int v, int k, int l, int mu):
     A strongly regular graph with a non-isomorphic dual coming from another
     strongly regular graph::
 
-        sage: # needs sage.modules
         sage: graphs.strongly_regular_graph(243,220,199,200, existence=True)            # needs sage.combinat
         True
         sage: graphs.strongly_regular_graph(243,110,37,60, existence=True)              # needs sage.combinat
@@ -2492,16 +2481,17 @@ def strongly_regular_from_two_intersection_set(M):
     M = [list(p) for p in M]
 
     # For every point in F_q^{k+1} not on the hyperplane of M
-    for u in [tuple(x) for x in product(K,repeat=k)]:
+    for x in product(K, repeat=k):
+        u = tuple(x)
         # For every v point of M
         for v in M:
             # u is adjacent with all vertices on a uv line.
             g.add_edges([[u, tuple([u[i] + qq*v[i] for i in range(k)])]
                          for qq in K if not qq == K.zero()])
     g.relabel()
-    e = QQ((1,k))
-    qq = g.num_verts()**e
-    g.name('two-intersection set in PG('+str(k)+','+str(qq)+')')
+    e = QQ((1, k))
+    qq = g.n_vertices()**e
+    g.name(f'two-intersection set in PG({k},{qq})')
     return g
 
 

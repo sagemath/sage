@@ -807,11 +807,11 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             ...
             ValueError: chi must be a list/tuple or a class function of the group G
         """
-        from sage.groups.class_function import ClassFunction, ClassFunction_libgap
+        from sage.groups.class_function import ClassFunction
 
         if isinstance(chi, (list, tuple)):
             chi = ClassFunction(G, libgap(chi))
-        elif not isinstance(chi, ClassFunction_libgap):
+        elif not isinstance(chi, ClassFunction):
             raise ValueError("chi must be a list/tuple or a class function of the group G")
 
         try:

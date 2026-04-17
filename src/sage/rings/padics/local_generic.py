@@ -312,7 +312,6 @@ class LocalGeneric(Parent):
 
         Changing print mode to 'digits' works for Eisenstein extensions::
 
-            sage: # needs sage.libs.ntl
             sage: S.<x> = ZZ[]
             sage: W.<w> = Zp(3).extension(x^4 + 9*x^2 + 3*x - 3)
             sage: W.print_mode()
@@ -322,7 +321,6 @@ class LocalGeneric(Parent):
 
         You can change extensions::
 
-            sage: # needs sage.libs.flint
             sage: K.<a> = QqFP(125, prec=4)
             sage: K.change(q=64)
             2-adic Unramified Extension Field in a defined by x^6 + x^4 + x^3 + x + 1
@@ -337,7 +335,6 @@ class LocalGeneric(Parent):
 
         and precision::
 
-            sage: # needs sage.libs.flint
             sage: Kup = K.change(prec=8); Kup
             5-adic Unramified Extension Field in a defined by x^3 + 3*x + 3
             sage: Kup.precision_cap()
@@ -347,7 +344,6 @@ class LocalGeneric(Parent):
 
         If you decrease the precision, the precision of the base stays the same::
 
-            sage: # needs sage.libs.flint
             sage: Kdown = K.change(prec=2); Kdown
             5-adic Unramified Extension Field in a defined by x^3 + 3*x + 3
             sage: Kdown.precision_cap()
@@ -357,7 +353,6 @@ class LocalGeneric(Parent):
 
         Changing the prime works for extensions::
 
-            sage: # needs sage.libs.ntl
             sage: x = polygen(ZZ)
             sage: R.<a> = Zp(5).extension(x^2 + 2)
             sage: S = R.change(p=7)
@@ -371,7 +366,6 @@ class LocalGeneric(Parent):
 
         ::
 
-            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(5^3)
             sage: S = R.change(prec=50)
             sage: S.defining_polynomial(exact=True)
@@ -390,7 +384,6 @@ class LocalGeneric(Parent):
 
         The `secure` attribute for relaxed type is copied::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpER(5, secure=True); R
             5-adic Ring handled with relaxed arithmetics
             sage: K = R.change(field=True); K
@@ -400,7 +393,6 @@ class LocalGeneric(Parent):
 
         The `check=False` option works for relaxed type::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpER(5) ; R
             5-adic Ring handled with relaxed arithmetics
             sage: K = R.change(field=True, check=False) ; K
@@ -1304,6 +1296,10 @@ class LocalGeneric(Parent):
             sage: M.smith_form(transformation=False, exact=False)  # indirect doctest
             [O(5^10) O(5^10)]
             [O(5^10) O(5^10)]
+
+            sage: A = Zp(5)
+            sage: matrix(A,[1,1]).smith_form(transformation=False, integral=False, exact=False)
+            [1 + O(5^20)     O(5^20)]
         """
         from sage.rings.infinity import infinity
         from .precision_error import PrecisionError
@@ -1460,8 +1456,8 @@ class LocalGeneric(Parent):
                 if exact:
                     smith[i,i] = self(1)
                 else:
-                    for j in range(n):
-                        smith[i,j] = smith[i,j] >> v
+                    for j in range(m):
+                        smith[i,j] >>= v
             if transformation:
                 for i in range(n):
                     for j in range(n):
@@ -1573,7 +1569,6 @@ class LocalGeneric(Parent):
             O(5^70)
             O(5^80)
 
-            sage: # needs sage.geometry.polyhedron
             sage: A = random_matrix(Qp(5),4)
             sage: B = random_matrix(Qp(5),4)
             sage: (A*B).det() == A.det()*B.det()

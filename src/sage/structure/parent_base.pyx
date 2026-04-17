@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Base class for old-style parent objects with a base ring
 """
@@ -27,15 +26,6 @@ cdef class ParentWithBase(Parent_old):
     def __init__(self, base, *args, **kwds):
         Parent_old.__init__(self, *args, **kwds)
         self._base = base
-
-    cdef _coerce_c_impl(self, x):
-        check_old_coerce(self)
-        from sage.misc.superseded import deprecation
-        deprecation(33497, "_coerce_c_impl is deprecated, use coerce instead")
-        if self._base is not self:
-            return self(self._base._coerce_(x))
-        else:
-            raise TypeError("No canonical coercion found.")
 
     # Derived class *must* define base_extend.
     def base_extend(self, X):

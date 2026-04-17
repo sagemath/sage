@@ -1,3 +1,0 @@
-python3.10
-python3.10-devel
-python3.10-setuptools

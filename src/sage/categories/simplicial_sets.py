@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Simplicial Sets
 """
@@ -351,8 +350,7 @@ class SimplicialSets(Category_singleton):
                 FG = self._universal_cover_dict()[0]
                 if simplify:
                     return FG.simplified()
-                else:
-                    return FG
+                return FG
 
             def _universal_cover_dict(self):
                 r"""
@@ -536,7 +534,7 @@ class SimplicialSets(Category_singleton):
                     sage: S1_.n_cells(1)[0].rename("sigma_1'")
                     sage: W = S1.wedge(S1_)
                     sage: G = CyclicPermutationGroup(3)
-                    sage: (a, b) = W.n_cells(1)
+                    sage: a, b = W.n_cells(1)
                     sage: C = W.cover({a : G.gen(0), b : G.gen(0)^2})
                     sage: C.face_data()
                     {(*, ()): None,
@@ -744,8 +742,7 @@ class SimplicialSets(Category_singleton):
                         # Return the empty chain complex.
                         if cochain:
                             return ChainComplex(base_ring=base_ring, degree=1)
-                        else:
-                            return ChainComplex(base_ring=base_ring, degree=-1)
+                        return ChainComplex(base_ring=base_ring, degree=-1)
 
                 differentials = {}
                 # Convert the tuple self._data to a dictionary indexed by the
@@ -917,8 +914,7 @@ class SimplicialSets(Category_singleton):
                 def convert_to_polynomial(p):
                     if hasattr(p, "lift"):
                         return p.lift()._as_extended_polynomial()
-                    else:
-                        return p._as_extended_polynomial()
+                    return p._as_extended_polynomial()
                 M1 = M1.apply_map(convert_to_polynomial)
                 M2 = M2.apply_map(convert_to_polynomial)
                 RP = R._extended_ring

@@ -244,7 +244,7 @@ class SchurAlgebra(CombinatorialFreeModule):
                                          prefix='S', bracket=False,
                                          category=AlgebrasWithBasis(R).FiniteDimensional())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -431,7 +431,7 @@ class SchurTensorModule(CombinatorialFreeModule_Tensor):
         g = self._schur.module_morphism(self._monomial_product, codomain=self)
         self._schur_action = self.module_morphism(g, codomain=self, position=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -456,7 +456,7 @@ class SchurTensorModule(CombinatorialFreeModule_Tensor):
             sage: T = SchurTensorModule(QQ, 2, 3)
             sage: T.construction()
         """
-        return None
+        return
 
     def _monomial_product(self, xi, v):
         """

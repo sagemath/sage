@@ -7,8 +7,8 @@ py.install_sources(
   'book_schilling_zabrocki_kschur_primer.py',
   'book_stein_ent.py',
   'book_stein_modform.py',
-  'cmdline.py',
   'combinatorial_hopf_algebras.py',
+  'cython.pyx',
   'finite_poset.py',
   'functools_partial_src.py',
   'gosper-sum.py',
@@ -17,13 +17,14 @@ py.install_sources(
   'numpy.py',
   'parigp.py',
   'startup.py',
+  'stl_vector.pyx',
   'symbolic-series.py',
   'sympy.py',
   'test_deprecation.py',
   subdir: 'sage/tests',
 )
 
-extension_data = {'cython' : files('cython.pyx')}
+extension_data = {'cython': files('cython.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

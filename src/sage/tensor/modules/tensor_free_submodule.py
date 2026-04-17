@@ -157,10 +157,8 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
                         superscript = '{' + superscript + '}'
                     if len(base._latex_name) > 3:
                         return op + '^' + superscript + r'\left(' + base._latex_name + r'\right)'
-                    else:
-                        return op + '^' + superscript + '(' + base._latex_name + ')'
-                else:
-                    return op + '^' + superscript + '(' + base._name + ')'
+                    return op + '^' + superscript + '(' + base._latex_name + ')'
+                return op + '^' + superscript + '(' + base._name + ')'
 
             name = unicode_otimes.join(itertools.chain(
                 (power_name('T', s, latex=False) for s in nosym),
@@ -307,9 +305,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
         coarser_sym, coarser_antisym = sym_antisym(coarser_comp)
         if not is_coarsening_of(coarser_sym, finer_sym):
             return False
-        if not is_coarsening_of(coarser_antisym, finer_antisym):
-            return False
-        return True
+        return is_coarsening_of(coarser_antisym, finer_antisym)
 
     def _element_constructor_(self, comp=[], basis=None, name=None,
                               latex_name=None, sym=None, antisym=None):

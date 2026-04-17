@@ -38,16 +38,16 @@ import itertools
 
 from cysignals.signals cimport sig_check
 
-from sage.graphs.graph import Graph
-from sage.misc.lazy_import import LazyImport
+from sage.graphs.generators.platonic_solids import DodecahedralGraph
 from sage.graphs.generators.smallgraphs import (FosterGraph, BiggsSmithGraph,
                                                 CoxeterGraph, LivingstoneGraph,
                                                 WellsGraph, GossetGraph,
                                                 HoffmanSingletonGraph,
                                                 SimsGewirtzGraph,
                                                 HigmanSimsGraph)
-from sage.graphs.generators.platonic_solids import DodecahedralGraph
+from sage.graphs.graph import Graph
 from sage.graphs.strongly_regular_db import strongly_regular_graph
+from sage.misc.lazy_import import LazyImport
 
 codes = LazyImport('sage.coding', 'codes_catalog', as_name='codes')
 libgap = LazyImport('sage.libs.gap.libgap', 'libgap')
@@ -57,12 +57,17 @@ vector = LazyImport('sage.modules.free_module_element', 'vector')
 GF = LazyImport('sage.rings.finite_rings.finite_field_constructor', 'GF')
 
 
-def cocliques_HoffmannSingleton():
+def cocliques_HoffmannSingleton(immutable=False):
     r"""
     Return the graph obtained from the cocliques of the Hoffmann-Singleton graph.
 
     This is a distance-regular graph with intersection array
     `[15, 14, 10, 3; 1, 5, 12, 15]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -70,27 +75,42 @@ def cocliques_HoffmannSingleton():
         sage: G.is_distance_regular(True)
         ([15, 14, 10, 3, None], [None, 1, 5, 12, 15])
 
+    TESTS:
+
+    Check the behavior of parameter `ìmmutable``::
+
+        sage: G = graphs.cocliques_HoffmannSingleton()
+        sage: G.is_immutable()
+        False
+        sage: G.copy().is_immutable()
+        False
+        sage: G.copy(immutable=True).is_immutable()
+        True
+        sage: G = graphs.cocliques_HoffmannSingleton(immutable=True)
+        sage: G.is_immutable()
+        True
+        sage: G.copy().is_immutable()
+        True
+        sage: G.copy(immutable=False).is_immutable()
+        False
+
     REFERENCES:
 
     The construction of this graph can be found in [BCN1989]_ p. 392.
     """
-    from sage.graphs.graph_generators import GraphGenerators
-
-    D = GraphGenerators.HoffmanSingletonGraph()
+    D = HoffmanSingletonGraph()
     DC = D.complement()
 
     cocliques = [frozenset(c) for c in DC.cliques_maximum()]  # 100 of this
 
-    edges = []
-    for c1, c2 in itertools.combinations(cocliques, 2):
-        if len(c1.intersection(c2)) == 8:
-            edges.append((c1, c2))
+    edges = ((c1, c2)
+             for c1, c2 in itertools.combinations(cocliques, 2)
+             if len(c1.intersection(c2)) == 8)
 
-    G = Graph(edges, format='list_of_edges')
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable)
 
 
-def locally_GQ42_distance_transitive_graph():
+def locally_GQ42_distance_transitive_graph(immutable=False):
     r"""
     Return the unique amply regular graph with `\mu = 6` which is locally
     a generalised quadrangle.
@@ -99,6 +119,11 @@ def locally_GQ42_distance_transitive_graph():
     `[45, 32, 12, 1; 1, 6, 32, 45]`.
 
     This graph is also distance-transitive.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -117,17 +142,22 @@ def locally_GQ42_distance_transitive_graph():
         if len(N.GeneratorsSmallest()) == 7:  # there is only one
             break
 
-    G = Graph(libgap.Orbit(N, [1, 9], libgap.OnSets), format='list_of_edges')
-    G.name("locally GQ(4,2) distance transitive graph")
-    return G
+    return Graph(libgap.Orbit(N, [1, 9], libgap.OnSets), format='list_of_edges',
+                 name="locally GQ(4,2) distance transitive graph",
+                 immutable=immutable)
 
 
-def ConwaySmith_for_3S7():
+def ConwaySmith_for_3S7(immutable=False):
     r"""
     Return the Conway-Smith graph related to `3 Sym(7)`.
 
     This is a distance-regular graph with intersection array
     `[10, 6, 4, 1; 1, 2, 6, 10]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -195,16 +225,12 @@ def ConwaySmith_for_3S7():
     def has_edge(u, v):
         return sum(u[i].conjugate() * v[i] for i in range(6)) == 2
 
-    G = Graph()
-    for Ki, Kj in itertools.combinations(K, 2):
-        if has_edge(Ki, Kj):
-            G.add_edge((Ki, Kj))
-
-    G.name("Conway-Smith graph for 3S7")
-    return G
+    edges = ((Ki, Kj) for Ki, Kj in itertools.combinations(K, 2) if has_edge(Ki, Kj))
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name="Conway-Smith graph for 3S7")
 
 
-def graph_3O73():
+def graph_3O73(immutable=False):
     r"""
     Return the graph related to the group `3 O(7,3)`.
 
@@ -213,6 +239,11 @@ def graph_3O73():
 
     The graph is also distance transitive with `3.O(7,3)` as automorphism
     group
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -226,12 +257,12 @@ def graph_3O73():
     [BCN1989]_ p. 400.
     """
     group = libgap.AtlasGroup("3.O7(3)", libgap.NrMovedPoints, 1134)
-    G = Graph(libgap.Orbit(group, [1, 3], libgap.OnSets), format='list_of_edges')
-    G.name("Distance transitive graph with automorphism group 3.O_7(3)")
-    return G
+    return Graph(libgap.Orbit(group, [1, 3], libgap.OnSets), format='list_of_edges',
+                 name="Distance transitive graph with automorphism group 3.O_7(3)",
+                 immutable=immutable)
 
 
-def FosterGraph3S6():
+def FosterGraph3S6(immutable=False):
     r"""
     Return the Foster graph for `3.Sym(6)`.
 
@@ -239,6 +270,11 @@ def FosterGraph3S6():
     `[6, 4, 2, 1; 1, 1, 4, 6]`.
 
     The graph is also distance transitive.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -260,14 +296,19 @@ def FosterGraph3S6():
 
     group = libgap.Group(a, b)
 
-    G = Graph(group.Orbit([1, 7], libgap.OnSets), format='list_of_edges')
-    G.name("Foster graph for 3.Sym(6) graph")
-    return G
+    return Graph(group.Orbit([1, 7], libgap.OnSets), format='list_of_edges',
+                 name="Foster graph for 3.Sym(6) graph",
+                 immutable=immutable)
 
 
-def J2Graph():
+def J2Graph(immutable=False):
     r"""
     Return the distance-transitive graph with automorphism group `J_2`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -281,16 +322,20 @@ def J2Graph():
     [BCN1989]_ p. 408.
     """
     group = libgap.AtlasGroup("J2", libgap.NrMovedPoints, 315)
-    G = Graph(group.Orbit([1, 9], libgap.OnSets), format='list_of_edges')
-    G.name("J_2 graph")
-    return G
+    return Graph(group.Orbit([1, 9], libgap.OnSets), format='list_of_edges',
+                 name="J_2 graph", immutable=immutable)
 
 
-def IvanovIvanovFaradjevGraph():
+def IvanovIvanovFaradjevGraph(immutable=False):
     r"""
     Return the IvanovIvanovFaradjev graph.
 
     The graph is distance-transitive with automorphism group `3.M_{22}`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -303,20 +348,23 @@ def IvanovIvanovFaradjevGraph():
     A description and construction of this graph can be found in
     [BCN1989]_ p. 369.
     """
-
     group = libgap.AtlasGroup("3.M22", libgap.NrMovedPoints, 990)
-    graph = Graph(group.Orbit([1, 22], libgap.OnSets), format='list_of_edges')
+    return Graph(group.Orbit([1, 22], libgap.OnSets), format='list_of_edges',
+                 name="Ivanov-Ivanov-Faradjev Graph",
+                 immutable=immutable)
 
-    graph.name("Ivanov-Ivanov-Faradjev Graph")
-    return graph
 
-
-def LargeWittGraph():
+def LargeWittGraph(immutable=False):
     r"""
     Return the large Witt graph.
 
     This is a distance-regular graph with intersection array
     `[30,28,24;1,3,15]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -331,22 +379,18 @@ def LargeWittGraph():
     This construction is taken from
     http://mathworld.wolfram.com/LargeWittGraph.html
     """
-    import itertools
-
     C = codes.GolayCode(GF(2), extended=True)
     vertices = [c for c in C if c.hamming_weight() == 8]
 
-    edges = []
-    for v, w in itertools.combinations(vertices, 2):
-        if not set(v.support()).intersection(w.support()):
-            edges.append((v, w))
+    edges = ((v, w)
+             for v, w in itertools.combinations(vertices, 2)
+             if not set(v.support()).intersection(w.support()))
 
-    W = Graph(edges, format='list_of_edges')
-    W.name("Large Witt graph")
-    return W
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name="Large Witt graph")
 
 
-def TruncatedWittGraph():
+def TruncatedWittGraph(immutable=False):
     r"""
     Return the truncated Witt graph.
 
@@ -355,6 +399,11 @@ def TruncatedWittGraph():
 
     The graph is distance-regular with intersection array
     `[15,14,12;1,1,9]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -369,14 +418,13 @@ def TruncatedWittGraph():
     [BCN1989]_ p. 367.
     """
     # get large witt graph and remove all vertices which start with a 1
-    G = LargeWittGraph()
+    G = LargeWittGraph(immutable=False)
     G.delete_vertices(filter(lambda x: x[0] == 1, G.vertices(sort=False)))
-
     G.name("Truncated Witt graph")
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
-def DoublyTruncatedWittGraph():
+def DoublyTruncatedWittGraph(immutable=False):
     r"""
     Return the doubly truncated Witt graph.
 
@@ -385,6 +433,11 @@ def DoublyTruncatedWittGraph():
 
     The graph is distance-regular with intersection array
     `[7,6,4,4;1,1,1,6]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -397,17 +450,21 @@ def DoublyTruncatedWittGraph():
     A description and construction of this graph can be found in
     [BCN1989]_ p. 368.
     """
-    G = TruncatedWittGraph()
+    G = TruncatedWittGraph(immutable=False)
     G.delete_vertices(filter(lambda x: x[1] == 1, G.vertices(sort=False)))
-
     G.name("Doubly Truncated Witt graph")
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
-def distance_3_doubly_truncated_Golay_code_graph():
+def distance_3_doubly_truncated_Golay_code_graph(immutable=False):
     r"""
     Return a distance-regular graph with intersection array
     `[9, 8, 6, 3; 1, 1, 3, 8]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -429,21 +486,21 @@ def distance_3_doubly_truncated_Golay_code_graph():
     Description and construction of this graph are taken from [BCN1989]_ p. 364.
     """
     G = codes.GolayCode(GF(2), extended=False).punctured([0, 1]).cosetGraph()
-    v = G.vertices(sort=False)[0]
+    v = next(G.vertex_iterator())
     it = G.breadth_first_search(v, distance=3, report_distance=True)
-    vertices = [w for (w, d) in it if d == 3]
-
-    edges = [(a, b) for a, b in itertools.combinations(vertices, 2)
-             if G.has_edge((a, b))]
-
-    H = Graph(edges, format='list_of_edges')
-    return H
+    return G.subgraph(vertices=[w for w, d in it if d == 3],
+                      immutable=immutable)
 
 
-def shortened_00_11_binary_Golay_code_graph():
+def shortened_00_11_binary_Golay_code_graph(immutable=False):
     r"""
     Return a distance-regular graph with intersection array
     `[21, 20, 16, 6, 2, 1; 1, 2, 6, 16, 20, 21]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -475,8 +532,8 @@ def shortened_00_11_binary_Golay_code_graph():
 
     code = LinearCode(Matrix(GF(2), C_basis))
 
-    G = code.cosetGraph()
-    G.name("Shortened 00 11 binary Golay code")
+    G = code.cosetGraph(immutable=immutable)
+    G._name = "Shortened 00 11 binary Golay code"
     return G
 
 
@@ -488,44 +545,73 @@ def shortened_000_111_extended_binary_Golay_code_graph():
     EXAMPLES::
 
         sage: # long time, needs sage.modules sage.rings.finite_rings
-        sage: G = graphs.shortened_000_111_extended_binary_Golay_code_graph()   # 25 s
+        sage: G = graphs.shortened_000_111_extended_binary_Golay_code_graph()
         sage: G.is_distance_regular(True)
         ([21, 20, 16, 9, 2, 1, None], [None, 1, 2, 3, 16, 20, 21])
 
     ALGORITHM:
 
-    Compute the extended binary Golay code. Compute its subcode whose codewords
-    start with 000 or 111. Remove the first 3 entries from all the codewords
-    from the new linear code and compute its coset graph.
+    The vertices and edges of this graph have been precomputed and
+    pickled, so truthfully, we just unpickle them and pass them to the
+    Graph constructor. But the algorithm used to compute those
+    vertices and edges in the first place is,
+
+    #. Compute the extended binary Golay code.
+    #. Compute its subcode whose codewords start with 000 or 111.
+    #. Remove the first 3 entries from all the codewords from the
+       new linear code and compute its coset graph.
+
+    This construction is tested in ``generators_test.py``, where the
+    result is compared with the result from this method.
 
     REFERENCES:
 
-    Description and construction of this graph can be found in [BCN1989]_ p. 365.
+    The description and construction of this graph can be found in
+    [BCN1989]_, page 365.
     """
-    from sage.coding.linear_code import LinearCode
+    import lzma
+    from importlib.resources import as_file, files
+    from pickle import load
 
-    code = codes.GolayCode(GF(2))
-    C_basis = code.basis()
+    # Path to the pickled-and-xz'd list of (vertices, edges)
+    ppath = files('sage.graphs.generators').joinpath(
+      "shortened_000_111_extended_binary_Golay_code_graph.pickle.xz"
+    )
 
-    # now special shortening
-    v = C_basis[0] + C_basis[1] + C_basis[2]  # v has 111 at the start
-    C_basis = C_basis[3:]
-    C_basis.append(v)
-    C_basis = list(map(lambda x: x[3:], C_basis))
+    with as_file(ppath) as p:
+        with lzma.open(p) as f:
+            vs_and_es = load(f, fix_imports=False)
 
-    code = LinearCode(Matrix(GF(2), C_basis))
+    # Vertices/edges are pickled as tuples of ints, but should be
+    # vectors with entries in GF(2).
+    V = VectorSpace(GF(2), 21)
+    for i in range(2048):
+        # vertex i
+        vs_and_es[0][i] = V(vs_and_es[0][i])
+        vs_and_es[0][i].set_immutable()
+    for i in range(21504):
+        # edge i = (v1, v2, l)
+        vs_and_es[1][i][0] = V(vs_and_es[1][i][0])  # v1
+        vs_and_es[1][i][0].set_immutable()
+        vs_and_es[1][i][1] = V(vs_and_es[1][i][1])  # v2
+        vs_and_es[1][i][1].set_immutable()
 
-    G = code.cosetGraph()
+    G = Graph(vs_and_es, format='vertices_and_edges')
     G.name("Shortened 000 111 extended binary Golay code")
     return G
 
 
-def vanLintSchrijverGraph():
+def vanLintSchrijverGraph(immutable=False):
     r"""
     Return the van Lint-Schrijver graph.
 
     The graph is distance-regular with intersection array
     `[6, 5, 5, 4; 1, 1, 2, 6]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -542,12 +628,9 @@ def vanLintSchrijverGraph():
     one = vector(GF(3), [1, 1, 1, 1, 1, 1])
     G = LinearCode(Matrix(GF(3), one)).cosetGraph()
 
-    vertices = [v for v in G.vertices(sort=False) if v.dot_product(one) in {1, 2}]
-    edges = [(v, w) for v, w in itertools.combinations(vertices, 2)
-             if G.has_edge((v, w))]
-
-    H = Graph(edges, format='list_of_edges')
-    H.name("Linst-Schrijver graph")
+    H = G.subgraph(vertices=[v for v in G if v.dot_product(one) in {1, 2}],
+                   immutable=immutable)
+    H._name = "Linst-Schrijver graph"
     return H
 
 
@@ -657,7 +740,6 @@ def BilinearFormsGraph(const int d, const int e, const int q):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
         sage: G = graphs.BilinearFormsGraph(3, 3, 2)
         sage: G.is_distance_regular(True)
         ([49, 36, 16, None], [None, 1, 6, 28])
@@ -675,7 +757,6 @@ def BilinearFormsGraph(const int d, const int e, const int q):
 
     TESTS::
 
-        sage: # needs sage.modules
         sage: G = graphs.BilinearFormsGraph(2,3,2)
         sage: G.is_distance_regular(True)
         ([21, 12, None], [None, 1, 6])
@@ -761,7 +842,6 @@ def AlternatingFormsGraph(const int n, const int q):
 
     TESTS::
 
-         sage: # needs sage.modules
          sage: G = graphs.AlternatingFormsGraph(6,2)    # not tested (2 min)            # needs sage.rings.finite_rings
          sage: G.order()                        # not tested (because of above)         # needs sage.rings.finite_rings
          32768
@@ -830,7 +910,7 @@ def AlternatingFormsGraph(const int n, const int q):
     return G
 
 
-def HermitianFormsGraph(const int n, const int r):
+def HermitianFormsGraph(const int n, const int r, immutable=False):
     r"""
     Return the Hermitian forms graph with the given parameters.
 
@@ -844,11 +924,14 @@ def HermitianFormsGraph(const int n, const int r):
     INPUT:
 
     - ``n`` -- integer
+
     - ``r`` -- a prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
-        sage: # needs sage.modules sage.rings.finite_rings
         sage: G = graphs.HermitianFormsGraph(2, 2)
         sage: G.is_distance_regular(True)
         ([5, 4, None], [None, 1, 2])
@@ -862,7 +945,6 @@ def HermitianFormsGraph(const int n, const int r):
 
     TESTS::
 
-         sage: # needs sage.modules sage.rings.finite_rings
          sage: G = graphs.HermitianFormsGraph(3, 2)
          sage: G.is_distance_regular(True)
          ([21, 20, 16, None], [None, 1, 2, 12])
@@ -930,12 +1012,11 @@ def HermitianFormsGraph(const int n, const int r):
             N = tuple([M[i] + R[i] for i in range((n * (n+1)) // 2)])
             edges.append((M, N))
 
-    G = Graph(edges, format='list_of_edges')
-    G.name(f"Hermitian forms graph on (F_{q})^{n}")
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name=f"Hermitian forms graph on (F_{q})^{n}")
 
 
-def DoubleOddGraph(const int n):
+def DoubleOddGraph(const int n, immutable=False):
     r"""
     Return the double odd graph on `2n+1` points.
 
@@ -948,6 +1029,9 @@ def DoubleOddGraph(const int n):
     INPUT:
 
     - ``n`` -- integer; must be greater than 0
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -982,26 +1066,27 @@ def DoubleOddGraph(const int n):
     if n < 1:
         raise ValueError("n must be >= 1")
 
-    cdef list edges, s1
+    cdef list edges, s2
+    cdef tuple s1
     cdef int i
+    cdef int k = 2*n + 1
 
     # a binary vector of size 2n + 1 represents a set
     edges = []
-    for s in IntegerVectors(n, k=2*n + 1, max_part=1):
-        s1 = list(s)
+    for s in IntegerVectors(n, k=k, max_part=1):
+        s1 = tuple(s)
         for i in range(2*n + 1):
             sig_check()
             if s1[i] == 0:
                 s2 = list(s)  # duplicate list
                 s2[i] = 1
-                edges.append((tuple(s1), tuple(s2)))
+                edges.append((s1, tuple(s2)))
 
-    G = Graph(edges, format='list_of_edges')
-    G.name("Bipartite double of Odd graph on a set of %d elements" % (2*n + 1))
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name=f"Bipartite double of Odd graph on a set of {k} elements")
 
 
-def HalfCube(const int n):
+def HalfCube(const int n, immutable=False):
     r"""
     Return the halved cube in `n` dimensions.
 
@@ -1011,6 +1096,9 @@ def HalfCube(const int n):
     INPUT:
 
     - ``n`` -- integer; must be greater than 2
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1064,13 +1152,14 @@ def HalfCube(const int n):
                 if u < v:
                     E.append((u, v))
 
-    G = Graph([range(2**(n - 1)), E], format='vertices_and_edges')
+    G = Graph([range(2**(n - 1)), E], format='vertices_and_edges',
+              name=f"Half {n} Cube", immutable=immutable)
     G.set_pos(pos)
-    G.name("Half %d Cube" % n)
     return G
 
 
-def GrassmannGraph(const int q, const int n, const int input_e):
+def GrassmannGraph(const int q, const int n, const int input_e,
+                   immutable=False):
     r"""
     Return the Grassmann graph with parameters `(q, n, e)`.
 
@@ -1085,7 +1174,11 @@ def GrassmannGraph(const int q, const int n, const int input_e):
     INPUT:
 
     - ``q`` -- a prime power
+
     - ``n``, ``e`` -- integers with `n > e+1`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1099,7 +1192,6 @@ def GrassmannGraph(const int q, const int n, const int input_e):
 
     TESTS::
 
-        sage: # needs sage.modules sage.rings.finite_rings
         sage: G = graphs.GrassmannGraph(2, 6, 3)        # long time
         sage: G.is_distance_regular(True)       # long time
         ([98, 72, 32, None], [None, 1, 9, 49])
@@ -1120,12 +1212,12 @@ def GrassmannGraph(const int q, const int n, const int input_e):
     # we want the intersection graph
     # the size of the intersection must be (q^{e-1} - 1) / (q-1)
     size = (q**(e - 1) - 1) // (q - 1)
-    G = PG.intersection_graph([size])
-    G.name("Grassmann graph J_%d(%d, %d)" % (q, n, e))
+    G = PG.intersection_graph([size], immutable=immutable)
+    G._name = f"Grassmann graph J_{q}({n}, {e})"
     return G
 
 
-def DoubleGrassmannGraph(const int q, const int e):
+def DoubleGrassmannGraph(const int q, const int e, immutable=False):
     r"""
     Return the bipartite double of the distance-`e` graph of the Grassmann graph `J_q(n,e)`.
 
@@ -1139,7 +1231,11 @@ def DoubleGrassmannGraph(const int q, const int e):
     INPUT:
 
     - ``q`` -- a prime power
+
     - ``e`` -- integer
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1156,17 +1252,16 @@ def DoubleGrassmannGraph(const int q, const int e):
 
     TESTS::
 
-         sage: # needs sage.modules
-         sage: G = graphs.DoubleGrassmannGraph(5,1)
-         sage: G.order()
-         62
-         sage: G.is_distance_regular(True)
-         ([6, 5, 5, None], [None, 1, 1, 6])
-         sage: G = graphs.DoubleGrassmannGraph(3, 2)    # long time                     # needs sage.rings.finite_rings
-         sage: G.order()                        # long time                             # needs sage.rings.finite_rings
-         2420
-         sage: G.is_distance_regular(True)      # long time                             # needs sage.rings.finite_rings
-         ([13, 12, 12, 9, 9, None], [None, 1, 1, 4, 4, 13])
+        sage: G = graphs.DoubleGrassmannGraph(5,1)
+        sage: G.order()
+        62
+        sage: G.is_distance_regular(True)
+        ([6, 5, 5, None], [None, 1, 1, 6])
+        sage: G = graphs.DoubleGrassmannGraph(3, 2)    # long time                     # needs sage.rings.finite_rings
+        sage: G.order()                        # long time                             # needs sage.rings.finite_rings
+        2420
+        sage: G.is_distance_regular(True)      # long time                             # needs sage.rings.finite_rings
+        ([13, 12, 12, 9, 9, None], [None, 1, 1, 4, 4, 13])
     """
     n = 2*e + 1
     V = VectorSpace(GF(q), n)
@@ -1179,9 +1274,8 @@ def DoubleGrassmannGraph(const int q, const int e):
             Ubasis = frozenset(U.basis())
             edges.append((Wbasis, Ubasis))
 
-    G = Graph(edges, format='list_of_edges')
-    G.name("Double Grassmann graph (%d, %d, %d)" % (n, e, q))
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name=f"Double Grassmann graph ({n}, {e}, {q})")
 
 
 def is_from_GQ_spread(list arr):
@@ -1254,7 +1348,7 @@ def is_from_GQ_spread(list arr):
     return (s, t)
 
 
-def graph_from_GQ_spread(const int s, const int t):
+def graph_from_GQ_spread(const int s, const int t, immutable=False):
     r"""
     Return the point graph of the generalised quadrangle with
     order `(s, t)` after removing one of its spreads.
@@ -1266,10 +1360,16 @@ def graph_from_GQ_spread(const int s, const int t):
 
     - ``s``, ``t`` -- integers; order of the generalised quadrangle
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
          sage: from sage.graphs.generators.distance_regular import \
          ....: graph_from_GQ_spread
+         sage: G = graph_from_GQ_spread(2, 2)                                           # needs sage.libs.pari
+         sage: G.is_distance_regular(True)                                              # needs sage.libs.pari
+         ([4, 2, 1, None], [None, 1, 1, 4])
          sage: G = graph_from_GQ_spread(4, 16)                                          # needs sage.libs.pari
          sage: G.is_distance_regular(True)                                              # needs sage.libs.pari
          ([64, 60, 1, None], [None, 1, 15, 64])
@@ -1301,7 +1401,7 @@ def graph_from_GQ_spread(const int s, const int t):
             sig_check()
             edges.append((p1, p2))
 
-    return Graph(edges, format='list_of_edges')
+    return Graph(edges, format='list_of_edges', immutable=immutable)
 
 
 def GeneralisedDodecagonGraph(const int s, const int t):
@@ -1422,7 +1522,6 @@ def GeneralisedOctagonGraph(const int s, const int t):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.gap
         sage: G = graphs.GeneralisedOctagonGraph(1, 4)          # optional - database_graphs
         sage: G.is_distance_regular(True)                       # optional - database_graphs
         ([5, 4, 4, 4, None], [None, 1, 1, 1, 5])
@@ -1533,7 +1632,6 @@ def GeneralisedHexagonGraph(const int s, const int t):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.gap
         sage: G = graphs.GeneralisedHexagonGraph(5, 5)          # optional - gap_package_atlasrep internet
         sage: G.is_distance_regular(True)                       # optional - gap_package_atlasrep internet
         ([30, 25, 25, None], [None, 1, 1, 6])
@@ -1690,7 +1788,6 @@ def _extract_lines(G):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.gap
         sage: from sage.graphs.generators.distance_regular import _extract_lines
         sage: G = graphs.GeneralisedHexagonGraph(1, 8)
         sage: lines = _extract_lines(G)
@@ -1758,7 +1855,6 @@ def _line_graph_generalised_polygon(H):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.gap
         sage: from sage.graphs.generators.distance_regular import (
         ....:     _line_graph_generalised_polygon)
         sage: G = graphs.GeneralisedHexagonGraph(1, 8)
@@ -1812,9 +1908,9 @@ def _intersection_array_from_graph(G):
 
         sage: from sage.graphs.generators.distance_regular import \
         ....: _intersection_array_from_graph
-        sage: _intersection_array_from_graph(graphs.FosterGraph())                      # needs networkx
+        sage: _intersection_array_from_graph(graphs.FosterGraph())
         [3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3]
-        sage: graphs.FosterGraph().is_distance_regular(True)                            # needs networkx
+        sage: graphs.FosterGraph().is_distance_regular(True)
         ([3, 2, 2, 2, 2, 1, 1, 1, None], [None, 1, 1, 1, 1, 2, 2, 2, 3])
         sage: graphs.DartGraph().is_distance_regular()
         False
@@ -2423,7 +2519,6 @@ def is_near_polygon(array):
 
     TESTS::
 
-        sage: # needs sage.combinat sage.libs.pari
         sage: from sage.graphs.generators.distance_regular import (
         ....: is_near_polygon, near_polygon_graph)
         sage: is_near_polygon([7, 6, 6, 4, 4, 1, 1, 3, 3, 7])
@@ -2561,7 +2656,6 @@ def near_polygon_graph(family, params):
 
     TESTS::
 
-        sage: # needs sage.combinat
         sage: near_polygon_graph(12, 9)
         Traceback (most recent call last):
         ...
@@ -2735,7 +2829,6 @@ def distance_regular_graph(list arr, existence=False, check=True):
         sage: graphs.distance_regular_graph([18, 16, 16, 1, 1, 9])              # optional - internet gap_package_atlasrep
         Generalised hexagon of order (2, 8): Graph on 819 vertices
 
-        sage: # needs sage.combinat
         sage: graphs.distance_regular_graph([14, 12, 10, 8, 6, 4, 2,
         ....:                                1, 2, 3, 4, 5, 6, 7])
         Hamming Graph with parameters 7,3: Graph on 2187 vertices
@@ -2786,10 +2879,10 @@ def distance_regular_graph(list arr, existence=False, check=True):
                                  f"parameters {arr} exists; error: {err}"))
     else:
         # basic checks
-        if len(arr) % 2 == 1 or any([i <= 0 for i in arr]) or \
-           any([x != int(x) for x in arr]) or \
-           any([(arr[i] - arr[i + 1]) < 0 for i in range(d - 1)]) or \
-           any([(arr[d + i + 1] - arr[d + i]) < 0 for i in range(d - 1)]):
+        if len(arr) % 2 == 1 or any(i <= 0 for i in arr) or \
+           any(x != int(x) for x in arr) or \
+           any((arr[i] - arr[i + 1]) < 0 for i in range(d - 1)) or \
+           any((arr[d + i + 1] - arr[d + i]) < 0 for i in range(d - 1)):
             if existence:
                 return False
             raise EmptySetError(("No distance-regular graphs with "

@@ -486,10 +486,9 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             # TO DO: replace this change of variable by creating the appropriate
             #        polynomial ring in the latte interface.
 
-        elif engine == 'normaliz':
+        if engine == 'normaliz':
             return self._ehrhart_polynomial_normaliz(variable)
-        else:
-            raise ValueError("engine must be 'latte' or 'normaliz'")
+        raise ValueError("engine must be 'latte' or 'normaliz'")
 
     @cached_method
     def polar(self):
@@ -650,22 +649,22 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             raise ValueError('Only polytopes (compact polyhedra) are allowed.')
 
         nonzero_points = [p for p in self.integral_points() if not p.is_zero()]
-        origin = [[0]*self.ambient_dim()]
+        origin = [[0] * self.ambient_dim()]
         fibers = set()
         parent = self.parent()
 
         for points in Combinations(nonzero_points, dim):
-                plane = parent.element_class(parent, [origin,[],points], None)
-                if plane.dim() != dim:
-                    continue
-                fiber = self.intersection(plane)
-                if fiber.base_ring() is not ZZ:
-                    continue
-                fiber_vertices = tuple(sorted(tuple(v) for v in fiber.vertex_generator()))
-                if fiber_vertices not in fibers:
-                    yield fiber
-                    fibers.update([fiber_vertices])
-                plane._delete()
+            plane = parent.element_class(parent, [origin, [], points], None)
+            if plane.dim() != dim:
+                continue
+            fiber = self.intersection(plane)
+            if fiber.base_ring() is not ZZ:
+                continue
+            fiber_vertices = tuple(sorted(tuple(v) for v in fiber.vertex_generator()))
+            if fiber_vertices not in fibers:
+                yield fiber
+                fibers.update([fiber_vertices])
+            plane._delete()
 
     def find_translation(self, translated_polyhedron):
         r"""
@@ -929,5 +928,4 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         if permutation:
             return out
-        else:
-            return out[0]
+        return out[0]

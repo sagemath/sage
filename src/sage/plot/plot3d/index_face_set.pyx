@@ -963,7 +963,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             count[0] += 1
             count[1] += face.n
         all = {}
-        for part, count in part_counts.iteritems():
+        for part, count in part_counts.items():
             face_set = IndexFaceSet([])
             face_set.realloc(self.vcount, count[0], count[1])
             memcpy(face_set.vs, self.vs, sizeof(point_c) * self.vcount)
@@ -1679,7 +1679,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             if face.n == 0: # skip unused vertices
                 continue
             face.vertices = &dual.face_indices[ix]
-            ff, next_ = next(iter(dd.itervalues()))
+            ff, next_ = next(iter(dd.values()))
             face.vertices[0] = ff
             for j in range(1, face.n):
                 ff, next_ = dd[next_]

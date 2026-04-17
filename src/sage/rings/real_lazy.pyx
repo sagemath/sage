@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.rings.real_interval_field sage.rings.real_mpfr
+# sage.doctest: needs sage.rings.real_mpfr
 """
 Lazy real and complex numbers
 
@@ -524,21 +524,6 @@ def ComplexLazyField():
     return CLF
 
 
-cdef int get_new_prec(R, int depth) except -1:
-    """
-    There are depth operations, so we want at least that many more digits of
-    precision.
-
-    Field creation may be expensive, so we want to avoid incrementing by 1 so
-    that it is more likely for cached fields to be used.
-    """
-    cdef int needed_prec = R.prec()
-    needed_prec += depth
-    if needed_prec % 10 != 0:
-        needed_prec += 10 - needed_prec % 10
-    return needed_prec
-
-
 cdef class LazyFieldElement(FieldElement):
 
     cpdef _add_(left, right):
@@ -755,7 +740,6 @@ cdef class LazyFieldElement(FieldElement):
 
         When the absolute value is involved, the result might be real::
 
-            sage: # needs sage.symbolic
             sage: z = exp(CLF(1 + I/2)); z
             2.38551673095914? + 1.303213729686996?*I
             sage: r = z.abs(); r
@@ -892,7 +876,6 @@ cdef class LazyFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: a = RLF(sqrt(2)) + RLF(sqrt(3))
             sage: cf = a.continued_fraction()
             sage: cf

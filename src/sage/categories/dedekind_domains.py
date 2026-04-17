@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Dedekind Domains
 """
@@ -6,6 +5,8 @@ Dedekind Domains
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
+from typing import Self
+
 from sage.categories.category import Category
 from sage.categories.integral_domains import IntegralDomains
 
@@ -86,7 +87,7 @@ class DedekindDomains(Category):
             """
             return True
 
-        def integral_closure(self):
+        def integral_closure(self) -> Self:
             r"""
             Return ``self`` since Dedekind domains are integrally closed.
 

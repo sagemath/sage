@@ -214,19 +214,24 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from pathlib import Path
+import os
 import re
 import sys
-import os
+from pathlib import Path
 
-from sage.structure.parent import Parent
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
-from sage.env import SAGE_EXTCODE, DOT_SAGE
+import sage.interfaces.abc
 import sage.misc.misc
 import sage.misc.sage_eval
-import sage.interfaces.abc
+from sage.env import DOT_SAGE, SAGE_EXTCODE
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from sage.structure.parent import Parent
 
 PROMPT = ">>>"
 
@@ -1775,35 +1780,9 @@ class MagmaFunction(ExpectFunction):
         return s
 
 
-def is_MagmaElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`MagmaElement`, and ``False``
-    otherwise.
-
-    INPUT:
-
-    - ``x`` -- any object
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.magma import is_MagmaElement
-        sage: is_MagmaElement(2)
-        doctest:...: DeprecationWarning: the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_MagmaElement(magma(2))                    # optional - magma
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead")
-
-    return isinstance(x, MagmaElement)
-
-
 @instancedoc
-class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaElement):
+class MagmaElement(ExtraTabCompletion, ExpectElement,
+                   sage.interfaces.abc.MagmaElement):
     def _ref(self):
         """
         Return a variable name that is a new reference to this particular
@@ -2914,10 +2893,9 @@ class MagmaGBLogPrettyPrinter:
                     if style == "sage" and verbosity >= 1:
                         print("Leading term degree: %2d. Critical pairs: %d." %
                               (self.curr_deg, self.curr_npairs))
-                else:
-                    if style == "sage" and verbosity >= 1:
-                        print("Leading term degree: %2d. Critical pairs: %d (all pairs of current degree eliminated by criteria)." %
-                              (self.curr_deg, self.curr_npairs))
+                elif style == "sage" and verbosity >= 1:
+                    print("Leading term degree: %2d. Critical pairs: %d (all pairs of current degree eliminated by criteria)." %
+                          (self.curr_deg, self.curr_npairs))
 
             if style == "magma" and verbosity >= 1:
                 print(line)
