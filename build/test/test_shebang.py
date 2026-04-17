@@ -28,6 +28,7 @@ class ShebangRewriteTestCase(unittest.TestCase):
                 entry_points=[
                     SimpleNamespace(group="console_scripts", name="jupyter"),
                     SimpleNamespace(group="console_scripts", name="missing"),
+                    SimpleNamespace(group="console_scripts", name="nonpython"),
                 ]
             )
             with patch("sage_bootstrap.shebang.distribution", return_value=fake_dist):
