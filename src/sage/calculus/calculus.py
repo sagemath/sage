@@ -2065,6 +2065,16 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
         sage: inverse_laplace(exp(-s)/s, s, t, algorithm='sympy')
         heaviside(t - 1)
 
+    Check conversion of mixed numeric expressions for SymPy backend::
+
+        sage: var("s, t")
+        (s, t)
+        sage: G = 4 / (s^2 + 0.8*s + 4)
+        sage: C = 10 + 5 / s + 0.5*s
+        sage: Y = (1 / s) * ((C * G) / (1 + C * G))
+        sage: inverse_laplace(Y, s, t, algorithm='sympy')
+        ...heaviside(t)...
+
     Testing unevaluated expression from Giac::
 
         sage: # needs giac

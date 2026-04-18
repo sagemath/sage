@@ -98,7 +98,11 @@ class SympyConverter(Converter):
         try:
             return obj._sympy_()
         except AttributeError:
-            return obj
+            import sympy
+            try:
+                return sympy.sympify(obj)
+            except sympy.SympifyError:
+                return obj
 
     def arithmetic(self, ex, operator):
         """
