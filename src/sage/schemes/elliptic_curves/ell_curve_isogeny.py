@@ -443,7 +443,8 @@ def compute_codomain_kohel(E, kernel):
         psi_quo = psi//psi_2tor
 
         if psi_quo.degree() != 0:
-            raise NotImplementedError("Kohel's algorithm currently only supports cyclic isogenies (except for [2])")
+            # Kohel formulas here are only implemented for specific cyclic kernels.
+            raise NotImplementedError("Kohel's algorithm currently supports only certain cyclic isogenies (e.g., degree 2, [2], or odd degree)")
 
         n = psi_2tor.degree()
 
@@ -2301,7 +2302,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             psi_quo = psi//psi_G
 
             if psi_quo.degree() != 0:
-                raise NotImplementedError("Kohel's algorithm currently only supports cyclic isogenies (except for [2])")
+                raise NotImplementedError("Kohel's algorithm currently supports only certain cyclic isogenies (e.g., degree 2, [2], or odd degree)")
 
             phi, omega, v, w, _, d = self.__init_even_kernel_polynomial(E, psi_G)
 
