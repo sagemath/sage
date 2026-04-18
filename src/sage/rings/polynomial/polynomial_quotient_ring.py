@@ -409,6 +409,12 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: Q1.has_coerce_map_from(Q)
             False
             sage: Q1(Q.gen())
+            doctest:warning
+            ...
+            DeprecationWarning: Converting from a polynomial quotient ring to a larger polynomial quotient ring is not mathematically well-defined and will cease to work in a future release. Use "S(x.lift())" instead of "S(x)" to emulate the current behaviour.
+            See https://github.com/sagemath/sage/issues/42028 for details.
+            xbar
+            sage: Q1(Q.gen().lift())  # recommended replacement for the functionality that was deprecated above
             xbar
 
         Here we test against several issues discussed in :issue:`8992`::
@@ -464,10 +470,23 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             True
             sage: T(u)
             v
+            sage: S.has_coerce_map_from(T)
+            False
+            sage: S(v)  # known bug -- #42028
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert v to an element of Univariate Quotient Polynomial Ring in u over Finite Field of size 7 with modulus x^4 + x^3
         """
         if isinstance(x, PolynomialQuotientRingElement):
             if self.has_coerce_map_from(x.parent()):
                 return self.element_class(self, x.lift(), check=True)
+            from sage.misc.superseded import deprecation
+            deprecation(42028, 'Converting from a polynomial quotient ring to a larger polynomial '
+                               'quotient ring is not mathematically well-defined and will cease to '
+                               'work in a future release. Use "S(x.lift())" instead of "S(x)" to '
+                               'emulate the current behaviour.')
+            # more reasonable behaviour (after deprecation period):
+            # raise TypeError(f'unable to convert {x!r} to an element of {self}')
         if not isinstance(x, str):
             try:
                 return self.element_class(self, self.__ring(x) , check=True)
