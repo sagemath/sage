@@ -33,7 +33,7 @@ This module implements:
 {LIST_OF_DM}
 
 - `(n,k;\lambda,\mu;u)`-quasi-difference matrices:
-    {LIST_OF_QDM}
+{LIST_OF_QDM}
 
 - `(q,k)` evenly distributed sets
 {LIST_OF_EDS}
