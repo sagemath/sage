@@ -371,7 +371,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
     _ideal_class_ = QuotientRing_generic._ideal_class_
 
     def _element_constructor_(self, x):
-        """
+        r"""
         Convert x into this quotient ring. Anything that can be converted into
         the polynomial ring can be converted into the quotient.
 
@@ -453,7 +453,21 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
             sage: Q3('x*ybar^2')
             -x
+
+        Check that conversion from one polynomial quotient ring to another
+        smaller quotient works correctly; see :issue:`42027`::
+
+            sage: R.<x> = GF(7)[]
+            sage: S.<u> = R.quotient(x^4 + x^3)
+            sage: T.<v> = R.quotient(x^3 + x^2)
+            sage: T.has_coerce_map_from(S)
+            True
+            sage: T(u)
+            v
         """
+        if isinstance(x, PolynomialQuotientRingElement):
+            if self.has_coerce_map_from(x.parent()):
+                return self.element_class(self, x.lift(), check=True)
         if not isinstance(x, str):
             try:
                 return self.element_class(self, self.__ring(x) , check=True)
@@ -476,7 +490,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         try:
             return self.element_class(self, self.__ring(x), check=False)
         except TypeError:
-            raise TypeError("unable to convert %r to an element of %s" % (x, self))
+            raise TypeError(f'unable to convert {x!r} to an element of {self}')
 
     def _coerce_map_from_(self, R):
         r"""
