@@ -988,10 +988,9 @@ class Polynomial_generic_sparse(Polynomial):
             D = PolynomialRing(S.base_ring(),'x',implementation=implementation)
             g = D(self).gcd(D(other))
             return S(g)
-        elif algorithm == "generic":
+        if algorithm == "generic":
             return Polynomial.gcd(self,other)
-        else:
-            raise ValueError("Unknown algorithm '%s'" % algorithm)
+        raise ValueError("Unknown algorithm '%s'" % algorithm)
 
     def reverse(self, degree=None):
         """
@@ -1393,8 +1392,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         if len(vertices) < 2:
             if slope is Infinity:
                 return self.parent().gen() ** self.degree()
-            else:
-                return one
+            return one
         if slope is None:
             deg_first = vertices[0][0]
             deg_last = vertices[1][0]

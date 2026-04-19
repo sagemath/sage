@@ -259,9 +259,8 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
             if x.is_dominant():
                 from sage.schemes.toric.morphism import SchemeMorphism_fan_toric_variety_dominant
                 return SchemeMorphism_fan_toric_variety_dominant(self, x, check=check)
-            else:
-                from sage.schemes.toric.morphism import SchemeMorphism_fan_toric_variety
-                return SchemeMorphism_fan_toric_variety(self, x, check=check)
+            from sage.schemes.toric.morphism import SchemeMorphism_fan_toric_variety
+            return SchemeMorphism_fan_toric_variety(self, x, check=check)
 
         raise TypeError("x must be a fan morphism or a list/tuple of polynomials")
 
@@ -409,11 +408,10 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
         ring = self.domain().base_ring()
         if ring in FiniteFields():
             return self._finite_field_enumerator()
-        elif ring.is_finite():
+        if ring.is_finite():
             return self._naive_enumerator()
-        else:
-            from sage.schemes.toric.points import InfinitePointEnumerator
-            return InfinitePointEnumerator(self.codomain().fan(), ring)
+        from sage.schemes.toric.points import InfinitePointEnumerator
+        return InfinitePointEnumerator(self.codomain().fan(), ring)
 
 
 class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
@@ -545,9 +543,8 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
         if not variety.base_ring().is_finite():
             if variety.dimension_relative() == 0:
                 return ZZ.one()
-            else:
-                from sage.rings.infinity import Infinity
-                return Infinity
+            from sage.rings.infinity import Infinity
+            return Infinity
         if not variety.is_smooth():
             try:
                 return self._enumerator().cardinality()

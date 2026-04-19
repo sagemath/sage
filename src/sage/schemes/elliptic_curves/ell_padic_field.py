@@ -425,16 +425,15 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             pts = self.lift_x(x, all=True)
             if pts[0][1][0] == P[1]:
                 return pts[0]
-            else:
-                return pts[1]
-        else:  # Weierstrass disc
-            S = self.find_char_zero_weier_point(P)
-            x, y = self.local_coord(S, prec)
-            a = P[1]
-            b = Q[1] - P[1]
-            y = a + b * t
-            x = x.polynomial()(y).add_bigoh(x.prec())
-            return (x, y, 1)
+            return pts[1]
+        # Weierstrass disc
+        S = self.find_char_zero_weier_point(P)
+        x, y = self.local_coord(S, prec)
+        a = P[1]
+        b = Q[1] - P[1]
+        y = a + b * t
+        x = x.polynomial()(y).add_bigoh(x.prec())
+        return (x, y, 1)
 
     def weierstrass_points(self):
         """
@@ -599,18 +598,15 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         if P == self(0, 1, 0):
             return HF(0, 1, 0)
-        elif yPv > 0:
+        if yPv > 0:
             if xPv > 0:
                 return HF(0, 0, 1)
-            else:
-                return HF(P[0].expansion(0), 0, 1)
-        elif yPv == 0:
+            return HF(P[0].expansion(0), 0, 1)
+        if yPv == 0:
             if xPv > 0:
                 return HF(0, P[1].expansion(0), 1)
-            else:
-                return HF(P[0].expansion(0), P[1].expansion(0), 1)
-        else:
-            return HF(0, 1, 0)
+            return HF(P[0].expansion(0), P[1].expansion(0), 1)
+        return HF(0, 1, 0)
 
     def is_same_disc(self, P, Q):
         """
@@ -732,8 +728,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         pts = self.lift_x(x, all=True)
         if (pts[0][1] - P[1]).valuation() > 0:
             return pts[0]
-        else:
-            return pts[1]
+        return pts[1]
 
     def coleman_integrals_on_basis(self, P, Q, algorithm=None):
         r"""
@@ -788,11 +783,10 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         if self.is_weierstrass(P):
             if self.is_weierstrass(Q):
                 return V(0)
-            else:
-                PP = None
-                QQ = Q
-                TP = None
-                TQ = self.frobenius(Q)
+            PP = None
+            QQ = Q
+            TP = None
+            TQ = self.frobenius(Q)
         elif self.is_weierstrass(Q):
             PP = P
             QQ = None
@@ -885,8 +879,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         TP_to_TQ = M_sys ** (-1) * b
         if algorithm == "teichmuller":
             return P_to_TP + TP_to_TQ + TQ_to_Q
-        else:
-            return TP_to_TQ
+        return TP_to_TQ
 
     def coleman_integral(self, w, P, Q, algorithm="None"):
         r"""
@@ -993,9 +986,9 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         if self.is_weierstrass(P):
             if self.is_weierstrass(Q):
                 return 0
-            elif f == 0:
+            if f == 0:
                 return sum([vec[i] * basis_values[i] for i in range(dim)])
-            elif (
+            if (
                 w._coeff(x, -y) * x.derivative() / (-2 * y)
                 + w._coeff(x, y) * x.derivative() / (2 * y)
                 == 0
@@ -1006,15 +999,14 @@ class EllipticCurve_padic_field(EllipticCurve_field):
                     )
                     / 2
                 )
-            else:
-                raise ValueError(
-                    "The differential is not odd: use coleman_integral_from_weierstrass_via_boundary"
-                )
+            raise ValueError(
+                "The differential is not odd: use coleman_integral_from_weierstrass_via_boundary"
+            )
 
         elif self.is_weierstrass(Q):
             if f == 0:
                 return sum([vec[i] * basis_values[i] for i in range(dim)])
-            elif (
+            if (
                 w._coeff(x, -y) * x.derivative() / (-2 * y)
                 + w._coeff(x, y) * x.derivative() / (2 * y)
                 == 0
@@ -1025,10 +1017,9 @@ class EllipticCurve_padic_field(EllipticCurve_field):
                     )
                     / 2
                 )
-            else:
-                raise ValueError(
-                    "The differential is not odd: use coleman_integral_from_weierstrass_via_boundary"
-                )
+            raise ValueError(
+                "The differential is not odd: use coleman_integral_from_weierstrass_via_boundary"
+            )
         else:
             return (
                 f(Q[0], Q[1])
@@ -1306,11 +1297,10 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         const = f(Q[0], Q[1]) - f(S[0], S[1])
         if vec == vector([0, 0]):
             return const
-        else:
-            basis_values = self.S_to_Q(S, Q)
-            dim = len(basis_values)
-            dot = sum([vec[i] * basis_values[i] for i in range(dim)])
-            return const + dot
+        basis_values = self.S_to_Q(S, Q)
+        dim = len(basis_values)
+        dot = sum([vec[i] * basis_values[i] for i in range(dim)])
+        return const + dot
 
     def coleman_integral_from_weierstrass_via_boundary(self, w, P, Q, d):
         r"""

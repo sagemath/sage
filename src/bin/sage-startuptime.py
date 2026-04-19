@@ -44,7 +44,7 @@ def new_import(name, globals={}, locals={}, fromlist=[], level=DEFAULT_LEVEL):
 
     Note that ``name`` is not unique, it can be `sage.foo.bar` or `bar`.
     """
-    global all_modules, import_counter, parent, direct_children_time
+    global import_counter, parent, direct_children_time
     old_direct_children_time = direct_children_time
     direct_children_time = 0
     old_parent = parent
@@ -104,7 +104,6 @@ fmt_number = '{0:>' + str(width) + '.3f} {1:>' + str(width) + '.3f} {2:>' + str(
 
 
 def print_table(module_list, limit):
-    global fmt_header, fmt_number
     print(fmt_header.format('exclude/ms', 'include/ms', '#parents', 'module name'))
     for t, module, data in module_list[-limit:]:
         print(fmt_number.format(1000 * t, 1000 * data['cumulative_time'],

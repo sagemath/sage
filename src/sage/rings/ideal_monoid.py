@@ -150,8 +150,7 @@ class IdealMonoid_c(Parent):
         """
         if isinstance(x, IdealMonoid_c):
             return self.ring().has_coerce_map_from(x.ring())
-        else:
-            return self.ring().has_coerce_map_from(x)
+        return self.ring().has_coerce_map_from(x)
 
     def __eq__(self, other):
         r"""
@@ -170,8 +169,7 @@ class IdealMonoid_c(Parent):
         """
         if not isinstance(other, IdealMonoid_c):
             return False
-        else:
-            return self.ring() == other.ring()
+        return self.ring() == other.ring()
 
     def __ne__(self, other):
         r"""

@@ -235,8 +235,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
             v, u = k.val_unit(q)
             if u == 1:
                 return self._compute_coefficient_exp(v)
-            else:
-                return zero
+            return zero
 
         if prec is Infinity:
             L = LazyPowerSeriesRing(self._base, name)
@@ -344,8 +343,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
             v, u = k.val_unit(q)
             if u == 1:
                 return self._compute_coefficient_log(v)
-            else:
-                return self._base.zero()
+            return self._base.zero()
 
         if prec is Infinity:
             L = LazyPowerSeriesRing(self._base, name)
@@ -491,8 +489,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         g = self.coefficient(n)
         if g.denominator().is_one():
             return A(g.numerator().list())
-        else:
-            raise ValueError("coefficient is not polynomial")
+        raise ValueError("coefficient is not polynomial")
 
     def coefficients_in_function_ring(self, sparse=True):
         r"""

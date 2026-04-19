@@ -277,19 +277,17 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             if isinstance(X, AlgebraicScheme_subscheme): # sieve should only be called for subschemes
                 from sage.schemes.projective.projective_rational_point import sieve
                 return sieve(X, B)
-            else:
-                from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
-                return enum_projective_rational_field(self, B)
-        elif R in NumberFields():
+            from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
+            return enum_projective_rational_field(self, B)
+        if R in NumberFields():
             if not B > 0:
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.projective.projective_rational_point import enum_projective_number_field
             return enum_projective_number_field(self, bound=B, tolerance=tol, precision=prec)
-        elif isinstance(R, FiniteField):
+        if isinstance(R, FiniteField):
             from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
             return enum_projective_finite_field(self.extended_codomain())
-        else:
-            raise TypeError("unable to enumerate points over %s" % R)
+        raise TypeError("unable to enumerate points over %s" % R)
 
     def numerical_points(self, F=None, **kwds):
         """
@@ -525,8 +523,7 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
             return enum_projective_rational_field(self,B)
-        else:
-            raise TypeError("unable to enumerate points over %s" % R)
+        raise TypeError("unable to enumerate points over %s" % R)
 
 
 class SchemeHomset_polynomial_projective_space(SchemeHomset_generic):

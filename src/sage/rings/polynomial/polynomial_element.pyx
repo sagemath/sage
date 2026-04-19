@@ -112,7 +112,7 @@ from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.structure.category_object cimport normalize_names
 
 from sage.misc.derivative import multi_derivative
-
+from sage.misc.lazy_import import LazyImport
 from sage.arith.misc import sort_complex_numbers_for_display, power_mod, is_prime
 from sage.arith.functions import lcm
 
@@ -135,6 +135,8 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_compiled cimport CompiledPolynomialFunction
 
 from sage.rings.polynomial.polydict cimport ETuple
+
+SymbolicRing = LazyImport('sage.symbolic.ring', 'SymbolicRing')
 
 
 cdef class Polynomial(CommutativePolynomial):
@@ -7112,7 +7114,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``gap`` -- a GAP or libgap instance
+        - ``gap`` -- a GAP instance
 
         EXAMPLES::
 
@@ -7129,8 +7131,6 @@ cdef class Polynomial(CommutativePolynomial):
             y^3-17*y+5
             sage: gap(z^2 + z)
             z^2+z
-            sage: libgap(z^2 + z)
-            z^2+z
 
         Coefficients in a finite field::
 
@@ -7138,14 +7138,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = y^3 - 17*y + 5
             sage: g = gap(f); g
             y^3+Z(7)^4*y+Z(7)^5
-            sage: h = libgap(f); h
-            y^3+Z(7)^4*y+Z(7)^5
             sage: g.Factors()
             [ y+Z(7)^0, y+Z(7)^0, y+Z(7)^5 ]
-            sage: h.Factors()
-            [ y+Z(7)^0, y+Z(7)^0, y+Z(7)^5 ]
-            sage: f.factor()
-            (y + 5) * (y + 1)^2
         """
         R = gap(self._parent)
         var = list(R.IndeterminatesOfPolynomialRing())[0]
@@ -7153,18 +7147,31 @@ cdef class Polynomial(CommutativePolynomial):
 
     def _libgap_(self):
         r"""
-        TESTS::
+        EXAMPLES::
 
-            sage: R.<x> = ZZ[]
-            sage: libgap(-x^3 + 3*x)   # indirect doctest                               # needs sage.libs.gap
-            -x^3+3*x
-            sage: libgap(R.zero())     # indirect doctest                               # needs sage.libs.gap
+            sage: R.<z> = ZZ[]
+            sage: libgap(z^2 + z)
+            z^2+z
+            sage: libgap(R.zero())     # indirect doctest
             0
+
+        Coefficients in a finite field::
+
+            sage: R.<y> = GF(7)[]
+            sage: f = y^3 - 17*y + 5
+            sage: h = libgap(f); h
+            y^3+Z(7)^4*y+Z(7)^5
+            sage: h.Factors()
+            [ y+Z(7)^0, y+Z(7)^0, y+Z(7)^5 ]
+            sage: f.factor()
+            (y + 5) * (y + 1)^2
         """
         from sage.libs.gap.libgap import libgap
-        return self._gap_(libgap)
+        R = libgap(self._parent)
+        var = list(R.IndeterminatesOfPolynomialRing())[0]
+        return self(var)
 
-    def _giac_init_(self):
+    def _giac_init_(self) -> str:
         r"""
         Return a Giac string representation of this polynomial.
 
@@ -8871,7 +8878,7 @@ cdef class Polynomial(CommutativePolynomial):
             else:
                 return [rt for (rt, mult) in rts_mult]
 
-        if isinstance(L, sage.rings.abc.SymbolicRing):
+        if isinstance(L, SymbolicRing):
             if self.degree() == 2:
                 from sage.misc.functional import sqrt
                 from sage.symbolic.constants import I
