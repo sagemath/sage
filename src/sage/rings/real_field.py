@@ -43,15 +43,14 @@ def create_RealField(prec=53, type='MPFR', rnd='RNDN', sci_not=0):
     if type == "RDF":
         from .real_double import RDF
         return RDF
-    elif type == "Interval":
+    if type == "Interval":
         from .real_mpfi import RealIntervalField
         return RealIntervalField(prec, sci_not)
-    elif type == "Ball":
+    if type == "Ball":
         from .real_arb import RealBallField
         return RealBallField(prec)
-    elif type == "RLF":
+    if type == "RLF":
         from .real_lazy import RLF
         return RLF
-    else:
-        from .real_mpfr import RealField
-        return RealField(prec, sci_not, rnd)
+    from .real_mpfr import RealField
+    return RealField(prec, sci_not, rnd)

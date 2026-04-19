@@ -660,9 +660,8 @@ class Constellation_class(Element):
         """
         if i is None:
             return tuple(self.profile(j) for j in range(self.length()))
-        else:
-            parts = [len(cy) for cy in self._g[i].cycle_tuples(True)]
-            return Partition(sorted(parts, reverse=True))
+        parts = [len(cy) for cy in self._g[i].cycle_tuples(True)]
+        return Partition(sorted(parts, reverse=True))
 
     passport = profile
 
@@ -693,9 +692,8 @@ class Constellation_class(Element):
         from copy import copy
         if i is None:
             return copy(self._g)
-        else:
-            gi = self._g[i]
-            return gi.parent()(gi)
+        gi = self._g[i]
+        return gi.parent()(gi)
 
     def relabel(self, perm=None, return_map=False):
         r"""
@@ -812,8 +810,7 @@ class Constellation_class(Element):
 
         if return_map:
             return c_win, m_win
-        else:
-            return c_win
+        return c_win
 
     # BRAID GROUP ACTION
 
@@ -1032,8 +1029,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
                                                       self._sym.domain())
         if self._connected:
             return "Connected constellations " + s
-        else:
-            return "Constellations " + s
+        return "Constellations " + s
 
     def __iter__(self):
         """
@@ -1194,8 +1190,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
             if c.length() != self._length:
                 raise ValueError("length is not {}".format(self._length))
             return c
-        else:
-            return self.element_class(self, g, self._connected, mutable, False)
+        return self.element_class(self, g, self._connected, mutable, False)
 
     def _an_element_(self):
         r"""
@@ -1506,20 +1501,17 @@ def perm_sym_domain(g):
     if isinstance(g, (tuple, list)):
         if isinstance(g[0], tuple):
             return set().union(*g)
-        else:
-            return set(g)
-    elif isinstance(g, str):  # perms given as strings of cycles
+        return set(g)
+    if isinstance(g, str):  # perms given as strings of cycles
         assert g.startswith('(') and g.endswith(')')
         domain = set().union(*[a for cyc in g[1:-1].split(')(')
                                for a in cyc.split(',')])
         if all(s.isdigit() for s in domain):
             return [int(x) for x in domain]
-        else:
-            return domain
-    elif parent(g) in Groups():
+        return domain
+    if parent(g) in Groups():
         return g.domain()
-    else:
-        raise TypeError
+    raise TypeError
 
 
 def perms_sym_init(g, sym=None):

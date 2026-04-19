@@ -81,7 +81,7 @@ Test that :issue:`15971` is fixed::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.misc.latex as latex
+from sage.misc import latex
 from sage.categories.basic import QuotientFields, Rings
 from sage.categories.map import Section
 from sage.misc.cachefunc import cached_method
@@ -140,29 +140,6 @@ def FractionField(R, names=None):
     if not R.is_integral_domain():
         raise TypeError("R must be an integral domain")
     return R.fraction_field()
-
-
-def is_FractionField(x) -> bool:
-    """
-    Test whether or not ``x`` inherits from :class:`FractionField_generic`.
-
-    EXAMPLES::
-
-        sage: from sage.rings.fraction_field import is_FractionField
-        sage: is_FractionField(Frac(ZZ['x']))
-        doctest:warning...
-        DeprecationWarning: The function is_FractionField is deprecated;
-        use 'isinstance(..., FractionField_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_FractionField(QQ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38128,
-                "The function is_FractionField is deprecated; "
-                "use 'isinstance(..., FractionField_generic)' instead.")
-    return isinstance(x, FractionField_generic)
 
 
 class FractionField_generic(ring.Field):
@@ -1071,8 +1048,7 @@ class FractionField_generic(ring.Field):
         if g.is_zero():
             if f.is_zero():
                 return f
-            else:
-                return f.monic()
+            return f.monic()
         Pol = f.parent()
         Num = Pol.change_ring(self.base())
         f1 = Num(f.numerator())

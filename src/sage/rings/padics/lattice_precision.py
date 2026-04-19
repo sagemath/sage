@@ -139,8 +139,7 @@ class pRational:
         """
         if self.exponent == 0:
             return repr(self.x)
-        else:
-            return "%s^%s * %s" % (self.p, self.exponent, self.x)
+        return "%s^%s * %s" % (self.p, self.exponent, self.x)
 
     def reduce(self, prec):
         r"""
@@ -326,8 +325,7 @@ class pRational:
             val = None
         if sexp < oexp:
             return self.__class__(p, self.x + other.x * p**(oexp-sexp), sexp, valuation=val)
-        else:
-            return self.__class__(p, self.x * p**(sexp-oexp) + other.x, oexp, valuation=val)
+        return self.__class__(p, self.x * p**(sexp-oexp) + other.x, oexp, valuation=val)
 
     def __sub__(self, other):
         r"""
@@ -432,14 +430,13 @@ class pRational:
         if sx == 0:
             return (self.__class__(self.p, 0, 0, valuation=Infinity),
                     self.__class__(self.p, 0, 0, valuation=Infinity))
-        elif sval >= oval:
+        if sval >= oval:
             return (self.__class__(self.p, sx / ox, diff, valuation=diff),
                     self.__class__(self.p, 0, 0, valuation=Infinity))
-        else:
-            pd = self.p**(-diff)
-            sred = sx % pd
-            return (self.__class__(self.p, (sx - sred)/(pd*ox), 0),
-                    self.__class__(self.p, sred, sval, valuation=sval))
+        pd = self.p**(-diff)
+        sred = sx % pd
+        return (self.__class__(self.p, (sx - sred)/(pd*ox), 0),
+                self.__class__(self.p, sred, sval, valuation=sval))
 
     def __lshift__(self, n):
         r"""
@@ -1248,8 +1245,7 @@ class DifferentialPrecisionGeneric(SageObject):
             else:
                 s = "%.6fs" % time
             return s + "  " + status
-        else:
-            return status
+        return status
 
     def history(self, compact=True, separate_reduce=False, timings=True, output_type='asciiart'):
         r"""
@@ -1475,8 +1471,7 @@ class DifferentialPrecisionGeneric(SageObject):
             if status or oldevent == '':
                 hist.append(self._format_history(total_time, status, timings))
             return '\n'.join(hist)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def timings(self, action=None):
         r"""
@@ -1529,8 +1524,7 @@ class DifferentialPrecisionGeneric(SageObject):
             return tme_by_event
         if action in tme_by_event:
             return tme_by_event[action]
-        else:
-            raise ValueError("invalid event")
+        raise ValueError("invalid event")
 
 
 class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
@@ -2658,8 +2652,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
         col = self._matrix[ref]
         if len(col) == 0:
             return Infinity
-        else:
-            return min( [ c.valuation() for c in col ] )
+        return min( [ c.valuation() for c in col ] )
 
     def precision_lattice(self, elements=None):
         r"""

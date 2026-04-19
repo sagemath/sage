@@ -600,8 +600,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
             a = bezout[1]
             b = bezout[2]
             return (p, q, a, b)
-        else:
-            raise ValueError("p and q must be distinct Blum primes.")
+        raise ValueError("p and q must be distinct Blum primes.")
 
     def public_key(self, p, q):
         r"""
@@ -673,8 +672,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
             raise ValueError("p and q must be distinct Blum primes.")
         if is_blum_prime(p) and is_blum_prime(q):
             return p * q
-        else:
-            raise ValueError("p and q must be distinct Blum primes.")
+        raise ValueError("p and q must be distinct Blum primes.")
 
     def random_key(self, lbound, ubound, ntries=100):
         r"""

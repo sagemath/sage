@@ -134,7 +134,7 @@ Mutability (see :issue:`12587`)::
     sage: hash(S) == hash(S)
     True
 
-    sage: S2 = SimplicialComplex([[1,4], [2,4]], is_mutable=False)
+    sage: S2 = SimplicialComplex([[1,4], [2,4]], immutable=True)
     sage: hash(S2) == hash(S)
     True
 
@@ -165,6 +165,7 @@ from functools import total_ordering
 from .cell_complex import GenericCellComplex
 from sage.categories.fields import Fields
 from sage.misc.cachefunc import cached_method
+from sage.misc.decorators import rename_keyword
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
@@ -246,50 +247,44 @@ def lattice_paths(t1, t2, length=None):
         if len(t1) == 0 or len(t2) == 0:
             return [[]]
         # 1 x n (or k x 1) rectangle:
-        elif len(t1) == 1:
+        if len(t1) == 1:
             return [[(t1[0], w) for w in t2]]
-        elif len(t2) == 1:
+        if len(t2) == 1:
             return [[(v, t2[0]) for v in t1]]
-        else:
-            # recursive: paths in rectangle with either one fewer row
-            # or column, plus the upper right corner
-            return ([path + [(t1[-1], t2[-1])] for path
-                     in lattice_paths(t1[:-1], t2)] +
-                    [path + [(t1[-1], t2[-1])] for path
-                     in lattice_paths(t1, t2[:-1])])
-    else:
-        if length > len(t1) + len(t2) - 1:
-            return []
-        # as above, except make sure that lengths are correct.  if
-        # not, return an empty list.
-        #
-        # 0 x n (or k x 0) rectangle:
-        elif len(t1) == 0 or len(t2) == 0:
-            if length == 0:
-                return [[]]
-            else:
-                return []
-        # 1 x n (or k x 1) rectangle:
-        elif len(t1) == 1:
-            if length == len(t2):
-                return [[(t1[0], w) for w in t2]]
-            else:
-                return []
-        elif len(t2) == 1:
-            if length == len(t1):
-                return [[(v, t2[0]) for v in t1]]
-            else:
-                return []
-        else:
-            # recursive: paths of length one fewer in rectangle with
-            # either one fewer row, one fewer column, or one fewer of
-            # each, and then plus the upper right corner
-            return ([path + [(t1[-1], t2[-1])] for path
-                     in lattice_paths(t1[:-1], t2, length=length-1)] +
-                    [path + [(t1[-1], t2[-1])] for path
-                     in lattice_paths(t1, t2[:-1], length=length-1)] +
-                    [path + [(t1[-1], t2[-1])] for path
-                     in lattice_paths(t1[:-1], t2[:-1], length=length-1)])
+        # recursive: paths in rectangle with either one fewer row
+        # or column, plus the upper right corner
+        return ([path + [(t1[-1], t2[-1])] for path
+                 in lattice_paths(t1[:-1], t2)] +
+                [path + [(t1[-1], t2[-1])] for path
+                 in lattice_paths(t1, t2[:-1])])
+    if length > len(t1) + len(t2) - 1:
+        return []
+    # as above, except make sure that lengths are correct.  if
+    # not, return an empty list.
+    #
+    # 0 x n (or k x 0) rectangle:
+    if len(t1) == 0 or len(t2) == 0:
+        if length == 0:
+            return [[]]
+        return []
+    # 1 x n (or k x 1) rectangle:
+    if len(t1) == 1:
+        if length == len(t2):
+            return [[(t1[0], w) for w in t2]]
+        return []
+    if len(t2) == 1:
+        if length == len(t1):
+            return [[(v, t2[0]) for v in t1]]
+        return []
+    # recursive: paths of length one fewer in rectangle with
+    # either one fewer row, one fewer column, or one fewer of
+    # each, and then plus the upper right corner
+    return ([path + [(t1[-1], t2[-1])] for path
+             in lattice_paths(t1[:-1], t2, length=length-1)] +
+            [path + [(t1[-1], t2[-1])] for path
+             in lattice_paths(t1, t2[:-1], length=length-1)] +
+            [path + [(t1[-1], t2[-1])] for path
+             in lattice_paths(t1[:-1], t2[:-1], length=length-1)])
 
 
 def rename_vertex(n, keep, left=True):
@@ -520,8 +515,7 @@ class Simplex(SageObject):
         """
         if n >= 0 and n <= self.dimension():
             return Simplex(self.__tuple[:n] + self.__tuple[n+1:])
-        else:
-            raise IndexError("{} does not have an n-th face for n={}".format(self, n))
+        raise IndexError("{} does not have an n-th face for n={}".format(self, n))
 
     def faces(self):
         """
@@ -839,7 +833,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
     - ``maximality_check`` -- boolean (default: ``True``); see below
     - ``sort_facets`` -- dictionary; see below
     - ``name_check`` -- boolean (default: ``False``); see below
-    - ``is_mutable`` -- boolean (default: ``True``); set to ``False`` to make
+    - ``immutable`` -- boolean (default: ``False``); set to ``True`` to make
       this immutable
     - ``category`` -- the category of the simplicial complex (default: finite
       simplicial complexes)
@@ -910,11 +904,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     In the situation where the first argument is a simplicial complex
     or another object with a built-in conversion, most of the other
-    arguments are ignored. The only exception is ``is_mutable``::
+    arguments are ignored. The only exception is ``immutable``::
 
         sage: S.is_mutable()
         True
-        sage: SimplicialComplex(S, is_mutable=False).is_mutable()
+        sage: SimplicialComplex(S, immutable=True).is_mutable()
         False
 
     From a characteristic monotone boolean function, e.g. the simplicial complex
@@ -934,15 +928,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     Check that we can make mutable copies (see :issue:`14142`)::
 
-        sage: S = SimplicialComplex([[0,2], [0,3]], is_mutable=False)
+        sage: S = SimplicialComplex([[0,2], [0,3]], immutable=True)
         sage: S.is_mutable()
         False
         sage: C = copy(S)
         sage: C.is_mutable()
         True
-        sage: SimplicialComplex(S, is_mutable=True).is_mutable()
-        True
-        sage: SimplicialComplex(S, is_immutable=False).is_mutable()
+        sage: SimplicialComplex(S, immutable=False).is_mutable()
         True
 
     .. WARNING::
@@ -953,15 +945,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         However this is close enough to being a parent with elements
         being the faces of ``self`` that we currently allow this abuse.
     """
-
+    @rename_keyword(deprecation=41756, is_immutable='immutable')
     def __init__(self,
                  maximal_faces=None,
                  from_characteristic_function=None,
                  maximality_check=True,
                  sort_facets=None,
                  name_check=False,
-                 is_mutable=True,
-                 is_immutable=False,
+                 immutable=False,
                  category=None) -> None:
         """
         Define a simplicial complex.  See ``SimplicialComplex`` for more
@@ -977,7 +968,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         TESTS::
 
             sage: S = SimplicialComplex([[1,4], [2,4]])
-            sage: S2 = SimplicialComplex([[1,4], [2,4]], is_mutable=False)
+            sage: S2 = SimplicialComplex([[1,4], [2,4]], immutable=True)
             sage: S == S2
             True
             sage: S3 = SimplicialComplex(maximal_faces=[[1,4], [2,4]])
@@ -1052,7 +1043,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             self._graph = copy(C._graph)
             self._vertex_to_index = copy(C._vertex_to_index)
             self._is_immutable = False
-            if not is_mutable or is_immutable:
+            if immutable:
                 self.set_immutable()
             self._bbn = C._bbn
             self._bbn_all_computed = C._bbn_all_computed
@@ -1135,7 +1126,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         # Handle mutability keywords
         self._is_immutable = False
-        if not is_mutable or is_immutable:
+        if immutable:
             self.set_immutable()
 
         # self._bbn: a dictionary indexed by base_ring, whose value is a dictionary of
@@ -1163,7 +1154,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S.set_immutable()
             sage: hash(S) == hash(S)
             True
-            sage: S2 = SimplicialComplex([[1,4], [2,4]], is_mutable=False)
+            sage: S2 = SimplicialComplex([[1,4], [2,4]], immutable=True)
             sage: S == S2
             True
             sage: hash(S) == hash(S2)
@@ -1210,7 +1201,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         EXAMPLES::
 
-            sage: S = SimplicialComplex([[0,2], [0,3]], is_mutable=False)
+            sage: S = SimplicialComplex([[0,2], [0,3]], immutable=True)
             sage: S.is_mutable()
             False
             sage: C = copy(S)
@@ -1224,7 +1215,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: T == C
             True
         """
-        return SimplicialComplex(self, is_mutable=True)
+        return SimplicialComplex(self, immutable=False)
 
     def vertices(self):
         """
@@ -1343,7 +1334,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # Make the subcomplex immutable if it is not
         if subcomplex is not None and not subcomplex._is_immutable:
             subcomplex = SimplicialComplex(subcomplex._facets, maximality_check=False,
-                                           is_mutable=False)
+                                           immutable=True)
 
         if subcomplex not in self._faces:
             # Faces is the dictionary of faces in self but not in
@@ -1533,8 +1524,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         d = simplex.dimension()
         if d in self.faces() and simplex in self.faces()[d]:
             return simplex.face(i)
-        else:
-            raise ValueError('this simplex is not in this simplicial complex')
+        raise ValueError('this simplex is not in this simplicial complex')
 
     def f_triangle(self):
         r"""
@@ -1773,7 +1763,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # whether that graph is connected.
         return self.flip_graph().is_connected()
 
-    def product(self, right, rename_vertices=True, is_mutable=True):
+    def product(self, right, rename_vertices=True, immutable=False):
         """
         The product of this simplicial complex with another one.
 
@@ -1790,8 +1780,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
           names like (0,1) are not suitable for that, while vertex names like
           "L0R1" are.
 
-        - ``is_mutable`` -- boolean (default: ``True``); determines whether the
-          output is mutable
+        - ``immutable`` -- boolean (default: ``False``); determines whether the
+          output is immutable
 
         The vertices in the product will be the set of ordered pairs
         `(v,w)` where `v` is a vertex in ``self`` and `w` is a vertex in
@@ -1832,22 +1822,21 @@ class SimplicialComplex(Parent, GenericCellComplex):
             for g in right._facets:
                 facets.extend(f.product(g, rename_vertices))
         if self != right:
-            return SimplicialComplex(facets, is_mutable=is_mutable)
-        else:
-            # Need to sort the vertices compatibly with the sorting in
-            # self, so that the diagonal map is defined properly.
-            V = self._vertex_to_index
-            L = len(V)
-            d = {}
-            for v in V.keys():
-                for w in V.keys():
-                    if rename_vertices:
-                        d['L' + str(v) + 'R' + str(w)] = V[v] * L + V[w]
-                    else:
-                        d[(v, w)] = V[v] * L + V[w]
-            return SimplicialComplex(facets, is_mutable=is_mutable, sort_facets=d)
+            return SimplicialComplex(facets, immutable=immutable)
+        # Need to sort the vertices compatibly with the sorting in
+        # self, so that the diagonal map is defined properly.
+        V = self._vertex_to_index
+        L = len(V)
+        d = {}
+        for v in V.keys():
+            for w in V.keys():
+                if rename_vertices:
+                    d['L' + str(v) + 'R' + str(w)] = V[v] * L + V[w]
+                else:
+                    d[(v, w)] = V[v] * L + V[w]
+        return SimplicialComplex(facets, immutable=immutable, sort_facets=d)
 
-    def join(self, right, rename_vertices=True, is_mutable=True):
+    def join(self, right, rename_vertices=True, immutable=False):
         """
         The join of this simplicial complex with another one.
 
@@ -1868,8 +1857,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
           renaming the vertices; this will cause problems if the two factors
           have any vertices with names in common.
 
-        - ``is_mutable`` -- boolean (default: ``True``); determine whether the
-          output is mutable
+        - ``immutable`` -- boolean (default: ``False``); determines whether the
+          output is immutable
 
         EXAMPLES::
 
@@ -1892,19 +1881,19 @@ class SimplicialComplex(Parent, GenericCellComplex):
         for f in self._facets:
             for g in right._facets:
                 facets.append(f.join(g, rename_vertices))
-        return SimplicialComplex(facets, is_mutable=is_mutable)
+        return SimplicialComplex(facets, immutable=immutable)
 
     # Use * to mean 'join':
     __mul__ = join
 
-    def cone(self, is_mutable=True):
+    def cone(self, immutable=False):
         """
         The cone on this simplicial complex.
 
         INPUT:
 
-        - ``is_mutable`` -- boolean (default: ``True``); determines whether
-          the output is mutable
+        - ``immutable`` -- boolean (default: ``False``); determines whether
+          the output is immutable
 
         The cone is the simplicial complex formed by adding a new
         vertex `C` and simplices of the form `[C, v_0, ..., v_k]` for
@@ -1923,10 +1912,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: CS.facets() == set([Simplex(['L0', 'R0']), Simplex(['L1', 'R0'])])
             True
         """
-        return self.join(SimplicialComplex([["0"]], is_mutable=is_mutable),
+        return self.join(SimplicialComplex([["0"]], immutable=immutable),
                          rename_vertices=True)
 
-    def suspension(self, n=1, is_mutable=True):
+    def suspension(self, n=1, immutable=False):
         r"""
         The suspension of this simplicial complex.
 
@@ -1934,8 +1923,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         - ``n`` -- positive integer (default: 1); suspend this many times
 
-        - ``is_mutable`` -- boolean (default: ``True``); determine whether
-          the output is mutable
+        - ``immutable`` -- boolean (default: ``False``); determines whether
+          the output is immutable
 
         The suspension is the simplicial complex formed by adding two
         new vertices `S_0` and `S_1` and simplices of the form `[S_0,
@@ -1997,12 +1986,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         new_facets.append(f.join(Simplex([u]), rename_vertices=False))
                     new_facets.append(f.join(w, rename_vertices=False))
                 return SimplicialComplex(new_facets)
-            else:
-                return self.join(SimplicialComplex([["0"], ["1"]], is_mutable=is_mutable),
-                                 rename_vertices=True)
-        return self.suspension(1, is_mutable).suspension(int(n-1), is_mutable)
+            return self.join(SimplicialComplex([["0"], ["1"]], immutable=immutable),
+                             rename_vertices=True)
+        return self.suspension(1, immutable).suspension(int(n-1), immutable)
 
-    def disjoint_union(self, right, is_mutable=True):
+    def disjoint_union(self, right, immutable=False):
         """
         The disjoint union of this simplicial complex with another one.
 
@@ -2019,9 +2007,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         facets = [tuple(f"L{v}" for v in f) for f in self._facets]
         facets.extend(tuple(f"R{v}" for v in f) for f in right._facets)
-        return SimplicialComplex(facets, is_mutable=is_mutable)
+        return SimplicialComplex(facets, immutable=immutable)
 
-    def wedge(self, right, rename_vertices=True, is_mutable=True):
+    def wedge(self, right, rename_vertices=True, immutable=False):
         """
         The wedge (one-point union) of this simplicial complex with
         another one.
@@ -2039,8 +2027,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
           the vertices; this will cause problems if the two factors have any
           vertices with names in common.
 
-        - ``is_mutable`` -- boolean (default: ``True``); determine whether
-          the output is mutable
+        - ``immutable`` -- boolean (default: ``False``); determines whether
+          the output is immutable
 
         .. NOTE::
 
@@ -2073,7 +2061,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 facets.append(tuple([right_dict[v] for v in f]))
         else:
             facets = self._facets + right._facets
-        return SimplicialComplex(facets, is_mutable=is_mutable)
+        return SimplicialComplex(facets, immutable=immutable)
 
     def chain_complex(self, subcomplex=None, augmented=False,
                       verbose=False, check=False, dimensions=None,
@@ -2124,14 +2112,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         # initialize subcomplex
         if subcomplex is None:
-            subcomplex = SimplicialComplex(is_mutable=False)
+            subcomplex = SimplicialComplex(immutable=True)
         else:
             # subcomplex is not empty, so don't augment the chain complex
             augmented = False
             # Use an immutable copy of the subcomplex
             if subcomplex._is_immutable:
                 subcomplex = SimplicialComplex(subcomplex._facets, maximality_check=False,
-                                               is_mutable=False)
+                                               immutable=True)
         # now construct the range of dimensions in which to compute
         if dimensions is None:
             dimensions = range(self.dimension() + 1)
@@ -2229,9 +2217,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if cochain:
             return ChainComplex(data=differentials, degree=1,
                                 base_ring=base_ring, check=check)
-        else:
-            return ChainComplex(data=differentials, degree=-1,
-                                base_ring=base_ring, check=check)
+        return ChainComplex(data=differentials, degree=-1,
+                            base_ring=base_ring, check=check)
 
     def _homology_(self, dim=None, base_ring=ZZ, subcomplex=None,
                    cohomology=False, enlarge=True, algorithm='pari',
@@ -2874,15 +2861,15 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         return all(f in other for f in self.facets())
 
-    def connected_sum(self, other, is_mutable=True):
+    def connected_sum(self, other, immutable=False):
         """
         The connected sum of this simplicial complex with another one.
 
         INPUT:
 
         - ``other`` -- another simplicial complex
-        - ``is_mutable`` -- boolean (default: ``True``); determine whether
-          the output is mutable
+        - ``immutable`` -- boolean (default: ``False``); determines whether
+          the output is immutable
 
         OUTPUT: the connected sum ``self # other``
 
@@ -2933,11 +2920,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
                      + [[rename_vertex(v, keep=list(keep_right), left=False)
                          for v in face] for face in right])
         # return the new surface
-        return SimplicialComplex(facet_set, is_mutable=is_mutable)
+        return SimplicialComplex(facet_set, immutable=immutable)
 
     __add__ = connected_sum
 
-    def link(self, simplex, is_mutable=True):
+    def link(self, simplex, immutable=None):
         r"""
         The link of a simplex in this simplicial complex.
 
@@ -2948,8 +2935,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``simplex`` -- a simplex in this simplicial complex
-        - ``is_mutable`` -- boolean (default: ``True``); determine whether
-          the output is mutable
+        - ``immutable`` -- boolean (default: inherited by parent); determines
+          whether the output is immutable
 
         EXAMPLES::
 
@@ -2961,15 +2948,22 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y = SimplicialComplex([[0,1,2,3]])
             sage: Y.link([1])
             Simplicial complex with vertex set (0, 2, 3) and facets {(0, 2, 3)}
+
+        TESTS::
+
+            sage: C = SimplicialComplex([[0, 1], [1, 2]], immutable=True)
+            sage: assert C.link([1]).is_immutable()
         """
         faces = []
         s = Simplex(simplex)
         for f in self._facets:
             if s.is_face(f):
                 faces.append(Simplex(f.set().difference(s.set())))
-        return SimplicialComplex(faces, is_mutable=is_mutable)
+        if immutable is None:
+            immutable = self._is_immutable
+        return SimplicialComplex(faces, immutable=immutable)
 
-    def star(self, simplex, is_mutable=True):
+    def star(self, simplex, immutable=None):
         """
         Return the star of a simplex in this simplicial complex.
 
@@ -2979,8 +2973,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``simplex`` -- a simplex in this simplicial complex
-        - ``is_mutable`` -- boolean (default: ``True``); determines if the output
-          is mutable
+        - ``immutable`` -- boolean (default: inherited by parent); determines
+          whether the output is immutable
 
         EXAMPLES::
 
@@ -2999,7 +2993,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         for f in self._facets:
             if s.is_face(f):
                 faces.append(f)
-        return SimplicialComplex(faces, is_mutable=is_mutable)
+        if immutable is None:
+            immutable = self._is_immutable
+        return SimplicialComplex(faces, immutable=immutable)
 
     def is_cohen_macaulay(self, base_ring=QQ, ncpus=0) -> bool:
         r"""
@@ -3064,8 +3060,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             H = S.homology(base_ring=base_ring)
             if base_ring in Fields():
                 return all(H[j].dimension() == 0 for j in range(S.dimension()))
-            else:
-                return not any(H[j].invariants() for j in range(S.dimension()))
+            return not any(H[j].invariants() for j in range(S.dimension()))
 
         @parallel(ncpus=ncpus)
         def all_homologies_in_list_vanish(Fs):
@@ -3073,7 +3068,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         return all(answer[1] for answer in all_homologies_in_list_vanish(facs_divided))
 
-    def generated_subcomplex(self, sub_vertex_set, is_mutable=True):
+    def generated_subcomplex(self, sub_vertex_set, immutable=None):
         """
         Return the largest sub-simplicial complex of ``self`` containing
         exactly ``sub_vertex_set`` as vertices.
@@ -3081,8 +3076,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``sub_vertex_set`` -- the sub-vertex set
-        - ``is_mutable`` -- boolean (default: ``True``); determine whether
-          the output is mutable
+        - ``immutable`` -- boolean (default: inherited by parent); determines
+          whether the output is immutable
 
         EXAMPLES::
 
@@ -3099,8 +3094,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
             for j in self.faces()[i]:
                 if j.set().issubset(sub_vertex_set):
                     faces.append(j)
+        if immutable is None:
+            immutable = self._is_immutable
         return SimplicialComplex(faces, maximality_check=True,
-                                 is_mutable=is_mutable)
+                                 immutable=immutable)
 
     def is_shelling_order(self, shelling_order, certificate=False) -> bool:
         r"""
@@ -3576,7 +3573,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             products.append(prod)
         return R.quotient(products)
 
-    def alexander_dual(self, is_mutable=True):
+    def alexander_dual(self, immutable=False):
         """
         The Alexander dual of this simplicial complex: according to
         the Macaulay2 documentation, this is the simplicial complex
@@ -3587,8 +3584,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``is_mutable`` -- boolean (default: ``True``); determine whether
-          the output is mutable
+        - ``immutable`` -- boolean (default: ``False``); determines whether
+          the output is immutable
 
         EXAMPLES::
 
@@ -3602,7 +3599,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 2), (1, 3)}
         """
         nonfaces = self.minimal_nonfaces()
-        return SimplicialComplex([self._complement(f) for f in nonfaces], is_mutable=is_mutable)
+        return SimplicialComplex([self._complement(f) for f in nonfaces], immutable=immutable)
 
     def barycentric_subdivision(self):
         """
@@ -3630,7 +3627,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         return self.face_poset().order_complex()
 
-    def stellar_subdivision(self, simplex, inplace=False, is_mutable=True):
+    def stellar_subdivision(self, simplex, inplace=False, immutable=False):
         """
         Return the stellar subdivision of a simplex in this simplicial complex.
 
@@ -3643,8 +3640,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         - ``simplex`` -- a simplex face of ``self``
         - ``inplace`` -- boolean (default: ``False``); determines if the
           operation is done on ``self`` or on a copy
-        - ``is_mutable`` -- boolean (default: ``True``); determines if the
-          output is mutable
+        - ``immutable`` -- boolean (default: ``False``); determines if the
+          output is immutable
 
         OUTPUT:
 
@@ -3681,7 +3678,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         One can not modify an immutable simplicial complex::
 
-            sage: SC = SimplicialComplex([[0,1,2],[1,2,3]], is_mutable=False)
+            sage: SC = SimplicialComplex([[0,1,2],[1,2,3]], immutable=True)
             sage: SC.stellar_subdivision(F1, inplace=True)
             Traceback (most recent call last):
             ...
@@ -3714,7 +3711,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         working_complex.remove_face(simplex)
 
-        if not is_mutable:
+        if immutable:
             working_complex.set_immutable()
 
         if not inplace:
@@ -3853,7 +3850,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # make sure it's a list (it will be a tuple if immutable)
         facets = [f for f in self._facets if f.dimension() < n]
         facets.extend(self.faces()[n])
-        return SimplicialComplex(facets, is_immutable=self._is_immutable)
+        return SimplicialComplex(facets, immutable=self._is_immutable)
 
     def _contractible_subcomplex(self, verbose=False):
         """
@@ -3896,7 +3893,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             {0: 0, 1: 0, 2: 0}
         """
         facets = [sorted(self._facets, key=str)[0]]
-        return self._enlarge_subcomplex(SimplicialComplex(facets, is_mutable=False), verbose=verbose)
+        return self._enlarge_subcomplex(SimplicialComplex(facets, immutable=True), verbose=verbose)
 
     def _enlarge_subcomplex(self, subcomplex, verbose=False):
         """
@@ -3929,7 +3926,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         Inside the torus, define a subcomplex consisting of a loop::
 
-            sage: S = SimplicialComplex([[0,1], [1,2], [0,2]], is_mutable=False)
+            sage: S = SimplicialComplex([[0,1], [1,2], [0,2]], immutable=True)
             sage: S.homology()                                                          # needs sage.modules
             {0: 0, 1: Z}
             sage: L = T._enlarge_subcomplex(S)
@@ -3944,7 +3941,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if subcomplex is not None and not subcomplex._is_immutable:
             subcomplex = SimplicialComplex(subcomplex._facets,
                                            maximality_check=False,
-                                           is_mutable=False)
+                                           immutable=True)
 
         if subcomplex in self.__enlarged:
             return self.__enlarged[subcomplex]
@@ -4006,7 +4003,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if verbose:
             print("  now constructing a simplicial complex with {} vertices and {} facets".format(len(self.vertices()), len(new_facets)))
         L = SimplicialComplex(new_facets, maximality_check=False,
-                              is_immutable=self._is_immutable)
+                              immutable=self._is_immutable)
         self.__enlarged[subcomplex] = L
         # Use the same sorting on the vertices in L as in the ambient complex.
         L._vertex_to_index = self._vertex_to_index
@@ -4209,7 +4206,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             return self.connected_component(Simplex([base_point])).fundamental_group(simplify=simplify)
 
         from sage.groups.free_group import FreeGroup
-        from sage.libs.gap.libgap import libgap as gap
+        from sage.libs.gap.libgap import libgap
         G = self.graph()
         # Edges in the graph may be sorted differently than in the
         # simplicial complex, so convert the edges to frozensets so we
@@ -4219,7 +4216,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         gens = [e for e in G.edge_iterator(labels=False)
                 if frozenset(e) not in spanning_tree]
         if not gens:
-            return gap.TrivialGroup()
+            return libgap.TrivialGroup()
 
         gens_dict = {frozenset(g): i for i, g in enumerate(gens)}
         FG = FreeGroup(len(gens), 'e')
@@ -4236,8 +4233,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             rels.append(z[0]*z[1].inverse()*z[2])
         if simplify:
             return FG.quotient(rels).simplified()
-        else:
-            return FG.quotient(rels)
+        return FG.quotient(rels)
 
     def is_isomorphic(self, other, certificate=False) -> bool:
         r"""
@@ -4598,10 +4594,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S.set_immutable()
             sage: S.is_mutable()
             False
-            sage: S2 = SimplicialComplex([[1,4], [2,4]], is_mutable=False)
+            sage: S2 = SimplicialComplex([[1,4], [2,4]], immutable=True)
             sage: S2.is_mutable()
             False
-            sage: S3 = SimplicialComplex([[1,4], [2,4]], is_mutable=False)
+            sage: S3 = SimplicialComplex([[1,4], [2,4]], immutable=True)
             sage: S3.is_mutable()
             False
         """
@@ -4720,8 +4716,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             C = Skel.coloring()
             C = C if len(C) == d else False
             return C
-        else:
-            return Skel.chromatic_number() == d
+        return Skel.chromatic_number() == d
 
     def is_partitionable(self, certificate=False,
                          *, solver=None, integrality_tolerance=1e-3):
@@ -4812,11 +4807,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         sol = round(IP.solve())
         if sol < sum(self.f_vector()):
             return False
-        elif not certificate:
+        if not certificate:
             return True
-        else:
-            x = IP.get_values(y, convert=bool, tolerance=integrality_tolerance)
-            return [RFPairs[i] for i in range(n) if x[i]]
+        x = IP.get_values(y, convert=bool, tolerance=integrality_tolerance)
+        return [RFPairs[i] for i in range(n) if x[i]]
 
     def intersection(self, other):
         r"""
@@ -4999,7 +4993,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if base_ring in self._bbn and not verbose:
             if base_ring in self._bbn_all_computed:
                 return self._bbn[base_ring].get((a, b), ZZ.zero())
-            elif (a, b) in self._bbn[base_ring]:
+            if (a, b) in self._bbn[base_ring]:
                 return self._bbn[base_ring][a, b]
 
         from sage.homology.homology_group import HomologyGroup

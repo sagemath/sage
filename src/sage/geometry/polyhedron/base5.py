@@ -781,8 +781,7 @@ class Polyhedron_base5(Polyhedron_base4):
             new_rays = self.rays() + other.rays()
             new_lines = self.lines() + other.lines()
             return self.parent().element_class(self.parent(), [new_vertices, new_rays, new_lines], None)
-        else:
-            return self.parent().element_class(self.parent(), None, None)
+        return self.parent().element_class(self.parent(), None, None)
 
     _add_ = minkowski_sum
 
@@ -1435,8 +1434,7 @@ class Polyhedron_base5(Polyhedron_base4):
             if self.base_ring() is ZZ:
                 parent = parent.base_extend(QQ)
                 return parent.element_class(parent, None, [new_ieqs, new_eqns])
-            else:
-                raise TypeError(msg)
+            raise TypeError(msg)
 
     __and__ = intersection
 
@@ -1499,9 +1497,9 @@ class Polyhedron_base5(Polyhedron_base4):
         """
         if isinstance(actor, Polyhedron_base5):
             return self.product(actor)
-        elif isinstance(actor, Vector):
+        if isinstance(actor, Vector):
             return self.translation(actor)
-        elif isinstance(actor, Matrix):
+        if isinstance(actor, Matrix):
             if self_on_left:
                 raise ValueError("matrices should act on the left")
             else:
@@ -2666,7 +2664,6 @@ class Polyhedron_base5(Polyhedron_base4):
         from sage.geometry.polyhedron.face import PolyhedronFace
         if isinstance(vertex, Vertex):
             return self.face_split(vertex)
-        elif isinstance(vertex, PolyhedronFace) and vertex.dim() == 0:
+        if isinstance(vertex, PolyhedronFace) and vertex.dim() == 0:
             return self.face_split(vertex)
-        else:
-            raise TypeError("the vertex {} should be a Vertex or PolyhedronFace of dimension 0".format(vertex))
+        raise TypeError("the vertex {} should be a Vertex or PolyhedronFace of dimension 0".format(vertex))

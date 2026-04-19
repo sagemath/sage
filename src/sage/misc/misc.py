@@ -523,16 +523,15 @@ def some_tuples(elements, repeat, bound, max_samples=None):
 
         P = elements if repeat is None else product(elements, repeat=repeat)
         return islice(P, int(bound))
-    else:
-        if not (hasattr(elements, '__len__') and hasattr(elements, '__getitem__')):
-            elements = list(elements)
-        n = len(elements)
-        N = n if repeat is None else n**repeat
-        if N <= max_samples:
-            from itertools import product
+    if not (hasattr(elements, '__len__') and hasattr(elements, '__getitem__')):
+        elements = list(elements)
+    n = len(elements)
+    N = n if repeat is None else n**repeat
+    if N <= max_samples:
+        from itertools import product
 
-            return elements if repeat is None else product(elements, repeat=repeat)
-        return _some_tuples_sampling(elements, repeat, max_samples, n)
+        return elements if repeat is None else product(elements, repeat=repeat)
+    return _some_tuples_sampling(elements, repeat, max_samples, n)
 
 
 def _some_tuples_sampling(elements, repeat, max_samples, n):

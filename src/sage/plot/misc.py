@@ -185,25 +185,24 @@ def setup_for_eval_on_grid(funcs,
         if hasattr(f, '_fast_callable_'):
             ff = fast_callable(f, vars=vars, expect_one_var=eov, domain=CDF)
             return FastCallablePlotWrapper(ff, imag_tol=imaginary_tolerance)
-        elif isinstance(f, Wrapper_cdf):
+        if isinstance(f, Wrapper_cdf):
             # Already a fast-callable, just wrap it. This can happen
             # if, for example, a symbolic expression is passed to a
             # higher-level plot() function that converts it to a
             # fast-callable with expr._plot_fast_callable() before
             # we ever see it.
             return FastCallablePlotWrapper(f, imag_tol=imaginary_tolerance)
-        elif callable(f):
+        if callable(f):
             # This will catch python functions, among other things. We don't
             # wrap these yet because we don't know what type they'll return.
             return f
-        else:
-            # Convert things like ZZ(0) into constant functions.
-            from sage.symbolic.ring import SR
-            ff = fast_callable(SR(f),
-                               vars=vars,
-                               expect_one_var=eov,
-                               domain=CDF)
-            return FastCallablePlotWrapper(ff, imag_tol=imaginary_tolerance)
+        # Convert things like ZZ(0) into constant functions.
+        from sage.symbolic.ring import SR
+        ff = fast_callable(SR(f),
+                           vars=vars,
+                           expect_one_var=eov,
+                           domain=CDF)
+        return FastCallablePlotWrapper(ff, imag_tol=imaginary_tolerance)
 
     # Handle vectors, lists, tuples, etc.
     if isinstance(funcs, Iterable):
@@ -219,10 +218,9 @@ def setup_for_eval_on_grid(funcs,
                 [tuple(_range + [range_step])
                  for _range, range_step in zip(ranges, range_steps)],
                 vars)
-    else:
-        return (funcs,
-                [tuple(_range + [range_step])
-                 for _range, range_step in zip(ranges, range_steps)])
+    return (funcs,
+            [tuple(_range + [range_step])
+             for _range, range_step in zip(ranges, range_steps)])
 
 
 def unify_arguments(funcs):
@@ -421,47 +419,44 @@ def get_matplotlib_linestyle(linestyle, return_type):
 
     if linestyle.startswith("default"):
         return get_matplotlib_linestyle(linestyle.removeprefix("default"), "short")
-    elif linestyle.startswith("steps"):
+    if linestyle.startswith("steps"):
         if linestyle.startswith("steps-mid"):
             return "steps-mid" + get_matplotlib_linestyle(
                 linestyle.removeprefix("steps-mid"), "short")
-        elif linestyle.startswith("steps-post"):
+        if linestyle.startswith("steps-post"):
             return "steps-post" + get_matplotlib_linestyle(
                 linestyle.removeprefix("steps-post"), "short")
-        elif linestyle.startswith("steps-pre"):
+        if linestyle.startswith("steps-pre"):
             return "steps-pre" + get_matplotlib_linestyle(
                 linestyle.removeprefix("steps-pre"), "short")
-        else:
-            return "steps" + get_matplotlib_linestyle(
-                linestyle.removeprefix("steps"), "short")
+        return "steps" + get_matplotlib_linestyle(
+            linestyle.removeprefix("steps"), "short")
 
     if return_type == 'short':
         if linestyle in short_to_long_dict.keys():
             return linestyle
-        elif linestyle == "" or linestyle == " " or linestyle == "None":
+        if linestyle == "" or linestyle == " " or linestyle == "None":
             return ''
-        elif linestyle in long_to_short_dict.keys():
+        if linestyle in long_to_short_dict.keys():
             return long_to_short_dict[linestyle]
-        else:
-            raise ValueError("WARNING: Unrecognized linestyle '%s'. "
-                             "Possible linestyle options are:\n{'solid', "
-                             "'dashed', 'dotted', dashdot', 'None'}, "
-                             "respectively {'-', '--', ':', '-.', ''}" %
-                             (linestyle))
+        raise ValueError("WARNING: Unrecognized linestyle '%s'. "
+                         "Possible linestyle options are:\n{'solid', "
+                         "'dashed', 'dotted', dashdot', 'None'}, "
+                         "respectively {'-', '--', ':', '-.', ''}" %
+                         (linestyle))
 
     elif return_type == 'long':
         if linestyle in long_to_short_dict.keys():
             return linestyle
-        elif linestyle == "" or linestyle == " " or linestyle == "None":
+        if linestyle == "" or linestyle == " " or linestyle == "None":
             return "None"
-        elif linestyle in short_to_long_dict.keys():
+        if linestyle in short_to_long_dict.keys():
             return short_to_long_dict[linestyle]
-        else:
-            raise ValueError("WARNING: Unrecognized linestyle '%s'. "
-                             "Possible linestyle options are:\n{'solid', "
-                             "'dashed', 'dotted', dashdot', 'None'}, "
-                             "respectively {'-', '--', ':', '-.', ''}" %
-                             (linestyle))
+        raise ValueError("WARNING: Unrecognized linestyle '%s'. "
+                         "Possible linestyle options are:\n{'solid', "
+                         "'dashed', 'dotted', dashdot', 'None'}, "
+                         "respectively {'-', '--', ':', '-.', ''}" %
+                         (linestyle))
 
 
 class FastCallablePlotWrapper(FastCallableFloatWrapper):

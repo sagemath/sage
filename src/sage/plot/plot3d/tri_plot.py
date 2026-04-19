@@ -172,8 +172,7 @@ class TriangleFactory:
         """
         if color is None:
             return Triangle(a,b,c)
-        else:
-            return Triangle(a,b,c,color)
+        return Triangle(a,b,c,color)
 
     def smooth_triangle(self, a, b, c, da, db, dc, color=None):
         """
@@ -195,8 +194,7 @@ class TriangleFactory:
         """
         if color is None:
             return SmoothTriangle(a,b,c,da,db,dc)
-        else:
-            return SmoothTriangle(a,b,c,da,db,dc,color)
+        return SmoothTriangle(a,b,c,da,db,dc,color)
 
     def get_colors(self, list):
         """

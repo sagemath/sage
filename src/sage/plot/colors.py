@@ -324,11 +324,10 @@ def rgbcolor(c, space='rgb'):
         if len(c) > 0 and c[0] == '#':
             # Assume an HTML-like color, e.g., #00ffff or #ab0.
             return html_to_float(c)
-        else:
-            try:
-                return colors[c].rgb()
-            except KeyError:
-                raise ValueError("unknown color '%s'" % c)
+        try:
+            return colors[c].rgb()
+        except KeyError:
+            raise ValueError("unknown color '%s'" % c)
 
     elif isinstance(c, (list, tuple)):
         if len(c) != 3:
@@ -336,14 +335,13 @@ def rgbcolor(c, space='rgb'):
         c = [mod_one(comp) for comp in c]
         if space == 'rgb':
             return tuple(c)
-        elif space == 'hsv':
+        if space == 'hsv':
             return tuple(map(float, hsv_to_rgb(*c)))
-        elif space == 'hls':
+        if space == 'hls':
             return tuple(map(float, hls_to_rgb(*c)))
-        elif space == 'hsl':
+        if space == 'hsl':
             return tuple(map(float, hls_to_rgb(c[0], c[2], c[1])))
-        else:
-            raise ValueError("space must be one of 'rgb', 'hsv', 'hsl', 'hls'")
+        raise ValueError("space must be one of 'rgb', 'hsv', 'hsl', 'hls'")
 
     raise TypeError("'%s' must be a Color, list, tuple, or string" % c)
 
@@ -1252,7 +1250,7 @@ def rainbow(n, format='hex'):
 
     if format == 'rgbtuple':
         return R
-    elif format == 'hex':
+    if format == 'hex':
         for j in range(len(R)):
             R[j] = float_to_html(*R[j])
         return R
@@ -1311,7 +1309,7 @@ def get_cmap(cmap):
     if isinstance(cmap, Colormap):
         return cmap
 
-    elif isinstance(cmap, str):
+    if isinstance(cmap, str):
         from matplotlib import colormaps
         try:
             return colormaps[cmap]
@@ -1350,10 +1348,9 @@ def check_color_data(cfcm):
     from matplotlib.colors import Colormap
     if isinstance(cm, Colormap):
         return cf, cm
-    elif isinstance(cf, Colormap):
+    if isinstance(cf, Colormap):
         return cm, cf
-    else:
-        raise ValueError('color data must be (color function, colormap)')
+    raise ValueError('color data must be (color function, colormap)')
 
 
 class Colormaps(MutableMapping):

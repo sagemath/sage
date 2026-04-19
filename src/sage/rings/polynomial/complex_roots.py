@@ -293,9 +293,9 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
             all_rts = sort_complex_numbers_for_display(all_rts)
             if retval == 'interval':
                 return [(rt, mult) for (rt, fac, mult) in all_rts]
-            elif retval == 'algebraic':
+            if retval == 'algebraic':
                 return [(QQbar.polynomial_root(fac, rt), mult) for (rt, fac, mult) in all_rts]
-            elif retval == 'algebraic_real':
+            if retval == 'algebraic_real':
                 rts = []
                 for (rt, fac, mult) in all_rts:
                     qqbar_rt = QQbar.polynomial_root(fac, rt)

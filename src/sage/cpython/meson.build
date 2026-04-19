@@ -1,6 +1,5 @@
 py.install_sources(
   '__init__.py',
-  '_py2_random.py',
   'all.py',
   'atexit.pyx',
   'builtin_types.pyx',

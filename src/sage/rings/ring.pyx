@@ -535,62 +535,6 @@ cdef class CommutativeRing(Ring):
             self.__fraction_field = K
         return self.__fraction_field
 
-    def extension(self, poly, name=None, names=None, **kwds):
-        """
-        Algebraically extend ``self`` by taking the quotient
-        ``self[x] / (f(x))``.
-
-        INPUT:
-
-        - ``poly`` -- a polynomial whose coefficients are coercible into
-          ``self``
-
-        - ``name`` -- (optional) name for the root of `f`
-
-        .. NOTE::
-
-            Using this method on an algebraically complete field does *not*
-            return this field; the construction ``self[x] / (f(x))`` is done
-            anyway.
-
-        EXAMPLES::
-
-            sage: R = QQ['x']
-            sage: y = polygen(R)
-            sage: R.extension(y^2 - 5, 'a')                                             # needs sage.libs.pari
-            Univariate Quotient Polynomial Ring in a over
-             Univariate Polynomial Ring in x over Rational Field with modulus a^2 - 5
-
-        ::
-
-            sage: P.<x> = PolynomialRing(GF(5))
-            sage: F.<a> = GF(5).extension(x^2 - 2)
-            sage: P.<t> = F[]
-            sage: R.<b> = F.extension(t^2 - a); R
-            Univariate Quotient Polynomial Ring in b over
-             Finite Field in a of size 5^2 with modulus b^2 + 4*a
-        """
-        from sage.rings.polynomial.polynomial_element import Polynomial
-        if not isinstance(poly, Polynomial):
-            try:
-                poly = poly.polynomial(self)
-            except (AttributeError, TypeError):
-                raise TypeError("polynomial (=%s) must be a polynomial." % repr(poly))
-        if names is not None:
-            name = names
-        if isinstance(name, tuple):
-            name = name[0]
-        if name is None:
-            name = str(poly.parent().gen(0))
-        for key, val in kwds.items():
-            if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_name', 'latex_names']:
-                raise TypeError("extension() got an unexpected keyword argument '%s'" % key)
-            if not (val is None or isinstance(val, list) and all(c is None for c in val)):
-                raise NotImplementedError("ring extension with prescribed %s is not implemented" % key)
-        R = self[name]
-        I = R.ideal(R(poly.list()))
-        return R.quotient(I, name)
-
 
 cdef class IntegralDomain(CommutativeRing):
     _default_category = IntegralDomains()

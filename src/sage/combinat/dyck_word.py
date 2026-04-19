@@ -524,7 +524,7 @@ class DyckWord(CombinatorialElement):
             if labelling is not None or underpath is not True:
                 raise ValueError("the labelling cannot be shown with Northeast-Southeast paths")
             return self.to_path_string()
-        elif type == "N-E":
+        if type == "N-E":
             alst = self.to_area_sequence()
             n = len(alst)
             if n == 0:
@@ -562,8 +562,7 @@ class DyckWord(CombinatorialElement):
             else:
                 row += "| " + " ." * (n - 1) + labels[-1] + "\n"
             return row
-        else:
-            raise ValueError("the given type (=%s) is not valid" % type)
+        raise ValueError("the given type (=%s) is not valid" % type)
 
     def _ascii_art_(self):
         r"""
@@ -1422,8 +1421,7 @@ class DyckWord(CombinatorialElement):
         touches = self.touch_points()
         if not touches:
             return 0
-        else:
-            return touches[0]
+        return touches[0]
 
     def positions_of_double_rises(self) -> list:
         r"""
@@ -2101,22 +2099,21 @@ class DyckWord_complete(DyckWord):
         n = self.semilength()
         if n == 0:
             return (Tableau([]), Tableau([]))  # type:ignore
-        elif self.height() == n:
+        if self.height() == n:
             T = Tableau([list(range(1, n + 1))])  # type:ignore
             return (T, T)
-        else:
-            left: list[list[int]] = [[], []]
-            right: list[list[int]] = [[], []]
-            for pos in range(n):
-                if self[pos] == open_symbol:
-                    left[0].append(pos + 1)
-                else:
-                    left[1].append(pos + 1)
-                if self[-pos - 1] == close_symbol:
-                    right[0].append(pos + 1)
-                else:
-                    right[1].append(pos + 1)
-            return (Tableau(left), Tableau(right))  # type:ignore
+        left: list[list[int]] = [[], []]
+        right: list[list[int]] = [[], []]
+        for pos in range(n):
+            if self[pos] == open_symbol:
+                left[0].append(pos + 1)
+            else:
+                left[1].append(pos + 1)
+            if self[-pos - 1] == close_symbol:
+                right[0].append(pos + 1)
+            else:
+                right[1].append(pos + 1)
+        return (Tableau(left), Tableau(right))  # type:ignore
 
     @combinatorial_map(name='to 312 avoiding permutation')
     def to_312_avoiding_permutation(self) -> Permutation:
@@ -2336,14 +2333,13 @@ class DyckWord_complete(DyckWord):
         """
         if map == "Bandlow-Killpatrick":
             return self.to_312_avoiding_permutation()
-        elif map == "Knuth":
+        if map == "Knuth":
             return self.to_321_avoiding_permutation()
-        elif map == "Krattenthaler":
+        if map == "Krattenthaler":
             return self.to_132_avoiding_permutation()
-        elif map == "Stump":
+        if map == "Stump":
             return self.to_noncrossing_permutation()
-        else:
-            raise ValueError("the given map is not valid")
+        raise ValueError("the given map is not valid")
 
     def to_noncrossing_partition(self, bijection=None):
         r"""
@@ -3291,8 +3287,7 @@ class DyckWords(UniqueRepresentation, Parent):
             if k1 < 0:
                 raise ValueError("k1 (= %s) must be nonnegative" % k1)
             return CompleteDyckWords_size(k1)
-        else:
-            k1 = Integer(k1)
+        k1 = Integer(k1)
 
         k2 = Integer(k2)
         if k1 < 0 or (k2 is not None and k2 < 0):
@@ -4341,8 +4336,7 @@ def pealing(D, return_touches=False):
     D = DyckWords().from_area_sequence(new_area)
     if return_touches:
         return (D, touch_sequences)
-    else:
-        return D
+    return D
 
 
 from sage.misc.persist import register_unpickle_override

@@ -745,7 +745,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
             print("http://www.imagemagick.org to download these programs.")
             return "Error"
         # if png output + [pdf|xe|lua]latex, check to see if magick/convert is installed.
-        elif engine in ["pdflatex", "xelatex", "lualatex"]:
+        if engine in ["pdflatex", "xelatex", "lualatex"]:
             ImageMagick().require()
     # check_validity: check to see if the dvi file is okay by trying
     # to convert to a png file.  if this fails, return_suffix will be
@@ -1230,11 +1230,10 @@ class Latex(LatexCall):
         """
         if left is None and right is None:
             return _Latex_prefs._option['matrix_delimiters']
-        else:
-            if left is not None:
-                _Latex_prefs._option['matrix_delimiters'][0] = left
-            if right is not None:
-                _Latex_prefs._option['matrix_delimiters'][1] = right
+        if left is not None:
+            _Latex_prefs._option['matrix_delimiters'][0] = left
+        if right is not None:
+            _Latex_prefs._option['matrix_delimiters'][1] = right
 
     def vector_delimiters(self, left=None, right=None):
         r"""nodetex
@@ -1286,11 +1285,10 @@ class Latex(LatexCall):
         """
         if left is None and right is None:
             return _Latex_prefs._option['vector_delimiters']
-        else:
-            if left is not None:
-                _Latex_prefs._option['vector_delimiters'][0] = left
-            if right is not None:
-                _Latex_prefs._option['vector_delimiters'][1] = right
+        if left is not None:
+            _Latex_prefs._option['vector_delimiters'][0] = left
+        if right is not None:
+            _Latex_prefs._option['vector_delimiters'][1] = right
 
     def matrix_column_alignment(self, align=None):
         r"""nodetex
@@ -1336,8 +1334,7 @@ class Latex(LatexCall):
         """
         if align is None:
             return _Latex_prefs._option['matrix_column_alignment']
-        else:
-            _Latex_prefs._option['matrix_column_alignment'] = align
+        _Latex_prefs._option['matrix_column_alignment'] = align
 
     @cached_method
     def has_file(self, file_name) -> bool:
@@ -1422,8 +1419,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
         """
         if macros is None:
             return _Latex_prefs._option['macros']
-        else:
-            _Latex_prefs._option['macros'] = macros
+        _Latex_prefs._option['macros'] = macros
 
     def add_macro(self, macro):
         r"""nodetex
@@ -1477,8 +1473,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
         """
         if s is None:
             return _Latex_prefs._option['preamble']
-        else:
-            _Latex_prefs._option['preamble'] = s
+        _Latex_prefs._option['preamble'] = s
 
     def add_to_preamble(self, s):
         r"""nodetex
@@ -1586,8 +1581,7 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
             e = _Latex_prefs._option["engine"]
             if e is None:
                 return _default_engine()
-            else:
-                return e
+            return e
 
         if e not in ["latex", "pdflatex", "xelatex", "luatex"]:
             raise ValueError("%s is not a supported LaTeX engine. Use latex, pdflatex, xelatex, or lualatex" % e)
@@ -2273,14 +2267,13 @@ def latex_varify(a, is_fname=False):
     """
     if a in common_varnames:
         return "\\" + a
-    elif len(a) == 0:
+    if len(a) == 0:
         return ''
-    elif len(a) == 1:
+    if len(a) == 1:
         return a
-    elif is_fname is True:
+    if is_fname is True:
         return '{\\rm %s}' % a
-    else:
-        return '\\mathit{%s}' % a
+    return '\\mathit{%s}' % a
 
 
 def latex_variable_name(x, is_fname=False):
@@ -2376,8 +2369,7 @@ def latex_variable_name(x, is_fname=False):
         if suffix.strip("1234567890") != "":
             suffix = latex_variable_name(suffix, is_fname)  # recurse to deal with recursive subscripts
         return '%s_{%s}' % (latex_varify(prefix, is_fname), suffix)
-    else:
-        return latex_varify(prefix, is_fname)
+    return latex_varify(prefix, is_fname)
 
 
 class LatexExamples:

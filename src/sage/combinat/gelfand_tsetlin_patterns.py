@@ -1063,8 +1063,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
         """
         if self._strict:
             return [[self._k - j for j in range(self._n - i)] for i in range(self._n)]
-        else:
-            return [[self._k for j in range(self._n - i)] for i in range(self._n)]
+        return [[self._k for j in range(self._n - i)] for i in range(self._n)]
 
     def _cftp_lower(self):
         """
@@ -1079,8 +1078,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
         """
         if self._strict:
             return [[self._n - j - i - 1 for j in range(self._n - i)] for i in range(self._n)]
-        else:
-            return [[0 for j in range(self._n - i)] for i in range(self._n)]
+        return [[0 for j in range(self._n - i)] for i in range(self._n)]
 
     def _cftp(self, start_row):
         """

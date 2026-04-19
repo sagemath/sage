@@ -521,7 +521,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         return v
 
 
-def unpickle_v0(parent, entries, degree, is_immutable):
+def unpickle_v0(parent, entries, degree, immutable):
     """
     EXAMPLES::
 
@@ -542,5 +542,5 @@ def unpickle_v0(parent, entries, degree, is_immutable):
             mzd_write_bit(v._entries, 0, i, xi % 2)
         else:
             mzd_write_bit(v._entries, 0, i, entries[i] % 2)
-    v._is_immutable = int(is_immutable)
+    v._is_immutable = int(immutable)
     return v

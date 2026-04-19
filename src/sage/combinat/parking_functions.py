@@ -170,7 +170,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         if pf is not None:
             PF = ParkingFunctions()
             return PF.element_class(PF, pf)
-        elif labelling is not None:
+        if labelling is not None:
             if (area_sequence is None):
                 raise ValueError("must also provide area sequence along with labelling")
             if (len(area_sequence) != len(labelling)):
@@ -178,9 +178,9 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
             if any(area_sequence[i] < area_sequence[i + 1] and labelling[i] > labelling[i + 1] for i in range(len(labelling) - 1)):
                 raise ValueError("%s is not a valid labeling of area sequence %s" % (labelling, area_sequence))
             return from_labelling_and_area_sequence(labelling, area_sequence)
-        elif labelled_dyck_word is not None:
+        if labelled_dyck_word is not None:
             return from_labelled_dyck_word(labelled_dyck_word)
-        elif area_sequence is not None:
+        if area_sequence is not None:
             DW = DyckWord(area_sequence)
             return ParkingFunction(labelling=list(range(1, DW.size() + 1)),
                                    area_sequence=DW)

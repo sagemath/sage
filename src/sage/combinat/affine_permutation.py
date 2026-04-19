@@ -403,8 +403,7 @@ class AffinePermutation(ClonableArray):
             D = gr.descents(side=side)
         if side == 'right':
             return (gr, fin)
-        else:
-            return (fin, gr)
+        return (fin, gr)
 
 
 class AffinePermutationTypeA(AffinePermutation):

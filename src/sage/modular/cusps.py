@@ -214,7 +214,7 @@ class Cusp(Element):
             self.__a = ZZ.zero()
             self.__b = ZZ.one()
             return
-        elif not b:
+        if not b:
             if not a:
                 raise TypeError("unable to convert (%r, %r) to a cusp" % (a, b))
             self.__a = ZZ.one()
@@ -430,8 +430,7 @@ class Cusp(Element):
             return "Infinity"
         if self.__b != 1:
             return "%s/%s" % (self.__a, self.__b)
-        else:
-            return str(self.__a)
+        return str(self.__a)
 
     def _latex_(self):
         r"""
@@ -450,8 +449,7 @@ class Cusp(Element):
             return "\\infty"
         if self.__b != 1:
             return "\\frac{%s}{%s}" % (self.__a, self.__b)
-        else:
-            return str(self.__a)
+        return str(self.__a)
 
     def __neg__(self):
         """
@@ -541,17 +539,15 @@ class Cusp(Element):
         if v1 == v2 and u1 == u2:
             if not transformation:
                 return True
-            elif transformation == "matrix":
+            if transformation == "matrix":
                 return True, matrix(ZZ, [[1, 0], [0, 1]])
-            else:
-                return True, one
+            return True, one
 
         # a necessary, but not sufficient condition unless N is square-free
         if v1.gcd(N) != v2.gcd(N):
             if not transformation:
                 return False
-            else:
-                return False, None
+            return False, None
 
         if (u1, v1) != (zero, one):
             if v1 in [zero, one]:
@@ -572,8 +568,7 @@ class Cusp(Element):
         if a % g != 0:
             if not transformation:
                 return False
-            else:
-                return False, None
+            return False, None
 
         if not transformation:
             return True
@@ -584,23 +579,19 @@ class Cusp(Element):
             if v2 == 0:  # both are oo
                 if transformation == "matrix":
                     return (True, matrix(ZZ, [[1, 0], [0, 1]]))
-                else:
-                    return (True, one)
-            else:
-                dum, s2, r2 = u2.xgcd(-v2)
-                assert dum.is_one()
-                if transformation == "matrix":
-                    return (True, matrix(ZZ, [[u2, r2], [v2, s2]]))
-                else:
-                    return (True, u2)
+                return (True, one)
+            dum, s2, r2 = u2.xgcd(-v2)
+            assert dum.is_one()
+            if transformation == "matrix":
+                return (True, matrix(ZZ, [[u2, r2], [v2, s2]]))
+            return (True, u2)
 
-        elif v2 == 0:  # the second is oo
+        if v2 == 0:  # the second is oo
             dum, s1, r1 = u1.xgcd(-v1)
             assert dum.is_one()
             if transformation == "matrix":
                 return (True, matrix(ZZ, [[s1, -r1], [-v1, u1]]))
-            else:
-                return (True, s1)
+            return (True, s1)
 
         dum, s2, r2 = u2.xgcd(-v2)
         assert dum.is_one()
@@ -640,13 +631,12 @@ class Cusp(Element):
             assert (A * u1 + B * v1) / (C * u1 + D * v1) == u2 / v2
             return (True, ga)
 
-        else:
-            # mainly for backwards compatibility and
-            # for how it is used in modular symbols
-            A = (u2 * s1p - r2 * v1)
-            if u2 != 0 and v1 != 0:
-                A = A % (u2 * v1 * M)
-            return (True, A)
+        # mainly for backwards compatibility and
+        # for how it is used in modular symbols
+        A = (u2 * s1p - r2 * v1)
+        if u2 != 0 and v1 != 0:
+            A = A % (u2 * v1 * M)
+        return (True, A)
 
     def is_gamma1_equiv(self, other, N) -> tuple[bool, int]:
         r"""
@@ -699,7 +689,7 @@ class Cusp(Element):
         g = v1.gcd(N)
         if ((v2 - v1) % N == 0 and (u2 - u1) % g == 0):
             return True, 1
-        elif ((v2 + v1) % N == 0 and (u2 + u1) % g == 0):
+        if ((v2 + v1) % N == 0 and (u2 + u1) % g == 0):
             return True, -1
         return False, 0
 

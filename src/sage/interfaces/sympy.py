@@ -475,9 +475,8 @@ class UndefSageHelper:
     def __get__(self, ins, typ):
         if ins is None:
             return lambda: _sympysage_function_by_name(typ.__name__)
-        else:
-            args = [arg._sage_() for arg in ins.args]
-            return lambda: _sympysage_function_by_name(ins.__class__.__name__)(*args)
+        args = [arg._sage_() for arg in ins.args]
+        return lambda: _sympysage_function_by_name(ins.__class__.__name__)(*args)
 
 
 def _sympysage_function(self):
@@ -1360,17 +1359,17 @@ def sympy_set_to_list(set, vars):
     from sympy.core.relational import Relational
     if set == S.Reals:
         return [x._sage_() < oo for x in vars]
-    elif set == S.Complexes:
+    if set == S.Complexes:
         return [x._sage_() != UnsignedInfinity for x in vars]
-    elif set is None or set == S.EmptySet:
+    if set is None or set == S.EmptySet:
         return []
     if isinstance(set, (And, Or, Relational)):
         if isinstance(set, And):
             return [[item for rel in set._args[0]
                     for item in sympy_set_to_list(rel, vars)]]
-        elif isinstance(set, Or):
+        if isinstance(set, Or):
             return [sympy_set_to_list(iv, vars) for iv in set._args[0]]
-        elif isinstance(set, Relational):
+        if isinstance(set, Relational):
             return [set._sage_()]
     elif isinstance(set, FiniteSet):
         x = vars[0]

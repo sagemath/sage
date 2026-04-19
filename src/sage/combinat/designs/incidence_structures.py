@@ -489,10 +489,8 @@ class IncidenceStructure(SageObject):
             if certificate:
                 B_canon_rev = {y: x for x, y in B_canon.items()}
                 return {x: B_canon_rev[xint] for x, xint in A_canon.items()}
-            else:
-                return True
-        else:
-            return {} if certificate else False
+            return True
+        return {} if certificate else False
 
     def isomorphic_substructures_iterator(self, H2, induced=False):
         r"""
@@ -796,8 +794,7 @@ class IncidenceStructure(SageObject):
         """
         if self._point_to_index is None:
             return [b[:] for b in self._blocks]
-        else:
-            return [[self._points[i] for i in b] for b in self._blocks]
+        return [[self._points[i] for i in b] for b in self._blocks]
 
     def block_sizes(self):
         r"""
@@ -855,13 +852,12 @@ class IncidenceStructure(SageObject):
             return sum((p in b) for b in self._blocks) if p != -1 else 0
 
         # degree of a set
+        if self._point_to_index:
+            p = set(self._point_to_index.get(x, -1) for x in p)
         else:
-            if self._point_to_index:
-                p = set(self._point_to_index.get(x, -1) for x in p)
-            else:
-                p = set(p) if all(x >= 0 and x < len(self._points) for x in p) else set([-1])
+            p = set(p) if all(x >= 0 and x < len(self._points) for x in p) else set([-1])
 
-            return sum(p.issubset(b) for b in self._blocks) if -1 not in p else 0
+        return sum(p.issubset(b) for b in self._blocks) if -1 not in p else 0
 
     def degrees(self, size=None):
         r"""
@@ -905,16 +901,14 @@ class IncidenceStructure(SageObject):
                 for x in b:
                     d[x] += 1
             return {p: d[i] for i, p in enumerate(self._points)}
-        else:
-            from itertools import combinations
-            d = {t: 0 for t in combinations(range(self.n_points()), size)}
-            for b in self._blocks:
-                for s in combinations(b, size):
-                    d[s] += 1
-            if self._point_to_index:
-                return {tuple([self._points[x] for x in s]): v for s, v in d.items()}
-            else:
-                return d
+        from itertools import combinations
+        d = {t: 0 for t in combinations(range(self.n_points()), size)}
+        for b in self._blocks:
+            for s in combinations(b, size):
+                d[s] += 1
+        if self._point_to_index:
+            return {tuple([self._points[x] for x in s]): v for s, v in d.items()}
+        return d
 
     def rank(self):
         r"""
@@ -1238,10 +1232,9 @@ class IncidenceStructure(SageObject):
                 G.add_edges((b, x) for x in b)
             return G
 
-        else:
-            from sage.graphs.bipartite_graph import BipartiteGraph
-            A = self.incidence_matrix()
-            return BipartiteGraph(A)
+        from sage.graphs.bipartite_graph import BipartiteGraph
+        A = self.incidence_matrix()
+        return BipartiteGraph(A)
 
     def is_berge_cyclic(self):
         r"""
@@ -1668,15 +1661,13 @@ class IncidenceStructure(SageObject):
         if (t is not None and t > k):
             if (l is None or l == 0):
                 return (True, (t, v, k, 0)) if return_parameters else True
-            else:
-                return (False, (0, 0, 0, 0)) if return_parameters else False
+            return (False, (0, 0, 0, 0)) if return_parameters else False
 
         # Trivial case k=0
         if k == 0:
             if (l is None or l == 0):
                 return (True, (0, v, k, b)) if return_parameters else True
-            else:
-                return (False, (0, 0, 0, 0)) if return_parameters else False
+            return (False, (0, 0, 0, 0)) if return_parameters else False
 
         # Trivial case k=v (includes v=0)
         if k == v:
@@ -1684,8 +1675,7 @@ class IncidenceStructure(SageObject):
                 t = v
             if l is None or b == l:
                 return (True, (t, v, k, b)) if return_parameters else True
-            else:
-                return (True, (0, 0, 0, 0)) if return_parameters else False
+            return (True, (0, 0, 0, 0)) if return_parameters else False
 
         # Handbook of combinatorial design theorem II.4.8:
         #
@@ -1714,10 +1704,9 @@ class IncidenceStructure(SageObject):
         if ((t is not None and t != tt) or
                 (l is not None and l != ll)):
             return (False, (0, 0, 0, 0)) if return_parameters else False
-        else:
-            if tt == 0:
-                ll = b
-            return (True, (tt, v, k, ll)) if return_parameters else True
+        if tt == 0:
+            ll = b
+        return (True, (tt, v, k, ll)) if return_parameters else True
 
     def is_generalized_quadrangle(self, verbose=False, parameters=False):
         r"""
@@ -1802,7 +1791,7 @@ class IncidenceStructure(SageObject):
             if verbose:
                 print("Two blocks intersect on >1 points.")
             return False
-        elif girth == 6:
+        if girth == 6:
             if verbose:
                 print("Some point has two projections on some line.")
             return False
@@ -1813,8 +1802,7 @@ class IncidenceStructure(SageObject):
             s = s - 1 if (s is not False and s >= 2) else False
             t = t - 1 if (t is not False and t >= 2) else False
             return (s, t)
-        else:
-            return True
+        return True
 
     def dual(self, algorithm=None):
         """
@@ -2064,8 +2052,7 @@ class IncidenceStructure(SageObject):
 
             return (True, classes)
 
-        else:
-            return True
+        return True
 
     def coloring(self, k=None, solver=None, verbose=0,
                  *, integrality_tolerance=1e-3) -> list:
@@ -2131,7 +2118,7 @@ class IncidenceStructure(SageObject):
             if self.n_points():
                 raise ValueError("Only empty hypergraphs are 0-chromatic")
             return []
-        elif any(len(x) == 1 for x in self._blocks):
+        if any(len(x) == 1 for x in self._blocks):
             raise RuntimeError("No coloring can be defined "
                                "when there is a set of size 1")
         elif k == 1:

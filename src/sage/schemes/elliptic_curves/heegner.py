@@ -3460,8 +3460,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             f = P[0].algebraic_dependency(n)
             if f.is_irreducible() and self._check_poly_discriminant(f):
                 return f.monic()
-            else:
-                raise ValueError("insufficient precision to determine Heegner point (fails discriminant test)")
+            raise ValueError("insufficient precision to determine Heegner point (fails discriminant test)")
         else:
             raise NotImplementedError("'lll' is the only algorithm implemented for Heegner points")
 
@@ -4218,46 +4217,43 @@ class KolyvaginPoint(HeegnerPoint):
 
             if E.root_number() == -1:
                 return self._recognize_point_over_QQ(P, 2*self.index())
+            # root number +1.  We use algebraic_dependency
+            # to recognize the x
+            # coordinate, stick it in the appropriate quadratic
+            # field, then make sure that we got the right
+            # embedding, and if not fix things so we do.
+            x = P[0]
+            C = x.parent()
+            f = x.algebraic_dependency(2)
+            K = self.quadratic_field()
+            roots = [r[0] for r in f.roots(K)]
+            if not roots:
+                raise RuntimeError("insufficient precision to find exact point")
+            if len(roots) == 1:
+                X = roots[0]
             else:
-                # root number +1.  We use algebraic_dependency
-                # to recognize the x
-                # coordinate, stick it in the appropriate quadratic
-                # field, then make sure that we got the right
-                # embedding, and if not fix things so we do.
-                x = P[0]
-                C = x.parent()
-                f = x.algebraic_dependency(2)
-                K = self.quadratic_field()
-                roots = [r[0] for r in f.roots(K)]
-                if not roots:
-                    raise RuntimeError("insufficient precision to find exact point")
-                if len(roots) == 1:
-                    X = roots[0]
-                else:
-                    d = [abs(C(r) - x) for r in roots]
-                    if d[0] == d[1]:
-                        raise RuntimeError("insufficient precision to distinguish roots")
-                    if d[0] < d[1]:
-                        X = roots[0]
-                    else:
-                        X = roots[1]
-                F = E.change_ring(K)
-                Q = F.lift_x(X, all=True)
-                if len(Q) == 1:
-                    return Q[0]
-                if not Q:
-                    raise RuntimeError("insufficient precision")
-                y = P[1]
-                d = [abs(C(r[1])-y) for r in Q]
+                d = [abs(C(r) - x) for r in roots]
                 if d[0] == d[1]:
                     raise RuntimeError("insufficient precision to distinguish roots")
                 if d[0] < d[1]:
-                    return Q[0]
+                    X = roots[0]
                 else:
-                    return Q[1]
+                    X = roots[1]
+            F = E.change_ring(K)
+            Q = F.lift_x(X, all=True)
+            if len(Q) == 1:
+                return Q[0]
+            if not Q:
+                raise RuntimeError("insufficient precision")
+            y = P[1]
+            d = [abs(C(r[1])-y) for r in Q]
+            if d[0] == d[1]:
+                raise RuntimeError("insufficient precision to distinguish roots")
+            if d[0] < d[1]:
+                return Q[0]
+            return Q[1]
 
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def plot(self, prec=53, *args, **kwds):
         r"""
@@ -4283,8 +4279,7 @@ class KolyvaginPoint(HeegnerPoint):
                 # point at infinity
                 return Graphics()
             return point((P[0].real(), P[1].real()), *args, **kwds)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     @cached_method
     def trace_to_real_numerical(self, prec=53):
@@ -6595,12 +6590,12 @@ def heegner_point_height(self, D, prec=2, check_rank=True):
         err_E = max(err_E, MIN_ERR)
         return IR(alpha-MIN_ERR,alpha+MIN_ERR) * IR(LE1-err_E,LE1+err_E) * IR(LF1-err_F,LF1+err_F)
 
-    else:          # E has odd rank
-        LE1, err_E = E.lseries().deriv_at1(k_E)
-        LF1, err_F = F.lseries().at1(k_F)
-        err_F = max(err_F, MIN_ERR)
-        err_E = max(err_E, MIN_ERR)
-        return IR(alpha-MIN_ERR,alpha+MIN_ERR) * IR(LE1-err_E,LE1+err_E) * IR(LF1-err_F,LF1+err_F)
+    # E has odd rank
+    LE1, err_E = E.lseries().deriv_at1(k_E)
+    LF1, err_F = F.lseries().at1(k_F)
+    err_F = max(err_F, MIN_ERR)
+    err_E = max(err_E, MIN_ERR)
+    return IR(alpha-MIN_ERR,alpha+MIN_ERR) * IR(LE1-err_E,LE1+err_E) * IR(LF1-err_F,LF1+err_F)
 
 
 def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
@@ -6777,7 +6772,7 @@ def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
     a = 1
     if len(P) == 0:
         return IR(1)
-    elif len(P) == 1:
+    if len(P) == 1:
         z = P[0]
         FK = F.base_extend(QuadraticField(D,'a'))
         z = FK(z)
@@ -6945,8 +6940,7 @@ def heegner_index_bound(self, D=0, prec=5, max_height=None) -> tuple:
     if len(P) == 0:
         # We've eliminated the possibility of a divisor up to p.
         return prime_range(3, p), D, False
-    else:
-        return _bound(P)
+    return _bound(P)
 
 
 ##############################################################################

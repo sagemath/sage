@@ -19,7 +19,7 @@ from sage.symbolic.function import BuiltinFunction
 #  Table of available integration routines
 ##################################################################
 
-import sage.symbolic.integration.external as external
+from sage.symbolic.integration import external
 
 # Add new integration routines to the dictionary below. This will make them
 # accessible with the 'algorithm' keyword parameter of top level integrate().
@@ -144,10 +144,9 @@ class IndefiniteIntegral(BuiltinFunction):
             else:
                 if not hasattr(A, 'operator'):
                     return A
-                else:
-                    uneval = integral(SR.wild(0), x, hold=True)
-                    if not A.has(uneval):
-                        return A
+                uneval = integral(SR.wild(0), x, hold=True)
+                if not A.has(uneval):
+                    return A
         return A
 
     def _tderivative_(self, f, x, diff_param=None):
@@ -164,8 +163,7 @@ class IndefiniteIntegral(BuiltinFunction):
         """
         if x.has(diff_param):
             return f * x.derivative(diff_param)
-        else:
-            return f.derivative(diff_param).integral(x)
+        return f.derivative(diff_param).integral(x)
 
     def _print_latex_(self, f, x):
         r"""
@@ -272,10 +270,9 @@ class DefiniteIntegral(BuiltinFunction):
             else:
                 if not hasattr(A, 'operator'):
                     return A
-                else:
-                    uneval = integral(SR.wild(0), x, a, b, hold=True)
-                    if not A.has(uneval):
-                        return A
+                uneval = integral(SR.wild(0), x, a, b, hold=True)
+                if not A.has(uneval):
+                    return A
         return A
 
     def _evalf_(self, f, x, a, b, parent=None, algorithm=None):
@@ -1070,8 +1067,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         return integrator(expression, v, a, b)
     if a is None:
         return indefinite_integral(expression, v, hold=hold)
-    else:
-        return definite_integral(expression, v, a, b, hold=hold)
+    return definite_integral(expression, v, a, b, hold=hold)
 
 
 integral = integrate

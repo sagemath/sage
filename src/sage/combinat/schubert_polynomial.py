@@ -292,9 +292,9 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
                     pi = Perms(pi).remove_extra_fixed_points()
                     res_dict[pi] = coeff
                 return self.parent()._from_dict(res_dict)
-            else:  # if algorithm == "symmetrica":
-                return symmetrica.divdiff_schubert(i, self)
-        elif i in Perms:
+            # if algorithm == "symmetrica":
+            return symmetrica.divdiff_schubert(i, self)
+        if i in Perms:
             if algorithm == "sage":
                 i = Permutation(i)
                 redw = i.reduced_word()
@@ -316,10 +316,9 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
                     pi = Perms(pi).remove_extra_fixed_points()
                     res_dict[pi] = coeff
                 return self.parent()._from_dict(res_dict)
-            else:  # if algorithm == "symmetrica":
-                return symmetrica.divdiff_perm_schubert(i, self)
-        else:
-            raise TypeError("i must either be an integer or permutation")
+            # if algorithm == "symmetrica":
+            return symmetrica.divdiff_perm_schubert(i, self)
+        raise TypeError("i must either be an integer or permutation")
 
     def scalar_product(self, x):
         """
@@ -349,8 +348,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
         """
         if isinstance(x, SchubertPolynomial_class):
             return symmetrica.scalarproduct_schubert(self, x)
-        else:
-            raise TypeError("x must be a Schubert polynomial")
+        raise TypeError("x must be a Schubert polynomial")
 
     def multiply_variable(self, i):
         """
@@ -372,8 +370,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
         """
         if isinstance(i, Integer):
             return symmetrica.mult_schubert_variable(self, i)
-        else:
-            raise TypeError("i must be an integer")
+        raise TypeError("i must be an integer")
 
 
 class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
@@ -474,21 +471,20 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
                 raise ValueError(f"the input {x} is not a valid permutation")
             perm = Permutation(x).remove_extra_fixed_points()
             return self._from_dict({perm: self.base_ring().one()})
-        elif isinstance(x, Permutation):
+        if isinstance(x, Permutation):
             perm = x.remove_extra_fixed_points()
             return self._from_dict({perm: self.base_ring().one()})
-        elif isinstance(x, MPolynomial):
+        if isinstance(x, MPolynomial):
             return symmetrica.t_POLYNOM_SCHUBERT(x)
-        elif isinstance(x, InfinitePolynomial):
+        if isinstance(x, InfinitePolynomial):
             R = x.polynomial().parent()
             # massage the term order to be what symmetrica expects
             S = PolynomialRing(R.base_ring(),
                                names=list(map(repr, reversed(R.gens()))))
             return symmetrica.t_POLYNOM_SCHUBERT(S(x.polynomial()))
-        elif isinstance(x, OperatorPolynomial):
+        if isinstance(x, OperatorPolynomial):
             return self(x.expand())
-        else:
-            raise TypeError
+        raise TypeError
 
     def some_elements(self):
         """
