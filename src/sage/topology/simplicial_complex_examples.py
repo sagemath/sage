@@ -190,10 +190,9 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
 
     INPUT:
 
-    - the inputs are the same as for a :class:`SimplicialComplex`,
-      with one addition and two exceptions. The exceptions are that
-      ``is_mutable`` and ``is_immutable`` are ignored: all instances
-      of this class are immutable. The addition:
+    - the inputs are the same as for a :class:`SimplicialComplex`, with one
+      addition and one exception. The exception is that ``immutable`` is
+      ignored: all instances of this class are immutable. The addition:
 
     - ``name`` -- string (optional); the string representation for this complex
 
@@ -253,15 +252,13 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
         TESTS::
 
             sage: from sage.topology.simplicial_complex_examples import UniqueSimplicialComplex
-            sage: UniqueSimplicialComplex([[1, 2, 3], [0, 1, 3]], is_mutable=True).is_mutable()
+            sage: UniqueSimplicialComplex([[1, 2, 3], [0, 1, 3]], immutable=False).is_mutable()
             False
         """
-        if 'is_mutable' in kwds:
-            del kwds['is_mutable']
-        if 'is_immutable' in kwds:
-            del kwds['is_immutable']
+        if 'immutable' in kwds:
+            del kwds['immutable']
         self._name = name
-        SimplicialComplex.__init__(self, maximal_faces=maximal_faces, is_mutable=False, **kwds)
+        SimplicialComplex.__init__(self, maximal_faces=maximal_faces, immutable=True, **kwds)
 
     def _repr_(self):
         """

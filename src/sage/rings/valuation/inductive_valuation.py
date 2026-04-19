@@ -936,8 +936,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         if explain:
             return reason is None, reason
-        else:
-            return reason is None
+        return reason is None
 
     def is_minimal(self, f, assume_equivalence_irreducible=False):
         r"""
@@ -1008,13 +1007,12 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
                 F = self.reduce(f, check=False)
                 assert not F.is_constant()
                 return F.is_irreducible()
-            else:
-                assert (self(f) <= 0)  # f is monic
-                # f is not minimal:
-                # Let g be f stripped of its leading term, i.e., g = f - x^n.
-                # Then g and f are equivalent with respect to this valuation
-                # and in particular g divides f with respect to this valuation
-                return False
+            assert (self(f) <= 0)  # f is monic
+            # f is not minimal:
+            # Let g be f stripped of its leading term, i.e., g = f - x^n.
+            # Then g and f are equivalent with respect to this valuation
+            # and in particular g divides f with respect to this valuation
+            return False
 
         if self.is_equivalent(self.phi(), f):
             assert f.degree() >= self.phi().degree()
@@ -1023,13 +1021,12 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
             # So if f were not minimal then phi would not be minimal but it is.
             return f.degree() == self.phi().degree()
 
-        else:
-            tau = self.value_group().index(self._base_valuation.value_group())
-            # see Theorem 9.4 of [Mac1936II]
-            return list(self.valuations(f))[-1] == self(f) and \
-                   list(self.coefficients(f))[-1].is_constant() and \
-                   list(self.valuations(f))[0] == self(f) and \
-                   tau.divides(len(list(self.coefficients(f))) - 1)
+        tau = self.value_group().index(self._base_valuation.value_group())
+        # see Theorem 9.4 of [Mac1936II]
+        return list(self.valuations(f))[-1] == self(f) and \
+               list(self.coefficients(f))[-1].is_constant() and \
+               list(self.valuations(f))[0] == self(f) and \
+               tau.divides(len(list(self.coefficients(f))) - 1)
 
     def _equivalence_reduction(self, f, coefficients=None, valuations=None, degree_bound=None):
         r"""

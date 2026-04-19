@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Affine nilTemperley Lieb Algebra of type A
 """

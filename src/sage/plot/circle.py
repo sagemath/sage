@@ -142,7 +142,7 @@ class Circle(GraphicPrimitive):
             sage: from math import pi
             sage: C = circle((2,pi), 2, edgecolor='black', facecolor='green', fill=True)
         """
-        import matplotlib.patches as patches
+        from matplotlib import patches
         from sage.plot.misc import get_matplotlib_linestyle
 
         options = self.options()

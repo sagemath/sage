@@ -17,7 +17,6 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.lazy_import import lazy_import
-import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
@@ -25,6 +24,9 @@ from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.categories.modules import Modules
 from .representation import Inequality, Equation, Vertex, Ray, Line
+
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
+
 
 
 def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *,
@@ -169,7 +171,7 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         return Polyhedra_QQ_normaliz(base_ring, ambient_dim, backend)
     if backend == 'normaliz' and base_ring is ZZ:
         return Polyhedra_ZZ_normaliz(base_ring, ambient_dim, backend)
-    if backend == 'normaliz' and (isinstance(base_ring, sage.rings.abc.SymbolicRing) or base_ring.is_exact()):
+    if backend == 'normaliz' and (isinstance(base_ring, SymbolicRing) or base_ring.is_exact()):
         return Polyhedra_normaliz(base_ring, ambient_dim, backend)
     if backend == 'cdd' and base_ring in (ZZ, QQ):
         return Polyhedra_QQ_cdd(QQ, ambient_dim, backend)

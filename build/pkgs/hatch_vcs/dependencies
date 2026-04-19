@@ -1,4 +1,4 @@
-setuptools_scm hatchling | pip $(PYTHON)
+setuptools_scm hatchling | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

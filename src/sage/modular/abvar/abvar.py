@@ -2832,6 +2832,12 @@ class ModularAbelianVariety_abstract(Parent):
             Finite subgroup with invariants [5] over QQ of Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33)
             sage: J.shimura_subgroup()
             Finite subgroup with invariants [10] over QQ of Abelian variety J0(33) of dimension 3
+            sage: S = J.shimura_subgroup()
+            sage: elems = list(S)
+            sage: len(elems) == prod(S.invariants())
+            True
+            sage: len({tuple(x.element()) for x in elems}) == len(elems)
+            True
         """
         N = self.level()
         J = self.ambient_variety()

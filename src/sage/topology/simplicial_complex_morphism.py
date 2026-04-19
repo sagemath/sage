@@ -18,16 +18,16 @@ the same codomain.
 
 EXAMPLES::
 
-    sage: S = SimplicialComplex([[0,2],[1,5],[3,4]], is_mutable=False)
-    sage: H = Hom(S,S.product(S, is_mutable=False))
+    sage: S = SimplicialComplex([[0,2],[1,5],[3,4]], immutable=True)
+    sage: H = Hom(S,S.product(S, immutable=True))
     sage: H.diagonal_morphism()
     Simplicial complex morphism:
       From: Simplicial complex with vertex set (0, 1, 2, 3, 4, 5) and facets {(0, 2), (1, 5), (3, 4)}
       To: Simplicial complex with 36 vertices and 18 facets
       Defn: [0, 1, 2, 3, 4, 5] --> ['L0R0', 'L1R1', 'L2R2', 'L3R3', 'L4R4', 'L5R5']
 
-    sage: S = SimplicialComplex([[0,2],[1,5],[3,4]], is_mutable=False)
-    sage: T = SimplicialComplex([[0,2],[1,3]], is_mutable=False)
+    sage: S = SimplicialComplex([[0,2],[1,5],[3,4]], immutable=True)
+    sage: T = SimplicialComplex([[0,2],[1,3]], immutable=True)
     sage: f = {0:0,1:1,2:2,3:1,4:3,5:3}
     sage: H = Hom(S,T)
     sage: x = H(f)
@@ -65,7 +65,7 @@ EXAMPLES::
             L2R2 |--> 2
             L3R3 |--> 3
     sage: S = simplicial_complexes.Sphere(2)
-    sage: T = S.product(SimplicialComplex([[0,1]]), rename_vertices = False, is_mutable=False)
+    sage: T = S.product(SimplicialComplex([[0,1]]), rename_vertices = False, immutable=True)
     sage: H = Hom(T,S)
     sage: T
     Simplicial complex with 8 vertices and 12 facets
@@ -126,7 +126,7 @@ class SimplicialComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = SimplicialComplex([[0,1],[2],[3,4],[5]], is_mutable=False)
+            sage: S = SimplicialComplex([[0,1],[2],[3,4],[5]], immutable=True)
             sage: H = Hom(S,S)
             sage: f = {0:0,1:1,2:2,3:3,4:4,5:5}
             sage: g = {0:0,1:1,2:0,3:3,4:4,5:0}
@@ -176,7 +176,7 @@ class SimplicialComplexMorphism(Morphism):
             sage: i==j
             False
 
-            sage: T = SimplicialComplex([[1,2]], is_mutable=False)
+            sage: T = SimplicialComplex([[1,2]], immutable=True)
             sage: T
             Simplicial complex with vertex set (1, 2) and facets {(1, 2)}
             sage: G = Hom(T,T)
@@ -217,7 +217,7 @@ class SimplicialComplexMorphism(Morphism):
 
         An orientation-reversing example::
 
-            sage: X = SimplicialComplex([[0,1]], is_mutable=False)
+            sage: X = SimplicialComplex([[0,1]], immutable=True)
             sage: g = Hom(X,X)({0:1, 1:0})
             sage: g(Simplex([0,1]))
             (0, 1)
@@ -228,8 +228,8 @@ class SimplicialComplexMorphism(Morphism):
 
         Test that the problem in :issue:`36849` has been fixed::
 
-            sage: S = SimplicialComplex([[1,2]],is_mutable=False).barycentric_subdivision()
-            sage: T = SimplicialComplex([[1,2],[2,3],[1,3]],is_mutable=False).barycentric_subdivision()
+            sage: S = SimplicialComplex([[1,2]],immutable=True).barycentric_subdivision()
+            sage: T = SimplicialComplex([[1,2],[2,3],[1,3]],immutable=True).barycentric_subdivision()
             sage: f = {x[0]:x[0] for x in S.cells()[0]}
             sage: H = Hom(S,T)
             sage: z = H(f)
@@ -376,7 +376,7 @@ class SimplicialComplexMorphism(Morphism):
                 [ 0  0  0]
                 [ 0  0  0],
              2: []}
-            sage: X = SimplicialComplex([[0, 1]], is_mutable=False)
+            sage: X = SimplicialComplex([[0, 1]], immutable=True)
             sage: Hom(X,X)({0:1, 1:0}).associated_chain_complex_morphism()._matrix_dictionary
             {0: [0 1]
                 [1 0],
@@ -438,23 +438,23 @@ class SimplicialComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = SimplicialComplex([[0,1],[2,3]], is_mutable=False)
-            sage: T = SimplicialComplex([[0,1]], is_mutable=False)
+            sage: S = SimplicialComplex([[0,1],[2,3]], immutable=True)
+            sage: T = SimplicialComplex([[0,1]], immutable=True)
             sage: f = {0:0,1:1,2:0,3:1}
             sage: H = Hom(S,T)
             sage: x = H(f)
             sage: x.image()
             Simplicial complex with vertex set (0, 1) and facets {(0, 1)}
 
-            sage: S = SimplicialComplex(is_mutable=False)
+            sage: S = SimplicialComplex(immutable=True)
             sage: H = Hom(S,S)
             sage: i = H.identity()
             sage: i.image()
             Simplicial complex with vertex set () and facets {()}
             sage: i.is_surjective()
             True
-            sage: S = SimplicialComplex([[0,1]], is_mutable=False)
-            sage: T = SimplicialComplex([[0,1], [0,2]], is_mutable=False)
+            sage: S = SimplicialComplex([[0,1]], immutable=True)
+            sage: T = SimplicialComplex([[0,1], [0,2]], immutable=True)
             sage: f = {0:0,1:1}
             sage: g = {0:0,1:1}
             sage: k = {0:0,1:2}
@@ -482,10 +482,10 @@ class SimplicialComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = SimplicialComplex([(0,1,2)], is_mutable=False)
+            sage: S = SimplicialComplex([(0,1,2)], immutable=True)
             sage: S
             Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1, 2)}
-            sage: T = SimplicialComplex([(0,1)], is_mutable=False)
+            sage: T = SimplicialComplex([(0,1)], immutable=True)
             sage: T
             Simplicial complex with vertex set (0, 1) and facets {(0, 1)}
             sage: H = Hom(S,T)
@@ -493,8 +493,8 @@ class SimplicialComplexMorphism(Morphism):
             sage: x.is_surjective()
             True
 
-            sage: S = SimplicialComplex([[0,1],[2,3]], is_mutable=False)
-            sage: T = SimplicialComplex([[0,1]], is_mutable=False)
+            sage: S = SimplicialComplex([[0,1],[2,3]], immutable=True)
+            sage: T = SimplicialComplex([[0,1]], immutable=True)
             sage: f = {0:0,1:1,2:0,3:1}
             sage: H = Hom(S,T)
             sage: x = H(f)
@@ -574,9 +574,9 @@ class SimplicialComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = SimplicialComplex([[0,1],[1,2]], is_mutable=False)
-            sage: T = SimplicialComplex([[0,2],[1]], is_mutable=False)
-            sage: U = SimplicialComplex([[0,1],[2]], is_mutable=False)
+            sage: S = SimplicialComplex([[0,1],[1,2]], immutable=True)
+            sage: T = SimplicialComplex([[0,2],[1]], immutable=True)
+            sage: U = SimplicialComplex([[0,1],[2]], immutable=True)
             sage: H = Hom(S,U)
             sage: G = Hom(T,U)
             sage: f = {0:0,1:1,2:0}
@@ -672,7 +672,7 @@ class SimplicialComplexMorphism(Morphism):
         EXAMPLES::
 
             sage: S = simplicial_complexes.Sphere(1)
-            sage: T = S.product(S, is_mutable=False)
+            sage: T = S.product(S, immutable=True)
             sage: H = Hom(S,T)
             sage: diag = H.diagonal_morphism()
             sage: h = diag.induced_homology_morphism(QQ); h                             # needs sage.modules
