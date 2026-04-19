@@ -334,9 +334,8 @@ class RationalField(Singleton, number_field_base.NumberField):
         if p == Infinity:
             from sage.rings.real_field import create_RealField
             return create_RealField(prec, **extras)
-        else:
-            from sage.rings.padics.factory import Qp
-            return Qp(p, prec, **extras)
+        from sage.rings.padics.factory import Qp
+        return Qp(p, prec, **extras)
 
     def _coerce_map_from_(self, S):
         """
@@ -374,9 +373,9 @@ class RationalField(Singleton, number_field_base.NumberField):
             ZZ = integer_ring.ZZ
         if S is ZZ:
             return rational.Z_to_Q()
-        elif S is int:
+        if S is int:
             return rational.int_to_Q()
-        elif ZZ.has_coerce_map_from(S):
+        if ZZ.has_coerce_map_from(S):
             return rational.Z_to_Q() * ZZ._internal_coerce_map_from(S)
         from sage.rings.localization import Localization
         if isinstance(S, Localization):
@@ -449,10 +448,9 @@ class RationalField(Singleton, number_field_base.NumberField):
         from sage.rings.ideal import Ideal_generic
         if I is ZZ:
             return QmodnZ(1)
-        elif isinstance(I, Ideal_generic) and I.base_ring() is ZZ:
+        if isinstance(I, Ideal_generic) and I.base_ring() is ZZ:
             return QmodnZ(I.gen())
-        else:
-            return super().__truediv__(I)
+        return super().__truediv__(I)
 
     def range_by_height(self, start, end=None):
         r"""
@@ -936,8 +934,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         if n == 0:
             return self(1)
-        else:
-            raise IndexError("n must be 0")
+        raise IndexError("n must be 0")
 
     def degree(self):
         r"""
@@ -1227,18 +1224,17 @@ class RationalField(Singleton, number_field_base.NumberField):
             while den == 0:
                 den = ZZ.random_element(*args, **kwds)
             return self((num, den))
-        else:
-            if num_bound == 0:
-                num_bound = 2
-            if den_bound is None:
-                den_bound = num_bound
-                if den_bound < 1:
-                    den_bound = 2
-            num = ZZ.random_element(-num_bound, num_bound+1, *args, **kwds)
+        if num_bound == 0:
+            num_bound = 2
+        if den_bound is None:
+            den_bound = num_bound
+            if den_bound < 1:
+                den_bound = 2
+        num = ZZ.random_element(-num_bound, num_bound+1, *args, **kwds)
+        den = ZZ.random_element(1, den_bound+1, *args, **kwds)
+        while den == 0:
             den = ZZ.random_element(1, den_bound+1, *args, **kwds)
-            while den == 0:
-                den = ZZ.random_element(1, den_bound+1, *args, **kwds)
-            return self((num, den))
+        return self((num, den))
 
     def zeta(self, n=2):
         """
@@ -1263,10 +1259,9 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         if n == 1:
             return Rational(1)
-        elif n == 2:
+        if n == 2:
             return Rational(-1)
-        else:
-            raise ValueError("no n-th root of unity in rational field")
+        raise ValueError("no n-th root of unity in rational field")
 
     def selmer_generators(self, S, m, proof=True, orders=False):
         r"""
@@ -1490,8 +1485,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         if p != 2:
             if legendre_symbol(u, p) == 1:
                 return Infinity
-            else:
-                return v
+            return v
         if p == 2:
             if u % 8 == 1:
                 return Infinity

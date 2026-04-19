@@ -813,7 +813,7 @@ class GhLabelSynchronizer:
         r"""
         Post a comment that the given label must not be removed any more.
         """
-        if type(item) == Status:
+        if isinstance(item, Status):
             sel_list = 'status'
         else:
             sel_list = 'priority'

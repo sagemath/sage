@@ -280,8 +280,7 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
         """
         if R.has_coerce_map_from(self.base_ring()):
             return self.change_ring(R)
-        else:
-            raise TypeError("no valid base extension defined")
+        raise TypeError("no valid base extension defined")
 
     def fraction_field(self):
         r"""
@@ -308,12 +307,11 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
         from sage.categories.integral_domains import IntegralDomains
         if self in Fields():
             return self
-        elif self in IntegralDomains():
+        if self in IntegralDomains():
             return LaurentSeriesRing(self.base_ring().fraction_field(),
                     self.variable_names(),
                     self.default_prec())
-        else:
-            raise ValueError('must be an integral domain')
+        raise ValueError('must be an integral domain')
 
     def change_ring(self, R):
         """
@@ -534,7 +532,7 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
         P = parent(x)
         if isinstance(x, self.element_class) and n == 0 and P is self:
             return x.add_bigoh(prec)  # ok, since Laurent series are immutable (no need to make a copy)
-        elif P is self.base_ring():
+        if P is self.base_ring():
             # Convert x into a power series; if P is itself a Laurent
             # series ring A((t)), this prevents the implementation of
             # LaurentSeries.__init__() from effectively applying the
@@ -551,13 +549,13 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
                 x = self(self.polynomial_ring()(x.numerator())) / \
                     self(self.polynomial_ring()(x.denominator()))
                 return (x << n).add_bigoh(prec)
-            elif t == "t_SER":   # Laurent series
+            if t == "t_SER":   # Laurent series
                 n += x._valp()
                 bigoh = n + x.length()
                 x = self(self.polynomial_ring()(x.Vec()))
                 return (x << n).add_bigoh(bigoh)
-            else:  # General case, pretend to be a polynomial
-                return (self(self.polynomial_ring()(x)) << n).add_bigoh(prec)
+            # General case, pretend to be a polynomial
+            return (self(self.polynomial_ring()(x)) << n).add_bigoh(prec)
         elif (isinstance(x, FractionFieldElement)
               and (x.base_ring() is self.base_ring() or x.base_ring() == self.base_ring())
               and isinstance(x.numerator(), (Polynomial, MPolynomial))):
@@ -581,8 +579,7 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
                     return sum(
                             (R(a)*g**ZZ(e) for a, e in x.coefficients(v, sparse=True)), self.zero()
                             ).add_bigoh(x.degree(x.default_variable()))
-                else:
-                    raise TypeError("can only convert series into ring with same variable name")
+                raise TypeError("can only convert series into ring with same variable name")
         return self.element_class(self, x, n).add_bigoh(prec)
 
     def random_element(self, algorithm='default'):
@@ -612,8 +609,7 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
             return self([self.base_ring().random_element()
                          for k in range(self.default_prec())],
                         shift).O(shift + self.default_prec())
-        else:
-            raise ValueError("algorithm cannot be %s" % algorithm)
+        raise ValueError("algorithm cannot be %s" % algorithm)
 
     def construction(self):
         r"""

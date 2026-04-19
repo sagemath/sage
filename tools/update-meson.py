@@ -142,7 +142,7 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
         folder = Path(target.filename).parent
         src_list = ext_data[folder]
 
-        cython_files = sorted(list(folder.glob("*.pyx")))
+        cython_files = sorted(folder.glob("*.pyx"))
         # Some cython files are compiled in a special way, so we don't want to add them
         special_cython_files = {
             "bliss.pyx",

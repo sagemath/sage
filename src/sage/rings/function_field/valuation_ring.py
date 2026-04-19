@@ -129,8 +129,7 @@ class FunctionFieldValuationRing(UniqueRepresentation, Parent):
         x = self._field(x)
         if x.valuation(self._place) >= 0:
             return x
-        else:
-            raise TypeError
+        raise TypeError
 
     def _repr_(self) -> str:
         """

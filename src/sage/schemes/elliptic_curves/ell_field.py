@@ -222,8 +222,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             assert E0.a3() == K(0)
             assert E0.a4() == K(0)
             return EllipticCurve(K, [1, E0.a2() + D, 0, 0, E0.a6()])
-        else:
-            raise ValueError("Quadratic twist not implemented in char 2 when j=0")
+        raise ValueError("Quadratic twist not implemented in char 2 when j=0")
 
     def two_torsion_rank(self):
         r"""
@@ -737,7 +736,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         L = self.base_field()
         if L is K:
             return self
-        elif L == K:  # number fields can be equal but not identical
+        if L == K:  # number fields can be equal but not identical
             return self.base_extend(K)
 
         # Construct an embedding f of K in L, and check that the
@@ -1287,7 +1286,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if algorithm == 'structure':
             return E.torsion_subgroup().torsion_subgroup(n)
 
-        elif algorithm == 'divpoly':
+        if algorithm == 'divpoly':
             accP = accQ = E.zero()
 
             for l,m in n.factor():
@@ -1378,8 +1377,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
             return AdditiveAbelianGroupWrapper(E.point_homset(), gens, [pt.order() for pt in gens])
 
-        else:
-            raise ValueError(f'unknown algorithm {algorithm!r}')
+        raise ValueError(f'unknown algorithm {algorithm!r}')
 
     def torsion_gens(self, n, *args, **kwds):
         r"""
@@ -2714,8 +2712,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise ValueError("Second argument is not an Elliptic Curve.")
         if self.is_isomorphic(other):
             return True
-        else:
-            raise NotImplementedError("Only implemented for isomorphic curves over general fields.")
+        raise NotImplementedError("Only implemented for isomorphic curves over general fields.")
 
     def weierstrass_p(self, prec=20, algorithm=None):
         r"""

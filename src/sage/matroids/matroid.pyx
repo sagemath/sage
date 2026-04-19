@@ -8340,7 +8340,7 @@ cdef class Matroid(SageObject):
         for S in self.no_broken_circuits_sets_iterator(ordering):
             if len(S) == r:
                 facets.append(S)
-        return SimplicialComplex(facets, maximality_check=False, is_immutable=True)
+        return SimplicialComplex(facets, maximality_check=False, immutable=True)
 
     cpdef automorphism_group(self):
         r"""

@@ -201,7 +201,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-import sage.misc.latex as latex
+from sage.misc import latex
 
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity

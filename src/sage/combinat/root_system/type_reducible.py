@@ -15,7 +15,7 @@ from sage.combinat.root_system.cartan_type import CartanType_abstract, CartanTyp
 from sage.matrix.constructor import block_diagonal_matrix
 from sage.sets.family import Family
 from . import ambient_space
-import sage.combinat.root_system as root_system
+from sage.combinat import root_system
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp, rich_to_bool
 

@@ -908,12 +908,11 @@ class RingDerivationWithoutTwist(RingDerivation):
                 s += " + (%s)*%s" % (sc, ddx)
         if s[:3] == " + ":
             return s[3:]
-        elif s[:3] == " - ":
+        if s[:3] == " - ":
             return "-" + s[3:]
-        elif s == "":
+        if s == "":
             return "0"
-        else:
-            return s
+        return s
 
     def _latex_(self):
         r"""
@@ -961,12 +960,11 @@ class RingDerivationWithoutTwist(RingDerivation):
                 s += " + \\left(%s\\right) %s" % (sc, ddx)
         if s[:3] == " + ":
             return s[3:]
-        elif s[:3] == " - ":
+        if s[:3] == " - ":
             return "-" + s[3:]
-        elif s == "":
+        if s == "":
             return "0"
-        else:
-            return s
+        return s
 
     def list(self):
         """
@@ -1059,13 +1057,11 @@ class RingDerivationWithoutTwist(RingDerivation):
         if op == op_EQ:
             if isinstance(other, RingDerivationWithoutTwist):
                 return self.list() == other.list()
-            else:
-                return False
+            return False
         if op == op_NE:
             if isinstance(other, RingDerivationWithoutTwist):
                 return self.list() != other.list()
-            else:
-                return True
+            return True
         return NotImplemented
 
     def _bracket_(self, other):
@@ -2008,7 +2004,7 @@ class RingDerivationWithTwist_generic(RingDerivation):
             stwi = "twisting_morphism"
         if sc == "1":
             return "%s - %s" % (stwi, sdef)
-        elif sc == "-1":
+        if sc == "-1":
             s = "-"
         elif scalar._is_atomic():
             s = "%s*" % sc
@@ -2049,7 +2045,7 @@ class RingDerivationWithTwist_generic(RingDerivation):
             stwi = "\\text{twisting morphism}"
         if sc == "1":
             return "%s - %s" % (stwi, sdef)
-        elif sc == "-1":
+        if sc == "-1":
             s = "-"
         elif scalar._is_atomic():
             s = "%s " % sc
@@ -2278,13 +2274,11 @@ class RingDerivationWithTwist_generic(RingDerivation):
         if op == op_EQ:
             if isinstance(other, RingDerivationWithTwist_generic):
                 return self._scalar == other._scalar
-            else:
-                return False
+            return False
         if op == op_NE:
             if isinstance(other, RingDerivationWithTwist_generic):
                 return self._scalar != other._scalar
-            else:
-                return True
+            return True
         return NotImplemented
 
     def extend_to_fraction_field(self):

@@ -477,7 +477,7 @@ class FactorizationToTableaux(CrystalMorphism):
             p += [i + 1] * len(word)
             # We sort for those pesky commutative elements
             # The word is most likely in reverse order to begin with
-            q += sorted(reversed(word))
+            q += sorted(word)
         C = self.codomain()
         return C(RSK(p, q, insertion=RSK.rules.EG)[1])
 

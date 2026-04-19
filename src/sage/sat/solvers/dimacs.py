@@ -509,14 +509,14 @@ class DIMACS(SatSolver):
         TESTS::
 
             sage: from sage.sat.boolean_polynomials import solve as solve_sat
-            sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)                       # needs sage.rings.finite_rings sage.rings.polynomial.pbori
-            sage: while True:  # workaround (see :issue:`31891`)                         # needs sage.rings.finite_rings sage.rings.polynomial.pbori
+            sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)                       # needs sage.rings.finite_rings brial
+            sage: while True:  # workaround (see :issue:`31891`)                         # needs sage.rings.finite_rings brial
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
             ....:     except ZeroDivisionError:
             ....:         pass
-            sage: solve_sat(F, solver=sage.sat.solvers.RSat)    # optional - rsat, needs sage.rings.finite_rings sage.rings.polynomial.pbori
+            sage: solve_sat(F, solver=sage.sat.solvers.RSat)    # optional - rsat, needs sage.rings.finite_rings brial
         """
         if assumptions is not None:
             raise NotImplementedError("Assumptions are not supported for DIMACS based solvers.")
@@ -537,8 +537,7 @@ class DIMACS(SatSolver):
             L = " ".join(v_lines).split(" ")
             assert L[-1] == "0", "last digit of solution line must be zero (not {})".format(L[-1])
             return (None,) + tuple(int(e) > 0 for e in L[:-1])
-        else:
-            raise ValueError("When parsing the output(={}), no line starts with letter v or s".format(self._output))
+        raise ValueError("When parsing the output(={}), no line starts with letter v or s".format(self._output))
 
 
 class RSat(DIMACS):
