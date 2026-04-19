@@ -89,8 +89,7 @@ class pAdicRelativeBaseringInjection(Morphism):
         """
         if x.is_zero():
             return self.codomain()(0,x.precision_absolute())
-        else:
-            return self.codomain()([x])
+        return self.codomain()([x])
 
     def _call_with_args(self, x, args=(), kwds={}):
         """

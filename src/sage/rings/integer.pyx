@@ -3100,7 +3100,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    def divisors(self, method=None):
+    def divisors(self, method=None) -> list:
         """
         Return the list of all positive integer divisors of this integer,
         sorted in increasing order.

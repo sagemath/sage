@@ -835,8 +835,7 @@ cdef class CircuitsMatroid(Matroid):
             raise ValueError("broken circuit complex of matroid with loops is not defined")
         return SimplicialComplex(
             self.no_broken_circuits_facets(ordering, reduced),
-            maximality_check=False,
-            is_immutable=True,
+            maximality_check=False, immutable=True
         )
 
     # properties

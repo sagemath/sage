@@ -1555,16 +1555,13 @@ class ToricDivisor_generic(Divisor_generic):
         if dim:
             if deg is None:
                 return HH
-            else:
-                return HH[deg]
-        else:
-            from sage.modules.free_module import VectorSpace
-            vectorspaces = {k: VectorSpace(self.scheme().base_ring(), HH[k])
-                            for k in range(len(HH))}
-            if deg is None:
-                return vectorspaces
-            else:
-                return vectorspaces[deg]
+            return HH[deg]
+        from sage.modules.free_module import VectorSpace
+        vectorspaces = {k: VectorSpace(self.scheme().base_ring(), HH[k])
+                        for k in range(len(HH))}
+        if deg is None:
+            return vectorspaces
+        return vectorspaces[deg]
 
     def cohomology_support(self):
         r"""
@@ -1781,8 +1778,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
         if isinstance(x, ToricDivisor_generic):
             if x.parent() is self:
                 return x
-            else:
-                x = x._data
+            x = x._data
         return ToricDivisor(self.scheme(), x, self.base_ring(), check, reduce)
 
     def base_extend(self, R):

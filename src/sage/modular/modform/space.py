@@ -64,7 +64,7 @@ from sage.misc.cachefunc import cached_method
 
 import sage.modular.hecke.all as hecke
 import sage.modular.arithgroup.all as arithgroup
-import sage.modular.dirichlet as dirichlet
+from sage.modular import dirichlet
 
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer

@@ -735,8 +735,7 @@ class Order(Parent, sage.rings.abc.Order):
         """
         if self.is_maximal():
             return self
-        else:
-            return self.number_field().maximal_order()
+        return self.number_field().maximal_order()
 
     def gen(self, i):
         r"""
@@ -1004,12 +1003,10 @@ class Order(Parent, sage.rings.abc.Order):
         if not roots_in_self:
             if all:
                 return []
-            else:
-                raise ArithmeticError("there are no %s roots of unity in self" % n.ordinal_str())
+            raise ArithmeticError("there are no %s roots of unity in self" % n.ordinal_str())
         if all:
             return roots_in_self
-        else:
-            return roots_in_self[0]
+        return roots_in_self[0]
 
     def number_field(self):
         """
@@ -1203,8 +1200,7 @@ class Order(Parent, sage.rings.abc.Order):
         """
         if self.is_maximal():
             return self.number_field().class_group(proof=proof, names=names)
-        else:
-            raise NotImplementedError('non-maximal orders are not yet supported')
+        raise NotImplementedError('non-maximal orders are not yet supported')
 
     def is_suborder(self, other) -> bool:
         """
@@ -1694,7 +1690,7 @@ class Order_absolute(Order):
         if left._is_maximal():
             return left
 
-        elif right._is_maximal():
+        if right._is_maximal():
             return right
 
         return AbsoluteOrder(left._K, left._module_rep + right._module_rep)
@@ -1867,14 +1863,13 @@ class Order_absolute(Order):
             if self._is_maximal() is None:
                 self._assume_maximal(self.absolute_discriminant() == self._K.absolute_discriminant())
             return self._is_maximal()
-        else:
-            p = ZZ(p).abs()
+        p = ZZ(p).abs()
 
-            if self._is_maximal_at(p) is None:
-                is_maximal = self._K.maximal_order(p, assume_maximal=None).absolute_discriminant().valuation(p) == self.absolute_discriminant().valuation(p)
-                self._assume_maximal(is_maximal, p=p)
+        if self._is_maximal_at(p) is None:
+            is_maximal = self._K.maximal_order(p, assume_maximal=None).absolute_discriminant().valuation(p) == self.absolute_discriminant().valuation(p)
+            self._assume_maximal(is_maximal, p=p)
 
-            return self._is_maximal_at(p)
+        return self._is_maximal_at(p)
 
     def _is_maximal(self):
         r"""
@@ -2372,8 +2367,7 @@ class Order_relative(Order):
         """
         if names == 'z' or names == ('z',):
             return self._absolute_order
-        else:
-            return self._absolute_order.change_names(names)
+        return self._absolute_order.change_names(names)
 
     def basis(self):
         r"""

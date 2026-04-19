@@ -154,8 +154,7 @@ def _canonicalize_show_prec(type, print_mode, show_prec=None):
     if show_prec is True:
         if print_mode in ('series', 'terse', 'val-unit'):
             return "bigoh"
-        else:
-            return "dots"
+        return "dots"
     if print_mode in ('series', 'terse', 'val-unit'):
         if show_prec not in ('none', 'bigoh'):
             raise ValueError("show_prec must be either a boolean, 'none' or 'bigoh' when printing mode is %s" % print_mode)
@@ -794,40 +793,35 @@ class Qp_class(UniqueFactory):
                 return pAdicFieldCappedRelative(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                           'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name,
                                                 category=_Fields)
-            else:
-                return pAdicFieldCappedRelative(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                          'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name,
-                                                category=_Fields)
-        elif type == 'floating-point':
+            return pAdicFieldCappedRelative(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
+                                                      'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                            category=_Fields)
+        if type == 'floating-point':
             if print_mode == 'terse':
                 return pAdicFieldFloatingPoint(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                          'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name,
                                                category=_Fields)
-            else:
-                return pAdicFieldFloatingPoint(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                         'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name,
-                                               category=_Fields)
-        elif type == 'relaxed':
+            return pAdicFieldFloatingPoint(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
+                                                     'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                           category=_Fields)
+        if type == 'relaxed':
             if print_mode == 'terse':
                 return pAdicFieldRelaxed(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                    'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name,
                                          category=_Fields)
-            else:
-                return pAdicFieldRelaxed(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                   'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name,
-                                         category=_Fields)
-        elif type[:8] == 'lattice-':
+            return pAdicFieldRelaxed(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
+                                               'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name,
+                                     category=_Fields)
+        if type[:8] == 'lattice-':
             subtype = type[8:]
             if print_mode == 'terse':
                 return pAdicFieldLattice(p, prec, subtype, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                             'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name, label,
                                          category=_Fields)
-            else:
-                return pAdicFieldLattice(p, prec, subtype, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
-                                                            'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name, label,
-                                         category=_Fields)
-        else:
-            raise ValueError("unexpected type")
+            return pAdicFieldLattice(p, prec, subtype, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
+                                                        'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name, label,
+                                     category=_Fields)
+        raise ValueError("unexpected type")
 
 
 Qp = Qp_class("Qp")
@@ -2029,24 +2023,23 @@ class Zp_class(UniqueFactory):
         if type == 'capped-rel':
             return pAdicRingCappedRelative(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                      'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
-        elif type == 'fixed-mod':
+        if type == 'fixed-mod':
             return pAdicRingFixedMod(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
-        elif type == 'capped-abs':
+        if type == 'capped-abs':
             return pAdicRingCappedAbsolute(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                      'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
-        elif type == 'floating-point':
+        if type == 'floating-point':
             return pAdicRingFloatingPoint(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                      'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
-        elif type == 'relaxed':
+        if type == 'relaxed':
             return pAdicRingRelaxed(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                            'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
-        elif type[:8] == 'lattice-':
+        if type[:8] == 'lattice-':
             subtype = type[8:]
             return pAdicRingLattice(p, prec, subtype, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                        'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name, label)
-        else:
-            raise ValueError("unexpected type")
+        raise ValueError("unexpected type")
 
 
 Zp = Zp_class("Zp")
@@ -2604,7 +2597,7 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
               show_prec=show_prec, check=False)
     if F[0][1] == 1:
         return base
-    elif names is None:
+    if names is None:
         raise TypeError("You must specify the name of the generator.")
     if res_name is None:
         res_name = names + '0'

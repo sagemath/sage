@@ -433,24 +433,23 @@ class FunctionField_polymod(FunctionField):
                                 from_L(ret_to_L(ret.base_field().gen()))])
             to_ret = self.hom([L_to_ret(to_L(k.gen())) for k in self._intermediate_fields(self.rational_function_field())])
             return ret, from_ret, to_ret
-        elif self.polynomial().is_monic() and all(c.denominator().is_one() for c in self.polynomial()):
+        if self.polynomial().is_monic() and all(c.denominator().is_one() for c in self.polynomial()):
             # self is already monic and integral
             if names is None or names == ():
                 names = (self.variable_name(),)
             return self.change_variable_name(names)
-        else:
-            if not names:
-                names = (self.variable_name() + "_",)
-            if len(names) == 1:
-                names = (names[0], self.rational_function_field().variable_name())
+        if not names:
+            names = (self.variable_name() + "_",)
+        if len(names) == 1:
+            names = (names[0], self.rational_function_field().variable_name())
 
-            g, d = self._make_monic_integral(self.polynomial())
-            K, from_K, to_K = self.base_field().change_variable_name(names[1])
-            g = g.map_coefficients(to_K)
-            ret = K.extension(g, names=names[0])
-            from_ret = ret.hom([self.gen() * d, self.base_field().gen()])
-            to_ret = self.hom([ret.gen() / d, ret.base_field().gen()])
-            return ret, from_ret, to_ret
+        g, d = self._make_monic_integral(self.polynomial())
+        K, from_K, to_K = self.base_field().change_variable_name(names[1])
+        g = g.map_coefficients(to_K)
+        ret = K.extension(g, names=names[0])
+        from_ret = ret.hom([self.gen() * d, self.base_field().gen()])
+        to_ret = self.hom([ret.gen() / d, ret.base_field().gen()])
+        return ret, from_ret, to_ret
 
     def _make_monic_integral(self, f):
         """
@@ -1051,9 +1050,8 @@ class FunctionField_polymod(FunctionField):
             singular.lib('normal.lib')  # loading genus method in Singular
             return int(curveIdeal._singular_().genus())
 
-        else:
-            raise NotImplementedError("computation of genus over non-prime "
-                                      "constant fields not implemented yet")
+        raise NotImplementedError("computation of genus over non-prime "
+                                  "constant fields not implemented yet")
 
     def _simple_model(self, name='v'):
         r"""
@@ -1303,28 +1301,26 @@ class FunctionField_polymod(FunctionField):
             if name == self.variable_name():
                 id = Hom(self, self).identity()
                 return self, id, id
-            else:
-                ret = self.base_field().extension(self.polynomial(), names=(name,))
-                f = ret.hom(self.gen())
-                t = self.hom(ret.gen())
-                return ret, f, t
-        else:
-            # recursively collapse the tower of fields
-            base = self.base_field()
-            base_, from_base_, to_base_ = base.simple_model()
-            self_ = base_.extension(self.polynomial().map_coefficients(to_base_), names=(name,))
-            gens_in_base_ = [to_base_(k.gen())
-                             for k in base._intermediate_fields(base.rational_function_field())]
-            to_self_ = self.hom([self_.gen()] + gens_in_base_)
-            from_self_ = self_.hom([self.gen(), from_base_(base_.gen())])
+            ret = self.base_field().extension(self.polynomial(), names=(name,))
+            f = ret.hom(self.gen())
+            t = self.hom(ret.gen())
+            return ret, f, t
+        # recursively collapse the tower of fields
+        base = self.base_field()
+        base_, from_base_, to_base_ = base.simple_model()
+        self_ = base_.extension(self.polynomial().map_coefficients(to_base_), names=(name,))
+        gens_in_base_ = [to_base_(k.gen())
+                         for k in base._intermediate_fields(base.rational_function_field())]
+        to_self_ = self.hom([self_.gen()] + gens_in_base_)
+        from_self_ = self_.hom([self.gen(), from_base_(base_.gen())])
 
-            # now collapse self_/base_/K(x)
-            ret, ret_to_self_, self__to_ret = self_._simple_model(name)
-            ret_to_self = ret.hom(from_self_(ret_to_self_(ret.gen())))
-            gens_in_ret = [self__to_ret(to_self_(k.gen()))
-                           for k in self._intermediate_fields(self.rational_function_field())]
-            self_to_ret = self.hom(gens_in_ret)
-            return ret, ret_to_self, self_to_ret
+        # now collapse self_/base_/K(x)
+        ret, ret_to_self_, self__to_ret = self_._simple_model(name)
+        ret_to_self = ret.hom(from_self_(ret_to_self_(ret.gen())))
+        gens_in_ret = [self__to_ret(to_self_(k.gen()))
+                       for k in self._intermediate_fields(self.rational_function_field())]
+        self_to_ret = self.hom(gens_in_ret)
+        return ret, ret_to_self, self_to_ret
 
     @cached_method
     def primitive_element(self):
@@ -1549,33 +1545,32 @@ class FunctionField_polymod(FunctionField):
             f = ret.hom([from_L(ret_to_L(ret.gen())), from_L(ret_to_L(ret.base_field().gen()))])
             t = self.hom([L_to_ret(to_L(self.gen())), L_to_ret(to_L(self.base_field().gen()))])
             return ret, f, t
-        else:
-            # otherwise, the polynomial of L must be separable in the other variable
-            from .constructor import FunctionField
-            K = FunctionField(self.constant_base_field(), names=(names[1],))
-            # construct a field isomorphic to L on top of K
+        # otherwise, the polynomial of L must be separable in the other variable
+        from .constructor import FunctionField
+        K = FunctionField(self.constant_base_field(), names=(names[1],))
+        # construct a field isomorphic to L on top of K
 
-            # turn the minpoly of K into a bivariate polynomial
-            if names[0] == names[1]:
-                raise ValueError("names of generators must be distinct")
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            R = PolynomialRing(self.constant_base_field(), names=names)
-            S = R.remove_var(names[1])
-            f = R(L.polynomial().change_variable_name(names[1]).map_coefficients(
-                lambda c: c.numerator().change_variable_name(names[0]), S))
-            f = f.polynomial(R.gen(0)).change_ring(K)
-            f /= f.leading_coefficient()
-            # f must be separable in the other variable (otherwise it would factor)
-            assert f.gcd(f.derivative()).is_one()
+        # turn the minpoly of K into a bivariate polynomial
+        if names[0] == names[1]:
+            raise ValueError("names of generators must be distinct")
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        R = PolynomialRing(self.constant_base_field(), names=names)
+        S = R.remove_var(names[1])
+        f = R(L.polynomial().change_variable_name(names[1]).map_coefficients(
+            lambda c: c.numerator().change_variable_name(names[0]), S))
+        f = f.polynomial(R.gen(0)).change_ring(K)
+        f /= f.leading_coefficient()
+        # f must be separable in the other variable (otherwise it would factor)
+        assert f.gcd(f.derivative()).is_one()
 
-            ret = K.extension(f, names=(names[0],))
-            # isomorphisms between L and ret are given by swapping generators
-            ret_to_L = ret.hom([L(L.base_field().gen()), L.gen()])
-            L_to_ret = L.hom([ret(K.gen()), ret.gen()])
-            # compose with from_L and to_L to get the desired isomorphisms between self and ret
-            f = ret.hom([from_L(ret_to_L(ret.gen())), from_L(ret_to_L(ret.base_field().gen()))])
-            t = self.hom([L_to_ret(to_L(self.gen())), L_to_ret(to_L(self.base_field().gen()))])
-            return ret, f, t
+        ret = K.extension(f, names=(names[0],))
+        # isomorphisms between L and ret are given by swapping generators
+        ret_to_L = ret.hom([L(L.base_field().gen()), L.gen()])
+        L_to_ret = L.hom([ret(K.gen()), ret.gen()])
+        # compose with from_L and to_L to get the desired isomorphisms between self and ret
+        f = ret.hom([from_L(ret_to_L(ret.gen())), from_L(ret_to_L(ret.base_field().gen()))])
+        t = self.hom([L_to_ret(to_L(self.gen())), L_to_ret(to_L(self.base_field().gen()))])
+        return ret, f, t
 
     def change_variable_name(self, name):
         r"""

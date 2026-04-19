@@ -214,8 +214,7 @@ class Berkovich_Cp(Berkovich):
             return False
         if self._base_type == 'padic field':
             return self.prime() == right.prime()
-        else:
-            return self.base() == right.base() and self.ideal() == right.ideal()
+        return self.base() == right.base() and self.ideal() == right.ideal()
 
     def __ne__(self, right):
         """
@@ -448,9 +447,8 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
         if self._base_type == 'padic field':
             return "Affine Berkovich line over Cp(%s) of precision %s" % (self.prime(),
                 self.base().precision_cap())
-        else:
-            return "Affine Berkovich line over Cp(%s), with base %s" % (self.prime(),
-                self.base())
+        return "Affine Berkovich line over Cp(%s), with base %s" % (self.prime(),
+            self.base())
 
     def _latex_(self):
         r"""
@@ -682,9 +680,8 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
         if self._base_type == 'padic field':
             return "Projective Berkovich line over Cp(%s) of precision %s" % (self.prime(),
                 self.base().base_ring().precision_cap())
-        else:
-            return "Projective Berkovich line over Cp(%s), with base %s" % (self.prime(),
-                self.base().base_ring())
+        return "Projective Berkovich line over Cp(%s), with base %s" % (self.prime(),
+            self.base().base_ring())
 
     def _latex_(self):
         r"""

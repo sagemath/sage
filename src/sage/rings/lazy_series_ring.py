@@ -562,7 +562,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                 stream = x._coeff_stream
                 if isinstance(stream, Stream_zero):
                     return self.zero()
-                elif isinstance(stream, Stream_exact):
+                if isinstance(stream, Stream_exact):
                     if x.parent()._arity != 1:
                         # Special case for constant series
                         if stream._degree == 1:

@@ -62,7 +62,7 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
     # WeightedProjectiveSpace(5) -> just return unweighted version
     if isinstance(weights, (int, Integer)):
         return ProjectiveSpace(weights, R=R, names=names)
-    elif isinstance(weights, (list, tuple)):
+    if isinstance(weights, (list, tuple)):
         # Make it hashable
         weights = tuple(map(Integer, weights))
         if any(w <= 0 for w in weights):
@@ -382,9 +382,8 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         if isinstance(R, Map):
             return WeightedProjectiveSpace(self.weights(), R.codomain(),
                                            self.variable_names())
-        else:
-            return WeightedProjectiveSpace(self.weights(), R,
-                                           self.variable_names())
+        return WeightedProjectiveSpace(self.weights(), R,
+                                       self.variable_names())
 
     def _an_element_(self):
         r"""

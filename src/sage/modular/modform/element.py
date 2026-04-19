@@ -57,7 +57,7 @@ from sage.rings.real_mpfr import RealField
 from sage.structure.element import coercion_model, ModuleElement, Element
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
-import sage.modular.hecke.element as element
+from sage.modular.hecke import element
 from . import defaults
 
 lazy_import('sage.combinat.integer_vector_weighted',

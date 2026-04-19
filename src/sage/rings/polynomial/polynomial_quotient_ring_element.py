@@ -87,7 +87,7 @@ AUTHORS:
 
 from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import richcmp
-import sage.rings.polynomial.polynomial_singular_interface as polynomial_singular_interface
+from sage.rings.polynomial import polynomial_singular_interface
 
 
 class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_singular_repr, CommutativeRingElement):

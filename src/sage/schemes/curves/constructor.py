@@ -345,7 +345,7 @@ def Curve(F, A=None):
             return AffinePlaneCurve_field(A, F)
         return AffinePlaneCurve(A, F)
 
-    elif isinstance(A, ProjectiveSpace_ring):
+    if isinstance(A, ProjectiveSpace_ring):
         if n == 1:
             if A.coordinate_ring().ideal(F).is_zero():
                 if isinstance(k, FiniteField):
@@ -385,12 +385,11 @@ def Curve(F, A=None):
             return ProjectivePlaneCurve_field(A, F)
         return ProjectivePlaneCurve(A, F)
 
-    elif isinstance(A, WeightedProjectiveSpace_ring):
+    if isinstance(A, WeightedProjectiveSpace_ring):
         # currently, we only support curves in a weighted projective plane
         if n != 2:
             raise NotImplementedError("ambient space has to be a weighted projective plane")
         # currently, we do not perform checks on weighted projective curves
         return WeightedProjectiveCurve(A, F)
 
-    else:
-        raise TypeError('ambient space neither affine nor projective')
+    raise TypeError('ambient space neither affine nor projective')
