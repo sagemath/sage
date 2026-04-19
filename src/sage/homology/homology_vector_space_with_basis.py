@@ -1099,7 +1099,7 @@ class CohomologyRing_mod2(CohomologyRing):
                 # Convert cubical complex to simplicial complex, and
                 # convert self to basis element in the new complex's
                 # cohomology ring.
-                scomplex = SimplicialComplex(scomplex, is_mutable=False)
+                scomplex = SimplicialComplex(scomplex, immutable=True)
                 P = scomplex.cohomology_ring(self.base_ring())
                 self = P.sum_of_terms(self.monomial_coefficients().items())
             if not isinstance(scomplex, (SimplicialComplex, SimplicialSet_arbitrary)):

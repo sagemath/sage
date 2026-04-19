@@ -321,7 +321,7 @@ class xmrange_iter:
         self.typ = typ
 
     def __repr__(self):
-        if self.typ == list:
+        if self.typ is list:
             return 'xmrange_iter(%s)' % self.iter_list
         return 'xmrange_iter(%s, %s)' % (self.iter_list, self.typ)
 
@@ -572,7 +572,7 @@ class xmrange:
         self.typ = typ
 
     def __repr__(self):
-        if self.typ == list:
+        if self.typ is list:
             return 'xmrange(%s)' % self.sizes
         return 'xmrange(%s, %s)' % (self.sizes, self.typ)
 

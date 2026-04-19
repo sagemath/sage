@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Lie Conformal Algebra Element
 
@@ -16,9 +15,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.arith.misc import factorial
+from sage.misc.latex import latex
 from sage.misc.misc_c import prod
 from sage.misc.repr import repr_lincomb
-from sage.misc.latex import latex
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 
 
@@ -51,7 +50,8 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
             sage: C.T()
             0
 
-            sage: R = lie_conformal_algebras.NeveuSchwarz(QQbar); R.inject_variables()
+            sage: R = lie_conformal_algebras.NeveuSchwarz(QQbar)
+            sage: R.inject_variables()
             Defining L, G, C
             sage: (L + 2*G.T() + 4*C).T(2)
             2*T^(2)L + 12*T^(3)G
@@ -108,7 +108,8 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
             {1: -TL, 2: -4*L, 4: -2*C}
 
             sage: R = lie_conformal_algebras.Affine(QQbar, 'A1', names=('e','h','f')); R
-            The affine Lie conformal algebra of type ['A', 1] over Algebraic Field
+            The affine Lie conformal algebra of type ['A', 1]
+            over Algebraic Field
             sage: R.inject_variables()
             Defining e, h, f, K
             sage: e.bracket(f)
@@ -173,14 +174,14 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
             return "0"
         p = self.parent()
         if p._names:
-            terms = [("T^({}){}".format(k1, p._names[p._index_to_pos[k0]]), v) if k1 > 1
-                     else ("T{}".format(p._names[p._index_to_pos[k0]]), v) if k1 == 1
-                     else ("{}".format(p._names[p._index_to_pos[k0]]), v)
+            terms = [(f"T^({k1}){p._names[p._index_to_pos[k0]]}", v) if k1 > 1
+                     else (f"T{p._names[p._index_to_pos[k0]]}", v) if k1 == 1
+                     else (f"{p._names[p._index_to_pos[k0]]}", v)
                      for (k0, k1), v in self.monomial_coefficients().items()]
         else:
-            terms = [("T^({}){}".format(k1, p._repr_generator(k0)), v) if k1 > 1
-                     else ("T{}".format(p._repr_generator(k0)), v) if k1 == 1
-                     else ("{}".format(p._repr_generator(k0)), v)
+            terms = [(f"T^({k1}){p._repr_generator(k0)}", v) if k1 > 1
+                     else (f"T{p._repr_generator(k0)}", v) if k1 == 1
+                     else (f"{p._repr_generator(k0)}", v)
                      for (k0, k1), v in self.monomial_coefficients().items()]
 
         return repr_lincomb(terms, strip_one=True)

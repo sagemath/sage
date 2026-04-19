@@ -19,7 +19,7 @@ EXAMPLES::
 # ***************************************************************************
 
 
-import sage.schemes.curves.projective_curve as projective_curve
+from sage.schemes.curves import projective_curve
 
 
 class QuarticCurve_generic(projective_curve.ProjectivePlaneCurve):

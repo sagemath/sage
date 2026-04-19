@@ -1078,8 +1078,7 @@ class IdealMonoid(UniqueRepresentation, Parent):
         """
         if isinstance(x, IdealMonoid):
             return self.ring().has_coerce_map_from(x.ring())
-        else:
-            return self.ring().has_coerce_map_from(x)
+        return self.ring().has_coerce_map_from(x)
 
     def _an_element_(self):
         """

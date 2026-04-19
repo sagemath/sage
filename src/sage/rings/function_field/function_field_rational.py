@@ -795,10 +795,9 @@ class RationalFunctionField(FunctionField):
         if name == self.variable_name():
             id = Hom(self, self).identity()
             return self, id, id
-        else:
-            from .constructor import FunctionField
-            ret = FunctionField(self.constant_base_field(), name)
-            return ret, ret.hom(self.gen()), self.hom(ret.gen())
+        from .constructor import FunctionField
+        ret = FunctionField(self.constant_base_field(), name)
+        return ret, ret.hom(self.gen()), self.hom(ret.gen())
 
     def residue_field(self, place, name=None):
         """
@@ -875,8 +874,7 @@ class RationalFunctionField_global(RationalFunctionField):
         """
         if degree == 1:
             return [self.place_infinite()] + self.places_finite(degree)
-        else:
-            return self.places_finite(degree)
+        return self.places_finite(degree)
 
     def _places_finite(self, degree=1) -> Iterator[FunctionFieldPlace_rational]:
         """

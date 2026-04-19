@@ -958,10 +958,9 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             P = parent(x)
             if P is self:
                 return x
-            elif self._base.has_coerce_map_from(P):
+            if self._base.has_coerce_map_from(P):
                 return InfinitePolynomial(self, self._base(x))
-            else:
-                raise ValueError(f"cannot convert {x} into an element of {self}")
+            raise ValueError(f"cannot convert {x} into an element of {self}")
 
         if isinstance(parent(x), InfinitePolynomialRing_sparse):
             # the easy case - parent == self - is already past
@@ -1296,8 +1295,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             key = ((0,), ())
             if key in self._cache__gen:
                 return self._cache__gen[key]
-            else:
-                self._cache__gen[key] = res
+            self._cache__gen[key] = res
         return res
 
     def _first_ngens(self, n):

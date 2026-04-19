@@ -247,8 +247,15 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             True
             sage: bool(J.zero())
             False
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(x^5 + x)
+            sage: bool(C.jacobian().zero())
+            False
         """
-        return not (self._u.is_one() and not self._v.is_zero())
+        return not (self._u.is_one() and self._v.is_zero())
 
     @cached_method
     def order(self) -> Integer:

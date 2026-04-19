@@ -407,7 +407,6 @@ def Hom[DomainElementT: Parent, CodomainElementT: Parent](
     # domains/codomains that break the unique parent condition. Also,
     # at some point, it somehow broke the coercion (see e.g. sage -t
     # sage.rings.real_mpfr). To be investigated.
-    global _cache
     key = (X, Y, category)
     try:
         H = _cache[key]

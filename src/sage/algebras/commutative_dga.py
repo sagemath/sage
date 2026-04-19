@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Commutative Differential Graded Algebras
 
@@ -4113,7 +4112,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: CohomologyClass(x - 2)                                                # needs sage.symbolic
+            sage: CohomologyClass(x - 2)
             [x - 2]
         """
         self._x = x
@@ -4124,7 +4123,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         TESTS::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: hash(CohomologyClass(sin)) == hash(sin)                               # needs sage.symbolic
+            sage: hash(CohomologyClass(sin)) == hash(sin)
             True
         """
         return hash(self._x)
@@ -4134,7 +4133,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: CohomologyClass(sin)                                                  # needs sage.symbolic
+            sage: CohomologyClass(sin)
             [sin]
         """
         return '[{}]'.format(self._x)
@@ -4144,9 +4143,9 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: latex(CohomologyClass(sin))                                           # needs sage.symbolic
+            sage: latex(CohomologyClass(sin))
             \left[ \sin \right]
-            sage: latex(CohomologyClass(x^2))                                           # needs sage.symbolic
+            sage: latex(CohomologyClass(x^2))
             \left[ x^{2} \right]
         """
         from sage.misc.latex import latex
@@ -4159,8 +4158,8 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: x = CohomologyClass(sin)                                              # needs sage.symbolic
-            sage: x.representative() == sin                                             # needs sage.symbolic
+            sage: x = CohomologyClass(sin)
+            sage: x.representative() == sin
             True
         """
         return self._x

@@ -23,8 +23,3 @@ cdef class ComplexField(Field):
 cdef class ComplexDoubleField(Field):
 
     pass
-
-
-cdef class SymbolicRing(CommutativeRing):
-
-    pass
