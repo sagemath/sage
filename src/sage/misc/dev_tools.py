@@ -280,6 +280,8 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
 
     obj = []
     for smodule_name, smodule in mods.items():
+        if smodule is None:
+            continue
         if module_name and smodule_name != module_name and not smodule_name.startswith(module_name + '.'):
             continue
         try:
@@ -291,52 +293,6 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
             obj.append(u)
 
     return obj
-
-
-def _find_name_in_sage_modules(name):
-    """
-    Search Sage modules for an attribute called ``name``.
-
-    This is a fallback for :func:`import_statements` when ``name`` is not
-    currently available from loaded modules.
-
-    OUTPUT:
-
-    A dictionary ``module -> object`` for modules exposing ``name``.
-    """
-    import importlib
-
-    import sage
-
-    from .package_dir import walk_packages
-
-    # Keep in sync with the heavy exclusions used by ``load_submodules``.
-    exclude = re.compile(
-        r"^sage\.libs|^sage\.tests|tests$|^sage\.all_|all$|"
-        r"sage\.interacts$|^sage\.misc\.benchmark$"
-    )
-
-    matches = {}
-    for _, module_name, ispkg in walk_packages(sage.__path__, sage.__name__ + '.'):
-        if ispkg or exclude.search(module_name):
-            continue
-        try:
-            module = sys.modules.get(module_name)
-            if module is None:
-                module = importlib.import_module(module_name)
-        except Exception:
-            # Some optional/broken modules can fail to import in developer
-            # environments; ignore them while searching.
-            continue
-
-        try:
-            obj = getattr(module, name)
-        except AttributeError:
-            continue
-
-        matches[module_name] = obj
-
-    return matches
 
 
 def import_statements(*objects, **kwds):
@@ -416,6 +372,7 @@ def import_statements(*objects, **kwds):
         Traceback (most recent call last):
         ...
         NameError: name 'IntegerLattice' is not defined
+        sage: import sage.modules.free_module_integer
         sage: import_statements("IntegerLattice")
         from sage.modules.free_module_integer import IntegerLattice
 
@@ -427,8 +384,10 @@ def import_statements(*objects, **kwds):
 
     Specifying a string is also useful for objects that are not
     imported in the Sage interpreter namespace by default. In this
-    case, an object with that name is looked up in all the modules
-    that have been imported in this session::
+    case, an object with that name is looked up in modules that are
+    already loaded in this session (``sys.modules``), for example after
+    a normal ``import`` of the defining package or after
+    :func:`load_submodules`::
 
         sage: import_statement_string
         Traceback (most recent call last):
@@ -567,20 +526,8 @@ def import_statements(*objects, **kwds):
                 # 1.b. object inside a submodule of sage
                 obj = find_objects_from_name(name, 'sage', include_lazy_imports=True)
                 if not obj:
-                    # 1.c. object from something already imported
+                    # 1.c. object from something already imported (loaded modules only)
                     obj = find_objects_from_name(name, include_lazy_imports=True)
-                if not obj:
-                    # 1.d. object from Sage modules not loaded yet
-                    module_matches = _find_name_in_sage_modules(name)
-                    if module_matches:
-                        if verbose and len(module_matches) > 1:
-                            print("# **Warning**: distinct objects with name '{}' "
-                                  "in:".format(name))
-                            for mod in sorted(module_matches):
-                                print("#   - {}".format(mod))
-                        for module_name in sorted(module_matches):
-                            answer[module_name].append((name, name))
-                        continue
 
             # remove lazy imported objects from list obj
             i = 0
