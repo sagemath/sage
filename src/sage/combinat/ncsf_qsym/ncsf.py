@@ -4833,7 +4833,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     -I[1, 1, 3, 2] - I[1, 2, 2, 2] - I[1, 2, 3, 1] + I[2, 3, 2]
                 """
                 if n <= 0:
-                    return super(NonCommutativeSymmetricFunctions.Immaculate.Element, self).bernstein_creation_operator(n)
+                    return super().bernstein_creation_operator(n)
 
                 C = Compositions()
                 P = self.parent()

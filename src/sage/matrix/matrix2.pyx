@@ -87,6 +87,7 @@ from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.rings import Rings
 from sage.misc.lazy_string import lazy_string
+from sage.misc.lazy_import import LazyImport
 from sage.misc.randstate cimport current_randstate
 from sage.structure.coerce cimport py_scalar_parent
 from sage.structure.sequence import Sequence
@@ -106,6 +107,9 @@ from sage.modules.free_module_element import FreeModuleElement
 from sage.matrix.matrix_misc import permanental_minor_polynomial
 
 from sage.misc.misc_c import prod
+
+
+SymbolicRing = LazyImport('sage.symbolic.ring', 'SymbolicRing')
 
 
 # temporary hack to silence the warnings from #34806
@@ -894,7 +898,7 @@ cdef class Matrix(Matrix1):
 
         # If our field is inexact, checking the answer is doomed in
         # most cases. But here we handle the special ones.
-        if isinstance(K, sage.rings.abc.SymbolicRing):
+        if isinstance(K, SymbolicRing):
             # Elements of SR "remember" whether or not they are exact.
             # If every element in the system is exact, we can probably
             # still check the solution over the inexact ring SR.
@@ -2415,7 +2419,7 @@ cdef class Matrix(Matrix1):
         # is then assumed to not be a variable in the symbolic ring.  But this
         # resulted in further exceptions/ errors.
 
-        var = 'A0123456789' if isinstance(R, sage.rings.abc.SymbolicRing) else 'x'
+        var = 'A0123456789' if isinstance(R, SymbolicRing) else 'x'
         try:
             charp = self.charpoly(var, algorithm='df')
         except ValueError:
@@ -15623,13 +15627,13 @@ cdef class Matrix(Matrix1):
                 R.has_coerce_map_from(RLF) or
                 CLF.has_coerce_map_from(R) or
                 R.has_coerce_map_from(CLF) or
-                isinstance(R, sage.rings.abc.SymbolicRing)):
+                isinstance(R, SymbolicRing)):
             # This is necessary to avoid "going through the motions"
             # with e.g. a one-by-one identity matrix over the finite
             # field of order 5^2, which might otherwise look positive-
             # definite.
-            raise ValueError("Could not see {} as a subring of the "
-                             "real or complex numbers".format(R))
+            raise ValueError(f"Could not see {R} as a subring of the "
+                             "real or complex numbers")
 
         if not self.is_hermitian():
             return False
@@ -18383,7 +18387,7 @@ cdef class Matrix(Matrix1):
         if not (isinstance(K1, sage.geometry.abc.ConvexRationalPolyhedralCone)
                 and isinstance(K2, sage.geometry.abc.ConvexRationalPolyhedralCone)):
             raise TypeError('K1 and K2 must be cones.')
-        if not self.base_ring().is_exact() and not isinstance(self.base_ring(), sage.rings.abc.SymbolicRing):
+        if not self.base_ring().is_exact() and not isinstance(self.base_ring(), SymbolicRing):
             msg = 'The base ring of the matrix is neither symbolic nor exact.'
             raise ValueError(msg)
 
@@ -18529,7 +18533,7 @@ cdef class Matrix(Matrix1):
 
         if not isinstance(K, sage.geometry.abc.ConvexRationalPolyhedralCone):
             raise TypeError('K must be a cone.')
-        if not self.base_ring().is_exact() and not isinstance(self.base_ring(), sage.rings.abc.SymbolicRing):
+        if not self.base_ring().is_exact() and not isinstance(self.base_ring(), SymbolicRing):
             msg = 'The base ring of the matrix is neither symbolic nor exact.'
             raise ValueError(msg)
 
@@ -18794,7 +18798,7 @@ cdef class Matrix(Matrix1):
 
         if not isinstance(K, sage.geometry.abc.ConvexRationalPolyhedralCone):
             raise TypeError('K must be a cone.')
-        if not self.base_ring().is_exact() and not isinstance(self.base_ring(), sage.rings.abc.SymbolicRing):
+        if not self.base_ring().is_exact() and not isinstance(self.base_ring(), SymbolicRing):
             msg = 'The base ring of the matrix is neither symbolic nor exact.'
             raise ValueError(msg)
 

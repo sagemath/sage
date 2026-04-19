@@ -677,7 +677,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [0 0]
             [0 0]
             [0 0]
-        """    
+        """
         cdef m4ri_word a = poly_to_word(right)
         cdef Matrix_gf2e_dense C = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, self._parent)
 
@@ -1675,7 +1675,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             ...
             ValueError: self must be a square matrix
         """
-        cdef size_t m = self._nrows 
+        cdef size_t m = self._nrows
 
         if m != self._ncols:
             raise ValueError("self must be a square matrix")

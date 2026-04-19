@@ -40,7 +40,7 @@ TESTS::
 # returns a vector that the defining matrix can hit from the left, or
 # be coercible into vector space of appropriate dimension.
 
-import sage.modules.free_module as free_module
+from sage.modules import free_module
 
 from sage.categories.morphism import Morphism
 from sage.modules import free_module_homspace, matrix_morphism

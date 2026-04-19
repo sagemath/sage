@@ -141,8 +141,7 @@ class Polynomial_padic(Polynomial):
         """
         if self.is_zero():
             return self[0]
-        else:
-            return self.base_ring()(self.base_ring().prime_pow(min([x.valuation() for x in self.coefficients(sparse=False)])))
+        return self.base_ring()(self.base_ring().prime_pow(min([x.valuation() for x in self.coefficients(sparse=False)])))
 
     def factor(self):
         r"""

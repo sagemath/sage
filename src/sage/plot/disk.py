@@ -164,7 +164,7 @@ class Disk(GraphicPrimitive):
             sage: p = disk((0,0), 5, (0, pi/4), alpha=0.5)
             sage: p.save(f)
         """
-        import matplotlib.patches as patches
+        from matplotlib import patches
         options = self.options()
         deg1 = self.rad1*(180./pi)  # convert radians to degrees
         deg2 = self.rad2*(180./pi)

@@ -254,7 +254,6 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
 
         TESTS::
 
-            sage: # needs sage.symbolic
             sage: L.<x,y,z> = LieAlgebra(SR, {('x','y'): {'x':1}})
             sage: K = L.quotient(y)
             sage: K.dimension()

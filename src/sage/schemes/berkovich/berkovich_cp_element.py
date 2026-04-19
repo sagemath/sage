@@ -236,7 +236,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                     self._center_lst[i] = center
                     self._radius_lst[i] = radius
                 return
-            elif space_type == "affine":
+            if space_type == "affine":
                 for i in range(len(self._center_lst)):
                     center = self._center_lst[i]
                     radius = self._radius_lst[i]
@@ -279,9 +279,8 @@ class Berkovich_Element_Cp(Berkovich_Element):
                     self._center_lst[i] = center
                     self._radius_lst[i] = radius
                 return
-            else:
-                raise ValueError("bad value %s passed to space_type. Do not initialize  " % (space_type) +
-                                 "Berkovich_Element_Cp directly")
+            raise ValueError("bad value %s passed to space_type. Do not initialize  " % (space_type) +
+                             "Berkovich_Element_Cp directly")
 
         # the point must now be type 1, 2, or 3, so we check that the center is of the appropriate type
         if error_check:
@@ -715,8 +714,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         if self.type_of_point() == 1 or other.type_of_point() == 1:
             if self == other:
                 return 0
-            else:
-                return RR(Infinity)
+            return RR(Infinity)
         return 2 * self.join(other).diameter().log(self.prime()) \
             - self.diameter().log(self.prime()) \
             - other.diameter().log(other.prime())
@@ -1043,22 +1041,21 @@ class Berkovich_Element_Cp(Berkovich_Element):
         """
         if self._type == 1:
             return "Type I point centered at " + format(self._center)
-        elif self._type == 2:
+        if self._type == 2:
             return "Type II point centered at " \
                 + format(self._center) \
                 + " of radius %s^%s" % (self._p, self._power)
-        elif self._type == 3:
+        if self._type == 3:
             return "Type III point centered at " \
                 + format(self._center) + " of radius " \
                 + format(self._radius)
-        elif self._center_func is not None and self._radius_func is not None:
+        if self._center_func is not None and self._radius_func is not None:
             return "Type IV point of precision %s " % self._prec + \
                 "with centers given by %s and radii given by %s"\
                 % (self._center_func, self._radius_func)
-        else:
-            return "Type IV point of precision %s, approximated " % self._prec + \
-                "by disks centered at %s ... with radii %s ..." \
-                % (self._center_lst[:min(self._prec, 2)], self._radius_lst[:min(self._prec, 2)])
+        return "Type IV point of precision %s, approximated " % self._prec + \
+            "by disks centered at %s ... with radii %s ..." \
+            % (self._center_lst[:min(self._prec, 2)], self._radius_lst[:min(self._prec, 2)])
 
     def _latex_(self):
         r"""
@@ -1298,9 +1295,9 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         new_space = Berkovich_Cp_Projective(self.parent().base_ring(), self.parent().ideal())
         if self.type_of_point() == 1:
             return new_space(self.center())
-        elif self.type_of_point() == 2:
+        if self.type_of_point() == 2:
             return new_space(self.center(), power=self.power())
-        elif self.type_of_point() == 3:
+        if self.type_of_point() == 3:
             return new_space(self.center(), self.radius())
         if self._center_func is None:
             center = self.center()
@@ -1352,7 +1349,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         otype = other.type_of_point()
         if stype == otype and stype == 1:
             return self.center() == other.center()
-        elif stype == otype and stype == 4:
+        if stype == otype and stype == 4:
             raise NotImplementedError("Equality for type IV points not yet implemented")
         elif stype in [2, 3] and otype in [2, 3]:
             if self.radius() != other.radius():
@@ -1388,7 +1385,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         """
         if self.type_of_point() == 1:
             return hash(self.center())
-        elif self.type_of_point() == 4:
+        if self.type_of_point() == 4:
             raise NotImplementedError('hash not defined for type IV points')
         return hash(self.radius())
 
@@ -1465,9 +1462,8 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
             center = self.center()[-1]
             dist = self._custom_abs(other.center() - center)
             return dist <= other.radius() and self.radius()[-1] <= other.radius()
-        else:
-            dist = self._custom_abs(self.center() - other.center())
-            return dist <= other.radius() and self.radius() <= other.radius()
+        dist = self._custom_abs(self.center() - other.center())
+        return dist <= other.radius() and self.radius() <= other.radius()
 
     def gt(self, other):
         r"""
@@ -1537,9 +1533,8 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
             center = other.center()[-1]
             dist = self._custom_abs(self.center() - center)
             return dist <= self.radius() and other.radius()[-1] <= self.radius()
-        else:
-            dist = self._custom_abs(self.center() - other.center())
-            return dist <= self.radius() and other.radius() <= self.radius()
+        dist = self._custom_abs(self.center() - other.center())
+        return dist <= self.radius() and other.radius() <= self.radius()
 
     def join(self, other, basepoint=Infinity):
         """
@@ -1943,9 +1938,9 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
             center = self.center()[0]
             if self.type_of_point() == 1:
                 return new_space(center)
-            elif self.type_of_point() == 2:
+            if self.type_of_point() == 2:
                 return new_space(center, power=self.power())
-            elif self.type_of_point() == 3:
+            if self.type_of_point() == 3:
                 return new_space(center, self.radius())
         if self._center_func is None:
             center = [i[0] for i in self.center()]
@@ -1997,7 +1992,7 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
         otype = other.type_of_point()
         if stype == otype and stype == 1:
             return self.center() == other.center()
-        elif stype == otype and stype == 4:
+        if stype == otype and stype == 4:
             raise NotImplementedError("equality for type IV points not implemented")
         elif stype in [2, 3] and otype in [2, 3]:
             if self.radius() != other.radius():
@@ -2036,7 +2031,7 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
         """
         if self.type_of_point() == 1:
             return hash(self.center())
-        elif self.type_of_point() == 4:
+        if self.type_of_point() == 4:
             raise ValueError('hash not defined for type IV points')
         return hash(self.radius())
 
@@ -2131,9 +2126,8 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
             center = self.center()[-1]
             dist = self._custom_abs(other.center()[0] - center[0])
             return dist <= other.radius() and self.radius()[-1] <= other.radius()
-        else:
-            dist = self._custom_abs(self.center()[0] - other.center()[0])
-            return dist <= other.radius() and self.radius() <= other.radius()
+        dist = self._custom_abs(self.center()[0] - other.center()[0])
+        return dist <= other.radius() and self.radius() <= other.radius()
 
     def gt(self, other):
         r"""
@@ -2220,9 +2214,8 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
             center = other.center()[-1]
             dist = self._custom_abs(self.center()[0] - center[0])
             return dist <= self.radius() and other.radius()[-1] <= self.radius()
-        else:
-            dist = self._custom_abs(self.center()[0] - other.center()[0])
-            return dist <= self.radius() and other.radius() <= self.radius()
+        dist = self._custom_abs(self.center()[0] - other.center()[0])
+        return dist <= self.radius() and other.radius() <= self.radius()
 
     def join(self, other, basepoint=Infinity):
         """
@@ -2357,19 +2350,17 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
                                              max(dist_b_s, self.radius(), basepoint.radius())))
 
                 # case where self and basepoint are comparable
-                elif b_ge_s:
+                if b_ge_s:
                     return basepoint
-                else:
-                    return self
+                return self
 
             # case where other and basepoint are comparable
-            elif b_ge_o:
+            if b_ge_o:
                 return basepoint
-            else:
-                return other
+            return other
 
         # now the cases where self > other
-        elif s_ge_o:
+        if s_ge_o:
             if not (b_ge_s or b_lt_s):
                 return self
             if b_ge_s:
