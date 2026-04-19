@@ -8,6 +8,20 @@ option(
   description: 'Path to SAGE_LOCAL directory (only used for compatibility with the old Sage-the-Distro',
 )
 
+option(
+  'GAP_ROOT_PATHS',
+  type: 'string',
+  value: '',
+  description: 'Semicolon-separated GAP root paths; empty uses the Sage defaults and appends detected system GAP paths when available',
+)
+
+option(
+  'MAXIMA_FAS',
+  type: 'string',
+  value: '',
+  description: 'Location of maxima.fas; empty to locate this file automatically if possible',
+)
+
 #
 # Boolean options
 #

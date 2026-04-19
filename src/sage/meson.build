@@ -36,17 +36,27 @@ if openmp.found()
 endif
 gap_exe = find_program('gap', required: not is_windows, disabler: true)
 if gap_exe.found()
-  gaprun = run_command(
-    gap_exe,
-    '-r',
-    '-q',
-    '--bare',
-    '--nointeract',
-    '-c',
-    'Display(JoinStringsWithSeparator(GAPInfo.RootPaths,";"));',
-    check: true,
-  )
-  gap_root_paths = gaprun.stdout().strip()
+  gap_root_paths = get_option('GAP_ROOT_PATHS')
+  if gap_root_paths == ''
+    if meson.can_run_host_binaries()
+      gaprun = run_command(
+        gap_exe,
+        '-r',
+        '-q',
+        '--bare',
+        '--nointeract',
+        '-c',
+        'Display(JoinStringsWithSeparator(GAPInfo.RootPaths,";"));',
+        check: true,
+      )
+      gap_root_paths = gaprun.stdout().strip()
+    else
+      gap_root_paths = '${prefix}/lib/gap;${prefix}/share/gap'
+      message(
+        'Warning: Unable to determine system GAP root paths because host binaries cannot be run. ' + 'Using the default GAP_ROOT_PATHS=' + gap_root_paths + '.',
+      )
+    endif
+  endif
   conf_data.set('GAP_ROOT_PATHS', gap_root_paths)
 endif
 ecm_bin = find_program(
