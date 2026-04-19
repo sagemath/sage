@@ -1,4 +1,4 @@
- sphinxcontrib_serializinghtml | $(PYTHON_TOOLCHAIN) $(PYTHON)
+ sphinxcontrib_serializinghtml jinja2 sphinx | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

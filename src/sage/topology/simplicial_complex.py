@@ -246,50 +246,44 @@ def lattice_paths(t1, t2, length=None):
         if len(t1) == 0 or len(t2) == 0:
             return [[]]
         # 1 x n (or k x 1) rectangle:
-        elif len(t1) == 1:
+        if len(t1) == 1:
             return [[(t1[0], w) for w in t2]]
-        elif len(t2) == 1:
+        if len(t2) == 1:
             return [[(v, t2[0]) for v in t1]]
-        else:
-            # recursive: paths in rectangle with either one fewer row
-            # or column, plus the upper right corner
-            return ([path + [(t1[-1], t2[-1])] for path
-                     in lattice_paths(t1[:-1], t2)] +
-                    [path + [(t1[-1], t2[-1])] for path
-                     in lattice_paths(t1, t2[:-1])])
-    else:
-        if length > len(t1) + len(t2) - 1:
-            return []
-        # as above, except make sure that lengths are correct.  if
-        # not, return an empty list.
-        #
-        # 0 x n (or k x 0) rectangle:
-        elif len(t1) == 0 or len(t2) == 0:
-            if length == 0:
-                return [[]]
-            else:
-                return []
-        # 1 x n (or k x 1) rectangle:
-        elif len(t1) == 1:
-            if length == len(t2):
-                return [[(t1[0], w) for w in t2]]
-            else:
-                return []
-        elif len(t2) == 1:
-            if length == len(t1):
-                return [[(v, t2[0]) for v in t1]]
-            else:
-                return []
-        else:
-            # recursive: paths of length one fewer in rectangle with
-            # either one fewer row, one fewer column, or one fewer of
-            # each, and then plus the upper right corner
-            return ([path + [(t1[-1], t2[-1])] for path
-                     in lattice_paths(t1[:-1], t2, length=length-1)] +
-                    [path + [(t1[-1], t2[-1])] for path
-                     in lattice_paths(t1, t2[:-1], length=length-1)] +
-                    [path + [(t1[-1], t2[-1])] for path
-                     in lattice_paths(t1[:-1], t2[:-1], length=length-1)])
+        # recursive: paths in rectangle with either one fewer row
+        # or column, plus the upper right corner
+        return ([path + [(t1[-1], t2[-1])] for path
+                 in lattice_paths(t1[:-1], t2)] +
+                [path + [(t1[-1], t2[-1])] for path
+                 in lattice_paths(t1, t2[:-1])])
+    if length > len(t1) + len(t2) - 1:
+        return []
+    # as above, except make sure that lengths are correct.  if
+    # not, return an empty list.
+    #
+    # 0 x n (or k x 0) rectangle:
+    if len(t1) == 0 or len(t2) == 0:
+        if length == 0:
+            return [[]]
+        return []
+    # 1 x n (or k x 1) rectangle:
+    if len(t1) == 1:
+        if length == len(t2):
+            return [[(t1[0], w) for w in t2]]
+        return []
+    if len(t2) == 1:
+        if length == len(t1):
+            return [[(v, t2[0]) for v in t1]]
+        return []
+    # recursive: paths of length one fewer in rectangle with
+    # either one fewer row, one fewer column, or one fewer of
+    # each, and then plus the upper right corner
+    return ([path + [(t1[-1], t2[-1])] for path
+             in lattice_paths(t1[:-1], t2, length=length-1)] +
+            [path + [(t1[-1], t2[-1])] for path
+             in lattice_paths(t1, t2[:-1], length=length-1)] +
+            [path + [(t1[-1], t2[-1])] for path
+             in lattice_paths(t1[:-1], t2[:-1], length=length-1)])
 
 
 def rename_vertex(n, keep, left=True):
@@ -520,8 +514,7 @@ class Simplex(SageObject):
         """
         if n >= 0 and n <= self.dimension():
             return Simplex(self.__tuple[:n] + self.__tuple[n+1:])
-        else:
-            raise IndexError("{} does not have an n-th face for n={}".format(self, n))
+        raise IndexError("{} does not have an n-th face for n={}".format(self, n))
 
     def faces(self):
         """
@@ -1533,8 +1526,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         d = simplex.dimension()
         if d in self.faces() and simplex in self.faces()[d]:
             return simplex.face(i)
-        else:
-            raise ValueError('this simplex is not in this simplicial complex')
+        raise ValueError('this simplex is not in this simplicial complex')
 
     def f_triangle(self):
         r"""
@@ -1833,19 +1825,18 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 facets.extend(f.product(g, rename_vertices))
         if self != right:
             return SimplicialComplex(facets, is_mutable=is_mutable)
-        else:
-            # Need to sort the vertices compatibly with the sorting in
-            # self, so that the diagonal map is defined properly.
-            V = self._vertex_to_index
-            L = len(V)
-            d = {}
-            for v in V.keys():
-                for w in V.keys():
-                    if rename_vertices:
-                        d['L' + str(v) + 'R' + str(w)] = V[v] * L + V[w]
-                    else:
-                        d[(v, w)] = V[v] * L + V[w]
-            return SimplicialComplex(facets, is_mutable=is_mutable, sort_facets=d)
+        # Need to sort the vertices compatibly with the sorting in
+        # self, so that the diagonal map is defined properly.
+        V = self._vertex_to_index
+        L = len(V)
+        d = {}
+        for v in V.keys():
+            for w in V.keys():
+                if rename_vertices:
+                    d['L' + str(v) + 'R' + str(w)] = V[v] * L + V[w]
+                else:
+                    d[(v, w)] = V[v] * L + V[w]
+        return SimplicialComplex(facets, is_mutable=is_mutable, sort_facets=d)
 
     def join(self, right, rename_vertices=True, is_mutable=True):
         """
@@ -1997,9 +1988,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
                         new_facets.append(f.join(Simplex([u]), rename_vertices=False))
                     new_facets.append(f.join(w, rename_vertices=False))
                 return SimplicialComplex(new_facets)
-            else:
-                return self.join(SimplicialComplex([["0"], ["1"]], is_mutable=is_mutable),
-                                 rename_vertices=True)
+            return self.join(SimplicialComplex([["0"], ["1"]], is_mutable=is_mutable),
+                             rename_vertices=True)
         return self.suspension(1, is_mutable).suspension(int(n-1), is_mutable)
 
     def disjoint_union(self, right, is_mutable=True):
@@ -2229,9 +2219,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if cochain:
             return ChainComplex(data=differentials, degree=1,
                                 base_ring=base_ring, check=check)
-        else:
-            return ChainComplex(data=differentials, degree=-1,
-                                base_ring=base_ring, check=check)
+        return ChainComplex(data=differentials, degree=-1,
+                            base_ring=base_ring, check=check)
 
     def _homology_(self, dim=None, base_ring=ZZ, subcomplex=None,
                    cohomology=False, enlarge=True, algorithm='pari',
@@ -3064,8 +3053,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             H = S.homology(base_ring=base_ring)
             if base_ring in Fields():
                 return all(H[j].dimension() == 0 for j in range(S.dimension()))
-            else:
-                return not any(H[j].invariants() for j in range(S.dimension()))
+            return not any(H[j].invariants() for j in range(S.dimension()))
 
         @parallel(ncpus=ncpus)
         def all_homologies_in_list_vanish(Fs):
@@ -4236,8 +4224,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             rels.append(z[0]*z[1].inverse()*z[2])
         if simplify:
             return FG.quotient(rels).simplified()
-        else:
-            return FG.quotient(rels)
+        return FG.quotient(rels)
 
     def is_isomorphic(self, other, certificate=False) -> bool:
         r"""
@@ -4720,8 +4707,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             C = Skel.coloring()
             C = C if len(C) == d else False
             return C
-        else:
-            return Skel.chromatic_number() == d
+        return Skel.chromatic_number() == d
 
     def is_partitionable(self, certificate=False,
                          *, solver=None, integrality_tolerance=1e-3):
@@ -4812,11 +4798,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         sol = round(IP.solve())
         if sol < sum(self.f_vector()):
             return False
-        elif not certificate:
+        if not certificate:
             return True
-        else:
-            x = IP.get_values(y, convert=bool, tolerance=integrality_tolerance)
-            return [RFPairs[i] for i in range(n) if x[i]]
+        x = IP.get_values(y, convert=bool, tolerance=integrality_tolerance)
+        return [RFPairs[i] for i in range(n) if x[i]]
 
     def intersection(self, other):
         r"""
@@ -4999,7 +4984,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if base_ring in self._bbn and not verbose:
             if base_ring in self._bbn_all_computed:
                 return self._bbn[base_ring].get((a, b), ZZ.zero())
-            elif (a, b) in self._bbn[base_ring]:
+            if (a, b) in self._bbn[base_ring]:
                 return self._bbn[base_ring][a, b]
 
         from sage.homology.homology_group import HomologyGroup

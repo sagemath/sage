@@ -1202,7 +1202,6 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
                                       for u, v, label in G.edge_iterator()}
     cdef dict original_edges = {(u, v): (int_to_vertex[u], int_to_vertex[v])
                                 for u, v in G.edge_iterator(labels=False)}
-    cdef dict edge_wt = {(e[0], e[1]): weight_function(e) for e in G.edge_iterator()}
 
     # The first shortest path tree T_0
     from sage.graphs.base.boost_graph import shortest_paths

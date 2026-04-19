@@ -167,40 +167,8 @@ lazy_import('sage.rings.multi_power_series_ring', 'MPowerSeriesRing_generic')
 lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
-def is_MPowerSeries(f):
-    """
-    Return ``True`` if ``f`` is a multivariate power series.
-
-    TESTS::
-
-        sage: from sage.rings.power_series_ring_element import is_PowerSeries
-        sage: from sage.rings.multi_power_series_ring_element import is_MPowerSeries
-        sage: M = PowerSeriesRing(ZZ,4,'v')
-        sage: is_PowerSeries(M.random_element(10))
-        doctest:warning...
-        DeprecationWarning: The function is_PowerSeries is deprecated; use 'isinstance(..., PowerSeries)' instead.
-        See https://github.com/sagemath/sage/issues/38266 for details.
-        True
-        sage: is_MPowerSeries(M.random_element(10))
-        doctest:warning...
-        DeprecationWarning: The function is_MPowerSeries is deprecated; use 'isinstance(..., MPowerSeries)' instead.
-        See https://github.com/sagemath/sage/issues/38266 for details.
-        True
-        sage: T.<v> = PowerSeriesRing(RR)
-        sage: is_MPowerSeries(1 - v + v^2 +O(v^3))
-        False
-        sage: is_PowerSeries(1 - v + v^2 +O(v^3))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38266,
-                "The function is_MPowerSeries is deprecated; "
-                "use 'isinstance(..., MPowerSeries)' instead.")
-    return isinstance(f, MPowerSeries)
-
-
 class MPowerSeries(PowerSeries):
-    ### methods from PowerSeries that we *don't* override:
+    # ## methods from PowerSeries that we *don't* override:
     #
     # __hash__ : works just fine
     #

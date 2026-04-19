@@ -747,8 +747,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         """
         if self._denominator is None:
             return self._pseudohom
-        else:
-            return self.over_fraction_field().pseudohom()
+        return self.over_fraction_field().pseudohom()
 
     def ore_ring(self, names='x', action=True):
         r"""
@@ -1842,8 +1841,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         denom = No._fitting_index()
         if denom:
             return Ns._fitting_index() / denom
-        else:
-            return Infinity
+        return Infinity
 
     def covers(self):
         r"""
@@ -2376,8 +2374,7 @@ class OreSubmodule(OreModule):
         submodule = self._submodule
         if submodule.rank != self._ambient.rank():
             return self.base_ring().zero()
-        else:
-            return submodule.basis.determinant()
+        return submodule.basis.determinant()
 
     def injection_morphism(self):
         r"""

@@ -506,7 +506,7 @@ class NFCusp(Element):
                 self.__a = R.zero()
                 self.__b = R.one()
                 return
-            elif not b:
+            if not b:
                 if not a:
                     raise TypeError("unable to convert (%r, %r) "
                                     "to a cusp of the number field" % (a, b))
@@ -579,9 +579,8 @@ class NFCusp(Element):
         """
         if self.__b.is_zero():
             return "Cusp Infinity of %s" % self.parent().number_field()
-        else:
-            return "Cusp [%s: %s] of %s" % (self.__a, self.__b,
-                                            self.parent().number_field())
+        return "Cusp [%s: %s] of %s" % (self.__a, self.__b,
+                                        self.parent().number_field())
 
     def number_field(self):
         """
@@ -714,9 +713,8 @@ class NFCusp(Element):
         """
         if self.__b.is_zero():
             return "\\infty"
-        else:
-            return "\\[%s: %s\\]" % (self.__a._latex_(),
-                                     self.__b._latex_())
+        return "\\[%s: %s\\]" % (self.__a._latex_(),
+                                 self.__b._latex_())
 
     def _richcmp_(self, right, op):
         """
@@ -752,14 +750,11 @@ class NFCusp(Element):
         if self.__b.is_zero():
             if right.__b.is_zero():
                 return rich_to_bool(op, 0)
-            else:
-                return rich_to_bool(op, 1)
-        else:
-            if right.__b.is_zero():
-                return rich_to_bool(op, -1)
-            else:
-                return richcmp(self._number_field_element_(),
-                               right._number_field_element_(), op)
+            return rich_to_bool(op, 1)
+        if right.__b.is_zero():
+            return rich_to_bool(op, -1)
+        return richcmp(self._number_field_element_(),
+                       right._number_field_element_(), op)
 
     def __neg__(self):
         """
@@ -955,8 +950,7 @@ class NFCusp(Element):
         if not (self.ideal() / other.ideal()).is_principal():
             if not Transformation:
                 return False
-            else:
-                return False, 0
+            return False, 0
 
         reps = list_of_representatives(N)
         alpha1 = NFCusp(k, self, lreps=reps)
@@ -966,8 +960,7 @@ class NFCusp(Element):
         if (k.ideal(alpha2.__b) + N) != delta:
             if not Transformation:
                 return False
-            else:
-                return False, 0
+            return False, 0
 
         M1 = alpha1.ABmatrix()
         M2 = alpha2.ABmatrix()
@@ -982,29 +975,27 @@ class NFCusp(Element):
             if (M2[2] * M1[3] - u * M1[2] * M2[3]) in ABdelta:
                 if not Transformation:
                     return True
-                else:
-                    AuxCoeff = [1, 0, 0, 1]
-                    Aux = M2[2] * M1[3] - u * M1[2] * M2[3]
-                    if Aux in A * B * N:
-                        if u != 1:
-                            AuxCoeff[3] = u
-                    else:
-                        A1 = (A * B * N) / ABdelta
-                        A2 = B * k.ideal(M1[2] * M2[2]) / (A * ABdelta)
-                        f = A1.element_1_mod(A2)
-                        w = ((1 - f) * Aux) / (M1[2] * M2[2])
+                AuxCoeff = [1, 0, 0, 1]
+                Aux = M2[2] * M1[3] - u * M1[2] * M2[3]
+                if Aux in A * B * N:
+                    if u != 1:
                         AuxCoeff[3] = u
-                        AuxCoeff[1] = w
-                    from sage.matrix.constructor import Matrix
-                    Maux = Matrix(k, 2, AuxCoeff)
-                    M1inv = Matrix(k, 2, M1).inverse()
-                    Mtrans = Matrix(k, 2, M2) * Maux * M1inv
-                    assert Mtrans[1][0] in N
-                    return True, Mtrans.list()
+                else:
+                    A1 = (A * B * N) / ABdelta
+                    A2 = B * k.ideal(M1[2] * M2[2]) / (A * ABdelta)
+                    f = A1.element_1_mod(A2)
+                    w = ((1 - f) * Aux) / (M1[2] * M2[2])
+                    AuxCoeff[3] = u
+                    AuxCoeff[1] = w
+                from sage.matrix.constructor import Matrix
+                Maux = Matrix(k, 2, AuxCoeff)
+                M1inv = Matrix(k, 2, M1).inverse()
+                Mtrans = Matrix(k, 2, M2) * Maux * M1inv
+                assert Mtrans[1][0] in N
+                return True, Mtrans.list()
         if not Transformation:
             return False
-        else:
-            return False, 0
+        return False, 0
 
 # *************************************************************************
 #  Global functions:

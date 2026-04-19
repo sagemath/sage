@@ -294,21 +294,20 @@ class Polyhedron_base7(Polyhedron_base6):
             if engine != 'normaliz':
                 pc.set_engine(engine)
                 return pc.triangulate()
-            else:
-                return pc(self._triangulate_normaliz())
-        else:  # From above, we have a pointed cone and the engine is normaliz
-            try:
-                pc = PointConfiguration((v.vector() for v in self.ray_generator()),
-                                        connected=connected, fine=fine, regular=regular, star=star)
-                return pc(self._triangulate_normaliz())
-            except AssertionError:
-                # PointConfiguration is not adapted to inhomogeneous cones
-                # This is a hack. TODO: Implement the necessary things in
-                # PointConfiguration to accept such cases.
-                c = self.representative_point()
-                normed_v = ((1/(r.vector()*c))*r.vector() for r in self.ray_generator())
-                pc = PointConfiguration(normed_v, connected=connected, fine=fine, regular=regular, star=star)
-                return pc(self._triangulate_normaliz())
+            return pc(self._triangulate_normaliz())
+        # From above, we have a pointed cone and the engine is normaliz
+        try:
+            pc = PointConfiguration((v.vector() for v in self.ray_generator()),
+                                    connected=connected, fine=fine, regular=regular, star=star)
+            return pc(self._triangulate_normaliz())
+        except AssertionError:
+            # PointConfiguration is not adapted to inhomogeneous cones
+            # This is a hack. TODO: Implement the necessary things in
+            # PointConfiguration to accept such cases.
+            c = self.representative_point()
+            normed_v = ((1/(r.vector()*c))*r.vector() for r in self.ray_generator())
+            pc = PointConfiguration(normed_v, connected=connected, fine=fine, regular=regular, star=star)
+            return pc(self._triangulate_normaliz())
 
     def _volume_lrs(self, verbose=False):
         """
@@ -709,7 +708,7 @@ class Polyhedron_base7(Polyhedron_base6):
         if measure == 'ambient':
             if self.dim() < self.ambient_dim():
                 return self.base_ring().zero()
-            elif self.dim() == 0:
+            if self.dim() == 0:
                 return 1
             # if the polyhedron is unbounded, return infinity
             if not self.is_compact():
@@ -717,15 +716,15 @@ class Polyhedron_base7(Polyhedron_base6):
                 return infinity
             if engine == 'lrs':
                 return self._volume_lrs(**kwds)
-            elif engine == 'latte':
+            if engine == 'latte':
                 return self._volume_latte(**kwds)
-            elif engine == 'normaliz':
+            if engine == 'normaliz':
                 return self._volume_normaliz(measure='ambient')
 
             triangulation = self.triangulate(engine=engine, **kwds)
             pc = triangulation.point_configuration()
             return sum([pc.volume(simplex) for simplex in triangulation]) / ZZ(self.dim()).factorial()
-        elif measure == 'induced':
+        if measure == 'induced':
             # if polyhedron is actually full-dimensional, return volume with ambient measure
             if self.dim() == self.ambient_dim():
                 return self.volume(measure='ambient', engine=engine, **kwds)
@@ -747,26 +746,25 @@ class Polyhedron_base7(Polyhedron_base6):
                 sqrt_Adet = AA(Adet).sqrt()
                 scaled_volume = AA(scaled_volume)
             return scaled_volume / sqrt_Adet
-        elif measure == 'induced_rational':
+        if measure == 'induced_rational':
             # if the polyhedron is unbounded, return infinity
             if not self.is_compact():
                 from sage.rings.infinity import infinity
                 return infinity
             if engine == 'latte':
                 return self._volume_latte(**kwds)
-            else:  # engine is 'normaliz'
-                return self._volume_normaliz(measure='induced_lattice') / ZZ(self.dim()).factorial()
-        elif measure == 'induced_lattice':
+            # engine is 'normaliz'
+            return self._volume_normaliz(measure='induced_lattice') / ZZ(self.dim()).factorial()
+        if measure == 'induced_lattice':
             # if the polyhedron is unbounded, return infinity
             if not self.is_compact():
                 from sage.rings.infinity import infinity
                 return infinity
             if engine == 'latte':
                 return self._volume_latte(**kwds) * ZZ(self.dim()).factorial()
-            else:  # engine is 'normaliz'
-                return self._volume_normaliz(measure='induced_lattice')
-        else:
-            raise TypeError("the measure should be `ambient`, `induced`, `induced_rational`, or `induced_lattice`")
+            # engine is 'normaliz'
+            return self._volume_normaliz(measure='induced_lattice')
+        raise TypeError("the measure should be `ambient`, `induced`, `induced_rational`, or `induced_lattice`")
 
     def integrate(self, function, measure='ambient', **kwds):
         r"""
@@ -913,7 +911,7 @@ class Polyhedron_base7(Polyhedron_base6):
 
             return self._integrate_latte_(function, **kwds)
 
-        elif measure == 'induced' or measure == 'induced_nonnormalized':
+        if measure == 'induced' or measure == 'induced_nonnormalized':
             # if polyhedron is actually full-dimensional,
             # return with ambient measure
             if self.is_full_dimensional():
@@ -938,18 +936,16 @@ class Polyhedron_base7(Polyhedron_base6):
                                      measure='ambient', **kwds)
             if measure == 'induced_nonnormalized':
                 return I
-            else:
-                A = affine_hull_data.projection_linear_map.matrix()
-                Adet = (A.transpose() * A).det()
-                try:
-                    from sage.rings.qqbar import AA
-                    Adet = AA.coerce(Adet)
-                except TypeError:
-                    pass
-                return I / Adet.sqrt()
+            A = affine_hull_data.projection_linear_map.matrix()
+            Adet = (A.transpose() * A).det()
+            try:
+                from sage.rings.qqbar import AA
+                Adet = AA.coerce(Adet)
+            except TypeError:
+                pass
+            return I / Adet.sqrt()
 
-        else:
-            raise ValueError('unknown measure "{}"'.format(measure))
+        raise ValueError('unknown measure "{}"'.format(measure))
 
     def _integrate_latte_(self, polynomial, **kwds):
         r"""

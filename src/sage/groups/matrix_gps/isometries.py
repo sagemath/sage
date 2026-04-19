@@ -153,10 +153,9 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
         from sage.repl.display.util import format_list
         if n > 5:
             return 'Group of isometries with %s generators ' % n
-        elif n == 1:
+        if n == 1:
             return 'Group of isometries with %s generator %s' % (n, format_list(self.gens()))
-        else:
-            return 'Group of isometries with %s generators %s' % (n, format_list(self.gens()))
+        return 'Group of isometries with %s generators %s' % (n, format_list(self.gens()))
 
     def __reduce__(self):
         r"""

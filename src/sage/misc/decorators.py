@@ -283,9 +283,8 @@ class _infix_wrapper:
                 new = copy(self)
                 new.right = right
                 return new
-            else:
-                raise SyntaxError("Infix operator already has its "
-                                  "right argument")
+            raise SyntaxError("Infix operator already has its "
+                              "right argument")
         else:
             return self.function(self.left, right)
 
@@ -296,9 +295,8 @@ class _infix_wrapper:
                 new = copy(self)
                 new.left = left
                 return new
-            else:
-                raise SyntaxError("Infix operator already has its "
-                                  "left argument")
+            raise SyntaxError("Infix operator already has its "
+                              "left argument")
         else:
             return self.function(left, self.right)
 
@@ -345,8 +343,7 @@ def decorator_defaults(func):
         if len(kwds) == 0 and len(args) == 1:
             # call without parentheses
             return func(*args)
-        else:
-            return lambda f: func(f, *args, **kwds)
+        return lambda f: func(f, *args, **kwds)
     return my_wrap
 
 
@@ -733,6 +730,5 @@ def decorator_keywords(func):
     def wrapped(f=None, **kwargs):
         if f is None:
             return sage_wraps(func)(lambda f: func(f, **kwargs))
-        else:
-            return func(f, **kwargs)
+        return func(f, **kwargs)
     return wrapped

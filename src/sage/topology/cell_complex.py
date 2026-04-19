@@ -200,9 +200,8 @@ class GenericCellComplex(SageObject):
         """
         if n in self.cells(subcomplex):
             return list(self.cells(subcomplex)[n])
-        else:
-            # don't barf if someone asks for n_cells in a dimension where there are none
-            return []
+        # don't barf if someone asks for n_cells in a dimension where there are none
+        return []
 
     def _n_cells_sorted(self, n, subcomplex=None):
         """
@@ -758,9 +757,8 @@ class GenericCellComplex(SageObject):
         H = self.homology(base_ring=base_ring)
         if base_ring == ZZ:
             return all(len(x.invariants()) == 0 for x in H.values())
-        else:
-            # base_ring is a field.
-            return all(x.dimension() == 0 for x in H.values())
+        # base_ring is a field.
+        return all(x.dimension() == 0 for x in H.values())
 
     def n_chains(self, n, base_ring=ZZ, cochains=False):
         r"""
@@ -794,8 +792,7 @@ class GenericCellComplex(SageObject):
         n_cells = tuple(self._n_cells_sorted(n))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)
-        else:
-            return Chains(self, n, n_cells, base_ring)
+        return Chains(self, n, n_cells, base_ring)
 
     def algebraic_topological_model(self, base_ring=QQ):
         r"""

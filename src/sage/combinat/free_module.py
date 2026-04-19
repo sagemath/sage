@@ -752,8 +752,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         if x in R:
             if x == 0:
                 return self.zero()
-            else:
-                raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
+            raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
         # x is an element of the basis enumerated set;
         # This is a very ugly way of testing this
         elif ((hasattr(self._indices, 'element_class') and

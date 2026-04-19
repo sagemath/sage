@@ -4017,10 +4017,10 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: L.<b, c> = NumberFieldTower([x^2 - 5, x^3 + x + 3])
             sage: [(b + c).local_height_arch(i) for i in range(4)]
-            [1.238223390757884911842206617439,
-            0.02240347229957875780769746914391,
-            0.780028961749618,
-            1.16048938497298]
+            [1.238223390757884911842206617260,
+             0.02240347229957875780769746914391,
+             0.780028961749618,
+             1.16048938497298]
         """
         K = self.number_field()
         emb = K.places(prec=prec)[i]

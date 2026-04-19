@@ -499,5 +499,5 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
             sector[0], sector[1],
             options))
         return g
-    elif len(center) == 3:
+    if len(center) == 3:
         raise NotImplementedError

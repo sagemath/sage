@@ -370,8 +370,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             p = self.parent()
             if 1 not in part:
                 return p.zero()
-            else:
-                return len([i for i in part if i == 1]) * p(part[:-1])
+            return len([i for i in part if i == 1]) * p(part[:-1])
 
         def _derivative_with_respect_to_p1(self):
             """

@@ -78,7 +78,7 @@ def LyndonWords(e=None, k=None):
     """
     if e is None and k is None:
         return LyndonWords_class()
-    elif isinstance(e, (int, Integer)):
+    if isinstance(e, (int, Integer)):
         if e > 0:
             if not isinstance(k, (int, Integer)):
                 raise TypeError("k must be a nonnegative integer")
@@ -261,8 +261,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
             ev_dict = w.evaluation_dict()
             evaluation = [ev_dict.get(x, 0) for x in self._words.alphabet()]
             return evaluation == self._e and w.is_lyndon()
-        else:
-            return False
+        return False
 
     def cardinality(self):
         """
@@ -443,10 +442,9 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
         """
         if self._k == 0:
             return Integer(1)
-        else:
-            s = Integer(0)
-            for d in divisors(self._k):
-                s += moebius(d) * self._n**(self._k // d)
+        s = Integer(0)
+        for d in divisors(self._k):
+            s += moebius(d) * self._n**(self._k // d)
         return s // self._k
 
     def __iter__(self):
@@ -645,7 +643,6 @@ def standard_unbracketing(sblw):
         if x < y and (len(t) == 0 or y <= t):
             x += y
             return x, y
-        else:
-            raise ValueError("not a standard bracketing of a Lyndon word")
+        raise ValueError("not a standard bracketing of a Lyndon word")
     lw, _ = standard_unbracketing_rec(sblw)
     return FiniteWords(list(set(lw)))(lw, datatype='list', check=False)

@@ -17,12 +17,8 @@ AUTHOR:
 # ****************************************************************************
 
 from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
-from sage.libs.singular.function import lib
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from cpython.object cimport PyObject_RichCompare
-
-# Define some singular functions
-lib("freegb.lib")
 
 #####################
 # Free algebra elements

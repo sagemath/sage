@@ -516,10 +516,9 @@ class Chart(UniqueRepresentation, SageObject):
         def normalize(r):
             if isinstance(r, tuple):  # or
                 return tuple(normalize(x) for x in r)
-            elif isinstance(r, (list, set, frozenset)):  # and
+            if isinstance(r, (list, set, frozenset)):  # and
                 return frozenset(normalize(x) for x in r)
-            else:
-                return r
+            return r
 
         if coord_restrictions is None:
             return frozenset()
@@ -964,7 +963,7 @@ class Chart(UniqueRepresentation, SageObject):
             return any(
                 self._check_restrictions(cond, substitutions) for cond in restrict
             )
-        elif isinstance(restrict, (list, set, frozenset)):  # case of 'and' conditions
+        if isinstance(restrict, (list, set, frozenset)):  # case of 'and' conditions
             return all(
                 self._check_restrictions(cond, substitutions) for cond in restrict
             )
@@ -987,8 +986,7 @@ class Chart(UniqueRepresentation, SageObject):
         ambient = VectorSpace(self.manifold().base_field(), self.manifold().dimension())
         if self._restrictions:
             return self._restrict_set(ambient, self._restrictions)
-        else:
-            return ambient
+        return ambient
 
     def _restrict_set(self, universe, coord_restrictions):
         """
@@ -1018,18 +1016,16 @@ class Chart(UniqueRepresentation, SageObject):
             A = self._restrict_set(universe, coord_restrictions[0])
             if len(coord_restrictions) == 1:
                 return A
-            else:
-                return A.union(self._restrict_set(universe, coord_restrictions[1:]))
-        elif isinstance(
+            return A.union(self._restrict_set(universe, coord_restrictions[1:]))
+        if isinstance(
             coord_restrictions, (list, set, frozenset)
         ):  # case of 'and' conditions
             A = self._restrict_set(universe, coord_restrictions[0])
             if len(coord_restrictions) == 1:
                 return A
-            else:
-                return A.intersection(
-                    self._restrict_set(universe, coord_restrictions[1:])
-                )
+            return A.intersection(
+                self._restrict_set(universe, coord_restrictions[1:])
+            )
         # Case of a single condition:
         from sage.sets.condition_set import ConditionSet
 
@@ -2107,8 +2103,7 @@ class RealChart(Chart):
         """
         if i is None:
             return self._bounds
-        else:
-            return self._bounds[i - self._sindex]
+        return self._bounds[i - self._sindex]
 
     def codomain(self):
         r"""
@@ -2157,8 +2152,7 @@ class RealChart(Chart):
             ambient = cartesian_product(intervals)
         if self._restrictions:
             return self._restrict_set(ambient, self._restrictions)
-        else:
-            return ambient
+        return ambient
 
     def coord_range(self, xx=None):
         r"""
@@ -3142,9 +3136,8 @@ class RealChart(Chart):
                     xc += sx
             if len(rem_coords) == 1:
                 return resu
-            else:
-                rem_coords.remove(coord)
-                return _plot_xx_list(resu, rem_coords, ranges, steps, number_values)
+            rem_coords.remove(coord)
+            return _plot_xx_list(resu, rem_coords, ranges, steps, number_values)
 
         if chart is None:
             chart = self

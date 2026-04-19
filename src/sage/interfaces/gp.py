@@ -465,8 +465,7 @@ class Gp(ExtraTabCompletion, Expect):
                 raise RuntimeError(a)
             return self._eval_line(line, allow_use_file=allow_use_file,
                                    wait_for_prompt=wait_for_prompt)
-        else:
-            return a
+        return a
 
     def cputime(self, t=None):
         """

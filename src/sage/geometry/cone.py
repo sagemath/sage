@@ -492,18 +492,17 @@ def _Cone_from_PPL(cone, lattice, original_rays=None):
     if (original_rays is not None and not lines and
         len(rays) == len(original_rays)):
         return ConvexRationalPolyhedralCone(original_rays, lattice, PPL=cone)
-    else:
-        rays = [ray.coefficients() for ray in rays]
-        for line in lines:
-            rays.append(line.coefficients())
-            rays.append(-vector(ZZ, rays[-1]))
-        try:
-            for i, ray in enumerate(rays):
-                rays[i] = lattice(ray)
-                rays[i].set_immutable()
-        except TypeError:
-            rays = normalize_rays(rays, lattice)
-        return ConvexRationalPolyhedralCone(rays, lattice, PPL=cone)
+    rays = [ray.coefficients() for ray in rays]
+    for line in lines:
+        rays.append(line.coefficients())
+        rays.append(-vector(ZZ, rays[-1]))
+    try:
+        for i, ray in enumerate(rays):
+            rays[i] = lattice(ray)
+            rays[i].set_immutable()
+    except TypeError:
+        rays = normalize_rays(rays, lattice)
+    return ConvexRationalPolyhedralCone(rays, lattice, PPL=cone)
 
 
 def _ambient_space_point(body, data):
@@ -1911,8 +1910,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             # We don't care about particular type of right in this case
             return richcmp((self.lattice(), self.rays()),
                            (right.lattice(), right.rays()), op)
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def _latex_(self):
         r"""
@@ -1930,9 +1928,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         if self.ambient() is self:
             return r"\sigma^{%d}" % self.dim()
-        else:
-            return r"\sigma^{%d} \subset %s" % (self.dim(),
-                                                latex(self.ambient()))
+        return r"\sigma^{%d} \subset %s" % (self.dim(),
+                                            latex(self.ambient()))
 
     def _repr_(self):
         r"""
@@ -2099,15 +2096,14 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             if adjacent:
                 adjacent.remove(L(self))
             return self._sort_faces(adjacent)
-        elif self.dim() == self._ambient.dim():
+        if self.dim() == self._ambient.dim():
             # Special treatment relevant for fans
             for facet in facets:
                 adjacent.update(facet.facet_of())
             if adjacent:
                 adjacent.remove(self)
             return self._sort_faces(adjacent)
-        else:
-            return ()
+        return ()
 
     def ambient(self):
         r"""
@@ -2532,8 +2528,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                         # thought of as faces of a single cone, not of a fan.
                         face._containing_cone_facets = facets
                         return face
-                    else:
-                        return self
+                    return self
 
                 # Obtain a modified version of the incidence matrix,
                 # with rows corresponding to rays in subspace removed.
@@ -2714,9 +2709,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                                     self.face_lattice().level_sets()))
         if dim is None:
             return self._faces
-        else:
-            lsd = self.linear_subspace().dimension()
-            return self._faces[dim - lsd] if lsd <= dim <= self.dim() else ()
+        lsd = self.linear_subspace().dimension()
+        return self._faces[dim - lsd] if lsd <= dim <= self.dim() else ()
 
     @cached_method
     def facet_normals(self):
@@ -3859,8 +3853,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             self._split_ambient_lattice()
         if args or kwds:
             return self._sublattice(*args, **kwds)
-        else:
-            return self._sublattice
+        return self._sublattice
 
     def sublattice_quotient(self, *args, **kwds):
         r"""
@@ -3897,8 +3890,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             self._sublattice_quotient = self.lattice() / self.sublattice()
         if args or kwds:
             return self._sublattice_quotient(*args, **kwds)
-        else:
-            return self._sublattice_quotient
+        return self._sublattice_quotient
 
     def sublattice_complement(self, *args, **kwds):
         r"""
@@ -3958,8 +3950,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             self._split_ambient_lattice()
         if args or kwds:
             return self._sublattice_complement(*args, **kwds)
-        else:
-            return self._sublattice_complement
+        return self._sublattice_complement
 
     def orthogonal_sublattice(self, *args, **kwds):
         r"""
@@ -4023,8 +4014,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                     U.rows()[len(basis):])
         if args or kwds:
             return self._orthogonal_sublattice(*args, **kwds)
-        else:
-            return self._orthogonal_sublattice
+        return self._orthogonal_sublattice
 
     def relative_quotient(self, subcone):
         r"""
@@ -6840,13 +6830,12 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             # The upper bound is unspecified; return a random integer
             # in [l,infinity).
             return l + ZZ.random_element().abs()
-        else:
-            # We have an upper bound, and it's greater than or equal
-            # to our lower bound. So we generate a random integer in
-            # [0,u-l], and then add it to l to get something in
-            # [l,u]. To understand the "+1", check the
-            # ZZ.random_element() docs.
-            return l + ZZ.random_element(u - l + 1)
+        # We have an upper bound, and it's greater than or equal
+        # to our lower bound. So we generate a random integer in
+        # [0,u-l], and then add it to l to get something in
+        # [l,u]. To understand the "+1", check the
+        # ZZ.random_element() docs.
+        return l + ZZ.random_element(u - l + 1)
 
     def is_valid(K):
         r"""

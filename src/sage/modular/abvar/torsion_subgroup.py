@@ -265,8 +265,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         R = A.rational_cusp_subgroup()
         if R.order() == self.multiple_of_order():
             return R.lattice()
-        else:
-            raise NotImplementedError("unable to compute the rational torsion subgroup in this case (there is no known general algorithm yet)")
+        raise NotImplementedError("unable to compute the rational torsion subgroup in this case (there is no known general algorithm yet)")
 
     def possible_orders(self, proof=True):
         """
@@ -297,8 +296,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         try:
             if proof:
                 return self._possible_orders
-            else:
-                return self._possible_orders_proof_false
+            return self._possible_orders_proof_false
         except AttributeError:
             pass
 
@@ -433,8 +431,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         try:
             if proof:
                 return self._multiple_of_order
-            else:
-                return self._multiple_of_order_proof_false
+            return self._multiple_of_order_proof_false
         except AttributeError:
             pass
 

@@ -203,8 +203,7 @@ class Cube(SageObject):
         if len(t) == len(u):
             # these must be equal for self to be a face of other
             return all(is_subinterval(ti, ui) for ti, ui in zip(t, u))
-        else:
-            return False
+        return False
 
     def _translate(self, vec):
         """
@@ -1298,9 +1297,8 @@ class CubicalComplex(GenericCellComplex):
         if cochain:
             return ChainComplex(data=differentials, base_ring=base_ring,
                                 degree=1, check=check)
-        else:
-            return ChainComplex(data=differentials, base_ring=base_ring,
-                                degree=-1, check=check)
+        return ChainComplex(data=differentials, base_ring=base_ring,
+                            degree=-1, check=check)
 
     def alexander_whitney(self, cube, dim_left):
         r"""
@@ -1348,11 +1346,10 @@ class CubicalComplex(GenericCellComplex):
         """
         if n >= self.dimension():
             return self
-        else:
-            data = []
-            for d in range(n+1):
-                data.extend(list(self.cells()[d]))
-            return CubicalComplex(data)
+        data = []
+        for d in range(n+1):
+            data.extend(list(self.cells()[d]))
+        return CubicalComplex(data)
 
     def graph(self):
         """
@@ -1963,8 +1960,7 @@ class CubicalComplexExamples:
         """
         if n == 0:
             return CubicalComplex([Cube([[0]])])
-        else:
-            return CubicalComplex([Cube([[0, 1]] * n)])
+        return CubicalComplex([Cube([[0, 1]] * n)])
 
 
 cubical_complexes = CubicalComplexExamples()

@@ -351,8 +351,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
         """
         if all(t == 'c' or t[0] == t[1] for t, e in x._sorted_items()):
             return self.base_ring().one()
-        else:
-            return self.base_ring().zero()
+        return self.base_ring().zero()
 
     class Element(CombinatorialFreeModule.Element):
         """

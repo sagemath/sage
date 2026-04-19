@@ -547,7 +547,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
                                     given_by_matrix=given_by_matrix)
 
     @cached_method
-    def is_associative(self):
+    def is_associative(self) -> bool:
         """
         Return ``True`` if ``self`` is associative.
 
@@ -604,7 +604,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
                     return False
         return True
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``True`` if the cardinality of ``self`` is finite.
 
@@ -627,7 +627,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         return self.degree() == 0 or self.base_ring().is_finite()
 
     @cached_method
-    def is_unitary(self):
+    def is_unitary(self) -> bool:
         """
         Return ``True`` if ``self`` has a two-sided multiplicative
         identity element.
@@ -698,7 +698,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         self._one = sol1
         return True
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if ``self`` is the zero ring.
 

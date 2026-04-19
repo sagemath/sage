@@ -481,7 +481,7 @@ class KleberTreeNode(Element):
         ct = self.parent()._cartan_type
         if ct.type() == 'BC' or ct.dual().type() == 'BC':
             return "[" + ret_str + "]"
-        elif not ct.is_simply_laced():
+        if not ct.is_simply_laced():
             s_factors = self.parent()._folded_ct.scaling_factors()
             gamma = max(s_factors)
             # Subtract 1 for indexing

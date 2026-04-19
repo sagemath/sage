@@ -554,8 +554,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         if self._space._plot_projection == self._space._plot_projection_barycentric:
             return self._plot_projection_barycentric
-        else:
-            RootLatticeRealizations.ParentMethods.__dict__["_plot_projection"]
+        RootLatticeRealizations.ParentMethods.__dict__["_plot_projection"]
 
 ###########################################################################
 

@@ -457,38 +457,6 @@ def _single_variate():
     pass
 
 
-def is_PowerSeriesRing(R):
-    """
-    Return ``True`` if this is a *univariate* power series ring.  This is in
-    keeping with the behavior of ``is_PolynomialRing``
-    versus ``is_MPolynomialRing``.
-
-    EXAMPLES::
-
-        sage: from sage.rings.power_series_ring import is_PowerSeriesRing
-        sage: is_PowerSeriesRing(10)
-        doctest:warning...
-        DeprecationWarning: The function is_PowerSeriesRing is deprecated;
-        use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.
-        See https://github.com/sagemath/sage/issues/38290 for details.
-        False
-        sage: is_PowerSeriesRing(QQ[['x']])
-        True
-        sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x'))
-        True
-        sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x, y'))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38290,
-                "The function is_PowerSeriesRing is deprecated; "
-                "use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.")
-    if isinstance(R, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
-        return R.ngens() == 1
-    else:
-        return False
-
-
 class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
     """
     A power series ring.

@@ -1171,8 +1171,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         prec2 = prec * deg
         x, y = self.local_coord(P, prec2)
         int_sing = (w.coeff()(x, y) * x.derivative() / (2 * y)).integral()
-        int_sing_a = int_sing(S[1])
-        return int_sing_a
+        return int_sing(S[1])
 
     def S_to_Q(self, S, Q):
         r"""

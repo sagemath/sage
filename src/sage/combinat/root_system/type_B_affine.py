@@ -136,7 +136,7 @@ class CartanType(CartanType_standard_untwisted_affine):
         if self.n == 1:
             from . import cartan_type
             return cartan_type.CartanType(["A",1,1])._latex_dynkin_diagram(label, node, node_dist)
-        elif self.n == 2:
+        if self.n == 2:
             from . import cartan_type
             return cartan_type.CartanType(["C",2,1])._latex_dynkin_diagram(label, node, node_dist, dual)
         n = self.n

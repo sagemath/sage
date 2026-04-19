@@ -1342,11 +1342,10 @@ def mqapply_to_sage(expr):
         return sage.functions.hypergeometric.hypergeometric(mlist_to_sage(car(cdr(cdr(expr)))),
                                                             mlist_to_sage(car(cdr(cdr(cdr(expr))))),
                                                             max_to_sr(car(cdr(cdr(cdr(cdr(expr)))))))
-    else:
-        op = max_to_sr(cadr(expr))
-        max_args = cddr(expr)
-        args = [max_to_sr(a) for a in max_args]
-        return op(*args)
+    op = max_to_sr(cadr(expr))
+    max_args = cddr(expr)
+    args = [max_to_sr(a) for a in max_args]
+    return op(*args)
 
 
 def mdiff_to_sage(expr):
@@ -1558,7 +1557,7 @@ def pyobject_to_max(obj):
     """
     if isinstance(obj, sage.rings.rational.Rational):
         return EclObject(obj) if (obj.denom().is_one()) else EclObject([[rat], obj.numer(), obj.denom()])
-    elif isinstance(obj, NumberFieldElement_base):
+    if isinstance(obj, NumberFieldElement_base):
         from sage.rings.number_field.number_field_element_quadratic import (
             NumberFieldElement_quadratic,
         )
@@ -1641,12 +1640,12 @@ def sr_to_max(expr):
             l = [[mdiff], f]
             l.extend(deriv_max)
             return EclObject(l)
-        elif (op in special_sage_to_max):
+        if (op in special_sage_to_max):
             return EclObject(special_sage_to_max[op](*[sr_to_max(o) for o in expr.operands()]))
-        elif op == tuple:
+        if op == tuple:
             return EclObject(([mlist],
                               [sr_to_max(op) for op in expr.operands()]))
-        elif op not in sage_op_dict:
+        if op not in sage_op_dict:
             # Maxima does some simplifications automatically by default
             # so calling maxima(expr) can change the structure of expr
             # op_max=caar(maxima(expr).ecl())
@@ -1660,17 +1659,16 @@ def sr_to_max(expr):
             max_op_dict[op_max] = op
         return EclObject(([sage_op_dict[op]],
                           [sr_to_max(o) for o in expr.operands()]))
-    elif expr.is_symbol() or expr._is_registered_constant_():
+    if expr.is_symbol() or expr._is_registered_constant_():
         if expr not in sage_sym_dict:
             sym_max = maxima(expr).ecl()
             sage_sym_dict[expr] = sym_max
             max_sym_dict[sym_max] = expr
         return sage_sym_dict[expr]
-    else:
-        try:
-            return pyobject_to_max(expr.pyobject())
-        except TypeError:
-            return maxima(expr).ecl()
+    try:
+        return pyobject_to_max(expr.pyobject())
+    except TypeError:
+        return maxima(expr).ecl()
 
 
 # This goes from EclObject to SR
@@ -1727,17 +1725,16 @@ def max_to_sr(expr):
         max_args = cdr(expr)
         args = [max_to_sr(a) for a in max_args]
         return op(*args)
-    elif expr.symbolp():
+    if expr.symbolp():
         if expr not in max_sym_dict:
             sage_symbol = SR(maxima(expr))
             sage_sym_dict[sage_symbol] = expr
             max_sym_dict[expr] = sage_symbol
         return max_sym_dict[expr]
-    else:
-        e = expr.python()
-        if isinstance(e, float):
-            return sage.rings.real_double.RealDoubleElement(e)
-        return e
+    e = expr.python()
+    if isinstance(e, float):
+        return sage.rings.real_double.RealDoubleElement(e)
+    return e
 
 #interface routines for evaluating maxima's `equal` and `notequal`
 
