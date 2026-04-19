@@ -438,5 +438,4 @@ def inter_reduction(Q):
         if Qbar == Q:
             if base_ring.is_field():
                 return set(f.lc()**(-1) * f for f in Qbar)
-            else:
-                return Qbar
+            return Qbar

@@ -132,7 +132,6 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
         sage: from sage.algebras.steenrod.steenrod_algebra_bases import convert_to_milnor_matrix
         sage: convert_to_milnor_matrix(5, 'adem')  # indirect doctest
         [0 1]
@@ -151,7 +150,6 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
     The function takes an optional argument, the prime `p` over
     which to work::
 
-        sage: # needs sage.modules
         sage: convert_to_milnor_matrix(17, 'adem', 3)
         [0 0 1 1]
         [0 0 0 1]
@@ -208,7 +206,6 @@ def convert_from_milnor_matrix(n, basis, p=2, generic='auto'):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
         sage: from sage.algebras.steenrod.steenrod_algebra_bases import convert_from_milnor_matrix, convert_to_milnor_matrix
         sage: convert_from_milnor_matrix(12, 'wall')
         [1 0 0 1 0 0 0]
@@ -244,7 +241,7 @@ def convert_from_milnor_matrix(n, basis, p=2, generic='auto'):
     The function takes an optional argument, the prime `p` over
     which to work::
 
-        sage: convert_from_milnor_matrix(17, 'adem', 3)                                 # needs sage.modules
+        sage: convert_from_milnor_matrix(17, 'adem', 3)
         [2 1 1 2]
         [0 2 0 1]
         [1 2 0 0]

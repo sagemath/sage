@@ -227,8 +227,6 @@ save () {
 	configure real_configure configure_wrapper \
 	config/install-sh config/compile config/config.guess config/config.sub config/missing \
 	build/make/Makefile-auto.in \
-	src/doc/en/installation/*.txt \
-	$(find src/doc/en/reference/spkg -maxdepth 1 -name index.rst -prune -o -name "*.rst" -print) \
 	environment-3.1[0-9]-*.yml \
 	pyproject.toml \
 	build/pkgs/cypari/version_requirements.txt \

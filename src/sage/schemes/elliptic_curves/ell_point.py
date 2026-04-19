@@ -130,7 +130,7 @@ AUTHORS:
 
 import math
 
-import sage.groups.generic as generic
+from sage.groups import generic
 import sage.rings.abc
 
 from sage.misc.lazy_import import lazy_import
@@ -739,8 +739,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         x,y,z = self._coords
         if z:
             return pari([x/z, y/z])
-        else:
-            return pari([0])
+        return pari([0])
 
     def order(self, algorithm=None):
         r"""
@@ -812,7 +811,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         if algorithm == 'generic_small':
             return generic.order_from_bounds(self, None)
-        elif algorithm == 'hybrid':
+        if algorithm == 'hybrid':
             lb = 1
             sqrt_ub = 32
             N = None
@@ -1031,8 +1030,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         if self.is_zero():
             return text("$\\infty$", (-3, 3), **args)
-        else:
-            return point((self[0], self[1]), **args)
+        return point((self[0], self[1]), **args)
 
     def _add_(self, other):
         r"""
@@ -1175,8 +1173,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         if self[2].is_one():
             return self[0], self[1]
-        else:
-            return self[0]/self[2], self[1]/self[2]
+        return self[0]/self[2], self[1]/self[2]
 
     def x(self):
         """
@@ -1198,8 +1195,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         if self[2].is_one():
             return self[0]
-        else:
-            return self[0]/self[2]
+        return self[0]/self[2]
 
     def y(self):
         """
@@ -1221,8 +1217,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         if self[2].is_one():
             return self[1]
-        else:
-            return self[1]/self[2]
+        return self[1]/self[2]
 
     def is_divisible_by(self, m):
         """
@@ -1507,8 +1502,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         if m == 0:
             if self == 0:  # then every point Q is a solution, but...
                 return [self]
-            else:
-                return []
+            return []
 
         # ans will contain the list of division points.
         ans = []
@@ -1602,6 +1596,118 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         # Finally, sort and return
         ans.sort()
         return ans
+
+    def divide(self, d, *, extend=True):
+        r"""
+        Return a point `P'` such that `[d]P'` equals this point.
+
+        If ``extend`` is set to ``True`` (the default), the base
+        field is extended as needed to find `P'`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: P = E.lift_x(3); P
+            (3 : 43 : 1)
+            sage: P.order()
+            7
+            sage: P.divide(15)
+            (3 : 43 : 1)
+            sage: P.divide(7)  # random
+            (27*W^6 + 57*W^5 + 100*W^4 + 88*W^3 + 75*W^2 + 95*W + 40 : 88*W^6 + 60*W^5 + 77*W^4 + 90*W^3 + 29*W^2 + 30*W + 69 : 1)
+            sage: P.divide(7, extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: division point not defined over this field and "extend" is not set
+
+        ::
+
+            sage: E = EllipticCurve('11a1')
+            sage: P = E(5, 5); P.order()
+            5
+            sage: P.divide(7)
+            (16 : 60 : 1)
+            sage: P.divide(5)
+            (w25 : ... : 1)
+
+        ::
+
+            sage: E = EllipticCurve('574i1')
+            sage: P = E(103, -276); P.order()
+            7
+            sage: P.divide(7)  # long time -- 10s
+            (w49 : ... : 1)
+            sage: Q = E(61, 18); Q.order()
+            +Infinity
+            sage: Q.divide(2)
+            (w4 : 1/98*w4^3 - 183/98*w4^2 + 19395/98*w4 - 736973/98 : 1)
+            sage: Q.divide(3)
+            (w9 : -729/6939467105435648*w9^8 + 80657/1734866776358912*w9^7 - 2397859/123919055454208*w9^6 + 1500694639/495676221816832*w9^5 - 5685415021/15489881931776*w9^4 - 3292127267237/123919055454208*w9^3 + 1295248228392915/247838110908416*w9^2 + 166211134033305409/3469733552717824*w9 - 90243166176496845075/6939467105435648 : 1)
+            sage: Q.divide(4)
+            (w16 : (-124965/70810888830976*w4^3 + 11887009/70810888830976*w4^2 - 1135583489/70810888830976*w4 - 35734554871/70810888830976)*w16^3 + (55813353/70810888830976*w4^3 - 11172166293/70810888830976*w4^2 + 1212280156533/70810888830976*w4 - 53785946841885/70810888830976)*w16^2 + (-2446291839/70810888830976*w4^3 + 235629424819/70810888830976*w4^2 - 22582519549139/70810888830976*w4 - 700065444135573/70810888830976)*w16 - 120431435405/70810888830976*w4^3 + 49277316666089/70810888830976*w4^2 - 5642819368330569/70810888830976*w4 + 415447155783470481/70810888830976 : 1)
+        """
+        P = self
+        E = P.curve()
+        F = E.base_field()
+        n = P.order()
+
+        if n < oo:
+            m = d.prime_to_m_part(n)
+            P *= m.inverse_mod(n)
+            d //= m
+
+        def ffext(poly):
+            F = poly.parent().base_ring()
+            name = f'w{F.absolute_degree() * poly.degree()}'
+            if isinstance(self, EllipticCurvePoint_finite_field):
+                F, emb = F.extension(poly.degree(), name, map=True)
+                root = poly.change_ring(emb).any_root()
+                return F, emb, root
+            Fext = F.extension(poly, name)
+            return Fext, F.hom(Fext), Fext.gen()
+
+        coercion = F.hom(F)
+        for q, e in d.factor():
+            for _ in range(e):
+
+                f = P.division_points(q, poly_only=True)
+                try:
+                    x = f.any_root(assume_squarefree=True)
+                except ValueError:
+                    if not extend:
+                        raise ValueError('division point not defined over this field and "extend" is not set')
+                    # need to extend the field to get the x-coordinate
+                    g = f.factor()[0][0]
+                    F, emb, x = ffext(g)
+                    E = E.change_ring(emb)
+                    P = P.change_ring(emb)
+                    coercion = emb * coercion
+
+                h = E.defining_polynomial()(x=x, z=1).univariate_polynomial()
+                try:
+                    y = h.any_root()
+                except ValueError:
+                    # need to extend the field further to get the y-coordinate
+                    if not extend:
+                        raise ValueError('division point not defined over this field and "extend" is not set')
+                    F, emb, y = ffext(h)
+                    E = E.change_ring(emb)
+                    P = P.change_ring(emb)
+                    coercion = emb * coercion
+                    x = emb(x)
+
+                pt = E(x, y)
+                if q * pt != P:
+                    pt = -pt
+                assert q * pt == P
+                P = pt
+
+        try:
+            F.register_coercion(coercion)
+        except AssertionError:  # coercion already exists
+            pass
+
+        return P
 
     def _divide_out(self, p):
         r"""
@@ -1888,18 +1994,16 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         elif self != R:
             if self[0] == R[0]:
                 return Q[0] - self[0]
-            else:
-                l = (R[1] - self[1])/(R[0] - self[0])
-                return Q[1] - self[1] - l * (Q[0] - self[0])
+            l = (R[1] - self[1])/(R[0] - self[0])
+            return Q[1] - self[1] - l * (Q[0] - self[0])
         else:
             a1, a2, a3, a4, a6 = self.curve().a_invariants()
             numerator = (3*self[0]**2 + 2*a2*self[0] + a4 - a1*self[1])
             denominator = (2*self[1] + a1*self[0] + a3)
             if denominator == 0:
                 return Q[0] - self[0]
-            else:
-                l = numerator/denominator
-                return Q[1] - self[1] - l * (Q[0] - self[0])
+            l = numerator/denominator
+            return Q[1] - self[1] - l * (Q[0] - self[0])
 
     def _miller_(self, Q, n):
         r"""
@@ -2885,8 +2989,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             n = E.pari_curve().ellorder(self)
             if n:
                 return Integer(n)
-            else:
-                return oo
+            return oo
 
         if algorithm == 'generic':
             # Get the torsion order if known, else a bound on (multiple
@@ -4017,14 +4120,13 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         r -= offset/6
         if not r:
             return QQ.zero()
+        if E.base_ring() is QQ:
+            Nv = Integer(v)
         else:
-            if E.base_ring() is QQ:
-                Nv = Integer(v)
-            else:
-                Nv = v.norm()
-                if not weighted:
-                    r = r / (v.ramification_index() * v.residue_class_degree())
-            return r * log(Nv)
+            Nv = v.norm()
+            if not weighted:
+                r = r / (v.ramification_index() * v.residue_class_degree())
+        return r * log(Nv)
 
     def elliptic_logarithm(self, embedding=None, precision=100,
                            algorithm='pari'):
@@ -4577,9 +4679,9 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         if isinstance(base, (list, tuple)):
             if not base:
                 return self.log(self.curve().zero())
-            elif len(base) == 1:
+            if len(base) == 1:
                 return self.log(base[0])
-            elif len(base) > 2:
+            if len(base) > 2:
                 raise ValueError('sequence must have length <= 2')
 
             P1, P2 = base
@@ -4640,7 +4742,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         if F.is_prime_field() and n == p:
             # Anomalous case
             return base.padic_elliptic_logarithm(self, p)
-        elif hasattr(E, '_order') and E._order.gcd(n**2) == n:
+        if hasattr(E, '_order') and E._order.gcd(n**2) == n:
             pass    # cyclic rational n-torsion -> okay
         elif base.weil_pairing(self, n) != 1:
             raise ValueError('ECDLog problem has no solution (non-trivial Weil pairing)')

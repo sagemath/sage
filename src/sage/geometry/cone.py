@@ -3408,8 +3408,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         - :class:`tuple` of primitive vectors in the lattice of ``self``
           giving directions of lines that span the linear subspace of
-          ``self``. These lines are arbitrary, but fixed. If you do not care
-          about the order, see also :meth:`line_set`.
+          ``self``. These lines are arbitrary, but fixed and orthogonal
+          to one another.
 
         EXAMPLES::
 
@@ -3422,6 +3422,46 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N(0, 1),
             N(1, 0)
             in 2-d lattice N
+
+        TESTS:
+
+        Ensure that the returned generators are mutually
+        orthogonal. This is not promised by the PPL documentation, but
+        it seems to hold in practice. (There is February 2026 thread
+        about it on the ppl-devel mailing list that received no
+        responses.) By testing it here, we "guarantee" that it is a
+        safe assumption to make in user code::
+
+            sage: K = random_cone()
+            sage: V = K.lattice().vector_space()
+            sage: L = [V(l) for l in K.lines()]
+            sage: all( L[i].inner_product(L[j]).is_zero()
+            ....:      for i in range(len(L))
+            ....:      for j in range(len(L))
+            ....:      if i != j )
+            True
+
+            sage: K = random_cone(strictly_convex=False,
+            ....:                 min_ambient_dim=4)
+            sage: V = K.lattice().vector_space()
+            sage: L = [V(l) for l in K.lines()]
+            sage: all( L[i].inner_product(L[j]).is_zero()
+            ....:      for i in range(len(L))
+            ....:      for j in range(len(L))
+            ....:      if i != j )
+            True
+
+            sage: K = random_cone(strictly_convex=False,
+            ....:                 min_ambient_dim=8,
+            ....:                 min_rays=4)
+            sage: V = K.lattice().vector_space()
+            sage: L = [V(l) for l in K.lines()]
+            sage: all( L[i].inner_product(L[j]).is_zero()
+            ....:      for i in range(len(L))
+            ....:      for j in range(len(L))
+            ....:      if i != j )
+            True
+
         """
         lines = []
         for g in self._PPL_cone().minimized_generators():

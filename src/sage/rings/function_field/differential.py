@@ -467,10 +467,9 @@ class FunctionFieldDifferential(ModuleElement):
         r = g.valuation(place)
         if r >= 0:
             return R.zero()
-        else:
-            g_shifted = g * s**(-r)
-            c = g_shifted.higher_derivative(-r - 1, s)
-            return to_R(c)
+        g_shifted = g * s**(-r)
+        c = g_shifted.higher_derivative(-r - 1, s)
+        return to_R(c)
 
     def monomial_coefficients(self, copy: bool = True):
         """

@@ -301,8 +301,7 @@ class AnInfinity:
         """
         if self._sign < 0:
             return 'minf'
-        else:
-            return 'inf'
+        return 'inf'
 
     def _fricas_init_(self) -> str:
         """
@@ -317,10 +316,9 @@ class AnInfinity:
         """
         if self._sign_char == '':
             return r"%infinity"
-        elif self._sign > 0:
+        if self._sign > 0:
             return r"%plusInfinity"
-        else:
-            return r"%minusInfinity"
+        return r"%minusInfinity"
 
     def __pari__(self):
         """
@@ -337,8 +335,7 @@ class AnInfinity:
 
         if self._sign >= 0:
             return pari('oo')
-        else:
-            return pari('-oo')
+        return pari('-oo')
 
     def _latex_(self) -> str:
         r"""
@@ -538,8 +535,7 @@ class AnInfinity:
         """
         if x == 0:
             return x
-        else:
-            return abs(self)
+        return abs(self)
 
     def _sage_input_(self, sib, coerced):
         """
@@ -556,10 +552,9 @@ class AnInfinity:
         """
         if self._sign == 0:
             return sib.name('unsigned_infinity')
-        elif self._sign > 0:
+        if self._sign > 0:
             return sib.name('oo')
-        else:
-            return -sib.name('oo')
+        return -sib.name('oo')
 
 
 class UnsignedInfinityRing_class(Singleton, Parent):
@@ -719,7 +714,7 @@ class UnsignedInfinityRing_class(Singleton, Parent):
         # Handle all ways to represent infinity first
         if isinstance(x, InfinityElement):
             return self.gen()
-        elif isinstance(x, float):
+        if isinstance(x, float):
             if x in [float('+inf'), float('-inf')]:
                 return self.gen()
         elif isinstance(x, RingElement) and isinstance(x.parent(), sage.rings.abc.RealIntervalField):
@@ -1040,15 +1035,14 @@ class InfinityRing_class(Singleton, CommutativeRing):
         try:
             if n == 0:
                 return self._gen0
-            elif n == 1:
+            if n == 1:
                 return self._gen1
-            else:
-                raise IndexError("n must be 0 or 1")
+            raise IndexError("n must be 0 or 1")
         except AttributeError:
             if n == 0:
                 self._gen0 = PlusInfinity()
                 return self._gen0
-            elif n == 1:
+            if n == 1:
                 self._gen1 = MinusInfinity()
                 return self._gen1
 
@@ -1165,9 +1159,8 @@ class InfinityRing_class(Singleton, CommutativeRing):
         if isinstance(x, InfinityElement):
             if x < 0:
                 return self.gen(1)
-            else:
-                return self.gen(0)
-        elif isinstance(x, float):
+            return self.gen(0)
+        if isinstance(x, float):
             if x == float('+inf'):
                 return self.gen(0)
             if x == float('-inf'):

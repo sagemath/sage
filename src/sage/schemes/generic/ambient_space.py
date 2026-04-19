@@ -218,10 +218,9 @@ class AmbientSpace(Scheme):
                     "no natural map from the base ring (=%s) to R (=%s)!"
                     % (self.base_ring(), R))
             return self.change_ring(R)
-        else:
-            raise NotImplementedError(
-                        "extension of spaces over %s to %s is not implemented!"
-                        % (self.base_ring(), R))
+        raise NotImplementedError(
+                    "extension of spaces over %s to %s is not implemented!"
+                    % (self.base_ring(), R))
 
     def ambient_space(self):
         """

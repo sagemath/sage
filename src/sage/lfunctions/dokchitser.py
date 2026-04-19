@@ -109,7 +109,7 @@ class Dokchitser(SageObject):
         sage: L.derivative(1,2)
         0.373095594536324
         sage: L.cost()
-        50
+        205
         sage: L.taylor_series(1,4)
         0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + O(z^4)
         sage: L.check_functional_equation()  # abs tol 1e-17
@@ -123,7 +123,7 @@ class Dokchitser(SageObject):
         sage: E = EllipticCurve('389a')
         sage: L = E.lseries().dokchitser(algorithm='pari')
         sage: L.cost()
-        163
+        666
         sage: L.derivative(1,E.rank())
         1.51863300057685
         sage: L.taylor_series(1,4)
@@ -139,7 +139,7 @@ class Dokchitser(SageObject):
         sage: L.conductor
         400
         sage: L.cost()
-        313
+        5499
         sage: L(2)
         1.10398438736918
         sage: L.taylor_series(2,3)
@@ -346,11 +346,11 @@ class Dokchitser(SageObject):
             sage: E = EllipticCurve('11a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.cost()
-            27
+            112
             sage: E = EllipticCurve('5077a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.cost()
-            591
+            2406
             sage: L = Dokchitser(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], init='1')
             sage: L.cost()
             4

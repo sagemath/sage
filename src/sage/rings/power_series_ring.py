@@ -133,8 +133,8 @@ TESTS::
     sage: TestSuite(M).run()
 """
 
-import sage.categories.commutative_rings as commutative_rings
-import sage.misc.latex as latex
+from sage.categories import commutative_rings
+from sage.misc import latex
 from sage.interfaces.abc import MagmaElement
 from sage.misc.lazy_import import lazy_import
 from sage.rings import (
@@ -155,10 +155,10 @@ from sage.structure.nonexact import Nonexact
 from sage.structure.unique_representation import UniqueRepresentation
 
 _CommutativeRings = commutative_rings.CommutativeRings()
-import sage.categories.integral_domains as integral_domains
+from sage.categories import integral_domains
 
 _IntegralDomains = integral_domains.IntegralDomains()
-import sage.categories.fields as fields
+from sage.categories import fields
 
 _Fields = fields.Fields()
 
@@ -830,10 +830,9 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         elif isinstance(f, FractionFieldElement):
             if self.base_ring().has_coerce_map_from(f.parent()):
                 return self.element_class(self, [f], prec, check=check)
-            else:
-                num = self.element_class(self, f.numerator(), prec, check=check)
-                den = self.element_class(self, f.denominator(), prec, check=check)
-                return self.coerce(num/den)
+            num = self.element_class(self, f.numerator(), prec, check=check)
+            den = self.element_class(self, f.denominator(), prec, check=check)
+            return self.coerce(num/den)
         elif isinstance(f, Expression):
             from sage.symbolic.expression import SymbolicSeries
             if isinstance(f, SymbolicSeries):
@@ -841,8 +840,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
                     return self.element_class(self, f.list(),
                                               f.degree(f.default_variable()),
                                               check=check)
-                else:
-                    raise TypeError("Can only convert series into ring with same variable name.")
+                raise TypeError("Can only convert series into ring with same variable name.")
         else:
             from sage.rings.lazy_series import LazyPowerSeries
             if isinstance(f, LazyPowerSeries):
@@ -946,8 +944,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
                 if P.variable_name() == self.variable_name():
                     if self.has_coerce_map_from(P.base_ring()):
                         return self(x)
-                    else:
-                        raise TypeError("no natural map between bases of power series rings")
+                    raise TypeError("no natural map between bases of power series rings")
         except AttributeError:
             pass
 
@@ -1024,8 +1021,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         if R.has_coerce_map_from(self.base_ring()):
             return self.change_ring(R)
-        else:
-            raise TypeError("no base extension defined")
+        raise TypeError("no base extension defined")
 
     def change_ring(self, R):
         """
@@ -1123,8 +1119,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         if self.base_ring().is_field():
             return self.gen()
-        else:
-            raise TypeError("The base ring is not a field")
+        raise TypeError("The base ring is not a field")
 
     def ngens(self):
         """
@@ -1286,8 +1281,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         if self.base_ring().is_field():
             return self.base_ring()
-        else:
-            return self.base_ring().residue_field()
+        return self.base_ring().residue_field()
 
     def laurent_series_ring(self):
         """
