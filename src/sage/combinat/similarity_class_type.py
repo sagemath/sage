@@ -142,6 +142,7 @@ classes which are selftranspose can also be counted::
     (q^18 - q^17 - q^16 + q^14 + q^13 - q^12, q^2),
     (q^12 - q^9, 1/3*q^4 - 1/3*q^2),
     (q^6 - q^3, 1/3*q^6 - 1/3*q^4)]
+
 AUTHOR:
 
 - Amritanshu Prasad (2013-07-18): initial implementation
