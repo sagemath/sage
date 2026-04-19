@@ -44,6 +44,7 @@ AUTHORS:
 - Franco Saliola (2009): initial version
 - Vincent Delecroix, Timo Jolivet, Stepan Starosta, Sebastien Labbe (2010-05): redesign
 - Timo Jolivet (2010-08, 2010-09, 2011): redesign
+
 EXAMPLES:
 
 We start by drawing a simple three-face patch::
