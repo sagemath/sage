@@ -347,8 +347,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
             # self._invertible_A contains all the elements of G.
             if (a in self._invertible_A) and (0 <= b < n):
                 return AffineCipher(self, key=(a,b))
-            else:
-                raise ValueError
+            raise ValueError
         except Exception:
             raise ValueError("(a, b) = (%s, %s) is outside the range of acceptable values for a key of this affine cryptosystem." % (a, b))
 
@@ -1909,8 +1908,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
             return ShiftCipher(self, K)
             # from sage.rings.finite_rings.integer_mod import Mod
             # return ShiftCipher(self, Mod(K, self.alphabet_size()).lift())
-        else:
-            raise ValueError("K (=%s) is outside the range of acceptable values for a key of this shift cryptosystem." % K)
+        raise ValueError("K (=%s) is outside the range of acceptable values for a key of this shift cryptosystem." % K)
 
     def _repr_(self):
         r"""
@@ -2916,8 +2914,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
             # number of elements in A. If k is a key, then the corresponding
             # inverse key is -k mod n.
             return self.key_space()(-Integer(K)).lift()
-        else:
-            raise ValueError("K (=%s) is outside the range of acceptable values for a key of this shift cryptosystem." % K)
+        raise ValueError("K (=%s) is outside the range of acceptable values for a key of this shift cryptosystem." % K)
 
     def random_key(self):
         r"""

@@ -482,8 +482,8 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: C = FiniteDimensionalAlgebra(GF(2), [Matrix([1])])
-            sage: k.<y> = GF(4)                                                         # needs sage.rings.finite_rings
-            sage: C.base_extend(k)                                                      # needs sage.rings.finite_rings
+            sage: k.<y> = GF(4)
+            sage: C.base_extend(k)
             Finite-dimensional algebra of degree 1 over Finite Field in y of size 2^2
         """
         # Base extension of the multiplication table is done by __classcall_private__.
@@ -899,7 +899,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
             ....:                                      Matrix([[0, 1], [0, 0]])],
             ....:                              category=cat)
-            sage: A.maximal_ideal()                                                     # needs sage.rings.finite_rings
+            sage: A.maximal_ideal()
             Ideal (0, e1) of
              Finite-dimensional algebra of degree 2 over Finite Field of size 3
 
@@ -908,7 +908,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])],
             ....:                              category=cat)
-            sage: B.maximal_ideal()                                                     # needs sage.libs.pari
+            sage: B.maximal_ideal()
             Traceback (most recent call last):
             ...
             ValueError: algebra is not local
@@ -946,7 +946,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
             sage: cat = CommutativeAlgebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
             ....:                                      Matrix([[0, 1], [0, 0]])], category=cat)
-            sage: A.primary_decomposition()                                             # needs sage.rings.finite_rings
+            sage: A.primary_decomposition()
             [Morphism
               from Finite-dimensional algebra of degree 2 over Finite Field of size 3
                 to Finite-dimensional algebra of degree 2 over Finite Field of size 3
@@ -957,7 +957,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])], category=cat)
-            sage: B.primary_decomposition()                                             # needs sage.libs.pari
+            sage: B.primary_decomposition()
             [Morphism
               from Finite-dimensional algebra of degree 3 over Rational Field
                 to Finite-dimensional algebra of degree 1 over Rational Field
@@ -1019,7 +1019,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
             sage: cat = Algebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
             ....:                                      Matrix([[0, 1], [0, 0]])], category=cat)
-            sage: A.maximal_ideals()                                                    # needs sage.rings.finite_rings
+            sage: A.maximal_ideals()
             [Ideal (e1) of Finite-dimensional algebra of degree 2 over Finite Field of size 3]
 
             sage: cat = Algebras(QQ).FiniteDimensional().WithBasis()

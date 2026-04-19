@@ -109,7 +109,7 @@ easily::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sage.interfaces.abc
-import sage.misc.latex as latex
+from sage.misc import latex
 import sage.structure.parent_gens
 
 from sage.structure.parent import Parent
@@ -511,9 +511,8 @@ class QuotientRing_nc(Parent):
             return QuotientFunctor(self.__I, names=names, domain=_CommRings,
                                    codomain=_CommRings,
                                    as_field=isinstance(self, Field)), self.__R
-        else:
-            return QuotientFunctor(self.__I, names=names,
-                                   as_field=isinstance(self, Field)), self.__R
+        return QuotientFunctor(self.__I, names=names,
+                               as_field=isinstance(self, Field)), self.__R
 
     def _repr_(self):
         """

@@ -297,7 +297,7 @@ class SIDH(KeyExchangeBase):
             toy = cls(E, PA, QA, PB, QB)
             toy.rename('sidh-toy')
             return toy
-        elif name == 'p434':
+        if name == 'p434':
             e_A = 0xD8
             e_B = 0x89
         elif name == 'p503':

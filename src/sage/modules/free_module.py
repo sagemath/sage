@@ -179,7 +179,7 @@ import itertools
 from warnings import warn
 
 import sage.matrix.matrix_space
-import sage.misc.latex as latex
+from sage.misc import latex
 import sage.rings.abc
 import sage.rings.infinity
 import sage.rings.integer
@@ -192,7 +192,7 @@ from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.lazy_import import LazyImport
+from sage.misc.lazy_import import LazyImport, lazy_import
 from sage.misc.randstate import current_randstate
 from sage.modules.free_module_element import (
     FreeModuleElement,
@@ -216,6 +216,9 @@ from sage.structure.richcmp import (
     richcmp_not_equal,
 )
 from sage.structure.sequence import Sequence
+
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
+lazy_import('sage.symbolic.callable', 'CallableSymbolicExpressionRing_class')
 
 ###############################################################################
 #
@@ -8461,10 +8464,10 @@ def element_class(R, is_sparse):
             pass
         else:
             return Vector_complex_double_dense
-    elif isinstance(R, sage.rings.abc.CallableSymbolicExpressionRing) and not is_sparse:
+    elif isinstance(R, CallableSymbolicExpressionRing_class) and not is_sparse:
         import sage.modules.vector_callable_symbolic_dense
         return sage.modules.vector_callable_symbolic_dense.Vector_callable_symbolic_dense
-    elif isinstance(R, sage.rings.abc.SymbolicRing):
+    elif isinstance(R, SymbolicRing):
         if not is_sparse:
             import sage.modules.vector_symbolic_dense
             return sage.modules.vector_symbolic_dense.Vector_symbolic_dense

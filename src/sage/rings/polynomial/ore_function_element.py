@@ -101,8 +101,7 @@ class OreFunction(AlgebraElement):
             return s
         if self._numerator._is_atomic():
             return "%s * %s" % (s, self._numerator)
-        else:
-            return "%s * (%s)" % (s, self._numerator)
+        return "%s * (%s)" % (s, self._numerator)
 
     def _latex_(self):
         r"""
@@ -129,8 +128,7 @@ class OreFunction(AlgebraElement):
             return s
         if self._numerator._is_atomic():
             return "%s \\cdot %s" % (s, latex(self._numerator))
-        else:
-            return "%s \\cdot \\left(%s\\right)" % (s, latex(self._numerator))
+        return "%s \\cdot \\left(%s\\right)" % (s, latex(self._numerator))
 
     def __hash__(self):
         r"""

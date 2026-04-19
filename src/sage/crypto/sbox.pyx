@@ -589,7 +589,7 @@ cdef class SBox(SageObject):
             ...
             IndexError: list index out of range
             sage: from sage.crypto.sboxes import PRESENT
-            sage: PRESENT.derivative(1).max_degree() < PRESENT.max_degree()             # needs sage.rings.polynomial.pbori
+            sage: PRESENT.derivative(1).max_degree() < PRESENT.max_degree()             # needs brial
             True
         """
         from sage.structure.element import Vector
@@ -1318,11 +1318,11 @@ cdef class SBox(SageObject):
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox([7,6,0,4,2,5,1,3])
             sage: f3 = S.component_function(3)
-            sage: f3.algebraic_normal_form()                                            # needs sage.rings.polynomial.pbori
+            sage: f3.algebraic_normal_form()                                            # needs brial
             x0*x1 + x0*x2 + x0 + x2
 
             sage: f5 = S.component_function([1, 0, 1])
-            sage: f5.algebraic_normal_form()                                            # needs sage.rings.polynomial.pbori
+            sage: f5.algebraic_normal_form()                                            # needs brial
             x0*x2 + x0 + x1*x2
 
         TESTS::
@@ -1706,7 +1706,7 @@ cdef class SBox(SageObject):
 
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox([12,5,6,11,9,0,10,13,3,14,15,8,4,7,1,2])
-            sage: S.max_degree()                                                        # needs sage.rings.polynomial.pbori
+            sage: S.max_degree()                                                        # needs brial
             3
         """
         ret = ZZ.zero()
@@ -1726,7 +1726,7 @@ cdef class SBox(SageObject):
 
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox([12,5,6,11,9,0,10,13,3,14,15,8,4,7,1,2])
-            sage: S.min_degree()                                                        # needs sage.rings.polynomial.pbori
+            sage: S.min_degree()                                                        # needs brial
             2
         """
         ret = ZZ(self.m)

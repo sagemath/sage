@@ -691,7 +691,7 @@ class LazyModuleElement(Element):
         P = self.parent()
         if max_degree is None and min_degree is None:
             return self
-        elif max_degree is None:
+        if max_degree is None:
             v = max(self._coeff_stream._approximate_order, min_degree)
             if isinstance(self._coeff_stream, Stream_exact):
                 degree = self._coeff_stream._degree
@@ -4109,8 +4109,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             if root:
                 if v == 0:
                     return True, sqrt_unit
-                else:
-                    return True, sqrt_unit * z**(v // 2)
+                return True, sqrt_unit * z**(v // 2)
             return True
 
         except (ValueError, ArithmeticError):
@@ -5077,10 +5076,9 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             R = LaurentSeriesRing(S.base_ring(), name=name)
             n = self.valuation()
             return R([self[i] for i in range(n, prec)], n).add_bigoh(prec)
-        else:
-            from sage.rings.power_series_ring import PowerSeriesRing
-            R = PowerSeriesRing(S.base_ring(), name=name)
-            return R([self[i] for i in range(prec)]).add_bigoh(prec)
+        from sage.rings.power_series_ring import PowerSeriesRing
+        R = PowerSeriesRing(S.base_ring(), name=name)
+        return R([self[i] for i in range(prec)]).add_bigoh(prec)
 
     add_bigoh = approximate_series
     O = approximate_series
@@ -5166,10 +5164,9 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             R = LaurentPolynomialRing(S.base_ring(), name=name)
             n = self.valuation()
             return R([self[i] for i in range(n, m)]).shift(n)
-        else:
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            R = PolynomialRing(S.base_ring(), name=name)
-            return R([self[i] for i in range(m)])
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        R = PolynomialRing(S.base_ring(), name=name)
+        return R([self[i] for i in range(m)])
 
     def _format_series(self, formatter, format_strings=False):
         """
@@ -6918,8 +6915,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
                                            P.is_sparse(), ps, R)
             return P.element_class(P, coeff_stream)
 
-        else:
-            raise NotImplementedError("only implemented for arity 1")
+        raise NotImplementedError("only implemented for arity 1")
 
     plethysm = __call__
 
@@ -7371,8 +7367,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
             coeff_stream = Stream_function(coefficient, P._sparse, 0)
             return P.element_class(P, coeff_stream)
-        else:
-            raise NotImplementedError("only implemented for arity 1")
+        raise NotImplementedError("only implemented for arity 1")
 
     def arithmetic_product(self, *args):
         r"""
@@ -7579,8 +7574,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
             coeff_stream = Stream_function(coefficient, P._sparse, 0)
             return P.element_class(P, coeff_stream)
-        else:
-            raise NotImplementedError("only implemented for arity 1")
+        raise NotImplementedError("only implemented for arity 1")
 
     def symmetric_function(self, degree=None):
         r"""
