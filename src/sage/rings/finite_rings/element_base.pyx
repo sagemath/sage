@@ -66,10 +66,10 @@ cdef class FiniteRingElement(CommutativeRingElement):
             sage: r**(29*283*3539*12345) == a
             True
         """
-        n_exponent = Integer(n)
+        n = Integer(n)
         K = self.parent()
         q = K.order()
-        gcd = n_exponent.gcd(q-1)
+        gcd = n.gcd(q-1)
         if self.is_one():
             if gcd == 1:
                 return [self] if all else self
@@ -79,7 +79,7 @@ cdef class FiniteRingElement(CommutativeRingElement):
             if all:
                 return []
             raise ValueError("no nth root")
-        gcd, alpha, _ = n_exponent.xgcd(q-1)  # gcd = alpha*n_exponent + beta*(q-1), so 1/n = alpha/gcd (mod q-1)
+        gcd, alpha, _ = n.xgcd(q-1)  # gcd = alpha*n + beta*(q-1), so 1/n = alpha/gcd (mod q-1)
         if gcd == 1:
             return [self**alpha] if all else self**alpha
 
@@ -95,12 +95,11 @@ cdef class FiniteRingElement(CommutativeRingElement):
             F = factor_cunningham(n)
         else:
             # Merge the cached factorization of q-1 with factor(n), where
-            # n = gcd(n_exponent, q-1) (assigned above).  We must not factor
-            # n_exponent here: it can be vastly larger than n, and the original
+            # n = gcd(n, q-1) (assigned above).  We must not factor the original
+            # exponent here: it can be vastly larger than n, and the original
             # algorithm used ``F = n.factor()`` after reducing n (see :issue:`41911`).
             order_fac = K.factored_unit_order()[0]
-            if order_fac.value() != ZZ(q) - 1:
-                raise ValueError("order_factorization does not multiply to q-1")
+            assert order_fac.value() == ZZ(q) - 1
             F = order_fac.gcd(n.factor())
         from sage.groups.generic import discrete_log
         if algorithm is None or algorithm == 'Johnston':
@@ -957,6 +956,20 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: K.factored_unit_order.set_cache((factor(30),))
             sage: K(22).nth_root(7)
             13
+
+        Benchmark comparison between default ``n.factor()`` and cached
+        ``order_factorization`` (timings are machine-dependent)::
+
+            sage: K = GF(next_prime(2^50))
+            sage: a = K.random_element()
+            sage: n = 2^5 * 3^3 * 5
+            sage: t = cputime(); r1 = a.nth_root(n, all=True); t_default = cputime(t)
+            sage: K.factored_unit_order.set_cache((factor(K.order() - 1),))
+            sage: t = cputime(); r2 = a.nth_root(n, all=True); t_cached = cputime(t)
+            sage: sorted(r1) == sorted(r2)
+            True
+            sage: (t_default >= 0) and (t_cached >= 0)
+            True
 
             sage: K.<a> = GF(625)
             sage: (3*a^2+a+1).nth_root(13)**13
