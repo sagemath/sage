@@ -807,8 +807,7 @@ class DiscreteValuation(DiscretePseudoValuation):
             return self.simplify(x, error=error)
         if e % 2 == 0:
             return self._pow(self.simplify(x*x, error=error*2/e), e//2, error=error)
-        else:
-            return self.simplify(x*self._pow(x, e-1, error=error*(e-1)/e), error=error)
+        return self.simplify(x*self._pow(x, e-1, error=error*(e-1)/e), error=error)
 
     def mac_lane_approximant(self, G, valuation, approximants=None):
         r"""

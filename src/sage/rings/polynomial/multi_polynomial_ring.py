@@ -60,7 +60,7 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.rings.fraction_field_element as fraction_field_element
+from sage.rings import fraction_field_element
 
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
@@ -406,7 +406,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             <class 'sage.rings.qqbar.AlgebraicNumber'>
         """
         from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
-        import sage.rings.polynomial.polynomial_element as polynomial_element
+        from sage.rings.polynomial import polynomial_element
 
         # handle constants that coerce into self.base_ring() first, if possible
         if isinstance(x, Element) and x.parent() is self.base_ring():
@@ -455,7 +455,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
                                         x._mpoly_dict_recursive(self.variable_names(),
                                                                 self.base_ring()))
 
-        elif isinstance(x, MPolynomial_libsingular):
+        if isinstance(x, MPolynomial_libsingular):
             P = x.parent()
             if P == self:
                 return MPolynomial_polydict(self, x.monomial_coefficients())

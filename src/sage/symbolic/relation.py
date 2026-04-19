@@ -616,6 +616,47 @@ def string_to_list_of_solutions(s):
     return Sequence(v, universe=Objects(), cr_str=True)
 
 
+def _to_poly_solve_unwrap_solution(t):
+    r"""
+    Normalize one term parsed from Maxima's ``to_poly_solve`` output.
+
+    After :func:`string_to_list_of_solutions`, each entry is sometimes a
+    tuple or list ``(equation, \ldots)`` (e.g. equation with multiplicity
+    information) and sometimes a bare symbolic equation.  The old code
+    assumed the former and used ``t[0]``, which raises
+    ``TypeError: 'Expression' object is not subscriptable`` when Maxima
+    returns the latter.
+
+    INPUT:
+
+    - ``t`` -- a tuple, list, :class:`~sage.structure.sequence.Sequence`,
+      or :class:`~sage.symbolic.expression.Expression`
+
+    OUTPUT:
+
+    The equation to record, or ``None`` if ``t`` is an empty sequence
+    (skipped by the caller).
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.relation import _to_poly_solve_unwrap_solution
+        sage: x = var('x')
+        sage: _to_poly_solve_unwrap_solution((x == 1, 2))
+        x == 1
+        sage: _to_poly_solve_unwrap_solution(x == 2)
+        x == 2
+        sage: _to_poly_solve_unwrap_solution(()) is None
+        True
+    """
+    if isinstance(t, (list, tuple)):
+        if not t:
+            return None
+        return t[0]
+    if t is None:
+        return None
+    return t
+
+
 def _normalize_to_relational(f):
     """
     Normalize the input to a relational expression or a list of relational expressions.
@@ -997,6 +1038,15 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         [x == 1/4*pi + pi*z...]
         sage: solve(cos(x) * sin(x) == 1/2, x, to_poly_solve='force')
         [x == 1/4*pi + pi*z...]
+
+    Maxima's ``to_poly_solve`` may return bare equations or
+    tuples; both must be accepted without ``TypeError``::
+
+        sage: x = var('x')
+        sage: type(solve(x/sin(x) == cos(x), x, to_poly_solve=True))
+        <class 'list'>
+        sage: type(solve(sin(x) == cos(x)/2, x, to_poly_solve=True))
+        <class 'list'>
 
     We use ``use_grobner`` in Maxima if no solution is obtained from
     Maxima's ``to_poly_solve``::
@@ -1531,7 +1581,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                 m = eq._maxima_()
                 s = m.to_poly_solve(x, options='algexact:true')
                 T = string_to_list_of_solutions(repr(s))
-                X.extend([t[0] for t in T])
+                X.extend(u for t in T if (u :=_to_poly_solve_unwrap_solution(t)) is not None)
             except TypeError as mess:
                 if ignore_exceptions:
                     continue

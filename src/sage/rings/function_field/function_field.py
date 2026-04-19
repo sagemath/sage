@@ -1500,14 +1500,14 @@ class FunctionField(Field):
                     raise ValueError("Khuri-Makdisi large model requires base divisor of degree "
                                      "at least 2*g + 1 for genus g")
                 return JacobianKhuriMakdisi(self, base_div, model='large', curve=curve)
-            elif model.endswith('medium'):
+            if model.endswith('medium'):
                 if base_div is None:
                     base_div = (2 * g + 1) * base_place
                 if not base_div.degree() >= 2 * g + 1:
                     raise ValueError("Khuri-Makdisi medium model requires base divisor of degree "
                                      "at least 2*g + 1 for genus g")
                 return JacobianKhuriMakdisi(self, base_div, model='medium', curve=curve)
-            elif model.endswith('small'):
+            if model.endswith('small'):
                 if base_div is None:
                     base_div = (g + 1) * base_place
                 if not base_div.degree() >= g + 1:

@@ -923,3 +923,92 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return ss
 
     rational_points = points
+
+    @cached_method
+    def abelian_group(self):
+        r"""
+        Return the group of rational points on this Jacobian as an
+        :class:`~sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper`
+        object.
+
+        EXAMPLES::
+
+            sage: x = polygen(GF(419^2))
+            sage: C = HyperellipticCurve(x^4 + x - 1)
+            sage: C.is_split()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/25193 + Z/7
+              embedded in Abelian group of points over Finite Field in z2 of size 419^2
+                on Jacobian of Hyperelliptic Curve over Finite Field in z2 of size 419^2 defined by y^2 = x^4 + x + 418
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(x^5 + x)
+            sage: C.is_ramified()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/29346 + Z/6
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = x^5 + x
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(-x^6 + x - 3)
+            sage: C.is_inert()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/174078
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = 418*x^6 + x + 416
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(11*x^6 + x)
+            sage: C.is_inert()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/420 + Z/420
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = 11*x^6 + x
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(x^7 - x)
+            sage: C.is_ramified()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/420 + Z/420 + Z/210 + Z/2
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = x^7 + 418*x
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(x^8 + x)
+            sage: C.is_split()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/420 + Z/420 + Z/420
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = x^8 + x
+        """
+        n = self.order()
+        g = self.curve().genus()
+        from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
+        A = AdditiveAbelianGroupWrapper(self, [], [])
+        for fast in (True, False):
+            for _ in range(99 * g):
+                assert len(A.invariants()) <= 2 * g
+                assert A.order().divides(n)
+                if A.order() == n:
+                    return A
+                D = self.random_element(fast=fast)
+                if D in A:
+                    continue
+                A = AdditiveAbelianGroupWrapper.from_generators(A._gen_elements + (D,))
+        raise RuntimeError('very unlikely event, or (more likely) bug in HyperellipticJacobianHomset.abelian_group()')

@@ -1835,7 +1835,7 @@ class HyperplaneArrangementElement(Element):
             parallel_planes.append([b, (hyperplane, A, b)])
             parallels[through_origin] = parallel_planes
         parallels = sorted(tuple(hyperplane[1] for hyperplane in sorted(value))
-                           for key, value in parallels.items())
+                           for value in parallels.values())
         return tuple(parallels)
 
     def vertices(self, exclude_sandwiched=False):

@@ -214,14 +214,12 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
                 # a rational point is already known, return True
                 if point or obstruction:
                     return True, self._rational_point
-                else:
-                    return True
+                return True
             if self._local_obstruction is not None:
                 # a local obstruction is already known, return False
                 if point or obstruction:
                     return False, self._local_obstruction
-                else:
-                    return False
+                return False
             # `_(in)finite_obstructions` is ``None`` if the cache is empty,
             # so we explicitly check against a list:
             if (not point) and self._finite_obstructions == [] and \

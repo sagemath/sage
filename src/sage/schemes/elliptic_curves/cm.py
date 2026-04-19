@@ -779,7 +779,6 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
         {1: [(-3, 1), (-3, 2), (-3, 3), (-4, 1), (-4, 2), (-7, 1), (-7, 2), (-8, 1), (-11, 1), (-19, 1), (-43, 1)], 2: [(-3, 4), (-4, 3), (-8, 2), (-15, 1), (-20, 1), (-24, 1), (-35, 1), (-40, 1)], 3: [(-11, 2), (-23, 1), (-31, 1)], 4: [(-39, 1)], 5: [(-47, 1)]}
     """
     hmax = Integer(hmax)
-    global hDf_dict
 
     # Easy case where we have already computed and cached the relevant values
     if hDf_dict and hmax <= max(hDf_dict):
@@ -1006,8 +1005,7 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
                 D0 *= 4
             f = ZZ(D // D0).isqrt()
             return (True, (D0, f))
-        else:
-            return (False, None)
+        return (False, None)
 
     h = jpol.degree()
     if algorithm in ['exhaustive', 'old']:

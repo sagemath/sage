@@ -48,19 +48,19 @@ def _run_msolve(ideal, options):
 
     drlpolring = ideal.ring().change_ring(order='degrevlex')
     polys = ideal.change_ring(drlpolring).gens()
-    msolve_in = tempfile.NamedTemporaryFile(mode='w',
-                                            encoding='ascii', delete=False)
-    command = [msolve().absolute_filename(), "-f", msolve_in.name] + options
-    try:
+    with tempfile.NamedTemporaryFile(mode='w',
+                                     encoding='ascii',
+                                     delete_on_close=False) as msolve_in:
         print(",".join(drlpolring.variable_names()), file=msolve_in)
         print(base.characteristic(), file=msolve_in)
         print(*(pol._repr_().replace(" ", "") for pol in polys),
                 sep=',\n', file=msolve_in)
         msolve_in.close()
-        msolve_out = subprocess.run(command, capture_output=True, text=True)
-    finally:
-        os.unlink(msolve_in.name)
-    msolve_out.check_returncode()
+        command = [msolve().absolute_filename(), "-f", msolve_in.name] + options
+        msolve_out = subprocess.run(command,
+                                    capture_output=True,
+                                    text=True)
+        msolve_out.check_returncode()
 
     return msolve_out.stdout
 
@@ -253,7 +253,7 @@ def variety(ideal, ring, *, proof=True):
     dim = data[0]
     if dim == -1:
         return []
-    elif dim > 0:
+    if dim > 0:
         raise ValueError("positive-dimensional ideal")
     else:
         assert dim.is_zero()
