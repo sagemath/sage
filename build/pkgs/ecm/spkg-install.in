@@ -224,7 +224,6 @@ if [ -z "$ECM_CONFIGURE_USER" ]; then
 fi
 echo
 
-export OPENMP_CFLAGS="$OPENMP_CFLAGS $OPENMP_CLIB"
 sdh_configure $SAGE_CONFIGURE_GMP $ECM_CONFIGURE
 
 ###############################################################################
