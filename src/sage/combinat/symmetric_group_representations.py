@@ -1040,21 +1040,15 @@ def _choose_canonical_invariant_symmetric_form(matrices):
     r"""
     Combine a basis of `G`-invariant bilinear forms into one canonical matrix.
 
-    The null space of the linear system for invariant forms is computed with a
-    deterministic reduced-row-echelon basis. Taking the sum of the corresponding
-    matrices uses the entire invariant space in a fixed way and avoids picking
-    an arbitrary single basis vector. (Different choices of basis for the same
-    space would give different sums; this is a practical, reproducible
-    convention tied to Sage's kernel basis.)
+    Write each basis matrix as a vector by reading entries row-by-row. The span
+    of these vectors is the vector space of invariant forms. We compute its
+    reduced row echelon form (RREF), which is canonical for the subspace, and
+    then choose the nonzero RREF row with smallest lexicographic coordinates.
+    Reshaping that vector gives a deterministic representative.
 
-    If the sum vanishes, each basis matrix with nonzero trace is scaled by
-    `1/\mathrm{trace}` and the results are summed; if that sum is still zero,
-    the first basis matrix is returned.
-
-    .. TODO::
-
-        Explore more intrinsic choices, for example an orthogonal or
-        Frobenius-normalized basis of the invariant space.
+    This avoids arbitrary basis choices, and in modular settings (when
+    `p \mid |G|`) it avoids averaging over `G`, which is generally invalid
+    because `|G|` is not invertible in the base field.
 
     INPUT:
 
@@ -1080,20 +1074,15 @@ def _choose_canonical_invariant_symmetric_form(matrices):
         raise ValueError("matrices must be a nonempty list")
     if len(matrices) == 1:
         return matrices[0]
-    U = sum(matrices[1:], matrices[0])
-    if not U.is_zero():
-        return U
-    normalized = []
-    for M in matrices:
-        t = M.trace()
-        if t:
-            normalized.append(M / t)
-        else:
-            normalized.append(M)
-    U2 = sum(normalized[1:], normalized[0])
-    if not U2.is_zero():
-        return U2
-    return matrices[0]
+    d = matrices[0].nrows()
+    F = matrices[0].base_ring()
+    basis_vectors = matrix(F, [M.list() for M in matrices])
+    rref = basis_vectors.rref()
+    rows = [tuple(rref.row(i)) for i in range(rref.nrows()) if not rref.row(i).is_zero()]
+    if not rows:
+        raise ValueError("matrices must span a nonzero space")
+    canonical_vector = min(rows)
+    return matrix(F, d, d, canonical_vector)
 
 
 # #### Unitary Representation ###############################################
@@ -1185,10 +1174,11 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
         Select a deterministic `G`-invariant symmetric bilinear form.
 
         The invariant space may have dimension greater than one in modular
-        settings (for example when `p \mid n!`). We combine all vectors in the
-        kernel basis into matrices and pass them to
-        :func:`_choose_canonical_invariant_symmetric_form` (sum of basis
-        matrices, with trace-normalized fallback if that sum is zero).
+        settings (for example when `p \mid n!`). We cannot average over `G` in
+        this case because `|G|` is not invertible. Instead, we compute the
+        invariant space and choose a canonical element by RREF/lexicographic
+        normalization via
+        :func:`_choose_canonical_invariant_symmetric_form`.
 
         EXAMPLES::
 
@@ -1196,6 +1186,15 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             sage: M = U._canonical_invariant_form
             sage: M.is_zero()
             False
+            sage: R = SymmetricGroupRepresentations(4, 'unitary', ring=GF(3**2))
+            sage: U = next(U for U in [R(la) for la in Partitions(4)]
+            ....:          if matrix(U._ring, U._invariant_form_linear_system).right_kernel().dimension() > 1)
+            sage: M = U._canonical_invariant_form
+            sage: M.is_symmetric()
+            True
+            sage: rho = U._specht.representation_matrix
+            sage: all(rho(g).transpose() * M * rho(g).conjugate() == M for g in Permutations(U._n))
+            True
         """
         d_rho = self._specht.dimension()
         null_space = matrix(self._ring, self._invariant_form_linear_system).right_kernel()
@@ -1238,9 +1237,11 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
         We first compute a `G`-invariant symmetric bilinear form. This yields a solution `U`
         to the equation `\rho(g)^T U \rho(g) = U` for all `g` in `G`. We can
         solve this equation by computing the null space of the matrix of coefficients of the linear
-        equations. Generically, this null space will be one dimensional (it may have higher dimension
-        in the modular case when the decomposition factors have multiplicity). We then take the
-        extended Cholesky decomposition of the unique solution to the equation.
+        equations. Generically, this null space will be one dimensional (it may
+        have higher dimension in the modular case when the decomposition factors
+        have multiplicity). In that case, we use the canonical RREF-based
+        representative from :meth:`_canonical_invariant_form`. We then take the
+        extended Cholesky decomposition of that chosen solution.
 
         EXAMPLES::
 
