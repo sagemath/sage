@@ -1070,7 +1070,7 @@ def _choose_canonical_invariant_symmetric_form(matrices):
         [1 0]
         [0 0]
         sage: _choose_canonical_invariant_symmetric_form([A, B])
-        [1 0]
+        [0 0]
         [0 1]
     """
     if not matrices:
@@ -1208,6 +1208,16 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
         null_space = matrix(self._ring, self._invariant_form_linear_system).right_kernel()
         basis = null_space.basis()
         mats = [matrix(self._ring, d_rho, d_rho, v) for v in basis]
+        symmetric_mats = [M for M in mats if M == M.transpose()]
+        if symmetric_mats:
+            return _choose_canonical_invariant_symmetric_form(symmetric_mats)
+        # In odd characteristic, symmetrization preserves G-invariance and
+        # recovers the symmetric subspace even if the chosen kernel basis is not
+        # itself symmetric.
+        symmetrized = [M + M.transpose() for M in mats]
+        nonzero_symmetrized = [M for M in symmetrized if not M.is_zero()]
+        if nonzero_symmetrized:
+            return _choose_canonical_invariant_symmetric_form(nonzero_symmetrized)
         return _choose_canonical_invariant_symmetric_form(mats)
 
     @lazy_attribute
