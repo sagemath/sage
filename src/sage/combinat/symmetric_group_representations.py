@@ -1196,9 +1196,7 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             sage: M = U._canonical_invariant_form
             sage: M.is_zero()
             False
-            sage: R = SymmetricGroupRepresentations(4, 'unitary', ring=GF(3**2))
-            sage: U = next(U for U in [R(la) for la in Partitions(4)]
-            ....:          if matrix(U._ring, U._invariant_form_linear_system).right_kernel().dimension() > 1)
+            sage: U = SymmetricGroupRepresentation([3,1], 'unitary', ring=GF(3**2))
             sage: M = U._canonical_invariant_form
             sage: M.is_symmetric()
             True
