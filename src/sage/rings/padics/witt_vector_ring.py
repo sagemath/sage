@@ -126,12 +126,12 @@ def fast_char_p_power(x, n, p=None):
 
 class WittVectorRingFactory(UniqueFactory):
     r"""
-        Factory that creates and stores all truncated Witt vector rings.
+    Factory that creates and stores all truncated Witt vector rings.
 
-        Send directly to the appropriate constructor of WittVectorRingClass for each algorithm.
-        Except: ``algorithm="standard"``, where the Witt's Polynomials for `p` of `\ZZ` are cached,
-        in order to be reused in the computation of the Witt Polynomials of any ring `R`,
-        for the same prime `p`.
+    Send directly to the appropriate constructor of WittVectorRingClass for each algorithm.
+    Except: ``algorithm="standard"``, where the Witt's Polynomials for `p` of `\ZZ` are cached,
+    in order to be reused in the computation of the Witt Polynomials of any ring `R`,
+    for the same prime `p`.
     """
     def __init__(self, name):
         r"""
@@ -673,9 +673,9 @@ class WittVectorRingClass(Parent):
 
         var_names = [f'X{i}' for i in range(prec)] + [f'Y{i}' for i in range(prec)]
 
-        self._sum_polynomials = [None]*prec
-        self._prod_polynomials = [None]*prec
-        self._frob_polynomials = [None]*(prec-1)
+        self._sum_polynomials = [None] * prec
+        self._prod_polynomials = [None] * prec
+        self._frob_polynomials = [None] * (prec-1)
 
         # Because the stored Witt/Frobenius polynomials can belong to a ring of
         # higher precision than `prec`, we need to use indirect conversion
