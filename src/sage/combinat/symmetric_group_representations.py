@@ -1042,9 +1042,12 @@ def _choose_canonical_invariant_symmetric_form(matrices):
 
     Write each basis matrix as a vector by reading entries row-by-row. The span
     of these vectors is the vector space of invariant forms. We compute its
-    reduced row echelon form (RREF), which is canonical for the subspace, and
-    then choose the nonzero RREF row with smallest lexicographic coordinates.
-    Reshaping that vector gives a deterministic representative.
+    reduced row echelon form (RREF), which is canonical for the subspace.
+
+    We then normalize each nonzero RREF row by scaling with the inverse of its
+    first nonzero entry (so that entry is `1`) and choose the smallest matrix
+    among these normalized candidates. This is deterministic and independent of
+    how the original basis was ordered.
 
     This avoids arbitrary basis choices, and in modular settings (when
     `p \mid |G|`) it avoids averaging over `G`, which is generally invalid
@@ -1078,11 +1081,18 @@ def _choose_canonical_invariant_symmetric_form(matrices):
     F = matrices[0].base_ring()
     basis_vectors = matrix(F, [M.list() for M in matrices])
     rref = basis_vectors.rref()
-    rows = [tuple(rref.row(i)) for i in range(rref.nrows()) if not rref.row(i).is_zero()]
+    rows = [rref.row(i) for i in range(rref.nrows()) if not rref.row(i).is_zero()]
     if not rows:
         raise ValueError("matrices must span a nonzero space")
-    canonical_vector = min(rows)
-    return matrix(F, d, d, canonical_vector)
+
+    def _normalize(v):
+        for a in v:
+            if a:
+                return v / a
+        return v
+
+    candidates = [matrix(F, d, d, _normalize(v)) for v in rows]
+    return min(candidates)
 
 
 # #### Unitary Representation ###############################################

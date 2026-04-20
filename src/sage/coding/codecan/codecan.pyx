@@ -63,7 +63,7 @@ Get the canonical form of the Simplex code::
     sage: from sage.coding.codecan.codecan import PartitionRefinementLinearCode
     sage: mat = codes.HammingCode(GF(3), 3).dual_code().generator_matrix()
     sage: P = PartitionRefinementLinearCode(mat.ncols(), mat)
-    sage: cf = P.get_canonical_form(); cf
+    sage: cf = P.get_(); cf
     [1 0 0 0 0 1 1 1 1 1 1 1 1]
     [0 1 0 1 1 0 0 1 1 2 2 1 2]
     [0 0 1 1 2 1 2 1 2 1 2 0 0]
