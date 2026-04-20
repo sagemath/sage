@@ -1077,22 +1077,36 @@ def _choose_canonical_invariant_symmetric_form(matrices):
         raise ValueError("matrices must be a nonempty list")
     if len(matrices) == 1:
         return matrices[0]
+
     d = matrices[0].nrows()
     F = matrices[0].base_ring()
+
+    # Convert matrices to row vectors
     basis_vectors = matrix(F, [M.list() for M in matrices])
     rref = basis_vectors.rref()
-    rows = [rref.row(i) for i in range(rref.nrows()) if not rref.row(i).is_zero()]
+
+    # Extract nonzero rows
+    rows = [rref.row(i) for i in range(rref.nrows())
+            if not rref.row(i).is_zero()]
+
+    # 🔥 Deterministic ordering (VERY IMPORTANT for doctests)
+    rows = sorted(rows, key=lambda v: tuple(v))
+
     if not rows:
         raise ValueError("matrices must span a nonzero space")
 
-    def _normalize(v):
-        for a in v:
+    def _normalize(M):
+        for a in M.list():
             if a:
-                return v / a
-        return v
+                return M * (a**(-1))
+        return M
 
-    candidates = [matrix(F, d, d, _normalize(v)) for v in rows]
-    return min(candidates)
+    normalized = [_normalize(matrix(F, d, d, v)) for v in rows]
+
+    def key(M):
+        return tuple(M.list())
+
+    return sorted(normalized, key=key)[0]
 
 
 # #### Unitary Representation ###############################################
