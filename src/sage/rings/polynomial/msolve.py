@@ -5,7 +5,12 @@ Solution of polynomial systems using msolve
 based on Gröbner bases.
 
 This module provide implementations of some operations on polynomial ideals
-based on msolve.
+based on msolve. :
+
+It additionally provides a function for computing sample points
+per connected components of semi-algebraic sets defined by a single inequality
+or inequation. Note that it does not guarantee uniqueness; in particular, there
+can be multiple points in the output belonging to the same connected component.
 
 Note that the :ref:`optional package msolve <spkg_msolve>` must be installed.
 
@@ -13,7 +18,22 @@ Note that the :ref:`optional package msolve <spkg_msolve>` must be installed.
 
     - :mod:`sage.features.msolve`
     - :mod:`sage.rings.polynomial.multi_polynomial_ideal`
+
+AUTHORS:
+- Marc Mezzarobba (2022) -- initial version
+- Edern Gillot (2026) -- sample points per connected components of semi-algebraic sets
 """
+
+# ****************************************************************************
+#       Copyright (C) 2022 Marc Mezzarobba
+#                     2026 Edern Gillot
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import tempfile
@@ -331,25 +351,20 @@ def _format_output_msolve_grobner(ms_output):
     sols = []
     is_sol_reached = False
     for l2 in ms_output.splitlines():
-
         if l2 == '#Leading ideal data':
             is_sol_reached = True
-
         if is_sol_reached and l2 != '' and l2[0] == '-':
             is_sol_reached = False
-
         if is_sol_reached == False:
             print(l2)
             continue
-
         l = ''
         for c in l2:
-            if c not in ['[',']','\n',',',':']:
+            if c not in ['[', ']', '\n', ',', ':']:
                 l += c
         if l == '' or l[0] == "#":
             continue
         sols.append(l)
-
     return sols
 
 def _format_output_msolve_intervals(ms_output):
@@ -358,23 +373,19 @@ def _format_output_msolve_intervals(ms_output):
 
     Converts a msolve isolation intervals format string into a list
     """
+
     sols = ""
     is_sol_reached = False
     for l2 in ms_output.splitlines():
-
         if l2.startswith('[0,') or l2.startswith('[1,') or l2.startswith('[-1'):
             is_sol_reached = True
         if is_sol_reached and l2 != '' and l2[0] == '-':
             is_sol_reached = False
-
         if is_sol_reached == False:
             print(l2)
             continue
-        
         sols += l2
-
-
-    sols = sols.replace("\n","").replace(":","")
+    sols = sols.replace("\n", "").replace(":", "")
     return sage_eval(sols)
 
 def _is_smooth(poly, threads, msolve_verbose):
@@ -417,17 +428,8 @@ def _is_smooth(poly, threads, msolve_verbose):
     variables = list(R.gens())
     input_list = [poly.derivative(variables[i]) for i in range(len(variables))]
     input_list.append(poly)
-
     ms_out = sage.rings.polynomial.msolve._run_msolve(R.ideal(input_list), ['-g','1','-v',f"{msolve_verbose}",'-t',f"{threads}"])
     gb = _format_output_msolve_grobner(ms_out)
-
-
-    # filename = str(uuid.uuid4())
-    # ToMSolve(input_list, f"{filename}_in.ms")
-    # os.system(f"{msolve_path} -g1 -v{msolve_verbose} -t{threads} -f {filename}_in.ms -o {filename}_out.ms")
-    # gb = FormatOutputMSolveGrobner(f"{filename}_out.ms",R)
-    # os.system(f"rm {filename}_in.ms")
-    # os.system(f"rm {filename}_out.ms")
     if gb == ['1']:
         return True
     return False
@@ -492,7 +494,6 @@ def _derivative_order(poly):
     inv_perm = Word(new_var).standard_permutation() / Word(variables).standard_permutation()
     sigma = (SymmetricGroup(range(n)))([perm[i]-1 for i in range(n)])
     inv_sigma = (SymmetricGroup(range(n)))([inv_perm[i]-1 for i in range(n)])
-
     return(inv_sigma, R(SR(poly(*sigma(R.gens())))))
 
 def _remove_absent_variable(P, x):
@@ -617,27 +618,9 @@ def _critical_points(f, threads, msolve_verbose, precision, k, n, list_of_matric
     else:
         input_system = [_remove_absent_variable(p,variables[:k]) for p in input_system]
 
-
     # Calling msolve to solve the above system.
-    ms_out = sage.rings.polynomial.msolve._run_msolve((input_system[0].parent()).ideal(input_system), ['-P','0','-v',f"{msolve_verbose}",'-t',f"{threads}",'-p',f"{precision}"])
+    ms_out = sage.rings.polynomial.msolve._run_msolve((input_system[0].parent()).ideal(input_system), ['-P', '0', '-v', f"{msolve_verbose}", '-t', f"{threads}", '-p', f"{precision}"])
     sol = _format_output_msolve_intervals(ms_out)
-
-    # filename = str(uuid.uuid4())
-    # ToMSolve(input_system, f"{filename}_in.ms")
-    # os.system(f"{msolve_path} -v{msolve_verbose} -t{threads} -p{precision} -P0 -f {filename}_in.ms -o {filename}_out.ms")
-    # sol = FormatOutputMSolveIntervals(f"{filename}_out.ms")
-    # os.system(f"rm {filename}_in.ms")
-    # os.system(f"rm {filename}_out.ms")
-
-    # Computing the polynomial equivalent to df^A/dX_k
-    # NOT USED BY CURRENT VERSION OF CODE
-    # if k == 0:
-    #     gk = (1/list_of_matrices[1][0][0])*der_list[k]
-    # else:
-    #     left = der_list[k]
-    #     top_right = (list_of_matrices[0])[list(range(k)), list(range(k,n))]
-    #     inv_right = list_of_matrices[k+1]
-    #     gk = (left + (matrix(der_list[:k]) * top_right * inv_right)[0][0])*(1/inv_right[0][0])
 
     return substitution, sol
 
@@ -798,19 +781,13 @@ def _transverse_intersection(poly, vars, point, low_prec, threads, msolve_verbos
     list_to_sub = [UnivarRing("ttttt") + approx[0]]
     if len(approx) != 1:
         list_to_sub += approx[1:]
-    transverse_poly = MultivarRing(poly.subs({vars[i] : list_to_sub[i] for i in range(len(vars))}))
     # Changing base ring to a multivariate one because _run_msolve does not work
     # on univariate parents.
+    transverse_poly = MultivarRing(poly.subs({vars[i] : list_to_sub[i] for i in range(len(vars))}))
 
     ms_out = sage.rings.polynomial.msolve._run_msolve(MultivarRing.ideal(transverse_poly), ['-P','0','-v',f"{msolve_verbose}",'-t',f"{threads}",'-p',f"{precision}"])
     inter = _format_output_msolve_intervals(ms_out)
 
-    # filename = str(uuid.uuid4())
-    # ToMSolve([transverse_poly], f"{filename}_in.ms")
-    # os.system(f"{msolve_path} -v{msolve_verbose} -t{threads} -p{2*precision} -I1 -f {filename}_in.ms -o {filename}_out.ms")
-    # inter = FormatOutputMSolveIntervals(f"{filename}_out.ms")
-    # os.system(f"rm {filename}_in.ms")
-    # os.system(f"rm {filename}_out.ms")
     inter_lambda_values = inter[1][1]
 
     if inter_lambda_values == []:
@@ -839,8 +816,7 @@ def _transverse_intersection(poly, vars, point, low_prec, threads, msolve_verbos
         left_pt += approx[1:]
     return left_pt, right_pt
 
-
-def _points_per_component(poly,threads,msolve_verbose,precision,changevar=True):
+def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequation, isempty, changevar=True):
     r"""
     Internal Function
 
@@ -858,6 +834,13 @@ def _points_per_component(poly,threads,msolve_verbose,precision,changevar=True):
 
         - ``precision`` -- integer; number of bits of precision used by msolve 
         for real root approximation
+
+        - ``inequation`` -- boolean (default ``True``); computes points per
+        connected components of {x in R^n : f(x) =/= 0} if set to ``True``, and
+        of {x in R^n : f(x) > 0} if set to ``False``
+
+        - ``isempty`` -- boolean (default ``False``); if set to ``True``,
+        computation stops as soon as a point in the set is computed
 
         - ``changevar`` -- boolean (default ``True``); uses A = Identity and 
         sigma = [1,...,1] if set to ``False``
@@ -907,8 +890,7 @@ def _points_per_component(poly,threads,msolve_verbose,precision,changevar=True):
 
         # In case we have infinitely many of them
         if crit[0] > 0:
-            print("Error - Infinitely many critical points. Picking another change of variables matrix...")
-            return SmoothPointPerConnectedComponent(poly, threads, msolve_verbose, precision, changevar)
+            return _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequation, isempty, changevar)
 
         # In case we have finitely many of them, and at least one
         if crit[0] != -1 and len(crit) < 3 and crit[1][1] != []:
@@ -929,7 +911,6 @@ def _points_per_component(poly,threads,msolve_verbose,precision,changevar=True):
 
             # Looping over each computed point to obtain A^-1 * point
             if changevar == True:
-
                 A_inv_list = []
 
                 for point in crit[1][1]:
@@ -955,7 +936,6 @@ def _points_per_component(poly,threads,msolve_verbose,precision,changevar=True):
 
             else:
                 A_inv_list = crit[1][1]
-
 
             dfAdxk = fA_sub.derivative(variabless[0])
             for point in A_inv_list:
@@ -1007,21 +987,30 @@ def _points_per_component(poly,threads,msolve_verbose,precision,changevar=True):
                 if left == 0 or right == 0 or sign(f.subs({variables[i]: left[i] for i in range(n)})) == sign(f.subs({variables[i]: right[i] for i in range(n)})):
                     raise ValueError("Sanity check failed, something went wrong.")
 
-                Solsk.append(inv_permutation(list(left)))
-                Solsk.append(inv_permutation(list(right)))
+                # Reverting to original coordinates
+                left = inv_permutation(list(left))
+                right = inv_permutation(list(right))
 
-            # print(f"{len(Solsk)} solutions were added in the k = {k} case\n")
+                if inequation == True or f.subs({variables[i] : left[i] for i in range(n)}) > 0:
+                    if isempty == True:
+                        return [left]
+                    Solsk.append(left)
+                if inequation == True or f.subs({variables[i] : right[i] for i in range(n)}) > 0:
+                    if isempty == True:
+                        return [right]
+                    Solsk.append(right)
 
-        # # In case there are no critical points
-        # else:
-        #     print(f"There are no critical points in the k = {k} case\n")
         Sols += [Solsk]
 
+    final_point = list(list_of_matrices[0]*vector(sigma + [0]))
+    if inequation == True or f.subs({variables[i] : final_point[i] for i in range(n)}) > 0:
+        if isempty == True:
+            return [final_point]
+        Sols += [[final_point]]
     Sols = [x for xs in Sols for x in xs]
-    Sols += [list(list_of_matrices[0]*vector(sigma + [0]))]
     return Sols
 
-def smooth_points_per_connected_component(poly, threads, msolve_verbose, precision=128, changevar=True, proof=False):
+def points_per_components_single_inequality(poly, threads, msolve_verbose, precision=128, inequation=True, isempty=False, changevar=True, proof=False):
     r"""
     Function computing points per connected component of a semi-algebraic set 
     defined by a single polynomial inequation.
@@ -1039,6 +1028,13 @@ def smooth_points_per_connected_component(poly, threads, msolve_verbose, precisi
         - ``precision`` -- integer; number of bits of precision used by msolve 
         for real root approximation
 
+        - ``inequation`` -- boolean (default ``True``); computes points per
+        connected components of {x in R^n : f(x) =/= 0} if set to ``True``, and
+        of {x in R^n : f(x) > 0} if set to ``False``
+
+        - ``isempty`` -- boolean (default ``False``); if set to ``True``,
+        computation stops as soon as a point in the set is computed
+
         - ``changevar`` -- boolean (default ``True``); uses A = Identity and 
         sigma = [1,...,1] if set to ``False``
 
@@ -1053,27 +1049,27 @@ def smooth_points_per_connected_component(poly, threads, msolve_verbose, precisi
 
     EXAMPLES::
 
-        sage: from sage.rings.polynomial.msolve import smooth_points_per_connected_component
+        sage: from sage.rings.polynomial.msolve import points_per_components_single_inequality
         sage: R.<x,y> = QQ[]
         sage: f = 2*x^2 - 7*x*y + 5*y^2 - 3*x + y - 2
-        sage: smooth_points_per_connected_component(f,1,0,32,False) # optional - msolve
+        sage: points_per_components_single_inequality(f, 1, 0, 32, True, False, False) # optional - msolve
         [[-81327242789970644619/18230669955817908734, -151863759432751750973/52864310410056725586], [-63096572834152735885/18230669955817908734, -151863759432751750973/52864310410056725586], [-31255250995381558863/18941441967027853418, -2031568568823642965792129/2244655580804164026831606], [-12313809028353705445/18941441967027853418, -2031568568823642965792129/2244655580804164026831606], [1, -90794324783669909401/65802721238427014701], [1, 40811117693184120001/65802721238427014701], [1, 9172089397301669399/15819514147941225301], [1, 40811117693184120001/15819514147941225301], [1, 0]]
     
     ::
 
-        sage: from sage.rings.polynomial.msolve import smooth_points_per_connected_component
+        sage: from sage.rings.polynomial.msolve import points_per_components_single_inequality
         sage: R.<x,y> = QQ[]
         sage: f = x^2 + y^2
-        sage: smooth_points_per_connected_component(f,1,0,128,False) # optional - msolve
+        sage: points_per_components_single_inequality(f, 1, 0, 128, True, False, False) # optional - msolve
         Traceback (most recent call last):
         ...
-        ValueError: Input polynomial does not define a smooth hypersurface.
+        ValueError: Input polynomial does not define a smooth hypersurface, this case is not yet implemented.
     """
 
     if sage.structure.proof.proof.get_flag(proof, "polynomial"):
         raise ValueError("msolve relies on heuristics; please use proof=False.")
 
     if _is_smooth(poly, threads, msolve_verbose):
-        return _points_per_component(poly,threads,msolve_verbose,precision,changevar)
+        return _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequation, isempty, changevar)
     else:
-        raise ValueError("Input polynomial does not define a smooth hypersurface.")
+        raise ValueError("Input polynomial does not define a smooth hypersurface, this case is not yet implemented.")
