@@ -3395,8 +3395,9 @@ def compute_isogeny_bmss(E1, E2, l):
     Compute the kernel polynomial of the unique normalized isogeny
     of degree ``l`` between ``E1`` and ``E2``.
 
-    Both curves must be given in short Weierstrass form, and the
-    characteristic must be either `0` or no smaller than `4l+4`.
+    Both curves must be given in short Weierstrass form, ``l`` must be
+    odd, and the characteristic must be either `0` or no smaller than
+    `4l+4`.
 
     ALGORITHM: [BMSS2006]_, algorithm *fastElkies'*.
 
@@ -3407,6 +3408,20 @@ def compute_isogeny_bmss(E1, E2, l):
         sage: E2 = EllipticCurve(GF(167), [56, 40])
         sage: compute_isogeny_bmss(E1, E2, 13)
         x^6 + 139*x^5 + 73*x^4 + 139*x^3 + 120*x^2 + 88*x
+
+    The implementation follows the odd-degree specialization in
+    [BMSS2006]_: after deriving ``fastElkies``/``fastElkies'`` for the
+    denominator `D(x)`, the paper notes that for odd `\ell` one may
+    instead write `D(x) = g(x)^2` and recover `g(x)` using fewer terms.
+    The code below implements exactly that odd-degree shortcut, so it
+    does not apply to even degrees (:issue:`42043`)::
+
+        sage: E1 = EllipticCurve(GF(53), [34, 24])
+        sage: E2 = EllipticCurve(GF(53), [37, 45])
+        sage: compute_isogeny_bmss(E1, E2, 10)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: compute_isogeny_bmss only supports odd degrees
     """
     # Original author of this function: Rémy Oudompheng.
     # https://github.com/remyoudompheng/isogeny_weber/blob/64289127a337ac1bf258b711e02fea02b7df5275/isogeny_weber/isogenies.py#L272-L332
@@ -3416,6 +3431,12 @@ def compute_isogeny_bmss(E1, E2, l):
         raise ValueError('E1 must be a short Weierstrass curve')
     if E2.a1() or E2.a2() or E2.a3():
         raise ValueError('E2 must be a short Weierstrass curve')
+    if l % 2 == 0:
+        # BMSS2006 first derives fastElkies/fastElkies' for D(x), then
+        # specializes the odd-degree case by replacing D(x) with g(x)^2
+        # and computing fewer terms. This implementation follows that
+        # odd-degree shortcut, so it cannot be correct for even degrees.
+        raise NotImplementedError('compute_isogeny_bmss only supports odd degrees')
     char = E1.base_ring().characteristic()
     if char != 0 and char < 4*l + 4:
         raise ValueError('characteristic must be at least 4*degree+4')
@@ -3525,6 +3546,8 @@ def compute_isogeny_stark(E1, E2, ell):
         sage: E2 = phi.codomain()
         sage: compute_isogeny_stark(E, E2, 2)
         x
+        sage: compute_isogeny_stark(E, E, 1)
+        1
 
     TESTS:
 
@@ -3534,6 +3557,21 @@ def compute_isogeny_stark(E1, E2, ell):
         sage: E2 = EllipticCurve([0,-27])
         sage: E1.isogeny(None, E2, degree=3)
         Isogeny of degree 3 from Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field to Elliptic Curve defined by y^2 = x^3 - 27 over Rational Field
+
+    Check that exact termination of the continued fraction is accepted
+    instead of being treated as failure (:issue:`42045`)::
+
+        sage: F = GF(67)
+        sage: E1 = EllipticCurve(F, [0, 11])
+        sage: E2 = EllipticCurve(F, [0, 7])
+        sage: compute_isogeny_stark(E1, E2, 7).radical()
+        x^3 + 65
+
+        sage: F = GF(53)
+        sage: E1 = EllipticCurve(F, [43, 52])
+        sage: E2 = EllipticCurve(F, [25, 37])
+        sage: compute_isogeny_stark(E1, E2, 5).radical()
+        x^2 + 2*x + 39
     """
     K = E1.base_field()
     R, x = PolynomialRing(K, 'x').objgen()
@@ -3567,6 +3605,12 @@ def compute_isogeny_stark(E1, E2, ell):
         q_n = a_n*q[n-1] + q[n-2]
         q.append(q_n)
 
+        # An exact continued-fraction termination already gives the
+        # desired denominator. Treating T == 0 as an error here rejects
+        # valid cases such as :issue:`42045`.
+        if q_n.degree() >= ell-1:
+            break
+
         if n == ell+1 or T == 0:
             if T == 0 or T.valuation() < 2:
                 raise ValueError(f"the two curves are not linked by a cyclic normalized isogeny of degree {ell}")
@@ -3576,6 +3620,14 @@ def compute_isogeny_stark(E1, E2, ell):
 
     qn = q[n]
     qn /= qn.leading_coefficient()
+
+    # For odd-degree normalized isogenies, the denominator is D = g^2,
+    # where g is the kernel polynomial. If the continued fraction ends
+    # in a non-square denominator, then no cyclic normalized isogeny to
+    # E2 was found.
+    if ell % 2 and not qn.is_square():
+        raise ValueError(f"the two curves are not linked by a cyclic normalized isogeny of degree {ell}")
+
     return qn
 
 
@@ -3593,7 +3645,7 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
     - ``ell`` -- the degree of an isogeny from ``E1`` to ``E2``
 
     - ``algorithm`` -- ``None`` (default, choose automatically) or
-      ``'bmss'`` (:func:`compute_isogeny_bmss`) or
+      ``'bmss'`` (:func:`compute_isogeny_bmss`, odd degrees only) or
       ``'stark'`` (:func:`compute_isogeny_stark`)
 
     OUTPUT: the kernel polynomial of an isogeny from ``E1`` to ``E2``
@@ -3627,6 +3679,12 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         x^3 + x
 
     TESTS:
+
+    The trivial degree-`1` case returns the trivial kernel polynomial::
+
+        sage: E = EllipticCurve([1,1])
+        sage: compute_isogeny_kernel_polynomial(E, E, 1)
+        1
 
     Check that :meth:`Polynomial.radical` is doing the right thing for us::
 
@@ -3670,6 +3728,14 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         sage: for phi in E1.isogenies_degree(5):
         ....:     E2 = phi.codomain().isomorphism(~phi.scaling_factor()).codomain()
         ....:     assert phi.kernel_polynomial() == compute_isogeny_kernel_polynomial(E1, E2, phi.degree(), algorithm='bruteforce')
+
+    Check that automatic selection avoids BMSS for even degrees
+    (:issue:`42043`)::
+
+        sage: E1 = EllipticCurve(GF(53), [34, 24])
+        sage: E2 = EllipticCurve(GF(53), [37, 45])
+        sage: compute_isogeny_kernel_polynomial(E1, E2, 10)
+        x^5 + 39*x^4 + 41*x^3 + 26*x^2 + 17*x + 33
     """
     if algorithm is None:
         char = E1.base_ring().characteristic()
@@ -3679,7 +3745,10 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
             # No good algorithm available... See :issue:`38481`.
             algorithm = 'bruteforce'
         else:
-            algorithm = 'stark' if ell < 10 else 'bmss'
+            # The BMSS path here implements the paper's odd-degree
+            # shortcut D(x)=g(x)^2 rather than the general D(x)
+            # reconstruction, so even degrees must go through Stark.
+            algorithm = 'stark' if ell < 10 or ell % 2 == 0 else 'bmss'
 
     if algorithm == 'bruteforce':
         # This is a lazy workaround; there are better algorithms
@@ -3811,8 +3880,8 @@ def compute_sequence_of_maps(E1, E2, ell):
 
     - ``E1``, ``E2`` -- elliptic curves
 
-    - ``ell`` -- a prime such that there is a degree-``ell`` separable
-      normalized isogeny from ``E1`` to ``E2``
+    - ``ell`` -- a positive integer such that there is a degree-``ell``
+      separable normalized isogeny from ``E1`` to ``E2``
 
     OUTPUT:
 
@@ -3893,6 +3962,10 @@ def compute_sequence_of_maps(E1, E2, ell):
          Elliptic Curve defined by y^2 = x^3 + 52*x + 31 over Finite Field of size 97,
          Elliptic Curve defined by y^2 = x^3 + 41*x + 66 over Finite Field of size 97,
          x^5 + 67*x^4 + 13*x^3 + 35*x^2 + 77*x + 69)
+
+        sage: E = EllipticCurve([1,1])
+        sage: compute_sequence_of_maps(E, E, 1)[4]
+        1
     """
     E1pr, E2pr, pre_isom, post_isom = compute_intermediate_curves(E1, E2)
 
