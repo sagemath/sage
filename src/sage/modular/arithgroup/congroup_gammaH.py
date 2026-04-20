@@ -79,9 +79,9 @@ def GammaH_constructor(level, H):
     from .all import SL2Z, Gamma0, Gamma1
     if level == 1:
         return SL2Z
-    elif H == 0:
+    if H == 0:
         return Gamma0(level)
-    elif H == 1:
+    if H == 1:
         return Gamma1(level)
 
     H = _normalize_H(H, level)
@@ -801,8 +801,7 @@ class GammaH_class(CongruenceSubgroup):
             m2 = N - max(ls)
             if m1 < m2:
                 return Cusps((m1, N)), 1
-            else:
-                return Cusps((m2, N)), -1
+            return Cusps((m2, N)), -1
 
         u = int(c.numerator() % v)
         gcd = get_gcd(N)
@@ -822,8 +821,7 @@ class GammaH_class(CongruenceSubgroup):
             m2 = N - max(ls)
             if m1 < m2:
                 return Cusps((1, m1)), 1
-            else:
-                return Cusps((1, m2)), -1
+            return Cusps((1, m2)), -1
 
         val_min = v
         inv_mod = get_inverse_mod(N)
@@ -1023,10 +1021,9 @@ class GammaH_class(CongruenceSubgroup):
         if isinstance(other, Gamma1_class) and len(self._generators_for_H()) > 0:
             return False
 
-        else:
-            # difficult case
-            t = other._list_of_elements_in_H()
-            return all(x in t for x in self._generators_for_H())
+        # difficult case
+        t = other._list_of_elements_in_H()
+        return all(x in t for x in self._generators_for_H())
 
     def index(self):
         r"""
@@ -1461,6 +1458,6 @@ def mumu(N):
     for _, r in factor(N):
         if r > 2:
             return ZZ.zero()
-        elif r == 1:
+        if r == 1:
             p *= -2
     return ZZ(p)

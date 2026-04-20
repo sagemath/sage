@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Free algebra quotient elements
 
@@ -59,10 +58,10 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         if isinstance(x, (Integer, int)):
             self.__vector = Q.module().gen(0) * x
             return
-        elif isinstance(x, FreeModuleElement) and x.parent() is Q.module():
+        if isinstance(x, FreeModuleElement) and x.parent() is Q.module():
             self.__vector = x
             return
-        elif isinstance(x, FreeModuleElement) and x.parent() == A.module():
+        if isinstance(x, FreeModuleElement) and x.parent() == A.module():
             self.__vector = x
             return
         R = A.base_ring()

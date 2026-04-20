@@ -888,7 +888,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
             hw,path = self.element_class(self, Y, {}).to_highest_weight()
             hw._A = {}
             return hw.f_string(reversed(path))
-        elif Y is None or Y == 0:
+        if Y is None or Y == 0:
             # The Y == 0 check is because the parent's __call__ has that
             #   as the first default value
             ct = self.cartan_type()

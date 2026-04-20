@@ -31,7 +31,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.groups.generic as generic
+from sage.groups import generic
 
 from sage.arith.functions import lcm
 from sage.arith.misc import binomial, GCD as gcd
@@ -468,8 +468,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             R = self.frobenius_order()
             if R.degree() == 1:
                 return frob * frob
-            else:
-                return frob.norm()
+            return frob.norm()
 
         # We need manual caching (not @cached_method) since various
         # other methods refer to this _order attribute, in particular
@@ -778,8 +777,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         R = self.frobenius_order()
         if R.degree() == 1:
             return self.frobenius_polynomial().roots(multiplicities=False)[0]
-        else:
-            return R.gen(1)
+        return R.gen(1)
 
     def frobenius_endomorphism(self):
         r"""
@@ -1380,11 +1378,11 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             gens = list(filter(bool, [P, Q]))
             return AdditiveAbelianGroupWrapper(E.point_homset(), gens, [pt._order for pt in gens])
 
-        elif algorithm == 'divpoly':
+        if algorithm == 'divpoly':
             # NB: we already handled extend= above
             return super().torsion_subgroup(n, extend=False, algorithm='divpoly')
 
-        elif algorithm == 'structure':
+        if algorithm == 'structure':
             return E.abelian_group().torsion_subgroup(n)
 
         raise ValueError(f'unknown algorithm {algorithm!r}')
@@ -1490,16 +1488,15 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             if self.base_field().degree() == other.base_field().degree():
                 return self.cardinality() == other.cardinality()
 
-            elif self.base_field().degree() == gcd(self.base_field().degree(),
+            if self.base_field().degree() == gcd(self.base_field().degree(),
                                                    other.base_field().degree()):
                 return self.cardinality(extension_degree=other.base_field().degree()//self.base_field().degree()) == other.cardinality()
 
-            elif other.base_field().degree() == gcd(self.base_field().degree(),
+            if other.base_field().degree() == gcd(self.base_field().degree(),
                                                     other.base_field().degree()):
                 return other.cardinality(extension_degree=self.base_field().degree()//other.base_field().degree()) == self.cardinality()
 
-            else:
-                raise ValueError("Curves have different base fields: use the field parameter.")
+            raise ValueError("Curves have different base fields: use the field parameter.")
         else:
             f_deg = field.degree()
             s_deg = self.base_field().degree()
@@ -2624,7 +2621,6 @@ def fill_ss_j_dict():
     values for `p<300`.  Setting the values this way avoids start-up
     costs.
     """
-    global supersingular_j_polynomials
     if not supersingular_j_polynomials:
         supersingular_j_polynomials[13] = [8, 1]
         supersingular_j_polynomials[17] = [9, 1]
@@ -2904,7 +2900,7 @@ def is_j_supersingular(j, proof=True):
 def special_supersingular_curve(F, q=None, *, endomorphism=False):
     r"""
     Given a finite field ``F`` of characteristic `p`, and optionally
-    a positive integer `q` such that the Hilbert conductor of `-q`
+    a positive integer `q < p/4` such that the Hilbert conductor of `-q`
     and `-p` equals `p`, construct a "special" supersingular elliptic
     curve `E` defined over ``F``.
 
@@ -2934,12 +2930,6 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False):
     - ``endomorphism`` -- boolean (default: ``False``); when set to ``True``,
       it is required that `2 \mid r`, and the function then additionally
       returns `\vartheta`
-
-    .. WARNING::
-
-        Due to :issue:`38481`, calling this function with a value of `q`
-        larger than approximately `p/4` may currently fail. This failure
-        will not occur for automatically chosen values of `q`.
 
     EXAMPLES::
 
@@ -3046,7 +3036,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False):
         sage: p = random_prime(300, lbound=10)
         sage: k = ZZ(randrange(1, 5))
         sage: while True:
-        ....:     q = randrange(1, p//4)  # upper bound p//4 is a workaround for #38481
+        ....:     q = randrange(1, p//4)
         ....:     if QuaternionAlgebra(-q, -p).discriminant() == p:
         ....:         break
         sage: E = special_supersingular_curve(GF((p, k)), q)
@@ -3145,7 +3135,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False):
         iso = E.isomorphism(F(-q).sqrt(), is_codomain=True)
         try:
             endo = iso * E.isogeny(None, iso.domain(), degree=q)
-        except (NotImplementedError, ValueError):  #FIXME catching ValueError here is a workaround for #38481
+        except NotImplementedError:
             endos = (iso*phi for phi in E.isogenies_degree(q)
                              for iso in phi.codomain().isomorphisms(E))
             endo = next(endo for endo in endos if endo.trace().is_zero())
@@ -3408,8 +3398,8 @@ def EllipticCurve_with_prime_order(N):
         sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
         ....:     print(E)
         Elliptic Curve defined by y^2 = x^3 + 265977778*x + 120868502 over Finite Field of size 1000041437
-        Elliptic Curve defined by y^2 = x^3 + 689795416*x + 188156157 over Finite Field of size 999969307
-        Elliptic Curve defined by y^2 = x^3 + 999178436*x + 900579394 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 671938635*x + 843230411 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 835778425*x + 33546204 over Finite Field of size 999969307
         sage: set_verbose(2)
         sage: set_random_seed(1337)
         sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
@@ -3417,23 +3407,33 @@ def EllipticCurve_with_prime_order(N):
         verbose 2 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-163
         Elliptic Curve defined by y^2 = x^3 + 265977778*x + 120868502 over Finite Field of size 1000041437
         verbose 2 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
-        Elliptic Curve defined by y^2 = x^3 + 689795416*x + 188156157 over Finite Field of size 999969307
-        Elliptic Curve defined by y^2 = x^3 + 999178436*x + 900579394 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 671938635*x + 843230411 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 835778425*x + 33546204 over Finite Field of size 999969307
         sage: set_verbose(4)
         sage: set_random_seed(1337)
         sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
         ....:     print(E)
         verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-19
-        ...
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-67
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-107
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-139
         verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-163
         verbose 2 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-163
         Elliptic Curve defined by y^2 = x^3 + 265977778*x + 120868502 over Finite Field of size 1000041437
         verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-179
-        ...
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-227
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-251
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-283
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-307
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-331
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-379
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-419
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-491
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-523
         verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-667
         verbose 2 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
-        Elliptic Curve defined by y^2 = x^3 + 689795416*x + 188156157 over Finite Field of size 999969307
-        Elliptic Curve defined by y^2 = x^3 + 999178436*x + 900579394 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 671938635*x + 843230411 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 835778425*x + 33546204 over Finite Field of size 999969307
 
     TESTS::
 

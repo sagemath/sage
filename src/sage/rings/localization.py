@@ -784,13 +784,12 @@ class Localization(Parent, UniqueRepresentation):
             if not all(base_map(au).is_unit() for au in self._extra_units):
                 raise ValueError('images of some localized elements fail to be units')
             return B._is_valid_homomorphism_(codomain, im_gens, base_map=None)
-        else:
-            if B._is_valid_homomorphism_(codomain, im_gens, base_map=base_map):
-                phi = B.hom(im_gens, base_map=base_map)
-                if not all(phi(au).is_unit() for au in self._extra_units):
-                    raise ValueError('images of some localized elements fail to be units')
-                return True
-            return False
+        if B._is_valid_homomorphism_(codomain, im_gens, base_map=base_map):
+            phi = B.hom(im_gens, base_map=base_map)
+            if not all(phi(au).is_unit() for au in self._extra_units):
+                raise ValueError('images of some localized elements fail to be units')
+            return True
+        return False
 
     def ngens(self):
         """
@@ -943,9 +942,9 @@ class Localization(Parent, UniqueRepresentation):
         """
         if S is self.base_ring():
             return True
-        elif self.base_ring().has_coerce_map_from(S):
+        if self.base_ring().has_coerce_map_from(S):
             return True
-        elif isinstance(S, Localization):
+        if isinstance(S, Localization):
             return all(self(p).is_unit() for p in S._extra_units)
 
     def fraction_field(self):

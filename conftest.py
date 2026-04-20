@@ -119,11 +119,7 @@ class SageDoctestModule(DoctestModule):
                     if isinstance(exception, ModuleNotFoundError):
                         # Ignore some missing features/modules for now
                         # TODO: Remove this once all optional things are using Features
-                        if exception.name in (
-                            "valgrind",
-                            "sage.libs.coxeter3.coxeter",
-                            "sagemath_giac",
-                        ):
+                        if exception.name == "valgrind":
                             pytest.skip(
                                 f"unable to import module {self.path} due to missing feature {exception.name}"
                             )

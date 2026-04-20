@@ -1468,8 +1468,7 @@ class AbstractTree:
         def node_to_str(t):
             if hasattr(t, "label"):
                 return str(t.label())
-            else:
-                return "o"
+            return "o"
         # other possible choices for nodes would be u"█ ▓ ░ ╋ ╬"
 
         if self.is_empty():
@@ -2370,11 +2369,10 @@ class AbstractLabelledTree(AbstractTree):
         """
         if path is None:
             return self._label
-        else:
-            tr = self
-            for i in path:
-                tr = tr[i]
-            return tr._label
+        tr = self
+        for i in path:
+            tr = tr[i]
+        return tr._label
 
     def labels(self):
         """
@@ -2505,8 +2503,7 @@ class AbstractLabelledTree(AbstractTree):
         TR = self.parent().unlabelled_trees()
         if not self:
             return TR.leaf()
-        else:
-            return TR._element_constructor_([i.shape() for i in self])
+        return TR._element_constructor_([i.shape() for i in self])
 
     def as_digraph(self):
         """

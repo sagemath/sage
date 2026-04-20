@@ -205,8 +205,7 @@ class HeckeModule_generic(Module):
         if len(F) == 1:  # nontrivial prime power case
             return self._compute_hecke_matrix_prime_power(F[0][0], F[0][1], **kwds)
 
-        else:
-            return self._compute_hecke_matrix_general_product(F, **kwds)
+        return self._compute_hecke_matrix_general_product(F, **kwds)
 
     def _compute_hecke_matrix_prime(self, p, **kwds):
         """
@@ -1089,8 +1088,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             w, w_lift = self.__dual_eigenvector[(names, nz)]
             if lift:
                 return w_lift
-            else:
-                return w
+            return w
         except KeyError:
             pass
         except AttributeError:
@@ -1162,8 +1160,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         self.__dual_eigenvector[(names, nz)] = (w, w_lift)
         if lift:
             return w_lift
-        else:
-            return w
+        return w
 
     def dual_hecke_matrix(self, n):
         """

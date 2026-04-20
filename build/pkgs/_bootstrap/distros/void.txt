@@ -4,3 +4,9 @@ automake
 libtool
 xtools
 mk-configure
+# Python packages needed for configure and build
+python3
+python3-devel
+python3-setuptools
+liblzma-devel
+xz

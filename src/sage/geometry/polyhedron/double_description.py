@@ -269,9 +269,8 @@ class DoubleDescriptionPair:
 
         if not self.A:
             return Polyhedron(vertices=[[0] * self.problem.dim()], backend='ppl')
-        else:
-            ieqs = [[0] + list(a) for a in self.A]
-            return Polyhedron(ieqs=ieqs, base_ring=self.problem.base_ring(), backend='ppl')
+        ieqs = [[0] + list(a) for a in self.A]
+        return Polyhedron(ieqs=ieqs, base_ring=self.problem.base_ring(), backend='ppl')
 
     def verify(self):
         r"""

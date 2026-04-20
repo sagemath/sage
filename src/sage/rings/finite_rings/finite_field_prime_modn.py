@@ -28,9 +28,9 @@ from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField
 from sage.categories.finite_fields import FiniteFields
 _FiniteFields = FiniteFields()
 
-import sage.rings.finite_rings.integer_mod_ring as integer_mod_ring
+from sage.rings.finite_rings import integer_mod_ring
 from sage.rings.integer import Integer
-import sage.rings.finite_rings.integer_mod as integer_mod
+from sage.rings.finite_rings import integer_mod
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
@@ -136,9 +136,9 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
         """
         if S is int:
             return integer_mod.Int_to_IntegerMod(self)
-        elif S is ZZ:
+        if S is ZZ:
             return integer_mod.Integer_to_IntegerMod(self)
-        elif isinstance(S, IntegerModRing_generic):
+        if isinstance(S, IntegerModRing_generic):
             from .residue_field import ResidueField_generic
             if (S.characteristic() % self.characteristic() == 0 and
                     (not isinstance(S, ResidueField_generic) or

@@ -71,9 +71,9 @@ from sage.rings.ring import Field
 from sage.misc.mrange import cartesian_product_iterator
 import sage.rings.abc
 from sage.rings.finite_rings import integer_mod
-import sage.rings.integer as integer
-import sage.rings.integer_ring as integer_ring
-import sage.rings.quotient_ring as quotient_ring
+from sage.rings import integer
+from sage.rings import integer_ring
+from sage.rings import quotient_ring
 
 try:
     from sage.libs.pari import pari
@@ -242,8 +242,7 @@ class IntegerModFactory(UniqueFactory):
             order = -order
         if order == 0:
             return integer_ring.IntegerRing(**kwds)
-        else:
-            return IntegerModRing_generic(order, **kwds)
+        return IntegerModRing_generic(order, **kwds)
 
 
 Zmod = Integers = IntegerModRing = IntegerModFactory("IntegerModRing")
@@ -457,7 +456,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             raise ZeroDivisionError("order must be positive")
         self.__order = order
         self._pyx_order = integer_mod.NativeIntStruct(order)
-        global default_category
         if category is None:
             category = default_category
         else:
@@ -531,25 +529,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             0
         """
         return integer.Integer(0)
-
-    def extension(self, poly, name=None, names=None, **kwds):
-        """
-        Return an algebraic extension of ``self``. See
-        :meth:`sage.rings.ring.CommutativeRing.extension()` for more
-        information.
-
-        EXAMPLES::
-
-            sage: R.<t> = QQ[]
-            sage: Integers(8).extension(t^2 - 3)
-            Univariate Quotient Polynomial Ring in t
-             over Ring of integers modulo 8 with modulus t^2 + 5
-        """
-        if self.modulus() == 1:
-            return self
-
-        from sage.rings.ring import CommutativeRing
-        return CommutativeRing.extension(self, poly, name, names, **kwds)
 
     @cached_method
     def is_prime_field(self) -> bool:
@@ -1245,9 +1224,9 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         if S is int:
             return integer_mod.Int_to_IntegerMod(self)
-        elif S is integer_ring.ZZ:
+        if S is integer_ring.ZZ:
             return integer_mod.Integer_to_IntegerMod(self)
-        elif isinstance(S, IntegerModRing_generic):
+        if isinstance(S, IntegerModRing_generic):
             if isinstance(S, Field):
                 return None
             try:

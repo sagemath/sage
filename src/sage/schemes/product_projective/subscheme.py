@@ -309,8 +309,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         try:
             if return_embedding:
                 return self.__affine_patches[I]
-            else:
-                return self.__affine_patches[I][0]
+            return self.__affine_patches[I][0]
         except AttributeError:
             self.__affine_patches = {}
         except KeyError:
@@ -331,8 +330,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         self.__affine_patches.update({I:(U,phi)})
         if return_embedding:
             return U,phi
-        else:
-            return U
+        return U
 
     def intersection_multiplicity(self, X, P):
         r"""

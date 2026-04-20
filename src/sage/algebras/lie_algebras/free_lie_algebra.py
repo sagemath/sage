@@ -183,9 +183,8 @@ class FreeLieBasis_abstract(FinitelyGeneratedLieAlgebra, IndexedGenerators, Bind
         if not isinstance(x, (LieGenerator, GradedLieBracket)):
             if isinstance(x, list):
                 return super()._element_constructor_(x)
-            else:
-                i = self._indices.index(x)
-                x = LieGenerator(x, i)
+            i = self._indices.index(x)
+            x = LieGenerator(x, i)
         return self.element_class(self, {x: self.base_ring().one()})
 
     def _construct_UEA(self):

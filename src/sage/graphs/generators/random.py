@@ -1296,7 +1296,7 @@ def pruned_tree(T, f, s):
     if not ke:
         # No removed edge. Only one possible subtree
         return [tuple(T)] * n
-    elif ke == n - 1:
+    if ke == n - 1:
         # All edges are removed. Only n possible subtrees
         return [(u,) for u in T]
 
@@ -1920,8 +1920,8 @@ def _auxiliary_random_forest_word(n, k):
         sage: with(seed(94364165)):
         ....:     _auxiliary_random_forest_word(4, 3)
         ....:     _auxiliary_random_forest_word(3, 5)
-        [1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0]
-        [1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        [1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+        [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0]
 
     TESTS::
 

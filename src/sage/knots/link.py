@@ -472,7 +472,7 @@ class Link(SageObject):
                 else:
                     res.append(check[1])
             return res
-        elif presentation == 'gauss_code':
+        if presentation == 'gauss_code':
             res = []
             for comp in self.gauss_code():
                 if not any(i < 0 for i in comp):
@@ -563,19 +563,18 @@ class Link(SageObject):
                 Lr = regina(self)
                 if algorithm == regina.ALG_WIRTINGER:
                     return Lr.group(simplify=False).sage()
-                elif algorithm == regina.ALG_SIMPLIFY:
+                if algorithm == regina.ALG_SIMPLIFY:
                     return Lr.group().sage()
-                elif algorithm == regina.ALG_USE_EXTERIOR:
+                if algorithm == regina.ALG_USE_EXTERIOR:
                     return Lr.complement().group().sage()
-                else:
-                    raise ValueError('algorithm %s is not supported' % algorithm)
+                raise ValueError('algorithm %s is not supported' % algorithm)
         from sage.groups.free_group import FreeGroup
         if presentation == 'braid':
             b = self.braid()
             F = FreeGroup(b.strands())
             rels = [x * b / x for x in F.gens()]
             return F.quotient(rels)
-        elif presentation == 'wirtinger':
+        if presentation == 'wirtinger':
             arcs = self.arcs(presentation='pd')
             F = FreeGroup(len(arcs))
             rels = []
@@ -808,27 +807,26 @@ class Link(SageObject):
                             newPD.append([newedge + 2, newedge, newedge + 3, newedge + 1])  # E
                             self._braid = Link(newPD).braid(remove_loops=remove_loops)
                             return self._braid
-                        else:
-                            # -------------------------------------------------
-                            # Visualize insertion of the two new crossings D, E
-                            # C1   C2   existing crossings
-                            #  \   /
-                            # n1\ /n2   newedge + 1, newedge + 2
-                            #    D
-                            # n3/ \n0   newedge + 3, newedge
-                            #   \ /
-                            #    E
-                            #  a/ \b    existing edges, a up, b down
-                            #  /   \
-                            # -------------------------------------------------
-                            C1 = newPD[newPD.index(heads[-a])]
-                            C1[idx(C1, -a)] = newedge + 1
-                            C2 = newPD[newPD.index(tails[-b])]
-                            C2[idx(C2, -b)] = newedge + 2
-                            newPD.append([newedge + 2, newedge + 1, newedge + 3, newedge])  # D
-                            newPD.append([newedge + 3, -a, -b, newedge])  # E
-                            self._braid = Link(newPD).braid(remove_loops=remove_loops)
-                            return self._braid
+                        # -------------------------------------------------
+                        # Visualize insertion of the two new crossings D, E
+                        # C1   C2   existing crossings
+                        #  \   /
+                        # n1\ /n2   newedge + 1, newedge + 2
+                        #    D
+                        # n3/ \n0   newedge + 3, newedge
+                        #   \ /
+                        #    E
+                        #  a/ \b    existing edges, a up, b down
+                        #  /   \
+                        # -------------------------------------------------
+                        C1 = newPD[newPD.index(heads[-a])]
+                        C1[idx(C1, -a)] = newedge + 1
+                        C2 = newPD[newPD.index(tails[-b])]
+                        C2[idx(C2, -b)] = newedge + 2
+                        newPD.append([newedge + 2, newedge + 1, newedge + 3, newedge])  # D
+                        newPD.append([newedge + 3, -a, -b, newedge])  # E
+                        self._braid = Link(newPD).braid(remove_loops=remove_loops)
+                        return self._braid
 
         # We are in the case where no Vogel moves are necessary.
         G = DiGraph()
@@ -2582,8 +2580,7 @@ class Link(SageObject):
         if len(pd) == 1:
             if pd[0][0] == pd[0][3]:
                 return [[-pd[0][2]], [pd[0][0]], [pd[0][2], -pd[0][0]]]
-            else:
-                return [[pd[0][2]], [-pd[0][0]], [-pd[0][2], pd[0][0]]]
+            return [[pd[0][2]], [-pd[0][0]], [-pd[0][2], pd[0][0]]]
 
         tails, heads = self._directions_of_edges()
         available_edges = set(flatten(pd))
@@ -3018,21 +3015,18 @@ class Link(SageObject):
             if skein_normalization:
                 if variab is None:
                     return jones
-                else:
-                    return jones(variab)
-            else:
-                if variab is None:
-                    variab = 't'
-                # We force the result to be in the symbolic ring because of the expand
-                return jones(SR(variab)**(ZZ.one() / ZZ(4))).expand()
-        elif algorithm == 'jonesrep':
+                return jones(variab)
+            if variab is None:
+                variab = 't'
+            # We force the result to be in the symbolic ring because of the expand
+            return jones(SR(variab)**(ZZ.one() / ZZ(4))).expand()
+        if algorithm == 'jonesrep':
             braid = self.braid()
             # Special case for the trivial knot with no crossings
             if not braid.Tietze():
                 if skein_normalization:
                     return LaurentPolynomialRing(ZZ, 'A').one()
-                else:
-                    return SR.one()
+                return SR.one()
             return braid.jones_polynomial(variab, skein_normalization)
 
         raise ValueError("bad value of algorithm")
@@ -3062,49 +3056,47 @@ class Link(SageObject):
         if len(pd_code) == 1:
             if pd_code[0][0] == pd_code[0][3]:
                 return -t**(-3)
-            else:
-                return -t**3
+            return -t**3
 
         cross = pd_code[0]
         rest = [list(vertex) for vertex in pd_code[1:]]
         a, b, c, d = cross
         if a == d and c == b and rest:
             return (~t + t**(-5)) * Link(rest)._bracket()
-        elif a == b and c == d and len(rest) > 0:
+        if a == b and c == d and len(rest) > 0:
             return (t + t**5) * Link(rest)._bracket()
-        elif a == d:
+        if a == d:
             for cross in rest:
                 if b in cross:
                     cross[cross.index(b)] = c
             return -t**(-3) * Link(rest)._bracket()
-        elif a == b:
+        if a == b:
             for cross in rest:
                 if c in cross:
                     cross[cross.index(c)] = d
             return -t**3 * Link(rest)._bracket()
-        elif c == d:
+        if c == d:
             for cross in rest:
                 if b in cross:
                     cross[cross.index(b)] = a
             return -t**3 * Link(rest)._bracket()
-        elif c == b:
+        if c == b:
             for cross in rest:
                 if d in cross:
                     cross[cross.index(d)] = a
             return -t**(-3) * Link(rest)._bracket()
-        else:
-            rest_2 = [list(vertex) for vertex in rest]
-            for cross in rest:
-                if b in cross:
-                    cross[cross.index(b)] = a
-                if c in cross:
-                    cross[cross.index(c)] = d
-            for cross in rest_2:
-                if b in cross:
-                    cross[cross.index(b)] = c
-                if d in cross:
-                    cross[cross.index(d)] = a
-            return t * Link(rest)._bracket() + ~t * Link(rest_2)._bracket()
+        rest_2 = [list(vertex) for vertex in rest]
+        for cross in rest:
+            if b in cross:
+                cross[cross.index(b)] = a
+            if c in cross:
+                cross[cross.index(c)] = d
+        for cross in rest_2:
+            if b in cross:
+                cross[cross.index(b)] = c
+            if d in cross:
+                cross[cross.index(d)] = a
+        return t * Link(rest)._bracket() + ~t * Link(rest_2)._bracket()
 
     @cached_method
     def _isolated_components(self):
@@ -3361,7 +3353,7 @@ class Link(SageObject):
         dic = homfly_polynomial_dict(s)
         if normalization == 'lm':
             return L(dic)
-        elif normalization == 'az':
+        if normalization == 'az':
             auxdic = {}
             for a in dic:
                 if (a[0] + a[1]) % 4 == 0:
@@ -3370,10 +3362,8 @@ class Link(SageObject):
                     auxdic[a] = -dic[a]
             if self.number_of_components() % 2:
                 return L(auxdic)
-            else:
-                return -L(auxdic)
-        else:
-            raise ValueError('normalization must be either `lm`, `az` or `vz`')
+            return -L(auxdic)
+        raise ValueError('normalization must be either `lm`, `az` or `vz`')
 
     def links_gould_polynomial(self, varnames='t0, t1'):
         r"""
@@ -3502,9 +3492,8 @@ class Link(SageObject):
         M = self._coloring_matrix(n=n)
         if M.base_ring().is_field():
             return self._coloring_matrix(n=n).nullity() > 1
-        else:
-            # nullity is not implemented in this case
-            return M.right_kernel_matrix().dimensions()[0] > 1
+        # nullity is not implemented in this case
+        return M.right_kernel_matrix().dimensions()[0] > 1
 
     def colorings(self, n=None):
         r"""
@@ -3902,8 +3891,7 @@ class Link(SageObject):
             """
             if e > 0:
                 return v[2 * edges.index(e)]
-            else:
-                return v[2 * edges.index(-e) + 1]
+            return v[2 * edges.index(-e) + 1]
 
         def flow_to_sink(e):
             r"""
@@ -4213,9 +4201,8 @@ class Link(SageObject):
                 if not res:
                     res = sb.is_conjugated(ob*~g)
             return res
-        else:
-            L = Link(ob)
-            return L._markov_move_cmp(sb)
+        L = Link(ob)
+        return L._markov_move_cmp(sb)
 
     @cached_method
     def _knotinfo_matching_list(self):
@@ -4890,13 +4877,12 @@ class Link(SageObject):
                     if len(sl) == 1:
                         verbose('identified by KnotInfo uniquely (%s, %s)' % (sl[0], k))
                         return True
-                    elif not self.is_knot():
+                    if not self.is_knot():
                         if len({l.series(oriented=True) for l in sl}) == 1:
                             # all matches are orientation mutants of each other
                             verbose('identified by KnotInfoSeries (%s, %s)' % (sl, k))
                             return True
-                        else:
-                            verbose('KnotInfoSeries non-unique (%s, %s)' % (sl, k))
+                        verbose('KnotInfoSeries non-unique (%s, %s)' % (sl, k))
                     else:
                         verbose('KnotInfo non-unique (%s, %s)' % (sl, k))
                 else:

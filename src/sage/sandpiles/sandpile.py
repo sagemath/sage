@@ -703,7 +703,7 @@ class Sandpile(DiGraph):
             if name == '_group_gens':
                 self._set_group_gens()
                 return deepcopy(self.__dict__[name])
-            elif name == '_group_order':
+            if name == '_group_order':
                 self.__dict__[name] = det(self._reduced_laplacian.dense_matrix())
                 return self.__dict__[name]
             if name == '_invariant_factors':
@@ -724,7 +724,7 @@ class Sandpile(DiGraph):
             if name == '_betti_complexes':
                 self._set_betti_complexes()
                 return deepcopy(self.__dict__[name])
-            elif name in ['_postulation', '_h_vector', '_hilbert_function']:
+            if name in ['_postulation', '_h_vector', '_hilbert_function']:
                 self._set_hilbert_function()
                 return deepcopy(self.__dict__[name])
             if name in ['_ring', '_unsaturated_ideal']:
@@ -1293,8 +1293,7 @@ class Sandpile(DiGraph):
         """
         if verbose:
             return deepcopy(self._identity)
-        else:
-            return self._identity.values()
+        return self._identity.values()
 
     def _set_recurrents(self):
         """
@@ -1370,8 +1369,7 @@ class Sandpile(DiGraph):
         """
         if verbose:
             return deepcopy(self._recurrents)
-        else:
-            return [r.values() for r in self._recurrents]
+        return [r.values() for r in self._recurrents]
 
     def _set_superstables(self):
         r"""
@@ -1428,8 +1426,7 @@ class Sandpile(DiGraph):
         """
         if verbose:
             return deepcopy(self._superstables)
-        else:
-            return [s.values() for s in self._superstables]
+        return [s.values() for s in self._superstables]
 
     def _set_group_gens(self):
         r"""
@@ -1480,8 +1477,7 @@ class Sandpile(DiGraph):
         """
         if verbose:
             return deepcopy(self._group_gens)
-        else:
-            return [c.values() for c in self._group_gens]
+        return [c.values() for c in self._group_gens]
 
     def genus(self):
         r"""
@@ -1573,8 +1569,7 @@ class Sandpile(DiGraph):
         """
         if verbose:
             return deepcopy(self._min_recurrents)
-        else:
-            return [r.values() for r in self._min_recurrents]
+        return [r.values() for r in self._min_recurrents]
 
     def max_superstables(self, verbose=True):
         r"""
@@ -1609,8 +1604,7 @@ class Sandpile(DiGraph):
         result = [r.dualize() for r in self.min_recurrents()]
         if verbose:
             return result
-        else:
-            return [r.values() for r in result]
+        return [r.values() for r in result]
 
     def tutte_polynomial(self):
         r"""
@@ -2030,8 +2024,7 @@ class Sandpile(DiGraph):
         """
         if verbose:
             return deepcopy(self._jacobian_representatives)
-        else:
-            return [D.values() for D in self._jacobian_representatives]
+        return [D.values() for D in self._jacobian_representatives]
 
     def picard_representatives(self, d, verbose=True):
         r"""
@@ -2061,8 +2054,7 @@ class Sandpile(DiGraph):
         D[self._sink] = d
         if verbose:
             return [E + D for E in self._jacobian_representatives]
-        else:
-            return [(E + D).values() for E in self._jacobian_representatives]
+        return [(E + D).values() for E in self._jacobian_representatives]
 
     def stable_configs(self, smax=None):
         r"""
@@ -2489,8 +2481,7 @@ class Sandpile(DiGraph):
         """
         if gens:
             return self._ideal.gens()
-        else:
-            return self._ideal
+        return self._ideal
 
     def ring(self):
         r"""
@@ -2596,9 +2587,8 @@ class Sandpile(DiGraph):
         """
         if verbose:
             return self._resolution
-        else:
-            r = ['R^'+str(i) for i in self._betti]
-            return ' <-- '.join(r)
+        r = ['R^'+str(i) for i in self._betti]
+        return ' <-- '.join(r)
 
     def _set_groebner(self):
         r"""
@@ -2999,8 +2989,7 @@ class SandpileConfig(dict):
             if name == '_is_superstable':
                 self._set_is_superstable()
                 return self.__dict__[name]
-            else:
-                raise AttributeError(name)
+            raise AttributeError(name)
 
     def _set_deg(self) -> None:
         r"""
@@ -3797,8 +3786,7 @@ class SandpileConfig(dict):
         """
         if with_firing_vector:
             return self._equivalent_recurrent
-        else:
-            return self._equivalent_recurrent[0]
+        return self._equivalent_recurrent[0]
 
     def _set_is_recurrent(self) -> None:
         r"""
@@ -4262,8 +4250,7 @@ class SandpileDivisor(dict):
             if name == '_weierstrass_pts':
                 self._set_weierstrass_pts()
                 return self.__dict__[name]
-            else:
-                raise AttributeError(name)
+            raise AttributeError(name)
 
     def _set_deg(self) -> None:
         r"""
@@ -5318,8 +5305,7 @@ class SandpileDivisor(dict):
         """
         if with_witness:
             return (self._rank, deepcopy(self._rank_witness))
-        else:
-            return self._rank
+        return self._rank
 
     def _set_r_of_D(self, verbose=False):
         r"""
@@ -5342,32 +5328,31 @@ class SandpileDivisor(dict):
         if not eff:
             self._r_of_D = (r, self)
             return
-        else:
-            d = vector(self.values())
-            # standard basis vectors
-            e = []
-            for i in range(n):
-                v = vector([0]*n)
-                v[i] += 1
-                e.append(v)
-            level = [vector([0]*n)]
-            while True:
-                r += 1
-                if verbose:
-                    print(r)
-                new_level = []
-                for v in level:
-                    for i in range(n):
-                        w = v + e[i]
-                        if w not in new_level:
-                            new_level.append(w)
-                            C = d - w
-                            C = SandpileDivisor(self._sandpile, list(C))
-                            eff = C.effective_div()
-                            if not eff:
-                                self._r_of_D = (r, SandpileDivisor(self._sandpile, list(w)))
-                                return
-                level = new_level
+        d = vector(self.values())
+        # standard basis vectors
+        e = []
+        for i in range(n):
+            v = vector([0]*n)
+            v[i] += 1
+            e.append(v)
+        level = [vector([0]*n)]
+        while True:
+            r += 1
+            if verbose:
+                print(r)
+            new_level = []
+            for v in level:
+                for i in range(n):
+                    w = v + e[i]
+                    if w not in new_level:
+                        new_level.append(w)
+                        C = d - w
+                        C = SandpileDivisor(self._sandpile, list(C))
+                        eff = C.effective_div()
+                        if not eff:
+                            self._r_of_D = (r, SandpileDivisor(self._sandpile, list(w)))
+                            return
+            level = new_level
 
     def weierstrass_rank_seq(self, v='sink'):
         r"""
@@ -5448,8 +5433,7 @@ class SandpileDivisor(dict):
         gaps = tuple(gaps)
         if weight:
             return gaps, sum(gaps) - binomial(len(gaps) + 1, 2)
-        else:
-            return gaps
+        return gaps
 
     def is_weierstrass_pt(self, v='sink') -> bool:
         r"""
@@ -5561,8 +5545,7 @@ class SandpileDivisor(dict):
         D = SandpileDivisor(s, D)
         if verbose:
             return D
-        else:
-            return D.values()
+        return D.values()
 
     def support(self):
         r"""

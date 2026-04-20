@@ -146,15 +146,15 @@ def eval_op(op, lv, rv):
 
     if op == '~':
         return not lval
-    elif op == '&':
+    if op == '&':
         return lval and rval
-    elif op == '|':
+    if op == '|':
         return lval or rval
-    elif op == '^':
+    if op == '^':
         return lval ^ rval
-    elif op == '->':
+    if op == '->':
         return (not lval) or rval
-    elif op == '<->':
+    if op == '<->':
         return (not lval or rval) and (not rval or lval)
-    else:  # one variable
-        return __vars[op]
+    # one variable
+    return __vars[op]

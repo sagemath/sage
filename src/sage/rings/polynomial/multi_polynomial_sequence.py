@@ -23,24 +23,24 @@ EXAMPLES:
 
 As an example consider a small scale variant of the AES::
 
-    sage: sr = mq.SR(2, 1, 2, 4, gf2=True, polybori=True)                               # needs sage.rings.polynomial.pbori
-    sage: sr                                                                            # needs sage.rings.polynomial.pbori
+    sage: sr = mq.SR(2, 1, 2, 4, gf2=True, polybori=True)                               # needs brial
+    sage: sr                                                                            # needs brial
     SR(2,1,2,4)
 
 We can construct a polynomial sequence for a random plaintext-ciphertext
 pair and study it::
 
     sage: set_random_seed(1)
-    sage: while True:  # workaround (see :issue:`31891`)                                # needs sage.rings.polynomial.pbori
+    sage: while True:  # workaround (see :issue:`31891`)                                # needs brial
     ....:     try:
     ....:         F, s = sr.polynomial_system()
     ....:         break
     ....:     except ZeroDivisionError:
     ....:         pass
-    sage: F                                                                             # needs sage.rings.polynomial.pbori
+    sage: F                                                                             # needs brial
     Polynomial Sequence with 112 Polynomials in 64 Variables
 
-    sage: r2 = F.part(2); r2                                                            # needs sage.rings.polynomial.pbori
+    sage: r2 = F.part(2); r2                                                            # needs brial
     (w200 + k100 + x100 + x102 + x103,
      w201 + k101 + x100 + x101 + x103 + 1,
      w202 + k102 + x100 + x101 + x102 + 1,
@@ -76,7 +76,7 @@ pair and study it::
 
 We separate the system in independent subsystems::
 
-    sage: C = Sequence(r2).connected_components(); C                                    # needs sage.rings.polynomial.pbori
+    sage: C = Sequence(r2).connected_components(); C                                    # needs brial
     [[w200 + k100 + x100 + x102 + x103,
       w201 + k101 + x100 + x101 + x103 + 1,
       w202 + k102 + x100 + x101 + x102 + 1,
@@ -109,27 +109,27 @@ We separate the system in independent subsystems::
       x110*w110 + x110*w111 + x110*w112 + x111*w112 + x112*w110 + x112*w111 + x112*w113 + x113*w111 + w112,
       x110*w111 + x111*w110 + x111*w112 + x112*w110 + x113*w111 + x113*w113 + w113,
       x110*w112 + x111*w111 + x112*w110 + x113*w113 + 1]]
-    sage: C[0].groebner_basis()                                                         # needs sage.rings.polynomial.pbori
+    sage: C[0].groebner_basis()                                                         # needs brial
     Polynomial Sequence with 30 Polynomials in 16 Variables
 
 and compute the coefficient matrix::
 
-    sage: A,v = Sequence(r2).coefficients_monomials()                                   # needs sage.rings.polynomial.pbori
-    sage: A.rank()                                                                      # needs sage.rings.polynomial.pbori
+    sage: A,v = Sequence(r2).coefficients_monomials()                                   # needs brial
+    sage: A.rank()                                                                      # needs brial
     32
 
 Using these building blocks we can implement a simple XL algorithm
 easily::
 
-    sage: sr = mq.SR(1,1,1,4, gf2=True, polybori=True, order='lex')                     # needs sage.rings.polynomial.pbori
-    sage: while True:  # workaround (see :issue:`31891`)                                # needs sage.rings.polynomial.pbori
+    sage: sr = mq.SR(1,1,1,4, gf2=True, polybori=True, order='lex')                     # needs brial
+    sage: while True:  # workaround (see :issue:`31891`)                                # needs brial
     ....:     try:
     ....:         F, s = sr.polynomial_system()
     ....:         break
     ....:     except ZeroDivisionError:
     ....:         pass
 
-    sage: # needs sage.rings.polynomial.pbori
+    sage: # needs brial
     sage: monomials = [a*b for a in F.variables() for b in F.variables() if a < b]
     sage: len(monomials)
     190
@@ -366,9 +366,9 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     if not isinstance(K, FiniteField) or K.characteristic() != 2:
         return PolynomialSequence_generic(parts, ring, immutable=immutable, cr=cr, cr_str=cr_str)
-    elif K.degree() == 1:
+    if K.degree() == 1:
         return PolynomialSequence_gf2(parts, ring, immutable=immutable, cr=cr, cr_str=cr_str)
-    elif K.degree() > 1:
+    if K.degree() > 1:
         return PolynomialSequence_gf2e(parts, ring, immutable=immutable, cr=cr, cr_str=cr_str)
 
 
@@ -421,7 +421,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: sr = mq.SR(allow_zero_inversions=True)
             sage: F,s = sr.polynomial_system()
             sage: copy(F)  # indirect doctest
@@ -437,9 +437,9 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: sr = mq.SR(allow_zero_inversions=True, gf2=True, order='block')       # needs sage.rings.polynomial.pbori
-            sage: F, s = sr.polynomial_system()                                         # needs sage.rings.polynomial.pbori
-            sage: print(F.ring().repr_long())                                           # needs sage.rings.polynomial.pbori
+            sage: sr = mq.SR(allow_zero_inversions=True, gf2=True, order='block')       # needs brial
+            sage: F, s = sr.polynomial_system()                                         # needs brial
+            sage: print(F.ring().repr_long())                                           # needs brial
             Polynomial Ring
              Base Ring : Finite Field of size 2
                   Size : 20 Variables
@@ -458,9 +458,9 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs sage.rings.polynomial.pbori
-            sage: F, s = sr.polynomial_system()                                         # needs sage.rings.polynomial.pbori
-            sage: F.nparts()                                                            # needs sage.rings.polynomial.pbori
+            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs brial
+            sage: F, s = sr.polynomial_system()                                         # needs brial
+            sage: F.nparts()                                                            # needs brial
             4
         """
         return len(self._parts)
@@ -471,7 +471,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: sr = mq.SR(allow_zero_inversions=True)
             sage: F, s = sr.polynomial_system()
             sage: l = F.parts()
@@ -486,7 +486,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: sr = mq.SR(allow_zero_inversions=True)
             sage: F, s = sr.polynomial_system()
             sage: R0 = F.part(1)
@@ -501,7 +501,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: sr = mq.SR(allow_zero_inversions=True)
             sage: F, s = sr.polynomial_system()
             sage: P = F.ring()
@@ -529,7 +529,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: sr = mq.SR(allow_zero_inversions=True)
             sage: F, s = sr.polynomial_system()
             sage: gb = F.groebner_basis()
@@ -541,7 +541,7 @@ class PolynomialSequence_generic(Sequence_generic):
         Check that this method also works for boolean polynomials
         (:issue:`10680`)::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: B.<a,b,c,d> = BooleanPolynomialRing()
             sage: F0 = Sequence(map(lambda f: f.lm(), [a,b,c,d]))
             sage: F0.groebner_basis()
@@ -558,9 +558,9 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs sage.rings.polynomial.pbori
-            sage: F,s = sr.polynomial_system()                                          # needs sage.rings.polynomial.pbori
-            sage: len(F.monomials())                                                    # needs sage.rings.polynomial.pbori
+            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs brial
+            sage: F,s = sr.polynomial_system()                                          # needs brial
+            sage: len(F.monomials())                                                    # needs brial
             49
         """
         M = set()
@@ -575,9 +575,9 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs sage.rings.polynomial.pbori
-            sage: F,s = sr.polynomial_system()                                          # needs sage.rings.polynomial.pbori
-            sage: F.nmonomials()                                                        # needs sage.rings.polynomial.pbori
+            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs brial
+            sage: F,s = sr.polynomial_system()                                          # needs brial
+            sage: F.nmonomials()                                                        # needs brial
             49
         """
         return len(self.monomials())
@@ -589,9 +589,9 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs sage.rings.polynomial.pbori
-            sage: F,s = sr.polynomial_system()                                          # needs sage.rings.polynomial.pbori
-            sage: F.variables()[:10]                                                    # needs sage.rings.polynomial.pbori
+            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs brial
+            sage: F,s = sr.polynomial_system()                                          # needs brial
+            sage: F.variables()[:10]                                                    # needs brial
             (k003, k002, k001, k000, s003, s002, s001, s000, w103, w102)
         """
         V = set()
@@ -606,9 +606,9 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs sage.rings.polynomial.pbori
-            sage: F,s = sr.polynomial_system()                                          # needs sage.rings.polynomial.pbori
-            sage: F.nvariables()                                                        # needs sage.rings.polynomial.pbori
+            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs brial
+            sage: F,s = sr.polynomial_system()                                          # needs brial
+            sage: F.nvariables()                                                        # needs brial
             20
         """
         return len(self.variables())
@@ -1056,8 +1056,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         if not return_indices:
             return macaulay_mat
-        else:
-            return macaulay_mat, row_indices, column_indices
+        return macaulay_mat, row_indices, column_indices
 
     def subs(self, *args, **kwargs):
         """
@@ -1072,10 +1071,10 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs sage.rings.polynomial.pbori
-            sage: F, s = sr.polynomial_system(); F                                      # needs sage.rings.polynomial.pbori
+            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs brial
+            sage: F, s = sr.polynomial_system(); F                                      # needs brial
             Polynomial Sequence with 40 Polynomials in 20 Variables
-            sage: F = F.subs(s); F                                                      # needs sage.rings.polynomial.pbori
+            sage: F = F.subs(s); F                                                      # needs brial
             Polynomial Sequence with 40 Polynomials in 16 Variables
         """
         return PolynomialSequence(self._ring, [tuple([f.subs(*args, **kwargs) for f in r]) for r in self._parts])
@@ -1108,7 +1107,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: sr = mq.SR(allow_zero_inversions=True, gf2=True)
             sage: F,s = sr.polynomial_system()
             sage: F.set_immutable()
@@ -1149,14 +1148,13 @@ class PolynomialSequence_generic(Sequence_generic):
         If the system contains 20 or more polynomials, a short summary
         is printed::
 
-            sage: sr = mq.SR(allow_zero_inversions=True, gf2=True)                      # needs sage.rings.polynomial.pbori
-            sage: F,s = sr.polynomial_system(); F                                       # needs sage.rings.polynomial.pbori
+            sage: sr = mq.SR(allow_zero_inversions=True, gf2=True)                      # needs brial
+            sage: F,s = sr.polynomial_system(); F                                       # needs brial
             Polynomial Sequence with 36 Polynomials in 20 Variables
         """
         if self._is_short_for_repr():
             return super()._repr_()
-        else:
-            return "Polynomial Sequence with %d Polynomials in %d Variables" % (len(self), self.nvariables())
+        return "Polynomial Sequence with %d Polynomials in %d Variables" % (len(self), self.nvariables())
 
     def _repr_pretty_(self, p, cycle):
         """
@@ -1175,8 +1173,8 @@ class PolynomialSequence_generic(Sequence_generic):
         If the system contains 20 or more polynomials, a short summary
         is printed::
 
-            sage: sr = mq.SR(allow_zero_inversions=True, gf2=True)                      # needs sage.rings.polynomial.pbori
-            sage: F,s = sr.polynomial_system(); F                                       # needs sage.rings.polynomial.pbori
+            sage: sr = mq.SR(allow_zero_inversions=True, gf2=True)                      # needs brial
+            sage: F,s = sr.polynomial_system(); F                                       # needs brial
             Polynomial Sequence with 36 Polynomials in 20 Variables
         """
         if self._is_short_for_repr():
@@ -1216,14 +1214,13 @@ class PolynomialSequence_generic(Sequence_generic):
         if isinstance(right, PolynomialSequence_generic) and right.ring() == self.ring():
             return PolynomialSequence(self.ring(), self.parts() + right.parts())
 
-        elif isinstance(right, (tuple, list)) and all(x.parent() == self.ring() for x in right):
+        if isinstance(right, (tuple, list)) and all(x.parent() == self.ring() for x in right):
             return PolynomialSequence(self.ring(), self.parts() + (right,))
 
-        elif isinstance(right, MPolynomialIdeal) and (right.ring() is self.ring() or right.ring() == self.ring()):
+        if isinstance(right, MPolynomialIdeal) and (right.ring() is self.ring() or right.ring() == self.ring()):
             return PolynomialSequence(self.ring(), self.parts() + (right.gens(),))
 
-        else:
-            raise TypeError("right must be a system over same ring as self.")
+        raise TypeError("right must be a system over same ring as self.")
 
     def connection_graph(self):
         """
@@ -1233,7 +1230,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: B.<x,y,z> = BooleanPolynomialRing()
             sage: F = Sequence([x*y + y + 1, z + 1])
             sage: G = F.connection_graph(); G
@@ -1246,7 +1243,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         TESTS::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: F = Sequence([], B)
             sage: F.connection_graph()
             Graph on 0 vertices
@@ -1282,7 +1279,7 @@ class PolynomialSequence_generic(Sequence_generic):
         As an example consider one part of AES, which naturally
         splits into four subsystems which are independent::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: sr = mq.SR(2, 4, 4, 8, gf2=True, polybori=True)
             sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
@@ -1483,20 +1480,19 @@ class PolynomialSequence_generic(Sequence_generic):
 
         if isinstance(R, MPolynomialRing_libsingular):
             return PolynomialSequence(R, interred_libsingular(self), immutable=True)
-        else:
-            try:
-                s = self._singular_().parent()
-                o = s.option("get")
-                s.option("redTail")
-                ret = []
-                for f in self._singular_().interred():
-                    f = R(f)
-                    ret.append(f.lc()**(-1) * f)  # lead coeffs are not reduced by interred
-                s.option("set", o)
-            except TypeError:
-                from sage.rings.polynomial.toy_buchberger import \
-                    inter_reduction
-                ret = inter_reduction(self)
+        try:
+            s = self._singular_().parent()
+            o = s.option("get")
+            s.option("redTail")
+            ret = []
+            for f in self._singular_().interred():
+                f = R(f)
+                ret.append(f.lc()**(-1) * f)  # lead coeffs are not reduced by interred
+            s.option("set", o)
+        except TypeError:
+            from sage.rings.polynomial.toy_buchberger import \
+                inter_reduction
+            ret = inter_reduction(self)
 
         ret = sorted(ret, reverse=True)
         ret = PolynomialSequence(R, ret, immutable=True)
@@ -1585,7 +1581,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: B.<a,b,c,d> = BooleanPolynomialRing()
             sage: F = Sequence([c + d + b + 1, a + c + d, a*b + c, b*c*d + c])
             sage: F.eliminate_linear_variables() # everything vanishes
@@ -1597,7 +1593,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         The list of reductors can be requested by setting ``return_reductors`` to ``True``::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: B.<a,b,c,d> = BooleanPolynomialRing()
             sage: F = Sequence([a + b + d, a + b + c])
             sage: F, R = F.eliminate_linear_variables(return_reductors=True)
@@ -1610,7 +1606,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         If the input system is detected to be inconsistent then ``[1]`` is returned,
         and the list of reductors is empty::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: R.<x,y,z> = BooleanPolynomialRing()
             sage: S = Sequence([x*y*z + x*y + z*y + x*z, x + y + z + 1, x + y + z])
             sage: S.eliminate_linear_variables()
@@ -1625,23 +1621,23 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         The function should really dispose of linear equations (:issue:`13968`)::
 
-            sage: R.<x,y,z> = BooleanPolynomialRing()                                   # needs sage.rings.polynomial.pbori
-            sage: S = Sequence([x + y + z + 1, y + z])                                  # needs sage.rings.polynomial.pbori
-            sage: S.eliminate_linear_variables(return_reductors=True)                   # needs sage.rings.polynomial.pbori
+            sage: R.<x,y,z> = BooleanPolynomialRing()                                   # needs brial
+            sage: S = Sequence([x + y + z + 1, y + z])                                  # needs brial
+            sage: S.eliminate_linear_variables(return_reductors=True)                   # needs brial
             ([], [x + 1, y + z])
 
 
         The function should take care of linear variables created by previous
         substitution of linear variables ::
 
-            sage: R.<x,y,z> = BooleanPolynomialRing()                                   # needs sage.rings.polynomial.pbori
-            sage: S = Sequence([x*y*z + x*y + z*y + x*z, x + y + z + 1, x + y])         # needs sage.rings.polynomial.pbori
-            sage: S.eliminate_linear_variables(return_reductors=True)                   # needs sage.rings.polynomial.pbori
+            sage: R.<x,y,z> = BooleanPolynomialRing()                                   # needs brial
+            sage: S = Sequence([x*y*z + x*y + z*y + x*z, x + y + z + 1, x + y])         # needs brial
+            sage: S.eliminate_linear_variables(return_reductors=True)                   # needs brial
             ([], [x + y, z + 1])
 
         We test a case which would increase the degree with ``polybori=True``::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: B.<a,b,c,d> = BooleanPolynomialRing()
             sage: f = a*d + a + b*d + c*d + 1
             sage: Sequence([f, a + b*c + c+d + 1]).eliminate_linear_variables()
@@ -1705,8 +1701,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
                 if 1 in linear:
                     if return_reductors:
                         return PolynomialSequence(R, [R(1)]), PolynomialSequence(R, [])
-                    else:
-                        return PolynomialSequence(R, [R(1)])
+                    return PolynomialSequence(R, [R(1)])
                 rb = ll_encode(linear)
                 reductors.extend(linear)
 
@@ -1720,8 +1715,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         if return_reductors:
             reduced_reductors = gauss_on_polys(reductors)
             return ret, PolynomialSequence(R, reduced_reductors)
-        else:
-            return ret
+        return ret
 
     def _groebner_strategy(self):
         """
@@ -1738,7 +1732,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             Groebner Strategy for ideal generated by 2 elements over
             Multivariate Polynomial Ring in x, y, z over Finite Field of size 2
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: P.<x,y,z> = BooleanPolynomialRing()
             sage: F = Sequence([x*y + z, y + z + 1])
             sage: F._groebner_strategy()
@@ -1752,13 +1746,12 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         if not isinstance(R, BooleanPolynomialRing_base):
             from sage.libs.singular.groebner_strategy import GroebnerStrategy
             return GroebnerStrategy(self.ideal())
-        else:
-            from sage.rings.polynomial.pbori.pbori import GroebnerStrategy
-            g = GroebnerStrategy(R)
-            for p in self:
-                g.add_as_you_wish(p)
-            g.reduction_strategy.opt_red_tail = True
-            return g
+        from sage.rings.polynomial.pbori.pbori import GroebnerStrategy
+        g = GroebnerStrategy(R)
+        for p in self:
+            g.add_as_you_wish(p)
+        g.reduction_strategy.opt_red_tail = True
+        return g
 
     def solve(self, algorithm='polybori', n=1,
               eliminate_linear_variables=True, verbose=False, **kwds):
@@ -1797,7 +1790,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         Without argument, a single arbitrary solution is returned::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: R.<x,y,z> = BooleanPolynomialRing()
             sage: S = Sequence([x*y + z, y*z + x, x + y + z + 1])
             sage: sol = S.solve()
@@ -1806,39 +1799,39 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         We check that it is actually a solution::
 
-            sage: S.subs(sol[0])                                                        # needs sage.rings.polynomial.pbori
+            sage: S.subs(sol[0])                                                        # needs brial
             [0, 0, 0]
 
         We obtain all solutions::
 
-            sage: sols = S.solve(n=Infinity)                                            # needs sage.rings.polynomial.pbori
-            sage: sols                                                                  # needs sage.rings.polynomial.pbori
+            sage: sols = S.solve(n=Infinity)                                            # needs brial
+            sage: sols                                                                  # needs brial
             [{z: 0, y: 1, x: 0}, {z: 1, y: 1, x: 1}]
-            sage: [S.subs(x) for x in sols]                                             # needs sage.rings.polynomial.pbori
+            sage: [S.subs(x) for x in sols]                                             # needs brial
             [[0, 0, 0], [0, 0, 0]]
 
         We can force the use of exhaustive search if the optional
         package ``FES`` is present::
 
-            sage: sol = S.solve(algorithm='exhaustive_search')  # optional - fes        # needs sage.rings.polynomial.pbori
-            sage: sol                                           # optional - fes        # needs sage.rings.polynomial.pbori
+            sage: sol = S.solve(algorithm='exhaustive_search')  # optional - fes        # needs brial
+            sage: sol                                           # optional - fes        # needs brial
             [{z: 1, y: 1, x: 1}]
-            sage: S.subs(sol[0])                                # optional - fes        # needs sage.rings.polynomial.pbori
+            sage: S.subs(sol[0])                                # optional - fes        # needs brial
             [0, 0, 0]
 
         And we may use SAT-solvers if they are available::
 
-            sage: sol = S.solve(algorithm='sat')        # optional - pycryptosat        # needs sage.rings.polynomial.pbori
-            sage: sol                                   # optional - pycryptosat        # needs sage.rings.polynomial.pbori
+            sage: sol = S.solve(algorithm='sat')        # optional - pycryptosat        # needs brial
+            sage: sol                                   # optional - pycryptosat        # needs brial
             [{z: 0, y: 1, x: 0}]
-            sage: S.subs(sol[0])                                                        # needs sage.rings.polynomial.pbori
+            sage: S.subs(sol[0])                                                        # needs brial
             [0, 0, 0]
 
         TESTS:
 
         Make sure that variables not occurring in the equations are no problem::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: R.<x,y,z,t> = BooleanPolynomialRing()
             sage: S = Sequence([x*y + z, y*z + x, x + y + z + 1])
             sage: sols = S.solve(n=Infinity)
@@ -1847,15 +1840,15 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         Not eliminating linear variables::
 
-            sage: sols = S.solve(n=Infinity, eliminate_linear_variables=False)          # needs sage.rings.polynomial.pbori
-            sage: [S.subs(x) for x in sols]                                             # needs sage.rings.polynomial.pbori
+            sage: sols = S.solve(n=Infinity, eliminate_linear_variables=False)          # needs brial
+            sage: [S.subs(x) for x in sols]                                             # needs brial
             [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
 
         A tricky case where the linear equations are insatisfiable::
 
-            sage: R.<x,y,z> = BooleanPolynomialRing()                                   # needs sage.rings.polynomial.pbori
-            sage: S = Sequence([x*y*z + x*y + z*y + x*z, x + y + z + 1, x + y + z])     # needs sage.rings.polynomial.pbori
-            sage: S.solve()                                                             # needs sage.rings.polynomial.pbori
+            sage: R.<x,y,z> = BooleanPolynomialRing()                                   # needs brial
+            sage: S = Sequence([x*y*z + x*y + z*y + x*z, x + y + z + 1, x + y + z])     # needs brial
+            sage: S.solve()                                                             # needs brial
             []
         """
         from sage.modules.free_module import VectorSpace
@@ -1935,7 +1928,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
             sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
@@ -1966,8 +1959,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             l = [p for p in self if not p == 0]
             l = sorted(inter_red(l, completely=True), reverse=True)
             return PolynomialSequence(l, R, immutable=True)
-        else:
-            return PolynomialSequence_generic.reduced(self)
+        return PolynomialSequence_generic.reduced(self)
 
     def coefficients_monomials(self, order=None, sparse=True):
         """
@@ -1988,7 +1980,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: B.<x,y,z> = BooleanPolynomialRing()
             sage: F = Sequence([x*y + y + 1, z + 1])
             sage: A, v = F.coefficients_monomials()
@@ -2077,7 +2069,7 @@ class PolynomialSequence_gf2e(PolynomialSequence_generic):
 
         Another bigger example for a small scale AES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: sr = mq.SR(1, 1, 1, 4, gf2=False)
             sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:

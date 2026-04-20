@@ -1119,7 +1119,7 @@ class DiGraphGenerators:
                            loops=True, multiedges=multiedges,
                            immutable=immutable)
 
-        elif vertices == 'integers':
+        if vertices == 'integers':
             d = k if isinstance(k, Integer) else len(list(k))
             if not d:
                 return DiGraph(loops=True, multiedges=True, name=name,
@@ -1128,8 +1128,7 @@ class DiGraphGenerators:
             return digraphs.GeneralizedDeBruijn(d ** n, d, immutable=immutable,
                                                 name=name)
 
-        else:
-            raise ValueError('unknown type for vertices')
+        raise ValueError('unknown type for vertices')
 
     def GeneralizedDeBruijn(self, n, d, immutable=False, name=None):
         r"""
@@ -1408,15 +1407,14 @@ class DiGraphGenerators:
             return DiGraph(edges(), format='list_of_edges',
                            name=name, immutable=immutable)
 
-        elif vertices == 'integers':
+        if vertices == 'integers':
             d = k if isinstance(k, Integer) else (len(list(k)) - 1)
             if d < 1:
                 raise ValueError("degree must be greater than or equal to one")
             return digraphs.ImaseItoh((d + 1) * (d ** (D - 1)), d,
                                       name=name, immutable=immutable)
 
-        else:
-            raise ValueError('unknown type for vertices')
+        raise ValueError('unknown type for vertices')
 
     def RandomDirectedAcyclicGraph(self, n, p, weight_max=None, immutable=False):
         r"""
