@@ -5,6 +5,10 @@ This module defines the class
 :class:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field`, based on
 :class:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic`, for
 elliptic curves over general fields.
+
+AUTHORS:
+
+- Travis Morrison, Lorenz Panny (2026): :func:`rational_kernel_polynomial`
 """
 # *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -3620,6 +3624,83 @@ def compute_model(E, name):
         return E.montgomery_model()
 
     raise NotImplementedError(f'cannot compute {name} model')
+
+
+def rational_kernel_polynomial(E, l, *, all=False):
+    r"""
+    Computes one or all kernel polynomials of `E` for an `\ell`-isogeny.
+
+    INPUT:
+
+    - ``E`` -- elliptic curve
+    - ``l`` -- prime integer
+    - ``all`` -- boolean (default: ``False``); whether to return a single
+      kernel polynomial or an iterator over all kernel polynomials
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import rational_kernel_polynomial
+        sage: E = EllipticCurve('26b1')
+        sage: rational_kernel_polynomial(E, 7)
+        x^3 - 3*x^2 - x + 3
+
+    ::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import rational_kernel_polynomial
+        sage: E = EllipticCurve(GF(419), [1, 280])
+        sage: rational_kernel_polynomial(E, 13)
+        x^6 + 4*x^5 + 202*x^4 + 282*x^3 + 108*x^2 + 378*x + 337
+        sage: rational_kernel_polynomial(E, 11)
+        Traceback (most recent call last):
+        ...
+        ValueError: 11 is not an Elkies prime for Elliptic Curve defined by y^2 = x^3 + x + 280 over Finite Field of size 419
+
+    Illustrating the parameter ``all=True``::
+
+        sage: rational_kernel_polynomial(E, 13, all=True)
+        [x^6 + 4*x^5 + 202*x^4 + 282*x^3 + 108*x^2 + 378*x + 337,
+         x^6 + 151*x^5 + 140*x^4 + 392*x^3 + 12*x^2 + 100*x + 333]
+        sage: rational_kernel_polynomial(E, 11, all=True)
+        []
+
+    ALGORITHM: Adapted from the implementation
+    https://github.com/travismo/beyond-the-SEA/blob/edd845a/isogenies.sage
+    of [MPSW25]_.
+    """
+    if any(E.a_invariants()[:-2]):
+        Ew = E.short_weierstrass_model()
+        iso = E.isomorphism_to(Ew)
+    else:
+        Ew = E
+        iso = None
+
+    from sage.schemes.elliptic_curves.mod_poly import classical_modular_polynomial
+    j = E.j_invariant()
+    F = classical_modular_polynomial(l, j)
+    x = F.parent().gen()
+    F //= x**F.valuation(x)
+    F //= (x - 1728)**F.valuation(x - 1728)
+
+    from sage.schemes.elliptic_curves.ell_curve_isogeny import normalized_model, compute_isogeny_kernel_polynomial
+    def compute(Etilde):
+        if iso:
+            return (Ew.isogeny(None, Etilde, l) * iso).kernel_polynomial()
+        return compute_isogeny_kernel_polynomial(E, Etilde, l)
+
+    Es = []
+    for j in F.roots(multiplicities=False):
+        if all:
+            for Etilde in normalized_model(Ew, j, l, all=True):
+                Es.append(compute(Etilde))
+        else:
+            try:
+                Etilde = normalized_model(Ew, j, l)
+            except ValueError:
+                continue
+            return compute(Etilde)
+    if all:
+        return Es
+    raise ValueError(f'{l} is not an Elkies prime for {E}')
 
 
 def point_of_order(E, n):
