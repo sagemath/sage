@@ -1276,6 +1276,19 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         TESTS:
 
+        Check that logarithms to a base whose order is a proper divisor of
+        the unit group order are handled correctly::
+
+            sage: F.<a> = GF(2^10, impl='ntl')
+            sage: b = a^3
+            sage: b.multiplicative_order()
+            341
+            sage: x = (b^37).log(b)
+            sage: x
+            37
+            sage: b^x == b^37
+            True
+
         Check that non-existence is correctly detected::
 
             sage: g = GF(2^50).gen()
