@@ -1319,9 +1319,15 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             raise ValueError(f'no logarithm of {self} exists to base {base}')
 
         # Let's pass the known factorization of the order to PARI.
+        # Filter out primes that do not divide ``base_order``: PARI's
+        # ``fflog`` rejects a factorization matrix containing zero
+        # valuations (cf. the error ``incorrect type in generic
+        # discrete logarithm (order factorization)``).
         fs, = self._parent.factored_unit_order()  # cached
-        ps = pari.Col(p for p,_ in fs)
-        vs = pari.Col(base_order.valuation(p) for p,_ in fs)
+        pvs = [(p, base_order.valuation(p)) for p, _ in fs]
+        pvs = [(p, v) for p, v in pvs if v]
+        ps = pari.Col([p for p, _ in pvs])
+        vs = pari.Col([v for _, v in pvs])
         fac = pari.matconcat((ps, vs))
 
         x = pari.fflog(self, base, (base_order, fac))
