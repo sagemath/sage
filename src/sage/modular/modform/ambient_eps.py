@@ -84,8 +84,8 @@ TESTS::
 from sage.rings.integer import Integer
 
 from sage.modular.arithgroup.congroup_gamma1 import Gamma1_constructor
-import sage.modular.dirichlet as dirichlet
-import sage.modular.modsym.modsym as modsym
+from sage.modular import dirichlet
+from sage.modular.modsym import modsym
 from sage.misc.cachefunc import cached_method
 
 from .ambient import ModularFormsAmbient

@@ -635,8 +635,7 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
         a3 = make_integral((c6+a13**2)/(4*a13),P,2*e)
         if check_a1a3_local(c4,c6,P,a1,a3):
             return True, a1,a3
-        else:
-            raise RuntimeError("check_Kraus_local_2 fails")
+        raise RuntimeError("check_Kraus_local_2 fails")
 
     if c4val >= 4*e:
         if a1 is None:
@@ -645,8 +644,7 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
         if flag:
             if check_a1a3_local(c4,c6,P,a1,a3):
                 return True, a1,a3
-            else:
-                raise RuntimeError("check_Kraus_local_2 fails")
+            raise RuntimeError("check_Kraus_local_2 fails")
         else:
             return False,0,0
 
@@ -662,8 +660,7 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
                 if (4*a1sq*Px-(a1sq**2-c4)**2).valuation(P) >= 8*e:  # (iii)
                     if check_a1a3_local(c4,c6,P,a1,a3):
                         return True, a1, a3
-                    else:
-                        raise RuntimeError("check_Kraus_local_2 fails")
+                    raise RuntimeError("check_Kraus_local_2 fails")
     # end of loop, but no a1 found
     return False, 0, 0
 

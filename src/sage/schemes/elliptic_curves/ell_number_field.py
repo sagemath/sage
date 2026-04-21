@@ -2320,8 +2320,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         lower, upper = self.rank_bounds(**kwds)
         if lower == upper:
             return lower
-        else:
-            raise ValueError('There is insufficient data to determine the rank - 2-descent gave lower bound %s and upper bound %s' % (lower, upper))
+        raise ValueError('There is insufficient data to determine the rank - 2-descent gave lower bound %s and upper bound %s' % (lower, upper))
 
     def gens(self, **kwds):
         r"""
@@ -3053,8 +3052,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             try:
                 if l.is_prime(proof=False):
                     return isogenies_prime_degree(self, l, minimal_models=minimal_models)
-                else:
-                    raise ValueError("%s is not prime." % l)
+                raise ValueError("%s is not prime." % l)
             except AttributeError:
                 raise ValueError("%s is not prime." % l)
 
@@ -3582,8 +3580,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
         if flag:
             d, f = df
             return d*f**2
-        else:  # no CM
-            return ZZ.zero()
+        # no CM
+        return ZZ.zero()
 
     @cached_method
     def has_cm(self) -> bool:
@@ -4047,9 +4045,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
                 if verbose:
                     print("Saturation index bound < 2, points are saturated already.")
                 return Plist, index, RealField()(1)
-            else:
-                if verbose:
-                    print("p-saturating for primes p < {}".format(index_bound.ceil()))
+            if verbose:
+                print("p-saturating for primes p < {}".format(index_bound.ceil()))
             prime_list = prime_range(index_bound.ceil())
         else:
             if one_prime:

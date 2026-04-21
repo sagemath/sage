@@ -1171,7 +1171,7 @@ class OperationTable(SageObject):
         widenames = []
         for name in self._names:
             widenames.append('{0: >{1}s}'.format(name, width))
-        widenames_ext = [widename for widename in widenames]
+        widenames_ext = list(widenames)
         for name in self._names_ext:
             widenames_ext.append('{0: >{1}s}'.format(name, width))
 

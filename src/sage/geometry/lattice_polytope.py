@@ -419,7 +419,6 @@ def ReflexivePolytopes(dim):
         ...
         NotImplementedError: only 2- and 3-dimensional reflexive polytopes are available!
     """
-    global _rp
     if dim not in [2, 3]:
         raise NotImplementedError("only 2- and 3-dimensional reflexive polytopes are available!")
     if _rp[dim] is None:

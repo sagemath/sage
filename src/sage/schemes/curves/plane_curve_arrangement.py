@@ -192,7 +192,7 @@ class PlaneCurveArrangementElement(Element):
         """
         if not self:
             return 'Empty curve arrangement in {}'.format(self.parent().ambient_space())
-        elif len(self) < 5:
+        if len(self) < 5:
             curves = ', '.join(h.defining_polynomial()._repr_()
                                for h in self._curves)
             return 'Arrangement ({}) in {}'.format(curves,
@@ -625,12 +625,11 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         self.fundamental_group(simplified=simplified, vertical=vertical)
         if simplified and vertical:
             return dict(self._meridians_simpl_vertical)
-        elif simplified and not vertical:
+        if simplified and not vertical:
             return dict(self._meridians_group_simpl_nonvertical)
-        elif not simplified and vertical:
+        if not simplified and vertical:
             return dict(self._meridians_nonsimpl_vertical)
-        else:
-            return dict(self._meridians_nonsimpl_nonvertical)
+        return dict(self._meridians_nonsimpl_nonvertical)
 
     def braid_monodromy(self, vertical=True):
         r"""
@@ -969,8 +968,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         self.fundamental_group(simplified=simplified)
         if simplified:
             return dict(self._meridians_simpl)
-        else:
-            return dict(self._meridians_nonsimpl)
+        return dict(self._meridians_nonsimpl)
 
 
 class PlaneCurveArrangements(UniqueRepresentation, Parent):

@@ -893,8 +893,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         if P is None:
             poly = self.defining_polynomial()
             return poly.parent().ideal(poly.gradient()+[poly]).dimension() > 0
-        else:
-            return not self.is_smooth(P)
+        return not self.is_smooth(P)
 
     def degree(self):
         r"""
@@ -1458,12 +1457,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             K = number_field_elements_from_algebraics(L)[0]
             if isinstance(K, RationalField):
                 return F.embeddings(F)[0]
-            elif isinstance(F, RationalField):
+            if isinstance(F, RationalField):
                 return F.embeddings(K)[0]
-            else:
-                # make sure the defining polynomial variable names are the same for K, N
-                N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
-                return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
+            # make sure the defining polynomial variable names are the same for K, N
+            N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
+            return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
         if self.base_ring() not in NumberFields():
             raise NotImplementedError("the base ring of this curve must be a number field")
         if not self.is_irreducible():
@@ -1822,8 +1820,8 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         f = ring(self.affine_patch(2).defining_polynomial())
         if f.degree() == self.degree():
             return fundamental_group(f, projective=True)
-        else:  # in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
-            return fundamental_group(f, projective=False)
+        # in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
+        return fundamental_group(f, projective=False)
 
     def rational_parameterization(self):
         r"""

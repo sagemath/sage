@@ -650,8 +650,7 @@ class LocalGeneric(Parent):
         if exact:
             from sage.rings.integer_ring import ZZ
             return PolynomialRing(ZZ, var).gen()
-        else:
-            return PolynomialRing(self, var).gen()
+        return PolynomialRing(self, var).gen()
 
     def ground_ring(self):
         r"""
@@ -749,8 +748,7 @@ class LocalGeneric(Parent):
         """
         if self.base_ring().absolute_degree() == 1:
             return self.absolute_degree()
-        else:
-            raise NotImplementedError("For a relative p-adic ring or field you must use relative_degree or absolute_degree as appropriate")
+        raise NotImplementedError("For a relative p-adic ring or field you must use relative_degree or absolute_degree as appropriate")
 
     def absolute_e(self):
         r"""
@@ -770,8 +768,7 @@ class LocalGeneric(Parent):
         # Override this in subclasses (if appropriate)
         if self is self.base_ring():
             return ZZ(1)
-        else:
-            return self.base_ring().absolute_e()
+        return self.base_ring().absolute_e()
 
     def absolute_ramification_index(self):
         r"""
@@ -843,8 +840,7 @@ class LocalGeneric(Parent):
         """
         if self.base_ring().absolute_degree() == 1:
             return self.absolute_e()
-        else:
-            raise NotImplementedError("For a relative p-adic ring or field you must use relative_e or absolute_e as appropriate")
+        raise NotImplementedError("For a relative p-adic ring or field you must use relative_e or absolute_e as appropriate")
 
     def ramification_index(self):
         r"""
@@ -884,8 +880,7 @@ class LocalGeneric(Parent):
         # Override this in subclasses (if appropriate)
         if self is self.base_ring():
             return ZZ(1)
-        else:
-            return self.base_ring().absolute_f()
+        return self.base_ring().absolute_f()
 
     def absolute_inertia_degree(self):
         r"""
@@ -958,8 +953,7 @@ class LocalGeneric(Parent):
         """
         if self.base_ring().absolute_degree() == 1:
             return self.absolute_f()
-        else:
-            raise NotImplementedError("For a relative p-adic ring or field you must use relative_f or absolute_f as appropriate")
+        raise NotImplementedError("For a relative p-adic ring or field you must use relative_f or absolute_f as appropriate")
 
     def inertia_degree(self):
         r"""
@@ -1311,8 +1305,7 @@ class LocalGeneric(Parent):
             if transformation:
                 d, u, v = self._matrix_smith_form(M.transpose(), True, integral, exact)
                 return d.transpose(), v.transpose(), u.transpose()
-            else:
-                return self._matrix_smith_form(M.transpose(), False, integral, exact).transpose()
+            return self._matrix_smith_form(M.transpose(), False, integral, exact).transpose()
         smith = M.parent()(0)
         S = copy(M)
         Z = self.integer_ring()
@@ -1467,8 +1460,7 @@ class LocalGeneric(Parent):
                         right[i,j] <<= shift_cols[i]
         if transformation:
             return smith, left, right
-        else:
-            return smith
+        return smith
 
     def _test_matrix_smith(self, **options):
         r"""
@@ -1617,8 +1609,7 @@ class LocalGeneric(Parent):
             if S[pivi,pivj] == 0:
                 if track_precision:
                     return R(0, valdet + (n-piv)*val - shift)
-                else:
-                    return R(0)
+                return R(0)
 
             valdet += val
             S.swap_rows(pivi,piv)

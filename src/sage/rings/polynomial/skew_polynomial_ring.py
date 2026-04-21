@@ -125,20 +125,18 @@ def _minimal_vanishing_polynomial(R, eval_pts):
     l = len(eval_pts)
     if l == 0:
         return R.one()
-    elif l == 1:
+    if l == 1:
         e = eval_pts[0]
         if e.is_zero():
             return R.one()
-        else:
-            return R.gen() - R.twisting_morphism()(e) / e
-    else:
-        t = l // 2
-        A = eval_pts[:t]
-        B = eval_pts[t:]
-        M_A = _minimal_vanishing_polynomial(R, A)
-        B_moved = M_A.multi_point_evaluation(B)
-        M_at_B_moved = _minimal_vanishing_polynomial(R, B_moved)
-        return M_at_B_moved * M_A
+        return R.gen() - R.twisting_morphism()(e) / e
+    t = l // 2
+    A = eval_pts[:t]
+    B = eval_pts[t:]
+    M_A = _minimal_vanishing_polynomial(R, A)
+    B_moved = M_A.multi_point_evaluation(B)
+    M_at_B_moved = _minimal_vanishing_polynomial(R, B_moved)
+    return M_at_B_moved * M_A
 
 
 def _lagrange_polynomial(R, eval_pts, values):
@@ -196,17 +194,16 @@ def _lagrange_polynomial(R, eval_pts, values):
                              " so a Lagrange polynomial could not be determined"
                              " (and might not exist)")
         return (values[0] / eval_pts[0]) * R.one()
-    else:
-        t = l // 2
-        A = eval_pts[:t]
-        B = eval_pts[t:]
-        M_A = _minimal_vanishing_polynomial(R, A)
-        M_B = _minimal_vanishing_polynomial(R, B)
-        A_ = M_B.multi_point_evaluation(A)
-        B_ = M_A.multi_point_evaluation(B)
-        I_1 = _lagrange_polynomial(R, A_, values[:t])
-        I_2 = _lagrange_polynomial(R, B_, values[t:])
-        return I_1 * M_B + I_2 * M_A
+    t = l // 2
+    A = eval_pts[:t]
+    B = eval_pts[t:]
+    M_A = _minimal_vanishing_polynomial(R, A)
+    M_B = _minimal_vanishing_polynomial(R, B)
+    A_ = M_B.multi_point_evaluation(A)
+    B_ = M_A.multi_point_evaluation(B)
+    I_1 = _lagrange_polynomial(R, A_, values[:t])
+    I_2 = _lagrange_polynomial(R, B_, values[t:])
+    return I_1 * M_B + I_2 * M_A
 
 
 # Generic implementation of skew polynomial rings
