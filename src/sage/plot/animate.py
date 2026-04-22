@@ -307,8 +307,7 @@ class Animation(WithEqualityById, SageObject):
         """
         if isinstance(i, slice):
             return Animation(self._frames[i], **self._kwds)
-        else:
-            return self._frames[i]
+        return self._frames[i]
 
     def _repr_(self):
         """

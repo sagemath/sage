@@ -12,25 +12,6 @@ where `K_{\mu\nu}(q,t)` are the Macdonald `q,t`-Koskta coefficients.
 
 The `Ht` in this case is short for `{\tilde H}` and is the basis which is
 the graded Frobenius image of the Garsia-Haiman modules [GH1993]_.
-
-REFERENCES:
-
-- [Mac1995]_
-
-.. [GH1993] \A. Garsia, M. Haiman, A graded representation module for Macdonald's
-   polynomials, Proc. Nat. Acad. U.S.A. no. 90, 3607--3610.
-
-.. [BGHT1999] \F. Bergeron, A. M. Garsia, M. Haiman, and G. Tesler, Identities and
-   positivity conjectures for some remarkable operators in the theory of symmetric
-   functions, Methods Appl. Anal. 6 (1999), no. 3, 363--420.
-
-.. [LLM1998] \L. Lapointe, A. Lascoux, J. Morse, Determinantal Expressions for
-   Macdonald Polynomials, IRMN no. 18 (1998).
-   :arxiv:`math/9808050`.
-
-.. [BH2013] \F. Bergeron, M. Haiman, Tableaux Formulas for Macdonald Polynomials,
-   Special edition in honor of Christophe Reutenauer 60 birthday, International
-   Journal of Algebra and Computation, Volume 23, Issue 4, (2013), pp. 833-852.
 """
 
 # ***************************************************************************
@@ -1266,8 +1247,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
         """
         if self.t:
             return self._s(self._self_to_m(x))
-        else:
-            return sum(cmu*self._s(self._Qp(mu.conjugate())) for mu,cmu in x).omega()
+        return sum(cmu*self._s(self._Qp(mu.conjugate())) for mu,cmu in x).omega()
 
     def _s_to_self(self, x):
         r"""
@@ -1307,8 +1287,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
         """
         if self.t:
             return self._m_to_self(self._m(x))
-        else:
-            return self._from_dict({mu.conjugate() : cmu for mu,cmu in self._Qp(x.omega())})
+        return self._from_dict({mu.conjugate() : cmu for mu,cmu in self._Qp(x.omega())})
 
     def _self_to_m(self, x):
         r"""
@@ -1349,8 +1328,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
                                 * self._Lmunu(part2, mu).subs(q=self.q, t=tinv)
                                 for mu,c in part_coeff(x, d)) )
                 for d in range(x.degree()+1) for part2 in Partitions_n(d) })
-        else:
-            return self._m(self._self_to_s(x))
+        return self._m(self._self_to_s(x))
 
     def _m_to_self( self, f ):
         r"""
@@ -1526,8 +1504,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
         if not mu:
             if not nu:
                 return QQqt.one()
-            else:
-                return QQqt.zero()
+            return QQqt.zero()
         if (mu,nu) in self._self_to_m_cache:
             return self._self_to_m_cache[(mu,nu)]
         if len(nu) == 1:

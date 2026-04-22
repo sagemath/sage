@@ -189,8 +189,7 @@ class KRTToRCBijectionTypeE67(KRTToRCBijectionAbstract):
         """
         if self.tp_krt.cartan_type().classical().rank() == 6:
             return endpoint6(1)
-        else:
-            return endpoint7(7)
+        return endpoint7(7)
 
     @cached_method
     def _endpoint(self, r):
@@ -211,8 +210,7 @@ class KRTToRCBijectionTypeE67(KRTToRCBijectionAbstract):
         """
         if self.tp_krt.cartan_type().classical().rank() == 6:
             return endpoint6(r)
-        else:
-            return endpoint7(r)
+        return endpoint7(r)
 
 
 class RCToKRTBijectionTypeE67(RCToKRTBijectionAbstract):
@@ -323,8 +321,7 @@ class RCToKRTBijectionTypeE67(RCToKRTBijectionAbstract):
         """
         if self.KRT.cartan_type().classical().rank() == 6:
             return endpoint6(r)
-        else:
-            return endpoint7(r)
+        return endpoint7(r)
 
 
 def endpoint6(r):
@@ -350,15 +347,15 @@ def endpoint6(r):
     C = CrystalOfLetters(['E', 6])
     if r == 1:
         return C.module_generators[0]  # C((1,))
-    elif r == 2:
+    if r == 2:
         return C((-3, 2))
-    elif r == 3:
+    if r == 3:
         return C((-1, 3))
-    elif r == 4:
+    if r == 4:
         return C((-3, 4))
-    elif r == 5:
+    if r == 5:
         return C((-2, 5))
-    elif r == 6:
+    if r == 6:
         return C((-1, 6))
 
 
@@ -387,15 +384,15 @@ def endpoint7(r):
     C = CrystalOfLetters(['E', 7])
     if r == 1:
         return C((-7, 1))
-    elif r == 2:
+    if r == 2:
         return C((-1, 2))
-    elif r == 3:
+    if r == 3:
         return C((-2, 3))
-    elif r == 4:
+    if r == 4:
         return C((-5, 4))
-    elif r == 5:
+    if r == 5:
         return C((-6, 5))
-    elif r == 6:
+    if r == 6:
         return C((-7, 6))
-    elif r == 7:
+    if r == 7:
         return C.module_generators[0]  # C((7,))

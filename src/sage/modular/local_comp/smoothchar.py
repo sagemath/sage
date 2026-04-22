@@ -182,8 +182,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
         """
         if self._values_on_gens[-1].multiplicative_order() == Infinity:
             return Infinity
-        else:
-            return lcm([x.multiplicative_order() for x in self._values_on_gens])
+        return lcm([x.multiplicative_order() for x in self._values_on_gens])
 
     def level(self):
         r"""
@@ -404,8 +403,7 @@ class SmoothCharacterGroupGeneric(Parent):
         if (isinstance(P, SmoothCharacterGroupGeneric)
                 and P.number_field().has_coerce_map_from(self.number_field())):
             return self.character(x.level(), [x(v) for v in self.unit_gens(x.level())])
-        else:
-            raise TypeError
+        raise TypeError
 
     def __eq__(self, other):
         r"""
@@ -736,9 +734,9 @@ class SmoothCharacterGroupGeneric(Parent):
         n = self.exponents(level)
         for i in range(len(S)):
             if n[i] != 0 and not S[i]**n[i] == 1:
-                raise ValueError( "value on generator %s (=%s) should be a root of unity of order %s" % (self.unit_gens(level)[i], S[i], n[i]) )
+                raise ValueError("value on generator %s (=%s) should be a root of unity of order %s" % (self.unit_gens(level)[i], S[i], n[i]))
             elif n[i] == 0 and not S[i].is_unit():
-                raise ValueError( "value on uniformiser %s (=%s) should be a unit" % (self.unit_gens(level)[i], S[i]) )
+                raise ValueError("value on uniformiser %s (=%s) should be a unit" % (self.unit_gens(level)[i], S[i]))
         return self.element_class(self, level, S)
 
     def norm_character(self):
@@ -917,8 +915,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         """
         if level == 0:
             return [QQ(self.prime())]
-        else:
-            return [QQ(x) for x in Zmod(self.prime()**level).unit_gens()] + [QQ(self.prime())]
+        return [QQ(x) for x in Zmod(self.prime()**level).unit_gens()] + [QQ(self.prime())]
 
     def exponents(self, level):
         r"""
@@ -1011,7 +1008,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         """
         x = self.number_field().coerce(x)
         if x == 0:
-            raise ValueError( "cannot evaluate at zero" )
+            raise ValueError("cannot evaluate at zero")
         s = x.valuation(self.prime())
         return Zmod(self.prime()**level)(x / self.prime()**s).generalised_log() + [s]
 
@@ -1151,36 +1148,34 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
         """
         x = self.number_field().coerce(x)
         if x == 0:
-            raise ValueError( "cannot evaluate at zero" )
+            raise ValueError("cannot evaluate at zero")
         if gens is None:
             n1 = x.valuation(self.ideal(1))
             x1 = x / self.unit_gens(0)[-1] ** n1
             if level == 0:
                 return [n1]
-            else:
-                return self.ideal(level).ideallog(x1, self.unit_gens(level)[:-1]) + [n1]
-        else:
-            P = self.ideal(1)
-            I = self.ideal(level)
-            gens = [self.number_field().coerce(g) for g in gens]
-            i = min(i for i in range(len(gens)) if gens[i].valuation(P) == 1) # lazy!
-            pi = gens[i]
-            genvals = []
-            genunits = []
-            for g in gens:
-                genvals.append(g.valuation(P))
-                gu = g / pi**genvals[-1]
-                gu *= gu.denominator_ideal().element_1_mod(I)
-                genunits.append(I.reduce(gu))
-            xunit = x / pi**x.valuation(P)
-            xunit = I.reduce(xunit * xunit.denominator_ideal().element_1_mod(I))
-            verbose("computing log of %s in basis %s" % (xunit, genunits), level=1)
-            dl = I.ideallog(xunit, genunits)
-            pi_term = x.valuation(P) - sum(dl[j] * genvals[j] for j in range(len(gens)))
-            dl[i] += pi_term
-            X = prod(gens[j] ** dl[j] for j in range(len(gens)))
-            assert (X/x - 1).valuation(P) >= level
-            return dl
+            return self.ideal(level).ideallog(x1, self.unit_gens(level)[:-1]) + [n1]
+        P = self.ideal(1)
+        I = self.ideal(level)
+        gens = [self.number_field().coerce(g) for g in gens]
+        i = min(i for i in range(len(gens)) if gens[i].valuation(P) == 1) # lazy!
+        pi = gens[i]
+        genvals = []
+        genunits = []
+        for g in gens:
+            genvals.append(g.valuation(P))
+            gu = g / pi**genvals[-1]
+            gu *= gu.denominator_ideal().element_1_mod(I)
+            genunits.append(I.reduce(gu))
+        xunit = x / pi**x.valuation(P)
+        xunit = I.reduce(xunit * xunit.denominator_ideal().element_1_mod(I))
+        verbose("computing log of %s in basis %s" % (xunit, genunits), level=1)
+        dl = I.ideallog(xunit, genunits)
+        pi_term = x.valuation(P) - sum(dl[j] * genvals[j] for j in range(len(gens)))
+        dl[i] += pi_term
+        X = prod(gens[j] ** dl[j] for j in range(len(gens)))
+        assert (X/x - 1).valuation(P) >= level
+        return dl
 
     @cached_method
     def quotient_gens(self, n):
@@ -1227,8 +1222,7 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
         if n == 0:
             if self.ideal(1).norm().is_prime():
                 return [self.unit_gens(0), [2]]
-            else:
-                return [[], []]
+            return [[], []]
 
         p = self.prime()
         I = self.ideal(n)
@@ -1258,8 +1252,7 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
         if len(qgs) == 2:
             x, y = qgs
             return [x * y, y]
-        else:
-            return qgs
+        return qgs
 
     def _reduce_Qp(self, level, x):
         r"""
@@ -1544,13 +1537,12 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
 
         if c == 0:
             return [K(p)]
-        elif c == 1:
+        if c == 1:
             return [a, K(p)]
-        elif p == 2:
+        if p == 2:
             if c == 2:
                 return [a, 1 + 2*a, K(-1), K(2)]
-            else:
-                return [a, 1 + 2*a, 1 + 4*a, K(-1), K(2)]
+            return [a, 1 + 2*a, 1 + 4*a, K(-1), K(2)]
 
         # general case
 
@@ -1579,12 +1571,11 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
         p = self.prime()
         if c == 0:
             return [0]
-        elif c == 1:
+        if c == 1:
             return [p**2 - 1, 0]
-        elif p == 2 and c >= 3:
+        if p == 2 and c >= 3:
             return [p**2 - 1, p**(c-1), p**(c-2), 2, 0]
-        else:
-            return [p**2 - 1, p**(c-1), p**(c-1), 0]
+        return [p**2 - 1, p**(c-1), p**(c-1), 0]
 
     def subgroup_gens(self, level):
         r"""
@@ -1653,7 +1644,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
         """
         prime = ZZ(prime)
         if prime == 2:
-            raise NotImplementedError( "Wildly ramified extensions not supported" )
+            raise NotImplementedError("Wildly ramified extensions not supported")
         SmoothCharacterGroupGeneric.__init__(self, prime, base_ring)
         self._name = names
         if flag not in [0, 1]:
@@ -1665,7 +1656,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
             if (not a % prime) or (not ZZ(a).is_squarefree()) or ((a * prime) % 4 == 1):
                 continue
             if (flag == 0 and Zmod(prime)(a).is_square()) or \
-                (flag == 1 and not Zmod(prime)(a).is_square()):
+                    (flag == 1 and not Zmod(prime)(a).is_square()):
                 self._unif_sqr = a * prime
                 break
         else:
@@ -1764,15 +1755,14 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
             return [s]
         if c == 1:
             return zpgens + [s]
-        elif p > 3 or self._unif_sqr == 3 or c <= 3:
+        if p > 3 or self._unif_sqr == 3 or c <= 3:
             return zpgens + [1 + s, s]
-        else:
-            # Awkward case: K = Q_3(sqrt(-3)). Here the exponential map doesn't
-            # converge on 1 + P, and the quotient (O_K*) / (Zp*) isn't
-            # topologically cyclic. I don't know an explicit set of good
-            # generators here, so we let Pari do the work and put up with the
-            # rather arbitrary (nondeterministic?) results.
-            return list(self.ideal(c).idealstar(2).gens_values()) + [s]
+        # Awkward case: K = Q_3(sqrt(-3)). Here the exponential map doesn't
+        # converge on 1 + P, and the quotient (O_K*) / (Zp*) isn't
+        # topologically cyclic. I don't know an explicit set of good
+        # generators here, so we let Pari do the work and put up with the
+        # rather arbitrary (nondeterministic?) results.
+        return list(self.ideal(c).idealstar(2).gens_values()) + [s]
 
     def exponents(self, c):
         r"""
@@ -1794,14 +1784,13 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
         p = self.prime()
         if c == 0:
             return (0,)
-        elif c == 1:
+        if c == 1:
             return (p - 1, 0)
-        elif p > 3 or self._unif_sqr == 3 or c <= 3:
+        if p > 3 or self._unif_sqr == 3 or c <= 3:
             d = (c + 1) // 2
             return (p**(d - 1) * (p - 1), p**(c // 2), 0)
-        else:
-            # awkward case, see above
-            return self.ideal(c).idealstar(2).gens_orders() + (0,)
+        # awkward case, see above
+        return self.ideal(c).idealstar(2).gens_orders() + (0,)
 
     def subgroup_gens(self, level):
         r"""

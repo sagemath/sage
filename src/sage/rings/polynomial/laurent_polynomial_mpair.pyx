@@ -236,7 +236,6 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         check compatibility with  :issue:`26105`::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<t> = GF(4)
             sage: LF.<a,b> = LaurentPolynomialRing(F)
             sage: rho = LF.hom([b,a], base_map=F.frobenius_endomorphism())
@@ -1142,7 +1141,6 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         Verify that :issue:`31257` is fixed::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = LaurentPolynomialRing(QQ)
             sage: q, r = (1/x).quo_rem(y)
             sage: q, r
@@ -1593,7 +1591,6 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         """
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: R.<x,y> = LaurentPolynomialRing(QQ)
             sage: f = x^3 + y/x
             sage: g = f._symbolic_(SR); g

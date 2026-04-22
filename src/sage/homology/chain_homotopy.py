@@ -41,8 +41,8 @@ isomorphic.
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
-from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom
+from sage.categories.morphism import Morphism
 from sage.homology.chain_complex_morphism import ChainComplexMorphism
 
 
@@ -459,8 +459,8 @@ class ChainContraction(ChainHomotopy):
             ...
             ValueError: not an algebraic gradient vector field
         """
+        from sage.homology.chain_complex_morphism import ChainComplexMorphism
         from sage.matrix.constructor import identity_matrix
-        from .chain_complex_morphism import ChainComplexMorphism
 
         if not (pi.domain() == iota.codomain()
                 and pi.codomain() == iota.domain()):

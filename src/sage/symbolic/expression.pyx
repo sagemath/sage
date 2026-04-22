@@ -407,6 +407,10 @@ include "pynac_impl.pxi"
 
 from sage.symbolic.symbols import symbol_table, register_symbol  # used to be defined in pynac_impl
 
+from sage.misc.lazy_import import LazyImport
+CallableSymbolicExpressionRing_class = LazyImport(
+    'sage.symbolic.callable', 'CallableSymbolicExpressionRing_class')
+
 
 def _dict_update_check_duplicate(dict d1, dict d2):
     r"""
@@ -3074,7 +3078,7 @@ cdef class Expression(Expression_abc):
             sage: (a+2*x).is_callable()
             False
         """
-        return isinstance(self.parent(), sage.rings.abc.CallableSymbolicExpressionRing)
+        return isinstance(self.parent(), CallableSymbolicExpressionRing_class)
 
     def left_hand_side(self):
         """
@@ -5989,18 +5993,18 @@ cdef class Expression(Expression_abc):
         is identity::
 
             sage: x = SR.var("x")
-            sage: all([bool(u(x).exponentialize().demoivre(force=True) == u(x))
-            ....:      for u in (sin, cos, tan, csc, sec, cot,
-            ....:                sinh, cosh, tanh, csch, sech, coth)])
+            sage: all(bool(u(x).exponentialize().demoivre(force=True) == u(x))
+            ....:     for u in (sin, cos, tan, csc, sec, cot,
+            ....:               sinh, cosh, tanh, csch, sech, coth))
             True
 
         Check that differentiation and exponentialization commute::
 
             sage: x = SR.var("x")
-            sage: all([bool(u(x).diff(x).exponentialize() ==
-            ....:           u(x).exponentialize().diff(x))
-            ....:      for u in (sin, cos, tan, csc, sec, cot,
-            ....:                sinh, cosh, tanh, csch, sech, coth)])
+            sage: all(bool(u(x).diff(x).exponentialize() ==
+            ....:          u(x).exponentialize().diff(x))
+            ....:     for u in (sin, cos, tan, csc, sec, cot,
+            ....:               sinh, cosh, tanh, csch, sech, coth))
             True
         """
         from sage.symbolic.expression_conversions import Exponentialize
@@ -13160,13 +13164,14 @@ cdef class Expression(Expression_abc):
             integrate(log(4/5*sin(x) + 1), x, -3.14150000000000,
             3.14150000000000)
             sage: # needs sage.libs.giac
-            sage: integrate(f, x, -3.1415, 3.1415)  # tol 10e-6
+            sage: ans = integrate(f, x, -3.1415, 3.1415)  # random
+            sage: ans  # tol 10e-6
             -1.40205228301000
         """
         from sage.symbolic.integration.integral import \
             integral, _normalize_integral_input
         R = self._parent
-        if isinstance(R, sage.rings.abc.CallableSymbolicExpressionRing):
+        if isinstance(R, CallableSymbolicExpressionRing_class):
             from sage.symbolic.ring import SR
             f = SR(self)
             f, v, a, b = _normalize_integral_input(f, *args)

@@ -2,3 +2,11 @@
 autoconf
 automake
 libtool
+# Python packages needed for configure and build
+python3
+libpython3-dev
+python3-setuptools
+python3-venv
+xz-utils
+liblzma-dev
+# pixz  # provides pixz but not xz on debian buster

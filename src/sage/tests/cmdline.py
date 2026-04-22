@@ -39,7 +39,6 @@ test.spyx
 --ipynb2rst
 --sh
 --singular
---sqlite3
 --standard
 --startuptime
 -t
@@ -176,11 +175,11 @@ Basic information about the Sage installation::
 Test ``sage --info [packages]``::
 
     sage: # optional - sage_spkg
-    sage: out, err, ret = check_executable(["sage", "--info", "sqlite"])
+    sage: out, err, ret = check_executable(["sage", "--info", "pari"])
     sage: print(out)
-    sqlite...
-    SQLite is a software library that implements a self-contained,
-    serverless, zero-configuration, transactional SQL database engine.
+    pari...
+    PARI/GP is a widely used computer algebra system designed for fast
+    computations in number theory...
     ...
     sage: err
     ''
@@ -521,6 +520,7 @@ Some programs of which we check functionality using only ``--version``::
     sage: ret
     0
 
+    sage: # optional - sqlite3
     sage: (out, err, ret) = check_executable(["sage", "--sqlite3", "--version"])
     sage: out.startswith("3.")
     True

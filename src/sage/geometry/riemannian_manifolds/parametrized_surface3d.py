@@ -634,8 +634,7 @@ class ParametrizedSurface3D(SageObject):
         index = tuple(sorted(index))
         if len(index) == 2 and all(i == 1 or i == 2 for i in index):
             return self._compute_first_fundamental_form_coefficient(index)
-        else:
-            raise ValueError("Index %s out of bounds." % str(index))
+        raise ValueError("Index %s out of bounds." % str(index))
 
     def first_fundamental_form_coefficients(self):
         r"""
@@ -785,8 +784,7 @@ class ParametrizedSurface3D(SageObject):
         index = tuple(sorted(index))
         if len(index) == 2 and all(i == 1 or i == 2 for i in index):
             return self.first_fundamental_form_inverse_coefficients()[index]
-        else:
-            raise ValueError("Index %s out of bounds." % str(index))
+        raise ValueError("Index %s out of bounds." % str(index))
 
     @cached_method
     def rotation(self, theta):
@@ -1107,8 +1105,7 @@ class ParametrizedSurface3D(SageObject):
         index = tuple(sorted(index))
         if len(index) == 2 and all(i == 1 or i == 2 for i in index):
             return self._compute_second_order_frame_element(index)
-        else:
-            raise ValueError("Index %s out of bounds." % str(index))
+        raise ValueError("Index %s out of bounds." % str(index))
 
     @cached_method
     def _compute_second_fundamental_form_coefficient(self, index):
@@ -1156,8 +1153,7 @@ class ParametrizedSurface3D(SageObject):
         index = tuple(index)
         if len(index) == 2 and all(i == 1 or i == 2 for i in index):
             return self._compute_second_fundamental_form_coefficient(index)
-        else:
-            raise ValueError("Index %s out of bounds." % str(index))
+        raise ValueError("Index %s out of bounds." % str(index))
 
     def second_fundamental_form_coefficients(self):
         """

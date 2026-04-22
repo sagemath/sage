@@ -479,7 +479,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         if data == 1:
             return self.one()
 
-        elif data is None:
+        if data is None:
             raise ValueError('%s cannot be converted.' % (data,))
 
         elif type(data) is self.element_class and data.parent() == self:
@@ -495,7 +495,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             if P is self:
                 return data
 
-            elif P is SR:
+            if P is SR:
                 from sage.symbolic.operators import mul_vararg
                 if data.operator() == mul_vararg:
                     return convert_factors(data.operands(), data)
@@ -642,7 +642,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         if CartesianProductPoset.has_coerce_map_from(self, S):
             return True
 
-        elif isinstance(S, GenericProduct):
+        if isinstance(S, GenericProduct):
             factors = S.cartesian_factors()
         else:
             factors = (S,)
@@ -1295,9 +1295,8 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                         var=var, zeta=zeta, alpha=a.exponent,
                         beta=ZZ(b.exponent), delta=0,
                         precision=precision, normalized=False)
-                else:
-                    raise NotImplementedError(
-                        'singularity analysis of {} not implemented'.format(self))
+                raise NotImplementedError(
+                    'singularity analysis of {} not implemented'.format(self))
             else:
                 raise NotImplementedError(
                     'singularity analysis of {} not yet implemented '

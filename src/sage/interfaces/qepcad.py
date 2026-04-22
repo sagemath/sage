@@ -604,19 +604,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import os
-from sage.env import SAGE_LOCAL
-import pexpect
 import re
 import sys
 
+import pexpect
+
 from sage.cpython.string import bytes_to_str
+from sage.env import SAGE_LOCAL
+from sage.interfaces.expect import Expect, ExpectFunction
+from sage.interfaces.interface import AsciiArtString
+from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.flatten import flatten
+from sage.misc.instancedoc import instancedoc
 from sage.misc.sage_eval import sage_eval
 from sage.repl.preparse import implicit_mul
-from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.misc.instancedoc import instancedoc
-from .expect import Expect, ExpectFunction
-from sage.interfaces.interface import AsciiArtString
 
 
 def _qepcad_atoms(formula):
@@ -1070,8 +1071,7 @@ class Qepcad:
         match = self._qex.expect().match
         if match == pexpect.EOF:
             return 'EXITED'
-        else:
-            return bytes_to_str(match.group(1))
+        return bytes_to_str(match.group(1))
 
     def _parse_answer_stats(self):
         r"""
@@ -1099,8 +1099,7 @@ class Qepcad:
 
         if match:
             return (match.group(1).strip(), match.group(2))
-        else:
-            return (final, '')
+        return (final, '')
 
     def answer(self):
         r"""
@@ -1186,10 +1185,9 @@ class Qepcad:
         index_str = _format_cell_index(index)
         if index_str in self._cell_cache:
             return self._cell_cache[index_str]
-        else:
-            c = self.make_cells(self.d_cell(index))[0]
-            self._cell_cache[index_str] = c
-            return c
+        c = self.make_cells(self.d_cell(index))[0]
+        self._cell_cache[index_str] = c
+        return c
 
     def make_cells(self, text):
         r"""
@@ -1367,8 +1365,7 @@ def _format_cell_index(a):
         a[0:1] = a[0].index()
     if len(a) == 1:
         return '(%s)' % a[0]
-    else:
-        return str(tuple(a))
+    return str(tuple(a))
 
 
 @instancedoc
@@ -1642,44 +1639,42 @@ def qepcad(formula, assume=None, interact=False, solution=None,
         if solution is not None:
             print("WARNING: 'solution=' is ignored for interactive use")
         return qe
-    else:
-        qe.go()
-        qe.go()
-        qe.go()
-        if solution is None:
-            qe.finish()
-            return qe.answer()
-        elif solution == 'geometric':
-            s = qe.solution_extension('G')
-            qe.quit()
-            return s
-        elif solution == 'extended':
-            s = qe.solution_extension('E')
-            qe.quit()
-            return s
-        elif solution == 'any-point':
-            if use_witness:
-                cells = qe.make_cells(qe.d_witness_list())
-            else:
-                cells = qe.make_cells(qe.d_true_cells())
-            qe.quit()
-            if len(cells) == 0:
-                raise ValueError("input formula is false everywhere")
-            return cells[0].sample_point_dict()
-        elif solution == 'cell-points':
-            cells = qe.make_cells(qe.d_true_cells())
-            qe.quit()
-            return [c.sample_point_dict() for c in cells]
-        elif solution == 'all-points':
-            cells = qe.make_cells(qe.d_true_cells())
-            qe.quit()
-            for c in cells:
-                if c._dimension > 0:
-                    raise ValueError("input formula is true for "
-                                     "infinitely many points")
-            return [c.sample_point_dict() for c in cells]
+    qe.go()
+    qe.go()
+    qe.go()
+    if solution is None:
+        qe.finish()
+        return qe.answer()
+    if solution == 'geometric':
+        s = qe.solution_extension('G')
+        qe.quit()
+        return s
+    if solution == 'extended':
+        s = qe.solution_extension('E')
+        qe.quit()
+        return s
+    if solution == 'any-point':
+        if use_witness:
+            cells = qe.make_cells(qe.d_witness_list())
         else:
-            raise ValueError(f"Unknown solution type ({solution})")
+            cells = qe.make_cells(qe.d_true_cells())
+        qe.quit()
+        if len(cells) == 0:
+            raise ValueError("input formula is false everywhere")
+        return cells[0].sample_point_dict()
+    if solution == 'cell-points':
+        cells = qe.make_cells(qe.d_true_cells())
+        qe.quit()
+        return [c.sample_point_dict() for c in cells]
+    if solution == 'all-points':
+        cells = qe.make_cells(qe.d_true_cells())
+        qe.quit()
+        for c in cells:
+            if c._dimension > 0:
+                raise ValueError("input formula is true for "
+                                 "infinitely many points")
+        return [c.sample_point_dict() for c in cells]
+    raise ValueError(f"Unknown solution type ({solution})")
 
 
 def qepcad_console(memcells=None):
@@ -1967,8 +1962,7 @@ class qepcad_formula_factory:
         """
         if isinstance(formula, (list, tuple)):
             return self.and_(formula)
-        else:
-            return self.atomic(formula)
+        return self.atomic(formula)
 
     def and_(self, *formulas):
         r"""
@@ -2294,9 +2288,8 @@ class qepcad_formula_factory:
         if allow_multi and isinstance(v, (list, tuple)):
             if not v:
                 return formula
-            else:
-                return self.quantifier(kind, v[0],
-                                       self.quantifier(kind, v[1:], formula))
+            return self.quantifier(kind, v[0],
+                                   self.quantifier(kind, v[1:], formula))
 
         form_str = str(formula)
         if form_str[-1] != ']':
@@ -2336,10 +2329,10 @@ def _eval_qepcad_algebraic(text):
         sage: 8*x^2 - 8*x - 29 == 0
         True
     """
-    from sage.rings.rational_field import QQ
     from sage.rings.polynomial.polynomial_ring import polygen
-    from sage.rings.real_mpfi import RealIntervalField
     from sage.rings.qqbar import AA
+    from sage.rings.rational_field import QQ
+    from sage.rings.real_mpfi import RealIntervalField
 
     match = _qepcad_algebraic_re.match(text)
 

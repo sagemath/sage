@@ -71,9 +71,9 @@ from sage.rings.ring import Field
 from sage.misc.mrange import cartesian_product_iterator
 import sage.rings.abc
 from sage.rings.finite_rings import integer_mod
-import sage.rings.integer as integer
-import sage.rings.integer_ring as integer_ring
-import sage.rings.quotient_ring as quotient_ring
+from sage.rings import integer
+from sage.rings import integer_ring
+from sage.rings import quotient_ring
 
 try:
     from sage.libs.pari import pari
@@ -242,8 +242,7 @@ class IntegerModFactory(UniqueFactory):
             order = -order
         if order == 0:
             return integer_ring.IntegerRing(**kwds)
-        else:
-            return IntegerModRing_generic(order, **kwds)
+        return IntegerModRing_generic(order, **kwds)
 
 
 Zmod = Integers = IntegerModRing = IntegerModFactory("IntegerModRing")
@@ -318,7 +317,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         sage: FF.order()
         29
 
-        sage: # needs sage.groups
         sage: gens = FF.unit_gens()
         sage: a = gens[0]
         sage: a
@@ -380,7 +378,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         sage: Z16.characteristic()
         16
 
-        sage: # needs sage.groups
         sage: gens = Z16.unit_gens()
         sage: gens
         (15, 5)
@@ -459,7 +456,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             raise ZeroDivisionError("order must be positive")
         self.__order = order
         self._pyx_order = integer_mod.NativeIntStruct(order)
-        global default_category
         if category is None:
             category = default_category
         else:
@@ -534,25 +530,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return integer.Integer(0)
 
-    def extension(self, poly, name=None, names=None, **kwds):
-        """
-        Return an algebraic extension of ``self``. See
-        :meth:`sage.rings.ring.CommutativeRing.extension()` for more
-        information.
-
-        EXAMPLES::
-
-            sage: R.<t> = QQ[]
-            sage: Integers(8).extension(t^2 - 3)
-            Univariate Quotient Polynomial Ring in t
-             over Ring of integers modulo 8 with modulus t^2 + 5
-        """
-        if self.modulus() == 1:
-            return self
-
-        from sage.rings.ring import CommutativeRing
-        return CommutativeRing.extension(self, poly, name, names, **kwds)
-
     @cached_method
     def is_prime_field(self) -> bool:
         """
@@ -611,7 +588,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         EXAMPLES::
 
-            sage: # optional - gap_package_polycyclic, needs sage.groups
+            sage: # optional - gap_package_polycyclic
             sage: Integers(5).multiplicative_subgroups()
             ((2,), (4,), ())
             sage: Integers(15).multiplicative_subgroups()
@@ -623,11 +600,11 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         TESTS::
 
-            sage: IntegerModRing(1).multiplicative_subgroups()                          # needs sage.groups
+            sage: IntegerModRing(1).multiplicative_subgroups()
             ((),)
-            sage: IntegerModRing(2).multiplicative_subgroups()                          # needs sage.groups
+            sage: IntegerModRing(2).multiplicative_subgroups()
             ((),)
-            sage: IntegerModRing(3).multiplicative_subgroups()  # optional - gap_package_polycyclic, needs sage.groups
+            sage: IntegerModRing(3).multiplicative_subgroups()  # optional - gap_package_polycyclic
             ((2,), ())
         """
         return tuple(tuple(g.value() for g in H.gens())
@@ -641,7 +618,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
             sage: Integers(389).is_integral_domain()
             True
-            sage: Integers(389^2).is_integral_domain()                                  # needs sage.libs.pari
+            sage: Integers(389^2).is_integral_domain()
             False
 
         TESTS:
@@ -662,7 +639,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
             sage: Integers(389).is_unique_factorization_domain()
             True
-            sage: Integers(389^2).is_unique_factorization_domain()                      # needs sage.libs.pari
+            sage: Integers(389^2).is_unique_factorization_domain()
             False
         """
         return self.is_field(proof)
@@ -856,7 +833,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         EXAMPLES::
 
-            sage: # needs sage.groups sage.libs.pari
             sage: R = Integers(7); R
             Ring of integers modulo 7
             sage: R.multiplicative_generator()
@@ -931,7 +907,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         ::
 
-            sage: # needs sage.libs.pari
             sage: v = Integers(9*5).square_roots_of_one(); v
             (1, 19, 26, 44)
             sage: [x^2 for x in v]
@@ -1118,7 +1093,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K2 = GF(2)
             sage: K3 = GF(3)
             sage: K8 = GF(8, 'a')
@@ -1250,9 +1224,9 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         if S is int:
             return integer_mod.Int_to_IntegerMod(self)
-        elif S is integer_ring.ZZ:
+        if S is integer_ring.ZZ:
             return integer_mod.Integer_to_IntegerMod(self)
-        elif isinstance(S, IntegerModRing_generic):
+        if isinstance(S, IntegerModRing_generic):
             if isinstance(S, Field):
                 return None
             try:
@@ -1423,7 +1397,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         differ in various ways.  In the following example, the same
         cyclic factors are computed, but in a different order::
 
-            sage: # needs sage.groups
             sage: A = Zmod(15)
             sage: G = A.unit_group(); G
             Multiplicative Abelian group isomorphic to C2 x C4
@@ -1437,7 +1410,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         Here are two examples where the cyclic factors are isomorphic,
         but are ordered differently and have different generators::
 
-            sage: # needs sage.groups
             sage: A = Zmod(40)
             sage: G = A.unit_group(); G
             Multiplicative Abelian group isomorphic to C2 x C2 x C4
@@ -1448,7 +1420,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: H.gens_values()                                                       # needs sage.libs.pari
             (17, 31, 21)
 
-            sage: # needs sage.groups
             sage: A = Zmod(192)
             sage: G = A.unit_group(); G
             Multiplicative Abelian group isomorphic to C2 x C16 x C2
@@ -1480,7 +1451,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         We test the cases where the unit group is trivial::
 
-            sage: # needs sage.groups
             sage: A = Zmod(1)
             sage: A.unit_group()
             Trivial Abelian group
