@@ -75,7 +75,6 @@ Construct multivariate power series rings over various base rings.
 
 - Use angle-bracket notation::
 
-    sage: # needs sage.rings.finite_rings
     sage: S.<x,y> = PowerSeriesRing(GF(65537)); S
     Multivariate Power Series Ring in x, y over Finite Field of size 65537
     sage: s = -30077*x + 9485*x*y - 6260*y^3 + 12870*x^2*y^2 - 20289*y^4 + S.O(5); s
@@ -160,7 +159,6 @@ Coercion from polynomial ring in subset of variables::
 
 Coercion from symbolic ring::
 
-    sage: # needs sage.symbolic
     sage: x,y = var('x,y')
     sage: S = PowerSeriesRing(GF(11),2,'x,y'); S
     Multivariate Power Series Ring in x, y over Finite Field of size 11
@@ -203,7 +201,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-import sage.misc.latex as latex
+from sage.misc import latex
 
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
@@ -225,46 +223,6 @@ _IntegralDomains = IntegralDomains()
 
 lazy_import('sage.rings.lazy_series_ring', ('LazyPowerSeriesRing',
                                             'LazyLaurentSeriesRing'))
-
-
-def is_MPowerSeriesRing(x):
-    """
-    Return ``True`` if input is a multivariate power series ring.
-
-    TESTS::
-
-        sage: from sage.rings.power_series_ring import is_PowerSeriesRing
-        sage: from sage.rings.multi_power_series_ring import is_MPowerSeriesRing
-        sage: M = PowerSeriesRing(ZZ, 4, 'v')
-        sage: is_PowerSeriesRing(M)
-        doctest:warning...
-        DeprecationWarning: The function is_PowerSeriesRing is deprecated;
-        use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.
-        See https://github.com/sagemath/sage/issues/38290 for details.
-        False
-        sage: is_MPowerSeriesRing(M)
-        doctest:warning...
-        DeprecationWarning: The function is_MPowerSeriesRing is deprecated;
-        use 'isinstance(..., (MPowerSeriesRing_generic, LazyPowerSeriesRing))' instead.
-        See https://github.com/sagemath/sage/issues/38290 for details.
-        True
-        sage: T = PowerSeriesRing(RR, 'v')
-        sage: is_PowerSeriesRing(T)
-        True
-        sage: is_MPowerSeriesRing(T)
-        False
-        sage: L = LazyPowerSeriesRing(QQ, 'x')
-        sage: is_MPowerSeriesRing(L)
-        True
-        sage: L = LazyPowerSeriesRing(QQ, 'x, y')
-        sage: is_MPowerSeriesRing(L)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38290,
-                "The function is_MPowerSeriesRing is deprecated; "
-                "use 'isinstance(..., (MPowerSeriesRing_generic, LazyPowerSeriesRing))' instead.")
-    return isinstance(x, (MPowerSeriesRing_generic, LazyPowerSeriesRing))
 
 
 class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
@@ -722,7 +680,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         You must either give a base map or there must be a coercion
         from the base ring to the codomain::
 
-            sage: # needs sage.rings.number_field
             sage: T.<t> = ZZ[]
             sage: K.<i> = NumberField(t^2 + 1)
             sage: Q8.<z> = CyclotomicField(8)
@@ -773,7 +730,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: A = GF(17)[['x','y']]
             sage: A.has_coerce_map_from(ZZ)
             True

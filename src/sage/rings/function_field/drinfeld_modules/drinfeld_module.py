@@ -769,8 +769,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         if self.get_custom_name() is not None:
             return latex_variable_name(self.get_custom_name())
-        else:
-            return f'\\phi: {latex(self._function_ring.gen())} \\mapsto ' \
+        return f'\\phi: {latex(self._function_ring.gen())} \\mapsto ' \
                    f'{latex(self._gen)}'
 
     def _repr_(self) -> str:
@@ -1437,14 +1436,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # - when absolutely=False, over the ground field.
         if absolutely:
             return True
-        else:
-            try:
-                _ = ue.nth_root(e)
-            except ValueError:
-                return False
-            except (AttributeError, NotImplementedError):
-                raise NotImplementedError(f"cannot solve the equation u^{e} == {ue}")
-            return True
+        try:
+            _ = ue.nth_root(e)
+        except ValueError:
+            return False
+        except (AttributeError, NotImplementedError):
+            raise NotImplementedError(f"cannot solve the equation u^{e} == {ue}")
+        return True
 
     def is_finite(self) -> bool:
         r"""
@@ -1692,7 +1690,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             dk = Integer((q**r - 1) / (q**gcd(parameter, r) - 1))
             dr = Integer((q**parameter - 1) / (q**gcd(parameter, r) - 1))
             return self._gen[parameter]**dk / self._gen[-1]**dr
-        elif isinstance(parameter, (tuple, list)):
+        if isinstance(parameter, (tuple, list)):
             if len(parameter) != 2:
                 raise ValueError("list or tuple parameter must be of length 2")
             if not isinstance(parameter[0], (tuple, list)) \
@@ -1934,8 +1932,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         quo, rem = (isog * self.gen()).right_quo_rem(isog)
         if rem.is_zero() and quo[0] == self.gen()[0]:
             return self.category().object(quo)
-        else:
-            raise e
+        raise e
 
     def hom(self, x, codomain=None):
         r"""

@@ -863,7 +863,7 @@ class AlternatingSignMatrix(Element,
             parkfn = [nplus - row[0] for row in list(MT) if row]
             return NonDecreasingParkingFunction(parkfn).to_dyck_word().reverse()
 
-        elif algorithm == 'link_pattern':
+        if algorithm == 'link_pattern':
             from sage.combinat.perfect_matching import PerfectMatching
             from sage.combinat.dyck_word import DyckWords
             p = PerfectMatching(self.link_pattern()).to_noncrossing_set_partition()

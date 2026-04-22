@@ -24,7 +24,6 @@ Quotienting is a constructor for an element of the fraction field::
 The GCD is not taken (since it doesn't converge sometimes) in the
 inexact case::
 
-    sage: # needs sage.rings.real_mpfr
     sage: Z.<z> = CC[]
     sage: I = CC.gen()
     sage: (1+I+z)/(z+0.1*I)
@@ -82,7 +81,7 @@ Test that :issue:`15971` is fixed::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.misc.latex as latex
+from sage.misc import latex
 from sage.categories.basic import QuotientFields, Rings
 from sage.categories.map import Section
 from sage.misc.cachefunc import cached_method
@@ -141,29 +140,6 @@ def FractionField(R, names=None):
     if not R.is_integral_domain():
         raise TypeError("R must be an integral domain")
     return R.fraction_field()
-
-
-def is_FractionField(x) -> bool:
-    """
-    Test whether or not ``x`` inherits from :class:`FractionField_generic`.
-
-    EXAMPLES::
-
-        sage: from sage.rings.fraction_field import is_FractionField
-        sage: is_FractionField(Frac(ZZ['x']))
-        doctest:warning...
-        DeprecationWarning: The function is_FractionField is deprecated;
-        use 'isinstance(..., FractionField_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_FractionField(QQ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38128,
-                "The function is_FractionField is deprecated; "
-                "use 'isinstance(..., FractionField_generic)' instead.")
-    return isinstance(x, FractionField_generic)
 
 
 class FractionField_generic(ring.Field):
@@ -275,7 +251,6 @@ class FractionField_generic(ring.Field):
         We demonstrate that :issue:`7958` is resolved in the case of
         number fields::
 
-            sage: # needs sage.rings.number_field
             sage: _.<x> = ZZ[]
             sage: K.<a> = NumberField(x^5 - 3*x^4 + 2424*x^3 + 2*x - 232)
             sage: R = K.ring_of_integers()
@@ -309,7 +284,6 @@ class FractionField_generic(ring.Field):
             sage: 1/(R.gen() + 1)
             1/(x + 1)
 
-            sage: # needs sage.modules
             sage: R = LaurentPolynomialRing(ZZ, 'x,y')
             sage: FF = FractionField(PolynomialRing(ZZ, 'x,y'))
             sage: prod(R.gens()) + prod(FF.gens())
@@ -327,7 +301,6 @@ class FractionField_generic(ring.Field):
 
         Coercion from a localization::
 
-            sage: # needs sage.libs.pari
             sage: R.<x> = ZZ[]
             sage: L = Localization(R, (x**2 + 1,7))
             sage: F = L.fraction_field()
@@ -407,7 +380,6 @@ class FractionField_generic(ring.Field):
         We demonstrate that :issue:`7958` is resolved in the case of
         number fields::
 
-            sage: # needs sage.rings.number_field
             sage: _.<x> = ZZ[]
             sage: K.<a> = NumberField(x^5 - 3*x^4 + 2424*x^3 + 2*x - 232)
             sage: R = K.ring_of_integers()
@@ -1076,8 +1048,7 @@ class FractionField_generic(ring.Field):
         if g.is_zero():
             if f.is_zero():
                 return f
-            else:
-                return f.monic()
+            return f.monic()
         Pol = f.parent()
         Num = Pol.change_ring(self.base())
         f1 = Num(f.numerator())
@@ -1146,7 +1117,6 @@ class FractionField_1poly_field(FractionField_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: K = k['t'].fraction_field()
             sage: R.<x> = K[]
@@ -1183,7 +1153,6 @@ class FractionField_1poly_field(FractionField_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(5)[]
             sage: K = R.fraction_field()
             sage: L = K.function_field()
@@ -1410,7 +1379,6 @@ class FractionFieldEmbeddingSection(Section):
         Over inexact rings, we have to take the precision of the denominators
         into account::
 
-            sage: # needs sage.rings.padics
             sage: R = ZpCR(2)
             sage: S.<x> = R[]
             sage: f = x/S(R(3, absprec=2))

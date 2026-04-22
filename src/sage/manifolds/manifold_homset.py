@@ -212,8 +212,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     #### Parent methods ####
 

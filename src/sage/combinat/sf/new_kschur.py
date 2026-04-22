@@ -176,8 +176,7 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
         if self.t == 1:
             return [self.kschur(), self.ksplit(), self.khomogeneous(),
                 self.K_kschur()]
-        else:
-            return [self.kschur(), self.ksplit()]
+        return [self.kschur(), self.ksplit()]
 
     def kschur(self):
         r"""
@@ -344,8 +343,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             if x in R:
                 if x == 0:
                     return self.zero()
-                else:
-                    raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
+                raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
             # x is an element of the basis enumerated set;
             elif x in self._indices:
                 return self.monomial(self._indices(x))

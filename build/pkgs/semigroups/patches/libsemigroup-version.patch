@@ -1,0 +1,7 @@
+diff --git a/.LIBSEMIGROUPS_VERSION b/.LIBSEMIGROUPS_VERSION
+new file mode 100644
+index 0000000..d5c0c99
+--- /dev/null
++++ b/.LIBSEMIGROUPS_VERSION
+@@ -0,0 +1 @@
++3.5.1

@@ -39,7 +39,6 @@ Obtain the facets of a polyhedron::
 
 Obtain the Vrepresentation of a polyhedron as facet-incidences::
 
-    sage: # needs sage.combinat
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
     ....:         import incidence_matrix_to_bit_rep_of_Vrep
     sage: P = polytopes.associahedron(['A',3])

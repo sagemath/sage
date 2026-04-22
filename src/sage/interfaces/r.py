@@ -405,8 +405,7 @@ def _setup_r_to_sage_converter():
     def list_to_singleton_if_possible(l):
         if len(l) == 1:
             return l[0]
-        else:
-            return l
+        return l
 
     def _vector(vec):
         attrs = vec.list_attrs()
@@ -423,9 +422,8 @@ def _setup_r_to_sage_converter():
                 '_Names': names,
                 '_r_class': rclass,
             }
-        else:
-            # if no names are present, convert to a normal list or a single value
-            return data
+        # if no names are present, convert to a normal list or a single value
+        return data
     rpy2py.register(SexpVector, _vector)
 
     def _matrix(mat):
@@ -552,6 +550,14 @@ class R(ExtraTabCompletion, Interface):
             # Set this to True *before* the call to start, since that will call eval() which will in turn call this function.
             # Setting this to True early prevents infinite recursion.
             self._initialized = True
+            # Workaround for rpy2 calling super().__del__() which does not
+            # exist in Python 3.13+ (object has no __del__).
+            # https://github.com/rpy2/rpy2/pull/1234
+            import rpy2.robjects.help
+            if not hasattr(object, '__del__'):
+                def _Package__del__(self):
+                    self._dbcon.close()
+                rpy2.robjects.help.Package.__del__ = _Package__del__
             self._r_to_sage_converter = _setup_r_to_sage_converter()
             self._start()
 
@@ -1592,18 +1598,17 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         if isinstance(n, str):
             n = n.replace('self', self._name)
             return P.new('%s[%s]' % (self._name, n))
-        elif parent(n) is P:  # the key is RElement itself
+        if parent(n) is P:  # the key is RElement itself
             return P.new('%s[%s]' % (self._name, n.name()))
-        elif not isinstance(n, tuple):
+        if not isinstance(n, tuple):
             return P.new('%s[%s]' % (self._name, n))
-        else:
-            L = []
-            for i in range(len(n)):
-                if parent(n[i]) is P:
-                    L.append(n[i].name())
-                else:
-                    L.append(str(n[i]))
-            return P.new('%s[%s]' % (self._name, ','.join(L)))
+        L = []
+        for i in range(len(n)):
+            if parent(n[i]) is P:
+                L.append(n[i].name())
+            else:
+                L.append(str(n[i]))
+        return P.new('%s[%s]' % (self._name, ','.join(L)))
 
     def __bool__(self):
         """

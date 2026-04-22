@@ -57,7 +57,7 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
                 # Should give the information that this is an anti-morphism of algebra
                 return self._module_morphism(self.antipode_on_basis,
                                              codomain=self)
-            elif hasattr(self, "antipode_by_coercion"):
+            if hasattr(self, "antipode_by_coercion"):
                 return self.antipode_by_coercion
 
         def _test_antipode(self, **options):

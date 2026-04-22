@@ -216,4 +216,3 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
         """
         cdef Matrix_modn_dense_double _src = <Matrix_modn_dense_double>src
         self._matrix[iDst][jDst] = _src._matrix[iSrc][jSrc]
-        

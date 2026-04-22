@@ -894,11 +894,10 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
             inverse_map = field(x.prime()**power_of_p) * z + reduced_value
             if self.domain().is_padic_base():
                 return self.domain()(inverse_map(0), (inverse_map(1) - inverse_map(0)).abs())
-            else:
-                val = (inverse_map(1) - inverse_map(0)).valuation(ideal)
-                if val == Infinity:
-                    return self.domain()(inverse_map(0), 0)
-                return self.domain()(inverse_map(0), x.prime()**(-1 * val))
+            val = (inverse_map(1) - inverse_map(0)).valuation(ideal)
+            if val == Infinity:
+                return self.domain()(inverse_map(0), 0)
+            return self.domain()(inverse_map(0), x.prime()**(-1 * val))
         # point is now type III, so we compute using Proposition 7.6 [of Benedetto]
         affine_system = f.dehomogenize(1)
         dem = affine_system.defining_polynomials()[0].denominator().univariate_polynomial()

@@ -444,9 +444,23 @@ class IntersphinxCache:
 
 
 def main():
+    # Before parsing the command line, insert SAGE_DOCBUILD_OPTS into
+    # the list of arguments.
+    docbuild_opts = os.getenv("SAGE_DOCBUILD_OPTS", "")
+
+    # Handle the empty strings that arise when SAGE_DOCBUILD_OPTS is
+    # unset, or when multiple spaces appear between e.g. --foo  --bar.
+    docbuild_args = [arg for arg in docbuild_opts.split(" ") if arg]
+
+    # Insert the SAGE_DOCBUILD_OPTS before the remaining args. This
+    # ensures that they are actually processed as options. Note: when
+    # the args passed to parse_args() are not implicit, they shouldn't
+    # include sys.argv[0].
+    all_args = docbuild_args + sys.argv[1:]
+
     # Parse the command-line.
     parser = setup_parser()
-    args: BuildOptions = parser.parse_args() # type: ignore
+    args: BuildOptions = parser.parse_args(all_args) # type: ignore
 
     # Check that the docs source directory exists
     if args.source_dir is None:

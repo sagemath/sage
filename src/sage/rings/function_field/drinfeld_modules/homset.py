@@ -492,19 +492,17 @@ class DrinfeldModuleHomset(Homset):
         if self.base() not in FiniteFields():
             if degree is None:
                 return self.zero()
-            else:
-                raise NotImplementedError("computing isogenies are currently only implemented over finite fields")
+            raise NotImplementedError("computing isogenies are currently only implemented over finite fields")
         if degree is None:
             basis = self._A_basis()
             if len(basis) == 0:
                 return self.zero()
             return basis[0]
-        else:
-            basis = self._Fq_basis(degree=degree)
-            for isogeny in basis:
-                if isogeny.degree() == degree:
-                    return isogeny
-            raise ValueError("no isogeny of given degree")
+        basis = self._Fq_basis(degree=degree)
+        for isogeny in basis:
+            if isogeny.degree() == degree:
+                return isogeny
+        raise ValueError("no isogeny of given degree")
 
     def zero(self):
         r"""
@@ -719,7 +717,7 @@ class DrinfeldModuleHomset(Homset):
 
         # We write the linear system and solve it
         sys = Matrix(Fq, (d + r + 1) * n, (d + 1) * n)
-        for k in range(0, d + r + 1):
+        for k in range(d + r + 1):
             for i in range(max(0, k - r), min(k, d) + 1):
                 # We represent multiplication and Frobenius
                 # as operators acting on K as a vector space
@@ -840,8 +838,7 @@ class DrinfeldModuleHomset(Homset):
             raise NotImplementedError("computing basis of homsets are currently only implemented over finite fields")
         if degree is None:
             return self._A_basis()
-        else:
-            return self._Fq_basis(degree)
+        return self._Fq_basis(degree)
 
     def basis_over_frobenius(self):
         r"""

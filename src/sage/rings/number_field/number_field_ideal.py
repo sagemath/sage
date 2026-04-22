@@ -29,13 +29,13 @@ AUTHORS:
 
 SMALL_DISC = 1000000
 
-import sage.misc.latex as latex
+from sage.misc import latex
 
-import sage.rings.rational_field as rational_field
-import sage.rings.integer_ring as integer_ring
+from sage.rings import rational_field
+from sage.rings import integer_ring
 from sage.arith.misc import kronecker as kronecker_symbol
 from sage.arith.misc import GCD as gcd
-import sage.misc.misc as misc
+from sage.misc import misc
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
 from sage.rings.ideal import Ideal_generic, Ideal_fractional
@@ -273,7 +273,6 @@ class NumberFieldIdeal(Ideal_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: K.<I>=QQ[i]
             sage: A = K.ideal([5, 2 + I])
             sage: B = K.ideal([13, 5 + 12*I])
@@ -539,8 +538,7 @@ class NumberFieldIdeal(Ideal_generic):
         two_gens = self.gens_two()
         if two_gens[1]:
             return two_gens
-        else:
-            return (two_gens[0],)
+        return (two_gens[0],)
 
     def __pari__(self):
         """
@@ -2491,8 +2489,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal,
         if self.is_integral() and other.is_integral():
             if gcd(ZZ(self.absolute_norm()), ZZ(other.absolute_norm())) == 1:
                 return True
-            else:
-                return self+other == one
+            return self+other == one
         # This special case is necessary since the zero ideal is not a
         # fractional ideal!
         if other.absolute_norm() == 0:

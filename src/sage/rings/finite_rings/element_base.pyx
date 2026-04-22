@@ -166,6 +166,83 @@ cdef class FiniteRingElement(CommutativeRingElement):
             return (R.one(), self)
         return NotImplemented
 
+    def minpoly_over(self, F, var='x'):
+        r"""
+        Return the minimal polynomial of this finite-field element over
+        the given base field, which must be a subfield of the parent of
+        this element.
+
+        EXAMPLES::
+
+            sage: f = GF(101^2).gen().minpoly_over(GF(101^2)); f
+            x + 100*z2
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field in z2 of size 101^2
+
+        ::
+
+            sage: f = GF(101^4).gen().minpoly_over(GF(101^2)); f
+            x^2 + (31*z2 + 39)*x + z2
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field in z2 of size 101^2
+
+        ::
+
+            sage: GF(101^3).gen().minpoly_over(GF(101^2))
+            Traceback (most recent call last):
+            ...
+            ValueError: Finite Field in z2 of size 101^2 does not embed into Finite Field in z3 of size 101^3
+
+        ::
+
+            sage: f = GF(101)(42).minpoly_over(GF(101)); f
+            x + 59
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field of size 101
+
+        ::
+
+            sage: GF(101)(42).minpoly_over(GF(101^2))
+            Traceback (most recent call last):
+            ...
+            ValueError: Finite Field in z2 of size 101^2 does not embed into Finite Field of size 101
+
+        ::
+
+            sage: f = (GF(101^2).gen()^102).minpoly_over(GF(101^2)); f
+            x + 99
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field in z2 of size 101^2
+
+        ::
+
+            sage: f = (GF(101^2).gen()^102).minpoly_over(GF(101)); f
+            x + 99
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field of size 101
+
+        ::
+
+            sage: f = (GF(101^2).gen()^100).minpoly_over(GF(101)); f
+            x^2 + 95*x + 1
+            sage: f.parent()
+            Univariate Polynomial Ring in x over Finite Field of size 101
+        """
+        # workaround for #34907: if this element lies in F, then .minpoly() for extensions is buggy
+        try:
+            emb = F.hom(self.parent())
+        except TypeError:
+            raise ValueError(f'{F} does not embed into {self.parent()}')
+        try:
+            a = emb.section()(self)
+        except ValueError:
+            ext = self.parent().over(F)
+            return ext(self).minpoly(var=var)
+        else:
+            from sage.rings.polynomial.polynomial_ring import polygen
+            return polygen(F, var) - a
+
+
 
 cdef class FinitePolyExtElement(FiniteRingElement):
     """
@@ -293,7 +370,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: F,t = GF(random_prime(99)^randrange(2,99), 't').objgen()
             sage: a = F.random_element()
             sage: all(a[i] == a.polynomial()[i] for i in range(F.degree()))
@@ -334,7 +410,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: R.<x> = GF(17)[]
             sage: F.<t> = GF(17^60)
             sage: a = F.random_element()
@@ -378,7 +453,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: F = GF(random_prime(333)^randrange(111,999),'t')
             sage: a = F.random_element()
             sage: list(a) == a.list()  # implicit doctest
@@ -386,7 +460,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         ::
 
-            sage: # needs sage.modules
             sage: F.<t> = GF(17^60)
             sage: a = F.random_element()
             sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
@@ -394,7 +467,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         ::
 
-            sage: # needs sage.modules
             sage: F.<t> = GF((2^127 - 1)^10, 't')
             sage: a = F.random_element()
             sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
@@ -461,7 +533,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: k.<a> = GF(2^4)
             sage: b = k.random_element()
             sage: vector(a*b) == a.matrix() * vector(b)
@@ -1027,7 +1098,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         Check that :issue:`26761` is fixed::
 
-            sage: # needs sage.libs.gap
             sage: G32 = GU(3,2)
             sage: g1, g2 = G32.gens()
             sage: m1 = g1.matrix()
@@ -1079,7 +1149,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: p = random_prime(2^99)
             sage: k = randrange(2,10)
             sage: F.<t> = GF((p, k))

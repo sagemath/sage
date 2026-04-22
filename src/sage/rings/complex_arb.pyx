@@ -100,7 +100,6 @@ Coercion
 
 Automatic coercions work as expected::
 
-    sage: # needs sage.symbolic
     sage: bpol = 1/3*CBF(i) + AA(sqrt(2))
     sage: bpol += polygen(RealBallField(20), 'x') + QQbar(i)
     sage: bpol
@@ -646,7 +645,6 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         The following conversions used to yield incorrect enclosures::
 
-            sage: # needs sage.symbolic
             sage: a = CBF(airy_ai(1)); a
             [0.1352924163128814 +/- 6.95e-17]
             sage: a.overlaps(ComplexBallField(100).one().airy_ai())
@@ -739,7 +737,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: ComplexBallField().characteristic()
             0
         """
-        return 0
+        return ZZ.zero()
 
     def some_elements(self):
         """
@@ -4513,7 +4511,6 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: tau = CBF(sqrt(2),pi)
             sage: tau.modular_lambda()
             [-0.00022005123884157 +/- ...e-18] + [-0.00079787346459944 +/- ...e-18]*I

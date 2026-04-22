@@ -44,13 +44,6 @@ class CommutativeRing(Ring):
         category: Category | None = None,
     ) -> None: ...
     def fraction_field(self) -> Ring: ...
-    def extension(
-        self,
-        poly: object,
-        name: str | None = None,
-        names: NameSpec = None,
-        **kwds: object,
-    ) -> Ring: ...
 
 class IntegralDomain(CommutativeRing):
     _default_category: Category

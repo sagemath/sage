@@ -3316,31 +3316,30 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             self.__dual = corr * phi_hat
             return self.__dual
 
-        else:
-            # trac 7096
-            # this should take care of the case when the isogeny is
-            # not normalized.
-            u = self.scaling_factor()
-            E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
+        # trac 7096
+        # this should take care of the case when the isogeny is
+        # not normalized.
+        u = self.scaling_factor()
+        E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
 
-            phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
-            # assert phi_hat.scaling_factor() == 1
+        phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
+        # assert phi_hat.scaling_factor() == 1
 
-            for pre_iso in self._codomain.isomorphisms(E1):
-                for post_iso in E2.isomorphisms(self._domain):
-                    sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor()
-                    if sc == d:
-                        break
-                else:
-                    continue
-                break
+        for pre_iso in self._codomain.isomorphisms(E1):
+            for post_iso in E2.isomorphisms(self._domain):
+                sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor()
+                if sc == d:
+                    break
             else:
-                raise RuntimeError("bug in dual()")
+                continue
+            break
+        else:
+            raise RuntimeError("bug in dual()")
 
-            phi_hat._set_pre_isomorphism(pre_iso)
-            phi_hat._set_post_isomorphism(post_iso)
-            phi_hat.__perform_inheritance_housekeeping()
-            return phi_hat
+        phi_hat._set_pre_isomorphism(pre_iso)
+        phi_hat._set_post_isomorphism(post_iso)
+        phi_hat.__perform_inheritance_housekeeping()
+        return phi_hat
 
     @staticmethod
     def _composition_impl(left, right):
@@ -3645,12 +3644,59 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         x^3 + x^2 + 28*x + 33
         sage: poly.factor()
         (x + 10) * (x + 12) * (x + 16)
+
+    Check that it works even when the degree is large compared to the characteristic::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
+        sage: E1 = EllipticCurve(GF(5), [1,1])
+        sage: E2 = EllipticCurve(GF(5), [1,4])
+        sage: compute_isogeny_kernel_polynomial(E1, E2, 11)
+        x^5 + 4*x^4 + 4*x^2 + 3*x + 4
+
+    ...even for long Weierstraß curves::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
+        sage: E1 = EllipticCurve(GF(2), [1,0,1,0,1])
+        sage: E2 = EllipticCurve(GF(2), [1,0,1,1,1])
+        sage: compute_isogeny_kernel_polynomial(E1, E2, 7)
+        x^3 + x + 1
+
+    Verify that it works with the ``"bruteforce"`` algorithm even when
+    :meth:`~EllipticCurve_field.isogenies_degree` returns a non-normalized
+    isogeny (see :issue:`41565`)::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
+        sage: E1 = EllipticCurve(GF(419^2), [1,0])
+        sage: for phi in E1.isogenies_degree(5):
+        ....:     E2 = phi.codomain().isomorphism(~phi.scaling_factor()).codomain()
+        ....:     assert phi.kernel_polynomial() == compute_isogeny_kernel_polynomial(E1, E2, phi.degree(), algorithm='bruteforce')
     """
     if algorithm is None:
         char = E1.base_ring().characteristic()
-        if char != 0 and char < 4*ell + 4:
-            raise NotImplementedError(f'no algorithm for computing kernel polynomial from domain and codomain is implemented for degree {ell} and characteristic {char}')
-        algorithm = 'stark' if ell < 10 else 'bmss'
+        # This could be 4l+4 according to Stark/BMSS alone, but
+        # weierstrass_p() currently only works for p-2 >= 4l+4.
+        if char != 0 and char < 4*ell + 6:
+            # No good algorithm available... See :issue:`38481`.
+            algorithm = 'bruteforce'
+        else:
+            algorithm = 'stark' if ell < 10 else 'bmss'
+
+    if algorithm == 'bruteforce':
+        # This is a lazy workaround; there are better algorithms
+        # for most cases even when BMSS fails. See :issue:`38481`.
+        for phi in E1.isogenies_degree(ell):
+            if not any(E1.a_invariants()[:3] + E2.a_invariants()[:3]):
+                # short Weierstrass
+                u = phi.scaling_factor()
+                iso = phi.codomain().isomorphism(~u)
+                if iso.codomain() == E2:
+                    return phi.kernel_polynomial()
+            else:
+                # long Weierstrass
+                for iso in phi.codomain().isomorphisms(E2):
+                    if iso.scaling_factor().is_one():
+                        return phi.kernel_polynomial()
+        raise ValueError(f"the two curves are not linked by a cyclic normalized isogeny of degree {ell}")
 
     if algorithm == 'bmss':
         return compute_isogeny_bmss(E1, E2, ell)

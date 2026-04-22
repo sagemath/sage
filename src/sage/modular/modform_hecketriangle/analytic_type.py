@@ -481,8 +481,7 @@ class AnalyticType(FiniteLatticePoset):
         """
         if len(args) > 1:
             return super().__call__(list(args), **kwargs)
-        else:
-            return super().__call__(*args, **kwargs)
+        return super().__call__(*args, **kwargs)
 
     def _element_constructor_(self, element):
         r"""

@@ -859,8 +859,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         if self.name():
             return self.name()
-        else:
-            return repr(self)
+        return repr(self)
 
     def _bit_vector(self):
         """
@@ -958,8 +957,12 @@ class GenericGraph(GenericGraph_pyx):
             \definecolor{clv1}{rgb}{0.0,0.0,0.0}
             \definecolor{cv0v1}{rgb}{0.0,0.0,0.0}
             %
-            \Vertex[style={minimum size=1.0cm,draw=cv0,fill=cfv0,text=clv0,shape=circle},LabelOut=false,L=\hbox{$0$},x=2.5cm,y=5.0cm]{v0}
-            \Vertex[style={minimum size=1.0cm,draw=cv1,fill=cfv1,text=clv1,shape=circle},LabelOut=false,L=\hbox{$1$},x=2.5cm,y=0.0cm]{v1}
+            \begin{scope}[VertexStyle/.append style={minimum size=1.0cm,draw=cv0,fill=cfv0,text=clv0,shape=circle}]
+            \Vertex[LabelOut=false,L=\hbox{$0$},x=2.5cm,y=5.0cm]{v0}
+            \end{scope}
+            \begin{scope}[VertexStyle/.append style={minimum size=1.0cm,draw=cv1,fill=cfv1,text=clv1,shape=circle}]
+            \Vertex[LabelOut=false,L=\hbox{$1$},x=2.5cm,y=0.0cm]{v1}
+            \end{scope}
             %
             \Edge[lw=0.1cm,style={color=cv0v1,},](v0)(v1)
             %
@@ -1094,7 +1097,6 @@ class GenericGraph(GenericGraph_pyx):
 
         An example coming from ``graphviz_string`` documentation in SageMath::
 
-            sage: # needs sage.symbolic
             sage: f(x) = -1 / x
             sage: g(x) = 1 / (x + 1)
             sage: G = DiGraph()
@@ -2397,7 +2399,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Creating a module endomorphism::
 
-            sage: # needs sage.modules
             sage: D12 = posets.DivisorLattice(12).hasse_diagram()
             sage: phi = D12.adjacency_matrix(vertices=True); phi
             Generic endomorphism of
@@ -2413,7 +2414,6 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: graphs.CubeGraph(8).adjacency_matrix().parent()
             Full MatrixSpace of 256 by 256 dense matrices over Integer Ring
             sage: graphs.CubeGraph(9).adjacency_matrix().parent()
@@ -2648,7 +2648,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Creating a module morphism::
 
-            sage: # needs sage.modules
             sage: D12 = posets.DivisorLattice(12).hasse_diagram()
             sage: phi_VE = D12.incidence_matrix(vertices=True, edges=True); phi_VE
             Generic morphism:
@@ -2961,7 +2960,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Creating a module morphism::
 
-            sage: # needs sage.modules
             sage: G = Graph(sparse=True, weighted=True)
             sage: G.add_edges([('A', 'B', 1), ('B', 'C', 2), ('A', 'C', 3), ('A', 'D', 4)])
             sage: phi = G.weighted_adjacency_matrix(vertices=True); phi
@@ -3197,7 +3195,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Creating a module morphism::
 
-            sage: # needs sage.modules
             sage: G = Graph(sparse=True, weighted=True)
             sage: G.add_edges([('A', 'B', 1), ('B', 'C', 2), ('A', 'C', 3), ('A', 'D', 4)])
             sage: phi = G.laplacian_matrix(weighted=True, vertices=True); phi
@@ -3396,8 +3393,7 @@ class GenericGraph(GenericGraph_pyx):
 
             if self._check_embedding_validity():
                 return embedding
-            else:
-                self._embedding = None
+            self._embedding = None
 
         return None
 
@@ -3715,9 +3711,8 @@ class GenericGraph(GenericGraph_pyx):
         if self.allows_multiple_edges():
             if labels:
                 return [(v, v, l) for v in self.loop_vertices() for l in self.edge_label(v, v)]
-            else:
-                return [(v, v) for v in self.loop_vertices() for l in self.edge_label(v, v)]
-        elif labels:
+            return [(v, v) for v in self.loop_vertices() for l in self.edge_label(v, v)]
+        if labels:
             return [(v, v, self.edge_label(v, v)) for v in self.loop_vertices()]
         return [(v, v) for v in self.loop_vertices()]
 
@@ -4287,7 +4282,7 @@ class GenericGraph(GenericGraph_pyx):
 
             if self._check_pos_validity(dim=dim):
                 return pos
-            elif dim == 2:
+            if dim == 2:
                 pos = self._pos = None
             else:
                 pos = self._pos3d = None
@@ -4561,12 +4556,11 @@ class GenericGraph(GenericGraph_pyx):
             if self._directed:
                 return Rational(self.size()) / Rational(n ** 2)
             return Rational(self.size()) / Rational((n ** 2 + n) / 2)
-        else:
-            if n < 2:
-                return Rational(0)
-            if self._directed:
-                return Rational(self.size()) / Rational(n ** 2 - n)
-            return Rational(self.size()) / Rational((n ** 2 - n) / 2)
+        if n < 2:
+            return Rational(0)
+        if self._directed:
+            return Rational(self.size()) / Rational(n ** 2 - n)
+        return Rational(self.size()) / Rational((n ** 2 - n) / 2)
 
     def is_bipartite(self, certificate=False):
         r"""
@@ -4781,10 +4775,9 @@ class GenericGraph(GenericGraph_pyx):
                         if abs(diff) > 1:
                             return False
                         # if there was another vertex with the same sign of difference...
-                        elif uv[(diff + 1) // 2] is not None:
+                        if uv[(diff + 1) // 2] is not None:
                             return False  # ... the graph is not semi-Eulerian
-                        else:
-                            uv[(diff + 1) // 2] = v
+                        uv[(diff + 1) // 2] = v
                     else:
                         return False
         else:
@@ -4793,7 +4786,7 @@ class GenericGraph(GenericGraph_pyx):
                 if self.degree(v) % 2:
                     if not path:
                         return False
-                    elif uv[0] is None or uv[1] is None:
+                    if uv[0] is None or uv[1] is None:
                         uv[0 if uv[0] is None else 1] = v
                     else:
                         return False
@@ -5275,14 +5268,13 @@ class GenericGraph(GenericGraph_pyx):
             if algorithm == "Filter_Kruskal":
                 from .spanning_tree import filter_kruskal
                 return filter_kruskal(g, weight_function=wfunction_float, check_weight=False, check=check)
-            elif algorithm == "Boruvka":
+            if algorithm == "Boruvka":
                 from .spanning_tree import boruvka
                 return boruvka(g, weight_function=wfunction_float, check_weight=False, check=check)
-            else:
-                from sage.graphs.base.boost_graph import min_spanning_tree
-                return min_spanning_tree(g,
-                                         weight_function=wfunction_float,
-                                         algorithm=algorithm.split("_")[0])
+            from sage.graphs.base.boost_graph import min_spanning_tree
+            return min_spanning_tree(g,
+                                     weight_function=wfunction_float,
+                                     algorithm=algorithm.split("_")[0])
 
         if algorithm == "Prim_fringe":
             if starting_vertex is None:
@@ -5319,7 +5311,7 @@ class GenericGraph(GenericGraph_pyx):
                         fringe_list[neighbor] = (w, u)
             return edges
 
-        elif algorithm == "Prim_edge":
+        if algorithm == "Prim_edge":
             if starting_vertex is None:
                 v = next(self.vertex_iterator())
             else:
@@ -5351,7 +5343,7 @@ class GenericGraph(GenericGraph_pyx):
                         i += 1
             return edges
 
-        elif algorithm == "NetworkX":
+        if algorithm == "NetworkX":
             import networkx
             G = networkx.Graph([(e[0], e[1], {'weight': wfunction_float(e)}) for e in self.edge_iterator()])
             E = networkx.minimum_spanning_edges(G, data=False)
@@ -5415,7 +5407,6 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
-            sage: # needs sage.modules
             sage: M = matrix(3, 3, [0, 1, 0, 0, 0, 1, 1, 1, 0])
             sage: D = DiGraph(M)
             sage: D.number_of_spanning_trees()
@@ -5738,7 +5729,7 @@ class GenericGraph(GenericGraph_pyx):
             import networkx
             G = networkx.Graph([(e[0], e[1], {'weight': weight_function(e)}) for e in self.edge_iterator()])
             return networkx.minimum_cycle_basis(G, weight='weight')
-        elif algorithm is None:
+        if algorithm is None:
             from sage.graphs.base.boost_graph import min_cycle_basis
             if self.is_connected():
                 CC = [self]
@@ -6724,7 +6715,7 @@ class GenericGraph(GenericGraph_pyx):
             if isinstance(on_embedding, dict):
                 faces = len(self.faces(on_embedding))
                 return (2 - verts + edges - faces) // 2
-            elif on_embedding:
+            if on_embedding:
                 try:
                     faces = len(self.faces(self._embedding))
                 except AttributeError:
@@ -6754,17 +6745,16 @@ class GenericGraph(GenericGraph_pyx):
                     g = genus.simple_connected_graph_genus(G, set_embedding=True, check=False, minimal=minimal)
                     self._embedding = G._embedding
                 return g
-            else:
-                if maximal and (self.has_multiple_edges() or self.has_loops()):
-                    raise NotImplementedError("cannot compute the maximal genus of a graph with loops or multiple edges")
-                if minimal:
-                    B, C = G.blocks_and_cut_vertices()
-                    g = 0
-                    for block in B:
-                        H = G.subgraph(block)
-                        g += genus.simple_connected_graph_genus(H, set_embedding=False, check=False, minimal=True)
-                    return g
-                return genus.simple_connected_graph_genus(G, set_embedding=False, check=False, minimal=minimal)
+            if maximal and (self.has_multiple_edges() or self.has_loops()):
+                raise NotImplementedError("cannot compute the maximal genus of a graph with loops or multiple edges")
+            if minimal:
+                B, C = G.blocks_and_cut_vertices()
+                g = 0
+                for block in B:
+                    H = G.subgraph(block)
+                    g += genus.simple_connected_graph_genus(H, set_embedding=False, check=False, minimal=True)
+                return g
+            return genus.simple_connected_graph_genus(G, set_embedding=False, check=False, minimal=minimal)
 
     def crossing_number(self):
         r"""
@@ -7088,8 +7078,7 @@ class GenericGraph(GenericGraph_pyx):
                     # We use Euler's formula: V-E+F-C=1
                     C = self.number_of_connected_components()
                     return self.size() - self.order() + C + 1
-                else:
-                    raise ValueError("no embedding is provided and the graph is not planar")
+                raise ValueError("no embedding is provided and the graph is not planar")
 
         # We compute the number Fc of faces of each connected component c.
         # The number of faces of the graph is the sum of the Fc values minus the
@@ -7434,7 +7423,6 @@ class GenericGraph(GenericGraph_pyx):
         By Edmonds' theorem, a graph which is `k`-connected always has `k`
         edge-disjoint arborescences, regardless of the root we pick::
 
-            sage: # needs sage.numerical.mip
             sage: g = digraphs.RandomDirectedGNP(11, .3)  # reduced from 30 to 11, cf. #32169
             sage: k = Integer(g.edge_connectivity())
             sage: while not k:
@@ -7448,7 +7436,6 @@ class GenericGraph(GenericGraph_pyx):
 
         In the undirected case, we can only ensure half of it::
 
-            sage: # needs sage.numerical.mip
             sage: g = graphs.RandomGNP(14, .3)  # reduced from 30 to 14, see #32169
             sage: while not g.is_biconnected():
             ....:     g = graphs.RandomGNP(14, .3)
@@ -7459,7 +7446,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Check the validity of the algorithms for undirected graphs::
 
-            sage: # needs sage.numerical.mip
             sage: g = graphs.RandomGNP(12, .7)
             sage: k = Integer(g.edge_connectivity()) // 2
             sage: trees = g.edge_disjoint_spanning_trees(k, algorithm='MILP')
@@ -7490,7 +7476,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Small cases::
 
-            sage: # needs sage.numerical.mip
             sage: Graph().edge_disjoint_spanning_trees(0)
             []
             sage: Graph(1).edge_disjoint_spanning_trees(0)
@@ -7510,7 +7495,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Choice of the algorithm::
 
-            sage: # needs sage.numerical.mip
             sage: Graph().edge_disjoint_spanning_trees(0, algorithm=None)
             []
             sage: Graph().edge_disjoint_spanning_trees(0, algorithm='Roskind-Tarjan')
@@ -8168,8 +8152,7 @@ class GenericGraph(GenericGraph_pyx):
         if value_only:
             if use_edge_labels:
                 return sum(weight(l) for u, v, l in self.edge_iterator() if cut[good_edge((u, v))])
-            else:
-                return Integer(sum(1 for e in self.edge_iterator(labels=False) if cut[good_edge(e)]))
+            return Integer(sum(1 for e in self.edge_iterator(labels=False) if cut[good_edge(e)]))
 
         return [e for e in self.edge_iterator() if cut[good_edge((e[0], e[1]))]]
 
@@ -8215,7 +8198,6 @@ class GenericGraph(GenericGraph_pyx):
         Quite obviously, the max cut of a bipartite graph is the number of
         edges, and the two sets of vertices are the two sides::
 
-            sage: # needs sage.numerical.mip
             sage: g = graphs.CompleteBipartiteGraph(5,6)
             sage: [ value, edges, [ setA, setB ]] = g.max_cut(vertices=True)
             sage: value == 5*6
@@ -8817,7 +8799,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Empty graphs::
 
-            sage: # needs sage.numerical.mip
             sage: Graph().longest_path()
             Graph on 0 vertices
             sage: Graph().longest_path(use_edge_labels=True)
@@ -8829,7 +8810,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Trivial graphs::
 
-            sage: # needs sage.numerical.mip
             sage: G = Graph()
             sage: G.add_vertex(0)
             sage: G.longest_path()
@@ -8888,7 +8868,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Check the behavior of parameter ``immutable``::
 
-            sage: # needs sage.numerical.mip
             sage: g1 =  digraphs.RandomDirectedGNP(15, 0.2)
             sage: for u,v in g.edge_iterator(labels=False):
             ....:     g.set_edge_label(u, v, random())
@@ -9186,7 +9165,6 @@ class GenericGraph(GenericGraph_pyx):
         starting from vertex `(0, 0)` and ending at vertex `(2, 2)`, but no
         Hamiltonian path starting from `(0, 0)` and ending at `(0, 1)`::
 
-            sage: # needs sage.numerical.mip
             sage: g = graphs.Grid2dGraph(3, 3)
             sage: g.hamiltonian_path()
             Hamiltonian path from 2D Grid Graph for [3, 3]: Graph on 9 vertices
@@ -9246,7 +9224,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Check the behavior of parameter ``immutable``::
 
-            sage: # needs sage.numerical.mip
             sage: g = graphs.Grid2dGraph(3, 3)
             sage: g.hamiltonian_path().is_immutable()
             False
@@ -9290,7 +9267,7 @@ class GenericGraph(GenericGraph_pyx):
             zeros = [u for u in g if not g.in_degree(u)]
             if len(zeros) > 1:
                 return (0, None) if use_edge_labels else None
-            elif len(zeros) == 1:
+            if len(zeros) == 1:
                 if new_s is None:
                     new_s = zeros.pop()
                 elif new_s not in zeros:
@@ -9299,7 +9276,7 @@ class GenericGraph(GenericGraph_pyx):
             zeros = [u for u in g if not g.out_degree(u)]
             if len(zeros) > 1:
                 return (0, None) if use_edge_labels else None
-            elif len(zeros) == 1:
+            if len(zeros) == 1:
                 if new_t is None:
                     new_t = zeros.pop()
                 elif new_t not in zeros:
@@ -9313,7 +9290,7 @@ class GenericGraph(GenericGraph_pyx):
             if len(ones) > 2:
                 return (0, None) if use_edge_labels else None
 
-            elif len(ones) == 2:
+            if len(ones) == 2:
                 if new_s is not None and new_s not in ones:
                     return (0, None) if use_edge_labels else None
                 if new_t is not None and new_t not in ones:
@@ -9330,7 +9307,7 @@ class GenericGraph(GenericGraph_pyx):
             elif len(ones) == 1:
                 if new_s is not None and new_t is not None and not (new_s in ones or new_t in ones):
                     return (0, None) if use_edge_labels else None
-                elif new_s is None and (new_t is None or (new_t is not None and new_t not in ones)):
+                if new_s is None and (new_t is None or (new_t is not None and new_t not in ones)):
                     new_s = ones.pop()
                 elif new_t is None and new_s is not None and new_s not in ones:
                     new_t = ones.pop()
@@ -9519,7 +9496,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Search for a minimum and a maximum weight Hamiltonian cycle::
 
-            sage: # needs sage.numerical.mip
             sage: G = Graph([(0, 1, 1), (0, 2, 2), (0, 3, 1), (1, 2, 1), (1, 3, 2), (2, 3, 1)])
             sage: tsp = G.traveling_salesman_problem(use_edge_labels=True,
             ....:                                    maximize=False)
@@ -9569,7 +9545,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Simple tests for multiple edges and loops::
 
-            sage: # needs sage.numerical.mip
             sage: G = DiGraph(multiedges=True, loops=True)
             sage: G.is_hamiltonian()
             False
@@ -9597,7 +9572,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Graphs on 2 vertices::
 
-            sage: # needs sage.numerical.mip
             sage: Graph([(0, 1), (0, 1)], multiedges=True).is_hamiltonian()
             True
             sage: DiGraph([(0, 1), (0, 1)], multiedges=True).is_hamiltonian()
@@ -10112,7 +10086,6 @@ class GenericGraph(GenericGraph_pyx):
 
         The necessary example::
 
-            sage: # needs sage.numerical.mip
             sage: g = graphs.PetersenGraph()
             sage: fvs = g.feedback_vertex_set()
             sage: len(fvs)
@@ -10127,7 +10100,6 @@ class GenericGraph(GenericGraph_pyx):
         of its neighbors removed: a feedback vertex set is in this situation a
         vertex cover::
 
-            sage: # needs sage.numerical.mip
             sage: cycle = graphs.CycleGraph(5)
             sage: dcycle = DiGraph(cycle)
             sage: cycle.vertex_cover(value_only=True)
@@ -10461,7 +10433,7 @@ class GenericGraph(GenericGraph_pyx):
 
         if (algorithm == "FF"):
             return self._ford_fulkerson(x, y, value_only=value_only, integer=integer, use_edge_labels=use_edge_labels)
-        elif (algorithm == 'igraph'):
+        if (algorithm == 'igraph'):
             vertices = list(self)
             x_int = vertices.index(x)
             y_int = vertices.index(y)
@@ -10476,27 +10448,26 @@ class GenericGraph(GenericGraph_pyx):
 
             if value_only:
                 return maxflow.value
+            from sage.graphs.digraph import DiGraph
+            flow_digraph = DiGraph()
+            if self.is_directed():
+                for e in g_igraph.es():
+                    f = maxflow.flow[e.index]
+                    if f:
+                        flow_digraph.add_edge(e.source, e.target, f)
             else:
-                from sage.graphs.digraph import DiGraph
-                flow_digraph = DiGraph()
-                if self.is_directed():
-                    for e in g_igraph.es():
-                        f = maxflow.flow[e.index]
-                        if f:
-                            flow_digraph.add_edge(e.source, e.target, f)
-                else:
-                    # If the graph is undirected, the output of igraph is a list
-                    # of weights: a positive weight means that the flow is from
-                    # the vertex with minimum label to the vertex with maximum
-                    # label, a negative weight means the converse.
-                    for e in g_igraph.es():
-                        f = maxflow.flow[e.index]
-                        if (f > 0 and e.source < e.target) or (f < 0 and e.source > e.target):
-                            flow_digraph.add_edge(e.source, e.target, abs(f))
-                        elif f:
-                            flow_digraph.add_edge(e.target, e.source, abs(f))
-                flow_digraph.relabel({i: vertices[i] for i in flow_digraph})
-                return [maxflow.value, flow_digraph]
+                # If the graph is undirected, the output of igraph is a list
+                # of weights: a positive weight means that the flow is from
+                # the vertex with minimum label to the vertex with maximum
+                # label, a negative weight means the converse.
+                for e in g_igraph.es():
+                    f = maxflow.flow[e.index]
+                    if (f > 0 and e.source < e.target) or (f < 0 and e.source > e.target):
+                        flow_digraph.add_edge(e.source, e.target, abs(f))
+                    elif f:
+                        flow_digraph.add_edge(e.target, e.source, abs(f))
+            flow_digraph.relabel({i: vertices[i] for i in flow_digraph})
+            return [maxflow.value, flow_digraph]
 
         if algorithm != "LP":
             raise ValueError("the algorithm argument has to be equal to either "
@@ -10680,7 +10651,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Loops and multiple edges::
 
-            sage: # needs sage.numerical.mip
             sage: g = Graph([(0, 0), (0, 0)], loops=True, multiedges=True)
             sage: g.nowhere_zero_flow().edges(sort=True)
             [(0, 0, 1), (0, 0, 1)]
@@ -11603,7 +11573,7 @@ class GenericGraph(GenericGraph_pyx):
             return networkx.pagerank(gnx, alpha=alpha,
                                      personalization=personalization,
                                      weight=weight, dangling=dangling)
-        elif algorithm == 'igraph':
+        if algorithm == 'igraph':
             # An error will be raised if igraph is not installed
             if personalization:
                 raise ValueError('personalization parameter is not used in igraph implementation')
@@ -12231,22 +12201,20 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
+            sage: C = graphs.ClawGraph().complement()
+            sage: for v in C.vertex_iterator(degree=0):
+            ....:     print(v)
+            0
+
+        ::
+
             sage: H = graphs.PathGraph(5)
             sage: prop = lambda l: l % 3 == 1
             sage: for v in H.vertex_iterator(degree=1, vertex_property=prop):
             ....:     print(v)
             4
-
-        Note that since the intersection option is available, the
-        vertex_iterator() function is sub-optimal, speed-wise, but note the
-        following optimization::
-
-            sage: timeit V = P.vertices(sort=False)         # not tested
-            100000 loops, best of 3: 8.85 [micro]s per loop
-            sage: timeit V = list(P.vertex_iterator())      # not tested
-            100000 loops, best of 3: 5.74 [micro]s per loop
         """
-        if degree:
+        if degree is not None:
             if vertex_property is not None:
                 for v, d in self.degree_iterator(labels=True):
                     if d == degree and vertex_property(v):
@@ -12413,7 +12381,6 @@ class GenericGraph(GenericGraph_pyx):
         are first-class objects in Python, we can specify precisely the function
         from the Sage library that we wish to use as the key::
 
-            sage: # needs sage.libs.flint
             sage: t = polygen(QQ, 't')
             sage: K = Graph({5*t: [t^2], t^2: [t^2+2], t^2+2: [4*t^2-6], 4*t^2-6: [5*t]})
             sage: from sage.rings.polynomial.polynomial_rational_flint import Polynomial_rational_flint
@@ -13731,9 +13698,9 @@ class GenericGraph(GenericGraph_pyx):
             from itertools import chain
             return chain(self._backend.iterator_out_edges(vertices, labels),
                          self._backend.iterator_in_edges(vertices, labels))
-        elif self._directed:
+        if self._directed:
             return self._backend.iterator_out_edges(vertices, labels)
-        elif not sort_vertices:
+        if not sort_vertices:
             return self._backend.iterator_unsorted_edges(vertices, labels)
         return self._backend.iterator_edges(vertices, labels)
 
@@ -14014,7 +13981,6 @@ class GenericGraph(GenericGraph_pyx):
         returned list is the degree of the `i`-th vertex in the list
         ``list(self)``::
 
-            sage: # needs sage.combinat
             sage: D = digraphs.DeBruijn(4, 2)
             sage: D.delete_vertex('20')
             sage: print(D.degree())
@@ -14026,7 +13992,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         if labels:
             return dict(self.degree_iterator(vertices, labels))
-        elif vertices in self and not labels:
+        if vertices in self and not labels:
             return next(self.degree_iterator(vertices, labels))
         return list(self.degree_iterator(vertices, labels))
 
@@ -14820,7 +14786,6 @@ class GenericGraph(GenericGraph_pyx):
 
         It also contains the claw `K_{1,3}`::
 
-             sage: # needs sage.modules
              sage: h2 = g.subgraph_search(graphs.ClawGraph()); h2
              Subgraph of (Petersen graph): Graph on 4 vertices
              sage: h2.vertices(sort=True); h2.edges(sort=True, labels=False)
@@ -15475,14 +15440,12 @@ class GenericGraph(GenericGraph_pyx):
                     b, certif = gg.is_chordal(certificate=True)
                     if not b:
                         return False, certif
-                    else:
-                        peo.extend(certif)
+                    peo.extend(certif)
 
                 return True, peo
 
             # One line if no certificate is requested
-            else:
-                return all(gg.is_chordal() for gg in self.connected_components_subgraphs())
+            return all(gg.is_chordal() for gg in self.connected_components_subgraphs())
 
         hole = None
         g = copy(self)
@@ -15664,7 +15627,6 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: # needs sage.groups
             sage: digraphs.DeBruijn(3,1).is_circulant(certificate=True)                 # needs sage.combinat
             (True, [(3, [0, 1, 2])])
             sage: Graph(1).is_circulant(certificate=True)
@@ -16057,7 +16019,7 @@ class GenericGraph(GenericGraph_pyx):
 
         if loops and not G.allows_loops():
             return False
-        elif not loops and G.allows_loops():
+        if not loops and G.allows_loops():
             loop_edges = G.loop_edges(labels=False)
             if induced and loop_edges:
                 return False
@@ -16146,7 +16108,7 @@ class GenericGraph(GenericGraph_pyx):
         if not self.order():
             # The empty graph is not a cycle
             return False
-        elif self.order() == 1:
+        if self.order() == 1:
             # A (di)graph of order one is a cycle if it has a single loop
             return self.size() == 1
 
@@ -16366,7 +16328,7 @@ class GenericGraph(GenericGraph_pyx):
             import networkx
             return networkx.triangles(self.networkx_graph(), nbunch)
 
-        elif implementation == 'sparse_copy':
+        if implementation == 'sparse_copy':
             from sage.graphs.base.static_sparse_graph import triangles_count
 
         elif implementation == "dense_copy":
@@ -16446,7 +16408,7 @@ class GenericGraph(GenericGraph_pyx):
         if implementation == 'boost':
             from sage.graphs.base.boost_graph import clustering_coeff
             return clustering_coeff(self)[0]
-        elif implementation == 'networkx':
+        if implementation == 'networkx':
             import networkx
             return networkx.average_clustering(self.networkx_graph())
         coeffs = self.clustering_coeff(implementation=implementation)
@@ -16586,14 +16548,14 @@ class GenericGraph(GenericGraph_pyx):
         if implementation == 'boost':
             from sage.graphs.base.boost_graph import clustering_coeff
             return clustering_coeff(self, nodes)[1]
-        elif implementation == 'networkx':
+        if implementation == 'networkx':
             import networkx
             return networkx.clustering(self.networkx_graph(), nodes, weight=weight)
-        elif implementation == 'sparse_copy':
+        if implementation == 'sparse_copy':
             from sage.graphs.base.static_sparse_graph import triangles_count
             return {v: coeff_from_triangle_count(v, count)
                     for v, count in triangles_count(self).items()}
-        elif implementation == "dense_copy":
+        if implementation == "dense_copy":
             from sage.graphs.base.static_dense_graph import triangles_count
             return {v: coeff_from_triangle_count(v, count)
                     for v, count in triangles_count(self).items()}
@@ -16987,10 +16949,10 @@ class GenericGraph(GenericGraph_pyx):
 
         The McGee graph has girth 7 and therefore its odd girth is 7 as well::
 
-            sage: G = graphs.McGeeGraph()                                               # needs networkx
-            sage: G.girth()                                                             # needs networkx
+            sage: G = graphs.McGeeGraph()
+            sage: G.girth()
             7
-            sage: G.odd_girth()                                                         # needs networkx
+            sage: G.odd_girth()
             7
 
         Any complete (directed) graph on more than 2 vertices contains
@@ -17260,7 +17222,7 @@ class GenericGraph(GenericGraph_pyx):
         if algorithm == "Sage":
             from .centrality import centrality_betweenness
             return centrality_betweenness(self, normalize=normalized, exact=exact)
-        elif algorithm == "NetworkX":
+        if algorithm == "NetworkX":
             import networkx
             return networkx.betweenness_centrality(self.networkx_graph(),
                                                    k=k,
@@ -17522,7 +17484,7 @@ class GenericGraph(GenericGraph_pyx):
             if onlyone:
                 return closeness.get(vert, None)
             return closeness
-        elif algorithm == "Johnson_Boost":
+        if algorithm == "Johnson_Boost":
             from sage.graphs.base.boost_graph import johnson_closeness_centrality
             self.weighted(by_weight)
             closeness = johnson_closeness_centrality(self, weight_function)
@@ -17659,13 +17621,13 @@ class GenericGraph(GenericGraph_pyx):
                 for v in Nu:
                     tr += len(Nu.intersection(self.neighbors(v)))
             return Integer(tr // 6)
-        elif algorithm == "sparse_copy":
+        if algorithm == "sparse_copy":
             from sage.graphs.base.static_sparse_graph import triangles_count
             return sum(triangles_count(self).values()) // 3
-        elif algorithm == "dense_copy":
+        if algorithm == "dense_copy":
             from sage.graphs.base.static_dense_graph import triangles_count
             return sum(triangles_count(self).values()) // 3
-        elif algorithm == 'matrix':
+        if algorithm == 'matrix':
             return (self.adjacency_matrix(vertices=list(self))**3).trace() // 6
         raise ValueError('unknown algorithm "{}"'.format(algorithm))
 
@@ -17834,9 +17796,9 @@ class GenericGraph(GenericGraph_pyx):
             if v in all_paths:
                 return all_paths[v]
             return []
-        elif algorithm == "Dijkstra_Bid":
+        if algorithm == "Dijkstra_Bid":
             return self._backend.bidirectional_dijkstra(u, v, weight_function)
-        elif algorithm == "Dijkstra_Bid_NetworkX":
+        if algorithm == "Dijkstra_Bid_NetworkX":
             import networkx
             if self.is_directed():
                 G = networkx.DiGraph([(e[0], e[1], {'weight': weight_function(e)}) for e in self.edge_iterator()])
@@ -18019,9 +17981,9 @@ class GenericGraph(GenericGraph_pyx):
             from sage.rings.infinity import Infinity
             return Infinity
 
-        elif algorithm == "Dijkstra_Bid":
+        if algorithm == "Dijkstra_Bid":
             return self._backend.bidirectional_dijkstra(u, v, weight_function, distance_flag=True)
-        elif algorithm == "Dijkstra_Bid_NetworkX":
+        if algorithm == "Dijkstra_Bid_NetworkX":
             import networkx
             if self.is_directed():
                 G = networkx.DiGraph([(e[0], e[1], {'weight': weight_function(e)}) for e in self.edge_iterator()])
@@ -18335,7 +18297,7 @@ class GenericGraph(GenericGraph_pyx):
                                  "weighted graphs")
             return self._backend.shortest_path_all_vertices(u, cutoff)
 
-        elif algorithm == 'Dijkstra_NetworkX':
+        if algorithm == 'Dijkstra_NetworkX':
             import networkx
             # If this is not present, an error might be raised by NetworkX
             if self.order() == 1 and self.has_vertex(u):
@@ -18353,7 +18315,7 @@ class GenericGraph(GenericGraph_pyx):
             G.add_nodes_from(self)
             return networkx.single_source_dijkstra_path(G, u)
 
-        elif algorithm in ['Dijkstra_Boost', 'Bellman-Ford_Boost', None]:
+        if algorithm in ['Dijkstra_Boost', 'Bellman-Ford_Boost', None]:
             from sage.graphs.base.boost_graph import shortest_paths
             _, pred = shortest_paths(self, u, weight_function, algorithm)
             paths = {}
@@ -18548,7 +18510,7 @@ class GenericGraph(GenericGraph_pyx):
                 raise ValueError("the 'BFS' algorithm does not work on weighted graphs")
             return self._backend.shortest_path_all_vertices(u, cutoff=None, distance_flag=True)
 
-        elif algorithm == 'Dijkstra_NetworkX':
+        if algorithm == 'Dijkstra_NetworkX':
             import networkx
             # If this is not present, an error might be raised by NetworkX
             if self.n_vertices() == 1 and next(self.vertex_iterator()) == u:
@@ -18566,7 +18528,7 @@ class GenericGraph(GenericGraph_pyx):
             G.add_nodes_from(self)
             return networkx.single_source_dijkstra_path_length(G, u)
 
-        elif algorithm in ['Dijkstra_Boost', 'Bellman-Ford_Boost', None]:
+        if algorithm in ['Dijkstra_Boost', 'Bellman-Ford_Boost', None]:
             from sage.graphs.base.boost_graph import shortest_paths
             return shortest_paths(self, u, weight_function, algorithm)[0]
 
@@ -18868,15 +18830,15 @@ class GenericGraph(GenericGraph_pyx):
             )
             return distances_and_predecessors_all_pairs(self)
 
-        elif algorithm == "Floyd-Warshall-Cython":
+        if algorithm == "Floyd-Warshall-Cython":
             from sage.graphs.distances_all_pairs import floyd_warshall
             return floyd_warshall(self, distances=True)
 
-        elif algorithm == "Floyd-Warshall_Boost":
+        if algorithm == "Floyd-Warshall_Boost":
             from sage.graphs.base.boost_graph import floyd_warshall_shortest_paths
             return floyd_warshall_shortest_paths(self, weight_function, distances=True, predecessors=True)
 
-        elif algorithm == "Floyd-Warshall_SciPy":
+        if algorithm == "Floyd-Warshall_SciPy":
             # Turn the graph to a n x n matrix
             n = self.order()
             int_to_vertex = list(self)
@@ -18912,11 +18874,11 @@ class GenericGraph(GenericGraph_pyx):
                     for i in range(n)}
             return dist, pred
 
-        elif algorithm == "Johnson_Boost":
+        if algorithm == "Johnson_Boost":
             from sage.graphs.base.boost_graph import johnson_shortest_paths
             return johnson_shortest_paths(self, weight_function, distances=True, predecessors=True)
 
-        elif algorithm == "Dijkstra_Boost":
+        if algorithm == "Dijkstra_Boost":
             from sage.graphs.base.boost_graph import shortest_paths
             dist = dict()
             pred = dict()
@@ -18924,7 +18886,7 @@ class GenericGraph(GenericGraph_pyx):
                 dist[u], pred[u] = shortest_paths(self, u, weight_function, algorithm)
             return dist, pred
 
-        elif algorithm == "Dijkstra_NetworkX":
+        if algorithm == "Dijkstra_NetworkX":
             dist = dict()
             pred = dict()
             for u in self:
@@ -18938,7 +18900,7 @@ class GenericGraph(GenericGraph_pyx):
                            for v, p in paths.items()}
             return dist, pred
 
-        elif algorithm != "Floyd-Warshall-Python":
+        if algorithm != "Floyd-Warshall-Python":
             raise ValueError('unknown algorithm "{}"'.format(algorithm))
 
         if self.is_directed():
@@ -20412,7 +20374,6 @@ class GenericGraph(GenericGraph_pyx):
 
         The tensor product of two DeBruijn digraphs of same diameter is a DeBruijn digraph::
 
-            sage: # needs sage.combinat
             sage: B1 = digraphs.DeBruijn(2, 3)
             sage: B2 = digraphs.DeBruijn(3, 3)
             sage: T = B1.tensor_product(B2)
@@ -21077,13 +21038,12 @@ class GenericGraph(GenericGraph_pyx):
         We consider the Cayley graph of the symmetric group, whose edges are
         labelled by the numbers 1,2, and 3::
 
-            sage: G = SymmetricGroup(4).cayley_graph()                                  # needs sage.groups
-            sage: set(G.edge_labels())                                                  # needs sage.groups
+            sage: G = SymmetricGroup(4).cayley_graph()
+            sage: set(G.edge_labels())
             {1, 2, 3}
 
         We first request the coloring as a function::
 
-            sage: # needs sage.groups
             sage: f = G._color_by_label(as_function=True)
             sage: [f(1), f(2), f(3)]
             ['#0000ff', '#ff0000', '#00ff00']
@@ -21101,12 +21061,12 @@ class GenericGraph(GenericGraph_pyx):
 
         The default output is a dictionary assigning edges to colors::
 
-            sage: G._color_by_label()                                                   # needs sage.groups
+            sage: G._color_by_label()
             {'#0000ff': [((), (1,2), 1), ...],
              '#00ff00': [((), (3,4), 3), ...],
              '#ff0000': [((), (2,3), 2), ...]}
 
-            sage: G._color_by_label({1: "blue", 2: "red", 3: "green"})                  # needs sage.groups
+            sage: G._color_by_label({1: "blue", 2: "red", 3: "green"})
             {'blue': [((), (1,2), 1), ...],
              'green': [((), (3,4), 3), ...],
              'red': [((), (2,3), 2), ...]}
@@ -21115,7 +21075,6 @@ class GenericGraph(GenericGraph_pyx):
 
         We check what happens when several labels have the same color::
 
-            sage: # needs sage.groups
             sage: result = G._color_by_label({1: "blue", 2: "blue", 3: "green"})
             sage: sorted(result)
             ['blue', 'green']
@@ -21901,7 +21860,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Make sure that :issue:`12364` is fixed::
 
-            sage: # needs sage.combinat sage.modules
             sage: m = WordMorphism('a->abb,b->ba')
             sage: w = m.fixed_point('a')
             sage: prefix = Word(list(w[:100]))
@@ -22240,15 +22198,14 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = Graph({}, loops=True, multiedges=True, sparse=True)
             sage: g.add_edges([(0,0,'a'),(0,0,'b'),(0,1,'c'),(0,1,'d'),
             ....:     (0,1,'e'),(0,1,'f'),(0,1,'f'),(2,1,'g'),(2,2,'h')])
-            sage: GP = g.graphplot(edge_labels=True, color_by_label=True,               # needs sage.plot
+            sage: GP = g.graphplot(edge_labels=True, color_by_label=True,
             ....:                  edge_style='dashed')
-            sage: GP.plot()                                                             # needs sage.plot
+            sage: GP.plot()
             Graphics object consisting of 22 graphics primitives
 
         We can modify the :class:`~sage.graphs.graph_plot.GraphPlot` object.
         Notice that the changes are cumulative::
 
-            sage: # needs sage.plot
             sage: GP.set_edges(edge_style='solid')
             sage: GP.plot()
             Graphics object consisting of 22 graphics primitives
@@ -22473,7 +22430,6 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
-            sage: # needs sage.plot
             sage: from sage.plot.colors import rainbow
             sage: C = graphs.CubeGraph(5)
             sage: R = rainbow(5)
@@ -22611,7 +22567,6 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
-            sage: # needs sage.modular
             sage: S = SupersingularModule(389)
             sage: H = S.hecke_matrix(2)
             sage: D = DiGraph(H, sparse=True)
@@ -23198,7 +23153,6 @@ class GenericGraph(GenericGraph_pyx):
 
         A digraph using latex labels for vertices and edges::
 
-            sage: # needs sage.symbolic
             sage: f(x) = -1 / x
             sage: g(x) = 1 / (x + 1)
             sage: G = DiGraph()
@@ -23476,7 +23430,6 @@ class GenericGraph(GenericGraph_pyx):
         The following digraph has vertices with newlines in their string
         representations::
 
-            sage: # needs sage.modules
             sage: m1 = matrix(3, 3)
             sage: m2 = matrix(3, 3, 1)
             sage: m1.set_immutable()
@@ -23751,7 +23704,7 @@ class GenericGraph(GenericGraph_pyx):
             ....:            2: {0: None, 1: None, 3: 'foo'}, 3: {2: 'foo'}},
             ....:           sparse=True)
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(mode='a+t') as f:
+            sage: with tempfile.NamedTemporaryFile(mode='a+t', delete_on_close=False) as f:
             ....:     G.graphviz_to_file_named(f.name, edge_labels=True)
             ....:     print(f.read())
             graph {
@@ -23825,7 +23778,6 @@ class GenericGraph(GenericGraph_pyx):
         test both the Laplacian construction and the computation of
         eigenvalues. ::
 
-            sage: # needs sage.modules sage.rings.number_field
             sage: H = graphs.HoffmanSingletonGraph()
             sage: evals = H.spectrum()
             sage: lap = [7 - x for x in evals]
@@ -24206,7 +24158,6 @@ class GenericGraph(GenericGraph_pyx):
             [0 0 1]
             [1 1 0]
 
-            sage: # needs sage.groups
             sage: C5 = graphs.CycleGraph(5)
             sage: C5.relabel({u: str(u) for u in C5}, inplace=True)
             sage: ar = C5.automorphism_group().random_element()
@@ -24348,8 +24299,7 @@ class GenericGraph(GenericGraph_pyx):
 
             if return_map:
                 return G, perm2
-            else:
-                return G
+            return G
 
         if immutable:
             raise ValueError("To make an immutable copy use inplace=False")
@@ -24594,8 +24544,8 @@ class GenericGraph(GenericGraph_pyx):
         ::
 
             sage: ss = (graphs.WheelGraph(5)).line_graph(labels=False)
-            sage: ss.coarsest_equitable_refinement(prt)
-            [[(0, 1)], [(1, 2), (1, 4)], [(0, 3)], [(0, 4), (0, 2)], [(2, 3), (3, 4)]]
+            sage: [sorted(cell) for cell in ss.coarsest_equitable_refinement(prt)]
+            [[(0, 1)], [(1, 2), (1, 4)], [(0, 3)], [(0, 2), (0, 4)], [(2, 3), (3, 4)]]
 
         ALGORITHM: Brendan D. McKay's Master's Thesis, University of
         Melbourne, 1976.
@@ -24672,7 +24622,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Graphs::
 
-            sage: # needs sage.groups
             sage: graphs_query = GraphQuery(display_cols=['graph6'],num_vertices=4)
             sage: L = graphs_query.get_graphs_list()
             sage: graphs_list.show_graphs(L)                                            # needs sage.plot
@@ -24700,7 +24649,6 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
-            sage: # needs sage.groups
             sage: D = graphs.DodecahedralGraph()
             sage: G = D.automorphism_group()
             sage: A5 = AlternatingGroup(5)
@@ -24743,7 +24691,6 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.automorphism_group(edge_labels=True)                                # needs sage.groups
             Permutation Group with generators [(0,1)]
 
-            sage: # needs sage.groups
             sage: foo = Graph(sparse=True)
             sage: bar = Graph(sparse=True)
             sage: foo.add_edges([(0,1,1),(1,2,2), (2,3,3)])
@@ -24765,7 +24712,6 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
-            sage: # needs sage.groups
             sage: G = graphs.PetersenGraph()
             sage: G.automorphism_group(return_group=False, orbits=True, algorithm='sage')
             [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]
@@ -24801,7 +24747,6 @@ class GenericGraph(GenericGraph_pyx):
 
         Labeled automorphism group::
 
-            sage: # needs sage.combinat sage.groups
             sage: d = digraphs.DeBruijn(3,2)
             sage: A = d.automorphism_group(algorithm='sage')
             sage: A_target = PermutationGroup(["('02','10','21')('00','11','22')('01','12','20')",
@@ -24843,7 +24788,6 @@ class GenericGraph(GenericGraph_pyx):
         We check that the representations of the groups returned with ``'sage'``
         and ``'bliss'`` are the same (:issue:`27571`)::
 
-            sage: # needs sage.groups sage.libs.pari
             sage: G = graphs.PaleyGraph(9)
             sage: a1 = G.automorphism_group(algorithm='sage')
             sage: V = sorted(G, reverse=True)
@@ -25014,7 +24958,7 @@ class GenericGraph(GenericGraph_pyx):
 
         if len(output) == 1:
             return output[0]
-        elif len(output) > 1:
+        if len(output) > 1:
             return tuple(output)
         return None
 
@@ -25401,8 +25345,7 @@ class GenericGraph(GenericGraph_pyx):
                 self.degree_sequence() != other.degree_sequence()):
             if certificate:
                 return False, None
-            else:
-                return False
+            return False
 
         from sage.groups.perm_gps.partn_ref.refinement_graphs import isomorphic
 
@@ -25411,31 +25354,30 @@ class GenericGraph(GenericGraph_pyx):
         if edge_labels or self.has_multiple_edges():
             if edge_labels and sorted(self.edge_labels(), key=str) != sorted(other.edge_labels(), key=str):
                 return (False, None) if certificate else False
+            ret = graph_isom_equivalent_non_edge_labeled_graph(self, return_relabeling=True,
+                                                               ignore_edge_labels=(not edge_labels),
+                                                               return_edge_labels=True)
+            G, partition, relabeling, G_edge_labels = ret
+            self_vertices = sum(partition, [])
+            ret = graph_isom_equivalent_non_edge_labeled_graph(other, return_relabeling=True,
+                                                               ignore_edge_labels=(not edge_labels),
+                                                               return_edge_labels=True)
+            G2, partition2, relabeling2, G2_edge_labels = ret
+
+            if [len(_) for _ in partition] != [len(_) for _ in partition2]:
+                return (False, None) if certificate else False
+
+            if edge_labels:
+                def multilabel(e):
+                    return e
             else:
-                ret = graph_isom_equivalent_non_edge_labeled_graph(self, return_relabeling=True,
-                                                                   ignore_edge_labels=(not edge_labels),
-                                                                   return_edge_labels=True)
-                G, partition, relabeling, G_edge_labels = ret
-                self_vertices = sum(partition, [])
-                ret = graph_isom_equivalent_non_edge_labeled_graph(other, return_relabeling=True,
-                                                                   ignore_edge_labels=(not edge_labels),
-                                                                   return_edge_labels=True)
-                G2, partition2, relabeling2, G2_edge_labels = ret
+                def multilabel(e):
+                    return [[None, el[1]] for el in e]
 
-                if [len(_) for _ in partition] != [len(_) for _ in partition2]:
-                    return (False, None) if certificate else False
-
-                if edge_labels:
-                    def multilabel(e):
-                        return e
-                else:
-                    def multilabel(e):
-                        return [[None, el[1]] for el in e]
-
-                if [multilabel(_) for _ in G_edge_labels] != [multilabel(_) for _ in G2_edge_labels]:
-                    return (False, None) if certificate else False
-                partition2 = sum(partition2, [])
-                other_vertices = partition2
+            if [multilabel(_) for _ in G_edge_labels] != [multilabel(_) for _ in G2_edge_labels]:
+                return (False, None) if certificate else False
+            partition2 = sum(partition2, [])
+            other_vertices = partition2
         else:
             G = self
             partition = [self_vertices]
@@ -25467,9 +25409,9 @@ class GenericGraph(GenericGraph_pyx):
 
         if not isom and certificate:
             return False, None
-        elif not isom:
+        if not isom:
             return False
-        elif not certificate:
+        if not certificate:
             return True
         isom_trans = {}
         if edge_labels or self.has_multiple_edges():
@@ -25827,7 +25769,6 @@ class GenericGraph(GenericGraph_pyx):
         Graphs with loops and multiedges will have identity and repeated
         elements, respectively, among the generators::
 
-            sage: # needs sage.rings.finite_rings
             sage: g = Graph(graphs.PaleyGraph(9), loops=True, multiedges=True)
             sage: g.add_edges([(u, u) for u in g])
             sage: g.add_edges([(u, u+1) for u in g])
@@ -25852,7 +25793,6 @@ class GenericGraph(GenericGraph_pyx):
 
         A disconnected graphs may also be a Cayley graph::
 
-            sage: # needs sage.rings.finite_rings
             sage: g = graphs.PaleyGraph(9)
             sage: h = g.disjoint_union(g)
             sage: h = h.disjoint_union(h)
@@ -26169,7 +26109,6 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: # needs sage.modules sage.rings.number_field
             sage: (graphs.CompleteGraph(4)).katz_matrix(1/4)
             [3/5 4/5 4/5 4/5]
             [4/5 3/5 4/5 4/5]
@@ -26279,7 +26218,6 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: # needs sage.modules sage.rings.number_field
             sage: graphs.PathGraph(3).katz_centrality(1/20)
             {0: 11/199, 1: 21/199, 2: 11/199}
             sage: graphs.PathGraph(4).katz_centrality(1/20)

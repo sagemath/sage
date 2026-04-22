@@ -135,7 +135,6 @@ cdef class PowerSeries_pari(PowerSeries):
 
         TESTS::
 
-            sage: # needs sage.rings.real_mpfr
             sage: R.<q> = PowerSeriesRing(CC, implementation='pari')
             sage: TestSuite(q).run()
             sage: f = q - q^3 + O(q^10)
@@ -339,7 +338,6 @@ cdef class PowerSeries_pari(PowerSeries):
 
         Substituting `p`-adic numbers::
 
-            sage: # needs sage.rings.padics
             sage: f(100 + O(5^7))
             5^4 + 3*5^5 + 4*5^6 + 2*5^7 + 2*5^8 + O(5^9)
             sage: ff = PowerSeriesRing(pAdicRing(5), 't', implementation='pari')(f)
@@ -645,7 +643,6 @@ cdef class PowerSeries_pari(PowerSeries):
             sage: f.list()
             [1, 0, 0, -5, 0, 1]
 
-            sage: # needs sage.rings.padics
             sage: S.<u> = PowerSeriesRing(pAdicRing(5), implementation='pari')
             sage: (2 + u).list()
             [2 + O(5^20), 1 + O(5^20)]
