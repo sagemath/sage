@@ -3316,31 +3316,30 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             self.__dual = corr * phi_hat
             return self.__dual
 
-        else:
-            # trac 7096
-            # this should take care of the case when the isogeny is
-            # not normalized.
-            u = self.scaling_factor()
-            E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
+        # trac 7096
+        # this should take care of the case when the isogeny is
+        # not normalized.
+        u = self.scaling_factor()
+        E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
 
-            phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
-            # assert phi_hat.scaling_factor() == 1
+        phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
+        # assert phi_hat.scaling_factor() == 1
 
-            for pre_iso in self._codomain.isomorphisms(E1):
-                for post_iso in E2.isomorphisms(self._domain):
-                    sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor()
-                    if sc == d:
-                        break
-                else:
-                    continue
-                break
+        for pre_iso in self._codomain.isomorphisms(E1):
+            for post_iso in E2.isomorphisms(self._domain):
+                sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor()
+                if sc == d:
+                    break
             else:
-                raise RuntimeError("bug in dual()")
+                continue
+            break
+        else:
+            raise RuntimeError("bug in dual()")
 
-            phi_hat._set_pre_isomorphism(pre_iso)
-            phi_hat._set_post_isomorphism(post_iso)
-            phi_hat.__perform_inheritance_housekeeping()
-            return phi_hat
+        phi_hat._set_pre_isomorphism(pre_iso)
+        phi_hat._set_post_isomorphism(post_iso)
+        phi_hat.__perform_inheritance_housekeeping()
+        return phi_hat
 
     @staticmethod
     def _composition_impl(left, right):

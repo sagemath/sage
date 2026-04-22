@@ -231,9 +231,9 @@ class Scheme(Parent):
             S = args[0]
             if S in CommutativeRings():
                 return self.point_homset(S)
-            elif isinstance(S, Scheme):
+            if isinstance(S, Scheme):
                 return S.Hom(self)
-            elif isinstance(S, (list, tuple)):
+            if isinstance(S, (list, tuple)):
                 args = S
             elif isinstance(S, SchemeMorphism_point):
                 if S.codomain() is self:
@@ -567,8 +567,7 @@ class Scheme(Parent):
         if Y is None:
             if isinstance(x, Scheme):
                 return self.Hom(x).natural_map()
-            else:
-                raise TypeError("unable to determine codomain")
+            raise TypeError("unable to determine codomain")
         return self.Hom(Y)(x, check=check)
 
     def _Hom_(self, Y, category=None, check=True):
@@ -965,7 +964,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         if isinstance(x, self.element_class):
             if x.parent() is self:
                 return x
-            elif x.parent() == self:
+            if x.parent() == self:
                 return self.element_class(self, x.prime_ideal())
         elif isinstance(x, Ideal_generic) and x.ring() is self.coordinate_ring():
             return self.element_class(self, x)

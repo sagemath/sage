@@ -353,7 +353,7 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False) -> tuple:
         if pr > 0:
             # return circuit
             return circuit_vertex
-        elif pr < 0:
+        if pr < 0:
             return tuple(reversed(circuit_vertex))
     prec = precision
     while True:
@@ -768,7 +768,6 @@ def roots_interval_cached(f, x0) -> dict:
         sage: (f, 1) in roots_interval_cache
         True
     """
-    global roots_interval_cache
     try:
         return roots_interval_cache[(f, x0)]
     except KeyError:
@@ -805,7 +804,6 @@ def populate_roots_interval_cache(inputs) -> None:
          0.4795466549853897? + 1.475892845355996?*I: 1.? + 2.?*I,
          14421467174121563/9293107134194871: 2.? + 0.?*I}
     """
-    global roots_interval_cache
     tocompute = [inp for inp in inputs if inp not in roots_interval_cache]
     problem_par = True
     while problem_par:  # hack to deal with random fails in parallelization
@@ -1282,7 +1280,6 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
         sage: braid_monodromy(prod(L), arrangement=L, vertical=True)
         ([s^2, 1], {0: 1, 1: 3}, {0: 0, 1: 2}, 2)
     """
-    global roots_interval_cache
     F = fieldI(f.base_ring())
     I1 = F(QQbar.gen())
     f = f.change_ring(F)

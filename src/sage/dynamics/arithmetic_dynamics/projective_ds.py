@@ -115,6 +115,7 @@ lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFinite
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
 lazy_import('sage.rings.padics.factory', 'Qp')
 lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
 from cypari2.handle_error import PariError
 
@@ -426,7 +427,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if len(polys) != domain.ambient_space().coordinate_ring().ngens():
             raise ValueError(f'number of polys does not match dimension of {domain}')
         R = domain.base_ring()
-        if isinstance(R, sage.rings.abc.SymbolicRing):
+        if isinstance(R, SymbolicRing):
             raise TypeError("the base ring cannot be the Symbolic Ring or a symbolic subring")
 
         if isinstance(domain, ProductProjectiveSpaces_ring):

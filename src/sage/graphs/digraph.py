@@ -176,7 +176,7 @@ from copy import copy
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from itertools import product
-import sage.graphs.generic_graph_pyx as generic_graph_pyx
+from sage.graphs import generic_graph_pyx
 from sage.graphs.generic_graph import GenericGraph
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.graphs.views import EdgesView

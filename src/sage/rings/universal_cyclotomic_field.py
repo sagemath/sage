@@ -628,8 +628,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         coeffs = self._obj.CoeffsCyc(k).sage()
         if k == 1:
             return hash(coeffs[0])
-        else:
-            return hash((k,) + tuple(coeffs))
+        return hash((k,) + tuple(coeffs))
 
     def _algebraic_(self, R):
         r"""
@@ -1004,8 +1003,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
                 return self ** num
             if den == 2 and self._obj.IsRat():
                 return self.sqrt() ** num
-            else:
-                raise NotImplementedError("no powering implemented beyond square root of rationals")
+            raise NotImplementedError("no powering implemented beyond square root of rationals")
 
         raise NotImplementedError("no powering implemented for non-rational exponents")
 
@@ -1106,9 +1104,8 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
             if self._obj.IsInt():
                 return UCF_sqrt_int(D, UCF)
-            else:
-                return UCF_sqrt_int(D.numerator(), UCF) / \
-                    UCF_sqrt_int(D.denominator(), UCF)
+            return UCF_sqrt_int(D.numerator(), UCF) / \
+                UCF_sqrt_int(D.denominator(), UCF)
 
         # root of unity
         k = self._obj.Conductor()
@@ -1122,8 +1119,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         # no method to construct square roots yet...
         if extend:
             return QQbar(self).sqrt()
-        else:
-            raise NotImplementedError("sqrt() not fully implemented for elements of Universal Cyclotomic Field")
+        raise NotImplementedError("sqrt() not fully implemented for elements of Universal Cyclotomic Field")
 
     def conjugate(self):
         r"""
@@ -1333,8 +1329,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         """
         if n == 1:
             return (self.gen,)
-        else:
-            raise ValueError("This ring has only a single generator method.")
+        raise ValueError("This ring has only a single generator method.")
 
     def an_element(self):
         r"""
@@ -1518,9 +1513,9 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
 
         if isinstance(elt, (Integer, Rational)):
             return self.element_class(self, libgap(elt))
-        elif isinstance(elt, (GapElement_Integer, GapElement_Rational, GapElement_Cyclotomic)):
+        if isinstance(elt, (GapElement_Integer, GapElement_Rational, GapElement_Cyclotomic)):
             return self.element_class(self, elt)
-        elif not elt:
+        if not elt:
             return self.zero()
 
         obj = None

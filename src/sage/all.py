@@ -230,7 +230,7 @@ from sage.calculus.all import *
 from sage.cpython.all import *
 
 from sage.crypto.all import *
-import sage.crypto.mq as mq
+from sage.crypto import mq
 
 from sage.plot.all import *
 from sage.plot.plot3d.all import *

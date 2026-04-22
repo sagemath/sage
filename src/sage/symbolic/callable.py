@@ -60,7 +60,7 @@ The arguments in the definition must be symbolic variables (:issue:`10747`)::
     ...
     SyntaxError: can...t assign to function call...
 """
-import sage.rings.abc
+from sage.misc.lazy_import import lazy_import
 from sage.symbolic.ring import SymbolicRing, SR
 from sage.categories.pushout import ConstructionFunctor
 from sage.structure.factory import UniqueFactory
@@ -224,7 +224,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
         return tuple(new_list)
 
 
-class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.CallableSymbolicExpressionRing):
+class CallableSymbolicExpressionRing_class(SymbolicRing):
     def __init__(self, arguments):
         """
         EXAMPLES:

@@ -538,7 +538,7 @@ class Ideal_generic(MonoidElement):
             sage: latex(3*ZZ) # indirect doctest
             \left(3\right)\Bold{Z}
         """
-        import sage.misc.latex as latex
+        from sage.misc import latex
         return '\\left(%s\\right)%s' % (", ".join(latex.latex(g)
                                                   for g in self.gens()),
                                         latex.latex(self.ring()))
@@ -711,8 +711,7 @@ class Ideal_generic(MonoidElement):
             # For rings of Krull dimension 0, or for integral domains of
             # Krull dimension 1, every nontrivial prime ideal is maximal.
             return self.is_prime()
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def is_primary(self, P=None):
         r"""
@@ -765,8 +764,7 @@ class Ideal_generic(MonoidElement):
             raise NotImplementedError
         if P is None:
             return (len(ass) == 1)
-        else:
-            return (len(ass) == 1) and (ass[0] == P)
+        return (len(ass) == 1) and (ass[0] == P)
 
     def primary_decomposition(self):
         r"""
@@ -1548,10 +1546,9 @@ class Ideal_pid(Ideal_principal):
         """
         if isinstance(other, Ideal_principal):
             return self.ring().ideal(self.gen().gcd(other.gen()))
-        elif self.gen() in other:
+        if self.gen() in other:
             return other
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def is_prime(self):
         """

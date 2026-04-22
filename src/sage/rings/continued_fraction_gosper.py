@@ -144,8 +144,7 @@ class gosper_iterator:
             if ub == lb and s < 1:
                 self.emit(ub)
                 return Integer(ub)
-            else:
-                self.ingest()
+            self.ingest()
 
     def emit(self, q):
         """
@@ -214,5 +213,4 @@ class gosper_iterator:
         """
         if not d:
             return +Infinity
-        else:
-            return n // d
+        return n // d

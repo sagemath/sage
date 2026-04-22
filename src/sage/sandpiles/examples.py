@@ -151,13 +151,12 @@ class SandpileExamples:
                 f.allow_multiple_edges(True)
                 f.add_edges([(0, 1), (0, n-1)])
             return Sandpile(f, 0)
-        elif n == 1:
+        if n == 1:
             return Sandpile(f, 0)
-        elif n == 2:
+        if n == 2:
             if deg_three_verts:
                 return Sandpile({0: {1: 3}, 1: {0: 3}})
-            else:
-                return Sandpile(f, 0)
+            return Sandpile(f, 0)
 
     def Grid(self, m, n):
         """

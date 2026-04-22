@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 The Steenrod algebra
 
@@ -764,8 +763,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             mod 3 Steenrod algebra, milnor basis
             sage: SteenrodAlgebra(2, basis='adem')
             mod 2 Steenrod algebra, serre-cartan basis
-            sage: B = SteenrodAlgebra(2003)                                             # needs sage.rings.finite_rings
-            sage: B._repr_()                                                            # needs sage.rings.finite_rings
+            sage: B = SteenrodAlgebra(2003)
+            sage: B._repr_()
             'mod 2003 Steenrod algebra, milnor basis'
             sage: SteenrodAlgebra(generic=True, basis='adem')
             generic mod 2 Steenrod algebra, serre-cartan basis

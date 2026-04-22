@@ -424,8 +424,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
         """
         if self._prec_cap_relative is not infinity:
             return self._prec_cap_relative
-        else:
-            return self._prec_cap_absolute
+        return self._prec_cap_absolute
 
     def _precision_cap(self):
         """
@@ -443,8 +442,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
         """
         if self._subtype == 'cap':
             return (self._prec_cap_relative, self._prec_cap_absolute)
-        else:
-            return self._prec_cap_relative
+        return self._prec_cap_relative
 
     def precision_cap_relative(self):
         """
@@ -590,10 +588,9 @@ class pAdicLatticeGeneric(pAdicGeneric):
         try:
             if prec is None:
                 return x._copy(parent=self)
-            elif x.parent() is self:
+            if x.parent() is self:
                 return x.add_bigoh(prec)
-            else:
-                return x._copy(parent=self).add_bigoh(prec)
+            return x._copy(parent=self).add_bigoh(prec)
         except (TypeError, ValueError, AttributeError):
             pass
         return self._element_class(self, x, prec)
@@ -923,7 +920,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
         parent = x.parent()
         if parent is self and prec is None:
             return x
-        elif isinstance(parent, pAdicRelaxedGeneric):
+        if isinstance(parent, pAdicRelaxedGeneric):
             if parent.Element is self.Element:
                 if not self.is_field() and x.valuation() < 0:
                     raise ValueError("negative valuation")
@@ -1144,8 +1141,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
         """
         if integral or (not self.is_field()):
             return self._get_element_class('random')(self, 0, prec)
-        else:
-            return self._get_element_class('random')(self, None, prec)
+        return self._get_element_class('random')(self, None, prec)
 
     def teichmuller(self, x):
         r"""
@@ -1450,10 +1446,8 @@ class pAdicRingBaseGeneric(pAdicBaseGeneric, pAdicRingGeneric):
                     i += 1
                     a_i = ZZ.random_element(self.prime())
                 return self((self.prime()**i)*(a_i + self.prime()*ZZ.random_element(self.prime_pow.pow_Integer_Integer(self.precision_cap()-1))))
-            else:
-                return self(ZZ.random_element(self.prime_pow.pow_Integer_Integer(self.precision_cap())))
-        else:
-            raise NotImplementedError("Don't know %s algorithm" % algorithm)
+            return self(ZZ.random_element(self.prime_pow.pow_Integer_Integer(self.precision_cap())))
+        raise NotImplementedError("Don't know %s algorithm" % algorithm)
 
     #def unit_group(self):
     #    raise NotImplementedError
@@ -1510,8 +1504,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
         """
         if n == 1:
             return 1
-        else:
-            return 0
+        return 0
 
     def subfield(self, list):
         r"""
@@ -1597,5 +1590,4 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
             else:
                 prec = self._precision_cap()
             return (CompletionFunctor(self.prime(), prec, extras), QQ)
-        else:
-            return FractionField(), self.integer_ring()
+        return FractionField(), self.integer_ring()

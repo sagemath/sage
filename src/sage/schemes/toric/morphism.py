@@ -1450,14 +1450,12 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         if domain_cone.is_trivial():
             if multiplicity:
                 return self.fiber_generic()
-            else:
-                return self.fiber_generic()[0]
+            return self.fiber_generic()[0]
         embedding = SchemeMorphism_fan_fiber_component_toric_variety(self, domain_cone)
         if multiplicity:
             return embedding.domain(), \
                 self.fan_morphism().index(embedding.base_cone())
-        else:
-            return embedding.domain()
+        return embedding.domain()
 
     @cached_method
     def fiber_dimension(self, codomain_cone):

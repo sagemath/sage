@@ -20,7 +20,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from sage.rings.integer_ring import ZZ
@@ -36,11 +36,14 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 
-_Fields = Fields()
-
 from sage.structure.sequence import Sequence
 from sage.structure.element import parent, Expression
 from sage.structure.factory import UniqueFactory
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
+
+_Fields = Fields()
 
 
 class EllipticCurveFactory(UniqueFactory):
@@ -433,7 +436,7 @@ class EllipticCurveFactory(UniqueFactory):
                 )
             x = x.lhs() - x.rhs()
 
-        if isinstance(parent(x), sage.rings.abc.SymbolicRing):
+        if isinstance(parent(x), SymbolicRing):
             x = x._polynomial_(QQ["x", "y"])
 
         if isinstance(x, MPolynomial):
@@ -518,25 +521,25 @@ class EllipticCurveFactory(UniqueFactory):
             from .ell_rational_field import EllipticCurve_rational_field
 
             return EllipticCurve_rational_field(x, **kwds)
-        elif kwds:
+        if kwds:
             raise TypeError(f"unexpected keyword arguments: {kwds}")
 
         if isinstance(R, NumberField):
             from .ell_number_field import EllipticCurve_number_field
 
             return EllipticCurve_number_field(R, x)
-        elif isinstance(R, sage.rings.abc.pAdicField):
+        if isinstance(R, sage.rings.abc.pAdicField):
             from .ell_padic_field import EllipticCurve_padic_field
 
             return EllipticCurve_padic_field(R, x)
-        elif isinstance(R, FiniteField) or (
+        if isinstance(R, FiniteField) or (
             isinstance(R, sage.rings.abc.IntegerModRing)
             and R.characteristic().is_prime()
         ):
             from .ell_finite_field import EllipticCurve_finite_field
 
             return EllipticCurve_finite_field(R, x)
-        elif R in _Fields:
+        if R in _Fields:
             from .ell_field import EllipticCurve_field
 
             return EllipticCurve_field(R, x)
@@ -795,13 +798,11 @@ def coefficients_from_j(j, minimal_twist=True):
     if char == 2:
         if j == 0:
             return Sequence([0, 0, 1, 0, 0], universe=K)
-        else:
-            return Sequence([1, 0, 0, 0, 1 / j], universe=K)
+        return Sequence([1, 0, 0, 0, 1 / j], universe=K)
     if char == 3:
         if j == 0:
             return Sequence([0, 0, 0, 1, 0], universe=K)
-        else:
-            return Sequence([0, j, 0, 0, -(j**2)], universe=K)
+        return Sequence([0, j, 0, 0, -(j**2)], universe=K)
 
     if K is RationalField():
         # we construct the minimal twist, i.e. the curve with minimal
