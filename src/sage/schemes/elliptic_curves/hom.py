@@ -653,7 +653,9 @@ class EllipticCurveHom(Morphism):
             o = T2.exponent()
             for imP in imPs:
                 imP.set_order(multiple=o)
-            Rgens = [g.element() for g in T2.gens()]
+            T2gens = list(T2.gens())
+            Rgens = [g.element() for g in T2gens]
+            T2orders = [g.order() for g in T2gens]
             # For small exponent, compute the discrete logarithms by
             # brute-force table lookup. Calling ``pt.log(...)`` dispatches
             # to ``pari.elllog``, which may internally reduce the elliptic
@@ -667,17 +669,19 @@ class EllipticCurveHom(Morphism):
                 table = {}
                 if len(Rgens) == 1:
                     R, = Rgens
+                    oR, = map(int, T2orders)
                     cur = Z
-                    for a in range(int(o)):
+                    for a in range(oR):
                         table[cur] = (a,)
                         cur = cur + R
                     mylog = lambda pt: table[pt]
                 elif len(Rgens) == 2:
                     R, S = Rgens
+                    oR, oS = map(int, T2orders)
                     rowR = Z
-                    for a in range(int(o)):
+                    for a in range(oR):
                         cur = rowR
-                        for b in range(int(o)):
+                        for b in range(oS):
                             table[cur] = (a, b)
                             cur = cur + S
                         rowR = rowR + R
@@ -694,7 +698,7 @@ class EllipticCurveHom(Morphism):
 
             from sage.matrix.constructor import matrix
             from sage.matrix.special import diagonal_matrix
-            M = matrix(ZZ, map(mylog, imPs)).stack(diagonal_matrix([elt.order() for elt in T2.gens()]))
+            M = matrix(ZZ, map(mylog, imPs)).stack(diagonal_matrix(T2orders))
             K = M.left_kernel_matrix()[:,:len(Ps)]
 
             V = K.row_space(ZZ) / diagonal_matrix([P.order() for P in Ps]).row_space(ZZ)
