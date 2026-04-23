@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs
 r"""
 Generic cell complexes
 
@@ -231,7 +230,6 @@ class GenericCellComplex(SageObject):
             sage: Z._n_cells_sorted(2, subcomplex=K)
             [(1, 2, 4), (1, 3, 4)]
 
-            sage: # needs sage.symbolic
             sage: S = SimplicialComplex([[complex(i), complex(1)]])
             sage: S._n_cells_sorted(0)
             [((1+0j),), (1j,)]
@@ -511,7 +509,6 @@ class GenericCellComplex(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: P = delta_complexes.RealProjectivePlane()
             sage: P.homology()
             {0: 0, 1: C2, 2: 0}
@@ -530,7 +527,7 @@ class GenericCellComplex(SageObject):
         Sage can compute generators of homology groups::
 
             sage: S2 = simplicial_complexes.Sphere(2)
-            sage: S2.homology(dim=2, generators=True, base_ring=GF(2))                  # needs sage.modules
+            sage: S2.homology(dim=2, generators=True, base_ring=GF(2))
             [(Vector space of dimension 1 over Finite Field of size 2,
               (0, 1, 2) + (0, 1, 3) + (0, 2, 3) + (1, 2, 3))]
 
@@ -541,7 +538,7 @@ class GenericCellComplex(SageObject):
         complexes, each generator is a linear combination of cubes::
 
             sage: S2_cub = cubical_complexes.Sphere(2)
-            sage: S2_cub.homology(dim=2, generators=True)                               # needs sage.modules
+            sage: S2_cub.homology(dim=2, generators=True)
             [(Z,
              [0,0] x [0,1] x [0,1] - [0,1] x [0,0] x [0,1] + [0,1] x [0,1] x [0,0]
              - [0,1] x [0,1] x [1,1] + [0,1] x [1,1] x [0,1] - [1,1] x [0,1] x [0,1])]
@@ -549,7 +546,7 @@ class GenericCellComplex(SageObject):
         Similarly for simplicial sets::
 
             sage: S = simplicial_sets.Sphere(2)
-            sage: S.homology(generators=True)                                           # needs sage.modules
+            sage: S.homology(generators=True)
             {0: [], 1: 0, 2: [(Z, sigma_2)]}
         """
         from sage.homology.homology_group import HomologyGroup
@@ -628,14 +625,13 @@ class GenericCellComplex(SageObject):
         EXAMPLES::
 
             sage: circle = SimplicialComplex([[0,1], [1,2], [0, 2]])
-            sage: circle.cohomology(0)                                                  # needs sage.modules
+            sage: circle.cohomology(0)
             0
-            sage: circle.cohomology(1)                                                  # needs sage.modules
+            sage: circle.cohomology(1)
             Z
 
         Projective plane::
 
-            sage: # needs sage.modules
             sage: P2 = SimplicialComplex([[0,1,2], [0,2,3], [0,1,5], [0,4,5], [0,3,4],
             ....:                         [1,2,4], [1,3,4], [1,3,5], [2,3,5], [2,4,5]])
             sage: P2.cohomology(2)
@@ -645,20 +641,20 @@ class GenericCellComplex(SageObject):
             sage: P2.cohomology(2, base_ring=GF(3))
             Vector space of dimension 0 over Finite Field of size 3
 
-            sage: cubical_complexes.KleinBottle().cohomology(2)                         # needs sage.modules
+            sage: cubical_complexes.KleinBottle().cohomology(2)
             C2
 
         Relative cohomology::
 
             sage: T = SimplicialComplex([[0,1]])
             sage: U = SimplicialComplex([[0], [1]])
-            sage: T.cohomology(1, subcomplex=U)                                         # needs sage.modules
+            sage: T.cohomology(1, subcomplex=U)
             Z
 
         A `\Delta`-complex example::
 
             sage: s5 = delta_complexes.Sphere(5)
-            sage: s5.cohomology(base_ring=GF(7))[5]                                     # needs sage.modules
+            sage: s5.cohomology(base_ring=GF(7))[5]
             Vector space of dimension 1 over Finite Field of size 7
         """
         return self.homology(dim=dim, cohomology=True, base_ring=base_ring,
@@ -692,23 +688,23 @@ class GenericCellComplex(SageObject):
         two-point space with itself::
 
             sage: S = SimplicialComplex([[0], [1]])
-            sage: (S*S*S).betti()                                                       # needs sage.modules
+            sage: (S*S*S).betti()
             {0: 1, 1: 0, 2: 1}
-            sage: (S*S*S).betti([1,2])                                                  # needs sage.modules
+            sage: (S*S*S).betti([1,2])
             {1: 0, 2: 1}
-            sage: (S*S*S).betti(2)                                                      # needs sage.modules
+            sage: (S*S*S).betti(2)
             1
 
         Or build the two-sphere as a `\Delta`-complex::
 
             sage: S2 = delta_complexes.Sphere(2)
-            sage: S2.betti([1,2])                                                       # needs sage.modules
+            sage: S2.betti([1,2])
             {1: 0, 2: 1}
 
         Or as a cubical complex::
 
             sage: S2c = cubical_complexes.Sphere(2)
-            sage: S2c.betti(2)                                                          # needs sage.modules
+            sage: S2c.betti(2)
             1
         """
         dic = {}
@@ -736,9 +732,9 @@ class GenericCellComplex(SageObject):
         EXAMPLES::
 
             sage: RP2 = simplicial_complexes.RealProjectivePlane()
-            sage: RP2.is_acyclic()                                                      # needs sage.modules
+            sage: RP2.is_acyclic()
             False
-            sage: RP2.is_acyclic(QQ)                                                    # needs sage.modules
+            sage: RP2.is_acyclic(QQ)
             True
 
         This first computes the Euler characteristic: if it is not 1,
@@ -782,12 +778,12 @@ class GenericCellComplex(SageObject):
         EXAMPLES::
 
             sage: S2 = simplicial_complexes.Sphere(2)
-            sage: S2.n_chains(1, QQ)                                                    # needs sage.modules
+            sage: S2.n_chains(1, QQ)
             Free module generated by {(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)}
              over Rational Field
-            sage: list(S2.n_chains(1, QQ, cochains=False).basis())                      # needs sage.modules
+            sage: list(S2.n_chains(1, QQ, cochains=False).basis())
             [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
-            sage: list(S2.n_chains(1, QQ, cochains=True).basis())                       # needs sage.modules
+            sage: list(S2.n_chains(1, QQ, cochains=True).basis())
             [\chi_(0, 1), \chi_(0, 2), \chi_(0, 3), \chi_(1, 2), \chi_(1, 3), \chi_(2, 3)]
         """
         from sage.homology.chains import Chains, Cochains
@@ -850,7 +846,6 @@ class GenericCellComplex(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: K = simplicial_complexes.KleinBottle()
             sage: H = K.homology_with_basis(QQ); H
             Homology module of Minimal triangulation of the Klein bottle
@@ -866,12 +861,12 @@ class GenericCellComplex(SageObject):
         The homology is constructed as a graded object, so for
         example, you can ask for the basis in a single degree::
 
-            sage: H.basis(1)                                                            # needs sage.modules
+            sage: H.basis(1)
             Finite family {(1, 0): h_{1,0}, (1, 1): h_{1,1}}
 
             sage: S3 = delta_complexes.Sphere(3)
-            sage: H = S3.homology_with_basis(QQ, cohomology=True)                       # needs sage.modules
-            sage: list(H.basis(3))                                                      # needs sage.modules
+            sage: H = S3.homology_with_basis(QQ, cohomology=True)
+            sage: list(H.basis(3))
             [h^{3,0}]
         """
         from sage.homology.homology_vector_space_with_basis import \
@@ -917,7 +912,6 @@ class GenericCellComplex(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: K = simplicial_complexes.KleinBottle()
             sage: H = K.cohomology_ring(QQ); H
             Cohomology ring of Minimal triangulation of the Klein bottle
@@ -931,23 +925,22 @@ class GenericCellComplex(SageObject):
             [h^{0,0}, h^{1,0}, h^{1,1}, h^{2,0}]
 
             sage: X = delta_complexes.SurfaceOfGenus(2)
-            sage: H = X.cohomology_ring(QQ); H                                          # needs sage.modules
+            sage: H = X.cohomology_ring(QQ); H
             Cohomology ring of Delta complex with 3 vertices and 29 simplices
              over Rational Field
-            sage: sorted(H.basis(1), key=str)                                           # needs sage.modules
+            sage: sorted(H.basis(1), key=str)
             [h^{1,0}, h^{1,1}, h^{1,2}, h^{1,3}]
 
-            sage: H = simplicial_complexes.Torus().cohomology_ring(QQ); H               # needs sage.modules
+            sage: H = simplicial_complexes.Torus().cohomology_ring(QQ); H
             Cohomology ring of Minimal triangulation of the torus
              over Rational Field
-            sage: x = H.basis()[1,0]; x                                                 # needs sage.modules
+            sage: x = H.basis()[1,0]; x
             h^{1,0}
-            sage: y = H.basis()[1,1]; y                                                 # needs sage.modules
+            sage: y = H.basis()[1,1]; y
             h^{1,1}
 
         You can compute cup products of cohomology classes::
 
-            sage: # needs sage.modules
             sage: x.cup_product(y)
             -h^{2,0}
             sage: x * y # alternate notation
@@ -959,13 +952,12 @@ class GenericCellComplex(SageObject):
 
         Cohomology operations::
 
-            sage: # needs sage.groups
             sage: RP2 = simplicial_complexes.RealProjectivePlane()
             sage: K = RP2.suspension()
             sage: K.set_immutable()
-            sage: y = K.cohomology_ring(GF(2)).basis()[2,0]; y                          # needs sage.modules
+            sage: y = K.cohomology_ring(GF(2)).basis()[2,0]; y
             h^{2,0}
-            sage: y.Sq(1)                                                               # needs sage.modules
+            sage: y.Sq(1)
             h^{3,0}
 
         To compute the cohomology ring, the complex must be
@@ -979,12 +971,12 @@ class GenericCellComplex(SageObject):
             sage: T = S1.product(S1)
             sage: T.is_immutable()
             False
-            sage: T.cohomology_ring()                                                   # needs sage.modules
+            sage: T.cohomology_ring()
             Traceback (most recent call last):
             ...
             ValueError: this simplicial complex must be immutable; call set_immutable()
             sage: T.set_immutable()
-            sage: T.cohomology_ring()                                                   # needs sage.modules
+            sage: T.cohomology_ring()
             Cohomology ring of Simplicial complex with 9 vertices and
              18 facets over Rational Field
         """
