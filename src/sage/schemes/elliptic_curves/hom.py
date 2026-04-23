@@ -653,12 +653,44 @@ class EllipticCurveHom(Morphism):
             o = T2.exponent()
             for imP in imPs:
                 imP.set_order(multiple=o)
-            if len(T2.invariants()) == 1:
-                R, = (g.element() for g in T2.gens())
+            Rgens = [g.element() for g in T2.gens()]
+            # For small exponent, compute the discrete logarithms by
+            # brute-force table lookup. Calling ``pt.log(...)`` dispatches
+            # to ``pari.elllog``, which may internally reduce the elliptic
+            # curve DLP to a discrete logarithm in the multiplicative group
+            # of the underlying finite field; the latter can become
+            # unexpectedly slow (or effectively hang) when ``q^k - 1``
+            # has a large hard-to-factor part, even though ``o`` itself is
+            # small.
+            if o <= 256:
+                Z = Rgens[0].curve().zero() if Rgens else None
+                table = {}
+                if len(Rgens) == 1:
+                    R, = Rgens
+                    cur = Z
+                    for a in range(int(o)):
+                        table[cur] = (a,)
+                        cur = cur + R
+                    mylog = lambda pt: table[pt]
+                elif len(Rgens) == 2:
+                    R, S = Rgens
+                    rowR = Z
+                    for a in range(int(o)):
+                        cur = rowR
+                        for b in range(int(o)):
+                            table[cur] = (a, b)
+                            cur = cur + S
+                        rowR = rowR + R
+                    mylog = lambda pt: table[pt]
+                else:
+                    # no generators (trivial T2); mylog returns empty tuple
+                    mylog = lambda pt: ()
+            elif len(T2.invariants()) == 1:
+                R, = Rgens
                 mylog = lambda pt: (pt.log(R),)
             else:
-                R, S = (g.element() for g in T2.gens())
-                mylog = lambda pt: pt.log([R,S])
+                R, S = Rgens
+                mylog = lambda pt: pt.log([R, S])
 
             from sage.matrix.constructor import matrix
             from sage.matrix.special import diagonal_matrix
