@@ -331,51 +331,69 @@ class RightAngledArtinGroup(ArtinGroup):
             1
             sage: (a*b*c*d*e)^2 * (a*b*c*d*e)^-2
             1
+            sage: G._normal_form([[0, 1], [0, -1], [2, 0], [3, 4], [3, -4]])
+            ()
+            sage: all((x * y) == G(x._data + y._data)
+            ....:     for x in [a, b, c, d, e, a*b, c^-1*d, a^2*e^-3]
+            ....:     for y in [a^-1, b*c, d^-2, e, a*b^-1*c])
+            True
+            sage: all((x * y) * z == x * (y * z)
+            ....:     for x in [a, b, c, d, e, a*b^-1, c*d*e^-2]
+            ....:     for y in [a^-2, b*c^-1, d*e, a*b*c]
+            ....:     for z in [a, b^-1, c^2, d^-1*e, a*b^-1*c*d])
+            True
+            sage: a*c*a^-1*c^-1 == G.one() and a*b*a^-1*b^-1 != G.one()
+            True
+            sage: all((x * y) * ~(x * y) == G.one()
+            ....:     for x in [a, b, c, d, e, a*b^-1*c]
+            ....:     for y in [a^-1*d, b*c^-2, e^-1*a, d*e])
+            True
+            sage: from sage.misc.prandom import choice, randint
+            sage: set_random_seed(20260424)
+            sage: letters = [a, b, c, d, e, ~a, ~b, ~c, ~d, ~e]
+            sage: def rand_word():
+            ....:     return G.prod(choice(letters) for _ in range(randint(0, 8)))
+            sage: all((u * v) == G(u._data + v._data)
+            ....:     for _ in range(30)
+            ....:     for u, v in [(rand_word(), rand_word())])
+            True
         """
-        pos = 0
         G = self._graph
         v = G.vertices(sort=True)
-        w = [list(x) for x in word]  # Make a (2 level) deep copy
-        while pos < len(w):
-            comm_set = [w[pos][0]]
-            # The current set of totally commuting elements
-            i = pos + 1
+        # Keep nonzero syllables only and mutate in place.
+        w = [list(x) for x in word if x[1]]
 
-            while i < len(w):
-                letter = w[i][0]  # The current letter
-                # Check if this could fit in the commuting set
-                if letter in comm_set:
-                    # Try to move it in
-                    if any(G.has_edge(v[w[j][0]], v[letter])
-                           for j in range(pos + len(comm_set), i)):
-                        # We can't, so go onto the next letter
-                        i += 1
-                        continue
-                    j = comm_set.index(letter)
-                    w[pos + j][1] += w[i][1]
-                    w.pop(i)
-                    i -= 1  # Since we removed a syllable
-                    # Check cancellations
-                    if w[pos + j][1] == 0:
-                        w.pop(pos + j)
-                        comm_set.pop(j)
+        # Repeatedly apply local rewriting rules until stable:
+        #   1) Merge adjacent equal generators.
+        #   2) Cancel zero exponents after merging.
+        #   3) Swap commuting generators to enforce generator order.
+        changed = True
+        while changed:
+            changed = False
+            i = 0
+            while i < len(w) - 1:
+                g1, e1 = w[i]
+                g2, e2 = w[i + 1]
+
+                if g1 == g2:
+                    w[i][1] = e1 + e2
+                    w.pop(i + 1)
+                    if w[i][1] == 0:
+                        w.pop(i)
+                        if i:
+                            i -= 1
+                    changed = True
+                    continue
+
+                if not G.has_edge(v[g1], v[g2]) and g1 > g2:
+                    w[i], w[i + 1] = w[i + 1], w[i]
+                    changed = True
+                    if i:
                         i -= 1
-                        if not comm_set:
-                            pos = 0
-                            # Start again since cancellation can be pronounced effects
-                            break
-                elif all(not G.has_edge(v[w[j][0]], v[letter])
-                         for j in range(pos, i)):
-                    j = 0
-                    for x in comm_set:
-                        if x > letter:
-                            break
-                        j += 1
-                    w.insert(pos + j, w.pop(i))
-                    comm_set.insert(j, letter)
+                    continue
 
                 i += 1
-            pos += len(comm_set)
+
         return tuple(w)
 
     def cohomology(self, F=None):
