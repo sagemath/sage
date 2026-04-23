@@ -132,11 +132,11 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
     We can perform a number of operations, such as find the dimension or
     compute the homology::
 
-        sage: M.homology()                                                              # needs sage.modules
+        sage: M.homology()
         {0: 0, 1: 0, 2: 0, 3: Z}
         sage: Z.dimension()
         6
-        sage: Z.homology()                                                              # needs sage.modules
+        sage: Z.homology()
         {0: 0, 1: 0, 2: 0, 3: Z x Z, 4: Z, 5: Z, 6: Z}
 
     If the associated simplicial complex is an `n`-simplex, then the
@@ -405,9 +405,9 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
             sage: S3 = simplicial_complexes.Sphere(3)
             sage: product_of_spheres = S3.product(S3)
-            sage: Z.cohomology()                                                        # needs sage.modules
+            sage: Z.cohomology()
             {0: 0, 1: 0, 2: 0, 3: Z x Z, 4: 0, 5: 0, 6: Z}
-            sage: Z.cohomology() == product_of_spheres.cohomology()  # long time        # needs sage.modules
+            sage: Z.cohomology() == product_of_spheres.cohomology()  # long time
             True
         """
         return self._components
@@ -455,7 +455,6 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: Z = MomentAngleComplex([[0,1,2], [1,2,3]]); Z
             Moment-angle complex of Simplicial complex with vertex set
             (0, 1, 2, 3) and facets {(0, 1, 2), (1, 2, 3)}
@@ -553,7 +552,6 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: Z = MomentAngleComplex([[0,1,2], [1,2,3], [3,0]]); Z
             Moment-angle complex of Simplicial complex with vertex set
             (0, 1, 2, 3) and facets {(0, 3), (0, 1, 2), (1, 2, 3)}
@@ -584,14 +582,13 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}
             sage: Z.cubical_complex()
             Cubical complex with 64 vertices and 729 cubes
-            sage: Z.cubical_complex().homology() == Z.homology()                        # needs sage.modules
+            sage: Z.cubical_complex().homology() == Z.homology()
             True
 
         Meanwhile, the homology computation used here is quite efficient
         and works well even with significantly larger underlying simplicial
         complexes::
 
-            sage: # needs sage.modules
             sage: Z = MomentAngleComplex([[0,1,2,3,4,5], [0,1,2,3,4,6],
             ....:                         [0,1,2,3,5,7], [0,1,2,3,6,8,9]])
             sage: Z.homology()  # long time
@@ -661,7 +658,6 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         to a product of two 3-spheres (which can be seen by looking at the
         output of ``components()``)::
 
-            sage: # needs sage.modules
             sage: S3 = simplicial_complexes.Sphere(3)
             sage: product_of_spheres = S3.product(S3)
             sage: Z.cohomology()
@@ -690,7 +686,6 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0], [1,2,3]])
             sage: Z.betti()
             {0: 1, 1: 0, 2: 0, 3: 1, 4: 0, 5: 1, 6: 1, 7: 0}
@@ -722,7 +717,6 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: X = SimplicialComplex([[0,1,2,3,4,5], [0,1,2,3,4,6],
             ....:                        [0,1,2,3,5,7], [0,1,2,3,6,8,9]])
             sage: M = MomentAngleComplex(X)
