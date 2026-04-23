@@ -2425,57 +2425,6 @@ def is_kernel_polynomial(E, m, f):
     return True
 
 
-def _safe_factor(f):
-    r"""
-    Factor the univariate polynomial ``f`` robustly.
-
-    Over finite fields of non-prime order, the default PARI-based
-    factorization routine can (in some cases) enter an extremely slow
-    code path involving a finite-field discrete logarithm; this can
-    effectively hang for polynomials that are trivial to factor via
-    other backends.  This helper falls back to Singular whenever the
-    base ring is a finite non-prime field, which is reliable and
-    efficient for the division polynomials encountered here.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.elliptic_curves.isogeny_small_degree import _safe_factor
-        sage: R.<x> = GF(4,'z2')[]
-        sage: _safe_factor(x^3 + 2*x + 1)
-        (x + 1) * (x + z2) * (x + z2 + 1)
-
-    TESTS::
-
-        sage: from sage.schemes.elliptic_curves.isogeny_small_degree import _safe_factor
-        sage: R.<x> = GF(4,'z2')[]
-        sage: _safe_factor(x^3 + x + 1)
-        x^3 + x + 1
-    """
-    R = f.parent().base_ring()
-    from sage.rings.finite_rings.finite_field_base import FiniteField
-    if isinstance(R, FiniteField) and not R.is_prime_field():
-        from sage.structure.factorization import Factorization
-        try:
-            P = f.parent()
-            P._singular_().set_ring()
-            S = f._singular_().factorize()
-            fac_list = S[1]
-            exp_list = S[2]
-            unit = P.one()
-            pairs = []
-            for i in range(len(fac_list)):
-                g = P(fac_list[i + 1])
-                e = ZZ(exp_list[i + 1])
-                if g.is_unit():
-                    unit = unit * g**e
-                else:
-                    pairs.append((g, e))
-            return Factorization(pairs, unit=unit)
-        except (TypeError, AttributeError, NotImplementedError):
-            pass
-    return f.factor()
-
-
 def isogenies_prime_degree_general(E, l, minimal_models=True):
     """
     Return all separable ``l``-isogenies with domain ``E``.
@@ -2648,7 +2597,7 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
 
     psi_l = E.division_polynomial(l)
 
-    factors = [h for h,_ in _safe_factor(psi_l) if h.degree().divides(l//2)]
+    factors = [h for h,_ in psi_l.factor() if h.degree().divides(l//2)]
 
     kernels = []  # will store all kernel polynomials found
 
