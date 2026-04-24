@@ -343,8 +343,8 @@ def variety(ideal, ring, *, proof=True):
 
 def _format_output_msolve_grobner(ms_output):
     r"""
-    Internal utility function: 
-    
+    Internal utility function:
+
     Converts a msolve grobner basis format string into a list
     """
 
@@ -355,7 +355,7 @@ def _format_output_msolve_grobner(ms_output):
             is_sol_reached = True
         if is_sol_reached and l2 != '' and l2[0] == '-':
             is_sol_reached = False
-        if is_sol_reached == False:
+        if not is_sol_reached:
             print(l2)
             continue
         l = ''
@@ -369,7 +369,7 @@ def _format_output_msolve_grobner(ms_output):
 
 def _format_output_msolve_intervals(ms_output):
     r"""
-    Internal utility function: 
+    Internal utility function:
 
     Converts a msolve isolation intervals format string into a list
     """
@@ -381,7 +381,7 @@ def _format_output_msolve_intervals(ms_output):
             is_sol_reached = True
         if is_sol_reached and l2 != '' and l2[0] == '-':
             is_sol_reached = False
-        if is_sol_reached == False:
+        if not is_sol_reached:
             print(l2)
             continue
         sols += l2
@@ -390,17 +390,17 @@ def _format_output_msolve_intervals(ms_output):
 
 def _is_smooth(poly, threads, msolve_verbose):
     r"""
-    Function that checks for the smoothness of V(poly) where poly has 
+    Function that checks for the smoothness of V(poly) where poly has
     rational coefficients.
 
     INPUT:
 
         - ``poly`` -- polynomial with rational coefficients
 
-        - ``threads`` -- integer; number of threads to be used by msolve in 
+        - ``threads`` -- integer; number of threads to be used by msolve in
         computation
 
-        - ``msolve_verbose`` -- 0, 1 or 2; msolve parameter for explicit 
+        - ``msolve_verbose`` -- 0, 1 or 2; msolve parameter for explicit
         description of computations, ranging from 0 (no desc) to 2 (full desc)
 
     OUTPUT:
@@ -439,14 +439,14 @@ def _grp_random_matrix(n, changevar=True):
     Internal Function
 
     Function that generates a random (n x n) change of variables matrix, such
-    that all partial inverses B_k exist, for 0 <= k <= n. 
+    that all partial inverses B_k exist, for 0 <= k <= n.
     Under paper notation: such that it satisfies hypothesis (A2).
 
     INPUT:
 
         - ``n`` -- integer; number of variables
 
-        - ``changevar`` -- boolean (default ``True``); uses A = Identity if 
+        - ``changevar`` -- boolean (default ``True``); uses A = Identity if
         set to ``False``
 
     OUTPUT:
@@ -456,7 +456,7 @@ def _grp_random_matrix(n, changevar=True):
 
     while True:
         try:
-            if changevar == True:
+            if changevar:
                 A = matrix([[ZZ.random_element(1,100,"uniform") for j in range(n)] for i in range(n)])
             else:
                 A = matrix.identity(n)
@@ -505,10 +505,10 @@ def _remove_absent_variable(P, x):
 
     INPUT:
 
-        - ``P`` -- multivariate polynomial with rational coefficients; 
+        - ``P`` -- multivariate polynomial with rational coefficients;
         not tested for univariate polynomials.
 
-        - ``x`` -- tuple or list; list of variables such that 
+        - ``x`` -- tuple or list; list of variables such that
         each variable appears in P.parent() and not in P itself.
 
     OUTPUT:
@@ -555,32 +555,32 @@ def _critical_points(f, threads, msolve_verbose, precision, k, n, list_of_matric
 
         - ``f`` -- polynomial with rational coefficients
 
-        - ``threads`` -- integer; number of threads to be used by msolve in 
+        - ``threads`` -- integer; number of threads to be used by msolve in
         computation
 
-        - ``msolve_verbose`` -- 0, 1 or 2; msolve parameter for explicit 
+        - ``msolve_verbose`` -- 0, 1 or 2; msolve parameter for explicit
         description of computations, ranging from 0 (no desc) to 2 (full desc)
 
-        - ``precision`` -- integer; number of bits of precision used by msolve 
+        - ``precision`` -- integer; number of bits of precision used by msolve
         for real root approximation
 
         - ``k`` -- integer; integer satisfying 0 <= k < n
 
         - ``n`` -- integer; total number of variables
 
-        - ``list_of_matrices`` -- list of matrices; change of variables 
+        - ``list_of_matrices`` -- list of matrices; change of variables
         matrix A and its B_k's, formatted as in the output of _grp_random_matrix
-        
+
         - ``sigma`` -- list of integers; list of n-1 integers
 
         - ``variables`` -- list; list of all variables
 
-        - ``der_list`` -- list of polynomials; list of partial derivatives of f 
+        - ``der_list`` -- list of polynomials; list of partial derivatives of f
         with respect to every element in `variables`
 
     OUTPUT:
 
-        - list of k-1 polynomials; substitution expressions for the 
+        - list of k-1 polynomials; substitution expressions for the
         first k-1 variables
 
         - Isolation intervals with rational endpoints for the last (n-k)
@@ -634,14 +634,14 @@ def _rough_eval(point,poly):
 
     INPUT:
 
-        - ``point`` -- list of lists; list of isolation intervals, 
-            in msolve approximation format
+        - ``point`` -- list of lists; list of isolation intervals,
+        in msolve approximation format
 
         - ``poly`` -- polynomial with rational coefficients
-    
+
     OUTPUT:
 
-        - two rational numbers; lower and upper bounds for the value that `poly` 
+        - two rational numbers; lower and upper bounds for the value that `poly`
         can take on the approximation box of `point`.
     """
 
@@ -683,17 +683,17 @@ def _matrix_box(n, point, matrix, substitution):
 
             - ``n`` -- integer; size of the matrix, number of coordinates
 
-            - ``point`` -- list of lists; list of isolation intervals, 
+            - ``point`` -- list of lists; list of isolation intervals,
             in msolve approximation format
 
             - ``matrix`` -- matrix; (n x n) matrix
 
-            - ``substitution`` -- list of k-1 polynomials; substitution 
+            - ``substitution`` -- list of k-1 polynomials; substitution
             expressions for the first k-1 variables
 
         OUTPUT:
 
-            - list; list of isolation intervals for the last n-k+1 coordinates 
+            - list; list of isolation intervals for the last n-k+1 coordinates
             of matrix*point, in msolve approximation format.
         """
 
@@ -715,7 +715,7 @@ def _do_boxes_intersect(point_list):
 
     INPUT:
 
-        - ``point_list`` -- list of lists of lists; list of lists of 
+        - ``point_list`` -- list of lists of lists; list of lists of
         isolation intervals, in msolve approximation format
 
     OUTPUT:
@@ -750,28 +750,28 @@ def _transverse_intersection(poly, vars, point, low_prec, threads, msolve_verbos
 
         - ``poly`` -- polynomial with rational coefficients
 
-        - ``vars`` -- list; list of all variables of the parent ring of the 
+        - ``vars`` -- list; list of all variables of the parent ring of the
         polynomial
 
-        - ``point`` -- list of lists; list of isolation intervals, 
+        - ``point`` -- list of lists; list of isolation intervals,
         in msolve approximation format
 
-        - ``low_prec`` list of lists; ``point``, but with coordinates at a 
+        - ``low_prec`` list of lists; ``point``, but with coordinates at a
         lower precision
 
-        - ``threads`` -- integer; number of threads to be used by msolve in 
+        - ``threads`` -- integer; number of threads to be used by msolve in
         computation
 
-        - ``msolve_verbose`` -- 0, 1 or 2; msolve parameter for explicit 
+        - ``msolve_verbose`` -- 0, 1 or 2; msolve parameter for explicit
         description of computations, ranging from 0 (no desc) to 2 (full desc)
 
-        - ``precision`` -- integer; number of bits of precision used by msolve 
+        - ``precision`` -- integer; number of bits of precision used by msolve
         for real root approximation
 
     OUTPUT:
 
-        - Two points (in msolve format), each being to the 'left' and the 
-        'right' of the critical point on the transverse line, and sufficiently 
+        - Two points (in msolve format), each being to the 'left' and the
+        'right' of the critical point on the transverse line, and sufficiently
         close to be in the right connected component.
     """
 
@@ -826,13 +826,13 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
 
         - ``poly`` -- polynomial with rational coefficients
 
-        - ``threads`` -- integer; number of threads to be used by msolve in 
+        - ``threads`` -- integer; number of threads to be used by msolve in
         computation
 
-        - ``msolve_verbose`` -- 0, 1 or 2; msolve parameter for explicit 
+        - ``msolve_verbose`` -- 0, 1 or 2; msolve parameter for explicit
         description of computations, ranging from 0 (no desc) to 2 (full desc)
 
-        - ``precision`` -- integer; number of bits of precision used by msolve 
+        - ``precision`` -- integer; number of bits of precision used by msolve
         for real root approximation
 
         - ``inequation`` -- boolean (default ``True``); computes points per
@@ -842,12 +842,12 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
         - ``isempty`` -- boolean (default ``False``); if set to ``True``,
         computation stops as soon as a point in the set is computed
 
-        - ``changevar`` -- boolean (default ``True``); uses A = Identity and 
+        - ``changevar`` -- boolean (default ``True``); uses A = Identity and
         sigma = [1,...,1] if set to ``False``
-    
+
     OUTPUT:
 
-        - list of lists; each sublist corresponds to the coordinates of a 
+        - list of lists; each sublist corresponds to the coordinates of a
         rational point
     """
 
@@ -864,7 +864,7 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
     list_of_matrices = _grp_random_matrix(n,changevar)
 
     # Generating the specialisation point sigma
-    if changevar == True:
+    if changevar:
         sigma = [ZZ.random_element(1,100,"uniform") for i in range(n-1)]
     else:
         sigma = [1 for i in range(n-1)]
@@ -910,7 +910,7 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
             variabless = f_sub.parent().gens()
 
             # Looping over each computed point to obtain A^-1 * point
-            if changevar == True:
+            if changevar:
                 A_inv_list = []
 
                 for point in crit[1][1]:
@@ -945,7 +945,7 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
 
                     # Checking if df^A/dx_k = 0 in the msolve approximation box
                     dfA_interval = _rough_eval(point, dfAdxk)
-                    
+
                     # Checking whether 0 is in the interval
                     if (dfA_interval[0] == 0 or dfA_interval[1] == 0 or sign(dfA_interval[0]) != sign(dfA_interval[1])):
                         raise ValueError("Msolve not precise enough to guarantee non-zero derivative. Consider increasing the precision.")
@@ -991,20 +991,20 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
                 left = inv_permutation(list(left))
                 right = inv_permutation(list(right))
 
-                if inequation == True or f.subs({variables[i] : left[i] for i in range(n)}) > 0:
-                    if isempty == True:
+                if inequation or f.subs({variables[i] : left[i] for i in range(n)}) > 0:
+                    if isempty:
                         return [left]
                     Solsk.append(left)
-                if inequation == True or f.subs({variables[i] : right[i] for i in range(n)}) > 0:
-                    if isempty == True:
+                if inequation or f.subs({variables[i] : right[i] for i in range(n)}) > 0:
+                    if isempty:
                         return [right]
                     Solsk.append(right)
 
         Sols += [Solsk]
 
     final_point = list(list_of_matrices[0]*vector(sigma + [0]))
-    if inequation == True or f.subs({variables[i] : final_point[i] for i in range(n)}) > 0:
-        if isempty == True:
+    if inequation or f.subs({variables[i] : final_point[i] for i in range(n)}) > 0:
+        if isempty:
             return [final_point]
         Sols += [[final_point]]
     Sols = [x for xs in Sols for x in xs]
@@ -1012,20 +1012,20 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
 
 def points_per_components_single_inequality(poly, threads, msolve_verbose, precision=128, inequation=True, isempty=False, changevar=True, proof=False):
     r"""
-    Function computing points per connected component of a semi-algebraic set 
+    Function computing points per connected component of a semi-algebraic set
     defined by a single polynomial inequation.
 
     INPUT:
 
         - ``poly`` -- polynomial with rational coefficients
 
-        - ``threads`` -- integer; number of threads to be used by msolve in 
+        - ``threads`` -- integer; number of threads to be used by msolve in
         computation
 
-        - ``msolve_verbose`` -- 0, 1 or 2; msolve parameter for explicit 
+        - ``msolve_verbose`` -- 0, 1 or 2; msolve parameter for explicit
         description of computations, ranging from 0 (no desc) to 2 (full desc)
 
-        - ``precision`` -- integer; number of bits of precision used by msolve 
+        - ``precision`` -- integer; number of bits of precision used by msolve
         for real root approximation
 
         - ``inequation`` -- boolean (default ``True``); computes points per
@@ -1035,16 +1035,16 @@ def points_per_components_single_inequality(poly, threads, msolve_verbose, preci
         - ``isempty`` -- boolean (default ``False``); if set to ``True``,
         computation stops as soon as a point in the set is computed
 
-        - ``changevar`` -- boolean (default ``True``); uses A = Identity and 
+        - ``changevar`` -- boolean (default ``True``); uses A = Identity and
         sigma = [1,...,1] if set to ``False``
 
         - ``proof`` -- boolean (default ``False``); inner sagemath variable to
-        recall that the algorithm is based on msolve, which relies on 
-        heuristics. Returns an appropriate error message if set to ``True``.
-    
+        recall that the algorithm is based on msolve, which relies on
+        heuristics. Returns an appropriate error message if set to ``True``
+
     OUTPUT:
 
-        - list of lists; each sublist corresponds to the coordinates of a 
+        - list of lists; each sublist corresponds to the coordinates of a
         rational point
 
     EXAMPLES::
@@ -1054,7 +1054,7 @@ def points_per_components_single_inequality(poly, threads, msolve_verbose, preci
         sage: f = 2*x^2 - 7*x*y + 5*y^2 - 3*x + y - 2
         sage: points_per_components_single_inequality(f, 1, 0, 32, True, False, False) # optional - msolve
         [[-81327242789970644619/18230669955817908734, -151863759432751750973/52864310410056725586], [-63096572834152735885/18230669955817908734, -151863759432751750973/52864310410056725586], [-31255250995381558863/18941441967027853418, -2031568568823642965792129/2244655580804164026831606], [-12313809028353705445/18941441967027853418, -2031568568823642965792129/2244655580804164026831606], [1, -90794324783669909401/65802721238427014701], [1, 40811117693184120001/65802721238427014701], [1, 9172089397301669399/15819514147941225301], [1, 40811117693184120001/15819514147941225301], [1, 0]]
-    
+
     ::
 
         sage: from sage.rings.polynomial.msolve import points_per_components_single_inequality
