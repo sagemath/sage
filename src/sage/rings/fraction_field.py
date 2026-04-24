@@ -81,7 +81,7 @@ Test that :issue:`15971` is fixed::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.misc.latex as latex
+from sage.misc import latex
 from sage.categories.basic import QuotientFields, Rings
 from sage.categories.map import Section
 from sage.misc.cachefunc import cached_method
@@ -1048,8 +1048,7 @@ class FractionField_generic(ring.Field):
         if g.is_zero():
             if f.is_zero():
                 return f
-            else:
-                return f.monic()
+            return f.monic()
         Pol = f.parent()
         Num = Pol.change_ring(self.base())
         f1 = Num(f.numerator())

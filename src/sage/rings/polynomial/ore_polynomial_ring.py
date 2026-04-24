@@ -512,11 +512,10 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             def build(check):
                 if a.is_zero():
                     return P.zero()
-                else:
-                    return C(self, [a], check=check, construct=construct)
+                return C(self, [a], check=check, construct=construct)
             if P is self:
                 return a
-            elif P is self.base_ring():
+            if P is self.base_ring():
                 build(False)
             elif P == self.base_ring() or self.base_ring().has_coerce_map_from(P):
                 build(True)
@@ -644,8 +643,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             s += self._derivation._repr_()
         if s == "":
             return "untwisted"
-        else:
-            return "twisted by " + s
+        return "twisted by " + s
 
     def _latex_twist(self):
         r"""
@@ -1109,8 +1107,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         coeffs = [R.random_element(*args, **kwds) for _ in range(degree)]
         if monic:
             return self(coeffs + [R.one()])
-        else:
-            return self(coeffs + [R._random_nonzero_element()])
+        return self(coeffs + [R._random_nonzero_element()])
 
     def random_irreducible(self, degree=2, monic=True, *args, **kwds):
         r"""

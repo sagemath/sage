@@ -407,8 +407,7 @@ class pAdicGeneric(LocalGeneric):
             return self
         if print_mode is None:
             return self.change(field=True)
-        else:
-            return self.change(field=True, **print_mode)
+        return self.change(field=True, **print_mode)
 
     def integer_ring(self, print_mode=None):
         r"""
@@ -476,10 +475,9 @@ class pAdicGeneric(LocalGeneric):
             return self
         if print_mode is None:
             return self.change(field=False, check=False)
-        else:
-            from sage.misc.superseded import deprecation
-            deprecation(23227, "Use the change method if you want to change print options in integer_ring()")
-            return self.change(field=False, **print_mode)
+        from sage.misc.superseded import deprecation
+        deprecation(23227, "Use the change method if you want to change print options in integer_ring()")
+        return self.change(field=False, **print_mode)
 
     def teichmuller(self, x, prec=None):
         r"""
@@ -614,15 +612,14 @@ class pAdicGeneric(LocalGeneric):
         if isinstance(modulus, list):
             if len(modulus) == 0:
                 return self
-            else:
-                return self.extension(modulus[-1], prec=prec[-1],
-                                      names=names[-1],
-                                      implementation=implementation[-1],
-                                      print_mode=print_mode, **kwds).extension(
-                                          modulus[:-1], prec=prec[:-1],
-                                          names=names[:-1],
-                                          implementation=implementation[:-1],
-                                          print_mode=print_mode, **kwds)
+            return self.extension(modulus[-1], prec=prec[-1],
+                                  names=names[-1],
+                                  implementation=implementation[-1],
+                                  print_mode=print_mode, **kwds).extension(
+                                      modulus[:-1], prec=prec[:-1],
+                                      names=names[:-1],
+                                      implementation=implementation[:-1],
+                                      print_mode=print_mode, **kwds)
         from sage.rings.padics.factory import ExtensionFactory
         if print_mode is None:
             print_mode = {}
@@ -1338,8 +1335,7 @@ class pAdicGeneric(LocalGeneric):
 
         if order:
             return zeta, m * p**s
-        else:
-            return zeta
+        return zeta
 
     def roots_of_unity(self, n=None):
         r"""
@@ -1576,8 +1572,7 @@ class pAdicGeneric(LocalGeneric):
                 roots = P.change_ring(K)._roots(secure, 0, None)
             if multiplicities:
                 return [ (ring(root), m) for (root, m) in roots ]
-            else:
-                return [ ring(root) for (root, m) in roots ]
+            return [ ring(root) for (root, m) in roots ]
 
 
 class ResidueReductionMap(Morphism):
@@ -1795,9 +1790,8 @@ class ResidueLiftingMap(Morphism):
             else:
                 lift = K(x.polynomial().list(), unram_n)
             return R(lift, self._n)
-        else:
-            #unram_n = (self._n - 1) // R.absolute_e() + 1
-            raise NotImplementedError
+        #unram_n = (self._n - 1) // R.absolute_e() + 1
+        raise NotImplementedError
 
     def _call_with_args(self, x, args=(), kwds={}):
         r"""
@@ -1823,8 +1817,7 @@ class ResidueLiftingMap(Morphism):
             else:
                 lift = K(x.polynomial().list(), *args, **kwds)
             return R(lift, *args, **kwds)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def _repr_type(self):
         r"""

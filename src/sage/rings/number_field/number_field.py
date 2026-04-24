@@ -685,8 +685,7 @@ class NumberFieldFactory(UniqueFactory):
                                         structure=structure)
         if polynomial.degree() == 2:
             return NumberField_quadratic(polynomial, name, latex_name, check, embedding, assume_disc_small=assume_disc_small, maximize_at_primes=maximize_at_primes, structure=structure)
-        else:
-            return NumberField_absolute(polynomial, name, latex_name, check, embedding, assume_disc_small=assume_disc_small, maximize_at_primes=maximize_at_primes, structure=structure)
+        return NumberField_absolute(polynomial, name, latex_name, check, embedding, assume_disc_small=assume_disc_small, maximize_at_primes=maximize_at_primes, structure=structure)
 
 
 NumberField_version2 = NumberFieldFactory("sage.rings.number_field.number_field.NumberField_version2")
@@ -1677,7 +1676,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             K = x.parent()
             if K is self:
                 return x
-            elif isinstance(x, (OrderElement_absolute,
+            if isinstance(x, (OrderElement_absolute,
                                 OrderElement_relative,
                                 OrderElement_quadratic)):
                 L = K.number_field()
@@ -1685,7 +1684,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                     return self._element_class(self, x)
                 x = L(x)
             return self._coerce_from_other_number_field(x)
-        elif isinstance(x, pari_gen):
+        if isinstance(x, pari_gen):
             if x.type() == "t_POLMOD":
                 modulus = x.mod()
                 if check and modulus != self.pari_polynomial(modulus.variable()):
@@ -1715,14 +1714,14 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                 raise TypeError("%s has unsupported PARI type %s" % (x, x.type()))
             x = self.absolute_polynomial().parent()(x)
             return self._element_class(self, x)
-        elif isinstance(x, GapElement):
+        if isinstance(x, GapElement):
             s = x._sage_repr()
             if self.variable_name() in s:
                 return self._convert_from_str(s)
             return self._convert_from_str(s.replace('!', ''))
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return self._convert_from_str(x)
-        elif isinstance(x, (tuple, list,
+        if isinstance(x, (tuple, list,
                             sage.modules.free_module_element.FreeModuleElement)):
             if len(x) != self.relative_degree():
                 raise ValueError("Length must be equal to the degree of this number field")
@@ -1900,8 +1899,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         w = sage_eval(x, locals=self.gens_dict())
         if not (isinstance(w, Element) and w.parent() is self):
             return self(w)
-        else:
-            return w
+        return w
 
     def _Hom_(self, codomain, category=None):
         """
@@ -1985,8 +1983,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         if self._structure is None:
             f = self.hom(self)
             return f, f
-        else:
-            return self._structure.create_structure(self)
+        return self._structure.create_structure(self)
 
     def completion(self, p, prec, extras={}):
         """
@@ -2013,7 +2010,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
                 if gen_image in RDF:
                     return QQ.completion(p, prec, extras)
-                elif gen_image in CDF:
+                if gen_image in CDF:
                     return QQ.completion(p, prec, extras).algebraic_closure()
             raise ValueError("No embedding into the complex numbers has been specified.")
         else:
@@ -2656,8 +2653,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         if isomorphism_maps:
             R = self.polynomial().parent()
             return res, [R(ti) for ti in t]
-        else:
-            return res
+        return res
 
     def is_totally_real(self) -> bool:
         """
@@ -2875,11 +2871,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             if disc > 0:
                 self.__complex_conjugation = self.coerce_map_from(self)
                 return self.__complex_conjugation
-            else:
-                a = self.gen()
-                r = a.trace()
-                iy = a - r / 2
-                self.__complex_conjugation = self.hom([a - 2 * iy], check=False)
+            a = self.gen()
+            r = a.trace()
+            iy = a - r / 2
+            self.__complex_conjugation = self.hom([a - 2 * iy], check=False)
             return self.__complex_conjugation
         if isinstance(
            self, sage.rings.number_field.number_field.NumberField_cyclotomic):
@@ -2905,17 +2900,16 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                 from_abs).post_compose(to_abs)
             self.__complex_conjugation = self.hom([self.__complex_conjugation(self.gen())], check=False)
             return self.__complex_conjugation
-        else:
-            if self.is_CM_extension():
-                return self.automorphisms()[1]
-            K_abs = self.absolute_field(self.variable_name() * 2)
-            to_self, from_self = K_abs.structure()
-            K_rel = K_abs.relativize(phi.post_compose(from_self), self.variable_name() * 3)
-            to_abs, from_abs = K_rel.structure()
-            self.__complex_conjugation = K_rel.automorphisms()[1].pre_compose(from_abs).post_compose(to_abs)
-            self.__complex_conjugation = K_abs.hom([self.__complex_conjugation(K_abs.gen())], check=False)
-            self.__complex_conjugation = self.__complex_conjugation.pre_compose(from_self).post_compose(to_self)
-            return self.__complex_conjugation
+        if self.is_CM_extension():
+            return self.automorphisms()[1]
+        K_abs = self.absolute_field(self.variable_name() * 2)
+        to_self, from_self = K_abs.structure()
+        K_rel = K_abs.relativize(phi.post_compose(from_self), self.variable_name() * 3)
+        to_abs, from_abs = K_rel.structure()
+        self.__complex_conjugation = K_rel.automorphisms()[1].pre_compose(from_abs).post_compose(to_abs)
+        self.__complex_conjugation = K_abs.hom([self.__complex_conjugation(K_abs.gen())], check=False)
+        self.__complex_conjugation = self.__complex_conjugation.pre_compose(from_self).post_compose(to_self)
+        return self.__complex_conjugation
 
     def maximal_totally_real_subfield(self):
         """
@@ -3008,8 +3002,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             if self.discriminant() > 0:
                 self.__max_tot_real_sub = [self, self.coerce_map_from(self)]
                 return self.__max_tot_real_sub
-            else:
-                self.__max_tot_real_sub = [QQ, self.coerce_map_from(QQ)]
+            self.__max_tot_real_sub = [QQ, self.coerce_map_from(QQ)]
             return self.__max_tot_real_sub
         if isinstance(
            self, sage.rings.number_field.number_field.NumberField_cyclotomic):
@@ -3228,8 +3221,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         embedding = self.coerce_embedding()
         if embedding is None:
             return None
-        else:
-            return embedding(self.gen())
+        return embedding(self.gen())
 
     def algebraic_closure(self):
         """
@@ -3596,8 +3588,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             I = gens[0]
             if I.number_field() is self:
                 return I
-            else:
-                gens = I.gens()
+            gens = I.gens()
         return self._fractional_ideal_class_()(self, gens, **kwds)
 
     def ideals_of_bdd_norm(self, bound):
@@ -3759,8 +3750,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                       for id in self.prime_factors(x))
         if degree is None:
             return [id for d, n, id in facs]
-        else:
-            return [id for d, n, id in facs if d == degree]
+        return [id for d, n, id in facs if d == degree]
 
     def prime_above(self, x, degree=None):
         r"""
@@ -3915,12 +3905,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         from sage.rings.fast_arith import prime_range
         if self is QQ:
             return prime_range(B + 1, algorithm='pari_isprime')
-        else:
-            P = (pp for p in prime_range(B + 1, algorithm='pari_isprime')
-                 for pp in self.primes_above(p))
-            P = [p for p in P if p.norm() <= B]
-            P.sort(key=lambda P: (P.norm(), P))
-            return P
+        P = (pp for p in prime_range(B + 1, algorithm='pari_isprime')
+             for pp in self.primes_above(p))
+        P = [p for p in P if p.norm() <= B]
+        P.sort(key=lambda P: (P.norm(), P))
+        return P
 
     def primes_of_bounded_norm_iter(self, B):
         r"""
@@ -5103,8 +5092,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                 ords.append(d)
         if orders:
             return gens, ords
-        else:
-            return gens
+        return gens
 
     def selmer_group_iterator(self, S, m, proof=True):
         r"""
@@ -5755,8 +5743,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             else:
                 self.__disc = ZZ(self.discriminant(OK.basis()))
             return self.__disc
-        else:
-            return QQ(self.trace_pairing(v).det())
+        return QQ(self.trace_pairing(v).det())
 
     def disc(self, v=None):
         """
@@ -7097,12 +7084,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         P = P.pari_prime()
         if others == "positive":
             return self(P[1])
-        elif others == "negative":
+        if others == "negative":
             nf = self.pari_nf()
             F = pari.matrix(1, 2, [P, -1])
             return ~self(nf.idealappr(F, 1))
-        else:
-            raise ValueError("others must be 'positive' or 'negative'")
+        raise ValueError("others must be 'positive' or 'negative'")
 
     def units(self, proof=None):
         """
@@ -7181,10 +7167,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             # cache the provable results and return them
             self.__units = B
             return self.__units
-        else:
-            # cache the conjectural results and return them
-            self.__units_no_proof = B
-            return self.__units_no_proof
+        # cache the conjectural results and return them
+        self.__units_no_proof = B
+        return self.__units_no_proof
 
     def unit_group(self, proof=None):
         """
@@ -7554,7 +7539,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             if all:
                 return [K.one()]
             return K.one()
-        elif n == 2:
+        if n == 2:
             if all:
                 return [K(-1)]
             return K(-1)
@@ -9417,7 +9402,7 @@ class NumberField_absolute(NumberField_generic):
             put_natural_embedding_first(v)
             return Sequence(v, cr=(v != []), immutable=True,
                             check=False, universe=self.Hom(self))
-        elif K.characteristic() != 0:
+        if K.characteristic() != 0:
             return Sequence([], immutable=True, check=False, universe=self.Hom(K))
 
         f = self.defining_polynomial()
@@ -9765,8 +9750,7 @@ class NumberField_absolute(NumberField_generic):
         except AttributeError:
             if is_real_place(v):
                 return R(v(iota).abs())
-            else:
-                return R(v(iota).abs()**2)
+            return R(v(iota).abs()**2)
 
     def relativize(self, alpha, names, structure=None):
         r"""
@@ -10022,8 +10006,7 @@ class NumberField_absolute(NumberField_generic):
             structure = RelativeFromAbsolute(self, alpha)
         if L is QQ:
             return L.extension(f, names[0])
-        else:
-            return L.extension(f, names[0], structure=structure)
+        return L.extension(f, names[0], structure=structure)
 
     # Synonyms so that terminology appropriate to relative number fields
     # can be applied to an absolute number field:
@@ -10703,10 +10686,9 @@ class NumberField_absolute(NumberField_generic):
         B = kwds.pop('bound')
         if self.degree() == 2 and r == 0:
             return bdd_height_iq(self, B)
-        else:
-            tol = kwds.pop('tolerance', 1e-2)
-            prec = kwds.pop('precision', 53)
-            return bdd_height(self, B, tolerance=tol, precision=prec)
+        tol = kwds.pop('tolerance', 1e-2)
+        prec = kwds.pop('precision', 53)
+        return bdd_height(self, B, tolerance=tol, precision=prec)
 
     def _factor_univariate_polynomial(self, poly, **kwargs):
         """
@@ -10733,7 +10715,7 @@ class NumberField_absolute(NumberField_generic):
             factors = poly.change_ring(QQ).factor()
             return Factorization([(p.change_ring(self), e)
                                   for p, e in factors], self(factors.unit()))
-        elif poly.is_term():
+        if poly.is_term():
             return Factorization([(poly.parent().gen(), poly.degree())],
                                  poly.leading_coefficient())
 
@@ -11226,10 +11208,9 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             if Kn % 4 == 2 and (Kn//2).divides(n):
                 e = self._log_gen(ambient_field(-K.gen()))
                 return number_field_morphisms.NumberFieldEmbedding(K, self, -self.gen() ** e)
-            else:
-                return None
+            return None
 
-        elif self.degree() == 2:
+        if self.degree() == 2:
             if K is ZZ:
                 return Z_to_quadratic_field_element(self)
             if K is QQ:
@@ -11380,18 +11361,16 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         if isinstance(x, NumberFieldElement):
             if isinstance(x.parent(), NumberField_cyclotomic):
                 return self._coerce_from_other_cyclotomic_field(x)
-            else:
-                return NumberField_absolute._element_constructor_(self, x)
-        elif isinstance(x, pari_gen):
+            return NumberField_absolute._element_constructor_(self, x)
+        if isinstance(x, pari_gen):
             return NumberField_absolute._element_constructor_(self, x, check=check)
-        elif isinstance(x, (LibGapElement, GapElement)):
+        if isinstance(x, (LibGapElement, GapElement)):
             return self._coerce_from_gap(x)
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return self._convert_from_str(x)
-        elif isinstance(x, UniversalCyclotomicFieldElement):
+        if isinstance(x, UniversalCyclotomicFieldElement):
             return x.to_cyclotomic_field(self)
-        else:
-            return self._convert_non_number_field_element(x)
+        return self._convert_non_number_field_element(x)
 
     def _coerce_from_other_cyclotomic_field(self, x, only_canonical=False):
         """
@@ -11424,28 +11403,27 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             # it can be done very quickly and easily by the
             # Cython<->NTL interface there
             return x._lift_cyclotomic_element(self)
-        else:
-            if only_canonical:
-                raise TypeError
-            n = x.multiplicative_order()
-            m = self.zeta_order()
-            if m % n == 0:
-                # Harder case.  E.g., x = (zeta_42)^7 and
-                # self.__zeta = zeta_6, so it is possible to
-                # coerce x in, but not zeta_42 in.
-                # Algorithm:
-                #    1. Compute self.__zeta as an element
-                #       of K = parent of x.  Call this y.
-                #    2. Write x as a power r of y.
-                #       TODO: we do step two STUPIDLY.
-                #    3. Return self.__zeta to the power r.
-                y = K(self.zeta(m))
-                z = y
-                for r in range(y.multiplicative_order()):
-                    if z == x:
-                        return self.zeta(m)**(r+1)
-                    z *= y
-            raise TypeError("cannot coerce %s into %s" % (x, self))
+        if only_canonical:
+            raise TypeError
+        n = x.multiplicative_order()
+        m = self.zeta_order()
+        if m % n == 0:
+            # Harder case.  E.g., x = (zeta_42)^7 and
+            # self.__zeta = zeta_6, so it is possible to
+            # coerce x in, but not zeta_42 in.
+            # Algorithm:
+            #    1. Compute self.__zeta as an element
+            #       of K = parent of x.  Call this y.
+            #    2. Write x as a power r of y.
+            #       TODO: we do step two STUPIDLY.
+            #    3. Return self.__zeta to the power r.
+            y = K(self.zeta(m))
+            z = y
+            for r in range(y.multiplicative_order()):
+                if z == x:
+                    return self.zeta(m)**(r+1)
+                z *= y
+        raise TypeError("cannot coerce %s into %s" % (x, self))
         return self._element_class(self, x)
 
     def _coerce_from_gap(self, x):
@@ -11734,8 +11712,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         m = ZZ(self.degree())
         if m == 1:
             return (ZZ.one(), ZZ(0))
-        else:
-            return (ZZ(0), m // 2)
+        return (ZZ(0), m // 2)
 
     def different(self):
         """
@@ -12171,8 +12148,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         v = self.latex_variable_names()[0]
         if v.startswith('\\sqrt'):
             return "%s(%s)" % (latex(QQ), v)
-        else:
-            return NumberField_generic._latex_(self)
+        return NumberField_generic._latex_(self)
 
     def _polymake_init_(self):
         r"""

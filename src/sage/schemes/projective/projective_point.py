@@ -840,8 +840,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             raise TypeError("must be over a number field or a number field order")
         if K == QQ:
             return max(K(c).local_height_arch(prec=prec) for c in self)
-        else:
-            return max(K(c).local_height_arch(i, prec=prec) for c in self)
+        return max(K(c).local_height_arch(i, prec=prec) for c in self)
 
     def multiplier(self, f, n, check=True):
         r"""

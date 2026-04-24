@@ -285,8 +285,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     def minrep(a):
         if abs(a-q) < abs(a):
             return a-q
-        else:
-            return a
+        return a
     A_prime = A[n:m].lift().apply_map(minrep)
 
     if not dual:
@@ -304,8 +303,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
     if ntl:
         return B._ntl_()
-    elif lattice:
+    if lattice:
         from sage.modules.free_module_integer import IntegerLattice
         return IntegerLattice(B)
-    else:
-        return B
+    return B

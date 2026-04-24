@@ -698,8 +698,7 @@ class AffinePlaneCurve(AffineCurve):
                     roots = T.univariate_polynomial().roots()
                     fact.extend([vars[1] - roots[i][0]*vars[0] for i in range(len(roots))])
             return [ff(coords) for ff in fact]
-        else:
-            return [ll[0](coords) for ll in T.factor()]
+        return [ll[0](coords) for ll in T.factor()]
 
     def is_ordinary_singularity(self, P):
         r"""
@@ -760,8 +759,7 @@ class AffinePlaneCurve(AffineCurve):
         # use resultants to determine if there is a higher multiplicity tangent
         if T.degree(vars[0]) > 0:
             return T.resultant(T.derivative(vars[0]), vars[0]) != 0
-        else:
-            return T.resultant(T.derivative(vars[1]), vars[1]) != 0
+        return T.resultant(T.derivative(vars[1]), vars[1]) != 0
 
     def rational_parameterization(self):
         r"""
@@ -1567,13 +1565,11 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             K = number_field_elements_from_algebraics(L)[0]
             if isinstance(K, RationalField):
                 return F.embeddings(F)[0]
-            else:
-                if isinstance(F, RationalField):
-                    return F.embeddings(K)[0]
-                else:
-                    # make sure the defining polynomial variable names are the same for K, N
-                    N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
-                    return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
+            if isinstance(F, RationalField):
+                return F.embeddings(K)[0]
+            # make sure the defining polynomial variable names are the same for K, N
+            N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
+            return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
         # find the set of singular points of this curve
         # in the case that the base field is a number field, extend it as needed (if extend == True)
         C = self
@@ -2101,14 +2097,13 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
             # remove multiple points
             return sorted(set(pnts))
 
-        elif algorithm == "all":
+        if algorithm == "all":
             S_enum = self.rational_points(algorithm='enum')
             S_bn = self.rational_points(algorithm='bn')
             if S_enum != S_bn:
                 raise RuntimeError("Bug in rational_points -- different algorithms give different answers for curve %s!" % self)
             return S_enum
-        else:
-            raise ValueError("No algorithm '%s' known" % algorithm)
+        raise ValueError("No algorithm '%s' known" % algorithm)
 
 
 class IntegralAffineCurve(AffineCurve_field):

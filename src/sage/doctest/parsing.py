@@ -1510,6 +1510,13 @@ class SageOutputChecker(doctest.OutputChecker):
             got = dup_rpath_regex.sub('', got)
             did_fixup = True
 
+        if "lto-wrapper" in got:
+            # Messages from GCC's LTO wrapper when -flto is in CFLAGS
+            # and cython() is used non-trivially. Github issue 41991.
+            lto_wrapper_regex = re.compile("lto-wrapper: (warning|note): .*")
+            got = lto_wrapper_regex.sub('', got)
+            did_fixup = True
+
         return did_fixup, want, got
 
     def output_difference(self, example, got, optionflags):

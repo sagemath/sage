@@ -427,8 +427,7 @@ class EllipticCurveSaturator(SageObject):
             pts = Plist[0].division_points(p)
             if pts:
                 return (0, pts[0])
-            else:
-                return False
+            return False
 
         E = self._curve
 
@@ -556,10 +555,9 @@ class EllipticCurveSaturator(SageObject):
                                         print("-- points were not {}-saturated, gaining index {}".format(p,p))
                                     j = next(i for i,x in enumerate(v) if x)
                                     return (j, pt)
-                                else:
-                                    # R is not a p-multiple so the
-                                    # points were p-saturated
-                                    return False
+                                # R is not a p-multiple so the
+                                # points were p-saturated
+                                return False
 
                             # Else we call the non-sieve version with
                             # a list of points which are all
@@ -579,11 +577,10 @@ class EllipticCurveSaturator(SageObject):
                                     print("-- points were not {}-saturated, gaining index {}".format(p,p))
                                 j = next(i for i,x in enumerate(v) if x)
                                 return (j, R)
-                            else:
-                                # points really were saturated
-                                if verbose:
-                                    print("-- points were %s-saturated" % p)
-                                return False
+                            # points really were saturated
+                            if verbose:
+                                print("-- points were %s-saturated" % p)
+                            return False
                     else: # rank went up but is <n; carry on using more Qs
                         rankA = newrank
                         count = 0

@@ -838,8 +838,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             self._beta = prime._beta
             self._beta_matrix = prime._beta_matrix
             return True
-        else:
-            return False
+        return False
 
     ###################################################
     # The following methods are only for prime ideals #
@@ -1176,9 +1175,8 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
             if g2:
                 self._gens_two_vecs = (_g1, _g2)
                 return (g1, g2)
-            else:
-                self._gens_two_vecs = (_g1,)
-                return (g1,)
+            self._gens_two_vecs = (_g1,)
+            return (g1,)
 
         # ---- start to search for two generators
 

@@ -1188,9 +1188,8 @@ class NumberField_relative(NumberField_generic):
         d = self.relative_degree()
         if d <= 2:
             return True
-        else:
-            rel_poly = self.relative_polynomial()
-            return d == len(rel_poly.base_extend(self).factor())
+        rel_poly = self.relative_polynomial()
+        return d == len(rel_poly.base_extend(self).factor())
 
     def is_galois_absolute(self) -> bool:
         r"""
