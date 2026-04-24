@@ -98,6 +98,7 @@ Constructions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
@@ -927,7 +928,6 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.RandomLattice(0, 0.5)
             Finite lattice containing 0 elements
         """
-        from copy import copy
         n = check_int(n)
         try:
             p = float(p)
@@ -2116,7 +2116,6 @@ def _random_distributive_lattice(n):
     Repeat.
     """
     from sage.combinat.posets.hasse_diagram import HasseDiagram
-    from copy import copy
     from sage.combinat.subset import Subsets
     from sage.graphs.digraph_generators import digraphs
 
@@ -2174,10 +2173,10 @@ def _random_stone_lattice(n) -> DiGraph:
     from sage.arith.misc import factor
     from sage.combinat.partition import Partitions
     from sage.misc.misc_c import prod
-    from copy import copy
+    from sage.misc.prandom import shuffle
 
     factors = sum([[f[0]] * f[1] for f in factor(n)], [])
-    sage.misc.prandom.shuffle(factors)
+    shuffle(factors)
 
     part_lengths = list(Partitions(len(factors)).random_element())
     parts = []

@@ -3401,10 +3401,10 @@ class RecurrenceParser:
             raise ValueError("Initial values for arguments in %s are not in %s."
                              % (values_not_in_ring, coefficient_ring))
 
+        max_key = max(keys_initial)
         last_value_needed = max(
-            k**(M-1) - k**m + uu + (n1 > 0)*k**(M-1)*(k*(n1 - 1) + k - 1),  # for matrix W
-            k**m*offset + u,
-            max(keys_initial))
+            k**(M-1) - k**m + uu + (n1 > 0) * k**(M-1) * (k * (n1 - 1) + k - 1),  # for matrix W
+            k**m * offset + u, max_key)
         initial_values = self.values(
             M=M, m=m, l=l, u=u, ll=ll, coeffs=coeffs,
             initial_values=initial_values, last_value_needed=last_value_needed,

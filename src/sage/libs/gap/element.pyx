@@ -657,8 +657,14 @@ cdef class GapElement(RingElement):
             sage: a
             [ [ 0, -2 ], [ 2, 3, 4 ] ]
         """
+        cdef Obj copy
         if IS_MUTABLE_OBJ(self.value):
-            return make_any_gap_element(self.parent(), SHALLOW_COPY_OBJ(self.value))
+            try:
+                GAP_Enter()
+                copy = SHALLOW_COPY_OBJ(self.value)
+            finally:
+                GAP_Leave()
+            return make_any_gap_element(self.parent(), copy)
         else:
             return self
 
@@ -689,8 +695,14 @@ cdef class GapElement(RingElement):
             sage: l.deepcopy(1).IsMutable()
             true
         """
+        cdef Obj copy
         if IS_MUTABLE_OBJ(self.value):
-            return make_any_gap_element(self.parent(), CopyObj(self.value, mut))
+            try:
+                GAP_Enter()
+                copy = CopyObj(self.value, mut)
+            finally:
+                GAP_Leave()
+            return make_any_gap_element(self.parent(), copy)
         else:
             return self
 

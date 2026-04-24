@@ -249,8 +249,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
                 if is_irreducible:
                     if R in Fields():
                         return PolynomialQuotientRing_field(ring, polynomial, names)
-                    else:
-                        return PolynomialQuotientRing_domain(ring, polynomial, names)
+                    return PolynomialQuotientRing_domain(ring, polynomial, names)
         return PolynomialQuotientRing_generic(ring, polynomial, names)
 
 
@@ -807,8 +806,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             from sage.rings.integer_ring import ZZ
             return ZZ.one()
         # 2) F[x]/(f) where F is finite
-        else:
-            return self.base_ring().cardinality() ** f.degree()
+        return self.base_ring().cardinality() ** f.degree()
 
     order = cardinality
 
@@ -1871,14 +1869,13 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         f = f.monic()
         if f.degree() == 0:
             return Factorization(unit=unit)
-        elif f.degree() == 1:
+        if f.degree() == 1:
             return Factorization([(f,1)], unit=unit)
-        else:
-            from_isomorphic_ring, to_isomorphic_ring, isomorphic_ring = self._isomorphic_ring()
-            g = f.map_coefficients(to_isomorphic_ring)
-            F = g.factor()
-            unit *= g.parent()(F.unit()).map_coefficients(from_isomorphic_ring)
-            return Factorization([(factor.map_coefficients(from_isomorphic_ring), e) for factor,e in F], unit=unit)
+        from_isomorphic_ring, to_isomorphic_ring, isomorphic_ring = self._isomorphic_ring()
+        g = f.map_coefficients(to_isomorphic_ring)
+        F = g.factor()
+        unit *= g.parent()(F.unit()).map_coefficients(from_isomorphic_ring)
+        return Factorization([(factor.map_coefficients(from_isomorphic_ring), e) for factor,e in F], unit=unit)
 
     @cached_method
     def _isomorphic_ring(self):
@@ -2125,8 +2122,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
             and self.domain().modulus().leading_coefficient().is_unit()):
             if self.codomain().base_ring().coerce_map_from(self.domain().base_ring()).is_injective():
                 return True
-            else:
-                return self.domain().modulus().degree() == 0 # domain and codomain are the zero ring
+            return self.domain().modulus().degree() == 0 # domain and codomain are the zero ring
         return super().is_injective()
 
     def is_surjective(self):

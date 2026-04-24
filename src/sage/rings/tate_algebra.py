@@ -864,8 +864,7 @@ class TateAlgebra_generic(Parent):
             A = TateAlgebra(base, cap, log_radii, self._names, self._order)
             if base.is_field():
                 return A
-            else:
-                return A.integer_ring()
+            return A.integer_ring()
 
     def _ideal_class_(self, n=0):
         r"""
@@ -1003,8 +1002,7 @@ class TateAlgebra_generic(Parent):
                          for var, r in zip(self._names, self._log_radii))
         if self._integral:
             return "Integer ring of the Tate Algebra in %s over %s" % (vars, self._field)
-        else:
-            return "Tate Algebra in %s over %s" % (vars, self._field)
+        return "Tate Algebra in %s over %s" % (vars, self._field)
 
     def _latex_(self):
         """

@@ -830,7 +830,7 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
                 if operation == '*':
                     return P(sinst * oinst)
                 return P(sinst + oinst)
-            if type(sinst) == type(oinst):
+            if type(sinst) is type(oinst):
                 if hasattr(self, 'addTermsLast'):
                     new = self.__deepcopy__()
                     new.addTermsLast(other)

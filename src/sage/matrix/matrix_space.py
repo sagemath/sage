@@ -42,9 +42,9 @@ import operator
 import sage.structure.coerce_actions
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-import sage.rings.integer as integer
+from sage.rings import integer
 from sage.rings.finite_rings.finite_field_base import FiniteField
-import sage.misc.latex as latex
+from sage.misc import latex
 import sage.modules.free_module
 
 from sage.misc.lazy_attribute import lazy_attribute
