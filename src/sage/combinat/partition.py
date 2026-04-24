@@ -485,11 +485,11 @@ class Partition(CombinatorialElement):
         if l == 1:
             if 'beta_numbers' in keyword:
                 return _Partitions.from_beta_numbers(keyword['beta_numbers'])
-            elif 'exp' in keyword:
+            if 'exp' in keyword:
                 return _Partitions.from_exp(keyword['exp'])
-            elif 'frobenius_coordinates' in keyword:
+            if 'frobenius_coordinates' in keyword:
                 return _Partitions.from_frobenius_coordinates(keyword['frobenius_coordinates'])
-            elif 'zero_one' in keyword:
+            if 'zero_one' in keyword:
                 return _Partitions.from_zero_one(keyword['zero_one'])
 
         if l == 2 and 'core' in keyword and 'quotient' in keyword:
@@ -1333,7 +1333,7 @@ class Partition(CombinatorialElement):
             instead.
         """
         def horizontal_piece(xy, bdy):
-            (start_x, start_y) = xy
+            start_x, start_y = xy
             if not bdy:
                 h_piece = [(start_x, start_y)]
             else:
@@ -1343,12 +1343,12 @@ class Partition(CombinatorialElement):
             return list(reversed(h_piece))
         bdy = []
         for i, part in enumerate(self):
-            (cell_x, cell_y) = (part - 1, i)
-            (x, y) = (cell_x + 1, cell_y + 1)
+            cell_x, cell_y = (part - 1, i)
+            x, y = (cell_x + 1, cell_y + 1)
             bdy += horizontal_piece((x, y - 1), bdy)
             bdy.append((x, y))
         # add final "top-left" horizontal piece
-        (top_left_x, top_left_y) = (0, len(self))
+        top_left_x, top_left_y = (0, len(self))
         bdy += horizontal_piece((top_left_x, top_left_y), bdy)
         return bdy
 
@@ -1571,8 +1571,7 @@ class Partition(CombinatorialElement):
         assert k >= 0
         if self.is_empty():
             return True
-        else:
-            return self[0] <= k
+        return self[0] <= k
 
     def is_k_reducible(self, k):
         r"""
@@ -1727,7 +1726,7 @@ class Partition(CombinatorialElement):
                     next_p[r] += 1
                     break
                 return None
-            elif (max is None or p[r] < max[r]) and condition(p[r], p[r-1]):
+            if (max is None or p[r] < max[r]) and condition(p[r], p[r-1]):
                 next_p[r] += 1
                 break
             next_p[r] = min[r]
@@ -2368,8 +2367,7 @@ class Partition(CombinatorialElement):
         """
         if i < len(self._list):
             return self._list[i]
-        else:
-            return default
+        return default
 
     @combinatorial_map(name="partition to minimal Dyck word")
     def to_dyck_word(self, n=None):
@@ -2842,9 +2840,9 @@ class Partition(CombinatorialElement):
             - :meth:`top_garnir_tableau`
         """
         try:
-            (row, col) = cell
+            row, col = cell
         except ValueError:
-            (row, col) = cell[0]
+            row, col = cell[0]
 
         if row + 1 >= len(self) or col >= self[row+1]:
             raise ValueError('(row+1, col) must be inside the diagram')
@@ -2914,7 +2912,7 @@ class Partition(CombinatorialElement):
 
         - [KMR2012]_
         """
-        (row, col) = cell
+        row, col = cell
         if row+1 >= len(self) or col >= self[row+1]:
             raise ValueError(f'({row+1},{col})=(row+1,col) must be inside the diagram')
 
@@ -3123,8 +3121,7 @@ class Partition(CombinatorialElement):
         """
         if e == 0:
             return ZZ.zero()
-        else:
-            return sum(m // e for m in self)
+        return sum(m // e for m in self)
 
     def degree(self, e):
         r"""
@@ -3450,8 +3447,7 @@ class Partition(CombinatorialElement):
         P = Partitions_n(n)
         if rows:
             return [P(x) for x in ZS1_iterator_nk(n, rows) if self.dominates(x)]
-        else:
-            return [P(x) for x in ZS1_iterator(n) if self.dominates(x)]
+        return [P(x) for x in ZS1_iterator(n) if self.dominates(x)]
 
     def contains(self, x):
         """
@@ -4657,8 +4653,7 @@ class Partition(CombinatorialElement):
 
         if self[i] == 1:
             return Partition(self[:-1])
-        else:
-            return Partition(self[:i] + [self[i:i+1][0] - 1] + self[i+1:])
+        return Partition(self[:i] + [self[i:i+1][0] - 1] + self[i+1:])
 
     def k_irreducible(self, k):
         r"""
@@ -5157,7 +5152,7 @@ class Partition(CombinatorialElement):
             (-q^2*t^3 + 1)/(-q^3*t^2 + 1)
         """
         QQqt = PolynomialRing(QQ, ['q', 't'])
-        (q, t) = QQqt.gens()
+        q, t = QQqt.gens()
         if i < len(self) and j < self[i]:
             res = 1 - q**self.arm_length(i, j) * t**(self.leg_length(i, j)+1)
             res /= 1 - q**(self.arm_length(i, j)+1) * t**self.leg_length(i, j)
@@ -5236,17 +5231,16 @@ class Partition(CombinatorialElement):
         """
         if self == []:
             return []
-        elif k < self[0]:
+        if k < self[0]:
             return []
-        else:
-            res = []
-            part = list(self)
-            while part and part[0] + len(part) - 1 >= k:
-                p = k - part[0]
-                res.append(part[:p + 1])
-                part = part[p + 1:]
-            if part:
-                res.append(part)
+        res = []
+        part = list(self)
+        while part and part[0] + len(part) - 1 >= k:
+            p = k - part[0]
+            res.append(part[:p + 1])
+            part = part[p + 1:]
+        if part:
+            res.append(part)
         return res
 
     def jacobi_trudi(self):
@@ -7152,11 +7146,11 @@ class Partitions_n(Partitions):
         if algorithm == 'flint':
             return cached_number_of_partitions(self.n)
 
-        elif algorithm == 'gap':
+        if algorithm == 'gap':
             from sage.libs.gap.libgap import libgap
             return ZZ(libgap.NrPartitions(ZZ(self.n)))
 
-        elif algorithm == 'pari':
+        if algorithm == 'pari':
             return ZZ(pari(ZZ(self.n)).numbpart())
 
         raise ValueError("unknown algorithm '%s'" % algorithm)
@@ -7184,10 +7178,9 @@ class Partitions_n(Partitions):
         """
         if measure == 'uniform':
             return self.random_element_uniform()
-        elif measure == 'Plancherel':
+        if measure == 'Plancherel':
             return self.random_element_plancherel()
-        else:
-            raise ValueError("Unknown measure: %s" % measure)
+        raise ValueError("Unknown measure: %s" % measure)
 
     def random_element_uniform(self):
         """
@@ -7782,14 +7775,13 @@ class Partitions_parts_in(Partitions):
         """
         if n == 0:
             return []
-        else:
-            while parts:
-                p = parts.pop()
-                for k in range(n.quo_rem(p)[0], 0, -1):
-                    try:
-                        return k * [p] + self._findfirst(n - k * p, parts[:])
-                    except TypeError:
-                        pass
+        while parts:
+            p = parts.pop()
+            for k in range(n.quo_rem(p)[0], 0, -1):
+                try:
+                    return k * [p] + self._findfirst(n - k * p, parts[:])
+                except TypeError:
+                    pass
 
     def last(self):
         """
@@ -7855,20 +7847,19 @@ class Partitions_parts_in(Partitions):
         """
         if n < 0:
             return None
-        elif n == 0:
+        if n == 0:
             return []
-        elif parts:
+        if parts:
             p = parts[0]
             q, r = n.quo_rem(p)
             if r == 0:
                 return [p] * q
             # If the smallest part doesn't divide n, try using the next
             # largest part
-            else:
-                for i, p in enumerate(parts[1:]):
-                    rest = self._findlast(n - p, parts[:i + 2])
-                    if rest is not None:
-                        return [p] + rest
+            for i, p in enumerate(parts[1:]):
+                rest = self._findlast(n - p, parts[:i + 2])
+                if rest is not None:
+                    return [p] + rest
         # If we get to here, nothing ever worked, so there's no such
         # partitions, and we return None.
         return None
@@ -8312,19 +8303,18 @@ class PartitionsInBox(Partitions):
         w = self.w
         if h == 0:
             return [self.element_class(self, [])]
-        else:
-            l = [[i] for i in range(w + 1)]
+        l = [[i] for i in range(w + 1)]
 
-            def add(x):
-                return [x + [i] for i in range(x[-1] + 1)]
+        def add(x):
+            return [x + [i] for i in range(x[-1] + 1)]
 
-            for i in range(h-1):
-                new_list = []
-                for element in l:
-                    new_list += add(element)
-                l = new_list
+        for i in range(h-1):
+            new_list = []
+            for element in l:
+                new_list += add(element)
+            l = new_list
 
-            return [self.element_class(self, [x for x in p if x != 0]) for p in l]
+        return [self.element_class(self, [x for x in p if x != 0]) for p in l]
 
     def cardinality(self):
         """

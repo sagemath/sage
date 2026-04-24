@@ -31,13 +31,13 @@ def parallel_iter(f, inputs):
         sage: set_random_seed(0)
         sage: for a, val in sage.parallel.reference.parallel_iter(f, inputs):
         ....:     print((a, val))
-        (((2,), {}), 20)
         (((), {'M': 5, 'N': 3}), 15)
+        (((2,), {}), 20)
         (((2, 3), {}), 6)
         sage: for a, val in sage.parallel.reference.parallel_iter(f, inputs):
         ....:     print((a, val))
-        (((), {'M': 5, 'N': 3}), 15)
         (((2,), {}), 20)
+        (((), {'M': 5, 'N': 3}), 15)
         (((2, 3), {}), 6)
     """
     v = list(inputs)

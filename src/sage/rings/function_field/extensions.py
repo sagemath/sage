@@ -27,7 +27,6 @@ Constant field extension of the rational function field over rational numbers::
 
 Constant field extension of a function field over a finite field::
 
-    sage: # needs sage.rings.finite_rings sage.rings.function_field
     sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
     sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
     sage: E = F.extension_constant_field(GF(2^3))
@@ -89,7 +88,6 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
             sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
             sage: E = F.extension_constant_field(GF(2^3))
@@ -129,7 +127,6 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
             sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
             sage: E = F.extension_constant_field(GF(2^3))
@@ -146,7 +143,6 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
             sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
             sage: E = F.extension_constant_field(GF(2^3))
@@ -172,7 +168,6 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
             sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
             sage: E = F.extension_constant_field(GF(2^3))
@@ -209,7 +204,6 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
             sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
             sage: E = F.extension_constant_field(GF(2^3))

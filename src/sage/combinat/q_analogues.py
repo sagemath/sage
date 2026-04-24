@@ -19,6 +19,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.structure.element import parent
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
 
 def q_int(n, q=None):
@@ -121,7 +123,7 @@ def q_factorial(n, q=None):
     if n in ZZ:
         if n == 0:
             return q_int(1, q)
-        elif n >= 1:
+        if n >= 1:
             return prod(q_int(i, q) for i in range(1, n + 1))
     raise ValueError("argument (%s) must be a nonnegative integer" % n)
 
@@ -358,12 +360,10 @@ def q_binomial(n, k, q=None, algorithm='auto'):
             algorithm = 'naive'
         elif is_polynomial:
             algorithm = 'cyclotomic'
+        elif isinstance(R, SymbolicRing):
+            algorithm = 'cyclotomic'
         else:
-            import sage.rings.abc
-            if isinstance(R, sage.rings.abc.SymbolicRing):
-                algorithm = 'cyclotomic'
-            else:
-                algorithm = 'naive'
+            algorithm = 'naive'
 
     # the algorithms
     while algorithm == 'naive':
@@ -386,8 +386,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         return prod(cyclotomic_value(d, q)
                     for d in range(2, n + 1)
                     if (n//d) != (k//d) + ((n-k)//d))
-    else:
-        raise ValueError("unknown algorithm {!r}".format(algorithm))
+    raise ValueError("unknown algorithm {!r}".format(algorithm))
 
 
 def gaussian_binomial(n, k, q=None, algorithm='auto'):
@@ -550,8 +549,7 @@ def qt_catalan_number(n):
             tup = (dw.area(), dw.bounce())
             d[tup] = d.get(tup, 0) + 1
         return ZZqt(d)
-    else:
-        raise ValueError("argument (%s) must be a nonnegative integer" % n)
+    raise ValueError("argument (%s) must be a nonnegative integer" % n)
 
 
 def q_pochhammer(n, a, q=None):
@@ -588,13 +586,13 @@ def q_pochhammer(n, a, q=None):
         sage: q_pochhammer(3, 1)
         0
 
-        sage: R.<q> = ZZ[]
+        sage: R.<q,a> = ZZ[]
         sage: q_pochhammer(4, q)
         q^10 - q^9 - q^8 + 2*q^5 - q^2 - q + 1
         sage: q_pochhammer(4, q^2)
         q^14 - q^12 - q^11 - q^10 + q^8 + 2*q^7 + q^6 - q^4 - q^3 - q^2 + 1
-        sage: q_pochhammer(-3, q)
-        1/(-q^9 + q^7 + q^6 + q^5 - q^4 - q^3 - q^2 + 1)
+        sage: q_pochhammer(-3, a, q)
+        q^6/(q^6 - q^5*a - q^4*a + q^3*a^2 - q^3*a + q^2*a^2 + q*a^2 - a^3)
 
     TESTS::
 
@@ -621,7 +619,7 @@ def q_pochhammer(n, a, q=None):
     R = parent(q)
     one = R(1)
     if n < 0:
-        return R.prod(one / (one - a/q**-k) for k in range(1, -n+1))
+        return R.prod(one / (one - a/q**k) for k in range(1, -n+1))
     return R.prod((one - a*q**k) for k in range(n))
 
 

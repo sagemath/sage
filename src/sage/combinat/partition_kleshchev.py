@@ -209,7 +209,7 @@ class KleshchevPartition(Partition):
         conormal_cells = self.conormal_cells(i)
         if i is None:
             return {i: conormal_cells[i][-1] for i in conormal_cells}
-        elif not conormal_cells:
+        if not conormal_cells:
             return None
 
         return conormal_cells[-1]
@@ -316,7 +316,7 @@ class KleshchevPartition(Partition):
         normal_cells = self.normal_cells(i)
         if i is None:
             return {j: normal_cells[j][0] for j in normal_cells}
-        elif not normal_cells:
+        if not normal_cells:
             return None
 
         return normal_cells[0]
@@ -426,7 +426,9 @@ class KleshchevPartition(Partition):
         mu = P.element_class(P, self.remove_cell(r, c)).mullineux_conjugate()
         # add back on a cogood cell of residue -residue(k,r,c)
         KP = mu.parent()
-        return KP.element_class(KP, mu.add_cell(*mu.cogood_cells( r-c-self.parent()._multicharge[0]) ))
+        return KP.element_class(
+            KP,
+            mu.add_cell(*mu.cogood_cells(r-c-self.parent()._multicharge[0])))
 
     def is_regular(self) -> bool:
         r"""
@@ -603,7 +605,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         conormal_cells = self.conormal_cells(i)
         if i is None:
             return {j: conormal_cells[j][-1] for j in conormal_cells}
-        elif not conormal_cells:
+        if not conormal_cells:
             return None
 
         return conormal_cells[-1]
@@ -723,7 +725,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         normal_cells = self.normal_cells(i)
         if i is None:
             return {j: normal_cells[j][0] for j in normal_cells}
-        elif not normal_cells:
+        if not normal_cells:
             return None
 
         return normal_cells[0]
@@ -745,8 +747,8 @@ class KleshchevPartitionTuple(PartitionTuple):
 
         res = sorted(good_cells.keys())[0]
         k, r, c = good_cells[res]
-        good_seq = type(self)(self.parent(), self.remove_cell(k,r,c)).good_residue_sequence()
-        good_seq.append( self.parent()._index_set(res) )
+        good_seq = type(self)(self.parent(), self.remove_cell(k, r, c)).good_residue_sequence()
+        good_seq.append(self.parent()._index_set(res))
         return good_seq
 
     def good_cell_sequence(self):

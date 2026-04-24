@@ -183,6 +183,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         "sagemath_giac",
         "pynormaliz",  # due to https://github.com/sagemath/sage/issues/40214
         "latte-integrale",  # due to https://github.com/sagemath/sage/issues/40216
+        "cibuildwheel",  # fails pip check since it claims to require the PyPI package patchelf which is not available on conda-forge yet (however, it just needs a patchelf which is installed from conda-forge already.)
     }
     if platform in ("linux-aarch64", "osx-arm64"):
         exclude_packages |= {
@@ -192,7 +193,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         }
     elif platform == "win-64":
         exclude_packages |= {
-            "4ti2",
             "bc",
             "libbrial",
             "bliss",
@@ -226,7 +226,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
             "palp",
             "patch",
             "ppl",
-            "primecount",
             "pynormaliz",
             "python-lrcalc",
             "readline",
@@ -273,7 +272,12 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     else:
         all_requirements.add("openblas")
         all_requirements.add("libblas=*=*_openblas")
+    # Issue #41555: meson uses pkg-config to search for cblas whose .pc files are in blas-devel
+    all_requirements.add("blas-devel")
     all_requirements.add("fortran-compiler")
+    all_requirements = {req for req in all_requirements if not req.startswith("mpmath")}
+    all_requirements.add("mpmath >=1.1.0,<1.4.0")
+
     if platform == "win-64":
         all_requirements.add("vs2022_win-64")
         # For mingw:
@@ -302,6 +306,8 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     if platform != "win-64":
         all_requirements.remove("maxima")
         all_requirements.add("maxima < 5.48.0")
+        all_requirements.remove("singular")
+        all_requirements.add("singular ==4.4.1.p5")
 
     return all_requirements
 
@@ -316,15 +322,18 @@ def get_dev_dependencies(pyproject: dict) -> list[str]:
     )
     # Remove dependencies that are not available on conda
     dev_dependencies.remove("relint")
+    # Remove cibuildwheel because its dependency bashlex is not available on linux-aarch64
+    dev_dependencies.remove("cibuildwheel")
     return dev_dependencies
 
 
 def get_optional_dependencies(pyproject: dict) -> list[str]:
     optional_dependencies = []
     optional_groups = pyproject.get("project", {}).get("optional-dependencies", {})
-    for _, dependencies in optional_groups.items():
+    for dependencies in optional_groups.values():
         optional_dependencies.extend(dependencies)
     # print(f"Optional dependencies: {optional_dependencies}")  # Uncommented for debugging
     return optional_dependencies
+
 
 update_conda(options.sourcedir, options.systems)

@@ -160,8 +160,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             phi = R.module_morphism(G_to_G_on_basis, codomain=G)
             if self is G:
                 return phi
-            else:
-                return self.coerce_map_from(G) * phi
+            return self.coerce_map_from(G) * phi
 
         return super()._coerce_map_from_(R)
 
@@ -1341,8 +1340,7 @@ class FQSymBases(Category_realization_of_parent):
             from sage.sets.family import Family
             if degree is None:
                 return Family(self._indices, self.monomial)
-            else:
-                return Family(Permutations(degree), self.monomial)
+            return Family(Permutations(degree), self.monomial)
 
         def is_field(self, proof=True):
             """

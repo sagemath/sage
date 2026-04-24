@@ -15,7 +15,7 @@ on:
       platform:
         description: 'Platform'
         required: true
-        default: 'ubuntu-noble-standard'
+        default: 'ubuntu-resolute-standard'
       docker_tag:
         description: 'Docker tag'
         required: true
@@ -68,8 +68,8 @@ concurrency:
 
 env:
   # Adapted from docker.yml
-  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-noble-standard' }}-incremental"
-  BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-noble-standard' }}-with-targets:ci"
+  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-resolute-standard' }}-incremental"
+  BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-resolute-standard' }}-with-targets:ci"
   FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
   FROM_DOCKER_TARGET:     "with-targets"
   FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
@@ -94,15 +94,15 @@ jobs:
           - "src/doc src/sage_docbuild src/sage_setup"
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v10
+        uses: jlumbroso/free-disk-space@main
         with:
-          # need space in /var for Docker images
-          root-reserve-mb:      30000
-          remove-dotnet:        true
-          remove-android:       true
-          remove-haskell:       true
-          remove-codeql:        true
-          remove-docker-images: true
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
 
       - name: Checkout
         id: checkout
@@ -214,16 +214,15 @@ jobs:
           - 5000:5000
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v10
+        uses: jlumbroso/free-disk-space@main
         with:
-          # need space in /var for Docker images
-          root-reserve-mb:      30000
-          remove-dotnet:        true
-          remove-android:       true
-          remove-haskell:       true
-          remove-codeql:        true
-          remove-docker-images: true
-
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4

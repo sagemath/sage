@@ -183,7 +183,7 @@ def get_basis_name(basis, p, generic=None):
 # profile functions
 
 
-def is_valid_profile(profile, truncation_type, p=2, generic=None):
+def is_valid_profile(profile, truncation_type, p=2, generic=None) -> bool:
     r"""
     Return ``True`` if ``profile``, together with ``truncation_type``, is a valid
     profile at the prime `p`.
@@ -499,8 +499,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
             new_profile = tuple(new_profile)
         if is_valid_profile(new_profile, truncation_type, p):
             return new_profile, truncation_type
-        else:
-            raise ValueError("invalid profile")
+        raise ValueError("invalid profile")
     else:  # p odd
         if profile is None or profile == Infinity:
             # no specified profile or infinite profile: return profile
@@ -559,8 +558,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
             new_profile = (e, k)
         if is_valid_profile(new_profile, truncation_type, p, generic=True):
             return new_profile, truncation_type
-        else:
-            raise ValueError("invalid profile")
+        raise ValueError("invalid profile")
 
 ######################################################
 # string representations for elements
@@ -621,23 +619,22 @@ def milnor_mono_to_string(mono, latex=False, generic=False):
             P = "P"
     if mono == () or mono == (0,) or (generic and len(mono[0]) + len(mono[1]) == 0):
         return "1"
+    if not generic:
+        string = sq + "(" + str(mono[0])
+        for n in mono[1:]:
+            string = string + "," + str(n)
+        string = string + ")"
     else:
-        if not generic:
-            string = sq + "(" + str(mono[0])
-            for n in mono[1:]:
+        string = ""
+        if len(mono[0]) > 0:
+            for e in mono[0]:
+                string = string + "Q_{" + str(e) + "} "
+        if len(mono[1]) > 0:
+            string = string + P + "(" + str(mono[1][0])
+            for n in mono[1][1:]:
                 string = string + "," + str(n)
             string = string + ")"
-        else:
-            string = ""
-            if len(mono[0]) > 0:
-                for e in mono[0]:
-                    string = string + "Q_{" + str(e) + "} "
-            if len(mono[1]) > 0:
-                string = string + P + "(" + str(mono[1][0])
-                for n in mono[1][1:]:
-                    string = string + "," + str(n)
-                string = string + ")"
-        return string.strip(" ")
+    return string.strip(" ")
 
 
 def serre_cartan_mono_to_string(mono, latex=False, generic=False):

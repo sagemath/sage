@@ -177,7 +177,7 @@ cdef class Polynomial_complex_arb(Polynomial):
                     acb_poly_set_coeff_acb(self._poly, i, ball.value)
             elif isinstance(x, dict):
                 dct = <dict> x
-                if len(dct) == 0:
+                if not dct:
                     acb_poly_zero(self._poly)
                 else:
                     length = max(int(i) for i in dct) + 1
@@ -197,7 +197,6 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         TESTS::
 
-            sage: # needs sage.symbolic
             sage: Pol.<x> = ComplexBallField(42)[]
             sage: pol = (x + i)/3
             sage: pol2 = loads(dumps(pol))

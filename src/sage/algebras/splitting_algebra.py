@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.libs.pari sage.modules
 r"""
 Splitting Algebras
 
@@ -645,8 +644,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             if base_ring.is_completely_split():
                 # another splitting algebra independent of self
                 return base_ring
-            else:
-                return base_ring.scalar_base_ring()
+            return base_ring.scalar_base_ring()
         return base_ring
 
     @cached_method
@@ -668,8 +666,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             if base_ring.is_completely_split():
                 # another splitting algebra independent of self
                 return self._defining_polynomial
-            else:
-                return base_ring.defining_polynomial()
+            return base_ring.defining_polynomial()
         return self._defining_polynomial
 
 

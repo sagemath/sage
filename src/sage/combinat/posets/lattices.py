@@ -156,7 +156,7 @@ from sage.combinat.posets.elements import (LatticePosetElement,
 from sage.combinat.posets.hasse_diagram import LatticeError
 
 
-####################################################################################
+############################################################################
 
 def MeetSemilattice(data=None, *args, **options):
     r"""
@@ -481,7 +481,7 @@ class FiniteMeetSemilattice(FinitePoset):
             return None
         return self._vertex_to_element(e)
 
-####################################################################################
+############################################################################
 
 
 def JoinSemilattice(data=None, *args, **options):

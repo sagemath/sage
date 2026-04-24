@@ -48,54 +48,6 @@ from sage.structure.unique_representation import UniqueRepresentation
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
 
 
-def is_Berkovich(space) -> bool:
-    """
-    Check if ``space`` is a Berkovich space.
-
-    OUTPUT:
-
-    - ``True`` if ``space`` is a Berkovich space.
-    - ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: B = Berkovich_Cp_Projective(3)
-        sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich
-        sage: is_Berkovich(B)
-        doctest:warning...
-        DeprecationWarning: The function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead.")
-    return isinstance(space, Berkovich)
-
-
-def is_Berkovich_Cp(space) -> bool:
-    """
-    Check if ``space`` is a Berkovich space over ``Cp``.
-
-    OUTPUT:
-
-    - ``True`` if ``space`` is a Berkovich space over ``Cp``.
-    - ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: B = Berkovich_Cp_Projective(3)
-        sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich_Cp
-        sage: is_Berkovich_Cp(B)
-        doctest:warning...
-        DeprecationWarning: The function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead.")
-    return isinstance(space, Berkovich_Cp)
-
-
 class Berkovich(UniqueRepresentation, Parent):
     """
     The parent class for any Berkovich space
@@ -262,8 +214,7 @@ class Berkovich_Cp(Berkovich):
             return False
         if self._base_type == 'padic field':
             return self.prime() == right.prime()
-        else:
-            return self.base() == right.base() and self.ideal() == right.ideal()
+        return self.base() == right.base() and self.ideal() == right.ideal()
 
     def __ne__(self, right):
         """
@@ -496,9 +447,8 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
         if self._base_type == 'padic field':
             return "Affine Berkovich line over Cp(%s) of precision %s" % (self.prime(),
                 self.base().precision_cap())
-        else:
-            return "Affine Berkovich line over Cp(%s), with base %s" % (self.prime(),
-                self.base())
+        return "Affine Berkovich line over Cp(%s), with base %s" % (self.prime(),
+            self.base())
 
     def _latex_(self):
         r"""
@@ -730,9 +680,8 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
         if self._base_type == 'padic field':
             return "Projective Berkovich line over Cp(%s) of precision %s" % (self.prime(),
                 self.base().base_ring().precision_cap())
-        else:
-            return "Projective Berkovich line over Cp(%s), with base %s" % (self.prime(),
-                self.base().base_ring())
+        return "Projective Berkovich line over Cp(%s), with base %s" % (self.prime(),
+            self.base().base_ring())
 
     def _latex_(self):
         r"""

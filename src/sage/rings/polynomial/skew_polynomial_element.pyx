@@ -91,7 +91,6 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -154,7 +153,6 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -174,7 +172,6 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         Negative exponents are supported:
 
-            sage: # needs sage.rings.finite_rings
             sage: a^(-5)
             (x^5 + (2*t^2 + 4)*x^4 + (t^2 + 2)*x^3 + 2*x^2 + (4*t^2 + 2)*x + 2*t^2 + 4*t + 4)^(-1)
             sage: b * a^(-5)
@@ -247,7 +244,6 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -318,7 +314,6 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: T.<x> = k['x',Frob]
@@ -341,7 +336,6 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: T.<x> = k['x',Frob]
@@ -410,7 +404,6 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         Here is a working example::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: T.<y> = k['y',Frob]
@@ -452,7 +445,6 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -594,7 +586,6 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -653,7 +644,6 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]

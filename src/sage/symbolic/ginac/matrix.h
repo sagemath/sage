@@ -101,7 +101,7 @@ public:
 	matrix(unsigned r, unsigned c, exvector  m2);
 	matrix(unsigned r, unsigned c, const lst & l);
 
-	// First step of initialization of matrix with a comma-separated seqeuence
+	// First step of initialization of matrix with a comma-separated sequence
 	// of expressions. Subsequent steps are handled by matrix_init<>::operator,().
 	matrix_init<ex, exvector::iterator> operator=(const ex & x)
 	{

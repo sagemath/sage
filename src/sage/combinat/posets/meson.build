@@ -18,6 +18,7 @@ py.install_sources(
   'moebius_algebra.py',
   'poset_examples.py',
   'posets.py',
+  'sashes.py',
   subdir: 'sage/combinat/posets',
 )
 

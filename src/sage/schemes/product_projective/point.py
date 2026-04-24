@@ -196,8 +196,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         #needed for Digraph
         if not isinstance(right, (ProductProjectiveSpaces_point_ring)):
             return NotImplemented
-        else:
-            return richcmp(self._points, right._points, op)
+        return richcmp(self._points, right._points, op)
 
     def __copy__(self):
         r"""

@@ -263,36 +263,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-def is_Fan(x) -> bool:
-    r"""
-    Check if ``x`` is a Fan.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is a fan and ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.fan import is_Fan
-        sage: is_Fan(1)
-        doctest:warning...
-        DeprecationWarning: The function is_Fan is deprecated; use 'isinstance(..., RationalPolyhedralFan)' instead.
-        See https://github.com/sagemath/sage/issues/38126 for details.
-        False
-        sage: fan = toric_varieties.P2().fan(); fan                                     # needs palp
-        Rational polyhedral fan in 2-d lattice N
-        sage: is_Fan(fan)                                                               # needs palp
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38126,
-                "The function is_Fan is deprecated; "
-                "use 'isinstance(..., RationalPolyhedralFan)' instead.")
-    return isinstance(x, RationalPolyhedralFan)
-
-
 def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         is_complete=None, virtual_rays=None, discard_faces=False,
         allow_arrangement=False):
@@ -1282,8 +1252,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             # "self()" we return just "self", which seems to be more natural
             # and convenient for ToricVariety.fan() method.
             return self
-        else:
-            return self.cones(dim, codim)
+        return self.cones(dim, codim)
 
     def __richcmp__(self, right, op):
         r"""
@@ -1324,8 +1293,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
                             self.generating_cones()],
                            [right.rays(), right.virtual_rays(),
                             right.generating_cones()], op)
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def __contains__(self, cone) -> bool:
         r"""
@@ -1815,8 +1783,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
                                              for rtc in ray_to_cones)
         if i is None:
             return self._ray_to_cones_tuple
-        else:
-            return self._ray_to_cones_tuple[i]
+        return self._ray_to_cones_tuple[i]
 
     def _repr_(self) -> str:
         r"""
@@ -2764,8 +2731,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         if self.lattice_dim() == 2:
             if self._2d_echelon_forms.cache is None:
                 return self._2d_echelon_form() in other._2d_echelon_forms()
-            else:
-                return other._2d_echelon_form() in self._2d_echelon_forms()
+            return other._2d_echelon_form() in self._2d_echelon_forms()
         generator = fan_isomorphism_generator(self, other)
         try:
             next(generator)
@@ -3195,8 +3161,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             self._virtual_rays = virtual
         if args:
             return virtual(*args)
-        else:
-            return virtual
+        return virtual
 
     def primitive_collections(self):
         r"""
@@ -3411,8 +3376,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             assert x != 0
             if x > 0:
                 return 1
-            else:
-                return -1
+            return -1
         N_QQ = self.lattice().base_extend(QQ)
         dim = self.lattice_dim()
         outward_vectors = {}

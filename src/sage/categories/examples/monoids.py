@@ -1,12 +1,12 @@
 r"""
 Examples of monoids
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
@@ -75,7 +75,7 @@ class FreeMonoid(FreeSemigroup):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self, alphabet=('a','b','c','d')):
+    def __init__(self, alphabet=('a', 'b', 'c', 'd')) -> None:
         r"""
         The free monoid.
 
@@ -95,7 +95,7 @@ class FreeMonoid(FreeSemigroup):
         self.alphabet = alphabet
         Parent.__init__(self, category=Monoids())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

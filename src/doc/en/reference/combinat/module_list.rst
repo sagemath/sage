@@ -129,6 +129,7 @@ Comprehensive module list
     sage/combinat/t_sequences
     sage/combinat/tableau_tuple
     sage/combinat/tableau
+    sage/combinat/tamari_blossoming_tree
     sage/combinat/interval_posets
     sage/combinat/hillman_grassl
     sage/combinat/tiling
@@ -324,6 +325,7 @@ Comprehensive module list
     sage/combinat/posets/linear_extensions
     sage/combinat/posets/mobile
     sage/combinat/posets/moebius_algebra
+    sage/combinat/posets/sashes
     sage/combinat/posets/all
     sage/combinat/posets/hasse_cython
     sage/combinat/posets/hasse_cython_flint

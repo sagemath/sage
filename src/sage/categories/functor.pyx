@@ -297,7 +297,7 @@ cdef class Functor(SageObject):
             raise TypeError("x (=%s) is not in %s" % (x, self.__domain))
         return x
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -408,39 +408,6 @@ cdef class Functor(SageObject):
             Category of fields
         """
         return self.__codomain
-
-
-def is_Functor(x):
-    """
-    Test whether the argument is a functor.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: from sage.categories.functor import is_Functor
-        sage: F1 = QQ.construction()[0]
-        sage: F1
-        FractionField
-        sage: is_Functor(F1)
-        doctest:warning...
-        DeprecationWarning: The function is_Functor is deprecated;
-        use 'isinstance(..., Functor)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        True
-        sage: is_Functor(FractionField)
-        False
-        sage: F2 = ForgetfulFunctor(Fields(), Rings())
-        sage: F2
-        The forgetful functor from Category of fields to Category of rings
-        sage: is_Functor(F2)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_Functor is deprecated; "
-                "use 'isinstance(..., Functor)' instead.")
-    return isinstance(x, Functor)
 
 
 ###########################################

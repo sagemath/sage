@@ -83,7 +83,6 @@ from sage.structure.element cimport Element
 from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
-from sage.misc.superseded import deprecated_function_alias
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
 #########################################################
@@ -200,9 +199,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
         ...
         TypeError: mutable matrices are unhashable
         sage: a.set_immutable()
-        sage: hash(a)
-        1846857684291126914  # 64-bit
-        1591707266           # 32-bit
+        sage: hash32 = 1591707266
+        sage: hash64 = 1846857684291126914
+        sage: hash(a) in [hash32, hash64]
+        True
     """
     def __cinit__(self):
         """
@@ -2584,8 +2584,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
             F = matrix_space.MatrixSpace(QQ, self.nrows())(v[0].sage())
             B = matrix_space.MatrixSpace(QQ, self.nrows())(v[1].sage())
             return F, B
-
-    frobenius = deprecated_function_alias(36396, frobenius_form)
 
     def _right_kernel_matrix(self, **kwds):
         r"""

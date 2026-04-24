@@ -1,4 +1,4 @@
- meson pyproject_metadata ninja_build patchelf | $(PYTHON_TOOLCHAIN) $(PYTHON)
+meson pyproject_metadata ninja_build patchelf packaging | $(PYTHON) pip wheel flit_core python_build
 
 ----------
 All lines of this file are ignored except the first.

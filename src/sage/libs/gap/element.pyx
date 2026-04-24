@@ -657,8 +657,14 @@ cdef class GapElement(RingElement):
             sage: a
             [ [ 0, -2 ], [ 2, 3, 4 ] ]
         """
+        cdef Obj copy
         if IS_MUTABLE_OBJ(self.value):
-            return make_any_gap_element(self.parent(), SHALLOW_COPY_OBJ(self.value))
+            try:
+                GAP_Enter()
+                copy = SHALLOW_COPY_OBJ(self.value)
+            finally:
+                GAP_Leave()
+            return make_any_gap_element(self.parent(), copy)
         else:
             return self
 
@@ -689,8 +695,14 @@ cdef class GapElement(RingElement):
             sage: l.deepcopy(1).IsMutable()
             true
         """
+        cdef Obj copy
         if IS_MUTABLE_OBJ(self.value):
-            return make_any_gap_element(self.parent(), CopyObj(self.value, mut))
+            try:
+                GAP_Enter()
+                copy = CopyObj(self.value, mut)
+            finally:
+                GAP_Leave()
+            return make_any_gap_element(self.parent(), copy)
         else:
             return self
 
@@ -743,6 +755,24 @@ cdef class GapElement(RingElement):
 
         return (_from_sage, (elem,))
 
+    cdef bint _check_contains(self, Element other) except -2:
+        """
+        Helper function to check containment.
+        """
+        cdef GapElement c_other
+        if isinstance(other, GapElement):
+            c_other = <GapElement>other
+        else:
+            c_other = <GapElement>libgap(other)
+
+        try:
+            gap_sig_on()
+            GAP_Enter()
+            return GAP_IN(c_other.value, self.value)
+        finally:
+            GAP_Leave()
+            gap_sig_off()
+
     def __contains__(self, other):
         r"""
         TESTS::
@@ -762,8 +792,7 @@ cdef class GapElement(RingElement):
             ...
             GAPError: Error, no method found! Error, no 1st choice method found for `in' on 2 arguments
         """
-        GAP_IN = libgap.eval(r'\in')
-        return GAP_IN(other, self).sage()
+        return self._check_contains(other)
 
     cpdef _type_number(self):
         """
@@ -2884,7 +2913,11 @@ cdef class GapElement_List(GapElement):
             sage: len(lst)
             4
         """
-        return GAP_LenList(self.value)
+        try:
+            GAP_Enter()
+            return GAP_LenList(self.value)
+        finally:
+            GAP_Leave()
 
     def __getitem__(self, i):
         r"""
@@ -2926,23 +2959,44 @@ cdef class GapElement_List(GapElement):
             Traceback (most recent call last):
             ...
             ValueError: too many indices
+
+        TESTS:
+
+        Check that :issue:`41595` is fixed::
+
+            sage: W = WeylGroup("E8", implementation='permutation')
+            sage: s = W.gens()
+            sage: G = W.subgroup([s[0], s[1], s[2], s[3], s[4], s[6], s[7]])
+            sage: R = libgap.RightTransversal(W, G)
+            sage: len(R)
+            60480
+            sage: for w in R:  # long time
+            ....:     v = W(w)
         """
         cdef int j
         cdef Obj obj = self.value
 
         if isinstance(i, tuple):
             for j in i:
-                if not GAP_IsList(obj):
-                    raise ValueError('too many indices')
-                if j < 0 or j >= GAP_LenList(obj):
-                    raise IndexError('index out of range')
-                obj = ELM_LIST(obj, j+1)
+                try:
+                    GAP_Enter()
+                    if not GAP_IsList(obj):
+                        raise ValueError('too many indices')
+                    if j < 0 or j >= GAP_LenList(obj):
+                        raise IndexError('index out of range')
+                    obj = ELM_LIST(obj, j+1)
+                finally:
+                    GAP_Leave()
 
         else:
             j = i
-            if j < 0 or j >= GAP_LenList(obj):
-                raise IndexError('index out of range.')
-            obj = ELM_LIST(obj, j+1)
+            try:
+                GAP_Enter()
+                if j < 0 or j >= GAP_LenList(obj):
+                    raise IndexError('index out of range.')
+                obj = ELM_LIST(obj, j+1)
+            finally:
+                GAP_Leave()
 
         return make_any_gap_element(self.parent(), obj)
 
@@ -3003,13 +3057,21 @@ cdef class GapElement_List(GapElement):
 
         if isinstance(i, tuple):
             for j in i[:-1]:
+                try:
+                    GAP_Enter()
+                    if not GAP_IsList(obj):
+                        raise ValueError('too many indices')
+                    if j < 0 or j >= GAP_LenList(obj):
+                        raise IndexError('index out of range')
+                    obj = ELM_LIST(obj, j+1)
+                finally:
+                    GAP_Leave()
+            try:
+                GAP_Enter()
                 if not GAP_IsList(obj):
                     raise ValueError('too many indices')
-                if j < 0 or j >= GAP_LenList(obj):
-                    raise IndexError('index out of range')
-                obj = ELM_LIST(obj, j+1)
-            if not GAP_IsList(obj):
-                raise ValueError('too many indices')
+            finally:
+                GAP_Leave()
             j = i[-1]
         else:
             j = i
@@ -3023,7 +3085,11 @@ cdef class GapElement_List(GapElement):
         else:
             celt= self.parent()(elt)
 
-        GAP_AssList(obj, j+1, celt.value)
+        try:
+            GAP_Enter()
+            GAP_AssList(obj, j+1, celt.value)
+        finally:
+            GAP_Leave()
 
     def sage(self, **kwds):
         r"""

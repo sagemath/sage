@@ -758,7 +758,6 @@ def schur(ambient_dim=None, lattice=None):
     generators of the Schur cone and the nonnegative orthant in
     dimension five is `\left(3/4\right)\pi`::
 
-        sage: # needs sage.rings.number_fields
         sage: P = cones.schur(5)
         sage: Q = cones.nonnegative_orthant(5)
         sage: G = ( g.change_ring(QQbar).normalized() for g in P )
@@ -785,7 +784,7 @@ def schur(ambient_dim=None, lattice=None):
         True
 
     The Schur cone induces the majorization preordering on the
-    downard-monotone cone, as in Iusem and Seeger's [IS2005]_ Example
+    downward-monotone cone, as in Iusem and Seeger's [IS2005]_ Example
     7.3 or Niezgoda's [Niez1998]_ Example 2.2::
 
         sage: ambient_dim = ZZ.random_element(10)
@@ -836,10 +835,9 @@ def schur(ambient_dim=None, lattice=None):
     def _f(i, j):
         if i == j:
             return 1
-        elif j - i == 1:
+        if j - i == 1:
             return -1
-        else:
-            return 0
+        return 0
 
     # The "max" below catches the trivial case where ambient_dim == 0.
     S = matrix(ZZ, max(0, ambient_dim-1), ambient_dim, _f)

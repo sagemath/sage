@@ -206,47 +206,6 @@ def Ideal(*args, **kwds):
     return I
 
 
-def is_Ideal(x):
-    r"""
-    Return ``True`` if object is an ideal of a ring.
-
-    EXAMPLES:
-
-    A simple example involving the ring of integers. Note
-    that Sage does not interpret rings objects themselves as ideals.
-    However, one can still explicitly construct these ideals::
-
-        sage: from sage.rings.ideal import is_Ideal
-        sage: R = ZZ
-        sage: is_Ideal(R)
-        doctest:warning...
-        DeprecationWarning: The function is_Ideal is deprecated; use 'isinstance(..., Ideal_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38266 for details.
-        False
-        sage: 1*R; is_Ideal(1*R)
-        Principal ideal (1) of Integer Ring
-        True
-        sage: 0*R; is_Ideal(0*R)
-        Principal ideal (0) of Integer Ring
-        True
-
-    Sage recognizes ideals of polynomial rings as well::
-
-        sage: R = PolynomialRing(QQ, 'x'); x = R.gen()
-        sage: I = R.ideal(x^2 + 1); I
-        Principal ideal (x^2 + 1) of Univariate Polynomial Ring in x over Rational Field
-        sage: is_Ideal(I)
-        True
-        sage: is_Ideal((x^2 + 1)*R)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38266,
-                "The function is_Ideal is deprecated; "
-                "use 'isinstance(..., Ideal_generic)' instead.")
-    return isinstance(x, Ideal_generic)
-
-
 class Ideal_generic(MonoidElement):
     """
     An ideal.
@@ -367,24 +326,29 @@ class Ideal_generic(MonoidElement):
             sage: I == J
             True
 
-        TESTS:
-
-        Check that the example from :issue:`37409` raises an error
-        rather than silently returning an incorrect result::
+        TESTS::
 
             sage: R.<x> = ZZ[]
             sage: I = R.ideal(1-2*x,2)
-            sage: I.is_trivial()  # not implemented -- see #37409
+            sage: I.is_trivial()  # needs sage.libs.singular
             True
-            sage: I.is_trivial()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: ideal comparison in Univariate Polynomial Ring in x over Integer Ring is not implemented
+            sage: R.ideal(x, 2) <= R.ideal(1)  # needs sage.libs.singular
+            True
         """
         if self.is_zero():
             return rich_to_bool(op, other.is_zero() - 1)
         if other.is_zero():
             return rich_to_bool(op, 1)  # self.is_zero() is already False
+
+        from sage.rings.integer_ring import ZZ
+        if self.ring().base_ring() is ZZ:
+            #assert self.ring().implementation() != "singular"
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            Rs = PolynomialRing(ZZ, self.ring().variable_names(), implementation="singular")
+            Is = Rs.ideal(self.gens())
+            Js = Rs.ideal(other.gens())
+            return Is.__richcmp__(Js, op)
+
         S = set(self.gens())
         T = set(other.gens())
         if S == T:
@@ -509,7 +473,6 @@ class Ideal_generic(MonoidElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.real_mpfr
             sage: psi = CC['x'].hom([-CC['x'].0])
             sage: J = ideal([CC['x'].0 + 1]); J
             Principal ideal (x + 1.00000000000000) of Univariate Polynomial Ring in x
@@ -533,7 +496,6 @@ class Ideal_generic(MonoidElement):
 
         TESTS::
 
-            sage: # needs sage.rings.number_fields
             sage: x = polygen(ZZ)
             sage: K.<a> = NumberField(x^2 + 1)
             sage: A = K.ideal(a)
@@ -547,7 +509,6 @@ class Ideal_generic(MonoidElement):
 
         ::
 
-            sage: # needs sage.rings.number_fields
             sage: K.<a> = NumberField(x^2 + 5)
             sage: B = K.ideal([2, a + 1]); B
             Fractional ideal (2, a + 1)
@@ -577,7 +538,7 @@ class Ideal_generic(MonoidElement):
             sage: latex(3*ZZ) # indirect doctest
             \left(3\right)\Bold{Z}
         """
-        import sage.misc.latex as latex
+        from sage.misc import latex
         return '\\left(%s\\right)%s' % (", ".join(latex.latex(g)
                                                   for g in self.gens()),
                                         latex.latex(self.ring()))
@@ -750,8 +711,7 @@ class Ideal_generic(MonoidElement):
             # For rings of Krull dimension 0, or for integral domains of
             # Krull dimension 1, every nontrivial prime ideal is maximal.
             return self.is_prime()
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def is_primary(self, P=None):
         r"""
@@ -781,7 +741,6 @@ class Ideal_generic(MonoidElement):
 
         Some examples from the Macaulay2 documentation::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x, y, z> = GF(101)[]
             sage: I = R.ideal([y^6])
             sage: I.is_primary()                                                        # needs sage.libs.singular
@@ -805,8 +764,7 @@ class Ideal_generic(MonoidElement):
             raise NotImplementedError
         if P is None:
             return (len(ass) == 1)
-        else:
-            return (len(ass) == 1) and (ass[0] == P)
+        return (len(ass) == 1) and (ass[0] == P)
 
     def primary_decomposition(self):
         r"""
@@ -1588,10 +1546,9 @@ class Ideal_pid(Ideal_principal):
         """
         if isinstance(other, Ideal_principal):
             return self.ring().ideal(self.gen().gcd(other.gen()))
-        elif self.gen() in other:
+        if self.gen() in other:
             return other
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def is_prime(self):
         """
@@ -1644,7 +1601,6 @@ class Ideal_pid(Ideal_principal):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(5)[]
             sage: p = R.ideal(t^2 + 2)
             sage: p.is_maximal()
@@ -1674,7 +1630,6 @@ class Ideal_pid(Ideal_principal):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: P = ZZ.ideal(61); P
             Principal ideal (61) of Integer Ring
             sage: F = P.residue_field(); F
