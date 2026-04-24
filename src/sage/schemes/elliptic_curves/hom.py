@@ -619,9 +619,15 @@ class EllipticCurveHom(Morphism):
               embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y = x^3 + 1
                 over Finite Field in t of size 2^42
         """
+        n = self.separable_degree()
         if algorithm is None:
             if self.domain().base_ring().is_finite():
-                algorithm = 'structure'
+                # For prime-degree kernels, extend=True only needs the
+                # cyclic kernel, not the full n-torsion.
+                if extend and n.is_prime():
+                    algorithm = 'kerpoly'
+                else:
+                    algorithm = 'structure'
             else:
                 algorithm = 'kerpoly'
 
@@ -635,12 +641,11 @@ class EllipticCurveHom(Morphism):
         except AttributeError:
             pass
 
-        if self.separable_degree().is_one():
+        if n.is_one():
             # purely inseparable
             return AdditiveAbelianGroupWrapper(self.domain().point_homset(), [], [])
 
         if algorithm == 'structure':
-            n = self.separable_degree()
             T1 = self.domain().torsion_subgroup(n, extend=extend)
             F = T1.universe().codomain().base_field()
             T2 = self.codomain().change_ring(F).torsion_subgroup(n)
@@ -653,52 +658,16 @@ class EllipticCurveHom(Morphism):
             o = T2.exponent()
             for imP in imPs:
                 imP.set_order(multiple=o)
-            T2gens = list(T2.gens())
-            Rgens = [g.element() for g in T2gens]
-            T2orders = [g.order() for g in T2gens]
-            # For small exponent, compute the discrete logarithms by
-            # brute-force table lookup. Calling ``pt.log(...)`` dispatches
-            # to ``pari.elllog``, which may internally reduce the elliptic
-            # curve DLP to a discrete logarithm in the multiplicative group
-            # of the underlying finite field; the latter can become
-            # unexpectedly slow (or effectively hang) when ``q^k - 1``
-            # has a large hard-to-factor part, even though ``o`` itself is
-            # small.
-            if o <= 256:
-                Z = Rgens[0].curve().zero() if Rgens else None
-                table = {}
-                if len(Rgens) == 1:
-                    R, = Rgens
-                    oR, = map(int, T2orders)
-                    cur = Z
-                    for a in range(oR):
-                        table[cur] = (a,)
-                        cur = cur + R
-                    mylog = lambda pt: table[pt]
-                elif len(Rgens) == 2:
-                    R, S = Rgens
-                    oR, oS = map(int, T2orders)
-                    rowR = Z
-                    for a in range(oR):
-                        cur = rowR
-                        for b in range(oS):
-                            table[cur] = (a, b)
-                            cur = cur + S
-                        rowR = rowR + R
-                    mylog = lambda pt: table[pt]
-                else:
-                    # no generators (trivial T2); mylog returns empty tuple
-                    mylog = lambda pt: ()
-            elif len(T2.invariants()) == 1:
-                R, = Rgens
+            if len(T2.invariants()) == 1:
+                R, = (g.element() for g in T2.gens())
                 mylog = lambda pt: (pt.log(R),)
             else:
-                R, S = Rgens
-                mylog = lambda pt: pt.log([R, S])
+                R, S = (g.element() for g in T2.gens())
+                mylog = lambda pt: pt.log([R,S])
 
             from sage.matrix.constructor import matrix
             from sage.matrix.special import diagonal_matrix
-            M = matrix(ZZ, map(mylog, imPs)).stack(diagonal_matrix(T2orders))
+            M = matrix(ZZ, map(mylog, imPs)).stack(diagonal_matrix([elt.order() for elt in T2.gens()]))
             K = M.left_kernel_matrix()[:,:len(Ps)]
 
             V = K.row_space(ZZ) / diagonal_matrix([P.order() for P in Ps]).row_space(ZZ)
@@ -714,37 +683,30 @@ class EllipticCurveHom(Morphism):
                 gens.append(Q)
 
             A = AdditiveAbelianGroupWrapper(T1.universe(), gens, [pt._order for pt in gens])
-            assert A.order().divides(self.separable_degree())
-            if A.order() != self.separable_degree():
+            assert A.order().divides(n)
+            if A.order() != n:
                 raise ValueError('kernel subgroup has no generating points over the base field')
             return A
 
         if algorithm != 'kerpoly':
             raise ValueError(f"invalid algorithm {algorithm}")
 
+        E = self.domain()
         f = self.kernel_polynomial()
-
-        if part:
-            f = f.gcd(E.division_polynomial(part))
 
         pts = []
 
         if not extend:
-            for x in self.kernel_polynomial().roots(multiplicities=False):
+            for x in f.roots(multiplicities=False):
                 try:
                     pts.append(E.lift_x(x))
                 except ValueError:
                     continue
                 A = AdditiveAbelianGroupWrapper.from_generators(pts)
                 pts = [g.element() for g in A.gens()]
-                if A.order() == self.separable_degree():
+                if A.order() == n:
                     return A
             raise ValueError('kernel subgroup has no generating points over the base field')
-
-        E = self.domain()
-        f = self.kernel_polynomial()
-
-        from sage.rings.polynomial.polynomial_ring import polygen
 
         K, to_K = f.splitting_field('u', map=True)
         EE = E.change_ring(to_K)
@@ -763,7 +725,7 @@ class EllipticCurveHom(Morphism):
 
             A = AdditiveAbelianGroupWrapper.from_generators(pts)
             pts = [g.element() for g in A.gens()]
-            if A.order() == self.separable_degree():
+            if A.order() == n:
                 break
 
         return A
