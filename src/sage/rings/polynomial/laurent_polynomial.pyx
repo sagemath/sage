@@ -109,7 +109,6 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         ::
 
-            sage: # needs sage.modules
             sage: L.<a, b> = LaurentPolynomialRing(QQ)
             sage: L(42)._integer_(ZZ)
             42
@@ -150,7 +149,6 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         ::
 
-            sage: # needs sage.modules
             sage: L.<a, b> = LaurentPolynomialRing(QQ)
             sage: L(42)._rational_()
             42
@@ -179,7 +177,6 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         Check that :issue:`22277` is fixed::
 
-            sage: # needs sage.modules
             sage: R.<x, y> = LaurentPolynomialRing(QQ)
             sage: a = 2*x^2 + 3*x^3 + 4*x^-1
             sage: a.change_ring(GF(3))
@@ -253,7 +250,6 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: R.<x> = LaurentPolynomialRing(k)
             sage: f = x*a + a
@@ -266,7 +262,6 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
         Examples with different base ring::
 
-            sage: # needs sage.modules sage.rings.finite_rings
             sage: R.<r> = GF(9); S.<s> = GF(81)
             sage: h = Hom(R, S)[0]; h
             Ring morphism:
@@ -296,8 +291,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
             R = R.change_ring(new_base_ring)
         elif isinstance(f, Map):
             R = R.change_ring(f.codomain())
-        return R(dict([(k, f(v))
-                       for k, v in self.monomial_coefficients().items()]))
+        return R({k: f(v) for k, v in self.monomial_coefficients().items()})
 
 
 cdef class LaurentPolynomial_univariate(LaurentPolynomial):
@@ -334,7 +328,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         ::
 
-            sage: # needs sage.rings.padics
             sage: S.<s> = LaurentPolynomialRing(GF(5))
             sage: T.<t> = PolynomialRing(pAdicRing(5))
             sage: S(t)
@@ -516,7 +509,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         You can specify a map on the base ring::
 
-            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
             sage: K.<i> = NumberField(x^2 + 1)
             sage: cc = K.hom([-i])
@@ -841,7 +833,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: R.<x> = LaurentPolynomialRing(QQ)
             sage: f = x^3 + 2/x
             sage: g = f._symbolic_(SR); g
@@ -1839,7 +1830,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         The answer is dependent of the base ring::
 
-            sage: # needs sage.rings.number_field
             sage: S.<u> = LaurentPolynomialRing(QQbar)
             sage: (2 + 4*t + 2*t^2).is_square()
             False
@@ -1966,7 +1956,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         Check that :issue:`28187` is fixed::
 
-            sage: # needs sage.symbolic
             sage: R.<x> = LaurentPolynomialRing(ZZ)
             sage: p = 1/x + 1 + x
             sage: x,y = var("x, y")

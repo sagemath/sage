@@ -386,8 +386,7 @@ class Algebras(AlgebrasCategory):
             result = (q1+q2) * pi_on_weight - self.term(weight.simple_reflection(i), q2)
             if convention == "dominant":
                 return result.map_support(operator.neg)
-            else:
-                return result
+            return result
 
         def demazure_lusztig_operators(self, q1, q2, convention='antidominant'):
             r"""
@@ -1011,9 +1010,8 @@ class Algebras(AlgebrasCategory):
                 if convention != "dominant":
                     raise NotImplementedError("The twisted Demazure-Lusztig operator T_0 is only implemented in the dominant convention")
                 return self.T0_check_on_basis(q1, q2, convention=convention)(weight)
-            else:
-                L = self.classical()
-                return L.demazure_lusztig_operators(q1, q2, convention=convention)[i](L.monomial(weight))
+            L = self.classical()
+            return L.demazure_lusztig_operators(q1, q2, convention=convention)[i](L.monomial(weight))
 
         def twisted_demazure_lusztig_operators(self, q1, q2, convention='antidominant'):
             r"""

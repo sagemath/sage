@@ -219,34 +219,39 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             (9*z3^2 + 6*z3 + 6 : 4*z3^2 + 9*z3 + 3 : 1)
             sage: phi._eval(Q)
             (z3^2 + 9*z3 : 10*z3^2 + 6*z3 + 10 : 1)
+
+        TESTS:
+
+        Check for :issue:`41902`::
+
+            sage: F.<t> = GF((1019, 2))
+            sage: E = EllipticCurve(F, [1, 0])
+            sage: P = E.lift_x(675*t + 800)
+            sage: i = E.automorphisms()[-1]
+            sage: j = E.frobenius_isogeny()
+            sage: f = End(E)(6) / 6
+            sage: P
+            (675*t + 800 : 518*t + 493 : 1)
+            sage: f(P)
+            (675*t + 800 : 518*t + 493 : 1)
+
+        Check for :issue:`41969`::
+
+            sage: E, endo = special_supersingular_curve(GF(1021^2), endomorphism=True)
+            sage: ((1 + endo + E.frobenius_isogeny()) / 2)((148, 0))
+            (148 : 0 : 1)
         """
         if self._domain.defining_polynomial()(*P):
             raise ValueError(f'{P} not on {self._domain}')
-        k = Sequence(P).universe()
+        F = Sequence(P).universe()
 
         if not P:
-            return self._codomain.base_extend(k).zero()
+            return self._codomain.base_extend(F).zero()
 
-        # TODO this should really be a "divide point by possibly
-        # extending the base field" method
-        F = k
-        n = P.order()
-        m = self._d.prime_to_m_part(n)
-        P *= m.inverse_mod(n)
-        for q, e in (self._d//m).factor():
-            for _ in range(e):
-                f = P.division_points(q, poly_only=True)
-                try:
-                    f.any_root(assume_squarefree=True)
-                except ValueError:
-                    g = f.factor()[0][0]
-                    F = F.extension(g.degree())
-                    g.any_root(ring=F)
-                P = P.change_ring(F).division_points(q)[0]
+        P = P.divide(self._d, extend=True)
+        Q = self._phi._eval(P).change_ring(F)
 
-        Q = self._phi._eval(P).change_ring(k)
-
-        return self._codomain.base_extend(k)(*Q)
+        return self._codomain.base_extend(F)(*Q)
 
     def _repr_(self) -> str:
         r"""

@@ -961,5 +961,4 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         """
         if self.is_cuspidal():
             return self.sturm_bound()
-        else:
-            return self.ambient_hecke_module().hecke_bound()
+        return self.ambient_hecke_module().hecke_bound()

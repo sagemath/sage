@@ -121,17 +121,12 @@ TESTS::
     algebras with different term orderings, yet.
 """
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.libs.singular.function import lib
 from sage.libs.singular.function cimport RingWrap
 from sage.libs.singular.ring cimport singular_ring_delete, singular_ring_reference
 from sage.categories.algebras import Algebras
 from sage.rings.noncommutative_ideals import IdealMonoid_nc
 from sage.rings.polynomial.plural cimport new_CRing
 from sage.misc.cachefunc import cached_method
-
-#####################
-# Define some singular functions
-lib("freegb.lib")
 
 # unfortunately we cannot set Singular attributes for MPolynomialRing_libsingular
 # Hence, we must constantly work around Letterplace's sanity checks,
@@ -918,7 +913,8 @@ cdef class FreeAlgebra_letterplace_libsingular():
 
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
         """
-        from sage.libs.singular.function import singular_function
+        from sage.libs.singular.function import singular_function, lib
+        lib("freegb.lib")
         freeAlgebra = singular_function("freeAlgebra")
         cdef RingWrap rw = freeAlgebra(commutative_ring, degbound)
         self._lp_ring = singular_ring_reference(rw._ring)

@@ -1409,7 +1409,6 @@ class GraphGenerators:
 
         There are two sets of cospectral graphs on six vertices with no isolated vertices::
 
-            sage: # needs sage.modules
             sage: g = graphs.cospectral_graphs(6, graphs=lambda x: min(x.degree())>0)
             sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
             [['Ep__', 'Er?G'], ['ExGg', 'ExoG']]
@@ -1429,7 +1428,6 @@ class GraphGenerators:
         There are two sets of cospectral graphs (with respect to the
         Laplacian matrix) on six vertices::
 
-            sage: # needs sage.modules
             sage: g = graphs.cospectral_graphs(6, matrix_function=lambda g: g.laplacian_matrix())
             sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
             [['Edq_', 'ErcG'], ['Exoo', 'EzcG']]

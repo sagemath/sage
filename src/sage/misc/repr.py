@@ -39,8 +39,7 @@ def coeff_repr(c, is_latex=False):
     if s.find("+") != -1 or s.find("-") != -1:
         if is_latex:
             return "\\left(%s\\right)" % s
-        else:
-            return "(%s)" % s
+        return "(%s)" % s
     return s
 
 
@@ -198,5 +197,4 @@ def repr_lincomb(terms, is_latex=False, scalar_mult='*', strip_one=False,
         # this can happen only if are only terms with coeff_repr(c) == "0"
     # elif s == "":
         # return "1"  # is empty string representation invalid?
-    else:
-        return s
+    return s

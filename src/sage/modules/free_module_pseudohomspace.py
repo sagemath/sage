@@ -197,8 +197,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
         twist = self._ore._repr_twist()
         if self.domain() is self.codomain():
             return "Set of Pseudoendomorphisms (%s) of %s" % (twist, self.domain())
-        else:
-            return "Set of Pseudomorphism (%s) from %s to %s" % (twist, self.domain(), self.codomain())
+        return "Set of Pseudomorphism (%s) from %s to %s" % (twist, self.domain(), self.codomain())
 
     def ore_ring(self, var='x'):
         r"""

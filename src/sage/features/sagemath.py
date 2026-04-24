@@ -941,28 +941,6 @@ class sage__rings__padics(JoinFeature):
                              type='standard')
 
 
-class sage__rings__polynomial__pbori(JoinFeature):
-    r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`sage.rings.polynomial.pbori`.
-
-    TESTS::
-
-        sage: from sage.features.sagemath import sage__rings__polynomial__pbori
-        sage: sage__rings__polynomial__pbori().is_present()                             # needs sage.rings.polynomial.pbori
-        FeatureTestResult('sage.rings.polynomial.pbori', True)
-    """
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.sagemath import sage__rings__polynomial__pbori
-            sage: isinstance(sage__rings__polynomial__pbori(), sage__rings__polynomial__pbori)
-            True
-        """
-        JoinFeature.__init__(self, 'sage.rings.polynomial.pbori',
-                             [PythonModule('sage.rings.polynomial.pbori.pbori')],
-                             spkg='sagemath_brial', type='standard')
-
 
 class sage__rings__real_double(PythonModule):
     r"""
@@ -1171,7 +1149,6 @@ def all_features():
         sage__rings__function_field(),
         sage__rings__number_field(),
         sage__rings__padics(),
-        sage__rings__polynomial__pbori(),
         sage__rings__real_double(),
         sage__rings__real_mpfr(),
         sage__sat(),

@@ -146,11 +146,11 @@ def CoxeterGroup(data, implementation='reflection', base_ring=None, index_set=No
         if cartan_type.is_crystallographic():
             return WeylGroup(cartan_type, implementation='permutation')
         return ReflectionGroup(cartan_type, index_set=index_set)
-    elif implementation == "matrix":
+    if implementation == "matrix":
         if cartan_type.is_crystallographic():
             return WeylGroup(cartan_type)
         return CoxeterMatrixGroup(cartan_type, base_ring, index_set)
-    elif implementation == "chevie":
+    if implementation == "chevie":
         return ReflectionGroup(cartan_type, index_set=index_set)
 
     raise NotImplementedError("Coxeter group of type {} as {} group not implemented".format(cartan_type, implementation))

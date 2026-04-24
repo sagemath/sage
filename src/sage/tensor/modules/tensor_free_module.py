@@ -607,8 +607,7 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             if self._tensor_type == (1,1):
                 return other.is_endomorphism_set() and \
                                          self._fmodule is other.domain()
-            else:
-                return False
+            return False
         if isinstance(other, ExtPowerFreeModule):
             # Coercion of an alternating contravariant tensor to a
             # type-(p,0) tensor:

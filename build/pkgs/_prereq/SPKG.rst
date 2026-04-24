@@ -20,9 +20,6 @@ computer:
 - **perl**: version 5.8.0 or later.
 - **ar** and **ranlib**: can be obtained as part of GNU binutils.
 - **tar**: GNU tar version 1.17 or later, or BSD tar (as provided on macOS).
-- **python**: Python 3.4 or later, or Python 2.7.
-  (This range of versions is a minimal requirement for internal purposes of the SageMath
-  build system, which is referred to as ``sage-bootstrap-python``.)
 - **patch**.
 - **boost**: the library ``boost`` with its headers.
 - **bzip2**: the executable ``bzip2`` and the library ``libbz2`` with its headers.

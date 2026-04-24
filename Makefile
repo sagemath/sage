@@ -364,14 +364,14 @@ CONFIGURE_DEPENDENCIES =							\
 	build/pkgs/*/spkg-install build/pkgs/*/spkg-install.in
 
 # SPKG_INFO_DEPENDENCIES is the list of files that influence the run of 'sage-spkg-info' and hence
-# the generation of the files generated in 'src/doc' by 'src/doc/bootstrap'.
+# the generation of the files generated 'tools/bootstrap-docs.py'.
 SPKG_INFO_DEPENDENCIES =							\
 	build/pkgs/*/type build/pkgs/*/SPKG.rst					\
 	build/pkgs/*/requirements.txt						\
 	build/pkgs/*/version_requirements.txt build/pkgs/*/package-version.txt	\
 	build/pkgs/*/distros/*.txt
 
-configure: bootstrap src/doc/bootstrap $(CONFIGURE_DEPENDENCIES) $(SPKG_INFO_DEPENDENCIES)
+configure: bootstrap tools/bootstrap-docs.py $(CONFIGURE_DEPENDENCIES) $(SPKG_INFO_DEPENDENCIES)
 	./bootstrap -d
 
 install: all

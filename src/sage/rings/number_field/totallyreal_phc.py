@@ -139,5 +139,4 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
 
     if len(output_data) > 0:
         return [min([v[1] for v in output_data]), max([v[2] for v in output_data])]
-    else:
-        return []
+    return []

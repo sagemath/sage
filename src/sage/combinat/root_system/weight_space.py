@@ -276,12 +276,10 @@ class WeightSpace(CombinatorialFreeModule):
                 raise ValueError("delta is only defined for affine weight spaces")
             if self.is_extended():
                 return self.monomial(i)
-            else:
-                return self.zero()
-        else:
-            if i not in self.index_set():
-                raise ValueError("{} is not in the index set".format(i))
-            return self.monomial(i)
+            return self.zero()
+        if i not in self.index_set():
+            raise ValueError("{} is not in the index set".format(i))
+        return self.monomial(i)
 
     @cached_method
     def basis_extension(self):
@@ -306,8 +304,7 @@ class WeightSpace(CombinatorialFreeModule):
         """
         if self.is_extended():
             return Family(["delta"], self.monomial)
-        else:
-            return Family([])
+        return Family([])
 
     @cached_method
     def simple_root(self, j):
@@ -427,8 +424,7 @@ class WeightSpace(CombinatorialFreeModule):
         """
         if i == "delta" or i == self.cartan_type().special_node():
             return self.classical().zero()
-        else:
-            return self.classical().monomial(i)
+        return self.classical().monomial(i)
 
     @cached_method
     def to_ambient_space_morphism(self):
@@ -510,8 +506,7 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
         zero = self.parent().base_ring().zero()
         if len(self) < len(lambdacheck):
             return sum( (lambdacheck[i]*c for (i,c) in self), zero)
-        else:
-            return sum( (self[i]*c for (i,c) in lambdacheck), zero)
+        return sum( (self[i]*c for (i,c) in lambdacheck), zero)
 
     def is_dominant(self):
         r"""

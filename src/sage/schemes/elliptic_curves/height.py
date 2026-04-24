@@ -197,10 +197,9 @@ class UnionOfIntervals:
         """
         if not isinstance(right, UnionOfIntervals):
             return UnionOfIntervals([e*right for e in left._endpoints])
-        elif not isinstance(left, UnionOfIntervals):
+        if not isinstance(left, UnionOfIntervals):
             return UnionOfIntervals([left*e for e in right._endpoints])
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def __rmul__(self, other):
         r"""
@@ -741,8 +740,7 @@ def eps(err, is_real):
     e = RIF(-err, err)
     if is_real:
         return e
-    else:
-        return CIF(e, e)
+    return CIF(e, e)
 
 
 class EllipticCurveCanonicalHeight:
@@ -937,33 +935,32 @@ class EllipticCurveCanonicalHeight:
             min_FG = inf_max_abs(F, G, nonneg_region(F) & I)
             return min(min_fg, min_FG) ** (-1/QQ(3))
 
-        else:
-            # def pair_max(f, g):
-            #     f = f.change_ring(CIF)
-            #     g = g.change_ring(CIF)
-            #     max = type(RIF(0)).max
-            #     def max_f_g(z):
-            #         return max(abs(f(z)), abs(g(z)))
-            #     return max_f_g
-            def pair_max(f, g):
-                f = f.change_ring(CDF)
-                g = g.change_ring(CDF)
-                dfn = [fast_callable(f.derivative(n)/factorial(n), CDF) for n in range(f.degree()+1)]
-                dgn = [fast_callable(g.derivative(n)/factorial(n), CDF) for n in range(g.degree()+1)]
+        # def pair_max(f, g):
+        #     f = f.change_ring(CIF)
+        #     g = g.change_ring(CIF)
+        #     max = type(RIF(0)).max
+        #     def max_f_g(z):
+        #         return max(abs(f(z)), abs(g(z)))
+        #     return max_f_g
+        def pair_max(f, g):
+            f = f.change_ring(CDF)
+            g = g.change_ring(CDF)
+            dfn = [fast_callable(f.derivative(n)/factorial(n), CDF) for n in range(f.degree()+1)]
+            dgn = [fast_callable(g.derivative(n)/factorial(n), CDF) for n in range(g.degree()+1)]
 
-                def max_f_g(s):
-                    (a,b), (c,d) = s.real().endpoints(), s.imag().endpoints()
-                    dx = a - b
-                    dy = c - d
-                    eta = RDF(dx*dx + dy*dy).sqrt()
-                    z = CDF(s.center())
-                    err_f = sum(eta ** n * abs(df(z)) for n, df in enumerate(dfn) if n)
-                    err_g = sum(eta ** n * abs(dg(z)) for n, dg in enumerate(dgn) if n)
-                    return RIF(max(abs(f(z)), abs(g(z)))) + eps(max(err_f, err_g), True)
-                return max_f_g
-            _, min_fg = min_on_disk(pair_max(f, g), tol)
-            _, min_FG = min_on_disk(pair_max(F, G), tol)
-            return min(min_fg, min_FG) ** QQ((-1, 3))
+            def max_f_g(s):
+                (a,b), (c,d) = s.real().endpoints(), s.imag().endpoints()
+                dx = a - b
+                dy = c - d
+                eta = RDF(dx*dx + dy*dy).sqrt()
+                z = CDF(s.center())
+                err_f = sum(eta ** n * abs(df(z)) for n, df in enumerate(dfn) if n)
+                err_g = sum(eta ** n * abs(dg(z)) for n, dg in enumerate(dgn) if n)
+                return RIF(max(abs(f(z)), abs(g(z)))) + eps(max(err_f, err_g), True)
+            return max_f_g
+        _, min_fg = min_on_disk(pair_max(f, g), tol)
+        _, min_FG = min_on_disk(pair_max(F, G), tol)
+        return min(min_fg, min_FG) ** QQ((-1, 3))
 
     @cached_method
     def e_p(self, p):
@@ -1233,12 +1230,11 @@ class EllipticCurveCanonicalHeight:
         beta = L.elliptic_exponential(w1/2)[0]
         if xi2 < beta:
             return UnionOfIntervals([])
-        elif xi1 < beta <= xi2:
+        if xi1 < beta <= xi2:
             a = self.psi(xi2, v)
             return UnionOfIntervals([1-a, a])
-        else:
-            a, b = self.psi(xi1, v), self.psi(xi2, v)
-            return UnionOfIntervals([1-b, 1-a, a, b])
+        a, b = self.psi(xi1, v), self.psi(xi2, v)
+        return UnionOfIntervals([1-b, 1-a, a, b])
 
     def Sn(self, xi1, xi2, n, v):
         r"""

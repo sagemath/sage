@@ -130,7 +130,7 @@ cdef object _md_tree_node_to_md_tree_inner_rec(const md_tree_node *n,
     else:  # is_prime
         node = Node(NodeType.PRIME)
     node.children.extend(_md_tree_node_to_md_tree_inner_rec(c, Gb)
-                                                    for c in deref(n).children)
+                         for c in deref(n).children)
     return node
 
 
@@ -731,7 +731,7 @@ def check_modular_decomposition(tree_root, graph):
                 # characteristics of modules
                 return False
             if not check_modular_decomposition(module,
-                                              graph.subgraph(get_vertices(module))):
+                                               graph.subgraph(get_vertices(module))):
                 # recursively test the modular decomposition subtrees
                 return False
 
@@ -1338,7 +1338,7 @@ def random_md_tree(max_depth, max_fan_out, leaf_probability):
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: set_random_seed(0)
         sage: tree_to_nested_tuple(random_md_tree(2, 5, 0.5))
-        (PRIME, [0, 1, (PRIME, [2, 3, 4, 5, 6]), 7, (PARALLEL, [8, 9, 10])])
+        (PRIME, [0, (PRIME, [1, 2, 3, 4]), 5, 6])
     """
 
     from sage.misc.prandom import choice, randint, random

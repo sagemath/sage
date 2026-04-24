@@ -276,8 +276,8 @@ cdef class CategoryObject(SageObject):
 
         EXAMPLES::
 
-            sage: B.<a,b,c,d> = BooleanPolynomialRing()                                 # needs sage.rings.polynomial.pbori
-            sage: B.gens_dict()                                                         # needs sage.rings.polynomial.pbori
+            sage: B.<a,b,c,d> = BooleanPolynomialRing()                                 # needs brial
+            sage: B.gens_dict()                                                         # needs brial
             {'a': a, 'b': b, 'c': c, 'd': d}
 
         TESTS::
