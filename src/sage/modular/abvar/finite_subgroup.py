@@ -831,7 +831,47 @@ class FiniteSubgroup(Module):
         self.__invariants = I
         return I
 
-    __iter__ = abelian_iterator
+    def __iter__(self):
+        r"""
+        Iterate through the elements of ``self`` exactly once.
+
+        This wraps :func:`~sage.structure.gens_py.abelian_iterator`,
+        which enumerates all combinations of ``gens()``. Since
+        ``gens()`` may be redundant, we filter duplicates.
+
+        EXAMPLES::
+
+            sage: S = J0(33).shimura_subgroup()
+            sage: elems = list(S)
+            sage: len(elems)
+            10
+            sage: len({tuple(x.element()) for x in elems})
+            10
+        """
+        target = self.order()
+        seen = set()
+        for x in abelian_iterator(self):
+            key = tuple(x.element())
+            if key in seen:
+                continue
+            seen.add(key)
+            yield x
+            if len(seen) >= target:
+                return
+
+    def cardinality(self):
+        r"""
+        Return the cardinality of ``self``.
+
+        This equals the product of the elementary invariants.
+
+        EXAMPLES::
+
+            sage: S = J0(33).shimura_subgroup()
+            sage: S.cardinality() == prod(S.invariants())
+            True
+        """
+        return self.order()
 
 
 class FiniteSubgroup_lattice(FiniteSubgroup):

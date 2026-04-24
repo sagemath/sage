@@ -171,18 +171,17 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             if set(self.gens()) == set(right_r.gens()): # Early abort
                 return (op == op_EQ)
             return ((self.polynomial_ideal() == right_r.polynomial_ideal()) == (op == op_EQ))
-        elif op == op_LE:
+        if op == op_LE:
             if all(f in right_r.gens() for f in self.gens()): # Early abort
                 return True
             return self.polynomial_ideal(saturate=False) <= right_r.polynomial_ideal()
-        elif op == op_GE:
+        if op == op_GE:
             return right_r._richcmp_(self, op_LE)
-        elif op == op_LT:
+        if op == op_LT:
             return self._richcmp_(right_r, op_LE) and self._richcmp_(right_r, op_NE)
-        elif op == op_GT:
+        if op == op_GT:
             return right_r._richcmp_(self, op_LE) and right_r._richcmp_(self, op_NE)
-        else:
-            raise ValueError("invalid comparison")
+        raise ValueError("invalid comparison")
 
     def __contains__(self, f) -> bool:
         """

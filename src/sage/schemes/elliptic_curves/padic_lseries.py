@@ -316,7 +316,7 @@ class pAdicLseries(SageObject):
         if quadratic_twist == +1:
             if sign == +1:
                 return self._modular_symbol(r)
-            elif sign == -1:
+            if sign == -1:
                 try:
                     m = self._negative_modular_symbol
                 except (KeyError, AttributeError):
@@ -333,15 +333,14 @@ class pAdicLseries(SageObject):
                 return sum([kronecker_symbol(D, u) * m(r + ZZ(u) / D)
                             for u in range(1, D)])
 
-            else:
-                try:
+            try:
+                m = self._negative_modular_symbol
+            except (KeyError, AttributeError):
+                if not hasattr(self, '_modular_symbol_negative'):
+                    self.__add_negative_space()
                     m = self._negative_modular_symbol
-                except (KeyError, AttributeError):
-                    if not hasattr(self, '_modular_symbol_negative'):
-                        self.__add_negative_space()
-                        m = self._negative_modular_symbol
-                return -sum([kronecker_symbol(D, u) * m(r + ZZ(u) / D)
-                             for u in range(1, -D)])
+            return -sum([kronecker_symbol(D, u) * m(r + ZZ(u) / D)
+                         for u in range(1, -D)])
 
     def measure(self, a, n, prec, quadratic_twist=+1, sign=+1):
         r"""
@@ -435,17 +434,16 @@ class pAdicLseries(SageObject):
             if self._E.conductor() % p == 0:
                 return z * f(a/(p*w))
             return z * ( f(a/(p*w)) - f(a/w) / alpha)
+        D = quadratic_twist
+        if self.is_ordinary():
+            chip = kronecker_symbol(D,p)
         else:
-            D = quadratic_twist
-            if self.is_ordinary():
-                chip = kronecker_symbol(D,p)
-            else:
-                chip = 1 # alpha is +- sqrt(-p) anyway
-            if self._E.conductor() % p == 0:
-                mu = chip**n * z * sum([kronecker_symbol(D,u) * f(a/(p*w)+ZZ(u)/D) for u in range(1,D.abs())])
-            else:
-                mu = chip**n * z * sum([kronecker_symbol(D,u) * ( f(a/(p*w)+ZZ(u)/D) - chip / alpha * f(a/w+ZZ(u)/D) ) for u in range(1,D.abs())])
-            return s*mu
+            chip = 1 # alpha is +- sqrt(-p) anyway
+        if self._E.conductor() % p == 0:
+            mu = chip**n * z * sum([kronecker_symbol(D,u) * f(a/(p*w)+ZZ(u)/D) for u in range(1,D.abs())])
+        else:
+            mu = chip**n * z * sum([kronecker_symbol(D,u) * ( f(a/(p*w)+ZZ(u)/D) - chip / alpha * f(a/w+ZZ(u)/D) ) for u in range(1,D.abs())])
+        return s*mu
 
     def alpha(self, prec=20):
         r"""
@@ -904,10 +902,9 @@ class pAdicLseriesOrdinary(pAdicLseries):
                 L /= self._quotient_of_periods_to_twist(D)*self._E.real_components()
                 L = R(L, 1)
                 return L
-            else:
-                # here we need some sums anyway
-                bounds = self._prec_bounds(n,prec,sign=si)
-                padic_prec = 20
+            # here we need some sums anyway
+            bounds = self._prec_bounds(n,prec,sign=si)
+            padic_prec = 20
         else:
             bounds = self._prec_bounds(n,prec,sign=si)
             padic_prec = max(bounds[1:]) + 5
@@ -1055,14 +1052,13 @@ class pAdicLseriesOrdinary(pAdicLseries):
             C = b._known_cusps()  # all known, since computed the boundary map
             if sign == +1:
                 return max([valuation(self.modular_symbol(a).denominator(), p) for a in C])
-            else:
-                try:
+            try:
+                m = self._negative_modular_symbol
+            except (KeyError, AttributeError):
+                if not hasattr(self, '_modular_symbol_negative'):
+                    self._add_negative_space()
                     m = self._negative_modular_symbol
-                except (KeyError, AttributeError):
-                    if not hasattr(self, '_modular_symbol_negative'):
-                        self._add_negative_space()
-                        m = self._negative_modular_symbol
-                return max([valuation(m(a).denominator(), p) for a in C])
+            return max([valuation(m(a).denominator(), p) for a in C])
 
         # else the same reasoning as in _set_denom in numerical
         # modular symbol. We rely on the fact that p is semistable
@@ -1249,10 +1245,9 @@ class pAdicLseriesSupersingular(pAdicLseries):
                 L /= self._quotient_of_periods_to_twist(D)*self._E.real_components()
                 L = R(L, 1)
                 return L
-            else:
-                # here we need some sums anyway
-                bounds = self._prec_bounds(n,prec)
-                alphaadic_prec = 20
+            # here we need some sums anyway
+            bounds = self._prec_bounds(n,prec)
+            alphaadic_prec = 20
         else:
             prec = min(p**(n-1), prec)
             bounds = self._prec_bounds(n,prec)

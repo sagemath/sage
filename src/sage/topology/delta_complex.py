@@ -290,7 +290,7 @@ class DeltaComplex(GenericCellComplex):
             pass
         else:
             if isinstance(data, (list, tuple)):
-                new_data.update({dim: s for dim, s in enumerate(data)})
+                new_data.update(dict(enumerate(data)))
             elif isinstance(data, dict):
                 if all(isinstance(a, (int, Integer)) for a in data):
                     # a dictionary indexed by integers

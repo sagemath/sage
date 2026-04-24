@@ -234,39 +234,24 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             (675*t + 800 : 518*t + 493 : 1)
             sage: f(P)
             (675*t + 800 : 518*t + 493 : 1)
+
+        Check for :issue:`41969`::
+
+            sage: E, endo = special_supersingular_curve(GF(1021^2), endomorphism=True)
+            sage: ((1 + endo + E.frobenius_isogeny()) / 2)((148, 0))
+            (148 : 0 : 1)
         """
         if self._domain.defining_polynomial()(*P):
             raise ValueError(f'{P} not on {self._domain}')
-        k = Sequence(P).universe()
+        F = Sequence(P).universe()
 
         if not P:
-            return self._codomain.base_extend(k).zero()
+            return self._codomain.base_extend(F).zero()
 
-        # TODO this should really be a "divide point by possibly
-        # extending the base field" method
-        F = k
-        n = P.order()
-        m = self._d.prime_to_m_part(n)
-        P *= m.inverse_mod(n)
-        coercion = k.hom(k)
-        for q, e in (self._d//m).factor():
-            for _ in range(e):
-                f = P.division_points(q, poly_only=True)
-                try:
-                    f.any_root(assume_squarefree=True)
-                except ValueError:
-                    g = f.factor()[0][0]
-                    F, emb = F.extension(g.degree(), 'W', map=True)
-                    coercion = emb * coercion
-                P = P.change_ring(F).division_points(q)[0]
-        try:
-            F.register_coercion(coercion)
-        except AssertionError:  # coercion already exists
-            pass
+        P = P.divide(self._d, extend=True)
+        Q = self._phi._eval(P).change_ring(F)
 
-        Q = self._phi._eval(P).change_ring(k)
-
-        return self._codomain.base_extend(k)(*Q)
+        return self._codomain.base_extend(F)(*Q)
 
     def _repr_(self) -> str:
         r"""

@@ -539,8 +539,7 @@ class MPowerSeries(PowerSeries):
             y += base_map(c)*prod([x[i]**m[i] for i in range(n) if m[i] != 0])
         if self.prec() == infinity:
             return y
-        else:
-            return y.add_bigoh(self.prec())
+        return y.add_bigoh(self.prec())
 
     def _value(self):
         """
@@ -636,8 +635,7 @@ class MPowerSeries(PowerSeries):
         if base_map is None:
             # __call__ might be faster if codomain coerces into the base ring
             return codomain(self(*im_gens))
-        else:
-            return codomain(self._subs_formal(*im_gens, base_map=base_map))
+        return codomain(self._subs_formal(*im_gens, base_map=base_map))
 
     def __getitem__(self, n):
         """
@@ -705,8 +703,7 @@ class MPowerSeries(PowerSeries):
         """
         if self.valuation() == 0:
             return self.parent(~self._bg_value)
-        else:
-            raise NotImplementedError("Multiplicative inverse of multivariate power series currently implemented only if constant coefficient is a unit.")
+        raise NotImplementedError("Multiplicative inverse of multivariate power series currently implemented only if constant coefficient is a unit.")
 
     ## comparisons
     def _richcmp_(self, other, op):

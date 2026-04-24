@@ -74,31 +74,31 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
     if isinstance(base_ring, sage.rings.rational_field.RationalField):
         return make_ring("(QQ)"), None
 
-    elif isinstance(base_ring, sage.rings.abc.RealField):
+    if isinstance(base_ring, sage.rings.abc.RealField):
         # singular converts to bits from base_10 in mpr_complex.cc by:
         #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
         precision = base_ring.precision()
         digits = (2*precision + 4) // 7
         return make_ring(f"(real,{digits},0)"), None
 
-    elif isinstance(base_ring, sage.rings.abc.ComplexField):
+    if isinstance(base_ring, sage.rings.abc.ComplexField):
         # singular converts to bits from base_10 in mpr_complex.cc by:
         #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
         precision = base_ring.precision()
         digits = (2*precision + 4) // 7
         return make_ring(f"(complex,{digits},0,I)"), None
 
-    elif isinstance(base_ring, sage.rings.abc.RealDoubleField):
+    if isinstance(base_ring, sage.rings.abc.RealDoubleField):
         # singular converts to bits from base_10 in mpr_complex.cc by:
         #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
         return make_ring("(real,15,0)"), None
 
-    elif isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
+    if isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
         # singular converts to bits from base_10 in mpr_complex.cc by:
         #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
         return make_ring("(complex,15,0,I)"), None
 
-    elif isinstance(base_ring, sage.rings.abc.IntegerModRing):
+    if isinstance(base_ring, sage.rings.abc.IntegerModRing):
         char = base_ring.characteristic()
         if isinstance(base_ring, FiniteField) and char <= 2147483647:
             return make_ring(str(char)), None
@@ -106,7 +106,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
             return make_ring(f"(integer,2,{char.nbits()-1})"), None
         return make_ring(f"(integer,{char})"), None
 
-    elif isinstance(base_ring, FiniteField):
+    if isinstance(base_ring, FiniteField):
         # not the prime field!
         gen = str(base_ring.gen())
         R = make_ring(f"({char},{gen})")
@@ -118,7 +118,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
         return R, minpoly
 
-    elif isinstance(base_ring, NumberField) and base_ring.is_absolute():
+    if isinstance(base_ring, NumberField) and base_ring.is_absolute():
         # not the rationals!
         gen = str(base_ring.gen())
         poly = base_ring.polynomial()
@@ -133,7 +133,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
         return R, minpoly
 
-    elif isinstance(base_ring, sage.rings.fraction_field.FractionField_generic):
+    if isinstance(base_ring, sage.rings.fraction_field.FractionField_generic):
         if base_ring.ngens() == 1:
             gens = str(base_ring.gen())
         else:

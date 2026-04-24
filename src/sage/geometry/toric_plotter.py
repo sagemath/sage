@@ -995,7 +995,6 @@ def options(option=None, **kwds):
 
         sage: toric_plotter.options(wall_color='grey')
     """
-    global _options
     if option is None and not kwds:
         return copy(_options)
     if option is not None and not kwds:

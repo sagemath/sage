@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs sage.modules
 r"""
 Cluster algebras
 
@@ -2378,7 +2377,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: A = ClusterAlgebra(['A', 2])
-            sage: A.cluster_fan()                                                       # needs sage.geometry.polyhedron
+            sage: A.cluster_fan()
             Rational polyhedral fan in 2-d lattice N
         """
         seeds = self.seeds(depth=depth, mutating_F=False)

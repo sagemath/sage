@@ -15,9 +15,8 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 import math
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
 
 from sage.misc.misc_c import prod
 
@@ -1484,7 +1483,7 @@ def random_prime(n, proof=None, lbound=2):
             return p
 
 
-def divisors(n):
+def divisors(n) -> list:
     """
     Return the list of all divisors (up to units) of this element
     of a unique factorization domain.
@@ -5971,7 +5970,7 @@ def is_power_of_two(n):
     return ZZ(n).popcount() == 1
 
 
-def differences(lis, n=1):
+def differences(lis, n=1) -> list:
     """
     Return the `n` successive differences of the elements in ``lis``.
 
@@ -6147,7 +6146,7 @@ def fundamental_discriminant(D):
     return 4 * D
 
 
-def squarefree_divisors(x):
+def squarefree_divisors(x) -> Iterator:
     """
     Return an iterator over the squarefree divisors (up to units)
     of this ring element.
@@ -6430,7 +6429,7 @@ def gauss_sum(char_value, finite_field):
     return resu
 
 
-def dedekind_psi(N):
+def dedekind_psi(N) -> Integer:
     r"""
     Return the value of the Dedekind psi function at ``N``.
 
@@ -6492,7 +6491,8 @@ def smooth_part(x, base):
         tree = ProductTree(base)
     fs = []
     rems = tree.remainders(x)
-    for j, (p, r) in enumerate(zip(tree, rems)):
+    for j, pr in enumerate(zip(tree, rems)):
+        p, r = pr
         if not r:
             x //= p
             v = 1

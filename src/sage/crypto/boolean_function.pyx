@@ -16,7 +16,7 @@ EXAMPLES::
     Boolean function with 8 variables
     sage: B.nonlinearity()
     112
-    sage: B.algebraic_immunity()                                                        # needs sage.rings.polynomial.pbori
+    sage: B.algebraic_immunity()                                                        # needs brial
     4
 
 AUTHOR:
@@ -88,7 +88,7 @@ cdef long yellow_code(unsigned long a) noexcept:
 
     EXAMPLES::
 
-        sage: # needs sage.rings.polynomial.pbori
+        sage: # needs brial
         sage: from sage.crypto.boolean_function import BooleanFunction
         sage: R.<x,y,z> = BooleanPolynomialRing(3)
         sage: P = x*y
@@ -121,7 +121,7 @@ cdef reed_muller(mp_limb_t* f, int ldn):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.polynomial.pbori
+        sage: # needs brial
         sage: from sage.crypto.boolean_function import BooleanFunction
         sage: R.<x,y,z> = BooleanPolynomialRing(3)
         sage: P = x*y
@@ -191,9 +191,9 @@ cdef class BooleanFunction(SageObject):
 
     from a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`::
 
-        sage: R.<x,y,z> = BooleanPolynomialRing(3)                                      # needs sage.rings.polynomial.pbori
-        sage: P = x*y                                                                   # needs sage.rings.polynomial.pbori
-        sage: BooleanFunction(P)                                                        # needs sage.rings.polynomial.pbori
+        sage: R.<x,y,z> = BooleanPolynomialRing(3)                                      # needs brial
+        sage: P = x*y                                                                   # needs brial
+        sage: BooleanFunction(P)                                                        # needs brial
         Boolean function with 3 variables
 
     from a polynomial over a binary field::
@@ -260,9 +260,9 @@ cdef class BooleanFunction(SageObject):
 
         from a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`::
 
-            sage: R.<x,y,z> = BooleanPolynomialRing(3)                                  # needs sage.rings.polynomial.pbori
-            sage: P = x*y                                                               # needs sage.rings.polynomial.pbori
-            sage: BooleanFunction(P)                                                    # needs sage.rings.polynomial.pbori
+            sage: R.<x,y,z> = BooleanPolynomialRing(3)                                  # needs brial
+            sage: P = x*y                                                               # needs brial
+            sage: BooleanFunction(P)                                                    # needs brial
             Boolean function with 3 variables
 
         from a polynomial over a binary field::
@@ -393,8 +393,8 @@ cdef class BooleanFunction(SageObject):
 
         it also corresponds to the addition of algebraic normal forms::
 
-            sage: S = A.algebraic_normal_form() + B.algebraic_normal_form()             # needs sage.rings.polynomial.pbori
-            sage: (A+B).algebraic_normal_form() == S                                    # needs sage.rings.polynomial.pbori
+            sage: S = A.algebraic_normal_form() + B.algebraic_normal_form()             # needs brial
+            sage: (A+B).algebraic_normal_form() == S                                    # needs brial
             True
 
         TESTS::
@@ -425,8 +425,8 @@ cdef class BooleanFunction(SageObject):
 
         it also corresponds to the multiplication of algebraic normal forms::
 
-            sage: P = A.algebraic_normal_form() * B.algebraic_normal_form()             # needs sage.rings.polynomial.pbori
-            sage: (A*B).algebraic_normal_form() == P                                    # needs sage.rings.polynomial.pbori
+            sage: P = A.algebraic_normal_form() * B.algebraic_normal_form()             # needs brial
+            sage: (A*B).algebraic_normal_form() == P                                    # needs brial
             True
 
         TESTS::
@@ -496,9 +496,9 @@ cdef class BooleanFunction(SageObject):
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction([0,1,1,0,1,0,1,1])
-            sage: P = B.algebraic_normal_form(); P                                      # needs sage.rings.polynomial.pbori
+            sage: P = B.algebraic_normal_form(); P                                      # needs brial
             x0*x1*x2 + x0 + x1*x2 + x1 + x2
-            sage: [P(*ZZ(i).digits(base=2, padto=3)) for i in range(8)]                 # needs sage.rings.polynomial.pbori
+            sage: [P(*ZZ(i).digits(base=2, padto=3)) for i in range(8)]                 # needs brial
             [0, 1, 1, 0, 1, 0, 1, 1]
         """
         cdef bitset_t anf
@@ -553,7 +553,7 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: R.<x,y,z> = BooleanPolynomialRing(3)
             sage: B = BooleanFunction(x*y*z + z + y + 1)
@@ -564,10 +564,10 @@ cdef class BooleanFunction(SageObject):
             sage: B.truth_table(format='hex')
             '43'
 
-            sage: BooleanFunction('00ab').truth_table(format='hex')                     # needs sage.rings.polynomial.pbori
+            sage: BooleanFunction('00ab').truth_table(format='hex')                     # needs brial
             '00ab'
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: H = '0abbacadabbacad0'
             sage: len(H)
             16
@@ -993,10 +993,10 @@ cdef class BooleanFunction(SageObject):
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: f = BooleanFunction("7969817CC5893BA6AC326E47619F5AD0")
-            sage: f.annihilator(1) is None                                              # needs sage.rings.polynomial.pbori
+            sage: f.annihilator(1) is None                                              # needs brial
             True
-            sage: g = BooleanFunction(f.annihilator(3))                                 # needs sage.rings.polynomial.pbori
-            sage: set(fi*g(i) for i,fi in enumerate(f))                                 # needs sage.rings.polynomial.pbori
+            sage: g = BooleanFunction(f.annihilator(3))                                 # needs brial
+            sage: set(fi*g(i) for i,fi in enumerate(f))                                 # needs brial
             {0}
         """
         # NOTE: this is a toy implementation
@@ -1057,7 +1057,7 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: R.<x0,x1,x2,x3,x4,x5> = BooleanPolynomialRing(6)
             sage: B = BooleanFunction(x0*x1 + x1*x2 + x2*x3 + x3*x4 + x4*x5)
@@ -1067,7 +1067,7 @@ cdef class BooleanFunction(SageObject):
             sage: B.algebraic_immunity()
             2
 
-            sage: # needs sage.rings.finite_rings sage.rings.polynomial.pbori
+            sage: # needs sage.rings.finite_rings brial
             sage: R.<x> = GF(2^8,'a')[]
             sage: B = BooleanFunction(x^31)
             sage: B.algebraic_immunity()
@@ -1096,7 +1096,7 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B.<x0, x1, x2, x3> = BooleanPolynomialRing()
             sage: f = BooleanFunction(x1*x2 + x1*x2*x3 + x1)
@@ -1116,7 +1116,7 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: R.<x0, x1, x2, x3> = BooleanPolynomialRing()
             sage: f = BooleanFunction(x0*x1 + x2 + x3)
@@ -1279,7 +1279,7 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: f = BooleanFunction([0,1,0,1,0,1,0,1])
             sage: f.derivative(1).algebraic_normal_form()

@@ -14,7 +14,7 @@ if not fs.is_absolute(datadir)
 endif
 if not fs.exists(datadir / 'cremona')
   message(
-    'Warning: The specified datadir does not contain the necessary Cremona database. Either specify a different datadir or specify a correct the correct path via the environment variable SAGE_SHARE during runtime.',
+    'Warning: The specified datadir does not contain the necessary Cremona database. Either specify a different datadir or specify the correct path via the environment variable SAGE_SHARE during runtime.',
   )
 endif
 # Kenzo cannot yet be provided by the system, so we always use the SAGE_LOCAL path for now.

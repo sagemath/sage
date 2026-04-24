@@ -39,13 +39,12 @@ from collections.abc import Iterable, Iterator
 from ipywidgets.widgets import SelectionSlider, ValueWidget, ToggleButtons
 from ipywidgets.widgets.interaction import interactive, signature
 
-import sage.rings.abc
-
 from sage.misc.lazy_import import lazy_import
 from sage.repl.ipython_kernel.widgets import EvalText, SageColorPicker
 from sage.structure.element import Matrix, parent
 
 lazy_import("sage.plot.colors", "Color")
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
 
 class sage_interactive(interactive):
@@ -232,7 +231,7 @@ class sage_interactive(interactive):
         # Numerically evaluate symbolic expressions
 
         def n(x):
-            if isinstance(parent(x), sage.rings.abc.SymbolicRing):
+            if isinstance(parent(x), SymbolicRing):
                 return x.numerical_approx()
             return x
         abbrev = tuple(n(x) for x in abbrev)
