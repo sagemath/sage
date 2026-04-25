@@ -747,23 +747,20 @@ class Components(SageObject):
                 indices = args[:-1]
         if isinstance(indices, slice):
             return self._get_list(indices, no_format, format_type)
-        else:
-            ind = self._check_indices(indices)
-            if ind in self._comp:
-                if no_format:
-                    return self._comp[ind]
-                elif format_type is None:
-                    return self._output_formatter(self._comp[ind])
-                else:
-                    return self._output_formatter(self._comp[ind], format_type)
-            else:  # if the value is not stored in self._comp, it is zero:
-                if no_format:
-                    return self._ring.zero()
-                elif format_type is None:
-                    return self._output_formatter(self._ring.zero())
-                else:
-                    return self._output_formatter(self._ring.zero(),
-                                                  format_type)
+        ind = self._check_indices(indices)
+        if ind in self._comp:
+            if no_format:
+                return self._comp[ind]
+            if format_type is None:
+                return self._output_formatter(self._comp[ind])
+            return self._output_formatter(self._comp[ind], format_type)
+        # if the value is not stored in self._comp, it is zero:
+        if no_format:
+            return self._ring.zero()
+        if format_type is None:
+            return self._output_formatter(self._ring.zero())
+        return self._output_formatter(self._ring.zero(),
+                                      format_type)
 
     def _get_list(self, ind_slice, no_format=True, format_type=None):
         r"""
@@ -827,8 +824,7 @@ class Components(SageObject):
                 raise NotImplementedError("function [start:stop:step] not implemented")
             if no_format:
                 return [self[[i]] for i in range(start, stop)]
-            else:
-                return [self[i, format_type] for i in range(start, stop)]
+            return [self[i, format_type] for i in range(start, stop)]
         if ind_slice.start is not None or ind_slice.stop is not None:
             raise NotImplementedError("function [start:stop] not implemented " +
                                       f"for components with {self._nid} indices")
@@ -866,14 +862,12 @@ class Components(SageObject):
         if len(ind) == self._nid:
             if no_format:
                 return self[ind]
-            else:
-                args = tuple(ind + [format_type])
-                return self[args]
-        else:
-            si = self._sindex
-            nsi = si + self._dim
-            return [self._gen_list(ind + [i], no_format, format_type)
-                    for i in range(si, nsi)]
+            args = tuple(ind + [format_type])
+            return self[args]
+        si = self._sindex
+        nsi = si + self._dim
+        return [self._gen_list(ind + [i], no_format, format_type)
+                for i in range(si, nsi)]
 
     def __setitem__(self, args, value) -> None:
         r"""
@@ -1440,8 +1434,7 @@ class Components(SageObject):
         if isinstance(other, (int, Integer)):  # other is 0
             if other == 0:
                 return self.is_zero()
-            else:
-                raise TypeError("cannot compare a set of components to a number")
+            raise TypeError("cannot compare a set of components to a number")
         else:  # other is another Components
             if not isinstance(other, Components):
                 raise TypeError("an instance of Components is expected")
@@ -1833,9 +1826,8 @@ class Components(SageObject):
                     for ind in result.non_redundant_index_generator():
                         result[[ind]] = self[[ind[0]]] * self[[ind[1]]]
                 return result
-            else:
-                result = Components(self._ring, self._frame, 2, self._sindex,
-                                    self._output_formatter)
+            result = Components(self._ring, self._frame, 2, self._sindex,
+                                self._output_formatter)
         else:
             result = Components(self._ring, self._frame, self._nid + other._nid,
                                 self._sindex, self._output_formatter)
@@ -1994,18 +1986,17 @@ class Components(SageObject):
             for i in range(si, nsi):
                 res += self[[i, i]]
             return res
-        else:
-            # More than 2 indices
-            result = Components(self._ring, self._frame, self._nid - 2,
-                                self._sindex, self._output_formatter)
-            if pos1 > pos2:
-                pos1, pos2 = (pos2, pos1)
-            for ind, val in self._comp.items():
-                if ind[pos1] == ind[pos2]:
-                    # there is a contribution to the contraction
-                    ind_res = ind[:pos1] + ind[pos1+1:pos2] + ind[pos2+1:]
-                    result[[ind_res]] += val
-            return result
+        # More than 2 indices
+        result = Components(self._ring, self._frame, self._nid - 2,
+                            self._sindex, self._output_formatter)
+        if pos1 > pos2:
+            pos1, pos2 = (pos2, pos1)
+        for ind, val in self._comp.items():
+            if ind[pos1] == ind[pos2]:
+                # there is a contribution to the contraction
+                ind_res = ind[:pos1] + ind[pos1+1:pos2] + ind[pos2+1:]
+                result[[ind_res]] += val
+        return result
 
     def contract(self, *args):
         r"""
@@ -3246,34 +3237,31 @@ class CompWithSym(Components):
                 indices = args[:-1]
         if isinstance(indices, slice):
             return self._get_list(indices, no_format, format_type)
-        else:
-            sign, ind = self._ordered_indices(indices)
-            if sign == 0 or ind not in self._comp:  # the value is zero:
-                if no_format:
-                    return self._ring.zero()
-                elif format_type is None:
-                    return self._output_formatter(self._ring.zero())
-                else:
-                    return self._output_formatter(self._ring.zero(),
-                                                  format_type)
-            else: # nonzero value
-                if no_format:
-                    if sign == 1:
-                        return self._comp[ind]
-                    else: # sign = -1
-                        return -self._comp[ind]
-                elif format_type is None:
-                    if sign == 1:
-                        return self._output_formatter(self._comp[ind])
-                    else: # sign = -1
-                        return self._output_formatter(-self._comp[ind])
-                else:
-                    if sign == 1:
-                        return self._output_formatter(
-                            self._comp[ind], format_type)
-                    else: # sign = -1
-                        return self._output_formatter(
-                            -self._comp[ind], format_type)
+        sign, ind = self._ordered_indices(indices)
+        if sign == 0 or ind not in self._comp:  # the value is zero:
+            if no_format:
+                return self._ring.zero()
+            if format_type is None:
+                return self._output_formatter(self._ring.zero())
+            return self._output_formatter(self._ring.zero(),
+                                          format_type)
+        # nonzero value
+        if no_format:
+            if sign == 1:
+                return self._comp[ind]
+            # sign = -1
+            return -self._comp[ind]
+        if format_type is None:
+            if sign == 1:
+                return self._output_formatter(self._comp[ind])
+            # sign = -1
+            return self._output_formatter(-self._comp[ind])
+        if sign == 1:
+            return self._output_formatter(
+                self._comp[ind], format_type)
+        # sign = -1
+        return self._output_formatter(
+            -self._comp[ind], format_type)
 
     def __setitem__(self, args, value) -> None:
         r"""
@@ -3535,29 +3523,28 @@ class CompWithSym(Components):
                     for ind, val in other._comp.items():
                         result[[ind]] += val
                 return result
+            # The symmetries/antisymmetries are different: only the
+            # common ones are kept
+            common_sym = []
+            for isym in self._sym:
+                for osym in other._sym:
+                    com = tuple(set(isym).intersection(set(osym)))
+                    if len(com) > 1:
+                        common_sym.append(com)
+            common_antisym = []
+            for isym in self._antisym:
+                for osym in other._antisym:
+                    com = tuple(set(isym).intersection(set(osym)))
+                    if len(com) > 1:
+                        common_antisym.append(com)
+            if common_sym or common_antisym:
+                result = CompWithSym(self._ring, self._frame, self._nid,
+                                     self._sindex, self._output_formatter,
+                                     common_sym, common_antisym)
             else:
-                # The symmetries/antisymmetries are different: only the
-                # common ones are kept
-                common_sym = []
-                for isym in self._sym:
-                    for osym in other._sym:
-                        com = tuple(set(isym).intersection(set(osym)))
-                        if len(com) > 1:
-                            common_sym.append(com)
-                common_antisym = []
-                for isym in self._antisym:
-                    for osym in other._antisym:
-                        com = tuple(set(isym).intersection(set(osym)))
-                        if len(com) > 1:
-                            common_antisym.append(com)
-                if common_sym or common_antisym:
-                    result = CompWithSym(self._ring, self._frame, self._nid,
-                                         self._sindex, self._output_formatter,
-                                         common_sym, common_antisym)
-                else:
-                    # no common symmetry -> the result is a generic Components:
-                    result = Components(self._ring, self._frame, self._nid,
-                                        self._sindex, self._output_formatter)
+                # no common symmetry -> the result is a generic Components:
+                result = Components(self._ring, self._frame, self._nid,
+                                    self._sindex, self._output_formatter)
         else:
             # other has no symmetry at all:
             result = Components(self._ring, self._frame, self._nid,
@@ -3820,87 +3807,86 @@ class CompWithSym(Components):
             for i in range(si, nsi):
                 res += self[[i, i]]
             return res
-        else:
-            # More than 2 indices
-            if pos1 > pos2:
-                pos1, pos2 = (pos2, pos1)
-            # Determination of the remaining symmetries:
-            sym_res = list(self._sym)
-            for isym in self._sym:
-                isym_res = list(isym)
-                if pos1 in isym:
-                    isym_res.remove(pos1)
-                if pos2 in isym:
-                    isym_res.remove(pos2)
-                if len(isym_res) < 2:       # the symmetry is lost
-                    sym_res.remove(isym)
-                else:
-                    sym_res[sym_res.index(isym)] = tuple(isym_res)
-            antisym_res = list(self._antisym)
-            for isym in self._antisym:
-                isym_res = list(isym)
-                if pos1 in isym:
-                    isym_res.remove(pos1)
-                if pos2 in isym:
-                    isym_res.remove(pos2)
-                if len(isym_res) < 2:       # the symmetry is lost
-                    antisym_res.remove(isym)
-                else:
-                    antisym_res[antisym_res.index(isym)] = tuple(isym_res)
-            # Shift of the index positions to take into account the
-            # suppression of 2 indices:
-            max_sym = 0
-            for k in range(len(sym_res)):
-                isym_res = []
-                for pos in sym_res[k]:
-                    if pos < pos1:
-                        isym_res.append(pos)
-                    elif pos < pos2:
-                        isym_res.append(pos-1)
-                    else:
-                        isym_res.append(pos-2)
-                max_sym = max(max_sym, len(isym_res))
-                sym_res[k] = tuple(isym_res)
-            max_antisym = 0
-            for k in range(len(antisym_res)):
-                isym_res = []
-                for pos in antisym_res[k]:
-                    if pos < pos1:
-                        isym_res.append(pos)
-                    elif pos < pos2:
-                        isym_res.append(pos-1)
-                    else:
-                        isym_res.append(pos-2)
-                max_antisym = max(max_antisym, len(isym_res))
-                antisym_res[k] = tuple(isym_res)
-            # Construction of the appropriate object in view of the
-            # remaining symmetries:
-            nid_res = self._nid - 2
-            if max_sym == 0 and max_antisym == 0:
-                result = Components(self._ring, self._frame, nid_res, self._sindex,
-                                    self._output_formatter)
-            elif max_sym == nid_res:
-                result = CompFullySym(self._ring, self._frame, nid_res,
-                                      self._sindex, self._output_formatter)
-            elif max_antisym == nid_res:
-                result = CompFullyAntiSym(self._ring, self._frame, nid_res,
-                                          self._sindex, self._output_formatter)
+        # More than 2 indices
+        if pos1 > pos2:
+            pos1, pos2 = (pos2, pos1)
+        # Determination of the remaining symmetries:
+        sym_res = list(self._sym)
+        for isym in self._sym:
+            isym_res = list(isym)
+            if pos1 in isym:
+                isym_res.remove(pos1)
+            if pos2 in isym:
+                isym_res.remove(pos2)
+            if len(isym_res) < 2:       # the symmetry is lost
+                sym_res.remove(isym)
             else:
-                result = CompWithSym(self._ring, self._frame, nid_res,
-                                     self._sindex, self._output_formatter,
-                                     sym=sym_res, antisym=antisym_res)
-            # The contraction itself:
-            for ind_res in result.non_redundant_index_generator():
-                ind = list(ind_res)
-                ind.insert(pos1, 0)
-                ind.insert(pos2, 0)
-                res = 0
-                for i in range(si, nsi):
-                    ind[pos1] = i
-                    ind[pos2] = i
-                    res += self[[ind]]
-                result[[ind_res]] = res
-            return result
+                sym_res[sym_res.index(isym)] = tuple(isym_res)
+        antisym_res = list(self._antisym)
+        for isym in self._antisym:
+            isym_res = list(isym)
+            if pos1 in isym:
+                isym_res.remove(pos1)
+            if pos2 in isym:
+                isym_res.remove(pos2)
+            if len(isym_res) < 2:       # the symmetry is lost
+                antisym_res.remove(isym)
+            else:
+                antisym_res[antisym_res.index(isym)] = tuple(isym_res)
+        # Shift of the index positions to take into account the
+        # suppression of 2 indices:
+        max_sym = 0
+        for k in range(len(sym_res)):
+            isym_res = []
+            for pos in sym_res[k]:
+                if pos < pos1:
+                    isym_res.append(pos)
+                elif pos < pos2:
+                    isym_res.append(pos-1)
+                else:
+                    isym_res.append(pos-2)
+            max_sym = max(max_sym, len(isym_res))
+            sym_res[k] = tuple(isym_res)
+        max_antisym = 0
+        for k in range(len(antisym_res)):
+            isym_res = []
+            for pos in antisym_res[k]:
+                if pos < pos1:
+                    isym_res.append(pos)
+                elif pos < pos2:
+                    isym_res.append(pos-1)
+                else:
+                    isym_res.append(pos-2)
+            max_antisym = max(max_antisym, len(isym_res))
+            antisym_res[k] = tuple(isym_res)
+        # Construction of the appropriate object in view of the
+        # remaining symmetries:
+        nid_res = self._nid - 2
+        if max_sym == 0 and max_antisym == 0:
+            result = Components(self._ring, self._frame, nid_res, self._sindex,
+                                self._output_formatter)
+        elif max_sym == nid_res:
+            result = CompFullySym(self._ring, self._frame, nid_res,
+                                  self._sindex, self._output_formatter)
+        elif max_antisym == nid_res:
+            result = CompFullyAntiSym(self._ring, self._frame, nid_res,
+                                      self._sindex, self._output_formatter)
+        else:
+            result = CompWithSym(self._ring, self._frame, nid_res,
+                                 self._sindex, self._output_formatter,
+                                 sym=sym_res, antisym=antisym_res)
+        # The contraction itself:
+        for ind_res in result.non_redundant_index_generator():
+            ind = list(ind_res)
+            ind.insert(pos1, 0)
+            ind.insert(pos2, 0)
+            res = 0
+            for i in range(si, nsi):
+                ind[pos1] = i
+                ind[pos2] = i
+                res += self[[ind]]
+            result[[ind_res]] = res
+        return result
 
     def non_redundant_index_generator(self) -> Iterator:
         r"""
@@ -4838,19 +4824,17 @@ class CompFullySym(CompWithSym):
         if ind in self._comp: # nonzero value
             if no_format:
                 return self._comp[ind]
-            elif format_type is None:
+            if format_type is None:
                 return self._output_formatter(self._comp[ind])
-            else:
-                return self._output_formatter(self._comp[ind], format_type)
+            return self._output_formatter(self._comp[ind], format_type)
 
         # the value is zero
         if no_format:
             return self._ring.zero()
-        elif format_type is None:
+        if format_type is None:
             return self._output_formatter(self._ring.zero())
-        else:
-            return self._output_formatter(self._ring.zero(),
-                                          format_type)
+        return self._output_formatter(self._ring.zero(),
+                                      format_type)
 
     def __setitem__(self, args, value) -> None:
         r"""
@@ -5048,8 +5032,7 @@ class CompFullySym(CompWithSym):
                 for ind, val in other._comp.items():
                     result[[ind]] += val
             return result
-        else:
-            return CompWithSym.__add__(self, other)
+        return CompWithSym.__add__(self, other)
 
 
 # ****************************************************************************
@@ -5341,8 +5324,7 @@ class CompFullyAntiSym(CompWithSym):
                     result[[ind]] += val
 
             return result
-        else:
-            return CompWithSym.__add__(self, other)
+        return CompWithSym.__add__(self, other)
 
     def interior_product(self, other):
         r"""

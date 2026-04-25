@@ -266,8 +266,7 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
 
         if a is None:
             return betti
-        else:
-            return betti.get(a, 0)
+        return betti.get(a, 0)
 
     def K_polynomial(self, names=None):
         r"""

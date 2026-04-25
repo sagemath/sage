@@ -187,12 +187,11 @@ class BinaryStringMonoid(StringMonoid_class):
         # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
-        elif isinstance(x, list):
+        if isinstance(x, list):
             return StringMonoidElement(self, x, check)
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return StringMonoidElement(self, x, check)
-        else:
-            raise TypeError("Argument x (= %s) is of the wrong type." % x)
+        raise TypeError("Argument x (= %s) is of the wrong type." % x)
 
     def encoding(self, S, padic=False):
         r"""
@@ -305,12 +304,11 @@ class OctalStringMonoid(StringMonoid_class):
         # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
-        elif isinstance(x, list):
+        if isinstance(x, list):
             return StringMonoidElement(self, x, check)
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return StringMonoidElement(self, x, check)
-        else:
-            raise TypeError("Argument x (= %s) is of the wrong type." % x)
+        raise TypeError("Argument x (= %s) is of the wrong type." % x)
 
 
 OctalStrings = OctalStringMonoid
@@ -373,12 +371,11 @@ class HexadecimalStringMonoid(StringMonoid_class):
         # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
-        elif isinstance(x, list):
+        if isinstance(x, list):
             return StringMonoidElement(self, x, check)
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return StringMonoidElement(self, x, check)
-        else:
-            raise TypeError("Argument x (= %s) is of the wrong type." % x)
+        raise TypeError("Argument x (= %s) is of the wrong type." % x)
 
     def encoding(self, S, padic=False):
         r"""
@@ -485,12 +482,11 @@ class Radix64StringMonoid(StringMonoid_class):
         # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
-        elif isinstance(x, list):
+        if isinstance(x, list):
             return StringMonoidElement(self, x, check)
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return StringMonoidElement(self, x, check)
-        else:
-            raise TypeError("Argument x (= %s) is of the wrong type." % x)
+        raise TypeError("Argument x (= %s) is of the wrong type." % x)
 
 
 Radix64Strings = Radix64StringMonoid
@@ -589,12 +585,11 @@ class AlphabeticStringMonoid(StringMonoid_class):
         # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
-        elif isinstance(x, list):
+        if isinstance(x, list):
             return StringMonoidElement(self, x, check)
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return StringMonoidElement(self, x, check)
-        else:
-            raise TypeError("Argument x (= %s) is of the wrong type." % x)
+        raise TypeError("Argument x (= %s) is of the wrong type." % x)
 
     def characteristic_frequency(self, table_name='beker_piper'):
         r"""

@@ -113,7 +113,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         deprecation(34509, "using 'index in vector' is deprecated; use 'index in vector.support()' instead")
         return x in self.support()
 
-    def __hash__(self) -> int:
+    def __hash__(self) -> Py_hash_t:
         """
         Return the hash value for ``self``.
 
@@ -659,8 +659,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         equality testing costly. It may be removed at some point.
 
         Equality testing can be a bit tricky when the order of terms
-        can vary because their indices are incomparable with
-        ``cmp``. The following test did fail before :issue:`12489` ::
+        can vary because their indices are incomparable.
+        The following test did fail before :issue:`12489` ::
 
             sage: # needs sage.combinat
             sage: F = CombinatorialFreeModule(QQ, Subsets([1,2,3]))

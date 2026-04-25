@@ -431,11 +431,10 @@ class DrinfeldModule_finite(DrinfeldModule):
         if algorithm is None:
             if self._frobenius_charpoly is not None:
                 return self._frobenius_charpoly.change_variable_name(var)
+            if self.rank() < self._base_degree_over_constants:
+                algorithm = 'crystalline'
             else:
-                if self.rank() < self._base_degree_over_constants:
-                    algorithm = 'crystalline'
-                else:
-                    algorithm = 'CSA'
+                algorithm = 'CSA'
         # If an algorithm is specified, do not use cached data, even
         # if it is possible:
         method_name = f'_frobenius_charpoly_{algorithm}'
@@ -885,11 +884,10 @@ class DrinfeldModule_finite(DrinfeldModule):
                 self._frobenius_trace = -self._frobenius_charpoly \
                                         .coefficients(sparse=False)[-2]
                 return self._frobenius_trace
+            if self.rank() < self._base_degree_over_constants:
+                algorithm = 'crystalline'
             else:
-                if self.rank() < self._base_degree_over_constants:
-                    algorithm = 'crystalline'
-                else:
-                    algorithm = 'CSA'
+                algorithm = 'CSA'
         # We first check if a matrix method is available
         matrix_method_name = f'_frobenius_matrix_{algorithm}'
         if hasattr(self, matrix_method_name):

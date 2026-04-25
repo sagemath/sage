@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Lie Conformal Algebra
 
@@ -173,10 +172,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.sets.family import Family
 from sage.categories.commutative_rings import CommutativeRings
+from sage.sets.family import Family
 from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class LieConformalAlgebra(UniqueRepresentation, Parent):
@@ -334,20 +333,21 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
         if isinstance(arg0, dict) and arg0:
             graded = kwds.pop("graded", False)
             if weights is not None or graded:
-                from .graded_lie_conformal_algebra import \
-                    GradedLieConformalAlgebra
+                from sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra import (
+                    GradedLieConformalAlgebra,
+                )
                 return GradedLieConformalAlgebra(
                     R, Family(arg0),
                     index_set=index_set, central_elements=central_elements,
                     category=category, prefix=prefix, names=names,
                     latex_names=latex_names, parity=parity, weights=weights,
                     **kwds)
-            else:
-                from .lie_conformal_algebra_with_structure_coefs import \
-                    LieConformalAlgebraWithStructureCoefficients
-                return LieConformalAlgebraWithStructureCoefficients(
-                    R, Family(arg0),
-                    index_set=index_set, central_elements=central_elements,
-                    category=category, prefix=prefix, names=names,
-                    latex_names=latex_names, parity=parity, **kwds)
+            from sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefs import (
+                LieConformalAlgebraWithStructureCoefficients,
+            )
+            return LieConformalAlgebraWithStructureCoefficients(
+                R, Family(arg0),
+                index_set=index_set, central_elements=central_elements,
+                category=category, prefix=prefix, names=names,
+                latex_names=latex_names, parity=parity, **kwds)
         raise NotImplementedError("not implemented")

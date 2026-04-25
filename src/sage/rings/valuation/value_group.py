@@ -297,8 +297,7 @@ class DiscreteValueGroup(UniqueRepresentation, Parent):
         if other._generator == 0:
             if self._generator == 0:
                 return ZZ(1)
-            else:
-                raise ValueError("other must have finite index in this group")
+            raise ValueError("other must have finite index in this group")
         return ZZ(other._generator / self._generator)
 
     def numerator(self):
@@ -497,8 +496,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
         if len(self._generators) == 0:
             if target == 0:
                 return {}
-            else:
-                return None
+            return None
 
         if len(self._generators) == 1:
             from sage.rings.semirings.non_negative_integer_semiring import NN

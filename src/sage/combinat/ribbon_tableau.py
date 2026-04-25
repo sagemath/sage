@@ -125,8 +125,7 @@ class RibbonTableau(SkewTableau):
 
         if l == 0:
             return t
-        else:
-            return t // l
+        return t // l
 
     def to_word(self):
         """
@@ -194,13 +193,6 @@ class RibbonTableaux(UniqueRepresentation, Parent):
           .  1  0  1
           2  0  0
         <BLANKLINE>
-
-    REFERENCES:
-
-    .. [vanLeeuwen91] Marc. A. A. van Leeuwen, *Edge sequences,
-       ribbon tableaux, and an action of affine permutations*.
-       Europe J. Combinatorics. **20** (1999).
-       http://wwwmathlabo.univ-poitiers.fr/~maavl/pdf/edgeseqs.pdf
     """
     @staticmethod
     def __classcall_private__(cls, shape=None, weight=None, length=None):
@@ -512,8 +504,7 @@ def count_rec(nexts, current, part, weight, length):
         return [0]
     if nexts:
         return [sum(j for i in nexts for j in i)]
-    else:
-        return [len(current)]
+    return [len(current)]
 
 
 def list_rec(nexts, current, part, weight, length):
@@ -791,12 +782,11 @@ def graph_implementation_rec(skp, weight, length, function):
 
     if len(weight) == 1:
         return function([], selection, skp, weight, length)
-    else:
-        # The recursive calls permit us to construct the list of the sons
-        # of all current nodes in selection
-        a = [graph_implementation_rec([p[0], outer], weight[:-1], length, function)
-             for p in selection]
-        return function(a, selection, skp, weight, length)
+    # The recursive calls permit us to construct the list of the sons
+    # of all current nodes in selection
+    a = [graph_implementation_rec([p[0], outer], weight[:-1], length, function)
+         for p in selection]
+    return function(a, selection, skp, weight, length)
 
 
 class MultiSkewTableau(CombinatorialElement):

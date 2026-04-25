@@ -695,7 +695,7 @@ class ManifoldPoint(Element):
             else:
                 if isinstance(diff, Expression) and not diff.is_trivial_zero():
                     return False
-                elif not (diff == 0):
+                if not (diff == 0):
                     return False
         return True
 

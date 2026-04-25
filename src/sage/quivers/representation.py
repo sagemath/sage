@@ -795,11 +795,11 @@ class QuiverRepFactory(UniqueFactory):
             # Create and return the module
             return QuiverRep_generic(key[0], P, spaces, maps)
 
-        elif key[2] == 'paths':
+        if key[2] == 'paths':
             # Create and return the module
             return QuiverRep_with_path_basis(key[0], P, key[3])
 
-        elif key[2] == 'dual paths':
+        if key[2] == 'dual paths':
             # Create and return the module
             return QuiverRep_with_dual_path_basis(key[0], P, key[3])
 
@@ -1734,9 +1734,8 @@ class QuiverRep_generic(WithEqualityById, Module):
             for x in self._quiver:
                 dim += self._spaces[x].dimension()
             return dim
-        else:
-            # Return the dimension of just the one vertex
-            return self._spaces[vertex].dimension()
+        # Return the dimension of just the one vertex
+        return self._spaces[vertex].dimension()
 
     def dimension_vector(self):
         """
@@ -2112,8 +2111,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         # submodule
         if dim == self.dimension():
             return self
-        else:
-            return self._submodule(spaces)
+        return self._submodule(spaces)
 
     def quotient(self, sub, check=True):
         """
@@ -2832,8 +2830,7 @@ class QuiverRep_with_path_basis(QuiverRep_generic):
         if isinstance(edge, list):
             if not edge:
                 return element
-            else:
-                return self.left_edge_action(edge[:-1], self.left_edge_action(edge[-1], element))
+            return self.left_edge_action(edge[:-1], self.left_edge_action(edge[-1], element))
 
         # Now we are just acting by a single edge
         elems = {v: self._left_action_mats[edge][v] * element._elems[v]

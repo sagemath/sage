@@ -239,8 +239,7 @@ def number_of_fCT(content_comp, shape_comp):
     if content_comp.to_partition().length() == 1:
         if shape_comp.to_partition().length() == 1:
             return 1
-        else:
-            return 0
+        return 0
     C = Compositions(content_comp.size()-content_comp[-1], outer=list(shape_comp))
     s = 0
     for x in C:
@@ -290,8 +289,7 @@ def number_of_SSRCT(content_comp, shape_comp):
     if len(content_comp) == 1:
         if len(shape_comp) == 1:
             return ZZ.one()
-        else:
-            return ZZ.zero()
+        return ZZ.zero()
     s = ZZ.zero()
     cond = lambda al, be: all(al[j] <= be_val
                               and not any(al[i] <= k <= be[i]

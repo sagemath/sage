@@ -5,7 +5,7 @@ cdef unsigned short * c_distances_all_pairs(G, vertex_list=*) noexcept
 cdef all_pairs_shortest_path_BFS(gg,
                                  unsigned short * predecessors,
                                  unsigned short * distances,
-                                 uint32_t       * eccentricity,
+                                 uint32_t * eccentricity,
                                  vertex_list=*)
 
 cdef uint32_t * c_eccentricity(G, vertex_list=*) except NULL

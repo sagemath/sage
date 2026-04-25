@@ -136,7 +136,6 @@ class Polyhedron_base3(Polyhedron_base2):
             [1 0 1 0 0 1]
             [1 0 0 0 1 1]
 
-            sage: # needs sage.rings.number_field
             sage: P = polytopes.dodecahedron().faces(2)[0].as_polyhedron()
             sage: P.slack_matrix()
             [1/2*sqrt5 - 1/2               0               0               1 1/2*sqrt5 - 1/2               0]
@@ -289,7 +288,6 @@ class Polyhedron_base3(Polyhedron_base2):
         Test that this method works for inexact base ring
         (``cdd`` sets the cache already)::
 
-            sage: # needs sage.groups
             sage: P = polytopes.dodecahedron(exact=False)
             sage: M = P.incidence_matrix.cache
             sage: P.incidence_matrix.clear_cache()

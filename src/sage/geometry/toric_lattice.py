@@ -516,8 +516,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
         def make_name(N1, N2, use_latex=False):
             if use_latex:
                 return latex(N1) + r' \oplus ' + latex(N2)
-            else:
-                return N1._name + '+' + N2._name
+            return N1._name + '+' + N2._name
 
         rank = self.rank() + other.rank()
         name = make_name(self, other, False)
@@ -1412,8 +1411,7 @@ class ToricLattice_quotient(FGP_Module_class):
         if self._flip_sign_of_generator:
             assert len(gens) == 1
             return (-gens[0],)
-        else:
-            return gens
+        return gens
 
     # Should be overridden in derived classes.
     Element = ToricLattice_quotient_element
@@ -1511,8 +1509,7 @@ class ToricLattice_quotient(FGP_Module_class):
         if self.is_torsion_free():
             return "%d-d lattice, quotient of %s by %s" % (self.rank(),
                                                            self.V(), self.W())
-        else:
-            return "Quotient with torsion of %s by %s" % (self.V(), self.W())
+        return "Quotient with torsion of %s by %s" % (self.V(), self.W())
 
     def _module_constructor(self, V, W, check=True):
         r"""
@@ -1666,5 +1663,4 @@ class ToricLattice_quotient(FGP_Module_class):
         if self._flip_sign_of_generator:
             assert len(coordinates) == 1, "Sign flipped for a multi-dimensional quotient!"
             return -coordinates
-        else:
-            return coordinates
+        return coordinates

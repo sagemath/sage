@@ -34,6 +34,7 @@ Features
    sage/features/sagemath
    sage/features/pkg_systems
    sage/features/bliss
+   sage/features/brial
    sage/features/csdp
    sage/features/databases
    sage/features/dvipng

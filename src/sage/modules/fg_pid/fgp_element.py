@@ -386,8 +386,7 @@ class FGP_Element(ModuleElement):
         v = self.vector()
         if base_ring is None or v.base_ring() is base_ring:
             return v.__copy__()
-        else:
-            return v.change_ring(base_ring)
+        return v.change_ring(base_ring)
 
     def _richcmp_(self, right, op):
         """

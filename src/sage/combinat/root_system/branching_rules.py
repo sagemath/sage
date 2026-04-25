@@ -1148,8 +1148,7 @@ class BranchingRule(SageObject):
             return BranchingRule(self._R, other._S, f, "composite",
                                  intermediate_types=intermediates,
                                  intermediate_names=internames)
-        else:
-            raise ValueError("unable to define composite: source and target don't agree")
+        raise ValueError("unable to define composite: source and target don't agree")
 
     def Rtype(self):
         """
@@ -1389,9 +1388,9 @@ def branching_rule(Rtype, Stype, rule='default'):
             if Rtype[0] == "A":
                 if Stype[0] == "B" and r == 2*s:
                     return branching_rule(Rtype, Stype, rule='symmetric')
-                elif Stype[0] == "C" and r == 2*s-1:
+                if Stype[0] == "C" and r == 2*s-1:
                     return branching_rule(Rtype, Stype, rule='symmetric')
-                elif Stype[0] == "D" and r == 2*s-1:
+                if Stype[0] == "D" and r == 2*s-1:
                     return branching_rule(Rtype, Stype, rule='symmetric')
             elif Rtype[0] == "B" and Stype[0] == "D" and r == s:
                 return branching_rule(Rtype, Stype, rule='extended')
@@ -1415,8 +1414,7 @@ def branching_rule(Rtype, Stype, rule='default'):
             if Stype.is_compound():
                 if all(ct[0] == 'A' for ct in stypes) and rdim == sdim:
                     return BranchingRule(Rtype, Stype, lambda x: x, "levi")
-                else:
-                    raise ValueError("Rule not found")
+                raise ValueError("Rule not found")
             elif Stype[0] == 'A':
                 return BranchingRule(Rtype, Stype, lambda x: list(x)[:r], "levi")
             else:
@@ -1425,7 +1423,7 @@ def branching_rule(Rtype, Stype, rule='default'):
             if Stype.is_atomic():
                 if Stype[0] == 'A':
                     return BranchingRule(Rtype, Stype, lambda x: x, "levi")
-                elif Stype[0] == Rtype[0]:
+                if Stype[0] == Rtype[0]:
                     return BranchingRule(Rtype, Stype, lambda x: list(x)[1:], "levi")
             elif stypes[-1][0] == Rtype[0] and all(t[0] == 'A' for t in stypes[:-1]):
                 return BranchingRule(Rtype, Stype, lambda x: x, "levi")
@@ -1434,16 +1432,16 @@ def branching_rule(Rtype, Stype, rule='default'):
         elif Rtype == CartanType("E6"):
             if Stype == CartanType("D5"):
                 return BranchingRule(Rtype, Stype, lambda x: [-x[4],-x[3],-x[2],-x[1],-x[0]], "levi")
-            elif Stype == CartanType("A5"):  # non-maximal levi
+            if Stype == CartanType("A5"):  # non-maximal levi
                 return branching_rule("E6","A5xA1","extended")*branching_rule("A5xA1","A5","proj1")
-            elif Stype.is_compound():
+            if Stype.is_compound():
                 if Stype[0] == CartanType("A4") and Stype[1] == CartanType("A1"):  # non-maximal levi
                     return branching_rule("E6","A5xA1","extended")*branching_rule("A5xA1","A4xA1",[branching_rule("A5","A4","levi"),"identity"])
                 if Stype[0] == CartanType("A1") and Stype[1] == CartanType("A4"):  # non-maximal levi
                     return branching_rule("E6","A1xA5","extended")*branching_rule("A1xA5","A1xA4",["identity",branching_rule("A5","A4","levi")])
-                elif Stype[0] == CartanType("A2") and Stype[1] == CartanType("A2") and Stype[2] == CartanType("A1"):  # non-maximal levi
+                if Stype[0] == CartanType("A2") and Stype[1] == CartanType("A2") and Stype[2] == CartanType("A1"):  # non-maximal levi
                     return branching_rule("E6","A2xA2xA2","extended")*branching_rule("A2xA2xA2","A2xA2xA2",["identity","identity",branching_rule("A2","A2","automorphic")*branching_rule("A2","A1","levi")])
-                elif Stype[0] == CartanType("A2") and Stype[1] == CartanType("A1") and Stype[2] == CartanType("A2"):  # non-maximal levi
+                if Stype[0] == CartanType("A2") and Stype[1] == CartanType("A1") and Stype[2] == CartanType("A2"):  # non-maximal levi
                     raise ValueError("Not implemented: use A2xA2xA1 levi or A2xA2xA2 extended rule. (Non-maximal Levi.)")
                 elif Stype[0] == CartanType("A1") and Stype[1] == CartanType("A2") and Stype[2] == CartanType("A2"):  # non-maximal levi
                     raise ValueError("Not implemented: use A2xA2xA1 levi or A2xA2xA2 extended rule. (Non-maximal Levi.)")
@@ -1452,28 +1450,27 @@ def branching_rule(Rtype, Stype, rule='default'):
                 return branching_rule("E7","D6xA1","extended")*branching_rule("D6xA1","D6","proj1")  # non-maximal levi
             if Stype == CartanType("E6"):
                 return BranchingRule(Rtype, Stype, lambda x: [x[0], x[1], x[2], x[3], x[4], (x[5]+x[6]-x[7])/3, (2*x[5]+5*x[6]+x[7])/6, (-2*x[5]+x[6]+5*x[7])/6], "levi")
-            elif Stype == CartanType("A6"):  # non-maximal levi
+            if Stype == CartanType("A6"):  # non-maximal levi
                 return branching_rule("E7","A7","extended")*branching_rule("A7","A7","automorphic")*branching_rule("A7","A6","levi")
             if Stype.is_compound():
                 if Stype[0] == CartanType("A5") and Stype[1] == CartanType("A1"):
                     return branching_rule("E7","A5xA2","extended")*branching_rule("A5xA2","A5xA1",["identity",branching_rule("A2","A2","automorphic")*branching_rule("A2","A1","levi")])
-                elif Stype[0] == CartanType("A1") and Stype[1] == CartanType("A5"):
+                if Stype[0] == CartanType("A1") and Stype[1] == CartanType("A5"):
                     raise NotImplementedError("Not implemented: use A5xA1")
         elif Rtype == CartanType("E8"):
             if Stype == CartanType("D7"):
                 return BranchingRule(Rtype, Stype, lambda x: [-x[6],-x[5],-x[4],-x[3],-x[2],-x[1],-x[0]], "levi")
-            elif Stype == CartanType("E7"):
+            if Stype == CartanType("E7"):
                 return BranchingRule(Rtype, Stype, lambda x: [x[0],x[1],x[2],x[3],x[4],x[5],(x[6]-x[7])/2,(x[7]-x[6])/2], "levi")
-            elif Stype == CartanType("A7"):
+            if Stype == CartanType("A7"):
                 return branching_rule("E8","A8","extended")*branching_rule("A8","A7","levi")
             raise NotImplementedError("Not implemented yet: branch first using extended rule to get non-maximal levis")
         elif Rtype == CartanType("F4"):
             if Stype == CartanType("B3"):
                 return BranchingRule(Rtype, Stype, lambda x: x[1:], "levi")
-            elif Stype == CartanType("C3"):
+            if Stype == CartanType("C3"):
                 return BranchingRule(Rtype, Stype, lambda x: [x[1]-x[0],x[2]+x[3],x[2]-x[3]], "levi")
-            else:
-                raise NotImplementedError("Not implemented yet")
+            raise NotImplementedError("Not implemented yet")
         elif Rtype == CartanType("G2") and Stype == CartanType("A1"):
             return BranchingRule(Rtype, Stype, lambda x: list(x)[1:][:2], "levi")
         else:
@@ -1515,8 +1512,7 @@ def branching_rule(Rtype, Stype, rule='default'):
         if Rtype[0] == 'A':
             if (Stype[0] == 'C' or Stype[0] == 'D' and r == 2*s-1) or (Stype[0] == 'B' and r == 2*s):
                 return BranchingRule(Rtype, Stype, lambda x: [x[i]-x[r-i] for i in range(s)], "symmetric")
-            else:
-                raise ValueError("Rule not found")
+            raise ValueError("Rule not found")
         elif Rtype[0] == 'D' and Stype[0] == 'B' and s == r-1:
             return BranchingRule(Rtype, Stype, lambda x: x[:s], "symmetric")
         elif Rtype == CartanType("D4") and Stype == CartanType("G2"):
@@ -1549,8 +1545,7 @@ def branching_rule(Rtype, Stype, rule='default'):
                         sdeg += 2*t[1]+1
                 if rdeg == sdeg:
                     return BranchingRule(Rtype, Stype, lambda x: x[:s], "orthogonal_sum")
-                else:
-                    raise ValueError("Rule not found")
+                raise ValueError("Rule not found")
             elif Rtype[0] == 'C':
                 if all(t[0] == Rtype[0] for t in stypes):
                     return BranchingRule(Rtype, Stype, lambda x: x, "orthogonal_sum")
@@ -1592,9 +1587,9 @@ def branching_rule(Rtype, Stype, rule='default'):
                 elif r == 7:
                     if stypes == [CartanType("D6"),CartanType("A1")]:
                         return BranchingRule(Rtype, Stype, lambda x: [x[5],x[4],x[3],x[2],x[1],x[0],x[6],x[7]], "extended")
-                    elif stypes == [CartanType("A1"),CartanType("D6")]:
+                    if stypes == [CartanType("A1"),CartanType("D6")]:
                         return BranchingRule(Rtype, Stype, lambda x: [x[6],x[7],x[5],x[4],x[3],x[2],x[1],x[0]], "extended")
-                    elif stypes == [CartanType("A5"),CartanType("A2")]:
+                    if stypes == [CartanType("A5"),CartanType("A2")]:
                         M = matrix(QQ,[(5, 1, 1, 1, 1, 1, 0, 0),
                                        (-1, -5, 1, 1, 1, 1, 0, 0),
                                        (-1, 1, -5, 1, 1, 1, 0, 0),
@@ -1605,7 +1600,7 @@ def branching_rule(Rtype, Stype, rule='default'):
                                        (1, -1, -1, -1, -1, -1, -6, 0),
                                        (-2, 2, 2, 2, 2, 2, -3, -3)])/6
                         return BranchingRule(Rtype, Stype, lambda x: tuple(M*vector(x)), "extended")
-                    elif stypes == [CartanType("A3"),CartanType("A3"),CartanType("A1")]:
+                    if stypes == [CartanType("A3"),CartanType("A3"),CartanType("A1")]:
                         M = matrix(QQ, [(0, 0, -1, -1, -1, -1, 2, -2),
                                         (0, 0, -1, -1, -1, -1, -2, 2),
                                         (-2, 2, 1, 1, 1, 1, 0, 0),
@@ -1630,7 +1625,7 @@ def branching_rule(Rtype, Stype, rule='default'):
                                        (0, 0, 0, 2, 2, 2, -8, -2),
                                        (0, 0, 0, 2, 2, 2, 2, 8)])/10
                         return BranchingRule(Rtype, Stype, lambda x: tuple(M*vector(x)), "extended")
-                    elif len(stypes) == 3:
+                    if len(stypes) == 3:
                         if 5 in stypes[0][i]:  # S is A5xA2xA1
                             raise NotImplementedError("Not maximal: first branch to A7xA1")
                     elif stypes == [CartanType("D5"), CartanType("A3")]:
@@ -1656,9 +1651,9 @@ def branching_rule(Rtype, Stype, rule='default'):
             elif Rtype[0] == 'F':
                 if stypes == [CartanType("C3"), CartanType("A1")]:
                     return BranchingRule(Rtype, Stype, lambda x: [x[0]-x[1],x[2]+x[3],x[2]-x[3],(-x[0]-x[1])/2,(x[0]+x[1])/2], "extended")
-                elif stypes == [CartanType("A1"), CartanType("C3")]:
+                if stypes == [CartanType("A1"), CartanType("C3")]:
                     return BranchingRule(Rtype, Stype, lambda x: [(-x[0]-x[1])/2,(x[0]+x[1])/2,x[0]-x[1],x[2]+x[3],x[2]-x[3]], "extended")
-                elif stypes == [CartanType("A2"), CartanType("A2")]:
+                if stypes == [CartanType("A2"), CartanType("A2")]:
                     M = matrix(QQ,[(-2, -1, -1, 0), (1, 2, -1, 0), (1, -1, 2, 0), (1, -1, -1, 3), (1, -1, -1, -3), (-2, 2, 2, 0)])/3
                 elif stypes == [CartanType("A3"), CartanType("A1")]:
                     M = matrix(QQ,[(-3, -1, -1, -1), (1, 3, -1, -1), (1, -1, 3, -1), (1, -1, -1, 3), (2, -2, -2, -2), (-2, 2, 2, 2)])/4
@@ -1674,7 +1669,7 @@ def branching_rule(Rtype, Stype, rule='default'):
         else:  # irreducible Stype
             if Rtype[0] == 'B' and Stype[0] == 'D':
                 return BranchingRule(Rtype, Stype, lambda x: x, "extended")
-            elif Rtype == CartanType("E7"):
+            if Rtype == CartanType("E7"):
                 if Stype == CartanType("A7"):
                     M = matrix(QQ, [(-1, -1, -1, -1, -1, -1, 2, -2),
                                     (-1, -1, -1, -1, -1, -1, -2, 2),
@@ -1688,7 +1683,7 @@ def branching_rule(Rtype, Stype, rule='default'):
             elif Rtype == CartanType("E8"):
                 if Stype == CartanType("D8"):
                     return BranchingRule(Rtype, Stype, lambda x: [-x[7],x[6],x[5],x[4],x[3],x[2],x[1],x[0]], "extended")
-                elif Stype == CartanType("A8"):
+                if Stype == CartanType("A8"):
                     M = matrix([(-2, -2, -2, -2, -2, -2, -2, 2),
                                 (-5, 1, 1, 1, 1, 1, 1, -1),
                                 (1, -5, 1, 1, 1, 1, 1, -1),
@@ -1710,42 +1705,41 @@ def branching_rule(Rtype, Stype, rule='default'):
             raise ValueError("Incompatible ranks")
         if Rtype == Stype:
             return BranchingRule(Rtype, Stype, lambda x: x, "isomorphic")
-        elif Rtype == CartanType("B2") and Stype == CartanType("C2"):
+        if Rtype == CartanType("B2") and Stype == CartanType("C2"):
             def rule(x):
                 x1, x2 = x
                 return [x1 + x2, x1 - x2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
-        elif Rtype == CartanType("C2") and Stype == CartanType("B2"):
+        if Rtype == CartanType("C2") and Stype == CartanType("B2"):
             def rule(x):
                 x1, x2 = x
                 return [(x1 + x2) / 2, (x1 - x2) / 2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
-        elif Rtype == CartanType("B1") and Stype == CartanType("A1"):
+        if Rtype == CartanType("B1") and Stype == CartanType("A1"):
             return BranchingRule(Rtype, Stype, lambda x: [x[0],-x[0]], "isomorphic")
-        elif Rtype == CartanType("A1") and Stype == CartanType("B1"):
+        if Rtype == CartanType("A1") and Stype == CartanType("B1"):
             return BranchingRule(Rtype, Stype, lambda x: [(x[0]-x[1])/2], "isomorphic")
-        elif Rtype == CartanType("C1") and Stype == CartanType("A1"):
+        if Rtype == CartanType("C1") and Stype == CartanType("A1"):
             return BranchingRule(Rtype, Stype, lambda x: [x[0]/2,-x[0]/2], "isomorphic")
-        elif Rtype == CartanType("A1") and Stype == CartanType("C1"):
+        if Rtype == CartanType("A1") and Stype == CartanType("C1"):
             return BranchingRule(Rtype, Stype, lambda x: [x[0]-x[1]], "isomorphic")
-        elif Rtype == CartanType("A3") and Stype == CartanType("D3"):
+        if Rtype == CartanType("A3") and Stype == CartanType("D3"):
             def rule(x):
                 x1, x2, x3, x4 = x
                 return [(x1+x2-x3-x4)/2, (x1-x2+x3-x4)/2, (x1-x2-x3+x4)/2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
-        elif Rtype == CartanType("D3") and Stype == CartanType("A3"):
+        if Rtype == CartanType("D3") and Stype == CartanType("A3"):
             def rule(x):
                 t1, t2, t3 = x
                 return [(t1+t2+t3)/2, (t1-t2-t3)/2,
                         (-t1+t2-t3)/2, (-t1-t2+t3)/2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
-        elif Rtype == CartanType("D2") and Stype == CartanType("A1xA1"):
+        if Rtype == CartanType("D2") and Stype == CartanType("A1xA1"):
             def rule(x):
                 t1, t2 = x
                 return [(t1-t2)/2, -(t1-t2)/2, (t1+t2)/2, -(t1+t2)/2]
             return BranchingRule(Rtype, Stype, rule, "isomorphic")
-        else:
-            raise ValueError("Rule not found")
+        raise ValueError("Rule not found")
     elif rule == "tensor" or rule == "tensor-debug":
         if not Stype.is_compound():
             raise ValueError("Tensor product requires more than one factor")
@@ -1778,8 +1772,7 @@ def branching_rule(Rtype, Stype, rule='default'):
                                for i in range(ns[1]))
                     return ret
                 return BranchingRule(Rtype, Stype, rule, "tensor")
-            else:
-                raise ValueError("Rule not found")
+            raise ValueError("Rule not found")
         elif Rtype[0] == 'B':
             if not all(t[0] == 'B' for t in stypes):
                 raise ValueError("Rule not found")
@@ -1833,7 +1826,7 @@ def branching_rule(Rtype, Stype, rule='default'):
                     a = sum((r-i)*x[i] for i in range(r))
                     return [a,-a]
                 return BranchingRule(Rtype, Stype, rule, "symmetric_power")
-            elif Rtype[0] == 'C':
+            if Rtype[0] == 'C':
                 def rule(x):
                     a = sum((2*r-2*i-1)*x[i] for i in range(r))
                     return [a/2,-a/2]
@@ -1841,11 +1834,11 @@ def branching_rule(Rtype, Stype, rule='default'):
     elif rule == "miscellaneous":
         if Rtype[0] == 'B' and Stype[0] == 'G' and r == 3:
             return BranchingRule(Rtype, Stype, lambda x: [x[0]+x[1], -x[1]+x[2], -x[0]-x[2]], "miscellaneous")
-        elif Rtype == CartanType("E6"):
+        if Rtype == CartanType("E6"):
             if Stype.is_compound():
                 if stypes == [CartanType("A2"),CartanType("G2")]:
                     return BranchingRule(Rtype, Stype, lambda x: [-2*x[5],x[5]+x[4],x[5]-x[4],x[2]+x[3],x[1]-x[2],-x[1]-x[3]], "miscellaneous")
-                elif stypes == [CartanType("G2"),CartanType("A2")]:
+                if stypes == [CartanType("G2"),CartanType("A2")]:
                     return BranchingRule(Rtype, Stype, lambda x: [x[2]+x[3],x[1]-x[2],-x[1]-x[3],-2*x[5],x[5]+x[4],x[5]-x[4]], "miscellaneous")
             else:
                 if Stype == CartanType("G2"):
@@ -1856,16 +1849,16 @@ def branching_rule(Rtype, Stype, rule='default'):
             if Stype.is_compound():
                 if stypes == [CartanType("C3"), CartanType("G2")]:
                     return BranchingRule(Rtype, Stype, lambda x: [-2*x[6],x[4]+x[5],-x[4]+x[5],x[1]+x[3],x[2]-x[3],-x[1]-x[2]], "miscellaneous")
-                elif stypes == [CartanType("G2"), CartanType("C3")]:
+                if stypes == [CartanType("G2"), CartanType("C3")]:
                     return BranchingRule(Rtype, Stype, lambda x: [x[1]+x[3],x[2]-x[3],-x[1]-x[2],-2*x[6],x[4]+x[5],-x[4]+x[5]], "miscellaneous")
-                elif stypes == [CartanType("F4"), CartanType("A1")]:
+                if stypes == [CartanType("F4"), CartanType("A1")]:
                     def f(x):
                         x0, x1, x2, x3, x4, x5, x6 = x[:7]
                         return [(x4-x5)/2-x6, (x0+x1+x2+x3)/2,
                                 (-x0-x1+x2+x3)/2, (-x0+x1-x2+x3)/2,
                                 x5-x6, x6-x5]
                     return BranchingRule(Rtype, Stype, f, "miscellaneous")
-                elif stypes == [CartanType("A1"), CartanType("F4")]:
+                if stypes == [CartanType("A1"), CartanType("F4")]:
                     def f(x):
                         x0, x1, x2, x3, x4, x5, x6 = x[:7]
                         return [x5-x6, x6-x5, (x4-x5)/2-x6,
@@ -1873,11 +1866,11 @@ def branching_rule(Rtype, Stype, rule='default'):
                                 (-x0-x1+x2+x3)/2,
                                 (-x0+x1-x2+x3)/2]
                     return BranchingRule(Rtype, Stype, f, "miscellaneous")
-                elif stypes == [CartanType("A1"), CartanType("A1")]:
+                if stypes == [CartanType("A1"), CartanType("A1")]:
                     return BranchingRule(Rtype, Stype,
                                          lambda x: [x[1]+2*x[2]-2*x[3]-x[4]-2*x[6], -x[1]-2*x[2]+2*x[3]+x[4]+2*x[6],
                                                     (x[3]+x[4]+x[5]-3*x[6]),-(x[3]+x[4]+x[5]-3*x[6])], "miscellaneous")
-                elif stypes == [CartanType("G2"), CartanType("A1")]:
+                if stypes == [CartanType("G2"), CartanType("A1")]:
                     def f(x):
                         return [(x[0]-x[1]+x[2]+3*x[3]+x[4]-x[5]+2*x[6])/2,
                                 (-3*x[0]-x[1]-x[2]-x[3]+x[4]+x[5]-2*x[6])/2,
@@ -1885,7 +1878,7 @@ def branching_rule(Rtype, Stype, rule='default'):
                                 (x[0]+x[1]+x[2]+x[3]+x[4]+x[5]-4*x[6])/2,
                                 -(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]-4*x[6])/2]
                     return BranchingRule(Rtype, Stype, f, "miscellaneous")
-                elif stypes == [CartanType("A1"), CartanType("G2")]:
+                if stypes == [CartanType("A1"), CartanType("G2")]:
                     def f(x):
                         return [(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]-4*x[6])/2,
                                 -(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]-4*x[6])/2,
@@ -1899,9 +1892,9 @@ def branching_rule(Rtype, Stype, rule='default'):
             if Stype.is_compound():
                 if stypes == [CartanType("F4"),CartanType("G2")]:
                     return BranchingRule(Rtype, Stype, lambda x: [x[7], x[6], x[5], x[4], x[1]+x[3], -x[3]+x[2], -x[1]-x[2]], "miscellaneous")
-                elif stypes == [CartanType("G2"),CartanType("F4")]:
+                if stypes == [CartanType("G2"),CartanType("F4")]:
                     return BranchingRule(Rtype, Stype, lambda x: [x[1]+x[3], -x[3]+x[2], -x[1]-x[2], x[7], x[6], x[5], x[4]], "miscellaneous")
-                elif stypes == [CartanType("A2"), CartanType("A1")]:
+                if stypes == [CartanType("A2"), CartanType("A1")]:
                     def f(x):
                         return [(x[0]-x[1]+x[2]+x[3]+3*x[4]+x[5]-x[6]-x[7])/2,
                                 (-3*x[0]-x[1]-x[2]-x[3]-x[4]+x[5]+x[6]+x[7])/2,
@@ -1909,7 +1902,7 @@ def branching_rule(Rtype, Stype, rule='default'):
                                 (x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+5*x[7])/2,
                                 -(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+5*x[7])/2]
                     return BranchingRule("E8","A2xA1",f,"miscellaneous")
-                elif stypes == [CartanType("A1"), CartanType("A2")]:
+                if stypes == [CartanType("A1"), CartanType("A2")]:
                     def f(x):
                         return [(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+5*x[7])/2,
                                 -(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+5*x[7])/2,
@@ -1923,7 +1916,7 @@ def branching_rule(Rtype, Stype, rule='default'):
             if Stype.is_compound():
                 if stypes == [CartanType("A1"), CartanType("G2")]:
                     return BranchingRule("F4", "A1xG2", lambda x: [2*x[0], -2*x[0], x[1]+x[2], -x[2]+x[3], -x[1]-x[3]], "miscellaneous")
-                elif stypes == [CartanType("G2"), CartanType("A1")]:
+                if stypes == [CartanType("G2"), CartanType("A1")]:
                     return BranchingRule("F4","G2xA1", lambda x: [x[1]+x[2], -x[2]+x[3], -x[1]-x[3], 2*x[0], -2*x[0]], "miscellaneous")
         raise ValueError("Rule not found")
     elif rule in ["i", "ii", "iii", "iv", "v", "vi", "vii"]:
@@ -1931,21 +1924,21 @@ def branching_rule(Rtype, Stype, rule='default'):
             raise ValueError("Wrong target Cartan Type for rule %s" % rule)
         if rule == "i" and Rtype == CartanType("G2"):
             return BranchingRule(Rtype, Stype, lambda x: [(5*x[0]-x[1]-4*x[2])/3,-(5*x[0]-x[1]-4*x[2])/3], "i")
-        elif rule == "ii" and Rtype == CartanType("F4"):
+        if rule == "ii" and Rtype == CartanType("F4"):
             return BranchingRule(Rtype, Stype, lambda x: [8*x[0]+3*x[1]+2*x[2]+x[3],-(8*x[0]+3*x[1]+2*x[2]+x[3])], "ii")
-        elif rule == "iii" and Rtype == CartanType("E7"):
+        if rule == "iii" and Rtype == CartanType("E7"):
             return BranchingRule(Rtype, Stype,
                                  lambda x: [x[1]+2*x[2]+3*x[3]+4*x[4]+5*x[5]-17*x[6],-(x[1]+2*x[2]+3*x[3]+4*x[4]+5*x[5]-17*x[6])], "iii")
-        elif rule == "iv" and Rtype == CartanType("E7"):
+        if rule == "iv" and Rtype == CartanType("E7"):
             return BranchingRule(Rtype, Stype,
                                  lambda x: [x[1]+x[2]+2*x[3]+3*x[4]+4*x[5]-13*x[6],-(x[1]+x[2]+2*x[3]+3*x[4]+4*x[5]-13*x[6])], "iv")
-        elif rule == "v" and Rtype == CartanType("E8"):
+        if rule == "v" and Rtype == CartanType("E8"):
             return BranchingRule(Rtype, Stype,
                                  lambda x: [x[1]+2*x[2]+3*x[3]+4*x[4]+5*x[5]+6*x[6]+23*x[7],-(x[1]+2*x[2]+3*x[3]+4*x[4]+5*x[5]+6*x[6]+23*x[7])], "v")
-        elif rule == "vi" and Rtype == CartanType("E8"):
+        if rule == "vi" and Rtype == CartanType("E8"):
             return BranchingRule(Rtype, Stype,
                                  lambda x: [x[1]+x[2]+2*x[3]+3*x[4]+4*x[5]+5*x[6]+18*x[7],-(x[1]+x[2]+2*x[3]+3*x[4]+4*x[5]+5*x[6]+18*x[7])], "vi")
-        elif rule == "vii" and Rtype == CartanType("E8"):
+        if rule == "vii" and Rtype == CartanType("E8"):
             return BranchingRule(Rtype, Stype,
                                  lambda x: [x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7],-(x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7])], "vii")
         raise ValueError("Wrong source Cartan Type for rule %s" % rule)
@@ -2038,8 +2031,7 @@ def branching_rule_from_plethysm(chi, cartan_type, return_matrix=False):
         raise ValueError("representation has wrong degree for type {}".format(ct))
     if return_matrix:
         return M
-    else:
-        return BranchingRule(ct, chi.parent().cartan_type(), lambda x: tuple(M*vector(x)), "plethysm (along %s)" % chi)
+    return BranchingRule(ct, chi.parent().cartan_type(), lambda x: tuple(M*vector(x)), "plethysm (along %s)" % chi)
 
 
 def maximal_subgroups(ct, mode='print_rules'):

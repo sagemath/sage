@@ -198,7 +198,7 @@ class MultiGraphics(WithEqualityById, SageObject):
         graphics = display_manager.preferences.graphics
         if graphics == 'disable':
             return
-        elif graphics == 'raster' or graphics is None:
+        if graphics == 'raster' or graphics is None:
             preferred = prefer_raster + prefer_vector
         elif graphics == 'vector':
             preferred = prefer_vector + prefer_raster
