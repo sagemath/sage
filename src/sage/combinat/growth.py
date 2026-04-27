@@ -4362,16 +4362,16 @@ class RuleDomino(Rule):
         return z
 
 
-def mason_insert(k, T):
+def _mason_insert(k, T):
     """
     Insert ``k`` into a composition tableau ``T``.
 
     EXAMPLES::
 
-        sage: from sage.combinat.growth import mason_insert
+        sage: from sage.combinat.growth import _mason_insert
 
         sage: T = [[1,1],[3,2,2,2],[6,5,4],[7,4,3]]
-        sage: mason_insert(5, T)
+        sage: _mason_insert(5, T)
         [[1, 1], [2], [3, 3, 2, 2], [6, 5, 5], [7, 4, 4]]
 
     TESTS::
@@ -4379,7 +4379,7 @@ def mason_insert(k, T):
         sage: T
         [[1, 1], [3, 2, 2, 2], [6, 5, 4], [7, 4, 3]]
 
-        sage: mason_insert(1, [])
+        sage: _mason_insert(1, [])
         [[1]]
     """
     S = [row[:] for row in T]
@@ -4397,32 +4397,32 @@ def mason_insert(k, T):
     return sorted([[k]] + S)
 
 
-def mason(pi):
+def _mason(pi):
     """
     Return the composition tableau corresponding to the word ``pi``.
 
     EXAMPLES::
 
-        sage: from sage.combinat.growth import mason
+        sage: from sage.combinat.growth import _mason
 
-        sage: mason([3,1,2]).pp()
+        sage: _mason([3,1,2]).pp()
         1
         3  2
-        sage: mason([1,3,2]).pp()
+        sage: _mason([1,3,2]).pp()
         1
         3  2
-        sage: mason([2,1,3]).pp()
+        sage: _mason([2,1,3]).pp()
         2  1
         3
         sage: pi = Permutation([3, 2, 6, 17, 10, 20, 14, 9, 16, 4, 19, 15, 1, 13, 18, 7, 5, 8, 12, 11])
         sage: pi.complement().inverse().descents(from_zero=False)
         [3, 6, 10, 13, 14, 16, 17]
-        sage: mason(pi).descent_set()
+        sage: _mason(pi).descent_set()
         [3, 4, 6, 7, 10, 14, 17]
     """
     T = []
     for e in pi:
-        T = mason_insert(e, T)
+        T = _mason_insert(e, T)
     return CompositionTableau(T)
 
 
@@ -4724,10 +4724,10 @@ class RuleLeftCompositions(RuleCompositions):
 
         TESTS::
 
-            sage: from sage.combinat.growth import mason
+            sage: from sage.combinat.growth import _mason
             sage: L = GrowthDiagram.rules.LeftCompositions()
             sage: n = 7
-            sage: all(L(pi).P_symbol() == mason(pi.complement()) for pi in Permutations(n))
+            sage: all(L(pi).P_symbol() == _mason(pi.complement()) for pi in Permutations(n))
             True
         """
         def t_operator(i, c):
