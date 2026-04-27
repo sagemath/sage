@@ -4430,9 +4430,8 @@ class RuleCompositions(Rule):
     r"""
     A base class for growth diagrams on the composition poset.
 
-    These were introduced by Stephanie van Willigenburg in [vW2019]_,
-    cf. [TvW2018]_.  More precisely, this class implements Theorem
-    3.15 of [vW2019]_.
+    These were introduced by Stephanie van Willigenburg in [vW2020]_,
+    cf. [TvW2018]_.
     """
     zero = Composition([])
 
