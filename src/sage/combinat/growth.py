@@ -4426,59 +4426,13 @@ def mason(pi):
     return CompositionTableau(T)
 
 
-class RuleLeftCompositions(Rule):
+class RuleCompositions(Rule):
     r"""
-    Dual graded graphs for (skew) quasisymmetric Schur functions.
+    A base class for growth diagrams on the composition poset.
 
-    These were introduced by Stephanie van Willigenburg in [vW2020]_,
-    cf. [TvW2018]_.  This class implements Theorem 3.15 of [vW2020]_.
-
-    Currently, no backward rule is implemented.  The forward rule
-    implemented here seems to agree with Mason's insertion algorithm
-    from Section 6.1 of [HLMvW2011]_.
-
-    The vertices of the dual graded graph are
-    :class:`~sage.combinat.composition.Compositions`::
-
-        sage: L = GrowthDiagram.rules.LeftCompositions()
-        sage: L.vertices(3)
-        Compositions of 3
-
-    A saturated chain in the :meth:`P_graph` is a (skew)
-    :class:`~sage.combinat.composition_tableau.CompositionTableau`::
-
-        sage: c = [[], [1], [2], [1, 2], [1, 1, 2], [1, 1, 3], [2, 1, 3], [1, 2, 1, 3]]
-        sage: L.P_symbol(c).pp()
-        1
-        4  2
-        5
-        7  6  3
-
-    The number of
-    :class:`~sage.combinat.composition_tableau.CompositionTableau` is
-    the same as the number of standard Young tableaux with one entry
-    less::
-
-        sage: [len(L.P_graph(n).maximal_chains()) for n in range(1,8)]
-        [1, 1, 2, 4, 10, 26, 76]
-
-        sage: [StandardTableaux(n).cardinality() for n in range(7)]
-        [1, 1, 2, 4, 10, 26, 76]
-
-    The saturated chains in the :meth:`Q_graph` are not in the OEIS
-    as of 2026::
-
-        sage: [len(L.Q_graph(n).maximal_chains()) for n in range(1,8)]
-        [1, 1, 2, 6, 19, 69, 285]
-
-    TESTS::
-
-        sage: [L._check_duality(n) for n in range(6)]
-        [None, None, None, None, None, None]
-
-        sage: l = {pi: L(pi) for pi in Permutations(4)}
-        sage: len(set([tuple(G.out_labels()) for G in l.values()]))
-        24
+    These were introduced by Stephanie van Willigenburg in [vW2019]_,
+    cf. [TvW2018]_.  More precisely, this class implements Theorem
+    3.15 of [vW2019]_.
     """
     zero = Composition([])
 
@@ -4517,64 +4471,6 @@ class RuleLeftCompositions(Rule):
             Compositions of 3
         """
         return Compositions(n)
-
-    def is_P_edge_aux(self, v, w):
-        r"""
-        Return `i` if `w = t_i(v)`, ``None`` otherwise.
-
-        `t_i(v)` increases the left most occurrence of `i-1` by one.
-        `t_1(v)` prepends `1` to the composition.  `t_i(w)=0` if
-        `i-1` does not occur in `w`.
-
-        EXAMPLES::
-
-            sage: L = GrowthDiagram.rules.LeftCompositions()
-            sage: L.is_P_edge_aux([1],[1,1])
-            1
-            sage: L.is_P_edge_aux([1],[2])
-            2
-            sage: L.is_P_edge_aux([1,1,1],[1,2,1])
-
-            sage: L.is_P_edge_aux([3,2,3,1,2],[3,3,3,1,2])
-            3
-        """
-        # find difference between v and w:
-        #    v = ... l_{j-1} x l_{j+1} ..., and x is left most
-        #    w = ... l_{j-1} x+1 l_{j+1} ...
-        # or
-        #    v = l_0 ...
-        #    w = 1 l_0 ...
-        if w[1:] == v:
-            assert w[0] == 1
-            return 1
-
-        for j in range(len(v)):
-            if v[j] != w[j]:
-                if w[j] == v[j] + 1 and w[j+1:] == v[j+1:] and v[j] not in v[:j]:
-                    return w[j]
-                return None
-        return None
-
-    def is_P_edge(self, v, w):
-        r"""
-        Return whether ``(v, w)`` is a `P`-edge of ``self``.
-
-        ``(v, w)`` is an edge if any left most occurrence of a letter
-        in ``v`` can be increased by one to obtain ``w``.
-
-        TESTS::
-
-            sage: L = GrowthDiagram.rules.LeftCompositions()
-            sage: L.is_P_edge(L.zero, Composition([1]))
-            True
-
-            sage: L.is_P_edge(Composition([1]), Composition([1,1]))
-            True
-
-            sage: L.is_P_edge(Composition([2]), Composition([2,1]))
-            False
-        """
-        return self.rank(v) + 1 == self.rank(w) and self.is_P_edge_aux(v, w) is not None
 
     def is_Q_edge_aux(self, v, w):
         r"""
@@ -4633,6 +4529,119 @@ class RuleLeftCompositions(Rule):
             False
         """
         return self.rank(v) + 1 == self.rank(w) and self.is_Q_edge_aux(v, w) is not None
+
+
+class RuleLeftCompositions(RuleCompositions):
+    r"""
+    Dual graded graphs for (skew) quasisymmetric Schur functions.
+
+    These were introduced by Stephanie van Willigenburg in [vW2020]_,
+    cf. [TvW2018]_.  This class implements Theorem 3.15 of [vW2020]_.
+
+    Currently, no backward rule is implemented.  The forward rule
+    implemented here seems to agree with Mason's insertion algorithm
+    from Section 6.1 of [HLMvW2011]_.
+
+    The vertices of the dual graded graph are
+    :class:`~sage.combinat.composition.Compositions`::
+
+        sage: L = GrowthDiagram.rules.LeftCompositions()
+        sage: L.vertices(3)
+        Compositions of 3
+
+    A saturated chain in the :meth:`P_graph` is a (skew)
+    :class:`~sage.combinat.composition_tableau.CompositionTableau`::
+
+        sage: c = [[], [1], [2], [1, 2], [1, 1, 2], [1, 1, 3], [2, 1, 3], [1, 2, 1, 3]]
+        sage: L.P_symbol(c).pp()
+        1
+        4  2
+        5
+        7  6  3
+
+    The number of
+    :class:`~sage.combinat.composition_tableau.CompositionTableau` is
+    the same as the number of standard Young tableaux with one entry
+    less::
+
+        sage: [len(L.P_graph(n).maximal_chains()) for n in range(1,8)]
+        [1, 1, 2, 4, 10, 26, 76]
+
+        sage: [StandardTableaux(n).cardinality() for n in range(7)]
+        [1, 1, 2, 4, 10, 26, 76]
+
+    The saturated chains in the :meth:`Q_graph` are not in the OEIS
+    as of 2026::
+
+        sage: [len(L.Q_graph(n).maximal_chains()) for n in range(1,8)]
+        [1, 1, 2, 6, 19, 69, 285]
+
+    TESTS::
+
+        sage: [L._check_duality(n) for n in range(6)]
+        [None, None, None, None, None, None]
+
+        sage: l = {pi: L(pi) for pi in Permutations(4)}
+        sage: len(set([tuple(G.out_labels()) for G in l.values()]))
+        24
+    """
+    def is_P_edge_aux(self, v, w):
+        r"""
+        Return `i` if `w = t_i(v)`, ``None`` otherwise.
+
+        `t_i(v)` increases the left most occurrence of `i-1` by one.
+        `t_1(v)` prepends `1` to the composition.  `t_i(w)=0` if
+        `i-1` does not occur in `w`.
+
+        EXAMPLES::
+
+            sage: L = GrowthDiagram.rules.LeftCompositions()
+            sage: L.is_P_edge_aux([1],[1,1])
+            1
+            sage: L.is_P_edge_aux([1],[2])
+            2
+            sage: L.is_P_edge_aux([1,1,1],[1,2,1])
+
+            sage: L.is_P_edge_aux([3,2,3,1,2],[3,3,3,1,2])
+            3
+        """
+        # find difference between v and w:
+        #    v = ... l_{j-1} x l_{j+1} ..., and x is left most
+        #    w = ... l_{j-1} x+1 l_{j+1} ...
+        # or
+        #    v = l_0 ...
+        #    w = 1 l_0 ...
+        if w[1:] == v:
+            assert w[0] == 1
+            return 1
+
+        for j in range(len(v)):
+            if v[j] != w[j]:
+                if w[j] == v[j] + 1 and w[j+1:] == v[j+1:] and v[j] not in v[:j]:
+                    return w[j]
+                return None
+        return None
+
+    def is_P_edge(self, v, w):
+        r"""
+        Return whether ``(v, w)`` is a `P`-edge of ``self``.
+
+        ``(v, w)`` is an edge if any left most occurrence of a letter
+        in ``v`` can be increased by one to obtain ``w``.
+
+        TESTS::
+
+            sage: L = GrowthDiagram.rules.LeftCompositions()
+            sage: L.is_P_edge(L.zero, Composition([1]))
+            True
+
+            sage: L.is_P_edge(Composition([1]), Composition([1,1]))
+            True
+
+            sage: L.is_P_edge(Composition([2]), Composition([2,1]))
+            False
+        """
+        return self.rank(v) + 1 == self.rank(w) and self.is_P_edge_aux(v, w) is not None
 
     def P_symbol(self, P_chain):
         """
@@ -4756,6 +4765,298 @@ class RuleLeftCompositions(Rule):
         if not y:
             return Composition([1])
         return Composition(t_operator(max(t)+1, t))
+
+
+class RuleRightCompositions(RuleCompositions):
+    r"""
+    Dual graded graphs for (skew) quasisymmetric Schur functions.
+
+    These were introduced by Stephanie van Willigenburg in [vW2020]_,
+    cf. [TvW2018]_.  This class implements Theorem 3.3 of [vW2020]_.
+
+    TESTS::
+
+        sage: R = GrowthDiagram.rules.RightCompositions()
+        sage: TestSuite(R).run()
+    """
+    def _u_operator(self, i, alpha):
+        """
+        Apply u_i = a_i d_1 d_2 ... d_{i-1} to the composition alpha.
+        Return the resulting list, or None if the result is 0.
+        """
+        c = list(alpha)
+        # Apply d_{i-1}, d_{i-2}, ..., d_1 (d_{i-1} applied first).
+        for j in range(i - 1, 0, -1):
+            pos = None
+            for k in range(len(c) - 1, -1, -1):
+                if c[k] == j:
+                    pos = k
+                    break
+            else:
+                return None
+            c[pos] -= 1
+            if c[pos] == 0:           # drop 0s arising during the computation
+                c = c[:pos] + c[pos+1:]
+        c.append(i)
+        return c
+
+    def is_P_edge_aux(self, v, w):
+        r"""
+        Return `i` if `w = u_i(v)`, ``None`` otherwise.
+
+        `u_i(v) = a_i d_{[i-1]}(v)` appends `i` after removing a box
+        from the rightmost occurrences of `i-1, i-2, \dots, 1`.
+
+        """
+        if not w:
+            return None
+        # The appending operator a_i guarantees that the result ends with i
+        i = w[-1]
+        u = self._u_operator(i, list(v))
+        if u is None:
+            return None
+        if list(w) == u:
+            return i
+        return None
+
+    def is_P_edge(self, v, w):
+        return self.rank(v) + 1 == self.rank(w) and self.is_P_edge_aux(v, w) is not None
+
+    def _d_operator(self, i, alpha):
+        """
+        Apply d_i to the composition alpha.
+        Return a list, or None if the result is 0.
+        """
+        if i == 0:
+            return list(alpha)
+        c = list(alpha)
+        for pos in range(len(c) - 1, -1, -1):
+            if c[pos] == i:
+                c[pos] -= 1
+                if c[pos] == 0:
+                    c.pop(pos)
+                return c
+        return None
+
+    def forward_rule(self, y, t, x, content):
+        r"""
+        Fomin local forward rule for (Rc, Qc).
+
+        INPUT:
+
+        - ``y, t, x`` arranged as
+
+              t x
+            y
+
+        - ``content`` in ``{0, 1}``
+
+        OUTPUT:
+
+        - the fourth corner ``z``
+
+        Label form:
+            (i,j,0) -> (i,j)      if i != j
+            (i,i,0) -> (i+1,i+1)
+            (0,j,0) -> (0,j)
+            (i,0,0) -> (i,0)
+            (0,0,1) -> (1,1)
+
+        where i is the Rc-label on t -> y and j is the Qc-label on t -> x,
+        with 0 denoting a degenerate edge.
+        """
+        if content not in (0, 1):
+            raise ValueError("content must be 0 or 1")
+
+        i = 0 if y == t else self.is_P_edge_aux(t, y)
+        j = 0 if x == t else self.is_Q_edge_aux(t, x)
+
+        if i is None or j is None:
+            raise ValueError(f"invalid local configuration: y={y}, t={t}, x={x}")
+
+        if content == 1:
+            if i != 0 or j != 0:
+                raise ValueError("content=1 requires y == t == x")
+            z = self._u_operator(1, x)   # exceptional d1*u1 = Id case
+            return Composition(z)
+
+        # content == 0
+        if i == 0:
+            return Composition(x)
+        if j == 0:
+            return Composition(y)
+
+        k = i if i != j else i + 1
+        z = self._u_operator(k, x)
+        if z is None:
+            raise ValueError(f"u_{k}({x}) is undefined")
+        return Composition(z)
+
+    def backward_rule(self, y, z, x):
+        r"""
+        Inverse local rule for (Rc, Qc).
+
+        INPUT:
+
+        - ``y, z, x`` arranged as
+
+                x
+            y z
+
+        OUTPUT:
+
+        - ``(t, content)``
+
+        If p is the Rc-label on x -> z and q is the Qc-label on y -> z
+        (with 0 for degenerate edges), then:
+
+            p = 0       -> (y, 0)
+            q = 0       -> (x, 0)
+            p != q      -> (d_q(x), 0)
+            p = q > 1   -> (d_{p-1}(x), 0)
+            p = q = 1   -> (x, 1)
+        """
+        p = 0 if z == x else self.is_P_edge_aux(x, z)
+        q = 0 if z == y else self.is_Q_edge_aux(y, z)
+
+        if p is None or q is None:
+            raise ValueError(f"invalid local configuration: y={y}, z={z}, x={x}")
+
+        if p == 0:
+            return (Composition(y), 0)
+
+        if q == 0:
+            return (Composition(x), 0)
+
+        if p != q:
+            t = self._d_operator(q, x)
+            if t is None:
+                raise ValueError(f"d_{q}({x}) is undefined")
+            return (Composition(t), 0)
+
+        # Now p == q
+        if p == 1:
+            if x != y:
+                raise ValueError("p=q=1 should force x==y in a valid square")
+            return (Composition(x), 1)
+
+        t = self._d_operator(p - 1, x)
+        if t is None:
+            raise ValueError(f"d_{p-1}({x}) is undefined")
+        return (Composition(t), 0)
+
+    # ---------- helpers for P_symbol ----------
+    def _chain_labels(self, P_chain):
+        if P_chain[0] != self.zero:
+            raise NotImplementedError("P_symbol currently expects a chain starting at []")
+        labels = []
+        for a, b in zip(P_chain, P_chain[1:]):
+            i = self.is_P_edge_aux(a, b)
+            if i is None:
+                raise ValueError(f"not an Rc-chain step: {a} -> {b}")
+            labels.append(i)
+        return labels
+
+    @staticmethod
+    def _std_reverse_lattice_word(word):
+        """
+        Standardize a word w = i_n ... i_1.
+
+        Equivalent to stable standardization:
+        assign 1,2,... to positions after sorting positions by (word[pos], pos).
+        """
+        n = len(word)
+        sigma = [None] * n
+        order = sorted(range(n), key=lambda p: (word[p], p))
+        for rank, pos in enumerate(order, start=1):
+            sigma[pos] = rank
+        return sigma
+
+    @staticmethod
+    def _variant_rs_recording_tableau(sigma):
+        """
+        Recording tableau Q for Tewari's reverse-tableau variant of RS insertion.
+        Returned as a reverse tableau in rows top-to-bottom.
+        """
+        n = len(sigma)
+        P = []
+        Q = []
+        for step, y in enumerate(sigma, start=1):
+            r = 0
+            while True:
+                if r == len(P):
+                    P.append([])
+                    Q.append([])
+                row = P[r]
+                smaller = [x for x in row if x < y]
+                if smaller:
+                    x = max(smaller)
+                    j = row.index(x)
+                    row[j] = y
+                    y = x
+                    r += 1
+                else:
+                    row.append(y)
+                    Q[r].append(n - step + 1)
+                    break
+        return Q
+
+    @staticmethod
+    def _rho_inverse_to_composition_tableau(T):
+        """
+        Convert a reverse tableau T to a composition tableau using Mason's inverse map.
+        """
+        if not T:
+            return CompositionTableau([])
+
+        max_col = max(len(row) for row in T)
+
+        # first column becomes increasing top-to-bottom
+        first_col = sorted(row[0] for row in T)
+        rows = [[x] for x in first_col]
+
+        # later columns: left-to-right; within each column, descending
+        for c in range(1, max_col):
+            col_entries = [row[c] for row in T if len(row) > c]
+            col_entries.sort(reverse=True)
+            for x in col_entries:
+                for r in range(len(rows)):
+                    if len(rows[r]) == c and rows[r][-1] > x:
+                        rows[r].append(x)
+                        break
+                else:
+                    raise ValueError(f"rho^(-1) failed in column {c+1} on entry {x}")
+
+        return CompositionTableau(rows)
+
+    def _tableau_from_growth_word(self, growth_word):
+        """
+        growth_word is w = i_n ... i_1.
+        Return rho^{-1}(Q(std(w))).
+        """
+        if not growth_word:
+            return CompositionTableau([])
+        sigma = self._std_reverse_lattice_word(growth_word)
+        Q = self._variant_rs_recording_tableau(sigma)
+        return self._rho_inverse_to_composition_tableau(Q)
+
+    # ---------- P_symbol: theorem 8.7 ----------
+    def P_symbol(self, P_chain):
+        labels = self._chain_labels(P_chain)      # [i_1, ..., i_n]
+        w = list(reversed(labels))                # [i_n, ..., i_1]
+        return self._tableau_from_growth_word(w)
+
+    # ---------- P_symbol via successive \hat\mu_i ----------
+    def P_symbol_via_mu(self, P_chain):
+        labels = self._chain_labels(P_chain)      # [i_1, ..., i_n]
+        T = CompositionTableau([])
+        prefix = []
+        for i in labels:
+            prefix.append(i)
+            # \hat\mu_i update, realized via Theorem 8.7 on the current prefix
+            T = self._tableau_from_growth_word(list(reversed(prefix)))
+        return T
+
 
 #####################################################################
 ## Set the rules available from GrowthDiagram.rules.<tab>
