@@ -290,8 +290,7 @@ def explain_pickle_string(pickle, in_current_sage=False,
         result = sage_eval(ans, preparse=preparse)
         print(ans)
         return result
-    else:
-        return ans
+    return ans
 
 
 valid_name_re = re.compile('^[a-zA-Z_][a-zA-Z0-9_]*$')

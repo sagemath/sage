@@ -115,10 +115,8 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
     if not var_str:
         if safe_flag:
             return deepcopy(theta_vec)         # We must make a copy here to insure the integrity of the cached version!
-        else:
-            return theta_vec
-    else:
-        return PowerSeriesRing(ZZ, var_str)(theta_vec, Max)
+        return theta_vec
+    return PowerSeriesRing(ZZ, var_str)(theta_vec, Max)
 
 
 # -- Compute the theta function by using an explicit Cholesky decomposition --

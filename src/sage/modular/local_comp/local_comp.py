@@ -823,111 +823,110 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
 
             return Sequence([chi1, chi2], check=False, cr=True)
 
+        # The ramified case.
+
+        n = self.conductor() - 1
+        if p == 2:
+            # The ramified 2-adic representations aren't classified by admissible pairs. Die.
+            raise ValueError("Totally ramified 2-adic representations are not classified by characters")
+
+        G0 = SmoothCharacterGroupRamifiedQuadratic(p, 0, self.coefficient_field())
+        G1 = SmoothCharacterGroupRamifiedQuadratic(p, 1, self.coefficient_field())
+        q0 = G0.quotient_gens(n)
+        assert all(x.valuation(G0.ideal(1)) == 1 for x in q0)
+        q1 = G1.quotient_gens(n)
+        assert all(x.valuation(G1.ideal(1)) == 1 for x in q1)
+
+        t0 = [(~T.rho(q.matrix().list())).trace() for q in q0]
+        t1 = [(~T.rho(q.matrix().list())).trace() for q in q1]
+
+        if all(x == 0 for x in t0 + t1):
+            # Can't happen?
+            raise NotImplementedError("Can't identify ramified quadratic extension -- all traces zero")
+        elif all(x == 0 for x in t1):
+            G, qs, ts = G0, q0, t0
+        elif all(x == 0 for x in t0):
+            G, qs, ts = G1, q1, t1
         else:
-            # The ramified case.
+            # At least one of the traces is *always* 0, since the type
+            # space has to be isomorphic to its twist by the (ramified
+            # quadratic) character corresponding to the quadratic
+            # extension.
+            raise RuntimeError("Can't get here!")
 
-            n = self.conductor() - 1
-            if p == 2:
-                # The ramified 2-adic representations aren't classified by admissible pairs. Die.
-                raise ValueError("Totally ramified 2-adic representations are not classified by characters")
+        q = qs[0]
+        t = ts[0]
+        k = self.newform().weight()
+        t *= p**ZZ((k - 2 + self.twist_factor()) / 2)
 
-            G0 = SmoothCharacterGroupRamifiedQuadratic(p, 0, self.coefficient_field())
-            G1 = SmoothCharacterGroupRamifiedQuadratic(p, 1, self.coefficient_field())
-            q0 = G0.quotient_gens(n)
-            assert all(x.valuation(G0.ideal(1)) == 1 for x in q0)
-            q1 = G1.quotient_gens(n)
-            assert all(x.valuation(G1.ideal(1)) == 1 for x in q1)
+        X = polygen(self.coefficient_field())
+        theta_poly = X**2 - X * t + self.central_character()(q.norm())
+        verbose("theta_poly is %s" % theta_poly, level=1)
+        if theta_poly.is_irreducible():
+            F = self.coefficient_field().extension(theta_poly, "d")
+            G = G.base_extend(F)
+        c1q, c2q = flatten([[x] * e for x, e in theta_poly.roots(G.base_ring())])
 
-            t0 = [(~T.rho(q.matrix().list())).trace() for q in q0]
-            t1 = [(~T.rho(q.matrix().list())).trace() for q in q1]
+        if len(qs) == 1:
+            chi1, chi2 = (G.extend_character(n, self.central_character(), [x]) for x in [c1q, c2q])
 
-            if all(x == 0 for x in t0 + t1):
-                # Can't happen?
-                raise NotImplementedError("Can't identify ramified quadratic extension -- all traces zero")
-            elif all(x == 0 for x in t1):
-                G, qs, ts = G0, q0, t0
-            elif all(x == 0 for x in t0):
-                G, qs, ts = G1, q1, t1
-            else:
-                # At least one of the traces is *always* 0, since the type
-                # space has to be isomorphic to its twist by the (ramified
-                # quadratic) character corresponding to the quadratic
-                # extension.
-                raise RuntimeError("Can't get here!")
-
-            q = qs[0]
-            t = ts[0]
-            k = self.newform().weight()
+        else:
+            assert p == 3
+            q = qs[1]
+            t = ts[1]
             t *= p**ZZ((k - 2 + self.twist_factor()) / 2)
 
-            X = polygen(self.coefficient_field())
+            X = polygen(G.base_ring())
             theta_poly = X**2 - X * t + self.central_character()(q.norm())
             verbose("theta_poly is %s" % theta_poly, level=1)
             if theta_poly.is_irreducible():
-                F = self.coefficient_field().extension(theta_poly, "d")
+                F = G.base_ring().extension(theta_poly, "e")
                 G = G.base_extend(F)
-            c1q, c2q = flatten([[x] * e for x, e in theta_poly.roots(G.base_ring())])
+            c1q2, c2q2 = flatten([[x] * e for x, e in theta_poly.roots(G.base_ring())])
 
-            if len(qs) == 1:
-                chi1, chi2 = (G.extend_character(n, self.central_character(), [x]) for x in [c1q, c2q])
+            pairA = [[c1q, c1q2], [c2q, c2q2]]
+            pairB = [[c1q, c2q2], [c2q, c1q2]]
 
-            else:
-                assert p == 3
-                q = qs[1]
-                t = ts[1]
-                t *= p**ZZ((k - 2 + self.twist_factor()) / 2)
+            A_fail = 0
+            B_fail = 0
+            try:
+                chisA = [G.extend_character(n, self.central_character(), [x, y]) for (x, y) in pairA]
+            except ValueError:
+                verbose('A failed to create', level=1)
+                A_fail = 1
+            try:
+                chisB = [G.extend_character(n, self.central_character(), [x, y]) for (x, y) in pairB]
+            except ValueError:
+                verbose('A failed to create', level=1)
+                B_fail = 1
 
-                X = polygen(G.base_ring())
-                theta_poly = X**2 - X * t + self.central_character()(q.norm())
-                verbose("theta_poly is %s" % theta_poly, level=1)
-                if theta_poly.is_irreducible():
-                    F = G.base_ring().extension(theta_poly, "e")
-                    G = G.base_extend(F)
-                c1q2, c2q2 = flatten([[x] * e for x, e in theta_poly.roots(G.base_ring())])
+            if c1q == c2q or c1q2 == c2q2:
+                B_fail = 1
 
-                pairA = [[c1q, c1q2], [c2q, c2q2]]
-                pairB = [[c1q, c2q2], [c2q, c1q2]]
-
-                A_fail = 0
-                B_fail = 0
-                try:
-                    chisA = [G.extend_character(n, self.central_character(), [x, y]) for (x, y) in pairA]
-                except ValueError:
-                    verbose('A failed to create', level=1)
+            for u in G.ideal(n).invertible_residues():
+                if A_fail or B_fail:
+                    break
+                x = q * u
+                verbose("testing x = %s" % x, level=1)
+                ti = (~T.rho(x.matrix().list())).trace() * p**ZZ((k - 2 + self.twist_factor()) / 2)
+                verbose("trace of matrix is %s" % ti, level=1)
+                if chisA[0](x) + chisA[1](x) != ti:
                     A_fail = 1
-                try:
-                    chisB = [G.extend_character(n, self.central_character(), [x, y]) for (x, y) in pairB]
-                except ValueError:
-                    verbose('A failed to create', level=1)
+                if chisB[0](x) + chisB[1](x) != ti:
                     B_fail = 1
 
-                if c1q == c2q or c1q2 == c2q2:
-                    B_fail = 1
+            if B_fail and not A_fail:
+                chi1, chi2 = chisA
+            elif A_fail and not B_fail:
+                chi1, chi2 = chisB
+            else:
+                raise ValueError("Something went wrong: can't identify the characters")
 
-                for u in G.ideal(n).invertible_residues():
-                    if A_fail or B_fail:
-                        break
-                    x = q * u
-                    verbose("testing x = %s" % x, level=1)
-                    ti = (~T.rho(x.matrix().list())).trace() * p**ZZ((k - 2 + self.twist_factor()) / 2)
-                    verbose("trace of matrix is %s" % ti, level=1)
-                    if chisA[0](x) + chisA[1](x) != ti:
-                        A_fail = 1
-                    if chisB[0](x) + chisB[1](x) != ti:
-                        B_fail = 1
+        # Consistency checks
+        assert chi1.restrict_to_Qp() == chi2.restrict_to_Qp() == self.central_character()
+        assert chi1 * chi2 == chi1.parent().compose_with_norm(self.central_character())
 
-                if B_fail and not A_fail:
-                    chi1, chi2 = chisA
-                elif A_fail and not B_fail:
-                    chi1, chi2 = chisB
-                else:
-                    raise ValueError("Something went wrong: can't identify the characters")
-
-            # Consistency checks
-            assert chi1.restrict_to_Qp() == chi2.restrict_to_Qp() == self.central_character()
-            assert chi1 * chi2 == chi1.parent().compose_with_norm(self.central_character())
-
-            return Sequence([chi1, chi2], check=False, cr=True)
+        return Sequence([chi1, chi2], check=False, cr=True)
 
     def check_tempered(self):
         r"""

@@ -1145,7 +1145,6 @@ def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose
 
     Show the influence of edge labels on the solution::
 
-        sage: # needs sage.numerical.mip
         sage: g = graphs.PetersenGraph()
         sage: o = g.minimum_outdegree_orientation(use_edge_labels=False)
         sage: max(o.out_degree())

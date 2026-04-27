@@ -1,2 +1,0 @@
-lang/python
-devel/py-setuptools

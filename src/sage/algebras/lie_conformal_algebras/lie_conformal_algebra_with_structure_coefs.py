@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Lie Conformal Algebras With Structure Coefficients
 
@@ -118,7 +117,8 @@ class LieConformalAlgebraWithStructureCoefficients(
         sage: LieConformalAlgebra(QQbar, wrongdict, names='L')
         Traceback (most recent call last):
         ...
-        ValueError: two distinct values given for one and the same bracket. Skew-symmetry is not satisfied?
+        ValueError: two distinct values given for one and the same bracket.
+        Skew-symmetry is not satisfied?
     """
     @staticmethod
     def _standardize_s_coeff(s_coeff, index_set, ce, parity=None):
@@ -160,10 +160,10 @@ class LieConformalAlgebraWithStructureCoefficients(
             # e.g.  v = { 0: { (L,2):3, (G,3):1}, 1:{(L,1),2} }
             key = tuple(mypair)
             vals = {}
-            for l in v:
-                lth_product = {k: y for k, y in v[l].items() if y}
+            for ell, vell in v.items():
+                lth_product = {k: y for k, y in vell.items() if y}
                 if lth_product:
-                    vals[l] = lth_product
+                    vals[ell] = lth_product
 
             myvals = tuple((k, tuple(v.items())) for k, v in vals.items() if v)
 
@@ -186,14 +186,16 @@ class LieConformalAlgebraWithStructureCoefficients(
             for k in range(maxpole + 1):
                 kth_product = {}
                 for j in range(maxpole + 1 - k):
-                    if k + j in v.keys():
-                        for i in v[k + j]:
-                            if (i[0] not in ce) or (
-                                    i[0] in ce and i[1] + j == 0):
-                                kth_product[(i[0], i[1] + j)] = \
-                                    kth_product.get((i[0], i[1] + j), 0)
-                                kth_product[(i[0], i[1] + j)] += parsgn *\
-                                    v[k+j][i]*(-1)**(k+j+1)*binomial(i[1]+j, j)
+                    kj = k + j
+                    if kj in v:
+                        for i in v[kj]:
+                            i0, i1 = i
+                            i1j = i1 + j
+                            if (i0 not in ce) or (i0 in ce and i1j == 0):
+                                kth_product[(i0, i1j)] = \
+                                    kth_product.get((i0, i1j), 0)
+                                kth_product[(i0, i1j)] += parsgn *\
+                                    v[kj][i] * (-1)**(kj+1)*binomial(i1j, j)
                 kth_product = {k: v for k, v in kth_product.items() if v}
                 if kth_product:
                     vals[k] = kth_product
@@ -299,7 +301,8 @@ class LieConformalAlgebraWithStructureCoefficients(
             sage: Vir.structure_coefficients()
             Finite family {('L', 'L'): ((0, TL), (1, 2*L), (3, 1/2*C))}
 
-            sage: lie_conformal_algebras.NeveuSchwarz(QQ).structure_coefficients()
+            sage: NS = lie_conformal_algebras.NeveuSchwarz(QQ)
+            sage: NS.structure_coefficients()
             Finite family {('G', 'G'): ((0, 2*L), (2, 2/3*C)),
             ('G', 'L'): ((0, 1/2*TG), (1, 3/2*G)),
             ('L', 'G'): ((0, TG), (1, 3/2*G)),

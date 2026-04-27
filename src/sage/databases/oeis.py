@@ -378,11 +378,10 @@ class OEIS:
         if isinstance(query, str):
             if re.match('^A[0-9]{6}$', query):
                 return self.find_by_id(query)
-            else:
-                return self.find_by_description(query, max_results, first_result)
-        elif isinstance(query, (int, Integer)):
+            return self.find_by_description(query, max_results, first_result)
+        if isinstance(query, (int, Integer)):
             return self.find_by_id(query)
-        elif isinstance(query, (list, tuple)):
+        if isinstance(query, (list, tuple)):
             return self.find_by_subsequence(query, max_results, first_result)
 
     class options(GlobalOptions):
@@ -823,7 +822,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         """
         if format == 'A':
             return self._id
-        elif format == 'int':
+        if format == 'int':
             return int(self._id[1:].lstrip("0"))
 
     def __hash__(self):
@@ -1120,19 +1119,18 @@ class OEISSequence(SageObject, UniqueRepresentation):
         if 'cofr' in self.keywords() and 'frac' not in self.keywords():
             from sage.rings.continued_fraction import continued_fraction
             return continued_fraction(self.first_terms())
-        elif 'cons' in self.keywords():
+        if 'cons' in self.keywords():
             offset = self.offsets()[0]
             terms = self.first_terms() + tuple([0] * abs(offset))
             from sage.rings.real_lazy import RealLazyField
             return RealLazyField()('0' + ''.join(map(str, terms[:offset])) + '.' + ''.join(map(str, terms[offset:])))
-        elif 'nonn' in self.keywords():
+        if 'nonn' in self.keywords():
             from sage.rings.semirings.non_negative_integer_semiring import NN
             from sage.structure.sequence import Sequence
             return Sequence(self.first_terms(), NN)
-        else:
-            from sage.rings.integer_ring import ZZ
-            from sage.structure.sequence import Sequence
-            return Sequence(self.first_terms(), ZZ)
+        from sage.rings.integer_ring import ZZ
+        from sage.structure.sequence import Sequence
+        return Sequence(self.first_terms(), ZZ)
 
     def is_dead(self, warn_only=False) -> bool:
         r"""
@@ -1211,8 +1209,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         """
         if 'finit' in self.keywords() or 'full' in self.keywords():
             return True
-        else:
-            return Unknown
+        return Unknown
 
     def is_full(self):
         r"""
@@ -1256,8 +1253,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         """
         if 'full' in self.keywords():
             return True
-        else:
-            return Unknown
+        return Unknown
 
     def first_terms(self, number=None):
         r"""
@@ -1612,11 +1608,11 @@ class OEISSequence(SageObject, UniqueRepresentation):
         if browse is None:
             if format == 'guess':
                 return self.links(format='url')
-            elif format == 'raw':
+            if format == 'raw':
                 return FancyTuple(self._field('H'))
-            elif format == 'html':
+            if format == 'html':
                 return HtmlFragment(FancyTuple([url_absolute(f) for f in self._field('H')]))
-            elif format == 'url':
+            if format == 'url':
                 url_list = flatten([_urls(url_absolute(string)) for string in self._field('H')])
                 return FancyTuple(url_list)
         else:
@@ -1948,7 +1944,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         language = language.lower()
         if language == "maple":
             return [FancyTuple(self._field('p'))]
-        elif language == "mathematica":
+        if language == "mathematica":
             return [FancyTuple(self._field('t'))]
         if language == 'sagemath':
             language = 'sage'

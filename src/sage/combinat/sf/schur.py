@@ -408,9 +408,8 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 f = lambda p1, p2: one
                 x = s(x)
                 return s._apply_multi_module_morphism(self, x, f, orthogonal=True)
-            else:
-                p = self.parent().realization_of().power()
-                return p(self).scalar( x, zee=zee )
+            p = self.parent().realization_of().power()
+            return p(self).scalar( x, zee=zee )
 
         def verschiebung(self, n):
             r"""

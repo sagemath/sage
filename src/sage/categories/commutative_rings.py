@@ -574,6 +574,82 @@ class CommutativeRings(CategoryWithAxiom):
             except (NotImplementedError, TypeError):
                 return coercion_model.division_parent(self)
 
+        def extension(self, poly, name=None, names=None, **kwds):
+            """
+            Algebraically extend ``self`` by taking the quotient
+            ``self[x] / (poly(x))``.
+
+            INPUT:
+
+            - ``poly`` -- a polynomial whose coefficients are coercible into
+              ``self``
+
+            - ``name`` -- (optional) name for the root of ``poly``
+
+            .. NOTE::
+
+                Using this method on an algebraically complete field `k` does *not*
+                return the field `k`; the construction ``self[x] / (poly(x))`` is done
+                anyway.
+
+            EXAMPLES::
+
+                sage: R = QQ['x']
+                sage: y = polygen(R)
+                sage: R.extension(y^2 - 5, 'a')                                             # needs sage.libs.pari
+                Univariate Quotient Polynomial Ring in a over
+                 Univariate Polynomial Ring in x over Rational Field with modulus a^2 - 5
+
+            ::
+
+                sage: # needs sage.rings.finite_rings
+                sage: P.<x> = PolynomialRing(GF(5))
+                sage: F.<a> = GF(5).extension(x^2 - 2)
+                sage: P.<t> = F[]
+                sage: R.<b> = F.extension(t^2 - a); R
+                Univariate Quotient Polynomial Ring in b over
+                 Finite Field in a of size 5^2 with modulus b^2 + 4*a
+
+                sage: R.<t> = QQ[]
+                sage: Integers(8).extension(t^2 - 3)
+                Univariate Quotient Polynomial Ring in t
+                 over Ring of integers modulo 8 with modulus t^2 + 5
+
+            TESTS::
+
+                sage: R.<t> = QQ[]
+                sage: Integers(1).extension(t^2 - 2)
+                Ring of integers modulo 1
+            """
+            from sage.rings.polynomial.polynomial_element import Polynomial
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+            if not isinstance(poly, Polynomial):
+                try:
+                    poly = poly.polynomial(self)
+                except (AttributeError, TypeError):
+                    raise TypeError(f"{poly} must be a polynomial")
+
+            if names is not None:
+                name = names
+            if isinstance(name, tuple):
+                name = name[0]
+            if name is None:
+                name = str(poly.parent().gen(0))
+
+            for key, val in kwds.items():
+                if key not in ['structure', 'implementation', 'prec',
+                               'embedding', 'latex_name', 'latex_names']:
+                    raise TypeError(f"extension() got an invalid keyword argument: {key}")
+                if not (val is None or isinstance(val, list)
+                        and all(c is None for c in val)):
+                    raise NotImplementedError(f"ring extension with prescribed {key} is not implemented")
+
+            if self.is_zero():
+                return self
+            R = PolynomialRing(self, name)
+            return R.quotient(R.ideal(R(poly.list())), name)
+
     class ElementMethods:
         def is_square(self, root=False):
             """

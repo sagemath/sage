@@ -862,16 +862,15 @@ def closed_form(hyp):
                     return (exp(z) * sum(rf(m - n, k) * (-z) ** k /
                             factorial(k) / rf(m, k) for k in
                             range(n - m + 1)))
-                else:
-                    T = sum(rf(n - m + 1, k) * z ** k /
-                            (factorial(k) * rf(2 - m, k)) for k in
-                            range(m - n))
-                    U = sum(rf(1 - n, k) * (-z) ** k /
-                            (factorial(k) * rf(2 - m, k)) for k in
-                            range(n))
-                    return (factorial(m - 2) * rf(1 - m, n) *
-                            z ** (1 - m) / factorial(n - 1) *
-                            (T - exp(z) * U))
+                T = sum(rf(n - m + 1, k) * z ** k /
+                        (factorial(k) * rf(2 - m, k)) for k in
+                        range(m - n))
+                U = sum(rf(1 - n, k) * (-z) ** k /
+                        (factorial(k) * rf(2 - m, k)) for k in
+                        range(n))
+                return (factorial(m - 2) * rf(1 - m, n) *
+                        z ** (1 - m) / factorial(n - 1) *
+                        (T - exp(z) * U))
 
         if p == 2 and q == 1:
             R12 = QQ((1, 2))
