@@ -169,12 +169,13 @@ class SageKernelSpec:
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
             sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec.kernel_spec()
-            {'argv': ..., 'display_name': 'SageMath ...', 'language': 'sage'}
+            {'argv': ..., 'display_name': 'SageMath ...', 'language': 'sage', 'metadata': {'debugger': True}}
         """
         return dict(
             argv=self._kernel_cmd(),
             display_name=self._display_name,
             language='sage',
+            metadata=dict(debugger=True),
         )
 
     def _install_spec(self):
@@ -260,15 +261,16 @@ class SageKernelSpec:
                           'check your Jupyter configuration '
                           '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
         else:
-            import shutil
             import sys
             from pathlib import Path
-            kernel_executable = shutil.which(spec.argv[0])
-            if not kernel_executable:
+            from sage.features import Executable
+            kernel_executable_feature = Executable(name=spec.argv[0], executable=spec.argv[0])
+            if not kernel_executable_feature.is_present():
                 warnings.warn(f'The kernel named {ident} does not seem to be runnable; '
                               'check your Jupyter configuration '
                               '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html).')
                 return
+            kernel_executable = kernel_executable_feature.absolute_filename()
             if Path(kernel_executable).resolve() != Path(sys.executable).resolve():
                 warnings.warn(f'The kernel named {ident} does not seem to correspond to this '
                               'installation of SageMath; check your Jupyter configuration '

@@ -228,8 +228,7 @@ class IsogenyClass_EC(SageObject):
         """
         if self._label:
             return "Elliptic curve isogeny class %s" % (self._label)
-        else:
-            return "Isogeny class of %r" % (self.E)
+        return "Isogeny class of %r" % (self.E)
 
     def __contains__(self, x) -> bool:
         """
@@ -1087,8 +1086,8 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
                 label = self.E.cremona_label(space=False)
             except RuntimeError:
                 raise RuntimeError("unable to find %s in the database" % self.E)
-            db = sage.databases.cremona.CremonaDatabase()
-            curves = db.isogeny_class(label)
+            with sage.databases.cremona.CremonaDatabase() as db:
+                curves = db.isogeny_class(label)
             if not curves:
                 raise RuntimeError("unable to find %s in the database" % self.E)
             # All curves will have the same conductor and isogeny class,

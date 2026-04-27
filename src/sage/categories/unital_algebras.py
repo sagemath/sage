@@ -154,8 +154,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             """
             if other is self.base_ring():
                 return self._coerce_map_from_base_ring()
-            else:
-                return self._coerce_map_via([self.base_ring()], other)
+            return self._coerce_map_via([self.base_ring()], other)
 
         def _coerce_map_from_base_ring(self):
             """

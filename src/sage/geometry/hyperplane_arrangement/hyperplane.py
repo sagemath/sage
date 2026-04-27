@@ -383,7 +383,6 @@ class Hyperplane(LinearExpression):
             sage: h.point() in h
             True
 
-            sage: # needs sage.rings.finite_rings
             sage: H.<x,y,z> = HyperplaneArrangements(GF(3))
             sage: h = 2*x + y + z + 1
             sage: h.point()
@@ -534,7 +533,6 @@ class Hyperplane(LinearExpression):
 
         Check that :issue:`30078` is fixed::
 
-            sage: # needs sage.rings.number_field
             sage: R.<sqrt2> = QuadraticField(2)
             sage: H.<x,y> = HyperplaneArrangements(base_ring=R)
             sage: B = H([1,1,0], [2,2,0], [sqrt2,sqrt2,0])
@@ -543,7 +541,6 @@ class Hyperplane(LinearExpression):
 
         Check that :issue:`30749` is fixed::
 
-            sage: # needs sage.rings.number_field
             sage: tau = (1+AA(5).sqrt()) / 2
             sage: ncn = [[2*tau+1,2*tau,tau],[2*tau+2,2*tau+1,tau+1]]
             sage: ncn += [[tau+1,tau+1,tau],[2*tau,2*tau,tau],[tau+1,tau+1,1]]

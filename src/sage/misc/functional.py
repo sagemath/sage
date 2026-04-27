@@ -93,8 +93,7 @@ def base_field(x):
         y = x.base_ring()
         if y.is_field():
             return y
-        else:
-            raise AttributeError("The base ring of %s is not a field" % x)
+        raise AttributeError("The base ring of %s is not a field" % x)
 
 
 def basis(x):
@@ -639,11 +638,10 @@ def symbolic_prod(expression, *args, **kwds):
     from .misc_c import prod as c_prod
     if hasattr(expression, 'prod'):
         return expression.prod(*args, **kwds)
-    elif len(args) <= 1:
+    if len(args) <= 1:
         return c_prod(expression, *args)
-    else:
-        from sage.symbolic.ring import SR
-        return SR(expression).prod(*args, **kwds)
+    from sage.symbolic.ring import SR
+    return SR(expression).prod(*args, **kwds)
 
 
 def integral(x, *args, **kwds):
@@ -787,9 +785,8 @@ def integral(x, *args, **kwds):
     """
     if hasattr(x, 'integral'):
         return x.integral(*args, **kwds)
-    else:
-        from sage.symbolic.ring import SR
-        return SR(x).integral(*args, **kwds)
+    from sage.symbolic.ring import SR
+    return SR(x).integral(*args, **kwds)
 
 
 integrate = integral
@@ -1735,16 +1732,14 @@ def round(x, ndigits=0):
         if ndigits:
             x = float(x)
             return RealDoubleElement(builtins.round(x, ndigits))
-        else:
-            try:
-                return x.round()
-            except AttributeError:
-                return RealDoubleElement(builtins.round(x, 0))
+        try:
+            return x.round()
+        except AttributeError:
+            return RealDoubleElement(builtins.round(x, 0))
     except ArithmeticError:
         if not isinstance(x, RealDoubleElement):
             return round(RDF(x), ndigits)
-        else:
-            raise
+        raise
 
 
 def quotient(x, y, *args, **kwds):
@@ -1883,9 +1878,8 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
         if x >= 0:
             from sage.rings.real_mpfr import RealField
             return RealField(prec)(x).sqrt(all=all)
-        else:
-            from sage.rings.complex_mpfr import ComplexField
-            return ComplexField(prec)(x).sqrt(all=all)
+        from sage.rings.complex_mpfr import ComplexField
+        return ComplexField(prec)(x).sqrt(all=all)
     if x == -1:
         from sage.symbolic.constants import I as z
     else:
@@ -1895,8 +1889,7 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
     if all:
         if z:
             return [z, -z]
-        else:
-            return [z]
+        return [z]
     return z
 
 
@@ -1982,7 +1975,7 @@ def sqrt(x, *args, **kwds):
     """
     if isinstance(x, float):
         return math.sqrt(x)
-    elif type(x).__module__ == 'numpy':
+    if type(x).__module__ == 'numpy':
         from numpy import sqrt
         return sqrt(x)
     try:

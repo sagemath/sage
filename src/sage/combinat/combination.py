@@ -197,13 +197,10 @@ def Combinations(mset, k=None, *, as_tuples=False):
     if is_unique:
         if k is None:
             return Combinations_set(mset, as_tuples=as_tuples)
-        else:
-            return Combinations_setk(mset, k, as_tuples=as_tuples)
-    else:
-        if k is None:
-            return Combinations_mset(mset, as_tuples=as_tuples)
-        else:
-            return Combinations_msetk(mset, k, as_tuples=as_tuples)
+        return Combinations_setk(mset, k, as_tuples=as_tuples)
+    if k is None:
+        return Combinations_mset(mset, as_tuples=as_tuples)
+    return Combinations_msetk(mset, k, as_tuples=as_tuples)
 
 
 class Combinations_mset(Parent):
@@ -532,8 +529,7 @@ class Combinations_setk(Combinations_msetk):
         """
         if self.k == 0:
             return self._iterator_zero()
-        else:
-            return self._iterator(self.mset, self.k)
+        return self._iterator(self.mset, self.k)
 
     def list(self) -> list:
         """

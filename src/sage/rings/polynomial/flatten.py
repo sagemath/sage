@@ -110,7 +110,6 @@ class FlatteningMorphism(Morphism):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<v> = NumberField(x^3 - 2)
             sage: R = K['x','y']['a','b']
@@ -121,7 +120,6 @@ class FlatteningMorphism(Morphism):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: R = QQbar['x','y']['a','b']
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: f = FlatteningMorphism(R)
@@ -130,7 +128,6 @@ class FlatteningMorphism(Morphism):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: R.<z> = PolynomialRing(QQbar, 1)
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: f = FlatteningMorphism(R)
@@ -140,7 +137,6 @@ class FlatteningMorphism(Morphism):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: R.<z> = PolynomialRing(QQbar)
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: f = FlatteningMorphism(R)

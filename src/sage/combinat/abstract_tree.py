@@ -63,9 +63,10 @@ incoherent with the data structure.
 """
 import itertools
 
-from sage.structure.list_clone import ClonableArray
-from sage.rings.integer import Integer
+from sage.misc.latex import latex
 from sage.misc.misc_c import prod
+from sage.rings.integer import Integer
+from sage.structure.list_clone import ClonableArray
 
 # Unfortunately Cython forbids multiple inheritance. Therefore, we do not
 # inherit from SageObject to be able to inherit from Element or a subclass
@@ -1467,8 +1468,7 @@ class AbstractTree:
         def node_to_str(t):
             if hasattr(t, "label"):
                 return str(t.label())
-            else:
-                return "o"
+            return "o"
         # other possible choices for nodes would be u"█ ▓ ░ ╋ ╬"
 
         if self.is_empty():
@@ -1649,7 +1649,6 @@ class AbstractTree:
         """
         #######################################################################
         # load tikz in the preamble for *view*
-        from sage.misc.latex import latex
         latex.add_package_to_preamble_if_available("tikz")
         #######################################################################
         # latex environment : TikZ
@@ -2370,11 +2369,10 @@ class AbstractLabelledTree(AbstractTree):
         """
         if path is None:
             return self._label
-        else:
-            tr = self
-            for i in path:
-                tr = tr[i]
-            return tr._label
+        tr = self
+        for i in path:
+            tr = tr[i]
+        return tr._label
 
     def labels(self):
         """
@@ -2505,8 +2503,7 @@ class AbstractLabelledTree(AbstractTree):
         TR = self.parent().unlabelled_trees()
         if not self:
             return TR.leaf()
-        else:
-            return TR._element_constructor_([i.shape() for i in self])
+        return TR._element_constructor_([i.shape() for i in self])
 
     def as_digraph(self):
         """

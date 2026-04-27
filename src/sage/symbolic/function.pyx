@@ -264,7 +264,6 @@ cdef class Function(SageObject):
         functions was broken. We check here that this is fixed
         (:issue:`11919`)::
 
-            sage: # needs sage.symbolic
             sage: f = function('f')(x)
             sage: s = dumps(f)
             sage: loads(s)
@@ -393,7 +392,6 @@ cdef class Function(SageObject):
         """
         TESTS::
 
-            sage: # needs sage.symbolic
             sage: foo = function("foo", nargs=2)
             sage: foo == foo
             True
@@ -418,7 +416,6 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: foo = function("foo", nargs=2)
             sage: x,y,z = var("x y z")
             sage: foo(x, y)
@@ -499,7 +496,6 @@ cdef class Function(SageObject):
 
         Check that :issue:`10133` is fixed::
 
-            sage: # needs sage.symbolic
             sage: out = sin(0)
             sage: out, parent(out)
             (0, Integer Ring)
@@ -576,7 +572,6 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: foo = function("foo", nargs=2)
             sage: foo.number_of_arguments()
             2
@@ -634,7 +629,6 @@ cdef class Function(SageObject):
         The following calls used to yield incorrect results because intervals
         were considered numerical by this method::
 
-            sage: # needs sage.libs.flint
             sage: b = RBF(3/2, 1e-10)
             sage: airy_ai(b)
             airy_ai([1.500000000 +/- 1.01e-10])
@@ -645,11 +639,11 @@ cdef class Function(SageObject):
             sage: hurwitz_zeta(1/2, b)
             hurwitz_zeta(1/2, [1.500000000 +/- 1.01e-10])
 
-            sage: iv = RIF(1, 1.0001)                                                   # needs sage.rings.real_interval_field
+            sage: iv = RIF(1, 1.0001)
 
-            sage: airy_ai(iv)                                                           # needs sage.rings.real_interval_field
+            sage: airy_ai(iv)
             airy_ai(1.0001?)
-            sage: airy_ai(CIF(iv))                                                      # needs sage.rings.complex_interval_field sage.rings.real_interval_field
+            sage: airy_ai(CIF(iv))                                                      # needs sage.rings.complex_interval_field
             airy_ai(1.0001?)
         """
         if isinstance(x, (float, complex)):
@@ -996,6 +990,17 @@ cdef class BuiltinFunction(Function):
             sage: bar = BuiltinFunction(name='bar', alt_name='foo')
             sage: bar(A())
             'foo'
+        
+        Check that the output is symbolic if ``hold=True`` (:issue:`41740`)::
+
+            sage: class Test(BuiltinFunction):
+            ....:     def __init__(self):
+            ....:         BuiltinFunction.__init__(self, 'test', nargs=1)
+            ....:     def _evalf_(self, x, **kwargs):
+            ....:         return "Should not be called when hold=True!"
+            sage: test = Test()
+            sage: test(RR(1.5), hold=True)
+            test(1.50000000000000)
         """
         res = None
         if args and not hold and not all(isinstance(arg, Element) for arg in args):
@@ -1011,14 +1016,7 @@ cdef class BuiltinFunction(Function):
                 import mpmath as module
                 custom = self._eval_mpmath_
             elif all(isinstance(arg, float) for arg in args):
-                # We do not include the factorial here as
-                # factorial(integer-valued float) is deprecated in Python 3.9.
-                # This special case should be removed when
-                # Python always raise an error for factorial(float).
-                # This case will be delegated to the gamma function.
-                # see Github issue #30764
-                if self._name != 'factorial':
-                    import math as module
+                import math as module
             elif all(isinstance(arg, complex) for arg in args):
                 import cmath as module
 
@@ -1055,11 +1053,11 @@ cdef class BuiltinFunction(Function):
                     except (TypeError, ValueError, ArithmeticError):
                         pass
 
-        if res is None:
+        if res is None and not hold:
             res = self._evalf_try_(*args)
-            if res is None:
-                res = super().__call__(
-                        *args, coerce=coerce, hold=hold)
+        if res is None:
+            res = super().__call__(
+                    *args, coerce=coerce, hold=hold)
 
         cdef Parent arg_parent
         if any(isinstance(x, Element) for x in args):
@@ -1227,7 +1225,7 @@ cdef class SymbolicFunction(Function):
     cdef _is_registered(SymbolicFunction self):
         from .expression import get_sfunction_from_hash
         # see if there is already a SymbolicFunction with the same state
-        cdef long myhash = self._hash_()
+        cdef Py_hash_t myhash = self._hash_()
         cdef SymbolicFunction sfunc = get_sfunction_from_hash(myhash)
         if sfunc is not None:
             # found one, set self._serial to be a copy
@@ -1238,7 +1236,7 @@ cdef class SymbolicFunction(Function):
     # cache the hash value of this function
     # this is used very often while unpickling to see if there is already
     # a function with the same properties
-    cdef long _hash_(self) except -1:
+    cdef Py_hash_t _hash_(self) except -1:
         if not self.__hinit:
             # create a string representation of this SymbolicFunction
             slist = [self._nargs, self._name, str(self._latex_name),
@@ -1303,7 +1301,6 @@ cdef class SymbolicFunction(Function):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: foo = function("foo", nargs=2)
             sage: foo.__getstate__()
             (2, 'foo', 2, None, {}, True,
@@ -1322,7 +1319,6 @@ cdef class SymbolicFunction(Function):
             (2, 'foo', 2, None, {}, True,
              [..., None, None, None, None, None, None, None, None, None, None])
 
-            sage: # needs sage.symbolic
             sage: u = loads(dumps(foo))
             sage: u == foo
             True
@@ -1337,7 +1333,6 @@ cdef class SymbolicFunction(Function):
             (2, 'foo', 1, None, {}, True,
              [None, ..., None, None, None, None, None, None, None, None, None])
 
-            sage: # needs sage.symbolic
             sage: v = loads(dumps(foo))
             sage: v == foo
             True
@@ -1359,7 +1354,6 @@ cdef class SymbolicFunction(Function):
 
         Check that :issue:`40292` is fixed::
 
-            sage: # needs sage.symbolic
             sage: var('x,y')
             (x, y)
             sage: u = function('u')(x, y)
@@ -1380,7 +1374,6 @@ cdef class SymbolicFunction(Function):
 
         TESTS::
 
-            sage: # needs sage.symbolic
             sage: var('x,y')
             (x, y)
             sage: foo = function("foo", nargs=2)
@@ -1389,7 +1382,6 @@ cdef class SymbolicFunction(Function):
 
         ::
 
-            sage: # needs sage.symbolic
             sage: g = function('g', nargs=1, conjugate_func=lambda y, x: 2*x)
             sage: st = g.__getstate__()
             sage: f = function('f')

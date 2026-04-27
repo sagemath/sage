@@ -1603,9 +1603,9 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         if not self.summands:
             if exponent == 0:
                 return self.parent().one()
-            elif exponent > 0:
+            if exponent > 0:
                 return self.parent().zero()
-            elif exponent < 0:
+            if exponent < 0:
                 raise ZeroDivisionError('Cannot take %s to the negative exponent %s.' %
                                         (self, exponent))
             else:
@@ -1762,9 +1762,9 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         if not self.summands:
             if exponent > 0:
                 return self.parent().zero()
-            elif exponent.is_zero():
+            if exponent.is_zero():
                 return self.parent().one()
-            elif exponent < 0:
+            if exponent < 0:
                 raise ZeroDivisionError(
                     'Cannot take {} to the negative '
                     'exponent {}.'.format(self, exponent))
@@ -2260,8 +2260,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         if return_inverse_main_term:
             return (imax_elem, x)
-        else:
-            return (max_elem, x)
+        return (max_elem, x)
 
     @staticmethod
     def _power_series_(coefficients, start, ratio, ratio_start, precision):
@@ -3019,8 +3018,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                 if c.is_zero():
                     return None
                 return T(term.growth, coefficient=c)
-            else:
-                return T(term.growth)
+            return T(term.growth)
 
         P = self.parent().change_parameter(coefficient_ring=new_coefficient_ring)
         S = self.summands.copy()
@@ -3121,10 +3119,9 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             P = cm.common_parent(self, S)
             return S.subs({var: P.coerce(self)})
 
-        else:
-            raise ValueError(
-                'Cannot build the factorial of {} since it is not '
-                'univariate.'.format(self))
+        raise ValueError(
+            'Cannot build the factorial of {} since it is not '
+            'univariate.'.format(self))
 
     def variable_names(self):
         r"""
@@ -4102,7 +4099,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             return True
         if self.growth_group.has_coerce_map_from(R):
             return True
-        elif isinstance(R, AsymptoticRing):
+        if isinstance(R, AsymptoticRing):
             if self.growth_group.has_coerce_map_from(R.growth_group) and \
                     self.coefficient_ring.has_coerce_map_from(R.coefficient_ring):
                 return True
@@ -4390,8 +4387,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             return SingularityAnalysisResult(
                 asymptotic_expansion=result,
                 singular_expansions=singular_expansions)
-        else:
-            return result
+        return result
 
     def create_summand(self, type, data=None, **kwds):
         r"""

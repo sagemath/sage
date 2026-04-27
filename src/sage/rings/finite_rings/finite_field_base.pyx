@@ -1009,7 +1009,6 @@ cdef class FiniteField(Field):
             sage: f(F.gen())
             0
 
-            sage: # needs sage.libs.ntl
             sage: k.<a> = GF(2^20, implementation='ntl')
             sage: k.polynomial()
             a^20 + a^10 + a^9 + a^7 + a^6 + a^5 + a^4 + a + 1
@@ -1132,7 +1131,6 @@ cdef class FiniteField(Field):
             sage: GF(27,'a').vector_space(map=False)                                    # needs sage.modules
             Vector space of dimension 3 over Finite Field of size 3
 
-            sage: # needs sage.modules
             sage: F = GF(8)
             sage: E = GF(64)
             sage: V, from_V, to_V = E.vector_space(F, map=True)
@@ -1147,7 +1145,6 @@ cdef class FiniteField(Field):
             sage: all(to_V(c * e) == c * to_V(e) for e in E for c in F)
             True
 
-            sage: # needs sage.modules
             sage: basis = [E.gen(), E.gen() + 1]
             sage: W, from_W, to_W = E.vector_space(F, basis, map=True)
             sage: all(from_W(to_W(e)) == e for e in E)
@@ -1160,7 +1157,6 @@ cdef class FiniteField(Field):
             (1, 0)
             (0, 1)
 
-            sage: # needs sage.modules
             sage: x = polygen(ZZ)
             sage: F = GF(9, 't', modulus=x^2 + x - 1)
             sage: E = GF(81)
@@ -1388,15 +1384,15 @@ cdef class FiniteField(Field):
         - ``name`` or ``names`` -- string; the name of the generator
           in the new extension
 
-        - ``latex_name`` or ``latex_names`` -- string; latex name of
-          the generator in the new extension
-
         - ``map`` -- boolean (default: ``False``); if ``False``,
           return just the extension `E`. If ``True``, return a pair
           `(E, f)`, where `f` is an embedding of ``self`` into `E`.
 
         - ``embedding`` -- currently not used; for compatibility with
           other ``AlgebraicExtensionFunctor`` calls
+
+        - ``latex_name`` or ``latex_names`` -- string; latex name of
+          the generator in the new extension
 
         - ``**kwds`` -- further keywords, passed to the finite field
           constructor.
@@ -1482,10 +1478,12 @@ cdef class FiniteField(Field):
         from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.integer import Integer
+
         if name is None and names is not None:
             name = names
         if latex_name is None and latex_names is not None:
             latex_name = latex_names
+
         if self.degree() == 1:
             if isinstance(modulus, (int, Integer)):
                 E = GF((self.characteristic(), modulus), name=name, **kwds)
@@ -1495,7 +1493,11 @@ cdef class FiniteField(Field):
                 if modulus.change_ring(self).is_irreducible():
                     E = GF((self.characteristic(), modulus.degree()), name=name, modulus=modulus, **kwds)
                 else:
-                    E = Field.extension(self, modulus, name=name, embedding=embedding, **kwds)
+                    E = super().extension(modulus, name=name,
+                                          embedding=embedding, **kwds)
+            else:
+                raise TypeError("invalid input for modulus")
+
         elif isinstance(modulus, (int, Integer)):
             E = GF((self.characteristic(), self.degree() * modulus), name=name, **kwds)
             if E is self:
@@ -1512,11 +1514,11 @@ cdef class FiniteField(Field):
                 except AssertionError: # coercion already exists
                     pass
         else:
-            E = Field.extension(self, modulus, name=name, embedding=embedding, latex_name=latex_name, **kwds)
+            E = super().extension(modulus, name=name, embedding=embedding,
+                                  latex_name=latex_name, **kwds)
         if map:
             return (E, E.coerce_map_from(self))
-        else:
-            return E
+        return E
 
     @cached_method
     def _compatible_family(self):
@@ -2003,7 +2005,6 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: G = GF(3^6).galois_group(); G
             Galois group C6 of GF(3^6)
             sage: F = G.gen()
@@ -2067,7 +2068,6 @@ cdef class FiniteField(Field):
         property of a dual basis:
         `\mathrm{Tr}(e_i d_j) = \delta_{i,j}, 0 \leq i,j \leq n-1` ::
 
-            sage: # needs sage.modules
             sage: F.<a> = GF(7^4)
             sage: e = [4*a^3, 2*a^3 + a^2 + 3*a + 5,
             ....:      3*a^3 + 5*a^2 + 4*a + 2, 2*a^3 + 2*a^2 + 2]
@@ -2081,7 +2081,6 @@ cdef class FiniteField(Field):
         We can test that if `d` is the dual basis of `e`, then `e` is the dual
         basis of `d`::
 
-            sage: # needs sage.modules
             sage: F.<a> = GF(7^8)
             sage: e = [a^0, a^1, a^2, a^3, a^4, a^5, a^6, a^7]
             sage: d = F.dual_basis(e, check=False); d

@@ -607,8 +607,7 @@ def proc_number(max_proc=None):
     n = ncpus()
     if max_proc is None:
         return n
-    else:
-        return min(max_proc, n)
+    return min(max_proc, n)
 
 
 class AbortError(Exception):

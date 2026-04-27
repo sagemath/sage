@@ -787,10 +787,9 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         """
         if self.base_ring() == QQ:
             return "QQ-Chow group of " + str(self._variety)
-        elif self.base_ring() == ZZ:
+        if self.base_ring() == ZZ:
             return "Chow group of " + str(self._variety)
-        else:
-            raise ValueError
+        raise ValueError
 
     def _cone_to_V(self, cone):
         r"""

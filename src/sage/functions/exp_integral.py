@@ -200,14 +200,12 @@ class Function_exp_integral_e(BuiltinFunction):
             if n.is_trivial_zero():
                 if z_zero:
                     return None
-                else:
-                    return exp(-z)/z
+                return exp(-z)/z
         else:
             if not n:
                 if z_zero:
                     return None
-                else:
-                    return exp(-z)/z
+                return exp(-z)/z
 
         return None  # leaves the expression unevaluated
 
@@ -993,7 +991,7 @@ class Function_cos_integral(BuiltinFunction):
             sage: N(cos_integral(10^-10), digits=30)                                    # needs sage.symbolic
             -22.4486352650389239795759024568
             sage: cos_integral(ComplexField(100)(I))                                    # needs sage.symbolic
-            0.83786694098020824089467857943 + 1.5707963267948966192313216916*I
+            0.83786694098020824089467857944 + 1.5707963267948966192313216916*I
         """
         return _mpmath_utils_call(_mpmath_ci, z, parent=parent)
 
@@ -1498,9 +1496,8 @@ def exponential_integral_1(x, n=0):
     if isinstance(x, Expression):
         if x.is_trivial_zero():
             return Infinity
-        else:
-            raise NotImplementedError("Use the symbolic exponential integral " +
-                                      "function: exp_integral_e1.")
+        raise NotImplementedError("Use the symbolic exponential integral " +
+                                  "function: exp_integral_e1.")
 
     # x == 0  =>  return Infinity
     if not x:
@@ -1519,10 +1516,9 @@ def exponential_integral_1(x, n=0):
         inprec = prec + 5 + math.ceil(math.log(prec))
         x = RealField(inprec)(x).__pari__()
         return R(x.eint1())
-    else:
-        # PARI's algorithm is less precise as n grows larger:
-        # add extra bits.
-        # (experimentally verified -- Jeroen Demeyer)
-        inprec = prec + 1 + math.ceil(1.4427 * math.log(n))
-        x = RealField(inprec)(x).__pari__()
-        return [R(z) for z in x.eint1(n)]
+    # PARI's algorithm is less precise as n grows larger:
+    # add extra bits.
+    # (experimentally verified -- Jeroen Demeyer)
+    inprec = prec + 1 + math.ceil(1.4427 * math.log(n))
+    x = RealField(inprec)(x).__pari__()
+    return [R(z) for z in x.eint1(n)]

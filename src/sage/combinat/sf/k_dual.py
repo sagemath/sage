@@ -171,8 +171,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
         """
         if self.t == 1:
             return self.kmonomial()
-        else:
-            return self.kHallLittlewoodP()
+        return self.kHallLittlewoodP()
 
     def _repr_(self):
         r"""
@@ -550,8 +549,7 @@ class KBoundedQuotientBases(Category_realization_of_parent):
             if x in R:
                 if x == 0:
                     return self.zero()
-                else:
-                    raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
+                raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
             #x is an element of the basis enumerated set;
             elif x in self._indices:
                 return self.monomial(self._indices(x))
@@ -996,9 +994,8 @@ class kMonomial(KBoundedQuotientBasis):
             return self(la)
         if self.t == 1:
             return self.zero()
-        else:
-            kHLP = self._kBoundedRing.kHallLittlewoodP()
-            return self(kHLP._m_to_kHLP_on_basis(la))
+        kHLP = self._kBoundedRing.kHallLittlewoodP()
+        return self(kHLP._m_to_kHLP_on_basis(la))
 
     def lift(self, la):
         r"""
@@ -1108,14 +1105,12 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
         if self.t == 1:
             if la in self._kbounded_partitions:
                 return self(la)
-            else:
-                return self.zero()
-        else:
-            HLP = self._kBoundedRing._quotient_basis
-            m = self._kBoundedRing._sym.m()
-            elt = dict(x for x in dict(HLP(m(la))).items()
-                       if x[0] in self._kbounded_partitions)
-            return self._from_dict(elt)
+            return self.zero()
+        HLP = self._kBoundedRing._quotient_basis
+        m = self._kBoundedRing._sym.m()
+        elt = dict(x for x in dict(HLP(m(la))).items()
+                   if x[0] in self._kbounded_partitions)
+        return self._from_dict(elt)
 
     def _HLP_to_mk_on_basis(self, la):
         r"""
@@ -1151,9 +1146,8 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
             return mk.zero()
         if self.t == 1:
             return mk(la)
-        else:
-            HLP = self._kBoundedRing._quotient_basis
-            return mk(HLP(la))
+        HLP = self._kBoundedRing._quotient_basis
+        return mk(HLP(la))
 
     def retract(self, la):
         r"""

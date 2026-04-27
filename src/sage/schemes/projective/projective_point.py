@@ -840,8 +840,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             raise TypeError("must be over a number field or a number field order")
         if K == QQ:
             return max(K(c).local_height_arch(prec=prec) for c in self)
-        else:
-            return max(K(c).local_height_arch(i, prec=prec) for c in self)
+        return max(K(c).local_height_arch(i, prec=prec) for c in self)
 
     def multiplier(self, f, n, check=True):
         r"""
@@ -1080,7 +1079,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
         This function still normalizes points so that the rightmost nonzero coordinate is 1.
         This is to maintain functionality with current
-        implementations of curves in projectives space (plane, conic, elliptic, etc).
+        implementations of curves in projective spaces (plane, conic, elliptic, etc).
         The :class:`SchemeMorphism_point_projective_ring` is for general use.
 
         EXAMPLES::

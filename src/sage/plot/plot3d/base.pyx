@@ -497,7 +497,7 @@ cdef class Graphics3d(SageObject):
             if isinstance(style, dict):
                 style = _validate_threejs_text_style(style)
                 style = [style, style, style]
-            elif isinstance(style, list) and len(style) == 3 and all([isinstance(s, dict) for s in style]):
+            elif isinstance(style, list) and len(style) == 3 and all(isinstance(s, dict) for s in style):
                 style = [_validate_threejs_text_style(s) for s in style]
             else:
                 import warnings

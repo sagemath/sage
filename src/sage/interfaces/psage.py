@@ -43,8 +43,9 @@ finished::
 import os
 import time
 
-from .sage0 import Sage, SageElement
 from pexpect import ExceptionPexpect
+
+from sage.interfaces.sage0 import Sage, SageElement
 
 number = 0
 

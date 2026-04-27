@@ -262,7 +262,7 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             if n % 2:
                 return base_ring.zero()
             return pn**(n//2)
-        elif n % m:
+        if n % m:
             return base_ring.zero()
         return pn**(n//m)
 
