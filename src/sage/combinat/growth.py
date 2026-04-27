@@ -5076,7 +5076,7 @@ class Rules:
     Burge = RuleBurge
     Domino = RuleDomino
     LeftCompositions = RuleLeftCompositions
-    RightCompositions = RuleRightCompositions    
+    RightCompositions = RuleRightCompositions
 
 
 GrowthDiagram.rules = Rules
