@@ -4844,7 +4844,7 @@ class RuleRightCompositions(RuleCompositions):
 
         INPUT:
 
-        - ``y, t, x`` arranged as
+        - ``y, t, x`` arranged as::
 
             t x
             y
@@ -4898,7 +4898,7 @@ class RuleRightCompositions(RuleCompositions):
 
         INPUT:
 
-        - ``y, z, x`` arranged as
+        - ``y, z, x`` arranged as::
 
               x
             y z
@@ -5076,6 +5076,7 @@ class Rules:
     Burge = RuleBurge
     Domino = RuleDomino
     LeftCompositions = RuleLeftCompositions
+    RightCompositions = RuleRightCompositions    
 
 
 GrowthDiagram.rules = Rules
