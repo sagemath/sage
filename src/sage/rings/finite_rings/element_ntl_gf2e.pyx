@@ -1294,6 +1294,19 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             ...
             ValueError: base does not have the provided order
 
+        Checks for :issue:`42047`::
+
+            sage: F.<t> = GF((2, 16))
+            sage: F.one().log(F.one())
+            0
+
+        ::
+
+            sage: F.<t> = GF((2, 42))
+            sage: z = t^41 + t^40 + t^37 + t^30 + t^27 + t^25 + t^24 + t^21 + t^11 + t^9 + t^7 + t^6 + t^3 + t + 1
+            sage: F.one().log(z)
+            0
+
         AUTHORS:
 
         - David Joyner and William Stein (2005-11)
@@ -1320,8 +1333,8 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         # Let's pass the known factorization of the order to PARI.
         fs, = self._parent.factored_unit_order()  # cached
-        ps = pari.Col(p for p,_ in fs)
-        vs = pari.Col(base_order.valuation(p) for p,_ in fs)
+        ps = pari.Col(p for p,_ in fs if p.divides(base_order))
+        vs = pari.Col(base_order.valuation(p) for p in ps)
         fac = pari.matconcat((ps, vs))
 
         x = pari.fflog(self, base, (base_order, fac))
