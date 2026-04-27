@@ -605,6 +605,18 @@ class EllipticCurveHom(Morphism):
             [2^91 * 3^57]
             sage: ker23 == ker32
             True
+
+        TESTS:
+
+        Make sure :issue:`42047` is fixed::
+
+            sage: E = EllipticCurve(GF(2), [1,0,0,0,1])
+            sage: x = polygen(GF(2))
+            sage: phi = E.isogeny(x^3 + x^2 + 1)
+            sage: phi.kernel_subgroup(extend=True)
+            Additive abelian group isomorphic to Z/7
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y = x^3 + 1
+                over Finite Field in t of size 2^42
         """
         if algorithm is None:
             if self.domain().base_ring().is_finite():
