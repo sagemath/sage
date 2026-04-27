@@ -4846,7 +4846,7 @@ class RuleRightCompositions(RuleCompositions):
 
         - ``y, t, x`` arranged as
 
-              t x
+            t x
             y
 
         - ``content`` in ``{0, 1}``
@@ -4900,7 +4900,7 @@ class RuleRightCompositions(RuleCompositions):
 
         - ``y, z, x`` arranged as
 
-                x
+              x
             y z
 
         OUTPUT:
