@@ -30,9 +30,9 @@ from libcpp.list cimport list
 
 
 cdef extern from "braiding.h" namespace "Braiding":
-    list[list[int]] ConjugatingBraid (int n, list[int] word, list[int] word2)
-    list[list[int]] LeftNormalForm (int n, list[int] word)
-    list[list[int]] RightNormalForm (int n, list[int] word)
+    list[list[int]] ConjugatingBraid(int n, list[int] word, list[int] word2)
+    list[list[int]] LeftNormalForm(int n, list[int] word)
+    list[list[int]] RightNormalForm(int n, list[int] word)
     list[list[int]] GreatestCommonDivisor(int n, list[int] word1, list[int] word2)
     list[list[int]] LeastCommonMultiple(int n, list[int] word1, list[int] word2)
     list[list[list[int]]] CentralizerGenerators(int n, list[int] word)
@@ -67,9 +67,9 @@ def conjugatingbraid(braid1, braid2):
 
         sage: from sage.libs.braiding import conjugatingbraid
         sage: B = BraidGroup(3)
-        sage: b = B([1,2,1,-2])
-        sage: c = B([1,2])
-        sage: conjugatingbraid(b,c)
+        sage: b = B([1, 2, 1, -2])
+        sage: c = B([1, 2])
+        sage: conjugatingbraid(b, c)
         [[0], [2]]
     """
     nstrands = max(braid1.parent().strands(), braid2.parent().strands())
@@ -99,7 +99,7 @@ def leftnormalform(braid):
 
         sage: from sage.libs.braiding import leftnormalform
         sage: B = BraidGroup(3)
-        sage: b = B([1,2,1,-2])
+        sage: b = B([1, 2, 1, -2])
         sage: leftnormalform(b)
         [[0], [2, 1]]
     """
@@ -129,7 +129,7 @@ def rightnormalform(braid):
 
         sage: from sage.libs.braiding import rightnormalform
         sage: B = BraidGroup(3)
-        sage: b = B([1,2,1,-2])
+        sage: b = B([1, 2, 1, -2])
         sage: rightnormalform(b)
         [[2, 1], [0]]
     """
@@ -216,19 +216,19 @@ def centralizer(braid):
 
         sage: from sage.libs.braiding import centralizer
         sage: B = BraidGroup(3)
-        sage: b = B([1,2,-1])
+        sage: b = B([1, 2, -1])
         sage: centralizer(b)
         [[[-1], [2, 1], [1, 2]], [[0], [1], [1, 2], [2]]]
     """
     nstrands = braid.parent().strands()
     lnf = leftnormalform(braid)
-    if len(lnf) == 1: # (lib)braiding crashes when the input is a power of Delta.
+    if len(lnf) == 1:  # (lib)braiding crashes when the input is a power of Delta.
         if lnf[0][0] % 2 == 0:
-            return [[[0], [i+1]] for i in range(nstrands)]
+            return [[[0], [i + 1]] for i in range(nstrands)]
         elif nstrands % 2:
-            return [[[0], [i+1, nstrands - i -1]] for i in range(nstrands//2)]
+            return [[[0], [i + 1, nstrands - i - 1]] for i in range(nstrands//2)]
         else:
-            return [[[0], [i+1, nstrands - i -1]] for i in range(nstrands//2-1)] + [[[0], [nstrands//2]]]
+            return [[[0], [i + 1, nstrands - i - 1]] for i in range(nstrands//2 - 1)] + [[[0], [nstrands//2]]]
     l = braid.Tietze()
     sig_on()
     cdef list[list[list[int]]] rop = CentralizerGenerators(nstrands, l)
@@ -250,14 +250,14 @@ def supersummitset(braid):
 
         sage: from sage.libs.braiding import supersummitset
         sage: B = BraidGroup(3)
-        sage: b = B([1,2,-1])
+        sage: b = B([1, 2, -1])
         sage: supersummitset(b)
         [[[0], [2]], [[0], [1]]]
     """
     nstrands = braid.parent().strands()
-    l = braid.Tietze()
+    b = braid.Tietze()
     sig_on()
-    cdef list[list[list[int]]] rop = SuperSummitSet(nstrands, l)
+    cdef list[list[list[int]]] rop = SuperSummitSet(nstrands, b)
     sig_off()
     return rop
 
@@ -279,14 +279,14 @@ def ultrasummitset(braid):
 
         sage: from sage.libs.braiding import ultrasummitset
         sage: B = BraidGroup(3)
-        sage: b = B([1,2,-1])
+        sage: b = B([1, 2, -1])
         sage: ultrasummitset(b)
         [[[[0], [2]]], [[[0], [1]]]]
     """
     nstrands = braid.parent().strands()
-    l = braid.Tietze()
+    b = braid.Tietze()
     sig_on()
-    cdef list[list[list[list[int]]]] rop = UltraSummitSet(nstrands, l)
+    cdef list[list[list[list[int]]]] rop = UltraSummitSet(nstrands, b)
     sig_off()
     return rop
 
@@ -307,10 +307,10 @@ def thurston_type(braid):
 
         sage: from sage.libs.braiding import thurston_type
         sage: B = BraidGroup(3)
-        sage: b = B([1,2,-1])
+        sage: b = B([1, 2, -1])
         sage: thurston_type(b)
         'reducible'
-        sage: c = B([1,2,1])
+        sage: c = B([1, 2, 1])
         sage: thurston_type(c)
         'periodic'
         sage: d = B([1,1,1,2,2])
@@ -318,9 +318,9 @@ def thurston_type(braid):
         'pseudo-anosov'
     """
     nstrands = braid.parent().strands()
-    l = braid.Tietze()
+    b = braid.Tietze()
     sig_on()
-    cdef int i = thurstontype(nstrands, l)
+    cdef int i = thurstontype(nstrands, b)
     sig_off()
     if i == 1:
         return 'periodic'
@@ -344,14 +344,14 @@ def rigidity(braid):
 
         sage: from sage.libs.braiding import rigidity
         sage: B = BraidGroup(3)
-        sage: c = B([1,1,1,2,2])
+        sage: c = B([1, 1, 1, 2, 2])
         sage: rigidity(c)
         3
     """
     nstrands = braid.parent().strands()
-    l = braid.Tietze()
+    b = braid.Tietze()
     sig_on()
-    cdef int i = Rigidity_ext(nstrands, l)
+    cdef int i = Rigidity_ext(nstrands, b)
     sig_off()
     return i
 
@@ -373,7 +373,7 @@ def sliding_circuits(braid):
 
         sage: from sage.libs.braiding import sliding_circuits
         sage: B = BraidGroup(3)
-        sage: c = B([1,1,1,2,2])
+        sage: c = B([1, 1, 1, 2, 2])
         sage: sliding_circuits(c)
         [[[[0], [1], [1, 2], [2, 1]]],
         [[[0], [2], [2, 1], [1, 2]]],
@@ -383,9 +383,9 @@ def sliding_circuits(braid):
         [[[0], [2, 1], [1], [1, 2]]]]
     """
     nstrands = braid.parent().strands()
-    l = braid.Tietze()
+    b = braid.Tietze()
     sig_on()
-    cdef list[list[list[list[int]]]] rop = SlidingCircuits(nstrands, l)
+    cdef list[list[list[list[int]]]] rop = SlidingCircuits(nstrands, b)
     sig_off()
     return rop
 
@@ -413,9 +413,9 @@ def send_to_sss(braid):
 
     """
     nstrands = braid.parent().strands()
-    l = braid.Tietze()
+    b = braid.Tietze()
     sig_on()
-    cdef list[list[list[int]]] rop = SendToSSS(nstrands, l)
+    cdef list[list[list[int]]] rop = SendToSSS(nstrands, b)
     sig_off()
     return rop
 
@@ -443,9 +443,9 @@ def send_to_uss(braid):
 
     """
     nstrands = braid.parent().strands()
-    l = braid.Tietze()
+    b = braid.Tietze()
     sig_on()
-    cdef list[list[list[int]]] rop = SendToUSS(nstrands, l)
+    cdef list[list[list[int]]] rop = SendToUSS(nstrands, b)
     sig_off()
     return rop
 
@@ -474,9 +474,9 @@ def send_to_sc(braid):
 
     """
     nstrands = braid.parent().strands()
-    l = braid.Tietze()
+    b = braid.Tietze()
     sig_on()
-    cdef list[list[list[int]]] rop = SendToSC(nstrands, l)
+    cdef list[list[list[int]]] rop = SendToSC(nstrands, b)
     sig_off()
     return rop
 
@@ -507,9 +507,9 @@ def trajectory(braid):
 
     """
     nstrands = braid.parent().strands()
-    l = braid.Tietze()
+    b = braid.Tietze()
     sig_on()
-    cdef list[list[list[int]]] rop = Trajectory(nstrands, l)
+    cdef list[list[list[int]]] rop = Trajectory(nstrands, b)
     sig_off()
     return rop
 
@@ -541,8 +541,8 @@ def cyclic_slidings(braid):
 
     """
     nstrands = braid.parent().strands()
-    l = braid.Tietze()
+    b = braid.Tietze()
     sig_on()
-    cdef list[list[list[list[int]]]] rop = CyclicSlidings(nstrands, l)
+    cdef list[list[list[list[int]]]] rop = CyclicSlidings(nstrands, b)
     sig_off()
     return rop
