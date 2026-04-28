@@ -398,8 +398,7 @@ def get_bit(x, c):
         bits.append(b)
     if c > len(bits) - 1:
         return 'False'
-    else:
-        return bits[c]
+    return bits[c]
 
 
 def eval(toks):
@@ -635,11 +634,11 @@ def eval_bin_op(args):
 
     if args[1] == 'AND':
         return eval_and_op(lval, rval)
-    elif args[1] == 'OR':
+    if args[1] == 'OR':
         return eval_or_op(lval, rval)
-    elif args[1] == 'IFTHEN':
+    if args[1] == 'IFTHEN':
         return eval_ifthen_op(lval, rval)
-    elif args[1] == 'IFF':
+    if args[1] == 'IFF':
         return eval_iff_op(lval, rval)
 
 

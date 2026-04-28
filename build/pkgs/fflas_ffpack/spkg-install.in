@@ -1,3 +1,7 @@
+if [ "$SAGE_DARWIN_ACCELERATE" = yes ]; then
+    export LINBOX_BLAS='-framework Accelerate'
+fi
+
 cd src
 
 if [ "$LINBOX_BLAS" != "" ]; then

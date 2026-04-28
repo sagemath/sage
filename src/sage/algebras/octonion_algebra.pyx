@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 """
 Octonion Algebras
 
@@ -86,6 +85,29 @@ cdef class Octonion_generic(AlgebraElement):
         from sage.algebras.weyl_algebra import repr_from_monomials
         data = [p for p in enumerate(self.vec) if p[1]]
         return repr_from_monomials(data, self._parent._repr_term, True)
+
+    def __getitem__(self, m):
+        r"""
+        Return the ``m``-th coordinate of ``self``.
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(QQ)
+            sage: elt = sum(i * b for i, b in enumerate(O.basis()))
+            sage: elt
+            i + 2*j + 3*k + 4*l + 5*li + 6*lj + 7*lk
+            sage: elt[2]
+            2
+            sage: elt.coefficient(4)
+            4
+            sage: elt[6]
+            6
+            sage: elt.leading_coefficient()
+            7
+            sage: elt.dense_coefficient_list()
+            [0, 1, 2, 3, 4, 5, 6, 7]
+        """
+        return self.vec[m]
 
     def __bool__(self):
         r"""
@@ -288,7 +310,7 @@ cdef class Octonion_generic(AlgebraElement):
         qf = (<Octonion_generic> other).quadratic_form()
         return self.__class__(self._parent, temp.vec / qf)
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         r"""
         Return if ``self`` is a unit or not.
 
@@ -416,7 +438,7 @@ cdef class Octonion_generic(AlgebraElement):
 
             sage: O = OctonionAlgebra(QQ, 1, 3, 7)
             sage: elt = sum(i * b for i, b in enumerate(O.basis(), start=2))
-            sage: elt.norm()                                                            # needs sage.symbolic
+            sage: elt.norm()
             2*sqrt(-61)
             sage: elt = sum(O.basis())
             sage: elt.norm()
@@ -439,7 +461,7 @@ cdef class Octonion_generic(AlgebraElement):
 
             sage: O = OctonionAlgebra(QQ, 1, 3, 7)
             sage: elt = sum(i * b for i, b in enumerate(O.basis(), start=2))
-            sage: elt.abs()                                                             # needs sage.symbolic
+            sage: elt.abs()
             2*sqrt(-61)
             sage: elt = sum(O.basis())
             sage: elt.abs()
@@ -573,10 +595,10 @@ cdef class Octonion(Octonion_generic):
 
             sage: O = OctonionAlgebra(QQ)
             sage: elt = sum(i * b for i, b in enumerate(O.basis(), start=2))
-            sage: elt.norm()                                                            # needs sage.symbolic
+            sage: elt.norm()
             2*sqrt(71)
             sage: elt = sum(O.basis())
-            sage: elt.norm()                                                            # needs sage.symbolic
+            sage: elt.norm()
             2*sqrt(2)
         """
         return self.vec.norm()
@@ -699,6 +721,14 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         sage: (1 + l) * (1 + l).conjugate()
         0
 
+    TESTS:
+
+    Random elements work::
+
+        sage: O = OctonionAlgebra(QQ)
+        sage: O.random_element() in O
+        True
+
     REFERENCES:
 
     - [Scha1996]_
@@ -747,7 +777,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: O = OctonionAlgebra(QQ)
-            sage: TestSuite(O).run()                                                    # needs sage.symbolic
+            sage: TestSuite(O).run()
 
             sage: O = OctonionAlgebra(QQ, 1, 3, 7)
             sage: TestSuite(O).run()

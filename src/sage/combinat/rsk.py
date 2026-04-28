@@ -128,30 +128,7 @@ the input is preserved::
     [0 1 0 0 0]
     sage: p
     [1, 4, 5, 3, 2]
-
-REFERENCES:
-
-.. [Knu1970] Donald E. Knuth.
-   *Permutations, matrices, and generalized Young tableaux*.
-   Pacific J. Math. Volume 34, Number 3 (1970), pp. 709-727.
-   http://projecteuclid.org/euclid.pjm/1102971948
-
-.. [EG1987] Paul Edelman, Curtis Greene.
-   *Balanced Tableaux*.
-   Advances in Mathematics 63 (1987), pp. 42-99.
-   :doi:`10.1016/0001-8708(87)90063-6`
-
-.. [BKSTY06] \A. Buch, A. Kresch, M. Shimozono, H. Tamvakis, and A. Yong.
-   *Stable Grothendieck polynomials and* `K`-*theoretic factor sequences*.
-   Math. Ann. **340** Issue 2, (2008), pp. 359--382.
-   :arxiv:`math/0601514v1`.
-
-.. [GR2018v5sol] Darij Grinberg, Victor Reiner.
-   *Hopf Algebras In Combinatorics*,
-   :arxiv:`1409.8356v5`, available with solutions at
-   https://arxiv.org/src/1409.8356v5/anc/HopfComb-v73-with-solutions.pdf
 """
-
 # *****************************************************************************
 #       Copyright (C) 2012,2019 Travis Scrimshaw <tcscrims at gmail.com>
 #                          2019 Chaman Agrawal <chaman.ag at gmail.com>
@@ -801,9 +778,8 @@ class RuleEG(Rule):
                 n = max(list(lower_row)) + 1
             from sage.combinat.permutation import Permutations
             return Permutations(n).from_reduced_word(list(lower_row))
-        else:
-            return super()._backward_format_output(lower_row, upper_row, output,
-                                                   p_is_standard, q_is_standard)
+        return super()._backward_format_output(lower_row, upper_row, output,
+                                               p_is_standard, q_is_standard)
 
 
 class RuleHecke(Rule):
@@ -1488,9 +1464,8 @@ class RuleDualRSK(Rule):
                 raise TypeError("p must be standard to have a valid permutation as output")
             from sage.combinat.permutation import Permutation
             return Permutation(reversed(lower_row))
-        else:
-            return super()._backward_format_output(lower_row, upper_row, output,
-                                                   p_is_standard, q_is_standard)
+        return super()._backward_format_output(lower_row, upper_row, output,
+                                               p_is_standard, q_is_standard)
 
     def _forward_format_output(self, p, q, check_standard):
         r"""
@@ -2489,9 +2464,8 @@ class RuleSuperRSK(RuleRSK):
             if q_is_standard:
                 from sage.combinat.words.word import Word
                 return Word(reversed(lower_row))
-            else:
-                raise TypeError("q must be standard to have a %s as "
-                                "valid output" % output)
+            raise TypeError("q must be standard to have a %s as "
+                            "valid output" % output)
         raise ValueError("invalid output option")
 
 
@@ -2944,12 +2918,11 @@ class RuleStar(Rule):
             raise ValueError(f"{obj1} and {obj2} are of different lengths")
         if output == 'array':
             return [obj1, obj2]
-        elif output == 'word':
+        if output == 'word':
             if obj1 == list(range(1, len(obj1)+1)):
                 from sage.combinat.words.word import Word
                 return Word(obj2)
-            else:
-                raise TypeError("upper row must be standard")
+            raise TypeError("upper row must be standard")
         elif output == 'DecreasingHeckeFactorization':
             from sage.combinat.crystals.fully_commutative_stable_grothendieck import DecreasingHeckeFactorization
             obj1.reverse()

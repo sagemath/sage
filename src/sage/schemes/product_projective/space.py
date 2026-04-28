@@ -330,8 +330,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         """
         if not isinstance(right, ProductProjectiveSpaces_ring):
             return False
-        else:
-            return self._components == right._components
+        return self._components == right._components
 
     def __ne__(self, other):
         """
@@ -442,9 +441,9 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             return self.__pow__(2)
         if isinstance(right, ProductProjectiveSpaces_ring):
             return ProductProjectiveSpaces(self.components() + right.components())
-        elif isinstance(right, ProjectiveSpace_ring):
+        if isinstance(right, ProjectiveSpace_ring):
             return ProductProjectiveSpaces(self.components() + [right])
-        elif isinstance(right, AlgebraicScheme_subscheme):
+        if isinstance(right, AlgebraicScheme_subscheme):
             AS = self * right.ambient_space()
             CR = AS.coordinate_ring()
             n = self.ambient_space().coordinate_ring().ngens()
@@ -452,8 +451,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             phi = self.ambient_space().coordinate_ring().hom(list(CR.gens()[:n]), CR)
             psi = right.ambient_space().coordinate_ring().hom(list(CR.gens()[n:]), CR)
             return AS.subscheme([phi(t) for t in self.defining_polynomials()] + [psi(t) for t in right.defining_polynomials()])
-        else:
-            raise TypeError('%s must be a projective space, product of projective spaces, or subscheme' % right)
+        raise TypeError('%s must be a projective space, product of projective spaces, or subscheme' % right)
 
     def components(self):
         r"""
@@ -922,8 +920,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         try:
             if return_embedding:
                 return self.__affine_patches[I][1]
-            else:
-                return self.__affine_patches[I][0]
+            return self.__affine_patches[I][0]
         except AttributeError:
             self.__affine_patches = {}
         except KeyError:
@@ -939,8 +936,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         self.__affine_patches.update({I: (AA, phi)})
         if return_embedding:
             return phi
-        else:
-            return AA
+        return AA
 
     @cached_method
     def segre_embedding(self, PP=None, var='u'):
@@ -1286,6 +1282,6 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
         """
         if F is None:
             return list(self)
-        elif not isinstance(F, FiniteField):
+        if not isinstance(F, FiniteField):
             raise TypeError("second argument (= %s) must be a finite field" % F)
         return list(self.base_extend(F))

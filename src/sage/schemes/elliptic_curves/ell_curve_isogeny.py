@@ -3316,31 +3316,30 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             self.__dual = corr * phi_hat
             return self.__dual
 
-        else:
-            # trac 7096
-            # this should take care of the case when the isogeny is
-            # not normalized.
-            u = self.scaling_factor()
-            E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
+        # trac 7096
+        # this should take care of the case when the isogeny is
+        # not normalized.
+        u = self.scaling_factor()
+        E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
 
-            phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
-            # assert phi_hat.scaling_factor() == 1
+        phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
+        # assert phi_hat.scaling_factor() == 1
 
-            for pre_iso in self._codomain.isomorphisms(E1):
-                for post_iso in E2.isomorphisms(self._domain):
-                    sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor()
-                    if sc == d:
-                        break
-                else:
-                    continue
-                break
+        for pre_iso in self._codomain.isomorphisms(E1):
+            for post_iso in E2.isomorphisms(self._domain):
+                sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor()
+                if sc == d:
+                    break
             else:
-                raise RuntimeError("bug in dual()")
+                continue
+            break
+        else:
+            raise RuntimeError("bug in dual()")
 
-            phi_hat._set_pre_isomorphism(pre_iso)
-            phi_hat._set_post_isomorphism(post_iso)
-            phi_hat.__perform_inheritance_housekeeping()
-            return phi_hat
+        phi_hat._set_pre_isomorphism(pre_iso)
+        phi_hat._set_post_isomorphism(post_iso)
+        phi_hat.__perform_inheritance_housekeeping()
+        return phi_hat
 
     @staticmethod
     def _composition_impl(left, right):
@@ -3408,6 +3407,72 @@ def compute_isogeny_bmss(E1, E2, l):
         sage: E2 = EllipticCurve(GF(167), [56, 40])
         sage: compute_isogeny_bmss(E1, E2, 13)
         x^6 + 139*x^5 + 73*x^4 + 139*x^3 + 120*x^2 + 88*x
+
+    TESTS:
+
+    A large number of tests that used to fail (see :issue:`42043`)::
+
+        sage: F = GF(53)
+        sage: E1 = EllipticCurve(F, [0, 1])
+        sage: E2 = EllipticCurve(F, [38, 22])
+        sage: compute_isogeny_bmss(E1, E2, 2)
+        x + 1
+
+    ::
+
+        sage: F = GF(53)
+        sage: E1 = EllipticCurve(F, [0, 1])
+        sage: E2 = EllipticCurve(F, [24, 42])
+        sage: compute_isogeny_bmss(E1, E2, 6)
+        x^3 + 52*x^2 + 51*x
+
+    ::
+
+        sage: F = GF(53)
+        sage: E1 = EllipticCurve(F, [0, 26])
+        sage: E2 = EllipticCurve(F, [24, 42])
+        sage: compute_isogeny_bmss(E1, E2, 2)
+        x + 50
+
+    ::
+
+        sage: F = GF(53)
+        sage: E1 = EllipticCurve(F, [40, 39])
+        sage: E2 = EllipticCurve(F, [8, 29])
+        sage: compute_isogeny_bmss(E1, E2, 2)
+        x + 40
+
+    ::
+
+        sage: F = GF(53)
+        sage: E1 = EllipticCurve(F, [40, 39])
+        sage: E2 = EllipticCurve(F, [20, 40])
+        sage: compute_isogeny_bmss(E1, E2, 4)
+        x^2 + 48*x + 2
+
+    ::
+
+        sage: F = GF(53)
+        sage: E1 = EllipticCurve(F, [13, 49])
+        sage: E2 = EllipticCurve(F, [45, 31])
+        sage: compute_isogeny_bmss(E1, E2, 2)
+        x + 34
+
+    ::
+
+        sage: F = GF(53)
+        sage: E1 = EllipticCurve(F, [20, 8])
+        sage: E2 = EllipticCurve(F, [30, 41])
+        sage: compute_isogeny_bmss(E1, E2, 2)
+        x + 9
+
+    ::
+
+        sage: F = GF(61)
+        sage: E1 = EllipticCurve(F, [1, 0])
+        sage: E2 = EllipticCurve(F, [11, 29])
+        sage: compute_isogeny_bmss(E1, E2, 2)
+        x + 11
     """
     # Original author of this function: Rémy Oudompheng.
     # https://github.com/remyoudompheng/isogeny_weber/blob/64289127a337ac1bf258b711e02fea02b7df5275/isogeny_weber/isogenies.py#L272-L332
@@ -3459,10 +3524,20 @@ def compute_isogeny_bmss(E1, E2, l):
     _, Q = Rx(U).rational_reconstruction(x ** (2 * l), l, l)
     Q = Q.add_bigoh((l + 1) // 2)
     if not Q.is_square():
+        if True:  #XXX stopgap for #42043; to be fixed properly eventually
+            return compute_isogeny_stark(E1, E2, l)
         raise ValueError(f"the two curves are not linked by a cyclic normalized isogeny of degree {l}")
     Q = Q.sqrt()
     ker = Rx(Q).reverse(degree=l//2)
-    return ker.monic()
+
+    ker = ker.monic().radical()
+
+    if True:  #XXX stopgap for #42043; to be fixed properly eventually
+        if (E1.division_polynomial(l, x=Rx.quotient(ker).gen())
+            or not E1.isogeny_codomain(ker).is_isomorphic(E2)):
+            return compute_isogeny_stark(E1, E2, l)
+
+    return ker
 
 
 def compute_isogeny_stark(E1, E2, ell):
@@ -3502,22 +3577,22 @@ def compute_isogeny_stark(E1, E2, ell):
         sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_stark, compute_sequence_of_maps
 
         sage: E = EllipticCurve(GF(97), [1,0,1,1,0])
-        sage: R.<x> = GF(97)[]; f = x^5 + 27*x^4 + 61*x^3 + 58*x^2 + 28*x + 21
+        sage: R.<x> = GF(97)[]
+        sage: f = x^5 + 27*x^4 + 61*x^3 + 58*x^2 + 28*x + 21
         sage: phi = EllipticCurveIsogeny(E, f)
         sage: E2 = phi.codomain()
         sage: isom1, isom2, E1pr, E2pr, ker_poly = compute_sequence_of_maps(E, E2, 11)
         sage: compute_isogeny_stark(E1pr, E2pr, 11)
-        x^10 + 37*x^9 + 53*x^8 + 66*x^7 + 66*x^6 + 17*x^5 + 57*x^4 + 6*x^3 + 89*x^2 + 53*x + 8
+        x^5 + 67*x^4 + 13*x^3 + 35*x^2 + 77*x + 69
 
         sage: E = EllipticCurve(GF(37), [0,0,0,1,8])
         sage: R.<x> = GF(37)[]
-        sage: f = (x + 14) * (x + 30)
+        sage: f = (x + 14) * (x + 30); f
+        x^2 + 7*x + 13
         sage: phi = EllipticCurveIsogeny(E, f)
         sage: E2 = phi.codomain()
         sage: compute_isogeny_stark(E, E2, 5)
-        x^4 + 14*x^3 + x^2 + 34*x + 21
-        sage: f**2
-        x^4 + 14*x^3 + x^2 + 34*x + 21
+        x^2 + 7*x + 13
 
         sage: E = EllipticCurve(QQ, [0,0,0,1,0])
         sage: R.<x> = QQ[]
@@ -3535,11 +3610,39 @@ def compute_isogeny_stark(E1, E2, ell):
         sage: E2 = EllipticCurve([0,-27])
         sage: E1.isogeny(None, E2, degree=3)
         Isogeny of degree 3 from Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field to Elliptic Curve defined by y^2 = x^3 - 27 over Rational Field
+
+    These tests used to fail (see :issue:`42045`)::
+
+        sage: E = EllipticCurve([1, 1])
+        sage: E.isogeny(None, E, 1)
+        Isogeny of degree 1 from Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field to Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field
+
+    ::
+
+        sage: F = GF(67)
+        sage: E1 = EllipticCurve(F, [0, 11])
+        sage: E2 = EllipticCurve(F, [0, 7])
+        sage: compute_isogeny_stark(E1, E2, 7)
+        x^3 + 65
+
+    ::
+
+        sage: F = GF(53)
+        sage: E1 = EllipticCurve(F, [43, 52])
+        sage: E2 = EllipticCurve(F, [25, 37])
+        sage: compute_isogeny_stark(E1, E2, 5)
+        x^2 + 2*x + 39
     """
     K = E1.base_field()
     R, x = PolynomialRing(K, 'x').objgen()
 
-    wp1 = E1.weierstrass_p(prec=4*ell+4)  #BMSS2006 claim 2*ell is enough, but it is not M09
+    ell = Integer(ell)
+    if ell.is_one():
+        if E1 == E2:
+            return R.one()
+        raise ValueError("the two curves are not linked by a cyclic normalized isogeny of degree 1")
+
+    wp1 = E1.weierstrass_p(prec=4*ell+4)  # [BMSS2006] claim 2*ell is enough, but it is not [M09]
     wp2 = E2.weierstrass_p(prec=4*ell+4)
 
     # viewed them as power series in Z = z^2
@@ -3570,14 +3673,14 @@ def compute_isogeny_stark(E1, E2, ell):
 
         if n == ell+1 or T == 0:
             if T == 0 or T.valuation() < 2:
+                if True:  #XXX stopgap for #42045; to be fixed properly eventually
+                    return compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm='bruteforce')
                 raise ValueError(f"the two curves are not linked by a cyclic normalized isogeny of degree {ell}")
             break
 
         T = 1/T
 
-    qn = q[n]
-    qn /= qn.leading_coefficient()
-    return qn
+    return q[n].monic().radical()
 
 
 def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
@@ -3629,7 +3732,8 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
 
     TESTS:
 
-    Check that :meth:`Polynomial.radical` is doing the right thing for us::
+    Check that :meth:`Polynomial.radical` is doing the right thing for us
+    inside this method::
 
         sage: E = EllipticCurve(GF(37), [0,0,0,1,8])
         sage: R.<x> = GF(37)[]
@@ -3638,24 +3742,67 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         sage: E2 = phi.codomain()
         sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_stark
         sage: ker_poly = compute_isogeny_stark(E, E2, 7); ker_poly
-        x^6 + 2*x^5 + 20*x^4 + 11*x^3 + 36*x^2 + 35*x + 16
-        sage: ker_poly.factor()
-        (x + 10)^2 * (x + 12)^2 * (x + 16)^2
-        sage: poly = ker_poly.radical(); poly
         x^3 + x^2 + 28*x + 33
-        sage: poly.factor()
+        sage: ker_poly.factor()
         (x + 10) * (x + 12) * (x + 16)
+
+    Check that it works even when the degree is large compared to the characteristic::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
+        sage: E1 = EllipticCurve(GF(5), [1,1])
+        sage: E2 = EllipticCurve(GF(5), [1,4])
+        sage: compute_isogeny_kernel_polynomial(E1, E2, 11)
+        x^5 + 4*x^4 + 4*x^2 + 3*x + 4
+
+    ...even for long Weierstraß curves::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
+        sage: E1 = EllipticCurve(GF(2), [1,0,1,0,1])
+        sage: E2 = EllipticCurve(GF(2), [1,0,1,1,1])
+        sage: compute_isogeny_kernel_polynomial(E1, E2, 7)
+        x^3 + x + 1
+
+    Verify that it works with the ``"bruteforce"`` algorithm even when
+    :meth:`~EllipticCurve_field.isogenies_degree` returns a non-normalized
+    isogeny (see :issue:`41565`)::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
+        sage: E1 = EllipticCurve(GF(419^2), [1,0])
+        sage: for phi in E1.isogenies_degree(5):
+        ....:     E2 = phi.codomain().isomorphism(~phi.scaling_factor()).codomain()
+        ....:     assert phi.kernel_polynomial() == compute_isogeny_kernel_polynomial(E1, E2, phi.degree(), algorithm='bruteforce')
     """
     if algorithm is None:
         char = E1.base_ring().characteristic()
-        if char != 0 and char < 4*ell + 4:
-            raise NotImplementedError(f'no algorithm for computing kernel polynomial from domain and codomain is implemented for degree {ell} and characteristic {char}')
-        algorithm = 'stark' if ell < 10 else 'bmss'
+        # This could be 4l+4 according to Stark/BMSS alone, but
+        # weierstrass_p() currently only works for p-2 >= 4l+4.
+        if char != 0 and char < 4*ell + 6:
+            # No good algorithm available... See :issue:`38481`.
+            algorithm = 'bruteforce'
+        else:
+            algorithm = 'stark' if ell < 10 else 'bmss'
+
+    if algorithm == 'bruteforce':
+        # This is a lazy workaround; there are better algorithms
+        # for most cases even when BMSS fails. See :issue:`38481`.
+        for phi in E1.isogenies_degree(ell):
+            if not any(E1.a_invariants()[:3] + E2.a_invariants()[:3]):
+                # short Weierstrass
+                u = phi.scaling_factor()
+                iso = phi.codomain().isomorphism(~u)
+                if iso.codomain() == E2:
+                    return phi.kernel_polynomial()
+            else:
+                # long Weierstrass
+                for iso in phi.codomain().isomorphisms(E2):
+                    if iso.scaling_factor().is_one():
+                        return phi.kernel_polynomial()
+        raise ValueError(f"the two curves are not linked by a cyclic normalized isogeny of degree {ell}")
 
     if algorithm == 'bmss':
         return compute_isogeny_bmss(E1, E2, ell)
     if algorithm == 'stark':
-        return compute_isogeny_stark(E1, E2, ell).radical()
+        return compute_isogeny_stark(E1, E2, ell)
 
     raise NotImplementedError(f'unknown algorithm {algorithm}')
 

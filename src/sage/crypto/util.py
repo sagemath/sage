@@ -376,8 +376,7 @@ def is_blum_prime(n):
         return False
     if is_prime(n):
         return mod(n, 4).lift() == 3
-    else:
-        return False
+    return False
 
 
 def least_significant_bits(n, k):

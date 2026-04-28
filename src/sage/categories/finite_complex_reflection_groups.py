@@ -758,8 +758,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 from sage.matrix.special import identity_matrix
                 I = identity_matrix(self.parent().rank())
                 return W.rank() - (self.canonical_matrix() - I).right_nullity()
-            else:
-                return len(self.reduced_word_in_reflections())
+            return len(self.reduced_word_in_reflections())
 
     class Irreducible(CategoryWithAxiom):
 

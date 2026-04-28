@@ -228,8 +228,8 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
         """
         if len(value) == 1 and isinstance(value[0], self.element_class) and value[0].parent() == self:
             return value[0]
-        else:  # Should do sanity checks!  (Including check for inconsistent parent.)
-            return self.retract(self.classical_crystal(*value, **options))
+        # Should do sanity checks!  (Including check for inconsistent parent.)
+        return self.retract(self.classical_crystal(*value, **options))
 
     def __contains__(self, x):
         r"""
@@ -352,12 +352,10 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
         """
         if i == self.parent()._cartan_type.special_node():
             return self.e0()
-        else:
-            x = self.lift().e(i)
-            if (x is None):
-                return None
-            else:
-                return self.parent().retract(x)
+        x = self.lift().e(i)
+        if (x is None):
+            return None
+        return self.parent().retract(x)
 
     def f(self, i):
         r"""
@@ -377,12 +375,10 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
         """
         if i == self.parent()._cartan_type.special_node():
             return self.f0()
-        else:
-            x = self.lift().f(i)
-            if (x is None):
-                return None
-            else:
-                return self.parent().retract(x)
+        x = self.lift().f(i)
+        if (x is None):
+            return None
+        return self.parent().retract(x)
 
     def epsilon0(self):
         r"""
@@ -420,8 +416,7 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
         """
         if i == self.parent()._cartan_type.special_node():
             return self.epsilon0()
-        else:
-            return self.lift().epsilon(i)
+        return self.lift().epsilon(i)
 
     def phi0(self):
         r"""
@@ -458,8 +453,7 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
         """
         if i == self.parent()._cartan_type.special_node():
             return self.phi0()
-        else:
-            return self.lift().phi(i)
+        return self.lift().phi(i)
 
     def _richcmp_(self, other, op):
         """
@@ -678,8 +672,7 @@ class AffineCrystalFromClassicalAndPromotionElement(AffineCrystalFromClassicalEl
         x = self.parent().automorphism(self).e(self.parent().dynkin_node)
         if (x is None):
             return None
-        else:
-            return self.parent().inverse_automorphism(x)
+        return self.parent().inverse_automorphism(x)
 
     def f0(self):
         r"""
@@ -700,8 +693,7 @@ class AffineCrystalFromClassicalAndPromotionElement(AffineCrystalFromClassicalEl
         x = self.parent().automorphism(self).f(self.parent().dynkin_node)
         if (x is None):
             return None
-        else:
-            return self.parent().inverse_automorphism(x)
+        return self.parent().inverse_automorphism(x)
 
     def epsilon0(self):
         r"""

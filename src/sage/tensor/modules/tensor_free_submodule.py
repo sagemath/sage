@@ -157,10 +157,8 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
                         superscript = '{' + superscript + '}'
                     if len(base._latex_name) > 3:
                         return op + '^' + superscript + r'\left(' + base._latex_name + r'\right)'
-                    else:
-                        return op + '^' + superscript + '(' + base._latex_name + ')'
-                else:
-                    return op + '^' + superscript + '(' + base._name + ')'
+                    return op + '^' + superscript + '(' + base._latex_name + ')'
+                return op + '^' + superscript + '(' + base._name + ')'
 
             name = unicode_otimes.join(itertools.chain(
                 (power_name('T', s, latex=False) for s in nosym),

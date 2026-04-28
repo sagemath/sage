@@ -389,8 +389,7 @@ class SemistandardPathTableau(PathTableau):
 
         if verbose:
             return rect
-        else:
-            return P.element_class(P, list(path)[:n])
+        return P.element_class(P, list(path)[:n])
 
     @combinatorial_map(name='to semistandard tableau')
     def to_tableau(self):
@@ -421,8 +420,7 @@ class SemistandardPathTableau(PathTableau):
         lt = [[i for i in a if i > 0] for a in self]
         if self.is_skew():
             return SkewTableaux().from_chain(lt)
-        else:
-            return from_chain(lt)
+        return from_chain(lt)
 
     @combinatorial_map(name='to Gelfand-Tsetlin pattern')
     def to_pattern(self):

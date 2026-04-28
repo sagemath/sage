@@ -119,7 +119,6 @@ as this base class still provides a few more methods than a general parent::
      '_one_element',
      '_zero_element',
      'base_extend',
-     'extension',
      'fraction_field',
      'gen',
      'gens',

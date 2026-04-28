@@ -61,7 +61,7 @@ from sage.rings.polynomial.polynomial_element import polynomial_is_variable
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
 from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.groups.additive_abelian.additive_abelian_group as groups
-import sage.groups.generic as generic
+from sage.groups import generic
 
 from sage.arith.functions import lcm
 from sage.rings.integer import Integer
@@ -74,7 +74,7 @@ from sage.misc.fast_methods import WithEqualityById
 from sage.structure.coerce import py_scalar_to_element
 
 # Schemes
-import sage.schemes.projective.projective_space as projective_space
+from sage.schemes.projective import projective_space
 from sage.schemes.projective.projective_homset import SchemeHomset_points_abelian_variety_field
 import sage.schemes.curves.projective_curve as plane_curve
 
@@ -953,16 +953,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             one = L.one()
             if all:
                 return [E.point([x, y, one], check=False) for y in ys]
-            else:
-                return E.point([x, ys[0], one], check=False)
+            return E.point([x, ys[0], one], check=False)
 
         # otherwise if the additional extension was not requested return the empty list or raise an error:
 
         if not extend:
             if all:
                 return []
-            else:
-                raise ValueError("No point with x-coordinate {} on {}".format(x, self))
+            raise ValueError("No point with x-coordinate {} on {}".format(x, self))
 
         # Now make the extension needed to contain the y-coordinates:
 
@@ -982,8 +980,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         one = M.one()
         if all:
             return [EM.point([x, y, one], check=False) for y in ys]
-        else:
-            return EM.point([x, ys[0], one], check=False)
+        return EM.point([x, ys[0], one], check=False)
 
     def _point_homset(self, *args, **kwds):
         r"""
@@ -1884,8 +1881,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         if not isinstance(n, (list, tuple)):
             return poly(int(n))
-        else:
-            return [poly(int(k)) for k in n]
+        return [poly(int(k)) for k in n]
 
     def two_division_polynomial(self, x=None):
         r"""
@@ -2516,8 +2512,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         if m == 1:
             if not x_only:
                 return (x, y)
-            else:
-                return x
+            return x
 
         # Grab curve invariants
         a1, _, a3, _, _ = self.a_invariants()
@@ -2525,8 +2520,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         if m == -1:
             if not x_only:
                 return (x, -y-a1*x-a3)
-            else:
-                return x
+            return x
 
         # If we only require the x coordinate, it is faster to use the recursive formula
         # since substituting polynomials is quite slow.
@@ -3009,19 +3003,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         if complete_cube:
             if a1 == 0 and a2 == 0 and a3 == 0:
                 return self
-            else:
-                b2, b4, b6, _ = self.b_invariants()
-                if b2 == 0:
-                    return constructor.EllipticCurve([0,0,0,8*b4,16*b6])
-                else:
-                    c4, c6 = self.c_invariants()
-                    return constructor.EllipticCurve([0,0,0,-27*c4, -54*c6])
-        else:
-            if a1 == 0 and a3 == 0:
-                return self
-            else:
-                b2, b4, b6, _ = self.b_invariants()
-                return constructor.EllipticCurve([0,b2,0,8*b4,16*b6])
+            b2, b4, b6, _ = self.b_invariants()
+            if b2 == 0:
+                return constructor.EllipticCurve([0,0,0,8*b4,16*b6])
+            c4, c6 = self.c_invariants()
+            return constructor.EllipticCurve([0,0,0,-27*c4, -54*c6])
+        if a1 == 0 and a3 == 0:
+            return self
+        b2, b4, b6, _ = self.b_invariants()
+        return constructor.EllipticCurve([0,b2,0,8*b4,16*b6])
 
     def montgomery_model(self, twisted=False, morphism=False):
         r"""
@@ -3732,8 +3722,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         from sage.libs.pari import pari
         if self.base_ring() in NumberFields():
             return pari.ellinit(self.a_invariants(), self.base_ring())
-        else:
-            return pari.ellinit(self.a_invariants())
+        return pari.ellinit(self.a_invariants())
 
     # This method is defined so that pari(E) returns exactly the same
     # as E.pari_curve().  This works even for classes that inherit from

@@ -385,7 +385,7 @@ def split_local_cover(self):
     if hasattr(self, "__split_local_cover"):
         if isinstance(self.__split_local_cover, QuadraticForm):  # Here the computation has been done.
             return self.__split_local_cover
-        elif self.__split_local_cover in ZZ:    # Here it indexes the values already tried!
+        if self.__split_local_cover in ZZ:    # Here it indexes the values already tried!
             current_length = self.__split_local_cover + 1
             Length_Max = current_length + 5
     else:

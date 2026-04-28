@@ -2460,20 +2460,17 @@ class NormalFormGame(SageObject, MutableMapping):
                 if strat and len(self.best_responses(strat, player=0)) > len(pair[0]):
                     if certificate:
                         return True, (strat, 0)
-                    else:
-                        return True
+                    return True
             elif len(pair[1]) < len(pair[0]):
                 strat = self._solve_indifference(pair[1], pair[0], M1.transpose())
                 if strat and len(self.best_responses(strat, player=0)) > len(pair[1]):
                     if certificate:
                         return True, (strat, 1)
-                    else:
-                        return True
+                    return True
 
         if certificate:
             return False, ()
-        else:
-            return False
+        return False
 
     def best_responses(self, strategy, player):
         """
@@ -2654,8 +2651,7 @@ class NormalFormGame(SageObject, MutableMapping):
                     strat = [0 for k in range(M1.nrows())]
                     strat[i] = 1
                     return True, (tuple(strat), 0)
-                else:
-                    return True
+                return True
 
         for j, col in enumerate(M1.columns()):
             if list(col).count(max(col)) > 1:
@@ -2663,8 +2659,7 @@ class NormalFormGame(SageObject, MutableMapping):
                     strat = [0 for k in range(M1.ncols())]
                     strat[j] = 1
                     return True, (tuple(strat), 1)
-                else:
-                    return True
+                return True
         return False
 
 

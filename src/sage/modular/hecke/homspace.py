@@ -134,8 +134,7 @@ class HeckeModuleHomspace(HomsetWithBase):
             if A.parent() == self:
                 A._set_parent(self)
                 return A
-            else:
-                raise TypeError("unable to coerce A to self")
+            raise TypeError("unable to coerce A to self")
         except AttributeError:
             pass
         side = kwds.get("side", "left")
@@ -179,6 +178,5 @@ class HeckeModuleHomspace(HomsetWithBase):
         """
         if self.domain() != self.codomain():
             return self.zero()
-        else:
-            A = self.domain().hecke_operator(2).matrix()
-            return HeckeModuleMorphism_matrix(self, A)
+        A = self.domain().hecke_operator(2).matrix()
+        return HeckeModuleMorphism_matrix(self, A)
