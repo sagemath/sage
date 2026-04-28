@@ -235,7 +235,7 @@ class LimitValuationFactory(UniqueFactory):
         ``G`` to infinity::
 
             sage: v = next(v for v in V if valuations.LimitValuation(v, F)(G) != oo)       # needs sage.geometry.polyhedron
-            sage: valuations.LimitValuation(v, G)                                         # needs sage.geometry.polyhedron
+            sage: valuations.LimitValuation(v, G)                                          # needs sage.geometry.polyhedron
             Traceback (most recent call last):
             ...
             ValueError: G must have a non-equivalence-unit factor for base_valuation
