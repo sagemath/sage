@@ -448,8 +448,8 @@ optional Sage package Regina installed.
 
         EXAMPLES::
 
-            sage: regina._function_call(regina.Polynomial, (-3, 5/3))
-            <regina.Polynomial: 5/3 x - 3>
+            sage: regina._function_call(regina.PolynomialRational, (-3, 5/3))
+            <regina.PolynomialRational: 5/3 x - 3>
         """
         args, kwds = self._convert_args_kwds(*args, **kwds)
         if len(args) == 0:
@@ -662,7 +662,7 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
             sage: type(regina.AbelianGroup().detail)
             <class 'sage.interfaces.regina.ReginaFunctionElement'>
             sage: regina.AbelianGroup().detail._name
-            <bound method pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_0.detail of <regina.AbelianGroup: 0>>
+            <bound method pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1.detail of <regina.AbelianGroup: 0>>
         """
         P = self._check_valid()
         if attrname == '_inst':
@@ -896,7 +896,7 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
             sage: R.<u> = PolynomialRing(ZZ)
             sage: p = u**3 -2*u + 9
             sage: rp = regina(p); rp
-            <regina.Polynomial: x^3 - 2 x + 9>
+            <regina.PolynomialRational: x^3 - 2 x + 9>
             sage: rp.sage() == p
             True
             sage: F3 = FreeGroup(3)
@@ -982,7 +982,7 @@ class ReginaFunctionElement(InterfaceFunctionElement):
 
         sage: A = regina.AbelianGroup()
         sage: A.addRank
-        <bound method pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_0.addRank of <regina.AbelianGroup: 0>>
+        <bound method pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1.addRank of <regina.AbelianGroup: 0>>
         sage: type(A.addRank)
         <class 'sage.interfaces.regina.ReginaFunctionElement'>
     """
