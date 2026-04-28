@@ -43,6 +43,18 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
 
 
+class EquivalenceDecompositionTooSmall(Exception):
+    r"""
+    Raised by :meth:`InductiveValuation.mac_lane_step` when the
+    equivalence-decomposition of ``G`` is empty because the requested
+    ``principal_part_bound`` is too small to see a non-trivial decomposition.
+
+    Callers that pass a ``principal_part_bound`` may catch this exception and
+    retry without the bound.
+    """
+    pass
+
+
 class InductiveValuation(DevelopingValuation):
     r"""
     Abstract base class for iterated :mod:`augmented valuations <sage.rings.valuation.augmented_valuation>` on top of a :mod:`Gauss valuation <sage.rings.valuation.gauss_valuation>`.
@@ -789,7 +801,10 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
         ret = []
 
         F = self.equivalence_decomposition(G, assume_not_equivalence_unit=True, coefficients=coefficients, valuations=valuations, compute_unit=False, degree_bound=principal_part_bound)
-        assert len(F), "%s equivalence-decomposes as an equivalence-unit %s" % (G, F)
+        message = "%s equivalence-decomposes as an equivalence-unit %s" % (G, F)
+        if not len(F) and principal_part_bound is not None:
+            raise EquivalenceDecompositionTooSmall(message)
+        assert len(F), message
         if len(F) == 1 and F[0][1] == 1 and F[0][0].degree() == G.degree():
             assert self.is_key(G, assume_equivalence_irreducible=assume_equivalence_irreducible)
             ret.append((self.augmentation(G, infinity, check=False), G.degree(), principal_part_bound, None, None))
