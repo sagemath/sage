@@ -91,6 +91,9 @@ extra = [
   'sage_numerical_backends_coin',
   'symengine >= 0.6.1', # Only used in tests
 ]
+snappy = ['snappy']
+regina = ['regina']
+database_knotinfo = ['database_knotinfo']
 #giac = ['sagemath_giac'] # Not yet available on PyPI (https://github.com/sagemath/sagemath-giac/issues/3)
 
 [project.readme]
