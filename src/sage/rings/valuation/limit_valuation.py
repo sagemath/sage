@@ -78,7 +78,6 @@ overview can also be found in Section 4.6 of [Rüt2014]_.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_method
 from .valuation import DiscretePseudoValuation, InfiniteDiscretePseudoValuation
 from sage.structure.factory import UniqueFactory
 
@@ -895,7 +894,6 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             return
         self._improve_approximation_for_call(f)
 
-    @cached_method
     def residue_ring(self):
         r"""
         Return the residue ring of this valuation, which is always a field.
@@ -909,11 +907,6 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: w = v.extension(L)
             sage: w.residue_ring()
             Finite Field of size 2
-
-        Repeated calls return the same object (cached)::
-
-            sage: w.residue_ring() is w.residue_ring()
-            True
 
         When the approximation is already infinite, the residue ring is the
         residue ring of that final augmentation::
