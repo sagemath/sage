@@ -1116,9 +1116,12 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         Note that interrupting the computation (``KeyboardInterrupt`` for
         instance) breaks the iterator::
 
-            sage: # needs sage.symbolic
+            sage: call_count = 0
             sage: def f(a):
-            ....:     sleep(0.05r)
+            ....:     global call_count
+            ....:     call_count += 1
+            ....:     if call_count == 3:
+            ....:         raise KeyboardInterrupt
             ....:     return [a - 1, a + 1]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='symmetric')
             sage: it = C.graded_component_iterator()
@@ -1126,8 +1129,10 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
             {0}
             sage: next(it)
             {-1, 1}
-            sage: from sage.doctest.util import ensure_interruptible_after
-            sage: with ensure_interruptible_after(0.02): next(it)
+            sage: next(it)
+            Traceback (most recent call last):
+            ...
+            KeyboardInterrupt
             sage: next(it)
             Traceback (most recent call last):
             ...

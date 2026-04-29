@@ -156,6 +156,7 @@ class AlgebraicScheme(scheme.Scheme):
     defined by equations in affine, projective, or toric ambient
     spaces.
     """
+
     def __init__(self, A, category=None) -> None:
         """
         TESTS::
@@ -282,6 +283,7 @@ class AlgebraicScheme(scheme.Scheme):
               Defn: Identity map
         """
         from sage.schemes.generic.morphism import SchemeMorphism_polynomial_id
+
         return SchemeMorphism_polynomial_id(self)
 
     def embedding_morphism(self):
@@ -385,7 +387,7 @@ class AlgebraicScheme(scheme.Scheme):
                     by 4 affine patches defined by: x - y
               Defn: Defined on coordinates by sending [y : u] to [1 : y : u : 1]
         """
-        if '_embedding_morphism' in self.__dict__:
+        if "_embedding_morphism" in self.__dict__:
             hom = self._embedding_morphism
             if isinstance(hom, tuple):
                 raise hom[0]
@@ -431,9 +433,9 @@ class AlgebraicScheme(scheme.Scheme):
               Defn: Defined on coordinates by sending (w, x, y) to
                     (w + 1 : x - 1 : y + 3 : 4)
         """
-        if '_embedding_center' in self.__dict__:
+        if "_embedding_center" in self.__dict__:
             return self._embedding_center
-        raise AttributeError('This algebraic scheme does not have a designated point.')
+        raise AttributeError("This algebraic scheme does not have a designated point.")
 
     def ngens(self):
         """
@@ -611,20 +613,24 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
              X \\text{ is defined by }\\text{no polynomials},\\text{ and }
              Y \\text{ is defined by } x - y.'
         """
-        if isinstance(self.ambient_space(), sage.schemes.affine.affine_space.AffineSpace_generic):
+        if isinstance(
+            self.ambient_space(), sage.schemes.affine.affine_space.AffineSpace_generic
+        ):
             t = "affine"
         else:
             t = "projective"
-        X = ', '.join(latex(f) for f in self.__X.defining_polynomials())
+        X = ", ".join(latex(f) for f in self.__X.defining_polynomials())
         if not X:
             X = r"\text{no polynomials}"
-        Y = ', '.join(latex(f) for f in self.__Y.defining_polynomials())
+        Y = ", ".join(latex(f) for f in self.__Y.defining_polynomials())
         if not Y:
             Y = r"\text{no polynomials}"
-        return (r"\text{Quasi-%s subscheme } (X\setminus Y)\subset %s,"
-                r"\text{ where } X \text{ is defined by }%s,"
-                r"\text{ and } Y \text{ is defined by } %s."
-                % (t, latex(self.ambient_space()), X, Y))
+        return (
+            r"\text{Quasi-%s subscheme } (X\setminus Y)\subset %s,"
+            r"\text{ where } X \text{ is defined by }%s,"
+            r"\text{ and } Y \text{ is defined by } %s."
+            % (t, latex(self.ambient_space()), X, Y)
+        )
 
     def _repr_(self):
         r"""
@@ -645,14 +651,22 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
             sage: U._repr_()
             'Quasi-projective subscheme X - Y of Projective Space of dimension 2 over Integer Ring, where X is defined by:\n  (no polynomials)\nand Y is defined by:\n  x - y'
         """
-        if isinstance(self.ambient_space(), sage.schemes.affine.affine_space.AffineSpace_generic):
+        if isinstance(
+            self.ambient_space(), sage.schemes.affine.affine_space.AffineSpace_generic
+        ):
             t = "affine"
         else:
             t = "projective"
-        return ("Quasi-%s subscheme X - Y of %s, where X is defined by:\n%s\n"
-                "and Y is defined by:\n%s"
-                % (t, self.ambient_space(), str(self.__X).split("\n", 1)[1],
-                   str(self.__Y).split("\n", 1)[1]))
+        return (
+            "Quasi-%s subscheme X - Y of %s, where X is defined by:\n%s\n"
+            "and Y is defined by:\n%s"
+            % (
+                t,
+                self.ambient_space(),
+                str(self.__X).split("\n", 1)[1],
+                str(self.__Y).split("\n", 1)[1],
+            )
+        )
 
     def X(self):
         """
@@ -755,11 +769,13 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
         coords = list(v)
         for f in self.__X.defining_polynomials():
             if f(coords) != 0:
-                raise TypeError("Coordinates %s do not define a point on %s" % (v,self))
+                raise TypeError(
+                    "Coordinates %s do not define a point on %s" % (v, self)
+                )
         for f in self.__Y.defining_polynomials():
             if f(coords) != 0:
                 return True
-        raise TypeError("Coordinates %s do not define a point on %s" % (v,self))
+        raise TypeError("Coordinates %s do not define a point on %s" % (v, self))
 
     def rational_points(self, **kwds):
         """
@@ -796,8 +812,8 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
              (6*b + 1, 6*b + 5), (6*b + 2, 4*b + 1), (6*b + 3, 2*b + 6), (6*b + 4, 6),
              (6*b + 5, 5*b + 1), (6*b + 6, 3*b + 5)]
         """
-        F = kwds.get('F', None)
-        bound = kwds.get('bound', 0)
+        F = kwds.get("F", None)
+        bound = kwds.get("bound", 0)
         if F is None:
             F = self.base_ring()
 
@@ -863,7 +879,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x^2 - y*z
         """
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
+        from sage.rings.polynomial.multi_polynomial_sequence import (
+            PolynomialSequence_generic,
+        )
 
         AlgebraicScheme.__init__(self, A, category=category)
         self._base_ring = A.base_ring()
@@ -873,7 +891,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             polynomials = I.gens()
             if I.ring() is R:  # Otherwise we will recompute I later after
                 self.__I = I  # converting generators to the correct ring
-        if isinstance(polynomials, (tuple, PolynomialSequence_generic)) or is_iterator(polynomials):
+        if isinstance(polynomials, (tuple, PolynomialSequence_generic)) or is_iterator(
+            polynomials
+        ):
             polynomials = list(polynomials)
         elif not isinstance(polynomials, list):
             # Looks like we got a single polynomial
@@ -882,8 +902,10 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             try:
                 polynomials[n] = R(f)
             except TypeError:
-                raise TypeError("%s cannot be converted to a polynomial in "
-                                "the coordinate ring of this %s!" % (f, A))
+                raise TypeError(
+                    "%s cannot be converted to a polynomial in "
+                    "the coordinate ring of this %s!" % (f, A)
+                )
         polynomials = tuple(polynomials)
         self.__polys = A._validate(polynomials)
 
@@ -916,11 +938,15 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             if f(coords) != 0:
                 # it must be "!=0" instead of "if f(v)", e.g.,
                 # because of p-adic base rings.
-                raise TypeError("Coordinates %s do not define a point on %s" % (coords, self))
+                raise TypeError(
+                    "Coordinates %s do not define a point on %s" % (coords, self)
+                )
         try:
             return self.ambient_space()._check_satisfies_equations(coords)
         except TypeError:
-            raise TypeError("Coordinates %s do not define a point on %s" % (coords, self))
+            raise TypeError(
+                "Coordinates %s do not define a point on %s" % (coords, self)
+            )
 
     def base_extend(self, R):
         """
@@ -983,11 +1009,13 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: S._latex_()
             '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^{2} \\text{ defined by } x^{2} - y z, x^{5}'
         """
-        polynomials = ', '.join(latex(f) for f in self.defining_polynomials())
+        polynomials = ", ".join(latex(f) for f in self.defining_polynomials())
         if not polynomials:
             polynomials = r"\text{no polynomials}"
-        return (r"\text{Closed subscheme of } %s \text{ defined by } %s"
-                % (latex(self.ambient_space()), polynomials))
+        return r"\text{Closed subscheme of } %s \text{ defined by } %s" % (
+            latex(self.ambient_space()),
+            polynomials,
+        )
 
     def _repr_(self):
         r"""
@@ -1008,11 +1036,13 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: S._repr_()
             'Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:\n  x^2 - y*z,\n  x^5'
         """
-        polynomials = ',\n  '.join(str(f) for f in self.defining_polynomials())
+        polynomials = ",\n  ".join(str(f) for f in self.defining_polynomials())
         if not polynomials:
-            polynomials = '(no polynomials)'
-        return ("Closed subscheme of %s defined by:\n  %s"
-                % (self.ambient_space(), polynomials))
+            polynomials = "(no polynomials)"
+        return "Closed subscheme of %s defined by:\n  %s" % (
+            self.ambient_space(),
+            polynomials,
+        )
 
     def defining_polynomials(self):
         """
@@ -1052,28 +1082,34 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             (x^2 + 2*x*y, 3*x + 8*y)
         """
         BR = self.base_ring()
-        if (BR == ZZ
-                or isinstance(BR, (sage.rings.abc.AlgebraicField, sage.rings.abc.Order))
-                or BR in NumberFields()):
+        if (
+            BR == ZZ
+            or isinstance(BR, (sage.rings.abc.AlgebraicField, sage.rings.abc.Order))
+            or BR in NumberFields()
+        ):
             normalized_polys = []
             initial_polys = list(self.__polys)
 
             for P in initial_polys:
                 # stores value which need to be multiplied to make all coefficient integers
                 mult = lcm([c.denominator() for c in P.coefficients()])
-                P = mult*P
+                P = mult * P
                 # stores the common factor from all coefficients
                 div = gcd(list(P.coefficients()))
-                poly_ring = P.parent() # need to coerce, since division might change base ring
-                P = poly_ring((BR.one()/div)*P)
+                poly_ring = (
+                    P.parent()
+                )  # need to coerce, since division might change base ring
+                P = poly_ring((BR.one() / div) * P)
                 normalized_polys.append(P)
 
             self.__polys = tuple(normalized_polys)
 
         else:
-            raise NotImplementedError("currently normalization is implemented "
-                                      "only for QQbar, number fields and "
-                                      "number field orders")
+            raise NotImplementedError(
+                "currently normalization is implemented "
+                "only for QQbar, number fields and "
+                "number field orders"
+            )
 
     def defining_ideal(self):
         """
@@ -1337,7 +1373,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             r = self.defining_ideal().radical()
             A = self.ambient_space()
             V = A.subscheme(r)
-            V._reduce = V       # so knows it is already reduced!
+            V._reduce = V  # so knows it is already reduced!
             self._reduce = V
             return V
 
@@ -1380,10 +1416,15 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             True
         """
         if not isinstance(other, AlgebraicScheme_subscheme):
-            raise TypeError("other (=%s) must be a closed algebraic subscheme of an ambient space" % other)
+            raise TypeError(
+                "other (=%s) must be a closed algebraic subscheme of an ambient space"
+                % other
+            )
         A = self.ambient_space()
         if other.ambient_space() != A:
-            raise ValueError("other (=%s) must be in the same ambient space as self" % other)
+            raise ValueError(
+                "other (=%s) must be in the same ambient space as self" % other
+            )
         return A.subscheme(self.defining_ideal().intersection(other.defining_ideal()))
 
     def __pow__(self, m):
@@ -1445,7 +1486,11 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         polys = []
         for i in range(m):
-            phi = self.ambient_space().coordinate_ring().hom(list(CR.gens()[n*i : n*(i+1)]), CR)
+            phi = (
+                self.ambient_space()
+                .coordinate_ring()
+                .hom(list(CR.gens()[n * i : n * (i + 1)]), CR)
+            )
             polys.extend([phi(t) for t in self.defining_polynomials()])
         return AS.subscheme(polys)
 
@@ -1541,14 +1586,17 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             TypeError: Affine Space of dimension 3 over Integer Ring must be a projective space,
             product of projective spaces, or subscheme
         """
-        #This will catch any ambient space mismatches
-        AS = self.ambient_space()*right.ambient_space()
+        # This will catch any ambient space mismatches
+        AS = self.ambient_space() * right.ambient_space()
         CR = AS.coordinate_ring()
         n = self.ambient_space().coordinate_ring().ngens()
 
         phi = self.ambient_space().coordinate_ring().hom(list(CR.gens()[:n]), CR)
         psi = right.ambient_space().coordinate_ring().hom(list(CR.gens()[n:]), CR)
-        return AS.subscheme([phi(t) for t in self.defining_polynomials()] + [psi(t) for t in right.defining_polynomials()])
+        return AS.subscheme(
+            [phi(t) for t in self.defining_polynomials()]
+            + [psi(t) for t in right.defining_polynomials()]
+        )
 
     __add__ = union
 
@@ -1568,10 +1616,15 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
               y
         """
         if not isinstance(other, AlgebraicScheme_subscheme):
-            raise TypeError("other (=%s) must be a closed algebraic subscheme of an ambient space" % other)
+            raise TypeError(
+                "other (=%s) must be a closed algebraic subscheme of an ambient space"
+                % other
+            )
         A = self.ambient_space()
         if other.ambient_space() != A:
-            raise ValueError("other (=%s) must be in the same ambient space as self" % other)
+            raise ValueError(
+                "other (=%s) must be in the same ambient space as self" % other
+            )
         return A.subscheme(self.defining_ideal() + other.defining_ideal())
 
     def complement(self, other=None):
@@ -1627,9 +1680,14 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             if other == A:
                 other = A.subscheme([])
             else:
-                raise TypeError("Argument other (=%s) must be a closed algebraic subscheme of an ambient space" % other)
+                raise TypeError(
+                    "Argument other (=%s) must be a closed algebraic subscheme of an ambient space"
+                    % other
+                )
         if other.ambient_space() != A:
-            raise ValueError("other (=%s) must be in the same ambient space as self" % other)
+            raise ValueError(
+                "other (=%s) must be in the same ambient space as self" % other
+            )
         return AlgebraicScheme_quasi(other, self)
 
     def rational_points(self, **kwds):
@@ -1709,15 +1767,21 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             [(0 : 1 : 0), (0 : 0 : 1), (0 : 2 : 1), (1 : 0 : 1),
              (1 : 2 : 1), (2 : 0 : 1), (2 : 2 : 1)]
 
-        The class of hyperelliptic curves does not (yet) support
+        The class of hyperelliptic curves now supports the
         desingularization of the places at infinity into two points::
 
             sage: FF = FiniteField(7)
             sage: P.<x> = PolynomialRing(FiniteField(7))
             sage: C = HyperellipticCurve(x^8 + x + 1)                                   # needs sage.schemes
             sage: C.rational_points()                                                   # needs sage.libs.singular sage.schemes
-            [(0 : 1 : 0), (0 : 1 : 1), (0 : 6 : 1), (2 : 0 : 1),
-             (4 : 0 : 1), (6 : 1 : 1), (6 : 6 : 1)]
+            [(1 : 1 : 0),
+            (1 : 6 : 0),
+            (0 : 1 : 1),
+            (0 : 6 : 1),
+            (2 : 0 : 1),
+            (4 : 0 : 1),
+            (6 : 1 : 1),
+            (6 : 6 : 1)]
 
         ::
 
@@ -1744,18 +1808,21 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             resolve singularities and find two points (1 : 1 : 0) and
             (-1 : 1 : 0) at infinity.
         """
-        F = kwds.pop('F', None)
-        if F is None: #sometimes None is passed in
+        F = kwds.pop("F", None)
+        if F is None:  # sometimes None is passed in
             F = self.base_ring()
         if F in NumberFields() or F == ZZ:
             X = self.base_extend(F)(F)
             try:
-                return X.points(**kwds) # checks for proper bound done in points functions
+                return X.points(
+                    **kwds
+                )  # checks for proper bound done in points functions
             except TypeError:
                 raise TypeError("Unable to enumerate points over %s." % F)
-        elif (self.base_ring() in NumberFields() or self.base_ring() == ZZ)\
-          and hasattr(F, 'precision'):
-            #we are numerically approximating number field points
+        elif (self.base_ring() in NumberFields() or self.base_ring() == ZZ) and hasattr(
+            F, "precision"
+        ):
+            # we are numerically approximating number field points
             return self(self.base_ring()).numerical_points(F=F, **kwds)
         try:
             X = self.base_extend(F)(F)
@@ -2004,9 +2071,12 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         """
         if D is None:
             if phi is None:
-                raise ValueError("either the dictionary or the specialization must be provided")
+                raise ValueError(
+                    "either the dictionary or the specialization must be provided"
+                )
         else:
             from sage.rings.polynomial.flatten import SpecializationMorphism
-            phi = SpecializationMorphism(self.ambient_space().coordinate_ring(),D)
+
+            phi = SpecializationMorphism(self.ambient_space().coordinate_ring(), D)
         amb = self.ambient_space().change_ring(phi.codomain().base_ring())
         return amb.subscheme([phi(g) for g in self.defining_polynomials()])

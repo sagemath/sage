@@ -466,7 +466,7 @@ class Standalone(SageObject):
         graphics = display_manager.preferences.graphics
         if graphics == 'disable':
             return
-        elif graphics == 'raster' or graphics is None:
+        if graphics == 'raster' or graphics is None:
             preferred = prefer_raster + prefer_vector
         elif graphics == 'vector':
             preferred = prefer_vector + prefer_raster
@@ -729,7 +729,7 @@ class Standalone(SageObject):
             return filename
 
         # open the tmp pdf
-        elif view:
+        if view:
             from sage.misc.viewer import pdf_viewer
             cmd = pdf_viewer().split()
             cmd.append(temp_filename_pdf)
@@ -853,7 +853,7 @@ class Standalone(SageObject):
             return filename
 
         # open the tmp dvi
-        elif view:
+        if view:
             from sage.misc.viewer import dvi_viewer
             cmd = dvi_viewer().split()
             cmd.append(temp_filename_dvi)
@@ -939,7 +939,7 @@ class Standalone(SageObject):
             return filename
 
         # open the tmp png
-        elif view:
+        if view:
             from sage.misc.viewer import png_viewer
             cmd = png_viewer().split()
             cmd.append(temp_filename_png)
@@ -1038,7 +1038,7 @@ class Standalone(SageObject):
             return filename
 
         # open the tmp svg
-        elif view:
+        if view:
             from sage.misc.viewer import browser
             cmd = browser().split()
             cmd.append(temp_filename_svg)
@@ -1152,7 +1152,7 @@ class Standalone(SageObject):
             return filename
 
         # open the tmp eps
-        elif view:
+        if view:
             from sage.misc.viewer import viewer
             cmd = viewer().split()
             cmd.append(temp_filename_eps)

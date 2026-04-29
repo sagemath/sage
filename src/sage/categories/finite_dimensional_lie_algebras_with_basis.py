@@ -1282,8 +1282,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             if self.is_semisimple():
                 return self
-            else:
-                return self.product_space(self)
+            return self.product_space(self)
 
         @cached_method
         def derived_series(self):
@@ -2599,12 +2598,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 if order is None:
                     order = {b: i for i, b in enumerate(self.parent()._basis_ordering)}
                 return M({order[k]: c for k, c in mc.items()})
-            else:
-                M = self.parent().module()
-                B = M.basis()
-                if order is None:
-                    order = self.parent()._basis_ordering
-                return M.sum(mc[k] * B[i] for i, k in enumerate(order) if k in mc)
+            M = self.parent().module()
+            B = M.basis()
+            if order is None:
+                order = self.parent()._basis_ordering
+            return M.sum(mc[k] * B[i] for i, k in enumerate(order) if k in mc)
 
         _vector_ = to_vector
 

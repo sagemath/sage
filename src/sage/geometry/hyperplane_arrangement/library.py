@@ -120,7 +120,6 @@ class HyperplaneArrangementLibrary:
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: G = graphs.CycleGraph(4)
             sage: G.edges(sort=True)
             [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)]
@@ -276,7 +275,6 @@ class HyperplaneArrangementLibrary:
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: hyperplane_arrangements.Coxeter(4)
             Arrangement of 6 hyperplanes of dimension 4 and rank 3
             sage: hyperplane_arrangements.Coxeter("B4")
@@ -296,7 +294,6 @@ class HyperplaneArrangementLibrary:
         The characteristic polynomial is pre-computed using the results
         of Terao, see [Ath2000]_::
 
-            sage: # needs sage.combinat
             sage: hyperplane_arrangements.Coxeter("A3").characteristic_polynomial()
             x^3 - 6*x^2 + 11*x - 6
         """
@@ -347,7 +344,6 @@ class HyperplaneArrangementLibrary:
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: G = graphs.CompleteGraph(5)
             sage: hyperplane_arrangements.G_semiorder(G)
             Arrangement of 20 hyperplanes of dimension 5 and rank 4
@@ -384,7 +380,6 @@ class HyperplaneArrangementLibrary:
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: G = graphs.CompleteGraph(5)
             sage: hyperplane_arrangements.G_Shi(G)
             Arrangement of 20 hyperplanes of dimension 5 and rank 4
@@ -427,7 +422,6 @@ class HyperplaneArrangementLibrary:
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: G = graphs.CompleteGraph(5)
             sage: hyperplane_arrangements.graphical(G)
             Arrangement of 10 hyperplanes of dimension 5 and rank 4
@@ -437,7 +431,6 @@ class HyperplaneArrangementLibrary:
 
         TESTS::
 
-            sage: # needs sage.graphs
             sage: h = hyperplane_arrangements.graphical(g)
             sage: h.characteristic_polynomial()
             x^5 - 6*x^4 + 14*x^3 - 15*x^2 + 6*x
@@ -484,7 +477,6 @@ class HyperplaneArrangementLibrary:
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: a = hyperplane_arrangements.Ish(3); a
             Arrangement of 6 hyperplanes of dimension 3 and rank 2
             sage: a.characteristic_polynomial()
@@ -668,7 +660,6 @@ class HyperplaneArrangementLibrary:
 
         TESTS::
 
-            sage: # needs sage.combinat
             sage: h = hyperplane_arrangements.semiorder(5)
             sage: h.characteristic_polynomial()
             x^5 - 20*x^4 + 180*x^3 - 790*x^2 + 1380*x
@@ -727,7 +718,6 @@ class HyperplaneArrangementLibrary:
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: hyperplane_arrangements.Shi(4)
             Arrangement of 12 hyperplanes of dimension 4 and rank 3
             sage: hyperplane_arrangements.Shi("A3")
@@ -758,7 +748,6 @@ class HyperplaneArrangementLibrary:
         The characteristic polynomial is pre-computed using the results
         of [Ath1996]_::
 
-            sage: # needs sage.combinat
             sage: hyperplane_arrangements.Shi("A3").characteristic_polynomial()
             x^4 - 12*x^3 + 48*x^2 - 64*x
             sage: hyperplane_arrangements.Shi("A3", m=2).characteristic_polynomial()
@@ -772,7 +761,6 @@ class HyperplaneArrangementLibrary:
 
         TESTS::
 
-            sage: # needs sage.combinat
             sage: h = hyperplane_arrangements.Shi(4)
             sage: h.characteristic_polynomial()
             x^4 - 12*x^3 + 48*x^2 - 64*x

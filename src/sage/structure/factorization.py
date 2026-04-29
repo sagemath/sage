@@ -1104,8 +1104,7 @@ class Factorization(SageObject):
             for a in set(d1).union(set(d2)):
                 s[a] = d1.get(a, 0) + d2.get(a, 0)
             return Factorization(list(s.items()), unit=self.unit() * other.unit())
-        else:
-            return Factorization(list(self) + list(other), unit=self.unit() * other.unit())
+        return Factorization(list(self) + list(other), unit=self.unit() * other.unit())
 
     def __pow__(self, n):
         """
@@ -1320,8 +1319,7 @@ class Factorization(SageObject):
             for a in set(d1).intersection(set(d2)):
                 s[a] = min(d1[a], d2[a])
             return Factorization(list(s.items()))
-        else:
-            raise NotImplementedError("gcd is not implemented for non-commutative factorizations")
+        raise NotImplementedError("gcd is not implemented for non-commutative factorizations")
 
     def lcm(self, other):
         r"""
@@ -1362,8 +1360,7 @@ class Factorization(SageObject):
             for a in set(d1).union(set(d2)):
                 s[a] = max(d1.get(a, 0), d2.get(a, 0))
             return Factorization(list(s.items()))
-        else:
-            raise NotImplementedError("lcm is not implemented for non-commutative factorizations")
+        raise NotImplementedError("lcm is not implemented for non-commutative factorizations")
 
     def is_integral(self) -> bool:
         r"""

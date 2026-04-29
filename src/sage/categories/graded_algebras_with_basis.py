@@ -223,8 +223,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
                 # all modules provide one_basis
                 if all(hasattr(module, "one_basis") for module in self._sets):
                     return tuple(module.one_basis() for module in self._sets)
-                else:
-                    raise NotImplementedError
+                raise NotImplementedError
 
             def product_on_basis(self, t0, t1):
                 """

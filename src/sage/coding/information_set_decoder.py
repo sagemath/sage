@@ -892,8 +892,7 @@ class LinearCodeInformationSetDecoder(Decoder):
         """
         if dictionary:
             return LinearCodeInformationSetDecoder._known_algorithms
-        else:
-            return LinearCodeInformationSetDecoder._known_algorithms.keys()
+        return LinearCodeInformationSetDecoder._known_algorithms.keys()
 
     def algorithm(self):
         r"""

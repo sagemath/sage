@@ -102,7 +102,6 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^3 - 1)
             sage: O = L.equation_order()
@@ -135,7 +134,6 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.rings.finite_rings
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: I = O.ideal(x^2 + x + 1)
@@ -156,7 +154,6 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: to_R(e2).parent() is R
             True
 
-            sage: # needs sage.modules sage.rings.finite_rings
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: I = O.ideal(x + 1)
@@ -177,7 +174,6 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: to_R(e2).parent() is R
             True
 
-            sage: # needs sage.modules sage.rings.number_field
             sage: F.<x> = FunctionField(QQ)
             sage: O = F.maximal_order()
             sage: I = O.ideal(x^2 + x + 1)
@@ -264,7 +260,6 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(4)
             sage: F.<x> = FunctionField(k)
             sage: O = F.maximal_order()
@@ -280,7 +275,6 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: all(to_K(fr_K(e)) == e for e in K)                                                # needs sage.modules
             True
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(2)
             sage: F.<x> = FunctionField(k)
             sage: O = F.maximal_order()

@@ -798,8 +798,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         if R is not None:
             return self._matrix.change_ring(R)
-        else:
-            return self._matrix
+        return self._matrix
 
     ##########################################################################
     # Coxeter type methods

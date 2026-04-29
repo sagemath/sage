@@ -202,8 +202,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
                 self._basis_key_inverse = False
         if self._basis_key_inverse is False:
             return x
-        else:
-            return self._basis_key_inverse[x]
+        return self._basis_key_inverse[x]
 
     def _monoid_key(self, x):
         """

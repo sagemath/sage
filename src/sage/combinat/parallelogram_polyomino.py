@@ -2407,8 +2407,7 @@ class ParallelogramPolyomino(ClonableList,
             """
             if self.is_outside():
                 return "The (outside) row %s of the parallelogram" % (self.row)
-            else:
-                return str(self.polyomino.get_array()[self.row])
+            return str(self.polyomino.get_array()[self.row])
 
     def __getitem__(self, row):
         r"""

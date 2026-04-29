@@ -523,8 +523,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         if basis is self._dual_basis:
             return self._inverse_transition_matrices[n]
-        else:
-            return self._inverse_transition_matrices[n]*self._dual_basis.transition_matrix(basis, n)
+        return self._inverse_transition_matrices[n]*self._dual_basis.transition_matrix(basis, n)
 
     def product(self, left, right):
         """

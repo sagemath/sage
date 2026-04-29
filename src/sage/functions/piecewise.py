@@ -892,8 +892,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             if definite:
                 return SR(area)
-            else:
-                return piecewise(new_pieces)
+            return piecewise(new_pieces)
 
         def critical_points(self, parameters, variable):
             """

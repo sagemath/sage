@@ -519,9 +519,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             roots = sorted(self.roots())
             if (not roots) or (self.parent().base().zero() in roots):
                 return plot(f, xmin=-1, xmax=1)
-            else:
-                return plot(f, xmin=roots[0]-1, xmax=roots[-1]+1)
-        elif xmin is None or xmax is None:
+            return plot(f, xmin=roots[0]-1, xmax=roots[-1]+1)
+        if xmin is None or xmax is None:
             raise ValueError("expected 2 inputs for xmin and xmax, but got 1")
         elif xmin >= xmax:
             raise ValueError(f"xmin = {xmin} should be less than xmax = {xmax}")

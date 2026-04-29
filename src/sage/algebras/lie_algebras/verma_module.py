@@ -612,7 +612,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         """
         return self._weight.is_verma_dominant(positive=False)
 
-    def is_projective(self):
+    def is_projective(self) -> bool:
         r"""
         Return if ``self`` is a projective module in Category `\mathcal{O}`.
 

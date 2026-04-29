@@ -344,8 +344,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
                 from sage.rings.integer import Integer
                 if isinstance(s, Integer):
                     return self.from_set(*(s,))
-                else:
-                    return self.from_set(*s)
+                return self.from_set(*s)
 
             # This could go in the super category VectorSpaces().Realizations()
             def _repr_(self):

@@ -959,7 +959,6 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         EXAMPLES::
 
-            sage: # needs sage.graphs sage.groups
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: Z3square = LatticePolytope_PPL((0,0), (1,2), (2,1), (3,3))
             sage: G1234 = Z3square.restricted_automorphism_group(
@@ -1240,12 +1239,11 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         ambient, subreflexive, hom = self._find_isomorphism_to_subreflexive_polytope()
         if output == 'hom':
             return hom
-        elif output == 'polytope':
+        if output == 'polytope':
             return ambient
-        elif output == 'points':
+        if output == 'points':
             points = dict()
             for p in subreflexive.integral_points():
                 points[ tuple(hom(p)) ] = p
             return points
-        else:
-            raise ValueError('output='+str(output)+' is not valid.')
+        raise ValueError('output='+str(output)+' is not valid.')

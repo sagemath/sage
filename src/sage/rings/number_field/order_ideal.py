@@ -617,7 +617,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         assert len(gs) in (1,2)
         if len(gs) > 1:
             return False
-        elif narrow:
+        if narrow:
             return gs[0].norm() > 0
         return True
 

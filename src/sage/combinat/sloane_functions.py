@@ -1514,8 +1514,7 @@ class A000312(SloaneSequence):
         """
         if n == 0:
             return ZZ.one()
-        else:
-            return ZZ(n**n)
+        return ZZ(n**n)
 
 
 class A001477(SloaneSequence):
@@ -2255,8 +2254,7 @@ class A000015(SloaneSequence):
         """
         if n == 1 or arith.is_prime_power(n):
             return n
-        else:
-            return arith.next_prime_power(n)
+        return arith.next_prime_power(n)
 
 
 class A000016(SloaneSequence):
@@ -2371,10 +2369,9 @@ class A000032(SloaneSequence):
         """
         if n == 0:
             return ZZ(2)
-        elif n == 1:
+        if n == 1:
             return ZZ.one()
-        else:
-            return sloane.A000045(n+1) + sloane.A000045(n-1)
+        return sloane.A000045(n+1) + sloane.A000045(n-1)
 
 
 # Theme numbers as strings of digits
@@ -2581,8 +2578,7 @@ class A000030(SloaneSequence):
         """
         if n < 10:
             return n
-        else:
-            return self(n//10)
+        return self(n//10)
 
 
 # Theme: primes and factoring
@@ -3369,8 +3365,7 @@ class A001055(SloaneSequence):
         if arith.is_prime(n):
             if m < n:
                 return ZZ.zero()
-            else:
-                return ZZ.one()
+            return ZZ.one()
         s = ZZ(0)
         for d in arith.divisors(n):
             if d > 1 and d <= m and d < n:
@@ -6033,7 +6028,7 @@ class A000204(SloaneSequence):
         """
         if n == 1:
             return ZZ.one()
-        elif n == 2:
+        if n == 2:
             return 3
         return sloane.A000045(n+1) + sloane.A000045(n-1)
 
@@ -6318,8 +6313,7 @@ class A001110(RecurrenceSequence):
         """
         if k > 1:
             return 2
-        else:
-            return ZZ.zero()
+        return ZZ.zero()
 
 
 class A051959(RecurrenceSequence):
@@ -6377,8 +6371,7 @@ class A051959(RecurrenceSequence):
         """
         if k > 1:
             return 7*k+1
-        else:
-            return ZZ.zero()
+        return ZZ.zero()
 
 
 class A001221(SloaneSequence):
@@ -7865,10 +7858,9 @@ class A061084(SloaneSequence):
         """
         if n == 0:
             return ZZ.one()
-        elif n == 1:
+        if n == 1:
             return 2
-        else:
-            return (-1)**(n-1)*sloane.A000204(n-1)
+        return (-1)**(n-1)*sloane.A000204(n-1)
 
 
 # a group of sequences uses this function:
@@ -8547,8 +8539,7 @@ class A111775(SloaneSequence):
         k = sum(i % 2 for i in arith.divisors(n))  # A001227, the number of odd divisors
         if n % 2 == 0:
             return k - 1
-        else:
-            return k - 2
+        return k - 2
 
 
 class A111787(SloaneSequence):

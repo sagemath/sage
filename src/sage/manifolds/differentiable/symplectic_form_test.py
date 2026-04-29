@@ -60,7 +60,7 @@ class TestCoherenceOfFormulas:
     def M(self, request: FixtureRequest):
         if request.param == 'R2':
             return StandardSymplecticSpace(2, 'R2', symplectic_name='omega')
-        elif request.param == 'S2':
+        if request.param == 'S2':
             # Init stereographic coordinates to get a complete atlas
             return Sphere(2, coordinates='stereographic')
 
@@ -68,8 +68,7 @@ class TestCoherenceOfFormulas:
     def omega(self, M):
         if isinstance(M, StandardSymplecticSpace):
             return M.symplectic_form()
-        else:
-            return SymplecticForm.wrap(M.metric().volume_form(), "omega")
+        return SymplecticForm.wrap(M.metric().volume_form(), "omega")
 
     def test_flat_of_hamiltonian_vector_field(
         self, M: DifferentiableManifold, omega: SymplecticForm

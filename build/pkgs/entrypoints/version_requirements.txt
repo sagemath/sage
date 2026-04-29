@@ -1,1 +1,0 @@
-entrypoints >=0.3

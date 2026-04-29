@@ -252,11 +252,10 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         if (interpolation_type == 'default' or
                 interpolation_type == 'linear' and 'num_points' not in kwds):
             return list_plot3d_matrix(v, **kwds)
-        else:
-            data = [(i, j, v[i, j])
-                    for i in range(v.nrows())
-                    for j in range(v.ncols())]
-            return list_plot3d_tuples(data, interpolation_type, **kwds)
+        data = [(i, j, v[i, j])
+                for i in range(v.nrows())
+                for j in range(v.ncols())]
+        return list_plot3d_tuples(data, interpolation_type, **kwds)
 
     if isinstance(v, numpy.ndarray):
         return list_plot3d(matrix(v), interpolation_type, **kwds)
@@ -266,18 +265,17 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
             # return empty 3d graphic
             from .base import Graphics3d
             return Graphics3d()
-        elif len(v) == 1:
+        if len(v) == 1:
             # return a point
             from .shapes2 import point3d
             return point3d(v[0], **kwds)
-        elif len(v) == 2:
+        if len(v) == 2:
             # return a line
             from .shapes2 import line3d
             return line3d(v, **kwds)
-        elif isinstance(v[0], tuple) or point_list and len(v[0]) == 3:
+        if isinstance(v[0], tuple) or point_list and len(v[0]) == 3:
             return list_plot3d_tuples(v, interpolation_type, **kwds)
-        else:
-            return list_plot3d_array_of_arrays(v, interpolation_type, **kwds)
+        return list_plot3d_array_of_arrays(v, interpolation_type, **kwds)
     raise TypeError("v must be a matrix or list")
 
 

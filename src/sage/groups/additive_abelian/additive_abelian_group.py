@@ -240,8 +240,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
         """
         if self.V().rank() == 0:
             return "Trivial group"
-        else:
-            return "Additive abelian group isomorphic to %s" % self.short_name()
+        return "Additive abelian group isomorphic to %s" % self.short_name()
 
     def _latex_(self):
         r"""
@@ -355,11 +354,10 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
         """
         if not self.invariants():
             return ZZ(1)
-        else:
-            ann = self.annihilator().gen()
-            if ann:
-                return ann
-            return ZZ(0)
+        ann = self.annihilator().gen()
+        if ann:
+            return ann
+        return ZZ(0)
 
     def is_multiplicative(self):
         r"""

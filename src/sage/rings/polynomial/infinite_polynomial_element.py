@@ -219,38 +219,37 @@ class InfinitePolynomial(CommutativePolynomial,
                 )
                 p = sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict()))
                 return InfinitePolynomial_dense(A, p)
-            else:
-                # Now there remains to fight the oddities and bugs of libsingular.
-                PP = p.parent()
-                if A._P.has_coerce_map_from(PP):
-                    if A._P.ngens() == PP.ngens():  # coercion is sometimes by position!
-                        f = PP.hom(PP.variable_names(), A._P)
-                        try:
-                            return InfinitePolynomial_dense(A, f(p))
-                        except (ValueError, TypeError):
-                            # last desperate attempt: String conversion
-                            from sage.misc.sage_eval import sage_eval
-                            from sage.rings.polynomial.infinite_polynomial_ring import (
-                                GenDictWithBasering,
-                            )
-                            # the base ring may be a function field, therefore
-                            # we need GenDictWithBasering
-                            return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
-                    return InfinitePolynomial_dense(A, A._P(p))
-                # there is no coercion, so, we set up a name-preserving map.
-                SV = set(repr(x) for x in p.variables())
-                f = PP.hom([x if x in SV else 0 for x in PP.variable_names()], A._P)
-                try:
-                    return InfinitePolynomial_dense(A, f(p))
-                except (ValueError, TypeError):
-                    # last desperate attempt: String conversion
-                    from sage.misc.sage_eval import sage_eval
-                    from sage.rings.polynomial.infinite_polynomial_ring import (
-                        GenDictWithBasering,
-                    )
-                    # the base ring may be a function field, therefore
-                    # we need GenDictWithBasering
-                    return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
+            # Now there remains to fight the oddities and bugs of libsingular.
+            PP = p.parent()
+            if A._P.has_coerce_map_from(PP):
+                if A._P.ngens() == PP.ngens():  # coercion is sometimes by position!
+                    f = PP.hom(PP.variable_names(), A._P)
+                    try:
+                        return InfinitePolynomial_dense(A, f(p))
+                    except (ValueError, TypeError):
+                        # last desperate attempt: String conversion
+                        from sage.misc.sage_eval import sage_eval
+                        from sage.rings.polynomial.infinite_polynomial_ring import (
+                            GenDictWithBasering,
+                        )
+                        # the base ring may be a function field, therefore
+                        # we need GenDictWithBasering
+                        return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
+                return InfinitePolynomial_dense(A, A._P(p))
+            # there is no coercion, so, we set up a name-preserving map.
+            SV = set(repr(x) for x in p.variables())
+            f = PP.hom([x if x in SV else 0 for x in PP.variable_names()], A._P)
+            try:
+                return InfinitePolynomial_dense(A, f(p))
+            except (ValueError, TypeError):
+                # last desperate attempt: String conversion
+                from sage.misc.sage_eval import sage_eval
+                from sage.rings.polynomial.infinite_polynomial_ring import (
+                    GenDictWithBasering,
+                )
+                # the base ring may be a function field, therefore
+                # we need GenDictWithBasering
+                return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
         return InfinitePolynomial_sparse(A, p)
 
     # Construction and other basic methods
@@ -373,7 +372,6 @@ class InfinitePolynomial(CommutativePolynomial,
 
         The substitution can also handle matrices::
 
-            sage: # needs sage.modules
             sage: M = matrix([[1,0], [0,2]])
             sage: N = matrix([[0,3], [4,0]])
             sage: g = x[0]^2 + 3*x[1]
@@ -398,7 +396,6 @@ class InfinitePolynomial(CommutativePolynomial,
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: g.subs(fixed=x[0], x_1=N)
             Traceback (most recent call last):
             ...
@@ -917,11 +914,10 @@ class InfinitePolynomial(CommutativePolynomial,
             divisor = self.base_ring().one() / p  # use induction
             OUTP = self.parent().tensor_with_ring(divisor.base_ring())
             return OUTP(self) * OUTP(divisor)
-        else:
-            from sage.rings.fraction_field_element import FractionFieldElement
-            field = self.parent().fraction_field()
-            # there remains a problem in reduction
-            return FractionFieldElement(field, self, x, reduce=False)
+        from sage.rings.fraction_field_element import FractionFieldElement
+        field = self.parent().fraction_field()
+        # there remains a problem in reduction
+        return FractionFieldElement(field, self, x, reduce=False)
 
     def factor(self, proof=None):
         """

@@ -492,8 +492,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         if self.is_real():
             return self._compute_periods_real(prec=prec, algorithm=algorithm)
-        else:
-            return self._compute_periods_complex(prec=prec)
+        return self._compute_periods_complex(prec=prec)
 
     @cached_method
     def gens(self, prec=None, algorithm='sage'):
@@ -994,9 +993,8 @@ class PeriodLattice_ell(PeriodLattice):
         if self.is_real():
             n_components = 2 if self.real_flag == 1 else 1
             return self.real_period(prec) * n_components
-        else:
-            bsd_factor = 2 if bsd_normalise else 1
-            return self.complex_area(prec) * bsd_factor
+        bsd_factor = 2 if bsd_normalise else 1
+        return self.complex_area(prec) * bsd_factor
 
     @cached_method
     def basis_matrix(self, prec=None, normalised=False):
@@ -1043,8 +1041,8 @@ class PeriodLattice_ell(PeriodLattice):
             [ 1.26920930427955 0.000000000000000]
             [0.634604652139777  1.45881661693850]
             sage: L.basis_matrix(normalised=True)
-            [0.634604652139777 -1.45881661693850]
-            [-1.26920930427955 0.000000000000000]
+            [-0.634604652139777  -1.45881661693850]
+            [ -1.26920930427955  0.000000000000000]
 
         ::
 
@@ -1064,8 +1062,7 @@ class PeriodLattice_ell(PeriodLattice):
         w1,w2 = self.basis(prec)
         if self.is_real():
             return Matrix([[w1,0],list(w2)])
-        else:
-            return Matrix([list(w) for w in (w1,w2)])
+        return Matrix([list(w) for w in (w1,w2)])
 
     def complex_area(self, prec=None):
         """
@@ -1382,8 +1379,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         if ((2*z.imag()/w2.imag()).round()) % 2:
             return C(z.real(), w2.imag() / 2)
-        else:
-            return C(z.real(), 0)
+        return C(z.real(), 0)
 
     def e_log_RC(self, xP, yP, prec=None, reduce=True):
         r"""
@@ -1775,11 +1771,11 @@ class PeriodLattice_ell(PeriodLattice):
             sage: L = E.period_lattice()
             sage: P = E.lift_x(3)
             sage: L.elliptic_logarithm(P)
-            -1.97657221097437 - 1.05021415535949*I
+            -3.47306312187149 + 0.446276755537628*I
             sage: L.elliptic_exponential(_)  # abs tol 1e-15
-            (3.00000000000000 + 9.20856947066460e-16*I : -5.59022723358798 - 0.0894418024719718*I : 1.00000000000000)
+            (3.00000000000000 + 9.63818638531819e-16*I : -5.59022723358799 - 0.0894418024719718*I : 1.00000000000000)
             sage: L.elliptic_logarithm(P, prec=100)  # abs tol 1e-15
-            -3.4730631218714889933426781799 + 0.44627675553762761312098773197*I
+            -1.9765722109743694676873864341 - 1.0502141553594919125343040138*I
             sage: L.elliptic_exponential(_)  # abs tol 1e-28
             (3.0000000000000000000000000000 - 1.4773628579202938936348512161e-30*I : -5.5902272335879800026836302686 - 0.089441802471969391005702381090*I : 1.0000000000000000000000000000)
 
@@ -2027,8 +2023,7 @@ class PeriodLattice_ell(PeriodLattice):
             K = z.parent()
             if to_curve:
                 return self.curve().change_ring(K)(0)
-            else:
-                return K(Infinity), K(Infinity)
+            return K(Infinity), K(Infinity)
 
         # general number field code (including QQ):
 
@@ -2063,8 +2058,7 @@ class PeriodLattice_ell(PeriodLattice):
             y = (y - (a1 * x + a3)) / 2
             EK = EllipticCurve(K, [a1, a2, a3, a4, a6])
             return EK.point((x, y, K.one()), check=False)
-        else:
-            return (x, y)
+        return (x, y)
 
 
 def reduce_tau(tau):

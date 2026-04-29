@@ -350,9 +350,8 @@ class ManifoldSubset(UniqueRepresentation, Parent):
                 for chart, coords in point._coordinates.items():
                     resu._coordinates[chart] = coords
                 return resu
-            else:
-                raise ValueError("the {}".format(point) +
-                                 " is not in {}".format(self))
+            raise ValueError("the {}".format(point) +
+                             " is not in {}".format(self))
         return self.element_class(self, coords=coords, chart=chart,
                                   name=name, latex_name=latex_name,
                                   check_coords=check_coords)
@@ -1775,8 +1774,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         """
         if subsets:
             return any(subset._has_defined_points for subset in self.subsets())
-        else:
-            return self._has_defined_points
+        return self._has_defined_points
 
     def point(self, coords=None, chart=None, name=None, latex_name=None):
         r"""
