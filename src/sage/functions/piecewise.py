@@ -408,9 +408,8 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f.domain()
                 [0, 2)
             """
-            intervals = []
-            for domain, func in parameters:
-                intervals += list(domain)
+            intervals = [interval for domain, func in parameters
+                         for interval in iter(domain)]
             return RealSet(*intervals)
 
         def __len__(self, parameters, variable):
@@ -430,7 +429,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def expressions(self, parameters, variable):
             """
-            Return the individual domains.
+            Return the individual expressions.
 
             See also :meth:`~domains`.
 
