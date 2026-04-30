@@ -57,8 +57,8 @@ def multiplicative_iterator(M):
 
     - elements of ``M`` in a deterministic order
 
-   If not all generators have finite multiplicative order, an
-   ``ArithmeticError`` is raised.
+    If not all generators have finite multiplicative order, an
+    ``ArithmeticError`` is raised.
     """
     from sage.rings.infinity import infinity
 
@@ -117,8 +117,8 @@ def abelian_iterator(M):
 
     - elements of ``M`` in a deterministic order
 
-   If not all generators have finite additive order, an
-   ``ArithmeticError`` is raised.
+    If not all generators have finite additive order, an
+    ``ArithmeticError`` is raised.
     """
     from sage.rings.infinity import infinity
 
