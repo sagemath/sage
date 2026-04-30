@@ -4603,17 +4603,13 @@ def reduce_riemann_matrix(M, Z):
     - ``Z'`` -- the reduced Riemann matrix
 
     EXAMPLES::
-
-        sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface, reduce_riemann_matrix
-        sage: R.<x,y> = QQ[]
-        sage: f = y^2 - x^6 - 1
-        sage: S = RiemannSurface(f, prec=50, integration_method='rigorous')
+        sage: from sage.schemes.riemann_surfaces.riemann_surface import reduce_riemann_matrix
+        sage: CC = ComplexField(53)
+        sage: Z = Matrix(CC, [[1 + I, 1/2], [1/2, 1 + I]])
         sage: M = Matrix(ZZ, [[1, 1, 0, 0], [0, 0, 1, 1]])
-        sage: Z = S.riemann_matrix()
-        sage: Z_prime = reduce_riemann_matrix(M, Z)
-        sage: Z_prime # abs tol 1e-10
-        [   -0.37500000000000 + 0.21650635094611*I -0.50000000000000 - 4.4408920985006e-16*I]
-        [-0.50000000000000 - 3.0730409244296e-16*I      1.5000000000000 + 0.86602540378444*I]
+        sage: reduce_riemann_matrix(M, Z)  # abs tol 1e-10
+        [-0.230769230769231 + 0.153846153846154*I                       -0.500000000000000]
+        [                      -0.500000000000000  0.250000000000000 + 0.500000000000000*I]
     """
     _, _, T = poincare_form(M, transformation=True)
     n = M.ncols() // 2
