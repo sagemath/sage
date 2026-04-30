@@ -2425,6 +2425,41 @@ def is_kernel_polynomial(E, m, f):
     return True
 
 
+def _factor_division_polynomial_with_singular(f):
+    r"""
+    Return the factorization of a division polynomial.
+
+    Use Singular for extension finite fields: PARI's finite-field
+    factorization can be very slow on some binary extension fields.
+
+    TESTS::
+
+        sage: from sage.schemes.elliptic_curves.isogeny_small_degree import _factor_division_polynomial_with_singular
+        sage: F.<a> = GF(8)
+        sage: E = EllipticCurve(F, [1, 0, 0, 0, a^2 + a])
+        sage: psi = E.division_polynomial(19)
+        sage: factorization = _factor_division_polynomial_with_singular(psi)
+        sage: [g.degree() for g, _ in factorization]
+        [9, 9, 18, 18, 18, 18, 18, 18, 18, 18, 18]
+    """
+    R = f.base_ring()
+    if R.is_finite() and hasattr(R, 'is_prime_field') and not R.is_prime_field():
+        P = f.parent()
+        if P._has_singular:
+            P._singular_().set_ring()
+            S = f._singular_().factorize()
+            factors = S[1]
+            exponents = S[2]
+            result = []
+            for i in range(len(factors)):
+                factor = P(factors[i + 1])
+                if not factor.is_unit():
+                    result.append((factor, ZZ(exponents[i + 1])))
+            return sorted(result)
+
+    return list(f.factor())
+
+
 def isogenies_prime_degree_general(E, l, minimal_models=True):
     """
     Return all separable ``l``-isogenies with domain ``E``.
@@ -2587,6 +2622,14 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
         ....:  for phi in E.isogenies_prime_degree(37)]
         [(0, 0, 0, 840*i + 1081, 0),
          (0, 0, 0, -840*i + 1081, 0)]
+
+    Check a binary extension field where PARI factorization of the
+    division polynomial can be very slow::
+
+        sage: F.<a> = GF(8)
+        sage: E = EllipticCurve(F, [1, 0, 0, 0, a^2 + a])
+        sage: [phi.degree() for phi in isogenies_prime_degree_general(E, 19)]
+        [19, 19]
     """
     if not l.is_prime():
         raise ValueError(f"{l} is not prime")
@@ -2597,7 +2640,8 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
 
     psi_l = E.division_polynomial(l)
 
-    factors = [h for h,_ in psi_l.factor() if h.degree().divides(l//2)]
+    factors = [h for h, _ in _factor_division_polynomial_with_singular(psi_l)
+               if h.degree().divides(l//2)]
 
     kernels = []  # will store all kernel polynomials found
 
