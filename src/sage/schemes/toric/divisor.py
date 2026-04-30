@@ -167,6 +167,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from itertools import combinations
 from sage.combinat.combination import Combinations
 import sage.geometry.abc
 from sage.geometry.polyhedron.constructor import Polyhedron
@@ -1295,13 +1296,16 @@ class ToricDivisor_generic(Divisor_generic):
         ray_is_negative = [m * ray + self.coefficient(i) < 0
                            for i, ray in enumerate(fan.rays())]
 
-        def cone_is_negative(cone):  # and non-trivial
+        simplicial_faces = set()
+        for cone in flatten(fan.cones()):
             if cone.is_trivial():
-                return False
-            return all(ray_is_negative[i] for i in cone.ambient_ray_indices())
-
-        negative_cones = [cone for cone in flatten(fan.cones()) if cone_is_negative(cone)]
-        return SimplicialComplex([c.ambient_ray_indices() for c in negative_cones])
+                continue
+            negative_indices = [i for i in cone.ambient_ray_indices()
+                                if ray_is_negative[i]]
+            for k in range(1, len(negative_indices) + 1):
+                for face in combinations(negative_indices, k):
+                    simplicial_faces.add(tuple(sorted(face)))
+        return SimplicialComplex(sorted(simplicial_faces))
 
     def _sheaf_cohomology(self, cplx):
         """
