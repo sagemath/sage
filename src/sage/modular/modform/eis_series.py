@@ -160,15 +160,13 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
         return R(E, prec)
         # The following is an older slower alternative to the above three lines:
         # return a0fac*R(eisenstein_series_poly(k, prec).list(), prec=prec, check=False)
-    else:
-        # This used to work with check=False, but that can only be regarded as
-        # an improbable lucky miracle. Enabling checking is a noticeable speed
-        # regression; the morally right fix would be to expose FLINT's
-        # fmpz_poly_to_nmod_poly command (at least for word-sized N).
-        if a0fac is not None:
-            return a0fac*R(eisenstein_series_poly(k, prec).list(), prec=prec, check=True)
-        else:
-            return R(eisenstein_series_poly(k, prec).list(), prec=prec, check=True)
+    # This used to work with check=False, but that can only be regarded as
+    # an improbable lucky miracle. Enabling checking is a noticeable speed
+    # regression; the morally right fix would be to expose FLINT's
+    # fmpz_poly_to_nmod_poly command (at least for word-sized N).
+    if a0fac is not None:
+        return a0fac*R(eisenstein_series_poly(k, prec).list(), prec=prec, check=True)
+    return R(eisenstein_series_poly(k, prec).list(), prec=prec, check=True)
 
 
 def __common_minimal_basering(chi, psi):
@@ -480,7 +478,6 @@ def compute_eisenstein_params(character, k):
     """
     if isinstance(character, (int, Integer)):
         return __find_eisen_chars_gamma1(character, k)
-    elif isinstance(character, GammaH_class):
+    if isinstance(character, GammaH_class):
         return __find_eisen_chars_gammaH(character.level(), character._generators_for_H(), k)
-    else:
-        return __find_eisen_chars(character, k)
+    return __find_eisen_chars(character, k)

@@ -58,8 +58,7 @@ def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
         number_str = "%d" % number
     if number == 1:
         return "%s %s%s" % (number_str, noun, pad_noun)
-    else:
-        return "%s %s" % (number_str, plural)
+    return "%s %s" % (number_str, plural)
 
 
 def dict_difference(self, other):
@@ -164,20 +163,20 @@ class Timer:
             sage: from tempfile import NamedTemporaryFile
             sage: from os import unlink
             sage: from sage.doctest.util import Timer
-            sage: with NamedTemporaryFile(delete=False, mode="w") as f:
+            sage: with NamedTemporaryFile(mode="w", delete_on_close=False) as f:
             ....:     _ = f.write("1 2 3 4 5")
-            sage: cputime = Timer()._proc_stat_cpu_seconds(f.name)
+            ....:     f.close()
+            ....:     cputime = Timer()._proc_stat_cpu_seconds(f.name)
             Traceback (most recent call last):
             ...
             OSError: unable to parse ...
-            sage: os.unlink(f.name)
-            sage: with NamedTemporaryFile(delete=False, mode="w") as f:
+            sage: with NamedTemporaryFile(mode="w", delete_on_close=False) as f:
             ....:     _ = f.write("1 2 3 4 5 6 7 8 9 10 11 12 w x y z 17")
-            sage: cputime = Timer()._proc_stat_cpu_seconds(f.name)
+            ....:     f.close()
+            ....:     cputime = Timer()._proc_stat_cpu_seconds(f.name)
             Traceback (most recent call last):
             ...
             OSError: unable to parse ...
-            sage: os.unlink(f.name)
 
         """
         try:

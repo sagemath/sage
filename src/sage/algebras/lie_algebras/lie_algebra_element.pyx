@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat
 """
 Lie Algebra Elements
 

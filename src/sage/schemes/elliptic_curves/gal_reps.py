@@ -453,7 +453,9 @@ class GaloisRepresentation(SageObject):
             sage: rho._is_surjective(7,100)
             True
 
-        TEST for :issue:`8451`::
+        TEST:
+
+        Test for :issue:`8451`::
 
             sage: E = EllipticCurve('648a1')
             sage: rho = E.galois_representation()
@@ -541,8 +543,7 @@ class GaloisRepresentation(SageObject):
             if n == 24:
                 self.__image_type[p] = "The image is all of GL_2(F_3)."
                 return True   #, None
-            else:
-                return False   #, "3-divpoly_galgroup_order_%s"%n
+            return False   #, "3-divpoly_galgroup_order_%s"%n
 
         if self._E.has_cm():
             return False   #, "CM"
@@ -886,10 +887,9 @@ class GaloisRepresentation(SageObject):
             if self._E.is_supersingular(p):
                 self.__image_type[p] = non_split_str + " (cm)"
                 return self.__image_type[p]
-            else:
-                # if the reduction is bad (additive nec.) then
-                # the image is in a Borel subgroup and we should have found this before
-                raise NotImplementedError("image_type is not implemented for cm-curves at bad prime.")
+            # if the reduction is bad (additive nec.) then
+            # the image is in a Borel subgroup and we should have found this before
+            raise NotImplementedError("image_type is not implemented for cm-curves at bad prime.")
 
         # now to p=5 where a lot of non-standard thing happen
         # we run through primes if we hit an element of order 6 in PGL_2, we know that it is the normaliser of a NON-split Cartan

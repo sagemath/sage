@@ -451,6 +451,36 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
         # TODO: inseparable case should be consistent with Frobenius' .kernel_polynomial()
         return self._domain.division_polynomial(self._m.abs()).monic().radical()
 
+    def kernel_subgroup(self, *, extend=False, algorithm=None):
+        r"""
+        Return the kernel subgroup of this scalar-multiplication
+        endomorphism :class:`AdditiveAbelianGroupWrapper`.
+
+        Since this morphism is a scalar multiplication `[m]`,
+        the kernel is simply the `m`-torsion subgroup.
+
+        ALGORITHM:
+
+        This method defers to ``self.domain().torsion_subgroup()``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [5,5])
+            sage: phi = E.scalar_multiplication(7)
+            sage: phi.kernel_subgroup()
+            Traceback (most recent call last):
+            ...
+            ValueError: kernel subgroup has no generating points over the base field
+            sage: phi.kernel_subgroup(extend=True)
+            Additive abelian group isomorphic to Z/7 + Z/7
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 5*x + 5
+                over Finite Field in t of size 101^6
+        """
+        ker = self.domain().torsion_subgroup(self._m, extend=extend, algorithm=algorithm)
+        if ker.order() != self.separable_degree():
+            raise ValueError('kernel subgroup has no generating points over the base field')
+        return ker
+
     def dual(self):
         """
         Return the dual isogeny of this scalar-multiplication map.

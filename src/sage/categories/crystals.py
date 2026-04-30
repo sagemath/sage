@@ -142,12 +142,10 @@ class Crystals(Category_singleton):
         import sage.categories.examples.crystals as examples
         if choice == "naive":
             return examples.NaiveCrystal(**kwds)
-        else:
-            from sage.rings.integer import Integer
-            if isinstance(choice, Integer):
-                return examples.HighestWeightCrystalOfTypeA(n=choice, **kwds)
-            else:
-                return examples.HighestWeightCrystalOfTypeA(**kwds)
+        from sage.rings.integer import Integer
+        if isinstance(choice, Integer):
+            return examples.HighestWeightCrystalOfTypeA(n=choice, **kwds)
+        return examples.HighestWeightCrystalOfTypeA(**kwds)
 
     class MorphismMethods:
         @cached_method

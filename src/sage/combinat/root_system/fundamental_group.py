@@ -198,8 +198,7 @@ def FundamentalGroupOfExtendedAffineWeylGroup(cartan_type, prefix='pi',
     if general_linear is True:
         if cartan_type.is_untwisted_affine() and cartan_type.type() == "A":
             return FundamentalGroupGL(cartan_type, prefix)
-        else:
-            raise ValueError("General Linear Fundamental group is untwisted type A")
+        raise ValueError("General Linear Fundamental group is untwisted type A")
     return FundamentalGroupOfExtendedAffineWeylGroup_Class(cartan_type, prefix,
                                                            finite=True)
 

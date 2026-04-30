@@ -2997,15 +2997,16 @@ cdef class Matroid(SageObject):
             flags = self._extend_flags(flags)
         return flags
 
-    cpdef SetSystem flats(self, long k):
+    cpdef SetSystem flats(self, long k=-1):
         r"""
-        Return the collection of flats of the matroid of specified rank.
+        Return the flats of the matroid.
 
         A *flat* is a closed set.
 
         INPUT:
 
-        - ``k`` -- integer
+        - ``k`` -- integer (optional); if specified, return the rank-`k`
+          flats of the matroid
 
         OUTPUT: :class:`SetSystem`
 
@@ -3020,8 +3021,22 @@ cdef class Matroid(SageObject):
             [['a', 'b', 'f'], ['a', 'c', 'e'], ['a', 'd', 'g'],
             ['b', 'c', 'd'], ['b', 'e', 'g'], ['c', 'f', 'g'],
             ['d', 'e', 'f']]
+
+        TESTS::
+
+            sage: M = matroids.catalog.Vamos()
+            sage: M.flats(2)
+            SetSystem of 28 sets over 8 elements
+            sage: M.flats()
+            SetSystem of 79 sets over 8 elements
         """
-        return SetSystem(self.groundset(), subsets=[f[0] for f in self._flags(k)])
+        cdef list F = []
+        if k == -1:
+            for i in range(self.rank() + 1):
+                F.extend([f[0] for f in self._flags(i)])
+        else:
+            F.extend([f[0] for f in self._flags(k)])
+        return SetSystem(self.groundset(), F)
 
     cpdef SetSystem coflats(self, long k):
         r"""
@@ -4685,27 +4700,27 @@ cdef class Matroid(SageObject):
             ....:                               [frozenset(M.groundset())])
             set()
         """
-        final_list = set()
-        temp_list = set([self.closure(X) for X in subsets])  # Checks validity
-        while temp_list:
-            F = temp_list.pop()
+        final_set = set()
+        temp_set = {self.closure(X) for X in subsets}  # Checks validity
+        while temp_set:
+            F = temp_set.pop()
             r = self._rank(F)
             # Check modular pairs
-            for FF in final_list:
+            for FF in final_set:
                 H = FF.intersection(F)
                 rH = self._rank(H)
                 if rH < r:
                     if rH + self._rank(FF.union(F)) == self._rank(FF) + r:
-                        if H not in final_list:
-                            temp_list.add(H)
+                        if H not in final_set:
+                            temp_set.add(H)
             # Check upper closure (going just one level up)
             if r < self.full_rank() - 1:
                 for e in self.groundset().difference(F):
                     FF = self.closure(F.union([e]))
-                    if self._rank(FF) > r and FF not in final_list:
-                        temp_list.add(FF)
-            final_list.add(F)
-        return final_list
+                    if self._rank(FF) > r and FF not in final_set:
+                        temp_set.add(FF)
+            final_set.add(F)
+        return final_set
 
     cpdef linear_subclasses(self, line_length=None, subsets=None):
         r"""
@@ -6076,7 +6091,7 @@ cdef class Matroid(SageObject):
         if not (self.is_connected() and self.is_simple() and self.is_cosimple()):
             return False
         basis = self.basis()
-        fund_cocircuits = set([self._fundamental_cocircuit(basis, e) for e in basis])
+        fund_cocircuits = {self._fundamental_cocircuit(basis, e) for e in basis}
         return self._is_3connected_BC_recursion(self.basis(), fund_cocircuits)
 
     cpdef _is_3connected_BC_recursion(self, basis, fund_cocircuits):
@@ -6168,10 +6183,10 @@ cdef class Matroid(SageObject):
             N = M.simplify()
             new_basis = basis & (B | Y)
             # the set of fundamental cocircuit that might be separating for N
-            cocirc = set([M._fundamental_cocircuit(new_basis, e) for e in new_basis])
+            cocirc = {M._fundamental_cocircuit(new_basis, e) for e in new_basis}
             cocirc &= fund_cocircuits
             fund_cocircuits -= cocirc
-            cocirc = set([x & N.groundset() for x in cocirc])
+            cocirc = {x & N.groundset() for x in cocirc}
             if not N._is_3connected_BC_recursion(new_basis, cocirc):
                 return False
         return True
@@ -8305,6 +8320,8 @@ cdef class Matroid(SageObject):
 
         TESTS::
 
+            sage: M = matroids.catalog.Fano()
+            sage: assert M.broken_circuit_complex().is_immutable()                      # needs sage.graphs
             sage: for M in matroids.AllMatroids(5):  # optional - matroid_database
             ....:     r = M.rank()
             ....:     if r > 0 and not M.dual().loops():
@@ -8323,7 +8340,7 @@ cdef class Matroid(SageObject):
         for S in self.no_broken_circuits_sets_iterator(ordering):
             if len(S) == r:
                 facets.append(S)
-        return SimplicialComplex(facets, maximality_check=False)
+        return SimplicialComplex(facets, maximality_check=False, immutable=True)
 
     cpdef automorphism_group(self):
         r"""
@@ -8644,5 +8661,4 @@ cdef class Matroid(SageObject):
             X_inv = frozenset([d_inv[x] for x in X])
             return self._rank(X_inv)
 
-        M = RankMatroid(groundset=E, rank_function=f_relabel)
-        return M
+        return RankMatroid(groundset=E, rank_function=f_relabel)

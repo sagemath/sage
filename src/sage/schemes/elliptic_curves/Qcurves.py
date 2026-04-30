@@ -241,8 +241,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
                     return True, {'CM': d * f**2}
             # else not CM
             return True, {'CM': ZZ(0), 'r': ZZ(0), 'rho': ZZ(0), 'N': ZZ(1), 'core_poly': polygen(QQ)}
-        else:
-            return True
+        return True
 
     # CM curves are Q-curves:
     flag, df = is_cm_j_invariant(jE)
@@ -253,8 +252,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
             print("Yes: E is CM (discriminant {})".format(D))
         if certificate:
             return True, {'CM': D}
-        else:
-            return True
+        return True
 
     # Step 2: replace E by a curve defined over Q(j(E)):
 
@@ -290,8 +288,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
                 print("  - potentially multiplicative: {}".format(pot_mult))
             if certificate:
                 return False, p
-            else:
-                return False
+            return False
 
     # Step 4 check: primes P of good reduction above p<=B:
 
@@ -304,8 +301,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
             print("No: local test at p={} failed".format(p))
         if certificate:
             return False, p
-        else:
-            return False
+        return False
 
     if verbose:
         print("...all local tests pass for p<={}".format(maxp))
@@ -355,8 +351,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
             print("No: local test at p={} failed".format(p))
         if certificate:
             return False, p
-        else:
-            return False
+        return False
 
     # Now we rerun Step 5 using a rigorous computation of the complete
     # isogeny class.  This will probably contain no more curves than
@@ -376,8 +371,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
             print("...and find that we already had the complete class:so No")
         if certificate:
             return False, 0
-        else:
-            return False
+        return False
     if verbose:
         print("...and find that the class contains {} curves, not just the {} we computed originally".format(len(jCfull), len(jC)))
     centrejpols = conjugacy_test(jCfull, verbose=verbose)
@@ -386,14 +380,12 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
             print("Yes: the isogeny class contains a complete conjugacy class of j-invariants")
         if certificate:
             return True, centrejpols
-        else:
-            return True
+        return True
     if verbose:
         print("No: the isogeny class does *not* contain a complete conjugacy class of j-invariants")
     if certificate:
         return False, 0
-    else:
-        return False
+    return False
 
 
 def Step4Test(E, B, oldB=0, verbose=False):

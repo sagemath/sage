@@ -11,7 +11,7 @@ import doctest
 import inspect
 import sys
 import warnings
-from typing import Any, Iterable, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional
 
 import pytest
 from _pytest.doctest import (
@@ -32,6 +32,7 @@ from sage.doctest.forker import (
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from pathlib import Path
 
 
@@ -118,12 +119,7 @@ class SageDoctestModule(DoctestModule):
                     if isinstance(exception, ModuleNotFoundError):
                         # Ignore some missing features/modules for now
                         # TODO: Remove this once all optional things are using Features
-                        if exception.name in (
-                            "valgrind",
-                            "rpy2",
-                            "sage.libs.coxeter3.coxeter",
-                            "sagemath_giac",
-                        ):
+                        if exception.name == "valgrind":
                             pytest.skip(
                                 f"unable to import module {self.path} due to missing feature {exception.name}"
                             )
@@ -196,18 +192,8 @@ def pytest_collect_file(
                 # We don't allow tests to be defined in __main__.py/setup.py files (because their import will fail).
                 return IgnoreCollector.from_parent(parent)
             if (
-                (
-                    file_path.name == "postprocess.py"
-                    and file_path.parent.name == "nbconvert"
-                )
-                or (
-                    file_path.name == "giacpy-mkkeywords.py"
-                    and file_path.parent.name == "autogen"
-                )
-                or (
-                    file_path.name == "flint_autogen.py"
-                    and file_path.parent.name == "autogen"
-                )
+                file_path.name == "postprocess.py"
+                and file_path.parent.name == "nbconvert"
             ):
                 # This is an executable file.
                 return IgnoreCollector.from_parent(parent)
@@ -270,7 +256,7 @@ def pytest_collect_file(
 
 def pytest_ignore_collect(
     collection_path: Path, config: pytest.Config
-) -> None | bool:
+) -> bool | None:
     """
     This hook is called when collecting test files, and can be used to
     prevent considering this path for collection by returning ``True``.
@@ -390,8 +376,8 @@ def tmpfile():
     * https://github.com/pytest-dev/pytest/issues/13669
 
     """
-    from tempfile import NamedTemporaryFile
     from os import unlink
+    from tempfile import NamedTemporaryFile
     t = NamedTemporaryFile(delete=False)
     yield t
     unlink(t.name)

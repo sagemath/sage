@@ -73,7 +73,7 @@ from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.integral_domains import IntegralDomains
 from sage.modules import free_module
 import sage.matrix.matrix_space
-import sage.misc.latex as latex
+from sage.misc import latex
 
 # #############################################################################
 #
@@ -134,7 +134,6 @@ def FreeQuadraticModule(base_ring, rank, inner_product_matrix,
         [1 0]
         [0 1]
     """
-    global _cache
     rank = int(rank)
 
     # In order to use coercion into the inner_product_ring we need to pass

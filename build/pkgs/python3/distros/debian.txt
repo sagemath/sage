@@ -1,4 +1,0 @@
-python3
-libpython3-dev
-python3-setuptools
-python3-venv

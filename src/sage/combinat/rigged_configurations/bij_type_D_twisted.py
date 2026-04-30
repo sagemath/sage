@@ -162,7 +162,7 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
         if val == 'E':
             KRTToRCBijectionTypeA2Even.next_state(self, val)
             return
-        elif val > 0:
+        if val > 0:
             # If it is a regular value, we follow the A_n rules
             KRTToRCBijectionTypeA.next_state(self, val)
             if tableau_height >= n - 1:

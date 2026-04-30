@@ -28,10 +28,14 @@ polymake has been described in [GJ1997]_, [GJ2006]_, [JMP2009]_, [GJRW2010]_,
 import os
 import re
 
-from .interface import (Interface, InterfaceElement, InterfaceFunctionElement)
-from sage.misc.verbose import get_verbose
-from sage.misc.cachefunc import cached_method
+from sage.interfaces.interface import (
+    Interface,
+    InterfaceElement,
+    InterfaceFunctionElement,
+)
 from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.misc.cachefunc import cached_method
+from sage.misc.verbose import get_verbose
 from sage.structure.richcmp import rich_to_bool
 
 _name_pattern = re.compile('SAGE[0-9]+')
@@ -1531,7 +1535,7 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
                 if r == '':
                     return vector(base_ring)
                 return vector(base_ring, [str_to_base_ring(s) for s in r.split(' ')])
-            elif 'Matrix' in T1:
+            if 'Matrix' in T1:
                 from sage.matrix.constructor import matrix
                 if r == '':
                     return matrix(base_ring)
@@ -1553,21 +1557,19 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
             if r is None:
                 # Prints like a rational, so we can't know the extension. Coerce to rational.
                 return QQ(a)
-            else:
-                from sage.rings.number_field.number_field import QuadraticField
-                K = QuadraticField(r)
-                return QQ(a) + QQ(b) * K.gen()
-        elif T1 == 'Vector' or T1 == 'SparseVector':
+            from sage.rings.number_field.number_field import QuadraticField
+            K = QuadraticField(r)
+            return QQ(a) + QQ(b) * K.gen()
+        if T1 == 'Vector' or T1 == 'SparseVector':
             from sage.modules.free_module_element import vector
             return vector([x.sage() for x in self])
-        elif T1 == 'Matrix' or T1 == 'SparseMatrix':
+        if T1 == 'Matrix' or T1 == 'SparseMatrix':
             from sage.matrix.constructor import matrix
             return matrix([x.sage() for x in self])
-        elif T1 == 'Polytope':
+        if T1 == 'Polytope':
             from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
             return Polyhedron_polymake._from_polymake_polytope(None, self)
-        else:
-            return super()._sage_()
+        return super()._sage_()
 
     def _sage_doc_(self):
         """

@@ -139,8 +139,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
             assert i in self.index_set()
             if self.value == i+1:
                 return self.parent()(self.value-1)
-            else:
-                return None
+            return None
 
         def f(self, i):
             r"""
@@ -155,8 +154,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
             assert i in self.index_set()
             if self.value == i:
                 return self.parent()(self.value+1)
-            else:
-                return None
+            return None
 
 
 class NaiveCrystal(UniqueRepresentation, Parent):

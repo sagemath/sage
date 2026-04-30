@@ -441,8 +441,7 @@ class PartitionTuple(CombinatorialElement):
 
         if len(mu) == 1:
             return _Partitions(mu[0])
-        else:
-            return PartitionTuples_all().element_class(PartitionTuples_all(), mu)
+        return PartitionTuples_all().element_class(PartitionTuples_all(), mu)
 
     def __init__(self, parent, mu):
         """
@@ -809,8 +808,7 @@ class PartitionTuple(CombinatorialElement):
             diag.append(line.rstrip())
         if PartitionTuples.options('convention') == "English":
             return '\n'.join(map(str, diag))
-        else:
-            return '\n'.join(map(str, diag[::-1]))
+        return '\n'.join(map(str, diag[::-1]))
 
     ferrers_diagram = diagram
 
@@ -1435,8 +1433,7 @@ class PartitionTuple(CombinatorialElement):
             else:
                 mu[k][r] += 1
             return PartitionTuple(mu)
-        else:
-            raise ValueError("%s is not an addable cell" % ((k, r, c),))
+        raise ValueError("%s is not an addable cell" % ((k, r, c),))
 
     def remove_cell(self, k, r, c):
         """
@@ -1454,8 +1451,7 @@ class PartitionTuple(CombinatorialElement):
             mu = self.to_list()
             mu[k][r] -= 1
             return PartitionTuple(mu)
-        else:
-            raise ValueError("%s is not a removable cell" % ((k, r, c),))
+        raise ValueError("%s is not a removable cell" % ((k, r, c),))
 
     def to_list(self):
         r"""
@@ -1851,7 +1847,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
                 return PartitionTuples_size(size)
             return RegularPartitionTuples_size(size, regular)
 
-        elif level == 1:
+        if level == 1:
             if isinstance(regular, (list, tuple)):
                 regular = regular[0]
             if size is None:
@@ -1990,7 +1986,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
         """
         if isinstance(r,(int,Integer)):
             return self.unrank(r)
-        elif isinstance(r,slice):
+        if isinstance(r,slice):
             start = 0 if r.start is None else r.start
             stop = r.stop
             if stop is None and not self.is_finite():
