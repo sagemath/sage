@@ -523,7 +523,8 @@ class Mathics(Interface):
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore")
                 from mathics.session import MathicsSession
-                import sys, os
+                import sys
+                import os
 
                 with open(os.devnull, "w") as devnull:
                     old_stdout = sys.stdout
