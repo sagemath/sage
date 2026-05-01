@@ -477,7 +477,6 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
             sage: x.exp(algorithm='newton')   # indirect doctest

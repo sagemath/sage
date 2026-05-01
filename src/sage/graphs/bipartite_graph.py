@@ -196,7 +196,6 @@ class BipartiteGraph(Graph):
 
     #. From a reduced adjacency matrix::
 
-        sage: # needs sage.modules
         sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),
         ....:             (0,1,0,1,0,1,0), (1,1,0,1,0,0,1)])
         sage: M
@@ -243,7 +242,6 @@ class BipartiteGraph(Graph):
 
        ::
 
-         sage: # needs sage.modules sage.rings.finite_rings
          sage: F.<a> = GF(4)
          sage: MS = MatrixSpace(F, 2, 3)
          sage: M = MS.matrix([[0, 1, a + 1], [a, 1, 1]])
@@ -256,15 +254,15 @@ class BipartiteGraph(Graph):
     #. From an alist file::
 
          sage: import tempfile
-         sage: with tempfile.NamedTemporaryFile(mode='w+t') as f:
+         sage: with tempfile.NamedTemporaryFile(mode='w+t', delete_on_close=False) as f:
          ....:     _ = f.write("7 4 \n 3 4 \n 3 3 1 3 1 1 1 \n\
          ....:                  3 3 3 4 \n 1 2 4 \n 1 3 4 \n 1 0 0 \n\
          ....:                  2 3 4 \n 2 0 0 \n 3 0 0 \n 4 0 0 \n\
          ....:                  1 2 3 0 \n 1 4 5 0 \n 2 4 6 0 \n\
          ....:                  1 2 4 7 \n")
-         ....:     f.flush()
+         ....:     f.close()
          ....:     B = BipartiteGraph(f.name)
-         sage: B.is_isomorphic(H)                                                       # needs sage.modules
+         sage: B.is_isomorphic(H)
          True
 
     #. From a ``graph6`` string::
@@ -329,7 +327,6 @@ class BipartiteGraph(Graph):
     Ensure that we can construct a ``BipartiteGraph`` with isolated vertices via
     the reduced adjacency matrix (:issue:`10356`)::
 
-        sage: # needs sage.modules
         sage: a = BipartiteGraph(matrix(2, 2, [1, 0, 1, 0]))
         sage: a
         Bipartite graph on 4 vertices
@@ -354,6 +351,23 @@ class BipartiteGraph(Graph):
         Traceback (most recent call last):
         ...
         ValueError: cannot add edge from 0 to 0 in graph without loops
+
+    Check that construction from a file works with immutable graphs::
+
+        sage: import tempfile, os
+        sage: content = "2 2\n2 2\n2 2\n2 2\n1 2\n1 2\n1 2\n1 2\n"
+        sage: fd, path = tempfile.mkstemp()
+        sage: with os.fdopen(fd, 'w') as f:
+        ....:     _ = f.write(content)
+        sage: B = BipartiteGraph(path, immutable=False)
+        sage: B.is_immutable()
+        False
+        sage: B = BipartiteGraph(path, immutable=True)
+        sage: B.is_immutable()
+        True
+        sage: set((u, v) for u, v, _ in B.edges()) == {(0,2), (0,3), (1,2), (1,3)}
+        True
+        sage: os.unlink(path)
     """
 
     def __init__(self, data=None, partition=None, check=True, hash_labels=None, *args, **kwds):
@@ -418,6 +432,8 @@ class BipartiteGraph(Graph):
                 raise ValueError('loops are not allowed in bipartite graphs')
             kwds['loops'] = False
 
+        immutable_request = kwds.get("immutable", False)
+
         if data is None:
             if partition is not None and check:
                 if partition[0] or partition[1]:
@@ -426,6 +442,7 @@ class BipartiteGraph(Graph):
             self.left = set()
             self.right = set()
             self._hash_labels = hash_labels
+
             return
 
         # need to turn off partition checking for Graph.__init__() adding
@@ -436,8 +453,6 @@ class BipartiteGraph(Graph):
         self.add_vertices = MethodType(Graph.add_vertices, self)
         self.add_edge = MethodType(Graph.add_edge, self)
         self.add_edges = MethodType(Graph.add_edges, self)
-        alist_file = True
-
         from sage.structure.element import Matrix
         if isinstance(data, BipartiteGraph):
             Graph.__init__(self, data, *args, **kwds)
@@ -446,14 +461,16 @@ class BipartiteGraph(Graph):
         elif isinstance(data, str):
             import os
             alist_file = os.path.exists(data)
-            Graph.__init__(self, data=None if alist_file else data, *args, **kwds)
+            if alist_file:
+                self.load_afile(data, immutable=immutable_request)
+            else:
+                Graph.__init__(self, data, *args, **kwds)
 
-            # methods; initialize left and right attributes
-            self.left = set()
-            self.right = set()
+                # methods; initialize left and right attributes
+                self.left = set()
+                self.right = set()
 
-            # determine partitions and populate self.left and self.right
-            if not alist_file:
+                # determine partitions and populate self.left and self.right
                 if partition is not None:
                     left, right = set(partition[0]), set(partition[1])
 
@@ -565,11 +582,6 @@ class BipartiteGraph(Graph):
         del self.add_vertices
         del self.add_edge
         del self.add_edges
-
-        # post-processing
-        if isinstance(data, str):
-            if alist_file:
-                self.load_afile(data)
 
         if hash_labels is None and hasattr(data, '_hash_labels'):
             hash_labels = data._hash_labels
@@ -1563,7 +1575,6 @@ class BipartiteGraph(Graph):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: g = BipartiteGraph(matrix.ones(4, 3))
             sage: g.matching_polynomial()                                               # needs sage.libs.flint
             x^7 - 12*x^5 + 36*x^3 - 24*x
@@ -1572,7 +1583,7 @@ class BipartiteGraph(Graph):
         """
         if algorithm == "Godsil":
             return Graph.matching_polynomial(self, complement=False, name=name)
-        elif algorithm == "rook":
+        if algorithm == "rook":
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             A = self.reduced_adjacency_matrix()
             a = A.rook_vector()
@@ -1740,10 +1751,17 @@ class BipartiteGraph(Graph):
         for m in rec(G):
             yield from itertools.product(*[edges[frozenset(e)] for e in m])
 
-    def load_afile(self, fname):
+    def load_afile(self, fname, immutable=False):
         r"""
         Load into the current object the bipartite graph specified in the given
         file name.
+
+        INPUT:
+
+        - ``fname`` -- string; file name in alist format
+
+        - ``immutable`` -- boolean (default: ``False``); whether to load
+          the graph with an immutable backend
 
         This file should follow David MacKay's alist format, see
         http://www.inference.phy.cam.ac.uk/mackay/codes/data.html for examples
@@ -1752,13 +1770,13 @@ class BipartiteGraph(Graph):
         EXAMPLES::
 
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(mode='w+t') as f:
+            sage: with tempfile.NamedTemporaryFile(mode='w+t', delete_on_close=False) as f:
             ....:     _ = f.write("7 4 \n 3 4 \n 3 3 1 3 1 1 1 \n\
             ....:                 3 3 3 4 \n 1 2 4 \n 1 3 4 \n\
             ....:                 1 0 0 \n 2 3 4 \n 2 0 0 \n 3 0 0 \n\
             ....:                 4 0 0 \n 1 2 3 0 \n 1 4 5 0 \n\
             ....:                 2 4 6 0 \n 1 2 4 7 \n")
-            ....:     f.flush()
+            ....:     f.close()
             ....:     B = BipartiteGraph()
             ....:     B2 = BipartiteGraph(f.name)
             ....:     B.load_afile(f.name)
@@ -1780,6 +1798,8 @@ class BipartiteGraph(Graph):
              sage: B2 == B
              True
         """
+        from types import MethodType
+
         # open the file
         try:
             fi = open(fname)
@@ -1787,39 +1807,52 @@ class BipartiteGraph(Graph):
             print("unable to open file <<" + fname + ">>")
             return None
 
-        # read header information
-        num_cols, num_rows = (int(_) for _ in fi.readline().split())
-        # next are max_col_degree, max_row_degree, not used
-        _ = [int(_) for _ in fi.readline().split()]
-        col_degrees = [int(_) for _ in fi.readline().split()]
-        row_degrees = [int(_) for _ in fi.readline().split()]
+        with fi:
+            # read header information
+            num_cols, num_rows = (int(_) for _ in fi.readline().split())
+            # next are max_col_degree, max_row_degree, not used
+            _ = [int(_) for _ in fi.readline().split()]
+            col_degrees = [int(_) for _ in fi.readline().split()]
+            row_degrees = [int(_) for _ in fi.readline().split()]
 
-        # sanity checks on header info
-        if len(col_degrees) != num_cols:
-            print("invalid Alist format: ")
-            print("number of column degree entries does not match number of columns")
-            return None
-        if len(row_degrees) != num_rows:
-            print("invalid Alist format: ")
-            print("number of row degree entries does not match number of rows")
-            return None
+            # sanity checks on header info
+            if len(col_degrees) != num_cols:
+                print("invalid Alist format: ")
+                print("number of column degree entries does not match number of columns")
+                return None
+            if len(row_degrees) != num_rows:
+                print("invalid Alist format: ")
+                print("number of row degree entries does not match number of rows")
+                return None
 
-        # clear out self
-        self.clear()
-        self.add_vertices(range(num_cols), left=True)
-        self.add_vertices(range(num_cols, num_cols + num_rows), right=True)
+            def edges():
+                # A-list uses 1-based indices with 0s as place-holders.
+                for cidx in range(num_cols):
+                    for ridx in map(int, fi.readline().split()):
+                        if ridx > 0:
+                            yield (cidx, num_cols + ridx - 1)
 
-        # read adjacency information
-        for cidx in range(num_cols):
-            for ridx in map(int, fi.readline().split()):
-                # A-list uses 1-based indices with 0s as place-holders
-                if ridx > 0:
-                    self.add_edge(cidx, num_cols + ridx - 1)
+            saved_methods = {}
+            graph_methods = (("add_vertex", Graph.add_vertex),
+                             ("add_vertices", Graph.add_vertices),
+                             ("add_edge", Graph.add_edge),
+                             ("add_edges", Graph.add_edges))
+            for name, method in graph_methods:
+                if name in self.__dict__:
+                    saved_methods[name] = self.__dict__[name]
+                setattr(self, name, MethodType(method, self))
 
-        # NOTE:: we could read in the row adjacency information as well to
-        #        double-check....
-        # NOTE:: we could check the actual node degrees against the reported
-        #        node degrees....
+            try:
+                Graph.__init__(self, [range(num_cols + num_rows), edges()],
+                               format='vertices_and_edges',
+                               loops=False, multiedges=False,
+                               immutable=immutable)
+            finally:
+                for name, _ in graph_methods:
+                    if name in saved_methods:
+                        setattr(self, name, saved_methods[name])
+                    else:
+                        delattr(self, name)
 
         # now we have all the edges in our graph, just fill in the
         # bipartite partitioning
@@ -1839,7 +1872,6 @@ class BipartiteGraph(Graph):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),
             ....:             (0,1,0,1,0,1,0), (1,1,0,1,0,0,1)])
             sage: M
@@ -1849,7 +1881,7 @@ class BipartiteGraph(Graph):
             [1 1 0 1 0 0 1]
             sage: b = BipartiteGraph(M)
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile() as f:
+            sage: with tempfile.NamedTemporaryFile(delete_on_close=False) as f:
             ....:     b.save_afile(f.name)
             ....:     b2 = BipartiteGraph(f.name)
             sage: b.is_isomorphic(b2)
@@ -1858,27 +1890,27 @@ class BipartiteGraph(Graph):
         TESTS::
 
             sage: import tempfile
-            sage: f = tempfile.NamedTemporaryFile()
-            sage: for order in range(3, 13, 3):                                         # needs sage.combinat
-            ....:     num_chks = int(order / 3)
-            ....:     num_vars = order - num_chks
-            ....:     partition = (list(range(num_vars)), list(range(num_vars, num_vars+num_chks)))
-            ....:     for idx in range(100):
-            ....:         g = graphs.RandomGNP(order, 0.5)
-            ....:         try:
-            ....:             b = BipartiteGraph(g, partition, check=False)
-            ....:             b.save_afile(f.name)
-            ....:             b2 = BipartiteGraph(f.name)
-            ....:             if not b.is_isomorphic(b2):
-            ....:                 print("Load/save failed for code with edges:")
-            ....:                 print(b.edges(sort=True))
-            ....:                 break
-            ....:         except Exception:
-            ....:             print("Exception encountered for graph of order "+ str(order))
-            ....:             print("with edges: ")
-            ....:             g.edges(sort=True)
-            ....:             raise
-            sage: f.close()  # this removes the file
+            sage: with tempfile.NamedTemporaryFile(delete_on_close=False) as f:
+            ....:     for order in range(3, 13, 3):
+            ....:         num_chks = int(order / 3)
+            ....:         num_vars = order - num_chks
+            ....:         partition = (list(range(num_vars)), list(range(num_vars, num_vars+num_chks)))
+            ....:         for idx in range(100):
+            ....:             g = graphs.RandomGNP(order, 0.5)
+            ....:             try:
+            ....:                 b = BipartiteGraph(g, partition, check=False)
+            ....:                 b.save_afile(f.name)
+            ....:                 b2 = BipartiteGraph(f.name)
+            ....:                 if not b.is_isomorphic(b2):
+            ....:                     print("Load/save failed for code with edges:")
+            ....:                     print(b.edges(sort=True))
+            ....:                     break
+            ....:             except Exception:
+            ....:                 print("Exception encountered for graph of order "+ str(order))
+            ....:                 print("with edges: ")
+            ....:                 g.edges(sort=True)
+            ....:                 raise
+
         """
         # open the file
         try:
@@ -1957,7 +1989,6 @@ class BipartiteGraph(Graph):
         Bipartite graphs that are not weighted will return a matrix over ZZ,
         unless a base ring is specified::
 
-            sage: # needs sage.modules
             sage: M = Matrix([(1,1,1,0,0,0,0), (1,0,0,1,1,0,0),
             ....:             (0,1,0,1,0,1,0), (1,1,0,1,0,0,1)])
             sage: B = BipartiteGraph(M)
@@ -1981,7 +2012,6 @@ class BipartiteGraph(Graph):
         Multi-edge graphs also return a matrix over ZZ,
         unless a base ring is specified::
 
-            sage: # needs sage.modules
             sage: M = Matrix([(1,1,2,0,0), (0,2,1,1,1), (0,1,2,1,1)])
             sage: B = BipartiteGraph(M, multiedges=True, sparse=True)
             sage: N = B.reduced_adjacency_matrix()
@@ -1996,7 +2026,6 @@ class BipartiteGraph(Graph):
         Weighted graphs will return a matrix over the ring given by their
         (first) weights, unless a base ring is specified::
 
-            sage: # needs sage.modules sage.rings.finite_rings
             sage: F.<a> = GF(4)
             sage: MS = MatrixSpace(F, 2, 3)
             sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])
@@ -2026,7 +2055,6 @@ class BipartiteGraph(Graph):
         An error is raised if the specified base ring is not compatible with the
         type of the weights of the bipartite graph::
 
-            sage: # needs sage.modules sage.rings.finite_rings
             sage: F.<a> = GF(4)
             sage: MS = MatrixSpace(F, 2, 3)
             sage: M = MS.matrix([[0, 1, a+1], [a, 1, 1]])
@@ -2244,7 +2272,7 @@ class BipartiteGraph(Graph):
                 return Integer(len(d))
             return d
 
-        elif algorithm == "Edmonds" or algorithm == "LP":
+        if algorithm == "Edmonds" or algorithm == "LP":
             return Graph.matching(self, value_only=value_only,
                                   algorithm=algorithm,
                                   use_edge_labels=use_edge_labels,

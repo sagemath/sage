@@ -506,7 +506,6 @@ cdef class PowerSeries_poly(PowerSeries):
 
         In the past this could die with EXC_BAD_ACCESS (:issue:`8029`)::
 
-            sage: # needs sage.rings.real_mpfr
             sage: A.<x> = RR['x']
             sage: B.<t> = PowerSeriesRing(A)
             sage: 1. + O(t)
@@ -602,7 +601,6 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(2)[[]]
             sage: f = t + t^4 + O(t^7)
             sage: f >> 1
@@ -1161,7 +1159,6 @@ cdef class PowerSeries_poly(PowerSeries):
 
         With real coefficients::
 
-            sage: # needs sage.rings.real_mpfr
             sage: R.<z> = RR[[]]
             sage: f = exp(2*z)
             sage: f.pade(3, 3) # abs tol 1e-10
@@ -1169,7 +1166,6 @@ cdef class PowerSeries_poly(PowerSeries):
 
         When precision is too low::
 
-            sage: # needs sage.rings.real_mpfr
             sage: f = z + O(z**6)
             sage: f.pade(4, 4)
             Traceback (most recent call last):
@@ -1202,7 +1198,6 @@ cdef class PowerSeries_poly(PowerSeries):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: R.<x> = PowerSeriesRing(QQ)
             sage: s = R([1,2,3,4,5], prec=10); s
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4 + O(x^10)

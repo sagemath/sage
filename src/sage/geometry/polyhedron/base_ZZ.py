@@ -486,10 +486,9 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             # TO DO: replace this change of variable by creating the appropriate
             #        polynomial ring in the latte interface.
 
-        elif engine == 'normaliz':
+        if engine == 'normaliz':
             return self._ehrhart_polynomial_normaliz(variable)
-        else:
-            raise ValueError("engine must be 'latte' or 'normaliz'")
+        raise ValueError("engine must be 'latte' or 'normaliz'")
 
     @cached_method
     def polar(self):
@@ -929,5 +928,4 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         if permutation:
             return out
-        else:
-            return out[0]
+        return out[0]

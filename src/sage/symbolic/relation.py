@@ -533,7 +533,7 @@ def check_relation_maxima(relation):
 
     if s is True:
         return True
-    elif s is False:
+    if s is False:
         return False  # if neither of these, s=='unknown' and we try a few other tricks
 
     if relation.operator() != operator.eq:
@@ -614,6 +614,47 @@ def string_to_list_of_solutions(s):
     from sage.structure.sequence import Sequence
     v = symbolic_expression_from_maxima_string(s, equals_sub=True)
     return Sequence(v, universe=Objects(), cr_str=True)
+
+
+def _to_poly_solve_unwrap_solution(t):
+    r"""
+    Normalize one term parsed from Maxima's ``to_poly_solve`` output.
+
+    After :func:`string_to_list_of_solutions`, each entry is sometimes a
+    tuple or list ``(equation, \ldots)`` (e.g. equation with multiplicity
+    information) and sometimes a bare symbolic equation.  The old code
+    assumed the former and used ``t[0]``, which raises
+    ``TypeError: 'Expression' object is not subscriptable`` when Maxima
+    returns the latter.
+
+    INPUT:
+
+    - ``t`` -- a tuple, list, :class:`~sage.structure.sequence.Sequence`,
+      or :class:`~sage.symbolic.expression.Expression`
+
+    OUTPUT:
+
+    The equation to record, or ``None`` if ``t`` is an empty sequence
+    (skipped by the caller).
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.relation import _to_poly_solve_unwrap_solution
+        sage: x = var('x')
+        sage: _to_poly_solve_unwrap_solution((x == 1, 2))
+        x == 1
+        sage: _to_poly_solve_unwrap_solution(x == 2)
+        x == 2
+        sage: _to_poly_solve_unwrap_solution(()) is None
+        True
+    """
+    if isinstance(t, (list, tuple)):
+        if not t:
+            return None
+        return t[0]
+    if t is None:
+        return None
+    return t
 
 
 def _normalize_to_relational(f):
@@ -998,6 +1039,15 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         sage: solve(cos(x) * sin(x) == 1/2, x, to_poly_solve='force')
         [x == 1/4*pi + pi*z...]
 
+    Maxima's ``to_poly_solve`` may return bare equations or
+    tuples; both must be accepted without ``TypeError``::
+
+        sage: x = var('x')
+        sage: type(solve(x/sin(x) == cos(x), x, to_poly_solve=True))
+        <class 'list'>
+        sage: type(solve(sin(x) == cos(x)/2, x, to_poly_solve=True))
+        <class 'list'>
+
     We use ``use_grobner`` in Maxima if no solution is obtained from
     Maxima's ``to_poly_solve``::
 
@@ -1226,15 +1276,13 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
     if any(s is False for s in f):
         if multiplicities:
             return [], []
-        else:
-            return []
+        return []
 
     if not x:
         if multiplicities:
             from sage.rings.integer_ring import ZZ
             return [[]], [ZZ.one()]
-        else:
-            return [[]]
+        return [[]]
 
     if len(f) == 1:
         return _solve_expression(f[0], x, explicit_solutions, multiplicities, to_poly_solve, solution_dict, algorithm, domain)
@@ -1258,22 +1306,19 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
                         r[v._sage_()] = ex._sage_()
                     l.append(r)
                 return l
-            else:
-                return [[v._sage_() == ex._sage_()
-                         for v, ex in d.items()]
-                        for d in ret]
-        elif isinstance(ret, list):
+            return [[v._sage_() == ex._sage_()
+                     for v, ex in d.items()]
+                    for d in ret]
+        if isinstance(ret, list):
             if solution_dict:
                 return [{v._sage_(): ex._sage_()
                          for v, ex in d.items()} for d in ret]
-            else:
-                return [[v._sage_() == ex._sage_()
-                         for v, ex in d.items()] for d in ret]
-        else:
-            # it is not clear how this branch could be reached
-            # because dict=True is passed above, however
-            # it is kept just in case
-            return sympy_set_to_list(ret, sympy_vars)
+            return [[v._sage_() == ex._sage_()
+                     for v, ex in d.items()] for d in ret]
+        # it is not clear how this branch could be reached
+        # because dict=True is passed above, however
+        # it is kept just in case
+        return sympy_set_to_list(ret, sympy_vars)
 
     if algorithm == 'giac':
         return _giac_solver(f, x, solution_dict)
@@ -1317,8 +1362,7 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
             sol_dict = [{eq.left(): eq.right()} for eq in sol_list]
 
         return sol_dict
-    else:
-        return sol_list
+    return sol_list
 
 
 def _solve_expression(f, x, explicit_solutions, multiplicities,
@@ -1431,17 +1475,16 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                     sympy_vars = tuple([v._sympy_() for v in x])
                 ret = solveset(f._sympy_(), sympy_vars[0], S.Reals)
                 return sympy_set_to_list(ret, sympy_vars)
-            elif algorithm == 'giac':
+            if algorithm == 'giac':
                 return _giac_solver(f, x, solution_dict)
-            else:
-                try:
-                    return solve_ineq(f)  # trying solve_ineq_univar
-                except Exception:
-                    pass
-                try:
-                    return solve_ineq([f])  # trying solve_ineq_fourier
-                except Exception:
-                    raise NotImplementedError("solving only implemented for equalities and few special inequalities, see solve_ineq")
+            try:
+                return solve_ineq(f)  # trying solve_ineq_univar
+            except Exception:
+                pass
+            try:
+                return solve_ineq([f])  # trying solve_ineq_fourier
+            except Exception:
+                raise NotImplementedError("solving only implemented for equalities and few special inequalities, see solve_ineq")
     else:
         f = (f == 0)
 
@@ -1504,16 +1547,14 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
             ans = [x == f.parent().var('r1')]
         if multiplicities:
             return ans, []
-        else:
-            return ans
+        return ans
 
     X = string_to_list_of_solutions(s)  # our initial list of solutions
 
     if multiplicities:  # to_poly_solve does not return multiplicities, so in this case we end here
         if len(X) == 0:
             return X, []
-        else:
-            ret_multiplicities = [int(e) for e in str(P.get('multiplicities'))[1:-1].split(',')]
+        ret_multiplicities = [int(e) for e in str(P.get('multiplicities'))[1:-1].split(',')]
 
     ########################################################
     # Maxima's to_poly_solver package converts difficult   #
@@ -1540,7 +1581,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                 m = eq._maxima_()
                 s = m.to_poly_solve(x, options='algexact:true')
                 T = string_to_list_of_solutions(repr(s))
-                X.extend([t[0] for t in T])
+                X.extend(u for t in T if (u :=_to_poly_solve_unwrap_solution(t)) is not None)
             except TypeError as mess:
                 if ignore_exceptions:
                     continue
@@ -1572,8 +1613,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
 
     if multiplicities:
         return X, ret_multiplicities
-    else:
-        return X
+    return X
 
 
 def _giac_solver(f, x, solution_dict=False):

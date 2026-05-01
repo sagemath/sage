@@ -529,7 +529,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self.inverse()
 
-    def is_invertible(self):
+    def is_invertible(self) -> bool:
         """
         Return ``True`` if ``self`` has a two-sided multiplicative
         inverse.
@@ -617,7 +617,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             raise ZeroDivisionError("element is not invertible")
         return self._inverse
 
-    def is_zerodivisor(self):
+    def is_zerodivisor(self) -> bool:
         """
         Return ``True`` if ``self`` is a left or right zero-divisor.
 
@@ -632,7 +632,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self.matrix().det() == 0 or self.left_matrix().det() == 0
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         """
         Return ``True`` if ``self`` is nilpotent.
 
@@ -663,12 +663,12 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
-            sage: B(0).minimal_polynomial()                                             # needs sage.libs.pari
+            sage: B(0).minimal_polynomial()
             x
             sage: b = B.random_element()
-            sage: f = b.minimal_polynomial(); f  # random                               # needs sage.libs.pari
+            sage: f = b.minimal_polynomial(); f  # random
             x^3 + 1/2*x^2 - 7/16*x + 1/16
-            sage: f(b) == 0                                                             # needs sage.libs.pari
+            sage: f(b) == 0
             True
         """
         A = self.parent()
@@ -694,12 +694,12 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
-            sage: B(0).characteristic_polynomial()                                      # needs sage.libs.pari
+            sage: B(0).characteristic_polynomial()
             x^3
             sage: b = B.random_element()
-            sage: f = b.characteristic_polynomial(); f  # random                        # needs sage.libs.pari
+            sage: f = b.characteristic_polynomial(); f  # random
             x^3 - 8*x^2 + 16*x
-            sage: f(b) == 0                                                             # needs sage.libs.pari
+            sage: f(b) == 0
             True
         """
         return self.matrix().characteristic_polynomial()

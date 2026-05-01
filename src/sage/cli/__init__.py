@@ -54,8 +54,8 @@ def main() -> int:
 
     if args.file:
         return RunFileCmd(options).run()
-    elif args.command:
+    if args.command:
         return EvalCmd(options).run()
-    elif args.notebook:
+    if args.notebook:
         return JupyterNotebookCmd(options).run()
     return InteractiveShellCmd(options).run()

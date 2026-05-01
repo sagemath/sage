@@ -164,7 +164,7 @@ def _set_contiguous(tree, x):
     """
     if isinstance(tree, PQ):
         return tree.set_contiguous(x)
-    elif x in tree:
+    if x in tree:
         return (FULL, ALIGNED)
     return (EMPTY, ALIGNED)
 
@@ -474,29 +474,27 @@ class PQ:
                 else:
                     L.append(c)
             return L
-        else:
-            empty = []
-            full = []
-            partial = []
+        empty = []
+        full = []
+        partial = []
 
-            for c in self._children:
-                if v in c:
-                    if (isinstance(c, PQ) and               # Is c partial? (does c contain
-                            any(v not in cc for cc in c)):  # sets with and without v ?)
-                        partial = c.simplify(v, right=right, left=left)
-                    else:
-                        full.append(c)
+        for c in self._children:
+            if v in c:
+                if (isinstance(c, PQ) and               # Is c partial? (does c contain
+                        any(v not in cc for cc in c)):  # sets with and without v ?)
+                    partial = c.simplify(v, right=right, left=left)
                 else:
-                    empty.append(c)
-            if empty:
-                empty = [_new_P(empty)]
-            if full:
-                full = [_new_P(full)]
-
-            if right:
-                return empty + partial + full
+                    full.append(c)
             else:
-                return full + partial + empty
+                empty.append(c)
+        if empty:
+            empty = [_new_P(empty)]
+        if full:
+            full = [_new_P(full)]
+
+        if right:
+            return empty + partial + full
+        return full + partial + empty
 
     def flatten(self):
         r"""
@@ -516,9 +514,8 @@ class PQ:
         """
         if self.number_of_children() == 1:
             return _flatten(self._children[0])
-        else:
-            self._children = [_flatten(x) for x in self._children]
-            return self
+        self._children = [_flatten(x) for x in self._children]
+        return self
 
 
 class P(PQ):
@@ -717,35 +714,34 @@ class P(PQ):
             # ends. We also know it will not be possible to align the
             # interval of sets containing v to the right
 
-            else:
-                new = []
+            new = []
 
-                # The second partial element is aligned to the right
-                # while, as we want to put it at the end of the
-                # interval, it should be aligned to the left
-                set_PARTIAL_ALIGNED[1].reverse()
+            # The second partial element is aligned to the right
+            # while, as we want to put it at the end of the
+            # interval, it should be aligned to the left
+            set_PARTIAL_ALIGNED[1].reverse()
 
-                # 1/3
-                # Left partial subtree
-                subtree = set_PARTIAL_ALIGNED[0]
-                new.extend(subtree.simplify(v, right=ALIGNED))
+            # 1/3
+            # Left partial subtree
+            subtree = set_PARTIAL_ALIGNED[0]
+            new.extend(subtree.simplify(v, right=ALIGNED))
 
-                # 2/3
-                # Center (Full elements, in a P-tree, as they can be
-                # permuted)
+            # 2/3
+            # Center (Full elements, in a P-tree, as they can be
+            # permuted)
 
-                if n_FULL > 0:
-                    new.append(_new_P(set_FULL))
+            if n_FULL > 0:
+                new.append(_new_P(set_FULL))
 
-                # 3/3
-                # Right partial subtree
-                subtree = set_PARTIAL_ALIGNED[1]
-                new.extend(subtree.simplify(v, left=ALIGNED))
+            # 3/3
+            # Right partial subtree
+            subtree = set_PARTIAL_ALIGNED[1]
+            new.extend(subtree.simplify(v, left=ALIGNED))
 
-                # We add all of it, locked in a Q-Tree
-                self._children.append(_new_Q(new))
+            # We add all of it, locked in a Q-Tree
+            self._children.append(_new_Q(new))
 
-                return PARTIAL, False
+            return PARTIAL, False
 
     def cardinality(self):
         r"""
@@ -972,8 +968,7 @@ class Q(PQ):
             if set_PARTIAL_ALIGNED[0] == self._children[-1]:
                 return (PARTIAL, ALIGNED)
 
-            else:
-                return (PARTIAL, UNALIGNED)
+            return (PARTIAL, UNALIGNED)
 
         ##############################################################
         # 2/2                                                        #

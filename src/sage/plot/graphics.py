@@ -53,29 +53,6 @@ DEFAULT_DPI = 100
 do_verify = True
 
 
-def is_Graphics(x):
-    """
-    Return ``True`` if `x` is a Graphics object.
-
-    EXAMPLES::
-
-        sage: from sage.plot.graphics import is_Graphics
-        sage: is_Graphics(1)
-        doctest:warning...
-        DeprecationWarning: The function is_Graphics is deprecated;
-        use 'isinstance(..., Graphics)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        False
-        sage: is_Graphics(disk((0.0, 0.0), 1, (0, pi/2)))                               # needs sage.symbolic
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_Graphics is deprecated; "
-                "use 'isinstance(..., Graphics)' instead.")
-    return isinstance(x, Graphics)
-
-
 def _parse_figsize(figsize):
     r"""
     Helper function to get a figure size in matplotlib format.
@@ -319,8 +296,7 @@ class Graphics(WithEqualityById, SageObject):
         """
         if show is None:
             return self._show_legend
-        else:
-            self._show_legend = bool(show)
+        self._show_legend = bool(show)
 
     def set_legend_options(self, **kwds):
         r"""
@@ -454,8 +430,7 @@ class Graphics(WithEqualityById, SageObject):
         """
         if len(kwds) == 0:
             return self._legend_opts
-        else:
-            self._legend_opts.update(kwds)
+        self._legend_opts.update(kwds)
 
     def get_axes_range(self):
         """
@@ -999,7 +974,7 @@ class Graphics(WithEqualityById, SageObject):
         graphics = display_manager.preferences.graphics
         if graphics == 'disable':
             return
-        elif graphics == 'raster' or graphics is None:
+        if graphics == 'raster' or graphics is None:
             preferred = prefer_raster + prefer_vector
         elif graphics == 'vector':
             preferred = prefer_vector + prefer_raster
@@ -2186,8 +2161,7 @@ class Graphics(WithEqualityById, SageObject):
         """
         if xmin is None:
             return self.get_axes_range()['xmin']
-        else:
-            self.set_axes_range(xmin=xmin)
+        self.set_axes_range(xmin=xmin)
 
     def xmax(self, xmax=None):
         """
@@ -2202,8 +2176,7 @@ class Graphics(WithEqualityById, SageObject):
         """
         if xmax is None:
             return self.get_axes_range()['xmax']
-        else:
-            self.set_axes_range(xmax=xmax)
+        self.set_axes_range(xmax=xmax)
 
     def ymin(self, ymin=None):
         """
@@ -2218,8 +2191,7 @@ class Graphics(WithEqualityById, SageObject):
         """
         if ymin is None:
             return self.get_axes_range()['ymin']
-        else:
-            self.set_axes_range(ymin=ymin)
+        self.set_axes_range(ymin=ymin)
 
     def ymax(self, ymax=None):
         """
@@ -2234,8 +2206,7 @@ class Graphics(WithEqualityById, SageObject):
         """
         if ymax is None:
             return self.get_axes_range()['ymax']
-        else:
-            self.set_axes_range(ymax=ymax)
+        self.set_axes_range(ymax=ymax)
 
     def get_minmax_data(self):
         r"""

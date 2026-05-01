@@ -358,7 +358,7 @@ def gale_ryser_theorem(p1, p2, algorithm='gale',
         A0 = A0.matrix_from_rows_and_columns(r_permutation, s_permutation)
         return A0
 
-    elif algorithm == "gale":
+    if algorithm == "gale":
         from sage.numerical.mip import MixedIntegerLinearProgram
         k1, k2 = len(p1), len(p2)
         p = MixedIntegerLinearProgram(solver=solver)
@@ -376,8 +376,7 @@ def gale_ryser_theorem(p1, p2, algorithm='gale',
                 M[i][j] = b[i, j]
         return matrix(M)
 
-    else:
-        raise ValueError('the only two algorithms available are "gale" and "ryser"')
+    raise ValueError('the only two algorithms available are "gale" and "ryser"')
 
 
 def _default_function(l, default, i):
@@ -436,9 +435,8 @@ def list2func(l, default=None):
     """
     if default is None:
         return lambda i: l[i]
-    else:
-        from functools import partial
-        return partial(_default_function, l, default)
+    from functools import partial
+    return partial(_default_function, l, default)
 
 
 class IntegerVector(ClonableArray):
@@ -716,10 +714,9 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
         if isinstance(k, numbers.Integral):
             return IntegerVectors_nk(n, k)
-        elif isinstance(k, (tuple, list)):
+        if isinstance(k, (tuple, list)):
             return IntegerVectors_nnondescents(n, tuple(k))
-        else:
-            raise TypeError("'k' must be an integer or a tuple, got {}".format(type(k).__name__))
+        raise TypeError("'k' must be an integer or a tuple, got {}".format(type(k).__name__))
 
     def __init__(self, category=None):
         """

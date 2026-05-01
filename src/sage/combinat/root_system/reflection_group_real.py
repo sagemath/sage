@@ -432,8 +432,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
             CG = C.coxeter_diagram()
             G = self.coxeter_diagram()
             return C.relabel(CG.is_isomorphic(G, edge_labels=True, certificate=True)[1])
-        else:
-            return CartanType([W.cartan_type() for W in self.irreducible_components()])
+        return CartanType([W.cartan_type() for W in self.irreducible_components()])
 
     def positive_roots(self):
         r"""

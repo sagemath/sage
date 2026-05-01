@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs sage.modules
 r"""
 Cluster algebras
 
@@ -2143,8 +2142,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         """
         if isinstance(self.base(), LaurentPolynomialRing_generic):
             return tuple(map(self.retract, self.base().gens()))
-        else:
-            return ()
+        return ()
 
     def coefficient_names(self) -> tuple:
         r"""
@@ -2379,7 +2377,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: A = ClusterAlgebra(['A', 2])
-            sage: A.cluster_fan()                                                       # needs sage.geometry.polyhedron
+            sage: A.cluster_fan()
             Rational polyhedral fan in 2-d lattice N
         """
         seeds = self.seeds(depth=depth, mutating_F=False)

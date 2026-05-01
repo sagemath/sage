@@ -84,8 +84,7 @@ cdef class Matrix(Matrix0):
             [1.0 2.0]
             [3.0 1.0]
             sage: b = pari(a); b                                                        # needs sage.libs.pari
-            [1.000000000, 2.000000000; 3.000000000, 1.000000000] # 32-bit
-            [1.00000000000000, 2.00000000000000; 3.00000000000000, 1.00000000000000] # 64-bit
+            [1.000000000..., 2.000000000...; 3.000000000..., 1.000000000...]
         """
         from sage.libs.pari import pari
         return pari.matrix(self._nrows, self._ncols, self._list())
@@ -96,7 +95,6 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: A = MatrixSpace(QQ,3,3)([0,1,2,3,4,5,6,7,8])
             sage: g = gap(A)  # indirect doctest
             sage: g
@@ -111,7 +109,6 @@ cdef class Matrix(Matrix0):
         Particularly difficult is the case of matrices over cyclotomic
         fields and general number fields. See :issue:`5618` and :issue:`8909`::
 
-            sage: # needs sage.libs.gap sage.rings.number_field
             sage: K.<zeta> = CyclotomicField(8)
             sage: A = MatrixSpace(K, 2, 2)([0, 1+zeta, 2*zeta, 3])
             sage: g = gap(A); g
@@ -121,7 +118,6 @@ cdef class Matrix(Matrix0):
             sage: g.IsMatrix()
             true
 
-            sage: # needs sage.libs.gap sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: L.<tau> = NumberField(x^3 - 2)
             sage: A = MatrixSpace(L, 2, 2)([0, 1+tau, 2*tau, 3])
@@ -730,9 +726,10 @@ cdef class Matrix(Matrix0):
             array([[ 0,  1,  2,  3],
                    [ 4,  5,  6,  7],
                    [ 8,  9, 10, 11]])
-            sage: b.dtype
-            dtype('int32')  # 32-bit
-            dtype('int64')  # 64-bit
+            sage: d32 = numpy.dtype(numpy.int32)
+            sage: d64 = numpy.dtype(numpy.int64)
+            sage: b.dtype in [d32, d64]  # depends on machine bitness
+            True
             sage: b.shape
             (3, 4)
         """
@@ -2504,7 +2501,6 @@ cdef class Matrix(Matrix0):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(2^4)
             sage: l = [a^2 + 1, a^3 + 1, 0, 0, a, a^3 + a + 1, a + 1,
             ....:      a + 1, a^2, a^3 + a + 1, a^3 + a, a^3 + a]
@@ -2519,7 +2515,6 @@ cdef class Matrix(Matrix0):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(25)
             sage: M = Matrix(K, 2, 3, [0, 2, 3, 5, a, a^2])
             sage: M

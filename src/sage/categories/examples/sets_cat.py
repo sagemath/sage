@@ -214,8 +214,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         """
         if i in self:
             return self._from_integer_(i)
-        else:
-            raise ValueError("%s is not a prime number" % (i))
+        raise ValueError("%s is not a prime number" % (i))
 
     @abstract_method
     def _from_integer_(self, i):

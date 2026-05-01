@@ -33,48 +33,11 @@ from sage.structure.element import Element
 from sage.misc.cachefunc import cached_function
 
 
-#*****************************************************************************
-#
-# Utility functions to test that something is a linear function / constraint
-#
-#*****************************************************************************
-
-def is_LinearTensorConstraint(x):
-    """
-    Test whether ``x`` is a constraint on module-valued linear functions.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: mip.<x> = MixedIntegerLinearProgram()
-        sage: vector_ieq = (x[0] * vector([1,2]) <= x[1] * vector([2,3]))
-        sage: from sage.numerical.linear_tensor_constraints import is_LinearTensorConstraint
-        sage: is_LinearTensorConstraint(vector_ieq)
-        doctest:warning...
-        DeprecationWarning: The function is_LinearTensorConstraint is deprecated;
-        use 'isinstance(..., LinearTensorConstraint)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        True
-        sage: is_LinearTensorConstraint('a string')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_LinearTensorConstraint is deprecated; "
-                "use 'isinstance(..., LinearTensorConstraint)' instead.")
-    return isinstance(x, LinearTensorConstraint)
-
-
-#*****************************************************************************
+# ***************************************************************************
 #
 # Factory functions for the parents to ensure uniqueness
 #
-#*****************************************************************************
+# ***************************************************************************
 
 @cached_function
 def LinearTensorConstraintsParent(linear_functions_parent):

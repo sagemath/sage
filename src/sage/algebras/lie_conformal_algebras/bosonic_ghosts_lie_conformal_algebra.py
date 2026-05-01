@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Bosonic Ghosts Lie Conformal Algebra
 
@@ -29,9 +28,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+from sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra import (
+    GradedLieConformalAlgebra,
+)
 from sage.matrix.special import identity_matrix
 from sage.structure.indexed_generators import standardize_names_index_set
-from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 
 
 class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
@@ -97,8 +98,8 @@ class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
         latex_names = None
         half = ngens // 2
         if (names is None) and (index_set is None):
-            from sage.misc.defaults import variable_names as varnames
             from sage.misc.defaults import latex_variable_names as laxnames
+            from sage.misc.defaults import variable_names as varnames
             names = varnames(half, 'beta') + varnames(half, 'gamma')
             latex_names = tuple(laxnames(half, r'\beta') +
                                 laxnames(half, r'\gamma')) + ('K',)

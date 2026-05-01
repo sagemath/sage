@@ -125,7 +125,6 @@ We output the base rings of several finite fields.
 
 ::
 
-    sage: # needs sage.libs.linbox
     sage: k = GF(9,'alpha'); type(k)
     <class 'sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro_with_category'>
     sage: k.base_ring()

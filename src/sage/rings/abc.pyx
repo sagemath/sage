@@ -226,12 +226,12 @@ cdef class RealIntervalField(Field):
     EXAMPLES::
 
         sage: import sage.rings.abc
-        sage: isinstance(RIF, sage.rings.abc.RealIntervalField)                         # needs sage.rings.real_interval_field
+        sage: isinstance(RIF, sage.rings.abc.RealIntervalField)
         True
 
     By design, there is a unique direct subclass::
 
-        sage: sage.rings.abc.RealIntervalField.__subclasses__()                         # needs sage.rings.real_interval_field
+        sage: sage.rings.abc.RealIntervalField.__subclasses__()
         [<class 'sage.rings.real_mpfi.RealIntervalField_class'>]
 
         sage: len(sage.rings.abc.RealIntervalField.__subclasses__()) <= 1
@@ -468,58 +468,4 @@ class pAdicField(Field):
         sage: len(sage.rings.abc.pAdicField.__subclasses__()) <= 1
         True
     """
-
-    pass
-
-
-cdef class SymbolicRing(CommutativeRing):
-    r"""
-    Abstract base class for :class:`~sage.rings.symbolic.ring.SymbolicRing`.
-
-    This class is defined for the purpose of ``isinstance`` tests.  It should not be
-    instantiated.
-
-    EXAMPLES::
-
-        sage: import sage.rings.abc
-        sage: isinstance(SR, sage.rings.abc.SymbolicRing)                               # needs sage.symbolic
-        True
-
-    By design, other than the abstract subclass :class:`~sage.rings.abc.CallableSymbolicExpressionRing`,
-    there is only one direct implementation subclass::
-
-        sage: sage.rings.abc.SymbolicRing.__subclasses__()                              # needs sage.symbolic
-        [<class 'sage.rings.abc.CallableSymbolicExpressionRing'>,
-         <class 'sage.symbolic.ring.SymbolicRing'>]
-
-        sage: len(sage.rings.abc.SymbolicRing.__subclasses__()) <= 2
-        True
-    """
-
-    pass
-
-
-class CallableSymbolicExpressionRing(SymbolicRing):
-    r"""
-    Abstract base class for :class:`~sage.rings.symbolic.callable.CallableSymbolicExpressionRing_class`.
-
-    This class is defined for the purpose of ``isinstance`` tests.  It should not be
-    instantiated.
-
-    EXAMPLES::
-
-        sage: import sage.rings.abc
-        sage: f = x.function(x).parent()                                                # needs sage.symbolic
-        sage: isinstance(f, sage.rings.abc.CallableSymbolicExpressionRing)              # needs sage.symbolic
-        True
-
-    By design, there is a unique direct subclass::
-
-        sage: sage.rings.abc.CallableSymbolicExpressionRing.__subclasses__()            # needs sage.symbolic
-        [<class 'sage.symbolic.callable.CallableSymbolicExpressionRing_class'>]
-
-        sage: len(sage.rings.abc.CallableSymbolicExpressionRing.__subclasses__()) <= 1
-        True
-    """
-
     pass

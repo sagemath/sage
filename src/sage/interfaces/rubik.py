@@ -32,16 +32,15 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
-import pexpect
-import time
 import shlex
+import time
 
-from . import quit
+import pexpect
 
+import sage.features.rubiks
 from sage.cpython.string import bytes_to_str
 from sage.groups.perm_gps.cubegroup import index2singmaster
-import sage.features.rubiks
-
+from sage.interfaces import quit
 
 # Can't seem to find consistency in letter ordering
 # between us and them... These are copied from the source.
@@ -220,11 +219,10 @@ class CubexSolver:
             child.expect(['211', pexpect.EOF])
             moves = bytes_to_str(child.before).strip().replace(',', '').split(' ')
             return " ".join(move_map[m] for m in reversed(moves))
-        else:
-            s = child.after
-            while child.expect([r'^5\d+', pexpect.EOF]) == 0:
-                s += child.after
-            raise ValueError(bytes_to_str(s))
+        s = child.after
+        while child.expect([r'^5\d+', pexpect.EOF]) == 0:
+            s += child.after
+        raise ValueError(bytes_to_str(s))
 
     def format_cube(self, facets):
         colors = sum([[i]*8 for i in range(1, 7)], [])
@@ -291,7 +289,7 @@ class DikSolver:
             sol = bytes_to_str(sol)
             return ' '.join(self.rot_map[m[0]] + str(4 - int(m[1]))
                             for m in reversed(sol.split(' '))).replace('1', '').replace('3', "'")
-        elif ix == 1:
+        if ix == 1:
             # invalid format
             child.close(True)
             raise ValueError(bytes_to_str(child.before))

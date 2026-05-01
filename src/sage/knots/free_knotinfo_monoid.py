@@ -63,9 +63,8 @@ class FreeKnotInfoMonoidElement(IndexedFreeAbelianMonoidElement):
             if name.endswith(SymmetryMutant.concordance_inverse.value):
                 return L.mirror_image().reverse()
             return L
-        else:
-            from sage.misc.misc_c import prod
-            return prod(P.gen(wl[i]).as_knot() for i in range(len(wl)))
+        from sage.misc.misc_c import prod
+        return prod(P.gen(wl[i]).as_knot() for i in range(len(wl)))
 
     def to_knotinfo(self):
         r"""
@@ -153,8 +152,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
         """
         if symmetry_mutant == SymmetryMutant.itself:
             return knotinfo.name
-        else:
-            return '%s%s' % (knotinfo.name, symmetry_mutant.value)
+        return '%s%s' % (knotinfo.name, symmetry_mutant.value)
 
     def _set_index_dictionary(self, max_crossing_number=6):
         r"""

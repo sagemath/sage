@@ -593,8 +593,7 @@ remote connection to a server running Mathematica -- for hints, type
         s = Expect.eval(self, code, **kwds)
         if strip:
             return AsciiArtString(clean_output(s))
-        else:
-            return AsciiArtString(s)
+        return AsciiArtString(s)
 
     def set(self, var, value):
         """
@@ -1038,9 +1037,9 @@ class MathematicaElement(ExpectElement):
         P = self.parent()
         if P.eval("%s < %s" % (self.name(), other.name())).strip() == 'True':
             return rich_to_bool(op, -1)
-        elif P.eval("%s > %s" % (self.name(), other.name())).strip() == 'True':
+        if P.eval("%s > %s" % (self.name(), other.name())).strip() == 'True':
             return rich_to_bool(op, 1)
-        elif P.eval("%s == %s" % (self.name(), other.name())).strip() == 'True':
+        if P.eval("%s == %s" % (self.name(), other.name())).strip() == 'True':
             return rich_to_bool(op, 0)
         return NotImplemented
 
@@ -1113,9 +1112,8 @@ def mathematica_console(readline=True):
     if not readline:
         os.system('math')
         return
-    else:
-        os.system('math-readline')
-        return
+    os.system('math-readline')
+    return
 
 
 # some tools for online interface

@@ -522,10 +522,8 @@ class Category_over_base_ring(Category_over_base):
                issubclass(x.category().parent_class, self.parent_class):
                 if isinstance(self.base(), Category):
                     return True
-                else:
-                    return x.base_ring() is self.base_ring()
-            else:
-                return super().__contains__(x)
+                return x.base_ring() is self.base_ring()
+            return super().__contains__(x)
         except AttributeError:
             return False
 

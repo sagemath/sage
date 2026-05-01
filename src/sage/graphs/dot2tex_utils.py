@@ -9,8 +9,9 @@ This file contains some utility functions for the interface with dot2tex
 # ****************************************************************************
 
 import re
-from sage.misc.latex import latex
+
 from sage.misc.cachefunc import cached_function
+from sage.misc.latex import latex
 
 
 @cached_function
@@ -68,7 +69,7 @@ for installation instructions.
 
 
 def quoted_latex(x):
-    """
+    r"""
     Strips the latex representation of ``x`` to make it suitable for a
     ``dot2tex`` string.
 
