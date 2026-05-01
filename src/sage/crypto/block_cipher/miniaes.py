@@ -67,8 +67,8 @@ class MiniAES(SageObject):
         [    x^3 + x^2       x^3 + x]
         [x^3 + x^2 + x   x^2 + x + 1]
         sage: C = maes.encrypt(P, key); C
-        [    x^3 + x^2 + 1 x^3 + x^2 + x + 1]
-        [                x     x^3 + x^2 + x]
+        [            x       x^2 + x]
+        [x^3 + x^2 + x       x^3 + x]
 
     Decrypt the result::
 
@@ -93,7 +93,7 @@ class MiniAES(SageObject):
         sage: P = bin.encoding("Encrypt this secret message!"); P
         01000101011011100110001101110010011110010111000001110100001000000111010001101000011010010111001100100000011100110110010101100011011100100110010101110100001000000110110101100101011100110111001101100001011001110110010100100001
         sage: C = maes(P, key, algorithm='encrypt'); C
-        11100000101000010110001101101001110110010010111011010001100111100000101000101111100110010010100001110101011100111001000010101000001111000101010011010001100111100111001100000001101100110110101001001000011100000101010110110101
+        10001101011010001111111111000011010011000101011001000010110101100101100101011110101011000101100100101000101101001010110101101001110101011001111101000010110101100010111100001000001111111100101111100110101101110000100011100010
         sage: plaintxt = maes(C, key, algorithm='decrypt')
         sage: plaintxt == P
         True
@@ -111,7 +111,7 @@ class MiniAES(SageObject):
         sage: key = maes.integer_to_binary(key); key
         0010001110110000
         sage: C = maes(P, key, algorithm='encrypt'); C
-        0011101000101110010011000101010100011101010000111000100100011010
+        1100010111111100111010001000000001010110010000010001110100110110
         sage: plaintxt = maes(C, key, algorithm='decrypt')
         sage: plaintxt == P
         True
@@ -294,10 +294,15 @@ class MiniAES(SageObject):
             sage: P = bin.encoding("Encrypt this secret message!"); P
             01000101011011100110001101110010011110010111000001110100001000000111010001101000011010010111001100100000011100110110010101100011011100100110010101110100001000000110110101100101011100110111001101100001011001110110010100100001
             sage: C = maes(P, key, algorithm='encrypt'); C
-            11100000101000010110001101101001110110010010111011010001100111100000101000101111100110010010100001110101011100111001000010101000001111000101010011010001100111100111001100000001101100110110101001001000011100000101010110110101
+            10001101011010001111111111000011010011000101011001000010110101100101100101011110101011000101100100101000101101001010110101101001110101011001111101000010110101100010111100001000001111111100101111100110101101110000100011100010
             sage: plaintxt = maes(C, key, algorithm='decrypt')
             sage: plaintxt == P
             True
+
+            sage: P = bin("1001110001100011")
+            sage: key = bin("1100001111110000")
+            sage: maes(P, key, algorithm='encrypt')
+            0111001011000110
 
         TESTS:
 
@@ -362,15 +367,15 @@ class MiniAES(SageObject):
         MS = MatrixSpace(FiniteField(self._key_size, "x"), 2, 2)
         bin = BinaryStrings()
         S = ""
+        matK = MS(self.binary_to_GF(key)).transpose()
         if algorithm == "encrypt":
             # encrypt each 16-bit block in succession
             for i in range(N):
                 # here 16 is the number of bits per encryption block
                 block = B[i*16 : (i+1)*16]
-                matB = MS(self.binary_to_GF(block))
-                matK = MS(self.binary_to_GF(key))
+                matB = MS(self.binary_to_GF(block)).transpose()
                 e = self.encrypt(matB, matK)
-                e = self.GF_to_binary(e)
+                e = self.GF_to_binary(e.transpose())
                 S = "".join([S, str(e)])
             return bin(S)
         if algorithm == "decrypt":
@@ -378,10 +383,9 @@ class MiniAES(SageObject):
             for i in range(N):
                 # here 16 is the number of bits per encryption block
                 block = B[i*16 : (i+1)*16]
-                matB = MS(self.binary_to_GF(block))
-                matK = MS(self.binary_to_GF(key))
+                matB = MS(self.binary_to_GF(block)).transpose()
                 e = self.decrypt(matB, matK)
-                e = self.GF_to_binary(e)
+                e = self.GF_to_binary(e.transpose())
                 S = "".join([S, str(e)])
             return bin(S)
         raise ValueError("algorithm must be either 'encrypt' or 'decrypt'")
@@ -609,8 +613,8 @@ class MiniAES(SageObject):
             [        x^3 + x^2 x^3 + x^2 + x + 1]
             [            x + 1                 0]
             sage: C = maes.encrypt(P, key); C
-            [            x + 1           x^2 + 1]
-            [x^3 + x^2 + x + 1               x^2]
+            [x^2 + x + 1   x^3 + x^2]
+            [          x     x^2 + x]
             sage: plaintxt = maes.decrypt(C, key)
             sage: plaintxt; P
             <BLANKLINE>
@@ -777,8 +781,8 @@ class MiniAES(SageObject):
             [        x^3 + x^2 x^3 + x^2 + x + 1]
             [            x + 1                 0]
             sage: maes.encrypt(P, key)
-            [            x + 1           x^2 + 1]
-            [x^3 + x^2 + x + 1               x^2]
+            [x^2 + x + 1   x^3 + x^2]
+            [          x     x^2 + x]
 
         But we can also work with binary strings::
 
@@ -1297,12 +1301,11 @@ class MiniAES(SageObject):
             [        x^3 + x^2 x^3 + x^2 + x + 1]
             [            x + 1                 0]
             sage: maes.round_key(key, 1)
-            [x^3 + x x^2 + x]
-            [x^3 + 1 x^2 + x]
+            [            x + 1 x^3 + x^2 + x + 1]
+            [                0 x^3 + x^2 + x + 1]
             sage: maes.round_key(key, 2)
-            <BLANKLINE>
-            [  x^2 + 1   x^3 + x]
-            [x^3 + x^2 x^3 + x^2]
+            [x^2 + x x^3 + 1]
+            [x^2 + x x^2 + x]
 
         TESTS:
 
@@ -1353,7 +1356,9 @@ class MiniAES(SageObject):
         # round 1
         if n == 1:
             round_constant_1 = K("1")
-            w4 = key[0][0] + self._sboxE[key[1][1]] + round_constant_1
+            sbox = self._sboxE[self._GF_to_int[key[1][1]]]
+            subkey = self._int_to_GF[sbox]
+            w4 = key[0][0] + subkey + round_constant_1
             w5 = key[1][0] + w4
             w6 = key[0][1] + w5
             w7 = key[1][1] + w6
@@ -1362,7 +1367,9 @@ class MiniAES(SageObject):
         if n == 2:
             round_constant_2 = K("x")
             key1 = self.round_key(key, 1)
-            w8 = key1[0][0] + self._sboxE[key1[1][1]] + round_constant_2
+            sbox = self._sboxE[self._GF_to_int[key1[1][1]]]
+            subkey = self._int_to_GF[sbox]
+            w8 = key1[0][0] + subkey + round_constant_2
             w9 = key1[1][0] + w8
             w10 = key1[0][1] + w9
             w11 = key1[1][1] + w10
