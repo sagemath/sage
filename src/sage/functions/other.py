@@ -741,6 +741,27 @@ class Function_frac(BuiltinFunction):
                                  conversions=dict(sympy='frac'),
                                  latex_name=r"\operatorname{frac}")
 
+    def __call__(self, *args, **kwds):
+        r"""
+        Evaluate the fractional part function.
+
+        TESTS:
+
+        Check that ``frac(x)`` does not use methods implementing the signed
+        fractional part with respect to ``trunc`` (:issue:`40418`)::
+
+            sage: frac(-2.3) == (-2.3) - floor(-2.3)                                   # needs sage.rings.real_mpfr
+            True
+            sage: frac(RR(-2.3)) == RR(-2.3) - floor(RR(-2.3))                         # needs sage.rings.real_mpfr
+            True
+            sage: frac(RDF(-2.3)) == RDF(-2.3) - floor(RDF(-2.3))
+            True
+            sage: frac(RIF(-2.3)).endpoints()                                          # needs sage.rings.real_mpfi
+            (0.700000000000000, 0.700000000000001)
+        """
+        kwds["dont_call_method_on_arg"] = True
+        return BuiltinFunction.__call__(self, *args, **kwds)
+
     def _evalf_(self, x, **kwds):
         """
         EXAMPLES::
