@@ -497,7 +497,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def tiny_integrals_on_basis(self, P, Q):
         r"""
-        Evaluate the integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`
+        Evaluate the integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{d-2}`
         by formally integrating a power series in a local parameter `t`.
         `P` and `Q` MUST be in the same residue disc for this result to make sense.
 
@@ -508,7 +508,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         OUTPUT:
 
-        The integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`
+        The integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{d-2}`
 
         EXAMPLES::
 
@@ -539,12 +539,14 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             ValueError: (11^-2 + O(11^3) : 11^-5 + 8*11^-2 + O(11^0) : 1 + O(11^5)) and (0 : 3 + 8*11 + 2*11^2 + 8*11^3 + 2*11^4 + O(11^5) : 1 + O(11^5)) are not in the same residue disc
 
         """
+        d = self.hyperelliptic_polynomials()[0].degree()
+        dim = d - 1  # MW basis: 2g for odd-degree, 2g+1 for even-degree
         if P == Q:
-            V = VectorSpace(self.base_ring(), 2 * self.genus())
+            V = VectorSpace(self.base_ring(), dim)
             return V(0)
         R = PolynomialRing(self.base_ring(), ["x", "y"])
         x, y = R.gens()
-        return self.tiny_integrals([x**i for i in range(2 * self.genus())], P, Q)
+        return self.tiny_integrals([x**i for i in range(dim)], P, Q)
 
     def teichmuller(self, P):
         r"""
@@ -578,7 +580,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def coleman_integrals_on_basis(self, P, Q, algorithm=None):
         r"""
-        Computes the Coleman integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`
+        Computes the Coleman integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{d-2}`
 
         INPUT:
 
@@ -588,7 +590,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         OUTPUT:
 
-        the Coleman integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`
+        the Coleman integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{d-2}`
 
         EXAMPLES::
 
@@ -672,7 +674,8 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         p = K.prime()
         prec = K.precision_cap()
         g = self.genus()
-        dim = 2 * g
+        d = self.hyperelliptic_polynomials()[0].degree()
+        dim = d - 1  # = 2g for odd-degree, 2g+1 for even-degree
         V = VectorSpace(K, dim)
         # if P or Q is Weierstrass, use the Frobenius algorithm
         if self.is_weierstrass_point(P):
@@ -1206,7 +1209,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
     def P_to_S(self, P, S):
         r"""
         Given a finite Weierstrass point ``P`` and a point ``S``
-        in the same disc, compute the Coleman integrals `\{\int_P^S x^i dx/2y \}_{i=0}^{2g-1}`
+        in the same disc, compute the Coleman integrals `\{\int_P^S x^i dx/2y \}_{i=0}^{d-2}`
 
         INPUT:
 
@@ -1215,7 +1218,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         OUTPUT:
 
-        Coleman integrals `\{\int_P^S x^i dx/2y \}_{i=0}^{2g-1}`
+        Coleman integrals `\{\int_P^S x^i dx/2y \}_{i=0}^{d-2}`
 
         EXAMPLES::
 
@@ -1239,8 +1242,9 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         prec2 = prec * deg
         x, y = self.local_coord(P, prec2)
         g = self.genus()
+        d = self.hyperelliptic_polynomials()[0].degree()
         integrals = [
-            ((x**k * x.derivative() / (2 * y)).integral()) for k in range(2 * g)
+            ((x**k * x.derivative() / (2 * y)).integral()) for k in range(d - 1)
         ]
         val = [I(S[1]) for I in integrals]
         return vector(val)
@@ -1292,7 +1296,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
     def S_to_Q(self, S, Q):
         r"""
         Given ``S`` a point on ``self`` over an extension field, compute the
-        Coleman integrals `\{\int_S^Q x^i dx/2y \}_{i=0}^{2g-1}`
+        Coleman integrals `\{\int_S^Q x^i dx/2y \}_{i=0}^{d-2}`
 
         **one should be able to feed ``S,Q`` into coleman_integral,
         but currently that segfaults**
@@ -1304,7 +1308,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         OUTPUT:
 
-        the Coleman integrals `\{\int_S^Q x^i dx/2y \}_{i=0}^{2g-1}` in terms of `a`
+        the Coleman integrals `\{\int_S^Q x^i dx/2y \}_{i=0}^{d-2}` in terms of `a`
 
         EXAMPLES::
 
@@ -1351,7 +1355,8 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         g = self.genus()
         prec2 = K.precision_cap()
         p = K.prime()
-        dim = 2 * g
+        d = self.hyperelliptic_polynomials()[0].degree()
+        dim = d - 1
         V = VectorSpace(K, dim)
         if S == FS:
             S_to_FS = V(dim * [0])
@@ -1429,8 +1434,9 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         w = MW(w)
         f, vec = w.reduce_fast()
         g = self.genus()
+        d = self.hyperelliptic_polynomials()[0].degree()
         const = f(Q[0], Q[1]) - f(S[0], S[1])
-        if vec == vector(2 * g * [0]):
+        if vec == vector((d - 1) * [0]):
             return const
         basis_values = self.S_to_Q(S, Q)
         dim = len(basis_values)
