@@ -65,6 +65,7 @@ py.install_sources(
   'hypergraph_generators.py',
   'independent_sets.pxd',
   'independent_sets.pyx',
+  'interval_mwfvs.py',
   'isgci.py',
   'isoperimetric_inequalities.pyx',
   'line_graph.pyx',
