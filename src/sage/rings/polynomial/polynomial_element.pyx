@@ -7201,9 +7201,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<v> = QQ[]
             sage: p = v^3 + 3*v + 1/5
             sage: rp = regina(p); (rp, type(rp), type(rp._inst)) # optional regina
-            (<regina.Polynomial: x^3 + 3 x + 1/5>,
+            (<regina.PolynomialRational: x^3 + 3 x + 1/5>,
             <class 'sage.interfaces.regina.ReginaElement'>,
-            <class 'regina.engine.Polynomial'>)
+            <class 'regina.engine.PolynomialRational'>)
             sage: regina(p.change_ring(CC))                      # optional regina
             Traceback (most recent call last):
             ...
