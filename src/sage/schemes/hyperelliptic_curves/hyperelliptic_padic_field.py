@@ -651,6 +651,18 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             sage: HK.coleman_integrals_on_basis(S,T)
             (0, 0)
 
+        Even degree models return `d-1` integrals (not `2g`)::
+
+            sage: R.<x> = QQ['x']
+            sage: H = HyperellipticCurve((x-1)*(x-2)*(x-3)*(x-4)*(x-5)*(x-6))
+            sage: K = Qp(7, 5)
+            sage: HK = H.change_ring(K)
+            sage: P = HK(1, 0)
+            sage: Q = HK(6, 0)
+            sage: I = HK.coleman_integrals_on_basis(P, Q)
+            sage: len(I) == 5  # d-1 = 6-1, not 2g = 4
+            True
+
         AUTHORS:
 
         - Robert Bradshaw (2007-03): non-Weierstrass points
