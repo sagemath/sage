@@ -27,7 +27,7 @@ jobs:
           - debian:forky
           - ghcr.io/void-linux/void-glibc-full
           - archlinux
-          - ubuntu:25.04
+          - ubuntu:25.10
           - ubuntu:26.04
     container:
       image: ${{ matrix.container }}
