@@ -45,7 +45,7 @@ class DrinfeldModules(Category_over_base_ring):
     by the rule `\tau \lambda = \lambda^q \tau` for any `\lambda \in K`.
 
     The extension `K/\GF{q}[T]` (represented as an instance of
-    the class :class:`sage.rings.ring_extension.RingExtension`) is the
+    the class :class:`sage.rings.ring_extension.RingExtension_generic`) is the
     *base field* of the category; its defining morphism `\gamma` is
     called the *base morphism*.
 
@@ -354,7 +354,7 @@ class DrinfeldModules(Category_over_base_ring):
         viewed as an algebra over the function ring `A`.
 
         This is an instance of the class
-        :class:`sage.rings.ring_extension.RingExtension`.
+        :class:`sage.rings.ring_extension.RingExtension_generic`.
 
         .. NOTE::
 
@@ -590,7 +590,7 @@ class DrinfeldModules(Category_over_base_ring):
             viewed as an algebra over the function ring `A`.
 
             This is an instance of the class
-            :class:`sage.rings.ring_extension.RingExtension`.
+            :class:`sage.rings.ring_extension.RingExtension_generic`.
 
             .. NOTE::
 
@@ -664,7 +664,7 @@ class DrinfeldModules(Category_over_base_ring):
             field `\GF{q}`.
 
             This is an instance of the class
-            :class:`sage.rings.ring_extension.RingExtension`.
+            :class:`sage.rings.ring_extension.RingExtension_generic`.
 
             EXAMPLES::
 

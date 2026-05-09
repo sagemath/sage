@@ -226,6 +226,25 @@ class AndersonMotives(OreModules):
         """
         return self._base_combined
 
+    def ore_polring(self):
+        r"""
+        Return the Ore polynomial ring over which the Anderson
+        motives in this category are defined.
+
+        EXAMPLES::
+
+            sage: from sage.categories.anderson_motives import AndersonMotives
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(6)
+            sage: phi = DrinfeldModule(A, [z, z^3, z^5])
+            sage: C = AndersonMotives(phi.category())
+            sage: C.ore_polring()
+            Ore Polynomial Ring in τ over Univariate Polynomial Ring in T
+            over Finite Field in z of size 5^12 twisted by T |--> T, with map of base ring
+        """
+        return self._ore_polring
+
     def divisor(self):
         r"""
         Return the polynomial `T - z` if `T` denotes the generator of
@@ -377,7 +396,7 @@ class AndersonMotives(OreModules):
             Return the underlying `A`-field of this Anderson motive.
 
             This is an instance of the class
-            :class:`sage.rings.ring_extension.RingExtension`.
+            :class:`sage.rings.ring_extension.RingExtension_generic`.
 
             EXAMPLES::
 
