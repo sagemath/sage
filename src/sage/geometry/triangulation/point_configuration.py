@@ -1878,6 +1878,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             points.remove(origin)
         vertices = [origin]
         edges = []
+        ker = None
         while points and len(vertices) <= self.dim():
             if large:
                 p = self.farthest_point(vertices, points)

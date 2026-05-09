@@ -1169,7 +1169,34 @@ cdef class MPolynomial(CommutativePolynomial):
                      for c, m in self)
         return s if s else '0'
 
-    def gradient(self):
+    def _fricas_init_(self):
+        """
+        Return a FriCAS string representation of this polynomial.
+
+        EXAMPLES::
+
+            sage: # optional - fricas
+            sage: a, b = GF(13)['a,b'].gens()
+            sage: p = 4 * a + b^2
+            sage: fricas(p).typeOf()
+            MultivariatePolynomial([a, b],PrimeField(13))
+
+        TESTS::
+
+            sage: # optional - fricas
+            sage: a, b = GF(13)['a,b'].gens()
+            sage: p = a^3 + b^3
+            sage: fricas(p).factor()
+            (a + b)(a + 9 b)(a + 3 b)
+        """
+        P = self.parent()
+        v = ",".join(P.variable_names())
+        lm = f"List Record(c: {P.base_ring()._fricas_init_()}, d: List NonNegativeInteger)"
+        coeffs = ",".join(f"[{c._fricas_init_()}, [{e}]]"
+                          for e, c in self.dict().items())
+        return f"reduce(+, [monomial(m.c, [{v}], m.d)${P._fricas_init_()} for m in [{coeffs}]${lm}])"
+
+    def gradient(self) -> list:
         r"""
         Return a list of partial derivatives of this polynomial,
         ordered by the variables of ``self.parent()``.
@@ -1181,7 +1208,7 @@ cdef class MPolynomial(CommutativePolynomial):
            sage: f.gradient()
            [y, x, 0]
         """
-        return [ self.derivative(var) for var in self.parent().gens() ]
+        return [self.derivative(var) for var in self.parent().gens()]
 
     def jacobian_ideal(self):
         r"""

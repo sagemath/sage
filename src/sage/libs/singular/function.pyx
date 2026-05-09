@@ -92,7 +92,6 @@ from sage.rings.polynomial.plural cimport NCPolynomialRing_plural, NCPolynomial_
 from sage.rings.polynomial.multi_polynomial_ideal import NCPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_ideal_libsingular cimport sage_ideal_to_singular_ideal, singular_ideal_to_sage_sequence
-from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
 
 from sage.libs.singular.decl cimport *
 from sage.libs.singular.option import opt_ctx
@@ -513,6 +512,8 @@ cdef class Converter(SageObject):
         from sage.matrix.matrix_mpolynomial_dense import Matrix_mpolynomial_dense
         from sage.matrix.matrix_integer_dense import Matrix_integer_dense
         from sage.matrix.matrix_generic_dense import Matrix_generic_dense
+        # local import to break cyclic dependency (rings.polynomial.multi_polynomial_sequence > ... > libs.singular.function > rings.polynomial.multi_polynomial_sequence)
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
         for a in args:
             if is_singular_poly_wrapper(a):
                 v = self.append_polynomial(a)

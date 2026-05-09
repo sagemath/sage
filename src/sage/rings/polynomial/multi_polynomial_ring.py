@@ -60,13 +60,14 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings import fraction_field_element
-
-from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
-from sage.rings.polynomial.polydict import PolyDict, ETuple
-from sage.rings.polynomial.term_order import TermOrder
 import sage.interfaces.abc
+from sage.rings import fraction_field_element
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+from sage.rings.polynomial.polydict import ETuple, PolyDict
+from sage.rings.polynomial.polynomial_singular_interface import (
+    PolynomialRing_singular_repr,
+)
+from sage.rings.polynomial.term_order import TermOrder
 
 try:
     from cypari2.gen import Gen as pari_gen
@@ -105,17 +106,20 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         sage: loads(R.dumps()) == R
         True
     """
-    from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict as Element_hidden
-    # should be just Element, once polynomial use new coercion framework
-
     def __init__(self, base_ring, n, names, order):
-        from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
+        from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
+        from sage.rings.polynomial.polynomial_singular_interface import (
+            can_convert_to_singular,
+        )
+
         order = TermOrder(order, n)
         # MPolynomialRing_base.__init__() normally initialises the base ring,
         # but it also needs the generators to construct a coercion map from the
         # base ring, and the base ring must be set to initialise the generators.
         # We set the base ring manually to break this circular dependency.
         self._base = base_ring
+        # Should be just Element, once polynomial use new coercion framework
+        self.Element_hidden = MPolynomial_polydict
         # Construct the generators
         v = [0] * n
         one = base_ring.one()
@@ -405,8 +409,8 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             sage: type(R({(1,2): 3}).coefficients()[0])
             <class 'sage.rings.qqbar.AlgebraicNumber'>
         """
-        from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
         from sage.rings.polynomial import polynomial_element
+        from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 
         # handle constants that coerce into self.base_ring() first, if possible
         if isinstance(x, Element) and x.parent() is self.base_ring():

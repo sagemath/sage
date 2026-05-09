@@ -377,7 +377,7 @@ package within SageMath, or install FriCAS separately, see
 http://fricas.sourceforge.net.
 """
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         Return the string used to quit FriCAS.
 
@@ -780,7 +780,7 @@ http://fricas.sourceforge.net.
         """
         return ":="
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         Return the equality testing logical symbol in FriCAS.
 
@@ -799,7 +799,7 @@ http://fricas.sourceforge.net.
         """
         return "="
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the string used for ``True`` in FriCAS.
 
@@ -810,7 +810,7 @@ http://fricas.sourceforge.net.
         """
         return "true"
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         Return the string used for ``False`` in FriCAS.
 
@@ -821,7 +821,7 @@ http://fricas.sourceforge.net.
         """
         return "false"
 
-    def _inequality_symbol(self):
+    def _inequality_symbol(self) -> str:
         """
         Return the string used for False in FriCAS.
 
@@ -832,7 +832,7 @@ http://fricas.sourceforge.net.
         """
         return '~='
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -893,6 +893,46 @@ http://fricas.sourceforge.net.
                 output = output.replace(old, new)
 
         return output
+
+    def _coerce_impl(self, x, use_special=True):
+        r"""
+        Coerce pure Python types via corresponding Sage objects.
+
+        TESTS:
+
+        Check that converting a list of integers does not take forever::
+
+            sage: l = list(range(1000))
+            sage: fricas(l)[-1]
+            999
+
+        Check that lists of SageMath types are converted properly::
+
+            sage: fricas([GF(13)(-1)]).typeOf()
+            List(PrimeField(13))
+        """
+        def _fricas_init_(x, use_special):
+            if isinstance(x, bool):
+                return self._true_symbol() if x else self._false_symbol()
+            if isinstance(x, int):
+                return str(x)
+            if isinstance(x, float):
+                from sage.rings.real_double import RDF
+                return RDF(x)._fricas_init_()
+            if isinstance(x, complex):
+                from sage.rings.complex_double import CDF
+                return CDF(x)._fricas_init_()
+            if isinstance(x, (list, tuple)):
+                X = ','.join(_fricas_init_(v, True) for v in x)
+                return self._left_list_delim() + X + self._right_list_delim()
+            if use_special:
+                try:
+                    return x._fricas_init_()
+                except AttributeError:
+                    pass
+            raise TypeError("unable to coerce element into %s" % self.name())
+
+        return self.new(_fricas_init_(x, use_special))
 
     def _function_class(self):
         """
