@@ -136,14 +136,14 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
         return len(G) == 2*G.matching(value_only=True,
                                       use_edge_labels=False,
                                       algorithm='Edmonds')
-    elif algorithm == "LP_matching":
+    if algorithm == "LP_matching":
         return len(G) == 2*G.matching(value_only=True,
                                       use_edge_labels=False,
                                       algorithm='LP',
                                       solver=solver,
                                       verbose=verbose,
                                       integrality_tolerance=integrality_tolerance)
-    elif algorithm == "LP":
+    if algorithm == "LP":
         from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
         p = MixedIntegerLinearProgram(solver=solver)
         b = p.new_variable(binary=True)
@@ -402,8 +402,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
     if G.order() == 2:
         if G.is_connected():
             return (True, None) if coNP_certificate else True
-        else:
-            return (False, None) if coNP_certificate else False
+        return (False, None) if coNP_certificate else False
 
     # The graph must have an even number of vertices
     if G.order() % 2:
@@ -433,7 +432,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
             if u is not None and not len(component) % 2:
                 v = component[0]
                 return (False, {u, v})
-            elif len(component) == 1:
+            if len(component) == 1:
                 u = component[0]
 
     # Bipartite graphs of order at least three are not bicritical
@@ -1211,8 +1210,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
     def weight(x):
         if x in RR:
             return x
-        else:
-            return 1
+        return 1
 
     W = {}
     L = {}
@@ -1244,7 +1242,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
         return EdgesView(Graph([(u, v, L[frozenset((u, v))]) for u, v in d],
                                format='list_of_edges'))
 
-    elif algorithm == "LP":
+    if algorithm == "LP":
         g = G
         from sage.numerical.mip import MixedIntegerLinearProgram
         # returns the weight of an edge considering it may not be

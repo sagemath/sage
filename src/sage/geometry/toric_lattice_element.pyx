@@ -103,39 +103,6 @@ from sage.rings.integer cimport Integer
 from sage.structure.richcmp cimport richcmp_not_equal
 
 
-def is_ToricLatticeElement(x):
-    r"""
-    Check if ``x`` is an element of a toric lattice.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is an element of a toric lattice, ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.toric_lattice_element import (
-        ....:   is_ToricLatticeElement)
-        sage: is_ToricLatticeElement(1)
-        doctest:warning...
-        DeprecationWarning: The function is_ToricLatticeElement is deprecated;
-        use 'isinstance(..., ToricLatticeElement)' instead.
-        See https://github.com/sagemath/sage/issues/38126 for details.
-        False
-        sage: e = ToricLattice(3).an_element()
-        sage: e
-        N(1, 0, 0)
-        sage: is_ToricLatticeElement(e)
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38126,
-                       "The function is_ToricLatticeElement is deprecated; "
-                       "use 'isinstance(..., ToricLatticeElement)' instead.")
-    return isinstance(x, ToricLatticeElement)
-
-
 # Why do we need a special class:
 # - customize output to include lattice name
 # - prohibit operations mixing "wrong" lattices
@@ -164,13 +131,13 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         N(1, 2, 3)
         sage: TestSuite(e).run()
     """
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Compare ``self`` and ``right`` according to the operator ``op``.
+        Compare ``self`` and ``other`` according to the operator ``op``.
 
         INPUT:
 
-        - ``right`` -- another ToricLatticeElement
+        - ``other`` -- another ToricLatticeElement
 
         OUTPUT: boolean
 
@@ -190,15 +157,15 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             sage: n is n2
             False
         """
-        if not isinstance(right, ToricLatticeElement):
+        if not isinstance(other, ToricLatticeElement):
             return NotImplemented
 
         PL_ambient = self.parent().ambient_module()
-        PR_ambient = right.parent().ambient_module()
+        PR_ambient = other.parent().ambient_module()
         if PL_ambient != PR_ambient:
             return richcmp_not_equal(PL_ambient, PR_ambient, op)
         # Now use the real comparison of vectors
-        return self._richcmp_(right, op)
+        return self._richcmp_(other, op)
 
     # For some reason, vectors work just fine without redefining this function
     # from the base class, but if it is not here, we get "unhashable type"...
@@ -368,7 +335,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             N(1, 2, 3)
         """
         return (unpickle_v1, (self._parent, self.list(), self._degree,
-                              not self._is_immutable))
+                              self._is_immutable))
 
     def plot(self, **options):
         r"""
@@ -394,7 +361,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         return tp.plot_points([self])
 
 
-def unpickle_v1(parent, entries, degree, is_mutable):
+def unpickle_v1(parent, entries, degree, immutable):
     """
     Unpickle a :class:`ToricLatticeElement`.
 
@@ -406,7 +373,7 @@ def unpickle_v1(parent, entries, degree, is_mutable):
 
     - ``degree`` -- integer; the dimension of the toric lattice
 
-    - ``is_mutable`` -- boolean; whether the lattice element is mutable
+    - ``immutable`` -- boolean; whether the lattice element is immutable
 
     OUTPUT: the :class:`ToricLatticeElement` determined by the input data
 
@@ -427,5 +394,5 @@ def unpickle_v1(parent, entries, degree, is_mutable):
     for i in range(degree):
         z = Integer(entries[i])
         mpz_set(v._entries[i], z.value)
-    v._is_immutable = not is_mutable
+    v._is_immutable = immutable
     return v

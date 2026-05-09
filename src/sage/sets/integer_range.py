@@ -263,8 +263,7 @@ class IntegerRange(UniqueRepresentation, Parent):
             sgn = 1 if step > 0 else -1
             end = begin + ((end - begin - sgn) // (step) + 1) * step
             return IntegerRangeFinite(begin, end, step)
-        else:
-            return IntegerRangeInfinite(begin, step)
+        return IntegerRangeInfinite(begin, step)
 
     def _element_constructor_(self, el):
         """
@@ -282,8 +281,7 @@ class IntegerRange(UniqueRepresentation, Parent):
             if not isinstance(el, Integer):
                 return Integer(el)
             return el
-        else:
-            raise ValueError("%s not in %s" % (el, self))
+        raise ValueError("%s not in %s" % (el, self))
 
     element_class = Integer
 
@@ -473,10 +471,9 @@ class IntegerRangeFinite(IntegerRange):
                 raise IndexError("out of range")
             n = (self._end - self._begin)//(self._step)
             return self._begin + (n+i)*self._step
-        else:
-            if i >= self.cardinality():
-                raise IndexError("out of range")
-            return self._begin + i * self._step
+        if i >= self.cardinality():
+            raise IndexError("out of range")
+        return self._begin + i * self._step
 
     unrank = __getitem__
 
@@ -521,8 +518,7 @@ class IntegerRangeFinite(IntegerRange):
         p = (self._begin + 2*self._step)
         if p in self:
             return p
-        else:
-            return self._begin
+        return self._begin
 
 
 class IntegerRangeInfinite(IntegerRange):
@@ -777,18 +773,16 @@ class IntegerRangeFromMiddle(IntegerRange):
             right = 2*n-elt+self._step
             if right in self:
                 return right
-            else:
-                left = elt-self._step
-                if left in self:
-                    return left
+            left = elt-self._step
+            if left in self:
+                return left
         else:
             left = 2*n-elt
             if left in self:
                 return left
-            else:
-                right = elt+self._step
-                if right in self:
-                    return right
+            right = elt+self._step
+            if right in self:
+                return right
 
     def __iter__(self):
         r"""

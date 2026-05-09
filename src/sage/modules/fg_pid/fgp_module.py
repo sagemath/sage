@@ -222,7 +222,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.arith.functions import lcm
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecated_function_alias
 from sage.matrix.constructor import matrix
 
 import sage.misc.weak_dict
@@ -264,30 +263,6 @@ def FGP_Module(V, W, check=True):
     M = FGP_Module_class(V, W, check=check)
     _fgp_module[key] = M
     return M
-
-
-def is_FGP_Module(x):
-    """
-    Return ``True`` if x is an FGP module, i.e., a finitely generated
-    module over a PID represented as a quotient of finitely generated
-    free modules over a PID.
-
-    EXAMPLES::
-
-        sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
-        sage: W = V.span([2*V.0 + 4*V.1, 9*V.0 + 12*V.1, 4*V.2]); Q = V/W
-        sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(V)
-        doctest:warning...
-        DeprecationWarning: the function is_FGP_Module is deprecated;
-        use 'isinstance(..., FGP_Module_class)' instead
-        See https://github.com/sagemath/sage/issues/37924 for details.
-        False
-        sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(Q)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37924, "the function is_FGP_Module is deprecated; use 'isinstance(..., FGP_Module_class)' instead")
-    return isinstance(x, FGP_Module_class)
 
 
 class FGP_Module_class(Module):
@@ -1338,10 +1313,9 @@ class FGP_Module_class(Module):
             return b.parent()([b[i] if I[i] == 0 else b[i] % I[i]
                                for i in range(len(I))])
 
-        else:
-            # Don't know (or not requested) canonical way to reduce
-            # each entry yet, or how to compute invariants.
-            return b
+        # Don't know (or not requested) canonical way to reduce
+        # each entry yet, or how to compute invariants.
+        return b
 
     def gen(self, i):
         """
@@ -1601,8 +1575,7 @@ class FGP_Module_class(Module):
 
         if self.gens() == self.smith_form_gens():
             return self._hom_from_smith(im_gens, check)
-        else:
-            return self._hom_general(im_gens, check)
+        return self._hom_general(im_gens, check)
 
     def _hom_general(self, im_gens, check=True):
         """
@@ -2074,6 +2047,3 @@ def _test_morphism_0(*args, **kwds):
     if len(I.smith_form_gens()) > 0:
         x = phi.lift(I.smith_form_gen(0))
         assert phi(x) == I.smith_form_gen(0)
-
-
-test_morphism_0 = deprecated_function_alias(33617, _test_morphism_0)

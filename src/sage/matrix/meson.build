@@ -1,4 +1,4 @@
-iml = cc.find_library('iml', required: not is_windows, disabler: true)
+iml = cc.find_library('iml', required: false, disabler: true)
 
 
 py.install_sources(
@@ -216,7 +216,6 @@ foreach name, pyx : extension_data_cpp
     mpfr,
     ntl,
     numpy,
-    pari,
     png,
     singular,
     zlib,

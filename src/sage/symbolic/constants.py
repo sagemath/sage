@@ -264,9 +264,8 @@ def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
     if class_name == "Constant":
         return Constant(name, conversions=conversions, latex=latex,
                         mathml=mathml, domain=domain)
-    else:
-        cls = globals()[class_name]
-        return cls(name=name)
+    cls = globals()[class_name]
+    return cls(name=name)
 
 
 @richcmp_method
@@ -315,8 +314,7 @@ class Constant:
         """
         if self.__class__ == other.__class__ and self._name == other._name:
             return op in [op_EQ, op_GE, op_LE]
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def __reduce__(self):
         """

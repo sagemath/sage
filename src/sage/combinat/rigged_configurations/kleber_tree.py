@@ -375,7 +375,7 @@ class KleberTreeNode(Element):
         """
         return hash(self.depth) ^ hash(self.weight)
 
-    def _richcmp_(self, rhs, op):
+    def _richcmp_(self, other, op):
         r"""
         Check whether two nodes are equal.
 
@@ -398,16 +398,16 @@ class KleberTreeNode(Element):
             True
         """
         lx = self.depth
-        rx = rhs.depth
+        rx = other.depth
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
 
         lx = self.parent_node
-        rx = rhs.parent_node
+        rx = other.parent_node
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
 
-        return richcmp(self.weight, rhs.weight, op)
+        return richcmp(self.weight, other.weight, op)
 
     def _repr_(self):
         r"""
@@ -481,7 +481,7 @@ class KleberTreeNode(Element):
         ct = self.parent()._cartan_type
         if ct.type() == 'BC' or ct.dual().type() == 'BC':
             return "[" + ret_str + "]"
-        elif not ct.is_simply_laced():
+        if not ct.is_simply_laced():
             s_factors = self.parent()._folded_ct.scaling_factors()
             gamma = max(s_factors)
             # Subtract 1 for indexing

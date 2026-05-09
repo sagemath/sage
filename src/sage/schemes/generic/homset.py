@@ -55,31 +55,6 @@ lazy_import('sage.schemes.product_projective.space', 'ProductProjectiveSpaces_ri
 lazy_import('sage.schemes.projective.projective_space', 'ProjectiveSpace_ring', as_='ProjectiveSpace')
 
 
-def is_SchemeHomset(H):
-    r"""
-    Test whether ``H`` is a scheme Hom-set.
-
-    EXAMPLES::
-
-        sage: f = Spec(QQ).identity_morphism();  f
-        Scheme endomorphism of Spectrum of Rational Field
-          Defn: Identity map
-        sage: from sage.schemes.generic.homset import is_SchemeHomset
-        sage: is_SchemeHomset(f)
-        doctest:warning...
-        DeprecationWarning: The function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        False
-        sage: is_SchemeHomset(f.parent())
-        True
-        sage: is_SchemeHomset('a string')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead.")
-    return isinstance(H, SchemeHomset_generic)
-
-
 # *******************************************************************
 #  Factory for Hom sets of schemes
 # *******************************************************************
@@ -578,8 +553,7 @@ class SchemeHomset_points(SchemeHomset_generic):
                 if (isinstance(target.ambient_space(), AffineSpace)
                         and target.ambient_space().dimension_relative() == 1):
                     return target.base_ring().has_coerce_map_from(other)
-                else:
-                    return False
+                return False
             except AttributeError:  # no .ambient_space
                 return False
         elif isinstance(other, SchemeHomset_points):
@@ -608,16 +582,14 @@ class SchemeHomset_points(SchemeHomset_generic):
                         or (isinstance(ta, AffineSpace) and isinstance(sa, AffineSpace))):
                     if (ta.variable_names() == sa.variable_names()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
-                    else:
-                        return False
+                    return False
                 # for products of projective spaces, we check dimension of
                 # components and matching variable names
-                elif isinstance(ta, ProductProjectiveSpaces) and isinstance(sa, ProductProjectiveSpaces):
+                if isinstance(ta, ProductProjectiveSpaces) and isinstance(sa, ProductProjectiveSpaces):
                     if (ta.dimension_relative_components() == sa.dimension_relative_components()) \
                       and (ta.variable_names() == sa.variable_names()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
-                    else:
-                        return False
+                    return False
 
     def _element_constructor_(self, *v, **kwds):
         """

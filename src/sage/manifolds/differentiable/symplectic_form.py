@@ -268,8 +268,7 @@ class SymplecticForm(DiffForm):
             # The restriction is ready
             self._restrictions[subdomain] = restriction
             return restriction
-        else:
-            return self._restrictions[subdomain]
+        return self._restrictions[subdomain]
 
     @staticmethod
     def wrap(

@@ -176,14 +176,6 @@ cdef class Parent(parent.Parent):
     # Coercion support functionality
     ##############################################
 
-    def _coerce_(self, x):            # Call this from Python (do not override!)
-        if self._element_constructor is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(33497, "_coerce_ is deprecated, use coerce instead")
-            return self.coerce(x)
-        check_old_coerce(self)
-        return self._coerce_c(x)
-
     cpdef _coerce_c(self, x):          # DO NOT OVERRIDE THIS (call it)
         if self._element_constructor is not None:
             from sage.misc.superseded import deprecation
@@ -199,15 +191,7 @@ cdef class Parent(parent.Parent):
         if HAS_DICTIONARY(self):
             return self._coerce_impl(x)
         else:
-            return self._coerce_c_impl(x)
-
-    cdef _coerce_c_impl(self, x):     # OVERRIDE THIS FOR CYTHON CLASSES
-        """
-        Canonically coerce ``x`` in assuming that the parent of ``x`` is not
-        equal to ``self``.
-        """
-        check_old_coerce(self)
-        raise TypeError
+            raise TypeError
 
     def _coerce_impl(self, x):        # OVERRIDE THIS FOR PYTHON CLASSES
         """
@@ -215,7 +199,7 @@ cdef class Parent(parent.Parent):
         equal to ``self``.
         """
         check_old_coerce(self)
-        return self._coerce_c_impl(x)
+        raise TypeError
 
     cdef __has_coerce_map_from_c(self, S):
         check_old_coerce(self)

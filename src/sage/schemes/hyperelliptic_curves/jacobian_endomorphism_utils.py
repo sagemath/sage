@@ -88,13 +88,13 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.rational_field import QQ
-from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.finite_rings.finite_field_constructor import FiniteField
+from sage.arith.misc import GCD as gcd
 from sage.misc.lazy_import import lazy_import
 from sage.rings.fast_arith import prime_range
-from sage.arith.misc import GCD as gcd
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 
 lazy_import('sage.interfaces.genus2reduction', ['genus2reduction', 'Genus2reduction'])
 lazy_import('sage.rings.number_field.number_field', 'NumberField')

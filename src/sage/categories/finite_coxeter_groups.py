@@ -16,6 +16,7 @@ from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
+from sage.categories.finite_lattice_posets import FiniteLatticePosets
 
 
 class FiniteCoxeterGroups(CategoryWithAxiom):
@@ -149,12 +150,10 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 if i is None:
                     if as_word:
                         return word
-                    else:
-                        return w
-                else:
-                    if as_word:
-                        word.append(i)
-                    w = w.apply_simple_reflection(i)
+                    return w
+                if as_word:
+                    word.append(i)
+                w = w.apply_simple_reflection(i)
 
         @cached_method
         def bruhat_poset(self, facade=False):
@@ -482,8 +481,9 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 return Poset((self, covers), cover_relations=True,
                              facade=facade)
             covers = tuple([u, v] for u in self for v in u.upper_covers(side=side))
+            cat = FiniteLatticePosets().ChainGraded()
             return LatticePoset((self, covers), cover_relations=True,
-                                facade=facade)
+                                facade=facade, category=cat)
 
         weak_lattice = weak_poset
 

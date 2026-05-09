@@ -160,15 +160,13 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
         return R(E, prec)
         # The following is an older slower alternative to the above three lines:
         # return a0fac*R(eisenstein_series_poly(k, prec).list(), prec=prec, check=False)
-    else:
-        # This used to work with check=False, but that can only be regarded as
-        # an improbable lucky miracle. Enabling checking is a noticeable speed
-        # regression; the morally right fix would be to expose FLINT's
-        # fmpz_poly_to_nmod_poly command (at least for word-sized N).
-        if a0fac is not None:
-            return a0fac*R(eisenstein_series_poly(k, prec).list(), prec=prec, check=True)
-        else:
-            return R(eisenstein_series_poly(k, prec).list(), prec=prec, check=True)
+    # This used to work with check=False, but that can only be regarded as
+    # an improbable lucky miracle. Enabling checking is a noticeable speed
+    # regression; the morally right fix would be to expose FLINT's
+    # fmpz_poly_to_nmod_poly command (at least for word-sized N).
+    if a0fac is not None:
+        return a0fac*R(eisenstein_series_poly(k, prec).list(), prec=prec, check=True)
+    return R(eisenstein_series_poly(k, prec).list(), prec=prec, check=True)
 
 
 def __common_minimal_basering(chi, psi):
@@ -380,16 +378,15 @@ def __find_eisen_chars_gamma1(N, k):
     return triples
 
 
-def eisenstein_series_lseries(weight, prec=53,
-                              max_imaginary_part=0,
-                              max_asymp_coeffs=40):
+def eisenstein_series_lseries(weight, prec=53, max_imaginary_part=0):
     r"""
     Return the `L`-series of the weight `2k` Eisenstein series `E_{2k}`
     on `\SL_2(\ZZ)`.
 
-    This actually returns an interface to Tim Dokchitser's program
-    for computing with the `L`-series of the Eisenstein series.
-    See :class:`~sage.lfunctions.dokchitser.Dokchitser`.
+    This returns an interface to Pari for computing with the
+    `L`-series of the Eisenstein series.
+
+    See :class:`~sage.lfunctions.pari.lfun_eisenstein`.
 
     INPUT:
 
@@ -397,13 +394,10 @@ def eisenstein_series_lseries(weight, prec=53,
 
     - ``prec`` -- integer (bits precision)
 
-    - ``max_imaginary_part`` -- real number
-
-    - ``max_asymp_coeffs`` -- integer
+    - ``max_imaginary_part`` -- real number (default: 0)
 
     OUTPUT: the `L`-series of the Eisenstein series. This can be
-    evaluated at argument `s`, or have
-    :meth:`~sage.lfunctions.dokchitser.Dokchitser.derivative` called, etc.
+    evaluated at argument `s` and has methods like `derivative`, etc.
 
     EXAMPLES:
 
@@ -424,26 +418,12 @@ def eisenstein_series_lseries(weight, prec=53,
         sage: L(2)
         -5.0235535164599797471968418348135050804419155747868718371029
     """
-    f = eisenstein_series_qexp(weight, prec)
-    from sage.lfunctions.dokchitser import Dokchitser
-    j = weight
-    L = Dokchitser(conductor=1,
-                   gammaV=[0, 1],
-                   weight=j,
-                   eps=(-1)**Integer(j // 2),
-                   poles=[j],
-                   # Using a string for residues is a hack but it works well
-                   # since this will make PARI/GP compute sqrt(pi) with the
-                   # right precision.
-                   residues='[sqrt(Pi)*(%s)]' % ((-1)**Integer(j // 2) * bernoulli(j) / j),
-                   prec=prec)
-
-    s = 'coeff = %s;' % f.list()
-    L.init_coeffs('coeff[k+1]', pari_precode=s,
-                  max_imaginary_part=max_imaginary_part,
-                  max_asymp_coeffs=max_asymp_coeffs)
-    L.check_functional_equation()
-    L.rename('L-series associated to the weight %s Eisenstein series %s on SL_2(Z)' % (j, f))
+    # ref : https://arxiv.org/pdf/1904.00190 Example 5.3
+    from sage.lfunctions.pari import lfun_eisenstein, LFunction
+    L = LFunction(lfun_eisenstein(weight), prec=prec,
+                  max_im=max_imaginary_part)
+    L.rename(f'L-series associated to the Eisenstein series E{weight} '
+             'on SL_2(Z)')
     return L
 
 
@@ -498,7 +478,6 @@ def compute_eisenstein_params(character, k):
     """
     if isinstance(character, (int, Integer)):
         return __find_eisen_chars_gamma1(character, k)
-    elif isinstance(character, GammaH_class):
+    if isinstance(character, GammaH_class):
         return __find_eisen_chars_gammaH(character.level(), character._generators_for_H(), k)
-    else:
-        return __find_eisen_chars(character, k)
+    return __find_eisen_chars(character, k)

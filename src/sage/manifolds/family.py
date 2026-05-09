@@ -170,8 +170,7 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
             return "Set {} of {} of the {}".format(
                 self._name, self._repr_object_type(), self._manifold
             )
-        else:
-            return "{}"
+        return "{}"
 
     def _latex_(self):
         r"""
@@ -265,5 +264,4 @@ class ManifoldSubsetFiniteFamily(ManifoldObjectFiniteFamily):
         """
         if all(subset.is_open() for subset in self):
             return "open subsets"
-        else:
-            return "subsets"
+        return "subsets"

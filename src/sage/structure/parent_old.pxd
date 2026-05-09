@@ -17,7 +17,6 @@ cdef class Parent(parent.Parent):
     cdef MonoDict _has_coerce_map_from
 
     cpdef _coerce_c(self, x)
-    cdef _coerce_c_impl(self, x)
 
     cdef __coerce_map_from_c(self, S)
     cdef __coerce_map_from_c_impl(self, S)

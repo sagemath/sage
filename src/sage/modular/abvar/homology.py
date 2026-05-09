@@ -134,9 +134,8 @@ class Homology_abvar(Homology):
         """
         if not isinstance(other, Homology_abvar):
             return NotImplemented
-        else:
-            return richcmp((self.abelian_variety(), self.base_ring()),
-                           (other.abelian_variety(), other.base_ring()), op)
+        return richcmp((self.abelian_variety(), self.base_ring()),
+                       (other.abelian_variety(), other.base_ring()), op)
 
     def _repr_(self) -> str:
         """
@@ -671,8 +670,7 @@ class Homology_submodule(Homology):
         """
         if self.rank() <= 2:
             return ZZ(1)
-        else:
-            return self.__ambient.hecke_bound()
+        return self.__ambient.hecke_bound()
 
     def hecke_matrix(self, n):
         """

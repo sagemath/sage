@@ -43,12 +43,13 @@ from __future__ import annotations
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
+from sage.structure.sage_object import SageObject
 from sage.sets.set import Set
 
 lazy_import('sage.libs.gap.libgap', 'libgap')
 
 
-class IncidenceStructure:
+class IncidenceStructure(SageObject):
     r"""
     A base class for incidence structures (i.e. hypergraphs, i.e. set systems)
 
@@ -142,7 +143,7 @@ class IncidenceStructure:
         True
     """
     def __init__(self, points=None, blocks=None, incidence_matrix=None,
-                 name=None, check=True, copy=True):
+                 name=None, check=True, copy=True) -> None:
         r"""
         TESTS::
 
@@ -260,7 +261,7 @@ class IncidenceStructure:
             for b in self._blocks:
                 yield [self._points[i] for i in b]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         A print method.
 
@@ -275,7 +276,7 @@ class IncidenceStructure:
 
     __str__ = __repr__
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Test whether the two incidence structures are equal.
 
@@ -320,7 +321,7 @@ class IncidenceStructure:
         other_blocks = sorted(sorted(p_to_i[p] for p in b) for b in other.blocks())
         return self._blocks == other_blocks
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Difference test.
 
@@ -334,7 +335,7 @@ class IncidenceStructure:
         """
         return not self == other
 
-    def __contains__(self, block):
+    def __contains__(self, block) -> bool:
         r"""
         Test if a block belongs to the incidence structure.
 
@@ -488,10 +489,8 @@ class IncidenceStructure:
             if certificate:
                 B_canon_rev = {y: x for x, y in B_canon.items()}
                 return {x: B_canon_rev[xint] for x, xint in A_canon.items()}
-            else:
-                return True
-        else:
-            return {} if certificate else False
+            return True
+        return {} if certificate else False
 
     def isomorphic_substructures_iterator(self, H2, induced=False):
         r"""
@@ -795,8 +794,7 @@ class IncidenceStructure:
         """
         if self._point_to_index is None:
             return [b[:] for b in self._blocks]
-        else:
-            return [[self._points[i] for i in b] for b in self._blocks]
+        return [[self._points[i] for i in b] for b in self._blocks]
 
     def block_sizes(self):
         r"""
@@ -854,13 +852,12 @@ class IncidenceStructure:
             return sum((p in b) for b in self._blocks) if p != -1 else 0
 
         # degree of a set
+        if self._point_to_index:
+            p = set(self._point_to_index.get(x, -1) for x in p)
         else:
-            if self._point_to_index:
-                p = set(self._point_to_index.get(x, -1) for x in p)
-            else:
-                p = set(p) if all(x >= 0 and x < len(self._points) for x in p) else set([-1])
+            p = set(p) if all(x >= 0 and x < len(self._points) for x in p) else set([-1])
 
-            return sum(p.issubset(b) for b in self._blocks) if -1 not in p else 0
+        return sum(p.issubset(b) for b in self._blocks) if -1 not in p else 0
 
     def degrees(self, size=None):
         r"""
@@ -904,16 +901,14 @@ class IncidenceStructure:
                 for x in b:
                     d[x] += 1
             return {p: d[i] for i, p in enumerate(self._points)}
-        else:
-            from itertools import combinations
-            d = {t: 0 for t in combinations(range(self.n_points()), size)}
-            for b in self._blocks:
-                for s in combinations(b, size):
-                    d[s] += 1
-            if self._point_to_index:
-                return {tuple([self._points[x] for x in s]): v for s, v in d.items()}
-            else:
-                return d
+        from itertools import combinations
+        d = {t: 0 for t in combinations(range(self.n_points()), size)}
+        for b in self._blocks:
+            for s in combinations(b, size):
+                d[s] += 1
+        if self._point_to_index:
+            return {tuple([self._points[x] for x in s]): v for s, v in d.items()}
+        return d
 
     def rank(self):
         r"""
@@ -1067,14 +1062,25 @@ class IncidenceStructure:
         B = self._blocks
         return all(B[i] != B[i + 1] for i in range(len(B) - 1))
 
-    def _gap_(self):
+    def _gap_init_(self) -> str:
         """
         Return the GAP string describing the design.
 
         EXAMPLES::
 
+            sage: # optional - gap_package_design
             sage: BD = IncidenceStructure(7,[[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]])
-            sage: BD._gap_()
+            sage: gap.load_package("design")
+            sage: gap(BD)
+            rec(
+              blocks := [ [ 1, 2, 3 ], [ 1, 4, 5 ], [ 1, 6, 7 ], [ 2, 4, 6 ],
+                  [ 2, 5, 7 ], [ 3, 4, 7 ], [ 3, 5, 6 ] ],
+              isBlockDesign := true,
+              v := 7 )
+
+        TESTS::
+
+            sage: BD._gap_init_()  # optional - gap_package_design
             'BlockDesign(7,[[1, 2, 3], [1, 4, 5], [1, 6, 7], [2, 4, 6], [2, 5, 7], [3, 4, 7], [3, 5, 6]])'
         """
         v = self.n_points()
@@ -1097,7 +1103,7 @@ class IncidenceStructure:
         gB = [[x + 1 for x in b] for b in self._blocks]
         return libgap.BlockDesign(v, gB)
 
-    def intersection_graph(self, sizes=None):
+    def intersection_graph(self, sizes=None, immutable=False):
         r"""
         Return the intersection graph of the incidence structure.
 
@@ -1110,6 +1116,9 @@ class IncidenceStructure:
         - ``sizes`` -- list/set of integers; for convenience, setting
           ``sizes`` to ``5`` has the same effect as ``sizes=[5]``. When set to
           ``None`` (default), behaves as ``sizes=PositiveIntegers()``.
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or a mutable graph
 
         EXAMPLES:
 
@@ -1131,7 +1140,8 @@ class IncidenceStructure:
         elif sizes in PositiveIntegers():
             sizes = (sizes,)
         V = [Set(v) for v in self]
-        return Graph([V, lambda x, y: len(x & y) in sizes], loops=False)
+        return Graph([V, lambda x, y: len(x & y) in sizes], format="rule",
+                     loops=False, immutable=immutable)
 
     def incidence_matrix(self):
         r"""
@@ -1222,10 +1232,9 @@ class IncidenceStructure:
                 G.add_edges((b, x) for x in b)
             return G
 
-        else:
-            from sage.graphs.bipartite_graph import BipartiteGraph
-            A = self.incidence_matrix()
-            return BipartiteGraph(A)
+        from sage.graphs.bipartite_graph import BipartiteGraph
+        A = self.incidence_matrix()
+        return BipartiteGraph(A)
 
     def is_berge_cyclic(self):
         r"""
@@ -1652,15 +1661,13 @@ class IncidenceStructure:
         if (t is not None and t > k):
             if (l is None or l == 0):
                 return (True, (t, v, k, 0)) if return_parameters else True
-            else:
-                return (False, (0, 0, 0, 0)) if return_parameters else False
+            return (False, (0, 0, 0, 0)) if return_parameters else False
 
         # Trivial case k=0
         if k == 0:
             if (l is None or l == 0):
                 return (True, (0, v, k, b)) if return_parameters else True
-            else:
-                return (False, (0, 0, 0, 0)) if return_parameters else False
+            return (False, (0, 0, 0, 0)) if return_parameters else False
 
         # Trivial case k=v (includes v=0)
         if k == v:
@@ -1668,8 +1675,7 @@ class IncidenceStructure:
                 t = v
             if l is None or b == l:
                 return (True, (t, v, k, b)) if return_parameters else True
-            else:
-                return (True, (0, 0, 0, 0)) if return_parameters else False
+            return (True, (0, 0, 0, 0)) if return_parameters else False
 
         # Handbook of combinatorial design theorem II.4.8:
         #
@@ -1698,10 +1704,9 @@ class IncidenceStructure:
         if ((t is not None and t != tt) or
                 (l is not None and l != ll)):
             return (False, (0, 0, 0, 0)) if return_parameters else False
-        else:
-            if tt == 0:
-                ll = b
-            return (True, (tt, v, k, ll)) if return_parameters else True
+        if tt == 0:
+            ll = b
+        return (True, (tt, v, k, ll)) if return_parameters else True
 
     def is_generalized_quadrangle(self, verbose=False, parameters=False):
         r"""
@@ -1786,7 +1791,7 @@ class IncidenceStructure:
             if verbose:
                 print("Two blocks intersect on >1 points.")
             return False
-        elif girth == 6:
+        if girth == 6:
             if verbose:
                 print("Some point has two projections on some line.")
             return False
@@ -1797,8 +1802,7 @@ class IncidenceStructure:
             s = s - 1 if (s is not False and s >= 2) else False
             t = t - 1 if (t is not False and t >= 2) else False
             return (s, t)
-        else:
-            return True
+        return True
 
     def dual(self, algorithm=None):
         """
@@ -2048,8 +2052,7 @@ class IncidenceStructure:
 
             return (True, classes)
 
-        else:
-            return True
+        return True
 
     def coloring(self, k=None, solver=None, verbose=0,
                  *, integrality_tolerance=1e-3) -> list:
@@ -2115,7 +2118,7 @@ class IncidenceStructure:
             if self.n_points():
                 raise ValueError("Only empty hypergraphs are 0-chromatic")
             return []
-        elif any(len(x) == 1 for x in self._blocks):
+        if any(len(x) == 1 for x in self._blocks):
             raise RuntimeError("No coloring can be defined "
                                "when there is a set of size 1")
         elif k == 1:

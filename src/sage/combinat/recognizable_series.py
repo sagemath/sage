@@ -56,7 +56,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 
 class PrefixClosedSet:
-    def __init__(self, words):
+    def __init__(self, words) ->  None:
         r"""
         A prefix-closed set.
 
@@ -104,7 +104,7 @@ class PrefixClosedSet:
         from sage.combinat.words.words import Words
         return cls(Words(alphabet, infinite=False))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         A representation string of this prefix-closed set.
 
@@ -119,7 +119,7 @@ class PrefixClosedSet:
         """
         return repr(self.elements)
 
-    def add(self, w, check=True):
+    def add(self, w, check=True) -> None:
         r"""
         Add a word to this prefix-closed set.
 
@@ -235,7 +235,7 @@ class PrefixClosedSet:
                 n += 1
                 it = self.words.iterate_by_length(1)
 
-    def prefix_set(self):
+    def prefix_set(self) -> list:
         r"""
         Return the set of minimal (with respect to prefix ordering) elements
         of the complement of this prefix closed set.
@@ -363,7 +363,7 @@ def minimize_result(operation):
 
 
 class RecognizableSeries(ModuleElement):
-    def __init__(self, parent, mu, left, right):
+    def __init__(self, parent, mu, left, right) -> None:
         r"""
         A recognizable series.
 
@@ -466,6 +466,7 @@ class RecognizableSeries(ModuleElement):
         r"""
         When evaluating a coefficient, this is applied on each letter
         of a word; the result is a matrix.
+
         This extends :meth:`mu <mu>` to words over the parent's
         :meth:`~RecognizableSeriesSpace.alphabet`.
 
@@ -512,7 +513,7 @@ class RecognizableSeries(ModuleElement):
         """
         return self._right_
 
-    def linear_representation(self):
+    def linear_representation(self) -> tuple:
         r"""
         Return the linear representation of this series.
 
@@ -537,7 +538,7 @@ class RecognizableSeries(ModuleElement):
         """
         return (self.left, self.mu, self.right)
 
-    def _repr_(self, latex=False):
+    def _repr_(self, latex=False) -> str:
         r"""
         A representation string for this recognizable series.
 
@@ -609,7 +610,7 @@ class RecognizableSeries(ModuleElement):
             s = '0'
         return s + ' + ...'
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         A LaTeX-representation string for this recognizable series.
 
@@ -805,7 +806,7 @@ class RecognizableSeries(ModuleElement):
         """
         return iter((w, self[w]) for w in self.parent().indices())
 
-    def is_trivial_zero(self):
+    def is_trivial_zero(self) -> bool:
         r"""
         Return whether this recognizable series is trivially equal to
         zero (without any :meth:`minimization <minimized>`).
@@ -850,7 +851,7 @@ class RecognizableSeries(ModuleElement):
             (all(not self.mu[a] for a in self.parent().alphabet()) and
              not self[self.parent().indices()()])
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return whether this recognizable series is nonzero.
 
@@ -888,7 +889,7 @@ class RecognizableSeries(ModuleElement):
                 return False
         return True
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         A hash value of this recognizable series.
 
@@ -902,7 +903,7 @@ class RecognizableSeries(ModuleElement):
         """
         return hash((self.mu, self.left, self.right))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Return whether this recognizable series is equal to ``other``.
 
@@ -954,7 +955,7 @@ class RecognizableSeries(ModuleElement):
         except (TypeError, ValueError):
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether this recognizable series is not equal to ``other``.
 
@@ -1194,7 +1195,7 @@ class RecognizableSeries(ModuleElement):
         mu_prime = []
         for a in self.parent().alphabet():
             a = self.parent().indices()([a])
-            M = Matrix([alpha(c) if c in C else tuple(ZZ(c == q) for q in P)
+            M = Matrix([alpha(c) if c in C else tuple((c == q) for q in P)
                         for c in (p + a for p in P)])
             mu_prime.append(M)
 
@@ -1673,7 +1674,8 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
         return (coefficient_ring, indices, category, minimize_results)
 
-    def __init__(self, coefficient_ring, indices, category, minimize_results):
+    def __init__(self, coefficient_ring, indices,
+                 category, minimize_results) -> None:
         r"""
         See :class:`RecognizableSeriesSpace` for details.
 
@@ -1809,7 +1811,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         """
         return self._minimize_results_
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this recognizable sequence
         space.

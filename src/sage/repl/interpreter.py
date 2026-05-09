@@ -119,8 +119,7 @@ line::
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
     sage: shell.run_cell('sage: a = 123')              # single line
-    sage: shell.run_cell('sage: a = [\n... 123]')      # old-style multi-line
-    sage: shell.run_cell('sage: a = [\n....: 123]')    # new-style multi-line
+    sage: shell.run_cell('sage: a = [\n....: 123]')    # multi-line
 
 We test that :issue:`16196` is resolved::
 
@@ -470,7 +469,7 @@ def SagePreparseTransformer(lines):
     return lines
 
 
-SagePromptTransformer = PromptStripper(prompt_re=re.compile(r'^(\s*(:?sage: |\.\.\.\.: ))+'))
+SagePromptTransformer = PromptStripper(prompt_re=re.compile(r'^(\s*(:?sage: |\.\.\. |\.\.\.\.: ))+'))
 
 
 ###################
@@ -679,7 +678,7 @@ def interface_shell_embed(interface):
         sage: shell = interface_shell_embed(gap)                                        # needs sage.libs.gap
         sage: shell.run_cell('List( [1..10], IsPrime )')                                # needs sage.libs.gap
         [ false, true, true, false, true, false, true, false, false, false ]
-        <ExecutionResult object at ..., execution_count=None error_before_exec=None error_in_exec=None ...result=[ false, true, true, false, true, false, true, false, false, false ]>
+        <ExecutionResult object at ..., execution_count=... error_before_exec=None error_in_exec=None ...result=[ false, true, true, false, true, false, true, false, false, false ]>
     """
     cfg = sage_ipython_config.copy()
     ipshell = InteractiveShellEmbed(config=cfg,
