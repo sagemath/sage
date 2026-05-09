@@ -29,7 +29,7 @@ def test_gc_loop_1():
     """
     libgap.collect()
     for _ in range(10000):
-        G = libgap.CyclicGroup(2)
+        libgap.CyclicGroup(2)
     assert True
 
 

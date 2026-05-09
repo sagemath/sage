@@ -28,23 +28,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from itertools import product
-from collections.abc import Sequence
 import numbers
+from collections.abc import Sequence
+from itertools import product
 
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.list_clone import ClonableArray
-from sage.misc.classcall_metaclass import ClasscallMetaclass
-
-from sage.categories.enumerated_sets import EnumeratedSets
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.rings.infinity import PlusInfinity
 from sage.arith.misc import binomial
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.misc.classcall_metaclass import ClasscallMetaclass
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.rings.integer import Integer
+from sage.structure.list_clone import ClonableArray
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 def is_gale_ryser(r, s):
@@ -1836,9 +1835,3 @@ def integer_vectors_nk_fast_iter(n, k):
             cur[pos] = rem  # Guaranteed to be at least 1
             rem = zero
             yield list(cur)
-
-
-# October 2012: fixing outdated pickles which use classes being deprecated
-from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.integer_vector', 'IntegerVectors_nconstraints', IntegerVectorsConstraints)
-register_unpickle_override('sage.combinat.integer_vector', 'IntegerVectors_nkconstraints', IntegerVectorsConstraints)

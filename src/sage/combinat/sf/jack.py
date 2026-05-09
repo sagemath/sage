@@ -769,11 +769,11 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         """
         from sage.categories.tensor import tensor
         s = self.realization_of().schur()
-        g = self.tensor_square().sum(coeff*tensor([self(s[x]), self(s[y])])
-                                        for ((x,y), coeff) in s(elt).coproduct())
+        g = self.tensor_square().sum(coeff * tensor([self(s[x]), self(s[y])])
+                                     for (x, y), coeff in s(elt).coproduct())
         normalize = self._normalize_coefficients
-        return self.tensor_square().sum(normalize(coeff)*tensor([self(x), self(y)])
-                    for ((x,y), coeff) in g)
+        return self.tensor_square().sum(normalize(coeff) * tensor([self(x), self(y)])
+                                        for (x, y), coeff in g)
 
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         def scalar_jack(self, x, t=None):
@@ -1297,10 +1297,10 @@ class JackPolynomials_qp(JackPolynomials_generic):
         parent = elt.parent()
         from sage.categories.tensor import tensor
         cfunc = lambda x, y: tensor([parent(x), parent(y)])
-        cprod = h(elt).coproduct().apply_multilinear_morphism( cfunc )
-        normalize = lambda c: normalize_coefficients( parent, c )
-        return cprod.parent().sum(normalize(coeff)*tensor([parent(x), parent(y)])
-                        for ((x,y), coeff) in cprod)
+        cprod = h(elt).coproduct().apply_multilinear_morphism(cfunc)
+        normalize = lambda c: normalize_coefficients(parent, c)
+        return cprod.parent().sum(normalize(coeff) * tensor([parent(x), parent(y)])
+                                  for (x, y), coeff in cprod)
 
     class Element(JackPolynomials_generic.Element):
         pass
@@ -1396,7 +1396,7 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
                 [ 0  0 48]
             """
             P = self.parent()._P
-            return P(self).scalar_jack(P(x),2)
+            return P(self).scalar_jack(P(x), 2)
 
 
 # Backward compatibility for unpickling

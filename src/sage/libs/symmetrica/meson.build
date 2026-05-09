@@ -3,7 +3,7 @@ if not symmetrica.found()
   # fallback for older versions without pkg-config
   symmetrica = cc.find_library(
     'symmetrica',
-    required: not is_windows,
+    required: false,
     disabler: true,
   )
 endif

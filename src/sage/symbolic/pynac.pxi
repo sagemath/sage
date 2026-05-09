@@ -3,7 +3,7 @@ Declarations for pynac, a Python frontend for ginac
 
 Check that we can externally cimport this (:issue:`18825`)::
 
-    sage: cython(                                                                       # needs sage.misc.cython
+    sage: cython(
     ....: '''
     ....: cimport sage.symbolic.expression
     ....: ''')

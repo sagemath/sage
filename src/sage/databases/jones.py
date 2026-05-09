@@ -111,7 +111,6 @@ class JonesDatabase:
         with open(path + "/" + filename) as f:
             data = f.read()
         data = data.replace("^", "**")
-        x = PolynomialRing(RationalField(), 'x').gen()  # used next line
         v = eval(data)
         s = tuple(S)
         if s in self.root:

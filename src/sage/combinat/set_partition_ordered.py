@@ -33,13 +33,12 @@ from sage.combinat.composition import Composition, Compositions
 from sage.combinat.words.finite_word import FiniteWord_class
 from sage.combinat.words.words import Words
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.misc.persist import register_unpickle_override
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.sets.set import Set, Set_generic
-from sage.structure.list_clone import ClonableArray
 from sage.structure.element import parent
+from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
@@ -1560,30 +1559,3 @@ class OrderedSetPartitions_all(OrderedSetPartitions):
             """
             return richcmp([sorted(s) for s in self],
                            [sorted(s) for s in other], op)
-
-##########################################################
-# Deprecations
-
-
-class SplitNK(OrderedSetPartitions_scomp):
-    def __setstate__(self, state):
-        r"""
-        For unpickling old ``SplitNK`` objects.
-
-        TESTS::
-
-            sage: loads(b"x\x9ck`J.NLO\xd5K\xce\xcfM\xca\xccK,\xd1+.\xc8\xc9,"
-            ....:   b"\x89\xcf\xcb\xe6\n\x061\xfc\xbcA\xccBF\xcd\xc6B\xa6\xda"
-            ....:   b"Bf\x8dP\xa6\xf8\xbcB\x16\x88\x96\xa2\xcc\xbc\xf4b\xbd\xcc"
-            ....:   b"\xbc\x92\xd4\xf4\xd4\"\xae\xdc\xc4\xec\xd4x\x18\xa7\x905"
-            ....:   b"\x94\xd1\xb45\xa8\x90\r\xa8>\xbb\x90=\x03\xc85\x02r9J\x93"
-            ....:   b"\xf4\x00\xb4\xc6%f")
-            Ordered set partitions of {0, 1, 2, 3, 4} into parts of size [2, 3]
-        """
-        self.__class__ = OrderedSetPartitions_scomp
-        n = state['_n']
-        k = state['_k']
-        OrderedSetPartitions_scomp.__init__(self, range(state['_n']), (k, n - k))
-
-
-register_unpickle_override("sage.combinat.split_nk", "SplitNK_nk", SplitNK)

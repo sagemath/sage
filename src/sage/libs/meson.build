@@ -91,7 +91,7 @@ if not homfly.found()
   homfly = cc.find_library(
     'homfly',
     has_headers: ['homfly.h'],
-    required: false,
+    required: get_option('libhomfly'),
     disabler: true,
   )
 endif

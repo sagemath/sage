@@ -78,11 +78,17 @@ SAGE_LOCAL="$prefix"
 # This is nonstandard.
 if test "$SAGE_LOCAL" = NONE; then
     SAGE_LOCAL=local
+    SAGE_VENV_AUTO=yes
     if test -x "$SAGE_LOCAL"/bin/python3; then
+        AC_ARG_ENABLE([python-in-sage-local-check],
+           [AS_HELP_STRING([--disable-python-in-sage-local-check],
+             [do not fail the build if Python3 found in SAGE_LOCAL])],
+           [enable_python_in_sage_local_check=$enableval],
+           [enable_python_in_sage_local_check=yes])
         # Incremental build with an existing installation of python3 spkg
-        AC_MSG_ERROR([A stale Python3 found in SAGE_LOCAL. Please remove local/ and try again.])
-    else
-        SAGE_VENV_AUTO=yes
+        if test "$enable_python_in_sage_local_check" = yes; then
+           AC_MSG_ERROR([A stale Python3 found in SAGE_LOCAL. Please remove local/ and try again. Otherwise, run configure with --disable-python-in-sage-local-check])
+	fi
     fi
 else
     SAGE_VENV_AUTO=no
