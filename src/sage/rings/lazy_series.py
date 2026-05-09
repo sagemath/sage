@@ -8295,7 +8295,6 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
             if left._degree <= 1:
                 from sage.functions.other import binomial
                 R = P._internal_poly_ring
-                dx = R.gen()
                 lpd = left._polynomial_part(R).dict()
                 ir = right._initial_coefficients
                 rv = right.order()
@@ -8567,7 +8566,6 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
             sage: S.options._reset()
         """
         P = self.parent()
-        D = P.gen()
         if isinstance(self._coeff_stream, Stream_exact) and not self._coeff_stream._constant:
             m = self._coeff_stream._degree
         else:

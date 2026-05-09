@@ -1024,16 +1024,15 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         """
         n = self.order()
         g = self.curve().genus()
-        from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
-        A = AdditiveAbelianGroupWrapper(self, [], [])
+        from sage.groups.additive_abelian.additive_abelian_wrapper import expand_basis, AdditiveAbelianGroupWrapper
+        gens, ords = [], []
         for fast in (True, False):
             for _ in range(99 * g):
-                assert len(A.invariants()) <= 2 * g
-                assert A.order().divides(n)
-                if A.order() == n:
-                    return A
+                assert len(ords) <= 2 * g
+                order = product(ords)
+                assert order.divides(n)
+                if order == n:
+                    return AdditiveAbelianGroupWrapper(self, gens, ords)
                 D = self.random_element(fast=fast)
-                if D in A:
-                    continue
-                A = AdditiveAbelianGroupWrapper.from_generators(A._gen_elements + (D,))
+                gens, ords = expand_basis(gens, D, ords)
         raise RuntimeError('very unlikely event, or (more likely) bug in HyperellipticJacobianHomset.abelian_group()')

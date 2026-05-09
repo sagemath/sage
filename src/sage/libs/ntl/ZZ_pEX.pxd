@@ -1,27 +1,28 @@
 # distutils: depends = NTL/ZZ.h
 
-from sage.libs.ntl.types cimport (ZZ_c, ZZ_p_c, ZZ_pContext_c, ZZ_pE_c, vec_ZZ_p_c,
-        vec_ZZ_pE_c, ZZ_pEX_c, ZZ_pEX_Modulus_c)
+from sage.libs.ntl.types cimport (ZZ_c, ZZ_p_c, ZZ_pContext_c,
+                                  ZZ_pE_c, vec_ZZ_p_c,
+                                  vec_ZZ_pE_c, ZZ_pEX_c, ZZ_pEX_Modulus_c)
 
 
 cdef extern from "ntlwrap.h":
     long ZZ_pEX_IsZero "IsZero"(ZZ_pEX_c a)
     long ZZ_pEX_IsOne "IsOne"(ZZ_pEX_c a)
 
-    void ZZ_pEX_add "add"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pEX_c b)
-    void ZZ_pEX_add_ZZ_p "add"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_p_c b)
-    void ZZ_pEX_add_ZZ_pE "add"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pE_c b)
-    void ZZ_pEX_sub "sub"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pEX_c b)
-    void ZZ_pEX_sub_ZZ_p "sub"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_p_c b)
-    void ZZ_pEX_sub_ZZ_pE "sub"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pE_c b)
+    void ZZ_pEX_add "add"(ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pEX_c b)
+    void ZZ_pEX_add_ZZ_p "add"(ZZ_pEX_c x, ZZ_pEX_c a, ZZ_p_c b)
+    void ZZ_pEX_add_ZZ_pE "add"(ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pE_c b)
+    void ZZ_pEX_sub "sub"(ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pEX_c b)
+    void ZZ_pEX_sub_ZZ_p "sub"(ZZ_pEX_c x, ZZ_pEX_c a, ZZ_p_c b)
+    void ZZ_pEX_sub_ZZ_pE "sub"(ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pE_c b)
     void ZZ_pEX_negate "NTL::negate"(ZZ_pEX_c x, ZZ_pEX_c a)
 
-    void ZZ_pEX_mul "mul"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pEX_c b)
-    void ZZ_pEX_mul_long "mul"( ZZ_pEX_c x, ZZ_pEX_c a, long b)
-    void ZZ_pEX_mul_ZZ_p "mul"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_p_c b)
-    void ZZ_pEX_mul_ZZ_pE "mul"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pE_c b)
-    void ZZ_pEX_sqr "sqr"( ZZ_pEX_c x, ZZ_pEX_c a)
-    void ZZ_pEX_power "NTL::power"( ZZ_pEX_c x, ZZ_pEX_c a, long e)
+    void ZZ_pEX_mul "mul"(ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pEX_c b)
+    void ZZ_pEX_mul_long "mul"(ZZ_pEX_c x, ZZ_pEX_c a, long b)
+    void ZZ_pEX_mul_ZZ_p "mul"(ZZ_pEX_c x, ZZ_pEX_c a, ZZ_p_c b)
+    void ZZ_pEX_mul_ZZ_pE "mul"(ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pE_c b)
+    void ZZ_pEX_sqr "sqr"(ZZ_pEX_c x, ZZ_pEX_c a)
+    void ZZ_pEX_power "NTL::power"(ZZ_pEX_c x, ZZ_pEX_c a, long e)
 
     void ZZ_pEX_LeftShift "LeftShift"(ZZ_pEX_c x, ZZ_pEX_c a, long n)
     void ZZ_pEX_RightShift "RightShift"(ZZ_pEX_c x, ZZ_pEX_c a, long n)
@@ -30,14 +31,14 @@ cdef extern from "ntlwrap.h":
     void ZZ_pEX_div_ZZ_pEX "div"(ZZ_pEX_c q, ZZ_pEX_c a, ZZ_pEX_c b)
     void ZZ_pEX_div_ZZ_pE "div"(ZZ_pEX_c q, ZZ_pEX_c a, ZZ_pE_c b)
     void ZZ_pEX_div_ZZ_p "div"(ZZ_pEX_c q, ZZ_pEX_c a, ZZ_p_c b)
-    void ZZ_pEX_div_long "div"( ZZ_pEX_c x, ZZ_pEX_c a, long b)
+    void ZZ_pEX_div_long "div"(ZZ_pEX_c x, ZZ_pEX_c a, long b)
     void ZZ_pEX_rem "rem"(ZZ_pEX_c r, ZZ_pEX_c a, ZZ_pEX_c b)
-    long ZZ_pEX_divide "divide"( ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pEX_c b)
+    long ZZ_pEX_divide "divide"(ZZ_pEX_c x, ZZ_pEX_c a, ZZ_pEX_c b)
 
     void ZZ_pEX_GCD "GCD"(ZZ_pEX_c r, ZZ_pEX_c a, ZZ_pEX_c b)
     void ZZ_pEX_XGCD "XGCD"(ZZ_pEX_c d, ZZ_pEX_c s, ZZ_pEX_c t, ZZ_pEX_c a, ZZ_pEX_c b)
 
-    long ZZ_pEX_deg "deg"( ZZ_pEX_c x )
+    long ZZ_pEX_deg "deg"(ZZ_pEX_c x)
     ZZ_pE_c ZZ_pEX_coeff "coeff"(ZZ_pEX_c a, long i)
     ZZ_pE_c ZZ_pEX_LeadCoeff "LeadCoeff"(ZZ_pEX_c a)
     void ZZ_pEX_SetCoeff "SetCoeff"(ZZ_pEX_c x, long i, ZZ_pE_c a)

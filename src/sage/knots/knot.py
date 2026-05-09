@@ -442,7 +442,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             [(4, 1), (2, 5), (6, 3), (10, 7), (8, 11), (12, 9)]
             sage: K2.dowker_notation()
             [(4, 1), (2, 5), (6, 3), (7, 10), (11, 8), (9, 12)]
-            sage: K.homfly_polynomial() == K2.homfly_polynomial()
+            sage: K.homfly_polynomial() == K2.homfly_polynomial()  # needs libhomfly
             False
 
         TESTS::

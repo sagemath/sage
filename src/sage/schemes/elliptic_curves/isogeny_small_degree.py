@@ -328,16 +328,14 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
     jt = Fricke_module(l)
     kt = jt - 1728
     psi = Psi(l)
-    X = t
     f = R(prod([p for p,e in jt.factor() if e == 3]
              + [p for p,e in kt.factor() if e == 2]))
-
     E1 = EllipticCurve([-27*c4, -54*c6])
-    kernels = [R(psi(X * T * (j - 1728) * t0 / f(t0), t0)).monic() for t0 in t_list]
-    isogs = [E1.isogeny(ker, model=model) for ker in kernels]
 
-    w = E.isomorphism_to(E1)
-    isogs = [isog * w for isog in isogs]
+    kernels = [R(psi(t * T * (j - 1728) * t0 / f(t0), t0)) for t0 in t_list]
+
+    w = E.isomorphism_to(E1).x_rational_map().numerator()
+    isogs = [E.isogeny(ker(w).monic(), model=model) for ker in kernels]
     return isogs
 
 
@@ -711,9 +709,8 @@ def isogenies_sporadic_Q(E, l=None, minimal_models=True):
     R = PolynomialRing(F, 'x')
     n = len(f)
     ker = R([d**(n-i-1) * f[i] for i in range(n)])
-    isog = Ew.isogeny(ker, degree=l, model=model, check=False)
-    w = E.isomorphism_to(Ew)
-    isog = isog * w
+    w = E.isomorphism_to(Ew).x_rational_map().numerator()
+    isog = E.isogeny(ker(w).monic(), degree=l, model=model, check=False)
     return [isog]
 
 
@@ -916,10 +913,9 @@ def isogenies_5_0(E, minimal_models=True):
     gammas = [(beta**2 * (beta**3-140*b)) / (120*b) for beta in betas]
 
     kernels = [x**2 + beta*x + gamma for beta, gamma in zip(betas, gammas)]
-    isogs = [Ew.isogeny(ker, model=model) for ker in kernels]
 
-    w = E.isomorphism_to(Ew)
-    isogs = [isog * w for isog in isogs]
+    w = E.isomorphism_to(Ew).x_rational_map().numerator()
+    isogs = [E.isogeny(ker(w).monic(), model=model) for ker in kernels]
     return isogs
 
 
@@ -1041,9 +1037,11 @@ def isogenies_5_1728(E, minimal_models=True):
     if not square5 and not square1:
         return []
 
+    x = polygen(F)
+
     Ew = E.short_weierstrass_model()
     a = Ew.a4()
-    x = polygen(F)
+    w = E.isomorphism_to(Ew).x_rational_map().numerator()
 
     isogs = []
 
@@ -1051,17 +1049,15 @@ def isogenies_5_1728(E, minimal_models=True):
     if square1:
         i = F(-1).sqrt()
         kernels = [x**2 + a / (1+2*i), x**2 + a / (1-2*i)]
-        isogs.extend(Ew.isogeny(ker, codomain=E) for ker in kernels)
+        isogs.extend(E.isogeny(ker(w).monic(), codomain=E) for ker in kernels)
 
     # Type 2: if 5 is a square we have up to 4 (non-endomorphism) isogenies
     if square5:
         betas = sorted((x**4 + 20*a*x**2 - 80*a**2).roots(multiplicities=False))
         gammas = [(beta**2 - 2*a) / 6 for beta in betas]
         kernels = [x**2 + beta*x + gamma for beta, gamma in zip(betas, gammas)]
-        isogs.extend(Ew.isogeny(ker, model=model) for ker in kernels)
+        isogs.extend(E.isogeny(ker(w).monic(), model=model) for ker in kernels)
 
-    w = E.isomorphism_to(Ew)
-    isogs = [isog * w for isog in isogs]
     return isogs
 
 
@@ -1180,16 +1176,18 @@ def isogenies_7_0(E, minimal_models=True):
         raise NotImplementedError("not implemented when the characteristic of the base field is 2, 3 or 7")
     from sage.rings.number_field.number_field_base import NumberField
     model = "minimal" if minimal_models and isinstance(F, NumberField) else None
+
     x = polygen(F)
 
     Ew = E.short_weierstrass_model()
     b = Ew.a6()
+    w = E.isomorphism_to(Ew).x_rational_map().numerator()
 
     # there will be 2 endomorphisms if -3 is a square:
     ts = sorted(F(-3).sqrt(all=True, extend=False))
     kernels = [7*x - (2 + 6*t) for t in ts]
     kernels = [ker(x**3/b).monic() for ker in kernels]
-    isogs = [Ew.isogeny(ker, codomain=E) for ker in kernels]
+    isogs = [E.isogeny(ker(w).monic(), codomain=E) for ker in kernels]
 
     # we may have up to 6 other isogenies:
     ts = sorted(F(21).sqrt(all=True, extend=False))
@@ -1198,10 +1196,8 @@ def isogenies_7_0(E, minimal_models=True):
         ss = sorted((x**3 - s3).roots(multiplicities=False))
         ker = x**3 - 2*t0*x**2 - 4*t0*x + 4*t0 + 28
         kernels = [ker(x/s).monic() for s in ss]
-        isogs.extend(Ew.isogeny(ker, model=model) for ker in kernels)
+        isogs.extend(E.isogeny(ker(w).monic(), model=model) for ker in kernels)
 
-    w = E.isomorphism_to(Ew)
-    isogs = [isog * w for isog in isogs]
     return isogs
 
 
@@ -1284,14 +1280,16 @@ def isogenies_7_1728(E, minimal_models=True):
         raise NotImplementedError("not implemented when the characteristic of the base field is 2, 3 or 7")
     from sage.rings.number_field.number_field_base import NumberField
     model = "minimal" if minimal_models and isinstance(F, NumberField) else None
-    x = polygen(F)
 
     ts = sorted((Fricke_module(7) - 1728).numerator().roots(F, multiplicities=False))
     if not ts:
         return []
 
+    x = polygen(F)
+
     Ew = E.short_weierstrass_model()
     a = Ew.a4()
+    w = E.isomorphism_to(Ew).x_rational_map().numerator()
 
     isogs = []
     for t0 in ts:
@@ -1299,10 +1297,8 @@ def isogenies_7_1728(E, minimal_models=True):
         ss = sorted(s2.sqrt(all=True, extend=False))
         ker = 9*x**3 + (-3*t0**3 - 36*t0**2 - 123*t0)*x**2 + (-8*t0**3 - 101*t0**2 - 346*t0 + 35)*x - 7*t0**3 - 88*t0**2 - 296*t0 + 28
         kernels = [ker(x/s).monic() for s in ss]
-        isogs.extend(Ew.isogeny(ker, model=model) for ker in kernels)
+        isogs.extend(E.isogeny(ker(w).monic(), model=model) for ker in kernels)
 
-    w = E.isomorphism_to(Ew)
-    isogs = [isog * w for isog in isogs]
     return isogs
 
 
@@ -1386,8 +1382,7 @@ def isogenies_13_0(E, minimal_models=True):
             to Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 19^2]
         sage: isogenies_13_0(E)[0].rational_maps()
         ((6*x^13 - 6*x^10 - 3*x^7 + 6*x^4 + x)/(x^12 - 5*x^9 - 9*x^6 - 7*x^3 + 5),
-         (-8*x^18*y - 9*x^15*y + 9*x^12*y - 5*x^9*y
-          + 5*x^6*y - 7*x^3*y + 7*y)/(x^18 + 2*x^15 + 3*x^12 - x^9 + 8*x^6 - 9*x^3 + 7))
+         (8*x^18*y + 9*x^15*y - 9*x^12*y + 5*x^9*y - 5*x^6*y + 7*x^3*y - 7*y)/(x^18 + 2*x^15 + 3*x^12 - x^9 + 8*x^6 - 9*x^3 + 7))
 
     A previous implementation did not work in some characteristics::
 
@@ -1427,16 +1422,18 @@ def isogenies_13_0(E, minimal_models=True):
         raise NotImplementedError("not implemented when the characteristic of the base field is 2, 3 or 13")
     from sage.rings.number_field.number_field_base import NumberField
     model = "minimal" if minimal_models and isinstance(F, NumberField) else None
+
     x = polygen(F)
 
     Ew = E.short_weierstrass_model()
     b = Ew.a6()
+    w = E.isomorphism_to(Ew).x_rational_map().numerator()
 
     # there will be 2 endomorphisms if -3 is a square:
     ts = sorted(F(-3).sqrt(all=True, extend=False))
     kernels = [13*x**2 + (78*t + 26)*x + 24*t + 40 for t in ts]
     kernels = [ker(x**3/b).monic() for ker in kernels]
-    isogs = [Ew.isogeny(ker, codomain=E) for ker in kernels]
+    isogs = [E.isogeny(ker(w).monic(), codomain=E) for ker in kernels]
 
     # we may have up to 12 other isogenies:
     ts = sorted((x**4 + 7*x**3 + 20*x**2 + 19*x + 1).roots(multiplicities=False))
@@ -1450,10 +1447,8 @@ def isogenies_13_0(E, minimal_models=True):
             + (354472*t0**3 + 1899488*t0**2 + 3971680*t0 + 215960)*x
             - 459424*t0**3 - 2461888*t0**2 - 5147648*t0 - 279904)
         kernels = [ker(x/s).monic() for s in ss]
-        isogs.extend(Ew.isogeny(ker, model=model) for ker in kernels)
+        isogs.extend(E.isogeny(ker(w).monic(), model=model) for ker in kernels)
 
-    w = E.isomorphism_to(Ew)
-    isogs = [isog * w for isog in isogs]
     return isogs
 
 
@@ -1571,16 +1566,18 @@ def isogenies_13_1728(E, minimal_models=True):
         raise NotImplementedError("not implemented when the characteristic of the base field is 2, 3 or 13")
     from sage.rings.number_field.number_field_base import NumberField
     model = "minimal" if minimal_models and isinstance(F, NumberField) else None
+
     x = polygen(F)
 
     Ew = E.short_weierstrass_model()
     a = Ew.a4()
+    w = E.isomorphism_to(Ew).x_rational_map().numerator()
 
     # we will have two endomorphisms if -1 is a square:
     ts = sorted(F(-1).sqrt(all=True, extend=False))
     kernels = [13*x**3 + (-26*i - 13)*x**2 + (-52*i - 13)*x - 2*i - 3 for i in ts]
     kernels = [ker(x**2/a).monic() for ker in kernels]
-    isogs = [Ew.isogeny(ker, codomain=E) for ker in kernels]
+    isogs = [E.isogeny(ker(w).monic(), codomain=E) for ker in kernels]
 
     # we may have up to 12 other isogenies:
     ts = sorted((x**6 + 10*x**5 + 46*x**4 + 108*x**3 + 122*x**2 + 38*x - 1).roots(multiplicities=False))
@@ -1600,10 +1597,8 @@ def isogenies_13_1728(E, minimal_models=True):
               966973468160*t0**4 - 4190156868352*t0**3 -
               8843158270336*t0**2 - 7860368751232*t0 + 196854655936)
         kernels = [ker(x/s).monic() for s in ss]
-        isogs.extend(Ew.isogeny(ker, model=model) for ker in kernels)
+        isogs.extend(E.isogeny(ker(w).monic(), model=model) for ker in kernels)
 
-    w = E.isomorphism_to(Ew)
-    isogs = [isog * w for isog in isogs]
     return isogs
 
 # List of primes l for which X_0(l) is (hyper)elliptic and X_0^+(l) has genus 0
