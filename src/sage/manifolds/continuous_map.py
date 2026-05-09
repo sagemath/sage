@@ -518,8 +518,7 @@ class ContinuousMap(Morphism):
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     #
     # Hash and equality
@@ -874,8 +873,7 @@ class ContinuousMap(Morphism):
         if self._is_identity:
             if subset is None:
                 return self.domain()
-            else:
-                return subset
+            return subset
         return ImageManifoldSubset(self, inverse=inverse, domain_subset=subset)
 
     def preimage(self, codomain_subset, name=None, latex_name=None):

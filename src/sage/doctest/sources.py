@@ -334,6 +334,12 @@ class DocTestSource:
                     self._process_doc(doctests, doc, namespace, start)
                     unparsed_doc = False
                 else:
+                    if self.line_shift and (m := sagestart.match(line)):
+                        # We insert empty doctest lines to make up for the removed lines
+                        indent_and_prompt = m.group(1)
+                        doc.extend([indent_and_prompt + "# inserted to compensate for removed conditional doctest output\n"]
+                                   * self.line_shift)
+                        self.line_shift = 0
                     doc.append(line)
                     unparsed_doc = True
             if not in_docstring and (not just_finished or self.start_finish_can_overlap):
@@ -369,8 +375,7 @@ class DocTestSource:
                 i = random.randint(0, len(doctests) - 1)
                 randomized.append(doctests.pop(i))
             return randomized, extras
-        else:
-            return doctests, extras
+        return doctests, extras
 
 
 class StringDocTestSource(DocTestSource):
@@ -646,12 +651,10 @@ class FileDocTestSource(DocTestSource):
         """
         if self.options.abspath:
             return os.path.abspath(self.path)
-        else:
-            relpath = os.path.relpath(self.path)
-            if relpath.startswith(".." + os.path.sep):
-                return self.path
-            else:
-                return relpath
+        relpath = os.path.relpath(self.path)
+        if relpath.startswith(".." + os.path.sep):
+            return self.path
+        return relpath
 
     @lazy_attribute
     def basename(self):
@@ -757,19 +760,6 @@ class FileDocTestSource(DocTestSource):
 
         TESTS:
 
-        We check that we correctly process results that depend on 32
-        vs 64 bit architecture::
-
-            sage: import sys
-            sage: bitness = '64' if sys.maxsize > (1 << 32) else '32'
-            sage: sys.maxsize == 2^63 - 1
-            False # 32-bit
-            True  # 64-bit
-            sage: ex = doctests[20].examples[11]
-            sage: ((bitness == '64' and ex.want == 'True  \n')
-            ....:  or (bitness == '32' and ex.want == 'False \n'))
-            True
-
         We check that lines starting with a # aren't doctested::
 
             #sage: raise RuntimeError
@@ -835,6 +825,7 @@ class FileDocTestSource(DocTestSource):
             skipping = False
             in_block = False
             last_line = ''
+        starting_indent = None
         for lineno, line in self:
             if not line.strip():
                 continue

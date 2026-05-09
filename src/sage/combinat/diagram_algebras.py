@@ -27,28 +27,31 @@ AUTHORS:
 
 import itertools
 
+from sage.arith.misc import integer_ceil as ceil
+from sage.arith.misc import integer_floor as floor
+from sage.arith.power import generic_power
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.arith.power import generic_power
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.combinat import bell_number, catalan_number
-from sage.structure.global_options import GlobalOptions
-from sage.combinat.combinat_cython import (perfect_matchings_iterator,
-                                           set_partition_composition)
-from sage.combinat.set_partition import SetPartitions, AbstractSetPartition
-from sage.combinat.set_partition_iterator import set_partition_iterator
+from sage.combinat.combinat_cython import (
+    perfect_matchings_iterator,
+    set_partition_composition,
+)
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
+from sage.combinat.set_partition import AbstractSetPartition, SetPartitions
+from sage.combinat.set_partition_iterator import set_partition_iterator
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
+from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.misc import integer_floor as floor
-from sage.arith.misc import integer_ceil as ceil
+from sage.structure.global_options import GlobalOptions
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.graphs.graph', 'Graph')
 lazy_import('sage.combinat.symmetric_group_algebra', 'SymmetricGroupAlgebra_n')
@@ -1524,8 +1527,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
         """
         if self.order in ZZ:
             return (2 * ZZ(self.order) - 1).multifactorial(2)
-        else:
-            return (2 * ZZ(self.order - 1 / 2) - 1).multifactorial(2)
+        return (2 * ZZ(self.order - 1 / 2) - 1).multifactorial(2)
 
     def symmetric_diagrams(self, l=None, perm=None):
         r"""
@@ -1693,8 +1695,7 @@ class TemperleyLiebDiagrams(AbstractPartitionDiagrams):
         """
         if self.order in ZZ:
             return catalan_number(ZZ(self.order))
-        else:
-            return catalan_number(ZZ(self.order - 1/2))
+        return catalan_number(ZZ(self.order - 1/2))
 
     def __contains__(self, obj):
         r"""
@@ -2825,12 +2826,11 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             D = [[-j, j] for j in range(1, ceil(self._k)+1)]
             D[i] += D.pop(i+1)
             return B[SP(D)]
-        else:
-            i = ceil(i)
-            D = [[-j, j] for j in range(1, ceil(self._k)+1)]
-            D[i-1] = [-i]
-            D.append([i])
-            return B[SP(D)]
+        i = ceil(i)
+        D = [[-j, j] for j in range(1, ceil(self._k)+1)]
+        D[i-1] = [-i]
+        D.append([i])
+        return B[SP(D)]
 
     generator_e = e
 
@@ -2952,21 +2952,20 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
                       * self.e(i) * self.e(i-half) * self.e(i-1)
                     - si * self.e(i-1) * self.e(i-half) * self.e(i) * sim
                       * self.jucys_murphy_element(i-1) * self.e(i-1) * si)
-        else:
-            j = ceil(i) - 1
-            if j == 0:
-                return self.zero()
-            if j == 1:
-                return self.s(1)
-            si = self.s(j)
-            sim = self.s(j-1)
-            x = self.e(j-1) * self.jucys_murphy_element(j-1) * si * self.e(j-1)
-            return (sim * si * self.sigma(i-1) * si * sim
-                    + si * x * si + x
-                    - si * self.e(j-1) * self.jucys_murphy_element(j-1) * sim
-                      * self.e(j) * self.e(i-1) * self.e(j-1)
-                    - self.e(j-1) * self.e(i-1) * self.e(j) * sim
-                      * self.jucys_murphy_element(j-1) * self.e(j-1) * si)
+        j = ceil(i) - 1
+        if j == 0:
+            return self.zero()
+        if j == 1:
+            return self.s(1)
+        si = self.s(j)
+        sim = self.s(j-1)
+        x = self.e(j-1) * self.jucys_murphy_element(j-1) * si * self.e(j-1)
+        return (sim * si * self.sigma(i-1) * si * sim
+                + si * x * si + x
+                - si * self.e(j-1) * self.jucys_murphy_element(j-1) * sim
+                  * self.e(j) * self.e(i-1) * self.e(j-1)
+                - self.e(j-1) * self.e(i-1) * self.e(j) * sim
+                  * self.jucys_murphy_element(j-1) * self.e(j-1) * si)
 
     @cached_method
     def jucys_murphy_element(self, i):
@@ -3089,15 +3088,14 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             return ((self.s(i) * L(i)) * (self.s(i) - self.e(i))
                     - (self.e(i) * L(i)) * (self.s(i) - self.e(i+half)*self.e(i))
                     + self.sigma(i+half))
-        else:
-            j = ceil(i) - 1
-            if j == 0:
-                return self.zero()
-            L = self.jucys_murphy_element
-            return (self.s(j) * L(i-1) * self.s(j)
-                    - self.e(j)*L(j)
-                    + (self._q*self.one() - L(i-1) - L(j))*self.e(j)
-                    + self.sigma(j))
+        j = ceil(i) - 1
+        if j == 0:
+            return self.zero()
+        L = self.jucys_murphy_element
+        return (self.s(j) * L(i-1) * self.s(j)
+                - self.e(j)*L(j)
+                + (self._q*self.one() - L(i-1) - L(j))*self.e(j)
+                + self.sigma(j))
 
     L = jucys_murphy_element
 
@@ -4812,16 +4810,15 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
     def key_func(P):
         if P[1] < 0:  # cap
             return (0, P[0], P[1])
-        elif P[0] > 0:  # cup
+        if P[0] > 0:  # cup
             return (3, -P[1], -P[0])
-        else:
-            bot, top = -P[0], P[1]
-            if top < bot:  # left moving
-                return (1, top, bot)
-            elif top > bot:  # right moving
-                return (2, -bot, -top)
-            else:  # vertical line
-                return (1, top, bot)
+        bot, top = -P[0], P[1]
+        if top < bot:  # left moving
+            return (1, top, bot)
+        if top > bot:  # right moving
+            return (2, -bot, -top)
+        # vertical line
+        return (1, top, bot)
     diagram = sorted(diagram, key=key_func)
     # Since diagram is sorted in lex order, we will first do the matchings
     #   from right-to-left on the bottom, then the propogating lines, and
@@ -4833,15 +4830,14 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
             insert_pairing([-P[1], -P[0], False, False], intervals)
         elif P[0] > 0:  # Top matching
             insert_pairing([P[0], P[1], True, True], top_intervals)
-        else:  # Propogating line
-            if -P[0] == P[1]:
-                vertical.append(P[1])
+        elif -P[0] == P[1]:
+            vertical.append(P[1])
+        else:
+            if -P[0] < P[1]:
+                num_right += 1
             else:
-                if -P[0] < P[1]:
-                    num_right += 1
-                else:
-                    num_left += 1
-                propogating.append(P)
+                num_left += 1
+            propogating.append(P)
 
     # Now piece together the intervals together
     total_prop = max(num_left, num_right)
@@ -4935,7 +4931,6 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
     """
     # these allow the view command to work (maybe move them
     # somewhere more appropriate?)
-    from sage.misc.latex import latex
     latex.add_package_to_preamble_if_available('tikz')
 
     if fill:
@@ -5187,9 +5182,8 @@ class PottsRepresentation(CombinatorialFreeModule):
             if y not in ZZ or y < 1 or y > self._d:
                 raise ValueError(f"the magnetic field direction must be an integer in [1, {self._d}]")
             y = ZZ(y)
-        else:
-            if y is not None:
-                raise ValueError("the magnetic field direction should not be given for integer rank")
+        elif y is not None:
+            raise ValueError("the magnetic field direction should not be given for integer rank")
         self._y = y
         # _order is used to define the ordering of the basis elements
         self._num_factors = ZZ(order)
@@ -5395,11 +5389,10 @@ class PottsRepresentation(CombinatorialFreeModule):
                 if i > 0:
                     if word[i] != color:
                         return self.zero()
-                else:  # i < 0
-                    if -i == order + 1:
-                        assert color == self._y
-                    else:
-                        fixed[-i-1] = color  # convert 1-based to 0-based
+                elif -i == order + 1:
+                    assert color == self._y
+                else:
+                    fixed[-i-1] = color  # convert 1-based to 0-based
         if not neg_parts:
             return self._monomial(fixed)
 

@@ -738,28 +738,27 @@ class CubeGroup(PermutationGroup_generic):
         if isinstance(mv, PermutationGroupElement):
             # mv is a perm_group element, return mv
             return mv if mv.parent() is self else PermutationGroup_generic.__call__(self, mv, check)
-        elif isinstance(mv, str):
+        if isinstance(mv, str):
             # It is a string: may be in cycle notation or Rubik's notation
             if '(' in mv and '^' not in mv:
                 return PermutationGroup_generic.__call__(self, mv, check)
-            else:
-                gens = self.gens()
-                names = self.gen_names()
-                map = {}
-                for i in range(6):
-                    map[names[i]] = gens[i]
-                g = self.identity()
-                mv = mv.strip().replace(" ","*").replace("**", "*").replace("'", "-1").replace('^','').replace('(','').replace(')','')
-                M = mv.split("*")
-                for m in M:
-                    if not m:
-                        pass
-                    elif len(m) == 1:
-                        g *= map[m[0]]
-                    else:
-                        g *= map[m[0]]**int(m[1:])
-                return g
-        elif isinstance(mv, dict):
+            gens = self.gens()
+            names = self.gen_names()
+            map = {}
+            for i in range(6):
+                map[names[i]] = gens[i]
+            g = self.identity()
+            mv = mv.strip().replace(" ","*").replace("**", "*").replace("'", "-1").replace('^','').replace('(','').replace(')','')
+            M = mv.split("*")
+            for m in M:
+                if not m:
+                    pass
+                elif len(m) == 1:
+                    g *= map[m[0]]
+                else:
+                    g *= map[m[0]]**int(m[1:])
+            return g
+        if isinstance(mv, dict):
             state = mv
             state_facets = []
             keyss = sorted(state.keys())
@@ -777,8 +776,7 @@ class CubeGroup(PermutationGroup_generic):
             p1 = [state0_facets.index(x) for x in range(1,49)]
             p2 = [state_facets[j] for j in p1]
             return PermutationGroup_generic.__call__(self, p2, check)
-        else:
-            return PermutationGroup_generic.__call__(self, mv, check)
+        return PermutationGroup_generic.__call__(self, mv, check)
 
     __call__ = parse
 
@@ -796,8 +794,7 @@ class CubeGroup(PermutationGroup_generic):
         fcts = range(1, 49)
         if g is not None:
             return [g(i) for i in fcts]
-        else:
-            return list(fcts)
+        return list(fcts)
 
     def faces(self, mv):
         r"""
@@ -1048,8 +1045,7 @@ class CubeGroup(PermutationGroup_generic):
             g = self.identity()
         if mode != 'quiet':
             return res, g
-        else:
-            return res
+        return res
 
     def solve(self, state, algorithm='default'):
         r"""
@@ -1359,8 +1355,7 @@ class RubiksCube(SageObject):
             B = Box(size, size, size, color=(.1, .1, .1))
             S = B + B.stickers(my_colors, size*.1, size*.01)
             return S.translate(-t*x, -t*z, -t*y)
-        else:
-            return ColorCube(size, [colors[sides[i]+6] for i in range(6)]).translate(-t*x, -t*z, -t*y)
+        return ColorCube(size, [colors[sides[i]+6] for i in range(6)]).translate(-t*x, -t*z, -t*y)
 
     def plot3d(self, stickers=True):
         r"""

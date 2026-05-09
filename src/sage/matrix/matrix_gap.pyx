@@ -48,7 +48,6 @@ cdef class Matrix_gap(Matrix_dense):
         sage: m.transpose().parent() is M
         True
 
-        sage: # needs sage.rings.number_field
         sage: UCF = UniversalCyclotomicField()
         sage: M = MatrixSpace(UCF, 3, implementation='gap')
         sage: m = M([UCF.zeta(i) for i in range(1,10)])
@@ -276,7 +275,6 @@ cdef class Matrix_gap(Matrix_dense):
             sage: m1 != m3
             True
 
-            sage: # needs sage.rings.number_field
             sage: UCF = UniversalCyclotomicField()
             sage: M = MatrixSpace(UCF, 2, implementation='gap')
             sage: m1 = M([E(2), E(3), 0, E(4)])
@@ -444,7 +442,6 @@ cdef class Matrix_gap(Matrix_dense):
             sage: parent(M(1).determinant())
             Rational Field
 
-            sage: # needs sage.rings.number_field
             sage: M = MatrixSpace(UniversalCyclotomicField(), 1, implementation='gap')
             sage: parent(M(1).determinant())
             Universal Cyclotomic Field
@@ -473,7 +470,6 @@ cdef class Matrix_gap(Matrix_dense):
             sage: parent(M(1).trace())
             Rational Field
 
-            sage: # needs sage.rings.number_field
             sage: M = MatrixSpace(UniversalCyclotomicField(), 1, implementation='gap')
             sage: parent(M(1).trace())
             Universal Cyclotomic Field

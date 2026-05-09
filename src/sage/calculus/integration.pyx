@@ -287,10 +287,13 @@ def numerical_integral(func, a, b=None,
         sage: def f(x):
         ....:     sleep(1r)
         ....:     return x
-        sage: with ensure_interruptible_after(0.5): numerical_integral(f, 0, 1)
+        sage: with ensure_interruptible_after(0.5) as data: numerical_integral(f, 0, 1)
         Traceback (most recent call last):
         ...
-        RuntimeError: Function is not interruptible within 0.5000 seconds, only after 1.0... seconds
+        RuntimeError: Function is not interruptible within 0.5000 seconds, only after 1... seconds
+        sage: # The elapsed time should be less than 1.1, but can sometimes take longer on CI
+        sage: 1 <= data['elapsed'] <= 1.5
+        True
 
     """
     cdef double abs_err  # step size
@@ -445,6 +448,7 @@ def numerical_integral(func, a, b=None,
 
 
 cdef double c_monte_carlo_f(double *t, size_t dim, void *params) noexcept:
+    sig_block()
     cdef double value
     cdef PyFunctionWrapper wrapper
     wrapper = <PyFunctionWrapper> params
@@ -457,16 +461,19 @@ cdef double c_monte_carlo_f(double *t, size_t dim, void *params) noexcept:
             value = wrapper.the_function(*wrapper.lx, *wrapper.the_parameters)
         else:
             value = wrapper.the_function(*wrapper.lx)
-    except Exception as msg:
-        print(msg)
-        return 0
+    except Exception as e:
+        print(e)
+        value=0
 
+    sig_unblock()
     return value
 
 
 cdef double c_monte_carlo_ff(double *x, size_t dim, void *params) noexcept:
     cdef double result
+    sig_block()
     (<Wrapper_rdf> params).call_c(x, &result)
+    sig_unblock()
     return result
 
 
@@ -585,6 +592,24 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         ValueError: The function to be integrated depends on 2 variables ('x', 'y'),
         and so cannot be integrated in 1 dimensions. Please add more items in
         upper and lower limits
+
+    Ensure :issue:`30379` is fixed for :func:`monte_carlo_integral` (c_monte_carlo_ff)::
+
+        sage: g(x, y) = gamma_inc(2, 11/5) * x * y
+        sage: for algo in ['plain', 'miser', 'vegas']:  # long time, abs tol 0.1
+        ....:     monte_carlo_integral(g, [0,0], [2,2], 10000, algorithm=algo)
+        (1.418, 0.01)
+        (1.418, 0.01)
+        (1.418, 0.01)
+
+    Ensure :issue:`30379` is fixed for :func:`monte_carlo_integral` (c_monte_carlo_f)::
+
+        sage: def f(x, y): return gamma_inc(2, 11/5) * x * y
+        sage: for algo in ['plain', 'miser', 'vegas']:  # long time, abs tol 0.1
+        ....:     monte_carlo_integral(f, [0,0], [2,2], 10000, algorithm=algo)
+        (1.418, 0.01)
+        (1.418, 0.01)
+        (1.418, 0.01)
 
     AUTHORS:
 

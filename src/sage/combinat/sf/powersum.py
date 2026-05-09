@@ -71,7 +71,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
         Pi = Partition([i])
         P0 = Partition([])
         T = self.tensor_square()
-        return T.sum_of_monomials( [(Pi, P0), (P0, Pi)] )
+        return T.sum_of_monomials([(Pi, P0), (P0, Pi)])
 
     def antipode_on_basis(self, partition):
         r"""
@@ -370,8 +370,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             p = self.parent()
             if 1 not in part:
                 return p.zero()
-            else:
-                return len([i for i in part if i == 1]) * p(part[:-1])
+            return len([i for i in part if i == 1]) * p(part[:-1])
 
         def _derivative_with_respect_to_p1(self):
             """
@@ -614,7 +613,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             p_coords_of_self = self.monomial_coefficients().items()
             dct = {Partition([i // n for i in lam]): coeff * (n ** len(lam))
                    for (lam, coeff) in p_coords_of_self
-                   if all( i % n == 0 for i in lam )}
+                   if all(i % n == 0 for i in lam)}
             result_in_p_basis = parent._from_dict(dct)
             return parent(result_in_p_basis)
 

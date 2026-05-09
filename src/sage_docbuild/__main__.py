@@ -444,9 +444,23 @@ class IntersphinxCache:
 
 
 def main():
+    # Before parsing the command line, insert SAGE_DOCBUILD_OPTS into
+    # the list of arguments.
+    docbuild_opts = os.getenv("SAGE_DOCBUILD_OPTS", "")
+
+    # Handle the empty strings that arise when SAGE_DOCBUILD_OPTS is
+    # unset, or when multiple spaces appear between e.g. --foo  --bar.
+    docbuild_args = [arg for arg in docbuild_opts.split(" ") if arg]
+
+    # Insert the SAGE_DOCBUILD_OPTS before the remaining args. This
+    # ensures that they are actually processed as options. Note: when
+    # the args passed to parse_args() are not implicit, they shouldn't
+    # include sys.argv[0].
+    all_args = docbuild_args + sys.argv[1:]
+
     # Parse the command-line.
     parser = setup_parser()
-    args: BuildOptions = parser.parse_args() # type: ignore
+    args: BuildOptions = parser.parse_args(all_args) # type: ignore
 
     # Check that the docs source directory exists
     if args.source_dir is None:
@@ -454,7 +468,7 @@ def main():
     args.source_dir = args.source_dir.absolute()
     if not args.source_dir.is_dir():
         parser.error(f"Source directory {args.source_dir} does not exist.")
-    
+
     if args.all_documents:
         if args.all_documents == 'reference':
             docs = get_all_reference_documents(args.source_dir / 'en')
@@ -468,7 +482,7 @@ def main():
 
     # Check that the docs output directory exists
     if args.output_dir is None:
-        args.output_dir = Path(os.environ.get('SAGE_DOC', 'src/doc'))    
+        args.output_dir = Path(os.environ.get('SAGE_DOC', 'src/doc'))
     args.output_dir = args.output_dir.absolute()
     if not args.output_dir.exists():
         try:

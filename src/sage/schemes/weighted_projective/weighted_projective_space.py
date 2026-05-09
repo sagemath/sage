@@ -1,3 +1,16 @@
+"""
+Weighted projective spaces
+"""
+
+# *****************************************************************************
+#        Copyright (C) 2024 Gareth Ma <grhkm21@gmail.com>
+#
+#   Distributed under the terms of the GNU General Public License (GPL)
+#   as published by the Free Software Foundation; either version 2 of
+#   the License, or (at your option) any later version.
+#                   https://www.gnu.org/licenses/
+# *****************************************************************************
+
 from sage.categories.fields import Fields
 from sage.categories.map import Map
 from sage.misc.latex import latex
@@ -49,7 +62,7 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
     # WeightedProjectiveSpace(5) -> just return unweighted version
     if isinstance(weights, (int, Integer)):
         return ProjectiveSpace(weights, R=R, names=names)
-    elif isinstance(weights, (list, tuple)):
+    if isinstance(weights, (list, tuple)):
         # Make it hashable
         weights = tuple(map(Integer, weights))
         if any(w <= 0 for w in weights):
@@ -369,9 +382,8 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         if isinstance(R, Map):
             return WeightedProjectiveSpace(self.weights(), R.codomain(),
                                            self.variable_names())
-        else:
-            return WeightedProjectiveSpace(self.weights(), R,
-                                           self.variable_names())
+        return WeightedProjectiveSpace(self.weights(), R,
+                                       self.variable_names())
 
     def _an_element_(self):
         r"""

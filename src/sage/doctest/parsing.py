@@ -190,8 +190,7 @@ def parse_optional_tags(
     if sharp_index < 0:                  # no comment
         if return_string_sans_tags:
             return {}, string, False
-        else:
-            return {}
+        return {}
 
     first_line_sans_comments, comment = first_line[:sharp_index] % literals, first_line[sharp_index:] % literals
     if not first_line_sans_comments.endswith("  ") and not first_line_sans_comments.rstrip().endswith("sage:"):
@@ -239,8 +238,7 @@ def parse_optional_tags(
         is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) tag
         return tags, (first_line + '\n' + rest % literals if rest is not None
                       else first_line), is_persistent
-    else:
-        return tags
+    return tags
 
 
 def parse_file_optional_tags(lines) -> dict[str, str | None]:
@@ -325,12 +323,11 @@ def _tag_group(tag):
     """
     if tag.startswith('sage.'):
         return 'sage'
-    elif tag in _standard_tags():
+    if tag in _standard_tags():
         return 'standard'
-    elif not special_optional_regex.fullmatch(tag):
+    if not special_optional_regex.fullmatch(tag):
         return 'optional'
-    else:
-        return 'special'
+    return 'special'
 
 
 def unparse_optional_tags(tags, prefix='# ') -> str:
@@ -1378,7 +1375,7 @@ class SageOutputChecker(doctest.OutputChecker):
             if isinstance(want, MarkedOutput):
                 if want.random:
                     return True
-                elif want.tol or want.rel_tol:
+                if want.tol or want.rel_tol:
                     want, got = check_tolerance_real_domain(want, got)
                 elif want.abs_tol:
                     want, got = check_tolerance_complex_domain(want, got)
@@ -1391,13 +1388,11 @@ class SageOutputChecker(doctest.OutputChecker):
 
         if doctest.OutputChecker.check_output(self, want, got, optionflags):
             return True
-        else:
-            # Last resort: try to fix-up the got string removing few typical warnings
-            did_fixup, want, got = self.do_fixup(want, got)
-            if did_fixup:
-                return doctest.OutputChecker.check_output(self, want, got, optionflags)
-            else:
-                return False
+        # Last resort: try to fix-up the got string removing few typical warnings
+        did_fixup, want, got = self.do_fixup(want, got)
+        if did_fixup:
+            return doctest.OutputChecker.check_output(self, want, got, optionflags)
+        return False
 
     def do_fixup(self, want, got):
         r"""
@@ -1535,6 +1530,13 @@ class SageOutputChecker(doctest.OutputChecker):
             # occurs sometimes when compiling cython code via sage.misc.cython
             dup_rpath_regex = re.compile("ld: warning: duplicate -rpath .* ignored")
             got = dup_rpath_regex.sub('', got)
+            did_fixup = True
+
+        if "lto-wrapper" in got:
+            # Messages from GCC's LTO wrapper when -flto is in CFLAGS
+            # and cython() is used non-trivially. Github issue 41991.
+            lto_wrapper_regex = re.compile("lto-wrapper: (warning|note): .*")
+            got = lto_wrapper_regex.sub('', got)
             did_fixup = True
 
         return did_fixup, want, got

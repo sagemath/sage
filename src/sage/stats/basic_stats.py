@@ -38,10 +38,10 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
-from sage.rings.integer_ring import ZZ
-from sage.misc.lazy_import import lazy_import
 from sage.misc.functional import sqrt
+from sage.misc.lazy_import import lazy_import
 from sage.misc.superseded import deprecation
+from sage.rings.integer_ring import ZZ
 
 lazy_import("sage.symbolic.constants", "NaN")
 lazy_import("numpy", "ndarray", as_="numpy_ndarray")
@@ -76,7 +76,7 @@ def mean(v):
         NaN
         sage: mean([I, sqrt(2), 3/5])                                                   # needs sage.symbolic
         1/3*sqrt(2) + 1/3*I + 1/5
-        sage: mean([RIF(1.0103,1.0103), RIF(2)])                                        # needs sage.rings.real_interval_field
+        sage: mean([RIF(1.0103,1.0103), RIF(2)])
         1.5051500000000000?
         sage: mean(range(4))
         3/2
@@ -248,8 +248,7 @@ def std(v, bias=False):
         # accounts for numpy arrays
         if bias:
             return v.std()
-        else:
-            return v.std(ddof=1)
+        return v.std(ddof=1)
 
     if not v:
         # standard deviation of empty set defined as NaN
@@ -345,8 +344,7 @@ def variance(v, bias=False):
         # accounts for numpy arrays
         if bias:
             return v.var()
-        else:
-            return v.var(ddof=1)
+        return v.var(ddof=1)
     if not v:
         # variance of empty set defined as NaN
         return NaN
@@ -359,11 +357,10 @@ def variance(v, bias=False):
         if isinstance(x, int):
             return x / ZZ(len(v))
         return x / len(v)
-    else:
-        # sample variance
-        if isinstance(x, int):
-            return x / ZZ(len(v)-1)
-        return x / (len(v)-1)
+    # sample variance
+    if isinstance(x, int):
+        return x / ZZ(len(v)-1)
+    return x / (len(v)-1)
 
 
 def median(v):
@@ -415,10 +412,9 @@ def median(v):
     values = sorted(v)
     if len(values) % 2:
         return values[((len(values))+1)//2-1]
-    else:
-        lower = values[(len(values)+1)//2-1]
-        upper = values[len(values)//2]
-        return (lower + upper) / ZZ(2)
+    lower = values[(len(values)+1)//2-1]
+    upper = values[len(values)//2]
+    return (lower + upper) / ZZ(2)
 
 
 def moving_average(v, n):

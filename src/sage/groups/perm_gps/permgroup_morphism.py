@@ -135,9 +135,8 @@ class PermutationGroupMorphism(Morphism):
             J = PermutationGroup([J])
             G = self._libgap_().Image(J)
             return H.subgroup(gap_group=G).gens()[0]
-        else:
-            G = self._libgap_().Image(J)
-            return H.subgroup(gap_group=G)
+        G = self._libgap_().Image(J)
+        return H.subgroup(gap_group=G)
 
     def __call__(self, g):
         r"""

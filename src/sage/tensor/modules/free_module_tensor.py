@@ -1836,9 +1836,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
         """
         if self._fmodule._def_basis in self._components:
             return self._fmodule._def_basis  # the default basis is privileged
-        else:
-            # a basis is picked arbitrarily:
-            return next(iter(self._components.items()))[0]
+        # a basis is picked arbitrarily:
+        return next(iter(self._components.items()))[0]
 
     def __eq__(self, other):
         r"""
@@ -1885,19 +1884,18 @@ class FreeModuleTensor(ModuleElementWithMutability):
         if isinstance(other, (int, Integer)): # other should be 0
             if other == 0:
                 return self.is_zero()
-            else:
-                return False
-        elif not isinstance(other, FreeModuleTensor):
             return False
-        else: # other is another tensor
-            if other._fmodule != self._fmodule:
-                return False
-            if other._tensor_type != self._tensor_type:
-                return False
-            basis = self.common_basis(other)
-            if basis is None:
-                raise ValueError("no common basis for the comparison")
-            return bool(self._components[basis] == other._components[basis])
+        if not isinstance(other, FreeModuleTensor):
+            return False
+        # other is another tensor
+        if other._fmodule != self._fmodule:
+            return False
+        if other._tensor_type != self._tensor_type:
+            return False
+        basis = self.common_basis(other)
+        if basis is None:
+            raise ValueError("no common basis for the comparison")
+        return bool(self._components[basis] == other._components[basis])
 
     def __ne__(self, other):
         r"""
@@ -2557,9 +2555,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
         resu_comp = self._components[basis].trace(pos1, pos2)
         if self._tensor_rank == 2:  # result is a scalar
             return resu_comp
-        else:
-            return self._fmodule.tensor_from_comp((k_con-1, l_cov-1),
-                                                  resu_comp)
+        return self._fmodule.tensor_from_comp((k_con-1, l_cov-1),
+                                              resu_comp)
 
     def contract(self, *args):
         r"""

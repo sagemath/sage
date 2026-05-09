@@ -26,8 +26,6 @@ gzip
 # so require full python 3 and its prereqs
 python3-devel
 bzip2-devel
-xz
-liblzma-devel
 libffi-devel
 zlib-devel
 # to build python3 with the crypto module; there may be other packages that need it

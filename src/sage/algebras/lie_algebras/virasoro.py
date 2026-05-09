@@ -1174,7 +1174,7 @@ class VermaModule(CombinatorialFreeModule):
                 if S is R or scalar in R:
                     scalar = R(scalar)
                     return P._from_dict({k: scalar*c for k,c in self._monomial_coefficients.items()})
-                elif S is P._V or scalar in P._V:
+                if S is P._V or scalar in P._V:
                     scalar = P._V(scalar)
                     return P.linear_combination((P._d_action_on_basis(n, k), cv * cm)
                                                 for n,cv in scalar.monomial_coefficients(copy=False).items()

@@ -138,8 +138,7 @@ class PoorManMap(SageObject):
                     and self._domain == other._domain
                     and self._codomain == other._codomain
                     and self._name == other._name)
-        else:
-            return False
+        return False
 
     def __ne__(self, other):
         r"""
