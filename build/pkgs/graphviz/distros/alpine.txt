@@ -1,1 +1,1 @@
-graphviz-dev
+graphviz

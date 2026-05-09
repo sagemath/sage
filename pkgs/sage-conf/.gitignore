@@ -1,6 +1,0 @@
-/_sage_conf/_conf.py
-/setup.cfg
-/build
-/dist
-/*.egg-info
-/.tox

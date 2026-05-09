@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Lyndon words
 """
@@ -14,7 +13,7 @@ Lyndon words
 
 from sage.arith.misc import divisors, gcd, moebius, multinomial
 from sage.combinat.combinat_cython import lyndon_word_iterator
-from sage.combinat.composition import Composition, Compositions
+from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.necklace import _sfc
 from sage.combinat.words.finite_word import FiniteWord_class
 from sage.combinat.words.words import FiniteWords
@@ -39,16 +38,14 @@ def LyndonWords(e=None, k=None):
 
     or
 
-    - ``e`` -- integer, size of alphabet
-    - ``k`` -- integer, length of the words
+    - ``e`` -- integer; size of alphabet
+    - ``k`` -- integer; length of the words
 
     or
 
-    - ``e`` -- a composition
+    - ``e`` -- a weak composition
 
-    OUTPUT:
-
-    A combinatorial class of Lyndon words.
+    OUTPUT: a combinatorial class of Lyndon words
 
     EXAMPLES::
 
@@ -64,9 +61,9 @@ def LyndonWords(e=None, k=None):
         word: 1112
         sage: LW.last()
         word: 2333
-        sage: LW.random_element() # random
+        sage: LW.random_element()  # random                                             # needs sage.libs.pari
         word: 1232
-        sage: LW.cardinality()
+        sage: LW.cardinality()                                                          # needs sage.libs.pari
         18
 
     If e is a (weak) composition, then it returns the class of Lyndon
@@ -81,17 +78,17 @@ def LyndonWords(e=None, k=None):
     """
     if e is None and k is None:
         return LyndonWords_class()
-    elif isinstance(e, (int, Integer)):
+    if isinstance(e, (int, Integer)):
         if e > 0:
             if not isinstance(k, (int, Integer)):
-                raise TypeError("k must be a non-negative integer")
+                raise TypeError("k must be a nonnegative integer")
             if k < 0:
-                raise TypeError("k must be a non-negative integer")
+                raise TypeError("k must be a nonnegative integer")
             return LyndonWords_nk(Integer(e), Integer(k))
-    elif e in Compositions():
-        return LyndonWords_evaluation(Composition(e))
+    elif e in IntegerVectors():
+        return LyndonWords_evaluation(IntegerVectors()(e))
 
-    raise TypeError("e must be a positive integer or a composition")
+    raise TypeError("e must be a positive integer or a weak composition")
 
 
 def LyndonWord(data, check=True):
@@ -101,12 +98,10 @@ def LyndonWord(data, check=True):
     INPUT:
 
     - ``data`` -- list
-    - ``check`` -- bool (optional, default: ``True``) if ``True``,
-      check that the input data represents a Lyndon word.
+    - ``check`` -- boolean (default: ``True``); if ``True``,
+      check that the input data represents a Lyndon word
 
-    OUTPUT:
-
-    A Lyndon word.
+    OUTPUT: a Lyndon word
 
     EXAMPLES::
 
@@ -208,7 +203,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
             sage: LW21 == loads(dumps(LW21))
             True
         """
-        self._e = e
+        self._e = list(e)
         self._words = FiniteWords(len(e))
 
         from sage.categories.enumerated_sets import EnumeratedSets
@@ -266,8 +261,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
             ev_dict = w.evaluation_dict()
             evaluation = [ev_dict.get(x, 0) for x in self._words.alphabet()]
             return evaluation == self._e and w.is_lyndon()
-        else:
-            return False
+        return False
 
     def cardinality(self):
         """
@@ -277,9 +271,9 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
 
             sage: LyndonWords([]).cardinality()
             0
-            sage: LyndonWords([2,2]).cardinality()
+            sage: LyndonWords([2,2]).cardinality()                                      # needs sage.libs.pari
             1
-            sage: LyndonWords([2,3,2]).cardinality()
+            sage: LyndonWords([2,3,2]).cardinality()                                    # needs sage.libs.pari
             30
 
         Check to make sure that the count matches up with the number of
@@ -287,7 +281,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
 
             sage: comps = [[],[2,2],[3,2,7],[4,2]] + Compositions(4).list()
             sage: lws = [LyndonWords(comp) for comp in comps]
-            sage: all(lw.cardinality() == len(lw.list()) for lw in lws)
+            sage: all(lw.cardinality() == len(lw.list()) for lw in lws)                 # needs sage.libs.pari
             True
         """
         evaluation = self._e
@@ -323,7 +317,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`12997` is fixed::
+        Check that :issue:`12997` is fixed::
 
             sage: LyndonWords([0,1]).list()
             [word: 2]
@@ -414,10 +408,10 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
             ...
             ValueError: length is not k=3
 
-        Make sure that the correct length is checked (:trac:`30186`)::
+        Make sure that the correct length is checked (:issue:`30186`)::
 
             sage: L = LyndonWords(2, 4)
-            sage: _ = L(L.random_element())
+            sage: _ = L(L.random_element())                                             # needs sage.libs.pari
         """
         w = self._words(*args, **kwds)
         if kwds.get('check', True) and not w.is_lyndon():
@@ -443,15 +437,14 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
         """
         TESTS::
 
-            sage: [ LyndonWords(3,i).cardinality() for i in range(1, 11) ]
+            sage: [ LyndonWords(3,i).cardinality() for i in range(1, 11) ]              # needs sage.libs.pari
             [3, 3, 8, 18, 48, 116, 312, 810, 2184, 5880]
         """
         if self._k == 0:
             return Integer(1)
-        else:
-            s = Integer(0)
-            for d in divisors(self._k):
-                s += moebius(d) * self._n**(self._k // d)
+        s = Integer(0)
+        for d in divisors(self._k):
+            s += moebius(d) * self._n**(self._k // d)
         return s // self._k
 
     def __iter__(self):
@@ -470,7 +463,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
             sage: sum(1 for lw in LyndonWords(1, 1000))
             0
 
-            sage: list(LyndonWords(1, 1))
+            sage: list(LyndonWords(1, 1))                                               # needs sage.libs.pari
             [word: 1]
         """
         W = self._words._element_classes['list']
@@ -650,7 +643,6 @@ def standard_unbracketing(sblw):
         if x < y and (len(t) == 0 or y <= t):
             x += y
             return x, y
-        else:
-            raise ValueError("not a standard bracketing of a Lyndon word")
+        raise ValueError("not a standard bracketing of a Lyndon word")
     lw, _ = standard_unbracketing_rec(sblw)
     return FiniteWords(list(set(lw)))(lw, datatype='list', check=False)

@@ -1,2 +1,7 @@
+if [ "$UNAME" = "Darwin" ]; then
+    LDFLAGS="${LDFLAGS} -Wl,-rpath,${SAGE_LOCAL}/lib"
+    export LDFLAGS
+fi
+
 cd src
-sdh_pip_install .
+sdh_pip_install --no-build-isolation . --config-setting=setup-args="--wrap-mode=nodownload" 

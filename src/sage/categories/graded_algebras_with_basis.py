@@ -12,10 +12,12 @@ Graded algebras with basis
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.signed_tensor import SignedTensorProductsCategory, tensor_signed
 from sage.misc.cachefunc import cached_method
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+
 
 class GradedAlgebrasWithBasis(GradedModulesCategory):
     """
-    The category of graded algebras with a distinguished basis
+    The category of graded algebras with a distinguished basis.
 
     EXAMPLES::
 
@@ -46,8 +48,8 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: m = SymmetricFunctions(QQ).m()
-                sage: m.graded_algebra() is m
+                sage: m = SymmetricFunctions(QQ).m()                                    # needs sage.combinat sage.modules
+                sage: m.graded_algebra() is m                                           # needs sage.combinat sage.modules
                 True
 
             TESTS:
@@ -57,6 +59,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
             and :meth:`projection` (which form the interface of the
             associated graded algebra) work correctly here::
 
+                sage: # needs sage.combinat sage.modules
                 sage: to_gr = m.to_graded_conversion()
                 sage: from_gr = m.from_graded_conversion()
                 sage: m[2] == to_gr(m[2]) == from_gr(m[2])
@@ -86,7 +89,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
         def free_graded_module(self, generator_degrees, names=None):
             """
-            Create a finitely generated free graded module over ``self``
+            Create a finitely generated free graded module over ``self``.
 
             INPUT:
 
@@ -111,6 +114,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: Q = QuadraticForm(QQ, 3, [1,2,3,4,5,6])
                 sage: Cl = CliffordAlgebra(Q)
                 sage: M = Cl.free_graded_module((0, 2, 3))
@@ -134,6 +138,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
                 sage: S = NCSF.Complete()
                 sage: L = S.formal_series_ring()
@@ -148,6 +153,24 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
     class ElementMethods:
         pass
+
+    class FiniteDimensional(CategoryWithAxiom_over_base_ring):
+        class ParentMethods:
+            @cached_method
+            def top_degree(self):
+                r"""
+                Return the top degree of the finite dimensional graded algebra.
+
+                EXAMPLES::
+
+                    sage: ch = matroids.Uniform(4,6).chow_ring(QQ, False)
+                    sage: ch.top_degree()
+                    3
+                    sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
+                    sage: ch.top_degree()
+                    3
+                """
+                return max(b.degree() for b in self.basis())
 
     class SignedTensorProducts(SignedTensorProductsCategory):
         """
@@ -170,7 +193,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
         class ParentMethods:
             """
-            Implements operations on tensor products of super algebras
+            Implement operations on tensor products of super algebras
             with basis.
             """
             @cached_method
@@ -185,6 +208,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: A.<x,y> = ExteriorAlgebra(QQ)
                     sage: A.one_basis()
                     0
@@ -199,8 +223,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
                 # all modules provide one_basis
                 if all(hasattr(module, "one_basis") for module in self._sets):
                     return tuple(module.one_basis() for module in self._sets)
-                else:
-                    raise NotImplementedError
+                raise NotImplementedError
 
             def product_on_basis(self, t0, t1):
                 """
@@ -211,6 +234,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                 Test the sign in the super tensor product::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: A = SteenrodAlgebra(3)
                     sage: x = A.Q(0)
                     sage: y = x.coproduct()
@@ -219,8 +243,8 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                 TODO: optimize this implementation!
                 """
-                basic = tensor_signed((module.monomial(x0) * module.monomial(x1)
-                                      for (module, x0, x1) in zip(self._sets, t0, t1)))
+                basic = tensor_signed(module.monomial(x0) * module.monomial(x1)
+                                      for (module, x0, x1) in zip(self._sets, t0, t1))
                 n = len(self._sets)
                 parity0 = [self._sets[idx].degree_on_basis(x0)
                            for (idx, x0) in enumerate(t0)]

@@ -2,15 +2,15 @@
 Utilities for subprocess management
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 import errno
 import signal
@@ -37,15 +37,15 @@ cdef class ContainChildren():
 
     INPUT:
 
-    - ``exitcode`` -- (integer, default 0) exit code to use when a
+    - ``exitcode`` -- integer (default: 0); exit code to use when a
       child process tries to exit the with block normally (not due to
       an exception)
 
-    - ``exceptcode`` -- (integer, default 1) exit code to use when a
+    - ``exceptcode`` -- integer (default: 1); exit code to use when a
       child process tries to exit the with block due to an exception
 
-    - ``silent`` -- (boolean, default ``False``) if ``False``, print
-      exceptions raised by the child process.
+    - ``silent`` -- boolean (default: ``False``); if ``False``, print
+      exceptions raised by the child process
 
     EXAMPLES::
 
@@ -163,7 +163,7 @@ cdef class ContainChildren():
             if exc[0] is not None:  # Exception was raised
                 exitcode = self.exceptcode
                 if not self.silent:
-                    sys.stderr.write("Exception raised by child process with pid=%s:\n"%pid)
+                    sys.stderr.write("Exception raised by child process with pid=%s:\n" % pid)
                     import traceback
                     traceback.print_exception(*exc)
             sys.stdout.flush()
@@ -186,7 +186,7 @@ def terminate(sp, interval=1, signals=[signal.SIGTERM, signal.SIGKILL]):
     INPUT:
 
     - ``sp`` -- a `subprocess.Popen` instance
-    - ``interval`` -- (float, default 1) interval in seconds between
+    - ``interval`` -- float (default: 1); interval in seconds between
       termination attempts
     - ``signals`` -- (list, default [signal.SIGTERM, signal.SIGKILL]) the
       signals to send the process in order to terminate it
@@ -245,9 +245,7 @@ def terminate(sp, interval=1, signals=[signal.SIGTERM, signal.SIGKILL]):
         sage: t = walltime() - t0
         sage: t <= 4.0 or t
         True
-
     """
-
     try:
         yield sp
     finally:

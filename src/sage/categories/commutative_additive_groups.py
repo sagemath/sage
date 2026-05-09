@@ -14,6 +14,7 @@ from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.additive_groups import AdditiveGroups
 
+
 class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
     """
     The category of abelian groups, i.e. additive abelian monoids
@@ -79,8 +80,10 @@ class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
                     sage: G((0,1)).additive_order()
                     +Infinity
 
+                    sage: # needs sage.rings.finite_rings
                     sage: K = GF(9)
-                    sage: H = cartesian_product([cartesian_product([Zmod(2),Zmod(9)]), K])
+                    sage: H = cartesian_product([
+                    ....:     cartesian_product([Zmod(2), Zmod(9)]), K])
                     sage: z = H(((1,2), K.gen()))
                     sage: z.additive_order()
                     18
@@ -89,9 +92,8 @@ class CommutativeAdditiveGroups(CategoryWithAxiom, AbelianCategory):
                 orders = [x.additive_order() for x in self.cartesian_factors()]
                 if any(o is Infinity for o in orders):
                     return Infinity
-                else:
-                    from sage.arith.functions import LCM_list
-                    return LCM_list(orders)
+                from sage.arith.functions import LCM_list
+                return LCM_list(orders)
 
     class Algebras(AlgebrasCategory):
         pass

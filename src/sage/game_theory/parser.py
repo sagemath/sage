@@ -13,7 +13,7 @@ Parser For gambit And lrs Nash Equilibria
 # ****************************************************************************
 
 
-class Parser():
+class Parser:
     r"""
     A class for parsing the outputs of different algorithms called in other
     software packages.
@@ -51,7 +51,7 @@ class Parser():
         """
         self.raw_string = raw_string
 
-    def format_lrs(self, legacy_format=False):
+    def format_lrs(self):
         r"""
         Parses the output of lrs so as to return vectors
         corresponding to equilibria.
@@ -137,45 +137,14 @@ class Parser():
              [(1/3, 2/3, 0), (1/7, 0, 6/7)],
              [(1, 0, 0), (0, 0, 1)]]
 
-        TESTS:
-
-        An example with the legacy format::
-
-            sage: from sage.cpython.string import bytes_to_str
-            sage: from sage.game_theory.parser import Parser
-            sage: from subprocess import Popen, PIPE
-            sage: A = matrix([[1, 2], [3, 2]])
-            sage: g = NormalFormGame([A])
-            sage: game1_str, game2_str = g._Hrepresentation(A, -A)
-            doctest:warning...
-            DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
-            creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
-            See https://github.com/sagemath/sage/issues/27745 for details.
-            sage: g1_name, g2_name = tmp_filename(), tmp_filename()
-            sage: g1_file, g2_file = open(g1_name, 'w'), open(g2_name, 'w')
-            sage: _ = g1_file.write(game1_str)
-            sage: g1_file.close()
-            sage: _ = g2_file.write(game2_str)
-            sage: g2_file.close()
-            sage: from sage.features.lrs import LrsNash
-            sage: process = Popen([LrsNash().absolute_filename(), g1_name, g2_name],        # optional - lrslib
-            ....:                 stdout=PIPE, stderr=PIPE)
-            sage: lrs_output = [bytes_to_str(row) for row in process.stdout]                # not tested, optional - lrslib
-            sage: nasheq = Parser(lrs_output).format_lrs(legacy_format=True)                # not tested, optional - lrslib
-            sage: nasheq                                                                    # not tested, optional - lrslib
-            [[(1/2, 1/2), (0, 1)], [(0, 1), (0, 1)]]
+        The former legacy format has been removed in :issue:`39464`.
         """
         equilibria = []
         from sage.misc.sage_eval import sage_eval
         from itertools import groupby, dropwhile
         lines = iter(self.raw_string)
-        if legacy_format:
-            # Skip until the magic stars announce the beginning of the real output
-            while not next(lines).startswith("*****"):
-                pass
-        else:
-            # Skip comment lines starting with a single star
-            lines = dropwhile(lambda line: line.startswith('*'), lines)
+        # Skip comment lines starting with a single star
+        lines = dropwhile(lambda line: line.startswith('*'), lines)
         for collection in [list(x[1]) for x in groupby(lines, lambda x: x == '\n')]:
             if collection[0].startswith('2'):
                 s1 = tuple([sage_eval(k) for k in collection[-1].split()][1:-1])
@@ -194,18 +163,19 @@ class Parser():
 
         Here we construct a two by two game in gambit::
 
-            sage: import gambit  # optional - gambit
+            sage: # optional - gambit
+            sage: import gambit
             sage: from sage.game_theory.parser import Parser
-            sage: g = gambit.Game.new_table([2,2])  # optional - gambit
-            sage: g[int(0), int(0)][int(0)] = int(2)  # optional - gambit
-            sage: g[int(0), int(0)][int(1)] = int(1)  # optional - gambit
-            sage: g[int(0), int(1)][int(0)] = int(0)  # optional - gambit
-            sage: g[int(0), int(1)][int(1)] = int(0)  # optional - gambit
-            sage: g[int(1), int(0)][int(0)] = int(0)  # optional - gambit
-            sage: g[int(1), int(0)][int(1)] = int(0)  # optional - gambit
-            sage: g[int(1), int(1)][int(0)] = int(1)  # optional - gambit
-            sage: g[int(1), int(1)][int(1)] = int(2)  # optional - gambit
-            sage: solver = gambit.nash.ExternalLCPSolver()  # optional - gambit
+            sage: g = gambit.Game.new_table([2,2])
+            sage: g[int(0), int(0)][int(0)] = int(2)
+            sage: g[int(0), int(0)][int(1)] = int(1)
+            sage: g[int(0), int(1)][int(0)] = int(0)
+            sage: g[int(0), int(1)][int(1)] = int(0)
+            sage: g[int(1), int(0)][int(0)] = int(0)
+            sage: g[int(1), int(0)][int(1)] = int(0)
+            sage: g[int(1), int(1)][int(0)] = int(1)
+            sage: g[int(1), int(1)][int(1)] = int(2)
+            sage: solver = gambit.nash.ExternalLCPSolver()
 
         Here is the output of the LCP algorithm::
 
@@ -218,21 +188,24 @@ class Parser():
         The Parser class outputs the equilibrium::
 
             sage: nasheq = Parser(LCP_output).format_gambit(g)  # optional - gambit
-            sage: nasheq  # optional - gambit
-            [[(1.0, 0.0), (1.0, 0.0)], [(0.6666666667, 0.3333333333), (0.3333333333, 0.6666666667)], [(0.0, 1.0), (0.0, 1.0)]]
+            sage: nasheq                                        # optional - gambit
+            [[(1.0, 0.0), (1.0, 0.0)],
+             [(0.6666666667, 0.3333333333), (0.3333333333, 0.6666666667)],
+             [(0.0, 1.0), (0.0, 1.0)]]
 
         Here is another game::
 
-            sage: g = gambit.Game.new_table([2,2])  # optional - gambit
-            sage: g[int(0), int(0)][int(0)] = int(4)  # optional - gambit
-            sage: g[int(0), int(0)][int(1)] = int(8)  # optional - gambit
-            sage: g[int(0), int(1)][int(0)] = int(0)  # optional - gambit
-            sage: g[int(0), int(1)][int(1)] = int(1)  # optional - gambit
-            sage: g[int(1), int(0)][int(0)] = int(1)  # optional - gambit
-            sage: g[int(1), int(0)][int(1)] = int(3)  # optional - gambit
-            sage: g[int(1), int(1)][int(0)] = int(1)  # optional - gambit
-            sage: g[int(1), int(1)][int(1)] = int(0)  # optional - gambit
-            sage: solver = gambit.nash.ExternalLCPSolver()  # optional - gambit
+            sage: # optional - gambit
+            sage: g = gambit.Game.new_table([2,2])
+            sage: g[int(0), int(0)][int(0)] = int(4)
+            sage: g[int(0), int(0)][int(1)] = int(8)
+            sage: g[int(0), int(1)][int(0)] = int(0)
+            sage: g[int(0), int(1)][int(1)] = int(1)
+            sage: g[int(1), int(0)][int(0)] = int(1)
+            sage: g[int(1), int(0)][int(1)] = int(3)
+            sage: g[int(1), int(1)][int(0)] = int(1)
+            sage: g[int(1), int(1)][int(1)] = int(0)
+            sage: solver = gambit.nash.ExternalLCPSolver()
 
         Here is the LCP output::
 
@@ -248,26 +221,27 @@ class Parser():
 
         Here is a larger degenerate game::
 
-            sage: g = gambit.Game.new_table([3,3])  # optional - gambit
-            sage: g[int(0), int(0)][int(0)] = int(-7)  # optional - gambit
-            sage: g[int(0), int(0)][int(1)] = int(-9)  # optional - gambit
-            sage: g[int(0), int(1)][int(0)] = int(-5)  # optional - gambit
-            sage: g[int(0), int(1)][int(1)] = int(7)  # optional - gambit
-            sage: g[int(0), int(2)][int(0)] = int(5)  # optional - gambit
-            sage: g[int(0), int(2)][int(1)] = int(9)  # optional - gambit
-            sage: g[int(1), int(0)][int(0)] = int(5)  # optional - gambit
-            sage: g[int(1), int(0)][int(1)] = int(6)  # optional - gambit
-            sage: g[int(1), int(1)][int(0)] = int(5)  # optional - gambit
-            sage: g[int(1), int(1)][int(1)] = int(-2)  # optional - gambit
-            sage: g[int(1), int(2)][int(0)] = int(3)  # optional - gambit
-            sage: g[int(1), int(2)][int(1)] = int(-3)  # optional - gambit
-            sage: g[int(2), int(0)][int(0)] = int(1)  # optional - gambit
-            sage: g[int(2), int(0)][int(1)] = int(-4)  # optional - gambit
-            sage: g[int(2), int(1)][int(0)] = int(-6)  # optional - gambit
-            sage: g[int(2), int(1)][int(1)] = int(6)  # optional - gambit
-            sage: g[int(2), int(2)][int(0)] = int(1)  # optional - gambit
-            sage: g[int(2), int(2)][int(1)] = int(-10)  # optional - gambit
-            sage: solver = gambit.nash.ExternalLCPSolver()  # optional - gambit
+            sage: # optional - gambit
+            sage: g = gambit.Game.new_table([3,3])
+            sage: g[int(0), int(0)][int(0)] = int(-7)
+            sage: g[int(0), int(0)][int(1)] = int(-9)
+            sage: g[int(0), int(1)][int(0)] = int(-5)
+            sage: g[int(0), int(1)][int(1)] = int(7)
+            sage: g[int(0), int(2)][int(0)] = int(5)
+            sage: g[int(0), int(2)][int(1)] = int(9)
+            sage: g[int(1), int(0)][int(0)] = int(5)
+            sage: g[int(1), int(0)][int(1)] = int(6)
+            sage: g[int(1), int(1)][int(0)] = int(5)
+            sage: g[int(1), int(1)][int(1)] = int(-2)
+            sage: g[int(1), int(2)][int(0)] = int(3)
+            sage: g[int(1), int(2)][int(1)] = int(-3)
+            sage: g[int(2), int(0)][int(0)] = int(1)
+            sage: g[int(2), int(0)][int(1)] = int(-4)
+            sage: g[int(2), int(1)][int(0)] = int(-6)
+            sage: g[int(2), int(1)][int(1)] = int(6)
+            sage: g[int(2), int(2)][int(0)] = int(1)
+            sage: g[int(2), int(2)][int(1)] = int(-10)
+            sage: solver = gambit.nash.ExternalLCPSolver()
 
         Here is the LCP output::
 
@@ -291,7 +265,7 @@ class Parser():
         nice_stuff = []
         for gambitstrategy in self.raw_string:
             gambitstrategy = list(gambitstrategy)
-            profile = [tuple(gambitstrategy[:len(gambit_game.players[int(0)].strategies)])]
+            profile = [tuple(gambitstrategy[:len(gambit_game.players[0].strategies)])]
             for player in list(gambit_game.players)[1:]:
                 previousplayerstrategylength = len(profile[-1])
                 profile.append(tuple(gambitstrategy[previousplayerstrategylength: previousplayerstrategylength + len(player.strategies)]))

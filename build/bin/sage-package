@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-bootstrap-python
+#!/usr/bin/env python3
 
 # Script to manage third-party tarballs.
 #
@@ -13,12 +13,10 @@
 #
 # * Print a list of all available packages
 #
-#   $ sage-package list | sort
+#   $ sage-package list
 #   4ti2
-#   arb
 #   autotools
 #   [...]
-#   zlib
 #
 # * Find the package name given a tarball filename
 #

@@ -1,151 +1,53 @@
 """
 Misc matrix algorithms
-
-Code goes here mainly when it needs access to the internal structure
-of several classes, and we want to avoid circular cimports.
-
-NOTE: The whole problem of avoiding circular imports -- the reason for
-existence of this file -- is now a non-issue, since some bugs in
-Cython were fixed.  Probably all this code should be moved into the
-relevant classes and this file deleted.
 """
 
 from cysignals.signals cimport sig_check
-
-cimport sage.rings.abc
 
 from sage.arith.misc import CRT_basis, previous_prime
 from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
 from sage.data_structures.binary_search cimport *
 from sage.ext.mod_int cimport *
-from sage.libs.flint.fmpq cimport fmpq_set_mpq, fmpq_canonicalise
-from sage.libs.flint.fmpq_mat cimport fmpq_mat_entry_num, fmpq_mat_entry_den, fmpq_mat_entry
-from sage.libs.flint.fmpz cimport fmpz_set_mpz, fmpz_one
 from sage.libs.gmp.mpq cimport *
 from sage.libs.gmp.mpz cimport *
-from sage.libs.mpfr cimport *
-from sage.misc.verbose import get_verbose, verbose
+from sage.misc.lazy_import import LazyImport
+from sage.misc.verbose import verbose
 from sage.modules.vector_integer_sparse cimport *
 from sage.modules.vector_modn_sparse cimport *
 from sage.modules.vector_rational_sparse cimport *
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr cimport RealNumber
 
-from .matrix0 cimport Matrix
-from .matrix_integer_dense cimport Matrix_integer_dense
-from .matrix_integer_sparse cimport Matrix_integer_sparse
-from .matrix_rational_dense cimport Matrix_rational_dense
-from .matrix_rational_sparse cimport Matrix_rational_sparse
+from sage.matrix.matrix0 cimport Matrix
+from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
+from sage.matrix.matrix_rational_sparse cimport Matrix_rational_sparse
 
-
-def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer N):
-    """
-    Given a matrix over the integers and an integer modulus, do
-    rational reconstruction on all entries of the matrix, viewed as
-    numbers mod N.  This is done efficiently by assuming there is a
-    large common factor dividing the denominators.
-
-    INPUT:
-
-        A -- matrix
-        N -- an integer
-
-    EXAMPLES::
-
-        sage: B = ((matrix(ZZ, 3,4, [1,2,3,-4,7,2,18,3,4,3,4,5])/3)%500).change_ring(ZZ)
-        sage: sage.matrix.misc.matrix_integer_dense_rational_reconstruction(B, 500)
-        [ 1/3  2/3    1 -4/3]
-        [ 7/3  2/3    6    1]
-        [ 4/3    1  4/3  5/3]
-
-    TESTS:
-
-    Check that :trac:`9345` is fixed::
-
-        sage: A = random_matrix(ZZ, 3)
-        sage: sage.matrix.misc.matrix_integer_dense_rational_reconstruction(A, 0)
-        Traceback (most recent call last):
-        ...
-        ZeroDivisionError: The modulus cannot be zero
-    """
-    if not N:
-        raise ZeroDivisionError("The modulus cannot be zero")
-    cdef Matrix_rational_dense R
-    R = Matrix_rational_dense.__new__(Matrix_rational_dense,
-                                      A.parent().change_ring(QQ), 0,0,0)
-
-    cdef mpz_t a, bnd, other_bnd, denom, tmp
-    cdef mpq_t qtmp
-    cdef Integer _bnd
-    cdef Py_ssize_t i, j
-    cdef int do_it
-
-    mpz_init_set_si(denom, 1)
-    mpz_init(a)
-    mpz_init(tmp)
-    mpz_init(other_bnd)
-    mpq_init(qtmp)
-
-    _bnd = (N//2).isqrt()
-    mpz_init_set(bnd, _bnd.value)
-    mpz_sub(other_bnd, N.value, bnd)
-
-    for i in range(A._nrows):
-        for j in range(A._ncols):
-            sig_check()
-            A.get_unsafe_mpz(i, j, a)
-            if mpz_cmp_ui(denom, 1) != 0:
-                mpz_mul(a, a, denom)
-            mpz_fdiv_r(a, a, N.value)
-            do_it = 0
-            if mpz_cmp(a, bnd) <= 0:
-                do_it = 1
-            elif mpz_cmp(a, other_bnd) >= 0:
-                mpz_sub(a, a, N.value)
-                do_it = 1
-            if do_it:
-                fmpz_set_mpz(fmpq_mat_entry_num(R._matrix, i, j), a)
-                if mpz_cmp_ui(denom, 1) != 0:
-                    fmpz_set_mpz(fmpq_mat_entry_den(R._matrix, i, j), denom)
-                    fmpq_canonicalise(fmpq_mat_entry(R._matrix, i, j))
-                else:
-                    fmpz_one(fmpq_mat_entry_den(R._matrix, i, j))
-            else:
-                # Otherwise have to do it the hard way
-                A.get_unsafe_mpz(i, j, tmp)
-                mpq_rational_reconstruction(qtmp, tmp, N.value)
-                mpz_lcm(denom, denom, mpq_denref(qtmp))
-                fmpq_set_mpq(fmpq_mat_entry(R._matrix, i, j), qtmp)
-
-    mpz_clear(denom)
-    mpz_clear(a)
-    mpz_clear(tmp)
-    mpz_clear(other_bnd)
-    mpz_clear(bnd)
-    mpq_clear(qtmp)
-
-    return R
+matrix_integer_dense_rational_reconstruction = \
+  LazyImport('sage.matrix.misc_flint', 'matrix_integer_dense_rational_reconstruction',
+             deprecation=35758)
+hadamard_row_bound_mpfr = \
+  LazyImport('sage.matrix.misc_mpfr', 'hadamard_row_bound_mpfr',
+             deprecation=35758)
 
 
 def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integer N):
-    """
+    r"""
     Given a sparse matrix over the integers and an integer modulus, do
     rational reconstruction on all entries of the matrix, viewed as
-    numbers mod N.
+    numbers mod `N`.
 
     EXAMPLES::
 
         sage: A = matrix(ZZ, 3, 4, [(1/3)%500, 2, 3, (-4)%500, 7, 2, 2, 3, 4, 3, 4, (5/7)%500], sparse=True)
-        sage: sage.matrix.misc.matrix_integer_sparse_rational_reconstruction(A, 500)
+        sage: from sage.matrix.misc import matrix_integer_sparse_rational_reconstruction
+        sage: matrix_integer_sparse_rational_reconstruction(A, 500)
         [1/3   2   3  -4]
         [  7   2   2   3]
         [  4   3   4 5/7]
 
     TESTS:
 
-    Check that :trac:`9345` is fixed::
+    Check that :issue:`9345` is fixed::
 
         sage: A = random_matrix(ZZ, 3, sparse=True)
         sage: sage.matrix.misc.matrix_integer_sparse_rational_reconstruction(A, 0)
@@ -222,16 +124,17 @@ def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integ
 
 def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, proof=None):
     """
-    Returns reduced row-echelon form using a multi-modular
-    algorithm.  Does not change self.
+    Return reduced row-echelon form using a multi-modular
+    algorithm.  Does not change ``self``.
 
     REFERENCE: Chapter 7 of Stein's "Explicitly Computing Modular Forms".
 
     INPUT:
 
-    - height_guess -- integer or None
-    - proof -- boolean or None (default: None, see proof.linear_algebra or
-      sage.structure.proof). Note that the global Sage default is proof=True
+    - ``height_guess`` -- integer or ``None``
+    - ``proof`` -- boolean or ``None`` (default: ``None``, see
+      ``proof.linear_algebra`` or ``sage.structure.proof``). Note that the
+      global Sage default is proof=True
 
     OUTPUT: a pair consisting of a matrix in echelon form and a tuple of pivot
     positions.
@@ -301,12 +204,55 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         [                0                 0                 1                 2]
         sage: A.pivots()
         (0, 1, 2)
+
+    A small benchmark, showing that flint fraction-free multimodular algorithm
+    is always faster than the fraction-free multimodular algorithm implemented in Python::
+
+        sage: import copy
+        sage: def benchmark(num_row, num_col, entry_size, timeout=2, integer_coefficient=True):
+        ....:     A = matrix(QQ, [[
+        ....:         randint(1, 2^entry_size) if integer_coefficient else ZZ(randint(1, 2^entry_size))/randint(1, 2^entry_size)
+        ....:         for col in range(num_col)] for row in range(num_row)])
+        ....:     data=[]
+        ....:     for algorithm in ("flint:fflu", "flint:multimodular", "padic", "multimodular"):
+        ....:         # classical is too slow
+        ....:         B = copy.copy(A)
+        ....:         t = walltime()
+        ....:         alarm(timeout)
+        ....:         try:
+        ....:             B.echelonize(algorithm=algorithm)
+        ....:         except AlarmInterrupt:
+        ....:             pass
+        ....:         finally:
+        ....:             cancel_alarm()
+        ....:         data.append((round(walltime(t), 4), algorithm))
+        ....:     return sorted(data)
+        sage: benchmark(20, 20, 10000)  # long time
+        [...'flint:multimodular'...'multimodular'...'flint:fflu'...]
+        sage: benchmark(39, 40, 200)  # long time
+        [...'flint:multimodular'...'flint:fflu'...'multimodular'...]
+
+    In older versions of flint
+    before this `issue <https://github.com/flintlib/flint/issues/2129>`_
+    is fixed, ``algorithm='flint'`` (automatic choice) may be slower than
+    ``algorithm='flint:multimodular'``.
+
+    In this case, there are more columns than rows, which means the resulting
+    matrix has height much higher than the input matrix. We check that the function
+    does not take too long::
+
+        sage: A = matrix(QQ, [[randint(1, 2^500) for col in range(40)] for row in range(20)])
+        sage: t = walltime()
+        sage: A.echelonize(algorithm="multimodular")  # long time
+        sage: t = walltime(t)  # long time
+        sage: (t < 10, t)  # long time
+        (True, ...)
     """
     if proof is None:
         from sage.structure.proof.proof import get_flag
         proof = get_flag(proof, "linear_algebra")
 
-    verbose("Multimodular echelon algorithm on %s x %s matrix"%(self._nrows, self._ncols), caller_name="multimod echelon")
+    verbose("Multimodular echelon algorithm on %s x %s matrix" % (self._nrows, self._ncols), caller_name="multimod echelon")
     cdef Matrix E
     if self._nrows == 0 or self._ncols == 0:
         return self, ()
@@ -316,12 +262,14 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
     height = self.height()
     if height_guess is None:
         height_guess = 10000000*(height+100)
-    tm = verbose("height_guess = %s"%height_guess, level=2, caller_name="multimod echelon")
+    tm = verbose("height_guess = %s" % height_guess, level=2, caller_name="multimod echelon")
 
+    cdef Integer M
+    from sage.arith.misc import integer_floor as floor
     if proof:
-        M = self._ncols * height_guess * height  +  1
+        M = floor(max(1, self._ncols * height_guess * height + 1))
     else:
-        M = height_guess + 1
+        M = floor(max(1, height_guess + 1))
 
     if self.is_sparse():
         from sage.matrix.matrix_modn_sparse import MAX_MODULUS
@@ -341,7 +289,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             problem = problem + 1
             if problem > 50:
                 verbose("echelon multi-modular possibly not converging?", caller_name="multimod echelon")
-            t = verbose("echelon modulo p=%s (%.2f%% done)"%(
+            t = verbose("echelon modulo p=%s (%.2f%% done)" % (
                        p, 100*float(len(str(prod))) / len(str(M))), level=2, caller_name="multimod echelon")
 
             # We use denoms=False, since we made self integral by calling clear_denom above.
@@ -378,10 +326,10 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             if cmp_pivots(best_pivots, X[i].pivots()) <= 0:
                 p = X[i].base_ring().order()
                 if p not in lifts:
-                    t0 = verbose("Lifting a good matrix", level=2, caller_name = "multimod echelon")
+                    t0 = verbose("Lifting a good matrix", level=2, caller_name="multimod echelon")
                     lift = X[i].lift()
                     lifts[p] = (lift, p)
-                    verbose("Finished lift", level=2, caller_name= "multimod echelon", t=t0)
+                    verbose("Finished lift", level=2, caller_name="multimod echelon", t=t0)
                 Y.append(lifts[p])
                 prod = prod * X[i].base_ring().order()
         verbose("finished comparing pivots", level=2, t=t, caller_name="multimod echelon")
@@ -406,7 +354,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         except ValueError as msg:
             verbose(msg, level=2)
             verbose("Not enough primes to do CRT lift; redoing with several more primes.", level=2, caller_name="multimod echelon")
-            M = prod * p*p*p
+            M <<= M.bit_length() // 5 + 1
             continue
 
         if not proof:
@@ -418,39 +366,40 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             verbose("Validity of result checked.", level=2, caller_name="multimod echelon")
             break
         verbose("Validity failed; trying again with more primes.", level=2, caller_name="multimod echelon")
-        M = prod * p*p*p
+        M <<= M.bit_length() // 5 + 1
     #end while
     verbose("total time",tm, level=2, caller_name="multimod echelon")
     return E, tuple(best_pivots)
 
 
 def cmp_pivots(x, y):
-    """
+    r"""
     Compare two sequences of pivot columns.
 
-    If x is shorter than y, return -1, i.e., x < y, "not as good".
-    If x is longer than y, then x > y, so "better" and return +1.
-    If the length is the same, then x is better, i.e., x > y
-    if the entries of x are correspondingly <= those of y with
+    If `x` is shorter than `y`, return `-1`, i.e., `x < y`, "not as good".
+    If `x` is longer than `y`, then `x > y`, so "better" and return `+1`.
+    If the length is the same, then `x` is better, i.e., `x > y`
+    if the entries of `x` are correspondingly `\leq` those of `y` with
     one being strictly less.
 
     INPUT:
 
-    - x, y -- lists or tuples of integers
+    - ``x``, ``y`` -- lists or tuples of integers
 
     EXAMPLES:
 
     We illustrate each of the above comparisons. ::
 
-        sage: sage.matrix.misc.cmp_pivots([1,2,3], [4,5,6,7])
+        sage: from sage.matrix.misc import cmp_pivots
+        sage: cmp_pivots([1,2,3], [4,5,6,7])
         -1
-        sage: sage.matrix.misc.cmp_pivots([1,2,3,5], [4,5,6])
+        sage: cmp_pivots([1,2,3,5], [4,5,6])
         1
-        sage: sage.matrix.misc.cmp_pivots([1,2,4], [1,2,3])
+        sage: cmp_pivots([1,2,4], [1,2,3])
         -1
-        sage: sage.matrix.misc.cmp_pivots([1,2,3], [1,2,3])
+        sage: cmp_pivots([1,2,3], [1,2,3])
         0
-        sage: sage.matrix.misc.cmp_pivots([1,2,3], [1,2,4])
+        sage: cmp_pivots([1,2,3], [1,2,4])
         1
     """
     x = tuple(x)
@@ -465,70 +414,3 @@ def cmp_pivots(x, y):
         return 0
     else:
         return -1
-
-
-def hadamard_row_bound_mpfr(Matrix A):
-    """
-    Given a matrix A with entries that coerce to RR, compute the row
-    Hadamard bound on the determinant.
-
-    INPUT:
-
-        A -- a matrix over RR
-
-    OUTPUT:
-
-        integer -- an integer n such that the absolute value of the
-                   determinant of this matrix is at most $10^n$.
-
-    EXAMPLES:
-
-    We create a very large matrix, compute the row Hadamard bound,
-    and also compute the row Hadamard bound of the transpose, which
-    happens to be sharp. ::
-
-        sage: a = matrix(ZZ, 2, [2^10000,3^10000,2^50,3^19292])
-        sage: import sage.matrix.misc
-        sage: sage.matrix.misc.hadamard_row_bound_mpfr(a.change_ring(RR))
-        13976
-        sage: len(str(a.det()))
-        12215
-        sage: sage.matrix.misc.hadamard_row_bound_mpfr(a.transpose().change_ring(RR))
-        12215
-
-    Note that in the above example using RDF would overflow::
-
-        sage: b = a.change_ring(RDF)
-        sage: b._hadamard_row_bound()
-        Traceback (most recent call last):
-        ...
-        OverflowError: cannot convert float infinity to integer
-    """
-    if not isinstance(A.base_ring(), sage.rings.abc.RealField):
-        raise TypeError("A must have base field an mpfr real field.")
-
-    cdef RealNumber a, b
-    cdef mpfr_t s, d, pr
-    cdef Py_ssize_t i, j
-
-    mpfr_init(s)
-    mpfr_init(d)
-    mpfr_init(pr)
-    mpfr_set_si(d, 0, MPFR_RNDU)
-
-    for i in range(A._nrows):
-        mpfr_set_si(s, 0, MPFR_RNDU)
-        for j in range(A._ncols):
-            sig_check()
-            a = A.get_unsafe(i, j)
-            mpfr_mul(pr, a.value, a.value, MPFR_RNDU)
-            mpfr_add(s, s, pr, MPFR_RNDU)
-        mpfr_log10(s, s, MPFR_RNDU)
-        mpfr_add(d, d, s, MPFR_RNDU)
-    b = a._new()
-    mpfr_set(b.value, d, MPFR_RNDU)
-    b /= 2
-    mpfr_clear(s)
-    mpfr_clear(d)
-    mpfr_clear(pr)
-    return b.ceil()

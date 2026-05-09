@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Monoids
 """
@@ -5,30 +6,9 @@ Monoids
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
 
-def is_Monoid(x):
-    r"""
-    Returns True if ``x`` is of type ``Monoid_class``.
-
-    EXAMPLES::
-
-        sage: from sage.monoids.monoid import is_Monoid
-        sage: is_Monoid(0)
-        False
-        sage: is_Monoid(ZZ)   # The technical math meaning of monoid has
-        ....:                 # no bearing whatsoever on the result: it's
-        ....:                 # a typecheck which is not satisfied by ZZ
-        ....:                 # since it does not inherit from Monoid_class.
-        False
-        sage: is_Monoid(sage.monoids.monoid.Monoid_class(('a','b')))
-        True
-        sage: F.<a,b,c,d,e> = FreeMonoid(5)
-        sage: is_Monoid(F)
-        True
-    """
-    return isinstance(x, Monoid_class)
 
 class Monoid_class(Parent):
-    def __init__(self, names):
+    def __init__(self, names, category=None) -> None:
         r"""
         EXAMPLES::
 
@@ -42,13 +22,16 @@ class Monoid_class(Parent):
             sage: TestSuite(F).run()
         """
         from sage.categories.monoids import Monoids
-        category = Monoids().FinitelyGeneratedAsMagma()
-        Parent.__init__(self, base=self, names=names, category=category)
+        if category is None:
+            cat = Monoids().FinitelyGeneratedAsMagma()
+        else:
+            cat = category & Monoids().FinitelyGeneratedAsMagma()
+        Parent.__init__(self, base=self, names=names, category=cat)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Returns the generators for ``self``.
+        Return the generators for ``self``.
 
         EXAMPLES::
 
@@ -60,7 +43,7 @@ class Monoid_class(Parent):
 
     def monoid_generators(self):
         r"""
-        Returns the generators for ``self``.
+        Return the generators for ``self``.
 
         EXAMPLES::
 

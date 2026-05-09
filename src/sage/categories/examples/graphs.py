@@ -117,4 +117,5 @@ class Cycle(UniqueRepresentation, Parent):
                 return 2
             return 1
 
+
 Example = Cycle

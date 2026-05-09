@@ -1,0 +1,4 @@
+# For ecl integration
+maxima-runtime-ecl
+# For binary
+maxima

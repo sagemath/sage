@@ -5,21 +5,20 @@ Fast functions for the category framework
 AUTHOR:
 
 - Simon King (initial version)
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Simon King <simon.king@uni-jena.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 #######################################
-## Sorting
+#  Sorting
 
 cpdef inline tuple category_sort_key(object category):
     """
@@ -47,7 +46,7 @@ cpdef tuple _sort_uniq(categories):
 
     INPUT:
 
-    - ``categories`` -- a list (or iterable) of categories
+    - ``categories`` -- list (or iterable) of categories
 
     OUTPUT: a sorted tuple of mutually incomparable categories
 
@@ -79,9 +78,9 @@ cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory):
 
     INPUT:
 
-    - ``categories`` -- a list (or iterable) of categories
+    - ``categories`` -- list (or iterable) of categories
 
-    - ``JoinCategory`` -- A type such that instances of that type will be
+    - ``JoinCategory`` -- a type such that instances of that type will be
       replaced by its super categories. Usually, this type is
       :class:`JoinCategory`.
 
@@ -106,9 +105,9 @@ cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory):
     return tuple(out)
 
 #############################################
-## Join
+#  Join
 
-cdef bint is_supercategory_of_done(new_cat, dict done):
+cdef bint is_supercategory_of_done(new_cat, dict done) noexcept:
     # This is a helper function. It replaces the closure
     # any(cat.is_subcategory(new_cat) for cat in done)
     for cat in done:
@@ -122,12 +121,12 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
 
     INPUT:
 
-    - ``categories`` -- tuple of categories to be joined,
+    - ``categories`` -- tuple of categories to be joined
     - ``axioms`` -- tuple of strings; the names of some
-      supplementary axioms.
+      supplementary axioms
     - ``ignore_axioms`` -- tuple of pairs ``(cat, axiom)``, such
       that ``axiom`` will not be applied to ``cat``, should ``cat``
-      occur in the algorithm.
+      occur in the algorithm
 
     EXAMPLES::
 
@@ -164,7 +163,7 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
                 axs = axs | {axiom}
         done[category] = axs
         for axiom in axiomsS.difference(axs):
-            todo.add( (category, axiom) )
+            todo.add((category, axiom))
 
     # Invariants:
     # - the current list of categories is stored in the keys of ``done``
@@ -198,7 +197,7 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
         # Mark old categories with new axioms as todo
         for category in done:
             for axiom in new_axioms:
-                todo.add( (category, axiom) )
+                todo.add((category, axiom))
         for new_cat in new_cats:
             axs = new_cat.axioms()
             for (cat, axiom) in ignore_axioms:
@@ -206,13 +205,13 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
                     axs = axs | {axiom}
             done[new_cat] = axs
             for axiom in axiomsS.difference(axs):
-                todo.add( (new_cat, axiom) )
+                todo.add((new_cat, axiom))
 
     return _sort_uniq(done)
 
 
 #############################################
-## Axiom related functions
+#  Axiom related functions
 
 cdef class AxiomContainer(dict):
     """
@@ -294,7 +293,7 @@ cpdef tuple canonicalize_axioms(AxiomContainer all_axioms, axioms):
 
     - ``all_axioms`` -- all available axioms
 
-    - ``axioms`` -- a set (or iterable) of axioms
+    - ``axioms`` -- set (or iterable) of axioms
 
     .. NOTE::
 

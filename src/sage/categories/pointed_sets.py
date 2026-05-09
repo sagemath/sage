@@ -11,7 +11,8 @@ Pointed sets
 #******************************************************************************
 
 from sage.categories.category_singleton import Category_singleton
-from .sets_cat import Sets
+from sage.categories.sets_cat import Sets
+
 
 class PointedSets(Category_singleton):
     """

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Highest weight crystals
 """
@@ -168,7 +169,7 @@ def HighestWeightCrystal(dominant_weight, model=None):
 
     Check that the correct crystal is constructed for the fundamental weights::
 
-        sage: for ct in CartanType.samples(finite=True, crystallographic=True):
+        sage: for ct in CartanType.samples(finite=True, crystallographic=True):  # long time
         ....:     L = ct.root_system().weight_lattice()
         ....:     La = L.fundamental_weights()
         ....:     for model in ['Tableaux', 'NakajimaMonomials', 'AlcovePaths', 'RiggedConfigurations']:
@@ -191,7 +192,6 @@ def HighestWeightCrystal(dominant_weight, model=None):
         ....:             C1 = crystals.HighestWeight(wt.to_ambient().to_weight_space(ZZ), model=model)
         ....:             C2 = crystals.HighestWeight(wt, model=model)
         ....:             assert C1 == C2
-
     """
     cartan_type = dominant_weight.parent().cartan_type()
     if model is None:
@@ -224,7 +224,7 @@ def HighestWeightCrystal(dominant_weight, model=None):
             raise ValueError("only for finite type E")
         if cartan_type.rank() == 6:
             return FiniteDimensionalHighestWeightCrystal_TypeE6(dominant_weight)
-        elif cartan_type.rank() == 7:
+        if cartan_type.rank() == 7:
             return FiniteDimensionalHighestWeightCrystal_TypeE7(dominant_weight)
         raise NotImplementedError
 
@@ -288,7 +288,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
         self._highest_weight = dominant_weight
         assert dominant_weight.is_dominant()
         self.rename()
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self.module_generators = [self.module_generator()]
 
     def _repr_(self):
@@ -309,8 +309,8 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
 
     def module_generator(self):
         """
-        This yields the module generator (or highest weight element) of the classical
-        crystal of given dominant weight in self.
+        Yield the module generator (or highest weight element) of the classical
+        crystal of given dominant weight in ``self``.
 
         EXAMPLES::
 
@@ -377,7 +377,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE6(FiniteDimensionalHighestWeigh
             2430
         """
         B1 = CrystalOfLetters(['E',6])
-        B6 = CrystalOfLetters(['E',6], dual = True)
+        B6 = CrystalOfLetters(['E',6], dual=True)
         self.column_crystal = {1 : B1, 6 : B6,
                                4 : TensorProductOfCrystals(B1,B1,B1,generators=[[B1([-3,4]),B1([-1,3]),B1([1])]]),
                                3 : TensorProductOfCrystals(B1,B1,generators=[[B1([-1,3]),B1([1])]]),

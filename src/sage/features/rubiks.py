@@ -20,7 +20,7 @@ from .join_feature import JoinFeature
 
 class cu2(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``cu2``
+    A :class:`~sage.features.Feature` describing the presence of ``cu2``.
 
     EXAMPLES::
 
@@ -37,12 +37,12 @@ class cu2(Executable):
             True
         """
         Executable.__init__(self, "cu2", executable=RUBIKS_BINS_PREFIX + "cu2",
-                            spkg="rubiks")
+                            spkg='rubiks')
 
 
 class size222(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``size222``
+    A :class:`~sage.features.Feature` describing the presence of ``size222``.
 
     EXAMPLES::
 
@@ -59,12 +59,12 @@ class size222(Executable):
             True
         """
         Executable.__init__(self, "size222", executable=RUBIKS_BINS_PREFIX + "size222",
-                            spkg="rubiks")
+                            spkg='rubiks')
 
 
 class optimal(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``optimal``
+    A :class:`~sage.features.Feature` describing the presence of ``optimal``.
 
     EXAMPLES::
 
@@ -81,12 +81,12 @@ class optimal(Executable):
             True
         """
         Executable.__init__(self, "optimal", executable=RUBIKS_BINS_PREFIX + "optimal",
-                            spkg="rubiks")
+                            spkg='rubiks')
 
 
 class mcube(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``mcube``
+    A :class:`~sage.features.Feature` describing the presence of ``mcube``.
 
     EXAMPLES::
 
@@ -103,12 +103,12 @@ class mcube(Executable):
             True
         """
         Executable.__init__(self, "mcube", executable=RUBIKS_BINS_PREFIX + "mcube",
-                            spkg="rubiks")
+                            spkg='rubiks')
 
 
 class dikcube(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``dikcube``
+    A :class:`~sage.features.Feature` describing the presence of ``dikcube``.
 
     EXAMPLES::
 
@@ -125,12 +125,12 @@ class dikcube(Executable):
             True
         """
         Executable.__init__(self, "dikcube", executable=RUBIKS_BINS_PREFIX + "dikcube",
-                            spkg="rubiks")
+                            spkg='rubiks')
 
 
 class cubex(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``cubex``
+    A :class:`~sage.features.Feature` describing the presence of ``cubex``.
 
     EXAMPLES::
 
@@ -147,14 +147,14 @@ class cubex(Executable):
             True
         """
         Executable.__init__(self, "cubex", executable=RUBIKS_BINS_PREFIX + "cubex",
-                            spkg="rubiks")
+                            spkg='rubiks')
 
 
 class Rubiks(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of
-    ``cu2``, ``cubex``, ``dikcube``, ``mcube``, ``optimal``, and
-    ``size222``.
+    A :class:`~sage.features.Feature` describing the presence of the
+    :class:`cu2`, :class:`cubex`, :class:`dikcube`, :class:`mcube`, :class:`optimal`, and
+    :class:`size222` programs from the :ref:`rubiks <spkg_rubiks>` package.
 
     EXAMPLES::
 
@@ -172,7 +172,7 @@ class Rubiks(JoinFeature):
         """
         JoinFeature.__init__(self, "rubiks",
                              [cu2(), size222(), optimal(), mcube(), dikcube(), cubex()],
-                             spkg="rubiks")
+                             spkg='rubiks')
 
 
 def all_features():

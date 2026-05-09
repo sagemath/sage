@@ -19,7 +19,8 @@ from .join_feature import JoinFeature
 
 class Meataxe(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``meataxe``.
+    A :class:`~sage.features.Feature` describing the presence of the Sage modules
+    that depend on the :ref:`meataxe <spkg_meataxe>` library.
 
     EXAMPLES::
 
@@ -35,10 +36,9 @@ class Meataxe(JoinFeature):
             sage: isinstance(Meataxe(), Meataxe)
             True
         """
-        # Currently part of sagemath_standard, conditionally built.
-        # Will be changed to spkg='sagemath_meataxe' later
         JoinFeature.__init__(self, 'meataxe',
-                             [PythonModule('sage.matrix.matrix_gfpn_dense', spkg='meataxe')])
+                             [PythonModule('sage.matrix.matrix_gfpn_dense',
+                                           spkg='meataxe')])
 
 
 def all_features():

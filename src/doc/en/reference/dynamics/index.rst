@@ -29,6 +29,7 @@ Arithmetic Dynamical Systems
    sage/dynamics/arithmetic_dynamics/product_projective_ds
    sage/dynamics/arithmetic_dynamics/wehlerK3
    sage/dynamics/arithmetic_dynamics/berkovich_ds
+   sage/dynamics/arithmetic_dynamics/dynamical_semigroup
 
 
 .. SEEALSO::

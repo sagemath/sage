@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 """
 Abelian varieties attached to newforms
 
@@ -18,10 +19,12 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 from sage.modular.modform.element import Newform
-from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1, is_GammaH
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
+from sage.modular.arithgroup.congroup_gammaH import GammaH_class
 
 from .abvar import ModularAbelianVariety_modsym_abstract
-from . import homspace
+from sage.modular.abvar import homspace
 lazy_import('sage.databases.cremona', 'cremona_letter_code')
 
 
@@ -35,7 +38,8 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
         newform `f`.
 
         INPUT:
-            f -- a newform
+
+        - ``f`` -- a newform
 
         EXAMPLES::
 
@@ -122,9 +126,7 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
         Return canonical label that defines this newform modular
         abelian variety.
 
-        OUTPUT:
-
-        string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -133,11 +135,11 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
             '43b'
         """
         G = self.__f.group()
-        if is_Gamma0(G):
+        if isinstance(G, Gamma0_class):
             group = ''
-        elif is_Gamma1(G):
+        elif isinstance(G, Gamma1_class):
             group = 'G1'
-        elif is_GammaH(G):
+        elif isinstance(G, GammaH_class):
             group = 'GH[' + ','.join(str(z) for z in G._generators_for_H()) + ']'
         return '%s%s%s' % (self.level(), cremona_letter_code(self.factor_number()), group)
 
@@ -145,9 +147,7 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
         """
         Return factor number.
 
-        OUTPUT:
-
-        int
+        OUTPUT: int
 
         EXAMPLES::
 

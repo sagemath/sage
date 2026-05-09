@@ -80,7 +80,7 @@ Classes and Methods
 ===================
 """
 
-#*****************************************************************************
+# ***************************************************************************
 # Copyright (C) 2014--2015 Benjamin Hackl <benjamin.hackl@aau.at>
 #               2014--2015 Daniel Krenn <dev@danielkrenn.at>
 #
@@ -88,8 +88,8 @@ Classes and Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.factory import UniqueFactory
 
@@ -100,7 +100,7 @@ class CartesianProductFactory(UniqueFactory):
 
     INPUT:
 
-    - ``growth_groups`` -- a tuple (or other iterable) of growth groups.
+    - ``growth_groups`` -- tuple (or other iterable) of growth groups
 
     - ``order`` -- (default: ``None``) if specified, then this order
       is taken for comparing two Cartesian product elements. If ``order`` is
@@ -196,7 +196,6 @@ class CartesianProductFactory(UniqueFactory):
 
         return (tuple(growth_groups), category), kwds
 
-
     def create_object(self, version, args, **kwds):
         r"""
         Create an object from the given arguments.
@@ -254,6 +253,8 @@ CartesianProductGrowthGroups = CartesianProductFactory('CartesianProductGrowthGr
 
 from sage.combinat.posets.cartesian_product import CartesianProductPoset
 from .growth_group import GenericGrowthGroup
+
+
 class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
     r"""
     A Cartesian product of growth groups.
@@ -287,7 +288,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
     __classcall__ = CartesianProductPoset.__classcall__
 
-
     def __init__(self, sets, category, **kwds):
         r"""
         See :class:`GenericProduct` for details.
@@ -298,7 +298,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             sage: GrowthGroup('x^ZZ * y^ZZ')  # indirect doctest
             Growth Group x^ZZ * y^ZZ
 
-        Check :trac:`26452`::
+        Check :issue:`26452`::
 
             sage: from sage.rings.asymptotic.growth_group import MonomialGrowthGroup
             sage: R = QQ.extension(x^2+1, 'i')
@@ -319,9 +319,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         GenericGrowthGroup.__init__(self, sets[0], Vars, self.category(), **kwds)
 
-
     __hash__ = CartesianProductPoset.__hash__
-
 
     def some_elements(self):
         r"""
@@ -329,9 +327,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         See :class:`TestSuite` for a typical use case.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -350,7 +346,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
              x^(2/3)*log(x)^(-4)*(6/7)^y,
              x^(-2/3)*log(x)^5*(7/6)^y)
         """
-        from builtins import zip
         return iter(
             self(c) for c in
             zip(*tuple(F.some_elements() for F in self.cartesian_factors())))
@@ -362,11 +357,9 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         INPUT:
 
-        - ``element`` -- a tuple.
+        - ``element`` -- tuple
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
@@ -399,11 +392,9 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                                             category=self.category())
         return parent(element)
 
-
     def _element_constructor_(self, data):
         r"""
-        Converts the given object to an element of this Cartesian
-        product.
+        Convert the given object to an element of this Cartesian product.
 
         EXAMPLES::
 
@@ -488,10 +479,10 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         if data == 1:
             return self.one()
 
-        elif data is None:
+        if data is None:
             raise ValueError('%s cannot be converted.' % (data,))
 
-        elif type(data) == self.element_class and data.parent() == self:
+        elif type(data) is self.element_class and data.parent() == self:
             return data
 
         elif isinstance(data, str):
@@ -504,7 +495,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             if P is self:
                 return data
 
-            elif P is SR:
+            if P is SR:
                 from sage.symbolic.operators import mul_vararg
                 if data.operator() == mul_vararg:
                     return convert_factors(data.operands(), data)
@@ -520,22 +511,14 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         return convert_factors((data,), data)
 
-
     _repr_ = GenericGrowthGroup._repr_
-
 
     def _repr_short_(self):
         r"""
         A short (shorter than :meth:`._repr_`) representation string
         for this Cartesian product of growth groups.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -547,7 +530,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         """
         return ' * '.join(S._repr_short_() for S in self.cartesian_factors())
 
-
     def _convert_factors_(self, factors):
         r"""
         Helper method. Try to convert some ``factors`` to an
@@ -556,11 +538,9 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         INPUT:
 
-        - ``factors`` -- a tuple or other iterable.
+        - ``factors`` -- tuple or other iterable
 
-        OUTPUT:
-
-        An element of this Cartesian product.
+        OUTPUT: an element of this Cartesian product
 
         EXAMPLES::
 
@@ -617,20 +597,17 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         return prod(self.cartesian_injection(*fs)
                     for f in factors for fs in get_factors(f))
 
-
     def cartesian_injection(self, factor, element):
         r"""
         Inject the given element into this Cartesian product at the given factor.
 
         INPUT:
 
-        - ``factor`` -- a growth group (a factor of this Cartesian product).
+        - ``factor`` -- a growth group (a factor of this Cartesian product)
 
-        - ``element`` -- an element of ``factor``.
+        - ``element`` -- an element of ``factor``
 
-        OUTPUT:
-
-        An element of this Cartesian product.
+        OUTPUT: an element of this Cartesian product
 
         TESTS::
 
@@ -642,18 +619,15 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         return self(tuple((f.one() if f != factor else element)
                           for f in self.cartesian_factors()))
 
-
     def _coerce_map_from_(self, S):
         r"""
         Return whether ``S`` coerces into this growth group.
 
         INPUT:
 
-        - ``S`` -- a parent.
+        - ``S`` -- a parent
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -668,7 +642,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         if CartesianProductPoset.has_coerce_map_from(self, S):
             return True
 
-        elif isinstance(S, GenericProduct):
+        if isinstance(S, GenericProduct):
             factors = S.cartesian_factors()
         else:
             factors = (S,)
@@ -676,7 +650,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         if all(any(g.has_coerce_map_from(f) for g in self.cartesian_factors())
                for f in factors):
             return True
-
 
     def _pushout_(self, other):
         r"""
@@ -786,8 +759,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             def subfactors(F):
                 for f in F:
                     if isinstance(f, GenericProduct):
-                        for g in subfactors(f.cartesian_factors()):
-                            yield g
+                        yield from subfactors(f.cartesian_factors())
                     else:
                         yield f
 
@@ -849,7 +821,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                 S.next_custom()
                 O.next_custom()
 
-        assert(len(newS) == len(newO))
+        assert (len(newS) == len(newO))
 
         if (len(Sfactors) == len(newS) and
             len(Ofactors) == len(newO)):
@@ -864,18 +836,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         from sage.categories.cartesian_product import cartesian_product
         return pushout(cartesian_product(newS), cartesian_product(newO))
 
-
-    def gens_monomial(self):
+    def gens_monomial(self) -> tuple:
         r"""
         Return a tuple containing monomial generators of this growth group.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A tuple containing elements of this growth group.
+        OUTPUT: a tuple containing elements of this growth group
 
         .. NOTE::
 
@@ -900,14 +865,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             for factor in self.cartesian_factors()),
                    tuple())
 
-
     def variable_names(self):
         r"""
         Return the names of the variables.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -921,12 +883,10 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         from itertools import groupby
         return tuple(v for v, _ in groupby(vars))
 
-
     class Element(CartesianProductPoset.Element):
 
         from .growth_group import _is_lt_one_
         is_lt_one = _is_lt_one_
-
 
         def _repr_(self, latex=False):
             r"""
@@ -934,12 +894,10 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             INPUT:
 
-            - ``latex`` -- (default: ``False``) a boolean. If set, then
-              LaTeX-output is returned.
+            - ``latex`` -- boolean (default: ``False``); if set, then
+              LaTeX-output is returned
 
-            OUTPUT:
-
-            A string.
+            OUTPUT: string
 
             EXAMPLES::
 
@@ -961,14 +919,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                 return '1'
             return s
 
-
         def _latex_(self):
             r"""
             A representation string for this Cartesian product element.
 
-            OUTPUT:
-
-            A string.
+            OUTPUT: string
 
             TESTS::
 
@@ -982,7 +937,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             """
             return self._repr_(latex=True)
 
-
         def __pow__(self, exponent):
             r"""
             Calculate the power of this growth element to the given
@@ -990,11 +944,9 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             INPUT:
 
-            - ``exponent`` -- a number.
+            - ``exponent`` -- a number
 
-            OUTPUT:
-
-            A growth element.
+            OUTPUT: a growth element
 
             EXAMPLES::
 
@@ -1013,19 +965,12 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             return self.parent()._create_element_in_extension_(
                 tuple(x ** exponent for x in self.cartesian_factors()))
 
-
         def factors(self):
             r"""
             Return the atomic factors of this growth element. An atomic factor
             cannot be split further and is not the identity (`1`).
 
-            INPUT:
-
-            Nothing.
-
-            OUTPUT:
-
-            A tuple of growth elements.
+            OUTPUT: a tuple of growth elements
 
             EXAMPLES::
 
@@ -1062,11 +1007,9 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                             if not f.is_one()),
                        tuple())
 
-
         from .growth_group import _log_factor_, _log_
         log = _log_
         log_factor = _log_factor_
-
 
         def _log_factor_(self, base=None, locals=None):
             r"""
@@ -1075,13 +1018,14 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             INPUT:
 
-            - ``base`` -- the base of the logarithm. If ``None``
-              (default value) is used, the natural logarithm is taken.
+            - ``base`` -- the base of the logarithm; if ``None``
+              (default value) is used, the natural logarithm is taken
 
-            - ``locals`` -- a dictionary which may contain the following keys and values:
+            - ``locals`` -- dictionary which may contain the following keys and
+              values:
 
-              - ``'log'`` -- value: a function. If not used, then the usual
-                :class:`log <sage.functions.log.Function_log>` is taken.
+              - ``'log'`` -- value: a function; if not used, then the usual
+                :class:`log <sage.functions.log.Function_log>` is taken
 
             OUTPUT:
 
@@ -1120,30 +1064,25 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                     ArithmeticError('Cannot build log(%s) in %s.' %
                                     (self, self.parent())), e)
 
-
         from .growth_group import _rpow_
         rpow = _rpow_
 
-
         def _rpow_element_(self, base):
             r"""
-            Return an element which is the power of ``base`` to this
-            element.
+            Return an element which is the power of ``base`` to this element.
 
             INPUT:
 
-            - ``base`` -- an element.
+            - ``base`` -- an element
 
-            OUTPUT:
-
-            A growth element.
+            OUTPUT: a growth element
 
             .. NOTE::
 
                 The parent of the result can be different from the parent
                 of this element.
 
-            A ``ValueError`` is raised if the calculation is not possible
+            A :exc:`ValueError` is raised if the calculation is not possible
             within this method. (Then the calling method should take care
             of the calculation.)
 
@@ -1166,18 +1105,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                 raise ValueError  # calling method has to deal with it...
             return factor._rpow_element_(base)
 
-
         def exp(self):
             r"""
             The exponential of this element.
 
-            INPUT:
-
-            Nothing.
-
-            OUTPUT:
-
-            A growth element.
+            OUTPUT: a growth element
 
             EXAMPLES::
 
@@ -1211,14 +1143,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             """
             return self.rpow('e')
 
-
         def __invert__(self):
             r"""
             Return the multiplicative inverse of this Cartesian product.
 
-            OUTPUT:
-
-            An growth element.
+            OUTPUT: a growth element
 
             .. NOTE::
 
@@ -1235,7 +1164,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             return self.parent()._create_element_in_extension_(
                 tuple(~x for x in self.cartesian_factors()))
 
-
         def _substitute_(self, rules):
             r"""
             Substitute the given ``rules`` in this
@@ -1243,13 +1171,10 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             INPUT:
 
-            - ``rules`` -- a dictionary.
-              The neutral element of the group is replaced by the value
-              to key ``'_one_'``.
+            - ``rules`` -- dictionary; the neutral element of the group is
+              replaced by the value to key ``'_one_'``
 
-            OUTPUT:
-
-            An object.
+            OUTPUT: an object
 
             TESTS::
 
@@ -1291,11 +1216,11 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             INPUT:
 
-            - ``var`` -- a string denoting the variable
+            - ``var`` -- string denoting the variable
 
             - ``zeta`` -- a number
 
-            - ``precision`` -- an integer
+            - ``precision`` -- integer
 
             OUTPUT:
 
@@ -1370,22 +1295,18 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                         var=var, zeta=zeta, alpha=a.exponent,
                         beta=ZZ(b.exponent), delta=0,
                         precision=precision, normalized=False)
-                else:
-                    raise NotImplementedError(
-                        'singularity analysis of {} not implemented'.format(self))
+                raise NotImplementedError(
+                    'singularity analysis of {} not implemented'.format(self))
             else:
                 raise NotImplementedError(
                     'singularity analysis of {} not yet implemented '
                     'since it has more than two factors'.format(self))
 
-
         def variable_names(self):
             r"""
             Return the names of the variables of this growth element.
 
-            OUTPUT:
-
-            A tuple of strings.
+            OUTPUT: a tuple of strings
 
             EXAMPLES::
 
@@ -1407,7 +1328,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                        tuple())
             from itertools import groupby
             return tuple(v for v, _ in groupby(vars))
-
 
     CartesianProduct = CartesianProductGrowthGroups
 

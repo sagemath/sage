@@ -1,0 +1,1 @@
+devel/py-setuptools_scm

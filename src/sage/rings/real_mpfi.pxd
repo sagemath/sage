@@ -5,13 +5,13 @@ from sage.rings.ring cimport Field
 cimport sage.rings.abc
 from sage.structure.element cimport RingElement
 
-from .rational cimport Rational
-from .real_mpfr cimport RealField_class
+from sage.rings.rational cimport Rational
+from sage.rings.real_mpfr cimport RealField_class
 
 cdef class RealIntervalFieldElement(RingElement)  # forward decl
 
 cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
-    cdef mpfr_prec_t __prec
+    cdef mpfr_prec_t _prec
     cdef bint sci_not
     # Cache RealField instances for the lower, upper, and middle bounds.
     # These have the same precision as the interval field;

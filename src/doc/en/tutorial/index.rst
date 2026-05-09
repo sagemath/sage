@@ -2,10 +2,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. _tutorial:
-
-Welcome to the Sage Tutorial!
-=============================
+========================
+Welcome to Sage Tutorial
+========================
 
 Sage is free, open-source math software that supports research and
 teaching in algebra, geometry, number theory, cryptography,

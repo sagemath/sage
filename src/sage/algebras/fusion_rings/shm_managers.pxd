@@ -8,7 +8,7 @@ cdef class KSHandler:
     cdef NumberField field
     cdef public object shm
 
-    cdef bint contains(self, int idx)
+    cdef bint contains(self, int idx) noexcept
     cdef NumberFieldElement_absolute get(self, int idx)
     cdef setitem(self, int idx, rhs)
     cpdef update(self, list eqns)
@@ -21,4 +21,3 @@ cdef class FvarsHandler:
     cdef object fvars_t, pid_list
     cdef Py_ssize_t child_id
     cdef public object shm
-

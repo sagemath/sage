@@ -13,9 +13,10 @@ from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.signed_tensor import SignedTensorProductsCategory
 from sage.misc.cachefunc import cached_method
 
+
 class GradedAlgebras(GradedModulesCategory):
     """
-    The category of graded algebras
+    The category of graded algebras.
 
     EXAMPLES::
 
@@ -39,8 +40,8 @@ class GradedAlgebras(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: m = SymmetricFunctions(QQ).m()
-                sage: m.graded_algebra() is m
+                sage: m = SymmetricFunctions(QQ).m()                                    # needs sage.combinat sage.modules
+                sage: m.graded_algebra() is m                                           # needs sage.combinat sage.modules
                 True
             """
             return self

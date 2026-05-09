@@ -1,4 +1,4 @@
-$(PYTHON) numpy | $(PYTHON_TOOLCHAIN) pybind11
+ numpy | $(PYTHON_TOOLCHAIN) pybind11 $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

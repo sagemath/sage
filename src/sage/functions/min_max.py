@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 r"""
 Symbolic minimum and maximum
 
@@ -33,11 +34,13 @@ This works as expected for more than two entries::
 #                  https://www.gnu.org/licenses/
 ###############################################################################
 
-from sage.symbolic.function import BuiltinFunction
-from sage.symbolic.expression import Expression
-from sage.symbolic.ring import SR
-
 from builtins import max as builtin_max, min as builtin_min
+
+from sage.misc.lazy_import import lazy_import
+from sage.structure.element import Expression
+from sage.symbolic.function import BuiltinFunction
+
+lazy_import('sage.symbolic.ring', 'SR')
 
 
 class MinMax_base(BuiltinFunction):
@@ -156,9 +159,10 @@ class MaxSymbolic(MinMax_base):
         r"""
         Symbolic `\max` function.
 
-        The Python builtin :func:`max` function does not work as expected when symbolic
-        expressions are given as arguments. This function delays evaluation
-        until all symbolic arguments are substituted with values.
+        The Python builtin :func:`max` function does not work as
+        expected when symbolic expressions are given as
+        arguments. This function delays evaluation until all symbolic
+        arguments are substituted with values.
 
         EXAMPLES::
 
@@ -177,7 +181,7 @@ class MaxSymbolic(MinMax_base):
             max(x, 5)
             sage: latex(max_symbolic(x, 5))
             \max\left(x, 5\right)
-            sage: max_symbolic(x, 5)._sympy_()
+            sage: max_symbolic(x, 5)._sympy_()  # needs sympy
             Max(5, x)
         """
         BuiltinFunction.__init__(self, 'max', nargs=0, latex_name=r"\max",
@@ -231,6 +235,7 @@ class MaxSymbolic(MinMax_base):
         We can usually integrate these expressions, but can't
         guarantee a symbolic answer in closed form::
 
+            sage: # long time
             sage: f = max_symbolic(sin(x), cos(x))
             sage: r = integral(f, x, 0, 1)
             ...
@@ -269,7 +274,7 @@ class MinSymbolic(MinMax_base):
             min(x, 5)
             sage: latex(min_symbolic(x, 5))
             \min\left(x, 5\right)
-            sage: min_symbolic(x, 5)._sympy_()
+            sage: min_symbolic(x, 5)._sympy_()  # needs sympy
             Min(5, x)
         """
         BuiltinFunction.__init__(self, 'min', nargs=0, latex_name=r"\min",

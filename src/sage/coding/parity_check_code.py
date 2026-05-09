@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Parity-check code
 
@@ -5,8 +6,8 @@ A simple way of detecting up to one error is to use the device of adding a
 parity check to ensure that the sum of the digits in a transmitted word is
 even.
 
-A parity-check code of dimension `k` over `F_q` is the set:
-`\{(m_1, m_2, \dots, m_k, - \Sigma_{i=1}^k m_i) \mid (m_1, m_2, \dots, m_k) \in F_q^k\}`
+A parity-check code of dimension `k` over `\GF{q}` is the set:
+`\{(m_1, m_2, \dots, m_k, - \Sigma_{i=1}^k m_i) \mid (m_1, m_2, \dots, m_k) \in \GF{q}^k\}`
 
 REFERENCE:
 
@@ -39,9 +40,9 @@ class ParityCheckCode(AbstractLinearCode):
 
     INPUT:
 
-    - ``base_field`` -- the base field over which ``self`` is defined.
+    - ``base_field`` -- the base field over which ``self`` is defined
 
-    - ``dimension`` -- the dimension of ``self``.
+    - ``dimension`` -- the dimension of ``self``
 
     EXAMPLES::
 
@@ -60,9 +61,9 @@ class ParityCheckCode(AbstractLinearCode):
         INPUT:
 
         - ``base_field`` -- the base field over which ``self`` is defined
-                            or GF(2) if no base_field.
+          or GF(2) if no base_field
 
-        - ``dimension`` -- the dimension of ``self`` or 7 if no dimension.
+        - ``dimension`` -- the dimension of ``self`` or 7 if no dimension
 
         EXAMPLES::
 
@@ -147,7 +148,7 @@ class ParityCheckCodeGeneratorMatrixEncoder(LinearCodeGeneratorMatrixEncoder):
 
     INPUT:
 
-    - ``code`` -- the associated code of this encoder.
+    - ``code`` -- the associated code of this encoder
 
     EXAMPLES::
 
@@ -211,7 +212,7 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- the associated code of this encoder.
+    - ``code`` -- the associated code of this encoder
 
     EXAMPLES::
 
@@ -289,12 +290,10 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
 
         INPUT:
 
-        - ``message`` -- A ``self.code().dimension()``-vector from the message
-          space of ``self``.
+        - ``message`` -- a ``self.code().dimension()``-vector from the message
+          space of ``self``
 
-        OUTPUT:
-
-        - A codeword in associated code of ``self``.
+        OUTPUT: a codeword in associated code of ``self``
 
         EXAMPLES::
 
@@ -303,7 +302,7 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
             sage: C.encode(message)
             (1, 0, 4, 2, 0, 3, 2, 3)
         """
-        parity=self.code().base_field().zero()
+        parity = self.code().base_field().zero()
         for i in message.list():
             parity += i
         return vector(self.code().base_field(), message.list() + [-parity])
@@ -317,13 +316,11 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
 
         INPUT:
 
-        - ``word`` -- A ``self.code().length()``-vector from the ambiant space
-          of ``self``.
+        - ``word`` -- a ``self.code().length()``-vector from the ambiant space
+          of ``self``
 
-        OUTPUT:
-
-        - A vector corresponding to the ``self.code().dimension()``-first
-          symbols in ``word``.
+        OUTPUT: a vector corresponding to the ``self.code().dimension()``-first
+        symbols in ``word``
 
         EXAMPLES::
 
@@ -347,6 +344,7 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
             Vector space of dimension 7 over Finite Field of size 5
         """
         return VectorSpace(self.code().base_field(), self.code().dimension())
+
 
 ####################### registration ###############################
 

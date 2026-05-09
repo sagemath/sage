@@ -18,7 +18,7 @@ from .join_feature import JoinFeature
 class PyNormaliz(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of the
-    Python package ``PyNormaliz``.
+    Python package :ref:`PyNormaliz <spkg_pynormaliz>`.
 
     EXAMPLES::
 
@@ -35,7 +35,7 @@ class PyNormaliz(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'pynormaliz',
-                             [PythonModule('PyNormaliz', spkg="pynormaliz")])
+                             [PythonModule('PyNormaliz', spkg='pynormaliz')])
 
 
 def all_features():

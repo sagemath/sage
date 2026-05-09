@@ -2,15 +2,15 @@ r"""
 Constant functions
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.richcmp cimport richcmp
 from sage.structure.sage_object cimport SageObject
@@ -34,10 +34,12 @@ cdef class ConstantFunction(SageObject):
     this is not (currently) picklable::
 
         sage: g = lambda x: 3
-        sage: g == loads(dumps(g))
-        Traceback (most recent call last):
-        ...
-        PicklingError: Can't pickle ...: attribute lookup ... failed
+        sage: try:
+        ....:     loads(dumps(g))
+        ....: except Exception as e:
+        ....:     if 'PicklingError' in str(type(e).__name__):
+        ....:         print('PicklingError Caught')
+        PicklingError Caught
         sage: f == loads(dumps(f))
         True
 
@@ -83,7 +85,6 @@ cdef class ConstantFunction(SageObject):
 
             sage: loads(dumps(ConstantFunction(5))) == ConstantFunction(5) # indirect doctest
             True
-
         """
         return ConstantFunction, (self._value,)
 
@@ -94,7 +95,7 @@ cdef class ConstantFunction(SageObject):
             sage: ConstantFunction(1)
             The constant function (...) -> 1
         """
-        return "The constant function (...) -> %s"%self._value
+        return "The constant function (...) -> %s" % self._value
 
     def __call__(self, *args):
         """

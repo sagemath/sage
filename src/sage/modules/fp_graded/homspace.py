@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Homsets of finitely presented graded modules
 
@@ -129,10 +130,9 @@ class FPModuleHomspace(Homset):
         """
         if isinstance(values, self.element_class):
             return values
-        elif values == 0 or all(v.is_zero() for v in values):
+        if values == 0 or all(v.is_zero() for v in values):
             return self.zero()
-        else:
-            return self.element_class(self, values)
+        return self.element_class(self, values)
 
     def an_element(self, n=0):
         r"""
@@ -142,9 +142,7 @@ class FPModuleHomspace(Homset):
 
         - ``n`` -- (default: 0) an integer degree
 
-        OUTPUT:
-
-        A module homomorphism of degree ``n``.
+        OUTPUT: a module homomorphism of degree ``n``
 
         EXAMPLES::
 
@@ -191,11 +189,9 @@ class FPModuleHomspace(Homset):
 
         INPUT:
 
-        - ``n`` -- an integer degree
+        - ``n`` -- integer degree
 
-        OUTPUT:
-
-        A basis for the set of all module homomorphisms of degree ``n``.
+        OUTPUT: a basis for the set of all module homomorphisms of degree ``n``
 
         EXAMPLES::
 
@@ -240,7 +236,6 @@ class FPModuleHomspace(Homset):
               To:   Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
               Defn: g[1] |--> 0
                     g[3] |--> 0
-
         """
         ngens = len(self.domain().generator_degrees())
         return self.element_class(self, [self.codomain().zero()] * ngens)
@@ -297,8 +292,7 @@ class FPModuleHomspace(Homset):
         """
         if self.is_endomorphism_set():
             return self.element_class(self, self.codomain().generators())
-        else:
-            raise TypeError('this homspace does not consist of endomorphisms')
+        raise TypeError('this homspace does not consist of endomorphisms')
 
     def _basis_elements(self, n, basis):
         r"""
@@ -309,7 +303,7 @@ class FPModuleHomspace(Homset):
 
         INPUT:
 
-        - ``n`` -- an integer degree
+        - ``n`` -- integer degree
         - ``basis`` -- boolean; decide if a basis should be returned or just
           a single homomorphism
 
@@ -505,10 +499,9 @@ class FPModuleHomspace(Homset):
                 # Since the free module of homomorphisms is trivial, the basis
                 # is the empty set.
                 return []
-            else:
-                # Since the free module of homomorphisms is trivial, it contains
-                # only The trivial homomorphism
-                return self.zero()
+            # Since the free module of homomorphisms is trivial, it contains
+            # only The trivial homomorphism
+            return self.zero()
 
         # Deal with the trivial cases first.  Note that this covers the case
         # where the domain or codomain have no generators.
@@ -516,7 +509,7 @@ class FPModuleHomspace(Homset):
             return _trivial_case()
 
         # Then deal with the case where the domain has no relations.
-        elif not M.has_relations():
+        if not M.has_relations():
             res = []
             num_generators = len(M.generators())
             for i, g in enumerate(M.generators()):
@@ -562,5 +555,4 @@ class FPModuleHomspace(Homset):
         # it will have terminated by now.
         if not res:
             return _trivial_case()
-        else:
-            return res
+        return res

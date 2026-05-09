@@ -1,0 +1,66 @@
+# This workflow synchronizes groups of labels that correspond
+# to items of selection list in Trac. It controls that in each
+# such case there is just one label of the list present.
+# Furthermore in the case of the state it checks the labels
+# to coincide with the corresponding review state.
+
+name: Synchronize labels
+
+on:
+  issues:
+    types: [opened, reopened, closed, labeled, unlabeled]
+  pull_request_review:
+    types: [submitted]
+  pull_request_target:
+    types: [opened, reopened, closed, ready_for_review, converted_to_draft, synchronize, labeled, unlabeled]
+  schedule:
+    # run cleaning of warning comments twice a day
+    - cron: '00 6,18 * * *'
+
+jobs:
+  synchronize:
+    if: |  # check variables from repository settings to suspend the job
+      vars.SYNC_LABELS_ACTIVE == 'yes' && (! vars.SYNC_LABELS_IGNORE_EVENTS || ! contains(fromJSON(vars.SYNC_LABELS_IGNORE_EVENTS), github.event.action))
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the Python script
+      - name: Checkout files
+        uses: Bhacaz/checkout-files@v2
+        with:
+          files: .github/sync_labels.py
+
+      # Set special sync_labels bot token
+      - name: Get Token
+        run: |
+          TOKEN="${{ secrets.SYNC_LABELS_BOT_TOKEN }}"
+          if [ -z "$TOKEN" ]; then
+            TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          fi
+          echo "TOKEN=$TOKEN" >> $GITHUB_ENV
+
+      # Perform synchronization
+      - name: Call script for synchronization
+        if: github.event.schedule == ''
+        run: |
+          chmod a+x .github/sync_labels.py
+          .github/sync_labels.py $ACTION $ISSUE_URL $PR_URL $ACTOR "$LABEL" "$REV_STATE" $LOG_LEVEL
+        env:
+          GITHUB_TOKEN: ${{ env.TOKEN }}
+          ACTION: ${{ github.event.action }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          ACTOR: ${{ github.actor }}
+          LABEL: ${{ github.event.label.name }}
+          REV_STATE: ${{ github.event.review.state }}
+          LOG_LEVEL: ${{ vars.SYNC_LABELS_LOG_LEVEL }} # variable from repository settings, values can be "--debug", "--info" or "--warning"
+
+      # Perform cleaning
+      - name: Call script for cleaning
+        if: github.event.schedule != ''
+        run: |
+          chmod a+x .github/sync_labels.py
+          .github/sync_labels.py $REPO_URL $LOG_LEVEL
+        env:
+          GITHUB_TOKEN: ${{ env.TOKEN }}
+          REPO_URL: ${{ github.event.repository.html_url }}
+          LOG_LEVEL: ${{ vars.SYNC_LABELS_LOG_LEVEL }} # variable from repository settings, values can be "--debug", "--info" or "--warning"

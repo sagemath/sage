@@ -1,6 +1,3 @@
-# distutils: extra_compile_args = -std=c++11
-# distutils: language = c++
-
 cdef extern from "m4ri/m4ri.h":
     ctypedef int rci_t
     ctypedef int wi_t
@@ -19,7 +16,7 @@ cdef extern from "m4ri/m4ri.h":
     cdef int m4ri_radix
 
     ##############
-    # Maintainance
+    # Maintenance
     ##############
 
     # builds all gray codes up to a certain size
@@ -179,6 +176,9 @@ cdef extern from "m4ri/m4ri.h":
     # reduced row echelon form using PLUQ factorization
     cdef mzd_t *mzd_kernel_left_pluq(mzd_t *A, int cutoff)
 
+    # system solving
+    cdef int mzd_solve_left(mzd_t *A, mzd_t *B, int cutoff, int inconsistency_check)
+
     ########################
     # Bit operations
     ########################
@@ -192,4 +192,3 @@ cdef extern from "m4ri/m4ri.h":
     ##################################
 
     cdef void mzd_clear_bits(mzd_t *m, int x, int y, int n)
-

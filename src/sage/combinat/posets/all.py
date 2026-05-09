@@ -36,8 +36,10 @@ If you are looking for Poset-related :mod:`categories
 from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
-from .posets import Poset
+from sage.combinat.posets.posets import Poset
 
-from .lattices import LatticePoset, MeetSemilattice, JoinSemilattice
+from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice, JoinSemilattice
 
-from .poset_examples import posets, Posets
+from sage.combinat.posets.poset_examples import posets, Posets
+
+del install_doc

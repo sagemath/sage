@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,10 +17,9 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
 include 'misc.pxi'
@@ -28,7 +27,6 @@ include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring cimport IntegerRing_class
 
 ##############################################################################
 # GF2: Bits
@@ -43,7 +41,7 @@ cdef class ntl_GF2():
     """
     def __init__(self, v=None):
         r"""
-        Initializes a NTL bit.
+        Initialize a NTL bit.
 
         EXAMPLES::
 
@@ -63,7 +61,7 @@ cdef class ntl_GF2():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -74,7 +72,7 @@ cdef class ntl_GF2():
 
     def __reduce__(self):
         """
-        Serializes self.
+        Serialize ``self``.
 
         EXAMPLES::
 
@@ -86,7 +84,7 @@ cdef class ntl_GF2():
 
     def __richcmp__(ntl_GF2 self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -239,7 +237,7 @@ cdef class ntl_GF2():
 
     def __int__(self):
         """
-        Return self as an int.
+        Return ``self`` as an int.
 
         EXAMPLES::
 
@@ -252,6 +250,7 @@ cdef class ntl_GF2():
         """
         cdef long l = GF2_conv_to_long(self.x)
         return int(l)
+
 
 def unpickle_class_value(cls, x):
     """

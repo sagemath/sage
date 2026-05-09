@@ -22,18 +22,18 @@ methods anyway.
 
 AUTHOR:
 
-- Jeroen Demeyer (2015-05-22): initial version, see :trac:`18329`
+- Jeroen Demeyer (2015-05-22): initial version, see :issue:`18329`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport PyTypeObject
 from sage.misc.classcall_metaclass cimport ClasscallMetaclass
@@ -51,8 +51,11 @@ cdef class InheritComparisonMetaclass(type):
 
     EXAMPLES::
 
-        sage: cython(                                                                       # optional - sage.misc.cython
+        sage: # needs sage.misc.cython
+        sage: cython(
         ....: '''
+        ....: cimport cython
+        ....:
         ....: from sage.misc.inherit_comparison cimport InheritComparisonMetaclass
         ....:
         ....: cdef class Base():
@@ -65,17 +68,18 @@ cdef class InheritComparisonMetaclass(type):
         ....:         return 1
         ....:
         ....: cdef class DerivedWithRichcmp(Base):
+        ....:     @cython.always_allow_keywords(False)
         ....:     def __getmetaclass__(_):
         ....:         from sage.misc.inherit_comparison import InheritComparisonMetaclass
         ....:         return InheritComparisonMetaclass
         ....:     def __hash__(self):
         ....:         return 1
         ....: ''')
-        sage: a = Derived()                                                                 # optional - sage.misc.cython
-        sage: a == a                                                                        # optional - sage.misc.cython
+        sage: a = Derived()
+        sage: a == a
         True
-        sage: b = DerivedWithRichcmp()                                                      # optional - sage.misc.cython
-        sage: b == b                                                                        # optional - sage.misc.cython
+        sage: b = DerivedWithRichcmp()
+        sage: b == b
         Calling Base.__richcmp__
         True
     """

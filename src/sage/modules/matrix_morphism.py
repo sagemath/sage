@@ -9,7 +9,7 @@ appropriate dimension.
 
 EXAMPLES::
 
-    sage: from sage.modules.matrix_morphism import MatrixMorphism, is_MatrixMorphism
+    sage: from sage.modules.matrix_morphism import MatrixMorphism
     sage: V = QQ^3
     sage: T = End(V)
     sage: M = MatrixSpace(QQ,3)
@@ -19,15 +19,13 @@ EXAMPLES::
     [1 0 0]
     [0 1 0]
     [0 0 1]
-    sage: is_MatrixMorphism(m)
-    True
-    sage: m.charpoly('x')
+    sage: m.charpoly('x')                                                               # needs sage.libs.pari
     x^3 - 3*x^2 + 3*x - 1
     sage: m.base_ring()
     Rational Field
     sage: m.det()
     1
-    sage: m.fcp('x')
+    sage: m.fcp('x')                                                                    # needs sage.libs.pari
     (x - 1)^3
     sage: m.matrix()
     [1 0 0]
@@ -53,33 +51,31 @@ AUTHOR:
 
 import sage.categories.morphism
 import sage.categories.homset
-from sage.structure.all import Sequence, parent
+from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
+from sage.structure.sequence import Sequence
+from sage.structure.element import parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
 
-def is_MatrixMorphism(x):
-    """
-    Return True if x is a Matrix morphism of free modules.
-
-    EXAMPLES::
-
-        sage: V = ZZ^2; phi = V.hom([3*V.0, 2*V.1])
-        sage: sage.modules.matrix_morphism.is_MatrixMorphism(phi)
-        True
-        sage: sage.modules.matrix_morphism.is_MatrixMorphism(3)
-        False
-    """
-    return isinstance(x, MatrixMorphism_abstract)
-
 class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
+
+    # Copy in methods that delegate to self.matrix.
+    # This is needed because MatrixMorphism_abstract is subclassed
+    # for use with parents that are merely set up as additive abelian groups,
+    # but not as ZZ-modules; see sage.modular.abvar.
+
+    characteristic_polynomial = charpoly = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.characteristic_polynomial
+    det = determinant = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.determinant
+    fcp = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.fcp
+    trace = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.trace
+
     def __init__(self, parent, side='left'):
         """
         INPUT:
 
-        -  ``parent`` - a homspace
+        - ``parent`` -- a homspace
 
-        -  ``A`` - matrix
-
+        - ``A`` -- matrix
 
         EXAMPLES::
 
@@ -91,7 +87,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: loads(A.dumps()) == A
             True
         """
-        if not sage.categories.homset.is_Homset(parent):
+        if not isinstance(parent, sage.categories.homset.Homset):
             raise TypeError("parent must be a Hom space")
         if side not in ["left", "right"]:
             raise ValueError("the argument side must be either 'left' or 'right'")
@@ -188,7 +184,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             if parent(x) is not self.domain():
                 x = self.domain()(x)
         except TypeError:
-            raise TypeError("%s must be coercible into %s"%(x,self.domain()))
+            raise TypeError("%s must be coercible into %s" % (x, self.domain()))
         if self.domain().is_ambient():
             x = x.element()
         else:
@@ -212,16 +208,17 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr sage.symbolic
             sage: V = RR^2
             sage: f = V.hom(V.gens())
             sage: f._matrix *= I         # f is now invalid
             sage: f((1, 0))
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce entries (=[1.00000000000000*I, 0.000000000000000]) to coefficients in Real Field with 53 bits of precision
+            TypeError: Unable to coerce entries (=[1.00000000000000*I, 0.000000000000000])
+            to coefficients in Real Field with 53 bits of precision
             sage: f((1, 0), coerce=False)
             (1.00000000000000*I, 0.000000000000000)
-
         """
         if self.domain().is_ambient():
             x = x.element()
@@ -276,7 +273,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
             sage: m = matrix(2, [1, 1, 0, 1])
             sage: V = ZZ^2
-            sage: h1 = V.hom(m); h2 = V.hom(m, side="right")
+            sage: h1 = V.hom(m); h2 = V.hom(m, side='right')
             sage: h1.side()
             'left'
             sage: h1([1, 0])
@@ -290,7 +287,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
     def side_switch(self):
         """
-        Return the same morphism, acting on vectors on the opposite side
+        Return the same morphism, acting on vectors on the opposite side.
 
         EXAMPLES::
 
@@ -319,7 +316,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         r"""
         Return the inverse of this matrix morphism, if the inverse exists.
 
-        Raises a ``ZeroDivisionError`` if the inverse does not exist.
+        This raises a :exc:`ZeroDivisionError` if the inverse does not exist.
 
         EXAMPLES:
 
@@ -523,6 +520,8 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         Composite maps can be formed with matrix morphisms::
 
+            sage: # needs sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 23)
             sage: V, VtoK, KtoV = K.vector_space()
             sage: f = V.hom([V.0 - V.1, V.0 + V.1])*KtoV; f
@@ -540,7 +539,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
                     Codomain: Vector space of dimension 2 over Rational Field
             sage: f(a)
             (1, 1)
-            sage: V.hom([V.0 - V.1, V.0 + V.1], side="right")*KtoV
+            sage: V.hom([V.0 - V.1, V.0 + V.1], side='right')*KtoV
             Composite map:
               From: Number Field in a with defining polynomial x^2 + 23
               To:   Vector space of dimension 2 over Rational Field
@@ -555,12 +554,12 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
                     Codomain: Vector space of dimension 2 over Rational Field
 
 
-        We can test interraction between morphisms with different ``side``::
+        We can test interaction between morphisms with different ``side``::
 
             sage: V = ZZ^2
             sage: m = matrix(2, [1,1,0,1])
             sage: hl = V.hom(m)
-            sage: hr = V.hom(m, side="right")
+            sage: hr = V.hom(m, side='right')
             sage: hl * hl
             Free module morphism defined by the matrix
             [1 2]
@@ -598,8 +597,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [1 0]
             [0 1]...
 
-
-
         .. WARNING::
 
             Matrix morphisms can be defined by either left or right-multiplication.
@@ -621,13 +618,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         if self.side() == "left":
             if right.side() == "left":
                 return H(right.matrix() * self.matrix(), side=self.side())
-            else:
-                return H(right.matrix().transpose() * self.matrix(), side=self.side())
-        else:
-            if right.side() == "right":
-                return H(self.matrix() * right.matrix(), side=self.side())
-            else:
-                return H(right.matrix() * self.matrix().transpose(), side="left")
+            return H(right.matrix().transpose() * self.matrix(), side=self.side())
+        if right.side() == "right":
+            return H(self.matrix() * right.matrix(), side=self.side())
+        return H(right.matrix() * self.matrix().transpose(), side='left')
 
     def __add__(self, right):
         """
@@ -671,7 +665,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: V = ZZ^2
             sage: m = matrix(2, [1,1,0,1])
             sage: hl = V.hom(m)
-            sage: hr = V.hom(m, side="right")
+            sage: hr = V.hom(m, side='right')
             sage: hl + hl
             Free module morphism defined by the matrix
             [2 2]
@@ -703,13 +697,13 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         if self.side() == "left":
             if right.side() == "left":
                 return self.parent()(self.matrix() + right.matrix(), side=self.side())
-            elif right.side() == "right":
-                return self.parent()(self.matrix() + right.matrix().transpose(), side="left")
+            if right.side() == "right":
+                return self.parent()(self.matrix() + right.matrix().transpose(), side='left')
         if self.side() == "right":
             if right.side() == "right":
                 return self.parent()(self.matrix() + right.matrix(), side=self.side())
-            elif right.side() == "left":
-                return self.parent()(self.matrix().transpose() + right.matrix(), side="left")
+            if right.side() == "left":
+                return self.parent()(self.matrix().transpose() + right.matrix(), side='left')
 
     def __neg__(self):
         """
@@ -742,7 +736,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: V = ZZ^2
             sage: m = matrix(2, [1,1,0,1])
             sage: hl = V.hom(m)
-            sage: hr = V.hom(m, side="right")
+            sage: hr = V.hom(m, side='right')
             sage: hl - hr
             Free module morphism defined by the matrix
             [ 0  1]
@@ -774,18 +768,18 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         if self.side() == "left":
             if other.side() == "left":
                 return self.parent()(self.matrix() - other.matrix(), side=self.side())
-            elif other.side() == "right":
-                return self.parent()(self.matrix() - other.matrix().transpose(), side="left")
+            if other.side() == "right":
+                return self.parent()(self.matrix() - other.matrix().transpose(), side='left')
         if self.side() == "right":
             if other.side() == "right":
                 return self.parent()(self.matrix() - other.matrix(), side=self.side())
-            elif other.side() == "left":
-                return self.parent()(self.matrix().transpose() - other.matrix(), side="left")
+            if other.side() == "left":
+                return self.parent()(self.matrix().transpose() - other.matrix(), side='left')
 
     def base_ring(self):
         """
-        Return the base ring of self, that is, the ring over which self is
-        given by a matrix.
+        Return the base ring of ``self``, that is, the ring over which ``self``
+        is given by a matrix.
 
         EXAMPLES::
 
@@ -794,123 +788,49 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         return self.domain().base_ring()
 
-    def characteristic_polynomial(self, var='x'):
-        r"""
-        Return the characteristic polynomial of this endomorphism.
-
-        ``characteristic_polynomial`` and ``char_poly`` are the same method.
-
-        INPUT:
-
-        - var -- variable
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.characteristic_polynomial()
-            x^2 - 3*x + 2
-            sage: phi.charpoly()
-            x^2 - 3*x + 2
-            sage: phi.matrix().charpoly()
-            x^2 - 3*x + 2
-            sage: phi.charpoly('T')
-            T^2 - 3*T + 2
-        """
-        if not self.is_endomorphism():
-            raise ArithmeticError("charpoly only defined for endomorphisms "
-                                  "(i.e., domain = range)")
-        return self.matrix().charpoly(var)
-
-    charpoly = characteristic_polynomial
-
     def decomposition(self, *args, **kwds):
         """
         Return decomposition of this endomorphism, i.e., sequence of
-        subspaces obtained by finding invariant subspaces of self.
+        subspaces obtained by finding invariant subspaces of ``self``.
 
-        See the documentation for self.matrix().decomposition for more
+        See the documentation for ``self.matrix().decomposition`` for more
         details.  All inputs to this function are passed onto the
         matrix one.
 
         EXAMPLES::
 
             sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.decomposition()
-            [
-            Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [0 1],
-            Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [ 1 -1]
-            ]
-            sage: phi2 = V.hom(phi.matrix(), side="right")
-            sage: phi2.decomposition()
-            [
-            Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [1 1],
-            Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [1 0]
-            ]
+            sage: phi.decomposition()                                                   # needs sage.libs.pari
+            [Free module of degree 2 and rank 1 over Integer Ring
+             Echelon basis matrix:
+             [0 1],
+             Free module of degree 2 and rank 1 over Integer Ring
+             Echelon basis matrix:
+             [ 1 -1]]
+            sage: phi2 = V.hom(phi.matrix(), side='right')
+            sage: phi2.decomposition()                                                  # needs sage.libs.pari
+            [Free module of degree 2 and rank 1 over Integer Ring
+             Echelon basis matrix:
+             [1 1],
+             Free module of degree 2 and rank 1 over Integer Ring
+             Echelon basis matrix:
+             [1 0]]
         """
         if not self.is_endomorphism():
-            raise ArithmeticError("Matrix morphism must be an endomorphism.")
+            raise ArithmeticError("matrix morphism must be an endomorphism")
         D = self.domain()
         if self.side() == "left":
-            E = self.matrix().decomposition(*args,**kwds)
+            E = self.matrix().decomposition(*args, **kwds)
         else:
-            E = self.matrix().transpose().decomposition(*args,**kwds)
+            E = self.matrix().transpose().decomposition(*args, **kwds)
         if D.is_ambient():
             return Sequence([D.submodule(V, check=False) for V, _ in E],
                             cr=True, check=False)
-        else:
-            B = D.basis_matrix()
-            R = D.base_ring()
-            return Sequence([D.submodule((V.basis_matrix() * B).row_module(R),
-                                         check=False) for V, _ in E],
-                            cr=True, check=False)
-
-    def trace(self):
-        r"""
-        Return the trace of this endomorphism.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.trace()
-            3
-        """
-        return self._matrix.trace()
-
-    def det(self):
-        """
-        Return the determinant of this endomorphism.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.det()
-            2
-        """
-        if not self.is_endomorphism():
-            raise ArithmeticError("Matrix morphism must be an endomorphism.")
-        return self.matrix().determinant()
-
-    def fcp(self, var='x'):
-        """
-        Return the factorization of the characteristic polynomial.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.fcp()
-            (x - 2) * (x - 1)
-            sage: phi.fcp('T')
-            (T - 2) * (T - 1)
-        """
-        return self.charpoly(var).factor()
+        B = D.basis_matrix()
+        R = D.base_ring()
+        return Sequence([D.submodule((V.basis_matrix() * B).row_module(R),
+                                     check=False) for V, _ in E],
+                        cr=True, check=False)
 
     def kernel(self):
         """
@@ -918,14 +838,14 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         EXAMPLES::
 
-            sage: V = VectorSpace(QQ,3)
+            sage: V = VectorSpace(QQ, 3)
             sage: id = V.Hom(V)(identity_matrix(QQ,3))
             sage: null = V.Hom(V)(0*identity_matrix(QQ,3))
             sage: id.kernel()
             Vector space of degree 3 and dimension 0 over Rational Field
             Basis matrix:
             []
-            sage: phi = V.Hom(V)(matrix(QQ,3,range(9)))
+            sage: phi = V.Hom(V)(matrix(QQ, 3, range(9)))
             sage: phi.kernel()
             Vector space of degree 3 and dimension 1 over Rational Field
             Basis matrix:
@@ -939,7 +859,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [1 0 0]
             [0 0 1]
             sage: f1 = V.hom(m)
-            sage: f2 = V.hom(m, side="right")
+            sage: f2 = V.hom(m, side='right')
             sage: f1.kernel()
             Vector space of degree 3 and dimension 1 over Rational Field
             Basis matrix:
@@ -968,7 +888,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         EXAMPLES::
 
-            sage: V = VectorSpace(QQ,3)
+            sage: V = VectorSpace(QQ, 3)
             sage: phi = V.Hom(V)(matrix(QQ, 3, range(9)))
             sage: phi.image()
             Vector space of degree 3 and dimension 2 over Rational Field
@@ -984,7 +904,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [1 0 0]
             [0 0 1]
             sage: f1 = V.hom(m)
-            sage: f2 = V.hom(m, side="right")
+            sage: f2 = V.hom(m, side='right')
             sage: f1.image()
             Vector space of degree 3 and dimension 2 over Rational Field
             Basis matrix:
@@ -999,7 +919,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         Compute the image of the identity map on a ZZ-submodule::
 
-            sage: V = (ZZ^2).span([[1,2],[3,4]])
+            sage: V = (ZZ^2).span([[1,2], [3,4]])
             sage: phi = V.Hom(V)(identity_matrix(ZZ,2))
             sage: phi(V.0) == V.0
             True
@@ -1046,7 +966,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         EXAMPLES:
 
         Check that this works with the :func:`matrix` function
-        (:trac:`16844`)::
+        (:issue:`16844`)::
 
             sage: H = Hom(ZZ^2, ZZ^3)
             sage: x = H.an_element()
@@ -1076,7 +996,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
     def rank(self):
         r"""
-        Returns the rank of the matrix representing this morphism.
+        Return the rank of the matrix representing this morphism.
 
         EXAMPLES::
 
@@ -1091,7 +1011,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
     def nullity(self):
         r"""
-        Returns the nullity of the matrix representing this morphism, which is the
+        Return the nullity of the matrix representing this morphism, which is the
         dimension of its kernel.
 
         EXAMPLES::
@@ -1111,16 +1031,15 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: h1.nullity()
             1
             sage: W = ZZ^1
-            sage: h2 = W.hom(m, side="right")
+            sage: h2 = W.hom(m, side='right')
             sage: h2.nullity()
             0
         """
         if self.side() == "left":
             return self._matrix.left_nullity()
-        else:
-            return self._matrix.right_nullity()
+        return self._matrix.right_nullity()
 
-    def is_bijective(self):
+    def is_bijective(self) -> bool:
         r"""
         Tell whether ``self`` is bijective.
 
@@ -1164,9 +1083,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         return self.is_injective() and self.is_surjective()
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
-        Determines if this morphism is an identity function or not.
+        Determine if this morphism is an identity function or not.
 
         EXAMPLES:
 
@@ -1238,9 +1157,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         #   so we test equality on a basis, which is sufficient
         return all(self(u) == u for u in self.domain().basis())
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
-        Determines if this morphism is a zero function or not.
+        Determine if this morphism is a zero function or not.
 
         EXAMPLES:
 
@@ -1253,7 +1172,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: phi.is_zero()
             True
 
-        An image list that just barely makes a non-zero morphism.  ::
+        An image list that just barely makes a nonzero morphism.  ::
 
             sage: V = ZZ^4
             sage: W = ZZ^6
@@ -1280,13 +1199,13 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         #   disqualifies the morphism as having totally zero outputs
         return self._matrix.is_zero()
 
-    def is_equal_function(self, other):
+    def is_equal_function(self, other) -> bool:
         r"""
-        Determines if two morphisms are equal functions.
+        Determine if two morphisms are equal functions.
 
         INPUT:
 
-        - ``other`` - a morphism to compare with ``self``
+        - ``other`` -- a morphism to compare with ``self``
 
         OUTPUT:
 
@@ -1361,7 +1280,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         - Rob Beezer (2011-07-15)
         """
-        if not is_MatrixMorphism(other):
+        if not isinstance(other, MatrixMorphism_abstract):
             msg = 'can only compare to a matrix morphism, not {0}'
             raise TypeError(msg.format(other))
         if self.domain() != other.domain():
@@ -1393,7 +1312,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Free module morphism defined by the matrix
             [0 2]...
             sage: m = matrix(2, range(1,5))
-            sage: f1 = V.hom(m); f2 = V.hom(m, side="right")
+            sage: f1 = V.hom(m); f2 = V.hom(m, side='right')
             sage: SV = V.span([V.0])
             sage: f1.restrict_domain(SV)
             Free module morphism defined by the matrix
@@ -1497,9 +1416,8 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             V = sub.free_module()
         try:
             if self.side() == "right":
-                return H(self.matrix().transpose().restrict_codomain(V).transpose(), side="right")
-            else:
-                return H(self.matrix().restrict_codomain(V))
+                return H(self.matrix().transpose().restrict_codomain(V).transpose(), side='right')
+            return H(self.matrix().restrict_codomain(V))
         except Exception:
             return H(self.matrix().restrict_codomain(V))
 
@@ -1520,8 +1438,8 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Codomain: Free module of degree 2 and rank 1 over Integer Ring
             Echelon ...
 
-            sage: V = (QQ^2).span_of_basis([[1,2],[3,4]])
-            sage: phi = V.hom([V.0+V.1, 2*V.1])
+            sage: V = (QQ^2).span_of_basis([[1,2], [3,4]])
+            sage: phi = V.hom([V.0 + V.1, 2*V.1])
             sage: phi(V.1) == 2*V.1
             True
             sage: W = span([V.1])
@@ -1532,12 +1450,12 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: psi = phi.restrict(W); psi
             Vector space morphism represented by the matrix:
             [2]
-            Domain: Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [  1 4/3]
+            Domain:   Vector space of degree 2 and dimension 1 over Rational Field
+                      Basis matrix:
+                      [  1 4/3]
             Codomain: Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [  1 4/3]
+                      Basis matrix:
+                      [  1 4/3]
             sage: psi.domain() == W
             True
             sage: psi(W.0) == 2*W.0
@@ -1553,26 +1471,26 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Free module morphism defined by the matrix
             [ 1  1]
             [-1  1]
-            Domain: Free module of degree 3 and rank 2 over Integer Ring
-            Echelon basis matrix:
-            [0 2 0]
-            [0 0 2]
+            Domain:   Free module of degree 3 and rank 2 over Integer Ring
+                      Echelon basis matrix:
+                      [0 2 0]
+                      [0 0 2]
             Codomain: Free module of degree 3 and rank 2 over Integer Ring
-            Echelon basis matrix:
-            [0 2 0]
-            [0 0 2]
+                      Echelon basis matrix:
+                      [0 2 0]
+                      [0 0 2]
             sage: h2.restrict(SV)
             Free module morphism defined as left-multiplication by the matrix
             [ 1 -1]
             [ 1  1]
-            Domain: Free module of degree 3 and rank 2 over Integer Ring
-            Echelon basis matrix:
-            [0 2 0]
-            [0 0 2]
+            Domain:   Free module of degree 3 and rank 2 over Integer Ring
+                      Echelon basis matrix:
+                      [0 2 0]
+                      [0 0 2]
             Codomain: Free module of degree 3 and rank 2 over Integer Ring
-            Echelon basis matrix:
-            [0 2 0]
-            [0 0 2]
+                      Echelon basis matrix:
+                      [0 2 0]
+                      [0 0 2]
         """
         if not self.is_endomorphism():
             raise ArithmeticError("matrix morphism must be an endomorphism")
@@ -1601,13 +1519,13 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
     INPUT:
 
-    -  ``parent`` -- a homspace
+    - ``parent`` -- a homspace
 
-    -  ``A`` -- matrix or a :class:`MatrixMorphism_abstract` instance
+    - ``A`` -- matrix or a :class:`MatrixMorphism_abstract` instance
 
-    -  ``copy_matrix`` -- (default: ``True``) make an immutable copy of
-       the matrix ``A`` if it is mutable; if ``False``, then this makes
-       ``A`` immutable
+    - ``copy_matrix`` -- boolean (default: ``True``); make an immutable copy of
+      the matrix ``A`` if it is mutable. If ``False``, then this makes
+      ``A`` immutable.
     """
     def __init__(self, parent, A, copy_matrix=True, side='left'):
         """
@@ -1617,7 +1535,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
             sage: from sage.modules.matrix_morphism import MatrixMorphism
             sage: T = End(ZZ^3)
-            sage: M = MatrixSpace(ZZ,3)
+            sage: M = MatrixSpace(ZZ, 3)
             sage: I = M.identity_matrix()
             sage: A = MatrixMorphism(T, I)
             sage: loads(A.dumps()) == A
@@ -1631,7 +1549,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             if A.nrows() != parent.domain().rank():
                 raise ArithmeticError("number of rows of matrix (={}) must equal rank of domain (={})".format(A.nrows(), parent.domain().rank()))
             if A.ncols() != parent.codomain().rank():
-                    raise ArithmeticError("number of columns of matrix (={}) must equal rank of codomain (={})".format(A.ncols(), parent.codomain().rank()))
+                raise ArithmeticError("number of columns of matrix (={}) must equal rank of codomain (={})".format(A.ncols(), parent.codomain().rank()))
         if side == "right":
             if A.nrows() != parent.codomain().rank():
                 raise ArithmeticError("number of rows of matrix (={}) must equal rank of codomain (={})".format(A.nrows(), parent.domain().rank()))
@@ -1651,7 +1569,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
         INPUT:
 
-        - ``side`` -- (default: ``'None'``) the side of the matrix
+        - ``side`` -- (default: ``None``) the side of the matrix
           where a vector is placed to effect the morphism (function)
 
         OUTPUT:
@@ -1693,12 +1611,12 @@ class MatrixMorphism(MatrixMorphism_abstract):
             ValueError: side must be 'left' or 'right', not junk
         """
         if side not in ['left', 'right', None]:
-            raise ValueError("side must be 'left' or 'right', not {0}".format(side))
+            raise ValueError("side must be 'left' or 'right', not {}".format(side))
         if side == self.side() or side is None:
             return self._matrix
         return self._matrix.transpose()
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Tell whether ``self`` is injective.
 
@@ -1706,10 +1624,10 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
             sage: V1 = QQ^2
             sage: V2 = QQ^3
-            sage: phi = V1.hom(Matrix([[1,2,3],[4,5,6]]),V2)
+            sage: phi = V1.hom(Matrix([[1,2,3], [4,5,6]]),V2)
             sage: phi.is_injective()
             True
-            sage: psi = V2.hom(Matrix([[1,2],[3,4],[5,6]]),V1)
+            sage: psi = V2.hom(Matrix([[1,2], [3,4], [5,6]]),V1)
             sage: psi.is_injective()
             False
 
@@ -1723,7 +1641,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             ker = self._matrix.right_kernel()
         return ker.dimension() == 0
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         Tell whether ``self`` is surjective.
 
@@ -1731,19 +1649,19 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
             sage: V1 = QQ^2
             sage: V2 = QQ^3
-            sage: phi = V1.hom(Matrix([[1,2,3],[4,5,6]]), V2)
+            sage: phi = V1.hom(Matrix([[1,2,3], [4,5,6]]), V2)
             sage: phi.is_surjective()
             False
-            sage: psi = V2.hom(Matrix([[1,2],[3,4],[5,6]]), V1)
+            sage: psi = V2.hom(Matrix([[1,2], [3,4], [5,6]]), V1)
             sage: psi.is_surjective()
             True
 
         An example over a PID that is not `\ZZ`.  ::
 
-            sage: R = PolynomialRing(QQ, 'x')
+            sage: R.<x> = PolynomialRing(QQ)
             sage: A = R^2
             sage: B = R^2
-            sage: H = A.hom([B([x^2-1, 1]), B([x^2, 1])])
+            sage: H = A.hom([B([x^2 - 1, 1]), B([x^2, 1])])
             sage: H.image()
             Free module of degree 2 and rank 2 over Univariate Polynomial Ring in x over Rational Field
             Echelon basis matrix:
@@ -1752,10 +1670,10 @@ class MatrixMorphism(MatrixMorphism_abstract):
             sage: H.is_surjective()
             True
 
-        This tests if :trac:`11552` is fixed. ::
+        This tests if :issue:`11552` is fixed. ::
 
             sage: V = ZZ^2
-            sage: m = matrix(ZZ, [[1,2],[0,2]])
+            sage: m = matrix(ZZ, [[1,2], [0,2]])
             sage: phi = V.hom(m, V)
             sage: phi.lift(vector(ZZ, [0, 1]))
             Traceback (most recent call last):
@@ -1790,7 +1708,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             sage: phi._repr_()
             'Free module morphism defined by the matrix\n[3 0]\n[0 2]\nDomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring\nCodomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring'
         """
-        rep = "Morphism defined by the matrix\n{0}".format(self.matrix())
+        rep = "Morphism defined by the matrix\n{}".format(self.matrix())
         if self._side == 'right':
             rep += " acting by multiplication on the left"
         return rep

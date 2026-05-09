@@ -1,12 +1,11 @@
 r"""
-Super Tableaux
+Super tableaux
 
 AUTHORS:
 
 - Matthew Lancellotti (2007): initial version
-
-- Chaman Agrawal (2019-07-23): Modify standard and semistandard tableaux for
-  super tableaux.
+- Chaman Agrawal (2019-07-23): modify standard and semistandard tableaux for
+  super tableaux
 """
 
 # ****************************************************************************
@@ -184,13 +183,13 @@ class SemistandardSuperTableau(Tableau):
             Traceback (most recent call last):
             ...
             ValueError: the entries of a semistandard super tableau must be
-            non-negative primed integers
+            nonnegative primed integers
         """
         super().check()
         for row in self:
             if not all(isinstance(c, PrimedEntry) and c > 0 for c in row):
                 raise ValueError("the entries of a semistandard super tableau"
-                                 " must be non-negative primed integers")
+                                 " must be nonnegative primed integers")
             if any(row[c] > row[c + 1] for c in range(len(row) - 1)):
                 raise ValueError("the entries in each row of a semistandard"
                                  " super tableau must be weakly increasing")
@@ -391,7 +390,7 @@ class SemistandardSuperTableaux(SemistandardTableaux):
         """
         if isinstance(x, SemistandardSuperTableau):
             return True
-        elif Tableaux.__contains__(self, x):
+        if Tableaux.__contains__(self, x):
             x = SemistandardSuperTableau._preprocess(x)
             for row in x:
                 if any(row[c] > row[c + 1] for c in range(len(row) - 1)):
@@ -408,8 +407,7 @@ class SemistandardSuperTableaux(SemistandardTableaux):
                            if (row[c].is_unprimed() or next[c].is_unprimed())):
                     return False
             return True
-        else:
-            return False
+        return False
 
 
 class SemistandardSuperTableaux_all(SemistandardSuperTableaux):
@@ -419,7 +417,7 @@ class SemistandardSuperTableaux_all(SemistandardSuperTableaux):
 
     def __init__(self):
         r"""
-        Initializes the class of all semistandard super tableaux.
+        Initialize the class of all semistandard super tableaux.
 
         TESTS::
 
@@ -455,7 +453,7 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
 
     INPUT:
 
-    - ``n`` -- a non-negative integer or a partition.
+    - ``n`` -- a nonnegative integer or a partition
 
     EXAMPLES::
 
@@ -519,12 +517,12 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
             sage: StandardSuperTableaux(-1)
             Traceback (most recent call last):
             ...
-            ValueError: the argument must be a non-negative integer or a
+            ValueError: the argument must be a nonnegative integer or a
             partition
             sage: StandardSuperTableaux([[1]])
             Traceback (most recent call last):
             ...
-            ValueError: the argument must be a non-negative integer or a
+            ValueError: the argument must be a nonnegative integer or a
             partition
         """
         from sage.combinat.partition import _Partitions
@@ -533,15 +531,15 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
         if n is None:
             return StandardSuperTableaux_all()
 
-        elif n in _Partitions:
+        if n in _Partitions:
             return StandardSuperTableaux_shape(_Partitions(n))
 
-        elif n in SkewPartitions():
+        if n in SkewPartitions():
             raise NotImplementedError("standard super tableau for skew "
                                       "partitions is not implemented yet")
 
         if not isinstance(n, (int, Integer)) or n < 0:
-            raise ValueError("the argument must be a non-negative integer"
+            raise ValueError("the argument must be a nonnegative integer"
                              " or a partition")
 
         return StandardSuperTableaux_size(n)
@@ -576,7 +574,7 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
         """
         if isinstance(x, StandardSuperTableau):
             return True
-        elif Tableaux.__contains__(self, x):
+        if Tableaux.__contains__(self, x):
             x = SemistandardSuperTableau._preprocess(x)
             flattened_list = [i for row in x for i in row]
             a = PrimedEntry('1p')
@@ -589,8 +587,7 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
                     (all(row[i] < row[i + 1] for row in x for i in range(len(row) - 1)) and
                      all(x[r][c] < x[r + 1][c] for r in range(len(x) - 1)
                          for c in range(len(x[r + 1])))))
-        else:
-            return False
+        return False
 
 
 class StandardSuperTableaux_all(StandardSuperTableaux,
@@ -601,7 +598,7 @@ class StandardSuperTableaux_all(StandardSuperTableaux,
 
     def __init__(self):
         r"""
-        Initializes the class of all standard super tableaux.
+        Initialize the class of all standard super tableaux.
 
         TESTS::
 
@@ -654,7 +651,7 @@ class StandardSuperTableaux_size(StandardSuperTableaux,
 
     def __init__(self, n):
         r"""
-        Initializes the class of all standard super tableaux of size ``n``.
+        Initialize the class of all standard super tableaux of size ``n``.
 
         TESTS::
 
@@ -735,7 +732,7 @@ class StandardSuperTableaux_shape(StandardSuperTableaux):
 
     def __init__(self, p):
         r"""
-        Initializes the class of all standard super tableaux of a given shape.
+        Initialize the class of all standard super tableaux of a given shape.
 
         TESTS::
 

@@ -165,8 +165,8 @@ Sage может использоваться для решения диффер�
     sage: s = var("s")
     sage: t = var("t")
     sage: f = t^2*exp(t) - sin(t)
-    sage: f.laplace(t,s)
-    -1/(s^2 + 1) + 2/(s - 1)^3
+    sage: f.laplace(t,s).simplify_rational()
+    -(s^3 - 5*s^2 + 3*s - 3)/(s^5 - 3*s^4 + 4*s^3 - 4*s^2 + 3*s - 1)
 
 Приведем более сложный пример. Отклонение от положения равновесия для пары
 пружин, прикрепленных к стене слева,
@@ -199,8 +199,8 @@ Sage может использоваться для решения диффер�
 ::
 
     sage: de1 = maxima("2*diff(x(t),t, 2) + 6*x(t) - 2*y(t)")
-    sage: lde1 = de1.laplace("t","s"); lde1
-    2*((-%at('diff(x(t),t,1),t = 0))+s^2*'laplace(x(t),t,s)-x(0)*s) -2*'laplace(y(t),t,s)+6*'laplace(x(t),t,s)
+    sage: lde1 = de1.laplace("t","s"); lde1.sage()
+    2*s^2*laplace(x(t), t, s) - 2*s*x(0) + 6*laplace(x(t), t, s) - 2*laplace(y(t), t, s) - 2*D[0](x)(0)
 
 Данный результат тяжело читаем, однако должен быть понят как
 
@@ -210,9 +210,12 @@ Sage может использоваться для решения диффер�
 
 ::
 
-    sage: de2 = maxima("diff(y(t),t, 2) + 2*y(t) - 2*x(t)")
-    sage: lde2 = de2.laplace("t","s"); lde2
-    (-%at('diff(y(t),t,1),t = 0))+s^2*'laplace(y(t),t,s) +2*'laplace(y(t),t,s)-2*'laplace(x(t),t,s) -y(0)*s
+    sage: t,s = SR.var('t,s')
+    sage: x = function('x')
+    sage: y = function('y')
+    sage: f = 2*x(t).diff(t,2) + 6*x(t) - 2*y(t)
+    sage: f.laplace(t,s)
+    2*s^2*laplace(x(t), t, s) - 2*s*x(0) + 6*laplace(x(t), t, s) - 2*laplace(y(t), t, s) - 2*D[0](x)(0)
 
 Результат:
 

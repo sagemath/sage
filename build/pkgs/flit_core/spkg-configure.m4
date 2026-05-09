@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([flit_core], [SAGE_PYTHON_PACKAGE_CHECK([flit_core])])

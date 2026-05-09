@@ -8,7 +8,6 @@ AUTHOR:
 
 - Josh Kantor (2006-10-07)  - initial version
 - David Joyner (2006-10-09) - minor changes to docstrings and examples.
-
 """
 
 # ****************************************************************************
@@ -21,6 +20,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+
 def WaveletTransform(n, wavelet_type, wavelet_k):
     r"""
     This function initializes an GSLDoubleArray of length n which
@@ -28,7 +28,7 @@ def WaveletTransform(n, wavelet_type, wavelet_k):
 
     INPUT:
 
-    - ``n`` --  a power of 2
+    - ``n`` -- a power of 2
     - ``T`` -- the data in the GSLDoubleArray must be real
     - ``wavelet_type`` -- the name of the type of wavelet, valid choices are:
 
@@ -63,27 +63,28 @@ def WaveletTransform(n, wavelet_type, wavelet_k):
         sage: for i in range(1, 11):
         ....:     a[i] = 1
         ....:     a[128-i] = 1
-        sage: a.plot().show(ymin=0)
+        sage: a.plot().show(ymin=0)                                                     # needs sage.plot
         sage: a.forward_transform()
-        sage: a.plot().show()
+        sage: a.plot().show()                                                           # needs sage.plot
         sage: a = WaveletTransform(128,'haar',2)
         sage: for i in range(1, 11): a[i] = 1; a[128-i] = 1
         sage: a.forward_transform()
-        sage: a.plot().show(ymin=0)
+        sage: a.plot().show(ymin=0)                                                     # needs sage.plot
         sage: a = WaveletTransform(128,'bspline_centered',103)
         sage: for i in range(1, 11): a[i] = 1; a[100+i] = 1
         sage: a.forward_transform()
-        sage: a.plot().show(ymin=0)
+        sage: a.plot().show(ymin=0)                                                     # needs sage.plot
 
     This example gives a simple example of wavelet compression::
 
+        sage: # needs sage.symbolic
         sage: a = DWT(2048,'daubechies',6)
         sage: for i in range(2048): a[i]=float(sin((i*5/2048)**2))
-        sage: a.plot().show()  # long time (7s on sage.math, 2011)
+        sage: a.plot().show()                   # long time (7s on sage.math, 2011), needs sage.plot
         sage: a.forward_transform()
         sage: for i in range(1800): a[2048-i-1] = 0
         sage: a.backward_transform()
-        sage: a.plot().show()  # long time (7s on sage.math, 2011)
+        sage: a.plot().show()                   # long time (7s on sage.math, 2011), needs sage.plot
     """
     cdef size_t _n, _k
     _n = int(n)
@@ -92,34 +93,36 @@ def WaveletTransform(n, wavelet_type, wavelet_k):
     _k = int(wavelet_k)
     if not is2pow(_n):
         raise NotImplementedError("discrete wavelet transform only implemented when n is a 2-power")
-    return DiscreteWaveletTransform(_n,1,wavelet_type,_k)
+    return DiscreteWaveletTransform(_n, 1, wavelet_type, _k)
+
 
 DWT = WaveletTransform
+
 
 cdef class DiscreteWaveletTransform(GSLDoubleArray):
     """
     Discrete wavelet transform class.
     """
-    def __cinit__(self,size_t n,size_t stride, wavelet_type, size_t wavelet_k):
+    def __cinit__(self, size_t n, size_t stride, wavelet_type, size_t wavelet_k):
         self.wavelet = NULL
         self.workspace = NULL
 
-    def __init__(self,size_t n,size_t stride, wavelet_type, size_t wavelet_k):
+    def __init__(self, size_t n, size_t stride, wavelet_type, size_t wavelet_k):
         if not is2pow(n):
             raise NotImplementedError("discrete wavelet transform only implemented when n is a 2-power")
-        GSLDoubleArray.__init__(self,n,stride)
+        GSLDoubleArray.__init__(self, n, stride)
         if wavelet_type=="daubechies":
             self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_daubechies, wavelet_k)
         elif wavelet_type == "daubechies_centered":
-            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_daubechies_centered,wavelet_k)
+            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_daubechies_centered, wavelet_k)
         elif wavelet_type == "haar":
-            self.wavelet = <gsl_wavelet *> gsl_wavelet_alloc(gsl_wavelet_haar,wavelet_k)
+            self.wavelet = <gsl_wavelet *> gsl_wavelet_alloc(gsl_wavelet_haar, wavelet_k)
         elif wavelet_type == "haar_centered":
-            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_haar_centered,wavelet_k)
+            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_haar_centered, wavelet_k)
         elif wavelet_type == "bspline":
-            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_bspline,wavelet_k)
+            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_bspline, wavelet_k)
         elif wavelet_type == "bspline_centered":
-            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_bspline_centered,wavelet_k)
+            self.wavelet = <gsl_wavelet*> gsl_wavelet_alloc(gsl_wavelet_bspline_centered, wavelet_k)
         self.workspace = <gsl_wavelet_workspace*> gsl_wavelet_workspace_alloc(n)
 
     def __dealloc__(self):
@@ -128,10 +131,12 @@ cdef class DiscreteWaveletTransform(GSLDoubleArray):
             gsl_wavelet_workspace_free(self.workspace)
 
     def forward_transform(self):
-        gsl_wavelet_transform_forward(self.wavelet,self.data,self.stride,self.n,self.workspace)
+        gsl_wavelet_transform_forward(self.wavelet, self.data,
+                                      self.stride, self.n, self.workspace)
 
     def backward_transform(self):
-        gsl_wavelet_transform_inverse(self.wavelet,self.data,self.stride,self.n,self.workspace)
+        gsl_wavelet_transform_inverse(self.wavelet, self.data,
+                                      self.stride, self.n, self.workspace)
 
     def plot(self, xmin=None, xmax=None, **args):
         from sage.plot.point import point
@@ -143,7 +148,7 @@ cdef class DiscreteWaveletTransform(GSLDoubleArray):
             x_min = 0
         if xmax is None:
             x_max = self.n
-        for i from x_min <= i < x_max:
+        for i in range(x_min, x_max):
             x = self.data[i]
             if i > 0:
                 v.append(point([(i, x)], hue=(1, 1, 1), **args))
@@ -151,6 +156,6 @@ cdef class DiscreteWaveletTransform(GSLDoubleArray):
 
 
 def is2pow(unsigned int n):
-    while n != 0 and n%2 == 0:
+    while n and not n % 2:
         n = n >> 1
     return n == 1

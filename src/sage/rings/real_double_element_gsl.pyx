@@ -8,21 +8,29 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.arith.constants cimport *
 
-from sage.libs.gsl.all cimport *
+from sage.libs.gsl.errno cimport gsl_set_error_handler_off
+from sage.libs.gsl.math cimport *
+from sage.libs.gsl.exp cimport *
+from sage.libs.gsl.log cimport gsl_sf_log
+from sage.libs.gsl.trig cimport *
+from sage.libs.gsl.dilog cimport gsl_sf_dilog
+from sage.libs.gsl.gamma cimport gsl_sf_fact, gsl_sf_gamma
+from sage.libs.gsl.zeta cimport gsl_sf_zeta
+from sage.libs.gsl.erf cimport gsl_sf_erf
+
 
 gsl_set_error_handler_off()
 
 
 cdef class RealDoubleElement_gsl(RealDoubleElement):
 
-
     def nth_root(self, int n):
         """
-        Return the `n^{th}` root of ``self``.
+        Return the `n`-th root of ``self``.
 
         INPUT:
 
-        -  ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -53,9 +61,9 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
                 from sage.rings.complex_double import CDF
                 return self._complex_double_(CDF).nth_root(n)
             else:
-                return - ( (-self) ** (float(1)/n) )
-        else:
-            return self ** (float(1)/n)
+                return - ((-self) ** (float(1)/n))
+
+        return self ** (float(1)/n)
 
     cdef __pow_double(self, double exponent, double sign):
         """
@@ -216,10 +224,10 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
 
     cdef _log_base(self, double log_of_base):
         if self._value == 0:
-            from .real_double import RDF
+            from sage.rings.real_double import RDF
             return RDF(-1)/RDF(0)
         elif self._value < 0:
-            from .real_double import RDF
+            from sage.rings.real_double import RDF
             return RDF.NaN()
         sig_on()
         a = self._new_c(gsl_sf_log(self._value) / log_of_base)
@@ -249,7 +257,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             0.6931471805599453
             sage: RDF(2).log(2)
             1.0
-            sage: RDF(2).log(pi)
+            sage: RDF(2).log(pi)                                                        # needs sage.symbolic
             0.6055115613982801
             sage: RDF(2).log(10)
             0.30102999566398114
@@ -265,7 +273,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         TESTS:
 
         Make sure that we can take the log of small numbers accurately
-        and the fix doesn't break preexisting values (:trac:`12557`)::
+        and the fix doesn't break preexisting values (:issue:`12557`)::
 
             sage: R = RealField(128)
             sage: def check_error(x):
@@ -325,7 +333,6 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         sig_off()
         return a
 
-
     def log10(self):
         """
         Return log to the base 10 of ``self``.
@@ -334,7 +341,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
 
             sage: r = RDF('16.0'); r.log10()
             1.2041199826559248
-            sage: r.log() / RDF(log(10))
+            sage: r.log() / RDF(log(10))                                                # needs sage.symbolic
             1.2041199826559246
             sage: r = RDF('39.9'); r.log10()
             1.6009728956867482
@@ -355,7 +362,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
 
             sage: r = RDF(16); r.logpi()
             2.4220462455931204
-            sage: r.log() / RDF(log(pi))
+            sage: r.log() / RDF(log(pi))                                                # needs sage.symbolic
             2.4220462455931204
             sage: r = RDF('39.9'); r.logpi()
             3.2203023346075152
@@ -504,15 +511,15 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         the interval `(-\pi, \pi]`.
 
         Specifically, it is the unique `x \in (-\pi, \pi]` such
-        that ```self`` `= x + 2\pi n` for some `n \in \ZZ`.
+        that ``self`` `= x + 2\pi n` for some `n \in \ZZ`.
 
         EXAMPLES::
 
-            sage: RDF(pi).restrict_angle()
+            sage: RDF(pi).restrict_angle()                                              # needs sage.symbolic
             3.141592653589793
-            sage: RDF(pi + 1e-10).restrict_angle()
+            sage: RDF(pi + 1e-10).restrict_angle()                                      # needs sage.symbolic
             -3.1415926534897936
-            sage: RDF(1+10^10*pi).restrict_angle()
+            sage: RDF(1+10^10*pi).restrict_angle()                                      # needs sage.symbolic
             0.9999977606...
         """
         return self._new_c(gsl_sf_angle_restrict_symm(self._value))
@@ -530,7 +537,6 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             sage: q.tan()
             0.5773502691896256
         """
-        cdef double denom
         cos = gsl_sf_cos(self._value)
         a = self._new_c(gsl_sf_sin(self._value) / cos)
         return a
@@ -549,7 +555,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
 
     def hypot(self, other):
         r"""
-        Computes the value `\sqrt{s^2 + o^2}` where `s` is ``self`` and `o`
+        Compute the value `\sqrt{s^2 + o^2}` where `s` is ``self`` and `o`
         is ``other`` in such a way as to avoid overflow.
 
         EXAMPLES::
@@ -604,7 +610,6 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         """
         return self._new_c(libc.math.atan(self._value))
 
-
     def cosh(self):
         """
         Return the hyperbolic cosine of ``self``.
@@ -615,7 +620,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             sage: q.cosh()
             1.0344656400955106
         """
-        return self._new_c(gsl_ldexp( gsl_sf_exp(self._value) + gsl_sf_exp(-self._value), -1)) # (e^x + e^-x)/2
+        return self._new_c(gsl_ldexp(gsl_sf_exp(self._value) + gsl_sf_exp(-self._value), -1))  # (e^x + e^-x)/2
 
     def sinh(self):
         """
@@ -627,7 +632,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             sage: q.sinh()
             0.26480022760227073
         """
-        return self._new_c(gsl_ldexp( gsl_sf_expm1(self._value) - gsl_sf_expm1(-self._value), -1)) # (e^x - e^-x)/2
+        return self._new_c(gsl_ldexp(gsl_sf_expm1(self._value) - gsl_sf_expm1(-self._value), -1))  # (e^x - e^-x)/2
 
     def tanh(self):
         """

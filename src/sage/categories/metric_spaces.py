@@ -1,21 +1,21 @@
 r"""
 Metric Spaces
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2015 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecated_function_alias
 from sage.categories.category import Category
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 from sage.categories.with_realizations import WithRealizationsCategory
 from sage.categories.homsets import HomsetsCategory
+
 
 class MetricSpacesCategory(RegressiveCovariantConstructionCategory):
 
@@ -72,6 +72,7 @@ class MetricSpacesCategory(RegressiveCovariantConstructionCategory):
         """
         return "metric {}".format(self.base_category()._repr_object_names())
 
+
 class MetricSpaces(MetricSpacesCategory):
     r"""
     The category of metric spaces.
@@ -127,10 +128,11 @@ class MetricSpaces(MetricSpacesCategory):
 
             EXAMPLES::
 
-                sage: UHP = HyperbolicPlane().UHP()                         # optional - sage.symbolic
-                sage: UHP._test_metric_function()                           # optional - sage.symbolic
-                sage: elts = [UHP.random_element() for i in range(5)]       # optional - sage.symbolic
-                sage: UHP._test_metric_function(some_elements=elts)         # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: UHP = HyperbolicPlane().UHP()
+                sage: UHP._test_metric_function()
+                sage: elts = [UHP.random_element() for i in range(5)]
+                sage: UHP._test_metric_function(some_elements=elts)
             """
             tester = self._tester(**options)
             S = tester.some_elements()
@@ -149,16 +151,15 @@ class MetricSpaces(MetricSpacesCategory):
 
             EXAMPLES::
 
-                sage: UHP = HyperbolicPlane().UHP()                         # optional - sage.symbolic
-                sage: m = UHP.metric_function()                             # optional - sage.symbolic
-                sage: p1 = UHP.get_point(5 + 7*I)                           # optional - sage.symbolic
-                sage: p2 = UHP.get_point(1.0 + I)                           # optional - sage.symbolic
-                sage: m(p1, p2)                                             # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: UHP = HyperbolicPlane().UHP()
+                sage: m = UHP.metric_function()
+                sage: p1 = UHP.get_point(5 + 7*I)
+                sage: p2 = UHP.get_point(1.0 + I)
+                sage: m(p1, p2)
                 2.23230104635820
             """
-            return lambda a,b: a.dist(b)
-
-        metric = deprecated_function_alias(30062, metric_function)
+            return lambda a, b: a.dist(b)
 
         def dist(self, a, b):
             """
@@ -166,27 +167,28 @@ class MetricSpaces(MetricSpacesCategory):
 
             EXAMPLES::
 
-                sage: UHP = HyperbolicPlane().UHP()                         # optional - sage.symbolic
-                sage: p1 = UHP.get_point(5 + 7*I)                           # optional - sage.symbolic
-                sage: p2 = UHP.get_point(1.0 + I)                           # optional - sage.symbolic
-                sage: UHP.dist(p1, p2)                                      # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: UHP = HyperbolicPlane().UHP()
+                sage: p1 = UHP.get_point(5 + 7*I)
+                sage: p2 = UHP.get_point(1.0 + I)
+                sage: UHP.dist(p1, p2)
                 2.23230104635820
 
-                sage: PD = HyperbolicPlane().PD()                           # optional - sage.symbolic
-                sage: PD.dist(PD.get_point(0), PD.get_point(I/2))           # optional - sage.symbolic
+                sage: PD = HyperbolicPlane().PD()                                       # needs sage.symbolic
+                sage: PD.dist(PD.get_point(0), PD.get_point(I/2))                       # needs sage.symbolic
                 arccosh(5/3)
 
             TESTS::
 
-                sage: RR.dist(-1, pi)                                       # optional - sage.symbolic
+                sage: RR.dist(-1, pi)                                                   # needs sage.rings.real_mpfr sage.symbolic
                 4.14159265358979
                 sage: RDF.dist(1, -1/2)
                 1.5
-                sage: CC.dist(3, 2)
+                sage: CC.dist(3, 2)                                                     # needs sage.rings.real_mpfr
                 1.00000000000000
-                sage: CC.dist(-1, I)
+                sage: CC.dist(-1, I)                                                    # needs sage.rings.real_mpfr sage.symbolic
                 1.41421356237310
-                sage: CDF.dist(-1, I)
+                sage: CDF.dist(-1, I)                                                   # needs sage.rings.real_mpfr sage.symbolic
                 1.4142135623730951
             """
             return (self(a) - self(b)).abs()
@@ -198,7 +200,7 @@ class MetricSpaces(MetricSpacesCategory):
 
             EXAMPLES::
 
-                sage: CC(I).abs()
+                sage: CC(I).abs()                                                       # needs sage.rings.real_mpfr sage.symbolic
                 1.00000000000000
             """
             P = self.parent()
@@ -210,17 +212,18 @@ class MetricSpaces(MetricSpacesCategory):
 
             EXAMPLES::
 
-                sage: UHP = HyperbolicPlane().UHP()                         # optional - sage.symbolic
-                sage: p1 = UHP.get_point(5 + 7*I)                           # optional - sage.symbolic
-                sage: p2 = UHP.get_point(1 + I)                             # optional - sage.symbolic
-                sage: p1.dist(p2)                                           # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: UHP = HyperbolicPlane().UHP()
+                sage: p1 = UHP.get_point(5 + 7*I)
+                sage: p2 = UHP.get_point(1 + I)
+                sage: p1.dist(p2)
                 arccosh(33/7)
             """
             return self.parent().dist(self, b)
 
     class Homsets(HomsetsCategory):
         """
-        The category of homsets of metric spaces
+        The category of homsets of metric spaces.
 
         It consists of the metric maps, that is, the Lipschitz functions
         with Lipschitz constant 1.
@@ -266,11 +269,12 @@ class MetricSpaces(MetricSpacesCategory):
 
                 EXAMPLES::
 
-                    sage: H = HyperbolicPlane()                             # optional - sage.symbolic
-                    sage: PD = H.PD()                                       # optional - sage.symbolic
-                    sage: p1 = PD.get_point(0)                              # optional - sage.symbolic
-                    sage: p2 = PD.get_point(I/2)                            # optional - sage.symbolic
-                    sage: H.dist(p1, p2)                                    # optional - sage.symbolic
+                    sage: # needs sage.symbolic
+                    sage: H = HyperbolicPlane()
+                    sage: PD = H.PD()
+                    sage: p1 = PD.get_point(0)
+                    sage: p2 = PD.get_point(I/2)
+                    sage: H.dist(p1, p2)
                     arccosh(5/3)
                 """
                 R = self.a_realization()

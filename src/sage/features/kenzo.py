@@ -17,9 +17,10 @@ Feature for testing the presence of ``kenzo``
 
 from . import Feature, FeatureTestResult
 
+
 class Kenzo(Feature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``Kenzo``.
+    A :class:`~sage.features.Feature` describing the presence of :ref:`Kenzo <spkg_kenzo>`.
 
     EXAMPLES::
 
@@ -35,8 +36,8 @@ class Kenzo(Feature):
             sage: isinstance(Kenzo(), Kenzo)
             True
         """
-        Feature.__init__(self, name="kenzo", spkg="kenzo",
-                         url="https://github.com/miguelmarco/kenzo/")
+        Feature.__init__(self, name='kenzo', spkg='kenzo',
+                         url='https://github.com/miguelmarco/kenzo/')
 
     def _is_present(self):
         r"""
@@ -48,7 +49,10 @@ class Kenzo(Feature):
             sage: Kenzo()._is_present()  # optional - kenzo
             FeatureTestResult('kenzo', True)
         """
-        from sage.libs.ecl import ecl_eval
+        try:
+            from sage.libs.ecl import ecl_eval
+        except ImportError:
+            return FeatureTestResult(self, False, reason="sage.libs.ecl is not available")
         # Redirection of ECL and Maxima stdout to /dev/null
         # This is also done in the Maxima library, but we
         # also do it here for redundancy.

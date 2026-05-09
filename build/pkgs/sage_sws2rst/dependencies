@@ -1,1 +1,0 @@
-$(PYTHON) beautifulsoup4 $(SAGE_ROOT)/pkgs/sage-sws2rst/*.py | $(PYTHON_TOOLCHAIN)

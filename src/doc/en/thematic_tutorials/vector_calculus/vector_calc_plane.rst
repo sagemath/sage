@@ -1,4 +1,4 @@
-.. -*- coding: utf-8 -*-
+.. sage-doctest: needs sage.plot sage.symbolic
 
 .. linkall
 
@@ -54,7 +54,6 @@ Each of the Cartesian coordinates spans the entire real line::
 
     sage: cartesian.coord_range()
     x: (-oo, +oo); y: (-oo, +oo)
-
 
 
 2. Vector fields
@@ -216,7 +215,6 @@ see :ref:`vector_fields_as_derivations_plane` below)::
     sage: s = v.at(p) + pi*w.at(p)
     sage: s.display()
     (pi*w_x(-2, 3) - 3) e_x + (pi*w_y(-2, 3) - 2) e_y
-
 
 
 3. Differential operators
@@ -500,7 +498,7 @@ manifold endowed with a positive definite metric tensor::
 
 Actually ``RR`` is used here as a proxy for the real field (this should
 be replaced in the future, see the discussion at
-:trac:`24456`) and the 53 bits of
+:issue:`24456`) and the 53 bits of
 precision play of course no role for the symbolic computations.
 
 The user atlas of `\mathbb{E}^2` has two charts::

@@ -22,12 +22,18 @@ from sage_docbuild.conf import *
 # contains common paths.
 html_static_path = [] + html_common_static_path
 
+# Add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/it/faq', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/it/faq', '{filename}'),
+})
+
 # General information about the project.
 project = "Sage FAQ"
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-html_title = project + " v" + release
+# The name for this set of Sphinx documents. Do not include release info.
+html_title = project
+html_short_title = project
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "faq"

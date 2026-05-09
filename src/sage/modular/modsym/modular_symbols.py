@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 r"""
 Modular symbols `\{\alpha`, `\beta\}`
 
@@ -30,11 +31,11 @@ TESTS::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-import sage.modular.cusps as cusps
+from sage.modular import cusps
 from sage.modular.modsym.apply import apply_to_monomial
 from sage.modular.modsym.manin_symbol import ManinSymbol
 from sage.structure.sage_object import SageObject
-import sage.structure.formal_sum as formal_sum
+from sage.structure import formal_sum
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.integer_ring import ZZ
 from sage.misc.latex import latex
@@ -95,7 +96,7 @@ class ModularSymbol(SageObject):
             polypart = ''
         else:
             polypart = str(self.polynomial_part()) + '*'
-        return "%s{%s, %s}"%(polypart, self.__alpha, self.__beta)
+        return "%s{%s, %s}" % (polypart, self.__alpha, self.__beta)
 
     def __getitem__(self, j):
         r"""
@@ -132,8 +133,9 @@ class ModularSymbol(SageObject):
             polypart = ''
         else:
             polypart = latex(self.polynomial_part())
-        return "%s\\left\\{%s, %s\\right\\}"%(polypart,
-                  latex(self.__alpha), latex(self.__beta))
+        return "%s\\left\\{%s, %s\\right\\}" % (polypart,
+                                                latex(self.__alpha),
+                                                latex(self.__beta))
 
     def __richcmp__(self, other, op):
         """
@@ -267,8 +269,8 @@ class ModularSymbol(SageObject):
 
         INPUT:
 
-        - ``g`` -- a list ``[a,b,c,d]``, corresponding to the 2x2 matrix
-          `\begin{pmatrix} a & b \\ c & d \end{pmatrix} \in {\rm GL}_2(\QQ)`.
+        - ``g`` -- list ``[a,b,c,d]``, corresponding to the 2x2 matrix
+          `\begin{pmatrix} a & b \\ c & d \end{pmatrix} \in {\rm GL}_2(\QQ)`
 
         OUTPUT:
 

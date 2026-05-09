@@ -1,3 +1,6 @@
+"""
+Utilities for Gross-Zagier L-series
+"""
 from cysignals.memory cimport check_allocarray, check_calloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
@@ -14,7 +17,7 @@ from libc.string cimport memcpy
 
 cpdef to_series(L, var):
     """
-    Create a power series element out of a list ``L`` in the variable`` var``.
+    Create a power series element out of a list ``L`` in the variable ``var``.
 
     EXAMPLES::
 
@@ -42,7 +45,7 @@ def bqf_theta_series(Q, long bound, var=None):
 
     .. MATH::
 
-        \sum_{(x,y) \in \Z^2} q^{f(x,y)} = \sum_{n=-\infty}^{\infty} r(n)q^n
+        \sum_{(x,y) \in \ZZ^2} q^{f(x,y)} = \sum_{n=-\infty}^{\infty} r(n)q^n
 
     where `r(n)` give the number of way `n` is represented by `f`.
 
@@ -52,9 +55,7 @@ def bqf_theta_series(Q, long bound, var=None):
     - ``bound`` -- how many terms to compute
     - ``var`` -- (optional) the variable in which to express this power series
 
-    OUTPUT:
-
-    A power series in ``var``, or list of ints if ``var`` is unspecified.
+    OUTPUT: a power series in ``var``, or list of ints if ``var`` is unspecified
 
     EXAMPLES::
 
@@ -68,13 +69,12 @@ def bqf_theta_series(Q, long bound, var=None):
     cdef long a, b, c
     a, b, c = Q
     cdef long* terms = bqf_theta_series_c(NULL, bound, a, b, c)
-    L = [terms[i] for i from 0 <= i <= bound]
+    L = [terms[i] for i in range(bound + 1)]
     sig_free(terms)
     return to_series(L, var)
 
 
 cdef long* bqf_theta_series_c(long* terms, long bound, long a, long b, long c) except NULL:
-    cdef long i
     cdef long x, y, yD
     cdef long xmax, ymin, ymax
     cdef double sqrt_yD
@@ -86,13 +86,13 @@ cdef long* bqf_theta_series_c(long* terms, long bound, long a, long b, long c) e
         terms = <long*>check_calloc(1 + bound, sizeof(long))
 
     sig_on()
-    for x from -xmax <= x <= xmax:
+    for x in range(-xmax, xmax + 1):
         yD = b * b * x * x - 4 * c * (a * x * x - bound)
         if yD > 0:
             sqrt_yD = sqrt(yD)
             ymin = <long>ceil((-b * x - sqrt_yD) / (2 * c))
             ymax = <long>floor((-b * x + sqrt_yD) / (2 * c))
-            for y from ymin <= y <= ymax:
+            for y in range(ymin, ymax + 1):
                 terms[a * x * x + b * x * y + c * y * y] += 1
     sig_off()
     return terms
@@ -100,19 +100,17 @@ cdef long* bqf_theta_series_c(long* terms, long bound, long a, long b, long c) e
 
 def gross_zagier_L_series(an_list, Q, long N, long u, var=None):
     """
-    Compute the coefficients of the Gross-Zagier L-series.
+    Compute the coefficients of the Gross-Zagier `L`-series.
 
     INPUT:
 
-    - ``an_list`` -- list of coefficients of the L-series of an elliptic curve
+    - ``an_list`` -- list of coefficients of the `L`-series of an elliptic curve
     - ``Q`` -- a positive definite quadratic form
     - ``N`` -- conductor of the elliptic curve
     - ``u`` -- number of roots of unity in the field associated with ``Q``
     - ``var`` -- (optional) the variable in which to express this power series
 
-    OUTPUT:
-
-    A power series in ``var``, or list of ints if ``var`` is unspecified.
+    OUTPUT: a power series in ``var``, or list of ints if ``var`` is unspecified
 
     The number of terms is the length of the input ``an_list``.
 
@@ -162,7 +160,7 @@ def gross_zagier_L_series(an_list, Q, long N, long u, var=None):
         i += 1
     sig_on()
     memcpy(terms, con_terms, sizeof(long) * bound)  # m = 1
-    for m from 2 <= m <= <long>sqrt(bound):
+    for m in range(2, <long>sqrt(bound) + 1):
         if arith.c_gcd_longlong(D * N, m) == 1:
             me = m * kronecker_symbol(D, m)
             j = 0

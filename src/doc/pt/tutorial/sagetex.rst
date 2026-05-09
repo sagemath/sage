@@ -14,7 +14,7 @@ instalação do Sage <http://doc.sagemath.org/html/en/installation/index.html>`_
 
 Aqui vai um breve exemplo de como usar o SageTeX. A documentação
 completa pode ser encontrada em
-``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex``, onde
+:file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex`, onde
 ``SAGE_ROOT`` é o diretório onde se encontra a sua instalação. Esse
 diretório contém a documentação, um arquivo de exemplo, e alguns
 scripts em Python possivelmente úteis.
@@ -107,4 +107,4 @@ os comandos em Sage em seu documento.
 Há muito mais sobre o SageTeX, e como tanto o Sage como o LaTeX são
 ferramentas complexas e poderosas, é uma boa idéia ler a documentação
 para o SageTeX que se encontra em
-``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex``.
+:file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex`.

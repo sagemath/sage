@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Functions to construct widgets, based on the old SageNB interface.
 
@@ -29,23 +28,26 @@ EXAMPLES::
 # ****************************************************************************
 
 from ipywidgets.widgets import (IntSlider, IntRangeSlider, FloatSlider,
-        FloatRangeSlider, SelectionSlider,
-        Checkbox, ToggleButtons, Dropdown)
+                                FloatRangeSlider, SelectionSlider,
+                                Checkbox, ToggleButtons, Dropdown)
 from .widgets import (TransformText, TransformTextarea,
-        TransformIntSlider, TransformIntRangeSlider,
-        TransformFloatSlider, TransformFloatRangeSlider,
-        EvalText, EvalTextarea, SageColorPicker, Grid)
+                      TransformIntSlider, TransformIntRangeSlider,
+                      TransformFloatSlider, TransformFloatRangeSlider,
+                      EvalText, EvalTextarea, SageColorPicker, Grid)
 from ipywidgets.widgets.interaction import _get_min_max_value
 from collections.abc import Iterable, Sequence
 from numbers import Integral, Rational, Real
 
-from sage.structure.all import parent
 from sage.arith.srange import srange
-import sage.rings.abc
-
-Color = None
+from sage.misc.lazy_import import lazy_import
+from sage.structure.element import parent
 
 from .widgets import HTMLText as text_control
+
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
+
+
+Color = None
 
 
 def input_box(default=None, label=None, type=None, width=80, height=1):
@@ -56,7 +58,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
 
     - ``default`` -- initial value
 
-    - ``label`` -- optional label
+    - ``label`` -- (optional)
 
     - ``type`` -- function of one variable or ``None``. if ``type`` is
       ``str``, the value of this widget for interactive functions is
@@ -68,7 +70,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
     - ``width`` -- width of the box
 
     - ``height`` -- if ``height > 1``, create a textarea instead of a
-      single-line textbox.
+      single-line textbox
 
     EXAMPLES::
 
@@ -153,7 +155,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
     if label is not None:
         kwds["description"] = label
     w = cls(**kwds)
-    w.layout.max_width = str(width+1) + "em"
+    w.layout.max_width = str(width + 1) + "em"
     return w
 
 
@@ -171,16 +173,15 @@ def slider(vmin, vmax=None, step_size=None, default=None, label=None, display_va
 
     For a selection slider (select a value from a list of values):
 
-    - ``vmin`` -- a list of possible values for the slider
+    - ``vmin`` -- list of possible values for the slider
 
     For all sliders:
 
     - ``default`` -- initial value
 
-    - ``label`` -- optional label
+    - ``label`` -- (optional)
 
-    - ``display_value`` -- (boolean) if ``True``, display the current
-      value.
+    - ``display_value`` -- boolean; if ``True``, display the current value
 
     EXAMPLES::
 
@@ -286,7 +287,7 @@ def slider(vmin, vmax=None, step_size=None, default=None, label=None, display_va
     p = parent(sum(x for x in (vmin, vmax, step_size) if x is not None))
 
     # Change SR to RR
-    if isinstance(p, sage.rings.abc.SymbolicRing):
+    if isinstance(p, SymbolicRing):
         from sage.rings.real_mpfr import RR
         p = RR
 
@@ -361,10 +362,9 @@ def range_slider(*args, **kwds):
 
     - ``default`` -- initial value, given as a 2-tuple
 
-    - ``label`` -- optional label
+    - ``label`` -- (optional)
 
-    - ``display_value`` -- (boolean) if ``True``, display the current
-      value.
+    - ``display_value`` -- boolean; if ``True``, display the current value
 
     EXAMPLES::
 
@@ -417,9 +417,9 @@ def checkbox(default=True, label=None):
 
     INPUT:
 
-    - ``default`` -- (boolean) initial value
+    - ``default`` -- boolean; initial value
 
-    - ``label`` -- optional label
+    - ``label`` -- (optional)
 
     EXAMPLES::
 
@@ -444,14 +444,14 @@ def selector(values, label=None, default=None, nrows=None, ncols=None, width=Non
 
     INPUT:
 
-    - ``values`` -- a list of values to choose from (see examples below
+    - ``values`` -- list of values to choose from (see examples below
       for the accepted formats for this)
 
-    - ``label`` -- optional label
+    - ``label`` -- (optional)
 
     - ``default`` -- initial value
 
-    - ``buttons`` -- (boolean) if True, display buttons instead of a
+    - ``buttons`` -- boolean; if ``True``, display buttons instead of a
       dropdown box
 
     EXAMPLES::
@@ -515,7 +515,7 @@ def input_grid(nrows, ncols, default=None, label=None, to_value=None, width=4):
     - ``default`` -- initial value (given as a list of lists, a single
       constant value or a flat list)
 
-    - ``label`` -- optional label
+    - ``label`` -- (optional)
 
     - ``to_value`` -- function to be called to get the value for
       interactive functions
@@ -525,7 +525,7 @@ def input_grid(nrows, ncols, default=None, label=None, to_value=None, width=4):
     EXAMPLES::
 
         sage: from sage.repl.ipython_kernel.all_jupyter import input_grid
-        sage: input_grid(2, 2, default=42, label="answers")
+        sage: input_grid(2, 2, default=42, label='answers')
         Grid(value=[[42, 42], [42, 42]], children=(Label(value='answers'), VBox(children=(EvalText(value='42', layout=Layout(max_width='5em')), EvalText(value='42', layout=Layout(max_width='5em')))), VBox(children=(EvalText(value='42', layout=Layout(max_width='5em')), EvalText(value='42', layout=Layout(max_width='5em'))))))
         sage: w = input_grid(2, 2, default=[[cos(x), sin(x)], [-sin(x), cos(x)]], to_value=matrix); w
         Grid(value=[[cos(x), sin(x)], [-sin(x), cos(x)]], children=(Label(value=''), VBox(children=(EvalText(value='cos(x)', layout=Layout(max_width='5em')), EvalText(value='-sin(x)', layout=Layout(max_width='5em')))), VBox(children=(EvalText(value='sin(x)', layout=Layout(max_width='5em')), EvalText(value='cos(x)', layout=Layout(max_width='5em'))))))
@@ -567,9 +567,9 @@ def color_selector(default=(0, 0, 1), label=None, widget=None, hide_box=False):
 
     - ``default`` -- initial value
 
-    - ``label`` -- optional label
+    - ``label`` -- (optional)
 
-    - ``hide_box`` -- (boolean) if True, do not show the textbox
+    - ``hide_box`` -- boolean; if ``True``, do not show the textbox
 
     EXAMPLES::
 

@@ -14,14 +14,14 @@ AUTHORS:
 #                              and Emily A. Kirkman
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+#                         https://www.gnu.org/licenses/
 # ****************************************************************************
 
 
 from sage.misc.misc import try_read
 
 
-def from_whatever(data):
+def from_whatever(data, immutable=False):
     r"""
     Return a list of Sage Graphs, given a list of whatever kind of data.
 
@@ -29,6 +29,9 @@ def from_whatever(data):
 
     - ``data`` -- can be a string, a list/iterable of strings, or a readable
       file-like object
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
+      or mutable graphs
 
     EXAMPLES::
 
@@ -48,11 +51,20 @@ def from_whatever(data):
         sage: with open(filename) as fobj:
         ....:     graphs_list.from_whatever(fobj)
         [Graph on 15 vertices, Looped multi-graph on 17 vertices]
+
+    Check the behaviour of parameter ``immutable``::
+
+        sage: with open(filename) as fobj:
+        ....:     any(g.is_immutable() for g in graphs_list.from_whatever(fobj))
+        False
+        sage: with open(filename) as fobj:
+        ....:     all(g.is_immutable() for g in graphs_list.from_whatever(fobj, immutable=True))
+        True
     """
-    return _from_whatever(data)
+    return _from_whatever(data, immutable=immutable)
 
 
-def _from_whatever(data, fmt=None):
+def _from_whatever(data, fmt=None, immutable=False):
     """
     Implementation details of :func:`from_whatever`.
 
@@ -66,11 +78,21 @@ def _from_whatever(data, fmt=None):
       indicating that the ``Graph`` constructor should determine this for
       itself
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
+      or mutable graphs
+
     EXAMPLES::
 
         sage: l = ['N@@?N@UGAGG?gGlKCMO', ':P_`cBaC_ACd`C_@BC`ABDHaEH_@BF_@CHIK_@BCEHKL_BIKM_BFGHI']
         sage: graphs_list.from_whatever(l)
         [Graph on 15 vertices, Looped multi-graph on 17 vertices]
+
+    Check the behaviour of parameter ``immutable``::
+
+        sage: any(g.is_immutable() for g in graphs_list.from_whatever(l))
+        False
+        sage: all(g.is_immutable() for g in graphs_list.from_whatever(l, immutable=True))
+        True
     """
     from sage.graphs.graph import Graph
 
@@ -110,14 +132,15 @@ def _from_whatever(data, fmt=None):
             continue
 
         if '\n' in line:
-            out.append(_from_whatever(line.splitlines(), fmt=fmt))
+            out.append(_from_whatever(line.splitlines(), fmt=fmt,
+                                      immutable=immutable))
         else:
-            out.append(Graph(line, **kwargs))
+            out.append(Graph(line, immutable=immutable, **kwargs))
 
     return out
 
 
-def from_graph6(data):
+def from_graph6(data, immutable=False):
     """
     Return a list of Sage Graphs, given a list of graph6 data.
 
@@ -125,22 +148,35 @@ def from_graph6(data):
 
     - ``data`` -- can be a string, a list of strings, or a file stream
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
+      or mutable graphs
+
     EXAMPLES::
 
         sage: l = ['N@@?N@UGAGG?gGlKCMO', 'XsGGWOW?CC?C@HQKHqOjYKC_uHWGX?P?~TqIKA`OA@SAOEcEA??']
         sage: graphs_list.from_graph6(l)
         [Graph on 15 vertices, Graph on 25 vertices]
+
+    Check the behaviour of parameter ``immutable``::
+
+        sage: any(g.is_immutable() for g in graphs_list.from_graph6(l))
+        False
+        sage: all(g.is_immutable() for g in graphs_list.from_graph6(l, immutable=True))
+        True
     """
-    return _from_whatever(data, fmt='graph6')
+    return _from_whatever(data, fmt='graph6', immutable=immutable)
 
 
-def from_sparse6(data):
-    """
+def from_sparse6(data, immutable=False):
+    r"""
     Return a list of Sage Graphs, given a list of sparse6 data.
 
     INPUT:
 
     - ``data`` -- can be a string, a list of strings, or a file stream
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
+      or mutable graphs
 
     EXAMPLES::
 
@@ -152,8 +188,15 @@ def from_sparse6(data):
         sage: g2 += 'BA@XCs\\NggWSOJIDbHh@?A@aF'
         sage: graphs_list.from_sparse6([g1, g2])
         [Looped multi-graph on 17 vertices, Looped multi-graph on 39 vertices]
+
+    Check the behaviour of parameter ``immutable``::
+
+        sage: any(g.is_immutable() for g in graphs_list.from_sparse6([g1, g2]))
+        False
+        sage: all(g.is_immutable() for g in graphs_list.from_sparse6([g1, g2], immutable=True))
+        True
     """
-    return _from_whatever(data, fmt='sparse6')
+    return _from_whatever(data, fmt='sparse6', immutable=immutable)
 
 
 def to_graph6(graphs, file=None, output_list=False):
@@ -241,7 +284,7 @@ def _to_graph6(graphs, file=None, output_list=False, sparse=False):
 
 def to_graphics_array(graph_list, **kwds):
     """
-    Draw all graphs in a graphics array
+    Draw all graphs in a graphics array.
 
     INPUT:
 
@@ -258,17 +301,17 @@ def to_graphics_array(graph_list, **kwds):
         sage: glist = []
         sage: for i in range(999):
         ....:     glist.append(graphs.RandomGNP(6, .45))
-        sage: garray = graphs_list.to_graphics_array(glist)
-        sage: garray.nrows(), garray.ncols()
+        sage: garray = graphs_list.to_graphics_array(glist)                             # needs sage.plot
+        sage: garray.nrows(), garray.ncols()                                            # needs sage.plot
         (250, 4)
 
     See the .plot() or .show() documentation for an individual graph for
     options, all of which are available from :func:`to_graphics_array`::
 
         sage: glist = []
-        sage: for _ in range(10):
+        sage: for _ in range(10):                                                       # needs networkx
         ....:     glist.append(graphs.RandomLobster(41, .3, .4))
-        sage: graphs_list.to_graphics_array(glist, layout='spring', vertex_size=20)
+        sage: graphs_list.to_graphics_array(glist, layout='spring', vertex_size=20)     # needs networkx sage.plot
         Graphics Array of size 3 x 4
     """
     from sage.graphs import graph
@@ -342,7 +385,7 @@ def show_graphs(graph_list, **kwds):
 
     Show the graphs in a graphics array::
 
-        sage: graphs_list.show_graphs(glist)
+        sage: graphs_list.show_graphs(glist)                                            # needs sage.plot
 
     Example where more than one graphics array is used::
 
@@ -350,15 +393,15 @@ def show_graphs(graph_list, **kwds):
         sage: g = gq.get_graphs_list()
         sage: len(g)
         34
-        sage: graphs_list.show_graphs(g)
+        sage: graphs_list.show_graphs(g)                                                # needs sage.plot
 
     See the .plot() or .show() documentation for an individual graph for
     options, all of which are available from :func:`to_graphics_array`::
 
         sage: glist = []
-        sage: for _ in range(10):
+        sage: for _ in range(10):                                                       # needs networkx
         ....:     glist.append(graphs.RandomLobster(41, .3, .4))
-        sage: graphs_list.show_graphs(glist, layout='spring', vertex_size=20)
+        sage: graphs_list.show_graphs(glist, layout='spring', vertex_size=20)           # needs sage.plot
     """
     graph_list = list(graph_list)
     for i in range(len(graph_list) // 20 + 1):

@@ -1,8 +1,8 @@
 """
-Cycle Species
+Cycle species
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 # This program is free software: you can redistribute it and/or modify
@@ -10,7 +10,7 @@ Cycle Species
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 from sage.arith.misc import divisors, euler_phi
 from sage.combinat.species.misc import accept_size
@@ -25,6 +25,10 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: S = species.CycleSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
+
             sage: S.structures(["a","b","c"])[0]
             ('a', 'b', 'c')
         """
@@ -44,14 +48,14 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
 
     def permutation_group_element(self):
         """
-        Returns this cycle as a permutation group element.
+        Return this cycle as a permutation group element.
 
         EXAMPLES::
 
             sage: F = species.CycleSpecies()
             sage: a = F.structures(["a", "b", "c"])[0]; a
             ('a', 'b', 'c')
-            sage: a.permutation_group_element()
+            sage: a.permutation_group_element()                                         # needs sage.groups
             (1,2,3)
         """
         from sage.groups.perm_gps.constructor import PermutationGroupElement
@@ -59,28 +63,27 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
 
     def transport(self, perm):
         """
-        Returns the transport of this structure along the permutation
-        perm.
+        Return the transport of this structure along the permutation ``perm``.
 
         EXAMPLES::
 
             sage: F = species.CycleSpecies()
             sage: a = F.structures(["a", "b", "c"])[0]; a
             ('a', 'b', 'c')
-            sage: p = PermutationGroupElement((1,2))
-            sage: a.transport(p)
+            sage: p = PermutationGroupElement((1,2))                                    # needs sage.groups
+            sage: a.transport(p)                                                        # needs sage.groups
             ('a', 'c', 'b')
         """
         p = self.permutation_group_element()
-        p = perm*p*~perm
+        p = perm * p * ~perm
         new_list = [1]
-        for i in range(len(self._list)-1):
-            new_list.append( p(new_list[-1]) )
+        for i in range(len(self._list) - 1):
+            new_list.append(p(new_list[-1]))
         return CycleSpeciesStructure(self.parent(), self._labels, new_list)
 
     def automorphism_group(self):
         """
-        Returns the group of permutations whose action on this structure
+        Return the group of permutations whose action on this structure
         leave it fixed.
 
         EXAMPLES::
@@ -88,12 +91,12 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
             sage: P = species.CycleSpecies()
             sage: a = P.structures([1, 2, 3, 4])[0]; a
             (1, 2, 3, 4)
-            sage: a.automorphism_group()
+            sage: a.automorphism_group()                                                # needs sage.groups
             Permutation Group with generators [(1,2,3,4)]
 
         ::
 
-            sage: [a.transport(perm) for perm in a.automorphism_group()]
+            sage: [a.transport(perm) for perm in a.automorphism_group()]                # needs sage.groups
             [(1, 2, 3, 4), (1, 2, 3, 4), (1, 2, 3, 4), (1, 2, 3, 4)]
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -113,11 +116,11 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: C = species.CycleSpecies(); C
             Cyclic permutation species
         """
-        return super(CycleSpecies, cls).__classcall__(cls, *args, **kwds)
+        return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
         """
-        Returns the species of cycles.
+        Return the species of cycles.
 
         EXAMPLES::
 
@@ -201,7 +204,7 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _order(self):
         """
-        Returns the order of the generating series.
+        Return the order of the generating series.
 
         EXAMPLES::
 
@@ -255,8 +258,8 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: P = species.CycleSpecies()
-            sage: cis = P.cycle_index_series()
-            sage: cis[0:7]
+            sage: cis = P.cycle_index_series()                                          # needs sage.modules
+            sage: cis[0:7]                                                              # needs sage.modules
             [0,
              p[1],
              1/2*p[1, 1] + 1/2*p[2],

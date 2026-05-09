@@ -19,7 +19,7 @@ from .join_feature import JoinFeature
 class python_igraph(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of the
-    Python package ``igraph``.
+    Python package :ref:`igraph <spkg_python_igraph>`.
 
     EXAMPLES::
 
@@ -36,8 +36,9 @@ class python_igraph(JoinFeature):
             True
         """
         JoinFeature.__init__(self, 'python_igraph',
-                             [PythonModule('igraph', spkg="python_igraph",
-                                            url="http://igraph.org")])
+                             [PythonModule('igraph', spkg='python_igraph',
+                                            url='http://igraph.org')])
+
 
 def all_features():
     return [python_igraph()]

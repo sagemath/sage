@@ -1,10 +1,10 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Hecke triangle groups
 
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************
@@ -17,30 +17,33 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import divisors
-from sage.functions.gamma import psi1
-from sage.functions.log import exp
-from sage.functions.trig import cos, sec
 from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_generic
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
-from sage.rings.imaginary_unit import I
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import AA, AlgebraicField
 from sage.rings.rational_field import QQ
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.symbolic.constants import pi
+
+lazy_import("sage.functions.log", "exp")
+lazy_import("sage.functions.gamma", "psi1")
+lazy_import("sage.functions.trig", "sec")
+lazy_import("sage.rings.number_field.number_field", "NumberField")
+lazy_import("sage.rings.qqbar", ["AA", "AlgebraicField"])
+lazy_import("sage.rings.universal_cyclotomic_field", "E")
+lazy_import("sage.symbolic.constants", "pi")
 
 from .hecke_triangle_group_element import HeckeTriangleGroupElement, cyclic_representative, coerce_AA
+
 
 class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
                          UniqueRepresentation):
     r"""
-    Hecke triangle group (2, n, infinity).
+    Hecke triangle group `(2, n, \infty)`.
     """
 
     Element = HeckeTriangleGroupElement
@@ -56,11 +59,11 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             sage: HeckeTriangleGroup(QQ(3)) == HeckeTriangleGroup(int(3))
             True
         """
-        if (n == infinity):
+        if n == infinity:
             n = infinity
         else:
             n = ZZ(n)
-            if (n < 3):
+            if n < 3:
                 raise AttributeError("n has to be infinity or an Integer >= 3.")
 
         return super().__classcall__(cls, n)
@@ -74,11 +77,9 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         INPUT:
 
-        - ``n``   - ``infinity`` or an integer greater or equal to ``3``.
+        - ``n`` -- ``infinity`` or an integer greater or equal to `3`
 
-        OUTPUT:
-
-        The Hecke triangle group for the given parameter ``n``.
+        OUTPUT: the Hecke triangle group for the given parameter `n`
 
         EXAMPLES::
 
@@ -95,12 +96,12 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         if n in [3, infinity]:
             self._base_ring = ZZ
-            self._lam = ZZ(1) if n == 3 else ZZ(2)
+            self._lam = ZZ.one() if n == 3 else ZZ(2)
         else:
-            lam_symbolic = 2 * cos(pi / n)
+            lam_symbolic = coerce_AA(E(2 * n) + ~E(2 * n))
             K = NumberField(self.lam_minpoly(), 'lam',
-                            embedding=coerce_AA(lam_symbolic))
-            #self._base_ring = K.order(K.gens())
+                            embedding=lam_symbolic)
+            # self._base_ring = K.order(K.gens())
             self._base_ring = K.maximal_order()
             self._lam = self._base_ring.gen(1)
 
@@ -119,7 +120,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             sage: HeckeTriangleGroup(10)
             Hecke triangle group for n = 10
         """
-        return "Hecke triangle group for n = {}".format(self._n)
+        return f"Hecke triangle group for n = {self._n}"
 
     def _latex_(self):
         r"""
@@ -140,19 +141,23 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         INPUT:
 
-        - ``method``  -- If ``method=None`` (default) the current default representation
-                         method is returned. Otherwise the default method is set to ``method``.
-                         If ``method`` is not available a ValueError is raised. Possible methods are:
+        - ``method`` -- if ``method=None`` (default) the current default
+          representation method is returned. Otherwise the default method is
+          set to ``method``. If ``method`` is not available a
+          :exc:`ValueError` is raised. Possible methods are:
 
-                         ``default``: Use the usual representation method for matrix group elements.
+          - ``default``: use the usual representation method for matrix group
+            elements
 
-                         ``basic``:   The representation is given as a word in ``S`` and powers of ``T``.
+          - ``basic``: the representation is given as a word in ``S`` and
+            powers of ``T``
 
-                         ``conj``:    The conjugacy representative of the element is represented
-                                      as a word in powers of the basic blocks, together with
-                                      an unspecified conjugation matrix.
+          - ``conj``: the conjugacy representative of the element is
+            represented as a word in powers of the basic blocks, together with
+            an unspecified conjugation matrix
 
-                         ``block``:   Same as ``conj`` but the conjugation matrix is specified as well.
+          - ``block``: same as ``conj`` but the conjugation matrix is
+            specified as well
 
         EXAMPLES::
 
@@ -166,10 +171,10 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         """
         if method is None:
             return self._element_repr_method
-        elif method in ["default", "basic", "block", "conj"]:
-            self._element_repr_method=method
+        if method in ["default", "basic", "block", "conj"]:
+            self._element_repr_method = method
         else:
-            raise ValueError("The specified method {} is not supported!").format(method)
+            raise ValueError(f"the specified method {method} is not supported")
 
     def one(self):
         r"""
@@ -205,8 +210,12 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             x - 2
         """
         # TODO: Write an explicit (faster) implementation
-        lam_symbolic = 2 * cos(pi / self._n)
-        return coerce_AA(lam_symbolic).minpoly()
+        n = self._n
+        if n == infinity:
+            lam_symbolic = QQ(2)
+        else:
+            lam_symbolic = E(2 * n) + ~E(2 * n)
+        return lam_symbolic.minpoly()
 
     def base_ring(self):
         r"""
@@ -218,7 +227,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             sage: HeckeTriangleGroup(n=infinity).base_ring()
             Integer Ring
             sage: HeckeTriangleGroup(n=7).base_ring()
-            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
+            Maximal Order generated by lam in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
         """
         return self._base_ring
 
@@ -236,8 +245,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         """
         if self._n in [3, infinity]:
             return QQ
-        else:
-            return self._base_ring.number_field()
+        return self._base_ring.number_field()
 
     def n(self):
         r"""
@@ -256,7 +264,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         """
         return self._n
 
-    # TODO: rename this to a more descriptive lambda in a later update/patch
     def lam(self):
         r"""
         Return the parameter ``lambda`` of ``self``,
@@ -304,15 +311,15 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         # TODO: maybe rho should be replaced by -rhobar
         # Also we could use NumberFields...
         if self._n == infinity:
-            return coerce_AA(1)
-        else:
-            rho = AlgebraicField()(exp(pi / self._n * I))
-            rho.simplify()
-            return rho
+            return AA.one()
+        rho = AlgebraicField()(E(2 * self._n))
+        rho.simplify()
+        return rho
 
     def alpha(self):
         r"""
         Return the parameter ``alpha`` of ``self``.
+
         This is the first parameter of the hypergeometric series used
         in the calculation of the Hauptmodul of ``self``.
 
@@ -332,11 +339,12 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             sage: HeckeTriangleGroup(infinity).alpha()
             1/4
         """
-        return ZZ(1) / ZZ(2) * (ZZ(1) / ZZ(2) - ZZ(1) / self._n)
+        return QQ((1, 2)) * (QQ((1, 2)) - ZZ.one() / self._n)
 
     def beta(self):
         r"""
         Return the parameter ``beta`` of ``self``.
+
         This is the second parameter of the hypergeometric series used
         in the calculation of the Hauptmodul of ``self``.
 
@@ -356,7 +364,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             sage: HeckeTriangleGroup(infinity).beta()
             1/4
         """
-        return ZZ(1)/ZZ(2) * (ZZ(1)/ZZ(2) + ZZ(1)/self._n)
+        return QQ((1, 2)) * (QQ((1, 2)) + ZZ.one() / self._n)
 
     # We use cached method here to create unique instances of basic matrices
     # (major performance gain)
@@ -382,11 +390,13 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
     @cached_method
     def T(self, m=1):
         r"""
-        Return the element in ``self`` corresponding to the translation by ``m*self.lam()``.
+        Return the element in ``self`` corresponding to the translation by
+        ``m*self.lam()``.
 
         INPUT:
 
-        - ``m`` -- An integer, default: ``1``, namely the second generator of ``self``.
+        - ``m`` -- integer (default: 1); namely the second generator of
+          ``self``
 
         EXAMPLES::
 
@@ -471,13 +481,12 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         INPUT:
 
-        - ``j``  -- Any integer. To get the usual representatives
-                    ``j`` should range from ``1`` to ``self.n()-1``.
+        - ``j`` --integer; to get the usual representatives
+          ``j`` should range from ``1`` to ``self.n()-1``
 
-        OUTPUT:
+        OUTPUT: the corresponding matrix/element
 
-        The corresponding matrix/element.
-        The matrix is parabolic if ``j`` is congruent to +-1 modulo ``self.n()``.
+        The matrix is parabolic if ``j`` is congruent to `\pm 1` modulo ``self.n()``.
         It is elliptic if ``j`` is congruent to 0 modulo ``self.n()``.
         It is hyperbolic otherwise.
 
@@ -540,19 +549,20 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         """
         n = self._n
         if n == 3:
-            return ZZ(1)/ZZ(2**6*3**3)
-        elif n == 4:
-            return ZZ(1)/ZZ(2**8)
-        elif n == 6:
-            return ZZ(1)/ZZ(2**2*3**3)
-        elif n == infinity:
-            return ZZ(1)/ZZ(2**6)
-        else:
-            return exp(-ZZ(2)*psi1(ZZ(1)) + psi1(ZZ(1)-self.alpha())+psi1(ZZ(1)-self.beta()) - pi*sec(pi/self._n))
+            return 1 / ZZ(2**6*3**3)
+        if n == 4:
+            return 1 / ZZ(2**8)
+        if n == 6:
+            return 1 / ZZ(2**2*3**3)
+        if n == infinity:
+            return 1 / ZZ(2**6)
+        # reference for this formula ?
+        return exp(-ZZ(2)*psi1(ZZ.one()) + psi1(ZZ.one()-self.alpha())
+                   + psi1(ZZ.one()-self.beta()) - pi*sec(pi/self._n))
 
-    def is_arithmetic(self):
+    def is_arithmetic(self) -> bool:
         r"""
-        Return True if ``self`` is an arithmetic subgroup.
+        Return ``True`` if ``self`` is an arithmetic subgroup.
 
         EXAMPLES::
 
@@ -579,26 +589,26 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         INPUT:
 
-        - ``z`` -- a complex number or an element of AlgebraicField().
+        - ``z`` -- a complex number or an element of AlgebraicField()
 
         OUTPUT:
 
         A tuple ``(A, w)``.
 
         - ``A`` -- a matrix in ``self`` such that ``A.acton(w)==z``
-          (if ``z`` is exact at least).
+          (if ``z`` is exact at least)
 
         - ``w`` -- a complex number or an element of AlgebraicField()
           (depending on the type ``z``) which lies inside the (strict)
           fundamental domain of ``self`` (``self.in_FD(w)==True``) and
-          which is equivalent to ``z`` (by the above property).
+          which is equivalent to ``z`` (by the above property)
 
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
             sage: G = HeckeTriangleGroup(8)
             sage: z = AlgebraicField()(1+i/2)
-            sage: (A, w) = G.get_FD(z)
+            sage: A, w = G.get_FD(z)
             sage: A
             [-lam    1]
             [  -1    0]
@@ -607,7 +617,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
             sage: z = (134.12 + 0.22*i).n()
-            sage: (A, w) = G.get_FD(z)
+            sage: A, w = G.get_FD(z)
             sage: A
             [-73*lam^3 + 74*lam       73*lam^2 - 1]
             [        -lam^2 + 1                lam]
@@ -625,20 +635,20 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         A = ID
         w = z
-        while (abs(w) < ZZ(1) or abs(w.real()) > self.lam()/ZZ(2)):
-            if (abs(w) < ZZ(1)):
+        while abs(w) < ZZ.one() or abs(w.real()) > self.lam() / ZZ(2):
+            if abs(w) < ZZ.one():
                 w = self.S().acton(w)
                 A = S*A
-            while (w.real() >= self.lam()/ZZ(2)):
+            while w.real() >= self.lam() / ZZ(2):
                 w = TI.acton(w)
                 A = TI*A
-            while (w.real() < -self.lam()/ZZ(2)):
+            while w.real() < -self.lam() / ZZ(2):
                 w = T.acton(w)
                 A = T*A
-        if (w.real() == self.lam()/ZZ(2)):
+        if w.real() == self.lam() / ZZ(2):
             w = TI.acton(w)
             A = TI*A
-        if (abs(w) == ZZ(1) and w.real() > ZZ(0)):
+        if abs(w) == ZZ.one() and w.real() > ZZ.zero():
             w = S.acton(w)
             A = S*A
 
@@ -646,9 +656,9 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         return (AI, A.acton(z))
 
-    def in_FD(self, z):
+    def in_FD(self, z) -> bool:
         r"""
-        Returns ``True`` if ``z`` lies in the (strict) fundamental
+        Return ``True`` if ``z`` lies in the (strict) fundamental
         domain of ``self``.
 
         EXAMPLES::
@@ -668,13 +678,13 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         INPUT:
 
-        - ``D`` -- An element of the base ring of ``self``
-                   corresponding to a discriminant.
+        - ``D`` -- an element of the base ring of ``self``
+          corresponding to a discriminant
 
         OUTPUT:
 
         A relative (at most quadratic) extension to the base field
-        of self in the variable ``e`` which corresponds to ``sqrt(D)``.
+        of ``self`` in the variable ``e`` which corresponds to ``sqrt(D)``.
         If the extension degree is ``1`` then the base field is returned.
 
         The correct embedding is the positive resp. positive imaginary one.
@@ -709,19 +719,18 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         if D.is_square():
             return K
-        else:
-            # unfortunately we can't set embeddings for relative extensions :-(
-            # return K.extension(x**2 - D, 'e', embedding=AA(D).sqrt())
+        # unfortunately we can't set embeddings for relative extensions :-(
+        # return K.extension(x**2 - D, 'e', embedding=AA(D).sqrt())
 
-            L = K.extension(x**2 - D, 'e')
+        L = K.extension(x**2 - D, 'e')
 
-            #e = AA(D).sqrt()
-            #emb = L.hom([e])
-            #L._unset_embedding()
-            #L.register_embedding(emb)
+        # e = AA(D).sqrt()
+        # emb = L.hom([e])
+        # L._unset_embedding()
+        # L.register_embedding(emb)
 
-            #return NumberField(L.absolute_polynomial(), 'e', structure=AbsoluteFromRelative(L), embedding=(???))
-            return L
+        # return NumberField(L.absolute_polynomial(), 'e', structure=AbsoluteFromRelative(L), embedding=(???))
+        return L
 
     # We cache this method for performance reasons (it is repeatedly reused)
     @cached_method
@@ -735,18 +744,18 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         INPUT:
 
-        - ``D`` -- An element of the base ring of ``self``
-                   corresponding to a discriminant.
+        - ``D`` -- an element of the base ring of ``self``
+          corresponding to a discriminant
 
-        - ``K`` -- A field to which we want the (correct) embedding.
-                   If ``K=None`` (default) then ``AlgebraicField()`` is
-                   used for positive ``D`` and ``AlgebraicRealField()``
-                   otherwise.
+        - ``K`` -- a field to which we want the (correct) embedding;
+          if ``K=None`` (default) then ``AlgebraicField()`` is
+          used for positive ``D`` and ``AlgebraicRealField()``
+          otherwise
 
         OUTPUT:
 
         The corresponding embedding if it was found.
-        Otherwise a ValueError is raised.
+        Otherwise a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -792,7 +801,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             else:
                 K = AlgebraicField()
 
-        L = [emb for emb in F.embeddings(K)]
+        L = list(F.embeddings(K))
 
         # Three possibilities up to numerical artefacts:
         # (1) emb = e, purely imaginary
@@ -869,7 +878,10 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             self._conj_prim[D] = []
         self._conj_prim[D].append(self.S())
 
-        other_reps = [self.U()**k for k in range(-((self.n()-1)/2).floor(), (self.n()/2).floor() + 1) if k not in [0,1]]
+        other_reps = [self.U()**k
+                      for k in range(-((self.n() - 1) / 2).floor(),
+                                     self.n() // 2 + 1)
+                      if k not in [0, 1]]
 
         for v in other_reps:
             D = v.discriminant()
@@ -877,10 +889,10 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
                 self._conj_nonprim[D] = []
             self._conj_nonprim[D].append(v)
 
-    def _conjugacy_representatives(self, max_block_length=ZZ(0), D=None):
+    def _conjugacy_representatives(self, max_block_length=0, D=None):
         r"""
         Store conjugacy representatives up to block length
-        ``max_block_length`` (a non-negative integer, default: 0)
+        ``max_block_length`` (a nonnegative integer, default: 0)
         in the internal dictionary. Previously calculated data is reused.
         This is a helper function for e.g. :meth:`class_number`.
 
@@ -891,18 +903,17 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         The set of all non-primitive representatives (so far) with
         discriminant ``D`` is stored in ``self._conj_nonprim[D]``.
 
-        The case of non-positive discriminants is done manually.
+        The case of nonpositive discriminants is done manually.
 
         INPUT:
 
-        - ``max_block_length`` -- A non-negative integer (default: ``0``),
-                                  the maximal block length.
+        - ``max_block_length`` -- nonnegative integer (default: `0`); the
+          maximal block length
 
-        - ``D``                -- An element/discriminant of the base ring or
-                                  more generally an upper bound for the
-                                  involved discriminants. If ``D != None``
-                                  then an upper bound for ``max_block_length``
-                                  is deduced from ``D`` (default: ``None``).
+        - ``D`` -- an element/discriminant of the base ring or more generally
+          an upper bound for the involved discriminants. If ``D != None`` then
+          an upper bound for ``max_block_length`` is deduced from ``D``
+          (default: ``None``).
 
         EXAMPLES::
 
@@ -944,22 +955,22 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
             sage: G.element_repr_method("default")
         """
-
         from sage.combinat.partition import OrderedPartitions
         from sage.combinat.combinat import tuples
 
         if D is not None:
-            max_block_length = max(coerce_AA(0), coerce_AA((D + 4)/(self.lam()**2))).sqrt().floor()
+            max_block_length = max(AA.zero(),
+                                   coerce_AA((D + 4)/(self.lam()**2))).sqrt().floor()
         else:
             try:
                 max_block_length = ZZ(max_block_length)
                 if max_block_length < 0:
                     raise TypeError
             except TypeError:
-                raise ValueError("max_block_length must be a non-negative integer!")
+                raise ValueError("max_block_length must be a nonnegative integer!")
 
         if not hasattr(self, "_max_block_length"):
-            self._max_block_length = ZZ(0)
+            self._max_block_length = ZZ.zero()
             self._conj_block = {}
             self._conj_nonprim = {}
             self._conj_prim = {}
@@ -974,26 +985,23 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             #
             # We set it here to ensure that 0 is enlisted as a discriminant...
             #
-            self._conj_prim[ZZ(0)] = []
-            self._conj_prim[ZZ(0)].append(self.V(self.n()-1))
+            self._conj_prim[ZZ.zero()] = []
+            self._conj_prim[ZZ.zero()].append(self.V(self.n()-1))
 
             self._elliptic_conj_reps()
 
         if max_block_length <= self._max_block_length:
             return
 
-        def is_cycle(seq):
+        def is_cycle(seq) -> bool:
             length = len(seq)
             for n in divisors(length):
                 if n < length and is_cycle_of_length(seq, n):
                     return True
             return False
 
-        def is_cycle_of_length(seq, n):
-            for j in range(n, len(seq)):
-                if seq[j] != seq[j % n]:
-                    return False
-            return True
+        def is_cycle_of_length(seq, n) -> bool:
+            return all(seq[j] == seq[j % n] for j in range(n, len(seq)))
 
         j_list = range(1, self.n())
 
@@ -1018,7 +1026,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
                         keep = False
                     # But: Do we maybe want powers of V(n-1)??
                     # For now we exclude the parabolic cases...
-                    elif ex[0] == self.n()-1:
+                    elif ex[0] == self.n() - 1:
                         keep = False
 
                     if keep:
@@ -1028,18 +1036,11 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             for el in self._conj_block[t_ZZ]:
                 group_el = prod([self.V(el[k][0])**el[k][1] for k in range(len(el))])
 
-                #if el != group_el.conjugacy_type():
-                #    raise AssertionError("This shouldn't happen!")
-
                 D = group_el.discriminant()
-                if coerce_AA(D) < 0:
-                    raise AssertionError("This shouldn't happen!")
-                if coerce_AA(D) == 0:
-                    raise AssertionError("This shouldn't happen!")
-                    #continue
+                assert coerce_AA(D) > 0
 
                 # The primitive cases
-                #if group_el.is_primitive():
+                # if group_el.is_primitive():
                 if not ((len(el) == 1 and el[0][1] > 1) or is_cycle(el)):
                     if D not in self._conj_prim:
                         self._conj_prim[D] = []
@@ -1062,11 +1063,11 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         INPUT:
 
-        - ``D``          -- An element of the base ring corresponding
-                            to a valid discriminant.
+        - ``D`` -- an element of the base ring corresponding
+          to a valid discriminant
 
-        - ``primitive``  -- If ``True`` (default) then only primitive
-                            representatives are considered.
+        - ``primitive`` -- if ``True`` (default) then only primitive
+          representatives are considered
 
         EXAMPLES::
 
@@ -1129,7 +1130,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         if not primitive and D in self._conj_nonprim:
             L += self._conj_nonprim[D]
 
-        if len(L) == 0:
+        if not L:
             raise ValueError("D = {} is not a{} discriminant for {}".format(D, " primitive" if primitive else "", self))
         else:
             return L
@@ -1147,11 +1148,11 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         INPUT:
 
-        - ``D``          -- An element of the base ring corresponding
-                            to a valid discriminant.
+        - ``D`` -- an element of the base ring corresponding
+          to a valid discriminant
 
-        - ``primitive``  -- If ``True`` (default) then only primitive
-                            elements are considered.
+        - ``primitive`` -- if ``True`` (default) then only primitive
+          elements are considered
 
         EXAMPLES::
 
@@ -1188,19 +1189,19 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         else:
             return num
 
-    def is_discriminant(self, D, primitive=True):
+    def is_discriminant(self, D, primitive=True) -> bool:
         r"""
-        Returns whether ``D`` is a discriminant of an element of ``self``.
+        Return whether ``D`` is a discriminant of an element of ``self``.
 
         Note: Checking that something isn't a discriminant takes much
         longer than checking for valid discriminants.
 
         INPUT:
 
-        - ``D``          -- An element of the base ring.
+        - ``D`` -- an element of the base ring
 
-        - ``primitive``  -- If ``True`` (default) then only primitive
-                            elements are considered.
+        - ``primitive`` -- if ``True`` (default) then only primitive
+          elements are considered
 
         OUTPUT:
 
@@ -1220,9 +1221,9 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             sage: G.is_discriminant(2)
             False
         """
-
         self._conjugacy_representatives(0)
-        t_bound = max(coerce_AA(0), coerce_AA((D + 4)/(self.lam()**2))).sqrt().floor()
+        t_bound = max(AA.zero(),
+                      coerce_AA((D + 4) / (self.lam()**2))).sqrt().floor()
         for t in range(self._max_block_length + 1, t_bound + 1):
             self._conjugacy_representatives(t)
 
@@ -1233,33 +1234,28 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         if D in self._conj_prim:
             return True
-        elif not primitive and D in self._conj_nonprim:
-            return True
-        else:
-            return False
+        return not primitive and D in self._conj_nonprim
 
     def list_discriminants(self, D, primitive=True, hyperbolic=True, incomplete=False):
         r"""
-        Returns a list of all discriminants up to some upper bound ``D``.
+        Return a list of all discriminants up to some upper bound ``D``.
 
         INPUT:
 
-        - ``D``          -- An element/discriminant of the base ring or
-                            more generally an upper bound for the discriminant.
+        - ``D`` -- an element/discriminant of the base ring or
+          more generally an upper bound for the discriminant
 
-        - ``primitive``  -- If ``True`` (default) then only primitive
-                            discriminants are listed.
+        - ``primitive`` -- if ``True`` (default) then only primitive
+          discriminants are listed
 
-        - ``hyperbolic`` -- If ``True`` (default) then only positive
-                            discriminants are listed.
+        - ``hyperbolic`` -- if ``True`` (default) then only positive
+          discriminants are listed
 
-        - ``incomplete`` -- If ``True`` (default: ``False``) then all (also higher)
-                            discriminants which were gathered so far are listed
-                            (however there might be missing discriminants inbetween).
+        - ``incomplete`` -- if ``True`` (default: ``False``) then all
+          (also higher) discriminants which were gathered so far are listed
+          (however there might be missing discriminants in between).
 
-        OUTPUT:
-
-        A list of discriminants less than or equal to ``D``.
+        OUTPUT: list of discriminants less than or equal to ``D``
 
         EXAMPLES::
 
@@ -1284,17 +1280,18 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         else:
             max_D = coerce_AA(D)
 
-        L = []
         if hyperbolic:
-            L += [key for key in self._conj_prim if coerce_AA(key) > 0 and coerce_AA(key) <= max_D]
+            L = [key for key in self._conj_prim if 0 < coerce_AA(key) <= max_D]
         else:
-            L += [key for key in self._conj_prim if coerce_AA(key) <= max_D]
+            L = [key for key in self._conj_prim if coerce_AA(key) <= max_D]
 
         if not primitive:
             if hyperbolic:
-                L += [key for key in self._conj_nonprim if coerce_AA(key) > 0 and coerce_AA(key) <= max_D and key not in L]
+                L += [key for key in self._conj_nonprim
+                      if 0 < coerce_AA(key) <= max_D and key not in L]
             else:
-                L += [key for key in self._conj_nonprim if coerce_AA(key) <= max_D and key not in L]
+                L += [key for key in self._conj_nonprim
+                      if coerce_AA(key) <= max_D and key not in L]
 
         return sorted(L, key=coerce_AA)
 
@@ -1302,10 +1299,11 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
     def reduced_elements(self, D):
         r"""
         Return all reduced (primitive) elements of discriminant ``D``.
-        Also see the element method ``is_reduced()`` for more information.
 
-        - ``D`` -- An element of the base ring corresponding
-                   to a valid discriminant.
+        Also see the element method :meth:`is_reduced` for more information.
+
+        - ``D`` -- an element of the base ring corresponding
+          to a valid discriminant
 
         EXAMPLES::
 
@@ -1338,10 +1336,11 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
     def simple_elements(self, D):
         r"""
         Return all simple elements of discriminant ``D``.
+
         Also see the element method ``is_simple()`` for more information.
 
-        - ``D`` -- An element of the base ring corresponding
-                   to a valid discriminant.
+        - ``D`` -- an element of the base ring corresponding to a valid
+          discriminant
 
         EXAMPLES::
 
@@ -1367,17 +1366,21 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
     def rational_period_functions(self, k, D):
         r"""
-        Return a list of basic rational period functions of weight ``k`` for discriminant ``D``.
-        The list is expected to be a generating set for all rational period functions of the
-        given weight and discriminant (unknown).
+        Return a list of basic rational period functions of weight ``k`` for
+        discriminant ``D``.
+
+        The list is expected to be a generating set for all rational
+        period functions of the given weight and discriminant (unknown).
 
         The method assumes that ``D > 0``.
-        Also see the element method `rational_period_function` for more information.
 
-        - ``k`` -- An even integer, the desired weight of the rational period functions.
+        Also see the element method ``rational_period_function`` for more information.
 
-        - ``D`` -- An element of the base ring corresponding
-                   to a valid discriminant.
+        - ``k`` -- even integer, the desired weight of the rational period
+          functions
+
+        - ``D`` -- an element of the base ring corresponding to a valid
+          discriminant
 
         EXAMPLES::
 
@@ -1400,7 +1403,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             if not ZZ(2).divides(k):
                 raise TypeError
         except TypeError:
-            raise ValueError("k={} has to be an even integer!".format(k))
+            raise ValueError(f"k={k} has to be an even integer!")
 
         z = PolynomialRing(self.base_ring(), 'z').gen()
 

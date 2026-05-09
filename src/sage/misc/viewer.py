@@ -25,10 +25,13 @@ Functions and classes
 ---------------------
 """
 
+import platform
+from sage.features import Executable
 from sage.structure.sage_object import SageObject
 
 
 VIEWERS = ['browser', 'dvi_viewer', 'pdf_viewer', 'png_viewer']
+
 
 def default_viewer(viewer=None):
     """
@@ -36,9 +39,9 @@ def default_viewer(viewer=None):
 
     INPUT:
 
-    - ``viewer``: ``None`` or a string: one of 'browser', 'pdf', 'png',
-      'dvi' -- return the name of the corresponding program.  ``None``
-      is treated the same as 'browser'.
+    - ``viewer`` -- ``None`` or a string; one of ``'browser'``, ``'pdf'``,
+      ``'png'``, ``'dvi'``. Return the name of the corresponding program.
+      ``None`` is treated the same as ``'browser'``.
 
     EXAMPLES::
 
@@ -53,7 +56,15 @@ def default_viewer(viewer=None):
         ValueError: Unknown type of viewer: jpg.
     """
     import os
-    from sage.misc.sage_ostools import have_program
+
+    executable_features = {}
+
+    def executable_is_present(cmd):
+        feature = executable_features.get(cmd)
+        if feature is None:
+            feature = Executable(name=cmd, executable=cmd)
+            executable_features[cmd] = feature
+        return feature.is_present()
 
     if isinstance(viewer, str):
         viewer = viewer.lower()
@@ -64,28 +75,15 @@ def default_viewer(viewer=None):
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER
 
-    elif os.uname()[0] == 'Darwin':
+    elif platform.system() == 'Darwin':
         # Simple on OS X, since there is an open command that opens
         # anything, using the user's preferences.
-        BROWSER = 'open'
+        BROWSER = 'open -W'
         DVI_VIEWER = BROWSER
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER
 
-    elif os.uname()[0][:6] == 'CYGWIN':
-        # Windows is also easy, since it has a system for
-        # determining what opens things.  However, on Cygwin we
-        # should access this through the 'cygstart' program rather
-        # than trying to run rundll32 directly, which on newer Windows versions
-        # has security implications
-        # Indeed, on Sage for Windows, BROWSER is set by default to cygstart,
-        # so we just canonize that here
-        BROWSER = os.environ.get('BROWSER', 'cygstart')
-        DVI_VIEWER = BROWSER
-        PDF_VIEWER = BROWSER
-        PNG_VIEWER = BROWSER
-
-    elif have_program('xdg-open'):
+    elif executable_is_present('xdg-open'):
         # On other OS'es try xdg-open if present.
         # See http://portland.freedesktop.org/xdg-utils-1.0.
         BROWSER = 'xdg-open'
@@ -100,7 +98,7 @@ def default_viewer(viewer=None):
         except KeyError:
             BROWSER = 'less'  # silly default; lets hope it doesn't come to this!
             for cmd in ['firefox', 'konqueror', 'mozilla', 'mozilla-firefox']:
-                if have_program(cmd):
+                if executable_is_present(cmd):
                     BROWSER = cmd
                     break
         DVI_VIEWER = BROWSER
@@ -112,31 +110,31 @@ def default_viewer(viewer=None):
             DVI_VIEWER = os.environ['DVI_VIEWER']
         except KeyError:
             for cmd in ['xdvi', 'kdvi']:
-                if have_program(cmd):
+                if executable_is_present(cmd):
                     DVI_VIEWER = cmd
                     break
         try:
             PDF_VIEWER = os.environ['PDF_VIEWER']
         except KeyError:
             for cmd in ['acroread', 'xpdf']:
-                if have_program(cmd):
+                if executable_is_present(cmd):
                     PDF_VIEWER = cmd
                     break
 
     if viewer is None or viewer.startswith('browse'):
         return BROWSER
-    elif viewer.startswith('dvi'):
+    if viewer.startswith('dvi'):
         return DVI_VIEWER
-    elif viewer.startswith('png'):
+    if viewer.startswith('png'):
         return PNG_VIEWER
-    elif viewer.startswith('pdf'):
+    if viewer.startswith('pdf'):
         return PDF_VIEWER
-    else:
-        raise ValueError('Unknown type of viewer: {}.'.format(viewer))
+    raise ValueError('Unknown type of viewer: {}.'.format(viewer))
 
 
 # _viewer_prefs: a dictionary holding global preferences for viewers.
 _viewer_prefs = {}
+
 
 class Viewer(SageObject):
     """
@@ -159,9 +157,9 @@ class Viewer(SageObject):
 
         INPUT:
 
-        - ``app`` -- ``None`` or a string, the program to use
-        - ``TYPE`` -- a string, must be in the list ``VIEWERS`` defined in
-          :mod:`sage.misc.viewer`.  Default 'browser'.
+        - ``app`` -- ``None`` or a string; the program to use
+        - ``TYPE`` -- string (default: ``'browser'``); must be in the list
+          ``VIEWERS`` defined in :mod:`sage.misc.viewer`
 
         EXAMPLES::
 
@@ -294,14 +292,16 @@ class Viewer(SageObject):
 
         if x is None or x.startswith('browse'):
             return self.browser()
-        elif x.startswith('dvi'):
+        if x.startswith('dvi'):
             return self.dvi_viewer()
-        elif x.startswith('png'):
+        if x.startswith('png'):
             return self.png_viewer()
-        elif x.startswith('pdf'):
+        if x.startswith('pdf'):
             return self.pdf_viewer()
 
+
 viewer = Viewer()
+
 
 def browser():
     """
@@ -319,6 +319,7 @@ def browser():
     """
     return viewer.browser()
 
+
 def dvi_viewer():
     """
     Return the program used to display a dvi file.  By default, the
@@ -335,6 +336,7 @@ def dvi_viewer():
     """
     viewer()
     return viewer.dvi_viewer()
+
 
 def pdf_viewer():
     """
@@ -355,6 +357,7 @@ def pdf_viewer():
     """
     viewer()
     return viewer.pdf_viewer()
+
 
 def png_viewer():
     """

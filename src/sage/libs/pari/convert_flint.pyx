@@ -6,32 +6,32 @@ Utility function to convert PARI ``GEN``s to/from flint types.
 AUTHORS:
 
 - Luca De Feo (2016-09-06): Separate Sage-specific components from
-  generic C-interface in ``Pari`` (:trac:`20241`)
+  generic C-interface in ``Pari`` (:issue:`20241`)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Luca De Feo <luca.defeo@polytechnique.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on
 
-from sage.libs.flint.fmpz cimport fmpz_get_mpz, COEFF_IS_MPZ, COEFF_TO_PTR, fmpz_is_one
+from sage.libs.flint.fmpz cimport COEFF_IS_MPZ, COEFF_TO_PTR, fmpz_is_one
 from sage.libs.flint.fmpq cimport fmpq_numref, fmpq_denref
 from sage.libs.flint.fmpz_mat cimport fmpz_mat_nrows, fmpz_mat_ncols, fmpz_mat_entry
 from sage.libs.flint.fmpq_mat cimport fmpq_mat_nrows, fmpq_mat_ncols, fmpq_mat_entry
 
 from cypari2.paridecl cimport *
 from cypari2.stack cimport new_gen
-from .convert_gmp cimport _new_GEN_from_mpz_t
+from sage.libs.pari.convert_gmp cimport _new_GEN_from_mpz_t
 
 
-cdef inline GEN _new_GEN_from_fmpz_t(fmpz_t value):
+cdef inline GEN _new_GEN_from_fmpz_t(fmpz_t value) noexcept:
     r"""
     Create a new PARI ``t_INT`` from a ``fmpz_t``.
 
@@ -44,7 +44,7 @@ cdef inline GEN _new_GEN_from_fmpz_t(fmpz_t value):
         return stoi(value[0])
 
 
-cdef inline GEN _new_GEN_from_fmpq_t(fmpq_t value):
+cdef inline GEN _new_GEN_from_fmpq_t(fmpq_t value) noexcept:
     r"""
     Create a new PARI ``t_RAT`` from a ``fmpq_t``.
 
@@ -58,7 +58,7 @@ cdef inline GEN _new_GEN_from_fmpq_t(fmpq_t value):
     return mkfrac(num, denom)
 
 
-cdef GEN _new_GEN_from_fmpz_mat_t(fmpz_mat_t B):
+cdef GEN _new_GEN_from_fmpz_mat_t(fmpz_mat_t B) noexcept:
     r"""
     Create a new PARI ``t_MAT`` with ``nr`` rows and ``nc`` columns
     from a ``fmpz_mat_t``.
@@ -76,7 +76,7 @@ cdef GEN _new_GEN_from_fmpz_mat_t(fmpz_mat_t B):
     return A
 
 
-cdef GEN _new_GEN_from_fmpq_mat_t(fmpq_mat_t B):
+cdef GEN _new_GEN_from_fmpq_mat_t(fmpq_mat_t B) noexcept:
     cdef GEN x
     cdef GEN A = zeromatcopy(fmpq_mat_nrows(B), fmpq_mat_ncols(B))
     cdef Py_ssize_t i, j
@@ -86,7 +86,7 @@ cdef GEN _new_GEN_from_fmpq_mat_t(fmpq_mat_t B):
             set_gcoeff(A, i+1, j+1, x)  # A[i+1, j+1] = x (using 1-based indexing)
     return A
 
-cdef GEN _new_GEN_from_fmpz_mat_t_rotate90(fmpz_mat_t B):
+cdef GEN _new_GEN_from_fmpz_mat_t_rotate90(fmpz_mat_t B) noexcept:
     r"""
     Create a new PARI ``t_MAT`` with ``nr`` rows and ``nc`` columns
     from a ``fmpz_mat_t`` and rotate the matrix 90 degrees
@@ -106,7 +106,7 @@ cdef GEN _new_GEN_from_fmpz_mat_t_rotate90(fmpz_mat_t B):
     return A
 
 
-cdef GEN _new_GEN_from_fmpq_mat_t_rotate90(fmpq_mat_t B):
+cdef GEN _new_GEN_from_fmpq_mat_t_rotate90(fmpq_mat_t B) noexcept:
     r"""
     Create a new PARI ``t_MAT`` with ``nr`` rows and ``nc`` columns
     from a ``fmpq_mat_t`` and rotate the matrix 90 degrees

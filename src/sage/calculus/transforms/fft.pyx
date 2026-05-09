@@ -10,19 +10,18 @@ AUTHORS:
 - L.F. Tabera Alonso (2013-3): Documentation
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_free
 
-import sage.libs.pari.all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexNumber
 
@@ -33,8 +32,8 @@ def FastFourierTransform(size, base_ring=None):
 
     INPUT:
 
-    - ``size`` -- The size of the array
-    - ``base_ring`` -- Unused (2013-03)
+    - ``size`` -- the size of the array
+    - ``base_ring`` -- unused (2013-03)
 
     EXAMPLES:
 
@@ -70,14 +69,15 @@ def FastFourierTransform(size, base_ring=None):
         ....:    a[128-i] = 1
         sage: a[:6:2]
         [(0.0, 0.0), (1.0, 0.0), (1.0, 0.0)]
-        sage: a.plot().show(ymin=0)
+        sage: a.plot().show(ymin=0)                                                     # needs sage.plot
         sage: a.forward_transform()
-        sage: a.plot().show()
-
+        sage: a.plot().show()                                                           # needs sage.plot
     """
     return FastFourierTransform_complex(int(size))
 
+
 FFT = FastFourierTransform
+
 
 cdef class FastFourierTransform_base:
     pass
@@ -94,8 +94,8 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         INPUT:
 
-        - ``n`` -- An integer, the size of the array
-        - ``stride`` -- The stride to be applied when manipulating the array.
+        - ``n`` -- integer, the size of the array
+        - ``stride`` -- the stride to be applied when manipulating the array
 
         EXAMPLES::
 
@@ -125,14 +125,13 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         """
         Return the size of the array.
 
-        OUTPUT: The size of the array.
+        OUTPUT: the size of the array
 
         EXAMPLES::
 
             sage: a = FastFourierTransform(48)
             sage: len(a)
             48
-
         """
         return self.n
 
@@ -145,11 +144,12 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         INPUT:
 
-        - ``i`` -- An integer, the index.
-        - ``xy`` -- An object to store as `i`-th element of the array ``self[i]``.
+        - ``i`` -- integer; the index
+        - ``xy`` -- an object to store as `i`-th element of the array ``self[i]``
 
         EXAMPLES::
 
+            sage: # needs sage.rings.mpfr sage.symbolic
             sage: I = CC(I)
             sage: a = FastFourierTransform(4)
             sage: a[0] = 1
@@ -163,6 +163,16 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             Traceback (most recent call last):
             ...
             TypeError: unable to convert 1.0*I to float; use abs() or real_part() as desired
+
+        TESTS:
+
+        Verify that :issue:`10758` is fixed. ::
+
+            sage: F = FFT(1)
+            sage: F[0] = (1,1)
+            sage: F[0] = 1
+            sage: F[0]
+            (1.0, 0.0)
         """
         # just set real for now
         if i < 0 or i >= self.n:
@@ -172,18 +182,17 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             self.data[2*i+1] = xy[1]
         else:
             self.data[2*i] = xy
+            self.data[2*i+1] = 0
 
     def __getitem__(self, i):
         """
-        Gets the `i`-th element of the array.
+        Get the `i`-th element of the array.
 
         INPUT:
 
-        - ``i``: An integer.
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        - The `i`-th element of the array ``self[i]``.
+        OUTPUT: the `i`-th element of the array ``self[i]``
 
         EXAMPLES::
 
@@ -193,7 +202,6 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: a[0] = 1
             sage: a[0] == (1,0)
             True
-
         """
         if isinstance(i, slice):
             start, stop, step = i.indices(self.n)
@@ -218,7 +226,6 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(4): a[i] = i
             sage: a
             [(0.0, 0.0), (1.0, 0.0), (2.0, 0.0), (3.0, 0.0)]
-
         """
         return str(list(self))
 
@@ -228,37 +235,35 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         INPUT:
 
-        - ``xmin`` -- The lower bound of the slice to plot.
-        - ``xmax`` -- The upper bound of the slice to plot.
-        - ``**args`` -- passed on to the line plotting function.
+        - ``xmin`` -- the lower bound of the slice to plot
+        - ``xmax`` -- the upper bound of the slice to plot
+        - ``**args`` -- passed on to the line plotting function
 
-        OUTPUT:
-
-        - A plot of the array interpreting each element as polar coordinates.
+        OUTPUT: a plot of the array interpreting each element as polar coordinates
 
         This method should not be called directly. See :meth:`plot` for the details.
 
         EXAMPLES::
 
             sage: a = FastFourierTransform(4)
-            sage: a._plot_polar(0,2)
+            sage: a._plot_polar(0,2)                                                    # needs sage.plot sage.symbolic
             Graphics object consisting of 2 graphics primitives
-
         """
         from sage.plot.point import point
+        from sage.symbolic.constants import pi, I
 
         cdef int i
         v = []
 
-        pi    = sage.symbolic.constants.pi.n()
-        I     = sage.symbolic.constants.I.n()
+        pi = pi.n()
+        I = I.n()
         s = 1/(3*pi)   # so arg gets scaled between -1/3 and 1/3.
 
-        for i from xmin <= i < xmax:
+        for i in range(xmin, xmax):
             z = self.data[2*i] + I*self.data[2*i+1]
             mag = z.abs()
             arg = z.arg()*s
-            v.append(point((i,mag), hue=arg, **args))
+            v.append(point((i, mag), hue=arg, **args))
         return sum(v)
 
     def _plot_rect(self, xmin, xmax, **args):
@@ -267,61 +272,59 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         INPUT:
 
-        - ``xmin`` -- The lower bound of the slice to plot.
-        - ``xmax`` -- The upper bound of the slice to plot.
-        - ``**args`` -- passed on to the line plotting function.
+        - ``xmin`` -- the lower bound of the slice to plot
+        - ``xmax`` -- the upper bound of the slice to plot
+        - ``**args`` -- passed on to the line plotting function
 
-        OUTPUT:
-
-        - A plot of the array.
+        OUTPUT: a plot of the array
 
         This method should not be called directly. See :meth:`plot` for the details.
 
         EXAMPLES::
 
             sage: a = FastFourierTransform(4)
-            sage: a._plot_rect(0,3)
+            sage: a._plot_rect(0,3)                                                     # needs sage.plot
             Graphics object consisting of 3 graphics primitives
-
         """
+        from sage.plot.point import point
+
         cdef int i
-        cdef double pr_x, x, h
+        cdef double x, h
         v = []
 
-        point = sage.plot.all.point
-
-        for i from xmin <= i < xmax:
+        for i in range(xmin, xmax):
             x = self.data[2*i]
             h = self.data[2*i+1]
-            v.append(point((i,x), hue=h, **args))
+            v.append(point((i, x), hue=h, **args))
         return sum(v)
 
     def plot(self, style='rect', xmin=None, xmax=None, **args):
         """
         Plot a slice of the array.
 
-        - ``style`` -- Style of the plot, options are ``"rect"`` or ``"polar"``
-            - ``rect`` -- height represents real part, color represents
-                imaginary part.
-            - ``polar`` -- height represents absolute value, color
-                represents argument.
-        - ``xmin`` -- The lower bound of the slice to plot. 0 by default.
-        - ``xmax`` -- The upper bound of the slice to plot. ``len(self)`` by default.
-        - ``**args`` -- passed on to the line plotting function.
+        - ``style`` -- style of the plot, options are ``'rect'`` or ``'polar'``
 
-        OUTPUT:
+          - ``'rect'`` -- height represents real part, color represents
+            imaginary part
+          - ``'polar'`` -- height represents absolute value, color
+            represents argument
 
-        - A plot of the array.
+        - ``xmin`` -- the lower bound of the slice to plot; 0 by default
+        - ``xmax`` -- the upper bound of the slice to plot; ``len(self)`` by default
+        - ``**args`` -- passed on to the line plotting function
+
+        OUTPUT: a plot of the array
 
         EXAMPLES::
 
+            sage: # needs sage.plot
             sage: a = FastFourierTransform(16)
             sage: for i in range(16): a[i] = (random(),random())
             sage: A = plot(a)
-            sage: B = plot(a, style='polar')
+            sage: B = plot(a, style='polar')                                            # needs sage.symbolic
             sage: type(A)
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(B)
+            sage: type(B)                                                               # needs sage.symbolic
             <class 'sage.plot.graphics.Graphics'>
             sage: a = FastFourierTransform(125)
             sage: b = FastFourierTransform(125)
@@ -329,9 +332,8 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(1, 60): b[i]=1
             sage: a.forward_transform()
             sage: a.inverse_transform()
-            sage: (a.plot()+b.plot())
+            sage: a.plot() + b.plot()
             Graphics object consisting of 250 graphics primitives
-
         """
         if xmin is None:
             xmin = 0
@@ -353,9 +355,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         Compute the in-place forward Fourier transform of this data
         using the Cooley-Tukey algorithm.
 
-        OUTPUT:
-
-        - None, the transformation is done in-place.
+        OUTPUT: none, the transformation is done in-place
 
         If the number of sample points in the input is a power of 2 then the
         gsl function ``gsl_fft_complex_radix2_forward`` is automatically called.
@@ -368,7 +368,6 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: a.forward_transform()
             sage: a #abs tol 1e-2
             [(6.0, 0.0), (-2.0, 2.0), (-2.0, 0.0), (-2.0, -2.0)]
-
         """
         cdef gsl_fft_complex_wavetable * wt
         cdef gsl_fft_complex_workspace * mem
@@ -388,9 +387,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         Compute the in-place inverse Fourier transform of this data
         using the Cooley-Tukey algorithm.
 
-        OUTPUT:
-
-        - None, the transformation is done in-place.
+        OUTPUT: none, the transformation is done in-place
 
         If the number of sample points in the input is a power of 2 then the
         function ``gsl_fft_complex_radix2_inverse`` is automatically called.
@@ -407,7 +404,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(1, 60): b[i]=1
             sage: a.forward_transform()
             sage: a.inverse_transform()
-            sage: (a.plot()+b.plot())
+            sage: a.plot() + b.plot()                                                   # needs sage.plot
             Graphics object consisting of 250 graphics primitives
             sage: abs(sum([CDF(a[i])-CDF(b[i]) for i in range(125)])) < 2**-16
             True
@@ -420,9 +417,8 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(1, 60): b[i]=1
             sage: a.forward_transform()
             sage: a.inverse_transform()
-            sage: (a.plot()+b.plot())
+            sage: a.plot() + b.plot()                                                   # needs sage.plot
             Graphics object consisting of 256 graphics primitives
-
         """
         cdef gsl_fft_complex_wavetable * wt
         cdef gsl_fft_complex_workspace * mem
@@ -442,9 +438,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         Compute the in-place backwards Fourier transform of this data
         using the Cooley-Tukey algorithm.
 
-        OUTPUT:
-
-        - None, the transformation is done in-place.
+        OUTPUT: none, the transformation is done in-place
 
         This is the same as :meth:`inverse_transform` but lacks normalization
         so that ``f.forward_transform().backward_transform() == n*f``. Where
@@ -458,7 +452,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(1, 60): b[i]=1
             sage: a.forward_transform()
             sage: a.backward_transform()
-            sage: (a.plot() + b.plot()).show(ymin=0)  # long time (2s on sage.math, 2011)
+            sage: (a.plot() + b.plot()).show(ymin=0)    # long time (2s on sage.math, 2011), needs sage.plot
             sage: abs(sum([CDF(a[i])/125-CDF(b[i]) for i in range(125)])) < 2**-16
             True
 
@@ -470,7 +464,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(1, 60): b[i]=1
             sage: a.forward_transform()
             sage: a.backward_transform()
-            sage: (a.plot() + b.plot()).show(ymin=0)
+            sage: (a.plot() + b.plot()).show(ymin=0)                                    # needs sage.plot
         """
         cdef gsl_fft_complex_wavetable * wt
         cdef gsl_fft_complex_workspace * mem

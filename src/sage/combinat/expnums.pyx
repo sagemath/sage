@@ -1,5 +1,5 @@
 r"""
-Compute Bell and Uppuluri-Carpenter numbers
+Bell and Uppuluri-Carpenter numbers
 
 AUTHORS:
 
@@ -7,11 +7,9 @@ AUTHORS:
 """
 
 from cysignals.memory cimport check_allocarray, sig_free
-
 from sage.libs.gmp.mpz cimport *
-
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring import ZZ
+
 
 def expnums(int n, int aa):
     r"""
@@ -20,13 +18,11 @@ def expnums(int n, int aa):
 
     INPUT:
 
+    - ``n`` -- C machine int
 
-    -  ``n`` - C machine int
+    - ``aa`` -- C machine int
 
-    -  ``aa`` - C machine int
-
-
-    OUTPUT: A list of length `n`.
+    OUTPUT: list of length `n`
 
     ALGORITHM: We use the same integer addition algorithm as GAP. This
     is an extension of Bell's triangle to the general case of
@@ -116,6 +112,7 @@ def expnums(int n, int aa):
 #     od;
 #     return bell[1];
 # end);
+
 
 def expnums2(n, aa):
     r"""

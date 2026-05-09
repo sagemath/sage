@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Bijection classes for type `D_{n+1}^{(2)}`
 
@@ -20,7 +21,7 @@ TESTS::
     sage: TestSuite(bijection).run()
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011, 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -32,8 +33,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_A2_even import KRTToRCBijectionTypeA2Even
@@ -58,9 +59,9 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
 
         INPUT:
 
-        - ``tp_krt`` -- A tensor product of KR tableaux
+        - ``tp_krt`` -- a tensor product of KR tableaux
 
-        - ``verbose`` -- (Default: ``False``) Display each step in the
+        - ``verbose`` -- (default: ``False``) display each step in the
           bijection
 
         EXAMPLES::
@@ -84,7 +85,7 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
             r = cur_crystal.parent().r()
             # Iterate through the columns
             for col_number, cur_column in enumerate(reversed(cur_crystal.to_array(False))):
-                self.cur_path.insert(0, []) # Prepend an empty list
+                self.cur_path.insert(0, [])  # Prepend an empty list
 
                 # Check to see if we are a spinor column
                 if r == self.n:
@@ -101,7 +102,7 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
 
                 for letter in reversed(cur_column):
                     self.cur_dims[0][0] += 1
-                    val = letter.value # Convert from a CrystalOfLetter to an Integer
+                    val = letter.value  # Convert from a CrystalOfLetter to an Integer
 
                     if verbose:
                         print("====================")
@@ -111,7 +112,7 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
                         print("--------------------\n")
 
                     # Build the next state
-                    self.cur_path[0].insert(0, [letter]) # Prepend the value
+                    self.cur_path[0].insert(0, [letter])  # Prepend the value
                     self.next_state(val)
 
                 # Check to see if we are a spinor column
@@ -138,7 +139,7 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
                     for a in range(self.n):
                         self._update_vacancy_nums(a)
 
-        self.ret_rig_con.set_immutable() # Return it to immutable
+        self.ret_rig_con.set_immutable()  # Return it to immutable
         return self.ret_rig_con
 
     def next_state(self, val):
@@ -161,7 +162,7 @@ class KRTToRCBijectionTypeDTwisted(KRTToRCBijectionTypeD, KRTToRCBijectionTypeA2
         if val == 'E':
             KRTToRCBijectionTypeA2Even.next_state(self, val)
             return
-        elif val > 0:
+        if val > 0:
             # If it is a regular value, we follow the A_n rules
             KRTToRCBijectionTypeA.next_state(self, val)
             if tableau_height >= n - 1:
@@ -321,9 +322,9 @@ class RCToKRTBijectionTypeDTwisted(RCToKRTBijectionTypeD, RCToKRTBijectionTypeA2
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) display each step in the
+        - ``verbose`` -- boolean (default: ``False``); display each step in the
           bijection
-        - ``build_graph`` -- (default: ``False``) build the graph of each
+        - ``build_graph`` -- boolean (default: ``False``); build the graph of each
           step of the bijection
 
         EXAMPLES::
@@ -423,7 +424,7 @@ class RCToKRTBijectionTypeDTwisted(RCToKRTBijectionTypeD, RCToKRTBijectionTypeA2
             from sage.graphs.dot2tex_utils import have_dot2tex
             self._graph = DiGraph(self._graph)
             if have_dot2tex():
-                self._graph.set_latex_options(format="dot2tex", edge_labels=True)
+                self._graph.set_latex_options(format='dot2tex', edge_labels=True)
 
         return self.KRT(pathlist=ret_crystal_path)
 
@@ -571,4 +572,4 @@ class RCToKRTBijectionTypeDTwisted(RCToKRTBijectionTypeD, RCToKRTBijectionTypeA2
             else:
                 self.cur_partitions[n-1].rigging[row_num_bar_next] = self.cur_partitions[n-1].vacancy_numbers[row_num_bar_next]
 
-        return(b)
+        return b

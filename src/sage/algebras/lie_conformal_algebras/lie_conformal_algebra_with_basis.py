@@ -6,18 +6,19 @@ AUTHORS:
 - Reimundo Heluani (2019-08-09): Initial implementation
 """
 
-#******************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.categories.lie_conformal_algebras import LieConformalAlgebras
 from sage.combinat.free_module import CombinatorialFreeModule
+
 
 class LieConformalAlgebraWithBasis(CombinatorialFreeModule):
     """
@@ -53,7 +54,7 @@ class LieConformalAlgebraWithBasis(CombinatorialFreeModule):
     def __init__(self, R, basis_keys=None, element_class=None, category=None,
                  prefix=None, **kwds):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

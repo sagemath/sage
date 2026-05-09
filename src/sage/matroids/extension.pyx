@@ -30,8 +30,7 @@ Methods
 # ****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
-from .basis_matroid cimport BasisMatroid
-from sage.arith.misc import binomial
+from sage.matroids.basis_matroid cimport BasisMatroid
 
 
 cdef class CutNode:
@@ -52,15 +51,14 @@ cdef class CutNode:
     hyperplanes and closing the set to become a linear subclass again, and for
     adding a hyperplane to the set of *forbidden* hyperplanes, and similarly
     closing that set.
-
     """
     def __cinit__(self, MC, N=None):
         """
-        Internal data structure init
+        Internal data structure init.
 
         EXAMPLES::
 
-            sage: len(list(matroids.named_matroids.Fano().linear_subclasses()))  # indirect doctest
+            sage: len(list(matroids.catalog.Fano().linear_subclasses()))  # indirect doctest
             16
         """
         cdef CutNode node
@@ -91,7 +89,7 @@ cdef class CutNode:
     cdef CutNode copy(self):
         return CutNode(self._MC, self)
 
-    cdef bint insert_plane(self, long p0):
+    cdef bint insert_plane(self, long p0) noexcept:
         """
         Add a hyperplane to the linear subclass.
         """
@@ -129,7 +127,7 @@ cdef class CutNode:
                         return False
         return True
 
-    cdef bint remove_plane(self, long p0):
+    cdef bint remove_plane(self, long p0) noexcept:
         """
         Remove a hyperplane from the linear subclass.
         """
@@ -188,7 +186,7 @@ cdef class LinearSubclassesIter:
 
         INPUT:
 
-        - ``MC`` -- a member of class LinearSubclasses.
+        - ``MC`` -- a member of class LinearSubclasses
 
         EXAMPLES::
 
@@ -212,6 +210,9 @@ cdef class LinearSubclassesIter:
         first_cut._ml = len(self._MC._mandatory_lines) - 1
 
         self._nodes = [first_cut]
+
+    def __iter__(self):
+        return self
 
     def __next__(self):
         """
@@ -259,17 +260,15 @@ cdef class LinearSubclasses:
 
     INPUT:
 
-    - ``M`` -- a matroid.
-    - ``line_length`` -- (default: ``None``) an integer.
+    - ``M`` -- matroid
+    - ``line_length`` -- integer (default: ``None``)
     - ``subsets`` -- (default: ``None``) a set of subsets of the groundset of
-      ``M``.
+      ``M``
     - ``splice`` -- (default: ``None``) a matroid `N` such that for some
       `e \in E(N)` and some `f \in E(M)`, we have
-      `N\setminus e= M\setminus f`.
+      `N\setminus e= M\setminus f`
 
-    OUTPUT:
-
-    An enumerator for the linear subclasses of M.
+    OUTPUT: an enumerator for the linear subclasses of M
 
     If ``line_length`` is not ``None``, the enumeration is restricted to
     linear subclasses ``mc`` so containing at least one of each set of
@@ -302,7 +301,7 @@ cdef class LinearSubclasses:
     """
     def __init__(self, M, line_length=None, subsets=None, splice=None):
         """
-        See class docstring for full documentation.
+        See the class docstring for full documentation.
 
         EXAMPLES::
 
@@ -317,7 +316,7 @@ cdef class LinearSubclasses:
             ....:     print(len(mc))
             3
             15
-            sage: M = BasisMatroid(matroids.named_matroids.BetsyRoss()); M
+            sage: M = BasisMatroid(matroids.catalog.BetsyRoss()); M
             Matroid of rank 3 on 11 elements with 140 bases
             sage: e = 'k'; f = 'h'; Me = M.delete(e); Mf=M.delete(f)
             sage: for mc in LinearSubclasses(Mf, splice=Me):
@@ -341,8 +340,8 @@ cdef class LinearSubclasses:
 
         self._planes_on_line = [[] for l in range(self._hyperlines_count)]
         self._lines_on_plane = [[] for l in range(self._hyperplanes_count)]
-        for l in xrange(self._hyperlines_count):
-            for h in xrange(self._hyperplanes_count):
+        for l in range(self._hyperlines_count):
+            for h in range(self._hyperplanes_count):
                 if self._hyperplanes[h] >= self._hyperlines[l]:
                     self._lines_on_plane[h].append(l)
                     self._planes_on_line[l].append(h)
@@ -354,10 +353,10 @@ cdef class LinearSubclasses:
 
         if line_length is not None:
             self._line_length = line_length
-            self._mandatory_lines = [l for l in xrange(self._hyperlines_count) if len(self._planes_on_line[l]) >= line_length]
+            self._mandatory_lines = [l for l in range(self._hyperlines_count) if len(self._planes_on_line[l]) >= line_length]
 
         if subsets is not None:
-            for p in xrange(self._hyperplanes_count):
+            for p in range(self._hyperplanes_count):
                 H = self._hyperplanes[p]
                 for S in subsets:
                     if frozenset(S).issubset(H):
@@ -371,7 +370,7 @@ cdef class LinearSubclasses:
             if len(E) != len(E2) or len(F) != 1:
                 raise ValueError("LinearSubclasses: the ground set of the splice matroid is not of the form E + e-f")
 
-            for p in xrange(self._hyperplanes_count):
+            for p in range(self._hyperplanes_count):
                 X = self._hyperplanes[p] - F
                 if splice._rank(X) == splice.full_rank() - 1:
                     if splice._rank(X | F2) == splice.full_rank() - 1:
@@ -417,13 +416,13 @@ cdef class MatroidExtensions(LinearSubclasses):
 
     INPUT:
 
-    - ``M`` -- a matroid
+    - ``M`` -- matroid
     - ``e`` -- an element
-    - ``line_length`` (default: ``None``) -- an integer
-    - ``subsets`` (default: ``None``) -- a set of subsets of the groundset of
+    - ``line_length`` -- integer (default: ``None``)
+    - ``subsets`` -- (default: ``None``) a set of subsets of the groundset of
       ``M``
     - ``splice`` -- a matroid `N` such that for some `f \in E(M)`, we have
-      `N\setminus e= M\setminus f`.
+      `N\setminus e= M\setminus f`
 
     OUTPUT:
 
@@ -452,7 +451,7 @@ cdef class MatroidExtensions(LinearSubclasses):
         ....:                                             [4, 5]]): print(N)
         Matroid of rank 3 on 7 elements with 32 bases
         Matroid of rank 3 on 7 elements with 20 bases
-        sage: M = BasisMatroid(matroids.named_matroids.BetsyRoss()); M
+        sage: M = BasisMatroid(matroids.catalog.BetsyRoss()); M
         Matroid of rank 3 on 11 elements with 140 bases
         sage: e = 'k'; f = 'h'; Me = M.delete(e); Mf=M.delete(f)
         sage: for N in MatroidExtensions(Mf, f, splice=Me): print(N)
@@ -467,7 +466,7 @@ cdef class MatroidExtensions(LinearSubclasses):
     """
     def __init__(self, M, e, line_length=None, subsets=None, splice=None, orderly=False):
         """
-        See class docstring for full documentation.
+        See the class docstring for full documentation.
 
         EXAMPLES::
 
@@ -481,17 +480,16 @@ cdef class MatroidExtensions(LinearSubclasses):
             ....:                                            [4, 5]]): print(N)
             Matroid of rank 3 on 7 elements with 32 bases
             Matroid of rank 3 on 7 elements with 20 bases
-
         """
         if M.full_rank() == 0:
             pass
-        if type(M) == BasisMatroid:
+        if isinstance(M, BasisMatroid):
             BM = M
         else:
             BM = BasisMatroid(M)
         LinearSubclasses.__init__(self, BM, line_length=line_length, subsets=subsets, splice=splice)
         self._BX = BM._extension(e, [])
-        self._BH = [BM._extension(e, [self._hyperplanes[i]]) for i in xrange(len(self._hyperplanes))]
+        self._BH = [BM._extension(e, [self._hyperplanes[i]]) for i in range(len(self._hyperplanes))]
         if orderly:
             self._orderly = True
 

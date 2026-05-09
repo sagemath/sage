@@ -20,16 +20,16 @@ Arithmetic with rational functions::
 
 Derivatives of elements in separable extensions::
 
-    sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                                     # optional - sage.rings.finite_rings
-    sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                        # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: (y^3 + x).derivative()                                                        # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                                     # needs sage.rings.finite_rings
+    sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                        # needs sage.rings.finite_rings sage.rings.function_field
+    sage: (y^3 + x).derivative()                                                        # needs sage.rings.finite_rings sage.rings.function_field
     ((x^2 + 1)/x^2)*y + (x^4 + x^3 + 1)/x^3
 
 The divisor of an element of a global function field::
 
-    sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                                     # optional - sage.rings.finite_rings
-    sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                        # optional - sage.rings.finite_rings sage.rings.function_field
-    sage: y.divisor()                                                                   # optional - sage.rings.finite_rings sage.rings.function_field
+    sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+    sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                        # needs sage.rings.function_field
+    sage: y.divisor()                                                                   # needs sage.rings.function_field
     - Place (1/x, 1/x*y)
      - Place (x, x*y)
      + 2*Place (x + 1, x*y)
@@ -46,8 +46,9 @@ AUTHORS:
 
 - Kwankyu Lee (2017-04-30): added elements for global function fields
 
+- Vincent Macri (2024-09-03): added subs method
 """
-# ****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2010      William Stein <wstein@gmail.com>
 #                     2010      Robert Bradshaw <robertwb@math.washington.edu>
 #                     2011-2020 Julian Rueth <julian.rueth@gmail.com>
@@ -58,16 +59,18 @@ AUTHORS:
 #                     2018-2020 Travis Scrimshaw
 #                     2019      Brent Baccala
 #                     2021      Saher Amasha
+#                     2024      Vincent Macri
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-# ****************************************************************************
+# *****************************************************************************
 
-from sage.structure.element cimport FieldElement, RingElement, ModuleElement, Element
+from sage.categories.function_fields import FunctionFields
 from sage.misc.cachefunc import cached_method
-from sage.structure.richcmp cimport richcmp, richcmp_not_equal
+from sage.structure.element cimport FieldElement
+
 
 def is_FunctionFieldElement(x):
     """
@@ -77,14 +80,25 @@ def is_FunctionFieldElement(x):
 
         sage: t = FunctionField(QQ,'t').gen()
         sage: sage.rings.function_field.element.is_FunctionFieldElement(t)
+        doctest:warning...
+        DeprecationWarning: The function is_FunctionFieldElement is deprecated;
+        use '....parent() in FunctionFields()' instead.
+        See https://github.com/sagemath/sage/issues/38289 for details.
         True
         sage: sage.rings.function_field.element.is_FunctionFieldElement(0)
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38289,
+                       "The function is_FunctionFieldElement is deprecated; "
+                       "use '....parent() in FunctionFields()' instead.")
     if isinstance(x, FunctionFieldElement):
         return True
-    from .function_field import is_FunctionField
-    return is_FunctionField(x.parent())
+    from sage.rings.function_field.function_field import FunctionField
+    if isinstance(x.parent(), FunctionField):
+        return True
+    return x.parent() in FunctionFields()
+
 
 def make_FunctionFieldElement(parent, element_class, representing_element):
     """
@@ -137,16 +151,15 @@ cdef class FunctionFieldElement(FieldElement):
 
         TESTS:
 
-        Check that :trac:`16369` has been resolved::
+        Check that :issue:`16369` has been resolved::
 
             sage: K.<a> = FunctionField(QQ)
             sage: R.<b> = K[]
-            sage: L.<b> = K.extension(b^2 - a)                                          # optional - sage.rings.function_field
-            sage: b.__pari__()                                                          # optional - sage.rings.function_field
+            sage: L.<b> = K.extension(b^2 - a)                                          # needs sage.rings.function_field
+            sage: b.__pari__()                                                          # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
             NotImplementedError: PARI does not support general function field elements.
-
         """
         raise NotImplementedError("PARI does not support general function field elements.")
 
@@ -164,6 +177,261 @@ cdef class FunctionFieldElement(FieldElement):
         """
         return self._x._latex_()
 
+    def subs(self, in_dict=None, **kwds):
+        r"""
+        Substitute the given generators with given values while not touching
+        other generators.
+
+        INPUT:
+
+        - ``in_dict`` -- (optional) dictionary of inputs
+
+        - ``**kwds`` -- named parameters
+
+        OUTPUT: new object if substitution is possible, otherwise ``self``
+
+        EXAMPLES:
+
+        Basic substitution::
+
+            sage: K = GF(7)
+            sage: Kx.<x> = FunctionField(K)
+            sage: y = polygen(Kx)
+            sage: f = x^6 + 3; f
+            x^6 + 3
+
+        We also substitute the generators in any base fields::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+            sage: S.<t> = L[]
+            sage: M.<t> = L.extension(t^2 - x*y)
+            sage: f = 7 * t + 3*x*y
+            sage: f.subs(t=9)
+            3*x*y + 63
+            sage: f.subs(x=2, y=4)
+            7*t + 24
+            sage: f.subs(t=1, x=2, y=3)
+            25
+
+        Because of the possibility of extension fields, a generator to
+        substitute must be specified::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: f = x
+            sage: f.subs(2)
+            Traceback (most recent call last):
+            ...
+            TypeError: in_dict must be a dict
+
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+            sage: f = x + y
+            sage: f.subs(0)
+            Traceback (most recent call last):
+            ...
+            TypeError: in_dict must be a dict
+
+        We can also substitute using dictionary syntax::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+            sage: S.<t> = L[]
+            sage: M.<t> = L.extension(t^2 - x*y)
+            sage: f = x + y + t
+            sage: f.subs({x: 1, y: 3, t: 4})
+            8
+            sage: f.subs({x: 1, t: 4})
+            y + 5
+
+        TESTS:
+
+        Check that we correctly handle extension fields::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+            sage: S.<t> = L[]
+            sage: M.<t> = L.extension(t^2 - x*y)
+            sage: f = t + x*y
+            sage: f.subs(x=1, y=3, t=5)
+            8
+            sage: f_sub = f.subs(x=1); f_sub
+            t + y
+            sage: f_sub.parent() == f.parent()
+            True
+            sage: f.subs(y=2)
+            t + 2*x
+            sage: f_sub = f.subs(x=1, y=1, t=1); f_sub
+            2
+            sage: f_sub.parent() == M
+            True
+
+        Test that substitution works for rational functions::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^4 - 3)
+            sage: f = x / y
+            sage: f.subs(x=2) == 2 / y
+            True
+            sage: f.subs(y=3)
+            9*x
+            sage: f.subs(t=-1) is f
+            True
+            sage: f.subs({x: 2, y: 4})
+            128/3
+
+        Make sure that we return the same object when there is no
+        substitution::
+
+            sage: K = GF(7)
+            sage: Kx.<x> = FunctionField(K)
+            sage: y = polygen(Kx)
+            sage: f = x^6 + 3
+            sage: g = f.subs(z=2)
+            sage: g == f
+            True
+            sage: g is f
+            True
+
+        Same purpose as above but over an extension field over the rationals::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+            sage: S.<t> = L[]
+            sage: M.<t> = L.extension(t^2 - x*y)
+            sage: f = t + x*y
+            sage: f.subs() is f
+            True
+            sage: f.subs(w=7) is f
+            True
+            sage: f.subs(w=7) is f.subs(w=7)
+            True
+            sage: f.subs(y=y) is f
+            True
+            sage: f.subs({y: y}) is f
+            True
+            sage: f.subs(x=x, y=y, t=t) is f
+            True
+
+        Test proper handling of not making substitutions::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: f = x
+            sage: f.subs() is f
+            True
+            sage: f.subs(dict()) is f
+            True
+            sage: f.subs(w=0) is f
+            True
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
+            sage: f = 3*y
+            sage: f.subs(x=0)
+            3*y
+            sage: f = 3*y
+            sage: f.subs(x=0, y=y)
+            3*y
+
+        Test error handling for wrong argument type::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: f = x
+            sage: f.subs(0)
+            Traceback (most recent call last):
+            ...
+            TypeError: in_dict must be a dict
+
+        Test error handling for dictionary with keys that don't match
+        generators::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: f = x
+            sage: f.subs({1: 1})
+            Traceback (most recent call last):
+            ...
+            TypeError: key does not match any field generators
+
+        Test error handling with ambiguously named generators::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<x> = K[]
+            sage: L.<x> = K.extension(x^3 - x)
+            sage: str(L.gen()) == str(K.gen())
+            True
+            sage: f = K.gen() - L.gen()
+            sage: f.subs(x=2)
+            Traceback (most recent call last):
+            ...
+            TypeError: multiple generators have the same name, making substitution ambiguous. Rename generators or pass substitution values in using dictionary format
+            sage: f.subs({K.gen(): 1})
+            -x + 1
+            sage: f.subs({L.gen(): 2})
+            x - 2
+            sage: f.subs({K.gen(): 1, L.gen(): 2})
+            -1
+            sage: f.subs({K.gen(): 2, L.gen(): 1})
+            1
+        """
+        def sub_recurse(ff_element, sub_dict):
+            # Helper method to recurse through base fields.
+            ff = ff_element.parent()
+            if ff.base_field() == ff:
+                return ff(ff_element._x.subs({ff.gen(): sub_dict[ff.gen()]}))
+            total = ff.zero()
+            for i, v in enumerate(list(ff_element._x)):
+                total += sub_recurse(v, sub_dict) * sub_dict[ff.gen()]**i
+            return ff(total)
+
+        if in_dict is None and kwds is None:
+            return self
+
+        if in_dict is not None and not isinstance(in_dict, dict):
+            raise TypeError('in_dict must be a dict')
+
+        field_tower = [self.parent()]
+        ff = self.parent()
+
+        while ff.base_field() != ff:
+            ff = ff.base_field()
+            field_tower.append(ff)
+        sub_dict = {f.gen(): f.gen() for f in field_tower}
+
+        made_substitution = False
+        if in_dict is not None:
+            for k, v in in_dict.items():
+                if k not in sub_dict:
+                    raise TypeError('key does not match any field generators')
+                sub_dict[k] = v
+                if v != k:
+                    made_substitution = True
+        else:
+            used_kwds = {k: False for k in kwds}
+            for g in sub_dict:
+                strg = str(g)
+                if strg not in kwds:
+                    continue
+                v = kwds[strg]
+                sub_dict[g] = v
+
+                if used_kwds[strg]:
+                    raise TypeError('multiple generators have the '
+                                    'same name, making substitution '
+                                    'ambiguous. Rename generators '
+                                    'or pass substitution values in '
+                                    'using dictionary format')
+                used_kwds[strg] = True
+                if g != v:
+                    made_substitution = True
+
+        if made_substitution:
+            return sub_recurse(self, sub_dict)
+        return self
+
     @cached_method
     def matrix(self, base=None):
         r"""
@@ -172,27 +440,27 @@ cdef class FunctionFieldElement(FieldElement):
 
         INPUT:
 
-        - ``base`` -- a function field (default: ``None``), if ``None``, then
-          the matrix is formed over the base field of this function field.
+        - ``base`` -- a function field (default: ``None``); if ``None``, then
+          the matrix is formed over the base field of this function field
 
         EXAMPLES:
 
         A rational function field::
 
             sage: K.<t> = FunctionField(QQ)
-            sage: t.matrix()                                                                        # optional - sage.modules
+            sage: t.matrix()                                                            # needs sage.modules
             [t]
-            sage: (1/(t+1)).matrix()                                                                # optional - sage.modules
+            sage: (1/(t+1)).matrix()                                                    # needs sage.modules
             [1/(t + 1)]
 
         Now an example in a nontrivial extension of a rational function field::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # optional - sage.rings.function_field
-            sage: y.matrix()                                                                        # optional - sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: y.matrix()
             [     0      1]
             [-4*x^3      x]
-            sage: y.matrix().charpoly('Z')                                                          # optional - sage.modules sage.rings.function_field
+            sage: y.matrix().charpoly('Z')
             Z^2 - x*Z + 4*x^3
 
         An example in a relative extension, where neither function
@@ -200,21 +468,21 @@ cdef class FunctionFieldElement(FieldElement):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                            # optional - sage.rings.function_field
-            sage: M.<T> = L[]                                                                       # optional - sage.rings.function_field
-            sage: Z.<alpha> = L.extension(T^3 - y^2*T + x)                                          # optional - sage.rings.function_field
-            sage: alpha.matrix()                                                                    # optional - sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: M.<T> = L[]
+            sage: Z.<alpha> = L.extension(T^3 - y^2*T + x)
+            sage: alpha.matrix()
             [          0           1           0]
             [          0           0           1]
             [         -x x*y - 4*x^3           0]
-            sage: alpha.matrix(K)                                                                   # optional - sage.modules sage.rings.function_field
+            sage: alpha.matrix(K)
             [           0            0            1            0            0            0]
             [           0            0            0            1            0            0]
             [           0            0            0            0            1            0]
             [           0            0            0            0            0            1]
             [          -x            0       -4*x^3            x            0            0]
             [           0           -x       -4*x^4 -4*x^3 + x^2            0            0]
-            sage: alpha.matrix(Z)                                                                   # optional - sage.modules sage.rings.function_field
+            sage: alpha.matrix(Z)
             [alpha]
 
         We show that this matrix does indeed work as expected when making a
@@ -222,20 +490,20 @@ cdef class FunctionFieldElement(FieldElement):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))                                    # optional - sage.rings.function_field
-            sage: V, from_V, to_V = L.vector_space()                                                # optional - sage.modules sage.rings.function_field
-            sage: y5 = to_V(y^5); y5                                                                # optional - sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))
+            sage: V, from_V, to_V = L.vector_space()
+            sage: y5 = to_V(y^5); y5
             ((x^4 + 1)/x, 2*x, 0, 0, 0)
-            sage: y4y = to_V(y^4) * y.matrix(); y4y                                                 # optional - sage.modules sage.rings.function_field
+            sage: y4y = to_V(y^4) * y.matrix(); y4y
             ((x^4 + 1)/x, 2*x, 0, 0, 0)
-            sage: y5 == y4y                                                                         # optional - sage.modules sage.rings.function_field
+            sage: y5 == y4y
             True
         """
         # multiply each element of the vector space isomorphic to the parent
         # with this element; make matrix whose rows are the coefficients of the
         # result, and transpose
         V, f, t = self.parent().vector_space(base)
-        rows = [ t(self*f(b)) for b in V.basis() ]
+        rows = [t(self*f(b)) for b in V.basis()]
         from sage.matrix.matrix_space import MatrixSpace
         MS = MatrixSpace(V.base_field(), V.dimension())
         ret = MS(rows)
@@ -250,8 +518,8 @@ cdef class FunctionFieldElement(FieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.rings.function_field
-            sage: y.trace()                                                             # optional - sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # needs sage.rings.function_field
+            sage: y.trace()                                                             # needs sage.rings.function_field
             x
         """
         return self.matrix().trace()
@@ -263,18 +531,18 @@ cdef class FunctionFieldElement(FieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.rings.function_field
-            sage: y.norm()                                                              # optional - sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # needs sage.rings.function_field
+            sage: y.norm()                                                              # needs sage.rings.function_field
             4*x^3
 
         The norm is relative::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3); R.<z> = L[]                   # optional - sage.rings.function_field
-            sage: M.<z> = L.extension(z^3 - y^2*z + x)                                  # optional - sage.rings.function_field
-            sage: z.norm()                                                              # optional - sage.modules sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3); R.<z> = L[]                   # needs sage.rings.function_field
+            sage: M.<z> = L.extension(z^3 - y^2*z + x)                                  # needs sage.rings.function_field
+            sage: z.norm()                                                              # needs sage.rings.function_field
             -x
-            sage: z.norm().parent()                                                     # optional - sage.modules sage.rings.function_field
+            sage: z.norm().parent()                                                     # needs sage.rings.function_field
             Function field in y defined by y^2 - x*y + 4*x^3
         """
         return self.matrix().determinant()
@@ -313,7 +581,7 @@ cdef class FunctionFieldElement(FieldElement):
             sage: f.degree()
             1
         """
-        return max(self._x.denominator().degree(),self._x.numerator().degree())
+        return max(self._x.denominator().degree(), self._x.numerator().degree())
 
     def characteristic_polynomial(self, *args, **kwds):
         """
@@ -323,13 +591,14 @@ cdef class FunctionFieldElement(FieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3); R.<z> = L[]                   # optional - sage.rings.function_field
-            sage: M.<z> = L.extension(z^3 - y^2*z + x)                                  # optional - sage.rings.function_field
-            sage: x.characteristic_polynomial('W')                                      # optional - sage.modules sage.rings.function_field
+            sage: x.characteristic_polynomial('W')                                      # needs sage.modules
             W - x
-            sage: y.characteristic_polynomial('W')                                      # optional - sage.modules sage.rings.function_field
+
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3); R.<z> = L[]
+            sage: M.<z> = L.extension(z^3 - y^2*z + x)
+            sage: y.characteristic_polynomial('W')
             W^2 - x*W + 4*x^3
-            sage: z.characteristic_polynomial('W')                                      # optional - sage.modules sage.rings.function_field
+            sage: z.characteristic_polynomial('W')
             W^3 + (-x*y + 4*x^3)*W + x
         """
         return self.matrix().characteristic_polynomial(*args, **kwds)
@@ -344,13 +613,14 @@ cdef class FunctionFieldElement(FieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3); R.<z> = L[]                   # optional - sage.rings.function_field
-            sage: M.<z> = L.extension(z^3 - y^2*z + x)                                  # optional - sage.rings.function_field
-            sage: x.minimal_polynomial('W')                                             # optional - sage.modules sage.rings.function_field
+            sage: x.minimal_polynomial('W')                                             # needs sage.modules
             W - x
-            sage: y.minimal_polynomial('W')                                             # optional - sage.modules sage.rings.function_field
+
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3); R.<z> = L[]
+            sage: M.<z> = L.extension(z^3 - y^2*z + x)
+            sage: y.minimal_polynomial('W')
             W^2 - x*W + 4*x^3
-            sage: z.minimal_polynomial('W')                                             # optional - sage.modules sage.rings.function_field
+            sage: z.minimal_polynomial('W')
             W^3 + (-x*y + 4*x^3)*W + x
         """
         return self.matrix().minimal_polynomial(*args, **kwds)
@@ -364,16 +634,16 @@ cdef class FunctionFieldElement(FieldElement):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)                                # optional - sage.rings.function_field
-            sage: y.is_integral()                                                       # optional - sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
+            sage: y.is_integral()
             True
-            sage: (y/x).is_integral()                                                   # optional - sage.modules sage.rings.function_field
+            sage: (y/x).is_integral()
             True
-            sage: (y/x)^2 - (y/x) + 4*x                                                 # optional - sage.modules sage.rings.function_field
+            sage: (y/x)^2 - (y/x) + 4*x
             0
-            sage: (y/x^2).is_integral()                                                 # optional - sage.modules sage.rings.function_field
+            sage: (y/x^2).is_integral()
             False
-            sage: (y/x).minimal_polynomial('W')                                         # optional - sage.modules sage.rings.function_field
+            sage: (y/x).minimal_polynomial('W')
             W^2 - W + 4*x
         """
         R = self.parent().base_field().maximal_order()
@@ -387,29 +657,29 @@ cdef class FunctionFieldElement(FieldElement):
 
             sage: K.<t> = FunctionField(QQ)
             sage: f = 1 / t
-            sage: f.differential()                                                      # optional - sage.modules
+            sage: f.differential()                                                      # needs sage.modules
             (-1/t^2) d(t)
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x +1/x)                                 # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: (y^3 + x).differential()                                              # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^2 + Y + x +1/x)                                 # needs sage.rings.finite_rings sage.rings.function_field
+            sage: (y^3 + x).differential()                                              # needs sage.rings.finite_rings sage.rings.function_field
             (((x^2 + 1)/x^2)*y + (x^4 + x^3 + 1)/x^3) d(x)
 
         TESTS:
 
-        Verify that :trac:`27712` is resolved::
+        Verify that :issue:`27712` is resolved::
 
-            sage: K.<x> = FunctionField(GF(31))                                         # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: R.<z> = L[]                                                           # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: M.<z> = L.extension(z^2 - y)                                          # optional - sage.rings.finite_rings sage.rings.function_field
-
-            sage: x.differential()                                                      # optional - sage.rings.finite_rings sage.modules
+            sage: K.<x> = FunctionField(GF(31))
+            sage: x.differential()                                                      # needs sage.modules
             d(x)
-            sage: y.differential()                                                      # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z^2 - y)
+            sage: y.differential()
             (16/x*y) d(x)
-            sage: z.differential()                                                      # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: z.differential()
             (8/x*z) d(x)
         """
         F = self.parent()
@@ -427,12 +697,12 @@ cdef class FunctionFieldElement(FieldElement):
 
             sage: K.<t> = FunctionField(QQ)
             sage: f = (t + 1) / (t^2 - 1/3)
-            sage: f.derivative()                                                        # optional - sage.modules
+            sage: f.derivative()                                                        # needs sage.modules
             (-t^2 - 2*t - 1/3)/(t^4 - 2/3*t^2 + 1/9)
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: (y^3 + x).derivative()                                                # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.finite_rings sage.rings.function_field
+            sage: (y^3 + x).derivative()                                                # needs sage.rings.finite_rings sage.rings.function_field
             ((x^2 + 1)/x^2)*y + (x^4 + x^3 + 1)/x^3
         """
         D = self.parent().derivation()
@@ -452,16 +722,16 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: f = t^2                                                               # optional - sage.rings.finite_rings
-            sage: f.higher_derivative(2)                                                # optional - sage.rings.finite_rings sage.modules
+            sage: K.<t> = FunctionField(GF(2))
+            sage: f = t^2
+            sage: f.higher_derivative(2)                                                # needs sage.rings.function_field
             1
 
         ::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: (y^3 + x).higher_derivative(2)                                        # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.finite_rings sage.rings.function_field
+            sage: (y^3 + x).higher_derivative(2)                                        # needs sage.rings.finite_rings sage.rings.function_field
             1/x^3*y + (x^6 + x^4 + x^3 + x^2 + x + 1)/x^5
         """
         D = self.parent().higher_derivation()
@@ -474,18 +744,18 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: f = 1/(x^3 + x^2 + x)                                                 # optional - sage.rings.finite_rings
-            sage: f.divisor()                                                           # optional - sage.rings.finite_rings sage.modules
+            sage: K.<x> = FunctionField(GF(2))
+            sage: f = 1/(x^3 + x^2 + x)
+            sage: f.divisor()                                                           # needs sage.libs.pari sage.modules
             3*Place (1/x)
              - Place (x)
              - Place (x^2 + x + 1)
 
         ::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: y.divisor()                                                           # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.function_field
+            sage: y.divisor()                                                           # needs sage.rings.function_field
             - Place (1/x, 1/x*y)
              - Place (x, x*y)
              + 2*Place (x + 1, x*y)
@@ -504,16 +774,16 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: f = 1/(x^3 + x^2 + x)                                                 # optional - sage.rings.finite_rings
-            sage: f.divisor_of_zeros()                                                  # optional - sage.rings.finite_rings sage.modules
+            sage: K.<x> = FunctionField(GF(2))
+            sage: f = 1/(x^3 + x^2 + x)
+            sage: f.divisor_of_zeros()                                                  # needs sage.libs.pari sage.modules
             3*Place (1/x)
 
         ::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: (x/y).divisor_of_zeros()                                              # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.finite_rings sage.rings.function_field
+            sage: (x/y).divisor_of_zeros()                                              # needs sage.rings.finite_rings sage.rings.function_field
             3*Place (x, x*y)
         """
         if self.is_zero():
@@ -530,17 +800,17 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: f = 1/(x^3 + x^2 + x)                                                 # optional - sage.rings.finite_rings
-            sage: f.divisor_of_poles()                                                  # optional - sage.rings.finite_rings sage.modules
+            sage: K.<x> = FunctionField(GF(2))
+            sage: f = 1/(x^3 + x^2 + x)
+            sage: f.divisor_of_poles()                                                  # needs sage.libs.pari sage.modules
             Place (x)
              + Place (x^2 + x + 1)
 
         ::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: (x/y).divisor_of_poles()                                              # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.finite_rings sage.rings.function_field
+            sage: (x/y).divisor_of_poles()                                              # needs sage.rings.finite_rings sage.rings.function_field
             Place (1/x, 1/x*y) + 2*Place (x + 1, x*y)
         """
         if self.is_zero():
@@ -557,16 +827,16 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: f = 1/(x^3 + x^2 + x)                                                 # optional - sage.rings.finite_rings
-            sage: f.zeros()                                                             # optional - sage.rings.finite_rings sage.modules
+            sage: K.<x> = FunctionField(GF(2))
+            sage: f = 1/(x^3 + x^2 + x)
+            sage: f.zeros()                                                             # needs sage.libs.pari sage.modules
             [Place (1/x)]
 
         ::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings
-            sage: (x/y).zeros()                                                         # optional - sage.rings.finite_rings sage.modules
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.finite_rings sage.rings.function_field
+            sage: (x/y).zeros()                                                         # needs sage.rings.finite_rings sage.rings.function_field
             [Place (x, x*y)]
         """
         return self.divisor_of_zeros().support()
@@ -577,16 +847,16 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2))                                          # optional - sage.rings.finite_rings
-            sage: f = 1/(x^3 + x^2 + x)                                                 # optional - sage.rings.finite_rings
-            sage: f.poles()                                                             # optional - sage.rings.finite_rings sage.modules
+            sage: K.<x> = FunctionField(GF(2))
+            sage: f = 1/(x^3 + x^2 + x)
+            sage: f.poles()                                                             # needs sage.libs.pari sage.modules
             [Place (x), Place (x^2 + x + 1)]
 
         ::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: (x/y).poles()                                                         # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # needs sage.rings.finite_rings
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.finite_rings sage.rings.function_field
+            sage: (x/y).poles()                                                         # needs sage.rings.finite_rings sage.rings.function_field
             [Place (1/x, 1/x*y), Place (x + 1, x*y)]
         """
         return self.divisor_of_poles().support()
@@ -601,19 +871,19 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: p = L.places_infinite()[0]                                            # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
-            sage: y.valuation(p)                                                        # optional - sage.rings.finite_rings sage.modules sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # needs sage.rings.function_field
+            sage: p = L.places_infinite()[0]                                            # needs sage.rings.function_field
+            sage: y.valuation(p)                                                        # needs sage.rings.function_field
             -1
 
         ::
 
             sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.function_field sage.rings.function_field
-            sage: O = L.maximal_order()                                                 # optional - sage.rings.function_field sage.rings.function_field
-            sage: p = O.ideal(x - 1).place()                                            # optional - sage.rings.function_field sage.rings.function_field
-            sage: y.valuation(p)                                                        # optional - sage.rings.function_field sage.rings.function_field
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: O = L.maximal_order()
+            sage: p = O.ideal(x - 1).place()
+            sage: y.valuation(p)
             0
         """
         prime = place.prime_ideal()
@@ -631,48 +901,48 @@ cdef class FunctionFieldElement(FieldElement):
         OUTPUT:
 
         If the element is in the valuation ring at the place, then an element
-        in the residue field at the place is returned. Otherwise, ``ValueError``
-        is raised.
+        in the residue field at the place is returned. Otherwise, a
+        :exc:`ValueError` is raised.
 
         EXAMPLES::
 
-            sage: K.<t> = FunctionField(GF(5))                                          # optional - sage.rings.finite_rings
-            sage: p = K.place_infinite()                                                # optional - sage.rings.finite_rings
-            sage: f = 1/t^2 + 3                                                         # optional - sage.rings.finite_rings
-            sage: f.evaluate(p)                                                         # optional - sage.rings.finite_rings
+            sage: K.<t> = FunctionField(GF(5))
+            sage: p = K.place_infinite()
+            sage: f = 1/t^2 + 3
+            sage: f.evaluate(p)
             3
 
         ::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]                             # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)                                # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: p, = L.places_infinite()                                              # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: p, = L.places_infinite()                                              # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: (y + x).evaluate(p)                                                   # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: p, = L.places_infinite()
+            sage: p, = L.places_infinite()
+            sage: (y + x).evaluate(p)
             Traceback (most recent call last):
             ...
             ValueError: has a pole at the place
-            sage: (y/x + 1).evaluate(p)                                                 # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: (y/x + 1).evaluate(p)
             1
         """
-        R, fr_R, to_R = place._residue_field()
+        R, _, to_R = place._residue_field()
 
         v = self.valuation(place)
         if v > 0:
             return R.zero()
-        elif v  == 0:
+        if v == 0:
             return to_R(self)
-        else: # v < 0
-            raise ValueError('has a pole at the place')
+        # v < 0
+        raise ValueError('has a pole at the place')
 
-    cpdef bint is_nth_power(self, n):
+    cpdef bint is_nth_power(self, n) noexcept:
         r"""
         Return whether this element is an ``n``-th power in the rational
         function field.
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -685,9 +955,9 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.rings.finite_rings
-            sage: f = (x+1)/(x-1)                                                       # optional - sage.rings.finite_rings
-            sage: f.is_nth_power(2)                                                     # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(3))
+            sage: f = (x+1)/(x-1)
+            sage: f.is_nth_power(2)
             False
         """
         raise NotImplementedError("is_nth_power() not implemented for generic elements")
@@ -698,7 +968,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -711,10 +981,10 @@ cdef class FunctionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.finite_rings sage.rings.function_field
-            sage: L(y^27).nth_root(27)                                                  # optional - sage.rings.finite_rings sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(3))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)                                          # needs sage.rings.function_field
+            sage: L(y^27).nth_root(27)                                                  # needs sage.rings.function_field
             y
         """
         raise NotImplementedError("nth_root() not implemented for generic elements")

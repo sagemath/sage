@@ -19,14 +19,15 @@ from .join_feature import JoinFeature
 
 class NautyExecutable(Executable):
     r"""
-    A :class:`~sage.features.Feature` which checks for nauty executables.
+    A :class:`~sage.features.Feature` which checks for executables from the :ref:`nauty <spkg_nauty>` package.
 
     EXAMPLES::
 
         sage: from sage.features.nauty import NautyExecutable
-        sage: NautyExecutable('converseg').is_present()         # optional - nauty
+        sage: NautyExecutable('converseg').is_present()                                 # needs nauty
         FeatureTestResult('nauty_converseg', True)
     """
+
     def __init__(self, name):
         r"""
         TESTS::
@@ -35,22 +36,27 @@ class NautyExecutable(Executable):
             sage: isinstance(NautyExecutable('geng'), NautyExecutable)
             True
         """
-        Executable.__init__(self, name=f"nauty_{name}",
-                            executable=f"{SAGE_NAUTY_BINS_PREFIX}{name}",
-                            spkg="nauty")
+        Executable.__init__(
+            self,
+            name=f"nauty_{name}",
+            executable=f"{SAGE_NAUTY_BINS_PREFIX}{name}",
+            spkg="nauty",
+            type="standard",
+        )
 
 
 class Nauty(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of the executables
-    which comes as a part of ``nauty``.
+    which comes as a part of :ref:`nauty <spkg_nauty>`.
 
     EXAMPLES::
 
         sage: from sage.features.nauty import Nauty
-        sage: Nauty().is_present()                              # optional - nauty
+        sage: Nauty().is_present()                                                      # needs nauty
         FeatureTestResult('nauty', True)
     """
+
     def __init__(self):
         r"""
         TESTS::
@@ -59,9 +65,22 @@ class Nauty(JoinFeature):
             sage: isinstance(Nauty(), Nauty)
             True
         """
-        JoinFeature.__init__(self, "nauty",
-                             [NautyExecutable(name)
-                              for name in ('directg', 'gentourng', 'geng', 'genbg', 'gentreeg', 'converseg')])
+        JoinFeature.__init__(
+            self,
+            "nauty",
+            [
+                NautyExecutable(name)
+                for name in (
+                    "directg",
+                    "gentourng",
+                    "geng",
+                    "genbg",
+                    "gentreeg",
+                    "genktreeg",
+                    "genposetg",
+                )
+            ],
+        )
 
 
 def all_features():

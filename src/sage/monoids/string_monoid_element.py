@@ -12,63 +12,21 @@ These are special classes of free monoid elements with distinct printing.
 The internal representation of elements does not use the exponential
 compression of FreeMonoid elements (a feature), and could be packed into words.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-# import operator
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
-from sage.rings.real_mpfr import RealField
-from .free_monoid_element import FreeMonoidElement
 from sage.structure.richcmp import richcmp
 
+lazy_import('sage.rings.real_mpfr', 'RealField')
 
-def is_StringMonoidElement(x):
-    r"""
-    """
-    return isinstance(x, StringMonoidElement)
-
-def is_AlphabeticStringMonoidElement(x):
-    r"""
-    """
-    from .string_monoid import AlphabeticStringMonoid
-    return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), AlphabeticStringMonoid)
-
-def is_BinaryStringMonoidElement(x):
-    r"""
-    """
-    from .string_monoid import BinaryStringMonoid
-    return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), BinaryStringMonoid)
-
-
-def is_OctalStringMonoidElement(x):
-    r"""
-    """
-    from .string_monoid import OctalStringMonoid
-    return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), OctalStringMonoid)
-
-
-def is_HexadecimalStringMonoidElement(x):
-    r"""
-    """
-    from .string_monoid import HexadecimalStringMonoid
-    return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), HexadecimalStringMonoid)
-
-
-def is_Radix64StringMonoidElement(x):
-    r"""
-    """
-    from .string_monoid import Radix64StringMonoid
-    return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), Radix64StringMonoid)
+from .free_monoid_element import FreeMonoidElement
 
 
 class StringMonoidElement(FreeMonoidElement):
@@ -76,7 +34,7 @@ class StringMonoidElement(FreeMonoidElement):
     Element of a free string monoid.
     """
 
-    def __init__(self, S, x, check=True):
+    def __init__(self, S, x, check=True) -> None:
         """
         Create the element ``x`` of the StringMonoid ``S``.
 
@@ -89,7 +47,7 @@ class StringMonoidElement(FreeMonoidElement):
                     if not isinstance(b, (int, Integer)):
                         raise TypeError(
                             "x (= %s) must be a list of integers." % x)
-            self._element_list = list(x) # make copy
+            self._element_list = list(x)  # make copy
         elif isinstance(x, str):
             alphabet = list(self.parent().alphabet())
             self._element_list = []
@@ -113,7 +71,7 @@ class StringMonoidElement(FreeMonoidElement):
         EXAMPLES::
 
             sage: S = BinaryStrings()
-            sage: (x,y) = S.gens()
+            sage: x, y = S.gens()
             sage: x * y < y * x
             True
             sage: S("01") < S("10")
@@ -136,7 +94,7 @@ class StringMonoidElement(FreeMonoidElement):
 
     def _latex_(self):
         """
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 
@@ -154,7 +112,7 @@ class StringMonoidElement(FreeMonoidElement):
         EXAMPLES::
 
             sage: S = BinaryStrings()
-            sage: (x,y) = S.gens()
+            sage: x, y = S.gens()
             sage: x*y
             01
         """
@@ -173,7 +131,7 @@ class StringMonoidElement(FreeMonoidElement):
 
         EXAMPLES::
 
-            sage: (x,y) = BinaryStrings().gens()
+            sage: x, y = BinaryStrings().gens()
             sage: x**3 * y**5 * x**7
             000111110000000
             sage: x**0
@@ -187,12 +145,12 @@ class StringMonoidElement(FreeMonoidElement):
             sage: x**(-1)
             Traceback (most recent call last):
             ...
-            IndexError: Argument n (= -1) must be non-negative.
+            IndexError: Argument n (= -1) must be nonnegative.
         """
         if not isinstance(n, (int, Integer)):
             raise TypeError("Argument n (= %s) must be an integer." % n)
         if n < 0:
-            raise IndexError("Argument n (= %s) must be non-negative." % n)
+            raise IndexError("Argument n (= %s) must be nonnegative." % n)
         elif n == 0:
             return self.parent()('')
         elif n == 1:
@@ -204,6 +162,7 @@ class StringMonoidElement(FreeMonoidElement):
     def __len__(self):
         """
         Return the number of products that occur in this monoid element.
+
         For example, the length of the identity is 0, and the length
         of the monoid `x_0^2x_1` is three.
 
@@ -213,7 +172,7 @@ class StringMonoidElement(FreeMonoidElement):
             sage: z = S('')
             sage: len(z)
             0
-            sage: (x,y) = S.gens()
+            sage: x, y = S.gens()
             sage: len(x**2 * y**3)
             5
         """
@@ -312,15 +271,15 @@ class StringMonoidElement(FreeMonoidElement):
         if isinstance(S, BinaryStringMonoid):
             if not n % 8 == 0:
                 "String %s must have even length 0 mod 8 to determine a byte character string." % str(self)
-            pows = [ 2**i for i in range(8) ]
+            pows = [2**i for i in range(8)]
             s = []
             x = self._element_list
             for k in range(n//8):
                 m = 8*k
                 if padic:
-                    c = chr(sum([ x[m+i]*pows[i] for i in range(8) ]))
+                    c = chr(sum([x[m+i] * pows[i] for i in range(8)]))
                 else:
-                    c = chr(sum([ x[m+7-i]*pows[i] for i in range(8) ]))
+                    c = chr(sum([x[m+7-i] * pows[i] for i in range(8)]))
                 s.append(c)
             return ''.join(s)
         raise TypeError(
@@ -328,7 +287,7 @@ class StringMonoidElement(FreeMonoidElement):
 
     def coincidence_index(self, prec=0):
         """
-        Returns the probability of two randomly chosen characters being equal.
+        Return the probability of two randomly chosen characters being equal.
         """
         if prec == 0:
             RR = RealField()
@@ -342,12 +301,11 @@ class StringMonoidElement(FreeMonoidElement):
                 char_dict[i] = 1
         nn = 0
         ci_num = 0
-        for i in char_dict.keys():
-            ni = char_dict[i]
+        for ni in char_dict.values():
             nn += ni
-            ci_num += ni*(ni-1)
-        ci_den = nn*(nn-1)
-        return RR(ci_num)/ci_den
+            ci_num += ni * (ni - 1)
+        ci_den = nn * (nn - 1)
+        return RR(ci_num) / ci_den
 
     def character_count(self):
         r"""
@@ -424,10 +382,12 @@ class StringMonoidElement(FreeMonoidElement):
 
     def frequency_distribution(self, length=1, prec=0):
         """
-        Returns the probability space of character frequencies. The output
-        of this method is different from that of the method
+        Return the probability space of character frequencies.
+
+        The output of this method is different from that of the method
         :func:`characteristic_frequency()
         <sage.monoids.string_monoid.AlphabeticStringMonoid.characteristic_frequency>`.
+
         One can think of the characteristic frequency probability of an
         element in an alphabet `A` as the expected probability of that element
         occurring. Let `S` be a string encoded using elements of `A`. The
@@ -438,7 +398,7 @@ class StringMonoidElement(FreeMonoidElement):
 
         INPUT:
 
-        - ``length`` -- (default ``1``) if ``length=1`` then consider the
+        - ``length`` -- (default: ``1``) if ``length=1`` then consider the
           probability space of monogram frequency, i.e. probability
           distribution of single characters. If ``length=2`` then consider
           the probability space of digram frequency, i.e. probability
@@ -446,7 +406,7 @@ class StringMonoidElement(FreeMonoidElement):
           supports the generation of probability spaces for monogram
           frequency (``length=1``) and digram frequency (``length=2``).
 
-        - ``prec`` -- (default ``0``) a non-negative integer representing
+        - ``prec`` -- (default: ``0``) a nonnegative integer representing
           the precision (in number of bits) of a floating-point number. The
           default value ``prec=0`` means that we use 53 bits to represent
           the mantissa of a floating-point number. For more information on

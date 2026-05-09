@@ -1,24 +1,25 @@
+# sage.doctest: optional - ptyprocess
 """
 Sage wrapper around pexpect's ``spawn`` class and
 the ptyprocess's ``PtyProcess`` class.
 
 AUTHOR:
 
-- Jeroen Demeyer (2015-02-01): initial version, see :trac:`17686`.
+- Jeroen Demeyer (2015-02-01): initial version, see :issue:`17686`.
 
 - Jeroen Demeyer (2015-12-04): add support for pexpect 4 + ptyprocess,
-  see :trac:`10295`.
+  see :issue:`10295`.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from pexpect import *
 from ptyprocess import PtyProcess
@@ -26,7 +27,7 @@ from ptyprocess import PtyProcess
 from cpython.ref cimport Py_INCREF
 from libc.signal cimport *
 from posix.signal cimport killpg
-from posix.unistd cimport getpid, getpgid, close, fork
+from posix.unistd cimport getpid, getpgid, fork
 
 from time import sleep
 
@@ -39,13 +40,13 @@ class SageSpawn(spawn):
         """
         Spawn a subprocess in a pseudo-tty.
 
-        - ``*args``, ``**kwds``: see :class:`pexpect.spawn`.
+        - ``*args``, ``**kwds`` -- see :class:`pexpect.spawn`
 
         - ``name`` -- human-readable name for this process, used for
-          display purposes only.
+          display purposes only
 
         - ``quit_string`` -- (default: ``None``) if not ``None``, send
-          this string to the child process before killing it.
+          this string to the child process before killing it
 
         EXAMPLES::
 
@@ -216,7 +217,7 @@ class SagePtyProcess(PtyProcess):
         INPUT:
 
         - ``interval`` -- (default: 5) how much seconds to wait between
-          sending two signals.
+          sending two signals
 
         EXAMPLES:
 

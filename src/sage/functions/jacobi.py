@@ -145,17 +145,21 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.symbolic.function import BuiltinFunction
-from sage.functions.trig import (arctan, arcsin, arccos, arccot, arcsec,
-                                 arccsc, csc, sec, sin, cos, tan, cot)
 from sage.functions.hyperbolic import (arctanh, arccosh, arcsinh, arcsech,
                                        arccsch, arccoth, cosh, coth, sech,
                                        csch, tanh, sinh)
-from sage.rings.rational_field import QQ
-from sage.rings.integer import Integer
 from sage.functions.special import elliptic_e, elliptic_kc
-from sage.libs.mpmath import utils
-from sage.misc.latex import latex
+from sage.functions.trig import (arctan, arcsin, arccos, arccot, arcsec,
+                                 arccsc, csc, sec, sin, cos, tan, cot)
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer import Integer
+from sage.rings.rational_field import QQ
+from sage.symbolic.function import BuiltinFunction
+
+lazy_import('sage.misc.latex', 'latex')
+
+lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('mpmath', 'ellipfun', as_='_mpmath_ellipfun')
 
 HALF = QQ((1, 2))
 
@@ -176,18 +180,19 @@ class Jacobi(BuiltinFunction):
 
         TESTS::
 
-            sage: N(jacobi("sn", I, 1/2))   # abs tol 1e-12
+            sage: N(jacobi("sn", I, 1/2))   # abs tol 1e-12                             # needs sage.symbolic
             -8.59454886300046e-73 + 1.34737147138542*I
 
-            sage: CN = fricas(jacobi('cn',x, 2)); CN  # optional - fricas
+            sage: # optional - fricas, needs sage.symbolic
+            sage: CN = fricas(jacobi('cn',x, 2)); CN
             jacobiCn(x,2)
-            sage: fricas.series(CN, x=0)  # optional - fricas
+            sage: fricas.series(CN, x=0)
                 1  2   3  4   17  6    79  8    1381  10      11
             1 - - x  + - x  - -- x  + --- x  - ----- x   + O(x  )
                 2      8      80      640      19200
-            sage: fricas(jacobi('sn',x, 2))  # optional - fricas
+            sage: fricas(jacobi('sn',x, 2))
             jacobiSn(x,2)
-            sage: fricas(jacobi('dn',x, 2))  # optional - fricas
+            sage: fricas(jacobi('dn',x, 2))
             jacobiDn(x,2)
         """
         if kind not in ['nd', 'ns', 'nc', 'dn', 'ds', 'dc', 'sn', 'sd',
@@ -208,7 +213,8 @@ class Jacobi(BuiltinFunction):
 
         Check that the simplifications are correct::
 
-            sage: from mpmath import almosteq
+            sage: # needs mpmath sage.symbolic
+            sage: from sage.libs.mpmath.all import almosteq
             sage: almosteq(n(jacobi_nd(8, 0, hold=True)), n(jacobi_nd(8, 0)))
             True
             sage: almosteq(n(jacobi_nd(1, 1, hold=True)), n(jacobi_nd(1, 1)))
@@ -277,28 +283,28 @@ class Jacobi(BuiltinFunction):
         if self.kind == 'nd':
             if m == 0:
                 return Integer(1)
-            elif m == 1:
+            if m == 1:
                 return cosh(x)
-            elif x == 0:
+            if x == 0:
                 return Integer(1)
         elif self.kind == 'ns':
             if m == 0:
                 return csc(x)
-            elif m == 1:
+            if m == 1:
                 return coth(x)
         elif self.kind == 'nc':
             if m == 0:
                 return sec(x)
-            elif m == 1:
+            if m == 1:
                 return cosh(x)
-            elif x == 0:
+            if x == 0:
                 return Integer(1)
         elif self.kind == 'dn':
             if m == 0:
                 return Integer(1)
-            elif m == 1:
+            if m == 1:
                 return sech(x)
-            elif x == 0:
+            if x == 0:
                 return Integer(1)
         elif self.kind == 'ds':
             if m == 0:
@@ -306,49 +312,49 @@ class Jacobi(BuiltinFunction):
         elif self.kind == 'dc':
             if m == 0:
                 return sec(x)
-            elif m == 1:
+            if m == 1:
                 return Integer(1)
-            elif x == 0:
+            if x == 0:
                 return Integer(1)
         elif self.kind == 'sn':
             if m == 0:
                 return sin(x)
-            elif m == 1:
+            if m == 1:
                 return tanh(x)
-            elif x == 0:
+            if x == 0:
                 return Integer(0)
         elif self.kind == 'sd':
             if m == 0:
                 return sin(x)
-            elif m == 1:
+            if m == 1:
                 return sinh(x)
-            elif x == 0:
+            if x == 0:
                 return Integer(0)
         elif self.kind == 'sc':
             if m == 0:
                 return tan(x)
-            elif m == 1:
+            if m == 1:
                 return sinh(x)
-            elif x == 0:
+            if x == 0:
                 return Integer(0)
         elif self.kind == 'cn':
             if m == 0:
                 return cos(x)
-            elif m == 1:
+            if m == 1:
                 return sech(x)
-            elif x == 0:
+            if x == 0:
                 return Integer(1)
         elif self.kind == 'cd':
             if m == 0:
                 return cos(x)
-            elif m == 1:
+            if m == 1:
                 return Integer(1)
-            elif x == 0:
+            if x == 0:
                 return Integer(1)
         elif self.kind == 'cs':
             if m == 0:
                 return cot(x)
-            elif m == 1:
+            if m == 1:
                 return csch(x)
         return
 
@@ -356,13 +362,12 @@ class Jacobi(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: jacobi_sn(3, 4).n(100)
+            sage: jacobi_sn(3, 4).n(100)                                                # needs mpmath sage.symbolic
             -0.33260000892770027112809652714 + 1.7077912301715219199143891076e-33*I
-            sage: jacobi_dn(I, I).n()
+            sage: jacobi_dn(I, I).n()                                                   # needs mpmath sage.symbolic
             0.874189950651018 + 0.667346865048825*I
         """
-        from mpmath import ellipfun
-        return utils.call(ellipfun, self.kind, x, m, parent=parent)
+        return _mpmath_utils_call(_mpmath_ellipfun, self.kind, x, m, parent=parent)
 
     def _derivative_(self, x, m, diff_param):
         r"""
@@ -371,6 +376,7 @@ class Jacobi(BuiltinFunction):
         sn, cn, and dn are analytic for all real ``x``, so we can check
         that the derivatives are correct by computing the series::
 
+            sage: # needs mpmath sage.symbolic
             sage: from mpmath import almosteq
             sage: a = 0.9327542442482303
             sage: b = 0.7402326293643771
@@ -388,111 +394,111 @@ class Jacobi(BuiltinFunction):
             # From Wolfram Functions Site
             if self.kind == 'cd':
                 return (m - Integer(1)) * jacobi_nd(x, m) * jacobi_sd(x, m)
-            elif self.kind == 'cn':
+            if self.kind == 'cn':
                 return -jacobi_sn(x, m) * jacobi_dn(x, m)
-            elif self.kind == 'cs':
+            if self.kind == 'cs':
                 return -jacobi_ds(x, m) * jacobi_ns(x, m)
-            elif self.kind == 'dc':
+            if self.kind == 'dc':
                 return (Integer(1) - m) * jacobi_nc(x, m) * jacobi_sc(x, m)
-            elif self.kind == 'dn':
+            if self.kind == 'dn':
                 return -m * jacobi_sn(x, m) * jacobi_cn(x, m)
-            elif self.kind == 'ds':
+            if self.kind == 'ds':
                 return -jacobi_cs(x, m) * jacobi_ns(x, m)
-            elif self.kind == 'nc':
+            if self.kind == 'nc':
                 return jacobi_dc(x, m) * jacobi_sc(x, m)
-            elif self.kind == 'nd':
+            if self.kind == 'nd':
                 return m * jacobi_cd(x, m) * jacobi_sd(x, m)
-            elif self.kind == 'ns':
+            if self.kind == 'ns':
                 return -jacobi_cs(x, m) * jacobi_ds(x, m)
-            elif self.kind == 'sc':
+            if self.kind == 'sc':
                 return jacobi_dc(x, m) * jacobi_nc(x, m)
-            elif self.kind == 'sd':
+            if self.kind == 'sd':
                 return jacobi_cd(x, m) * jacobi_nd(x, m)
-            elif self.kind == 'sn':
+            if self.kind == 'sn':
                 return jacobi_cn(x, m) * jacobi_dn(x, m)
         elif diff_param == 1:
             # From Maxima
             if self.kind == 'nd':
-                return (HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                return (HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                               (m - Integer(1)))*jacobi_sn(x, m)*jacobi_cn(x, m) -
-                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1)))/
+                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1))) /
                         jacobi_dn(x, m)**Integer(2))
-            elif self.kind == 'ns':
+            if self.kind == 'ns':
                 return (HALF*(jacobi_sn(x, m)*jacobi_cn(x, m)**Integer(2)/(m - Integer(1)) -
-                              (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m)/
+                              (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m) /
                         jacobi_sn(x, m)**Integer(2))
-            elif self.kind == 'nc':
+            if self.kind == 'nc':
                 return (-HALF*(jacobi_sn(x, m)**Integer(2)*jacobi_cn(x, m)/(m - Integer(1)) -
-                               (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                                (m - Integer(1)))*jacobi_dn(x, m)*
+                               (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                                (m - Integer(1)))*jacobi_dn(x, m) *
                                jacobi_sn(x, m)/m)/jacobi_cn(x, m)**Integer(2))
-            elif self.kind == 'dn':
-                return (-HALF*(x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+            if self.kind == 'dn':
+                return (-HALF*(x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                                (m - Integer(1)))*jacobi_sn(x, m)*jacobi_cn(x, m) +
                         HALF*jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1)))
-            elif self.kind == 'ds':
+            if self.kind == 'ds':
                 return (HALF*(jacobi_sn(x, m)*jacobi_cn(x, m)**Integer(2)/(m - Integer(1)) -
-                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m)*
+                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m) *
                         jacobi_dn(x, m)/jacobi_sn(x, m)**Integer(2) -
-                        HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                        HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                               (m - Integer(1)))*jacobi_sn(x, m)*jacobi_cn(x, m) -
-                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1)))/
+                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1))) /
                         jacobi_sn(x, m))
-            elif self.kind == 'dc':
+            if self.kind == 'dc':
                 return (-HALF*(jacobi_sn(x, m)**Integer(2)*jacobi_cn(x, m)/(m - Integer(1)) -
-                               (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                                (m - Integer(1)))*jacobi_dn(x, m)*
-                               jacobi_sn(x, m)/m)*jacobi_dn(x, m)/
+                               (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                                (m - Integer(1)))*jacobi_dn(x, m) *
+                               jacobi_sn(x, m)/m)*jacobi_dn(x, m) /
                         jacobi_cn(x, m)**Integer(2) -
-                        HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                        HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                                (m - Integer(1)))*jacobi_sn(x, m)*jacobi_cn(x, m) -
-                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1)))/
+                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1))) /
                         jacobi_cn(x, m))
-            elif self.kind == 'sn':
+            if self.kind == 'sn':
                 return (-HALF*jacobi_sn(x, m)*jacobi_cn(x, m)**Integer(2)/(m - Integer(1)) +
-                        HALF*(x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                        HALF*(x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m)
-            elif self.kind == 'sd':
+            if self.kind == 'sd':
                 return (-HALF*(jacobi_sn(x, m)*jacobi_cn(x, m)**Integer(2)/(m - Integer(1)) -
-                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m)/
-                        jacobi_dn(x, m) + HALF*
-                        ((x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m) /
+                        jacobi_dn(x, m) + HALF *
+                        ((x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                           (m - Integer(1)))*jacobi_sn(x, m)*jacobi_cn(x, m) -
-                         jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1)))*
+                         jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1))) *
                         jacobi_sn(x, m)/jacobi_dn(x, m)**Integer(2))
-            elif self.kind == 'sc':
+            if self.kind == 'sc':
                 return (-HALF*(jacobi_sn(x, m)*jacobi_cn(x, m)**Integer(2)/(m - Integer(1)) -
-                               (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                                (m - Integer(1)))*jacobi_dn(x, m)*
+                               (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                                (m - Integer(1)))*jacobi_dn(x, m) *
                                jacobi_cn(x, m)/m)/jacobi_cn(x, m) -
                         HALF*(jacobi_sn(x, m)**Integer(2)*jacobi_cn(x, m)/(m - Integer(1)) -
-                              (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m)*
+                              (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m) *
                         jacobi_sn(x, m)/jacobi_cn(x, m)**Integer(2))
-            elif self.kind == 'cn':
+            if self.kind == 'cn':
                 return (HALF*jacobi_sn(x, m)**Integer(2)*jacobi_cn(x, m)/(m - Integer(1)) -
-                        HALF*(x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                        HALF*(x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m)
-            elif self.kind == 'cd':
+            if self.kind == 'cd':
                 return (HALF*(jacobi_sn(x, m)**Integer(2)*jacobi_cn(x, m)/(m - Integer(1)) -
-                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m)/
+                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m) /
                         jacobi_dn(x, m) +
-                        HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
+                        HALF*((x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
                                (m - Integer(1)))*jacobi_sn(x, m)*jacobi_cn(x, m) -
-                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1)))*
+                              jacobi_dn(x, m)*jacobi_sn(x, m)**Integer(2)/(m - Integer(1))) *
                         jacobi_cn(x, m)/jacobi_dn(x, m)**Integer(2))
-            elif self.kind == 'cs':
+            if self.kind == 'cs':
                 return (HALF*(jacobi_sn(x, m)*jacobi_cn(x, m)**Integer(2)/(m - Integer(1)) -
-                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m)*
+                        (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                         (m - Integer(1)))*jacobi_dn(x, m)*jacobi_cn(x, m)/m) *
                         jacobi_cn(x, m)/jacobi_sn(x, m)**Integer(2) +
                         HALF*(jacobi_sn(x, m)**Integer(2)*jacobi_cn(x, m)/(m - Integer(1)) -
-                              (x + elliptic_e(arcsin(jacobi_sn(x, m)), m)/
-                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m)/
+                              (x + elliptic_e(arcsin(jacobi_sn(x, m)), m) /
+                               (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m) /
                         jacobi_sn(x, m))
 
     def _latex_(self):
@@ -508,12 +514,13 @@ class Jacobi(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(jacobi_sn(x, 3))
+            sage: latex(jacobi_sn(x, 3))                                                # needs sage.symbolic
             \operatorname{sn}\left(x\middle|3\right)
         """
         return r"\operatorname{{{}}}\left({}\middle|{}\right)".format(self.kind,
                                                                       latex(x),
                                                                       latex(m))
+
 
 jacobi_nd = Jacobi('nd')
 jacobi_ns = Jacobi('ns')
@@ -560,6 +567,7 @@ class InverseJacobi(BuiltinFunction):
 
         Check that the simplifications are correct::
 
+            sage: # needs mpmath sage.symbolic
             sage: from mpmath import almosteq
             sage: almosteq(n(inverse_jacobi_cd(1, -8, hold=True)),
             ....:          n(inverse_jacobi_cd(1, -8)))
@@ -637,74 +645,74 @@ class InverseJacobi(BuiltinFunction):
         if self.kind == 'cd':
             if m == 0:
                 return arccos(x)
-            elif x == 1:
+            if x == 1:
                 return Integer(0)
         elif self.kind == 'cn':
             if m == 0:
                 return arccos(x)
-            elif m == 1:
+            if m == 1:
                 return arcsech(x)
-            elif x == 0:
+            if x == 0:
                 return elliptic_kc(m)
-            elif x == 1:
+            if x == 1:
                 return Integer(0)
         elif self.kind == 'cs':
             if m == 0:
                 return arccot(x)
-            elif m == 1:
+            if m == 1:
                 return arccsch(x)
         elif self.kind == 'dc':
             if m == 0:
                 return arcsec(x)
-            elif x == 1:
+            if x == 1:
                 return Integer(0)
         elif self.kind == 'dn':
             if m == 1:
                 return arcsech(x)
-            elif x == 1:
+            if x == 1:
                 return Integer(0)
         elif self.kind == 'ds':
             if m == 0:
                 return arccsc(x)
-            elif m == 1:
+            if m == 1:
                 return arccsch(x)
         elif self.kind == 'nc':
             if m == 0:
                 return arcsec(x)
-            elif m == 1:
+            if m == 1:
                 return arccosh(x)
-            elif x == 1:
+            if x == 1:
                 return Integer(0)
         elif self.kind == 'nd':
             if m == 1:
                 return arccosh(x)
-            elif x == 1:
+            if x == 1:
                 return Integer(0)
         elif self.kind == 'ns':
             if m == 0:
                 return arccsc(x)
-            elif m == 1:
+            if m == 1:
                 return arccoth(x)
         elif self.kind == 'sc':
             if m == 0:
                 return arctan(x)
-            elif m == 1:
+            if m == 1:
                 return arcsinh(x)
-            elif x == 0:
+            if x == 0:
                 return Integer(0)
         elif self.kind == 'sd':
             if m == 0:
                 return arcsin(x)
-            elif m == 1:
+            if m == 1:
                 return arcsinh(x)
-            elif x == 0:
+            if x == 0:
                 return Integer(0)
         elif self.kind == 'sn':
             if m == 0:
                 return arcsin(x)
-            elif m == 1:
+            if m == 1:
                 return arctanh(x)
-            elif x == 0:
+            if x == 0:
                 return Integer(0)
         return
 
@@ -712,12 +720,12 @@ class InverseJacobi(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: inverse_jacobi_cn(2, 3).n()
+            sage: inverse_jacobi_cn(2, 3).n()                                           # needs mpmath
             0.859663746362987*I
-            sage: inverse_jacobi_cd(3, 4).n(100)
+            sage: inverse_jacobi_cd(3, 4).n(100)                                        # needs mpmath
             -0.67214752201235862490069823239 + 2.1565156474996432354386749988*I
         """
-        return utils.call(inverse_jacobi_f, self.kind, x, m, parent=parent)
+        return _mpmath_utils_call(inverse_jacobi_f, self.kind, x, m, parent=parent)
 
     def _derivative_(self, x, m, diff_param):
         r"""
@@ -726,6 +734,7 @@ class InverseJacobi(BuiltinFunction):
         Check that ``dy/dx * dx/dy == 1``, where ``y = jacobi_pq(x, m)`` and
         ``x = inverse_jacobi_pq(y, m)``::
 
+            sage: # needs mpmath sage.symbolic
             sage: from mpmath import almosteq
             sage: a = 0.130103220857094
             sage: b = 0.437176765041986
@@ -784,37 +793,37 @@ class InverseJacobi(BuiltinFunction):
             if self.kind == 'cd':
                 return (jacobi_sn(inverse_jacobi_cd(x, m), m) /
                         (x ** Integer(2) - Integer(1)))
-            elif self.kind == 'cn':
+            if self.kind == 'cn':
                 return (jacobi_ds(inverse_jacobi_cn(x, m), m) /
                         (m * x ** Integer(2) - m + Integer(1)))
-            elif self.kind == 'cs':
+            if self.kind == 'cs':
                 return (jacobi_nd(inverse_jacobi_cs(x, m), m) /
                         (x ** Integer(2) + Integer(1)))
-            elif self.kind == 'dc':
+            if self.kind == 'dc':
                 return (jacobi_sn(inverse_jacobi_dc(x, m), m) /
                         (x ** Integer(2) - Integer(1)))
-            elif self.kind == 'dn':
+            if self.kind == 'dn':
                 return -(jacobi_cs(inverse_jacobi_dn(x, m), m) /
                          (x ** Integer(2) + m - Integer(1)))
-            elif self.kind == 'ds':
+            if self.kind == 'ds':
                 return (jacobi_nc(inverse_jacobi_ds(x, m), m) /
                         (x ** Integer(2) + m))
-            elif self.kind == 'nc':
+            if self.kind == 'nc':
                 return (jacobi_ds(inverse_jacobi_nc(x, m), m) /
                         (-m * x ** Integer(2) + x ** Integer(2) + m))
-            elif self.kind == 'nd':
+            if self.kind == 'nd':
                 return (jacobi_sc(inverse_jacobi_nd(x, m), m) /
                         (x ** Integer(2) - Integer(1)))
-            elif self.kind == 'ns':
+            if self.kind == 'ns':
                 return Integer(1) / (jacobi_cs(inverse_jacobi_ns(x, m), m) *
                                      jacobi_ds(inverse_jacobi_ns(x, m), m))
-            elif self.kind == 'sc':
+            if self.kind == 'sc':
                 return (jacobi_nd(inverse_jacobi_sc(x, m), m) /
                         (x ** Integer(2) + Integer(1)))
-            elif self.kind == 'sd':
+            if self.kind == 'sd':
                 return (jacobi_cn(inverse_jacobi_sd(x, m), m) /
                         ((m - Integer(1)) * x ** Integer(2) + Integer(1)))
-            elif self.kind == 'sn':
+            if self.kind == 'sn':
                 return (jacobi_cd(inverse_jacobi_sn(x, m), m) /
                         (Integer(1) - x ** Integer(2)))
         elif diff_param == 1:
@@ -823,63 +832,63 @@ class InverseJacobi(BuiltinFunction):
                         ((m - Integer(1)) * inverse_jacobi_cd(x, m) +
                          elliptic_e(jacobi_am(inverse_jacobi_cd(x, m), m),
                                     m)))
-            elif self.kind == 'cn':
+            if self.kind == 'cn':
                 return ((-(Integer(1) / (Integer(2) * (-Integer(1) + m) * m))) *
                         (elliptic_e(jacobi_am(inverse_jacobi_cn(x, m), m),
                                     m) + (-Integer(1) + m) *
                          inverse_jacobi_cn(x, m) - m * x *
                          jacobi_sd(inverse_jacobi_cn(x, m), m)))
-            elif self.kind == 'cs':
+            if self.kind == 'cs':
                 return ((-(Integer(1) / (Integer(2) * (-Integer(1) + m) * m * (Integer(1) + x ** Integer(2))))) *
                         ((Integer(1) + x ** Integer(2)) *
                          elliptic_e(jacobi_am(inverse_jacobi_cs(x, m), m),
                                     m) + (-Integer(1) + m) * (Integer(1) + x ** Integer(2)) *
                          inverse_jacobi_cs(x, m) - m * x *
                          jacobi_nd(inverse_jacobi_cs(x, m), m)))
-            elif self.kind == 'dc':
+            if self.kind == 'dc':
                 return ((Integer(1) / (Integer(2) * (Integer(1) - m) * m)) *
                         (elliptic_e(jacobi_am(inverse_jacobi_dc(x, m), m),
                                     m) - (Integer(1) - m) *
                          inverse_jacobi_dc(x, m)))
-            elif self.kind == 'dn':
+            if self.kind == 'dn':
                 return ((Integer(1) / (Integer(2) * (Integer(1) - m) * m)) * ((m - Integer(1)) *
                         inverse_jacobi_dn(x, m) +
                         elliptic_e(jacobi_am(inverse_jacobi_dn(x, m), m), m) -
                         x * jacobi_sc(inverse_jacobi_dn(x, m), m)))
-            elif self.kind == 'ds':
+            if self.kind == 'ds':
                 return ((-(Integer(1) / (Integer(2) * (-Integer(1) + m) * m))) *
                         (elliptic_e(jacobi_am(inverse_jacobi_ds(x, m), m), m) +
                          (-Integer(1) + m) * inverse_jacobi_ds(x, m) -
                          (m * x * jacobi_nc(inverse_jacobi_ds(x, m), m)) /
                          (m + x ** Integer(2))))
-            elif self.kind == 'nc':
+            if self.kind == 'nc':
                 return ((Integer(1) / (Integer(2) * (-Integer(1) + m) * m * x)) * ((-x) *
                         (elliptic_e(jacobi_am(inverse_jacobi_nc(x, m), m), m) +
                          (-Integer(1) + m) * inverse_jacobi_nc(x, m)) + m *
                         jacobi_sd(inverse_jacobi_nc(x, m), m)))
-            elif self.kind == 'nd':
+            if self.kind == 'nd':
                 return ((Integer(1) / (Integer(2) * (m - Integer(1)) * m)) *
                         ((Integer(1) - m) * inverse_jacobi_nd(x, m) -
                          elliptic_e(jacobi_am(inverse_jacobi_nd(x, m), m), m) +
                          (Integer(1) / x) * jacobi_sc(inverse_jacobi_nd(x, m), m)))
-            elif self.kind == 'ns':
+            if self.kind == 'ns':
                 return ((Integer(1)/(Integer(2) * (m - Integer(1)) * m)) *
                         ((Integer(1) - m) * inverse_jacobi_ns(x, m) -
                          elliptic_e(jacobi_am(inverse_jacobi_ns(x, m), m), m) +
                          (m / x) * jacobi_cd(inverse_jacobi_ns(x, m), m)))
-            elif self.kind == 'sc':
+            if self.kind == 'sc':
                 return ((-(Integer(1) / (Integer(2) * (-Integer(1) + m) * m * (Integer(1) + x ** Integer(2))))) *
                         ((Integer(1) + x ** Integer(2)) *
                          elliptic_e(jacobi_am(inverse_jacobi_sc(x, m), m), m) +
                          (-Integer(1) + m) * (Integer(1) + x ** Integer(2)) * inverse_jacobi_sc(x, m) -
                          m * x * jacobi_nd(inverse_jacobi_sc(x, m), m)))
-            elif self.kind == 'sd':
+            if self.kind == 'sd':
                 return ((-(Integer(1) / (Integer(2) * (-Integer(1) + m) * m))) *
                         (elliptic_e(jacobi_am(inverse_jacobi_sd(x, m), m), m) +
                          (-Integer(1) + m) * inverse_jacobi_sd(x, m) -
                          (m * x * jacobi_nc(inverse_jacobi_sd(x, m), m)) /
                          (Integer(1) + m * x ** Integer(2))))
-            elif self.kind == 'sn':
+            if self.kind == 'sn':
                 return ((Integer(1) / (Integer(2) * (Integer(1) - m) * m)) *
                         (elliptic_e(jacobi_am(inverse_jacobi_sn(x, m), m), m) +
                          (-Integer(1) + m) * inverse_jacobi_sn(x, m) - m * x *
@@ -898,12 +907,13 @@ class InverseJacobi(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(inverse_jacobi_dn(x, 3))
+            sage: latex(inverse_jacobi_dn(x, 3))                                        # needs sage.symbolic
             \operatorname{arcdn}\left(x\middle|3\right)
         """
         return r"\operatorname{{arc{}}}\left({}\middle|{}\right)".format(self.kind,
                                                                          latex(x),
                                                                          latex(m))
+
 
 inverse_jacobi_nd = InverseJacobi('nd')
 inverse_jacobi_ns = InverseJacobi('ns')
@@ -925,7 +935,7 @@ def jacobi(kind, z, m, **kwargs):
 
     INPUT:
 
-    - ``kind`` -- a string of the form ``'pq'``, where ``p``, ``q`` are in
+    - ``kind`` -- string of the form ``'pq'``, where ``p``, ``q`` are in
       ``c``, ``d``, ``n``, ``s``
     - ``z`` -- a complex number
     - ``m`` -- a complex number; note that `m = k^2`, where `k` is
@@ -933,6 +943,7 @@ def jacobi(kind, z, m, **kwargs):
 
     EXAMPLES::
 
+        sage: # needs mpmath
         sage: jacobi('sn', 1, 1)
         tanh(1)
         sage: jacobi('cd', 1, 1/2)
@@ -942,36 +953,36 @@ def jacobi(kind, z, m, **kwargs):
         sage: (RDF(jacobi('cn', 1, 1/2)), RDF(jacobi('dn', 1, 1/2)),
         ....:  RDF(jacobi('cn', 1, 1/2) / jacobi('dn', 1, 1/2)))
         (0.5959765676721407, 0.8231610016315962, 0.7240097216593705)
-        sage: jsn = jacobi('sn', x, 1)
-        sage: P = plot(jsn, 0, 1)
+
+        sage: jsn = jacobi('sn', x, 1)                                                  # needs sage.symbolic
+        sage: P = plot(jsn, 0, 1)                                                       # needs sage.plot sage.symbolic
     """
     if kind == 'nd':
         return jacobi_nd(z, m, **kwargs)
-    elif kind == 'ns':
+    if kind == 'ns':
         return jacobi_ns(z, m, **kwargs)
-    elif kind == 'nc':
+    if kind == 'nc':
         return jacobi_nc(z, m, **kwargs)
-    elif kind == 'dn':
+    if kind == 'dn':
         return jacobi_dn(z, m, **kwargs)
-    elif kind == 'ds':
+    if kind == 'ds':
         return jacobi_ds(z, m, **kwargs)
-    elif kind == 'dc':
+    if kind == 'dc':
         return jacobi_dc(z, m, **kwargs)
-    elif kind == 'sn':
+    if kind == 'sn':
         return jacobi_sn(z, m, **kwargs)
-    elif kind == 'sd':
+    if kind == 'sd':
         return jacobi_sd(z, m, **kwargs)
-    elif kind == 'sc':
+    if kind == 'sc':
         return jacobi_sc(z, m, **kwargs)
-    elif kind == 'cn':
+    if kind == 'cn':
         return jacobi_cn(z, m, **kwargs)
-    elif kind == 'cd':
+    if kind == 'cd':
         return jacobi_cd(z, m, **kwargs)
-    elif kind == 'cs':
+    if kind == 'cs':
         return jacobi_cs(z, m, **kwargs)
-    else:
-        raise ValueError("kind must be one of 'nd', 'ns', 'nc', 'dn', "
-                         "'ds', 'dc', 'sn', 'sd', 'sc', 'cn', 'cd', 'cs'.")
+    raise ValueError("kind must be one of 'nd', 'ns', 'nc', 'dn', "
+                     "'ds', 'dc', 'sn', 'sd', 'sc', 'cn', 'cd', 'cs'.")
 
 
 def inverse_jacobi(kind, x, m, **kwargs):
@@ -986,7 +997,7 @@ def inverse_jacobi(kind, x, m, **kwargs):
 
     INPUT:
 
-    - ``kind`` -- a string of the form ``'pq'``, where ``p``, ``q`` are in
+    - ``kind`` -- string of the form ``'pq'``, where ``p``, ``q`` are in
       ``c``, ``d``, ``n``, ``s``
     - ``x`` -- a real number
     - ``m`` -- a real number; note that `m = k^2`, where `k` is the elliptic
@@ -994,20 +1005,24 @@ def inverse_jacobi(kind, x, m, **kwargs):
 
     EXAMPLES::
 
-        sage: jacobi('dn', inverse_jacobi('dn', 3, 0.4), 0.4)
+        sage: jacobi('dn', inverse_jacobi('dn', 3, 0.4), 0.4)                           # needs mpmath
         3.00000000000000
-        sage: inverse_jacobi('dn', 10, 1/10).n(digits=50)
+        sage: inverse_jacobi('dn', 10, 1/10).n(digits=50)                               # needs mpmath
         2.4777736267904273296523691232988240759001423661683*I
-        sage: inverse_jacobi_dn(x, 1)
+        sage: inverse_jacobi_dn(x, 1)                                                   # needs sage.symbolic
         arcsech(x)
-        sage: inverse_jacobi_dn(1, 3)
+        sage: inverse_jacobi_dn(1, 3)                                                   # needs mpmath
         0
+
+        sage: # needs sage.symbolic
         sage: m = var('m')
         sage: z = inverse_jacobi_dn(x, m).series(x, 4).subs(x=0.1, m=0.7)
         sage: jacobi_dn(z, 0.7)
         0.0999892750039819...
         sage: inverse_jacobi_nd(x, 1)
         arccosh(x)
+
+        sage: # needs mpmath
         sage: inverse_jacobi_nd(1, 2)
         0
         sage: inverse_jacobi_ns(10^-5, 3).n()
@@ -1020,35 +1035,35 @@ def inverse_jacobi(kind, x, m, **kwargs):
         0.499098231322220
         sage: inverse_jacobi('sn', 0.4707504, 0.5)
         0.499999911466555
-        sage: P = plot(inverse_jacobi('sn', x, 0.5), 0, 1)
+        sage: P = plot(inverse_jacobi('sn', x, 0.5), 0, 1)                              # needs sage.plot
     """
     if kind == 'nd':
         return inverse_jacobi_nd(x, m, **kwargs)
-    elif kind == 'ns':
+    if kind == 'ns':
         return inverse_jacobi_ns(x, m, **kwargs)
-    elif kind == 'nc':
+    if kind == 'nc':
         return inverse_jacobi_nc(x, m, **kwargs)
-    elif kind == 'dn':
+    if kind == 'dn':
         return inverse_jacobi_dn(x, m, **kwargs)
-    elif kind == 'ds':
+    if kind == 'ds':
         return inverse_jacobi_ds(x, m, **kwargs)
-    elif kind == 'dc':
+    if kind == 'dc':
         return inverse_jacobi_dc(x, m, **kwargs)
-    elif kind == 'sn':
+    if kind == 'sn':
         return inverse_jacobi_sn(x, m, **kwargs)
-    elif kind == 'sd':
+    if kind == 'sd':
         return inverse_jacobi_sd(x, m, **kwargs)
-    elif kind == 'sc':
+    if kind == 'sc':
         return inverse_jacobi_sc(x, m, **kwargs)
-    elif kind == 'cn':
+    if kind == 'cn':
         return inverse_jacobi_cn(x, m, **kwargs)
-    elif kind == 'cd':
+    if kind == 'cd':
         return inverse_jacobi_cd(x, m, **kwargs)
-    elif kind == 'cs':
+    if kind == 'cs':
         return inverse_jacobi_cs(x, m, **kwargs)
-    else:
-        raise ValueError("kind must be one of 'nd', 'ns', 'nc', 'dn', "
-                         "'ds', 'dc', 'sn', 'sd', 'sc', 'cn', 'cd', 'cs'.")
+    raise ValueError("kind must be one of 'nd', 'ns', 'nc', 'dn', "
+                     "'ds', 'dc', 'sn', 'sd', 'sc', 'cn', 'cd', 'cs'.")
+
 
 class JacobiAmplitude(BuiltinFunction):
     r"""
@@ -1073,16 +1088,16 @@ class JacobiAmplitude(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: jacobi_am(x, 0)
+            sage: jacobi_am(x, 0)                                                       # needs sage.symbolic
             x
-            sage: jacobi_am(0, x)
+            sage: jacobi_am(0, x)                                                       # needs sage.symbolic
             0
-            sage: jacobi_am(3, 4.)
+            sage: jacobi_am(3, 4.)                                                      # needs mpmath
             -0.339059208303591
         """
         if m == 0:
             return x
-        elif x == 0:
+        if x == 0:
             return Integer(0)
         return
 
@@ -1090,24 +1105,24 @@ class JacobiAmplitude(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: jacobi_am(1, 2).n(100)
+            sage: jacobi_am(1, 2).n(100)                                                # needs mpmath
             0.73704379494724574105101929735
         """
-        return utils.call(jacobi_am_f, x, m, parent=parent)
+        return _mpmath_utils_call(jacobi_am_f, x, m, parent=parent)
 
     def _derivative_(self, x, m, diff_param):
         r"""
         TESTS::
 
-            sage: diff(jacobi_am(x, 3), x)
+            sage: diff(jacobi_am(x, 3), x)                                              # needs sage.symbolic
             jacobi_dn(x, 3)
-            sage: diff(jacobi_am(3, x), x)
+            sage: diff(jacobi_am(3, x), x)                                              # needs sage.symbolic
             -1/2*(x*jacobi_cn(3, x)*jacobi_sn(3, x) -...
             (3*x + elliptic_e(jacobi_am(3, x), x) - 3)*jacobi_dn(3, x))/((x - 1)*x)
         """
         if diff_param == 0:
             return jacobi_dn(x, m)
-        elif diff_param == 1:
+        if diff_param == 1:
             return (((Integer(-1) + m) * x + elliptic_e(jacobi_am(x, m), m)) *
                     jacobi('dn', x, m) - m * jacobi('cn', x, m) *
                     jacobi('sn', x, m)) / (Integer(2) * (Integer(-1) + m) * m)
@@ -1125,7 +1140,7 @@ class JacobiAmplitude(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: latex(jacobi_am(3,x))
+            sage: latex(jacobi_am(3,x))                                                 # needs sage.symbolic
             \operatorname{am}\left(3\middle|x\right)
         """
         return r"\operatorname{{am}}\left({}\middle|{}\right)".format(latex(x),
@@ -1143,9 +1158,10 @@ def inverse_jacobi_f(kind, x, m):
 
     TESTS::
 
-        sage: from mpmath import ellipfun, chop
+        sage: from mpmath import ellipfun, chop                                         # needs mpmath
         sage: from sage.functions.jacobi import inverse_jacobi_f
 
+        sage: # needs mpmath
         sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.6, 0), 0))
         mpf('0.59999999999999998')
         sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.6, 1), 1))
@@ -1159,6 +1175,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('sn', inverse_jacobi_f('sn', 0.8, 4), 4))
         mpf('0.80000000000000004')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('ns', inverse_jacobi_f('ns', 0.8, 0), 0))
         mpf('0.80000000000000004')
         sage: chop(ellipfun('ns', inverse_jacobi_f('ns', -0.7, 1), 1))
@@ -1170,6 +1187,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('ns', inverse_jacobi_f('ns', -10, 6), 6))
         mpf('-10.0')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('cn', inverse_jacobi_f('cn', -10, 0), 0))
         mpf('-9.9999999999999982')
         sage: chop(ellipfun('cn', inverse_jacobi_f('cn', 50, 1), 1))
@@ -1185,6 +1203,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('cn', inverse_jacobi_f('cn', -2, 0.9), 0.9))
         mpf('-2.0')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('nc', inverse_jacobi_f('nc', -4, 0), 0))
         mpf('-3.9999999999999987')
         sage: chop(ellipfun('nc', inverse_jacobi_f('nc', 7, 1), 1))
@@ -1196,6 +1215,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('nc', inverse_jacobi_f('nc', -18, -4), -4))
         mpf('-17.999999999999925')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('dn', inverse_jacobi_f('dn', -0.3, 1), 1))
         mpf('-0.29999999999999999')
         sage: chop(ellipfun('dn', inverse_jacobi_f('dn', 1, -1), -1))
@@ -1213,6 +1233,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('dn', inverse_jacobi_f('dn', -1.9, 0.2), 0.2))
         mpf('-1.8999999999999999')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('nd', inverse_jacobi_f('nd', -1.9, 1), 1))
         mpf('-1.8999999999999999')
         sage: chop(ellipfun('nd', inverse_jacobi_f('nd', 1, -1), -1))
@@ -1224,6 +1245,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('nd', inverse_jacobi_f('nd', -3, 0.8), 0.8))
         mpf('-2.9999999999999996')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('sc', inverse_jacobi_f('sc', -3, 0), 0))
         mpf('-3.0')
         sage: chop(ellipfun('sc', inverse_jacobi_f('sc', 2, 1), 1))
@@ -1233,6 +1255,7 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('sc', inverse_jacobi_f('sc', -7, 3), 3))
         mpf('-7.0')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('cs', inverse_jacobi_f('cs', -7, 0), 0))
         mpf('-6.9999999999999991')
         sage: chop(ellipfun('cs', inverse_jacobi_f('cs', 8, 1), 1))
@@ -1244,18 +1267,19 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('cs', inverse_jacobi_f('cs', -6, 8), 8))
         mpf('-6.0000000000000018')
 
-        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', -6, 0), 0))
+        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', -6, 0), 0))                    # needs mpmath
         mpf('-6.0000000000000009')
-        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', 1, 3), 3))
+        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', 1, 3), 3))                     # needs mpmath
         mpf('1.0')
-        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', 6, 8), 8))
+        sage: chop(ellipfun('cd', inverse_jacobi_f('cd', 6, 8), 8))                     # needs mpmath
         mpf('6.0000000000000027')
 
-        sage: chop(ellipfun('dc', inverse_jacobi_f('dc', 5, 0), 0))
+        sage: chop(ellipfun('dc', inverse_jacobi_f('dc', 5, 0), 0))                     # needs mpmath
         mpf('5.0000000000000018')
-        sage: chop(ellipfun('dc', inverse_jacobi_f('dc', -4, 2), 2))
+        sage: chop(ellipfun('dc', inverse_jacobi_f('dc', -4, 2), 2))                    # needs mpmath
         mpf('-4.0000000000000018')
 
+        sage: # needs mpmath
         sage: chop(ellipfun('sd', inverse_jacobi_f('sd', -4, 0), 0))
         mpf('-3.9999999999999991')
         sage: chop(ellipfun('sd', inverse_jacobi_f('sd', 7, 1), 1))
@@ -1265,12 +1289,10 @@ def inverse_jacobi_f(kind, x, m):
         sage: chop(ellipfun('sd', inverse_jacobi_f('sd', 8, 0.8), 0.8))
         mpf('7.9999999999999991')
 
-        sage: chop(ellipfun('ds', inverse_jacobi_f('ds', 4, 0.25), 0.25))
+        sage: chop(ellipfun('ds', inverse_jacobi_f('ds', 4, 0.25), 0.25))               # needs mpmath
         mpf('4.0')
     """
-    from mpmath import mp
-
-    ctx = mp
+    from mpmath import mp as ctx
     prec = ctx.prec
     try:
         x = ctx.convert(x)
@@ -1280,9 +1302,9 @@ def inverse_jacobi_f(kind, x, m):
         if kind == 'sn':
             if m == 0:
                 return ctx.asin(x)
-            elif m == 1:
+            if m == 1:
                 return ctx.atanh(x)
-            elif x == 0:
+            if x == 0:
                 return ctx.zero
             sign = ctx.sign(x)  # sn is odd in x, so operate with abs(x) and
             x = abs(x)          # include the sign at the end
@@ -1290,7 +1312,7 @@ def inverse_jacobi_f(kind, x, m):
                 ctx.prec += 10
                 phi = ctx.asin(x)
                 return sign * ctx.ellipf(phi, m)
-            elif x <= 1 / ctx.sqrt(m):
+            if x <= 1 / ctx.sqrt(m):
                 K = ctx.ellipk(m)
                 ctx.prec += 10
                 xpn2 = x ** (-2)
@@ -1302,52 +1324,50 @@ def inverse_jacobi_f(kind, x, m):
                 ctx.prec += 10
                 phi = ctx.asin(omxpn2dm1.sqrt())
                 return sign * ctx.mpc(K, ctx.ellipf(phi, m1))
-            else:
-                ctx.prec += 10
-                m1 = 1 - m
-                K_prime = ctx.ellipk(m1)
-                sqrtm = ctx.sqrt(m)
-                ctx.prec += 10
-                xsqrtm = x * sqrtm
-                ctx.prec += 10
-                phi = ctx.asin(1 / xsqrtm)
-                ctx.prec += 10
-                return sign * ctx.mpc(ctx.ellipf(phi, m), K_prime)
+            ctx.prec += 10
+            m1 = 1 - m
+            K_prime = ctx.ellipk(m1)
+            sqrtm = ctx.sqrt(m)
+            ctx.prec += 10
+            xsqrtm = x * sqrtm
+            ctx.prec += 10
+            phi = ctx.asin(1 / xsqrtm)
+            ctx.prec += 10
+            return sign * ctx.mpc(ctx.ellipf(phi, m), K_prime)
         if kind == 'ns':
             if m == 0:
                 return ctx.acsc(x)
-            elif m == 1:
+            if m == 1:
                 return ctx.acoth(x)
-            elif x > 0:
+            if x > 0:
                 ctx.prec += 10
                 return inverse_jacobi_f('sn', 1 / x, m)
-            elif x == 0:
+            if x == 0:
                 ctx.prec += 10
                 return ctx.j * ctx.ellipk(1 - m)
-            else:
-                ctx.prec += 10
-                K_prime = ctx.ellipk(1 - m)
-                odx = 1 / x
-                ctx.prec += 10
-                arcsnodx = inverse_jacobi_f('sn', odx, m)
-                itK_prime = ctx.j * 2 * K_prime
-                ctx.prec += 10
-                return arcsnodx + itK_prime
+            ctx.prec += 10
+            K_prime = ctx.ellipk(1 - m)
+            odx = 1 / x
+            ctx.prec += 10
+            arcsnodx = inverse_jacobi_f('sn', odx, m)
+            itK_prime = ctx.j * 2 * K_prime
+            ctx.prec += 10
+            return arcsnodx + itK_prime
         if kind == 'cn':
             if m == 0:
                 return ctx.acos(x)
-            elif m == 1:
+            if m == 1:
                 return ctx.asech(x)
-            elif x == 1:
+            if x == 1:
                 return ctx.zero
-            elif 0 <= x < 1:
+            if 0 <= x < 1:
                 ctx.prec += 10
                 x2 = x ** 2
                 ctx.prec += 10
                 osx2 = 1 - x2
                 ctx.prec += 10
                 return ctx.ellipf(ctx.asin(ctx.sqrt(osx2)), m)
-            elif -1 <= x < 0:
+            if -1 <= x < 0:
                 K = ctx.ellipk(m)
                 ctx.prec += 10
                 x2 = x ** 2
@@ -1355,7 +1375,7 @@ def inverse_jacobi_f(kind, x, m):
                 osx2 = 1 - x2
                 ctx.prec += 10
                 return (2 * K) - ctx.ellipf(ctx.asin(ctx.sqrt(osx2)), m)
-            elif x > 1:
+            if x > 1:
                 ctx.prec += 10
                 m1 = 1 - m
                 xn2 = x ** (-2)
@@ -1363,7 +1383,7 @@ def inverse_jacobi_f(kind, x, m):
                 osx2 = 1 - xn2
                 ctx.prec += 10
                 return ctx.j * ctx.ellipf(ctx.asin(ctx.sqrt(osx2)), m1)
-            elif x < -1:
+            if x < -1:
                 K = ctx.ellipk(m)
                 ctx.prec += 10
                 m1 = 1 - m
@@ -1378,26 +1398,25 @@ def inverse_jacobi_f(kind, x, m):
         if kind == 'nc':
             if m == 0:
                 return ctx.asec(x)
-            elif m == 1:
+            if m == 1:
                 return ctx.acosh(x)
-            elif x == 1:
+            if x == 1:
                 return ctx.zero
-            elif x > 0:
+            if x > 0:
                 ctx.prec += 10
                 return inverse_jacobi_f('cn', 1 / x, m)
-            elif x == 0:
+            if x == 0:
                 ctx.prec += 10
                 return ctx.j * ctx.ellipk(1 - m)
-            else:
-                K = ctx.ellipk(m)
-                ctx.prec += 10
-                K_prime = ctx.ellipk(1 - m)
-                odx = 1 / x
-                ctx.prec += 10
-                arccnodx = inverse_jacobi_f('cn', odx, m)
-                tK = 2 * K
-                ctx.prec += 10
-                return arccnodx - tK + ctx.j * 2 * K_prime
+            K = ctx.ellipk(m)
+            ctx.prec += 10
+            K_prime = ctx.ellipk(1 - m)
+            odx = 1 / x
+            ctx.prec += 10
+            arccnodx = inverse_jacobi_f('cn', odx, m)
+            tK = 2 * K
+            ctx.prec += 10
+            return arccnodx - tK + ctx.j * 2 * K_prime
         if kind == 'dn':
             if x == 1:
                 return ctx.zero
@@ -1417,7 +1436,7 @@ def inverse_jacobi_f(kind, x, m):
                 osx2dm = osx2 / m
                 ctx.prec += 10
                 return ctx.ellipf(ctx.asin(ctx.sqrt(osx2dm)), m)
-            elif x > 1:
+            if x > 1:
                 ctx.prec += 10
                 xn2 = x ** (-2)
                 ctx.prec += 10
@@ -1429,7 +1448,7 @@ def inverse_jacobi_f(kind, x, m):
                 sqrtosxn2dosm1xn2 = ctx.sqrt(osxn2 / osm1xn2)
                 ctx.prec += 10
                 return ctx.j * ctx.ellipf(ctx.asin(sqrtosxn2dosm1xn2), m1)
-            elif 0 <= x < sqrtm1:
+            if 0 <= x < sqrtm1:
                 K = ctx.ellipk(m)
                 ctx.prec += 10
                 x2 = x ** 2
@@ -1446,7 +1465,7 @@ def inverse_jacobi_f(kind, x, m):
                 phi = ctx.asin(sqrtall)
                 ctx.prec += 10
                 return K + ctx.j * ctx.ellipf(phi, m1)
-            elif -sqrtm1 <= x < 0:
+            if -sqrtm1 <= x < 0:
                 K = ctx.ellipk(m)
                 K_prime = ctx.ellipk(m1)
                 ctx.prec += 10
@@ -1465,7 +1484,7 @@ def inverse_jacobi_f(kind, x, m):
                 phi = ctx.asin(sqrtall)
                 ctx.prec += 10
                 return K + ctx.j * (tK_prime - ctx.ellipf(phi, m1))
-            elif -1 <= x < -sqrtm1:
+            if -1 <= x < -sqrtm1:
                 K = ctx.ellipk(m)
                 K_prime = ctx.ellipk(m1)
                 ctx.prec += 10
@@ -1483,7 +1502,7 @@ def inverse_jacobi_f(kind, x, m):
                 phi = ctx.asin(sqrtall)
                 ctx.prec += 10
                 return (tK - ctx.ellipf(phi, m)) + (ctx.j * tK_prime)
-            elif x < -1:
+            if x < -1:
                 K = ctx.ellipk(m)
                 K_prime = ctx.ellipk(m1)
                 ctx.prec += 10
@@ -1504,60 +1523,56 @@ def inverse_jacobi_f(kind, x, m):
         if kind == 'nd':
             if m == 1:
                 return ctx.acosh(x)
-            elif x == 1:
+            if x == 1:
                 return ctx.zero
-            elif x > 0:
+            if x > 0:
                 ctx.prec += 10
                 return inverse_jacobi_f('dn', 1 / x, m)
-            elif x == 0:
+            if x == 0:
                 ctx.prec += 10
                 return ctx.j * ctx.ellipk(1 - m)
-            else:
-                K = ctx.ellipk(m)
-                ctx.prec += 10
-                tK = 2 * K
-                ctx.prec += 10
-                return inverse_jacobi_f('dn', 1 / x, m) - tK
+            K = ctx.ellipk(m)
+            ctx.prec += 10
+            tK = 2 * K
+            ctx.prec += 10
+            return inverse_jacobi_f('dn', 1 / x, m) - tK
         if kind == 'sc':
             if m == 0:
                 return ctx.atan(x)
-            elif m == 1:
+            if m == 1:
                 return ctx.asinh(x)
-            elif x == 0:
+            if x == 0:
                 return ctx.zero
-            else:
-                ctx.prec += 10
-                atanx = ctx.atan(x)
-                return ctx.ellipf(atanx, m)
+            ctx.prec += 10
+            atanx = ctx.atan(x)
+            return ctx.ellipf(atanx, m)
         if kind == 'cs':
             if m == 0:
                 return ctx.acot(x)
-            elif m == 1:
+            if m == 1:
                 return ctx.acsch(x)
-            elif x > 0:
+            if x > 0:
                 ctx.prec += 10
                 odx = 1 / x
                 ctx.prec += 10
                 return ctx.ellipf(ctx.atan(odx), m)
-            elif x == 0:
+            if x == 0:
                 return ctx.ellipk(m)
-            else:
-                K = ctx.ellipk(m)
-                ctx.prec += 10
-                odx = 1 / x
-                ctx.prec += 10
-                phi = ctx.atan(odx)
-                ctx.prec += 10
-                return ctx.ellipf(phi, m) + (2 * K)
+            K = ctx.ellipk(m)
+            ctx.prec += 10
+            odx = 1 / x
+            ctx.prec += 10
+            phi = ctx.atan(odx)
+            ctx.prec += 10
+            return ctx.ellipf(phi, m) + (2 * K)
         if kind == 'cd':
             if m == 0:
                 return ctx.acos(x)
-            elif x == 1:
+            if x == 1:
                 return ctx.zero
-            else:
-                K = ctx.ellipk(m)
-                ctx.prec += 10
-                return inverse_jacobi_f('sn', x, m) - K
+            K = ctx.ellipk(m)
+            ctx.prec += 10
+            return inverse_jacobi_f('sn', x, m) - K
         if kind == 'dc':
             if m == 0:
                 return ctx.asec(x)
@@ -1567,39 +1582,37 @@ def inverse_jacobi_f(kind, x, m):
         if kind == 'sd':
             if m == 0:
                 return ctx.asin(x)
-            elif m == 1:
+            if m == 1:
                 return ctx.asinh(x)
-            elif x == 0:
+            if x == 0:
                 return ctx.zero
-            else:
-                if m > 1:
-                    raise ValueError('m must be <= 1')
-                K = ctx.ellipk(m)
-                ctx.prec += 10
-                m1 = 1 - m
-                ctx.prec += 10
-                sqrtm1 = ctx.sqrt(m1)
-                ctx.prec += 10
-                xsqrtm1 = x * sqrtm1
-                ctx.prec += 10
-                return inverse_jacobi_f('cn', xsqrtm1, m) + K
+            if m > 1:
+                raise ValueError('m must be <= 1')
+            K = ctx.ellipk(m)
+            ctx.prec += 10
+            m1 = 1 - m
+            ctx.prec += 10
+            sqrtm1 = ctx.sqrt(m1)
+            ctx.prec += 10
+            xsqrtm1 = x * sqrtm1
+            ctx.prec += 10
+            return inverse_jacobi_f('cn', xsqrtm1, m) + K
         if kind == 'ds':
             if m == 0:
                 return ctx.acsc(x)
-            elif m == 1:
+            if m == 1:
                 return ctx.acsch(x)
-            else:
-                if m > 1:
-                    raise ValueError('m must be <= 1')
-                K = ctx.ellipk(m)
-                ctx.prec += 10
-                m1 = 1 - m
-                ctx.prec += 10
-                sqrtm1 = ctx.sqrt(m1)
-                ctx.prec += 10
-                xdsqrtm1 = x / sqrtm1
-                ctx.prec += 10
-                return inverse_jacobi_f('nc', xdsqrtm1, m) + K
+            if m > 1:
+                raise ValueError('m must be <= 1')
+            K = ctx.ellipk(m)
+            ctx.prec += 10
+            m1 = 1 - m
+            ctx.prec += 10
+            sqrtm1 = ctx.sqrt(m1)
+            ctx.prec += 10
+            xdsqrtm1 = x / sqrtm1
+            ctx.prec += 10
+            return inverse_jacobi_f('nc', xdsqrtm1, m) + K
     finally:
         ctx.prec = prec
 
@@ -1611,6 +1624,7 @@ def jacobi_am_f(x, m):
 
     TESTS::
 
+        sage: # needs mpmath
         sage: from mpmath import ellipf
         sage: from sage.functions.jacobi import jacobi_am_f
         sage: ellipf(jacobi_am_f(0.5, 1), 1)
@@ -1626,9 +1640,7 @@ def jacobi_am_f(x, m):
         sage: jacobi_am_f(-3, 2)
         mpf('0.36067407399586108')
     """
-    from mpmath import mp
-
-    ctx = mp
+    from mpmath import mp as ctx
     prec = ctx.prec
     try:
         x = ctx.convert(x)
@@ -1641,7 +1653,7 @@ def jacobi_am_f(x, m):
             tanhx = ctx.tanh(x)
             ctx.prec += 10
             return ctx.asin(tanhx)
-        elif abs(m) > 1:
+        if abs(m) > 1:
             ctx.prec += 10
             # Real values needed for atan2; as per "Handbook of Elliptic
             # Integrals for Engineers and Scientists" 121.02, sn is real for
@@ -1650,32 +1662,30 @@ def jacobi_am_f(x, m):
             cnx = ctx.ellipfun('cn', x, m).real
             ctx.prec += 10
             return ctx.atan2(snx, cnx)
-        else:
+        ctx.prec += 10
+        K = ctx.ellipk(m)
+        if abs(x) <= K:
+            snx = ctx.ellipfun('sn', x, m).real
+            cnx = ctx.ellipfun('cn', x, m).real
             ctx.prec += 10
-            K = ctx.ellipk(m)
-            if abs(x) <= K:
-                snx = ctx.ellipfun('sn', x, m).real
-                cnx = ctx.ellipfun('cn', x, m).real
-                ctx.prec += 10
-                return ctx.atan2(snx, cnx)
-            else:
-                # Do argument reduction on x to end up with z = x - 2nK, with
-                # abs(z) <= K
-                ctx.prec += 10
-                tK = 2 * K
-                ctx.prec += 10
-                n = ctx.floor(x / tK)
-                ctx.prec += 10
-                tnK = n * tK
-                npi = n * ctx.pi()
-                ctx.prec += 10
-                z = x - tnK
-                ctx.prec += 10
-                # z (and therefore sn(z, m) and cn(z, m)) is real because K(m)
-                # is real for abs(m) <= 1.
-                snz = ctx.ellipfun('sn', z, m).real
-                cnz = ctx.ellipfun('cn', z, m).real
-                ctx.prec += 10
-                return ctx.atan2(snz, cnz) + npi
+            return ctx.atan2(snx, cnx)
+        # Do argument reduction on x to end up with z = x - 2nK, with
+        # abs(z) <= K
+        ctx.prec += 10
+        tK = 2 * K
+        ctx.prec += 10
+        n = ctx.floor(x / tK)
+        ctx.prec += 10
+        tnK = n * tK
+        npi = n * ctx.pi()
+        ctx.prec += 10
+        z = x - tnK
+        ctx.prec += 10
+        # z (and therefore sn(z, m) and cn(z, m)) is real because K(m)
+        # is real for abs(m) <= 1.
+        snz = ctx.ellipfun('sn', z, m).real
+        cnz = ctx.ellipfun('cn', z, m).real
+        ctx.prec += 10
+        return ctx.atan2(snz, cnz) + npi
     finally:
         ctx.prec = prec

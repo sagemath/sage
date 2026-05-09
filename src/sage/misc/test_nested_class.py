@@ -36,14 +36,13 @@ alternative is to use ClasscallMetaclass as metaclass::
 
     sage: P = TestParent4()
     sage: TestSuite(P).run()
-
 """
-#*****************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
-#******************************************************************************
+# ******************************************************************************
 
 __all__ = []  # Don't document any parents
 
@@ -63,7 +62,7 @@ class TestParent1(Parent):
             <sage.misc.test_nested_class.TestParent1_with_category object at ...>
         """
         from sage.categories.sets_cat import Sets
-        Parent.__init__(self, category = Sets())
+        Parent.__init__(self, category=Sets())
 
     class Element(ElementWrapper):
         pass
@@ -80,7 +79,7 @@ class TestParent2(Parent, metaclass=NestedClassMetaclass):
             TypeError: metaclass conflict: the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases
         """
         from sage.categories.sets_cat import Sets
-        Parent.__init__(self, category = Sets())
+        Parent.__init__(self, category=Sets())
 
     class Element(ElementWrapper):
         pass
@@ -96,7 +95,7 @@ class TestParent3(UniqueRepresentation, Parent):
             <sage.misc.test_nested_class.TestParent3_with_category object at ...>
         """
         from sage.categories.sets_cat import Sets
-        Parent.__init__(self, category = Sets())
+        Parent.__init__(self, category=Sets())
 
     class Element(ElementWrapper):
         pass
@@ -150,34 +149,34 @@ class TestParent4(Parent, metaclass=ClasscallMetaclass):
 
 
 # Class for tests:
-class B():
+class B:
     """
     A normal external class.
     """
     pass
 
 
-class ABB():
-    class B():
+class ABB:
+    class B:
         """
-        This class is broken and can't be pickled.
-        A warning is emmited during compilation.
+        This class is broken and cannot be pickled.
+        A warning is emitted during compilation.
         """
         pass
 
 
-class ABL():
+class ABL:
     """
     There is no problem here.
     """
     B = B
 
 
-class ALB():
+class ALB:
     """
     There is a nested class just below. Which can't be properly sphinxed.
     """
-    class C():
+    class C:
         """
         Internal C class.
 
@@ -186,11 +185,12 @@ class ALB():
         """
         pass
 
+
 C = ALB.C
 
 
 class ABBMeta(metaclass=NestedClassMetaclass):
-    class B():
+    class B:
         """
         B interne
         """
@@ -205,7 +205,7 @@ class ALBMeta(metaclass=NestedClassMetaclass):
     """
     There is a nested class just below which is properly sphinxed.
     """
-    class CMeta():
+    class CMeta:
         """
         B interne
         """
@@ -222,6 +222,6 @@ class TestNestedParent(UniqueRepresentation, Parent):
     See the test in ``sage.misc.sageinspect.sage_getsourcelines``.
     """
 
-    class Element():
+    class Element:
         "This is a dummy element class"
         pass

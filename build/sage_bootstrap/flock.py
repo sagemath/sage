@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-bootstrap-python
+#!/usr/bin/env python3
 # vim: set filetype=python:
 """
 This script runs the given command under a file lock (similar to the flock
@@ -12,9 +12,10 @@ command on some systems).
 
 import fcntl
 import os
-import pipes
 import sys
 import argparse
+
+from sage_bootstrap.compat import quote
 
 
 class FileType(argparse.FileType):
@@ -105,7 +106,7 @@ def run(argv=None):
             kind = "exclusive"
 
         sys.stderr.write("Waiting for {0} lock to run {1} ... ".format(
-            kind, ' '.join(pipes.quote(arg) for arg in command)))
+            kind, ' '.join(quote(arg) for arg in command)))
         fcntl.flock(lock, locktype)
         sys.stderr.write("ok\n")
 

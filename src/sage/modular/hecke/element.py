@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Elements of Hecke modules
 
@@ -6,7 +7,7 @@ AUTHORS:
 - William Stein
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -20,24 +21,14 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.structure.richcmp import richcmp, op_NE
+from typing import Self
+
 from sage.structure.element import ModuleElement
+from sage.structure.richcmp import op_NE, richcmp
 
-def is_HeckeModuleElement(x):
-    """
-    Return True if x is a Hecke module element, i.e., of type HeckeModuleElement.
-
-    EXAMPLES::
-
-        sage: sage.modular.hecke.all.is_HeckeModuleElement(0)
-        False
-        sage: sage.modular.hecke.all.is_HeckeModuleElement(BrandtModule(37)([1,2,3]))
-        True
-    """
-    return isinstance(x, HeckeModuleElement)
 
 class HeckeModuleElement(ModuleElement):
     """
@@ -147,7 +138,7 @@ class HeckeModuleElement(ModuleElement):
         EXAMPLES::
 
             sage: M = ModularSymbols(11, 2)
-            sage: M.0 == M.1 # indirect doctest
+            sage: M.0 == M.1  # indirect doctest
             False
             sage: M.0 == (M.1 + M.0 - M.1)
             True
@@ -180,7 +171,7 @@ class HeckeModuleElement(ModuleElement):
             sage: BrandtModule(37)([0,1,-1])._lmul_(3)
             (0, 3, -3)
         """
-        return self.parent()(self.element()*x)
+        return self.parent()(self.element() * x)
 
     def _rmul_(self, x):
         """
@@ -200,7 +191,7 @@ class HeckeModuleElement(ModuleElement):
         """
         return self.parent()(-self.element())
 
-    def _pos_(self):
+    def _pos_(self) -> Self:
         """
         EXAMPLES::
 
@@ -218,9 +209,9 @@ class HeckeModuleElement(ModuleElement):
         """
         return self.parent()(self.element() - right.element())
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
-        Return True if this element is cuspidal.
+        Return ``True`` if this element is cuspidal.
 
         EXAMPLES::
 
@@ -241,20 +232,20 @@ class HeckeModuleElement(ModuleElement):
 
         TESTS:
 
-        Verify that :trac:`21497` is fixed::
+        Verify that :issue:`21497` is fixed::
 
             sage: M = ModularSymbols(Gamma0(3),weight=22,sign=1)
             sage: N = next(S for S in M.decomposition(anemic=False) if S.hecke_matrix(3).trace()==-128844)
             sage: [g.is_cuspidal() for g in N.gens()]
             [True, True]
-
         """
-        return (self in self.parent().ambient().cuspidal_submodule())
+        return self in self.parent().ambient().cuspidal_submodule()
 
-    def is_eisenstein(self):
+    def is_eisenstein(self) -> bool:
         r"""
-        Return True if this element is Eisenstein. This makes sense for both
-        modular forms and modular symbols.
+        Return ``True`` if this element is Eisenstein.
+
+        This makes sense for both modular forms and modular symbols.
 
         EXAMPLES::
 
@@ -269,12 +260,13 @@ class HeckeModuleElement(ModuleElement):
             sage: EllipticCurve('37a1').newform().element().is_eisenstein()
             False
         """
-        return (self in self.parent().ambient().eisenstein_submodule())
+        return self in self.parent().ambient().eisenstein_submodule()
 
-    def is_new(self, p=None):
+    def is_new(self, p=None) -> bool:
         r"""
-        Return True if this element is p-new. If p is None, return True if the
-        element is new.
+        Return ``True`` if this element is `p`-new.
+
+        If `p` is ``None``, return ``True`` if the element is new.
 
         EXAMPLES::
 
@@ -285,12 +277,13 @@ class HeckeModuleElement(ModuleElement):
             sage: CuspForms(22, 2).0.is_new()
             False
         """
-        return (self in self.parent().new_submodule(p))
+        return self in self.parent().new_submodule(p)
 
-    def is_old(self, p=None):
+    def is_old(self, p=None) -> bool:
         r"""
-        Return True if this element is p-old. If p is None, return True if the
-        element is old.
+        Return ``True`` if this element is `p`-old.
+
+        If `p` is ``None``, return ``True`` if the element is old.
 
         EXAMPLES::
 
@@ -305,4 +298,4 @@ class HeckeModuleElement(ModuleElement):
             sage: EisensteinForms(144, 2).1.is_old(2) # not implemented
             False
         """
-        return (self in self.parent().old_submodule(p))
+        return self in self.parent().old_submodule(p)

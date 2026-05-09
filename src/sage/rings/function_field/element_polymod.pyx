@@ -1,20 +1,28 @@
-# sage.doctest: optional - sage.rings.function_field
+# sage.doctest: needs sage.rings.function_field
 r"""
 Elements of function fields: extension
 """
 
-#*****************************************************************************
-#       Copyright (C) 2023 Kwankyu Lee <ekwankyu@gmail.com>
+# *****************************************************************************
+#       Copyright (C) 2010      William Stein <wstein@gmail.com>
+#                     2010      Robert Bradshaw <robertwb@math.washington.edu>
+#                     2011-2020 Julian Rueth <julian.rueth@gmail.com>
+#                     2011      Maarten Derickx <m.derickx.student@gmail.com>
+#                     2015      Nils Bruin
+#                     2016      Frédéric Chapoton
+#                     2017-2019 Kwankyu Lee
+#                     2018-2020 Travis Scrimshaw
+#                     2019      Brent Baccala
+#                     2021      Saher Amasha
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.structure.richcmp cimport richcmp, richcmp_not_equal
-from sage.structure.element cimport FieldElement, RingElement, ModuleElement, Element
+from sage.structure.richcmp cimport richcmp
+from sage.structure.element cimport FieldElement
 
 from sage.rings.function_field.element cimport FunctionFieldElement
 
@@ -76,7 +84,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
     def __bool__(self):
         """
-        Return True if the element is not zero.
+        Return ``True`` if the element is not zero.
 
         EXAMPLES::
 
@@ -106,7 +114,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
     cpdef _richcmp_(self, other, int op):
         """
-        Do rich comparison with the other element with respect to ``op``
+        Do rich comparison with the other element with respect to ``op``.
 
         EXAMPLES::
 
@@ -249,7 +257,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -268,24 +276,23 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.finite_rings
-            sage: L(y^3).nth_root(3)                                                    # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(3))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: L(y^3).nth_root(3)
             y
-            sage: L(y^9).nth_root(-9)                                                   # optional - sage.rings.finite_rings
+            sage: L(y^9).nth_root(-9)
             1/x*y
 
         This also works for inseparable extensions::
 
-            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^3 - x^2)                                        # optional - sage.rings.finite_rings
-            sage: L(x).nth_root(3)^3                                                    # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(3))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^3 - x^2)
+            sage: L(x).nth_root(3)^3
             x
-            sage: L(x^9).nth_root(-27)^-27                                              # optional - sage.rings.finite_rings
+            sage: L(x^9).nth_root(-27)^-27
             x^9
-
         """
         if n == 1:
             return self
@@ -299,7 +306,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         # reduce to the separable case
         poly = self._parent._polynomial
         if not poly.gcd(poly.derivative()).is_one():
-            L, from_L, to_L = self._parent.separable_model(('t', 'w'))
+            _, from_L, to_L = self._parent.separable_model(('t', 'w'))
             return from_L(to_L(self).nth_root(n))
 
         constant_base_field = self._parent.constant_base_field()
@@ -309,13 +316,13 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         raise NotImplementedError("nth_root() not implemented for this n")
 
-    cpdef bint is_nth_power(self, n):
+    cpdef bint is_nth_power(self, n) noexcept:
         r"""
         Return whether this element is an ``n``-th power in the function field.
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         ALGORITHM:
 
@@ -329,14 +336,13 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.finite_rings
-            sage: y.is_nth_power(2)                                                     # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(4))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: y.is_nth_power(2)
             False
-            sage: L(x).is_nth_power(2)                                                  # optional - sage.rings.finite_rings
+            sage: L(x).is_nth_power(2)
             True
-
         """
         if n == 0:
             return self.is_one()
@@ -348,7 +354,7 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
         # reduce to the separable case
         poly = self._parent._polynomial
         if not poly.gcd(poly.derivative()).is_one():
-            L, from_L, to_L = self._parent.separable_model(('t', 'w'))
+            _, _, to_L = self._parent.separable_model(('t', 'w'))
             return to_L(self).is_nth_power(n)
 
         constant_base_field = self._parent.constant_base_field()
@@ -366,17 +372,17 @@ cdef class FunctionFieldElement_polymod(FunctionFieldElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(3))                                          # optional - sage.rings.finite_rings
-            sage: R.<y> = K[]                                                           # optional - sage.rings.finite_rings
-            sage: L.<y> = K.extension(y^2 - x)                                          # optional - sage.rings.finite_rings
-            sage: (y^3).nth_root(3)  # indirect doctest                                 # optional - sage.rings.finite_rings
+            sage: K.<x> = FunctionField(GF(3))
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: (y^3).nth_root(3)  # indirect doctest
             y
         """
         cdef Py_ssize_t deg = self._parent.degree()
         if deg == 1:
             return self._parent(self._x[0].nth_root(self._parent.characteristic()))
 
-        from .function_field_rational import RationalFunctionField
+        from sage.rings.function_field.function_field_rational import RationalFunctionField
         if not isinstance(self.base_ring(), RationalFunctionField):
             raise NotImplementedError("only implemented for simple extensions of function fields")
         # compute a representation of the generator y of the field in terms of powers of y^p

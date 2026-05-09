@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Generic structures for linear codes over the rank metric
 
@@ -7,10 +7,10 @@ Rank Metric
 
 In coding theory, the most common metric is the Hamming metric, where distance
 between two codewords is  given by the number of positions in which they differ.
-An alternative to this is the rank metric. Take two fields, `F_q` and `F_{q^m}`,
+An alternative to this is the rank metric. Take two fields, `\GF{q}` and `\GF{q^m}`,
 and define a code `C` to be a set of vectors of length `n` with entries from
-`F_{q^m}`. Let `c` be a codeword. We can represent it as an `m \times n` matrix
-`M` over `F_q`.
+`\GF{q^m}`. Let `c` be a codeword. We can represent it as an `m \times n` matrix
+`M` over `\GF{q}`.
 
 A detailed description on the relationship between the two representations can
 be found in :meth:`sage.coding.linear_rank_metric.to_matrix_representation`
@@ -22,9 +22,9 @@ representation of `a - b`. A weight of a codeword `c` is the rank of the matrix
 representation of `c`.
 
 This module allows representing rank metric codes which are linear over the
-big field `F_{q^m}`, i.e. the usual linearity condition when the codewords are
+big field `\GF{q^m}`, i.e. the usual linearity condition when the codewords are
 considered in vector form. One can also consider rank metric codes which are
-only linear over `F_q`, but these are not currently supported in SageMath.
+only linear over `\GF{q}`, but these are not currently supported in SageMath.
 
 Note that linear rank metric codes per the definition of this file are
 mathematically just linear block codes, and so could be considered as a
@@ -91,6 +91,7 @@ Read more about
 AUTHORS:
 
 - Marketa Slukova (2019-08-16): initial version
+- Camille Garnier and Rubén Muñoz-\-Bertrand (2024-02-13): added rank_support_of_vector, and corrected the documentation
 
 TESTS::
 
@@ -112,8 +113,8 @@ TESTS::
 # ****************************************************************************
 
 from sage.categories.fields import Fields
-from sage.matrix.constructor import Matrix
-from sage.structure.element import is_Matrix, is_Vector
+from sage.matrix.constructor import matrix
+from sage.structure.element import Matrix, Vector
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import Infinity
 
@@ -127,28 +128,28 @@ def to_matrix_representation(v, sub_field=None, basis=None):
     Return a matrix representation of ``v`` over ``sub_field`` in terms of
     ``basis``.
 
-    Let `(b_1, b_2, \ldots, b_m)`, `b_i \in GF(q^m)`, be a basis of `GF(q^m)` as
-    a vector space over `GF(q)`. Take an element `x \in GF(q^m)`. We can write
+    Let `(b_1, b_2, \ldots, b_m)`, `b_i \in GF(q^m)`, be a basis of `\GF{q^m}` as
+    a vector space over `\GF{q}`. Take an element `x \in \GF{q^m}`. We can write
     `x` as `x = u_1 b_1 + u_2 b_2 + \ldots u_m b_m`, where `u_i \in GF(q)`. This
-    way we can represent an element from `GF(q^m)` as a vector of length `m`
-    over `GF(q)`.
+    way we can represent an element from `\GF{q^m}` as a vector of length `m`
+    over `\GF{q}`.
 
-    Given a vector ``v`` of length `n` over some field `F_{q^m}`, we can
+    Given a vector ``v`` of length `n` over some field `\GF{q^m}`, we can
     represent each entry as a vector of length `m`, yielding an `m \times n`
     matrix over ``sub_field``. In case ``sub_field`` is not given, we take the
-    prime subfield `F_p` of `F_{q^m}`.
+    prime subfield `\GF{p}` of `\GF{q^m}`.
 
     INPUT:
 
-    - ``v`` -- a vector over some field `F_{q^m}`
+    - ``v`` -- a vector over some field `\GF{q^m}`
 
-    - ``sub_field`` -- (default: ``None``) a sub field of `F_{q^m}`. If not
-      specified, it is the prime subfield `F_p` of `F_{q^m}`.
+    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`; if not
+      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`
 
-    - ``basis`` -- (default: ``None``) a basis of `F_{q^m}` as a vector space over
-      ``sub_field``. If not specified, given that `q = p^s`, let
-      `1,\beta,\ldots,\beta^{sm}` be the power basis that SageMath uses to
-      represent `F_{q^m}`. The default basis is then `1,\beta,\ldots,\beta^{m-1}`.
+    - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
+      ``sub_field``. If not specified, the default basis is
+      `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator of `\GF{q^m}`
+      given by SageMath.
 
     EXAMPLES::
 
@@ -166,7 +167,7 @@ def to_matrix_representation(v, sub_field=None, basis=None):
         ...
         TypeError: Input must be a vector
     """
-    if not is_Vector(v):
+    if not isinstance(v, Vector):
         raise TypeError("Input must be a vector")
     base_field = v.base_ring()
     if not sub_field:
@@ -174,32 +175,33 @@ def to_matrix_representation(v, sub_field=None, basis=None):
     n = v.length()
     m = base_field.degree()//sub_field.degree()
     extension, to_big_field, from_big_field = base_field.vector_space(sub_field, basis, map=True)
-    return Matrix(sub_field, m, n, lambda i, j: from_big_field(v[j])[i])
+    return matrix(sub_field, m, n, lambda i, j: from_big_field(v[j])[i])
+
 
 def from_matrix_representation(w, base_field=None, basis=None):
     r"""
     Return a vector representation of a matrix ``w`` over ``base_field`` in terms
     of ``basis``.
 
-    Given an `m \times n` matrix over `F_q` and some ``basis`` of `F_{q^m}`
-    over `F_q`, we can represent each of its columns as an element of `F_{q^m}`,
-    yielding a vector of length `n` over `F_q`.
+    Given an `m \times n` matrix over `\GF{q}` and some ``basis`` of `\GF{q^m}`
+    over `\GF{q}`, we can represent each of its columns as an element of `\GF{q^m}`,
+    yielding a vector of length `n` over `\GF{q}`.
 
-    In case ``base_field`` is not given, we take `F_{q^m}`, the field extension of
-    `F_q` of degree `m`, the number of rows of ``w``.
+    In case ``base_field`` is not given, we take `\GF{q^m}`, the field extension of
+    `\GF{q}` of degree `m`, the number of rows of ``w``.
 
     INPUT:
 
-    - ``w`` -- a matrix over some field `F_q`
+    - ``w`` -- a matrix over some field `\GF{q}`
 
-    - ``base_field`` -- (default: ``None``) an extension field of `F_q`. If not
-      specified, it is the field `F_{q^m}`, where `m` is the number of rows of
+    - ``base_field`` -- (default: ``None``) an extension field of `\GF{q}`. If not
+      specified, it is the field `\GF{q^m}`, where `m` is the number of rows of
       ``w``.
 
-    - ``basis`` -- (default: ``None``) a basis of `F_{q^m}` as a vector space over
-      ``F_q``. If not specified, given that `q = p^s`, let
-      `1,\beta,\ldots,\beta^{sm}` be the power basis that SageMath uses to
-      represent `F_{q^m}`. The default basis is then `1,\beta,\ldots,\beta^{m-1}`.
+    - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
+      `\GF{q}`. If not specified, the default basis is
+      `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator
+      of `\GF{q^m}` given by SageMath.
 
     EXAMPLES::
 
@@ -214,35 +216,34 @@ def from_matrix_representation(w, base_field=None, basis=None):
         ...
         TypeError: Input must be a matrix
     """
-    if not is_Matrix(w):
+    if not isinstance(w, Matrix):
         raise TypeError("Input must be a matrix")
     sub_field = w.base_ring()
     if not base_field:
         base_field = sub_field.extension(w.nrows())
-    v = []
     extension, to_big_field, from_big_field = base_field.vector_space(sub_field, basis, map=True)
-    for i in range(w.ncols()):
-        v.append(to_big_field(w.column(i)))
+    v = [to_big_field(w.column(i)) for i in range(w.ncols())]
     return vector(v)
+
 
 def rank_weight(c, sub_field=None, basis=None):
     r"""
     Return the rank of ``c`` as a matrix over ``sub_field``.
 
-    If ``c`` is a vector over some field `F_{q^m}`, the function converts it
-    into a matrix over `F_q`.
+    If ``c`` is a vector over some field `\GF{q^m}`, the function converts it
+    into a matrix over ``sub_field```.
 
     INPUT:
 
-    - ``c`` -- a vector over some field `F_{q^m}`; or a matrix over `F_q`
+    - ``c`` -- a vector over some field `\GF{q^m}`; or a matrix over `\GF{q}`
 
-    - ``sub_field`` -- (default: ``None``) a sub field of `F_{q^m}`. If not
-      specified, it is the prime subfield `F_p` of `F_{q^m}`.
+    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`; if not
+      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`
 
-    - ``basis`` -- (default: ``None``) a basis of `F_{q^m}` as a vector space over
-      ``sub_field``. If not specified, given that `q = p^s`, let
-      `1,\beta,\ldots,\beta^{sm}` be the power basis that SageMath uses to
-      represent `F_{q^m}`. The default basis is then `1,\beta,\ldots,\beta^{m-1}`.
+    - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
+      ``sub_field``. If not specified, the default basis is
+      `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator
+      of `\GF{q^m}` given by SageMath.
 
     EXAMPLES::
 
@@ -252,34 +253,35 @@ def rank_weight(c, sub_field=None, basis=None):
         sage: rank_weight(a, GF(4))
         2
     """
-    if is_Vector(c):
+    if isinstance(c, Vector):
         c = to_matrix_representation(c, sub_field, basis)
     return c.rank()
+
 
 def rank_distance(a, b, sub_field=None, basis=None):
     r"""
     Return the rank of ``a`` - ``b`` as a matrix over ``sub_field``.
 
-    Take two vectors ``a``, ``b`` over some field `F_{q^m}`. This function
-    converts them to matrices over `F_q` and calculates the rank of their
+    Take two vectors ``a``, ``b`` over some field `\GF{q^m}`. This function
+    converts them to matrices over `\GF{q}` and calculates the rank of their
     difference.
 
-    If ``sub_field`` is not specified, we take the prime subfield `F_q` of
-    `F_{q^m}`.
+    If ``sub_field`` is not specified, we take the prime subfield `\GF{q}` of
+    `\GF{q^m}`.
 
     INPUT:
 
-    - ``a`` -- a vector over some field `F_{q^m}`
+    - ``a`` -- a vector over some field `\GF{q^m}`
 
-    - ``b`` -- a vector over some field `F_{q^m}`
+    - ``b`` -- a vector over some field `\GF{q^m}`
 
-    - ``sub_field`` -- (default: ``None``) a sub field of `F_{q^m}`. If not
-      specified, it is the prime subfield `F_p` of `F_{q^m}`.
+    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`; if not
+      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`
 
-    - ``basis`` -- (default: ``None``) a basis of `F_{q^m}` as a vector space over
-      ``sub_field``. If not specified, given that `q = p^s`, let
-      `1,\beta,\ldots,\beta^{sm}` be the power basis that SageMath uses to
-      represent `F_{q^m}`. The default basis is then `1,\beta,\ldots,\beta^{m-1}`.
+    - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
+      ``sub_field``. If not specified, the default basis is
+      `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator
+      of `\GF{q^m}` given by SageMath.
 
     EXAMPLES::
 
@@ -310,7 +312,7 @@ def rank_distance(a, b, sub_field=None, basis=None):
     """
     if not (a.base_ring() == b.base_ring()):
         raise ValueError("The base field of {} and {} has to be the same".format(a, b))
-    if not (is_Vector(a) and is_Vector(b)):
+    if not (isinstance(a, Vector) and isinstance(b, Vector)):
         raise TypeError("Both inputs have to be vectors")
     if not len(a) == len(b):
         raise ValueError("The length of {} and {} has to be the same".format(a, b))
@@ -331,8 +333,8 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
     This class is intended for codes which are linear over the ``base_field``.
 
     Codewords of rank metric codes have two representations. They can either be
-    written as a vector of length `n` over `GF(q^m)`, or an `m \times n` matrix
-    over `GF(q)`. This implementation principally uses the vector representation.
+    written as a vector of length `n` over `\GF{q^m}`, or an `m \times n` matrix
+    over `\GF{q}`. This implementation principally uses the vector representation.
     However, one can always get the matrix representation using the
     :meth:`sage.coding.linear_rank_metric.AbstractLinearRankMetricCode.to_matrix`
     method. To go back to a vector, use the
@@ -377,10 +379,10 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
 
         - ``default_decoder_name`` -- the name of the default decoder of ``self``
 
-        - ``basis`` -- (default: ``None``) a basis of `F_{q^m}` as a vector space over
-          ``sub_field``. If not specified, given that `q = p^s`, let
-          `1,\beta,\ldots,\beta^{sm}` be the power basis that SageMath uses to
-          represent `F_{q^m}`. The default basis is then `1,\beta,\ldots,\beta^{m-1}`.
+        - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
+          ``sub_field``. If not specified, the default basis is
+          `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator
+          of `\GF{q^m}` given by SageMath.
 
         EXAMPLES:
 
@@ -391,9 +393,11 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
              sage: from sage.coding.linear_rank_metric import AbstractLinearRankMetricCode
              sage: class RankRepetitionCode(AbstractLinearRankMetricCode):
              ....:   def __init__(self, base_field, sub_field, length):
-             ....:       sage.coding.linear_rank_metric.AbstractLinearRankMetricCode.__init__(self, base_field, sub_field, length, "GeneratorMatrix", "NearestNeighbor")
+             ....:       super().__init__(base_field, sub_field, length,
+             ....:                        "GeneratorMatrix", "NearestNeighbor")
              ....:       beta = base_field.gen()
-             ....:       self._generator_matrix = matrix(base_field, [[ beta^i for i in range(length) ]])
+             ....:       self._generator_matrix = matrix(base_field,
+             ....:                                       [[beta^i for i in range(length)]])
              ....:   def generator_matrix(self):
              ....:       return self._generator_matrix
              ....:   def _repr_(self):
@@ -436,7 +440,8 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
             sage: C.parent()
             <class '__main__.RankRepetitionCode_with_category'>
             sage: C.category()
-            Category of facade finite dimensional vector spaces with basis over Finite Field in z3 of size 2^3
+            Category of facade finite dimensional vector spaces with basis
+             over Finite Field in z3 of size 2^3
 
         And any method that works on rank metric linear codes works for our new dummy code::
 
@@ -492,7 +497,7 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
         r"""
         Return `m`, the degree of the field extension of ``self``.
 
-        Let ``base_field`` be `GF(q^m)` and ``sub_field`` be `GF(q)`. Then this
+        Let ``base_field`` be `\GF{q^m}` and ``sub_field`` be `\GF{q}`. Then this
         function returns `m`.
 
         EXAMPLES::
@@ -509,8 +514,8 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
         r"""
         Return the field extension of ``self``.
 
-        Let ``base_field`` be some field `F_{q^m}` and ``sub_field`` `F_{q}`.
-        This function returns the vector space of dimension `m` over `F_{q}`.
+        Let ``base_field`` be some field `\GF{q^m}` and ``sub_field`` `\GF{q}`.
+        This function returns the vector space of dimension `m` over `\GF{q}`.
 
         EXAMPLES::
 
@@ -583,6 +588,67 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
             2
         """
         return rank_weight(word, self.sub_field())
+
+    def rank_support_of_vector(self, word, sub_field=None, basis=None):
+        r"""
+        Return the rank support of ``word`` over ``sub_field``, i.e. the  vector space over
+        ``sub_field`` generated by its coefficients.
+
+        If ``word`` is a vector over some field `\GF{q^m}`, and ``sub_field`` is a subfield of
+        `\GF{q^m}`, the function converts it into a matrix over ``sub_field``, with
+        respect to the basis ``basis``.
+
+        INPUT:
+
+        - ``word`` -- a vector over the ``base_field`` of ``self``.
+
+        - ``sub_field`` -- (default: ``None``) a sub field of the
+          ``base_field`` of ``self``; if not specified, it is the prime
+          subfield of `\GF{p}` the ``base_field`` of ``self``.
+
+        - ``basis`` -- (default: ``None``) a basis of ``base_field`` of
+          ``self`` as a vector space over ``sub_field``. If not specified,
+          the default basis is `1,\beta,\ldots,\beta^{m-1}`, where `\beta` is
+          the generator of `\GF{q^m}` given by SageMath.
+
+        EXAMPLES::
+
+            sage: G = Matrix(GF(64), [[1,1,0], [0,0,1]])
+            sage: C = codes.LinearRankMetricCode(G, GF(4))
+            sage: a = GF(64).gen()
+            sage: c = vector([a^4 + a^3 + 1, a^4 + a^3 + 1, a^4 + a^3 + a^2 + 1])
+            sage: c in C
+            True
+            sage: C.rank_support_of_vector(c)
+            Vector space of degree 6 and dimension 2 over Finite Field of size 2
+            Basis matrix:
+            [1 0 0 1 1 0]
+            [0 0 1 0 0 0]
+
+        An example with a non canonical basis::
+
+            sage: K.<a> = GF(2^3)
+            sage: G = Matrix(K, [[1,1,0], [0,0,1]])
+            sage: C = codes.LinearRankMetricCode(G)
+            sage: c = vector([a^2, a^2, 0])
+            sage: basis = [a, a+1, a^2]
+            sage: C.rank_support_of_vector(c, basis=basis)
+            Vector space of degree 3 and dimension 1 over Finite Field of size 2
+            Basis matrix:
+            [0 0 1]
+
+        TESTS::
+
+            sage: C.rank_support_of_vector(c, GF(2^4))
+            Traceback (most recent call last):
+            ...
+            TypeError: the input subfield Finite Field in z4 of size 2^4 is not a subfield of Finite Field in a of size 2^3
+        """
+        word = self.ambient_space()(word)
+        if sub_field is not None:
+            if self.base_field().degree() % sub_field.degree() != 0:
+                raise TypeError(f"the input subfield {sub_field} is not a subfield of {self.base_field()}")
+        return to_matrix_representation(word, sub_field, basis).column_module()
 
     def matrix_form_of_vector(self, word):
         r"""
@@ -674,10 +740,10 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
         - ``sub_field`` -- (default: ``None``) the sub field of ``self``, if not
           specified, it is the prime field of ``base_field``
 
-        - ``basis`` -- (default: ``None``) a basis of `F_{q^m}` as a vector space over
-          ``sub_field``. If not specified, given that `q = p^s`, let
-          `1,\beta,\ldots,\beta^{sm}` be the power basis that SageMath uses to
-          represent `F_{q^m}`. The default basis is then `1,\beta,\ldots,\beta^{m-1}`.
+        - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
+          ``sub_field``. If not specified, the default basis is
+          `1,\beta,\ldots,\beta^{m-1}` where `\beta` is the generator `\GF{q^m}`
+          given by SageMath.
 
         EXAMPLES::
 
@@ -704,7 +770,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
                 from sage.matrix.constructor import matrix
                 generator = matrix(base_field, gen_basis)
                 if generator.nrows() == 0:
-                    raise ValueError("this linear code contains no non-zero vector")
+                    raise ValueError("this linear code contains no nonzero vector")
         except AttributeError:
             # Assume input is an AbstractLinearRankMetricCode, extract its generator matrix
             generator = generator.generator_matrix()
@@ -728,9 +794,8 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
         R = self.base_field()
         S = self.sub_field()
         if R and S in Fields():
-            return "[%s, %s] linear rank metric code over GF(%s)/GF(%s)"%(self.length(), self.dimension(), R.cardinality(), S.cardinality())
-        else:
-            return "[%s, %s] linear rank metric code over %s/%s"%(self.length(), self.dimension(), R, S)
+            return "[%s, %s] linear rank metric code over GF(%s)/GF(%s)" % (self.length(), self.dimension(), R.cardinality(), S.cardinality())
+        return "[%s, %s] linear rank metric code over %s/%s" % (self.length(), self.dimension(), R, S)
 
     def _latex_(self):
         r"""
@@ -757,7 +822,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
           will be returned if default value is kept.
 
         - ``kwargs`` -- all additional arguments are forwarded to the construction of the
-          encoder that is used.
+          encoder that is used
 
         EXAMPLES::
 
@@ -788,7 +853,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
 
         INPUT:
 
-        - ``code`` -- A code associated to this decoder
+        - ``code`` -- a code associated to this decoder
 
         EXAMPLES::
 
@@ -852,9 +917,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
 
         - ``r`` -- a codeword of ``self``
 
-        OUTPUT:
-
-        - a vector of ``self``'s message space
+        OUTPUT: a vector of ``self``'s message space
 
         EXAMPLES::
 
@@ -888,7 +951,8 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
             sage: D.decoding_radius()
             1
         """
-        return (self.code().minimum_distance()-1) // 2
+        return (self.code().minimum_distance() - 1) // 2
+
 
 ####################### registration ###############################
 

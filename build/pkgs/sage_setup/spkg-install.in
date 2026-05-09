@@ -1,0 +1,9 @@
+cd src
+if [ "$SAGE_EDITABLE" = yes ]; then
+    sdh_pip_editable_install .
+    if [ "$SAGE_WHEELS" = yes ]; then
+        sdh_build_and_store_wheel --no-isolation .
+    fi
+else
+    sdh_pip_install .
+fi

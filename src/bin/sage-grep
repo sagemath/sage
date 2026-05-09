@@ -2,4 +2,4 @@
 
 cd "$SAGE_SRC"
 
-find sage -print | GREP_OPTIONS= egrep '.py([xdi])?$' | xargs grep "$@"
+find sage -name "*.py" -o -name "*.pyx" -o -name "*.pxi" -o -name "*.pxd" | xargs grep "$@"

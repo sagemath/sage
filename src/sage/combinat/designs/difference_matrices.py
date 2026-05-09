@@ -1,5 +1,6 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
-Difference Matrices
+Difference matrices
 
 This module gathers code related to difference matrices. One can build those
 objects (or know if they can be built) with :func:`difference_matrix`::
@@ -18,6 +19,7 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from .designs_pyx import is_difference_matrix
 from .database import DM as DM_constructions
 
+
 @cached_function
 def find_product_decomposition(g, k, lmbda=1):
     r"""
@@ -25,7 +27,7 @@ def find_product_decomposition(g, k, lmbda=1):
 
     INPUT:
 
-    - ``g,k,lmbda`` -- integers, parameters of the difference matrix
+    - ``g``, ``k``, ``lmbda`` -- integers, parameters of the difference matrix
 
     OUTPUT:
 
@@ -70,24 +72,25 @@ def find_product_decomposition(g, k, lmbda=1):
 
     return False
 
+
 def difference_matrix_product(k, M1, G1, lmbda1, M2, G2, lmbda2, check=True):
     r"""
-    Return the product of the ``(G1,k,lmbda1)`` and ``(G2,k,lmbda2)`` difference
-    matrices ``M1`` and ``M2``.
+    Return the product of the ``(G1, k, lmbda1)`` and ``(G2, k, lmbda2)``
+    difference matrices ``M1`` and ``M2``.
 
     The result is a `(G1 \times G2, k, \lambda_1 \lambda_2)`-difference matrix.
 
     INPUT:
 
-    - ``k,lmbda1,lmbda2`` -- positive integer
+    - ``k``, ``lmbda1``, ``lmbda2`` -- positive integers
 
-    - ``G1, G2`` -- groups
+    - ``G1``, ``G2`` -- groups
 
-    - ``M1, M2`` -- ``(G1,k,lmbda1)`` and ``(G,k,lmbda2)`` difference
+    - ``M1``, ``M2`` -- ``(G1, k, lmbda1)`` and ``(G, k, lmbda2)`` difference
       matrices
 
-    - ``check`` (boolean) -- if ``True`` (default), the output is checked before
-      being returned.
+    - ``check`` -- boolean (default: ``True``); whether to check the output
+      before it is returned
 
     EXAMPLES::
 
@@ -120,9 +123,10 @@ def difference_matrix_product(k, M1, G1, lmbda1, M2, G2, lmbda2, check=True):
 
     return G,M
 
-def difference_matrix(g,k,lmbda=1,existence=False,check=True):
+
+def difference_matrix(g, k, lmbda=1, existence=False, check=True):
     r"""
-    Return a `(g,k,\lambda)`-difference matrix
+    Return a `(g,k,\lambda)`-difference matrix.
 
     A matrix `M` is a `(g,k,\lambda)`-difference matrix if it has size `\lambda
     g\times k`, its entries belong to the group `G` of cardinality `g`, and
@@ -131,27 +135,26 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
 
     INPUT:
 
-    - ``k`` -- (integer) number of columns. If ``k=None`` it is set to the
-      largest value available.
+    - ``k`` -- integer; number of columns. If ``k`` is ``None`` it is set to the
+      largest value available
 
-    - ``g`` -- (integer) cardinality of the group `G`
+    - ``g`` -- integer; cardinality of the group `G`
 
-    - ``lmbda`` -- (integer; default: 1) -- number of times each element of `G`
-      appears as a difference.
+    - ``lmbda`` -- integer (default: 1); number of times each element of `G`
+      appears as a difference
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
-    - ``existence`` (boolean) -- instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
-        - ``True`` -- meaning that Sage knows how to build the design
+      - ``True`` -- meaning that Sage knows how to build the design
 
-        - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+      - ``Unknown`` -- meaning that Sage does not know how to build the
+        design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
-        - ``False`` -- meaning that the design does not exist.
+      - ``False`` -- meaning that the design does not exist
 
       .. NOTE::
 
@@ -218,7 +221,7 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
         NotImplementedError: I don't know how to build a (10,9,1)-Difference Matrix!
     """
 
-    if lmbda == 1 and k is not None and k>g:
+    if lmbda == 1 and k is not None and k > g:
         if existence:
             return False
         raise EmptySetError("No ({},{},{})-Difference Matrix exists as k(={})>g(={})".format(g,k,lmbda,k,g))
@@ -228,8 +231,7 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
         if k is None:
             if existence:
                 return g
-            else:
-                k = g
+            k = g
         elif existence:
             return True
         F = FiniteField(g,'x')
@@ -248,28 +250,29 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
         return i-1
 
     # From the database
-    elif (g,lmbda) in DM_constructions and DM_constructions[g,lmbda][0]>=k:
+    elif (g, lmbda) in DM_constructions and DM_constructions[g, lmbda][0] >= k:
         if existence:
             return True
-        _,f = DM_constructions[g,lmbda]
+        _, f = DM_constructions[g, lmbda]
         G, M = f()
         M = [R[:k] for R in M]
 
     # Product construction
-    elif find_product_decomposition(g,k,lmbda):
+    elif find_product_decomposition(g, k, lmbda):
         if existence:
             return True
-        (g1,lmbda1),(g2,lmbda2) = find_product_decomposition(g,k,lmbda)
-        G1,M1 = difference_matrix(g1,k,lmbda1)
-        G2,M2 = difference_matrix(g2,k,lmbda2)
-        G,M = difference_matrix_product(k,M1,G1,lmbda1,M2,G2,lmbda2,check=False)
+        (g1, lmbda1), (g2, lmbda2) = find_product_decomposition(g, k, lmbda)
+        G1, M1 = difference_matrix(g1, k, lmbda1)
+        G2, M2 = difference_matrix(g2, k, lmbda2)
+        G, M = difference_matrix_product(k, M1, G1, lmbda1,
+                                         M2, G2, lmbda2, check=False)
 
     else:
         if existence:
             return Unknown
         raise NotImplementedError("I don't know how to build a ({},{},{})-Difference Matrix!".format(g,k,lmbda))
 
-    if check and not is_difference_matrix(M,G,k,lmbda,1):
-        raise RuntimeError("Sage built something which is not a ({},{},{})-DM!".format(g,k,lmbda))
+    if check and not is_difference_matrix(M, G, k, lmbda, 1):
+        raise RuntimeError("Sage built something which is not a ({},{},{})-DM!".format(g, k, lmbda))
 
-    return G,M
+    return G, M

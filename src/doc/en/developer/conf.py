@@ -20,10 +20,16 @@ from sage_docbuild.conf import *  # NOQA
 # contains common paths.
 html_static_path = [] + html_common_static_path
 
-# General information about the project.
-project = "Developer's Guide"
+# Add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/en/developer', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/en/developer', '{filename}'),
+})
 
-# The name for this set of Sphinx documents.
+# General information about the project.
+project = "Developer Guide"
+
+# The name for this set of Sphinx documents. Do not include release info.
 html_title = project
 html_short_title = project
 
@@ -33,6 +39,6 @@ htmlhelp_basename = 'developer'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', 'developer.tex', 'Developer\'s Guide',
+  ('index', 'developer.tex', 'Developer Guide',
    'The Sage Development Team', 'manual'),
 ]

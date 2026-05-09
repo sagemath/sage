@@ -1,5 +1,7 @@
-from .free_module_element cimport FreeModuleElement
 cimport numpy
+
+from sage.modules.free_module_element cimport FreeModuleElement
+
 
 cdef class Vector_numpy_dense(FreeModuleElement):
     cdef object _numpy_dtype

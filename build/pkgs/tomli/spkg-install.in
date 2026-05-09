@@ -1,7 +1,0 @@
-cd src
-# tomli's build system, flit_core, has a runtime dependency on tomli.
-# Hence we make the uninstalled tomli sources available during the installation
-# and disable build isolation -- which would require a tomli wheel to
-# be available for setting up the build environment.
-export PYTHONPATH="$(pwd)"
-sdh_pip_install --no-build-isolation .

@@ -1,15 +1,13 @@
 r"""
 Index of bounds on the parameters of codes
 
-The ``codes.bounds`` object may be used to access the bounds that Sage can compute.
+The :obj:`codes.bounds` object may be used to access the bounds that Sage can compute.
 
 {INDEX_OF_FUNCTIONS}
 
-.. NOTE::
+To import these names into the global namespace, use::
 
-    To import these names into the global namespace, use:
-
-        sage: from sage.coding.bounds_catalog import *
+    sage: from sage.coding.bounds_catalog import *
 """
 from sage.misc.lazy_import import lazy_import as _lazy_import
 _lazy_import("sage.coding.code_bounds", ["codesize_upper_bound",

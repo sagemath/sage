@@ -28,9 +28,9 @@ from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField
 from sage.categories.finite_fields import FiniteFields
 _FiniteFields = FiniteFields()
 
-import sage.rings.finite_rings.integer_mod_ring as integer_mod_ring
+from sage.rings.finite_rings import integer_mod_ring
 from sage.rings.integer import Integer
-import sage.rings.finite_rings.integer_mod as integer_mod
+from sage.rings.finite_rings import integer_mod
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
@@ -47,7 +47,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
         sage: FiniteField(3)
         Finite Field of size 3
 
-        sage: FiniteField(next_prime(1000))
+        sage: FiniteField(next_prime(1000))                                             # needs sage.rings.finite_rings
         Finite Field of size 1009
     """
     def __init__(self, p, check=True, modulus=None):
@@ -56,9 +56,9 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
         INPUT:
 
-        - ``p`` -- an integer at least 2
+        - ``p`` -- integer at least 2
 
-        - ``check`` -- bool (default: ``True``); if ``False``, do not
+        - ``check`` -- boolean (default: ``True``); if ``False``, do not
           check ``p`` for primality
 
         EXAMPLES::
@@ -104,18 +104,20 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             5
             sage: 12 % 7
             5
+
             sage: ZZ.residue_field(7).hom(GF(7))(1)  # See trac 11319
             1
+
             sage: K.<w> = QuadraticField(337)  # See trac 11319
             sage: pp = K.ideal(13).factor()[0][0]
             sage: RF13 = K.residue_field(pp)
             sage: RF13.hom([GF(13)(1)])
             Ring morphism:
-             From: Residue field of Fractional ideal (-w - 18)
-             To:   Finite Field of size 13
-             Defn: 1 |--> 1
+              From: Residue field of Fractional ideal (w + 18)
+              To:   Finite Field of size 13
+              Defn: 1 |--> 1
 
-        Check that :trac:`19573` is resolved::
+        Check that :issue:`19573` is resolved::
 
             sage: Integers(9).hom(GF(3))
             Natural morphism:
@@ -129,14 +131,14 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
         There is no coercion from a `p`-adic ring to its residue field::
 
-            sage: GF(3).has_coerce_map_from(Zp(3))
+            sage: GF(3).has_coerce_map_from(Zp(3))                                      # needs sage.rings.padics
             False
         """
         if S is int:
             return integer_mod.Int_to_IntegerMod(self)
-        elif S is ZZ:
+        if S is ZZ:
             return integer_mod.Integer_to_IntegerMod(self)
-        elif isinstance(S, IntegerModRing_generic):
+        if isinstance(S, IntegerModRing_generic):
             from .residue_field import ResidueField_generic
             if (S.characteristic() % self.characteristic() == 0 and
                     (not isinstance(S, ResidueField_generic) or
@@ -151,7 +153,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
     def _convert_map_from_(self, R):
         """
-        Conversion from p-adic fields.
+        Conversion from `p`-adic fields.
 
         EXAMPLES::
 
@@ -170,7 +172,8 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
     def construction(self):
         """
-        Returns the construction of this finite field (for use by sage.categories.pushout)
+        Return the construction of this finite field (for use by
+        ``sage.categories.pushout``).
 
         EXAMPLES::
 
@@ -209,7 +212,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
     def polynomial(self, name=None):
         """
-        Returns the polynomial ``name``.
+        Return the polynomial ``name``.
 
         EXAMPLES::
 
@@ -271,7 +274,8 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
             sage: k = GF(13)
             sage: k.gen()
             1
-            sage: k = GF(1009, modulus="primitive")
+
+            sage: k = GF(1009, modulus='primitive')
             sage: k.gen()  # this gives a primitive element
             11
             sage: k.gen(1)
@@ -291,6 +295,30 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
         except AttributeError:
             self.__gen = self.one()
         return self.__gen
+
+    def gens(self) -> tuple:
+        r"""
+        Return a tuple containing the generator of ``self``.
+
+        .. WARNING::
+
+            The generator is not guaranteed to be a generator for the
+            multiplicative group.  To obtain the latter, use
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteFields.multiplicative_generator()`
+            or use the ``modulus="primitive"`` option when constructing
+            the field.
+
+        EXAMPLES::
+
+            sage: k = GF(1009, modulus='primitive')
+            sage: k.gens()
+            (11,)
+
+            sage: k = GF(1009)
+            sage: k.gens()
+            (1,)
+        """
+        return (self.gen(),)
 
     def __iter__(self):
         """
@@ -329,8 +357,13 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
             sage: FiniteField(3).degree()
             1
+
+        .. SEEALSO::
+
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.absolute_degree`
         """
         return Integer(1)
+
 
 register_unpickle_override(
     'sage.rings.finite_field_prime_modn', 'FiniteField_prime_modn',

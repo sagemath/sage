@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 The Sage pretty printer
 
@@ -50,7 +49,7 @@ class SagePrettyPrinter(PrettyPrinter):
 
         OUTPUT:
 
-        Boolean. Whether we are currently pretty-printing an object at
+        boolean; whether we are currently pretty-printing an object at
         the outermost level (``True``), or whether the object is
         inside a container (``False``).
 
@@ -67,7 +66,7 @@ class SagePrettyPrinter(PrettyPrinter):
 
     def __init__(self, output, max_width, newline, max_seq_length=None):
         """
-        Pretty print Sage objects for the commandline
+        Pretty print Sage objects for the commandline.
 
         INPUT:
 
@@ -87,7 +86,7 @@ class SagePrettyPrinter(PrettyPrinter):
 
         These are overridden in IPython in a way that we feel is somewhat
         confusing, and we prefer to print them like plain Python which is
-        more informative. See :trac:`14466` ::
+        more informative. See :issue:`14466` ::
 
             sage: 'this is a string'
             'this is a string'
@@ -111,17 +110,15 @@ class SagePrettyPrinter(PrettyPrinter):
 
     def pretty(self, obj):
         r"""
-        Pretty print ``obj``
+        Pretty print ``obj``.
 
         This is the only method that outside code should invoke.
 
         INPUT:
 
-        - ``obj`` -- anything.
+        - ``obj`` -- anything
 
-        OUTPUT:
-
-        String representation for object.
+        OUTPUT: string representation for object
 
         EXAMPLES::
 

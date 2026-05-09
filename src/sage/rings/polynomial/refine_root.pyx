@@ -10,15 +10,15 @@ AUTHORS:
 - Carl Witty (2007-11-18): initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Carl Witty
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from sage.rings.real_mpfi import RealIntervalField
@@ -74,7 +74,7 @@ def refine_root(ip, ipd, irt, fld):
     # unless either the real or imaginary component of the root is zero.
     # If the real or imaginary component is zero, then we could spend
     # a long time computing closer and closer approximations to that
-    # component.  (This doesn't happen for non-zero components, because
+    # component.  (This doesn't happen for nonzero components, because
     # of the imprecision of floating-point numbers combined with the
     # outward interval rounding; but close to zero, MPFI provides
     # extremely precise numbers.)

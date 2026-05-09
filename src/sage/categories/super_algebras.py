@@ -76,7 +76,8 @@ class SuperAlgebras(SuperModulesCategory):
 
             EXAMPLES::
 
-                sage: A.<x,y,z> = ExteriorAlgebra(ZZ); A.rename("A")
+                sage: # needs sage.combinat sage.modules
+                sage: A.<x,y,z> = ExteriorAlgebra(ZZ); A.rename('A')
                 sage: T = A.tensor(A,A); T
                 A # A # A
                 sage: T in Algebras(ZZ).Graded().SignedTensorProducts()
@@ -86,12 +87,13 @@ class SuperAlgebras(SuperModulesCategory):
                 sage: A.rename(None)
 
             This also works when the other elements do not have
-            a signed tensor product (:trac:`31266`)::
+            a signed tensor product (:issue:`31266`)::
 
+                sage: # needs sage.combinat sage.modules
                 sage: a = SteenrodAlgebra(3).an_element()
                 sage: M = CombinatorialFreeModule(GF(3), ['s', 't', 'u'])
                 sage: s = M.basis()['s']
-                sage: tensor([a, s])
+                sage: tensor([a, s])                                                    # needs sage.rings.finite_rings
                 2*Q_1 Q_3 P(2,1) # B['s']
             """
             constructor = kwargs.pop('constructor', tensor_signed)

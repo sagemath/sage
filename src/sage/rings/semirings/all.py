@@ -1,2 +1,2 @@
-from .non_negative_integer_semiring import NonNegativeIntegerSemiring, NN
-from .tropical_semiring import TropicalSemiring
+from sage.rings.semirings.non_negative_integer_semiring import NonNegativeIntegerSemiring, NN
+from sage.rings.semirings.tropical_semiring import TropicalSemiring

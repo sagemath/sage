@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Class to flatten polynomial rings over polynomial ring
 
@@ -10,7 +9,10 @@ EXAMPLES::
     sage: from sage.rings.polynomial.flatten import FlatteningMorphism
     sage: phi = FlatteningMorphism(R); phi
     Flattening morphism:
-      From: Univariate Polynomial Ring in X over Multivariate Polynomial Ring in s, t over Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+      From: Univariate Polynomial Ring in X
+            over Multivariate Polynomial Ring in s, t
+            over Univariate Polynomial Ring in y
+            over Univariate Polynomial Ring in x over Rational Field
       To:   Multivariate Polynomial Ring in x, y, s, t, X over Rational Field
     sage: phi('x*y*s + t*X').parent()
     Multivariate Polynomial Ring in x, y, s, t, X over Rational Field
@@ -35,12 +37,12 @@ import itertools
 from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
 from sage.misc.cachefunc import cached_method
-from .polynomial_ring_constructor import PolynomialRing
-from .polynomial_ring import is_PolynomialRing
-from .multi_polynomial_ring_base import is_MPolynomialRing
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.rings.fraction_field_element import FractionFieldElement
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polydict import ETuple
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 class FlatteningMorphism(Morphism):
@@ -77,7 +79,7 @@ class FlatteningMorphism(Morphism):
     """
     def __init__(self, domain):
         """
-        The Python constructor
+        The Python constructor.
 
         EXAMPLES::
 
@@ -108,6 +110,7 @@ class FlatteningMorphism(Morphism):
 
         ::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<v> = NumberField(x^3 - 2)
             sage: R = K['x','y']['a','b']
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
@@ -120,12 +123,12 @@ class FlatteningMorphism(Morphism):
             sage: R = QQbar['x','y']['a','b']
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: f = FlatteningMorphism(R)
-            sage: f(R('QQbar(sqrt(2))*a*x^2 + b^2 + QQbar(I)*y'))
+            sage: f(R('QQbar(sqrt(2))*a*x^2 + b^2 + QQbar(I)*y'))                       # needs sage.symbolic
             1.414213562373095?*x^2*a + b^2 + I*y
 
         ::
 
-            sage: R.<z> = PolynomialRing(QQbar,1)
+            sage: R.<z> = PolynomialRing(QQbar, 1)
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: f = FlatteningMorphism(R)
             sage: f.domain(), f.codomain()
@@ -153,14 +156,14 @@ class FlatteningMorphism(Morphism):
             sage: fl.section()(fl(p)) == p
             True
         """
-        if not is_PolynomialRing(domain) and not is_MPolynomialRing(domain):
+        if not isinstance(domain, (PolynomialRing_generic, MPolynomialRing_base)):
             raise ValueError("domain should be a polynomial ring")
 
         ring = domain
         variables = []
         intermediate_rings = []
 
-        while is_PolynomialRing(ring) or is_MPolynomialRing(ring):
+        while isinstance(ring, (PolynomialRing_generic, MPolynomialRing_base)):
             intermediate_rings.append(ring)
             v = ring.variable_names()
             variables.extend(reversed(v))
@@ -174,7 +177,7 @@ class FlatteningMorphism(Morphism):
                     if b not in variables:  # not just variables[:i]!
                         break
                 variables[i] = b
-        if is_MPolynomialRing(domain):
+        if isinstance(domain, MPolynomialRing_base):
             codomain = PolynomialRing(ring, variables, len(variables))
         else:
             codomain = PolynomialRing(ring, variables)
@@ -214,16 +217,16 @@ class FlatteningMorphism(Morphism):
 
         for ring in self._intermediate_rings:
             new_p = {}
-            if is_PolynomialRing(ring):
+            if isinstance(ring, PolynomialRing_generic):
                 for mon, pp in p.items():
                     assert pp.parent() is ring
-                    for i, j in pp.dict().items():
-                        new_p[(i,)+(mon)] = j
-            elif is_MPolynomialRing(ring):
+                    for i, j in pp.monomial_coefficients().items():
+                        new_p[(i,) + (mon)] = j
+            elif isinstance(ring, MPolynomialRing_base):
                 for mon, pp in p.items():
                     assert pp.parent() is ring
-                    for mmon, q in pp.dict().items():
-                        new_p[tuple(mmon)+mon] = q
+                    for mmon, q in pp.monomial_coefficients().items():
+                        new_p[tuple(mmon) + mon] = q
             else:
                 raise RuntimeError
             p = new_p
@@ -243,7 +246,8 @@ class FlatteningMorphism(Morphism):
             sage: h.section()
             Unflattening morphism:
               From: Multivariate Polynomial Ring in a, b, c, x, y, z over Rational Field
-              To:   Multivariate Polynomial Ring in x, y, z over Multivariate Polynomial Ring in a, b, c over Rational Field
+              To:   Multivariate Polynomial Ring in x, y, z
+                    over Multivariate Polynomial Ring in a, b, c over Rational Field
 
         ::
 
@@ -252,7 +256,8 @@ class FlatteningMorphism(Morphism):
             sage: FlatteningMorphism(R).section()
             Unflattening morphism:
               From: Multivariate Polynomial Ring in a, b, c over Integer Ring
-              To:   Univariate Polynomial Ring in c over Univariate Polynomial Ring in b over Univariate Polynomial Ring in a over Integer Ring
+              To:   Univariate Polynomial Ring in c over Univariate Polynomial Ring in b
+                    over Univariate Polynomial Ring in a over Integer Ring
         """
         return UnflatteningMorphism(self.codomain(), self.domain())
 
@@ -268,14 +273,15 @@ class FlatteningMorphism(Morphism):
             sage: f.inverse()
             Unflattening morphism:
               From: Multivariate Polynomial Ring in x, y, u, v over Rational Field
-              To:   Multivariate Polynomial Ring in u, v over Multivariate Polynomial Ring in x, y over Rational Field
+              To:   Multivariate Polynomial Ring in u, v
+                    over Multivariate Polynomial Ring in x, y over Rational Field
         """
         return self.section()
 
 
 class UnflatteningMorphism(Morphism):
     r"""
-    Inverses for :class:`FlatteningMorphism`
+    Inverses for :class:`FlatteningMorphism`.
 
     EXAMPLES::
 
@@ -286,7 +292,8 @@ class UnflatteningMorphism(Morphism):
         sage: g = f(R('x^2 + c*y^2 - z^2'));g
         x^2 + c*y^2 - z^2
         sage: g.parent()
-        Multivariate Polynomial Ring in x, y, z over Univariate Polynomial Ring in c over Rational Field
+        Multivariate Polynomial Ring in x, y, z
+         over Univariate Polynomial Ring in c over Rational Field
 
     ::
 
@@ -296,12 +303,13 @@ class UnflatteningMorphism(Morphism):
         sage: UnflatteningMorphism(R, S)
         Unflattening morphism:
           From: Multivariate Polynomial Ring in a, b, x, y over Rational Field
-          To:   Multivariate Polynomial Ring in x, y over Multivariate Polynomial Ring in a, b over Rational Field
+          To:   Multivariate Polynomial Ring in x, y
+                over Multivariate Polynomial Ring in a, b over Rational Field
     """
 
     def __init__(self, domain, codomain):
         """
-        The Python constructor
+        The Python constructor.
 
         EXAMPLES::
 
@@ -333,17 +341,17 @@ class UnflatteningMorphism(Morphism):
             ...
             ValueError: rings must have the same number of variables
         """
-        if not is_MPolynomialRing(domain):
+        if not isinstance(domain, MPolynomialRing_base):
             raise ValueError("domain should be a multivariate polynomial ring")
-        if not is_PolynomialRing(codomain) and not is_MPolynomialRing(codomain):
+        if not isinstance(codomain, (PolynomialRing_generic, MPolynomialRing_base)):
             raise ValueError("codomain should be a polynomial ring")
 
         ring = codomain
         intermediate_rings = []
 
         while True:
-            is_polynomial_ring = is_PolynomialRing(ring)
-            if not (is_polynomial_ring or is_MPolynomialRing(ring)):
+            is_polynomial_ring = isinstance(ring, PolynomialRing_generic)
+            if not (is_polynomial_ring or isinstance(ring, MPolynomialRing_base)):
                 break
             intermediate_rings.append((ring, is_polynomial_ring))
             ring = ring.base_ring()
@@ -366,8 +374,10 @@ class UnflatteningMorphism(Morphism):
         TESTS::
 
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
-            sage: for R in [ZZ['x']['y']['a,b,c'], GF(4)['x','y']['a','b'],
-            ....:           AA['x']['a','b']['y'], QQbar['a1','a2']['t']['X','Y']]:
+            sage: rings = [ZZ['x']['y']['a,b,c']]
+            sage: rings += [GF(4)['x','y']['a','b']]                                    # needs sage.rings.finite_rings
+            sage: rings += [AA['x']['a','b']['y'], QQbar['a1','a2']['t']['X','Y']]      # needs sage.rings.number_field
+            sage: for R in rings:                                                       # needs sage.modules
             ....:    f = FlatteningMorphism(R)
             ....:    g = f.section()
             ....:    for _ in range(10):
@@ -402,7 +412,7 @@ class UnflatteningMorphism(Morphism):
 
 class SpecializationMorphism(Morphism):
     r"""
-    Morphisms to specialize parameters in (stacked) polynomial rings
+    Morphisms to specialize parameters in (stacked) polynomial rings.
 
     EXAMPLES::
 
@@ -423,8 +433,9 @@ class SpecializationMorphism(Morphism):
         sage: from sage.rings.polynomial.flatten import SpecializationMorphism
         sage: xi = SpecializationMorphism(S, {c:0}); xi
         Specialization morphism:
-              From: Univariate Polynomial Ring in z over Univariate Polynomial Ring in c over Rational Field
-              To:   Univariate Polynomial Ring in z over Rational Field
+          From: Univariate Polynomial Ring in z
+                over Univariate Polynomial Ring in c over Rational Field
+          To:   Univariate Polynomial Ring in z over Rational Field
         sage: xi(z^2+c)
         z^2
 
@@ -437,15 +448,18 @@ class SpecializationMorphism(Morphism):
         sage: from sage.rings.polynomial.flatten import SpecializationMorphism
         sage: xi = SpecializationMorphism(S, D); xi
         Specialization morphism:
-          From: Multivariate Polynomial Ring in x, y, z over Multivariate Polynomial Ring in a, b, c over Multivariate Polynomial Ring in u, v over Rational Field
-          To:   Multivariate Polynomial Ring in y, z over Univariate Polynomial Ring in c over Univariate Polynomial Ring in v over Rational Field
+          From: Multivariate Polynomial Ring in x, y, z
+                over Multivariate Polynomial Ring in a, b, c
+                over Multivariate Polynomial Ring in u, v over Rational Field
+          To:   Multivariate Polynomial Ring in y, z over Univariate Polynomial Ring in c
+                over Univariate Polynomial Ring in v over Rational Field
         sage: xi(a*(x*z+y^2)*u+b*v*u*(x*z+y^2)*y^2*c+c*y^2*z^2)
         2*v*c*y^4 + c*y^2*z^2 + y^2
     """
 
     def __init__(self, domain, D):
         """
-        The Python constructor
+        The Python constructor.
 
         EXAMPLES::
 
@@ -469,18 +483,19 @@ class SpecializationMorphism(Morphism):
             ...
             TypeError: no conversion of this rational to integer
 
-        The following was fixed in :trac:`23811`::
+        The following was fixed in :issue:`23811`::
 
             sage: R.<c> = RR[]
             sage: P.<z> = AffineSpace(R, 1)
             sage: H = End(P)
             sage: f = H([z^2 + c])
-            sage: f.specialization({c:1})
-            Scheme endomorphism of Affine Space of dimension 1 over Real Field with 53 bits of precision
+            sage: f.specialization({c:1})                                               # needs sage.modules
+            Scheme endomorphism of
+             Affine Space of dimension 1 over Real Field with 53 bits of precision
               Defn: Defined on coordinates by sending (z) to
                     (z^2 + 1.00000000000000)
         """
-        if not is_PolynomialRing(domain) and not is_MPolynomialRing(domain):
+        if not isinstance(domain, (PolynomialRing_generic, MPolynomialRing_base)):
             raise TypeError("domain should be a polynomial ring")
 
         # use only the generators that are in the stack somewhere,
@@ -519,8 +534,10 @@ class SpecializationMorphism(Morphism):
         # Construct unflattened codomain R
         new_vars = []
         R = domain
-        while is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R):
-            if is_FractionField(R):
+        while isinstance(R, (PolynomialRing_generic,
+                             MPolynomialRing_base,
+                             FractionField_generic)):
+            if isinstance(R, FractionField_generic):
                 # We've hit base_ring, so set _sub_specialization and exit the loop
                 field_over = R.base()
                 applicable_vars = {key: val for key, val in D.items()
@@ -544,7 +561,7 @@ class SpecializationMorphism(Morphism):
             # We're still in the polynomials, so keep track of the tower
             old = R.gens()
             new = [t for t in old if t not in D]
-            force_multivariate = ((len(old) == 1) and is_MPolynomialRing(R))
+            force_multivariate = ((len(old) == 1) and isinstance(R, MPolynomialRing_base))
             new_vars.append((new, force_multivariate, old))
             R = R.base_ring()
 
@@ -623,7 +640,7 @@ class SpecializationMorphism(Morphism):
             # apply _sub_specialization to each coefficient
             # in the flattened polynomial
             tmp = {}
-            for exponent, coefficient in flat.dict().items():
+            for exponent, coefficient in flat.monomial_coefficients().items():
                 # Fix the type of exponent from (a,) to a
                 #     (necessary for R(tmp) later)
                 if isinstance(exponent, ETuple) and len(exponent) == 1:
@@ -645,7 +662,7 @@ class FractionSpecializationMorphism(Morphism):
     """
     def __init__(self, domain, D):
         """
-        Initialize the morphism with a domain and dictionary of specializations
+        Initialize the morphism with a domain and dictionary of specializations.
 
         EXAMPLES::
 
@@ -655,10 +672,12 @@ class FractionSpecializationMorphism(Morphism):
             sage: phi = FractionSpecializationMorphism(Frac(S), {c:3})
             sage: phi
             Fraction Specialization morphism:
-                From: Fraction Field of Multivariate Polynomial Ring in x, y over Multivariate Polynomial Ring in a, c over Rational Field
-                To:   Fraction Field of Multivariate Polynomial Ring in x, y over Univariate Polynomial Ring in a over Rational Field
+              From: Fraction Field of Multivariate Polynomial Ring in x, y
+                    over Multivariate Polynomial Ring in a, c over Rational Field
+              To:   Fraction Field of Multivariate Polynomial Ring in x, y
+                    over Univariate Polynomial Ring in a over Rational Field
         """
-        if not is_FractionField(domain):
+        if not isinstance(domain, FractionField_generic):
             raise TypeError("domain must be a fraction field")
         self._specialization = SpecializationMorphism(domain.base(), D)
         self._repr_type_str = 'Fraction Specialization'
@@ -666,7 +685,7 @@ class FractionSpecializationMorphism(Morphism):
 
     def _call_(self, p):
         """
-        Evaluate a fraction specialization morphism
+        Evaluate a fraction specialization morphism.
 
         EXAMPLES::
 
@@ -679,7 +698,6 @@ class FractionSpecializationMorphism(Morphism):
             (3*x + 2*y)/(-2*z)
             sage: spec.parent()
             Fraction Field of Multivariate Polynomial Ring in x, y, z over Rational Field
-
         """
         if not isinstance(p, FractionFieldElement):
             raise TypeError("p must be a fraction field element")

@@ -1,14 +1,14 @@
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Michele Borassi michele.borassi@imtlucca.it
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from libcpp.vector cimport vector
 from libcpp.pair cimport pair
 
@@ -61,7 +61,7 @@ cdef extern from "boost_interface.cpp":
         v_index num_verts()
         void add_edge(v_index u, v_index v)
         void add_edge(v_index u, v_index v, double w)
-        vector[pair[int, pair[int, double]]] edge_list()
+        vector[pair[v_index, pair[v_index, double]]] edge_list()
         e_index num_edges()
         result_ec edge_connectivity()
         double clustering_coeff(v_index v)

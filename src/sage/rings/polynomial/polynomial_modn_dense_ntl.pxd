@@ -16,7 +16,7 @@ from sage.libs.ntl.lzz_pX cimport *
 
 
 cdef class Polynomial_dense_mod_n(Polynomial):
-    cdef object __poly
+    cdef object _poly
     cdef object __singular
 
 cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):

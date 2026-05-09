@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Regular Supercrystals
 """
@@ -37,7 +38,7 @@ class RegularSuperCrystals(Category_singleton):
 
     - either an attribute ``_cartan_type`` or a method ``cartan_type``
 
-    - ``module_generators``: a list (or container) of distinct elements
+    - ``module_generators`` -- a list (or container) of distinct elements
       that generate the crystal using `f_i` and `e_i`
 
     Furthermore, their elements ``x`` should implement the following
@@ -87,6 +88,8 @@ class RegularSuperCrystals(Category_singleton):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
     """
     def super_categories(self):
@@ -107,7 +110,7 @@ class RegularSuperCrystals(Category_singleton):
 
             EXAMPLES::
 
-                sage: C = crystals.Tableaux(['A',[1,2]], shape = [2,1])
+                sage: C = crystals.Tableaux(['A',[1,2]], shape=[2,1])
                 sage: c = C.an_element(); c
                 [[-2, -2], [-1]]
                 sage: c.epsilon(2)
@@ -123,8 +126,7 @@ class RegularSuperCrystals(Category_singleton):
                 x = x.e(i)
                 if x is None:
                     return string_length
-                else:
-                    string_length += 1
+                string_length += 1
 
         def phi(self, i):
             r"""
@@ -132,7 +134,7 @@ class RegularSuperCrystals(Category_singleton):
 
             EXAMPLES::
 
-                sage: C = crystals.Tableaux(['A',[1,2]], shape = [2,1])
+                sage: C = crystals.Tableaux(['A',[1,2]], shape=[2,1])
                 sage: c = C.an_element(); c
                 [[-2, -2], [-1]]
                 sage: c.phi(1)
@@ -148,8 +150,7 @@ class RegularSuperCrystals(Category_singleton):
                 x = x.f(i)
                 if x is None:
                     return string_length
-                else:
-                    string_length += 1
+                string_length += 1
 
     class TensorProducts(TensorProductsCategory):
         """

@@ -1,5 +1,5 @@
-kiwisolver: An implementation of the Cassowary constraint solving algorithm
-===========================================================================
+kiwisolver: Fast implementation of the Cassowary constraint solver
+==================================================================
 
 Description
 -----------

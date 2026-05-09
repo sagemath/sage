@@ -1,7 +1,8 @@
+# sage.doctest: needs sage.rings.padics
 r"""
 `p`-adic Generic
 
-A generic superclass for all p-adic parents.
+A generic superclass for all `p`-adic parents.
 
 AUTHORS:
 
@@ -32,16 +33,14 @@ from sage.categories.morphism import Morphism
 from sage.categories.fields import Fields
 from sage.rings.infinity import infinity
 from .local_generic import LocalGeneric
-from sage.rings.ring import PrincipalIdealDomain
 from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
-from sage.rings.padics.padic_printing import pAdicPrinter
 from sage.rings.padics.precision_error import PrecisionError
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_not_equal
 
 
-class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
+class pAdicGeneric(LocalGeneric):
     def __init__(self, base, p, prec, print_mode, names, element_class, category=None):
         r"""
         Initialize ``self``.
@@ -58,6 +57,8 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
             sage: R = Zp(17)  # indirect doctest
         """
+        from sage.rings.padics.padic_printing import pAdicPrinter
+
         if category is None:
             if self.is_field():
                 category = Fields()
@@ -66,7 +67,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             category = category.Metric().Complete()
         LocalGeneric.__init__(self, base, prec, names, element_class, category)
         self._printer = pAdicPrinter(self, print_mode)
-        self._qth_roots_of_unity = [ (1, Infinity) ]
+        self._qth_roots_of_unity = [(1, Infinity)]
 
     def some_elements(self):
         r"""
@@ -90,7 +91,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         return L
 
     def _modified_print_mode(self, print_mode):
-
         r"""
         Return a dictionary of print options, starting with ``self``'s
         print options but modified by the options in the dictionary
@@ -145,26 +145,26 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         """
         return 1
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return a list of generators.
+        Return a tuple of generators.
 
         EXAMPLES::
 
             sage: R = Zp(5); R.gens()
-            [5 + O(5^21)]
+            (5 + O(5^21),)
             sage: Zq(25,names='a').gens()
-            [a + O(5^20)]
+            (a + O(5^20),)
             sage: S.<x> = ZZ[]; f = x^5 + 25*x -5; W.<w> = R.ext(f); W.gens()
-            [w + O(w^101)]
+            (w + O(w^101),)
         """
-        return [self.gen()]
+        return (self.gen(),)
 
     def __richcmp__(self, other, op):
         r"""
         Rich comparison of ``self`` with ``other``.
 
-        We consider two p-adic rings or fields to be equal if they are
+        We consider two `p`-adic rings or fields to be equal if they are
         equal mathematically, and also have the same precision cap and
         printing parameters.
 
@@ -195,15 +195,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         return self._printer.richcmp_modes(other._printer, op)
 
-    # def ngens(self):
-    #     return 1
-
-    # def gen(self, n = 0):
-    #     if n != 0:
-    #         raise IndexError, "only one generator"
-    #     return self(self.prime())
-
-    def print_mode(self):
+    def print_mode(self) -> str:
         r"""
         Return the current print mode as a string.
 
@@ -230,9 +222,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         r"""
         Return the prime, ie the characteristic of the residue field.
 
-        OUTPUT:
-
-        The characteristic of the residue field.
+        OUTPUT: the characteristic of the residue field
 
         EXAMPLES::
 
@@ -275,9 +265,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         r"""
         Return the prime, i.e., the characteristic of the residue field.
 
-        OUTPUT:
-
-        The characteristic of the residue field.
+        OUTPUT: the characteristic of the residue field
 
         EXAMPLES::
 
@@ -377,9 +365,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         - ``print_mode`` -- (optional) a dictionary containing print options;
           defaults to the same options as this ring
 
-        OUTPUT:
-
-        - the fraction field of this ring
+        OUTPUT: the fraction field of this ring
 
         EXAMPLES::
 
@@ -421,8 +407,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             return self
         if print_mode is None:
             return self.change(field=True)
-        else:
-            return self.change(field=True, **print_mode)
+        return self.change(field=True, **print_mode)
 
     def integer_ring(self, print_mode=None):
         r"""
@@ -437,9 +422,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         - ``print_mode`` -- (optional) a dictionary containing print options;
           defaults to the same options as this ring
 
-        OUTPUT:
-
-        - the ring of elements of this field with nonnegative valuation
+        OUTPUT: the ring of elements of this field with nonnegative valuation
 
         EXAMPLES::
 
@@ -478,6 +461,12 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             2-adic Ring with lattice-cap precision (label: test)
             sage: R.integer_ring({'mode':'series'}) is R
             True
+
+        The `secure` attribute for relaxed type is preserved::
+
+            sage: K = QpER(5, secure=True)
+            sage: K.integer_ring().is_secure()
+            True
         """
         # Currently does not support fields with non integral defining
         # polynomials.  This should change when the padic_general_extension
@@ -485,21 +474,18 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         if not self.is_field() and print_mode is None:
             return self
         if print_mode is None:
-            return self.change(field=False)
-        else:
-            from sage.misc.superseded import deprecation
-            deprecation(23227, "Use the change method if you want to change print options in integer_ring()")
-            return self.change(field=False, **print_mode)
+            return self.change(field=False, check=False)
+        from sage.misc.superseded import deprecation
+        deprecation(23227, "Use the change method if you want to change print options in integer_ring()")
+        return self.change(field=False, **print_mode)
 
-    def teichmuller(self, x, prec = None):
+    def teichmuller(self, x, prec=None):
         r"""
         Return the Teichmüller representative of ``x``.
 
         - ``x`` -- something that can be cast into ``self``
 
-        OUTPUT:
-
-        - the Teichmüller lift of ``x``
+        OUTPUT: the Teichmüller lift of ``x``
 
         EXAMPLES::
 
@@ -515,6 +501,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: R = Zp(5, 10, 'fixed-mod', 'series')
             sage: R.teichmuller(2)
             2 + 5 + 2*5^2 + 5^3 + 3*5^4 + 4*5^5 + 2*5^6 + 3*5^7 + 3*5^9
+
             sage: R = Zp(5,5)
             sage: S.<x> = R[]
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
@@ -533,7 +520,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: b^125 == b
             True
 
-        We check that :trac:`23736` is resolved::
+        We check that :issue:`23736` is resolved::
 
             sage: R.teichmuller(GF(5)(2))
             2 + 5 + 2*5^2 + 5^3 + 3*5^4 + O(5^5)
@@ -572,7 +559,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: R.teichmuller_system()
             [1, 242]
 
-        Check that :trac:`20457` is fixed::
+        Check that :issue:`20457` is fixed::
 
             sage: F.<a> = Qq(5^2,6)
             sage: F.teichmuller_system()[3]
@@ -608,34 +595,31 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 #         """
 #         raise NotImplementedError
 
-    def extension(self, modulus, prec = None, names = None, print_mode = None, implementation='FLINT', **kwds):
+    def extension(self, modulus, prec=None, names=None, print_mode=None, implementation='FLINT', **kwds):
         r"""
-        Create an extension of this p-adic ring.
+        Create an extension of this `p`-adic ring.
 
         EXAMPLES::
 
             sage: k = Qp(5)
             sage: R.<x> = k[]
-            sage: l.<w> = k.extension(x^2-5); l
+            sage: l.<w> = k.extension(x^2 - 5); l
             5-adic Eisenstein Extension Field in w defined by x^2 - 5
-
             sage: F = list(Qp(19)['x'](cyclotomic_polynomial(5)).factor())[0][0]
-            sage: L = Qp(19).extension(F, names='a')
-            sage: L
+            sage: L = Qp(19).extension(F, names='a'); L
             19-adic Unramified Extension Field in a defined by x^2 + 8751674996211859573806383*x + 1
         """
         if isinstance(modulus, list):
             if len(modulus) == 0:
                 return self
-            else:
-                return self.extension(modulus[-1], prec=prec[-1],
-                                      names=names[-1],
-                                      implementation=implementation[-1],
-                                      print_mode=print_mode, **kwds).extension(
-                                          modulus[:-1], prec=prec[:-1],
-                                          names=names[:-1],
-                                          implementation=implementation[:-1],
-                                          print_mode=print_mode, **kwds)
+            return self.extension(modulus[-1], prec=prec[-1],
+                                  names=names[-1],
+                                  implementation=implementation[-1],
+                                  print_mode=print_mode, **kwds).extension(
+                                      modulus[:-1], prec=prec[:-1],
+                                      names=names[:-1],
+                                      implementation=implementation[:-1],
+                                      print_mode=print_mode, **kwds)
         from sage.rings.padics.factory import ExtensionFactory
         if print_mode is None:
             print_mode = {}
@@ -659,7 +643,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                         print_mode[option] = kwds[option]
                     else:
                         print_mode[option] = self._printer.dict()[option]
-        return ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check = True, implementation=implementation, **print_mode)
+        return ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check=True, implementation=implementation, **print_mode)
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         r"""
@@ -680,7 +664,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             True
             sage: L._is_valid_homomorphism_(L, [-b])
             True
-
             sage: W.<w> = K.extension(x^2 - 5)
             sage: cc = K.hom([-a])
             sage: W._is_valid_homomorphism_(W, [w], base_map=cc)
@@ -963,7 +946,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                     xx = y + (x % b)
                     tester.assertTrue(xx.is_equal_to(x,prec))
 
-
     def _test_log(self, **options):
         r"""
         Test the log operator on elements of this ring.
@@ -1039,7 +1021,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             try:
                 y = self.teichmuller(x)
             except ValueError:
-                tester.assertTrue(x.valuation() < 0 or x.precision_absolute()==0)
+                tester.assertTrue(x.valuation() < 0 or x.precision_absolute() == 0)
             else:
                 try:
                     tester.assertEqual(x.residue(), y.residue())
@@ -1056,7 +1038,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         INPUT:
 
-         - ``options`` -- any keyword arguments accepted by :meth:`_tester`
+        - ``options`` -- any keyword arguments accepted by :meth:`_tester`
 
         EXAMPLES::
 
@@ -1113,7 +1095,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         INPUT:
 
-        -  ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         EXAMPLES::
 
@@ -1209,7 +1191,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         INPUT:
 
-        - ``exponent`` -- an integer or ``Infinity``
+        - ``exponent`` -- integer or ``Infinity``
 
         OUTPUT:
 
@@ -1226,7 +1208,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: K.<a> = Qq(2^3, 5)
             sage: S.<x> = K[]
             sage: L.<pi> = K.extension(x^2 + 2*x + 2)
-            sage: zeta = L.primitive_root_of_unity(); zeta # indirect doctest
+            sage: zeta = L.primitive_root_of_unity(); zeta  # indirect doctest
             a + a*pi + pi^2 + a*pi^4 + a*pi^5 + a^2*pi^8 + a^2*pi^9 + O(pi^10)
             sage: zeta.parent() is L
             True
@@ -1283,9 +1265,9 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         INPUT:
 
-        - ``n`` -- an integer or ``None`` (default: ``None``)
+        - ``n`` -- integer or ``None`` (default: ``None``)
 
-        - ``order`` -- a boolean (default: ``False``)
+        - ``order`` -- boolean (default: ``False``)
 
         OUTPUT:
 
@@ -1309,7 +1291,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: W = Zp(3, 2)
             sage: S.<x> = W[]
             sage: R.<pi> = W.extension((x+1)^6 + (x+1)^3 + 1)
-
             sage: zeta, order = R.primitive_root_of_unity(order=True)
             sage: zeta
             2 + 2*pi + 2*pi^3 + 2*pi^7 + 2*pi^8 + 2*pi^9 + pi^11 + O(pi^12)
@@ -1317,7 +1298,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             18
             sage: zeta.multiplicative_order()
             18
-
             sage: zeta, order = R.primitive_root_of_unity(24, order=True)
             sage: zeta
             2 + pi^3 + 2*pi^7 + 2*pi^8 + 2*pi^10 + 2*pi^11 + O(pi^12)
@@ -1355,8 +1335,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         if order:
             return zeta, m * p**s
-        else:
-            return zeta
+        return zeta
 
     def roots_of_unity(self, n=None):
         r"""
@@ -1364,7 +1343,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         INPUT:
 
-        - ``n`` -- an integer or ``None`` (default: ``None``); if
+        - ``n`` -- integer or ``None`` (default: ``None``); if
           ``None``, the full group of roots of unity is returned
 
         EXAMPLES::
@@ -1394,7 +1373,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: W.<a> = Zq(3^2, 2)
             sage: S.<x> = W[]
             sage: R.<pi> = W.extension((x+1)^2 + (x+1) + 1)
-
             sage: roots = R.roots_of_unity(); roots
             [1 + O(pi^4),
              a + 2*a*pi + 2*a*pi^2 + a*pi^3 + O(pi^4),
@@ -1423,21 +1401,21 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         INPUT:
 
-        - ``P`` - a polynomial defined over this ring
+        - ``P`` -- a polynomial defined over this ring
 
         - ``ring`` -- a ring into which this ring coerces
 
-        - ``multiplicities`` -- a boolean (default: ``True``);
+        - ``multiplicities`` -- boolean (default: ``True``);
           whether we have to return the multiplicities of each
           root or not
 
-        - ``algorithm`` -- ``"pari"``, ``"sage"`` or ``None`` (default:
+        - ``algorithm`` -- ``'pari'``, ``'sage'`` or ``None`` (default:
           ``None``); Sage provides an implementation for any extension of
           `\QQ_p` whereas only roots of polynomials over `\QQ_p` is implemented
-          in Pari; the default is ``"pari"`` if ``ring`` is `\ZZ_p` or `\QQ_p`,
-          ``"sage"`` otherwise.
+          in Pari; the default is ``'pari'`` if ``ring`` is `\ZZ_p` or `\QQ_p`,
+          ``'sage'`` otherwise.
 
-        - ``secure`` -- a boolean (default: ``False``)
+        - ``secure`` -- boolean (default: ``False``)
 
         .. NOTE::
 
@@ -1501,12 +1479,12 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
              3 + O(3^9),
              O(3^9)]
 
-        This is due to the fact that we are using ``"pari"`` which does not
+        This is due to the fact that we are using ``'pari'`` which does not
         track precision (it can only compute `p`-adic roots of exact polynomials).
-        If we are switching to ``"sage"`` then the precision on the result
+        If we are switching to ``'sage'`` then the precision on the result
         becomes correct (but the computation is much slower)::
 
-            sage: P.roots(multiplicities=False, algorithm="sage")
+            sage: P.roots(multiplicities=False, algorithm='sage')
             [0,
              3 + O(3^11),
              1 + O(3^9),
@@ -1516,9 +1494,9 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         We check that the keyword ``secure`` works as explained above::
 
             sage: P = x^2 + O(3^10)*x + O(3^10)
-            sage: P.roots(algorithm="sage")
+            sage: P.roots(algorithm='sage')
             [(O(3^5), 2)]
-            sage: P.roots(algorithm="sage", secure=True)
+            sage: P.roots(algorithm='sage', secure=True)
             Traceback (most recent call last):
             ...
             PrecisionError: not enough precision to determine the number of roots
@@ -1554,7 +1532,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: C.<pi> = B.extension(E)
             sage: E.roots(C)
             [(pi + O(pi^30), 1)]
-
             sage: S.<x> = C[]
             sage: P = prod(x - (pi+i) for i in range(5))
             sage: P.roots()
@@ -1595,13 +1572,12 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                 roots = P.change_ring(K)._roots(secure, 0, None)
             if multiplicities:
                 return [ (ring(root), m) for (root, m) in roots ]
-            else:
-                return [ ring(root) for (root, m) in roots ]
+            return [ ring(root) for (root, m) in roots ]
 
 
 class ResidueReductionMap(Morphism):
     r"""
-    Reduction map from a p-adic ring or field to its residue field or ring.
+    Reduction map from a `p`-adic ring or field to its residue field or ring.
 
     These maps must be created using the :meth:`_create_` method in order
     to support categories correctly.
@@ -1623,8 +1599,8 @@ class ResidueReductionMap(Morphism):
 
         INPUT:
 
-        - ``R`` -- a `p`-adic ring or field.
-        - ``k`` -- the residue field of ``R``, or a residue ring of ``R``.
+        - ``R`` -- a `p`-adic ring or field
+        - ``k`` -- the residue field of ``R``, or a residue ring of ``R``
 
         EXAMPLES::
 
@@ -1693,14 +1669,14 @@ class ResidueReductionMap(Morphism):
             sage: Zmod(121).convert_map_from(Qp(11))(3/11)
             Traceback (most recent call last):
             ...
-            ValueError: element must have non-negative valuation in order to compute residue
+            ValueError: element must have nonnegative valuation in order to compute residue
         """
         return x.residue(self._n, field=self._field, check_prec=self._field)
 
     def section(self):
         r"""
         Return the section from the residue ring or field
-        back to the p-adic ring or field.
+        back to the `p`-adic ring or field.
 
         EXAMPLES::
 
@@ -1736,15 +1712,16 @@ class ResidueReductionMap(Morphism):
             sage: f == g
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp((self.domain(), self.codomain()), (other.domain(), other.codomain()), op)
 
 # A class for the Teichmüller lift would also be reasonable....
 
+
 class ResidueLiftingMap(Morphism):
     r"""
-    Lifting map to a p-adic ring or field from its residue field or ring.
+    Lifting map to a `p`-adic ring or field from its residue field or ring.
 
     These maps must be created using the :meth:`_create_` method in order
     to support categories correctly.
@@ -1766,8 +1743,8 @@ class ResidueLiftingMap(Morphism):
 
         INPUT:
 
-        - ``k`` -- the residue field of ``R``, or a residue ring of ``R``.
-        - ``R`` -- a `p`-adic ring or field.
+        - ``k`` -- the residue field of ``R``, or a residue ring of ``R``
+        - ``R`` -- a `p`-adic ring or field
 
         EXAMPLES::
 
@@ -1813,9 +1790,8 @@ class ResidueLiftingMap(Morphism):
             else:
                 lift = K(x.polynomial().list(), unram_n)
             return R(lift, self._n)
-        else:
-            #unram_n = (self._n - 1) // R.absolute_e() + 1
-            raise NotImplementedError
+        #unram_n = (self._n - 1) // R.absolute_e() + 1
+        raise NotImplementedError
 
     def _call_with_args(self, x, args=(), kwds={}):
         r"""
@@ -1824,7 +1800,7 @@ class ResidueLiftingMap(Morphism):
         EXAMPLES::
 
             sage: f = Zp(2).convert_map_from(Zmod(128))
-            sage: f(7, 5) # indirect doctest
+            sage: f(7, 5)  # indirect doctest
             1 + 2 + 2^2 + O(2^5)
         """
         R = self.codomain()
@@ -1841,8 +1817,7 @@ class ResidueLiftingMap(Morphism):
             else:
                 lift = K(x.polynomial().list(), *args, **kwds)
             return R(lift, *args, **kwds)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def _repr_type(self):
         r"""
@@ -1869,14 +1844,15 @@ class ResidueLiftingMap(Morphism):
             sage: f == g
             True
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return NotImplemented
         return richcmp((self.domain(), self.codomain()), (other.domain(), other.codomain()), op)
+
 
 def local_print_mode(obj, print_options, pos=None, ram_name=None):
     r"""
     Context manager for safely temporarily changing the print_mode
-    of a p-adic ring/field.
+    of a `p`-adic ring/field.
 
     EXAMPLES::
 
@@ -1891,6 +1867,8 @@ def local_print_mode(obj, print_options, pos=None, ram_name=None):
 
         For more documentation see :class:`sage.structure.parent_gens.localvars`.
     """
+    from sage.rings.padics.padic_printing import pAdicPrinter
+
     if isinstance(print_options, str):
         print_options = {'mode': print_options}
     elif not isinstance(print_options, dict):

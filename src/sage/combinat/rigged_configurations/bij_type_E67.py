@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Bijection classes for type `E_{6,7}^{(1)}`
 
@@ -20,7 +21,7 @@ TESTS::
     sage: TestSuite(bijection).run()
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011, 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -32,8 +33,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.rigged_configurations.bij_abstract_class import KRTToRCBijectionAbstract
 from sage.combinat.rigged_configurations.bij_abstract_class import RCToKRTBijectionAbstract
@@ -91,8 +92,8 @@ class KRTToRCBijectionTypeE67(KRTToRCBijectionAbstract):
             if not data:
                 break
 
-            max_val = max(l for a,l in data)
-            for a,l in data:
+            max_val = max(l for a, l in data)
+            for a, l in data:
                 if l == max_val:
                     self.ret_rig_con[a-1].insert_cell(max_width)
                     max_width = l
@@ -153,7 +154,7 @@ class KRTToRCBijectionTypeE67(KRTToRCBijectionAbstract):
                 return 2
             if r == 2:
                 return 5
-        else: # rank == 7
+        else:  # rank == 7
             #     1-2-3
             #    /
             # 0-7-6-5-4
@@ -188,8 +189,7 @@ class KRTToRCBijectionTypeE67(KRTToRCBijectionAbstract):
         """
         if self.tp_krt.cartan_type().classical().rank() == 6:
             return endpoint6(1)
-        else:
-            return endpoint7(7)
+        return endpoint7(7)
 
     @cached_method
     def _endpoint(self, r):
@@ -210,8 +210,7 @@ class KRTToRCBijectionTypeE67(KRTToRCBijectionAbstract):
         """
         if self.tp_krt.cartan_type().classical().rank() == 6:
             return endpoint6(r)
-        else:
-            return endpoint7(r)
+        return endpoint7(r)
 
 
 class RCToKRTBijectionTypeE67(RCToKRTBijectionAbstract):
@@ -240,12 +239,12 @@ class RCToKRTBijectionTypeE67(RCToKRTBijectionAbstract):
             data = [(a, self._find_singular_string(self.cur_partitions[a-1], last_size))
                     for a in b.value if a > 0]
             data = [(val, a, self.cur_partitions[a-1][val])
-                    for a,val in data if val is not None]
+                    for a, val in data if val is not None]
             if not data:
                 break
 
-            min_val = min(l for i,a,l in data)
-            for i,a,l in data:
+            min_val = min(l for i, a, l in data)
+            for i, a, l in data:
                 if l == min_val:
                     found = True
                     last_size = l
@@ -253,13 +252,13 @@ class RCToKRTBijectionTypeE67(RCToKRTBijectionAbstract):
                     b = b.f(a)
                     break
 
-        for a,p in enumerate(self.cur_partitions):
+        for a, p in enumerate(self.cur_partitions):
             self._update_vacancy_numbers(a)
             for i in range(len(p)):
                 if p.rigging[i] is None:
                     p.rigging[i] = p.vacancy_numbers[i]
 
-        return(b)
+        return b
 
     def _next_index(self, r):
         """
@@ -290,7 +289,7 @@ class RCToKRTBijectionTypeE67(RCToKRTBijectionAbstract):
                 return 2
             if r == 6:
                 return 1
-        else: # rank == 7
+        else:  # rank == 7
             #     1-2-3
             #    /
             # 0-7-6-5-4
@@ -322,8 +321,7 @@ class RCToKRTBijectionTypeE67(RCToKRTBijectionAbstract):
         """
         if self.KRT.cartan_type().classical().rank() == 6:
             return endpoint6(r)
-        else:
-            return endpoint7(r)
+        return endpoint7(r)
 
 
 def endpoint6(r):
@@ -346,18 +344,18 @@ def endpoint6(r):
         sage: endpoint6(6)
         (-1, 6)
     """
-    C = CrystalOfLetters(['E',6])
+    C = CrystalOfLetters(['E', 6])
     if r == 1:
         return C.module_generators[0]  # C((1,))
-    elif r == 2:
+    if r == 2:
         return C((-3, 2))
-    elif r == 3:
+    if r == 3:
         return C((-1, 3))
-    elif r == 4:
+    if r == 4:
         return C((-3, 4))
-    elif r == 5:
+    if r == 5:
         return C((-2, 5))
-    elif r == 6:
+    if r == 6:
         return C((-1, 6))
 
 
@@ -383,18 +381,18 @@ def endpoint7(r):
         sage: endpoint7(7)
         (7,)
     """
-    C = CrystalOfLetters(['E',7])
+    C = CrystalOfLetters(['E', 7])
     if r == 1:
         return C((-7, 1))
-    elif r == 2:
+    if r == 2:
         return C((-1, 2))
-    elif r == 3:
+    if r == 3:
         return C((-2, 3))
-    elif r == 4:
+    if r == 4:
         return C((-5, 4))
-    elif r == 5:
+    if r == 5:
         return C((-6, 5))
-    elif r == 6:
+    if r == 6:
         return C((-7, 6))
-    elif r == 7:
+    if r == 7:
         return C.module_generators[0]  # C((7,))

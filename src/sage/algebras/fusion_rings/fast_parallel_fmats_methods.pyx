@@ -29,7 +29,7 @@ from sage.rings.ideal import Ideal
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 ##########################
-### Fast class methods ###
+#   Fast class methods   #
 ##########################
 
 cpdef _solve_for_linear_terms(factory, list eqns=None):
@@ -87,7 +87,8 @@ cpdef _solve_for_linear_terms(factory, list eqns=None):
                 # assert factory.test_fvars[s] == fvars[s], "OG value {}, Shared: {}".format(fvars[s], factory.test_fvars[s])
         if len(eq_tup) == 2:
             idx = has_appropriate_linear_term(eq_tup)
-            if idx < 0: continue
+            if idx < 0:
+                continue
             # The chosen term is guaranteed to be univariate in the largest variable
             exp = eq_tup[idx][0]
             max_var = exp._data[0]
@@ -161,7 +162,7 @@ cpdef _backward_subs(factory, bint flatten=True):
         sextuple = idx_to_sextuple[i]
         rhs = fvars[sextuple]
         d = {var_idx: fvars[idx_to_sextuple[var_idx]]
-              for var_idx in variables(rhs) if solved[var_idx]}
+             for var_idx in variables(rhs) if solved[var_idx]}
         if d:
             kp = compute_known_powers(get_variables_degrees([rhs], nvars), d, one)
             res = tuple(subs_squares(subs(rhs, kp, one), _ks).items())
@@ -210,7 +211,7 @@ cdef _fmat(fvars, _Nk_ij, id_anyon, a, b, c, d, x, y):
 # _Nk_ij = cached_function(_Nk_ij, name='_Nk_ij')
 
 ###############
-### Mappers ###
+#   Mappers   #
 ###############
 
 cdef req_cy(tuple basis, r_matrix, dict fvars, Nk_ij, id_anyon, tuple sextuple):
@@ -226,6 +227,7 @@ cdef req_cy(tuple basis, r_matrix, dict fvars, Nk_ij, id_anyon, tuple sextuple):
     for f in basis:
         rhs += _fmat(fvars, Nk_ij, id_anyon, c, a, b, d, e, f) * r_matrix(f, c, d, base_coercion=False) * _fmat(fvars, Nk_ij, id_anyon, a, b, c, d, f, g)
     return lhs-rhs
+
 
 @cython.wraparound(False)
 @cython.nonecheck(False)
@@ -271,7 +273,7 @@ cdef get_reduced_hexagons(factory, tuple mp_params):
         if i % n_proc == child_id:
             he = req_cy(basis, r_matrix, fvars, _Nk_ij, id_anyon, sextuple)
             if he:
-                red = reduce_poly_dict(he.dict(), _nnz, _ks, one)
+                red = reduce_poly_dict(he.monomial_coefficients(), _nnz, _ks, one)
 
                 # Avoid pickling cyclotomic coefficients
                 red = _flatten_coeffs(red)
@@ -287,12 +289,14 @@ cdef MPolynomial_libsingular feq_cy(tuple basis, fvars, Nk_ij, id_anyon, zero, t
     """
     a, b, c, d, e, f, g, k, l = nonuple
     lhs = _fmat(fvars, Nk_ij, id_anyon, f, c, d, e, g, l) * _fmat(fvars, Nk_ij, id_anyon, a, b, l, e, f, k)
-    if lhs == 0 and prune: # it is believed that if lhs=0, the equation carries no new information
+    if lhs == 0 and prune:
+        # it is believed that if lhs=0, the equation carries no new information
         return zero
     rhs = zero
     for h in basis:
         rhs += _fmat(fvars, Nk_ij, id_anyon, a, b, c, g, f, h)*_fmat(fvars, Nk_ij, id_anyon, a, h, d, e, g, k)*_fmat(fvars, Nk_ij, id_anyon, b, c, d, k, h, l)
     return lhs - rhs
+
 
 @cython.wraparound(False)
 @cython.nonecheck(False)
@@ -304,7 +308,7 @@ cdef get_reduced_pentagons(factory, tuple mp_params):
     # Set up multiprocessing parameters
     cdef list worker_results = list()
     cdef int child_id, n_proc
-    child_id, n_proc, output = mp_params
+    child_id, n_proc, _ = mp_params
     cdef unsigned long i
     cdef tuple nonuple, red
     cdef MPolynomial_libsingular pe
@@ -337,7 +341,7 @@ cdef get_reduced_pentagons(factory, tuple mp_params):
         if i % n_proc == child_id:
             pe = feq_cy(basis, fvars, _Nk_ij, id_anyon, zero, nonuple, prune=True)
             if pe:
-                red = reduce_poly_dict(pe.dict(), _nnz, _ks, one)
+                red = reduce_poly_dict(pe.monomial_coefficients(), _nnz, _ks, one)
 
                 # Avoid pickling cyclotomic coefficients
                 red = _flatten_coeffs(red)
@@ -395,17 +399,17 @@ cdef list compute_gb(factory, tuple args):
     cdef MPolynomialRing_libsingular R = PolynomialRing(factory._FR.field(), len(sorted_vars), 'a', order=term_order)
 
     # Zip tuples into R and compute Groebner basis
-    cdef idx_map = { old : new for new, old in enumerate(sorted_vars) }
+    cdef idx_map = {old: new for new, old in enumerate(sorted_vars)}
     nvars = len(sorted_vars)
     F = factory.field()
     cdef list polys = list()
     for eq_tup in eqns:
         eq_tup = _unflatten_coeffs(F, eq_tup)
         polys.append(_tup_to_poly(resize(eq_tup, idx_map, nvars), parent=R))
-    gb = Ideal(sorted(polys)).groebner_basis(algorithm="libsingular:slimgb")
+    gb = Ideal(sorted(polys)).groebner_basis(algorithm='libsingular:slimgb')
 
     # Change back to fmats poly ring and append to temp_eqns
-    cdef dict inv_idx_map = { v : k for k, v in idx_map.items() }
+    cdef dict inv_idx_map = {v: k for k, v in idx_map.items()}
     cdef tuple t
     nvars = factory._poly_ring.ngens()
     for p in gb:
@@ -418,7 +422,7 @@ cdef list compute_gb(factory, tuple args):
     return collect_eqns(res)
 
 ################
-### Reducers ###
+#   Reducers   #
 ################
 
 cdef inline list collect_eqns(list eqns):
@@ -434,7 +438,7 @@ cdef inline list collect_eqns(list eqns):
     return list(reduced)
 
 ##############################
-### Parallel code executor ###
+#   Parallel code executor   #
 ##############################
 
 # Hard-coded module __dict__-style attribute with visible cdef methods
@@ -451,12 +455,12 @@ cpdef executor(tuple params):
     Execute a function defined in this module
     (``sage.algebras.fusion_rings.fast_parallel_fmats_methods``) in a worker
     process, and supply the factory parameter by constructing a reference
-    to the ``FMatrix`` object in the worker's memory adress space from
+    to the ``FMatrix`` object in the worker's memory address space from
     its ``id``.
 
     INPUT:
 
-    - ``params`` -- a tuple ``((fn_name, fmats_id), fn_args)`` where
+    - ``params`` -- tuple ``((fn_name, fmats_id), fn_args)`` where
       ``fn_name`` is the name of the function to be executed, ``fmats_id``
       is the ``id`` of the :class:`FMatrix` object, and ``fn_args`` is a
       tuple containing all arguments to be passed to the function ``fn_name``.
@@ -490,7 +494,7 @@ cpdef executor(tuple params):
     return mappers[fn_name](fmats_obj, args)
 
 ####################
-### Verification ###
+#   Verification   #
 ####################
 
 cdef feq_verif(factory, worker_results, fvars, Nk_ij, id_anyon, tuple nonuple, float tol=5e-8):
@@ -508,6 +512,7 @@ cdef feq_verif(factory, worker_results, fvars, Nk_ij, id_anyon, tuple nonuple, f
     if diff > tol or diff < -tol:
         worker_results.append(diff)
 
+
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
@@ -517,7 +522,6 @@ cdef pent_verify(factory, tuple mp_params):
     and reduce them.
     """
     child_id, n_proc, verbose = mp_params
-    cdef float t0
     cdef tuple nonuple
     cdef unsigned long long i
     cdef list worker_results = list()

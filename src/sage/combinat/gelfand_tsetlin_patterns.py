@@ -1,25 +1,9 @@
 r"""
-Gelfand-Tsetlin Patterns
+Gelfand-Tsetlin patterns
 
 AUTHORS:
 
-- Travis Scrimshaw (2013-15-03): Initial version
-
-REFERENCES:
-
-.. [BBF] \B. Brubaker, D. Bump, and S. Friedberg.
-   Weyl Group Multiple Dirichlet Series: Type A Combinatorial Theory.
-   Ann. of Math. Stud., vol. 175, Princeton Univ. Press, New Jersey, 2011.
-
-.. [GC50] \I. M. Gelfand and M. L. Cetlin.
-   Finite-Dimensional Representations of the Group of Unimodular Matrices.
-   Dokl. Akad. Nauk SSSR **71**, pp. 825--828, 1950.
-
-.. [Tok88] \T. Tokuyama.
-   A Generating Function of Strict Gelfand Patterns and Some Formulas on
-   Characters of General Linear Groups.
-   J. Math. Soc. Japan **40** (4), pp. 671--685, 1988.
-
+- Travis Scrimshaw (2013-15-03): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim@ucdavis.edu>
@@ -53,7 +37,7 @@ from sage.misc.misc_c import prod
 
 
 class GelfandTsetlinPattern(ClonableArray,
-        metaclass=InheritComparisonClasscallMetaclass):
+                            metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A Gelfand-Tsetlin (sometimes written as Gelfand-Zetlin or Gelfand-Cetlin)
     pattern.  They were originally defined in [GC50]_.
@@ -173,7 +157,7 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: hash(gt) == hash(gt)
             True
 
-        Check that :trac:`14717` is fixed::
+        Check that :issue:`14717` is fixed::
 
             sage: GT = GelfandTsetlinPattern([[2, 1, 0], [2, 0], [1]])
             sage: GT in {}
@@ -197,7 +181,7 @@ class GelfandTsetlinPattern(ClonableArray,
         for i, row in enumerate(self):
             if i != 0:
                 ret += '\n'
-            ret += '   '*i
+            ret += '   ' * i
             ret += '   '.join('%3s' % val for val in row)
         return ret
 
@@ -234,13 +218,13 @@ class GelfandTsetlinPattern(ClonableArray,
         n = len(self)
         if n == 0:
             return "\\emptyset"
-        ret = "\\begin{array}{" + 'c'*(n*2-1) + "}\n"
+        ret = "\\begin{array}{" + 'c' * (n * 2 - 1) + "}\n"
         for i, row in enumerate(self):
             if i > 0:
                 ret += " \\\\\n"
-            ret += "& "*i
+            ret += "& " * i
             ret += " & & ".join(repr(val) for val in row)
-            ret += " &"*i
+            ret += " &" * i
         return ret + "\n\\end{array}"
 
     @combinatorial_map(name='to semistandard tableau')
@@ -282,9 +266,9 @@ class GelfandTsetlinPattern(ClonableArray,
                 if j >= len(ret):
                     if val == 0:
                         break
-                    ret.append([i+1]*val)
+                    ret.append([i + 1] * val)
                 else:
-                    ret[j].extend([i+1]*(val-len(ret[j])))
+                    ret[j].extend([i + 1] * (val - len(ret[j])))
         S = SemistandardTableaux(max_entry=len(self))
         return S(ret)
 
@@ -303,11 +287,9 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: G.boxed_entries()
             ((1, 0),)
         """
-        ret = []
-        for i in range(1, len(self)):
-            for j in range(len(self[i])):
-                if self[i][j] == self[i-1][j]:
-                    ret.append((i, j))
+        ret = [(i, j) for i in range(1, len(self))
+               for j, selfij in enumerate(self[i])
+               if selfij == self[i - 1][j]]
         return tuple(ret)
 
     @cached_method
@@ -325,11 +307,9 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: G.circled_entries()
             ((1, 1), (2, 0))
         """
-        ret = []
-        for i in range(1, len(self)):
-            for j in range(len(self[i])):
-                if self[i][j] == self[i-1][j+1]:
-                    ret.append((i, j))
+        ret = [(i, j) for i in range(1, len(self))
+               for j, selfij in enumerate(self[i])
+               if selfij == self[i - 1][j + 1]]
         return tuple(ret)
 
     @cached_method
@@ -350,11 +330,9 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: G.special_entries()
             ((2, 0),)
         """
-        ret = []
-        for i in range(1, len(self)):
-            for j in range(len(self[i])):
-                if self[i-1][j] > self[i][j] and self[i][j] > self[i-1][j+1]:
-                    ret.append((i, j))
+        ret = [(i, j) for i in range(1, len(self))
+               for j, selfij in enumerate(self[i])
+               if self[i - 1][j] > selfij > self[i - 1][j + 1]]
         return tuple(ret)
 
     def number_of_boxes(self) -> int:
@@ -457,7 +435,7 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: G.weight()
             (2, 2, 3)
         """
-        wt = [self.row_sums()[-1]] + [self.row_sums()[i-1]-self.row_sums()[i] for i in reversed(range(1, len(self[0])))]
+        wt = [self.row_sums()[-1]] + [self.row_sums()[i - 1] - self.row_sums()[i] for i in reversed(range(1, len(self[0])))]
         return tuple(wt)
 
     def Tokuyama_coefficient(self, name='t'):
@@ -480,8 +458,8 @@ class GelfandTsetlinPattern(ClonableArray,
 
         INPUT:
 
-        - ``name`` -- (Default: ``'t'``) An alternative name for the
-          variable `t`.
+        - ``name`` -- (default: ``'t'``) an alternative name for the
+          variable `t`
 
         EXAMPLES::
 
@@ -502,7 +480,7 @@ class GelfandTsetlinPattern(ClonableArray,
         t = R.gen(0)
         if not self.is_strict():
             return R.zero()
-        return (t+1)**(self.number_of_special_entries()) * t**(self.number_of_boxes())
+        return (t + 1)**self.number_of_special_entries() * t**self.number_of_boxes()
 
     @combinatorial_map(order=2, name='Bender-Knuth involution')
     def bender_knuth_involution(self, i) -> GelfandTsetlinPattern:
@@ -580,15 +558,15 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``n`` -- The width or depth of the array, also known as the rank
+    - ``n`` -- the width or depth of the array, also known as the rank
 
-    - ``k`` -- (Default: ``None``) If specified, this is the maximum value that
+    - ``k`` -- (default: ``None``) if specified, this is the maximum value that
       can occur in the patterns
 
-    - ``top_row`` -- (Default: ``None``) If specified, this is the fixed top
+    - ``top_row`` -- (default: ``None``) if specified, this is the fixed top
       row of all patterns
 
-    - ``strict`` -- (Default: ``False``) Set to ``True`` if all patterns are
+    - ``strict`` -- (default: ``False``) set to ``True`` if all patterns are
       strict patterns
 
     TESTS:
@@ -703,17 +681,17 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
         if self._n is not None and len(gt) != self._n:
             return False
         # Check if it has the correct maximum value
-        if self._k is not None and any( val > self._k for row in gt for val in row ):
+        if self._k is not None and any(val > self._k for row in gt
+                                       for val in row):
             return False
         # Check if it is a GT pattern
-        if not all( gt[i-1][j] >= gt[i][j] >= gt[i-1][j+1]
-                    for i in range(1, len(gt)) for j in range(len(gt[i])) ):
+        if not all(gt[i-1][j] >= gt[i][j] >= gt[i-1][j+1]
+                   for i in range(1, len(gt)) for j in range(len(gt[i]))):
             return False
         # Check if it is strict if applicable
-        if self._strict and any( gt[i][j] == gt[i][j-1] for i in range(len(gt))
-                for j in range(1, len(gt[i])) ):
-            return False
-        return True
+        return not (self._strict and any(gt[i][j] == gt[i][j - 1]
+                                         for i in range(len(gt))
+                                         for j in range(1, len(gt[i]))))
 
     def _repr_(self):
         """
@@ -782,7 +760,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             sage: t == GelfandTsetlinPattern([[1]])
             True
 
-        Check that :trac:`25919` is fixed::
+        Check that :issue:`25919` is fixed::
 
             sage: t = GelfandTsetlinPattern([[1]])
             sage: u = GelfandTsetlinPatterns()[1]
@@ -853,7 +831,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
              [[1, 0, 0], [0, 0], [0]],
              [[1, 0, 0], [1, 0], [0]]]
 
-        Check that :trac:`14718` is fixed::
+        Check that :issue:`14718` is fixed::
 
             sage: T = GelfandTsetlinPatterns(1,3)
             sage: list(T)
@@ -965,7 +943,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
                 continue
             # If it would create an invalid entry, backstep
             if (pos > 0 and (row[pos] >= row[pos-1]
-                    or (self._strict and row[pos] == row[pos-1]-1)) ) \
+                    or (self._strict and row[pos] == row[pos-1]-1))) \
                     or (self._k is not None and row[pos] >= self._k):
                 row[pos] = -1
                 pos -= 1
@@ -993,7 +971,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             [2, 0]
             [2, 1]
         """
-        row = [x-1 for x in upper_row[1:]]
+        row = [x - 1 for x in upper_row[1:]]
         row_len = len(row)
         pos = 0
         while pos >= 0:
@@ -1002,11 +980,11 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
                 pos -= 1
                 continue
             # If it would create an invalid entry, backstep
-            if ( pos > 0 and (row[pos] >= row[pos-1] \
-                    or (self._strict and row[pos] == row[pos-1]-1)) ) \
+            if (pos > 0 and (row[pos] >= row[pos - 1]
+                    or (self._strict and row[pos] == row[pos - 1] - 1))) \
                     or row[pos] >= upper_row[pos] \
                     or (self._k is not None and row[pos] >= self._k):
-                row[pos] = upper_row[pos+1] - 1
+                row[pos] = upper_row[pos + 1] - 1
                 pos -= 1
                 continue
             row[pos] += 1
@@ -1018,14 +996,12 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``chain_state`` -- A GelfandTsetlin pattern represented as a list of lists
-        - ``row`` -- The row of the cell being modified
-        - ``col`` -- The column of the cell being modified
-        - ``direction`` -- The direction to change the cell 1 = increase, 0 = decrease
+        - ``chain_state`` -- a GelfandTsetlin pattern represented as a list of lists
+        - ``row`` -- the row of the cell being modified
+        - ``col`` -- the column of the cell being modified
+        - ``direction`` -- the direction to change the cell 1 = increase, 0 = decrease
 
-        OUTPUT:
-
-        ``chain_state`` is possibly modified.
+        OUTPUT: ``chain_state`` is possibly modified
 
         TESTS:
 
@@ -1052,8 +1028,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             sage: G._toggle_markov_chain(state, 0, 2, 0)
             sage: state
             [[4, 2, 0], [3, 2], [2]]
-
-            """
+        """
         if direction == 1:
             upbound = self._k
             if row != 0:
@@ -1088,8 +1063,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
         """
         if self._strict:
             return [[self._k - j for j in range(self._n - i)] for i in range(self._n)]
-        else:
-            return [[self._k for j in range(self._n - i)] for i in range(self._n)]
+        return [[self._k for j in range(self._n - i)] for i in range(self._n)]
 
     def _cftp_lower(self):
         """
@@ -1104,8 +1078,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
         """
         if self._strict:
             return [[self._n - j - i - 1 for j in range(self._n - i)] for i in range(self._n)]
-        else:
-            return [[0 for j in range(self._n - i)] for i in range(self._n)]
+        return [[0 for j in range(self._n - i)] for i in range(self._n)]
 
     def _cftp(self, start_row):
         """
@@ -1130,8 +1103,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             True
         """
         from sage.misc.randstate import current_randstate
-        from sage.misc.randstate import seed
-        from sage.misc.randstate import random
+        from sage.misc.randstate import seed, random
 
         count = self._n * self._k
         seedlist = [(current_randstate().long_seed(), count)]
@@ -1148,7 +1120,8 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
                                 direction = random() % 2
                                 self._toggle_markov_chain(upper, row, col, direction)
                                 self._toggle_markov_chain(lower, row, col, direction)
-            if all(all(x == y for x, y in zip(l1, l2)) for l1, l2 in zip(upper, lower)):
+            if all(x == y for l1, l2 in zip(upper, lower)
+                   for x, y in zip(l1, l2)):
                 break
             count = seedlist[0][1] * 2
             seedlist.insert(0, (current_randstate().long_seed(), count))
@@ -1190,7 +1163,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             elif self._k < 0:
                 raise ValueError('cannot sample from empty set')
             else:
-                return self._cftp(0)
+                return self.element_class(self, self._cftp(0))
         else:
             raise ValueError('cannot sample from infinite set')
 
@@ -1211,7 +1184,7 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
 
         TESTS:
 
-        Check a border case in :trac:`14765`::
+        Check a border case in :issue:`14765`::
 
             sage: G = GelfandTsetlinPatterns(top_row=[])
             sage: list(G)
@@ -1283,7 +1256,7 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
              [[4, 2, 1], [4, 2], [4]]]
         """
         # If we enforce strictness, check to see if a specified top row is strict
-        if self._strict and any(self._row[i] == self._row[i+1] for i in range(self._n-1)):
+        if self._strict and any(self._row[i] == self._row[i + 1] for i in range(self._n - 1)):
             return
         if self._n == 0:
             yield self.element_class(self, [])
@@ -1292,8 +1265,8 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
             yield self.element_class(self, [list(self._row)])
             return
         # Setup the first row
-        iters = [None]*self._n
-        ret = [None]*self._n
+        iters = [None] * self._n
+        ret = [None] * self._n
         ret[0] = list(self._row)
         min_pos = 1
         iters[1] = self._row_iter(ret[0])
@@ -1307,7 +1280,7 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
                     yield self.element_class(self, ret[:])
                     pos -= 1
                     continue
-                iters[pos] = self._row_iter(ret[pos-1])
+                iters[pos] = self._row_iter(ret[pos - 1])
             except StopIteration:
                 pos -= 1
 
@@ -1342,8 +1315,8 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
 
         INPUT:
 
-        - ``name`` -- (Default: ``'t'``) An alternative name for the
-          variable `t`.
+        - ``name`` -- (default: ``'t'``) an alternative name for the
+          variable `t`
 
         EXAMPLES::
 
@@ -1358,12 +1331,12 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
             0
         """
         n = self._n
-        variables = [name] + ["x%d" % i for i in range(1, n+1)]
+        variables = [name] + ["x%d" % i for i in range(1, n + 1)]
         R = PolynomialRing(ZZ, names=variables)
         t = R.gen(0)
         x = R.gens()[1:]
         GT = GelfandTsetlinPatterns(top_row=self._row, strict=True)
-        return sum((t+1)**(gt.number_of_special_entries()) * t**(gt.number_of_boxes()) * prod(x[i]**gt.weight()[i] for i in range(n)) for gt in GT)
+        return sum((t + 1)**gt.number_of_special_entries() * t**gt.number_of_boxes() * prod(x[i]**gt.weight()[i] for i in range(n)) for gt in GT)
 
     def _cftp_upper(self) -> list:
         """

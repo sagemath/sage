@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap sage.modules sage.rings.number_field
 """
 Binary Dihedral Groups
 
@@ -16,7 +17,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.matrix.matrix_space import MatrixSpace
@@ -81,7 +82,7 @@ class BinaryDihedralGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap
 
         MS = MatrixSpace(R, 2)
         zero = R.zero()
-        gens = [ MS([zeta, zero, zero, ~zeta]), MS([zero, i, i, zero]) ]
+        gens = [MS([zeta, zero, zero, ~zeta]), MS([zero, i, i, zero])]
 
         from sage.libs.gap.libgap import libgap
         gap_gens = [libgap(matrix_gen) for matrix_gen in gens]

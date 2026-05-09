@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 Double cosets
 
@@ -80,7 +81,6 @@ REFERENCE:
 - [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
   Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
   533-583.
-
 """
 
 #*****************************************************************************
@@ -95,25 +95,27 @@ REFERENCE:
 
 from cysignals.memory cimport sig_calloc
 
-from .data_structures cimport *
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
 from sage.data_structures.bitset_base cimport *
 
 # Functions
 
-cdef bint all_children_are_equivalent_trivial(PartitionStack *PS, void *S):
+cdef bint all_children_are_equivalent_trivial(PartitionStack *PS, void *S) noexcept:
     return 0
 
-cdef int refine_and_return_invariant_trivial(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
+cdef int refine_and_return_invariant_trivial(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     return 0
 
-cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     cdef list MS1 = <list> S1
     cdef list MS2 = <list> S2
     cdef int i, j
-    for i from 0 <= i < degree:
+    for i in range(degree):
         j = int_cmp(MS1[gamma_1[i]], MS2[gamma_2[i]])
-        if j != 0: return j
+        if j != 0:
+            return j
     return 0
+
 
 def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2,3,4,5,0]]):
     """
@@ -166,7 +168,6 @@ def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2
         ....:       reps.append(p)
         sage: len(reps)
         8
-
     """
     cdef int i, n = len(perm1)
     assert all(len(g) == n for g in gens+[perm2])
@@ -197,9 +198,10 @@ def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2
     sig_free(isomorphism)
     return x
 
-cdef dc_work_space *allocate_dc_work_space(int n):
+
+cdef dc_work_space *allocate_dc_work_space(int n) noexcept:
     r"""
-    Allocates work space for the double_coset function. It can be
+    Allocate work space for the double_coset function. It can be
     input to the function in which case it must be deallocated after the
     function is called.
     """
@@ -211,24 +213,24 @@ cdef dc_work_space *allocate_dc_work_space(int n):
         return NULL
 
     work_space.degree = n
-    int_array = <int *> sig_malloc((n*n + # for perm_stack
+    int_array = <int *> sig_malloc((n*n +  # for perm_stack
                                      5*n   # for int_array
                                     )*sizeof(int))
     work_space.group1 = SC_new(n)
     work_space.group2 = SC_new(n)
-    work_space.current_ps = PS_new(n,0)
-    work_space.first_ps   = PS_new(n,0)
+    work_space.current_ps = PS_new(n, 0)
+    work_space.first_ps = PS_new(n, 0)
     work_space.bitset_array = <bitset_t *> sig_calloc((n + 2*len_of_fp_and_mcr + 1), sizeof(bitset_t))
     work_space.orbits_of_subgroup = OP_new(n)
     work_space.perm_stack = NULL
 
-    if int_array                        is NULL or \
-       work_space.group1                is NULL or \
-       work_space.group2                is NULL or \
-       work_space.current_ps            is NULL or \
-       work_space.first_ps              is NULL or \
-       work_space.bitset_array          is NULL or \
-       work_space.orbits_of_subgroup    is NULL:
+    if int_array is NULL or \
+       work_space.group1 is NULL or \
+       work_space.group2 is NULL or \
+       work_space.current_ps is NULL or \
+       work_space.first_ps is NULL or \
+       work_space.bitset_array is NULL or \
+       work_space.orbits_of_subgroup is NULL:
         sig_free(int_array)
         deallocate_dc_work_space(work_space)
         return NULL
@@ -247,9 +249,9 @@ cdef dc_work_space *allocate_dc_work_space(int n):
         return NULL
     return work_space
 
-cdef void deallocate_dc_work_space(dc_work_space *work_space):
+cdef void deallocate_dc_work_space(dc_work_space *work_space) noexcept:
     r"""
-    Deallocates work space for the double_coset function.
+    Deallocate work space for the double_coset function.
     """
     if work_space is NULL:
         return
@@ -267,58 +269,57 @@ cdef void deallocate_dc_work_space(dc_work_space *work_space):
     sig_free(work_space)
 
 cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *ordering2,
-    int n, bint (*all_children_are_equivalent)(PartitionStack *PS, void *S),
+    int n, bint (*all_children_are_equivalent)(PartitionStack *PS, void *S) noexcept,
     int (*refine_and_return_invariant)(PartitionStack *PS, void *S,
-                                       int *cells_to_refine_by, int ctrb_len),
+                                       int *cells_to_refine_by, int ctrb_len) noexcept,
     int (*compare_structures)(int *gamma_1, int *gamma_2, void *S1, void *S2,
-                              int degree),
+                              int degree) noexcept,
     StabilizerChain *input_group,
     dc_work_space *work_space_prealloc, int *isom) except -1:
     """
     Traverse the search space for double coset calculation.
 
     INPUT:
-    S1, S2 -- pointers to the structures
-    partition1 -- PartitionStack of depth 0 and degree n,
-        whose first partition is of the points of S1
-    ordering2 -- an ordering of the points of S2 representing a second partition
-    n -- the number of points (points are assumed to be 0,1,...,n-1)
-    all_children_are_equivalent -- pointer to a function
+    - ``S1``, ``S2`` -- pointers to the structures
+    - ``partition1`` -- PartitionStack of depth 0 and degree n,
+      whose first partition is of the points of S1
+    - ``ordering2`` -- an ordering of the points of S2 representing a second partition
+    - ``n`` -- the number of points (points are assumed to be 0,1,...,n-1)
+    - ``all_children_are_equivalent`` -- pointer to a function
         INPUT:
-        PS -- pointer to a partition stack
-        S -- pointer to the structure
+        - ``PS`` -- pointer to a partition stack
+        - ``S`` -- pointer to the structure
         OUTPUT:
-        bint -- returns True if it can be determined that all refinements below
-            the current one will result in an equivalent discrete partition
-    refine_and_return_invariant -- pointer to a function
+        bint; returns True if it can be determined that all refinements below
+        the current one will result in an equivalent discrete partition
+    - ``refine_and_return_invariant`` -- pointer to a function
         INPUT:
-        PS -- pointer to a partition stack
-        S -- pointer to the structure
-        alpha -- an array consisting of numbers, which indicate the starting
-            positions of the cells to refine against (will likely be modified)
+        - ``PS`` -- pointer to a partition stack
+        -n``S`` -- pointer to the structure
+        - ``alpha`` -- an array consisting of numbers, which indicate the starting
+          positions of the cells to refine against (will likely be modified)
         OUTPUT:
-        int -- returns an invariant under application of arbitrary permutations
+        integer; returns an invariant under application of arbitrary permutations
     compare_structures -- pointer to a function
         INPUT:
-        gamma_1, gamma_2 -- (list) permutations of the points of S1 and S2
-        S1, S2 -- pointers to the structures
-        degree -- degree of gamma_1 and 2
+        - ``gamma_1``, ``gamma_2`` -- (list) permutations of the points of S1 and S2
+        - ``S1``, ``S2`` -- pointers to the structures
+        - ``degree`` -- degree of gamma_1 and 2
         OUTPUT:
-        int -- 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
-            such that the set of all structures is well-ordered
-    input_group -- either a specified group to limit the search to,
-        or NULL for the full symmetric group
-    isom -- space to store the isomorphism to,
-        or NULL if isomorphism is not needed
+        integer; 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
+        such that the set of all structures is well-ordered
+    - ``input_group`` -- either a specified group to limit the search to,
+      or NULL for the full symmetric group
+    - ``isom`` -- space to store the isomorphism to,
+      or NULL if isomorphism is not needed
 
-    NOTE:
-    The partition ``partition1`` and the resulting partition from ``ordering2``
-    *must* satisfy the property that in each cell, the smallest element occurs
-    first!
+    .. NOTE::
 
-    OUTPUT:
-    1 if S1 and S2 are isomorphic, otherwise 0.
+        The partition ``partition1`` and the resulting partition from
+        ``ordering2`` *must* satisfy the property that in each cell, the
+        smallest element occurs first!
 
+    OUTPUT: ``1`` if ``S1`` and ``S2`` are isomorphic, otherwise ``0``
     """
     cdef PartitionStack *current_ps
     cdef PartitionStack *first_ps
@@ -351,8 +352,8 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     cdef StabilizerChain *tmp_gp
 
     cdef int i, j, k, ell, b
-    cdef bint discrete, automorphism, update_label
-    cdef bint backtrack, new_vertex, narrow, mem_err = 0
+    cdef bint automorphism
+    cdef bint new_vertex, mem_err = 0
 
     if n == 0:
         return 0
@@ -378,10 +379,10 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     orbits_of_subgroup                 = work_space.orbits_of_subgroup
 
     indicators                         = work_space.int_array
-    permutation                        = work_space.int_array +   n
-    id_perm                            = work_space.int_array + 2*n
-    cells_to_refine_by                 = work_space.int_array + 3*n
-    vertices_determining_current_stack = work_space.int_array + 4*n
+    permutation                        = work_space.int_array + n
+    id_perm                            = work_space.int_array + 2 * n
+    cells_to_refine_by                 = work_space.int_array + 3 * n
+    vertices_determining_current_stack = work_space.int_array + 4 * n
 
     fixed_points_of_generators         = work_space.bitset_array
     minimal_cell_reps_of_generators    = work_space.bitset_array + len_of_fp_and_mcr
@@ -398,14 +399,14 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     cdef bint unknown = 1
 
     # set up the identity permutation
-    for i from 0 <= i < n:
+    for i in range(n):
         id_perm[i] = i
     if ordering2 is NULL:
         ordering2 = id_perm
 
     # Copy reordering of left_ps coming from ordering2 to current_ps.
-    memcpy(current_ps.entries, ordering2,      n*sizeof(int))
-    memcpy(current_ps.levels,  left_ps.levels, n*sizeof(int))
+    memcpy(current_ps.entries, ordering2, n * sizeof(int))
+    memcpy(current_ps.levels, left_ps.levels, n * sizeof(int))
     current_ps.depth = left_ps.depth
 
     # default values of "infinity"
@@ -591,7 +592,7 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
                     # (same!) primary orbit, then all children of the first
                     # stack at this point are equivalent.
                     j = 0
-                    for i from 0 <= i < n:
+                    for i in range(n):
                         if bitset_check(vertices_to_split[current_ps.depth], i):
                             j += 1
                     if j == subgroup_primary_orbit_size and first_kids_are_same == current_ps.depth+1:
@@ -608,7 +609,6 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
 
         # II. Refine down to a discrete partition, or until
         # we leave the part of the tree we are interested in
-        discrete = 0
         while True:
             i = current_ps.depth
             while True:
@@ -642,7 +642,8 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
                         possible = 1
                         vertices_determining_current_stack[i] = j
                         current_ps.depth -= 1 # reset for next refinement
-                else: break
+                else:
+                    break
             if not possible:
                 break
             if PS_is_discrete(current_ps):
@@ -682,7 +683,7 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
                 index_in_fp_and_mcr += 1
             bitset_zero(fixed_points_of_generators[index_in_fp_and_mcr])
             bitset_zero(minimal_cell_reps_of_generators[index_in_fp_and_mcr])
-            for i from 0 <= i < n:
+            for i in range(n):
                 if permutation[i] == i:
                     bitset_set(fixed_points_of_generators[index_in_fp_and_mcr], i)
                     bitset_set(minimal_cell_reps_of_generators[index_in_fp_and_mcr], i)
@@ -691,7 +692,8 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
                     k = i
                     j = permutation[i]
                     while j != i:
-                        if j < k: k = j
+                        if j < k:
+                            k = j
                         j = permutation[j]
                     if k == i:
                         bitset_set(minimal_cell_reps_of_generators[index_in_fp_and_mcr], i)

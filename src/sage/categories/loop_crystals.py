@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.combinat
 r"""
 Loop Crystals
 """
@@ -126,6 +127,8 @@ class LoopCrystals(Category_singleton):
             return G
 
 # TODO: Should we make "regular" an axiom?
+
+
 class RegularLoopCrystals(Category_singleton):
     r"""
     The category of regular `U_q'(\mathfrak{g})`-crystals, where
@@ -162,6 +165,7 @@ class RegularLoopCrystals(Category_singleton):
             I0 = CT.index_set()
             La = CT.root_system().ambient_space().fundamental_weights()
             return sum(La[i] * (self.phi(i) - self.epsilon(i)) for i in I0)
+
 
 class KirillovReshetikhinCrystals(Category_singleton):
     """
@@ -268,7 +272,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
             TESTS:
 
-            Check that :trac:`23028` is fixed::
+            Check that :issue:`23028` is fixed::
 
                 sage: ct = CartanType(['A',8,2]).dual()
                 sage: K = crystals.KirillovReshetikhin(ct, 4, 1)
@@ -390,11 +394,17 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 sage: K2 = crystals.KirillovReshetikhin(['A',2,1],2,1)
                 sage: T1 = crystals.TensorProduct(K1,K2)
                 sage: T2 = crystals.TensorProduct(K2,K1)
-                sage: T1.digraph().is_isomorphic(T2.digraph(), edge_labels=True, certificate=True) #todo: not implemented (see #10904 and #10549)
-                (True, {[[[1]], [[2], [3]]]: [[[1], [3]], [[2]]], [[[3]], [[2], [3]]]: [[[2], [3]], [[3]]],
-                [[[3]], [[1], [3]]]: [[[1], [3]], [[3]]], [[[1]], [[1], [3]]]: [[[1], [3]], [[1]]], [[[1]],
-                [[1], [2]]]: [[[1], [2]], [[1]]], [[[2]], [[1], [2]]]: [[[1], [2]], [[2]]], [[[3]],
-                [[1], [2]]]: [[[2], [3]], [[1]]], [[[2]], [[1], [3]]]: [[[1], [2]], [[3]]], [[[2]], [[2], [3]]]: [[[2], [3]], [[2]]]})
+                sage: T1.digraph().is_isomorphic(T2.digraph(), edge_labels=True,  # todo: not implemented (see #10904 and #10549)
+                ....:                            certificate=True)
+                (True, {[[[1]], [[2], [3]]]: [[[1], [3]], [[2]]],
+                        [[[3]], [[2], [3]]]: [[[2], [3]], [[3]]],
+                        [[[3]], [[1], [3]]]: [[[1], [3]], [[3]]],
+                        [[[1]], [[1], [3]]]: [[[1], [3]], [[1]]], [[[1]],
+                        [[1], [2]]]: [[[1], [2]], [[1]]],
+                        [[[2]], [[1], [2]]]: [[[1], [2]], [[2]]], [[[3]],
+                        [[1], [2]]]: [[[2], [3]], [[1]]],
+                        [[[2]], [[1], [3]]]: [[[1], [2]], [[3]]],
+                        [[[2]], [[2], [3]]]: [[[2], [3]], [[2]]]})
             """
             from sage.combinat.crystals.tensor_product import TensorProductOfCrystals
             T1 = TensorProductOfCrystals(self, K)
@@ -514,16 +524,16 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 sage: K.is_perfect()
                 True
 
-                sage: K = crystals.KirillovReshetikhin(['E',6,1], 1,3)
+                sage: K = crystals.KirillovReshetikhin(['E',6,1], 1, 3)
                 sage: K.is_perfect()
                 True
 
             TESTS:
 
             Check that this works correctly for `B^{n,s}`
-            of type `A_{2n}^{(2)\dagger}` (:trac:`24364`)::
+            of type `A_{2n}^{(2)\dagger}` (:issue:`24364`)::
 
-                sage: K = crystals.KirillovReshetikhin(CartanType(['A',6,2]).dual(), 3,1)
+                sage: K = crystals.KirillovReshetikhin(CartanType(['A',6,2]).dual(), 3, 1)
                 sage: K.is_perfect()
                 True
                 sage: K.is_perfect(1)
@@ -536,7 +546,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
             from sage.rings.integer_ring import ZZ
             if ell is None:
                 if (self.cartan_type().dual().type() == 'BC'
-                    and self.cartan_type().rank() - 1 == self.r()):
+                        and self.cartan_type().rank() - 1 == self.r()):
                     return True
                 ell = self.s() / self.cartan_type().c()[self.r()]
                 if ell not in ZZ:
@@ -546,9 +556,9 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 raise ValueError("perfectness not defined for non-integral levels")
 
             # [FOS2010]_ check
-            if self.cartan_type().classical().type() not in ['E','F','G']:
+            if self.cartan_type().classical().type() not in ['E', 'F', 'G']:
                 if (self.cartan_type().dual().type() == 'BC'
-                    and self.cartan_type().rank() - 1 == self.r()):
+                        and self.cartan_type().rank() - 1 == self.r()):
                     return ell == self.s()
                 return ell == self.s() / self.cartan_type().c()[self.r()]
 
@@ -569,9 +579,9 @@ class KirillovReshetikhinCrystals(Category_singleton):
             rank = len(I)
             La = self.weight_lattice_realization().basis()
             from sage.combinat.integer_vector import IntegerVectors
-            for n in range(1, ell+1):
+            for n in range(1, ell + 1):
                 for c in IntegerVectors(n, rank):
-                    w = sum(c[i]*La[i] for i in I)
+                    w = sum(c[i] * La[i] for i in I)
                     if w.level() == ell:
                         weights.append(w)
             return sorted(b.Phi() for b in MPhi) == sorted(weights)
@@ -605,7 +615,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
             TESTS:
 
             Check that this works correctly for `B^{n,s}`
-            of type `A_{2n}^{(2)\dagger}` (:trac:`24364`)::
+            of type `A_{2n}^{(2)\dagger}` (:issue:`24364`)::
 
                 sage: ct = CartanType(['A',6,2]).dual()
                 sage: K1 = crystals.KirillovReshetikhin(ct, 3,1)
@@ -618,7 +628,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
             if not self.is_perfect():
                 raise ValueError("this crystal is not perfect")
             if (self.cartan_type().dual().type() == 'BC'
-                and self.cartan_type().rank() - 1 == self.r()):
+                    and self.cartan_type().rank() - 1 == self.r()):
                 return self.s()
             return self.s() / self.cartan_type().c()[self.r()]
 
@@ -753,7 +763,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 """
                 n = len(self.crystals)
                 I0 = self.cartan_type().classical().index_set()
-                it = [ iter(self.crystals[-1].classically_highest_weight_vectors()) ]
+                it = [iter(self.crystals[-1].classically_highest_weight_vectors())]
                 path = []
                 ret = []
                 while it:
@@ -762,18 +772,19 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     except StopIteration:
                         it.pop()
                         if path:
-                            path.pop(0)
+                            path.pop()
                         continue
 
-                    b = self.element_class(self, [x] + path)
+                    path.append(x)
+                    b = self.element_class(self, reversed(path))
                     if not b.is_highest_weight(index_set=I0):
+                        path.pop()
                         continue
-                    path.insert(0, x)
                     if len(path) == n:
                         ret.append(b)
-                        path.pop(0)
+                        path.pop()
                     else:
-                        it.append( iter(self.crystals[-len(path)-1]) )
+                        it.append(iter(self.crystals[-len(path) - 1]))
                 return tuple(ret)
 
             # TODO: This is duplicated in KR crystals category
@@ -811,7 +822,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
                 - ``q`` -- (default: ``None``) a variable or ``None``;
                   if ``None``, a variable `q` is set in the code
-                - ``group_components`` -- (default: ``True``) boolean; if
+                - ``group_components`` -- boolean (default: ``True``); if
                   ``True``, then the terms are grouped by classical component
 
                 The one-dimensional configuration sum is the sum of the
@@ -835,7 +846,8 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     sage: R = RootSystem(['A',2,1])
                     sage: La = R.weight_space().basis()
                     sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])
-                    sage: LS.one_dimensional_configuration_sum() == T.one_dimensional_configuration_sum() # long time
+                    sage: (LS.one_dimensional_configuration_sum()  # long time
+                    ....:  == T.one_dimensional_configuration_sum())
                     True
 
                 TESTS::
@@ -860,10 +872,11 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 B = P0.algebra(q.parent())
                 if group_components:
                     G = self.digraph(index_set=self.cartan_type().classical().index_set())
-                    C = G.connected_components()
-                    return B.sum(q**(c[0].energy_function())*B.sum(B(P0(b.weight())) for b in c)
+                    C = G.connected_components(sort=False)
+                    return B.sum(q**(c[0].energy_function()) * B.sum(B(P0(b.weight()))
+                                                                     for b in c)
                                  for c in C)
-                return B.sum(q**(b.energy_function())*B(P0(b.weight())) for b in self)
+                return B.sum(q**(b.energy_function()) * B(P0(b.weight())) for b in self)
 
         class ElementMethods:
             def energy_function(self, algorithm=None):
@@ -904,15 +917,15 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 - ``algorithm`` -- (default: ``None``) use one of the
                   following algorithms to determine the energy function:
 
-                  * ``'definition'`` - use the definition of the energy
+                  * ``'definition'`` -- use the definition of the energy
                     function;
-                  * ``'grading'`` - use the affine grading;
+                  * ``'grading'`` -- use the affine grading;
 
                   if not specified, then this uses ``'grading'`` if all
                   factors are perfect of the same level and otherwise
                   this uses ``'definition'``
 
-                OUTPUT: an integer
+                OUTPUT: integer
 
                 EXAMPLES::
 
@@ -960,11 +973,11 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     ....:     for b in hw)
                     True
                 """
-                from sage.functions.other import ceil
+                from sage.arith.misc import integer_ceil as ceil
 
                 C = self.parent().crystals[0]
-                ell = ceil(C.s()/C.cartan_type().c()[C.r()])
-                is_perfect = all(ell == K.s()/K.cartan_type().c()[K.r()]
+                ell = ceil(C.s() / C.cartan_type().c()[C.r()])
+                is_perfect = all(ell == K.s() / K.cartan_type().c()[K.r()]
                                  for K in self.parent().crystals)
                 if algorithm is None:
                     if is_perfect:
@@ -983,12 +996,12 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     from sage.rings.integer_ring import ZZ
                     energy = ZZ.zero()
                     R_mats = [[K.R_matrix(Kp) for Kp in self.parent().crystals[i+1:]]
-                              for i,K in enumerate(self.parent().crystals)]
+                              for i, K in enumerate(self.parent().crystals)]
                     H_funcs = [[K.local_energy_function(Kp) for Kp in self.parent().crystals[i+1:]]
-                               for i,K in enumerate(self.parent().crystals)]
+                               for i, K in enumerate(self.parent().crystals)]
 
-                    for i,b in enumerate(self):
-                        for j,R in enumerate(R_mats[i]):
+                    for i, b in enumerate(self):
+                        for j, R in enumerate(R_mats[i]):
                             H = H_funcs[i][j]
                             bp = self[i+j+1]
                             T = R.domain()
@@ -997,8 +1010,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                             b = R(t)[1]
                         energy += b.energy_function()  # D contribution
                     return energy
-                else:
-                    raise ValueError("invalid algorithm")
+                raise ValueError("invalid algorithm")
 
             def affine_grading(self):
                 r"""
@@ -1009,7 +1021,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 :meth:`e_string_to_ground_state`) and counting the number
                 of affine Kashiwara operators `e_0` applied on the way.
 
-                OUTPUT: an integer
+                OUTPUT: integer
 
                 EXAMPLES::
 
@@ -1080,7 +1092,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
                 TESTS:
 
-                Check that :trac:`22882` is fixed::
+                Check that :issue:`22882` is fixed::
 
                     sage: K = crystals.KirillovReshetikhin(CartanType(['A',6,2]).dual(), 1,1)
                     sage: T = tensor([K,K,K])
@@ -1093,7 +1105,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     ....:     for elt in hw)
                     True
                 """
-                from sage.functions.other import ceil
+                from sage.arith.misc import integer_ceil as ceil
 
                 ell = max(ceil(K.s()/K.cartan_type().c()[K.r()])
                           for K in self.parent().crystals)
@@ -1116,7 +1128,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
 
 #####################################################################
-## Local energy function
+# Local energy function
 
 class LocalEnergyFunction(Map):
     r"""
@@ -1175,7 +1187,7 @@ class LocalEnergyFunction(Map):
 
         TESTS:
 
-        Check that :trac:`23014` is fixed::
+        Check that :issue:`23014` is fixed::
 
             sage: La = RootSystem(['G',2,1]).weight_space().fundamental_weights()
             sage: K = crystals.ProjectedLevelZeroLSPaths(La[1])
@@ -1234,9 +1246,9 @@ class LocalEnergyFunction(Map):
             for i in self._I0:
                 b = cur.e(i)
                 if b is not None and b not in visited:
-                    visited[b] = visited[cur] # No change
+                    visited[b] = visited[cur]  # No change
                     return b
-            return None # is classically HW or all have been visited
+            return None  # is classically HW or all have been visited
 
         cur = x
         # Get the affine node (it might not be 0 if the type
@@ -1258,19 +1270,19 @@ class LocalEnergyFunction(Map):
 
                 bp = self._R_matrix(b)
                 cp = bp.e(i0)
-                if b[1] == c[1] and bp[1] == cp[1]: # LL case
+                if b[1] == c[1] and bp[1] == cp[1]:  # LL case
                     visited[c] = visited[b] + 1
-                elif b[0] == c[0] and bp[0] == cp[0]: # RR case
+                elif b[0] == c[0] and bp[0] == cp[0]:  # RR case
                     visited[c] = visited[b] - 1
                 else:
-                    visited[c] = visited[b] # Otherwise no change
+                    visited[c] = visited[b]  # Otherwise no change
                 b = c
 
             cur = b
             check0.append(b)
 
         baseline = self._known_values[cur] - visited[cur]
-        for y in visited:
-            self._known_values[y] = baseline + visited[y]
+        for y, vy in visited.items():
+            self._known_values[y] = baseline + vy
 
         return self._known_values[x]

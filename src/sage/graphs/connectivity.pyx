@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Connectivity related functions
 
@@ -17,14 +16,20 @@ Here is what the module can do:
 
     :meth:`is_connected` | Check whether the (di)graph is connected.
     :meth:`connected_components` | Return the list of connected components
-    :meth:`connected_components_number` | Return the number of connected components.
+    :meth:`number_of_connected_components` | Return the number of connected components.
     :meth:`connected_components_subgraphs` | Return a list of connected components as graph objects.
     :meth:`connected_component_containing_vertex` | Return a list of the vertices connected to vertex.
     :meth:`connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`blocks_and_cut_vertices` | Return the blocks and cut vertices of the graph.
     :meth:`blocks_and_cuts_tree` | Return the blocks-and-cuts tree of the graph.
-    :meth:`is_cut_edge` | Return True if the input edge is a cut-edge or a bridge.
+    :meth:`is_biconnected` | Check whether the graph is biconnected.
+    :meth:`biconnected_components` | Return the list of biconnected components.
+    :meth:`biconnected_components_subgraphs` | Return a list of biconnected components as graph objects.
+    :meth:`number_of_biconnected_components` | Return the number of biconnected components.
+    :meth:`is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
+    :meth:`is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`is_cut_vertex` | Check whether the input vertex is a cut-vertex.
+    :meth:`is_vertex_cut` | Check whether the input vertices form a vertex cut.
     :meth:`edge_connectivity` | Return the edge connectivity of the graph.
     :meth:`vertex_connectivity` | Return the vertex connectivity of the graph.
 
@@ -48,21 +53,32 @@ Here is what the module can do:
     :widths: 30, 70
     :delim: |
 
-    :meth:`bridges` | Returns an iterator over the bridges (or cut edges) of given undirected graph.
+    :meth:`bridges` | Return an iterator over the bridges (or cut edges) of given undirected graph.
     :meth:`cleave` | Return the connected subgraphs separated by the input vertex cut.
     :meth:`is_triconnected` | Check whether the graph is triconnected.
     :meth:`spqr_tree` | Return a SPQR-tree representing the triconnected components of the graph.
     :meth:`spqr_tree_to_graph` | Return the graph represented by the SPQR-tree `T`.
+    :meth:`minimal_separators` | Return an iterator over the minimal separators of ``G``.
 
 Methods
 -------
 """
 
-from sage.rings.integer cimport Integer
-from cysignals.memory cimport sig_malloc, sig_free
+# ****************************************************************************
+#
+#       Copyright (C) 2023      David Coudert <david.coudert@inria.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+from sage.sets.disjoint_set cimport DisjointSet
 
 
-def is_connected(G):
+def is_connected(G, forbidden_vertices=None):
     """
     Check whether the (di)graph is connected.
 
@@ -72,9 +88,12 @@ def is_connected(G):
 
     - ``G`` -- the input graph
 
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
+
     .. SEEALSO::
 
-        - :meth:`~Graph.is_biconnected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
 
     EXAMPLES::
 
@@ -86,6 +105,10 @@ def is_connected(G):
         False
         sage: G.add_edge(0,3)
         sage: is_connected(G)
+        True
+        sage: is_connected(G, forbidden_vertices=[3])
+        False
+        sage: is_connected(G, forbidden_vertices=[1])
         True
         sage: D = DiGraph({0: [1, 2], 1: [2], 3: [4, 5], 4: [5]})
         sage: is_connected(D)
@@ -114,15 +137,30 @@ def is_connected(G):
     if not G.order():
         return True
 
+    forbidden = None if forbidden_vertices is None else set(forbidden_vertices)
+
     try:
-        return G._backend.is_connected()
+        return G._backend.is_connected(forbidden_vertices=forbidden)
     except AttributeError:
-        v = next(G.vertex_iterator())
-        conn_verts = list(G.depth_first_search(v, ignore_direction=True))
-        return len(conn_verts) == G.num_verts()
+        # Search for a vertex in G that is not forbidden
+        if forbidden:
+            for v in G:
+                if v not in forbidden:
+                    break
+            else:
+                # The empty graph is connected, so the graph with only forbidden
+                # vertices is also connected
+                return True
+        else:
+            v = next(G.vertex_iterator())
+        n = len(forbidden)
+        for _ in G.depth_first_search(v, ignore_direction=True,
+                                      forbidden_vertices=forbidden):
+            n += 1
+        return n == G.n_vertices()
 
 
-def connected_components(G, sort=True):
+def connected_components(G, sort=False, key=None, forbidden_vertices=None):
     """
     Return the list of connected components.
 
@@ -133,20 +171,38 @@ def connected_components(G, sort=True):
 
     - ``G`` -- the input graph
 
-    - ``sort`` -- boolean (default ``True``); whether to sort vertices inside
-      each component
+    - ``sort`` -- boolean (default: ``False``); if ``True``, vertices inside each
+      component are sorted according to the default ordering
+
+    - ``key`` -- a function (default: ``None``); a function that takes a
+      vertex as its one argument and returns a value that can be used for
+      comparisons in the sorting algorithm (we must have ``sort=True``)
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_components
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_components(G)
+        sage: connected_components(G, sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
-        sage: G.connected_components()
+        sage: G.connected_components(sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_components(D)
+        sage: connected_components(D, sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
+        sage: connected_components(D, sort=True, key=lambda x: -x)
+        [[3, 2, 1, 0], [6, 5, 4]]
+
+    Connected components in a graph with forbidden vertices::
+
+        sage: G = graphs.PathGraph(5)
+        sage: connected_components(G, sort=True, forbidden_vertices=[2])
+        [[0, 1], [3, 4]]
+        sage: connected_components(G, sort=True,
+        ....:     forbidden_vertices=G.neighbor_iterator(2, closed=True))
+        [[0], [4]]
 
     TESTS:
 
@@ -157,23 +213,35 @@ def connected_components(G, sort=True):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
+
+    When parameter ``key`` is set, parameter ``sort`` must be ``True``::
+
+        sage: G = Graph(2)
+        sage: G.connected_components(sort=False, key=lambda x: x)
+        Traceback (most recent call last):
+        ...
+        ValueError: sort keyword is False, yet a key function is given
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    cdef set seen = set()
+    if (not sort) and key:
+        raise ValueError('sort keyword is False, yet a key function is given')
+
+    cdef set seen = set(forbidden_vertices) if forbidden_vertices else set()
     cdef list components = []
     for v in G:
         if v not in seen:
-            c = connected_component_containing_vertex(G, v, sort=sort)
+            c = connected_component_containing_vertex(G, v, sort=sort, key=key,
+                                                      forbidden_vertices=seen)
             seen.update(c)
             components.append(c)
     components.sort(key=lambda comp: -len(comp))
     return components
 
 
-def connected_components_number(G):
+def number_of_connected_components(G, forbidden_vertices=None):
     """
     Return the number of connected components.
 
@@ -181,46 +249,69 @@ def connected_components_number(G):
 
     - ``G`` -- the input graph
 
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
+
     EXAMPLES::
 
-        sage: from sage.graphs.connectivity import connected_components_number
+        sage: from sage.graphs.connectivity import number_of_connected_components
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_components_number(G)
+        sage: number_of_connected_components(G)
         2
-        sage: G.connected_components_number()
+        sage: G.number_of_connected_components()
         2
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_components_number(D)
+        sage: number_of_connected_components(D)
         2
+        sage: number_of_connected_components(D, forbidden_vertices=[1, 3])
+        3
 
     TESTS:
 
     If ``G`` is not a Sage graph, an error is raised::
 
-        sage: from sage.graphs.connectivity import connected_components_number
-        sage: connected_components_number('I am not a graph')
+        sage: from sage.graphs.connectivity import number_of_connected_components
+        sage: number_of_connected_components('I am not a graph')
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
     """
-    return len(connected_components(G, sort=False))
+    return len(connected_components(G, sort=False,
+                                    forbidden_vertices=forbidden_vertices))
 
 
-def connected_components_subgraphs(G):
+connected_components_number = number_of_connected_components
+
+
+def connected_components_subgraphs(G, forbidden_vertices=None, immutable=None):
     """
     Return a list of connected components as graph objects.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable subgraphs. ``immutable=None`` (default) means that the
+      graph and the subgraphs of its connected components will behave the same
+      way.
 
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_components_subgraphs
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: L = connected_components_subgraphs(G)
-        sage: graphs_list.show_graphs(L)
+        sage: graphs_list.show_graphs(L)                                                # needs sage.plot
+        sage: L = connected_components_subgraphs(G, forbidden_vertices=[1, 3])
+        sage: graphs_list.show_graphs(L)                                                # needs sage.plot
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: L = connected_components_subgraphs(D)
-        sage: graphs_list.show_graphs(L)
+        sage: graphs_list.show_graphs(L)                                                # needs sage.plot
         sage: L = D.connected_components_subgraphs()
-        sage: graphs_list.show_graphs(L)
+        sage: graphs_list.show_graphs(L)                                                # needs sage.plot
 
     TESTS:
 
@@ -231,15 +322,31 @@ def connected_components_subgraphs(G):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: def my_check(G, immutable):
+        ....:     L = G.connected_components_subgraphs(immutable=immutable)
+        ....:     if immutable is None:
+        ....:         immutable = G.is_immutable()
+        ....:     if any(g.is_immutable() != immutable for g in L):
+        ....:         print("wrong result")
+        sage: my_check(Graph(2, immutable=False), None)
+        sage: my_check(Graph(2, immutable=False), True)
+        sage: my_check(Graph(2, immutable=True), None)
+        sage: my_check(Graph(2, immutable=True), False)
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    return [G.subgraph(c, inplace=False) for c in connected_components(G, sort=False)]
+    return [G.subgraph(c, inplace=False, immutable=immutable)
+            for c in connected_components(G, sort=False,
+                                          forbidden_vertices=forbidden_vertices)]
 
 
-def connected_component_containing_vertex(G, vertex, sort=True):
+def connected_component_containing_vertex(G, vertex, sort=False, key=None,
+                                          forbidden_vertices=None):
     """
     Return a list of the vertices connected to vertex.
 
@@ -247,22 +354,33 @@ def connected_component_containing_vertex(G, vertex, sort=True):
 
     - ``G`` -- the input graph
 
-    - ``v`` -- the vertex to search for
+    - ``vertex`` -- the vertex to search for
 
-    - ``sort`` -- boolean (default ``True``); whether to sort vertices inside
-      the component
+    - ``sort`` -- boolean (default: ``False``); if ``True``, vertices inside the
+      component are sorted according to the default ordering
+
+    - ``key`` -- a function (default: ``None``); a function that takes a
+      vertex as its one argument and returns a value that can be used for
+      comparisons in the sorting algorithm (we must have ``sort=True``)
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. The start ``vertex`` cannot be in this set.
 
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_component_containing_vertex
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_component_containing_vertex(G, 0)
+        sage: connected_component_containing_vertex(G, 0, sort=True)
         [0, 1, 2, 3]
-        sage: G.connected_component_containing_vertex(0)
+        sage: G.connected_component_containing_vertex(0, sort=True)
         [0, 1, 2, 3]
+        sage: G.connected_component_containing_vertex(0, sort=True, forbidden_vertices=[1, 3])
+        [0]
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
-        sage: connected_component_containing_vertex(D, 0)
+        sage: connected_component_containing_vertex(D, 0, sort=True)
         [0, 1, 2, 3]
+        sage: connected_component_containing_vertex(D, 0, sort=True, key=lambda x: -x)
+        [3, 2, 1, 0]
 
     TESTS:
 
@@ -273,26 +391,58 @@ def connected_component_containing_vertex(G, vertex, sort=True):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage graph
+
+    :issue:`35889` is fixed::
+
+        sage: G = Graph([('A', 1)])
+        sage: G.connected_component_containing_vertex(1, sort=False)
+        [1, 'A']
+        sage: G.connected_component_containing_vertex(1, sort=True)
+        Traceback (most recent call last):
+        ...
+        TypeError: '<' not supported between instances of 'str' and 'int'
+
+    When parameter ``key`` is set, parameter ``sort`` must be ``True``::
+
+        sage: G = Graph(2)
+        sage: G.connected_component_containing_vertex(1, sort=False, key=lambda x: x)
+        Traceback (most recent call last):
+        ...
+        ValueError: sort keyword is False, yet a key function is given
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
+    if (not sort) and key:
+        raise ValueError('sort keyword is False, yet a key function is given')
+
+    forbidden = None if forbidden_vertices is None else list(forbidden_vertices)
+
     try:
-        c = list(G._backend.depth_first_search(vertex, ignore_direction=True))
+        c = list(G._backend.depth_first_search(vertex, ignore_direction=True,
+                                               forbidden_vertices=forbidden))
     except AttributeError:
-        c = list(G.depth_first_search(vertex, ignore_direction=True))
+        c = list(G.depth_first_search(vertex, ignore_direction=True,
+                                      forbidden_vertices=forbidden))
 
     if sort:
-        c.sort()
+        return sorted(c, key=key)
     return c
 
 
-def connected_components_sizes(G):
+def connected_components_sizes(G, forbidden_vertices=None):
     """
     Return the sizes of the connected components as a list.
 
     The list is sorted from largest to lower values.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     EXAMPLES::
 
@@ -309,6 +459,13 @@ def connected_components_sizes(G):
         [2, 1]
         [3]
         [3]
+        sage: G = graphs.PathGraph(5)
+        sage: G.connected_components_sizes()
+        [5]
+        sage: G.connected_components_sizes(forbidden_vertices=[1])
+        [3, 1]
+        sage: G.connected_components_sizes(forbidden_vertices=[1, 3])
+        [1, 1, 1]
 
     TESTS:
 
@@ -325,10 +482,12 @@ def connected_components_sizes(G):
         raise TypeError("the input must be a Sage graph")
 
     # connected components are sorted from largest to smallest
-    return [len(cc) for cc in connected_components(G, sort=False)]
+    return [len(cc) for cc in connected_components(G, sort=False,
+                                                   forbidden_vertices=forbidden_vertices)]
 
 
-def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
+def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None,
+                            forbidden_vertices=None):
     """
     Return the blocks and cut vertices of the graph.
 
@@ -342,17 +501,24 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
 
     INPUT:
 
-    - ``algorithm`` -- string (default: ``"Tarjan_Boost"``); the algorithm to
+    - ``algorithm`` -- string (default: ``'Tarjan_Boost'``); the algorithm to
       use among:
 
-      - ``"Tarjan_Boost"`` (default) -- Tarjan's algorithm (Boost
+      - ``'Tarjan_Boost'`` -- default; Tarjan's algorithm (Boost
         implementation)
 
-      - ``"Tarjan_Sage"`` -- Tarjan's algorithm (Sage implementation)
+      - ``'Tarjan_Sage'`` -- Tarjan's algorithm (Sage implementation)
 
     - ``sort`` -- boolean (default: ``False``); whether to sort vertices inside
       the components and the list of cut vertices
-      **currently only available for ``"Tarjan_Sage"``**
+      **currently only available for ``'Tarjan_Sage'``**
+
+    - ``key`` -- a function (default: ``None``); a function that takes a
+      vertex as its one argument and returns a value that can be used for
+      comparisons in the sorting algorithm (we must have ``sort=True``)
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     OUTPUT: ``(B, C)``, where ``B`` is a list of blocks - each is a list of
     vertices and the blocks are the corresponding induced subgraphs - and
@@ -381,10 +547,10 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
         ([[0, 1, 4, 2, 3], [0, 6, 9, 7, 8]], [0])
         sage: rings.blocks_and_cut_vertices()
         ([[0, 1, 4, 2, 3], [0, 6, 9, 7, 8]], [0])
-        sage: B, C = blocks_and_cut_vertices(rings, algorithm="Tarjan_Sage", sort=True)
+        sage: B, C = blocks_and_cut_vertices(rings, algorithm='Tarjan_Sage', sort=True)
         sage: B, C
         ([[0, 1, 2, 3, 4], [0, 6, 7, 8, 9]], [0])
-        sage: B2, C2 = blocks_and_cut_vertices(rings, algorithm="Tarjan_Sage", sort=False)
+        sage: B2, C2 = blocks_and_cut_vertices(rings, algorithm='Tarjan_Sage', sort=False)
         sage: Set(map(Set, B)) == Set(map(Set, B2)) and set(C) == set(C2)
         True
 
@@ -405,13 +571,36 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
         sage: blocks_and_cut_vertices(g)
         ([[1, 2, 3], [5, 6], [5, 7], [5, 8], [4]], [5])
 
-    A directed graph with Boost's algorithm (:trac:`25994`)::
+    A directed graph with Boost's algorithm (:issue:`25994`)::
 
         sage: rings = graphs.CycleGraph(10)
         sage: rings.merge_vertices([0, 5])
         sage: rings = rings.to_directed()
-        sage: blocks_and_cut_vertices(rings, algorithm="Tarjan_Boost")
+        sage: blocks_and_cut_vertices(rings, algorithm='Tarjan_Boost')
         ([[0, 1, 4, 2, 3], [0, 6, 9, 7, 8]], [0])
+
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.WindmillGraph(4, 3)
+        sage: G.blocks_and_cut_vertices(sort=True)
+        ([[0, 1, 2, 3], [0, 4, 5, 6], [0, 7, 8, 9]], [0])
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Boost', forbidden_vertices=[0])
+        ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], [])
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Sage', forbidden_vertices=[0])
+        ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], [])
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Boost', forbidden_vertices=[1])
+        ([[0, 2, 3], [0, 4, 5, 6], [0, 7, 8, 9]], [0])
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Sage', forbidden_vertices=[1])
+        ([[0, 2, 3], [0, 4, 5, 6], [0, 7, 8, 9]], [0])
+        sage: G = graphs.PathGraph(3)
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Sage')
+        ([[1, 2], [0, 1]], [1])
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Sage', forbidden_vertices=[0])
+        ([[1, 2]], [])
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Sage', forbidden_vertices=[1])
+        ([[0], [2]], [])
+        sage: G.blocks_and_cut_vertices(sort=True, algorithm='Tarjan_Boost', forbidden_vertices=[1])
+        ([[0], [2]], [])
 
     TESTS::
 
@@ -436,24 +625,30 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
 
     if algorithm == "Tarjan_Boost":
         from sage.graphs.base.boost_graph import blocks_and_cut_vertices
-        return blocks_and_cut_vertices(G)
+        return blocks_and_cut_vertices(G, forbidden_vertices=forbidden_vertices)
 
     if algorithm != "Tarjan_Sage":
         raise NotImplementedError("blocks and cut vertices algorithm '%s' is not implemented" % algorithm)
 
     # If algorithm is "Tarjan_Sage"
+    if (not sort) and key:
+        raise ValueError('sort keyword is False, yet a key function is given')
+
     blocks = []
     cut_vertices = set()
 
     # We iterate over all vertices to ensure that we visit each connected
     # component of the graph
-    seen = set()
+    cdef set seen = set() if forbidden_vertices is None else set(forbidden_vertices)
+    cdef frozenset forbidden = frozenset(seen)
     for start in G.vertex_iterator():
         if start in seen:
             continue
 
         # Special case of an isolated vertex
-        if not G.degree(start):
+        if (not G.degree(start) or
+                (forbidden and
+                 all(v in forbidden for v in G.neighbor_iterator(start)))):
             blocks.append([start])
             seen.add(start)
             continue
@@ -492,6 +687,10 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
             try:
                 # We consider the next of its neighbors
                 w = next(neighbors[v])
+
+                if w in forbidden:
+                    # We skip that neighbor
+                    continue
 
                 # If we never met w before, we remember the direction of
                 # edge vw, and add w to the stack.
@@ -534,7 +733,7 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
                         u1, u2 = edge_stack.pop()
                     new_block.add(u1)
                     if sort:
-                        this_block = sorted(new_block)
+                        this_block = sorted(new_block, key=key)
                     else:
                         this_block = list(new_block)
                     blocks.append(this_block)
@@ -549,12 +748,11 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False):
                         start_already_seen = True
 
     if sort:
-        return blocks, sorted(cut_vertices)
-    else:
-        return blocks, list(cut_vertices)
+        return blocks, sorted(cut_vertices, key=key)
+    return blocks, list(cut_vertices)
 
 
-def blocks_and_cuts_tree(G):
+def blocks_and_cuts_tree(G, forbidden_vertices=None):
     """
     Return the blocks-and-cuts tree of ``self``.
 
@@ -573,10 +771,18 @@ def blocks_and_cuts_tree(G):
 
     We referred to [HarPri]_ and [Gallai]_ for blocks and cuts tree.
 
+    INPUT:
+
+    - ``G`` -- a Sage graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. This is equivalent to getting the blocks and cut
+      tree of a graph in which the forbidden vertices have been removed.
+
     .. SEEALSO::
 
         - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`
-        - :meth:`~Graph.is_biconnected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
 
     EXAMPLES::
 
@@ -604,10 +810,22 @@ def blocks_and_cuts_tree(G):
         sage: T.vertices(sort=True)
         [('B', (0, 1, 4, 5, 2, 6, 3, 7, 8, 9))]
 
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.CycleGraph(5)
+        sage: G.blocks_and_cut_vertices()
+        ([[0, 1, 4, 2, 3]], [])
+        sage: G.blocks_and_cuts_tree()
+        Graph on 1 vertex
+        sage: G.blocks_and_cut_vertices(forbidden_vertices=[0])
+        ([[3, 4], [2, 3], [1, 2]], [2, 3])
+        sage: G.blocks_and_cuts_tree(forbidden_vertices=[0])
+        Graph on 5 vertices
+
     TESTS:
 
     When ``self`` is not connected, the resulting graph is a forest
-    (:trac:`24163`)::
+    (:issue:`24163`)::
 
         sage: from sage.graphs.connectivity import blocks_and_cuts_tree
         sage: T = blocks_and_cuts_tree(Graph(2))
@@ -626,7 +844,7 @@ def blocks_and_cuts_tree(G):
         raise TypeError("the input must be a Sage graph")
 
     from sage.graphs.graph import Graph
-    B, C = G.blocks_and_cut_vertices()
+    B, C = G.blocks_and_cut_vertices(forbidden_vertices=forbidden_vertices)
     B = map(tuple, B)
     set_C = set(C)
     g = Graph()
@@ -638,13 +856,420 @@ def blocks_and_cuts_tree(G):
     return g
 
 
+def is_biconnected(G, forbidden_vertices=None):
+    r"""
+    Check whether the graph is biconnected.
+
+    A biconnected graph is a connected graph on two or more vertices that is not
+    broken into disconnected pieces by deleting any single vertex.
+
+    INPUT:
+
+    - ``G`` -- a Sage graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. This is equivalent to checking whether the graph
+      in which the forbidden vertices have been removed is biconnected.
+
+    .. SEEALSO::
+
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_connected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cuts_tree`
+        - :wikipedia:`Biconnected_graph`
+
+    EXAMPLES::
+
+        sage: G = graphs.PetersenGraph()
+        sage: G.is_biconnected()
+        True
+        sage: G.add_path([0,'a','b'])
+        sage: G.is_biconnected()
+        False
+        sage: G.add_edge('b', 1)
+        sage: G.is_biconnected()
+        True
+
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.CycleGraph(5)
+        sage: G.is_biconnected()
+        True
+        sage: G.is_biconnected(forbidden_vertices=[0])
+        False
+
+    TESTS::
+
+        sage: Graph().is_biconnected()
+        False
+        sage: Graph(1).is_biconnected()
+        False
+        sage: graphs.CompleteGraph(2).is_biconnected()
+        True
+    """
+    if G.order() < 2 or not G.is_connected():
+        return False
+    return not G.blocks_and_cut_vertices(forbidden_vertices=forbidden_vertices)[1]
+
+
+def biconnected_components(G, forbidden_vertices=None):
+    r"""
+    Return the list of biconnected components.
+
+    A biconnected component is a maximal subgraph on two or more vertices that
+    is biconnected, i.e., removing any vertex does not disconnect it.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. This is equivalent to getting the biconnected
+      components of the graph after the removal of the forbidden vertices.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.connectivity import biconnected_components
+        sage: G = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1, 3], 3: [2]})
+        sage: sorted(len(b) for b in biconnected_components(G))
+        [2, 3]
+        sage: sorted(len(b) for b in biconnected_components(2 * G))
+        [2, 2, 3, 3]
+
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.CycleGraph(5)
+        sage: len(G.biconnected_components())
+        1
+        sage: len(G.biconnected_components(forbidden_vertices=[0]))
+        3
+
+    TESTS:
+
+    If ``G`` is not a Sage graph, an error is raised::
+
+        sage: from sage.graphs.connectivity import biconnected_components
+        sage: biconnected_components('I am not a graph')
+        Traceback (most recent call last):
+        ...
+        TypeError: the input must be a Sage graph
+    """
+    from sage.graphs.generic_graph import GenericGraph
+    if not isinstance(G, GenericGraph):
+        raise TypeError("the input must be a Sage graph")
+
+    B = blocks_and_cut_vertices(G, forbidden_vertices=forbidden_vertices)[0]
+    return [b for b in B if len(b) > 1]
+
+
+def biconnected_components_subgraphs(G, forbidden_vertices=None,
+                                     immutable=None):
+    r"""
+    Return a list of biconnected components as graph objects.
+
+    A biconnected component is a maximal subgraph on two or more vertices that
+    is biconnected, i.e., removing any vertex does not disconnect it.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. This is equivalent to getting the biconnected
+      components subgraphs of the graph after the removal of the forbidden
+      vertices.
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graphs. ``immutable=None`` (default) means that the
+      graph and the subgraphs of its connected components will behave the same
+      way.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.connectivity import biconnected_components_subgraphs
+        sage: G = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1, 3], 3: [2]})
+        sage: L = biconnected_components_subgraphs(G)
+        sage: L
+        [Subgraph of (): Graph on 2 vertices, Subgraph of (): Graph on 3 vertices]
+        sage: L[0].edges()
+        [(2, 3, None)]
+        sage: L[1].edges()
+        [(0, 1, None), (0, 2, None), (1, 2, None)]
+
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.CycleGraph(5)
+        sage: len(G.biconnected_components_subgraphs())
+        1
+        sage: len(G.biconnected_components_subgraphs(forbidden_vertices=[0]))
+        3
+
+    TESTS:
+
+    If ``G`` is not a Sage graph, an error is raised::
+
+        sage: from sage.graphs.connectivity import biconnected_components_subgraphs
+        sage: biconnected_components_subgraphs('I am not a graph')
+        Traceback (most recent call last):
+        ...
+        TypeError: the input must be a Sage graph
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: def my_check(G, immutable):
+        ....:     L = G.biconnected_components_subgraphs(immutable=immutable)
+        ....:     if immutable is None:
+        ....:         immutable = G.is_immutable()
+        ....:     if any(g.is_immutable() != immutable for g in L):
+        ....:         print("wrong result")
+        sage: my_check(Graph(2, immutable=False), None)
+        sage: my_check(Graph(2, immutable=False), True)
+        sage: my_check(Graph(2, immutable=True), None)
+        sage: my_check(Graph(2, immutable=True), False)
+    """
+    from sage.graphs.generic_graph import GenericGraph
+    if not isinstance(G, GenericGraph):
+        raise TypeError("the input must be a Sage graph")
+
+    B = G.biconnected_components(forbidden_vertices=forbidden_vertices)
+    return [G.subgraph(c, immutable=immutable) for c in B]
+
+
+def number_of_biconnected_components(G, forbidden_vertices=None):
+    r"""
+    Return the number of biconnected components.
+
+    A biconnected component is a maximal subgraph on two or more vertices that
+    is biconnected, i.e., removing any vertex does not disconnect it.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. This is equivalent to getting the number of
+      biconnected components of the graph after the removal of the forbidden
+      vertices.
+
+    .. SEEALSO::
+
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
+
+    EXAMPLES:
+
+    The disjoint union of cycles has as many biconnected components as the
+    number of cycles::
+
+        sage: G = graphs.CycleGraph(5)
+        sage: G.number_of_biconnected_components()
+        1
+        sage: (3 * G).number_of_biconnected_components()
+        3
+
+    A block graph is a connected graph in which every biconnected component
+    (block) is a clique. Hence its number of biconnected components is its
+    number of blocks::
+
+        sage: number_of_blocks = randint(4, 10)
+        sage: G = graphs.RandomBlockGraph(number_of_blocks, 5)
+        sage: G.number_of_biconnected_components() == number_of_blocks
+        True
+
+    By definition, an edge is a biconnected component. Hence, the number of
+    biconnected components of a tree is its number of edges::
+
+        sage: T = graphs.RandomTree(randint(0, 10))
+        sage: T.number_of_biconnected_components() == T.size()
+        True
+
+    An isolated vertex is a block but not a biconnected component::
+
+        sage: G = Graph(3)
+        sage: len(G.blocks_and_cut_vertices()[0])
+        3
+        sage: G.number_of_biconnected_components()
+        0
+
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.CycleGraph(5)
+        sage: G.number_of_biconnected_components()
+        1
+        sage: G.number_of_biconnected_components(forbidden_vertices=[0])
+        3
+
+    TESTS:
+
+    An error is raised if the input is not a Sage graph::
+
+        sage: from sage.graphs.connectivity import number_of_biconnected_components
+        sage: number_of_biconnected_components('I am not a graph')
+        Traceback (most recent call last):
+        ...
+        TypeError: the input must be a Sage graph
+    """
+    from sage.graphs.generic_graph import GenericGraph
+    if not isinstance(G, GenericGraph):
+        raise TypeError("the input must be a Sage graph")
+
+    return len(G.biconnected_components(forbidden_vertices=forbidden_vertices))
+
+
+def is_edge_cut(G, edges):
+    """
+    Check whether ``edges`` form an edge cut.
+
+    A set of edges is an edge cut of a graph if its removal increases the number
+    of connected components. In a digraph, we consider the number of (weakly)
+    connected components.
+
+    This method is not working for (di)graphs with multiple edges. Furthermore,
+    edge labels are ignored.
+
+    INPUT:
+
+    - ``G`` -- a (di)graph
+
+    - ``edges`` -- a set of edges
+
+    EXAMPLES:
+
+    A cycle graph of order 4::
+
+        sage: from sage.graphs.connectivity import is_edge_cut
+        sage: G = graphs.CycleGraph(4)
+        sage: is_edge_cut(G, [(1, 2)])
+        False
+        sage: is_edge_cut(G, [(1, 2), (2, 3)])
+        True
+        sage: is_edge_cut(G, [(1, 2), (3, 0)])
+        True
+
+    A pending edge is a cut-edge::
+
+        sage: G.add_edge((0, 5, 'silly'))
+        sage: is_edge_cut(G, [(0, 5, 'silly')])
+        True
+
+    Edge labels are ignored, even if specified::
+
+        sage: G.add_edge((2, 5, 'xyz'))
+        sage: is_edge_cut(G, [(0, 5), (2, 5)])
+        True
+        sage: is_edge_cut(G, [(0, 5), (2, 5, 'xyz')])
+        True
+        sage: is_edge_cut(G, [(0, 5, 'silly'), (2, 5)])
+        True
+        sage: is_edge_cut(G, [(0, 5, 'aa'), (2, 5, 'bb')])
+        True
+
+    The graph can have loops::
+
+        sage: G.allow_loops(True)
+        sage: G.add_edge(0, 0)
+        sage: is_edge_cut(G, [(0, 5), (2, 5)])
+        True
+        sage: is_edge_cut(G, [(0, 0), (0, 5), (2, 5)])
+        True
+
+    Multiple edges are not allowed::
+
+        sage: G.allow_multiple_edges(True)
+        sage: is_edge_cut(G, [(0, 5), (2, 5)])
+        Traceback (most recent call last):
+        ...
+        ValueError: This method is not known to work on graphs with
+         multiedges. Perhaps this method can be updated to handle them, but in
+         the meantime if you want to use it please disallow multiedges using
+         allow_multiple_edges().
+
+    An error is raised if an element of ``edges`` is not an edge of `G`::
+
+        sage: G = graphs.CycleGraph(4)
+        sage: is_edge_cut(G, [(0, 2)])
+        Traceback (most recent call last):
+        ...
+        ValueError: edge (0, 2) is not an edge of the graph
+
+    For digraphs, this method considers the number of (weakly) connected
+    components::
+
+        sage: G = digraphs.Circuit(4)
+        sage: is_edge_cut(G, [(0, 1)])
+        False
+        sage: G = digraphs.Circuit(4)
+        sage: is_edge_cut(G, [(0, 1), (1, 2)])
+        True
+
+    For disconnected (di)graphs, the method checks if the number of (weakly)
+    connected components increases::
+
+        sage: G = graphs.CycleGraph(4) * 2
+        sage: is_edge_cut(G, [(1, 2), (2, 3)])
+        True
+        sage: G = digraphs.Circuit(4) * 2
+        sage: is_edge_cut(G, [(0, 1), (1, 2)])
+        True
+    """
+    G._scream_if_not_simple(allow_loops=True)
+
+    cdef set C = set()  # set of edges of the potential cut
+    cdef set S = set()  # set of incident vertices
+    for e in edges:
+        u, v = e[0], e[1]
+        if not G.has_edge(u, v):
+            raise ValueError("edge {0} is not an edge of the graph".format(repr(e)))
+        if u == v:
+            # We ignore loops
+            continue
+        if G.degree(u) == 1 or G.degree(v) == 1:
+            # e is a pending edge and so a cut-edge
+            return True
+        S.add(u)
+        S.add(v)
+        C.add((u, v))
+        if not G.is_directed():
+            C.add((v, u))
+
+    cdef list queue
+    cdef set seen
+    DS = DisjointSet(G)
+
+    for comp in G.connected_components():
+        if not S.intersection(comp):
+            # This component is not involved in the cut
+            continue
+
+        # We run a DFS in comp from any vertex and avoid edges in C
+        start = comp[0]
+        queue = [start]
+        seen = set(queue)
+        while queue:
+            v = queue.pop()
+            for e in G.edge_iterator(vertices=[v], labels=False, ignore_direction=True, sort_vertices=False):
+                if e in C:
+                    continue
+                w = e[1] if e[0] == v else e[0]
+                if w not in seen:
+                    seen.add(w)
+                    DS.union(v, w)
+                    queue.append(w)
+
+        # We now check if some vertices of comp have not been reached
+        if len({DS.find(v) for v in comp}) > 1:
+            return True
+
+    return False
+
+
 def is_cut_edge(G, u, v=None, label=None):
     """
-    Returns True if the input edge is a cut-edge or a bridge.
+    Check whether the edge ``(u, v)`` is a cut-edge or a bridge of graph ``G``.
 
     A cut edge (or bridge) is an edge that when removed increases
-    the number of connected components.  This function works with
-    simple graphs as well as graphs with loops and multiedges.  In
+    the number of connected components. This function works with
+    simple graphs as well as graphs with loops and multiedges. In
     a digraph, a cut edge is an edge that when removed increases
     the number of (weakly) connected components.
 
@@ -660,7 +1285,7 @@ def is_cut_edge(G, u, v=None, label=None):
 
     OUTPUT:
 
-    - Returns True if (u,v) is a cut edge, False otherwise
+    - Returns ``True`` if (u,v) is a cut edge, False otherwise
 
     EXAMPLES::
 
@@ -693,20 +1318,7 @@ def is_cut_edge(G, u, v=None, label=None):
         Traceback (most recent call last):
         ...
         ValueError: edge not in graph
-
-    TESTS:
-
-    If ``G`` is not a Sage graph, an error is raised::
-
-        sage: is_cut_edge('I am not a graph',0)
-        Traceback (most recent call last):
-        ...
-        TypeError: the input must be a Sage graph
     """
-    from sage.graphs.generic_graph import GenericGraph
-    if not isinstance(G, GenericGraph):
-        raise TypeError("the input must be a Sage graph")
-
     if label is None:
         if v is None:
             try:
@@ -741,12 +1353,158 @@ def is_cut_edge(G, u, v=None, label=None):
     return sol
 
 
+def is_vertex_cut(G, cut, weak=False):
+    r"""
+    Check whether the input vertices form a vertex cut.
+
+    A set of vertices is a vertex cut if its removal from the (di)graph
+    increases the number of (strongly) connected components. This function works
+    with simple graphs as well as graphs with loops and multiple edges.
+
+    INPUT:
+
+    - ``G`` -- a Sage (Di)Graph
+
+    - ``cut`` -- a set of vertices
+
+    - ``weak`` -- boolean (default: ``False``); whether the connectivity of
+      directed graphs is to be taken in the weak sense, that is ignoring edges
+      orientations
+
+    EXAMPLES:
+
+    Giving a cycle graph of order 4::
+
+        sage: from sage.graphs.connectivity import is_vertex_cut
+        sage: G = graphs.CycleGraph(4)
+        sage: is_vertex_cut(G, [0, 1])
+        False
+        sage: is_vertex_cut(G, [0, 2])
+        True
+
+    Giving a disconnected graph::
+
+        sage: from sage.graphs.connectivity import is_vertex_cut
+        sage: G = graphs.CycleGraph(4) * 2
+        sage: G.connected_components(sort=True)
+        [[0, 1, 2, 3], [4, 5, 6, 7]]
+        sage: is_vertex_cut(G, [0, 2])
+        True
+        sage: is_vertex_cut(G, [4, 6])
+        True
+        sage: is_vertex_cut(G, [0, 6])
+        False
+        sage: is_vertex_cut(G, [0, 4, 6])
+        True
+
+    Comparing the weak and strong connectivity of a digraph::
+
+        sage: D = digraphs.Circuit(6)
+        sage: D.is_strongly_connected()
+        True
+        sage: is_vertex_cut(D, [2])
+        True
+        sage: is_vertex_cut(D, [2], weak=True)
+        False
+
+    Giving a vertex that is not in the graph::
+
+        sage: G = graphs.CompleteGraph(4)
+        sage: is_vertex_cut(G, [7])
+        Traceback (most recent call last):
+        ...
+        ValueError: vertex (7) is not a vertex of the graph
+
+    TESTS:
+
+    If ``G`` is not a Sage graph, an error is raised::
+
+        sage: is_vertex_cut('I am not a graph', [0])
+        Traceback (most recent call last):
+        ...
+        TypeError: the input must be a Sage graph
+    """
+    from sage.graphs.generic_graph import GenericGraph
+    if not isinstance(G, GenericGraph):
+        raise TypeError("the input must be a Sage graph")
+
+    cdef set cutset = set(cut)
+    for u in cutset:
+        if u not in G:
+            raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(u)))
+
+    if len(cutset) >= G.order() - 1:
+        # A vertex cut must be of size at most n - 2
+        return False
+
+    # We deal with graphs with multiple (strongly) connected components
+    cdef list CC
+    if G.is_directed() and not weak:
+        CC = G.strongly_connected_components()
+    else:
+        CC = G.connected_components(sort=False)
+    if len(CC) > 1:
+        for comp in CC:
+            subcut = cutset.intersection(comp)
+            if subcut and is_vertex_cut(G.subgraph(comp), subcut, weak=weak):
+                return True
+        return False
+
+    cdef list boundary = G.vertex_boundary(cutset)
+    if not boundary:
+        # We need at least 1 vertex in the boundary of the cut
+        return False
+
+    cdef list cases = [(G.neighbor_iterator, boundary)]
+    if not weak and G.is_directed():
+        # Strong connectivity for digraphs.
+        # We perform two DFS starting from an out neighbor of cut and avoiding
+        # cut. The first DFS follows the edges directions, and the second is
+        # in the reverse order. If both allow to reach all neighbors of cut,
+        # then it is not a vertex cut.
+        # We set data for the reverse order
+        in_boundary = set()
+        for u in cutset:
+            in_boundary.update(G.neighbor_in_iterator(u))
+        in_boundary.difference_update(cutset)
+        if not in_boundary:
+            return False
+        cases.append((G.neighbor_in_iterator, list(in_boundary)))
+
+    cdef list queue
+    cdef set seen
+    cdef set targets
+    start = boundary[0]
+
+    for neighbors, this_boundary in cases:
+
+        # We perform a DFS starting from start and avoiding cut
+        queue = [start]
+        seen = set(cutset)
+        seen.add(start)
+        targets = set(this_boundary)
+        targets.discard(start)
+        while queue:
+            v = queue.pop()
+            for w in neighbors(v):
+                if w not in seen:
+                    seen.add(w)
+                    queue.append(w)
+                    targets.discard(w)
+
+        # If some neighbors cannot be reached, we have a vertex cut
+        if targets:
+            return True
+
+    return False
+
+
 def is_cut_vertex(G, u, weak=False):
     r"""
     Check whether the input vertex is a cut-vertex.
 
     A vertex is a cut-vertex if its removal from the (di)graph increases the
-    number of (strongly) connected components. Isolated vertices or leafs are
+    number of (strongly) connected components. Isolated vertices or leaves are
     not cut-vertices. This function works with simple graphs as well as graphs
     with loops and multiple edges.
 
@@ -780,9 +1538,8 @@ def is_cut_vertex(G, u, weak=False):
 
     Comparing the weak and strong connectivity of a digraph::
 
-        sage: from sage.graphs.connectivity import is_strongly_connected
         sage: D = digraphs.Circuit(6)
-        sage: is_strongly_connected(D)
+        sage: D.is_strongly_connected()
         True
         sage: is_cut_vertex(D, 2)
         True
@@ -806,70 +1563,160 @@ def is_cut_vertex(G, u, weak=False):
         ...
         TypeError: the input must be a Sage graph
     """
-    from sage.graphs.generic_graph import GenericGraph
-    if not isinstance(G, GenericGraph):
-        raise TypeError("the input must be a Sage graph")
+    return is_vertex_cut(G, [u], weak=weak)
 
-    if u not in G:
-        raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(u)))
 
-    # Initialization
-    cdef set CC
-    cdef list neighbors_func
-    if not G.is_directed() or weak:
-        # Weak connectivity
+def minimal_separators(G, forbidden_vertices=None):
+    r"""
+    Return an iterator over the minimal separators of ``G``.
 
-        if G.degree(u) < 2:
-            # An isolated or a leaf vertex is not a cut vertex
-            return False
+    A separator in a graph is a set of vertices whose removal increases the
+    number of connected components. In other words, a separator is a vertex
+    cut. This method implements the algorithm proposed in [BBC2000]_.
+    It computes the set `S` of minimal separators of a graph in `O(n^3)` time
+    per separator, and so overall in `O(n^3 |S|)` time.
 
-        neighbors_func = [G.neighbor_iterator]
-        start = next(G.neighbor_iterator(u))
-        CC = set(G)
+    .. WARNING::
 
+        Note that all separators are recorded during the execution of the
+        algorithm and so the memory consumption of this method might be huge.
+
+    INPUT:
+
+    - ``G`` -- an undirected graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
+
+    EXAMPLES::
+
+        sage: P = graphs.PathGraph(5)
+        sage: sorted(sorted(sep) for sep in P.minimal_separators())
+        [[1], [2], [3]]
+        sage: C = graphs.CycleGraph(6)
+        sage: sorted(sorted(sep) for sep in C.minimal_separators())
+        [[0, 2], [0, 3], [0, 4], [1, 3], [1, 4], [1, 5], [2, 4], [2, 5], [3, 5]]
+        sage: sorted(sorted(sep) for sep in C.minimal_separators(forbidden_vertices=[0]))
+        [[2], [3], [4]]
+        sage: sorted(sorted(sep) for sep in (P + C).minimal_separators())
+        [[1], [2], [3], [5, 7], [5, 8], [5, 9], [6, 8],
+         [6, 9], [6, 10], [7, 9], [7, 10], [8, 10]]
+        sage: sorted(sorted(sep) for sep in (P + C).minimal_separators(forbidden_vertices=[10]))
+        [[1], [2], [3], [6], [7], [8]]
+
+        sage: G = graphs.RandomGNP(10, .3)
+        sage: all(G.is_vertex_cut(sep) for sep in G.minimal_separators())
+        True
+
+    Example of [BPS2010]_::
+
+        sage: G = Graph({'a': ['b', 'k'], 'b': ['c'], 'c': ['d', 'j', 'k'],
+        ....:            'd': ['e', 'f', 'j', 'k'], 'e': ['g'],
+        ....:            'f': ['g', 'j', 'k'], 'g': ['j', 'k'], 'h': ['i', 'j'],
+        ....:            'i': ['k'], 'j': ['k']})
+        sage: sorted(sorted(sep) for sep in G.minimal_separators())
+        [['a', 'c'], ['b', 'k'], ['c', 'k'], ['d', 'j', 'k'],
+         ['h', 'k'], ['i', 'j'], ['j', 'k']]
+
+    TESTS:
+
+    Simple cases::
+
+        sage: list(Graph().minimal_separators())
+        []
+        sage: list(Graph(1).minimal_separators())
+        []
+        sage: list(Graph(2).minimal_separators())
+        []
+        sage: from sage.graphs.connectivity import minimal_separators
+        sage: list(minimal_separators(DiGraph()))
+        Traceback (most recent call last):
+        ...
+        ValueError: the input must be an undirected graph
+
+    A disconected graph without cut vertices::
+        sage: G = graphs.CycleGraph(4) + graphs.PathGraph(2) + Graph(1)
+        sage: sorted(sorted(sep) for sep in G.minimal_separators())
+        [[0, 2], [1, 3]]
+    """
+    from sage.graphs.graph import Graph
+    if not isinstance(G, Graph):
+        raise ValueError("the input must be an undirected graph")
+
+    if forbidden_vertices is not None and G.order() >= 3:
+        # Build the subgraph with active vertices
+        G = G.subgraph(set(G).difference(forbidden_vertices), immutable=True)
+
+    if G.order() < 3:
+        return
+
+    # Decompose the graph into biconnected components
+    blocks, cuts = G.blocks_and_cut_vertices()
+    if len(blocks) > 1:
+        # Cut vertices are minimal separators
+        if cuts:
+            yield from (set([c]) for c in cuts)
+        # Biconnected components to explore
+        BCC = (G.subgraph(bcc) for bcc in blocks if len(bcc) > 3)
     else:
-        # Strong connectivity for digraphs
+        BCC = [G]
 
-        if not G.out_degree(u) or not G.in_degree(u):
-            # A vertex without in or out neighbors is not a cut vertex
-            return False
+    # Decompose the biconnected components into triconnected components
+    TCC = []
+    from itertools import combinations
+    for g in BCC:
+        for t, h in g.spqr_tree():
+            if t == 'P':
+                # h is a separator of order 2
+                yield set(h)
+            elif t == 'S':
+                # h is a cycle. The edges of its complement are separators.
+                # The complement of a 3-cycle has no edge.
+                if h.order() > 3:
+                    yield from (set(e) for e in combinations(h, 2) if not h.has_edge(e))
+            elif h.order() > 4:
+                # h is a 3-connected component (t == 'R') of order at least 5.
+                # A 3-connected component of order 4 is a clique.
+                TCC.append(h.to_simple(immutable=True))
 
-        # We consider only the strongly connected component containing u
-        CC = set(strongly_connected_component_containing_vertex(G, u))
+    # Decompose the triconnected components by clique minimal separators
+    atoms = []
+    for g in TCC:
+        A, cliques = g.atoms_and_clique_separators()
+        if cliques:
+            # A clique separator may be repeated in cliques
+            cliques = {frozenset(clique) for clique in cliques}
+            yield from (set(clique) for clique in cliques)
+            atoms.extend(g.subgraph(atom) for atom in A)
+        else:
+            atoms.append(g)
 
-        # We perform two DFS starting from an out neighbor of u and avoiding
-        # u. The first DFS follows the edges directions, and the second is
-        # in the reverse order. If both allow to reach all neighbors of u,
-        # then u is not a cut vertex
-        neighbors_func = [G.neighbor_out_iterator, G.neighbor_in_iterator]
-        start = next(G.neighbor_out_iterator(u))
+    # Find the minimal separators of each atom
+    for g in atoms:
+        # Initialization - identify separators needing further inspection
+        to_explore = []
+        for v in g:
+            # iterate over the connected components of G \ N[v]
+            for comp in g.connected_components(sort=False, forbidden_vertices=list(g.neighbor_iterator(v, closed=True))):
+                # The vertex boundary of comp in G is a separator
+                nh = g.vertex_boundary(comp)
+                if nh:
+                    to_explore.append(frozenset(nh))
 
-    CC.discard(u)
-    CC.discard(start)
-    cdef list queue
-    cdef set seen
-    cdef set targets
-
-    for neighbors in neighbors_func:
-
-        # We perform a DFS starting from a neighbor of u and avoiding u
-        queue = [start]
-        seen = set(queue)
-        targets = CC.intersection(G.neighbor_iterator(u))
-        targets.discard(start)
-        while queue and targets:
-            v = queue.pop()
-            for w in neighbors(v):
-                if w not in seen and w in CC:
-                    seen.add(w)
-                    queue.append(w)
-                    targets.discard(w)
-
-        # If some neighbors cannot be reached, u is a cut vertex.
-        if targets:
-            return True
-
-    return False
+        # Generation of all minimal separators
+        separators = set()
+        while to_explore:
+            sep = to_explore.pop()
+            if sep in separators:
+                continue
+            yield set(sep)
+            separators.add(sep)
+            for v in sep:
+                # iterate over the connected components of G \ sep \ N(v)
+                for comp in g.connected_components(sort=False, forbidden_vertices=sep.union(g.neighbor_iterator(v))):
+                    nh = g.vertex_boundary(comp)
+                    if nh:
+                        to_explore.append(frozenset(nh))
 
 
 def edge_connectivity(G,
@@ -908,14 +1755,14 @@ def edge_connectivity(G,
     - ``implementation`` -- string (default: ``None``); selects an
       implementation:
 
-      - ``None`` (default) -- selects the best implementation available
+      - ``None`` -- default; selects the best implementation available
 
-      - ``"boost"`` -- use the Boost graph library (which is much more
+      - ``'boost'`` -- use the Boost graph library (which is much more
         efficient). It is not available when ``edge_labels=True``, and it is
-        unreliable for directed graphs (see :trac:`18753`).
+        unreliable for directed graphs (see :issue:`18753`).
 
-      -``"Sage"`` -- use Sage's implementation based on integer linear
-       programming
+      - ``'Sage'`` -- use Sage's implementation based on integer linear
+        programming
 
     - ``use_edge_labels`` -- boolean (default: ``False``)
 
@@ -930,7 +1777,7 @@ def edge_connectivity(G,
       - When set to ``True``, also returns the two sets of vertices that are
         disconnected by the cut. Implies ``value_only=False``.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -938,7 +1785,7 @@ def edge_connectivity(G,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
@@ -985,8 +1832,9 @@ def edge_connectivity(G,
         sage: for u,v in tree.edge_iterator(labels=None):
         ....:      tree.set_edge_label(u, v, random())
         sage: minimum = min(tree.edge_labels())
-        sage: [_, [(_, _, l)]] = edge_connectivity(tree, value_only=False, use_edge_labels=True)
-        sage: l == minimum
+        sage: [_, [(_, _, l)]] = edge_connectivity(tree, value_only=False,              # needs sage.numerical.mip
+        ....:                                      use_edge_labels=True)
+        sage: l == minimum                                                              # needs sage.numerical.mip
         True
 
     When ``value_only=True`` and ``implementation="sage"``, this function is
@@ -996,56 +1844,60 @@ def edge_connectivity(G,
     It is the case for graphs which are not connected ::
 
         sage: g = 2 * graphs.PetersenGraph()
-        sage: edge_connectivity(g, implementation="sage")
+        sage: edge_connectivity(g, implementation='sage')
         0.0
 
     For directed graphs, the strong connectivity is tested through the dedicated
     function::
 
         sage: g = digraphs.ButterflyGraph(3)
-        sage: edge_connectivity(g, implementation="sage")
+        sage: edge_connectivity(g, implementation='sage')
         0.0
 
     We check that the result with Boost is the same as the result without Boost::
 
         sage: g = graphs.RandomGNP(15, .3)
-        sage: edge_connectivity(g, implementation="boost") == edge_connectivity(g, implementation="sage")
+        sage: (edge_connectivity(g, implementation='boost')                             # needs sage.numerical.mip
+        ....:    == edge_connectivity(g, implementation='sage'))
         True
 
     Boost interface also works with directed graphs::
 
-        sage: edge_connectivity(digraphs.Circuit(10), implementation="boost", vertices=True)
+        sage: edge_connectivity(digraphs.Circuit(10), implementation='boost',
+        ....:                   vertices=True)
         [1, [(0, 1)], [{0}, {1, 2, 3, 4, 5, 6, 7, 8, 9}]]
 
     However, the Boost algorithm is not reliable if the input is directed
-    (see :trac:`18753`)::
+    (see :issue:`18753`)::
 
         sage: g = digraphs.Path(3)
         sage: edge_connectivity(g)
         0.0
-        sage: edge_connectivity(g, implementation="boost")
+        sage: edge_connectivity(g, implementation='boost')
         1
         sage: g.add_edge(1, 0)
         sage: edge_connectivity(g)
         0.0
-        sage: edge_connectivity(g, implementation="boost")
+        sage: edge_connectivity(g, implementation='boost')
         0
 
     TESTS:
 
     Checking that the two implementations agree::
 
-        sage: for i in range(10):
+        sage: for i in range(10):                                                       # needs sage.numerical.mip
         ....:     g = graphs.RandomGNP(30, 0.3)
-        ....:     e1 = edge_connectivity(g, implementation="boost")
-        ....:     e2 = edge_connectivity(g, implementation="sage")
+        ....:     e1 = edge_connectivity(g, implementation='boost')
+        ....:     e2 = edge_connectivity(g, implementation='sage')
         ....:     assert (e1 == e2)
 
     Disconnected graphs and ``vertices=True``::
 
         sage: g = graphs.PetersenGraph()
         sage: edge_connectivity((2 * g), vertices=True)
-        [0, [], [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16, 17, 18, 19]]]
+        [0, [], [{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {10, 11, 12, 13, 14, 15, 16, 17, 18, 19}]]
+        sage: edge_connectivity(Graph(), vertices=True)
+        [0, [], [{}, {}]]
 
     If ``G`` is not a Sage graph, an error is raised::
 
@@ -1077,18 +1929,17 @@ def edge_connectivity(G,
         raise ValueError("the Boost implementation is currently not able to handle edge labels")
 
     # Otherwise, an error is created
-    if not g.num_edges() or not g.num_verts():
+    if not g.n_edges() or not g.n_vertices():
         if value_only:
             return 0
         elif vertices:
-            return [0, [], [[], []]]
-        else:
-            return [0, []]
+            return [0, [], [{}, {}]]
+        return [0, []]
 
     if implementation == "boost":
         from sage.graphs.base.boost_graph import edge_connectivity
 
-        [obj, edges] = edge_connectivity(g)
+        obj, edges = edge_connectivity(g)
 
         if value_only:
             return obj
@@ -1104,9 +1955,9 @@ def edge_connectivity(G,
                 b = set(H).difference(a)
                 val.append([a, b])
             else:
-                val.append(connected_components(H))
+                val.append([set(c) for c in connected_components(H, sort=False)])
         elif vertices:
-            val.append(connected_components(G))
+            val.append([set(c) for c in connected_components(G, sort=False)])
 
         return val
 
@@ -1180,29 +2031,27 @@ def edge_connectivity(G,
     if value_only:
         return obj
 
+    val = [obj]
+    in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
+
+    if g.is_directed():
+        edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[u, v]]
     else:
-        val = [obj]
+        edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[frozenset((u, v))]]
 
-        in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
+    val.append(edges)
 
-        if g.is_directed():
-            edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[u, v]]
-        else:
-            edges = [(u, v, l) for u, v, l in g.edge_iterator() if in_cut[frozenset((u, v))]]
+    if vertices:
+        a = {}
+        b = {}
+        for v in g:
+            if in_set[0, v]:
+                a.add(v)
+            else:
+                b.add(v)
+        val.append([a, b])
 
-        val.append(edges)
-
-        if vertices:
-            a = []
-            b = []
-            for v in g:
-                if in_set[0, v]:
-                    a.append(v)
-                else:
-                    b.append(v)
-            val.append([a, b])
-
-        return val
+    return val
 
 
 def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, verbose=0,
@@ -1246,7 +2095,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
       connectivity of the (di)graph is larger or equal to `k`. The method thus
       outputs a boolean only.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1254,7 +2103,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
@@ -1266,25 +2115,25 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
     A basic application on a ``PappusGraph``::
 
        sage: from sage.graphs.connectivity import vertex_connectivity
-       sage: g=graphs.PappusGraph()
-       sage: vertex_connectivity(g)
+       sage: g = graphs.PappusGraph()
+       sage: vertex_connectivity(g)                                                     # needs sage.numerical.mip
        3
-       sage: g.vertex_connectivity()
+       sage: g.vertex_connectivity()                                                    # needs sage.numerical.mip
        3
 
     In a grid, the vertex connectivity is equal to the minimum degree, in which
     case one of the two sets is of cardinality `1`::
 
        sage: g = graphs.GridGraph([ 3,3 ])
-       sage: [value, cut, [ setA, setB ]] = vertex_connectivity(g, sets=True)
-       sage: len(setA) == 1 or len(setB) == 1
+       sage: [value, cut, [ setA, setB ]] = vertex_connectivity(g, sets=True)           # needs sage.numerical.mip
+       sage: len(setA) == 1 or len(setB) == 1                                           # needs sage.numerical.mip
        True
 
     A vertex cut in a tree is any internal vertex::
 
        sage: tree = graphs.RandomTree(15)
-       sage: val, [cut_vertex] = vertex_connectivity(tree, value_only=False)
-       sage: tree.degree(cut_vertex) > 1
+       sage: val, [cut_vertex] = vertex_connectivity(tree, value_only=False)            # needs sage.numerical.mip
+       sage: tree.degree(cut_vertex) > 1                                                # needs sage.numerical.mip
        True
 
     When ``value_only = True``, this function is optimized for small
@@ -1293,41 +2142,41 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
     It is the case for connected graphs which are not connected::
 
        sage: g = 2 * graphs.PetersenGraph()
-       sage: vertex_connectivity(g)
+       sage: vertex_connectivity(g)                                                     # needs sage.numerical.mip
        0
 
     Or if they are just 1-connected::
 
        sage: g = graphs.PathGraph(10)
-       sage: vertex_connectivity(g)
+       sage: vertex_connectivity(g)                                                     # needs sage.numerical.mip
        1
 
     For directed graphs, the strong connectivity is tested through the dedicated
     function::
 
        sage: g = digraphs.ButterflyGraph(3)
-       sage: vertex_connectivity(g)
+       sage: vertex_connectivity(g)                                                     # needs sage.numerical.mip
        0
 
     A complete graph on `10` vertices is `9`-connected::
 
        sage: g = graphs.CompleteGraph(10)
-       sage: vertex_connectivity(g)
+       sage: vertex_connectivity(g)                                                     # needs sage.numerical.mip
        9
 
     A complete digraph on `10` vertices is `9`-connected::
 
        sage: g = DiGraph(graphs.CompleteGraph(10))
-       sage: vertex_connectivity(g)
+       sage: vertex_connectivity(g)                                                     # needs sage.numerical.mip
        9
 
     When parameter ``k`` is set, we only check for the existence of a vertex cut
     of order at least ``k``::
 
        sage: g = graphs.PappusGraph()
-       sage: vertex_connectivity(g, k=3)
+       sage: vertex_connectivity(g, k=3)                                                # needs sage.numerical.mip
        True
-       sage: vertex_connectivity(g, k=4)
+       sage: vertex_connectivity(g, k=4)                                                # needs sage.numerical.mip
        False
 
     TESTS:
@@ -1346,13 +2195,13 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
        sage: from sage.graphs.connectivity import is_strongly_connected
        sage: from sage.graphs.connectivity import is_connected
        sage: empty = Graph()
-       sage: vertex_connectivity(empty)
+       sage: vertex_connectivity(empty)                                                 # needs sage.numerical.mip
        0
-       sage: vertex_connectivity(empty, k=1) == is_connected(empty)
+       sage: vertex_connectivity(empty, k=1) == is_connected(empty)                     # needs sage.numerical.mip
        True
-       sage: vertex_connectivity(Graph(), k=2) == empty.is_biconnected()
+       sage: vertex_connectivity(Graph(), k=2) == empty.is_biconnected()                # needs sage.numerical.mip
        True
-       sage: vertex_connectivity(DiGraph(), k=1) == is_strongly_connected(DiGraph())
+       sage: vertex_connectivity(DiGraph(), k=1) == is_strongly_connected(DiGraph())    # needs sage.numerical.mip
        True
 
     If ``G`` is not a Sage (Di)Graph, an error is raised::
@@ -1362,20 +2211,30 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
         ...
         TypeError: the input must be a Sage graph
 
-    Complete Graph with loops or multiple edges (:trac:`25589`)::
+    Complete Graph with loops or multiple edges (:issue:`25589`)::
 
         sage: G = Graph([(0, 1), (0, 1)], multiedges=True)
-        sage: G.vertex_connectivity()
+        sage: G.vertex_connectivity()                                                   # needs sage.numerical.mip
         1
         sage: G = graphs.CompleteGraph(4)
         sage: G.allow_loops(True)
         sage: G.add_edge(0, 0)
-        sage: G.vertex_connectivity(value_only=False, verbose=1)
+        sage: G.vertex_connectivity(value_only=False, verbose=1)                        # needs sage.numerical.mip
         (3, [])
         sage: G.allow_multiple_edges(True)
         sage: G.add_edge(0, 1)
-        sage: G.vertex_connectivity(value_only=False, verbose=1)
+        sage: G.vertex_connectivity(value_only=False, verbose=1)                        # needs sage.numerical.mip
         (3, [])
+
+    Check that :issue:`38723` is fixed::
+
+        sage: G = graphs.SierpinskiGasketGraph(3)
+        sage: G.vertex_connectivity(k=1)                                                # needs sage.numerical.mip
+        True
+        sage: G.vertex_connectivity(k=2)                                                # needs sage.numerical.mip
+        True
+        sage: G.vertex_connectivity(k=3)                                                # needs sage.numerical.mip
+        False
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
@@ -1390,8 +2249,8 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
             # We follow the convention of is_connected, is_biconnected and
             # is_strongly_connected
             return k == 1
-        if (g.is_directed() and k > min(min(g.in_degree()), min(g.out_degree()))) \
-           or (not g.is_directed() and (k > min(g.degree()))):
+        if ((g.is_directed() and k > min(min(g.in_degree()), min(g.out_degree())))
+                or (not g.is_directed() and (k > min(g.degree())))):
             return False
         value_only = True
         sets = False
@@ -1408,8 +2267,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
             return max(g.order() - 1, 0)
         elif not sets:
             return max(g.order() - 1, 0), []
-        else:
-            return max(g.order() - 1, 0), [], [[], []]
+        return max(g.order() - 1, 0), [], [[], []]
 
     if value_only:
         if G.is_directed():
@@ -1424,7 +2282,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
                 return 1 if k is None else (k == 1)
 
             if not G.is_triconnected():
-                return 2 if k is None else (k == 2)
+                return 2 if k is None else (k <= 2)
             elif k == 3:
                 return True
 
@@ -1542,7 +2400,7 @@ def is_strongly_connected(G):
 
 def strongly_connected_components_digraph(G, keep_labels=False):
     r"""
-    Return the digraph of the strongly connected components
+    Return the digraph of the strongly connected components.
 
     The digraph of the strongly connected components of a graph `G` has a vertex
     per strongly connected component included in `G`. There is an edge from a
@@ -1632,7 +2490,7 @@ def strongly_connected_components_digraph(G, keep_labels=False):
 
     if keep_labels:
         g = DiGraph(len(scc), multiedges=True, loops=True)
-        g.add_edges(set((d[u], d[v], label) for u, v, label in G.edge_iterator()))
+        g.add_edges({(d[u], d[v], label) for u, v, label in G.edge_iterator()})
 
     else:
         g = DiGraph(len(scc), multiedges=False, loops=False)
@@ -1642,9 +2500,18 @@ def strongly_connected_components_digraph(G, keep_labels=False):
     return g
 
 
-def strongly_connected_components_subgraphs(G):
+def strongly_connected_components_subgraphs(G, immutable=None):
     r"""
     Return the strongly connected components as a list of subgraphs.
+
+    INPUT:
+
+    - ``G`` -- a directed graph
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graphs. ``immutable=None`` (default) means that the
+      graph and the subgraphs of its connected components will behave the same
+      way.
 
     EXAMPLES:
 
@@ -1673,17 +2540,32 @@ def strongly_connected_components_subgraphs(G):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage DiGraph
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: def my_check(G, immutable):
+        ....:     L = G.strongly_connected_components_subgraphs(immutable=immutable)
+        ....:     if immutable is None:
+        ....:         immutable = G.is_immutable()
+        ....:     if any(g.is_immutable() != immutable for g in L):
+        ....:         print("wrong result")
+        sage: edges = [(0, 1), (1, 0), (1, 2), (2, 3), (3, 2)]
+        sage: my_check(DiGraph(edges, immutable=False), None)
+        sage: my_check(DiGraph(edges, immutable=False), True)
+        sage: my_check(DiGraph(edges, immutable=True), None)
+        sage: my_check(DiGraph(edges, immutable=True), False)
     """
     from sage.graphs.digraph import DiGraph
     if not isinstance(G, DiGraph):
         raise TypeError("the input must be a Sage DiGraph")
 
-    return [G.subgraph(_) for _ in G.strongly_connected_components()]
+    return [G.subgraph(c, immutable=immutable)
+            for c in G.strongly_connected_components()]
 
 
 def strongly_connected_component_containing_vertex(G, v):
     """
-    Return the strongly connected component containing a given vertex
+    Return the strongly connected component containing a given vertex.
 
     INPUT:
 
@@ -1725,7 +2607,6 @@ def strongly_connected_component_containing_vertex(G, v):
         Traceback (most recent call last):
         ...
         ValueError: vertex ('z') is not a vertex of the DiGraph
-
     """
     from sage.graphs.digraph import DiGraph
     if not isinstance(G, DiGraph):
@@ -1753,7 +2634,7 @@ def strong_articulation_points(G):
     algorithm described in [ILS2012]_. The time complexity is dominated by
     the time complexity of the immediate dominators finding algorithm.
 
-    OUTPUT: The list of strong articulation points.
+    OUTPUT: the list of strong articulation points
 
     EXAMPLES:
 
@@ -1821,7 +2702,7 @@ def strong_articulation_points(G):
         ...
         TypeError: the input must be a Sage DiGraph
 
-    Issue :trac:`29958` is fixed::
+    Issue :issue:`29958` is fixed::
 
         sage: D = DiGraph('SA?GA??_??a???@?@OH_?@?I??b??G?AgGGCO??AC????a?????A@????AOCOQ?d??I?')
         sage: SAP = strong_articulation_points(D)
@@ -1920,7 +2801,7 @@ def bridges(G, labels=True):
         sage: list(bridges(g, labels=True))
         [(2, 3, 'label')]
 
-    Issue :trac:`23817` is solved::
+    Issue :issue:`23817` is solved::
 
         sage: G = Graph()
         sage: G.add_edge(0, 1)
@@ -1947,7 +2828,7 @@ def bridges(G, labels=True):
     if G.order() < 2 or not is_connected(G):
         return
 
-    B, C = G.blocks_and_cut_vertices()
+    B, _ = G.blocks_and_cut_vertices()
 
     # A block of size 2 is a bridge, unless the vertices are connected with
     # multiple edges.
@@ -1957,7 +2838,7 @@ def bridges(G, labels=True):
         if len(b) == 2 and not tuple(b) in ME:
             if labels:
                 if multiple_edges:
-                    [label] = G.edge_label(b[0], b[1])
+                    label, = G.edge_label(b[0], b[1])
                 else:
                     label = G.edge_label(b[0], b[1])
                 yield (b[0], b[1], label)
@@ -1980,7 +2861,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
 
     INPUT:
 
-    - ``G`` -- a Graph.
+    - ``G`` -- a Graph
 
     - ``cut_vertices`` -- iterable container of vertices (default: ``None``); a
       set of vertices representing a vertex cut of ``G``. If no vertex cut is
@@ -1991,7 +2872,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
       edges to the sides of the cut or not. A virtual edge is an edge between a
       pair of vertices of the cut that are not connected by an edge in ``G``.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1999,14 +2880,14 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
       :meth:`MixedIntegerLinearProgram.get_values`.
 
-    OUTPUT: A triple `(S, C, f)`, where
+    OUTPUT: a triple `(S, C, f)`, where
 
     - `S` is a list of the graphs that are sides of the vertex cut.
 
@@ -2115,8 +2996,9 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
     # If a vertex cut is given, we check that it is valid. Otherwise, we compute
     # a small vertex cut
     if cut_vertices is None:
-        cut_size, cut_vertices = G.vertex_connectivity(value_only=False, solver=solver, verbose=verbose,
-                                                       integrality_tolerance=integrality_tolerance)
+        _, cut_vertices = G.vertex_connectivity(value_only=False,
+                                                solver=solver, verbose=verbose,
+                                                integrality_tolerance=integrality_tolerance)
         if not cut_vertices:
             # Typical example is a clique
             raise ValueError("the input graph has no vertex cut")
@@ -2124,11 +3006,11 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
         cut_vertices = list(cut_vertices)
         for u in cut_vertices:
             if u not in G:
-                raise ValueError("vertex {} is not a vertex of the input graph".format(u))
+                raise ValueError(f"vertex {u} is not a vertex of the input graph")
 
     H = G.copy(immutable=False)
     H.delete_vertices(cut_vertices)
-    CC = H.connected_components()
+    CC = H.connected_components(sort=False)
     if len(CC) == 1:
         raise ValueError("the set cut_vertices is not a vertex cut of the graph")
 
@@ -2167,7 +3049,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
     return cut_sides, cocycles, virtual_cut_graph
 
 
-def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
+def spqr_tree(G, algorithm='Hopcroft_Tarjan', solver=None, verbose=0,
               *, integrality_tolerance=1e-3):
     r"""
     Return an SPQR-tree representing the triconnected components of the graph.
@@ -2177,17 +3059,17 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
     them. A node of a SPQR-tree, and the graph associated with it, can be one of
     the following four types:
 
-    - ``"S"`` -- the associated graph is a cycle with at least three vertices.
-      ``"S"`` stands for ``series``.
+    - ``'S'`` -- the associated graph is a cycle with at least three vertices
+      ``'S'`` stands for ``series``
 
-    - ``"P"`` -- the associated graph is a dipole graph, a multigraph with two
-      vertices and three or more edges. ``"P"`` stands for ``parallel``.
+    - ``'P'`` -- the associated graph is a dipole graph, a multigraph with two
+      vertices and three or more edges. ``'P'`` stands for ``parallel``
 
-    - ``"Q"`` -- the associated graph has a single real edge. This trivial case
-      is necessary to handle the graph that has only one edge.
+    - ``'Q'`` -- the associated graph has a single real edge. This trivial case
+      is necessary to handle the graph that has only one edge
 
-    - ``"R"`` -- the associated graph is a 3-connected graph that is not a cycle
-      or dipole. ``"R"`` stands for ``rigid``.
+    - ``'R'`` -- the associated graph is a 3-connected graph that is not a cycle
+      or dipole. ``'R'`` stands for ``rigid``
 
     This method decomposes a biconnected graph into cycles, cocycles, and
     3-connected blocks summed over cocycles, and arranges them as a SPQR-tree.
@@ -2201,17 +3083,17 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
 
     - ``G`` -- the input graph
 
-    - ``algorithm`` -- string (default: ``"Hopcroft_Tarjan"``); the algorithm to
+    - ``algorithm`` -- string (default: ``'Hopcroft_Tarjan'``); the algorithm to
       use among:
 
-      - ``"Hopcroft_Tarjan"`` (default) -- use the algorithm proposed by
+      - ``'Hopcroft_Tarjan'`` -- default; use the algorithm proposed by
         Hopcroft and Tarjan in [Hopcroft1973]_ and later corrected by Gutwenger
         and Mutzel in [Gut2001]_. See
         :class:`~sage.graphs.connectivity.TriconnectivitySPQR`.
 
-      - ``"cleave"`` -- using method :meth:`~sage.graphs.connectivity.cleave`
+      - ``'cleave'`` -- using method :meth:`~sage.graphs.connectivity.cleave`
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -2219,7 +3101,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
@@ -2281,49 +3163,49 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
         True
 
         sage: G = Graph('LlCG{O@?GBoMw?')
-        sage: T = spqr_tree(G, algorithm="Hopcroft_Tarjan")
+        sage: T = spqr_tree(G, algorithm='Hopcroft_Tarjan')
         sage: G.is_isomorphic(spqr_tree_to_graph(T))
         True
-        sage: T2 = spqr_tree(G, algorithm='cleave')
-        sage: G.is_isomorphic(spqr_tree_to_graph(T2))
+        sage: T2 = spqr_tree(G, algorithm='cleave')                                     # needs sage.numerical.mip
+        sage: G.is_isomorphic(spqr_tree_to_graph(T2))                                   # needs sage.numerical.mip
         True
 
         sage: G = Graph([(0, 1)], multiedges=True)
-        sage: T = spqr_tree(G, algorithm='cleave')
-        sage: T.vertices(sort=True)
+        sage: T = spqr_tree(G, algorithm='cleave')                                      # needs sage.numerical.mip
+        sage: T.vertices(sort=True)                                                     # needs sage.numerical.mip
         [('Q', Multi-graph on 2 vertices)]
-        sage: G.is_isomorphic(spqr_tree_to_graph(T))
+        sage: G.is_isomorphic(spqr_tree_to_graph(T))                                    # needs sage.numerical.mip
         True
         sage: T = spqr_tree(G, algorithm='Hopcroft_Tarjan')
         sage: T.vertices(sort=True)
         [('Q', Multi-graph on 2 vertices)]
         sage: G.add_edge(0, 1)
-        sage: spqr_tree(G, algorithm='cleave').vertices(sort=True)
+        sage: spqr_tree(G, algorithm='cleave').vertices(sort=True)                      # needs sage.numerical.mip
         [('P', Multi-graph on 2 vertices)]
 
         sage: from collections import Counter
         sage: G = graphs.PetersenGraph()
-        sage: T = G.spqr_tree(algorithm="Hopcroft_Tarjan")
+        sage: T = G.spqr_tree(algorithm='Hopcroft_Tarjan')
         sage: Counter(u[0] for u in T)
         Counter({'R': 1})
-        sage: T = G.spqr_tree(algorithm="cleave")
-        sage: Counter(u[0] for u in T)
+        sage: T = G.spqr_tree(algorithm='cleave')                                       # needs sage.numerical.mip
+        sage: Counter(u[0] for u in T)                                                  # needs sage.numerical.mip
         Counter({'R': 1})
         sage: for u,v in list(G.edges(labels=False, sort=False)):
         ....:     G.add_path([u, G.add_vertex(), G.add_vertex(), v])
-        sage: T = G.spqr_tree(algorithm="Hopcroft_Tarjan")
+        sage: T = G.spqr_tree(algorithm='Hopcroft_Tarjan')
         sage: sorted(Counter(u[0] for u in T).items())
         [('P', 15), ('R', 1), ('S', 15)]
-        sage: T = G.spqr_tree(algorithm="cleave")
-        sage: sorted(Counter(u[0] for u in T).items())
+        sage: T = G.spqr_tree(algorithm='cleave')                                       # needs sage.numerical.mip
+        sage: sorted(Counter(u[0] for u in T).items())                                  # needs sage.numerical.mip
         [('P', 15), ('R', 1), ('S', 15)]
         sage: for u,v in list(G.edges(labels=False, sort=False)):
         ....:     G.add_path([u, G.add_vertex(), G.add_vertex(), v])
-        sage: T = G.spqr_tree(algorithm="Hopcroft_Tarjan")
+        sage: T = G.spqr_tree(algorithm='Hopcroft_Tarjan')
         sage: sorted(Counter(u[0] for u in T).items())
         [('P', 60), ('R', 1), ('S', 75)]
-        sage: T = G.spqr_tree(algorithm="cleave")       # long time
-        sage: sorted(Counter(u[0] for u in T).items())  # long time
+        sage: T = G.spqr_tree(algorithm='cleave')       # long time                     # needs sage.numerical.mip
+        sage: sorted(Counter(u[0] for u in T).items())  # long time                     # needs sage.numerical.mip
         [('P', 60), ('R', 1), ('S', 75)]
 
     TESTS::
@@ -2340,7 +3222,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
         ...
         ValueError: graph is not biconnected
 
-        sage: spqr_tree(Graph(), algorithm="easy")
+        sage: spqr_tree(Graph(), algorithm='easy')
         Traceback (most recent call last):
         ...
         NotImplementedError: SPQR tree algorithm 'easy' is not implemented
@@ -2509,7 +3391,7 @@ def spqr_tree_to_graph(T):
 
     INPUT:
 
-    - ``T`` -- a SPQR tree as returned by :meth:`spqr_tree`.
+    - ``T`` -- a SPQR tree as returned by :meth:`spqr_tree`
 
     OUTPUT: a (multi) graph
 
@@ -2539,10 +3421,27 @@ def spqr_tree_to_graph(T):
         sage: H.is_isomorphic(G)
         True
 
-    TESTS::
+    TESTS:
+
+    Check that the method is working for the empty SPQR tree::
 
         sage: H = spqr_tree_to_graph(Graph())
         sage: H.is_isomorphic(Graph())
+        True
+
+    Check that :issue:`38527` is fixed::
+
+        sage: from sage.graphs.connectivity import spqr_tree, spqr_tree_to_graph
+        sage: G = Graph('LlCG{O@?GBoMw?')
+        sage: T1 = spqr_tree(G, algorithm="Hopcroft_Tarjan")
+        sage: T2 = spqr_tree(G, algorithm="cleave")
+        sage: T1.is_isomorphic(T2)
+        True
+        sage: G1 = spqr_tree_to_graph(T1)
+        sage: G2 = spqr_tree_to_graph(T2)
+        sage: G.is_isomorphic(G1)
+        True
+        sage: G.is_isomorphic(G2)
         True
     """
     from sage.graphs.graph import Graph
@@ -2550,11 +3449,23 @@ def spqr_tree_to_graph(T):
 
     count_G = Counter()
     count_P = Counter()
+    vertex_to_int = dict()
     for t, g in T:
+        for u in g:
+            if u not in vertex_to_int:
+                vertex_to_int[u] = len(vertex_to_int)
         if t in ['P', 'Q']:
-            count_P.update(g.edge_iterator())
+            for u, v, label in g.edge_iterator():
+                if vertex_to_int[u] < vertex_to_int[v]:
+                    count_P[u, v, label] += 1
+                else:
+                    count_P[v, u, label] += 1
         else:
-            count_G.update(g.edge_iterator())
+            for u, v, label in g.edge_iterator():
+                if vertex_to_int[u] < vertex_to_int[v]:
+                    count_G[u, v, label] += 1
+                else:
+                    count_G[v, u, label] += 1
 
     G = Graph(multiedges=True)
     for e, num in count_G.items():
@@ -2605,13 +3516,13 @@ cdef _LinkedList_set_head(_LinkedList * ll, _LinkedListNode * h):
     ll.tail = h
     ll.length = 1
 
-cdef inline _LinkedListNode * _LinkedList_get_head(_LinkedList * ll):
+cdef inline _LinkedListNode * _LinkedList_get_head(_LinkedList * ll) noexcept:
     """
     Return the head of the linked list ``ll``.
     """
     return ll.head
 
-cdef inline Py_ssize_t _LinkedList_get_length(_LinkedList * ll):
+cdef inline Py_ssize_t _LinkedList_get_length(_LinkedList * ll) noexcept:
     """
     Return the length of the linked list ``ll``.
     """
@@ -2674,7 +3585,7 @@ cdef _LinkedList_concatenate(_LinkedList * lst1, _LinkedList * lst2):
 
 cdef str _LinkedList_to_string(_LinkedList * ll):
     """
-    Return a string representation of self.
+    Return a string representation of ``self``.
     """
     cdef _LinkedListNode * temp = ll.head
     cdef list s = []
@@ -2692,9 +3603,9 @@ cdef class _Component:
     This class is used to store a connected component. It contains:
 
     - ``edge_list`` -- list of edges belonging to the component,
-      stored as a :class:`_LinkedList`.
+      stored as a :class:`_LinkedList`
 
-    - ``component_type`` -- the type of the component.
+    - ``component_type`` -- the type of the component
 
       - 0 if bond.
       - 1 if polygon.
@@ -2706,9 +3617,9 @@ cdef class _Component:
 
         INPUT:
 
-        - ``edge_list`` -- list of edges to be added to the component.
+        - ``edge_list`` -- list of edges to be added to the component
 
-        - `type_c` -- type of the component (0, 1, or 2).
+        - ``type_c`` -- type of the component (0, 1, or 2)
 
         TESTS::
 
@@ -2719,7 +3630,7 @@ cdef class _Component:
             ....: 'comp.add_edge(3)',
             ....: 'comp.finish_tric_or_poly(4)',
             ....: 'print(comp)']
-            sage: cython(os.linesep.join(cython_code))                          # optional - sage.misc.cython
+            sage: cython(os.linesep.join(cython_code))                                  # needs sage.misc.cython
             Polygon: 2 3 4
         """
         self.mem = MemoryAllocator()
@@ -2766,7 +3677,7 @@ cdef class _Component:
             ....: 'comp.add_edge(3)',
             ....: 'comp.finish_tric_or_poly(4)',
             ....: 'print(comp)']
-            sage: cython(os.linesep.join(cython_code))                          # optional - sage.misc.cython
+            sage: cython(os.linesep.join(cython_code))                                  # needs sage.misc.cython
             Polygon: 2 3 4
         """
         if self.component_type == 0:
@@ -2803,18 +3714,18 @@ cdef class TriconnectivitySPQR:
     them. A node of a SPQR-tree, and the graph associated with it, can be one of
     the following four types:
 
-    - ``"S"`` -- the associated graph is a cycle with at least three vertices.
-      ``"S"`` stands for ``series`` and is also called a ``polygon``.
+    - ``'S'`` -- the associated graph is a cycle with at least three vertices
+      ``'S'`` stands for ``series`` and is also called a ``polygon``
 
-    - ``"P"`` -- the associated graph is a dipole graph, a multigraph with two
-      vertices and three or more edges. ``"P"`` stands for ``parallel`` and the
+    - ``'P'`` -- the associated graph is a dipole graph, a multigraph with two
+      vertices and three or more edges. ``'P'`` stands for ``parallel`` and the
       node is called a ``bond``.
 
-    - ``"Q"`` -- the associated graph has a single real edge. This trivial case
+    - ``'Q'`` -- the associated graph has a single real edge. This trivial case
       is necessary to handle the graph that has only one edge.
 
-    - ``"R"`` -- the associated graph is a 3-vertex-connected graph that is not
-      a cycle or dipole. ``"R"`` stands for ``rigid``.
+    - ``'R'`` -- the associated graph is a 3-vertex-connected graph that is not
+      a cycle or dipole. ``'R'`` stands for ``rigid``.
 
     The edges of the tree indicate the 2-vertex cuts of the graph.
 
@@ -2829,7 +3740,7 @@ cdef class TriconnectivitySPQR:
     .. SEEALSO::
 
         - :meth:`sage.graphs.connectivity.spqr_tree`
-        - :meth:`~Graph.is_biconnected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
         - :wikipedia:`SPQR_tree`
 
     EXAMPLES:
@@ -3175,7 +4086,7 @@ cdef class TriconnectivitySPQR:
 
         self.__build_spqr_tree()
 
-    cdef int __new_virtual_edge(self, int u, int v):
+    cdef int __new_virtual_edge(self, int u, int v) noexcept:
         """
         Return a new virtual edge between ``u`` and ``v``.
         """
@@ -3187,7 +4098,7 @@ cdef class TriconnectivitySPQR:
         self.edge_status[e_index] = 0
         return e_index
 
-    cdef _LinkedListNode * __new_LinkedListNode(self, Py_ssize_t e_index):
+    cdef _LinkedListNode * __new_LinkedListNode(self, Py_ssize_t e_index) noexcept:
         """
         Create a new ``_LinkedListNode`` initialized with value ``e_index``.
         """
@@ -3195,7 +4106,7 @@ cdef class TriconnectivitySPQR:
         _LinkedListNode_initialize(node, e_index)
         return node
 
-    cdef Py_ssize_t __high(self, Py_ssize_t v):
+    cdef Py_ssize_t __high(self, Py_ssize_t v) noexcept:
         """
         Return the ``high(v)`` value, which is the first value in
         ``highpt`` list of ``v``.
@@ -3203,8 +4114,7 @@ cdef class TriconnectivitySPQR:
         cdef _LinkedListNode * head = _LinkedList_get_head(self.highpt[v])
         if head:
             return head.data
-        else:
-            return 0
+        return 0
 
     cdef __del_high(self, int e_index):
         """
@@ -3269,7 +4179,7 @@ cdef class TriconnectivitySPQR:
                 sb.append(virtual_e_index)
                 self.__new_component(sb, 0)
 
-    cdef int __dfs1(self, int start, bint check=True):
+    cdef int __dfs1(self, int start, bint check=True) noexcept:
         """
         Build the palm-tree of the graph using a dfs traversal.
 
@@ -3874,7 +4784,7 @@ cdef class TriconnectivitySPQR:
                         self.in_adj[eh_index] = e_virt_node
                         # end type-1 search
 
-                # if an path starts at edge e, empty the tstack.
+                # if a path starts at edge e, empty the tstack.
                 if self.starts_path[e_index]:
                     while self.__tstack_not_eos():
                         self.t_stack_top -= 1
@@ -4132,17 +5042,17 @@ cdef class TriconnectivitySPQR:
         separating them. A node of a SPQR-tree, and the graph associated with
         it, can be one of the following four types:
 
-        - ``"S"`` -- the associated graph is a cycle with at least three vertices.
-          ``"S"`` stands for ``series``.
+        - ``'S'`` -- the associated graph is a cycle with at least three vertices.
+          ``'S'`` stands for ``series``.
 
-        - ``"P"`` -- the associated graph is a dipole graph, a multigraph with
-          two vertices and three or more edges. ``"P"`` stands for ``parallel``.
+        - ``'P'`` -- the associated graph is a dipole graph, a multigraph with
+          two vertices and three or more edges. ``'P'`` stands for ``parallel``.
 
-        - ``"Q"`` -- the associated graph has a single real edge. This trivial
+        - ``'Q'`` -- the associated graph has a single real edge. This trivial
           case is necessary to handle the graph that has only one edge.
 
-        - ``"R"`` -- the associated graph is a 3-connected graph that is not a
-          cycle or dipole. ``"R"`` stands for ``rigid``.
+        - ``'R'`` -- the associated graph is a 3-connected graph that is not a
+          cycle or dipole. ``'R'`` stands for ``rigid``.
 
         The edges of the tree indicate the 2-vertex cuts of the graph.
 
@@ -4249,14 +5159,14 @@ def is_triconnected(G):
     Comparing different methods on random graphs that are not always
     triconnected::
 
-        sage: G = graphs.RandomBarabasiAlbert(50, 3)
-        sage: G.is_triconnected() == G.vertex_connectivity(k=3)
+        sage: G = graphs.RandomBarabasiAlbert(50, 3)                                    # needs networkx
+        sage: G.is_triconnected() == G.vertex_connectivity(k=3)                         # needs networkx
         True
 
     .. SEEALSO::
 
         - :meth:`~sage.graphs.generic_graph.GenericGraph.is_connected`
-        - :meth:`~Graph.is_biconnected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
         - :meth:`~sage.graphs.connectivity.spqr_tree`
         - :wikipedia:`SPQR_tree`
 

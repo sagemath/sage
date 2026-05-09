@@ -1,6 +1,6 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
-Schubert Polynomials
-
+Schubert polynomials
 
 See :wikipedia:`Schubert_polynomial` and
 `SymmetricFunctions.com <https://www.symmetricfunctions.com/schubert.htm#schubert>`_.
@@ -76,15 +76,17 @@ We can also check the properties listed in :wikipedia:`Schubert_polynomial`::
 
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.key_polynomial import KeyPolynomial
 from sage.combinat.permutation import Permutations, Permutation
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial import MPolynomial
-import sage.libs.symmetrica.all as symmetrica
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+lazy_import('sage.combinat.key_polynomial', 'OperatorPolynomial')
+lazy_import('sage.libs.symmetrica', 'all', as_='symmetrica')
 
 
 def SchubertPolynomialRing(R):
@@ -144,7 +146,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
 
         Now we check for correct handling of the empty
-        permutation (:trac:`23443`)::
+        permutation (:issue:`23443`)::
 
             sage: X([1]).expand() * X([2,1]).expand()
             x0
@@ -155,7 +157,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             p = R(p)
         return p
 
-    def divided_difference(self, i, algorithm="sage"):
+    def divided_difference(self, i, algorithm='sage'):
         r"""
         Return the ``i``-th divided difference operator, applied to ``self``.
 
@@ -249,7 +251,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
 
         TESTS:
 
-        Check that :trac:`23403` is fixed::
+        Check that :issue:`23403` is fixed::
 
             sage: X = SchubertPolynomialRing(ZZ)
             sage: a = X([3,2,4,1])
@@ -290,9 +292,9 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
                     pi = Perms(pi).remove_extra_fixed_points()
                     res_dict[pi] = coeff
                 return self.parent()._from_dict(res_dict)
-            else:  # if algorithm == "symmetrica":
-                return symmetrica.divdiff_schubert(i, self)
-        elif i in Perms:
+            # if algorithm == "symmetrica":
+            return symmetrica.divdiff_schubert(i, self)
+        if i in Perms:
             if algorithm == "sage":
                 i = Permutation(i)
                 redw = i.reduced_word()
@@ -314,10 +316,9 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
                     pi = Perms(pi).remove_extra_fixed_points()
                     res_dict[pi] = coeff
                 return self.parent()._from_dict(res_dict)
-            else:  # if algorithm == "symmetrica":
-                return symmetrica.divdiff_perm_schubert(i, self)
-        else:
-            raise TypeError("i must either be an integer or permutation")
+            # if algorithm == "symmetrica":
+            return symmetrica.divdiff_perm_schubert(i, self)
+        raise TypeError("i must either be an integer or permutation")
 
     def scalar_product(self, x):
         """
@@ -337,14 +338,17 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             sage: s = SymmetricFunctions(ZZ).schur()
             sage: c = s([2,1,1])
             sage: b.scalar_product(a).expand()
-            x0^2*x1*x2 + x0*x1^2*x2 + x0*x1*x2^2 + x0^2*x1*x3 + x0*x1^2*x3 + x0^2*x2*x3 + 3*x0*x1*x2*x3 + x1^2*x2*x3 + x0*x2^2*x3 + x1*x2^2*x3 + x0*x1*x3^2 + x0*x2*x3^2 + x1*x2*x3^2
+            x0^2*x1*x2 + x0*x1^2*x2 + x0*x1*x2^2 + x0^2*x1*x3 + x0*x1^2*x3
+             + x0^2*x2*x3 + 3*x0*x1*x2*x3 + x1^2*x2*x3 + x0*x2^2*x3 + x1*x2^2*x3
+             + x0*x1*x3^2 + x0*x2*x3^2 + x1*x2*x3^2
             sage: c.expand(4)
-            x0^2*x1*x2 + x0*x1^2*x2 + x0*x1*x2^2 + x0^2*x1*x3 + x0*x1^2*x3 + x0^2*x2*x3 + 3*x0*x1*x2*x3 + x1^2*x2*x3 + x0*x2^2*x3 + x1*x2^2*x3 + x0*x1*x3^2 + x0*x2*x3^2 + x1*x2*x3^2
+            x0^2*x1*x2 + x0*x1^2*x2 + x0*x1*x2^2 + x0^2*x1*x3 + x0*x1^2*x3
+             + x0^2*x2*x3 + 3*x0*x1*x2*x3 + x1^2*x2*x3 + x0*x2^2*x3 + x1*x2^2*x3
+             + x0*x1*x3^2 + x0*x2*x3^2 + x1*x2*x3^2
         """
         if isinstance(x, SchubertPolynomial_class):
             return symmetrica.scalarproduct_schubert(self, x)
-        else:
-            raise TypeError("x must be a Schubert polynomial")
+        raise TypeError("x must be a Schubert polynomial")
 
     def multiply_variable(self, i):
         """
@@ -366,8 +370,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
         """
         if isinstance(i, Integer):
             return symmetrica.mult_schubert_variable(self, i)
-        else:
-            raise TypeError("i must be an integer")
+        raise TypeError("i must be an integer")
 
 
 class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
@@ -430,7 +433,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
 
         TESTS:
 
-        We check that :trac:`12924` is fixed::
+        We check that :issue:`12924` is fixed::
 
             sage: X = SchubertPolynomialRing(QQ)
             sage: X._element_constructor_([1,2,1])
@@ -439,7 +442,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             ValueError: the input [1, 2, 1] is not a valid permutation
 
         Now we check for correct handling of the empty
-        permutation (:trac:`23443`)::
+        permutation (:issue:`23443`)::
 
             sage: X([])
             X[1]
@@ -452,6 +455,15 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             sage: for _ in range(50):
             ....:     P = next(it)
             ....:     assert X(k(X(P))) == X(P), P
+
+        Check the round trip from atom polynomials::
+
+            sage: a = AtomPolynomials(ZZ)
+            sage: X = SchubertPolynomialRing(ZZ)
+            sage: it = iter(Permutations())
+            sage: for _ in range(50):
+            ....:     P = next(it)
+            ....:     assert X(a(X(P))) == X(P), P
         """
         if isinstance(x, list):
             # checking the input to avoid symmetrica crashing Sage, see trac 12924
@@ -459,21 +471,20 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
                 raise ValueError(f"the input {x} is not a valid permutation")
             perm = Permutation(x).remove_extra_fixed_points()
             return self._from_dict({perm: self.base_ring().one()})
-        elif isinstance(x, Permutation):
+        if isinstance(x, Permutation):
             perm = x.remove_extra_fixed_points()
             return self._from_dict({perm: self.base_ring().one()})
-        elif isinstance(x, MPolynomial):
+        if isinstance(x, MPolynomial):
             return symmetrica.t_POLYNOM_SCHUBERT(x)
-        elif isinstance(x, InfinitePolynomial):
+        if isinstance(x, InfinitePolynomial):
             R = x.polynomial().parent()
             # massage the term order to be what symmetrica expects
             S = PolynomialRing(R.base_ring(),
                                names=list(map(repr, reversed(R.gens()))))
             return symmetrica.t_POLYNOM_SCHUBERT(S(x.polynomial()))
-        elif isinstance(x, KeyPolynomial):
+        if isinstance(x, OperatorPolynomial):
             return self(x.expand())
-        else:
-            raise TypeError
+        raise TypeError
 
     def some_elements(self):
         """

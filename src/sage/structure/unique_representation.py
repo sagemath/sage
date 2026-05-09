@@ -1,18 +1,8 @@
 r"""
 Unique Representation
 
-Abstract classes for cached and unique representation behavior.
-
-.. SEEALSO::
-
-   :class:`sage.structure.factory.UniqueFactory`
-
-AUTHORS:
-
-- Nicolas M. Thiery (2008): Original version.
-- Simon A. King (2013-02): Separate cached and unique representation.
-- Simon A. King (2013-08): Extended documentation.
-
+This modules defines abstract classes for cached and unique representation
+behavior.
 
 What is a cached representation?
 ================================
@@ -21,13 +11,13 @@ Instances of a class have a *cached representation behavior* when several
 instances constructed with the same arguments share the same memory
 representation. For example, calling twice::
 
-    sage: G = SymmetricGroup(6)
-    sage: H = SymmetricGroup(6)
+    sage: G = SymmetricGroup(6)                                                         # needs sage.groups
+    sage: H = SymmetricGroup(6)                                                         # needs sage.groups
 
 to create the symmetric group on six elements gives back the same
 object::
 
-    sage: G is H
+    sage: G is H                                                                        # needs sage.groups
     True
 
 This is a standard design pattern. Besides saving memory, it allows for
@@ -82,7 +72,7 @@ must be hashable, i.e., must be valid as dictionary keys::
     sage: C([1,2])
     Traceback (most recent call last):
     ...
-    TypeError: unhashable type: 'list'
+    TypeError: ...unhashable type: 'list'...
 
 In addition, equivalent ways of providing the arguments are *not*
 automatically normalised when forming the cache key, and hence different but
@@ -342,7 +332,7 @@ An example::
     ....:         return C(key)
 
 Now, we define an instance of the factory, stating that it can be found under
-the name ``"F"`` in the ``__main__`` module. By consequence, pickling works::
+the name ``'F'`` in the ``__main__`` module. By consequence, pickling works::
 
     sage: F = MyFactory("__main__.F")
     sage: __main__.F = F                # not needed in an interactive session
@@ -424,10 +414,10 @@ Class inheritance
 Using :class:`CachedRepresentation` has the advantage that one has a class and
 creates cached instances of this class by the usual Python syntax::
 
-    sage: G = SymmetricGroup(6)
-    sage: issubclass(SymmetricGroup, sage.structure.unique_representation.CachedRepresentation)
+    sage: G = SymmetricGroup(6)                                                                     # needs sage.groups
+    sage: issubclass(SymmetricGroup, sage.structure.unique_representation.CachedRepresentation)     # needs sage.groups
     True
-    sage: isinstance(G, SymmetricGroup)
+    sage: isinstance(G, SymmetricGroup)                                                             # needs sage.groups
     True
 
 In contrast, a factory is just a callable object that returns something that
@@ -439,8 +429,10 @@ instances of quite different classes::
     sage: K5 = GF(5)
     sage: type(K5)
     <class 'sage.rings.finite_rings.finite_field_prime_modn.FiniteField_prime_modn_with_category'>
+
+    sage: # needs sage.rings.finite_rings
     sage: K25 = GF(25, 'x')
-    sage: type(K25)
+    sage: type(K25)                                                                     # needs sage.libs.linbox
     <class 'sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro_with_category'>
     sage: Kp = GF(next_prime_power(1000000)^2, 'x')
     sage: type(Kp)
@@ -498,8 +490,9 @@ behaviour. However, they do not show the *unique* representation behaviour,
 since they are equal to groups created in a totally different way, namely to
 subgroups::
 
+    sage: # needs sage.groups
     sage: G = SymmetricGroup(6)
-    sage: G3 = G.subgroup([G((1,2,3,4,5,6)),G((1,2))])
+    sage: G3 = G.subgroup([G((1,2,3,4,5,6)), G((1,2))])
     sage: G is G3
     False
     sage: type(G) == type(G3)
@@ -517,9 +510,9 @@ For example, a symmetric function algebra is uniquely determined by the base
 ring. Thus, it is reasonable to use :class:`UniqueRepresentation` in this
 case::
 
-    sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)
+    sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)                        # needs sage.combinat
     True
-    sage: issubclass(SymmetricFunctions, UniqueRepresentation)
+    sage: issubclass(SymmetricFunctions, UniqueRepresentation)                          # needs sage.combinat
     True
 
 :class:`UniqueRepresentation` differs from :class:`CachedRepresentation` only
@@ -534,6 +527,17 @@ unique representation behaviour, one has to implement hash and equality test
 accordingly, for example by inheriting from
 :class:`~sage.misc.fast_methods.WithEqualityById`.
 
+.. SEEALSO::
+
+   :class:`sage.structure.factory.UniqueFactory`
+
+AUTHORS:
+
+- Nicolas M. Thiery (2008): initial version
+- Simon A. King (2013-02): separated cached and unique representation
+- Simon A. King (2013-08): extended documentation
+- Kwankyu Lee (2025-10): added ``__getstate__`` and ``__setstate__`` to support
+  ``do_pickle=True`` for cached methods.
 """
 # ****************************************************************************
 #  Copyright (C) 2008 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -556,7 +560,191 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.fast_methods import WithEqualityById
 
 
-class CachedRepresentation(metaclass=ClasscallMetaclass):
+class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
+    r"""
+    Classes derived from :class:`WithPicklingByInitArgs` store the arguments
+    passed to :meth:`__init__` to implement pickling.
+
+    This class is for objects that are semantically immutable and determined
+    by the class and the arguments passed to :meth:`__init__`.
+    The class also provides implementations of :meth:`__copy__` and
+    :func:`__deepcopy__`, which simply return the object.
+    """
+
+    @staticmethod
+    def __classcall__(cls, *args, **options):
+        """
+        Construct a new object of this class and store the arguments passed to ``__init__``.
+
+        TESTS::
+
+            sage: from sage.structure.unique_representation import WithPicklingByInitArgs
+            sage: class MyClass(WithPicklingByInitArgs):
+            ....:     def __init__(self, value):
+            ....:         self.value = value
+            ....:     def __eq__(self, other):
+            ....:         if type(self) != type(other):
+            ....:             return False
+            ....:         return self.value == other.value
+            sage: import __main__
+            sage: __main__.MyClass = MyClass  # This is only needed in doctests
+            sage: x = MyClass(1)
+            sage: x == loads(dumps(x))
+            True
+            sage: y = MyClass(1)
+            sage: x is y                # No Cached/UniqueRepresentation behavior
+            False
+        """
+        instance = typecall(cls, *args, **options)
+        assert isinstance(instance, cls)
+        if instance.__class__.__reduce__ == WithPicklingByInitArgs.__reduce__:
+            instance._reduction = (cls, args, options)
+            instance.__class__.__getstate__ = WithPicklingByInitArgs.__getstate__
+            instance.__class__.__setstate__ = WithPicklingByInitArgs.__setstate__
+        return instance
+
+    def __reduce__(self):
+        """
+        Return the arguments that have been passed to
+        :meth:`__new__<object.__new__>` to construct this object,
+        as per the pickle protocol.
+
+        See also :class:`CachedRepresentation` and
+        :class:`UniqueRepresentation` for a discussion.
+
+        EXAMPLES::
+
+            sage: x = UniqueRepresentation()
+            sage: x.__reduce__()          # indirect doctest
+            (<function unreduce at ...>,
+             (<class 'sage.structure.unique_representation.UniqueRepresentation'>, (), {}))
+        """
+        d = self.__getstate__()
+        if d:
+            return (unreduce, self._reduction, d)
+        return (unreduce, self._reduction)
+
+    def __copy__(self):
+        """
+        Return ``self``, as a semantic copy of ``self``.
+
+        This assumes that the object is semantically immutable.
+
+        EXAMPLES::
+
+            sage: x = UniqueRepresentation()
+            sage: x is copy(x)    # indirect doctest
+            True
+        """
+        return self
+
+    def __deepcopy__(self, memo):
+        """
+        Return ``self``, as a semantic deep copy of ``self``.
+
+        This assumes that the object is semantically immutable.
+
+        EXAMPLES::
+
+            sage: from copy import deepcopy
+            sage: x = UniqueRepresentation()
+            sage: x is deepcopy(x)      # indirect doctest
+            True
+        """
+        return self
+
+    def __getstate__(self):
+        """
+        Used for pickling.
+
+        An object of :class:`WithPicklingByInitArgs` does not keep its
+        dictionary when pickled, because the object is restored from the cache
+        or reconstructed afresh upon unpickling.
+
+        Cached-methods with ``do_pickle=True`` are exceptions and included to
+        the state of the pickled object.
+
+        EXAMPLES::
+
+            sage: from sage.structure.unique_representation import WithPicklingByInitArgs
+            sage: class X(WithPicklingByInitArgs):
+            ....:     def __init__(self, x):
+            ....:         self._x = x
+            ....:     @cached_method(do_pickle=True)
+            ....:     def genus(self):
+            ....:         return len(self._x)
+            ....:
+            sage: import __main__; __main__.X = X  # not needed in an interactive session
+            sage: a = X((1,2,3))
+            sage: a.genus()
+            3
+            sage: a.genus.cache
+            3
+            sage: s = dumps(a)
+            sage: a.genus.clear_cache()
+            sage: a.genus.cache
+            sage: b = loads(s)
+            sage: b.genus.cache
+            3
+        """
+        # We filter out cached-method placeholders (CachedFunction) with
+        # do_pickle=True in __dict__ to keep them as the state of the pickled object.
+        #
+        # Note that the same code is used to get the state of UniqueFactory objects.
+        from sage.misc.cachefunc import CachedFunction
+        d = {}
+        try:
+            d.update({key: value for key, value in self.__dict__.items()
+                      if isinstance(value, CachedFunction) and value.is_pickled_with_cache()})
+        except AttributeError:
+            pass
+        return d
+
+    def __setstate__(self, d):
+        """
+        Used for unpickling.
+
+        EXAMPLES::
+
+            sage: from sage.structure.unique_representation import WithPicklingByInitArgs
+            sage: class X(WithPicklingByInitArgs):
+            ....:     def __init__(self, x):
+            ....:         self._x = x
+            ....:     @cached_method(do_pickle=False)
+            ....:     def genus(self):
+            ....:         return len(self._x)
+            ....:
+            sage: import __main__; __main__.X = X  # not needed in an interactive session
+            sage: a = X((1,2,3))
+            sage: a.genus()
+            3
+            sage: a.genus.cache
+            3
+            sage: s = dumps(a)
+            sage: a.genus.clear_cache()
+            sage: a.genus.cache
+            sage: b = loads(s)
+            sage: b.genus.cache
+        """
+        self.__dict__.update(d)
+
+
+def unreduce(cls, args, keywords):
+    """
+    Calls a class on the given arguments::
+
+        sage: sage.structure.unique_representation.unreduce(Integer, (1,), {})
+        1
+
+    .. TODO::
+
+        should reuse something preexisting ...
+
+    """
+    return cls(*args, **keywords)
+
+
+class CachedRepresentation(WithPicklingByInitArgs):
     """
     Classes derived from CachedRepresentation inherit a weak cache for their
     instances.
@@ -598,7 +786,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
         ....:         return self.value == other.value
 
     Two coexisting instances of ``MyClass`` created with the same argument data
-    are guaranteed to share the same identity. Since :trac:`12215`, this is
+    are guaranteed to share the same identity. Since :issue:`12215`, this is
     only the case if there is some strong reference to the returned instance,
     since otherwise it may be garbage collected::
 
@@ -627,7 +815,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
         sage: MyClass(value = [1,2,3])
         Traceback (most recent call last):
         ...
-        TypeError: unhashable type: 'list'
+        TypeError: ...unhashable type: 'list'...
 
     .. rubric:: Argument preprocessing
 
@@ -657,7 +845,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
     implementation does not work::
 
         sage: class MyClass3(CachedRepresentation):
-        ....:     def __init__(self, value = 3):
+        ....:     def __init__(self, value=3):
         ....:         self.value = value
         sage: MyClass3(3) is MyClass3()
         False
@@ -666,7 +854,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
 
         sage: class MyClass3(UniqueRepresentation):
         ....:     @staticmethod
-        ....:     def __classcall__(cls, value = 3):
+        ....:     def __classcall__(cls, value=3):
         ....:         return super().__classcall__(cls, value)
         ....:
         ....:     def __init__(self, value):
@@ -1004,11 +1192,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             sage: x is y   # indirect doctest
             True
         """
-        instance = typecall(cls, *args, **options)
-        assert isinstance( instance, cls )
-        if instance.__class__.__reduce__ == CachedRepresentation.__reduce__:
-            instance._reduction = (cls, args, options)
-        return instance
+        return super().__classcall__(cls, *args, **options)
 
     @classmethod
     def _clear_cache_(cls):
@@ -1028,7 +1212,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             sage: class B(A):
             ....:     @staticmethod
             ....:     def __classcall__(cls, *args, **kwds):
-            ....:          return super().__classcall__(cls,*args,**kwds)
+            ....:          return super().__classcall__(cls, *args, **kwds)
             sage: class C(B): pass
             sage: a = A(1)
             sage: b = B(2)
@@ -1061,7 +1245,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             ....:     @staticmethod
             ....:     def __classcall_private__(cls, *args, **kwds):
             ....:         print("Private B")
-            ....:         return super().__classcall__(cls,*args,**kwds)
+            ....:         return super().__classcall__(cls, *args, **kwds)
             sage: class C(B): pass
             sage: a = A(1)
             sage: b = B(2)
@@ -1087,83 +1271,21 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             sage: c is C(3)
             False
         """
-        del_list = []
         cache = None
+        # not clear why the loop below is taking the last C
         for C in cls.mro():
             try:
                 cache = C.__classcall__.cache
             except AttributeError:
                 pass
-        for k in cache:
-            if issubclass(k[0][0],cls):
-                del_list.append(k)
+        del_list = [k for k in cache if issubclass(k[0][0], cls)]
         for k in del_list:
             del cache[k]
 
-    def __reduce__(self):
-        """
-        Return the arguments that have been passed to
-        :meth:`__new__<object.__new__>` to construct this object,
-        as per the pickle protocol.
 
-        See also :class:`CachedRepresentation` and
-        :class:`UniqueRepresentation` for a discussion.
-
-        EXAMPLES::
-
-            sage: x = UniqueRepresentation()
-            sage: x.__reduce__()          # indirect doctest
-            (<function unreduce at ...>, (<class 'sage.structure.unique_representation.UniqueRepresentation'>, (), {}))
-        """
-        return (unreduce, self._reduction)
-
-    def __copy__(self):
-        """
-        Return ``self``, as a semantic copy of ``self``.
-
-        This assumes that the object is semantically immutable.
-
-        EXAMPLES::
-
-            sage: x = UniqueRepresentation()
-            sage: x is copy(x)    # indirect doctest
-            True
-        """
-        return self
-
-    def __deepcopy__(self, memo):
-        """
-        Return ``self``, as a semantic deep copy of ``self``.
-
-        This assumes that the object is semantically immutable.
-
-        EXAMPLES::
-
-            sage: from copy import deepcopy
-            sage: x = UniqueRepresentation()
-            sage: x is deepcopy(x)      # indirect doctest
-            True
-        """
-        return self
-
-def unreduce(cls, args, keywords):
-    """
-    Calls a class on the given arguments::
-
-        sage: sage.structure.unique_representation.unreduce(Integer, (1,), {})
-        1
-
-    .. TODO::
-
-        should reuse something preexisting ...
-
-    """
-    return cls(*args, **keywords)
-
-
-class UniqueRepresentation(CachedRepresentation, WithEqualityById):
+class UniqueRepresentation(WithEqualityById, CachedRepresentation):
     r"""
-    Classes derived from UniqueRepresentation inherit a unique
+    Classes derived from ``UniqueRepresentation`` inherit a unique
     representation behavior for their instances.
 
     .. SEEALSO::
@@ -1188,15 +1310,15 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
     the same memory representation), if and only if they were created using
     equal arguments. For example, calling twice::
 
-        sage: f = SymmetricFunctions(QQ)
-        sage: g = SymmetricFunctions(QQ)
+        sage: f = SymmetricFunctions(QQ)                                                # needs sage.combinat sage.modules
+        sage: g = SymmetricFunctions(QQ)                                                # needs sage.combinat sage.modules
 
     to create the symmetric function algebra over `\QQ` actually gives back the
     same object::
 
-        sage: f == g
+        sage: f == g                                                                    # needs sage.combinat sage.modules
         True
-        sage: f is g
+        sage: f is g                                                                    # needs sage.combinat sage.modules
         True
 
     This is a standard design pattern. It allows for sharing cached data (say
@@ -1211,9 +1333,9 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
     derive from it, or make sure some of its super classes does. Also, it
     groups together the class and the factory in a single gadget::
 
-        sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)
+        sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)                    # needs sage.combinat sage.modules
         True
-        sage: issubclass(SymmetricFunctions, UniqueRepresentation)
+        sage: issubclass(SymmetricFunctions, UniqueRepresentation)                      # needs sage.combinat sage.modules
         True
 
     This nice behaviour is not available when one just uses a factory::
@@ -1249,7 +1371,7 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
         ....:         self.value = value
 
     Two coexisting instances of ``MyClass`` created with the same argument
-    data are guaranteed to share the same identity. Since :trac:`12215`, this
+    data are guaranteed to share the same identity. Since :issue:`12215`, this
     is only the case if there is some strong reference to the returned
     instance, since otherwise it may be garbage collected::
 

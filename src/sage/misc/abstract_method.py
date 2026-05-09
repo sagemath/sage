@@ -13,12 +13,12 @@ import types
 
 def abstract_method(f=None, optional=False):
     r"""
-    Abstract methods
+    Abstract methods.
 
     INPUT:
 
-     - ``f`` -- a function
-     - ``optional`` -- a boolean; defaults to ``False``
+    - ``f`` -- a function
+    - ``optional`` -- boolean (default: ``False``)
 
     The decorator :obj:`abstract_method` can be used to declare
     methods that should be implemented by all concrete derived
@@ -48,7 +48,7 @@ def abstract_method(f=None, optional=False):
         sage: A.my_method
         <abstract method my_method at ...>
 
-    The current policy is that a ``NotImplementedError`` is raised
+    The current policy is that a :exc:`NotImplementedError` is raised
     when accessing the method through an instance, even before the
     method is called::
 
@@ -127,21 +127,20 @@ def abstract_method(f=None, optional=False):
 
         sage: abstract_method(optional = True)
         <function abstract_method.<locals>.<lambda> at ...>
-        sage: abstract_method(optional = True)(banner)
-        <optional abstract method banner at ...>
-        sage: abstract_method(banner, optional = True)
-        <optional abstract method banner at ...>
+        sage: abstract_method(optional = True)(version)
+        <optional abstract method version at ...>
+        sage: abstract_method(version, optional = True)
+        <optional abstract method version at ...>
     """
     if f is None:
         return lambda f: AbstractMethod(f, optional=optional)
-    else:
-        return AbstractMethod(f, optional)
+    return AbstractMethod(f, optional)
 
 
-class AbstractMethod():
+class AbstractMethod:
     def __init__(self, f, optional=False):
         """
-        Constructor for abstract methods
+        Constructor for abstract methods.
 
         EXAMPLES::
 
@@ -173,34 +172,34 @@ class AbstractMethod():
         """
         EXAMPLES::
 
-            sage: abstract_method(banner)
-            <abstract method banner at ...>
+            sage: abstract_method(version)
+            <abstract method version at ...>
 
-            sage: abstract_method(banner, optional = True)
-            <optional abstract method banner at ...>
+            sage: abstract_method(version, optional = True)
+            <optional abstract method version at ...>
         """
         return "<" + ("optional " if self._optional else "") + "abstract method %s at %s>" % (self.__name__, hex(id(self._f)))
 
     def _sage_src_lines_(self):
         r"""
-        Returns the source code location for the wrapped function.
+        Return the source code location for the wrapped function.
 
         EXAMPLES::
 
             sage: from sage.misc.sageinspect import sage_getsourcelines
-            sage: g = abstract_method(banner)
+            sage: g = abstract_method(version)
             sage: (src, lines) = sage_getsourcelines(g)
             sage: src[0]
-            'def banner():\n'
+            'def version() -> str:\n'
             sage: lines
-            89
+            27
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self._f)
 
     def __get__(self, instance, cls):
         """
-        Implements the attribute access protocol.
+        Implement the attribute access protocol.
 
         EXAMPLES::
 
@@ -214,14 +213,13 @@ class AbstractMethod():
         """
         if instance is None:
             return self
-        elif self._optional:
+        if self._optional:
             return NotImplemented
-        else:
-            raise NotImplementedError(repr(self))
+        raise NotImplementedError(repr(self))
 
     def is_optional(self):
         """
-        Returns whether an abstract method is optional or not.
+        Return whether an abstract method is optional or not.
 
         EXAMPLES::
 
@@ -241,7 +239,7 @@ class AbstractMethod():
 
 def abstract_methods_of_class(cls):
     """
-    Returns the required and optional abstract methods of the class
+    Return the required and optional abstract methods of the class.
 
     EXAMPLES::
 

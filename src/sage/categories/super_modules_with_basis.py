@@ -10,6 +10,7 @@ Super modules with basis
 
 from sage.categories.super_modules import SuperModulesCategory
 
+
 class SuperModulesWithBasis(SuperModulesCategory):
     """
     The category of super modules with a distinguished basis.
@@ -53,6 +54,7 @@ class SuperModulesWithBasis(SuperModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: Q = QuadraticForm(QQ, 2, [1,2,3])
                 sage: C.<x,y> = CliffordAlgebra(Q)
                 sage: C._even_odd_on_basis((0,))
@@ -70,6 +72,7 @@ class SuperModulesWithBasis(SuperModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: Q = QuadraticForm(QQ, 2, [1,2,3])
                 sage: C.<x,y> = CliffordAlgebra(Q)
                 sage: a = x + y
@@ -86,6 +89,7 @@ class SuperModulesWithBasis(SuperModulesCategory):
             `\ZZ / 2\ZZ` grading. However the definition of homogeneous
             elements differs because of the different gradings::
 
+                sage: # needs sage.combinat sage.modules
                 sage: E.<x,y> = ExteriorAlgebra(QQ)
                 sage: a = x*y + 4
                 sage: a.is_super_homogeneous()
@@ -110,6 +114,7 @@ class SuperModulesWithBasis(SuperModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: Q = QuadraticForm(QQ, 2, [1,2,3])
                 sage: C.<x,y> = CliffordAlgebra(Q)
                 sage: a = x + y
@@ -124,8 +129,8 @@ class SuperModulesWithBasis(SuperModulesCategory):
                 ...
                 ValueError: element is not homogeneous
 
-                sage: E.<x,y> = ExteriorAlgebra(QQ)
-                sage: (x*y).is_even_odd()
+                sage: E.<x,y> = ExteriorAlgebra(QQ)                                     # needs sage.modules
+                sage: (x*y).is_even_odd()                                               # needs sage.modules
                 0
             """
             if not self.support():
@@ -140,6 +145,7 @@ class SuperModulesWithBasis(SuperModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: Q = QuadraticForm(QQ, 2, [1,2,3])
                 sage: C.<x,y> = CliffordAlgebra(Q)
                 sage: a = x*y + x - 3*y + 4
@@ -150,8 +156,8 @@ class SuperModulesWithBasis(SuperModulesCategory):
 
             Check that this really return ``A.zero()`` and not a plain ``0``::
 
-                sage: a = x + y
-                sage: a.even_component().parent() is C
+                sage: a = x + y                                                         # needs sage.modules
+                sage: a.even_component().parent() is C                                  # needs sage.modules
                 True
             """
             even_odd = self.parent()._even_odd_on_basis
@@ -165,6 +171,7 @@ class SuperModulesWithBasis(SuperModulesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: Q = QuadraticForm(QQ, 2, [1,2,3])
                 sage: C.<x,y> = CliffordAlgebra(Q)
                 sage: a = x*y + x - 3*y + 4
@@ -175,8 +182,8 @@ class SuperModulesWithBasis(SuperModulesCategory):
 
             Check that this really return ``A.zero()`` and not a plain ``0``::
 
-                sage: a = x*y
-                sage: a.odd_component().parent() is C
+                sage: a = x*y                                                           # needs sage.modules
+                sage: a.odd_component().parent() is C                                   # needs sage.modules
                 True
             """
             even_odd = self.parent()._even_odd_on_basis

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Gabidulin Code
 
@@ -206,7 +207,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
             if not len(evaluation_points) == length:
                 raise ValueError("the number of evaluation points should be equal to the length of the code")
             for i in range(length):
-                if not evaluation_points[i] in base_field:
+                if evaluation_points[i] not in base_field:
                     raise ValueError("evaluation point does not belong to the 'base field'")
             basis = self.matrix_form_of_vector(vector(evaluation_points))
             if basis.rank() != length:
@@ -229,8 +230,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
         S = self.sub_field()
         if R and S in Fields():
             return "[%s, %s, %s] linear Gabidulin code over GF(%s)/GF(%s)" % (self.length(), self.dimension(), self.minimum_distance(), R.cardinality(), S.cardinality())
-        else:
-            return "[%s, %s, %s] linear Gabidulin code over %s/%s" % (self.length(), self.dimension(), self.minimum_distance(), R, S)
+        return "[%s, %s, %s] linear Gabidulin code over %s/%s" % (self.length(), self.dimension(), self.minimum_distance(), R, S)
 
     def _latex_(self):
         r"""
@@ -256,9 +256,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
 
         - ``other`` -- another Gabidulin Code object
 
-        OUTPUT:
-
-        - ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -398,7 +396,7 @@ class GabidulinVectorEvaluationEncoder(Encoder):
 
         INPUT:
 
-        - ``code`` -- the associated code of this encoder.
+        - ``code`` -- the associated code of this encoder
 
         EXAMPLES::
 
@@ -466,9 +464,7 @@ class GabidulinVectorEvaluationEncoder(Encoder):
 
         - ``other`` -- another Gabidulin Generator Matrix Encoder
 
-        OUTPUT:
-
-        - ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -499,7 +495,8 @@ class GabidulinVectorEvaluationEncoder(Encoder):
             sage: Fqm = GF(2^9)
             sage: Fq = GF(2^3)
             sage: C = codes.GabidulinCode(Fqm, 3, 3, Fq)
-            sage: list(C.generator_matrix().row(1)) == [C.evaluation_points()[i]**(2**3) for i in range(3)]
+            sage: (list(C.generator_matrix().row(1))
+            ....:   == [C.evaluation_points()[i]**(2**3) for i in range(3)])
             True
         """
         from functools import reduce
@@ -543,7 +540,8 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
         sage: z9 = Fqm.gen()
         sage: p = (z9^6 + z9^2 + z9 + 1)*x + z9^7 + z9^5 + z9^4 + z9^2
         sage: vector(p.multi_point_evaluation(C.evaluation_points()))
-        doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
+        doctest:...: FutureWarning: This class/method/function is marked as experimental.
+        It, its functionality or its interface might change without a formal deprecation.
         See https://github.com/sagemath/sage/issues/13215 for details.
         (z9^7 + z9^6 + z9^5 + z9^4 + z9 + 1, z9^6 + z9^5 + z9^3 + z9)
 
@@ -554,13 +552,15 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
         sage: C = codes.GabidulinCode(Fqm, 2, 2, Fq)
         sage: E = codes.encoders.GabidulinPolynomialEvaluationEncoder(C)
         sage: E
-        Polynomial evaluation style encoder for [2, 2, 1] linear Gabidulin code over GF(16)/GF(4)
+        Polynomial evaluation style encoder for
+         [2, 2, 1] linear Gabidulin code over GF(16)/GF(4)
 
     Alternatively, we can construct the encoder from ``C`` directly::
 
         sage: E = C.encoder("PolynomialEvaluation")
         sage: E
-        Polynomial evaluation style encoder for [2, 2, 1] linear Gabidulin code over GF(16)/GF(4)
+        Polynomial evaluation style encoder for
+         [2, 2, 1] linear Gabidulin code over GF(16)/GF(4)
     """
 
     def __init__(self, code):
@@ -620,9 +620,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
 
         - ``other`` -- another Gabidulin Polynomial Evaluation Encoder
 
-        OUTPUT:
-
-        - ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -655,12 +653,13 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
             sage: C = codes.GabidulinCode(Fqm, 4, 4, Fq)
             sage: E = codes.encoders.GabidulinPolynomialEvaluationEncoder(C)
             sage: E.message_space()
-            Ore Polynomial Ring in x over Finite Field in z20 of size 5^20 twisted by z20 |--> z20^(5^4)
+            Ore Polynomial Ring in x over Finite Field in z20 of size 5^20
+             twisted by z20 |--> z20^(5^4)
         """
         C = self.code()
         return C.base_field()['x', C.twisting_homomorphism()]
 
-    def encode(self, p, form="vector"):
+    def encode(self, p, form='vector'):
         """
         Transform the polynomial ``p`` into a codeword of :meth:`code`.
 
@@ -674,11 +673,9 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
 
         - ``form`` -- type parameter taking strings "vector" or "matrix"
           as values and converting the output codeword into the respective form
-          (default: "vector")
+          (default: ``'vector'``)
 
-        OUTPUT:
-
-        - a codeword corresponding to `p` in vector or matrix form
+        OUTPUT: a codeword corresponding to `p` in vector or matrix form
 
         EXAMPLES::
 
@@ -728,10 +725,9 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
         codeword = p.multi_point_evaluation(eval_pts)
         if form == "vector":
             return vector(codeword)
-        elif form == "matrix":
+        if form == "matrix":
             return C.matrix_form_of_vector(vector(codeword))
-        else:
-            return ValueError("the argument 'form' takes only either 'vector' or 'matrix' as valid input")
+        return ValueError("the argument 'form' takes only either 'vector' or 'matrix' as valid input")
 
     def unencode_nocheck(self, c):
         """
@@ -849,9 +845,7 @@ class GabidulinGaoDecoder(Decoder):
 
         - ``other`` -- another Gabidulin Gao Decoder
 
-        OUTPUT:
-
-        - ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -888,9 +882,7 @@ class GabidulinGaoDecoder(Decoder):
         - ``d_stop`` -- the number of iterations for which the algorithm
           is to be run
 
-        OUTPUT:
-
-        - ``r_c`` -- right linearized remainder of `a` and `b`
+        OUTPUT: ``r_c`` -- right linearized remainder of `a` and `b`
 
         - ``u_c`` -- right linearized quotient of `a` and `b`
 
@@ -989,9 +981,7 @@ class GabidulinGaoDecoder(Decoder):
 
         - ``r`` -- received codeword
 
-        OUTPUT:
-
-        - the decoded codeword corresponding to the received codeword
+        OUTPUT: the decoded codeword corresponding to the received codeword
 
         EXAMPLES::
 
@@ -1022,9 +1012,7 @@ class GabidulinGaoDecoder(Decoder):
 
         - ``r`` -- received codeword
 
-        OUTPUT:
-
-        - the message corresponding to the received codeword
+        OUTPUT: the message corresponding to the received codeword
 
         EXAMPLES::
 

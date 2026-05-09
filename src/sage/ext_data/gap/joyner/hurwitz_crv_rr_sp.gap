@@ -62,7 +62,6 @@ return L;
 end;
 
 
-
 ram_module_hurwitz:=function(p)
 ##
 ## input: p is a Hurwitz prime; output: [m1,...,mn],

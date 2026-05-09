@@ -7,7 +7,6 @@ AUTHORS:
 
 - Julian Rueth (2013-09-13): added euclidean degree, quotient remainder, and
   their tests
-
 """
 # ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
@@ -40,7 +39,6 @@ class EuclideanDomains(Category_singleton):
     TESTS::
 
         sage: TestSuite(EuclideanDomains()).run()
-
     """
     def super_categories(self):
         """
@@ -54,13 +52,12 @@ class EuclideanDomains(Category_singleton):
     class ParentMethods:
         def is_euclidean_domain(self):
             """
-            Return True, since this in an object of the category of Euclidean domains.
+            Return ``True``, since this in an object of the category of Euclidean domains.
 
             EXAMPLES::
 
                 sage: Parent(QQ,category=EuclideanDomains()).is_euclidean_domain()
                 True
-
             """
             return True
 
@@ -71,7 +68,7 @@ class EuclideanDomains(Category_singleton):
 
             INPUT:
 
-            - ``elts`` - A sequence of elements of ``self``.
+            - ``elts`` -- a sequence of elements of ``self``
 
             OUTPUT:
 
@@ -132,7 +129,7 @@ class EuclideanDomains(Category_singleton):
 
         def _test_euclidean_degree(self, **options):
             r"""
-            Test that the assumptions on an Euclidean degree are met.
+            Test that the assumptions on a Euclidean degree are met.
 
             EXAMPLES::
 
@@ -197,7 +194,7 @@ class EuclideanDomains(Category_singleton):
         @abstract_method
         def euclidean_degree(self):
             r"""
-            Return the degree of this element as an element of an Euclidean
+            Return the degree of this element as an element of a Euclidean
             domain, i.e., for elements `a`, `b` the euclidean degree `f`
             satisfies the usual properties:
 
@@ -213,7 +210,7 @@ class EuclideanDomains(Category_singleton):
 
             OUTPUT:
 
-            For non-zero elements, a natural number. For the zero element, this
+            For nonzero elements, a natural number. For the zero element, this
             might raise an exception or produce some other output, depending on
             the implementation.
 
@@ -257,15 +254,13 @@ class EuclideanDomains(Category_singleton):
         def quo_rem(self, other):
             r"""
             Return the quotient and remainder of the division of this element
-            by the non-zero element ``other``.
+            by the nonzero element ``other``.
 
             INPUT:
 
             - ``other`` -- an element in the same euclidean domain
 
-            OUTPUT:
-
-            a pair of elements
+            OUTPUT: a pair of elements
 
             EXAMPLES::
 

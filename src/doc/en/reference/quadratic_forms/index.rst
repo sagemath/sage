@@ -6,6 +6,7 @@ Quadratic Forms
 
    sage/quadratic_forms/quadratic_form
    sage/quadratic_forms/binary_qf
+   sage/quadratic_forms/bqf_class_group
    sage/quadratic_forms/constructions
    sage/quadratic_forms/random_quadraticform
    sage/quadratic_forms/special_values

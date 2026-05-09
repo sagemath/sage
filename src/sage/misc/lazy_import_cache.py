@@ -1,12 +1,10 @@
 """
 Lazy import cache
-
-This is a pure Python file with no dependencies so it can be used in setup.py.
 """
 import os
 import hashlib
 
-from ..env import SAGE_LIB, DOT_SAGE
+from sage.env import SAGE_LIB, DOT_SAGE
 
 
 def get_cache_file():

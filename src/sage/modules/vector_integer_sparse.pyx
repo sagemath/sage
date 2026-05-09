@@ -23,11 +23,11 @@ cdef int allocate_mpz_vector(mpz_vector* v, Py_ssize_t num_nonzero) except -1:
     v.entries = <mpz_t *>sig_malloc(num_nonzero*sizeof(mpz_t))
     if v.entries == NULL:
         raise MemoryError("Error allocating memory")
-    for i from 0 <= i < num_nonzero:
+    for i in range(num_nonzero):
         mpz_init(v.entries[i])
     v.positions = <Py_ssize_t*>sig_malloc(num_nonzero*sizeof(Py_ssize_t))
     if v.positions == NULL:
-        for i from 0 <= i < num_nonzero:
+        for i in range(num_nonzero):
             mpz_clear(v.entries[i])
         sig_free(v.entries)
         v.entries = NULL
@@ -42,10 +42,10 @@ cdef int mpz_vector_init(mpz_vector* v, Py_ssize_t degree, Py_ssize_t num_nonzer
     v.num_nonzero = num_nonzero
     v.degree = degree
 
-cdef void mpz_vector_clear(mpz_vector* v):
+cdef void mpz_vector_clear(mpz_vector* v) noexcept:
     cdef Py_ssize_t i
     # Free all mpz objects allocated in creating v
-    for i from 0 <= i < v.num_nonzero:
+    for i in range(v.num_nonzero):
         mpz_clear(v.entries[i])
     # Free entries and positions of those entries.
     # These were allocated from the Python heap.
@@ -54,7 +54,7 @@ cdef void mpz_vector_clear(mpz_vector* v):
     sig_free(v.entries)
     sig_free(v.positions)
 
-cdef Py_ssize_t mpz_binary_search0(mpz_t* v, Py_ssize_t n, mpz_t x):
+cdef Py_ssize_t mpz_binary_search0(mpz_t* v, Py_ssize_t n, mpz_t x) noexcept:
     """
     Find the position of the integers x in the array v, which has length n.
     Returns -1 if x is not in the array v.
@@ -66,11 +66,11 @@ cdef Py_ssize_t mpz_binary_search0(mpz_t* v, Py_ssize_t n, mpz_t x):
     j = n-1
     while i<=j:
         if i == j:
-            if mpz_cmp(v[i],x) == 0:
+            if mpz_cmp(v[i], x) == 0:
                 return i
             return -1
         k = (i+j)/2
-        c = mpz_cmp(v[k],x)
+        c = mpz_cmp(v[k], x)
         if c > 0:       # v[k] > x
             j = k-1
         elif c < 0:     # v[k] < x
@@ -79,7 +79,7 @@ cdef Py_ssize_t mpz_binary_search0(mpz_t* v, Py_ssize_t n, mpz_t x):
             return k
     return -1
 
-cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* ins):
+cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* ins) noexcept:
     """
     Find the position of the integer x in the array v, which has length n.
     Returns -1 if x is not in the array v, and in this case ins is
@@ -87,12 +87,15 @@ cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* i
     obtain an ordered array.
 
     INPUT:
-       v -- array of mpz_t  (integer)
-       n -- integer (length of array v)
-       x -- mpz_t  (integer)
+
+    - ``v`` -- array of mpz_t  (integer)
+    - ``n`` -- integer (length of array v)
+    - ``x`` -- mpz_t  (integer)
+
     OUTPUT:
-       position of x (as an Py_ssize_t)
-       ins -- (call be pointer), the insertion point if x is not found.
+
+    position of x (as a Py_ssize_t)
+    ins -- (call be pointer), the insertion point if x is not found.
     """
     cdef Py_ssize_t i, j, k, c
     if n == 0:
@@ -100,9 +103,9 @@ cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* i
         return -1
     i = 0
     j = n-1
-    while i<=j:
+    while i <= j:
         if i == j:
-            c = mpz_cmp(v[i],x)
+            c = mpz_cmp(v[i], x)
             if c == 0:          # v[i] == x
                 ins[0] = i
                 return i
@@ -127,7 +130,7 @@ cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* i
 cdef int mpz_vector_get_entry(mpz_t ans, mpz_vector* v, Py_ssize_t n) except -1:
     """
     Returns the n-th entry of the sparse vector v.  This
-    would be v[n] in Python syntax.
+    would be ``v[n]`` in Python syntax.
 
     The return is done using the pointer ans, which is to an mpz_t
     that *must* have been initialized using mpz_init.
@@ -142,7 +145,7 @@ cdef int mpz_vector_get_entry(mpz_t ans, mpz_vector* v, Py_ssize_t n) except -1:
     mpz_set(ans, v.entries[m])
     return 0
 
-cdef bint mpz_vector_is_entry_zero_unsafe(mpz_vector* v, Py_ssize_t n):
+cdef bint mpz_vector_is_entry_zero_unsafe(mpz_vector* v, Py_ssize_t n) noexcept:
     """
     Return if the ``n``-th entry of the sparse vector ``v`` is zero.
 
@@ -153,29 +156,28 @@ cdef bint mpz_vector_is_entry_zero_unsafe(mpz_vector* v, Py_ssize_t n):
 
 cdef object mpz_vector_to_list(mpz_vector* v):
     """
-    Returns a Python list of 2-tuples (i,x), where x=v[i] runs
+    Return a Python list of 2-tuples (i,x), where ``x=v[i]`` runs
     through the nonzero elements of x, in order.
     """
     cdef object X
     cdef Integer a
     cdef Py_ssize_t i
     X = []
-    for i from 0 <= i < v.num_nonzero:
+    for i in range(v.num_nonzero):
         a = Integer()
         a.set_from_mpz(v.entries[i])
-        X.append( (v.positions[i], a) )
+        X.append((v.positions[i], a))
     return X
 
 
 cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
     """
     Set the n-th component of the sparse vector v equal to x.
-    This would be v[n] = x in Python syntax.
+    This would be ``v[n] = x`` in Python syntax.
     """
     if n >= v.degree or n < 0:
         raise IndexError("Index (=%s) must be between 0 and %s." % (n, v.degree - 1))
     cdef Py_ssize_t i, m, ins
-    cdef Py_ssize_t m2, ins2
     cdef Py_ssize_t *pos
     cdef mpz_t *e
 
@@ -195,12 +197,12 @@ cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
             e = v.entries
             pos = v.positions
             allocate_mpz_vector(v, v.num_nonzero - 1)  # This does *not* change v.num_nonzero
-            for i from 0 <= i < m:
+            for i in range(m):
                 # v.entries[i] = e[i]
                 mpz_set(v.entries[i], e[i])
                 mpz_clear(e[i])
                 v.positions[i] = pos[i]
-            for i from m < i < v.num_nonzero:
+            for i in range(m + 1, v.num_nonzero):
                 # v.entries[i-1] = e[i]
                 mpz_set(v.entries[i-1], e[i])
                 mpz_clear(e[i])
@@ -223,7 +225,7 @@ cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
         e = v.entries
         pos = v.positions
         allocate_mpz_vector(v, v.num_nonzero)
-        for i from 0 <= i < ins:
+        for i in range(ins):
             # v.entries[i] = e[i]
             mpz_set(v.entries[i], e[i])
             mpz_clear(e[i])
@@ -231,13 +233,12 @@ cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
         # v.entries[ins] = x
         mpz_set(v.entries[ins], x)
         v.positions[ins] = n
-        for i from ins < i < v.num_nonzero:
+        for i in range(ins + 1, v.num_nonzero):
             mpz_set(v.entries[i], e[i-1])
             mpz_clear(e[i-1])
             v.positions[i] = pos[i-1]
         sig_free(e)
         sig_free(pos)
-
 
 
 cdef mpz_t mpz_set_tmp
@@ -317,7 +318,7 @@ cdef int add_mpz_vector_init(mpz_vector* sum,
             mpz_set(z.entries[k], v.entries[i])
             i = i + 1
             k = k + 1
-        elif v.positions[i] > w.positions[j]: # copy entry from w in
+        elif v.positions[i] > w.positions[j]:  # copy entry from w in
             if do_multiply:
                 # This means: tmp = multiple*w.entries[j]
                 mpz_mul(tmp, multiple, w.entries[j])
@@ -342,9 +343,9 @@ cdef int add_mpz_vector_init(mpz_vector* sum,
                 k = k + 1     # only increment if sum is nonzero!
             i = i + 1
             j = j + 1
-        #end if
+        # end if
     # end while
-    for i from k <= i < z.num_nonzero:
+    for i in range(k, z.num_nonzero):
         mpz_clear(z.entries[i])
     z.num_nonzero = k
     mpz_clear(tmp)
@@ -356,7 +357,7 @@ cdef int mpz_vector_scale(mpz_vector* v, mpz_t scalar) except -1:
         mpz_vector_init(v, v.degree, 0)
         return 0
     cdef Py_ssize_t i
-    for i from 0 <= i < v.num_nonzero:
+    for i in range(v.num_nonzero):
         # v.entries[i] = scalar * v.entries[i]
         mpz_mul(v.entries[i], v.entries[i], scalar)
     return 0
@@ -382,20 +383,20 @@ cdef int mpz_vector_scalar_multiply(mpz_vector* v, mpz_vector* w, mpz_t scalar) 
             raise MemoryError("error allocating rational sparse vector positions")
         v.num_nonzero = w.num_nonzero
         v.degree = w.degree
-        for i from 0 <= i < v.num_nonzero:
+        for i in range(v.num_nonzero):
             mpz_init(v.entries[i])
             mpz_mul(v.entries[i], w.entries[i], scalar)
             v.positions[i] = w.positions[i]
         return 0
 
-cdef int mpz_vector_cmp(mpz_vector* v, mpz_vector* w):
+cdef int mpz_vector_cmp(mpz_vector* v, mpz_vector* w) noexcept:
     if v.degree < w.degree:
         return -1
     elif v.degree > w.degree:
         return 1
     cdef Py_ssize_t i
     cdef int c
-    for i from 0 <= i < v.num_nonzero:
+    for i in range(v.num_nonzero):
         c = mpz_cmp(v.entries[i], w.entries[i])
         if c < 0:
             return -1

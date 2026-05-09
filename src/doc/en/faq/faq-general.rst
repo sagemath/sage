@@ -199,8 +199,6 @@ functionalities are made possible through FOSS projects such as
 * `OpenBLAS <https://www.openblas.net/>`_  --- an optimized BLAS library.
 * `Pari/GP <https://pari.math.u-bordeaux.fr>`_ --- a computer algebra
   system for fast computations in number theory.
-* `Pynac <http://pynac.sagemath.org>`_ --- a modified version of GiNaC
-  that replaces the dependency on CLN by Python.
 * `R <http://www.r-project.org>`_ --- a language and environment for
   statistical computing and graphics.
 * And many more too numerous to list here.
@@ -258,7 +256,7 @@ testing <../developer/portability_testing.html>`_ in the Developer's
 Guide for details.
 
 
-With so many bugs in Sage and hundreds of open tickets, why don't you produce a stabilization release?
+With so many bugs in Sage and hundreds of open issues, why don't you produce a stabilization release?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Any software package contains bug. With something as complex as Sage, neither
@@ -269,7 +267,7 @@ A Sage release cycle lasts for a few months, with several betas appearing at
 1-2 week intervals, followed by several release candidates (as of 2022). Under
 this schedule and with the limited capacity of the Sage developer community,
 the project cannot make stabilization releases. However, important
-bug fix tickets are merged with high priority and will be available in the
+bug fix PRs are merged with high priority and will be available in the
 development release. Thanks to rigorous integration testing by our dedicated
 Release Manager, development releases (betas and release candidates) are
 generally safe and reliable to use.
@@ -294,7 +292,7 @@ During the compilation of Sage from source, the HTML version of the
 documentation is also built in the process. To build the HTML version
 of the documentation, issue the following command from ``SAGE_ROOT``:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ ./sage --docbuild --no-pdf-links all html
 
@@ -302,18 +300,17 @@ Building the PDF version requires that your system has a working LaTeX
 installation. To build the PDF version of the documentation, issue the
 following command from ``SAGE_ROOT``:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ ./sage --docbuild all pdf
 
 For more command line options, refer to the output of any of the
 following commands:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ ./sage --help
     $ ./sage --advanced
-
 
 
 I want to cite Sage in a publication, how do I do it?
@@ -334,8 +331,10 @@ Here is a BibTeX entry for Sage:
     }
 
 Adjust version/year as needed.  You might also like to use DOI for Sage,
-as the note entry in the above record, or directly as DOI record.
-
+as the ``note`` entry in the above record, or directly as DOI record.
+The DOI :doi:`10.5281/zenodo.8042260` represents all versions of Sage;
+clicking on it will show the DOI for the latest Sage version
+(at the time of writing, 10.3, see :doi:`10.5281/zenodo.10841614`).
 
 If you happen to use the Sage interface to PARI, GAP or Singular,
 you should definitely reference them as well. Likewise, if you use
@@ -403,4 +402,4 @@ What are DOI records for Sage?
 e.g. see `record for Sage 9.5 <https://zenodo.org/record/6259615>`_.
 The corresponding :doi:`10.5281/zenodo.6259615`.
 
-There is also DOI for the latest version, :doi:`10.5281/zenodo.593563`.
+There is also DOI for the latest version, :doi:`10.5281/zenodo.8042260`.

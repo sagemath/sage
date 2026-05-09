@@ -1,6 +1,6 @@
 """
 This file provides the declaration for the RelaxedElement class,
-which collects common functionality for the different relaxed p-adic
+which collects common functionality for the different relaxed `p`-adic
 template classes.
 
 It is included in padic_relaxed_element.pxd and should be included
@@ -34,16 +34,16 @@ cdef class RelaxedElement(pAdicGenericElement):
     cdef long _precbound
     cdef PowComputer_class prime_pow
 
-    cdef cdigit_ptr _getdigit_relative(self, long i)
-    cdef cdigit_ptr _getdigit_absolute(self, long i)
-    cdef void _getslice_relative(self, celement slice, long start, long length)
+    cdef cdigit_ptr _getdigit_relative(self, long i) noexcept
+    cdef cdigit_ptr _getdigit_absolute(self, long i) noexcept
+    cdef void _getslice_relative(self, celement slice, long start, long length) noexcept
 
     cdef int _init_jump(self) except -1
-    cdef int _jump_c(self, long prec)
-    cdef int _jump_relative_c(self, long prec, long halt)
-    cdef int _next_c(self)
+    cdef int _jump_c(self, long prec) noexcept
+    cdef int _jump_relative_c(self, long prec, long halt) noexcept
+    cdef int _next_c(self) noexcept
 
-    cdef long valuation_c(self, long halt=*)
+    cdef long valuation_c(self, long halt=*) noexcept
     cdef bint _is_equal(self, RelaxedElement right, long prec, bint permissive) except -1
 
 cdef class RelaxedElement_abandon(RelaxedElement):
@@ -98,7 +98,7 @@ cdef class RelaxedElement_mul(RelaxedElementWithDigits):
     cdef cdigit _lastdigit_x
     cdef RelaxedElement _y
     cdef cdigit _lastdigit_y
-    cdef int _update_last_digit(self)
+    cdef int _update_last_digit(self) noexcept
 
 cdef class RelaxedElement_muldigit(RelaxedElementWithDigits):
     cdef cdigit_ptr _x
@@ -110,13 +110,13 @@ cdef class RelaxedElement_div(RelaxedElementWithDigits):
     cdef RelaxedElement _num
     cdef RelaxedElement _denom
     cdef RelaxedElement _definition
-    cdef int _bootstrap_c(self)
+    cdef int _bootstrap_c(self) noexcept
     cdef bint _bootstraping
 
 cdef class RelaxedElement_sqrt(RelaxedElementWithDigits):
     cdef RelaxedElement _x
     cdef RelaxedElement _definition
-    cdef int _bootstrap_c(self)
+    cdef int _bootstrap_c(self) noexcept
 
 cdef class RelaxedElement_teichmuller(RelaxedElementWithDigits):
     cdef bint _ready
@@ -138,8 +138,8 @@ cdef class RelaxedElement_unknown(RelaxedElementWithDigits):
 # Expansion
 
 cdef class RelaxedElement_zeroone(RelaxedElementWithDigits):
-    cdef void _setdigit_to_zero(self)
-    cdef void _setdigit_to_one(self)
+    cdef void _setdigit_to_zero(self) noexcept
+    cdef void _setdigit_to_one(self) noexcept
 
 cdef class ExpansionIter():
     cdef RelaxedElement elt

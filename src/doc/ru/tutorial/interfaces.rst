@@ -10,7 +10,6 @@
 GAP как пример:
 
 
-
 #. ``gap.console()``: Открывает консоль GAP и передает управление GAP'у.
    Здесь Sage выступает в роли удобной командной строки, наподобие оболочки
    Bash в GNU/Linux.
@@ -29,9 +28,9 @@ PARI это компактная, очень продуманная и хоро�
 на C, сосредоточенная на теории чисел. Существует два раздельных интерфейса,
 которые вы можете использовать в Sage:
 
--  ``gp`` - gp - интерпретатор "**G** o **P** ARI" , и
+-  ``gp`` -- gp - интерпретатор **PARI** , и
 
--  ``pari`` - pari - С-библиотека PARI.
+-  ``pari`` -- pari - С-библиотека **PARI**.
 
 
 Например, следующие две строчки выполняют одну и ту же операцию. Они выглядят
@@ -191,8 +190,8 @@ Singular предоставляет массивную и продуманную
     sage: R1 = singular.ring(0, '(x,y)', 'dp')
     sage: R1
     polynomial ring, over a field, global ordering
-    //   coefficients: QQ
-    //   number of vars : 2
+    // coefficients: QQ...
+    // number of vars : 2
     //        block   1 : ordering dp
     //                  : names    x y
     //        block   2 : ordering C
@@ -264,8 +263,8 @@ gnuplot, имеет методы решения и манипуляции мат
     matrix([1,1/2,1/3,1/4],[0,0,0,0],[0,0,0,0],[0,0,0,0])
     sage: A.eigenvalues()
     [[0,4],[3,1]]
-    sage: A.eigenvectors()
-    [[[0,4],[3,1]],[[[1,0,0,-4],[0,1,0,-2],[0,0,1,-4/3]],[[1,2,3,4]]]]
+    sage: A.eigenvectors().sage()
+    [[[0, 4], [3, 1]], [[[1, 0, 0, -4], [0, 1, 0, -2], [0, 0, 1, -4/3]], [[1, 2, 3, 4]]]]
 
 Вот другой пример:
 
@@ -323,12 +322,9 @@ gnuplot, имеет методы решения и манипуляции мат
 
 ::
 
-    sage: maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0) - 10.0")
-    5*cos(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)-10.0
-    sage: maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
-    -5*sin(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)
-    sage: maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
-    5*(cos(x/2)*sin(2*y)-sin(x/2)*cos(y))
+    sage: _ = maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0) - 10.0")
+    sage: _ = maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
+    sage: _ = maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
     sage: maxima.plot3d ("[expr_1, expr_2, expr_3]", "[x, -%pi, %pi]", # not tested
     ....:     "[y, -%pi, %pi]", "['grid, 40, 40]",
     ....:     '[plot_format, openmath]')

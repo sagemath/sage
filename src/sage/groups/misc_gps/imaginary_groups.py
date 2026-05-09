@@ -19,15 +19,15 @@ AUTHORS:
 Classes and Methods
 ===================
 """
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2018 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.element import AdditiveGroupElement
 from sage.structure.parent import Parent
@@ -81,9 +81,9 @@ class ImaginaryElement(AdditiveGroupElement):
 
             sage: from sage.groups.misc_gps.imaginary_groups import ImaginaryGroup
             sage: J = ImaginaryGroup(ZZ)
-            sage: J(I).imag()
+            sage: J(I).imag()                                                           # needs sage.symbolic
             1
-            sage: imag_part(J(I))  # indirect doctest
+            sage: imag_part(J(I))  # indirect doctest                                   # needs sage.symbolic
             1
         """
         return self._imag_
@@ -96,9 +96,9 @@ class ImaginaryElement(AdditiveGroupElement):
 
             sage: from sage.groups.misc_gps.imaginary_groups import ImaginaryGroup
             sage: J = ImaginaryGroup(ZZ)
-            sage: J(I).real()
+            sage: J(I).real()                                                           # needs sage.symbolic
             0
-            sage: real_part(J(I))  # indirect doctest
+            sage: real_part(J(I))  # indirect doctest                                   # needs sage.symbolic
             0
         """
         return self.parent().base().zero()
@@ -111,7 +111,7 @@ class ImaginaryElement(AdditiveGroupElement):
 
             sage: from sage.groups.misc_gps.imaginary_groups import ImaginaryGroup
             sage: J = ImaginaryGroup(ZZ)
-            sage: hash(J(I))  # indirect doctest, random
+            sage: hash(J(I))  # indirect doctest, random                                # needs sage.symbolic
             42
         """
         return hash((self.parent(), self._imag_))
@@ -247,9 +247,9 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
         0
         sage: J(imag=100)
         100*I
-        sage: J(3*I)
+        sage: J(3*I)                                                                    # needs sage.symbolic
         3*I
-        sage: J(1+2*I)
+        sage: J(1 + 2*I)                                                                # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: 2*I + 1 is not in
@@ -284,9 +284,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
         - ``category`` -- a category or ``None`` (in which case the output
           equals ``category``)
 
-        OUTPUT:
-
-        A category.
+        OUTPUT: a category
 
         EXAMPLES::
 
@@ -376,9 +374,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
 
         - ``imag`` -- a number (of a subset of the reals) or ``None``
 
-        OUTPUT:
-
-        A :class:`ImaginaryElement`.
+        OUTPUT: a :class:`ImaginaryElement`
 
         TESTS::
 
@@ -393,6 +389,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
             sage: J(imag=100)
             100*I
 
+            sage: # needs sage.symbolic
             sage: J(3*I)
             3*I
             sage: J(1+2*I)
@@ -474,7 +471,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
                 raise ValueError('{} is not in {}'.format(data, self))
 
         elif not isinstance(data, int) or data != 0:
-            raise ValueError('input is ambigous: '
+            raise ValueError('input is ambiguous: '
                              '{} as well as imag={} '
                              'specified'.format(data, imag))
 

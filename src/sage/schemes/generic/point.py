@@ -2,11 +2,11 @@
 Points on schemes
 """
 
-#*******************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2006 William Stein
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
@@ -15,6 +15,7 @@ from sage.structure.richcmp import richcmp
 # Base class for points on a scheme, either topological
 # or defined by a morphism.
 ########################################################
+
 
 class SchemePoint(Element):
     """
@@ -41,7 +42,7 @@ class SchemePoint(Element):
 
     def scheme(self):
         """
-        Return the scheme on which self is a point.
+        Return the scheme on which ``self`` is a point.
 
         EXAMPLES::
 
@@ -66,14 +67,12 @@ class SchemePoint(Element):
             sage: P._repr_()
             'Point on Spectrum of Integer Ring'
         """
-        return "Point on %s"%self.__S
+        return "Point on %s" % self.__S
+
 
 ########################################################
 # Topological points on a scheme
 ########################################################
-
-def is_SchemeTopologicalPoint(x):
-    return isinstance(x, SchemeTopologicalPoint)
 
 class SchemeTopologicalPoint(SchemePoint):
     """
@@ -88,7 +87,7 @@ class SchemeTopologicalPoint(SchemePoint):
         TESTS:
 
         The parent of a topological point is the scheme on which it
-        lies (see :trac:`7946`)::
+        lies (see :issue:`7946`)::
 
             sage: R = Zmod(8)
             sage: S = Spec(R)
@@ -99,6 +98,7 @@ class SchemeTopologicalPoint(SchemePoint):
             True
         """
         SchemePoint.__init__(self, S, parent=S)
+
 
 class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
     def __init__(self, u, x):
@@ -114,9 +114,9 @@ class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
         self.__x = x
 
     def _repr_(self):
-        return "Point on %s defined by x in U, where:\n  U: %s\n  x: %s"%(\
-                   self.scheme(), self.embedding_of_affine_open().domain(),
-                                  self.point_on_affine())
+        return "Point on %s defined by x in U, where:\n  U: %s\n  x: %s" % (
+            self.scheme(), self.embedding_of_affine_open().domain(),
+            self.point_on_affine())
 
     def point_on_affine(self):
         """
@@ -169,8 +169,8 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
              the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """
         R = S.coordinate_ring()
-        from sage.rings.ideal import is_Ideal
-        if not is_Ideal(P):
+        from sage.rings.ideal import Ideal_generic
+        if not isinstance(P, Ideal_generic):
             P = R.ideal(P)
         elif P.ring() is not R:
             P = R.ideal(P.gens())
@@ -178,11 +178,11 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         # unfortunately is_prime() is only implemented in a small
         # number of cases
         if check and not P.is_prime():
-            raise ValueError("The argument %s must be a prime ideal of %s"%(P, R))
+            raise ValueError("The argument %s must be a prime ideal of %s" % (P, R))
         SchemeTopologicalPoint.__init__(self, S)
         self.__P = P
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this scheme point.
 
@@ -196,8 +196,9 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
             sage: pt._repr_()
             'Point on Projective Space of dimension 2 over Rational Field defined by the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field'
         """
-        return "Point on %s defined by the %s"%(self.scheme(),
-                                                self.prime_ideal())
+        return "Point on %s defined by the %s" % (self.scheme(),
+                                                  self.prime_ideal())
+
     def prime_ideal(self):
         """
         Return the prime ideal that defines this scheme point.
@@ -212,7 +213,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         """
         return self.__P
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare ``self`` to ``other``.
 
@@ -225,28 +226,3 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
             False
         """
         return richcmp(self.__P, other.__P, op)
-
-########################################################
-# Points on a scheme defined by a morphism
-########################################################
-
-def is_SchemeRationalPoint(x):
-    return isinstance(x, SchemeRationalPoint)
-
-class SchemeRationalPoint(SchemePoint):
-    def __init__(self, f):
-        """
-        INPUT:
-
-
-        -  ``f`` - a morphism of schemes
-        """
-        SchemePoint.__init__(self, f.codomain(), parent=f.parent())
-        self.__f = f
-
-    def _repr_(self):
-        return "Point on %s defined by the morphism %s"%(self.scheme(),
-                                                         self.morphism())
-
-    def morphism(self):
-        return self.__f

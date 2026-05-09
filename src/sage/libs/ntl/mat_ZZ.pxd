@@ -1,11 +1,11 @@
-from .types cimport mat_ZZ_c, ZZ_c, ZZX_c
+from sage.libs.ntl.types cimport mat_ZZ_c, ZZ_c, ZZX_c
 
 
 cdef extern from "ntlwrap.h":
-    void mat_ZZ_mul "mul"( mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
-    void mat_ZZ_add "add"( mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
-    void mat_ZZ_sub "sub"( mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
-    void mat_ZZ_power "NTL::power"( mat_ZZ_c x, mat_ZZ_c a, long e)
+    void mat_ZZ_mul "mul"(mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
+    void mat_ZZ_add "add"(mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
+    void mat_ZZ_sub "sub"(mat_ZZ_c x, mat_ZZ_c a, mat_ZZ_c b)
+    void mat_ZZ_power "NTL::power"(mat_ZZ_c x, mat_ZZ_c a, long e)
     void mat_ZZ_CharPoly "CharPoly"(ZZX_c r, mat_ZZ_c m)
 
     cdef long mat_ZZ_LLL_FP   "LLL_FP"(mat_ZZ_c B, double delta, int deep, int check , int verbose)

@@ -10,18 +10,21 @@ AUTHORS:
 - Reimundo Heluani (2020-06-15): Initial implementation.
 """
 
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
-from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+from sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra import (
+    GradedLieConformalAlgebra,
+)
 from sage.structure.indexed_generators import standardize_names_index_set
+
 
 class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
     r"""
@@ -31,21 +34,20 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
 
     - ``R`` -- a commutative ring; the base ring of this Lie
       conformal algebra
-    - ``ngens`` -- a positive integer (default: ``1``); the number
+    - ``ngens`` -- positive integer (default: `1`); the number
       of generators of this Lie conformal algebra
-    - ``weights`` -- a list of positive rational numbers (default:
-      ``1`` for each
-      generator); the weights of the generators. The resulting
+    - ``weights`` -- list of positive rational numbers (default:
+      `1` for each generator); the weights of the generators. The resulting
       Lie conformal algebra is `H`-graded.
     - ``parity`` -- ``None`` or a list of ``0`` or ``1`` (default:
-      ``None``); The parity of the generators. If not ``None`` the
+      ``None``); the parity of the generators. If not ``None`` the
       resulting Lie Conformal algebra is a Super Lie conformal
       algebra
-    - ``names`` -- a tuple of ``str`` or ``None`` (default: ``None``
-      ); the list of names of the generators of this algebra.
+    - ``names`` -- tuple of strings or ``None`` (default: ``None``);
+      the list of names of the generators of this algebra.
     - ``index_set`` -- an enumerated set or ``None`` (default:
-      ``None``); A set indexing the generators of this Lie
-      conformal algebra.
+      ``None``); a set indexing the generators of this Lie
+      conformal algebra
 
     OUTPUT:
 
@@ -75,29 +77,30 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
         case.
     """
     def __init__(self, R, ngens=1, weights=None,
-                 parity=None, names=None, index_set=None):
+                 parity=None, names=None, index_set=None) -> None:
         """
-        Initialize self.
+        Initialize ``self``.
 
         EXAMPLES::
 
             sage: V = lie_conformal_algebras.Abelian(QQ)
             sage: TestSuite(V).run()
         """
-        if (names is None) and (index_set is None):
+        if names is None and index_set is None:
             names = 'a'
             self._latex_names = tuple(r'a_{%d}' % i for i in range(ngens))
 
-        names,index_set = standardize_names_index_set(names=names,
-                                                      index_set=index_set,
-                                                      ngens=ngens)
+        names, index_set = standardize_names_index_set(names=names,
+                                                       index_set=index_set,
+                                                       ngens=ngens)
         abeliandict = {}
 
         GradedLieConformalAlgebra.__init__(self, R, abeliandict, names=names,
-                                           index_set=index_set, weights=weights,
+                                           index_set=index_set,
+                                           weights=weights,
                                            parity=parity)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -107,4 +110,4 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
             The Abelian Lie conformal algebra with generators (a,) over Rational Field
         """
         return "The Abelian Lie conformal algebra with generators {} over {}"\
-                .format(self.gens(), self.base_ring())
+            .format(self.gens(), self.base_ring())

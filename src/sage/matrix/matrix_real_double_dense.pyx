@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 Dense matrices over the Real Double Field using NumPy
 
@@ -59,7 +60,7 @@ cdef class Matrix_real_double_dense(Matrix_double_dense):
         sage: m**2
         [ 7.0 10.0]
         [15.0 22.0]
-        sage: n = m^(-1); n     # rel tol 1e-15
+        sage: n = m^(-1); n     # rel tol 1e-15                                         # needs scipy
         [-1.9999999999999996  0.9999999999999998]
         [ 1.4999999999999998 -0.4999999999999999]
 
@@ -69,7 +70,7 @@ cdef class Matrix_real_double_dense(Matrix_double_dense):
 
     ::
 
-        sage: p,e = m.right_eigenvectors()
+        sage: p,e = m.right_eigenvectors()                                              # needs scipy
 
     The result is a pair ``(p,e)``, where ``p`` is a diagonal matrix of
     eigenvalues and ``e`` is a matrix whose columns are the
@@ -79,7 +80,7 @@ cdef class Matrix_real_double_dense(Matrix_double_dense):
     `b = [5,6]`::
 
         sage: b = vector(RDF,[5,6])
-        sage: m.solve_right(b)  # rel tol 1e-15
+        sage: m.solve_right(b)  # rel tol 1e-15                                         # needs scipy
         (-3.9999999999999987, 4.499999999999999)
 
     See the methods :meth:`~.Matrix_double_dense.QR`,
@@ -109,7 +110,7 @@ cdef class Matrix_real_double_dense(Matrix_double_dense):
         """
         self.set_unsafe(i,j,value)
 
-    cdef double get_unsafe_double(self, Py_ssize_t i, Py_ssize_t j):
+    cdef double get_unsafe_double(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Get the (i,j) entry without any type checking or bound checking.
 

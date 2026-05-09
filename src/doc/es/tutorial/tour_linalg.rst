@@ -49,16 +49,6 @@ Resolver ecuaciones matriciales es sencillo, usando el método
     sage: A * X   # comprobando la solución...
     (0, -4, -1)
 
-Se puede usar una barra invertida ``\``  en lugar de ``solve_right``; 
-usamos ``A \ Y`` en lugar de ``A.solve_right(Y)``.
-
-.. link
-
-::
-
-    sage: A \ Y
-    (-2, 1, 0)
-
 Si no hay solución, Sage lanza un error:
 
 .. skip
@@ -81,11 +71,7 @@ Sage también puede calcular autovalores ("eigenvalues") y autovectores
     [-2*I, 2*I]
     sage: B = matrix([[1, 3], [3, 1]])
     sage: B.eigenvectors_left()
-    [(4, [
-    (1, 1)
-    ], 1), (-2, [
-    (1, -1)
-    ], 1)]
+    [(4, [(1, 1)], 1), (-2, [(1, -1)], 1)]
 
 (La sintaxis de la salida de ``eigenvectors_left`` es una lista de
 tuplas: (autovalor, autovector, multiplicidad).)  Los autovalores

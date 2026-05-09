@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Univariate Ore polynomials
 
@@ -13,7 +14,7 @@ The generic implementation of dense Ore polynomials is
 The classes
 :class:`~sage.rings.polynomial.ore_polynomial_element.ConstantOrePolynomialSection`
 and :class:`~sage.rings.polynomial.ore_polynomial_element.OrePolynomialBaseringInjection`
-handle conversion from a Ore polynomial ring to its base ring and vice versa.
+handle conversion from an Ore polynomial ring to its base ring and vice versa.
 
 AUTHORS:
 
@@ -27,26 +28,22 @@ AUTHORS:
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
 import re
 from cysignals.signals cimport sig_check
 from sage.structure.element import coerce_binop
-from sage.misc.superseded import experimental
 
 from sage.rings.infinity import infinity
-from sage.structure.factorization import Factorization
-from sage.structure.element cimport Element, RingElement, AlgebraElement, ModuleElement
+from sage.structure.element cimport Element, RingElement, AlgebraElement
 from sage.structure.parent cimport Parent
-from sage.structure.parent_gens cimport ParentWithGens
-from sage.misc.abstract_method import abstract_method
 from sage.categories.homset import Hom
 from sage.rings.ring import _Fields
 from sage.rings.integer cimport Integer
 from cpython.object cimport PyObject_RichCompare
 from sage.categories.map cimport Map
-from sage.rings.morphism cimport Morphism, RingHomomorphism
+from sage.rings.morphism cimport Morphism
 from sage.rings.polynomial.polynomial_element cimport _dict_to_list
 
 
@@ -61,7 +58,7 @@ cdef class OrePolynomial(AlgebraElement):
     Let `R` be a commutative ring equipped with an automorphism `\sigma`
     and a `\sigma`-derivation `\partial`.
 
-    A Ore polynomial is given by the equation:
+    An Ore polynomial is given by the equation:
 
     .. MATH::
 
@@ -76,23 +73,23 @@ cdef class OrePolynomial(AlgebraElement):
     is equal to the sum of the degrees of the factors.
 
     Let `a` and `b` be two Ore polynomials in the same ring `S`.
-    The *left (resp. right) euclidean division* of `a` by `b` is a couple
+    The *right (resp. left) Euclidean division* of `a` by `b` is a couple
     `(q,r)` of elements in `S` such that
 
-    -  `a = q b + r` (resp. `a = b q + r`)
+    - `a = q b + r` (resp. `a = b q + r`)
 
-    -  the degree of `r` is less than the degree of `b`
+    - the degree of `r` is less than the degree of `b`
 
     `q` (resp. `r`) is called the *quotient* (resp. the remainder)
-    of this euclidean division.
+    of this Euclidean division.
 
     .. RUBRIC:: Properties
 
     Keeping the previous notation, if the leading coefficient of `b`
     is a unit (e.g. if `b` is monic) then the quotient and the remainder
-    in the *right* euclidean division exist and are unique.
+    in the *right* Euclidean division exist and are unique.
 
-    The same result holds for the *left* euclidean division if in addition
+    The same result holds for the *left* Euclidean division if in addition
     the twisting morphism defining the Ore polynomial ring is invertible.
 
     EXAMPLES:
@@ -145,7 +142,7 @@ cdef class OrePolynomial(AlgebraElement):
         True
 
     The operators ``//`` and ``%`` give respectively the quotient
-    and the remainder of the *right* euclidean division::
+    and the remainder of the *right* Euclidean division::
 
         sage: q == c // b
         True
@@ -169,7 +166,7 @@ cdef class OrePolynomial(AlgebraElement):
         sage: S.<x> = k['x',Frob]
         sage: a = x^4 + (4*t + 1)*x^3 + (t^2 + 3*t + 3)*x^2 + (3*t^2 + 2*t + 2)*x + (3*t^2 + 3*t + 1)
         sage: b = (2*t^2 + 3)*x^2 + (3*t^2 + 1)*x + 4*t + 2
-        sage: q,r = a.left_quo_rem(b)
+        sage: q, r = a.left_quo_rem(b)
         sage: q
         (4*t^2 + t + 1)*x^2 + (2*t^2 + 2*t + 2)*x + 2*t^2 + 4*t + 3
         sage: r
@@ -177,7 +174,7 @@ cdef class OrePolynomial(AlgebraElement):
         sage: a == b*q + r
         True
 
-    Once we have euclidean divisions, we have for free gcd and lcm
+    Once we have Euclidean divisions, we have for free gcd and lcm
     (at least if the base ring is a field)::
 
         sage: a = (x + t) * (x + t^2)^2
@@ -191,21 +188,21 @@ cdef class OrePolynomial(AlgebraElement):
     their left lcm is the least degree polynomial `c = ua = vb` for some Ore
     polynomials `u, v`. Such a `c` always exist if the base ring is a field::
 
-        sage: c = a.left_lcm(b); c
+        sage: c = a.left_lcm(b); c                                                      # needs sage.rings.finite_rings
         x^5 + (4*t^2 + t + 3)*x^4 + (3*t^2 + 4*t)*x^3 + 2*t^2*x^2 + (2*t^2 + t)*x + 4*t^2 + 4
-        sage: c.is_right_divisible_by(a)
+        sage: c.is_right_divisible_by(a)                                                # needs sage.rings.finite_rings
         True
-        sage: c.is_right_divisible_by(b)
+        sage: c.is_right_divisible_by(b)                                                # needs sage.rings.finite_rings
         True
 
     The right lcm is defined similarly as the least degree polynomial `c = au =
     bv` for some `u,v`::
 
-        sage: d = a.right_lcm(b); d
+        sage: d = a.right_lcm(b); d                                                     # needs sage.rings.finite_rings
         x^5 + (t^2 + 1)*x^4 + (3*t^2 + 3*t + 3)*x^3 + (3*t^2 + t + 2)*x^2 + (4*t^2 + 3*t)*x + 4*t + 4
-        sage: d.is_left_divisible_by(a)
+        sage: d.is_left_divisible_by(a)                                                 # needs sage.rings.finite_rings
         True
-        sage: d.is_left_divisible_by(b)
+        sage: d.is_left_divisible_by(b)                                                 # needs sage.rings.finite_rings
         True
 
     .. SEEALSO::
@@ -234,7 +231,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         AlgebraElement.__init__(self, parent)
 
-    cdef long _hash_c(self):
+    cdef long _hash_c(self) noexcept:
         raise NotImplementedError
 
     def __hash__(self):
@@ -252,7 +249,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         return self._hash_c()
 
-    cpdef int degree(self):
+    cpdef Integer degree(self):
         r"""
         Return the degree of ``self``.
 
@@ -275,7 +272,7 @@ cdef class OrePolynomial(AlgebraElement):
 
     cdef OrePolynomial _new_c(self, list coeffs, Parent P, char check=0):
         r"""
-        Fast creation of a new Ore polynomial
+        Fast creation of a new Ore polynomial.
 
         .. NOTE::
 
@@ -286,7 +283,7 @@ cdef class OrePolynomial(AlgebraElement):
 
     cpdef OrePolynomial _new_constant_poly(self, RingElement a, Parent P, char check=0):
         r"""
-        Fast creation of a new constant Ore polynomial
+        Fast creation of a new constant Ore polynomial.
 
         EXAMPLES::
 
@@ -307,7 +304,7 @@ cdef class OrePolynomial(AlgebraElement):
         r"""
         Set the ``n``-th coefficient of ``self``.
 
-        This always raises an ``IndexError``, since polynomials are immutable in
+        This always raises an :exc:`IndexError`, since polynomials are immutable in
         Sage.
 
         EXAMPLES::
@@ -348,7 +345,7 @@ cdef class OrePolynomial(AlgebraElement):
 
     def constant_coefficient(self):
         r"""
-        Return the constant coefficient (i.e. the coefficient of term
+        Return the constant coefficient (i.e., the coefficient of term
         of degree `0`) of ``self``.
 
         EXAMPLES::
@@ -393,7 +390,7 @@ cdef class OrePolynomial(AlgebraElement):
         r"""
         Return ``True`` if this Ore polynomial is a unit.
 
-        When the base ring `R` is an integral domain, then a Ore polynomial `f`
+        When the base ring `R` is an integral domain, then an Ore polynomial `f`
         is a unit if and only if degree of `f` is `0` and `f` is then a unit in
         `R`.
 
@@ -478,7 +475,7 @@ cdef class OrePolynomial(AlgebraElement):
         Return the unique monic Ore polynomial `m` which divides this
         polynomial on the left and has the same degree.
 
-        Given a Ore polynomial `P` of degree `n`, its left monic is given by
+        Given an Ore polynomial `P` of degree `n`, its left monic is given by
         `P \cdot \sigma^{-n}(1/k)`, where `k` is the leading coefficient of
         `P` and `\sigma` is the twisting morphism.
 
@@ -495,7 +492,7 @@ cdef class OrePolynomial(AlgebraElement):
 
             sage: b.degree() == a.degree()
             True
-            sage: b.is_left_divisible_by(a)
+            sage: a.is_left_divisible_by(b)
             True
             sage: twist = S.twisting_morphism(-a.degree())
             sage: a == b * twist(a.leading_coefficient())
@@ -503,7 +500,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         Note that `b` does not divide `a` on the right::
 
-            sage: a.is_right_divisible_by(b)
+            sage: a.is_right_divisible_by(b)                                            # needs sage.rings.finite_rings
             False
 
         This function does not work if the leading coefficient is not a
@@ -532,8 +529,8 @@ cdef class OrePolynomial(AlgebraElement):
         Return the unique monic Ore polynomial which divides this polynomial
         on the right and has the same degree.
 
-        Given a Ore polynomial `P` of degree `n`, its left monic is given by
-        `(1/k) \cdot P`, where `k` is the leading coefficient of `p`.
+        Given an Ore polynomial `P` of degree `n`, its right monic is given by
+        `(1/k) \cdot P`, where `k` is the leading coefficient of `P`.
 
         EXAMPLES::
 
@@ -546,16 +543,16 @@ cdef class OrePolynomial(AlgebraElement):
 
         Check list::
 
-            sage: b.degree() == a.degree()
+            sage: b.degree() == a.degree()                                              # needs sage.rings.finite_rings
             True
-            sage: b.is_right_divisible_by(a)
+            sage: a.is_right_divisible_by(b)                                            # needs sage.rings.finite_rings
             True
-            sage: a == a.leading_coefficient() * b
+            sage: a == a.leading_coefficient() * b                                      # needs sage.rings.finite_rings
             True
 
         Note that `b` does not divide `a` on the right::
 
-            sage: a.is_left_divisible_by(b)
+            sage: a.is_left_divisible_by(b)                                             # needs sage.rings.finite_rings
             False
 
         This function does not work if the leading coefficient is not a
@@ -578,8 +575,8 @@ cdef class OrePolynomial(AlgebraElement):
 
     cpdef _mod_(self, other):
         r"""
-        Return the remainder in the *right* euclidean division of
-        ``self`` by ``other```.
+        Return the remainder in the *right* Euclidean division of
+        ``self`` by ``other``.
 
         TESTS::
 
@@ -600,7 +597,7 @@ cdef class OrePolynomial(AlgebraElement):
 
     cpdef _floordiv_(self, right):
         r"""
-        Return the quotient of the *right* euclidean division of
+        Return the quotient of the *right* Euclidean division of
         ``self`` by ``right``.
 
         The algorithm fails if the leading coefficient of the divisor
@@ -631,7 +628,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``right`` -- a Ore polynomial
+        - ``right`` -- an Ore polynomial
 
         EXAMPLES::
 
@@ -642,7 +639,8 @@ cdef class OrePolynomial(AlgebraElement):
             sage: f
             (x + 10/t)^(-1) * t
             sage: f.parent()
-            Ore Function Field in x over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 11 twisted by d/dt
+            Ore Function Field in x over
+             Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 11 twisted by d/dt
         """
         parent = self.parent().fraction_field()
         return parent(self) / parent(right)
@@ -653,11 +651,9 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        OUTPUT:
-
-        Return ``True`` or ``False``.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -674,7 +670,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         Divisibility by `0` does not make sense::
 
-            sage: c.is_left_divisible_by(S(0))
+            sage: c.is_left_divisible_by(S(0))                                          # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ZeroDivisionError: division by zero is not valid
@@ -688,11 +684,9 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        OUTPUT:
-
-        Return ``True`` or ``False``.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -709,7 +703,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         Divisibility by `0` does not make sense::
 
-            sage: c.is_right_divisible_by(S(0))
+            sage: c.is_right_divisible_by(S(0))                                         # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ZeroDivisionError: division by zero is not valid
@@ -737,11 +731,9 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        OUTPUT:
-
-        Return ``True`` or ``False``.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -750,7 +742,7 @@ cdef class OrePolynomial(AlgebraElement):
             sage: S.<x> = k['x',Frob]
             sage: a = x^2 + t*x + t^2 + 3
             sage: b = x^3 + (t + 1)*x^2 + 1
-            sage: c = a*b
+            sage: c = a * b
             sage: a.left_divides(c)
             True
             sage: b.left_divides(c)
@@ -758,7 +750,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         Divisibility by `0` does not make sense::
 
-            sage: S(0).left_divides(c)
+            sage: S(0).left_divides(c)                                                  # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ZeroDivisionError: division by zero is not valid
@@ -772,11 +764,9 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        OUTPUT:
-
-        Return ``True`` or ``False``.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -785,7 +775,7 @@ cdef class OrePolynomial(AlgebraElement):
             sage: S.<x> = k['x',Frob]
             sage: a = x^2 + t*x + t^2 + 3
             sage: b = x^3 + (t + 1)*x^2 + 1
-            sage: c = a*b
+            sage: c = a * b
             sage: a.right_divides(c)
             False
             sage: b.right_divides(c)
@@ -793,7 +783,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         Divisibility by `0` does not make sense::
 
-            sage: S(0).right_divides(c)
+            sage: S(0).right_divides(c)                                                 # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ZeroDivisionError: division by zero is not valid
@@ -827,14 +817,14 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
         - ``monic`` -- boolean (default: ``True``); return whether the left gcd
           should be normalized to be monic
 
         OUTPUT:
 
-        - The left gcd of ``self`` and ``other``, that is a Ore polynomial
+        - The left gcd of ``self`` and ``other``, that is an Ore polynomial
           `g` with the following property: any Ore polynomial is
           divisible on the left by `g` iff it is divisible on the left
           by both ``self`` and ``other``.
@@ -845,7 +835,7 @@ cdef class OrePolynomial(AlgebraElement):
 
           .. MATH::
 
-              g = a * u + b * v,
+              g = a \cdot u + b \cdot v,
 
           where `s` is ``self`` and `b` is ``other``.
 
@@ -870,9 +860,9 @@ cdef class OrePolynomial(AlgebraElement):
 
         Specifying ``monic=False``, we *can* get a nonmonic gcd::
 
-            sage: g,u,v = a.left_xgcd(b, monic=False); g
+            sage: g,u,v = a.left_xgcd(b, monic=False); g                                # needs sage.rings.finite_rings
             2*t*x + 4*t + 2
-            sage: a*u + b*v == g
+            sage: a*u + b*v == g                                                        # needs sage.rings.finite_rings
             True
 
         The base ring must be a field::
@@ -904,7 +894,7 @@ cdef class OrePolynomial(AlgebraElement):
             raise TypeError("the base ring must be a field")
         cdef OrePolynomial G = self
         cdef OrePolynomial U = self._parent.one()
-        cdef OrePolynomial V, V1, V2, Q, R, T
+        cdef OrePolynomial V, V1, Q, R, T
         cdef Morphism m
         if not other:
             V = self._parent.zero()
@@ -932,7 +922,7 @@ cdef class OrePolynomial(AlgebraElement):
 
     cdef _left_quo_rem(self, OrePolynomial other):
         r"""
-        Return the quotient and remainder of the left euclidean
+        Return the quotient and remainder of the left Euclidean
         division of ``self`` by ``other`` (C implementation).
 
         Must be implemented in subclasses.
@@ -942,16 +932,16 @@ cdef class OrePolynomial(AlgebraElement):
     @coerce_binop
     def left_quo_rem(self, other):
         r"""
-        Return the quotient and remainder of the left euclidean
+        Return the quotient and remainder of the left Euclidean
         division of ``self`` by ``other``.
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
         OUTPUT:
 
-        - the quotient and the remainder of the left euclidean
+        - the quotient and the remainder of the left Euclidean
           division of this Ore polynomial by ``other``
 
         .. NOTE::
@@ -991,7 +981,7 @@ cdef class OrePolynomial(AlgebraElement):
 
     cdef _right_quo_rem(self, OrePolynomial other):
         r"""
-        Return the quotient and remainder of the right euclidean
+        Return the quotient and remainder of the right Euclidean
         division of ``self`` by ``other`` (C implementation).
 
         Must be implemented in subclasses.
@@ -1001,16 +991,16 @@ cdef class OrePolynomial(AlgebraElement):
     @coerce_binop
     def right_quo_rem(self, other):
         r"""
-        Return the quotient and remainder of the right euclidean
+        Return the quotient and remainder of the right Euclidean
         division of ``self`` by ``other``.
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
         OUTPUT:
 
-        - the quotient and the remainder of the left euclidean
+        - the quotient and the remainder of the right Euclidean
           division of this Ore polynomial by ``other``
 
         .. NOTE::
@@ -1061,14 +1051,14 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
         - ``monic`` -- boolean (default: ``True``); return whether the right gcd
           should be normalized to be monic
 
         OUTPUT:
 
-        - The right gcd of ``self`` and ``other``, that is a Ore polynomial
+        - The right gcd of ``self`` and ``other``, that is an Ore polynomial
           `g` with the following property: any Ore polynomial is
           divisible on the right by `g` iff it is divisible on the right
           by both ``self`` and ``other``.
@@ -1079,7 +1069,7 @@ cdef class OrePolynomial(AlgebraElement):
 
           .. MATH::
 
-              g = u * a + v * b
+              g = u \cdot a + v \cdot b
 
           where `a` is ``self`` and `b` is ``other``.
 
@@ -1102,9 +1092,9 @@ cdef class OrePolynomial(AlgebraElement):
 
         Specifying ``monic=False``, we *can* get a nonmonic gcd::
 
-            sage: g,u,v = a.right_xgcd(b,monic=False); g
+            sage: g,u,v = a.right_xgcd(b, monic=False); g                               # needs sage.rings.finite_rings
             (4*t^2 + 4*t + 1)*x + 4*t^2 + 4*t + 3
-            sage: u*a + v*b == g
+            sage: u*a + v*b == g                                                        # needs sage.rings.finite_rings
             True
 
         The base ring must be a field::
@@ -1152,14 +1142,14 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
         - ``monic`` -- boolean (default: ``True``); return whether the right gcd
           should be normalized to be monic
 
         OUTPUT:
 
-        The right gcd of ``self`` and ``other``, that is a Ore polynomial
+        The right gcd of ``self`` and ``other``, that is an Ore polynomial
         `g` with the following property: any Ore polynomial is
         divisible on the right by `g` iff it is divisible on the right
         by both ``self`` and ``other``.
@@ -1183,7 +1173,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         Specifying ``monic=False``, we *can* get a nonmonic gcd::
 
-            sage: a.right_gcd(b,monic=False)
+            sage: a.right_gcd(b,monic=False)                                            # needs sage.rings.finite_rings
             (4*t^2 + 4*t + 1)*x + 4*t^2 + 4*t + 3
 
         The base ring need to be a field::
@@ -1217,14 +1207,14 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
         - ``monic`` -- boolean (default: ``True``); return whether the left gcd
           should be normalized to be monic
 
         OUTPUT:
 
-        The left gcd of ``self`` and ``other``, that is a Ore polynomial
+        The left gcd of ``self`` and ``other``, that is an Ore polynomial
         `g` with the following property: any Ore polynomial is
         divisible on the left by `g` iff it is divisible on the left
         by both ``self`` and ``other``.
@@ -1250,13 +1240,13 @@ cdef class OrePolynomial(AlgebraElement):
 
         Specifying ``monic=False``, we *can* get a nonmonic gcd::
 
-            sage: a.left_gcd(b,monic=False)
+            sage: a.left_gcd(b,monic=False)                                             # needs sage.rings.finite_rings
             2*t*x + 4*t + 2
 
         The base ring needs to be a field::
 
             sage: R.<t> = QQ[]
-            sage: sigma = R.hom([t+1])
+            sage: sigma = R.hom([t + 1])
             sage: S.<x> = R['x',sigma]
             sage: a = (x + t) * (x^2 + t*x + 1)
             sage: b = 2 * (x + t) * (x^3 + (t+1)*x^2 + t^2)
@@ -1275,7 +1265,8 @@ cdef class OrePolynomial(AlgebraElement):
             sage: a.left_gcd(b)
             Traceback (most recent call last):
             ...
-            NotImplementedError: inversion of the twisting morphism Ring endomorphism of Fraction Field of Univariate Polynomial Ring in t over Rational Field
+            NotImplementedError: inversion of the twisting morphism Ring endomorphism
+            of Fraction Field of Univariate Polynomial Ring in t over Rational Field
                 Defn: t |--> t^2
         """
         if self.base_ring() not in _Fields:
@@ -1294,30 +1285,28 @@ cdef class OrePolynomial(AlgebraElement):
 
     cdef OrePolynomial _left_lcm_cofactor(self, OrePolynomial other):
         r"""
-        Return a Ore polynomial `U` such that `U P = c L`
+        Return an Ore polynomial `U` such that `U P = c L`
         where `P` is this Ore polynomial (``self``), `L`
         is the left lcm of `P` and ``other`` and `c` is a
         constant
 
         TESTS::
 
-            sage: cython(                                       # optional - sage.misc.cython
+            sage: cython(
             ....: '''
             ....: from sage.rings.polynomial.ore_polynomial_element cimport OrePolynomial
             ....: def left_lcm_cofactor(OrePolynomial P, OrePolynomial Q):
             ....:     return P._left_lcm_cofactor(Q)
             ....: ''')
-
             sage: k.<a> = GF(7^5)
             sage: Frob = k.frobenius_endomorphism(3)
             sage: S.<x> = k['x', Frob]
-
             sage: D = S.random_element(degree=2)
             sage: P = S.random_element(degree=2) * D
             sage: Q = S.random_element(degree=2) * D
             sage: L = P.left_lcm(Q)
-            sage: U = left_lcm_cofactor(P, Q)                   # optional - sage.misc.cython
-            sage: (U*P).right_monic() == L                      # optional - sage.misc.cython
+            sage: U = left_lcm_cofactor(P, Q)
+            sage: (U*P).right_monic() == L
             True
         """
         cdef OrePolynomial Q, R, T
@@ -1353,9 +1342,9 @@ cdef class OrePolynomial(AlgebraElement):
             sage: L
             x^5 + (2*t^2 + t + 4)*x^4 + (3*t^2 + 4)*x^3 + (3*t^2 + 3*t + 2)*x^2 + (t^2 + t + 2)*x
 
-            sage: U*P == L
+            sage: U * P == L                                                            # needs sage.rings.finite_rings
             True
-            sage: V*Q == L
+            sage: V * Q == L                                                            # needs sage.rings.finite_rings
             True
         """
         if self.base_ring() not in _Fields:
@@ -1372,30 +1361,28 @@ cdef class OrePolynomial(AlgebraElement):
 
     cdef OrePolynomial _right_lcm_cofactor(self, OrePolynomial other):
         r"""
-        Return a Ore polynomial `U` such that `P U = L c`
+        Return an Ore polynomial `U` such that `P U = L c`
         where `P` is this Ore polynomial (``self``), `L`
         is the right lcm of `P` and ``other`` and `c` is a
         constant
 
         TESTS::
 
-            sage: cython(                                       # optional - sage.misc.cython
+            sage: cython(
             ....: '''
             ....: from sage.rings.polynomial.ore_polynomial_element cimport OrePolynomial
             ....: def right_lcm_cofactor(OrePolynomial P, OrePolynomial Q):
             ....:     return P._right_lcm_cofactor(Q)
             ....: ''')
-
             sage: k.<a> = GF(7^5)
             sage: Frob = k.frobenius_endomorphism(3)
             sage: S.<x> = k['x', Frob]
-
             sage: D = S.random_element(degree=2)
             sage: P = D * S.random_element(degree=2)
             sage: Q = D * S.random_element(degree=2)
             sage: L = P.right_lcm(Q)
-            sage: U = right_lcm_cofactor(P, Q)                  # optional - sage.misc.cython
-            sage: (P*U).left_monic() == L                       # optional - sage.misc.cython
+            sage: U = right_lcm_cofactor(P, Q)
+            sage: (P*U).left_monic() == L
             True
         """
         cdef OrePolynomial Q, R, T
@@ -1422,9 +1409,9 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        - ``monic`` -- a boolean (default: ``True``); whether the right lcm
+        - ``monic`` -- boolean (default: ``True``); whether the right lcm
           should be normalized to be monic
 
         EXAMPLES::
@@ -1437,9 +1424,9 @@ cdef class OrePolynomial(AlgebraElement):
             sage: L, U, V = P.right_xlcm(Q)
             sage: L
             x^4 + (2*t^2 + t + 2)*x^3 + (3*t^2 + 4*t + 1)*x^2 + (3*t^2 + 4*t + 1)*x + t^2 + 4
-            sage: P*U == L
+            sage: P * U == L
             True
-            sage: Q*V == L
+            sage: Q * V == L
             True
         """
         if self.base_ring() not in _Fields:
@@ -1463,18 +1450,17 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
         - ``monic`` -- boolean (default: ``True``); return whether the left lcm
           should be normalized to be monic
 
         OUTPUT:
 
-        The left lcm of ``self`` and ``other``, that is a Ore polynomial
-        `g` with the following property: any Ore polynomial divides
-        `g` on the *right* iff it divides both ``self`` and ``other``
-        on the *right*.
-        If monic is ``True``, `g` is in addition monic. (With this
+        The left lcm of ``self`` and ``other``, that is an Ore polynomial
+        `l` with the following property: any Ore polynomial is a left multiple of `l` (right divisible by `l`)
+        iff it is a left multiple of both ``self`` and ``other`` (right divisible by ``self`` and ``other``).
+        If monic is ``True``, `l` is in addition monic. (With this
         extra condition, it is uniquely determined.)
 
         .. NOTE::
@@ -1498,9 +1484,9 @@ cdef class OrePolynomial(AlgebraElement):
             sage: a.degree() + b.degree() == c.degree() + a.right_gcd(b).degree()
             True
 
-        Specifying ``monic=False``, we *can* get a nonmonic gcd::
+        Specifying ``monic=False``, we *can* get a nonmonic lcm::
 
-            sage: a.left_lcm(b,monic=False)
+            sage: a.left_lcm(b,monic=False)                                             # needs sage.rings.finite_rings
             (t^2 + t)*x^5 + (4*t^2 + 4*t + 1)*x^4 + (t + 1)*x^3 + (t^2 + 2)*x^2 + (3*t + 4)*x
 
         The base ring needs to be a field::
@@ -1531,17 +1517,16 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``other`` -- a Ore polynomial in the same ring as ``self``
+        - ``other`` -- an Ore polynomial in the same ring as ``self``
 
         - ``monic`` -- boolean (default: ``True``); return whether the right lcm
           should be normalized to be monic
 
         OUTPUT:
 
-        The right lcm of ``self`` and ``other``, that is a Ore polynomial
-        `g` with the following property: any Ore polynomial divides
-        `g` on the *left* iff it divides both ``self`` and ``other``
-        on the *left*.
+        The right lcm of ``self`` and ``other``, that is an Ore polynomial
+        `l` with the following property: any Ore polynomial is a right multiple of `g` (left divisible by `l`)
+        iff it is a right multiple of both ``self`` and ``other`` (left divisible by ``self`` and ``other``).
         If monic is ``True``, `g` is in addition monic. (With this
         extra condition, it is uniquely determined.)
 
@@ -1570,7 +1555,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         Specifying ``monic=False``, we *can* get a nonmonic gcd::
 
-            sage: a.right_lcm(b,monic=False)
+            sage: a.right_lcm(b,monic=False)                                            # needs sage.rings.finite_rings
             2*t*x^4 + (3*t + 1)*x^3 + (4*t^2 + 4*t + 3)*x^2
              + (3*t^2 + 4*t + 2)*x + 3*t^2 + 2*t + 3
 
@@ -1596,7 +1581,8 @@ cdef class OrePolynomial(AlgebraElement):
             sage: a.right_lcm(b)
             Traceback (most recent call last):
             ...
-            NotImplementedError: inversion of the twisting morphism Ring endomorphism of Fraction Field of Univariate Polynomial Ring in t over Rational Field
+            NotImplementedError: inversion of the twisting morphism Ring endomorphism of
+            Fraction Field of Univariate Polynomial Ring in t over Rational Field
                 Defn: t |--> t^2
         """
         if self.base_ring() not in _Fields:
@@ -1928,7 +1914,7 @@ cdef class OrePolynomial(AlgebraElement):
         r"""
         Return the coefficients of the monomials appearing in ``self``.
 
-        If ``sparse=True`` (the default), return only the non-zero coefficients.
+        If ``sparse=True`` (the default), return only the nonzero coefficients.
         Otherwise, return the same value as ``self.list()``.
 
         .. NOTE::
@@ -1950,7 +1936,7 @@ cdef class OrePolynomial(AlgebraElement):
 
     def number_of_terms(self):
         r"""
-        Return the number of non-zero coefficients of ``self``.
+        Return the number of nonzero coefficients of ``self``.
 
         This is also known as the weight, hamming weight or sparsity.
 
@@ -1992,7 +1978,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         return self
 
-    cpdef bint is_zero(self):
+    cpdef bint is_zero(self) noexcept:
         r"""
         Return ``True`` if ``self`` is the zero polynomial.
 
@@ -2010,7 +1996,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         return self.degree() == -1
 
-    cpdef bint is_one(self):
+    cpdef bint is_one(self) noexcept:
         r"""
         Test whether this polynomial is `1`.
 
@@ -2121,7 +2107,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``n`` -- (default: ``None``); if given, an integer that
+        - ``n`` -- (default: ``None``) if given, an integer that
           is at least `0`
 
         EXAMPLES::
@@ -2171,17 +2157,17 @@ cdef class OrePolynomial(AlgebraElement):
         return self.parent().variable_name()
 
 
-cdef void lmul_gen(list A, Morphism m, d):
+cdef void lmul_gen(list A, Morphism m, d) noexcept:
     r"""
-    If ``A`` is the list of coefficients of a Ore polynomial ``P``,
+    If ``A`` is the list of coefficients of an Ore polynomial ``P``,
     replace it by the list of coefficients of ``X*P`` (where ``X``
     is the variable in the Ore polynomial ring).
 
-    This is an helper function.
+    This is a helper function.
 
     INPUT:
 
-    - ``A`` -- a list of coefficients
+    - ``A`` -- list of coefficients
 
     - ``m`` -- the twisting morphism of the Ore polynomial ring
 
@@ -2205,7 +2191,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
     """
     def __init__(self, parent, x=None, int check=1, int construct=0, **kwds):
         r"""
-        Construct a Ore polynomial over the given parent with the given
+        Construct an Ore polynomial over the given parent with the given
         coefficients.
 
         INPUT:
@@ -2224,7 +2210,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
 
-        We create a Ore polynomial from a list::
+        We create an Ore polynomial from a list::
 
             sage: S([t,1])
             x + t
@@ -2250,7 +2236,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         if isinstance(x, list):
             if check:
                 self._coeffs = [R(t) for t in x]
-                self.__normalize()
+                self._normalize()
             else:
                 self._coeffs = x
             return
@@ -2269,7 +2255,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             else:
                 self._coeffs = [R(a, **kwds) for a in x.list()]
                 if check:
-                    self.__normalize()
+                    self._normalize()
                 return
 
         elif isinstance(x, int) and x == 0:
@@ -2283,7 +2269,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             x = [x]
         if check:
             self._coeffs = [R(z, **kwds) for z in x]
-            self.__normalize()
+            self._normalize()
         else:
             self._coeffs = x
 
@@ -2304,7 +2290,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         """
         return (self._parent, (self._coeffs,))
 
-    cdef long _hash_c(self):
+    cdef long _hash_c(self) noexcept:
         r"""
         This hash incorporates the name of the variable.
 
@@ -2319,9 +2305,9 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         cdef long c_hash
         cdef long var_name_hash = 0
         cdef int i
-        for i from 0 <= i < len(self._coeffs):
+        for i in range(len(self._coeffs)):
             if i == 1:
-                var_name_hash = hash((<ParentWithGens>self._parent)._names[0])
+                var_name_hash = hash(self._parent._names[0])
             c_hash = hash(self._coeffs[i])
             if c_hash != 0:
                 if i == 0:
@@ -2358,10 +2344,10 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         f._parent = P
         f._coeffs = coeffs
         if check:
-            f.__normalize()
+            f._normalize()
         return f
 
-    cdef void __normalize(self):
+    cdef void _normalize(self) noexcept:
         r"""
         Remove higher order `0`-coefficients from the representation of ``self``.
 
@@ -2422,11 +2408,9 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
-        OUTPUT:
-
-        - the ``n``-th coefficient of ``self``
+        OUTPUT: the ``n``-th coefficient of ``self``
 
         EXAMPLES::
 
@@ -2472,7 +2456,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         else:
             return (<OrePolynomial_generic_dense>self)._coeffs
 
-    cpdef dict dict(self):
+    cpdef dict monomial_coefficients(self):
         r"""
         Return a dictionary representation of ``self``.
 
@@ -2482,6 +2466,11 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
             sage: a = x^2012 + t*x^1006 + t^3 + 2*t
+            sage: a.monomial_coefficients()
+            {0: t^3 + 2*t, 1006: t, 2012: 1}
+
+        ``dict`` is an alias::
+
             sage: a.dict()
             {0: t^3 + 2*t, 1006: t, 2012: 1}
         """
@@ -2494,7 +2483,9 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
                 X[i] = c
         return X
 
-    cpdef int degree(self):
+    dict = monomial_coefficients
+
+    cpdef Integer degree(self):
         r"""
         Return the degree of ``self``.
 
@@ -2513,8 +2504,25 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
             sage: S(0).degree()
             -1
+
+        TESTS:
+
+        We check that the degree is an ``Integer`` object (see #35519)::
+
+            sage: R.<t> = ZZ[]
+            sage: sigma = R.hom([t+1])
+            sage: S.<x> = R['x',sigma]
+            sage: a = x^2 + t*x^3 + t^2*x + 1
+            sage: isinstance(a.degree(), Integer)
+            True
+
+        ::
+
+            sage: R.<t> = OrePolynomialRing(GF(5)['T'], GF(5)['T'].frobenius_endomorphism())
+            sage: isinstance((t + 1).degree(), Integer)
+            True
         """
-        return len(self._coeffs) - 1
+        return Integer(len(self._coeffs) - 1)
 
     cpdef _add_(self, right):
         r"""
@@ -2535,14 +2543,14 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: a + a == 2*a
             True
         """
-        cdef Py_ssize_t i, min
+        cdef Py_ssize_t i
         cdef list x = (<OrePolynomial_generic_dense>self)._coeffs
         cdef list y = (<OrePolynomial_generic_dense>right)._coeffs
         cdef Py_ssize_t dx = len(x), dy = len(y)
         if dx > dy:
-            r = self._new_c([x[i] + y[i] for i from 0 <= i < dy] + x[dy:], self._parent, 0)
+            r = self._new_c([x[i] + y[i] for i in range(dy)] + x[dy:], self._parent, 0)
         elif dx < dy:
-            r = self._new_c([x[i] + y[i] for i from 0 <= i < dx] + y[dx:], self._parent, 0)
+            r = self._new_c([x[i] + y[i] for i in range(dx)] + y[dx:], self._parent, 0)
         else:
             r = self._new_c([x[i] + y[i] for i in range(dx)], self._parent, 1)
         return r
@@ -2566,7 +2574,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: c - c == 0
             True
         """
-        cdef Py_ssize_t i, min
+        cdef Py_ssize_t i
         cdef list x = (<OrePolynomial_generic_dense>self)._coeffs
         cdef list y = (<OrePolynomial_generic_dense>right)._coeffs
         cdef Py_ssize_t dx = len(x), dy = len(y)
@@ -2598,7 +2606,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
     def valuation(self):
         r"""
-        Return the minimal degree of a non-zero monomial of ``self``.
+        Return the minimal degree of a nonzero monomial of ``self``.
 
         By convention, the zero Ore polynomial has valuation `+\infty`.
 
@@ -2647,7 +2655,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         Return the list of coefficients of the product of this
         Ore polynomial by that whose coefficients are given by ``A``.
 
-        This is an helper function.
+        This is a helper function.
         """
         cdef list BA = [self.base_ring().zero()] * (len(self._coeffs) + len(A) - 1)
         cdef Morphism m = self._parent._morphism
@@ -2700,7 +2708,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
         TESTS:
 
-        We check that :trac:`32210` is fixed::
+        We check that :issue:`32210` is fixed::
 
             sage: A.<t> = GF(5)[]
             sage: S.<X> = A['X', A.derivation()]
@@ -2716,7 +2724,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
         INPUT:
 
-        - ``right`` -- a Ore polynomial in the same ring as ``self``
+        - ``right`` -- an Ore polynomial in the same ring as ``self``
 
         EXAMPLES::
 
@@ -2751,7 +2759,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
     cdef _left_quo_rem(self, OrePolynomial other):
         r"""
-        Return the quotient and remainder of the left euclidean
+        Return the quotient and remainder of the left Euclidean
         division of ``self`` by ``other`` (C implementation).
         """
         sig_check()
@@ -2780,7 +2788,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
     cdef _right_quo_rem(self, OrePolynomial other):
         r"""
-        Return the quotient and remainder of the right euclidean
+        Return the quotient and remainder of the right Euclidean
         division of ``self`` by ``other`` (C implementation).
         """
         sig_check()
@@ -2820,7 +2828,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         r"""
         Return the coefficients of the monomials appearing in ``self``.
 
-        If ``sparse=True`` (the default), return only the non-zero coefficients.
+        If ``sparse=True`` (the default), return only the nonzero coefficients.
         Otherwise, return the same value as ``self.list()``.
 
         EXAMPLES::
@@ -2834,7 +2842,6 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: a.coefficients(sparse=False)
             [t^2 + 1, 0, t + 1, 0, 1]
         """
-        zero = self.parent().base_ring().zero()
         if sparse:
             return [c for c in self._coeffs if not c.is_zero()]
         else:
@@ -2842,14 +2849,15 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
     def hilbert_shift(self, s, var=None):
         r"""
-        Return this Ore polynomial with variable shifted by `s`,
-        i.e. if this Ore polynomial is `P(x)`, return `P(x+s)`.
+        Return this Ore polynomial with variable shifted by `s`.
+
+        If this Ore polynomial is `P(x)`, this returns `P(x+s)`.
 
         INPUT:
 
         - ``s`` -- an element in the base ring
 
-        - ``var`` -- a string; the variable name
+        - ``var`` -- string; the variable name
 
         EXAMPLES::
 
@@ -2874,18 +2882,17 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: k.<a> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
-
             sage: P = x^2 + a*x + a^2
             sage: Q = P.hilbert_shift(a); Q
             x^2 + (2*a^2 + a + 4)*x + a^2 + 3*a + 4
-
             sage: Q.parent()
-            Ore Polynomial Ring in x over Finite Field in a of size 5^3 twisted by a |--> a^5 and a*([a |--> a^5] - id)
+            Ore Polynomial Ring in x over
+             Finite Field in a of size 5^3 twisted by a |--> a^5 and a*([a |--> a^5] - id)
             sage: Q.parent() is S
             False
 
         This behavior ensures that the Hilbert shift by a fixed element
-        defines an homomorphism of rings::
+        defines a homomorphism of rings::
 
             sage: U = S.random_element(degree=5)
             sage: V = S.random_element(degree=5)
@@ -2916,9 +2923,9 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         if var is None:
             var = parent.variable_name()
         if derivation is None:
-            S = OrePolynomialRing(k, morphism, var)
+            S = OrePolynomialRing(k, morphism, var, polcast=False)
         else:
-            S = OrePolynomialRing(k, derivation, var)
+            S = OrePolynomialRing(k, derivation, var, polcast=False)
         if not self:
             return S.zero()
         X = S.gen() + s
@@ -2932,7 +2939,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
 cdef class ConstantOrePolynomialSection(Map):
     r"""
-    Representation of the canonical homomorphism from the constants of a Ore
+    Representation of the canonical homomorphism from the constants of an Ore
     polynomial ring to the base ring.
 
     This class is necessary for automatic coercion from zero-degree Ore
@@ -2946,7 +2953,8 @@ cdef class ConstantOrePolynomialSection(Map):
         sage: S.<x> = R['x',sigma]
         sage: m = ConstantOrePolynomialSection(S, R); m
         Generic map:
-            From: Ore Polynomial Ring in x over Univariate Polynomial Ring in t over Rational Field twisted by t |--> t + 1
+            From: Ore Polynomial Ring in x over Univariate Polynomial Ring in t
+                  over Rational Field twisted by t |--> t + 1
             To:   Univariate Polynomial Ring in t over Rational Field
     """
     cpdef Element _call_(self, x):
@@ -2971,7 +2979,7 @@ cdef class ConstantOrePolynomialSection(Map):
             sage: m(S([0,1])-S([0,t]))
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: (-t + 1)*x is not a constant polynomial
         """
         if x.degree() <= 0:
             try:
@@ -2979,12 +2987,12 @@ cdef class ConstantOrePolynomialSection(Map):
             except AttributeError:
                 return <Element>((<OrePolynomial>x).constant_coefficient())
         else:
-            raise TypeError("not a constant polynomial")
+            raise TypeError(f"{x} is not a constant polynomial")
 
 
 cdef class OrePolynomialBaseringInjection(Morphism):
     r"""
-    Representation of the canonical homomorphism from a ring `R` into a Ore
+    Representation of the canonical homomorphism from a ring `R` into an Ore
     polynomial ring over `R`.
 
     This class is necessary for automatic coercion from the base ring to the Ore
@@ -3002,7 +3010,8 @@ cdef class OrePolynomialBaseringInjection(Morphism):
         sage: S.coerce_map_from(S.base_ring()) #indirect doctest
         Ore Polynomial base injection morphism:
           From: Univariate Polynomial Ring in t over Rational Field
-          To:   Ore Polynomial Ring in x over Univariate Polynomial Ring in t over Rational Field twisted by t |--> t + 1
+          To:   Ore Polynomial Ring in x over Univariate Polynomial Ring in t
+                over Rational Field twisted by t |--> t + 1
     """
     def __init__(self, domain, codomain):
         r"""
@@ -3010,10 +3019,10 @@ cdef class OrePolynomialBaseringInjection(Morphism):
 
         INPUT:
 
-        - ``domain`` -- a ring `R`. This will be the domain of the injection.
+        - ``domain`` -- a ring `R`; this will be the domain of the injection
 
-        - ``codomain`` -- a Ore polynomial ring over ``domain``. This will be
-          the codomain.
+        - ``codomain`` -- an Ore polynomial ring over ``domain``; this will be
+          the codomain
 
         TESTS::
 
@@ -3063,9 +3072,7 @@ cdef class OrePolynomialBaseringInjection(Morphism):
 
         - ``e`` -- element belonging to the base ring according to ``self``
 
-        OUTPUT:
-
-        The Ore polynomial corresponding to `e` according to ``self``.
+        OUTPUT: the Ore polynomial corresponding to `e` according to ``self``
 
         TESTS::
 
@@ -3086,7 +3093,7 @@ cdef class OrePolynomialBaseringInjection(Morphism):
 
     def section(self):
         r"""
-        Return the canonical homomorphism from the constants of a Ore
+        Return the canonical homomorphism from the constants of an Ore
         polynomial ring to the base ring according to ``self``.
 
         TESTS::
@@ -3098,7 +3105,8 @@ cdef class OrePolynomialBaseringInjection(Morphism):
             sage: m = OrePolynomialBaseringInjection(k, k['x', Frob])
             sage: m.section()
             Generic map:
-            From: Ore Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
-            To:   Finite Field in t of size 5^3
+              From: Ore Polynomial Ring in x over Finite Field in t of size 5^3
+                    twisted by t |--> t^5
+              To:   Finite Field in t of size 5^3
         """
         return ConstantOrePolynomialSection(self._codomain, self.domain())

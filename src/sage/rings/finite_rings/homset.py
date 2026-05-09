@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 """
 Homset for finite fields
 
@@ -41,6 +42,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.structure.sequence import Sequence
+
 
 class FiniteFieldHomset(RingHomset_generic):
     """
@@ -87,34 +89,8 @@ class FiniteFieldHomset(RingHomset_generic):
             sage: H = Hom(GF(9, 'a'), GF(81, 'b'))
             sage: H == loads(dumps(H))
             True
-        """
-        if isinstance(im_gens, FiniteFieldHomomorphism_generic):
-            if base_map is not None:
-                raise ValueError("Cannot specify base map when providing morphism")
-            return self._coerce_impl(im_gens)
-        try:
-            if self.domain().degree() == 1:
-                from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
-                return FiniteFieldHomomorphism_prime(self, im_gens, base_map=base_map, check=check)
-            if isinstance(self.codomain(), FiniteField):
-                return FiniteFieldHomomorphism_generic(self, im_gens, base_map=base_map, check=check)
-            # Currently, FiniteFieldHomomorphism_generic does not work if
-            # the codomain is not derived from the finite field base class;
-            # in that case, we have to fall back to the generic
-            # implementation for rings
-            else:
-                return RingHomomorphism_im_gens(self, im_gens, base_map=base_map, check=check)
-        except (NotImplementedError, ValueError):
-            try:
-                return self._coerce_impl(im_gens)
-            except TypeError:
-                raise TypeError("images do not define a valid homomorphism")
 
-    def _coerce_impl(self, x):
-        """
-        Coercion of other morphisms.
-
-        EXAMPLES::
+        TESTS::
 
             sage: k.<a> = GF(25)
             sage: l.<b> = GF(625)
@@ -128,13 +104,28 @@ class FiniteFieldHomset(RingHomset_generic):
               To:   Finite Field in b of size 5^4
               Defn: a |--> 4*b^3 + 4*b^2 + 4*b + 3
         """
-        if not isinstance(x, FiniteFieldHomomorphism_generic):
-            raise TypeError
-        if x.parent() is self:
-            return x
-        if x.parent() == self:
-            return FiniteFieldHomomorphism_generic(self, x.im_gens())
-        raise TypeError
+        if isinstance(im_gens, FiniteFieldHomomorphism_generic):
+            phi = im_gens
+            if base_map is not None:
+                raise ValueError("cannot specify base map when providing morphism")
+            if phi.parent() is self:
+                return phi
+            if phi.parent() == self:
+                return FiniteFieldHomomorphism_generic(self, phi.im_gens())
+
+        if self.domain().degree() == 1:
+            from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
+            return FiniteFieldHomomorphism_prime(self, im_gens,
+                                                 base_map=base_map, check=check)
+        if isinstance(self.codomain(), FiniteField):
+            return FiniteFieldHomomorphism_generic(self, im_gens,
+                                                   base_map=base_map, check=check)
+        # Currently, FiniteFieldHomomorphism_generic does not work if
+        # the codomain is not derived from the finite field base class;
+        # in that case, we have to fall back to the generic
+        # implementation for rings
+        return RingHomomorphism_im_gens(self, im_gens,
+                                        base_map=base_map, check=check)
 
     def _repr_(self):
         """
@@ -152,13 +143,12 @@ class FiniteFieldHomset(RingHomset_generic):
         D = self.domain()
         C = self.codomain()
         if C == D:
-            return "Automorphism group of %s"%D
-        else:
-            return "Set of field embeddings from %s to %s"%(D, C)
+            return "Automorphism group of %s" % D
+        return "Set of field embeddings from %s to %s" % (D, C)
 
     def is_aut(self):
         """
-        Check if ``self`` is an automorphism
+        Check if ``self`` is an automorphism.
 
         EXAMPLES::
 
@@ -232,39 +222,33 @@ class FiniteFieldHomset(RingHomset_generic):
         Between isomorphic fields with different moduli::
 
             sage: k1 = GF(1009)
-            sage: k2 = GF(1009, modulus="primitive")
+            sage: k2 = GF(1009, modulus='primitive')
             sage: Hom(k1, k2).list()
-            [
-            Ring morphism:
-              From: Finite Field of size 1009
-              To:   Finite Field of size 1009
-              Defn: 1 |--> 1
-            ]
+            [Ring morphism:
+               From: Finite Field of size 1009
+               To:   Finite Field of size 1009
+               Defn: 1 |--> 1]
             sage: Hom(k2, k1).list()
-            [
-            Ring morphism:
-              From: Finite Field of size 1009
-              To:   Finite Field of size 1009
-              Defn: 11 |--> 11
-            ]
+            [Ring morphism:
+               From: Finite Field of size 1009
+               To:   Finite Field of size 1009
+               Defn: 11 |--> 11]
 
-            sage: k1.<a> = GF(1009^2, modulus="first_lexicographic")
-            sage: k2.<b> = GF(1009^2, modulus="conway")
+            sage: k1.<a> = GF(1009^2, modulus='first_lexicographic')
+            sage: k2.<b> = GF(1009^2, modulus='conway')
             sage: Hom(k1, k2).list()
-            [
-            Ring morphism:
-              From: Finite Field in a of size 1009^2
-              To:   Finite Field in b of size 1009^2
-              Defn: a |--> 290*b + 864,
-            Ring morphism:
-              From: Finite Field in a of size 1009^2
-              To:   Finite Field in b of size 1009^2
-              Defn: a |--> 719*b + 145
-            ]
+            [Ring morphism:
+               From: Finite Field in a of size 1009^2
+               To:   Finite Field in b of size 1009^2
+               Defn: a |--> 290*b + 864,
+             Ring morphism:
+               From: Finite Field in a of size 1009^2
+               To:   Finite Field in b of size 1009^2
+               Defn: a |--> 719*b + 145]
 
         TESTS:
 
-        Check that :trac:`11390` is fixed::
+        Check that :issue:`11390` is fixed::
 
             sage: K = GF(1<<16,'a'); L = GF(1<<32,'b')
             sage: K.Hom(L)[0]
@@ -301,16 +285,14 @@ class FiniteFieldHomset(RingHomset_generic):
               To:   Finite Field in b of size 2^10
               Defn: a |--> b^7 + b^5
             sage: H[2:4]
-            [
-            Ring morphism:
-              From: Finite Field in a of size 2^5
-              To:   Finite Field in b of size 2^10
-              Defn: a |--> b^8 + b^6 + b^2,
-            Ring morphism:
-              From: Finite Field in a of size 2^5
-              To:   Finite Field in b of size 2^10
-              Defn: a |--> b^9 + b^7 + b^6 + b^5 + b^4
-            ]
+            [Ring morphism:
+               From: Finite Field in a of size 2^5
+               To:   Finite Field in b of size 2^10
+               Defn: a |--> b^8 + b^6 + b^2,
+             Ring morphism:
+               From: Finite Field in a of size 2^5
+               To:   Finite Field in b of size 2^10
+               Defn: a |--> b^9 + b^7 + b^6 + b^5 + b^4]
         """
         return self.list()[n]
 
@@ -333,7 +315,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         TESTS::
 
-            sage: Hom(GF(3^3, 'a'), GF(3^6, 'b')).an_element()
+            sage: Hom(GF(3^3, 'a'), GF(3^6, 'b')).an_element()  # random
             Ring morphism:
               From: Finite Field in a of size 3^3
               To:   Finite Field in b of size 3^6
@@ -346,14 +328,13 @@ class FiniteFieldHomset(RingHomset_generic):
 
         .. TODO::
 
-            Use a more sophisticated algorithm; see also :trac:`8751`.
-
+            Use a more sophisticated algorithm; see also :issue:`8751`.
         """
         K = self.domain()
         L = self.codomain()
         if K.degree() == 1:
             return L.coerce_map_from(K)
-        elif not K.degree().divides(L.degree()):
+        if not K.degree().divides(L.degree()):
             from sage.categories.sets_cat import EmptySetError
             raise EmptySetError('no homomorphisms from %s to %s' % (K, L))
         return K.hom([K.modulus().any_root(L)])

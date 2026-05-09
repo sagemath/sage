@@ -8,12 +8,11 @@ from cpython.number cimport *
 from cpython.ref cimport *
 
 cimport sage.matrix.matrix_dense as matrix_dense
-from . import matrix_dense
-from .args cimport MatrixArgs_init
+from sage.matrix import matrix_dense
+from sage.matrix.args cimport MatrixArgs_init
 
 cimport sage.matrix.matrix as matrix
 
-from sage.structure.element cimport parent as parent_c
 
 cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     r"""
@@ -62,17 +61,17 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         TESTS:
 
-        We check that the problem related to :trac:`9049` is not an issue any
+        We check that the problem related to :issue:`9049` is not an issue any
         more::
 
-            sage: S.<t>=PolynomialRing(QQ)
-            sage: F.<q>=QQ.extension(t^4+1)
-            sage: R.<x,y>=PolynomialRing(F)
+            sage: S.<t> = PolynomialRing(QQ)
+            sage: F.<q> = QQ.extension(t^4 + 1)
+            sage: R.<x,y> = PolynomialRing(F)
             sage: M = MatrixSpace(R, 1, 2)
             sage: from sage.matrix.matrix_generic_dense import Matrix_generic_dense
             sage: Matrix_generic_dense(M, (x, y), True, True)
@@ -99,6 +98,46 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries[i*self._ncols + j]
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_generic_dense
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: K.<z> = GF(9)
+            sage: m = matrix(K,3,4,[((i%9)//3)*z + i%3 for i in range(12)])
+            sage: m
+            [      0       1       2       z]
+            [  z + 1   z + 2     2*z 2*z + 1]
+            [2*z + 2       0       1       2]
+            sage: m.transpose()
+            [      0   z + 1 2*z + 2]
+            [      1   z + 2       0]
+            [      2     2*z       1]
+            [      z 2*z + 1       2]
+            sage: m.matrix_from_rows([0,2])
+            [      0       1       2       z]
+            [2*z + 2       0       1       2]
+            sage: m.matrix_from_columns([1,3])
+            [      1       z]
+            [  z + 2 2*z + 1]
+            [      0       2]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [  z + 1 2*z + 1]
+            [2*z + 2       2]
+        """
+        cdef Matrix_generic_dense _src = <Matrix_generic_dense>src
+        self._entries[iDst*self._ncols + jDst] = _src._entries[iSrc*_src._ncols + jSrc]
 
     def _reverse_unsafe(self):
         r"""
@@ -152,8 +191,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def __copy__(self):
         """
-        Creates a copy of self, which may be changed without altering
-        self.
+        Create a copy of self, which may be changed without altering
+        ``self``.
 
         EXAMPLES::
 
@@ -215,7 +254,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
             sage: a._add_(b)
@@ -238,7 +277,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
             sage: a._sub_(b)
@@ -329,7 +368,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def _list(self):
         """
-        Return reference to list of entries of self.  For internal use
+        Return reference to list of entries of ``self``.  For internal use
         only, since this circumvents immutability.
 
         EXAMPLES::

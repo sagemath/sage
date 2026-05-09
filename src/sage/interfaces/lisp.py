@@ -50,12 +50,18 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #
 ##########################################################################
-
+import os
 import random
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
-from sage.structure.element import RingElement, parent
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+    gc_disabled,
+)
 from sage.misc.instancedoc import instancedoc
+from sage.structure.element import RingElement, parent
 from sage.structure.richcmp import rich_to_bool
 
 
@@ -68,6 +74,7 @@ class Lisp(Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.lisp import lisp
             sage: lisp == loads(dumps(lisp))
             True
         """
@@ -76,13 +83,14 @@ class Lisp(Expect):
                         # The capitalized version of this is used for printing.
                         name='Lisp',
 
-                        # This is regexp of the input prompt.  If you can change
-                        # it to be very obfuscated that would be better.   Even
-                        # better is to use sequence numbers.
+                        # This is regexp of the input prompt.  If you
+                        # can change it to be very obfuscated that
+                        # would be better.  Even better is to use
+                        # sequence numbers.
                         prompt='> ',
 
                         # This is the command that starts up your program
-                        command="ecl",
+                        command='ecl',
 
                         server=server,
                         server_tmpdir=server_tmpdir,
@@ -124,10 +132,10 @@ class Lisp(Expect):
             self._synchronize()
             code = str(code)
             code = code.strip()
-            code = code.replace('\n',' ')
+            code = code.replace('\n', ' ')
             x = []
             for L in code.split('\n'):
-                if L != '':
+                if L:
                     try:
                         s = self.__in_seq + 1
                         M = self._eval_line(L, wait_for_prompt=self._prompt)
@@ -136,14 +144,14 @@ class Lisp(Expect):
                         x.append(M.strip())
                         self.__in_seq = s
                     except TypeError as s:
-                        return 'error evaluating "%s":\n%s'%(code,s)
+                        return 'error evaluating "%s":\n%s' % (code, s)
             return '\n'.join(x)
 
-    def _an_element_impl(self):
+    def _an_element_(self):
         """
         EXAMPLES::
 
-            sage: lisp._an_element_impl()
+            sage: lisp._an_element_()
             0
         """
         return self(0)
@@ -165,10 +173,10 @@ class Lisp(Expect):
             sage: lisp.eval('x')
             '2'
         """
-        cmd = '(setq %s %s)'%(var, value)
+        cmd = '(setq %s %s)' % (var, value)
         out = self.eval(cmd)
         if '***' in out:
-            raise TypeError("Error executing code in Sage\nCODE:\n\t%s\nSAGE ERROR:\n\t%s"%(cmd, out))
+            raise TypeError("Error executing code in Sage\nCODE:\n\t%s\nSAGE ERROR:\n\t%s" % (cmd, out))
 
     def get(self, var):
         """
@@ -201,8 +209,8 @@ class Lisp(Expect):
             self._start()
             E = self._expect
         r = random.randrange(2147483647)
-        s = str(r+1)
-        cmd = "(+ 1 %s)"%r
+        s = str(r + 1)
+        cmd = "(+ 1 %s)" % r
         E.sendline(cmd)
         E.expect(s)
         E.expect(self._prompt)
@@ -231,7 +239,7 @@ class Lisp(Expect):
 
             sage: lisp._function_class()
             <class 'sage.interfaces.lisp.LispFunction'>
-         """
+        """
         return LispFunction
 
     def _quit_string(self):
@@ -291,7 +299,7 @@ class Lisp(Expect):
 
     def version(self):
         """
-        Returns the version of Lisp being used.
+        Return the version of Lisp being used.
 
         EXAMPLES::
 
@@ -342,9 +350,9 @@ class Lisp(Expect):
 
     def _equality_symbol(self):
         """
-        We raise a NotImplementedError when _equality_symbol is called since
-        equality testing in Lisp does not use infix notation and cannot be
-        done the same way as in the other interfaces.
+        We raise a :exc:`NotImplementedError` when ``_equality_symbol`` is
+        called since equality testing in Lisp does not use infix notation and
+        cannot be done the same way as in the other interfaces.
 
         EXAMPLES::
 
@@ -354,7 +362,7 @@ class Lisp(Expect):
             NotImplementedError: ...
         """
         raise NotImplementedError("We should never reach here in the Lisp interface. " +
-                                    "Please report this as a bug.")
+                                  "Please report this as a bug.")
 
     def help(self, command):
         """
@@ -369,8 +377,8 @@ class Lisp(Expect):
 
     def function_call(self, function, args=None, kwds=None):
         """
-        Calls the Lisp function with given args and kwds.
-        For Lisp functions, the kwds are ignored.
+        Call the Lisp function with given ``args`` and ``kwds``.
+        For Lisp functions, the ``kwds`` are ignored.
 
         EXAMPLES::
 
@@ -404,18 +412,16 @@ class LispElement(RingElement, ExpectElement):
             False
             sage: two == 2
             True
-
         """
         P = self._check_valid()
         if parent(other) is not P:
             other = P(other)
 
-        if P.eval('(= %s %s)'%(self.name(), other.name())) == P._true_symbol():
+        if P.eval('(= %s %s)' % (self.name(), other.name())) == P._true_symbol():
             return rich_to_bool(op, 0)
-        elif P.eval('(< %s %s)'%(self.name(), other.name())) == P._true_symbol():
+        if P.eval('(< %s %s)' % (self.name(), other.name())) == P._true_symbol():
             return rich_to_bool(op, -1)
-        else:
-            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 1)
 
     def __bool__(self):
         """
@@ -454,7 +460,7 @@ class LispElement(RingElement, ExpectElement):
             -1
         """
         P = self._check_valid()
-        return P.new('(- %s %s)'%(self._name, right._name))
+        return P.new('(- %s %s)' % (self._name, right._name))
 
     def _mul_(self, right):
         """
@@ -465,7 +471,7 @@ class LispElement(RingElement, ExpectElement):
             2
         """
         P = self._check_valid()
-        return P.new('(* %s %s)'%(self._name, right._name))
+        return P.new('(* %s %s)' % (self._name, right._name))
 
     def _div_(self, right):
         """
@@ -476,7 +482,7 @@ class LispElement(RingElement, ExpectElement):
             1/2
         """
         P = self._check_valid()
-        return P.new('(/ %s %s)'%(self._name, right._name))
+        return P.new('(/ %s %s)' % (self._name, right._name))
 
     def __pow__(self, n):
         """
@@ -520,25 +526,9 @@ class LispFunction(ExpectFunction):
         return M.help(self._name)
 
 
-def is_LispElement(x):
-    """
-    EXAMPLES::
-
-        sage: from sage.interfaces.lisp import is_LispElement
-        sage: is_LispElement(2)
-        doctest:...: DeprecationWarning: the function is_LispElement is deprecated; use isinstance(x, sage.interfaces.abc.LispElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_LispElement(lisp(2))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_LispElement is deprecated; use isinstance(x, sage.interfaces.abc.LispElement) instead")
-
-    return isinstance(x, LispElement)
-
 # An instance
 lisp = Lisp()
+
 
 def reduce_load_Lisp():
     """
@@ -550,7 +540,7 @@ def reduce_load_Lisp():
     """
     return lisp
 
-import os
+
 def lisp_console():
     """
     Spawn a new Lisp command-line session.

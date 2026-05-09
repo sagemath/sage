@@ -1,14 +1,15 @@
 cimport cython
 from sage.data_structures.list_of_pairs cimport ListOfPairs
 from sage.structure.sage_object         cimport SageObject
-from .face_iterator                     cimport FaceIterator, CombinatorialFace
-from .list_of_faces                     cimport ListOfFaces
-from .face_data_structure               cimport face_t
-from .polyhedron_face_lattice           cimport PolyhedronFaceLattice
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator                     cimport FaceIterator, CombinatorialFace
+from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces                     cimport ListOfFaces
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure               cimport face_t
+from sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_face_lattice           cimport PolyhedronFaceLattice
+
 
 @cython.final
 cdef class CombinatorialPolyhedron(SageObject):
-    cdef public dict __cached_methods
+    cdef public dict _cached_methods
 
     # Do not assume any of those attributes to be initialized, use the corresponding methods instead.
     cdef tuple _Vrep                       # the names of VRep, if they exist
@@ -33,14 +34,24 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef tuple Vrep(self)
     cdef tuple facet_names(self)
     cdef tuple equations(self)
-    cdef tuple equalities(self)
-    cdef unsigned int n_Vrepresentation(self)
-    cdef unsigned int n_Hrepresentation(self)
-    cdef bint is_bounded(self)
+    cdef unsigned int n_Vrepresentation(self) noexcept
+    cdef unsigned int n_Hrepresentation(self) noexcept
+    cdef bint is_bounded(self) noexcept
     cdef ListOfFaces bitrep_facets(self)
     cdef ListOfFaces bitrep_Vrep(self)
     cdef tuple far_face_tuple(self)
     cdef int _algorithm_to_dual(self, algorithm) except -2
+
+    # Methods to initialize the combinatorial polyhedron.
+    cdef _init_from_polyhedron(self, data)
+    cdef _init_from_lattice_polytope(self, data)
+    cdef _init_from_cone(self, data)
+    cdef _init_facet_names(self, facets)
+    cdef _init_from_incidence_matrix(self, data)
+    cdef _init_from_list_of_facets(self, data)
+    cdef _init_from_ListOfFaces(self, ListOfFaces facets, ListOfFaces Vrep)
+    cdef _initialize_far_face(self)
+    cdef _init_as_trivial_polyhedron(self, int dimension)
 
     # Methods to obtain a different combinatorial polyhedron.
     cpdef CombinatorialPolyhedron dual(self)
@@ -48,6 +59,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     cdef FaceIterator _face_iter(self, bint dual, int dimension)
     cdef int _compute_f_vector(self, size_t num_threads, size_t parallelization_depth, int dual) except -1
+    cdef int _persist_f_vector(self, size_t* input_f_vector, bint input_is_reversed) except -1
 
     cdef inline int _compute_edges(self, dual) except -1:
         return self._compute_edges_or_ridges(dual, True)
@@ -57,7 +69,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     cdef int _compute_edges_or_ridges(self, int dual, bint do_edges) except -1
     cdef size_t _compute_edges_or_ridges_with_iterator(
-            self, FaceIterator face_iter, const bint do_atom_rep, const bint do_f_vector,
+            self, FaceIterator face_iter, const bint do_atom_rep,
             ListOfPairs edges, size_t* f_vector) except -1
 
     cdef int _compute_face_lattice_incidences(self) except -1

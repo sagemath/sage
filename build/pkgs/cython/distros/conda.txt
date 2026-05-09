@@ -1,1 +1,3 @@
-cython
+cython>=3.0,!=3.0.3,<4.0
+
+# Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748

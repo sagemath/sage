@@ -3,25 +3,27 @@
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #########################################################################
 
-from .constructor import ModularForms, CuspForms, EisensteinForms, Newforms, Newform
+from sage.modular.modform.constructor import ModularForms, CuspForms, EisensteinForms, Newforms, Newform
 
-from .eis_series import eisenstein_series_qexp, eisenstein_series_lseries
+from sage.modular.modform.eis_series import eisenstein_series_qexp, eisenstein_series_lseries
 
-from .half_integral import half_integral_weight_modform_basis
+from sage.modular.modform.half_integral import half_integral_weight_modform_basis
 
-from .theta import theta_qexp, theta2_qexp
+from sage.modular.modform.theta import theta_qexp, theta2_qexp
 
-from .j_invariant import j_invariant_qexp
+from sage.misc.lazy_import import lazy_import
 
-from .vm_basis import victor_miller_basis, delta_qexp
+lazy_import('sage.modular.modform.j_invariant', 'j_invariant_qexp')
+lazy_import('sage.modular.modform.vm_basis', ['victor_miller_basis', 'delta_qexp'])
 
-from .hecke_operator_on_qexp import hecke_operator_on_qexp, hecke_operator_on_basis
+from sage.modular.modform.hecke_operator_on_qexp import hecke_operator_on_qexp, hecke_operator_on_basis
 
-from .numerical import NumericalEigenforms as numerical_eigenforms
+from sage.modular.modform.numerical import NumericalEigenforms as numerical_eigenforms
 
-from .element import delta_lseries
+from sage.modular.modform.element import delta_lseries
 
-from .ring import ModularFormsRing
+from sage.modular.modform.ring import ModularFormsRing
+del lazy_import

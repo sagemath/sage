@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 """
 Mix-in Class for GAP-based Groups
 
@@ -8,18 +9,20 @@ the parent/element.
 If your group implementation uses libgap, then you should add
 :class:`GroupMixinLibGAP` as the first class that you are deriving
 from. This ensures that it properly overrides any default methods that
-just raise ``NotImplementedError``.
+just raise :exc:`NotImplementedError`.
 """
 
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
 from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
-from sage.groups.class_function import ClassFunction_libgap
+from sage.misc.randstate import current_randstate
+from sage.groups.class_function import ClassFunction
 from sage.groups.libgap_wrapper import ElementLibGAP
 
-class GroupMixinLibGAP():
-    def __contains__(self, elt):
+
+class GroupMixinLibGAP:
+    def __contains__(self, elt) -> bool:
         r"""
         TESTS::
 
@@ -39,25 +42,22 @@ class GroupMixinLibGAP():
         """
         if parent(elt) is self:
             return True
-        elif isinstance(elt, GapElement):
+        if isinstance(elt, GapElement):
             return elt in self.gap()
-        elif isinstance(elt, ElementLibGAP):
+        if isinstance(elt, ElementLibGAP):
             return elt.gap() in self.gap()
-        else:
-            try:
-                elt2 = self(elt)
-            except Exception:
-                return False
-            return elt == elt2
+        try:
+            elt2 = self(elt)
+        except Exception:
+            return False
+        return elt == elt2
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         r"""
         Return whether the group is Abelian.
 
-        OUTPUT:
-
-        Boolean. ``True`` if this group is an Abelian group and ``False``
-        otherwise.
+        OUTPUT: boolean; ``True`` if this group is an Abelian group and
+        ``False`` otherwise
 
         EXAMPLES::
 
@@ -74,7 +74,7 @@ class GroupMixinLibGAP():
         """
         return self.gap().IsAbelian().sage()
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         r"""
         Return whether this group is nilpotent.
 
@@ -88,7 +88,7 @@ class GroupMixinLibGAP():
         """
         return self.gap().IsNilpotentGroup().sage()
 
-    def is_solvable(self):
+    def is_solvable(self) -> bool:
         r"""
         Return whether this group is solvable.
 
@@ -102,7 +102,7 @@ class GroupMixinLibGAP():
         """
         return self.gap().IsSolvableGroup().sage()
 
-    def is_supersolvable(self):
+    def is_supersolvable(self) -> bool:
         r"""
         Return whether this group is supersolvable.
 
@@ -116,7 +116,7 @@ class GroupMixinLibGAP():
         """
         return self.gap().IsSupersolvableGroup().sage()
 
-    def is_polycyclic(self):
+    def is_polycyclic(self) -> bool:
         r"""
         Return whether this group is polycyclic.
 
@@ -130,7 +130,7 @@ class GroupMixinLibGAP():
         """
         return self.gap().IsPolycyclicGroup().sage()
 
-    def is_perfect(self):
+    def is_perfect(self) -> bool:
         r"""
         Return whether this group is perfect.
 
@@ -147,7 +147,7 @@ class GroupMixinLibGAP():
         """
         return self.gap().IsPerfectGroup().sage()
 
-    def is_p_group(self):
+    def is_p_group(self) -> bool:
         r"""
         Return whether this group is a p-group.
 
@@ -161,7 +161,7 @@ class GroupMixinLibGAP():
         """
         return self.gap().IsPGroup().sage()
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return whether this group is simple.
 
@@ -178,13 +178,11 @@ class GroupMixinLibGAP():
         """
         return self.gap().IsSimpleGroup().sage()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Test whether the matrix group is finite.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -198,7 +196,7 @@ class GroupMixinLibGAP():
 
     def cardinality(self):
         """
-        Implements :meth:`EnumeratedSets.ParentMethods.cardinality`.
+        Implement :meth:`EnumeratedSets.ParentMethods.cardinality`.
 
         EXAMPLES::
 
@@ -250,8 +248,8 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: G = SU(3,GF(2))
-            sage: len(G.conjugacy_classes_representatives())
+            sage: G = SU(3,GF(2))                                                       # needs sage.rings.finite_rings
+            sage: len(G.conjugacy_classes_representatives())                            # needs sage.rings.finite_rings
             16
 
             sage: G = GL(2,GF(3))
@@ -261,7 +259,7 @@ class GroupMixinLibGAP():
             [0 1], [1 1], [0 2], [1 2], [1 0], [1 2], [1 1], [0 1]
             )
 
-            sage: len(GU(2,GF(5)).conjugacy_classes_representatives())
+            sage: len(GU(2,GF(5)).conjugacy_classes_representatives())                  # needs sage.rings.finite_rings
             36
 
         ::
@@ -270,12 +268,11 @@ class GroupMixinLibGAP():
             Traceback (most recent call last):
             ...
             NotImplementedError: only implemented for finite groups
-
         """
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
         G = self.gap()
-        reps = [ cc.Representative() for cc in G.ConjugacyClasses() ]
+        reps = [cc.Representative() for cc in G.ConjugacyClasses()]
         return tuple(self(g) for g in reps)
 
     def conjugacy_classes(self):
@@ -332,49 +329,47 @@ class GroupMixinLibGAP():
 
         INPUT:
 
-        - ``values`` -- list/tuple/iterable of numbers. The values of the
-          class function on the conjugacy classes, in that order.
+        - ``values`` -- list/tuple/iterable of numbers; the values of the
+          class function on the conjugacy classes, in that order
 
         EXAMPLES::
 
             sage: G = GL(2,GF(3))
-            sage: chi = G.class_function(range(8))
-            sage: list(chi)
+            sage: chi = G.class_function(range(8))                                      # needs sage.rings.number_field
+            sage: list(chi)                                                             # needs sage.rings.number_field
             [0, 1, 2, 3, 4, 5, 6, 7]
         """
-        from sage.groups.class_function import ClassFunction_libgap
-        return ClassFunction_libgap(self, values)
+        from sage.groups.class_function import ClassFunction
+        return ClassFunction(self, values)
 
     @cached_method
     def center(self):
         """
-        Return the center of this linear group as a subgroup.
+        Return the center of this group as a subgroup.
 
-        OUTPUT:
-
-        The center as a subgroup.
+        OUTPUT: the center as a subgroup
 
         EXAMPLES::
 
-            sage: G = SU(3,GF(2))
-            sage: G.center()
+            sage: G = SU(3, GF(2))                                                      # needs sage.rings.finite_rings
+            sage: G.center()                                                            # needs sage.rings.finite_rings
             Subgroup with 1 generators (
             [a 0 0]
             [0 a 0]
             [0 0 a]
             ) of Special Unitary Group of degree 3 over Finite Field in a of size 2^2
-            sage: GL(2,GF(3)).center()
+            sage: GL(2, GF(3)).center()
             Subgroup with 1 generators (
             [2 0]
             [0 2]
             ) of General Linear Group of degree 2 over Finite Field of size 3
-            sage: GL(3,GF(3)).center()
+            sage: GL(3, GF(3)).center()
             Subgroup with 1 generators (
             [2 0 0]
             [0 2 0]
             [0 0 2]
             ) of General Linear Group of degree 3 over Finite Field of size 3
-            sage: GU(3,GF(2)).center()
+            sage: GU(3, GF(2)).center()                                                 # needs sage.rings.finite_rings
             Subgroup with 1 generators (
             [a + 1     0     0]
             [    0 a + 1     0]
@@ -393,12 +388,218 @@ class GroupMixinLibGAP():
             [0 3 0]  [0 1 0]
             [0 0 1], [0 1 1]
             )
+
+            sage: GL = groups.matrix.GL(3, ZZ)
+            sage: GL.center()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
         """
+        if not self.is_finite():
+            raise NotImplementedError("group must be finite")
         G = self.gap()
         center = list(G.Center().GeneratorsOfGroup())
-        if len(center) == 0:
+        if not center:
             center = [G.One()]
         return self.subgroup(center)
+
+    def centralizer(self, g):
+        r"""
+        Return the centralizer of ``g`` in ``self``.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2, 3)
+            sage: g = G([[1,1], [1,0]])
+            sage: C = G.centralizer(g); C
+            Subgroup with 3 generators (
+            [1 1]  [2 0]  [2 1]
+            [1 0], [0 2], [1 1]
+            ) of General Linear Group of degree 2 over Finite Field of size 3
+            sage: C.order()
+            8
+
+            sage: S = G.subgroup([G([[2,0],[0,2]]), G([[0,1],[2,0]])]); S
+            Subgroup with 2 generators (
+            [2 0]  [0 1]
+            [0 2], [2 0]
+            ) of General Linear Group of degree 2 over Finite Field of size 3
+            sage: G.centralizer(S)
+            Subgroup with 3 generators (
+            [2 0]  [0 1]  [2 2]
+            [0 2], [2 0], [1 2]
+            ) of General Linear Group of degree 2 over Finite Field of size 3
+            sage: G = GL(3,2)
+            sage: all(G.order() == G.centralizer(x).order() * G.conjugacy_class(x).cardinality()
+            ....:     for x in G)
+            True
+            sage: H = groups.matrix.Heisenberg(2)
+            sage: H.centralizer(H.an_element())
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
+        """
+        if not self.is_finite():
+            raise NotImplementedError("group must be finite")
+        G = self.gap()
+        centralizer_gens = list(G.Centralizer(g).GeneratorsOfGroup())
+        if not centralizer_gens:
+            centralizer_gens = [G.One()]
+        return self.subgroup(centralizer_gens)
+
+    def subgroups(self):
+        r"""
+        Return a list of all the subgroups of ``self``.
+
+        OUTPUT:
+
+        Each possible subgroup of ``self`` is contained once in the returned
+        list. The list is in order, according to the size of the subgroups,
+        from the trivial subgroup with one element on through up to the whole
+        group. Conjugacy classes of subgroups are contiguous in the list.
+
+        .. WARNING::
+
+            For even relatively small groups this method can take a very long
+            time to execute, or create vast amounts of output. Likely both.
+            Its purpose is instructional, as it can be useful for studying
+            small groups.
+
+            For faster results, which still exhibit the structure of
+            the possible subgroups, use :meth:`conjugacy_classes_subgroups`.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2, 2)
+            sage: G.subgroups()
+            [Subgroup with 0 generators ()
+               of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 1 generators (
+             [0 1]
+             [1 0]
+             ) of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 1 generators (
+             [1 0]
+             [1 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 1 generators (
+             [1 1]
+             [0 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 1 generators (
+             [0 1]
+             [1 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 2 generators (
+             [0 1]  [1 1]
+             [1 1], [0 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2]
+
+            sage: H = groups.matrix.Heisenberg(2)
+            sage: H.subgroups()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
+        """
+        if not self.is_finite():
+            raise NotImplementedError("group must be finite")
+        ccs = self.gap().ConjugacyClassesSubgroups()
+        return [self.subgroup(h.GeneratorsOfGroup())
+                for cc in ccs for h in cc.Elements()]
+
+    def conjugacy_classes_subgroups(self):
+        r"""
+        Return a complete list of representatives of conjugacy classes of
+        subgroups in ``self``.
+
+        The ordering is that given by GAP.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2,2)
+            sage: G.conjugacy_classes_subgroups()
+            [Subgroup with 0 generators ()
+               of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 1 generators (
+             [1 1]
+             [0 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 1 generators (
+             [0 1]
+             [1 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2,
+             Subgroup with 2 generators (
+             [0 1]  [1 1]
+             [1 1], [0 1]
+             ) of General Linear Group of degree 2 over Finite Field of size 2]
+
+            sage: H = groups.matrix.Heisenberg(2)
+            sage: H.conjugacy_classes_subgroups()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
+        """
+        if not self.is_finite():
+            raise NotImplementedError("group must be finite")
+        return [self.subgroup(sub.Representative().GeneratorsOfGroup())
+                for sub in self.gap().ConjugacyClassesSubgroups()]
+
+    def group_id(self):
+        r"""
+        Return the ID code of ``self``, which is a list of two integers.
+
+        It is a unique identified assigned by GAP for groups in the
+        ``SmallGroup`` library.
+
+        EXAMPLES::
+
+            sage: PGL(2,3).group_id()
+            [24, 12]
+            sage: SymmetricGroup(4).group_id()
+            [24, 12]
+
+            sage: G = groups.matrix.GL(2, 2)
+            sage: G.group_id()
+            [6, 1]
+            sage: G = groups.matrix.GL(2, 3)
+            sage: G.id()
+            [48, 29]
+
+            sage: G = groups.matrix.GL(2, ZZ)
+            sage: G.group_id()
+            Traceback (most recent call last):
+            ...
+            GAPError: Error, the group identification for groups of size infinity is not available
+        """
+        from sage.rings.integer import Integer
+        return [Integer(n) for n in self.gap().IdGroup()]
+
+    id = group_id
+
+    def exponent(self):
+        r"""
+        Compute the exponent of the group.
+
+        The exponent `e` of a group `G` is the LCM of the orders of its
+        elements, that is, `e` is the smallest integer such that `g^e = 1`
+        for all `g \in G`.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2, 3)
+            sage: G.exponent()
+            24
+
+            sage: H = groups.matrix.Heisenberg(2)
+            sage: H.exponent()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
+        """
+        if not self.is_finite():
+            raise NotImplementedError("group must be finite")
+        from sage.rings.integer import Integer
+        return Integer(self._libgap_().Exponent())
 
     def intersection(self, other):
         """
@@ -418,10 +619,10 @@ class GroupMixinLibGAP():
             [-2 -1  2]
             [ 0  0  1]
             ) of Matrix group over Rational Field with 2 generators (
-            [  0 1/2   0]  [  0 1/2   0]
-            [  2   0   0]  [ -2  -1   2]
-            [  0   0   1], [  0   0   1]
-            )
+              [  0 1/2   0]  [  0 1/2   0]
+              [  2   0   0]  [ -2  -1   2]
+              [  0   0   1], [  0   0   1]
+              )
             sage: GL(3,ZZ).intersection(G)
             Subgroup with 1 generators (
             [ 1  0  0]
@@ -429,11 +630,12 @@ class GroupMixinLibGAP():
             [ 0  0  1]
             ) of General Linear Group of degree 3 over Integer Ring
             sage: G.intersection(SL(3,ZZ))
-            Subgroup with 0 generators () of Matrix group over Rational Field with 2 generators (
-            [  0 1/2   0]  [  0 1/2   0]
-            [  2   0   0]  [ -2  -1   2]
-            [  0   0   1], [  0   0   1]
-            )
+            Subgroup with 0 generators ()
+              of Matrix group over Rational Field with 2 generators (
+              [  0 1/2   0]  [  0 1/2   0]
+              [  2   0   0]  [ -2  -1   2]
+              [  0   0   1], [  0   0   1]
+              )
         """
         G = self.gap()
         H = other.gap()
@@ -445,14 +647,12 @@ class GroupMixinLibGAP():
         """
         Return the irreducible characters of the group.
 
-        OUTPUT:
-
-        A tuple containing all irreducible characters.
+        OUTPUT: tuple containing all irreducible characters
 
         EXAMPLES::
 
             sage: G = GL(2,2)
-            sage: G.irreducible_characters()
+            sage: G.irreducible_characters()                                            # needs sage.rings.number_field
             (Character of General Linear Group of degree 2 over Finite Field of size 2,
              Character of General Linear Group of degree 2 over Finite Field of size 2,
              Character of General Linear Group of degree 2 over Finite Field of size 2)
@@ -467,9 +667,7 @@ class GroupMixinLibGAP():
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
         Irr = self.gap().Irr()
-        L = []
-        for irr in Irr:
-            L.append(ClassFunction_libgap(self, irr))
+        L = [ClassFunction(self, irr) for irr in Irr]
         return tuple(L)
 
     def character(self, values):
@@ -480,14 +678,14 @@ class GroupMixinLibGAP():
 
         INPUT:
 
-        - ``values`` -- a list of values of the character
+        - ``values`` -- list of values of the character
 
         OUTPUT: a group character
 
         EXAMPLES::
 
             sage: G = MatrixGroup(AlternatingGroup(4))
-            sage: G.character([1]*len(G.conjugacy_classes_representatives()))
+            sage: G.character([1]*len(G.conjugacy_classes_representatives()))           # needs sage.rings.number_field
             Character of Matrix group over Integer Ring with 12 generators
 
         ::
@@ -500,7 +698,7 @@ class GroupMixinLibGAP():
         """
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
-        return ClassFunction_libgap(self, values)
+        return ClassFunction(self, values)
 
     def trivial_character(self):
         r"""
@@ -510,7 +708,7 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: MatrixGroup(SymmetricGroup(3)).trivial_character()
+            sage: MatrixGroup(SymmetricGroup(3)).trivial_character()                    # needs sage.rings.number_field
             Character of Matrix group over Integer Ring with 6 generators
 
         ::
@@ -522,7 +720,7 @@ class GroupMixinLibGAP():
         """
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
-        values = [1]*self._gap_().NrConjugacyClasses().sage()
+        values = [1] * self._libgap_().NrConjugacyClasses().sage()
         return self.character(values)
 
     def character_table(self):
@@ -538,14 +736,18 @@ class GroupMixinLibGAP():
 
         EXAMPLES::
 
-            sage: MatrixGroup(SymmetricGroup(2)).character_table()
+            sage: ct = MatrixGroup(SymmetricGroup(2)).character_table(); ct             # random, needs sage.rings.number_field
             [ 1 -1]
             [ 1  1]
-            sage: MatrixGroup(SymmetricGroup(3)).character_table()
+            sage: sorted(ct, key=str)                                                   # needs sage.rings.number_field
+            [(1, -1), (1, 1)]
+            sage: ct = MatrixGroup(SymmetricGroup(3)).character_table(); ct             # random, needs sage.rings.number_field
             [ 1  1 -1]
             [ 2 -1  0]
             [ 1  1  1]
-            sage: MatrixGroup(SymmetricGroup(5)).character_table()
+            sage: sorted(ct, key=str)                                                   # needs sage.rings.number_field
+            [(1, 1, -1), (1, 1, 1), (2, -1, 0)]
+            sage: ct = MatrixGroup(SymmetricGroup(5)).character_table(); ct             # random, long time
             [ 1 -1 -1  1 -1  1  1]
             [ 4  0  1 -1 -2  1  0]
             [ 5  1 -1  0 -1 -1  1]
@@ -553,15 +755,19 @@ class GroupMixinLibGAP():
             [ 5 -1  1  0  1 -1  1]
             [ 4  0 -1 -1  2  1  0]
             [ 1  1  1  1  1  1  1]
+            sage: sorted(ct, key=str)                                                   # long time
+            [(1, -1, -1, 1, -1, 1, 1), (1, 1, 1, 1, 1, 1, 1),
+             (4, 0, -1, -1, 2, 1, 0), (4, 0, 1, -1, -2, 1, 0),
+             (5, -1, 1, 0, 1, -1, 1), (5, 1, -1, 0, -1, -1, 1), (6, 0, 0, 1, 0, 0, -2)]
         """
-        #code from function in permgroup.py, but modified for
-        #how gap handles these groups.
-        G    = self._gap_()
-        cl   = self.conjugacy_classes()
+        # code from function in permgroup.py, but modified for
+        # how gap handles these groups.
+        G = self._libgap_()
+        cl = self.conjugacy_classes()
         from sage.rings.integer import Integer
-        n    = Integer(len(cl))
+        n = Integer(len(cl))
         irrG = G.Irr()
-        ct   = [[irrG[i][j] for j in range(n)] for i in range(n)]
+        ct = [[irrG[i][j] for j in range(n)] for i in range(n)]
 
         from sage.rings.number_field.number_field import CyclotomicField
         e = irrG.Flat().Conductor()
@@ -577,9 +783,7 @@ class GroupMixinLibGAP():
         """
         Return a random element of this group.
 
-        OUTPUT:
-
-        A group element.
+        OUTPUT: a group element
 
         EXAMPLES::
 
@@ -593,7 +797,7 @@ class GroupMixinLibGAP():
             True
 
             sage: F = GF(5); MS = MatrixSpace(F,2,2)
-            sage: gens = [MS([[1,2],[-1,1]]),MS([[1,1],[0,1]])]
+            sage: gens = [MS([[1,2],[-1,1]]), MS([[1,1],[0,1]])]
             sage: G = MatrixGroup(gens)
             sage: G.random_element()  # random
             [1 3]
@@ -601,6 +805,7 @@ class GroupMixinLibGAP():
             sage: G.random_element() in G
             True
         """
+        current_randstate().set_seed_libgap()
         return self(self.gap().Random())
 
     def __iter__(self):
@@ -622,8 +827,7 @@ class GroupMixinLibGAP():
             60
         """
         if self.list.cache is not None:
-            for g in self.list():
-                yield g
+            yield from self.list()
             return
         iterator = self.gap().Iterator()
         while not iterator.IsDoneIterator().sage():
@@ -658,10 +862,8 @@ class GroupMixinLibGAP():
         """
         List all elements of this group.
 
-        OUTPUT:
-
-        A tuple containing all group elements in a random but fixed
-        order.
+        OUTPUT: tuple containing all group elements in a random but fixed
+        order
 
         EXAMPLES::
 
@@ -682,7 +884,7 @@ class GroupMixinLibGAP():
             sage: all(g in G for g in G.list())
             True
 
-        An example over a ring (see :trac:`5241`)::
+        An example over a ring (see :issue:`5241`)::
 
             sage: M1 = matrix(ZZ,2,[[-1,0],[0,1]])
             sage: M2 = matrix(ZZ,2,[[1,0],[0,-1]])
@@ -702,7 +904,7 @@ class GroupMixinLibGAP():
             [ 0  1], [ 0 -1], [ 0 -1]
             )
 
-        An example over a field (see :trac:`10515`)::
+        An example over a field (see :issue:`10515`)::
 
             sage: gens = [matrix(QQ,2,[1,0,0,1])]
             sage: MatrixGroup(gens).list()
@@ -711,7 +913,7 @@ class GroupMixinLibGAP():
             [0 1]
             )
 
-        Another example over a ring (see :trac:`9437`)::
+        Another example over a ring (see :issue:`9437`)::
 
             sage: len(SL(2, Zmod(4)).list())
             48
@@ -733,11 +935,9 @@ class GroupMixinLibGAP():
 
         INPUT:
 
-        - ``H`` -- a group.
+        - ``H`` -- a group
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -755,4 +955,16 @@ class GroupMixinLibGAP():
             sage: F == G, G == H, F == H
             (False, False, False)
         """
-        return self.gap().IsomorphismGroups(H.gap()) != libgap.fail
+        # If GAP doesn't know that the groups are finite, it will
+        # check. This emits an informational warning, and then
+        # annotates the groups as being finite (assuming they were) so
+        # that future isomorphism checks are silent. This can lead to
+        # apparent non-determinism in the output as statements are
+        # rearranged. There's nothing the user can do about this
+        # anyway, and it happens in trivial cases like the alternating
+        # group on one element, so we prefer to hide the warning.
+        old_warnlevel = libgap.InfoLevel(libgap.InfoWarning)
+        libgap.SetInfoLevel(libgap.InfoWarning, 0)
+        result = self.gap().IsomorphismGroups(H.gap()) != libgap.fail
+        libgap.SetInfoLevel(libgap.InfoWarning, old_warnlevel)
+        return result

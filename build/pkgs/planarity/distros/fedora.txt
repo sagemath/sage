@@ -1,1 +1,2 @@
-planarity planarity-devel
+planarity
+planarity-devel

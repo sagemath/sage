@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Utility functions for pretty-printing
 
@@ -6,19 +5,19 @@ These utility functions are used in the implementations of ``_repr_``
 methods elsewhere.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
-class TallListFormatter():
+class TallListFormatter:
     """
-    Special representation for lists with tall entries (e.g. matrices)
+    Special representation for lists with tall entries (e.g. matrices).
 
     .. automethod:: __call__
     """
@@ -28,7 +27,7 @@ class TallListFormatter():
 
     def _tall_list_row(self, running_lines, last_row=False):
         """
-        Helper for :meth:`_check_tall_list_and_format`
+        Helper for :meth:`_check_tall_list_and_format`.
 
         This helper function processes and outputs the contents of the
         running_lines array.
@@ -39,7 +38,7 @@ class TallListFormatter():
             sage: format_list._tall_list_row(['a   b', 'b  c', 'c'])
             ['a           b', 'b        c', 'c,', '']
         """
-        s=[]
+        s = []
         for i, line in enumerate(running_lines):
             if i + 1 != len(running_lines):
                 sep, tail = '  ', ''
@@ -64,7 +63,7 @@ class TallListFormatter():
 
         INPUT:
 
-        - ``the_list`` - The list (or a tuple).
+        - ``the_list`` -- the list (or a tuple)
 
         OUTPUT:
 
@@ -74,7 +73,7 @@ class TallListFormatter():
         TESTS::
 
             sage: from sage.repl.display.util import format_list
-            sage: print(format_list.try_format(
+            sage: print(format_list.try_format(                                         # needs sage.modules
             ....:        [matrix([[1, 2, 3, 4], [5, 6, 7, 8]]) for i in range(7)]))
             [
             [1 2 3 4]  [1 2 3 4]  [1 2 3 4]  [1 2 3 4]  [1 2 3 4]  [1 2 3 4]
@@ -144,11 +143,9 @@ class TallListFormatter():
 
         INPUT:
 
-        - ``the_list`` -- list or tuple.
+        - ``the_list`` -- list or tuple
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

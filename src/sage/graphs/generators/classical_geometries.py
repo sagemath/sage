@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: optional - sage.modules
 r"""
 Families of graphs derived from classical geometries over finite fields
 
 These include graphs of polar spaces, affine polar graphs, graphs
-related to Hermitean unitals, graphs on nonisotropic points, etc
+related to Hermitean unitals, graphs on nonisotropic points, etc.
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 """
-
 # ****************************************************************************
 #           Copyright (C) 2015 Sagemath project
 #
@@ -17,13 +16,14 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import combinations
 
 from sage.graphs.graph import Graph
 from sage.arith.misc import is_prime_power
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
 
-def SymplecticPolarGraph(d, q, algorithm=None):
+def SymplecticPolarGraph(d, q, algorithm=None, immutable=False):
     r"""
     Return the Symplectic Polar Graph `Sp(d,q)`.
 
@@ -36,57 +36,64 @@ def SymplecticPolarGraph(d, q, algorithm=None):
 
     INPUT:
 
-    - ``d,q`` -- integers; note that only even values of `d` are accepted by the
-      function.
+    - ``d``, ``q`` -- integers; note that only even values of `d` are accepted
+      by the function
 
-    - ``algorithm`` -- string (default: ``None``); if set to 'gap' then the
+    - ``algorithm`` -- string (default: ``None``); if set to ``'gap'``, then the
       computation is carried via GAP library interface, computing totally
       singular subspaces, which is faster for `q>3`.  Otherwise it is done
       directly.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
     Computation of the spectrum of `Sp(6,2)`::
 
-        sage: g = graphs.SymplecticPolarGraph(6,2)
+        sage: g = graphs.SymplecticPolarGraph(6, 2)
         sage: g.is_strongly_regular(parameters=True)
         (63, 30, 13, 15)
-        sage: set(g.spectrum()) == {-5, 3, 30}
+        sage: set(g.spectrum()) == {-5, 3, 30}                                          # needs sage.rings.number_field
         True
 
     The parameters of `Sp(4,q)` are the same as of `O(5,q)`, but they are
     not isomorphic if `q` is odd::
 
-        sage: G = graphs.SymplecticPolarGraph(4,3)
+        sage: G = graphs.SymplecticPolarGraph(4, 3)
         sage: G.is_strongly_regular(parameters=True)
         (40, 12, 2, 4)
-        sage: O=graphs.OrthogonalPolarGraph(5,3)
+
+        sage: O = graphs.OrthogonalPolarGraph(5, 3)
         sage: O.is_strongly_regular(parameters=True)
         (40, 12, 2, 4)
         sage: O.is_isomorphic(G)
         False
-        sage: graphs.SymplecticPolarGraph(6,4,algorithm="gap").is_strongly_regular(parameters=True) # not tested (long time)
+        sage: S = graphs.SymplecticPolarGraph(6, 4, algorithm='gap')    # not tested (long time)
+        sage: S.is_strongly_regular(parameters=True)                    # not tested (long time)
         (1365, 340, 83, 85)
 
     TESTS::
 
-        sage: graphs.SymplecticPolarGraph(4,4,algorithm="gap").is_strongly_regular(parameters=True)
+        sage: graphs.SymplecticPolarGraph(4,4,algorithm='gap').is_strongly_regular(parameters=True)                     # needs sage.libs.gap
         (85, 20, 3, 5)
-        sage: graphs.SymplecticPolarGraph(4,4).is_strongly_regular(parameters=True)
+        sage: graphs.SymplecticPolarGraph(4,4).is_strongly_regular(parameters=True)     # needs sage.libs.pari
         (85, 20, 3, 5)
-        sage: graphs.SymplecticPolarGraph(4,4,algorithm="blah")
+        sage: graphs.SymplecticPolarGraph(4,4,algorithm='blah')
         Traceback (most recent call last):
         ...
-        ValueError: unknown algorithm!
+        ValueError: unknown algorithm: blah
     """
     if d < 1 or d % 2:
         raise ValueError("d must be even and greater than 2")
 
+    name = f"Symplectic Polar Graph Sp({d},{q})"
     if algorithm == "gap":     # faster for larger (q>3)  fields
         from sage.libs.gap.libgap import libgap
-        G = _polar_graph(d, q, libgap.SymplecticGroup(d, q))
+        return _polar_graph(d, q, libgap.SymplecticGroup(d, q),
+                            immutable=immutable, name=name, relabel=True)
 
-    elif algorithm is None:    # faster for small (q<4) fields
+    if algorithm is None:    # faster for small (q<4) fields
         from sage.modules.free_module import VectorSpace
         from sage.schemes.projective.projective_space import ProjectiveSpace
         from sage.matrix.constructor import identity_matrix, block_matrix, zero_matrix
@@ -99,18 +106,14 @@ def SymplecticPolarGraph(d, q, algorithm=None):
                           zero_matrix(F, d/2)])
 
         V = VectorSpace(F, d)
-        PV = list(ProjectiveSpace(d - 1, F))
-        G = Graph([[tuple(_) for _ in PV], lambda x, y: V(x)*(M*V(y)) == 0], loops=False)
+        PV = [tuple(_) for _ in ProjectiveSpace(d - 1, F)]
+        return Graph([range(len(PV)), lambda i, j: V(PV[i])*(M*V(PV[j])) == 0],
+                     format="rule", loops=False, name=name, immutable=immutable)
 
-    else:
-        raise ValueError("unknown algorithm!")
-
-    G.name("Symplectic Polar Graph Sp({},{})".format(d, q))
-    G.relabel()
-    return G
+    raise ValueError(f"unknown algorithm: {algorithm}")
 
 
-def AffineOrthogonalPolarGraph(d, q, sign="+"):
+def AffineOrthogonalPolarGraph(d, q, sign='+', immutable=False):
     r"""
     Return the affine polar graph `VO^+(d,q),VO^-(d,q)` or `VO(d,q)`.
 
@@ -131,9 +134,12 @@ def AffineOrthogonalPolarGraph(d, q, sign="+"):
 
     - ``q`` -- integer; a power of a prime number, as `F_q` must exist
 
-    - ``sign`` -- string (default: ``"+"``); must be equal to ``"+"``, ``"-"``,
+    - ``sign`` -- string (default: ``'+'``); must be equal to ``'+'``, ``'-'``,
       or ``None`` to compute (respectively) `VO^+(d,q),VO^-(d,q)` or
       `VO(d,q)`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. NOTE::
 
@@ -146,8 +152,8 @@ def AffineOrthogonalPolarGraph(d, q, sign="+"):
     The :meth:`Brouwer-Haemers graph <BrouwerHaemersGraph>` is isomorphic to
     `VO^-(4,3)`::
 
-        sage: g = graphs.AffineOrthogonalPolarGraph(4,3,"-")
-        sage: g.is_isomorphic(graphs.BrouwerHaemersGraph())
+        sage: g = graphs.AffineOrthogonalPolarGraph(4,3,"-")                            # needs sage.libs.gap
+        sage: g.is_isomorphic(graphs.BrouwerHaemersGraph())                             # needs sage.libs.gap
         True
 
     Some examples from `Brouwer's table or strongly regular graphs
@@ -185,24 +191,22 @@ def AffineOrthogonalPolarGraph(d, q, sign="+"):
     from sage.modules.free_module import VectorSpace
     from sage.matrix.constructor import Matrix
     from sage.libs.gap.libgap import libgap
-    from itertools import combinations
 
     M = Matrix(libgap.InvariantQuadraticForm(libgap.GeneralOrthogonalGroup(s, d, q))['matrix'])
     F = libgap.GF(q).sage()
     V = list(VectorSpace(F, d))
 
-    G = Graph()
-    G.add_vertices([tuple(_) for _ in V])
-    for x, y in combinations(V, 2):
-        if not (x - y)*M*(x - y):
-            G.add_edge(tuple(x), tuple(y))
-
-    G.name("Affine Polar Graph VO^" + str('+' if s == 1 else '-') + "(" + str(d) + "," + str(q) + ")")
-    G.relabel()
-    return G
+    Vi = {tuple(x): i for i, x in enumerate(V)}
+    edges = ((Vi[tuple(x)], Vi[tuple(y)])
+             for x, y in combinations(V, 2)
+             if not (x - y)*M*(x - y))
+    name = f"Affine Polar Graph VO^{'+' if s == 1 else '-'}({d},{q})"
+    return Graph([range(len(V)), edges], format="vertices_and_edges",
+                 name=name, immutable=immutable)
 
 
-def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
+def _orthogonal_polar_graph(m, q, sign='+', point_type=[0], immutable=False,
+                            name=None):
     r"""
     A helper function to build ``OrthogonalPolarGraph`` and ``NO2,3,5`` graphs.
 
@@ -211,75 +215,80 @@ def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
 
     INPUT:
 
-    - ``m,q`` -- integers; `q` must be a prime power
+    - ``m``, ``q`` -- integers; `q` must be a prime power
 
-    - ``sign`` -- string (default: ``"+"``); must be ``"+"`` or ``"-"`` if `m`
-      is even, ``"+"`` (default) otherwise
+    - ``sign`` -- string (default: ``'+'``); must be ``'+'`` or ``'-'`` if `m`
+      is even, ``'+'`` (default) otherwise
 
-    - ``point_type`` -- a list of elements from `F_q`
+    - ``point_type`` -- list of elements from `F_q`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
 
     EXAMPLES:
 
     Petersen graph::
 
         sage: from sage.graphs.generators.classical_geometries import _orthogonal_polar_graph
-        sage: g=_orthogonal_polar_graph(3,5,point_type=[2,3])
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g = _orthogonal_polar_graph(3,5,point_type=[2,3])                         # needs sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.libs.gap
         (10, 3, 0, 1)
 
     A locally Petersen graph (a.k.a. Doro graph, a.k.a. Hall graph)::
 
-        sage: g=_orthogonal_polar_graph(4,5,'-',point_type=[2,3])
-        sage: g.is_distance_regular(parameters=True)
+        sage: g = _orthogonal_polar_graph(4,5,'-',point_type=[2,3])                     # needs sage.libs.gap
+        sage: g.is_distance_regular(parameters=True)                                    # needs sage.libs.gap
         ([10, 6, 4, None], [None, 1, 2, 5])
 
     Various big and slow to build graphs:
 
     `NO^+(7,3)`::
 
-        sage: g=_orthogonal_polar_graph(7,3,point_type=[1])  # not tested (long time)
-        sage: g.is_strongly_regular(parameters=True)  # not tested (long time)
+        sage: g = _orthogonal_polar_graph(7,3,point_type=[1])    # not tested (long time)
+        sage: g.is_strongly_regular(parameters=True)             # not tested (long time)
         (378, 117, 36, 36)
 
     `NO^-(7,3)`::
 
-        sage: g=_orthogonal_polar_graph(7,3,point_type=[-1])  # not tested (long time)
-        sage: g.is_strongly_regular(parameters=True)  # not tested (long time)
+        sage: g = _orthogonal_polar_graph(7,3,point_type=[-1])   # not tested (long time)
+        sage: g.is_strongly_regular(parameters=True)             # not tested (long time)
         (351, 126, 45, 45)
 
     `NO^+(6,3)`::
 
-        sage: g=_orthogonal_polar_graph(6,3,point_type=[1])
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g = _orthogonal_polar_graph(6,3,point_type=[1])                           # needs sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.libs.gap
         (117, 36, 15, 9)
 
     `NO^-(6,3)`::
 
-        sage: g=_orthogonal_polar_graph(6,3,'-',point_type=[1])
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g = _orthogonal_polar_graph(6,3,'-',point_type=[1])                       # needs sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.libs.gap
         (126, 45, 12, 18)
 
     `NO^{-,\perp}(5,5)`::
 
-        sage: g=_orthogonal_polar_graph(5,5,point_type=[2,3])  # long time
-        sage: g.is_strongly_regular(parameters=True)  # long time
+        sage: g = _orthogonal_polar_graph(5,5,point_type=[2,3])         # long time, needs sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True)                    # long time, needs sage.libs.gap
         (300, 65, 10, 15)
 
     `NO^{+,\perp}(5,5)`::
 
-        sage: g=_orthogonal_polar_graph(5,5,point_type=[1,-1])  # not tested (long time)
-        sage: g.is_strongly_regular(parameters=True)  # not tested (long time)
+        sage: g = _orthogonal_polar_graph(5,5,point_type=[1,-1]) # not tested (long time)
+        sage: g.is_strongly_regular(parameters=True)             # not tested (long time)
         (325, 60, 15, 10)
 
     TESTS::
 
-        sage: g=_orthogonal_polar_graph(5,3,point_type=[-1])
+        sage: g = _orthogonal_polar_graph(5,3,point_type=[-1])
         sage: g.is_strongly_regular(parameters=True)
         (45, 12, 3, 3)
-        sage: g=_orthogonal_polar_graph(5,3,point_type=[1])
+        sage: g = _orthogonal_polar_graph(5,3,point_type=[1])
         sage: g.is_strongly_regular(parameters=True)
         (36, 15, 6, 6)
-
     """
     from sage.schemes.projective.projective_space import ProjectiveSpace
     from sage.modules.free_module_element import free_module_element as vector
@@ -319,13 +328,11 @@ def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
 
     V = [x for x in PG if F(x) in point_type]
 
-    G = Graph([V, lambda x, y: P(x, y) == 0], loops=False)
-
-    G.relabel()
-    return G
+    return Graph([range(len(V)), lambda i, j: P(V[i], V[j]) == 0],
+                 format="rule", loops=False, immutable=immutable, name=name)
 
 
-def OrthogonalPolarGraph(m, q, sign="+"):
+def OrthogonalPolarGraph(m, q, sign='+', immutable=False):
     r"""
     Return the Orthogonal Polar Graph `O^{\epsilon}(m,q)`.
 
@@ -334,10 +341,13 @@ def OrthogonalPolarGraph(m, q, sign="+"):
 
     INPUT:
 
-    - ``m,q`` -- integers; `q` must be a prime power
+    - ``m``, ``q`` -- integers; `q` must be a prime power
 
-    - ``sign`` -- string (default: ``"+"``); must be ``"+"`` or ``"-"`` if `m`
-      is even, ``"+"`` (default) otherwise
+    - ``sign`` -- string (default: ``'+'``); must be ``'+'`` or ``'-'`` if `m`
+      is even, ``'+'`` (default) otherwise
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -364,25 +374,26 @@ def OrthogonalPolarGraph(m, q, sign="+"):
 
     TESTS::
 
-        sage: G = graphs.OrthogonalPolarGraph(4,3,"")
+        sage: G = graphs.OrthogonalPolarGraph(4,3,"")                                   # needs sage.libs.gap
         Traceback (most recent call last):
         ...
         ValueError: sign must be equal to either '-' or '+' when m is even
-        sage: G = graphs.OrthogonalPolarGraph(5,3,"-")
+        sage: G = graphs.OrthogonalPolarGraph(5,3,"-")                                  # needs sage.libs.gap
         Traceback (most recent call last):
         ...
         ValueError: sign must be equal to either '' or '+' when m is odd
     """
-    G = _orthogonal_polar_graph(m, q, sign=sign)
+    G = _orthogonal_polar_graph(m, q, sign=sign, immutable=immutable)
     if m % 2:
         sign = ""
-    G.name("Orthogonal Polar Graph O" + ("^" + sign if sign else "") + str((m, q)))
+    G._name = "Orthogonal Polar Graph O" + ("^" + sign if sign else "") + str((m, q))
     return G
 
 
-def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
+def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None,
+                                     immutable=False):
     r"""
-    Return the Graph `NO^{\epsilon,\perp}_{m}(q)`
+    Return the Graph `NO^{\epsilon,\perp}_{m}(q)`.
 
     Let the vectorspace of dimension `m` over `F_q` be endowed with a
     nondegenerate quadratic form `F`, of type ``sign`` for `m` even.
@@ -410,77 +421,86 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
 
     - ``q`` -- a power of a prime number, the size of the underlying field
 
-    - ``sign`` -- string (default: ``"+"``); must be either ``"+"`` or ``"-"``
+    - ``sign`` -- string (default: ``'+'``); must be either ``'+'`` or ``'-'``
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
     `NO^-(4,2)` is isomorphic to Petersen graph::
 
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(4,2,'-'); g
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(4,2,'-'); g                   # needs sage.libs.gap
         NO^-(4, 2): Graph on 10 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.libs.gap
         (10, 3, 0, 1)
 
     `NO^-(6,2)` and `NO^+(6,2)`::
 
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(6,2,'-')
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(6,2,'-')
         sage: g.is_strongly_regular(parameters=True)
         (36, 15, 6, 6)
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(6,2,'+'); g
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(6,2,'+'); g
         NO^+(6, 2): Graph on 28 vertices
         sage: g.is_strongly_regular(parameters=True)
         (28, 15, 6, 10)
 
     `NO^+(8,2)`::
 
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(8,2,'+')
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(8,2,'+')                      # needs sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.libs.gap
         (120, 63, 30, 36)
 
     Wilbrink's graphs for `q=5`::
 
-        sage: graphs.NonisotropicOrthogonalPolarGraph(5,5,perp=1).is_strongly_regular(parameters=True)  # long time
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(5,5,perp=1)
+        sage: g.is_strongly_regular(parameters=True)    # long time
         (325, 60, 15, 10)
-        sage: graphs.NonisotropicOrthogonalPolarGraph(5,5,'-',perp=1).is_strongly_regular(parameters=True)  # long time
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(5,5,'-',perp=1)
+        sage: g.is_strongly_regular(parameters=True)    # long time
         (300, 65, 10, 15)
 
     Wilbrink's graphs::
 
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(5,4,'+')
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(5,4,'+')
         sage: g.is_strongly_regular(parameters=True)
         (136, 75, 42, 40)
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(5,4,'-')
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(5,4,'-')
         sage: g.is_strongly_regular(parameters=True)
         (120, 51, 18, 24)
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(7,4,'+'); g  # not tested (long time)
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(7,4,'+'); g        # not tested (long time)
         NO^+(7, 4): Graph on 2080 vertices
-        sage: g.is_strongly_regular(parameters=True)  # not tested (long time)
+        sage: g.is_strongly_regular(parameters=True)                         # not tested (long time)
         (2080, 1071, 558, 544)
 
     TESTS::
 
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(4,2); g
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(4,2); g
         NO^+(4, 2): Graph on 6 vertices
-        sage: graphs.NonisotropicOrthogonalPolarGraph(4,3,'-').is_strongly_regular(parameters=True)
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(4,3,'-')
+        sage: g.is_strongly_regular(parameters=True)
         (15, 6, 1, 3)
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(3,5,'-',perp=1); g
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(3,5,'-',perp=1); g
         NO^-,perp(3, 5): Graph on 10 vertices
         sage: g.is_strongly_regular(parameters=True)
         (10, 3, 0, 1)
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(6,3,'+')   # long time
-        sage: g.is_strongly_regular(parameters=True)               # long time
+
+        sage: # long time, needs sage.libs.gap
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(6,3,'+')
+        sage: g.is_strongly_regular(parameters=True)
         (117, 36, 15, 9)
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(6,3,'-'); g  # long time
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(6,3,'-'); g
         NO^-(6, 3): Graph on 126 vertices
-        sage: g.is_strongly_regular(parameters=True)                # long time
+        sage: g.is_strongly_regular(parameters=True)
         (126, 45, 12, 18)
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(5,5,'-')    # long time
-        sage: g.is_strongly_regular(parameters=True)                # long time
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(5,5,'-')
+        sage: g.is_strongly_regular(parameters=True)
         (300, 104, 28, 40)
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(5,5,'+')    # long time
-        sage: g.is_strongly_regular(parameters=True)                # long time
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(5,5,'+')
+        sage: g.is_strongly_regular(parameters=True)
         (325, 144, 68, 60)
-        sage: g=graphs.NonisotropicOrthogonalPolarGraph(6,4,'+')
+
+        sage: g = graphs.NonisotropicOrthogonalPolarGraph(6,4,'+')
         Traceback (most recent call last):
         ...
         ValueError: for m even q must be 2 or 3
@@ -491,13 +511,15 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
     dec = ''
     if not m % 2:
         if q in [2, 3]:
-            G = _orthogonal_polar_graph(m, q, sign=sign, point_type=[1])
+            G = _orthogonal_polar_graph(m, q, sign=sign, point_type=[1],
+                                        immutable=immutable)
         else:
             raise ValueError("for m even q must be 2 or 3")
     elif perp is not None:
         if q == 5:
             pt = [-1, 1] if sign == '+' else [2, 3] if sign == '-' else []
-            G = _orthogonal_polar_graph(m, q, point_type=pt)
+            G = _orthogonal_polar_graph(m, q, point_type=pt,
+                                        immutable=immutable)
             dec = ",perp"
         else:
             raise ValueError("for perp not None q must be 5")
@@ -518,23 +540,23 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
         deg = (q**n - e)*(q**(n - 1) + e)   # k
         S = [libgap.Elements(libgap.Basis(x))[0]
              for x in libgap.Elements(libgap.Subspaces(W, 1))]
-        (V,) = [x for x in libgap.Orbits(g, S, libgap.OnLines)
-                if len(x) == nvert]
+        (V,) = (x for x in libgap.Orbits(g, S, libgap.OnLines)
+                if len(x) == nvert)
         gp = libgap.Action(g, V, libgap.OnLines)  # make a permutation group
         h = libgap.Stabilizer(gp, 1)
-        (Vh,) = [x for x in libgap.Orbits(h, libgap.Orbit(gp, 1))
-                 if len(x) == deg]
+        (Vh,) = (x for x in libgap.Orbits(h, libgap.Orbit(gp, 1))
+                 if len(x) == deg)
         Vh = Vh[0]
         L = libgap.Orbit(gp, [1, Vh], libgap.OnSets)
-        G = Graph()
-        G.add_edges(L)
-    G.name("NO^" + sign + dec + str((m, q)))
+        G = Graph(L, format="list_of_edges", immutable=immutable)
+    G._name = "NO^" + sign + dec + str((m, q))
     return G
 
 
-def _polar_graph(m, q, g, intersection_size=None):
+def _polar_graph(m, q, g, intersection_size=None, immutable=False, name=None,
+                 relabel=False):
     r"""
-    The helper function to build graphs `(D)U(m,q)` and `(D)Sp(m,q)`
+    The helper function to build graphs `(D)U(m,q)` and `(D)Sp(m,q)`.
 
     Building a graph on an orbit of a group `g` of `m\times m` matrices over
     `GF(q)` on the points (or subspaces of dimension ``m//2``) isotropic
@@ -553,21 +575,42 @@ def _polar_graph(m, q, g, intersection_size=None):
 
     - ``g`` -- the group acting
 
-    - ``intersection_size`` -- (default: ``None``); if ``None``, build the graph
+    - ``intersection_size`` -- (default: ``None``) if ``None``, build the graph
       on the isotropic points, with adjacency being orthogonality w.r.t. `F`.
       Otherwise, build the graph on the maximal totally isotropic subspaces,
       with adjacency specified by ``intersection_size`` being as given.
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
+
+    - ``relabel`` -- boolean (default: ``False``); whether to relabel the
+      vertices as integers
+
     TESTS::
 
         sage: from sage.graphs.generators.classical_geometries import _polar_graph
-        sage: _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2))
+        sage: _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2))                                  # needs sage.libs.gap
         Graph on 45 vertices
-        sage: _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2), intersection_size=1)
+        sage: _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2), intersection_size=1)             # needs sage.libs.gap
         Graph on 27 vertices
+
+    Check the behavior of parameter ``relabel``::
+
+        sage: # needs sage.libs.gap
+        sage: A = _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2))
+        sage: B = _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2), relabel=True)
+        sage: A.is_isomorphic(B)
+        True
+        sage: A = _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2), intersection_size=1)
+        sage: B = _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2),
+        ....:                  intersection_size=1, relabel=True)
+        sage: A.is_isomorphic(B)
+        True
     """
     from sage.libs.gap.libgap import libgap
-    from itertools import combinations
     W = libgap.FullRowSpace(libgap.GF(q), m)   # F_q^m
     B = libgap.Elements(libgap.Basis(W))       # the standard basis of W
     V = libgap.Orbit(g, B[0], libgap.OnLines)  # orbit on isotropic points
@@ -578,16 +621,24 @@ def _polar_graph(m, q, g, intersection_size=None):
     h = libgap.Set([libgap.Position(V, x) for x in sp])  # indices of the points in s
     L = libgap.Orbit(gp, h, libgap.OnSets)  # orbit on these subspaces
     if intersection_size is None:
-        G = Graph()
-        for x in L:  # every pair of points in the subspace is adjacent to each other in G
-            G.add_edges(combinations(x, 2))
-        return G
-    else:
-        return Graph([L, lambda i, j: libgap.Size(libgap.Intersection(i, j)) == intersection_size],
-                     loops=False)
+        from itertools import chain
+        # every pair of points in the subspace is adjacent to each other in G
+        if relabel:
+            vertices = set(chain.from_iterable(L))
+            v_to_i = {u: i for i, u in enumerate(vertices)}
+            L = [[v_to_i[u] for u in x] for x in L]
+        return Graph(chain.from_iterable(combinations(x, 2) for x in L),
+                     format="list_of_edges", loops=False, immutable=immutable,
+                     name=name)
+    if relabel:
+        return Graph([range(len(L)),
+                      lambda i, j: libgap.Size(libgap.Intersection(L[i], L[j])) == intersection_size],
+                     format="rule", loops=False, immutable=immutable, name=name)
+    return Graph([L, lambda i, j: libgap.Size(libgap.Intersection(i, j)) == intersection_size],
+                 format="rule", loops=False, immutable=immutable, name=name)
 
 
-def UnitaryPolarGraph(m, q, algorithm="gap"):
+def UnitaryPolarGraph(m, q, algorithm='gap', immutable=False):
     r"""
     Return the Unitary Polar Graph `U(m,q)`.
 
@@ -596,12 +647,15 @@ def UnitaryPolarGraph(m, q, algorithm="gap"):
 
     INPUT:
 
-    - ``m,q`` -- integers; `q` must be a prime power
+    - ``m``, ``q`` -- integers; `q` must be a prime power
 
-    - ``algorithm`` -- string (default: ``"gap"``); if set to 'gap' then the
+    - ``algorithm`` -- string (default: ``'gap'``); if set to ``'gap'`` then the
       computation is carried via GAP library interface, computing totally
       singular subspaces, which is faster for large examples (especially with
       `q>2`). Otherwise it is done directly.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -611,25 +665,32 @@ def UnitaryPolarGraph(m, q, algorithm="gap"):
         (45, 12, 3, 3)
         sage: graphs.UnitaryPolarGraph(5,2).is_strongly_regular(parameters=True)
         (165, 36, 3, 9)
-        sage: graphs.UnitaryPolarGraph(6,2)    # not tested (long time)
+        sage: graphs.UnitaryPolarGraph(6,2)     # not tested (long time)
         Unitary Polar Graph U(6, 2): Graph on 693 vertices
 
     TESTS::
 
-        sage: graphs.UnitaryPolarGraph(4,3, algorithm="gap").is_strongly_regular(parameters=True)
+        sage: graphs.UnitaryPolarGraph(4,3, algorithm='gap').is_strongly_regular(parameters=True)   # needs sage.libs.gap
         (280, 36, 8, 4)
-        sage: graphs.UnitaryPolarGraph(4,3).is_strongly_regular(parameters=True)
+        sage: graphs.UnitaryPolarGraph(4,3).is_strongly_regular(parameters=True)                    # needs sage.libs.gap
         (280, 36, 8, 4)
-        sage: graphs.UnitaryPolarGraph(4,3, algorithm="foo")
+        sage: graphs.UnitaryPolarGraph(4,3, algorithm='foo')
         Traceback (most recent call last):
         ...
-        ValueError: unknown algorithm!
+        ValueError: unknown algorithm: foo
     """
+    name = "Unitary Polar Graph U" + str((m, q))
+    if m == 4:
+        name += '; GQ' + str((q**2, q))
+    if m == 5:
+        name += '; GQ' + str((q**2, q**3))
+
     if algorithm == "gap":
         from sage.libs.gap.libgap import libgap
-        G = _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q))
+        return _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
+                            name=name, immutable=immutable, relabel=True)
 
-    elif algorithm is None:  # slow on large examples
+    if algorithm is None:  # slow on large examples
         from sage.schemes.projective.projective_space import ProjectiveSpace
         from sage.modules.free_module_element import free_module_element as vector
         Fq = FiniteField(q**2, 'a')
@@ -643,20 +704,13 @@ def UnitaryPolarGraph(m, q, algorithm="gap"):
 
         V = [x for x in PG if P(x, x)]
         # bottleneck is here, of course
-        G = Graph([V, lambda x, y: P(x, y)], loops=False)
-    else:
-        raise ValueError("unknown algorithm!")
+        return Graph([range(len(V)), lambda x, y: P(V[x], V[y])], format="rule",
+                     loops=False, name=name, immutable=immutable)
 
-    G.relabel()
-    G.name("Unitary Polar Graph U" + str((m, q)))
-    if m == 4:
-        G.name(G.name() + '; GQ' + str((q**2, q)))
-    if m == 5:
-        G.name(G.name() + '; GQ' + str((q**2, q**3)))
-    return G
+    raise ValueError(f"unknown algorithm: {algorithm}")
 
 
-def NonisotropicUnitaryPolarGraph(m, q):
+def NonisotropicUnitaryPolarGraph(m, q, immutable=False):
     r"""
     Return the Graph `NU(m,q)`.
 
@@ -668,20 +722,23 @@ def NonisotropicUnitaryPolarGraph(m, q):
 
     INPUT:
 
-    - ``m,q`` -- integers; `q` must be a prime power
+    - ``m``, ``q`` -- integers; `q` must be a prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
-        sage: g=graphs.NonisotropicUnitaryPolarGraph(5,2); g
+        sage: g = graphs.NonisotropicUnitaryPolarGraph(5,2); g                          # needs sage.libs.gap
         NU(5, 2): Graph on 176 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.libs.gap
         (176, 135, 102, 108)
 
     TESTS::
 
-        sage: graphs.NonisotropicUnitaryPolarGraph(4,2).is_strongly_regular(parameters=True)
+        sage: graphs.NonisotropicUnitaryPolarGraph(4,2).is_strongly_regular(parameters=True)        # needs sage.libs.gap
         (40, 27, 18, 18)
-        sage: graphs.NonisotropicUnitaryPolarGraph(4,3).is_strongly_regular(parameters=True)  # long time
+        sage: graphs.NonisotropicUnitaryPolarGraph(4,3).is_strongly_regular(parameters=True)  # long time, needs sage.libs.gap
         (540, 224, 88, 96)
         sage: graphs.NonisotropicUnitaryPolarGraph(6,6)
         Traceback (most recent call last):
@@ -692,7 +749,6 @@ def NonisotropicUnitaryPolarGraph(m, q):
     if not k:
         raise ValueError('q must be a prime power')
     from sage.libs.gap.libgap import libgap
-    from itertools import combinations
     F = libgap.GF(q**2)  # F_{q^2}
     W = libgap.FullRowSpace(F, m)  # F_{q^2}^m
     B = libgap.Elements(libgap.Basis(W))  # the standard basis of W
@@ -714,15 +770,17 @@ def NonisotropicUnitaryPolarGraph(m, q):
     h = libgap.Set([libgap.Position(V, x)
                     for x in libgap.Intersection(V, sp)])  # indices
     L = libgap.Orbit(gp, h, libgap.OnSets)  # orbit on the tangent lines
-    G = Graph()
-    for x in L:  # every pair of points in the subspace is adjacent to each other in G
-        G.add_edges(combinations(x, 2))
-    G.relabel()
-    G.name("NU" + str((m, q)))
-    return G
+
+    from itertools import chain
+    vertices = set(chain.from_iterable(L))
+    v_to_i = {u: i for i, u in enumerate(vertices)}
+    L = [[v_to_i[u] for u in x] for x in L]
+    return Graph(chain.from_iterable(combinations(x, 2) for x in L),
+                 format="list_of_edges", immutable=immutable,
+                 name=f"NU{(m, q)}")
 
 
-def UnitaryDualPolarGraph(m, q):
+def UnitaryDualPolarGraph(m, q, immutable=False):
     r"""
     Return the Dual Unitary Polar Graph `U(m,q)`.
 
@@ -731,23 +789,26 @@ def UnitaryDualPolarGraph(m, q):
 
     INPUT:
 
-    - ``m,q`` -- integers; `q` must be a prime power
+    - ``m``, ``q`` -- integers; `q` must be a prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
     The point graph of a generalized quadrangle (see
     :wikipedia:`Generalized_quadrangle`, [PT2009]_) of order (8,4)::
 
-        sage: G = graphs.UnitaryDualPolarGraph(5,2); G   # long time
+        sage: G = graphs.UnitaryDualPolarGraph(5,2); G  # long time                     # needs sage.libs.gap
         Unitary Dual Polar Graph DU(5, 2); GQ(8, 4): Graph on 297 vertices
-        sage: G.is_strongly_regular(parameters=True)     # long time
+        sage: G.is_strongly_regular(parameters=True)    # long time                     # needs sage.libs.gap
         (297, 40, 7, 5)
 
     Another way to get the  generalized quadrangle of order (2,4)::
 
-        sage: G = graphs.UnitaryDualPolarGraph(4,2); G
+        sage: G = graphs.UnitaryDualPolarGraph(4,2); G                                  # needs sage.libs.gap
         Unitary Dual Polar Graph DU(4, 2); GQ(2, 4): Graph on 27 vertices
-        sage: G.is_isomorphic(graphs.OrthogonalPolarGraph(6,2,'-'))
+        sage: G.is_isomorphic(graphs.OrthogonalPolarGraph(6,2,'-'))                     # needs sage.libs.gap
         True
 
     A bigger graph::
@@ -759,24 +820,23 @@ def UnitaryDualPolarGraph(m, q):
 
     TESTS::
 
-        sage: graphs.UnitaryDualPolarGraph(6,6)
+        sage: graphs.UnitaryDualPolarGraph(6,6)                                         # needs sage.libs.gap
         Traceback (most recent call last):
         ...
         GAPError: Error, <subfield> must be a prime or a finite field
     """
     from sage.libs.gap.libgap import libgap
-    G = _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
-                     intersection_size=int((q**(2*(m//2 - 1)) - 1)/(q**2 - 1)))
-    G.relabel()
-    G.name("Unitary Dual Polar Graph DU" + str((m, q)))
+    name = "Unitary Dual Polar Graph DU" + str((m, q))
     if m == 4:
-        G.name(G.name() + '; GQ' + str((q, q**2)))
+        name += '; GQ' + str((q, q**2))
     if m == 5:
-        G.name(G.name() + '; GQ' + str((q**3, q**2)))
-    return G
+        name += '; GQ' + str((q**3, q**2))
+    return _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
+                        intersection_size=int((q**(2*(m//2 - 1)) - 1)/(q**2 - 1)),
+                        name=name, immutable=immutable, relabel=True)
 
 
-def SymplecticDualPolarGraph(m, q):
+def SymplecticDualPolarGraph(m, q, immutable=False):
     r"""
     Return the Symplectic Dual Polar Graph `DSp(m,q)`.
 
@@ -785,7 +845,10 @@ def SymplecticDualPolarGraph(m, q):
 
     INPUT:
 
-    - ``m,q`` -- integers; `q` must be a prime power, and `m` must be even
+    - ``m``, ``q`` -- integers; `q` must be a prime power, and `m` must be even
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -796,27 +859,25 @@ def SymplecticDualPolarGraph(m, q):
 
     TESTS::
 
-        sage: G = graphs.SymplecticDualPolarGraph(6,2); G
+        sage: G = graphs.SymplecticDualPolarGraph(6,2); G                               # needs sage.libs.gap
         Symplectic Dual Polar Graph DSp(6, 2): Graph on 135 vertices
-        sage: G.is_distance_regular(parameters=True)
+        sage: G.is_distance_regular(parameters=True)                                    # needs sage.libs.gap
         ([14, 12, 8, None], [None, 1, 3, 7])
-        sage: graphs.SymplecticDualPolarGraph(6,6)
+        sage: graphs.SymplecticDualPolarGraph(6,6)                                      # needs sage.libs.gap
         Traceback (most recent call last):
         ...
         GAPError: Error, <subfield> must be a prime or a finite field
     """
     from sage.libs.gap.libgap import libgap
-    G = _polar_graph(m, q, libgap.SymplecticGroup(m, q),
-                     intersection_size=int((q**(m/2 - 1) - 1)/(q - 1)))
-
-    G.relabel()
-    G.name("Symplectic Dual Polar Graph DSp" + str((m, q)))
+    name = "Symplectic Dual Polar Graph DSp" + str((m, q))
     if m == 4:
-        G.name(G.name() + '; GQ' + str((q, q)))
-    return G
+        name += '; GQ' + str((q, q))
+    return _polar_graph(m, q, libgap.SymplecticGroup(m, q),
+                        intersection_size=int((q**(m/2 - 1) - 1)/(q - 1)),
+                        name=name, immutable=immutable, relabel=True)
 
 
-def TaylorTwographDescendantSRG(q, clique_partition=False):
+def TaylorTwographDescendantSRG(q, clique_partition=False, immutable=False):
     r"""
     Return the descendant graph of the Taylor's two-graph for `U_3(q)`, `q` odd.
 
@@ -842,23 +903,26 @@ def TaylorTwographDescendantSRG(q, clique_partition=False):
       intersection. (Removing all of them leaves a clique, too), and the point
       removed from the unital.
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: g=graphs.TaylorTwographDescendantSRG(3); g
+        sage: g = graphs.TaylorTwographDescendantSRG(3); g
         Taylor two-graph descendant SRG: Graph on 27 vertices
         sage: g.is_strongly_regular(parameters=True)
         (27, 10, 1, 5)
         sage: from sage.combinat.designs.twographs import taylor_twograph
-        sage: T = taylor_twograph(3)                           # long time
+        sage: T = taylor_twograph(3)                            # long time
         sage: g.is_isomorphic(T.descendant(T.ground_set()[1]))  # long time
         True
-        sage: g=graphs.TaylorTwographDescendantSRG(5)    # not tested (long time)
-        sage: g.is_strongly_regular(parameters=True)  # not tested (long time)
+        sage: g = graphs.TaylorTwographDescendantSRG(5)         # not tested (long time)
+        sage: g.is_strongly_regular(parameters=True)            # not tested (long time)
         (125, 52, 15, 26)
 
     TESTS::
 
-        sage: g,l,_=graphs.TaylorTwographDescendantSRG(3,clique_partition=True)
+        sage: g,l,_ = graphs.TaylorTwographDescendantSRG(3, clique_partition=True)
         sage: all(g.is_clique(x) for x in l)
         True
         sage: graphs.TaylorTwographDescendantSRG(4)
@@ -884,20 +948,21 @@ def TaylorTwographDescendantSRG(q, clique_partition=False):
     V = [x for x in PG if S(x, x) == 0]  # the points of the unital
     v0 = V[0]
     V.remove(v0)
+    name = "Taylor two-graph descendant SRG"
     if mod(q, 4) == 1:
-        G = Graph([V, lambda y, z: not (S(v0, y)*S(y, z)*S(z, v0)).is_square()], loops=False)
+        G = Graph([V, lambda y, z: not (S(v0, y)*S(y, z)*S(z, v0)).is_square()],
+                  format="rule", loops=False, name=name, immutable=immutable)
     else:
-        G = Graph([V, lambda y, z: (S(v0, y)*S(y, z)*S(z, v0)).is_square()], loops=False)
-    G.name("Taylor two-graph descendant SRG")
+        G = Graph([V, lambda y, z: (S(v0, y)*S(y, z)*S(z, v0)).is_square()],
+                  format="rule", loops=False, name=name, immutable=immutable)
     if clique_partition:
         lines = [[t for t in V if t[0] + z * t[1] == 0]
                  for z in Fq if z]
         return (G, lines, v0)
-    else:
-        return G
+    return G
 
 
-def TaylorTwographSRG(q):
+def TaylorTwographSRG(q, immutable=False):
     r"""
     Return a strongly regular graph from the Taylor's two-graph for `U_3(q)`,
     `q` odd
@@ -912,25 +977,28 @@ def TaylorTwographSRG(q):
 
     - ``q`` -- a power of an odd prime number
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     .. SEEALSO::
 
         * :meth:`~sage.graphs.graph_generators.GraphGenerators.TaylorTwographDescendantSRG`
 
     EXAMPLES::
 
-        sage: t=graphs.TaylorTwographSRG(3); t
+        sage: t = graphs.TaylorTwographSRG(3); t                                        # needs sage.rings.finite_rings
         Taylor two-graph SRG: Graph on 28 vertices
-        sage: t.is_strongly_regular(parameters=True)
+        sage: t.is_strongly_regular(parameters=True)                                    # needs sage.rings.finite_rings
         (28, 15, 6, 10)
     """
     G, l, v0 = TaylorTwographDescendantSRG(q, clique_partition=True)
     G.add_vertex(v0)
     G.seidel_switching(sum(l[:(q**2 + 1)/2], []))
     G.name("Taylor two-graph SRG")
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
-def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
+def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False, immutable=False):
     r"""
     Return the collinearity graph of the generalized quadrangle `AS(q)`, or of
     its dual
@@ -953,13 +1021,16 @@ def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
     - ``dual`` -- boolean (default: ``False``); whether to return the
       collinearity graph of `AS(q)` or of the dual `AS(q)` (when ``True``)
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: g=graphs.AhrensSzekeresGeneralizedQuadrangleGraph(5); g
+        sage: g = graphs.AhrensSzekeresGeneralizedQuadrangleGraph(5); g
         AS(5); GQ(4, 6): Graph on 125 vertices
         sage: g.is_strongly_regular(parameters=True)
         (125, 28, 3, 7)
-        sage: g=graphs.AhrensSzekeresGeneralizedQuadrangleGraph(5,dual=True); g
+        sage: g = graphs.AhrensSzekeresGeneralizedQuadrangleGraph(5, dual=True); g
         AS(5)*; GQ(6, 4): Graph on 175 vertices
         sage: g.is_strongly_regular(parameters=True)
         (175, 30, 5, 5)
@@ -977,15 +1048,16 @@ def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
             for c in F:
                 L.append(tuple((c*s**2 - b*s + a, -2*c*s + b, s) for s in F))
     if dual:
-        G = IncidenceStructure(L).intersection_graph()
-        G.name('AS(' + str(q) + ')*; GQ' + str((q + 1, q - 1)))
+        G = IncidenceStructure(L).intersection_graph(immutable=immutable)
+        G._name = f"AS({q})*; GQ{(q + 1, q - 1)}"
     else:
-        G = IncidenceStructure(L).dual().intersection_graph()
-        G.name('AS(' + str(q) + '); GQ' + str((q - 1, q + 1)))
+        G = IncidenceStructure(L).dual().intersection_graph(immutable=immutable)
+        G._name = f"AS({q}); GQ{(q - 1, q + 1)}"
     return G
 
 
-def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, check_hyperoval=True):
+def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None,
+                                     check_hyperoval=True, immutable=False):
     r"""
     Return the collinearity graph of the generalized quadrangle `T_2^*(q)`, or
     of its dual
@@ -1021,37 +1093,41 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
     - ``check_hyperoval`` -- boolean (default: ``True``); whether to check
       ``hyperoval`` for correctness or not
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES:
 
     using the built-in construction::
 
-        sage: g=graphs.T2starGeneralizedQuadrangleGraph(4); g
+        sage: g = graphs.T2starGeneralizedQuadrangleGraph(4); g
         T2*(O,4); GQ(3, 5): Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)
         (64, 18, 2, 6)
-        sage: g=graphs.T2starGeneralizedQuadrangleGraph(4,dual=True); g
+        sage: g = graphs.T2starGeneralizedQuadrangleGraph(4, dual=True); g
         T2*(O,4)*; GQ(5, 3): Graph on 96 vertices
         sage: g.is_strongly_regular(parameters=True)
         (96, 20, 4, 4)
 
     supplying your own hyperoval::
 
-        sage: F=GF(4,'b')
-        sage: O=[vector(F,(0,0,0,1)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
-        sage: g=graphs.T2starGeneralizedQuadrangleGraph(4, hyperoval=O, field=F); g
+        sage: F = GF(4,'b')
+        sage: O = [vector(F,(0,0,0,1)),vector(F,(0,0,1,0))] + [vector(F, (0,1,x^2,x))
+        ....:                                                  for x in F]
+        sage: g = graphs.T2starGeneralizedQuadrangleGraph(4, hyperoval=O, field=F); g
         T2*(O,4); GQ(3, 5): Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)
         (64, 18, 2, 6)
 
     TESTS::
 
-        sage: F=GF(4,'b') # repeating a point...
-        sage: O=[vector(F,(0,1,0,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
+        sage: F = GF(4,'b')  # repeating a point...
+        sage: O = [vector(F,(0,1,0,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: graphs.T2starGeneralizedQuadrangleGraph(4, hyperoval=O, field=F)
         Traceback (most recent call last):
         ...
         RuntimeError: incorrect hyperoval size
-        sage: O=[vector(F,(0,1,1,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
+        sage: O = [vector(F,(0,1,1,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: graphs.T2starGeneralizedQuadrangleGraph(4, hyperoval=O, field=F)
         Traceback (most recent call last):
         ...
@@ -1084,24 +1160,25 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
                 raise RuntimeError("incorrect hyperoval size")
             for L in Theta.blocks():
                 if set(L).issubset(Pi):
-                    if not len(HO.intersection(L)) in [0, 2]:
+                    if len(HO.intersection(L)) not in [0, 2]:
                         raise RuntimeError("incorrect hyperoval")
 
     L = [[y for y in z if y not in HO]
-         for z in [x for x in Theta.blocks() if len(HO.intersection(x)) == 1]]
+         for z in Theta.blocks() if len(HO.intersection(z)) == 1]
 
     if dual:
-        G = IncidenceStructure(L).intersection_graph()
-        G.name('T2*(O,' + str(q) + ')*; GQ' + str((q + 1, q - 1)))
+        G = IncidenceStructure(L).intersection_graph(immutable=immutable)
+        G._name = f"T2*(O,{q})*; GQ{(q + 1, q - 1)}"
     else:
-        G = IncidenceStructure(L).dual().intersection_graph()
-        G.name('T2*(O,' + str(q) + '); GQ' + str((q - 1, q + 1)))
+        G = IncidenceStructure(L).dual().intersection_graph(immutable=immutable)
+        G._name = f"T2*(O,{q}); GQ{(q - 1, q + 1)}"
     return G
 
 
-def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_hyperoval=True):
+def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None,
+                 check_hyperoval=True, immutable=False):
     r"""
-    Return the Haemers graph obtained from `T_2^*(q)^*`
+    Return the Haemers graph obtained from `T_2^*(q)^*`.
 
     Let `q` be a power of 2. In Sect. 8.A of [BL1984]_ one finds a construction
     of a strongly regular graph with parameters `(q^2(q+2),q^2+q-1,q-2,q)` from
@@ -1140,45 +1217,46 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
     - ``check_hyperoval`` -- boolean (default: ``True``); whether to check
       ``hyperoval`` for correctness or not
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES:
 
     using the built-in constructions::
 
-        sage: g=graphs.HaemersGraph(4); g
+        sage: g = graphs.HaemersGraph(4); g
         Haemers(4): Graph on 96 vertices
         sage: g.is_strongly_regular(parameters=True)
         (96, 19, 2, 4)
 
     supplying your own hyperoval_matching::
 
-        sage: g=graphs.HaemersGraph(4,hyperoval_matching=((0,5),(1,4),(2,3))); g
+        sage: g = graphs.HaemersGraph(4, hyperoval_matching=((0,5),(1,4),(2,3))); g
         Haemers(4): Graph on 96 vertices
         sage: g.is_strongly_regular(parameters=True)
         (96, 19, 2, 4)
 
     TESTS::
 
-        sage: F=GF(4,'b') # repeating a point...
-        sage: O=[vector(F,(0,1,0,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
+        sage: F = GF(4,'b')  # repeating a point...
+        sage: O = [vector(F,(0,1,0,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: graphs.HaemersGraph(4, hyperoval=O, field=F)
         Traceback (most recent call last):
         ...
         RuntimeError: incorrect hyperoval size
-        sage: O=[vector(F,(0,1,1,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
+        sage: O = [vector(F,(0,1,1,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: graphs.HaemersGraph(4, hyperoval=O, field=F)
         Traceback (most recent call last):
         ...
         RuntimeError: incorrect hyperoval
 
-        sage: g=graphs.HaemersGraph(8); g               # not tested (long time)
+        sage: g = graphs.HaemersGraph(8); g             # not tested (long time)        # needs sage.rings.finite_rings
         Haemers(8): Graph on 640 vertices
-        sage: g.is_strongly_regular(parameters=True)    # not tested (long time)
+        sage: g.is_strongly_regular(parameters=True)    # not tested (long time)        # needs sage.rings.finite_rings
         (640, 71, 6, 8)
-
     """
     from sage.modules.free_module_element import free_module_element as vector
     from sage.rings.finite_rings.finite_field_constructor import GF
-    from itertools import combinations
 
     p, k = is_prime_power(q, get_data=True)
     if not k or p != 2:
@@ -1217,10 +1295,10 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
         G.delete_edges(G.edge_boundary(I_ks[i], I_ks[j]))  # edges on (I_i,I_j)
     G.add_edges(e for c in cliques for e in combinations(c, 2))
     G.name('Haemers(' + str(q) + ')')
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
-def CossidentePenttilaGraph(q):
+def CossidentePenttilaGraph(q, immutable=False):
     r"""
     Return the Cossidente-Penttila
     `((q^3+1)(q+1)/2,(q^2+1)(q-1)/2,(q-3)/2,(q-1)^2/2)`-strongly regular graph
@@ -1253,26 +1331,29 @@ def CossidentePenttilaGraph(q):
 
     INPUT:
 
-    - ``q`` -- an odd prime power.
+    - ``q`` -- an odd prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
     For `q=3` one gets Sims-Gewirtz graph. ::
 
-        sage: G=graphs.CossidentePenttilaGraph(3)     # optional - gap_packages (grape)
-        sage: G.is_strongly_regular(parameters=True)  # optional - gap_packages (grape)
+        sage: G = graphs.CossidentePenttilaGraph(3)     # optional - gap_package_grape
+        sage: G.is_strongly_regular(parameters=True)    # optional - gap_package_grape
         (56, 10, 0, 2)
 
     For `q>3` one gets new graphs. ::
 
-        sage: G=graphs.CossidentePenttilaGraph(5)     # optional - gap_packages (grape)
-        sage: G.is_strongly_regular(parameters=True)  # optional - gap_packages (grape)
+        sage: G = graphs.CossidentePenttilaGraph(5)     # optional - gap_package_grape
+        sage: G.is_strongly_regular(parameters=True)    # optional - gap_package_grape
         (378, 52, 1, 8)
 
     TESTS::
 
-        sage: G=graphs.CossidentePenttilaGraph(7)     # optional - gap_packages (grape) # long time
-        sage: G.is_strongly_regular(parameters=True)  # optional - gap_packages (grape) # long time
+        sage: G = graphs.CossidentePenttilaGraph(7)     # optional - gap_package_grape, long time
+        sage: G.is_strongly_regular(parameters=True)    # optional - gap_package_grape, long time
         (1376, 150, 2, 18)
         sage: graphs.CossidentePenttilaGraph(2)
         Traceback (most recent call last):
@@ -1284,11 +1365,11 @@ def CossidentePenttilaGraph(q):
         raise ValueError('q(={}) must be an odd prime power'.format(q))
 
     from sage.features.gap import GapPackage
-    GapPackage("grape", spkg="gap_packages").require()
+    GapPackage("grape", spkg='gap_packages').require()
 
     from sage.libs.gap.libgap import libgap
     adj_list = libgap.function_factory("""function(q)
-        local z, e, so, G, nu, G1, G0, B, T, s, O1, O2, x;
+        local z, e, so, G, nu, G1, G0, B, T, s, O1, O2, x, sqo;
         LoadPackage("grape");
         G0:=SO(3,q^2);
         so:=GeneratorsOfGroup(G0);
@@ -1313,14 +1394,14 @@ def CossidentePenttilaGraph(q):
         end;""")
 
     adj = adj_list(q)  # for each vertex, we get the list of vertices it is adjacent to
-    G = Graph(((i, int(j - 1))
-               for i, ni in enumerate(adj) for j in ni),
-              format='list_of_edges', multiedges=False)
-    G.name('CossidentePenttila(' + str(q) + ')')
-    return G
+    return Graph(((i, int(j - 1))
+                  for i, ni in enumerate(adj) for j in ni),
+                 format='list_of_edges', multiedges=False, immutable=immutable,
+                 name=f"CossidentePenttila({q})")
 
 
-def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperoval=True):
+def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None,
+                                    check_hyperoval=True, immutable=False):
     r"""
     Return the subgraph of nowhere 0 words from two-weight code of projective
     plane hyperoval.
@@ -1353,11 +1434,14 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
       particular, ``hyperoval`` we build is the classical one, i.e. a conic with
       the point of intersection of its tangent lines.
 
-    - ``field`` -- an instance of a finite field of order `q`, must be provided
-      if ``hyperoval`` is provided.
+    - ``field`` -- an instance of a finite field of order `q`; must be provided
+      if ``hyperoval`` is provided
 
     - ``check_hyperoval`` -- boolean (default: ``True``); whether to check
       ``hyperoval`` for correctness or not
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -1367,32 +1451,33 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     using the built-in construction::
 
-        sage: g=graphs.Nowhere0WordsTwoWeightCodeGraph(8); g
+        sage: g = graphs.Nowhere0WordsTwoWeightCodeGraph(8); g
         Nowhere0WordsTwoWeightCodeGraph(8): Graph on 196 vertices
         sage: g.is_strongly_regular(parameters=True)
         (196, 60, 14, 20)
-        sage: g=graphs.Nowhere0WordsTwoWeightCodeGraph(16)  # not tested (long time)
-        sage: g.is_strongly_regular(parameters=True)       # not tested (long time)
+        sage: g = graphs.Nowhere0WordsTwoWeightCodeGraph(16)  # not tested (long time)
+        sage: g.is_strongly_regular(parameters=True)          # not tested (long time)
         (1800, 728, 268, 312)
 
     supplying your own hyperoval::
 
-        sage: F=GF(8)
-        sage: O=[vector(F,(0,0,1)),vector(F,(0,1,0))]+[vector(F, (1,x^2,x)) for x in F]
-        sage: g=graphs.Nowhere0WordsTwoWeightCodeGraph(8,hyperoval=O,field=F); g
+        sage: F = GF(8)
+        sage: O = [vector(F,(0,0,1)),vector(F,(0,1,0))] + [vector(F, (1,x^2,x))
+        ....:                                              for x in F]
+        sage: g = graphs.Nowhere0WordsTwoWeightCodeGraph(8,hyperoval=O,field=F); g
         Nowhere0WordsTwoWeightCodeGraph(8): Graph on 196 vertices
         sage: g.is_strongly_regular(parameters=True)
         (196, 60, 14, 20)
 
     TESTS::
 
-        sage: F=GF(8) # repeating a point...
-        sage: O=[vector(F,(1,0,0)),vector(F,(0,1,0))]+[vector(F, (1,x^2,x)) for x in F]
+        sage: F = GF(8)  # repeating a point...
+        sage: O = [vector(F,(1,0,0)),vector(F,(0,1,0))]+[vector(F, (1,x^2,x)) for x in F]
         sage: graphs.Nowhere0WordsTwoWeightCodeGraph(8,hyperoval=O,field=F)
         Traceback (most recent call last):
         ...
         RuntimeError: incorrect hyperoval size
-        sage: O=[vector(F,(1,1,0)),vector(F,(0,1,0))]+[vector(F, (1,x^2,x)) for x in F]
+        sage: O = [vector(F,(1,1,0)),vector(F,(0,1,0))]+[vector(F, (1,x^2,x)) for x in F]
         sage: graphs.Nowhere0WordsTwoWeightCodeGraph(8,hyperoval=O,field=F)
         Traceback (most recent call last):
         ...
@@ -1435,13 +1520,12 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     for x in C:
         x.set_immutable()
-    G = Graph([C, lambda x, y: F.zero() not in x + y])
-    G.name('Nowhere0WordsTwoWeightCodeGraph(' + str(q) + ')')
-    G.relabel()
-    return G
+    return Graph([range(len(C)), lambda x, y: F_0 not in C[x] + C[y]],
+                 format="rule", immutable=immutable,
+                 name=f"Nowhere0WordsTwoWeightCodeGraph({q})")
 
 
-def OrthogonalDualPolarGraph(e, d, q):
+def OrthogonalDualPolarGraph(e, d, q, immutable=False):
     r"""
     Return the dual polar graph on `GO^e(n,q)` of diameter `d`.
 
@@ -1452,22 +1536,25 @@ def OrthogonalDualPolarGraph(e, d, q):
     INPUT:
 
     - ``e`` -- integer; type of the orthogonal polar space to consider;
-      must be `-1, 0` or  `1`.
+      must be `-1, 0` or  `1`
 
     - ``d`` -- integer; diameter of the graph
 
     - ``q`` -- integer; prime power; order of the finite field over which to
       build the polar space
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: G = graphs.OrthogonalDualPolarGraph(1,3,2)
         sage: G.is_distance_regular(True)
         ([7, 6, 4, None], [None, 1, 3, 7])
-        sage: G = graphs.OrthogonalDualPolarGraph(0,3,3) # long time
-        sage: G.is_distance_regular(True) # long time
+        sage: G = graphs.OrthogonalDualPolarGraph(0,3,3)        # long time
+        sage: G.is_distance_regular(True)                       # long time
         ([39, 36, 27, None], [None, 1, 4, 13])
-        sage: G.order() # long time
+        sage: G.order()                                         # long time
         1120
 
     REFERENCES:
@@ -1479,8 +1566,8 @@ def OrthogonalDualPolarGraph(e, d, q):
         sage: G = graphs.OrthogonalDualPolarGraph(0,3,2)
         sage: G.is_distance_regular(True)
         ([14, 12, 8, None], [None, 1, 3, 7])
-        sage: G = graphs.OrthogonalDualPolarGraph(-1,3,2) # long time
-        sage: G.is_distance_regular(True) # long time
+        sage: G = graphs.OrthogonalDualPolarGraph(-1,3,2)       # long time
+        sage: G.is_distance_regular(True)                       # long time
         ([28, 24, 16, None], [None, 1, 3, 7])
         sage: G = graphs.OrthogonalDualPolarGraph(1,3,4)
         sage: G.is_distance_regular(True)
@@ -1493,7 +1580,6 @@ def OrthogonalDualPolarGraph(e, d, q):
     from sage.matrix.constructor import Matrix
     from sage.modules.free_module import VectorSpace
     from sage.rings.finite_rings.finite_field_constructor import GF
-    import itertools
 
     def hashable(v):
         v.set_immutable()
@@ -1564,16 +1650,13 @@ def OrthogonalDualPolarGraph(e, d, q):
     allIsoSubspaces = libgap.Orbit(permutation, isoSPointsInt, libgap.OnSets)
 
     # number of projective points in a (d-1)-subspace
-    intersection_size = (q**(d-1) - 1) // (q-1)
+    intersection_size = (q**(d - 1) - 1) // (q - 1)
 
-    edges = []
     n = len(allIsoSubspaces)
-    for i, j in itertools.combinations(range(n), 2):
-        if libgap.Size(libgap.Intersection(allIsoSubspaces[i],
-                                           allIsoSubspaces[j])) \
-                                           == intersection_size:
-            edges.append((i, j))
+    edges = [(i, j) for i, j in combinations(range(n), 2)
+             if libgap.Size(libgap.Intersection(allIsoSubspaces[i],
+                                                allIsoSubspaces[j]))
+             == intersection_size]
 
-    G = Graph(edges, format="list_of_edges")
-    G.name("Dual Polar Graph on Orthogonal group (%d, %d, %d)" % (e, m, q))
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name = f"Dual Polar Graph on Orthogonal group {(e, m, q)}")

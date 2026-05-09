@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Attribute and method calling
 """
@@ -15,11 +14,19 @@ Attribute and method calling
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from typing import Any
+
 #############################################
 # Operators
 #############################################
-class AttrCallObject():
-    def __init__(self, name, args, kwds):
+
+
+class AttrCallObject:
+    name: str
+    args: tuple[Any, ...]
+    kwds: dict[str, Any]
+
+    def __init__(self, name: str, args: tuple[Any, ...], kwds: dict[str, Any]) -> None:
         """
         TESTS::
 
@@ -31,25 +38,25 @@ class AttrCallObject():
         self.args = args
         self.kwds = kwds
 
-    def __call__(self, x, *args):
+    def __call__(self, x: Any, *args: Any) -> Any:
         """
-        Gets the ``self.name`` method from ``x``, calls it with
+        Get the ``self.name`` method from ``x``, calls it with
         ``self.args`` and ``args`` as positional parameters and
         ``self.kwds`` as keyword parameters, and returns the result.
 
         EXAMPLES::
 
             sage: core = attrcall('core', 3)
-            sage: core(Partition([4,2]))
+            sage: core(Partition([4,2]))                                                # needs sage.combinat
             [4, 2]
 
-            sage: series = attrcall('series', x)
-            sage: series(sin(x), 4)
+            sage: series = attrcall('series', x)                                        # needs sage.symbolic
+            sage: series(sin(x), 4)                                                     # needs sage.symbolic
             1*x + (-1/6)*x^3 + Order(x^4)
         """
         return getattr(x, self.name)(*(self.args + args), **self.kwds)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of this object.
 
@@ -72,9 +79,9 @@ class AttrCallObject():
         s += ")"
         return s
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """
-        Equality testing
+        Equality testing.
 
         EXAMPLES::
 
@@ -87,9 +94,9 @@ class AttrCallObject():
         """
         return self.__class__ == other.__class__ and self.__dict__ == other.__dict__
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         """
-        Equality testing
+        Equality testing.
 
         EXAMPLES::
 
@@ -102,9 +109,9 @@ class AttrCallObject():
         """
         return not self == other
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
-        Hash value
+        Hash value.
 
         This method tries to ensure that, when two ``attrcall``
         objects are equal, they have the same hash value.
@@ -136,12 +143,12 @@ class AttrCallObject():
 
         Note: a missing ``__hash__`` method here used to break the
         unique representation of parents taking ``attrcall`` objects
-        as input; see :trac:`8911`.
+        as input; see :issue:`8911`.
         """
         return hash((self.args, tuple(sorted(self.kwds.items()))))
 
 
-def attrcall(name, *args, **kwds):
+def attrcall(name: str, *args: Any, **kwds: Any) -> AttrCallObject:
     """
     Return a callable which takes in an object, gets the method named
     name from that object, and calls it with the specified arguments
@@ -149,23 +156,23 @@ def attrcall(name, *args, **kwds):
 
     INPUT:
 
-    -  ``name`` - a string of the name of the method you
-       want to call
+    - ``name`` -- string of the name of the method you
+      want to call
 
-    -  ``args, kwds`` - arguments and keywords to be passed
-       to the method
+    - ``args, kwds`` -- arguments and keywords to be passed
+      to the method
 
     EXAMPLES::
 
         sage: f = attrcall('core', 3); f
         *.core(3)
-        sage: [f(p) for p in Partitions(5)]
+        sage: [f(p) for p in Partitions(5)]                                             # needs sage.combinat
         [[2], [1, 1], [1, 1], [3, 1, 1], [2], [2], [1, 1]]
     """
     return AttrCallObject(name, args, kwds)
 
 
-def call_method(obj, name, *args, **kwds):
+def call_method(obj: Any, name: str, *args: Any, **kwds: Any) -> Any:
     """
     Call the method ``name`` on ``obj``.
 
@@ -180,6 +187,7 @@ def call_method(obj, name, *args, **kwds):
         3
     """
     return getattr(obj, name)(*args, **kwds)
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.misc.misc", "call_method", call_method)

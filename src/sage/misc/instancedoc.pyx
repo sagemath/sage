@@ -36,7 +36,8 @@ EXAMPLES::
 For a Cython ``cdef class``, a decorator cannot be used. Instead, call
 :func:`instancedoc` as a function after defining the class::
 
-    sage: cython('''
+    sage: cython(                                                                       # needs sage.misc.cython
+    ....: '''
     ....: from sage.misc.instancedoc import instancedoc
     ....: cdef class Y:
     ....:     "Class docstring"
@@ -44,9 +45,9 @@ For a Cython ``cdef class``, a decorator cannot be used. Instead, call
     ....:         return "Instance docstring"
     ....: instancedoc(Y)
     ....: ''')
-    sage: Y.__doc__
+    sage: Y.__doc__                                                                     # needs sage.misc.cython
     'File:...\nClass docstring'
-    sage: Y().__doc__
+    sage: Y().__doc__                                                                   # needs sage.misc.cython
     'Instance docstring'
 
 One can still add a custom ``__doc__`` attribute on a particular
@@ -59,7 +60,7 @@ instance::
 
 This normally does not work on extension types::
 
-    sage: Y().__doc__ = "Very special doc"
+    sage: Y().__doc__ = "Very special doc"                                              # needs sage.misc.cython
     Traceback (most recent call last):
     ...
     AttributeError: attribute '__doc__' of 'Y' objects is not writable
@@ -106,7 +107,7 @@ Check that inheritance works (after passing the subclass to
     'Instance docstring'
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -114,7 +115,7 @@ Check that inheritance works (after passing the subclass to
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from cpython.object cimport PyObject, PyTypeObject
 
@@ -135,12 +136,12 @@ cdef class InstanceDocDescriptor:
 
     INPUT:
 
-    - ``classdoc`` -- (string) class documentation
+    - ``classdoc`` -- string; class documentation
 
     - ``instancedoc`` -- (method) documentation for an instance
 
-    - ``attr`` -- (string, default ``__doc__``) attribute name to use
-      for custom docstring on the instance.
+    - ``attr`` -- string (default: ``__doc__``); attribute name to use
+      for custom docstring on the instance
 
     EXAMPLES::
 
@@ -169,7 +170,7 @@ cdef class InstanceDocDescriptor:
     cdef instancedoc
     cdef attr
 
-    def __init__(self, classdoc, instancedoc, attr="__doc__"):
+    def __init__(self, classdoc, instancedoc, attr='__doc__'):
         """
         TESTS::
 
@@ -255,7 +256,7 @@ cdef class InstanceDocDescriptor:
             sage: descr.__delete__(obj)
             Traceback (most recent call last):
             ...
-            AttributeError: 'X' object has no attribute '__doc__'
+            AttributeError: 'X' object has no attribute '__doc__'...
 
             sage: descr.__delete__([])
             Traceback (most recent call last):

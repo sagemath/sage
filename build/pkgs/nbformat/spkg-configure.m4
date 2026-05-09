@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([nbformat], [SAGE_PYTHON_PACKAGE_CHECK([nbformat])])

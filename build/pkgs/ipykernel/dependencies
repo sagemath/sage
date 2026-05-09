@@ -1,4 +1,4 @@
-$(PYTHON) ipython_genutils importlib_metadata matplotlib_inline ipython jupyter_client tornado appnope traitlets executing | $(PYTHON_TOOLCHAIN)
+debugpy ipython comm traitlets jupyter_client jupyter_core nest_asyncio tornado matplotlib_inline appnope pyzmq psutil packaging | $(PYTHON_TOOLCHAIN) hatchling $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

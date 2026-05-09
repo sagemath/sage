@@ -1,1 +1,1 @@
-python3-snowballstemmer
+python3${PYTHON_MINOR}-snowballstemmer

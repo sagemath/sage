@@ -23,9 +23,10 @@ from sage.categories.modules import Modules
 from sage.categories.modules_with_basis import ModulesWithBasis
 _Fields = Fields()
 
+
 class VectorSpaces(Category_module):
     """
-    The category of (abstract) vector spaces over a given field
+    The category of (abstract) vector spaces over a given field.
 
     ??? with an embedding in an ambient vector space ???
 
@@ -41,8 +42,9 @@ class VectorSpaces(Category_module):
         """
         INPUT:
 
-        - `K` -- a field
-        - ``check`` -- a boolean (default: True) whether to check that `K` is a field.
+        - ``K`` -- a field
+        - ``check`` -- boolean (default: ``True``); whether to check that `K`
+          is a field
 
         EXAMPLES::
 
@@ -82,41 +84,40 @@ class VectorSpaces(Category_module):
 
         TESTS::
 
-            sage: C = QQ^10      # vector space
-            sage: TestSuite(C).run()
+            sage: C = QQ^10      # vector space                                         # needs sage.modules
+            sage: TestSuite(C).run()                                                    # needs sage.modules
             sage: TestSuite(VectorSpaces(QQ)).run()
         """
         Category_module.__init__(self, K)
 
     def _call_(self, x):
         """
-        Try to coerce ``x`` into an object of this category
+        Try to coerce ``x`` into an object of this category.
 
         EXAMPLES::
 
-            sage: VectorSpaces(QQ)(ZZ^3)
+            sage: VectorSpaces(QQ)(ZZ^3)                                                # needs sage.modules
             Vector space of dimension 3 over Rational Field
 
         TESTS:
 
-        Check whether :trac:`30174` is fixed::
+        Check whether :issue:`30174` is fixed::
 
-            sage: Q3 = FiniteRankFreeModule(QQ, 3)
-            sage: Modules(QQ)(Q3) is Q3
+            sage: Q3 = FiniteRankFreeModule(QQ, 3)                                      # needs sage.modules
+            sage: Modules(QQ)(Q3) is Q3                                                 # needs sage.modules
             True
-
         """
         try:
             V = x.vector_space(self.base_field())
             if V.base_field() != self.base_field():
                 V = V.change_ring(self.base_field())
         except (TypeError, AttributeError) as msg:
-            raise TypeError("%s\nunable to coerce x (=%s) into %s"%(msg,x,self))
+            raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg,x,self))
         return V
 
     def base_field(self):
         """
-        Returns the base field over which the vector spaces of this
+        Return the base field over which the vector spaces of this
         category are all defined.
 
         EXAMPLES::
@@ -162,17 +163,16 @@ class VectorSpaces(Category_module):
 
             EXAMPLES::
 
-                sage: M = FreeModule(FiniteField(19), 100)
-                sage: W = M.submodule([M.gen(50)])
-                sage: W.dimension()
+                sage: M = FreeModule(FiniteField(19), 100)                              # needs sage.modules
+                sage: W = M.submodule([M.gen(50)])                                      # needs sage.modules
+                sage: W.dimension()                                                     # needs sage.modules
                 1
 
-                sage: M = FiniteRankFreeModule(QQ, 3)
-                sage: M.dimension()
+                sage: M = FiniteRankFreeModule(QQ, 3)                                   # needs sage.modules
+                sage: M.dimension()                                                     # needs sage.modules
                 3
-                sage: M.tensor_module(1,2).dimension()
+                sage: M.tensor_module(1, 2).dimension()                                 # needs sage.modules
                 27
-
             """
             return self.rank()
 
@@ -183,7 +183,7 @@ class VectorSpaces(Category_module):
 
         _call_ = ModulesWithBasis.__dict__["_call_"]
 
-        def is_abelian(self):
+        def is_abelian(self) -> bool:
             """
             Return whether this category is abelian.
 
@@ -237,7 +237,6 @@ class VectorSpaces(Category_module):
                         [Category of finite dimensional vector spaces with basis over Rational Field]
                         sage: VectorSpaces(QQ).WithBasis().FiniteDimensional().TensorProducts().FiniteDimensional()
                         Category of tensor products of finite dimensional vector spaces with basis over Rational Field
-
                     """
                     return [self.base_category()]
 
@@ -253,7 +252,7 @@ class VectorSpaces(Category_module):
 
                 EXAMPLES::
 
-                    sage: Modules(QQ).WithBasis().Graded().example()
+                    sage: Modules(QQ).WithBasis().Graded().example()                    # needs sage.combinat sage.modules
                     An example of a graded module with basis:
                      the free module on partitions over Rational Field
                 """
@@ -274,7 +273,7 @@ class VectorSpaces(Category_module):
 
                 EXAMPLES::
 
-                    sage: Modules(QQ).WithBasis().Graded().example()
+                    sage: Modules(QQ).WithBasis().Graded().example()                    # needs sage.combinat sage.modules
                     An example of a graded module with basis:
                      the free module on partitions over Rational Field
                 """
@@ -298,7 +297,6 @@ class VectorSpaces(Category_module):
                     [Category of finite dimensional vector spaces over Rational Field]
                     sage: VectorSpaces(QQ).FiniteDimensional().TensorProducts().FiniteDimensional()
                     Category of tensor products of finite dimensional vector spaces over Rational Field
-
                 """
                 return [self.base_category()]
 
@@ -306,7 +304,7 @@ class VectorSpaces(Category_module):
 
         def extra_super_categories(self):
             r"""
-            Returns the dual category
+            Return the dual category.
 
             EXAMPLES:
 

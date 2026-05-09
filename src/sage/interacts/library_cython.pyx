@@ -4,19 +4,15 @@ Library of cythonized methods
 AUTHORS:
 
 - Harald Schilly (2011-01-16): initial version (#9623) partially based on work by Lauri Ruotsalainen
-
 """
-
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2011 Harald Schilly <harald.schilly@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from sage.misc.misc_c import prod
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 cpdef julia(ff_j, z, int iterations):
@@ -31,6 +27,7 @@ cpdef julia(ff_j, z, int iterations):
 
     TESTS::
 
+        sage: # needs sage.symbolic
         sage: from sage.interacts.library_cython import julia
         sage: z = var('z')
         sage: c_real, c_imag = 1, 1
@@ -58,13 +55,13 @@ cpdef mandel(ff_m, z, int iterations):
 
     TESTS::
 
+        sage: # needs sage.symbolic
         sage: from sage.interacts.library_cython import mandel
         sage: z, c = var('z, c')
         sage: f = symbolic_expression(z**2 + c).function(z,c)
         sage: ff_m = fast_callable(f, vars=[z,c], domain=CDF)
         sage: mandel(ff_m, CDF(1,1), 3)
         1.0 + 3.0*I
-
     """
     c = z
     for i in range(iterations):
@@ -100,11 +97,11 @@ cpdef cellular(rule, int N):
     """
     from numpy import zeros
     cdef int j, k, l
-    M=zeros((N, 2*N+2), dtype=int)
-    M[0,N]=1
+    M = zeros((N, 2*N+2), dtype=int)
+    M[0, N] = 1
 
     for j in range(1, N):
         for k in range(0, 2*N):
             l = 4 * M[j-1, k-1] + 2 * M[j-1, k] + M[j-1, k+1]
-            M[j,k] = rule[l]
+            M[j, k] = rule[l]
     return M

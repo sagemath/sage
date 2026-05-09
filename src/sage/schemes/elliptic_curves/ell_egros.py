@@ -71,7 +71,6 @@ required have conductors 13068 and 52272 so are in the database)::
 AUTHORS:
 
 - John Cremona (6 April 2009): initial version (over `\QQ` only).
-
 """
 
 # ****************************************************************************
@@ -96,7 +95,7 @@ from .constructor import EllipticCurve, EllipticCurve_from_j
 
 def is_possible_j(j, S=[]):
     r"""
-    Tests if the rational `j` is a possible `j`-invariant of an
+    Test if the rational `j` is a possible `j`-invariant of an
     elliptic curve with good reduction outside `S`.
 
     .. NOTE::
@@ -115,11 +114,9 @@ def is_possible_j(j, S=[]):
         True
     """
     j = QQ(j)
-    return (j.is_zero() and 3 in S) \
-        or (j == 1728)              \
-        or (j.is_S_integral(S)      \
-            and j.prime_to_S_part(S).is_nth_power(3) \
-            and (j-1728).prime_to_S_part(S).abs().is_square())
+    return (j.is_zero() and 3 in S) or (j == 1728) \
+        or (j.is_S_integral(S) and j.prime_to_S_part(S).is_nth_power(3)
+            and (j - 1728).prime_to_S_part(S).abs().is_square())
 
 
 def curve_key(E1):
@@ -158,7 +155,7 @@ def egros_from_j_1728(S=[]):
 
     INPUT:
 
-    - S -- list of primes (default: empty list).
+    - ``S`` -- list of primes (default: empty list)
 
     .. NOTE::
 
@@ -202,7 +199,7 @@ def egros_from_j_0(S=[]):
 
     INPUT:
 
-    - S -- list of primes (default: empty list).
+    - ``S`` -- list of primes (default: empty list)
 
     .. NOTE::
 
@@ -250,9 +247,9 @@ def egros_from_j(j, S=[]):
 
     INPUT:
 
-    - j -- a rational number.
+    - ``j`` -- a rational number
 
-    - S -- list of primes (default: empty list).
+    - ``S`` -- list of primes (default: empty list)
 
     .. NOTE::
 
@@ -305,9 +302,9 @@ def egros_from_jlist(jlist, S=[]):
 
     INPUT:
 
-    - j -- list of rational numbers.
+    - ``j`` -- list of rational numbers
 
-    - S -- list of primes (default: empty list).
+    - ``S`` -- list of primes (default: empty list)
 
     .. NOTE::
 
@@ -344,19 +341,19 @@ def egros_from_jlist(jlist, S=[]):
 
 def egros_get_j(S=[], proof=None, verbose=False):
     r"""
-    Returns a list of rational `j` such that all elliptic curves
+    Return a list of rational `j` such that all elliptic curves
     defined over `\QQ` with good reduction outside `S` have
     `j`-invariant in the list, sorted by height.
 
     INPUT:
 
-    - ``S`` -- list of primes (default: empty list).
+    - ``S`` -- list of primes (default: empty list)
 
-    - ``proof`` -- ``True``/``False`` (default ``True``): the MW basis for
-      auxiliary curves will be computed with this proof flag.
+    - ``proof`` -- boolean (default: ``True``); the MW basis for
+      auxiliary curves will be computed with this proof flag
 
-    - ``verbose`` -- ``True``/``False`` (default ``False````): if ``True``, some
-      details of the computation will be output.
+    - ``verbose`` -- boolean (default: ``False``); if ``True``, some
+      details of the computation will be output
 
     .. NOTE::
 
@@ -399,7 +396,6 @@ def egros_get_j(S=[], proof=None, verbose=False):
     SS = [-1] + S
 
     jlist = []
-    wcount = 0
     nw = 6**len(S) * 2
 
     if verbose:
@@ -407,9 +403,8 @@ def egros_get_j(S=[], proof=None, verbose=False):
         print("Using ", nw, " twists of base curve")
         sys.stdout.flush()
 
-    for ei in xmrange([6] * len(S) + [2]):
+    for wcount, ei in enumerate(xmrange([6] * len(S) + [2]), 1):
         w = QQ.prod(p**e for p, e in zip(reversed(SS), ei))
-        wcount += 1
         if verbose:
             print("Curve #", wcount, "/", nw, ":")
             print("w = ", w, "=", w.factor())

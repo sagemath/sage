@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 """
 Structure maps for finite fields
 
@@ -6,7 +7,6 @@ This module provides classes for isomorphisms between finite fields and vector s
 AUTHORS:
 
 - Kwankyu Lee (2017-11-07): initial version
-
 """
 
 #*****************************************************************************
@@ -20,6 +20,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.categories.morphism import Morphism
+
 
 class FiniteFieldVectorSpaceIsomorphism(Morphism):
     """
@@ -40,7 +41,6 @@ class FiniteFieldVectorSpaceIsomorphism(Morphism):
             Isomorphism:
               From: Vector space of dimension 1 over Finite Field in z4 of size 2^4
               To:   Finite Field in z4 of size 2^4
-
         """
         s = "Isomorphism:"
         s += "\n  From: {}".format(self.domain())
@@ -70,6 +70,7 @@ class FiniteFieldVectorSpaceIsomorphism(Morphism):
             True
         """
         return True
+
 
 class MorphismVectorSpaceToFiniteField(FiniteFieldVectorSpaceIsomorphism):
     """
@@ -124,12 +125,12 @@ class MorphismVectorSpaceToFiniteField(FiniteFieldVectorSpaceIsomorphism):
         if m == n == 1:
             # 1x1 matrix
             return self._C[0][0] * v[0]
-        else:
-            # expand v as a vector over GF(p)
-            w = self._C.row_ambient_module()()
-            for i in range(m):
-                w[i*n:(i+1)*n] = v[i]._vector_()
-            return E(w * self._C)
+        # expand v as a vector over GF(p)
+        w = self._C.row_ambient_module()()
+        for i in range(m):
+            w[i*n:(i+1)*n] = v[i]._vector_()
+        return E(w * self._C)
+
 
 class MorphismFiniteFieldToVectorSpace(FiniteFieldVectorSpaceIsomorphism):
     """
@@ -184,5 +185,4 @@ class MorphismFiniteFieldToVectorSpace(FiniteFieldVectorSpaceIsomorphism):
         w = e._vector_() * self._C
         if F.degree() > 1:
             return V([F(w[i*n:(i+1)*n]) for i in range(m)])
-        else:
-            return w
+        return w

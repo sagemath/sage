@@ -31,6 +31,7 @@ from sage.algebras.lie_algebras.lie_algebra import FinitelyGeneratedLieAlgebra
 from sage.modules.free_module import FreeModule
 from sage.sets.family import Family
 
+
 class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGenerators):
     r"""
     A Lie algebra with a set of specified structure coefficients.
@@ -47,7 +48,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
 
     - ``R`` -- a ring, to be used as the base ring
 
-    - ``s_coeff`` -- a dictionary, indexed by pairs of basis indices
+    - ``s_coeff`` -- dictionary, indexed by pairs of basis indices
       (see below), and whose values are dictionaries which are
       indexed by (single) basis indices and whose values are elements
       of `R`
@@ -133,7 +134,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             from sage.algebras.lie_algebras.abelian import AbelianLieAlgebra
             return AbelianLieAlgebra(R, names, index_set, **kwds)
 
-        if (names is None and len(index_set) <= 1) or len(names) <= 1:
+        if (names is None and len(index_set) <= 1) or (names is not None and len(names) <= 1):
             from sage.algebras.lie_algebras.abelian import AbelianLieAlgebra
             return AbelianLieAlgebra(R, names, index_set, **kwds)
 
@@ -255,7 +256,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
 
         TESTS:
 
-        Check that :trac:`23373` is fixed::
+        Check that :issue:`23373` is fixed::
 
             sage: L = lie_algebras.sl(QQ, 2)
             sage: sorted(L.structure_coefficients(True), key=str)
@@ -358,6 +359,31 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             v = self._M(v)
         return self.element_class(self, v)
 
+    def _from_dict(self, d, coerce=False, remove_zeros=False):
+        r"""
+        Construct an element of ``self`` from an ``{index: coefficient}``
+        dictionary.
+
+        INPUT:
+
+        - ``d`` -- dictionary ``{index: coeff}`` where each ``index`` is the
+          index of a basis element and each ``coeff`` belongs to the
+          coefficient ring ``self.base_ring()``
+        - ``coerce`` -- ignored
+        - ``remove_zeros`` -- ignored
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+            sage: L._from_dict({'x': -3, 'z': 2, 'y': 0})
+            -3*x + 2*z
+        """
+        zero = self._M.base_ring().zero()
+        ret = [zero] * self._M.rank()
+        for k, c in d.items():
+            ret[self._index_to_pos[k]] = c
+        return self.element_class(self, self._M(ret))
+
     def some_elements(self):
         """
         Return some elements of ``self``.
@@ -402,7 +428,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             .. WARNING::
 
                 The internal representation order is fixed, whereas this
-                depends on ``"sorting_key"`` print option as it is used
+                depends on ``'sorting_key'`` print option as it is used
                 only for printing.
 
             EXAMPLES::

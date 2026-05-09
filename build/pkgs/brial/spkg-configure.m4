@@ -1,7 +1,7 @@
 SAGE_SPKG_CONFIGURE([brial], [
-  dnl Trac #31624: Avoid C++ ABI issues
-  SAGE_SPKG_DEPCHECK([gcc boost_cropped m4ri], [
-    # If we're using the system m4ri and boost, ensure that we can
+  dnl Issue #31624: Avoid C++ ABI issues
+  SAGE_SPKG_DEPCHECK([gcc m4ri], [
+    # If we're using the system m4ri, ensure that we can
     # compile and run an executable linked against both libbrial and
     # libbrial_groebner (both are used by SageMath).
     AC_LANG_PUSH(C++)
@@ -91,7 +91,7 @@ SAGE_SPKG_CONFIGURE([brial], [
     LIBS=$SAVED_LIBS
     AC_LANG_POP
   ],
-  [ # If we're installing sage's boost or m4ri, then we have to
+  [ # If we're installing sage's m4ri, then we have to
     # install its BRiAl, too.
     sage_spkg_install_brial=yes
   ])

@@ -2,6 +2,7 @@
 import re
 __RGX = re.compile(r'([^!-~])[\n\r\t]+([^!-~])')
 
+
 def trunc_whitespace(app, doctree, docname):
     from docutils.nodes import Text, paragraph
     if not app.config.japanesesupport_trunc_whitespace:
@@ -14,6 +15,7 @@ def trunc_whitespace(app, doctree, docname):
             newtext = __RGX.sub(r"\1\2", newtext)
             #newtext = newtext.strip()
             node.parent.replace(node, Text(newtext))
+
 
 def setup(app):
     app.add_config_value('japanesesupport_trunc_whitespace', True, True)

@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# Test that there is no uncommitted changes in the repository. Return failure if there is.
+# Can also be invoked with `make test-git-no-uncommitted-changes` from top level.
+UNCOMMITTED="$(git status --porcelain)";
+if [ -n "$UNCOMMITTED" ]; then
+	echo "Error: the git repo has uncommitted changes:";
+	echo "$UNCOMMITTED";
+	echo;
+	exit 1;
+fi

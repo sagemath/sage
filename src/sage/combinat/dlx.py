@@ -1,5 +1,5 @@
 """
-Exact Cover Problem via Dancing Links
+Exact cover problem via dancing links
 """
 # dlx.py
 # Copyright (c) 2006,2008 Antti Ajanki <antti.ajanki@iki.fi>
@@ -55,7 +55,7 @@ class DLXMatrix:
         described by Knuth.
 
         Consider a matrix M with entries of 0 and 1, and compute a subset
-        of the rows of this matrix which sum to the vector of all 1's.
+        of the rows of this matrix which sum to the vector of all 1s.
 
         The dancing links algorithm works particularly well for sparse
         matrices, so the input is a list of lists of the form: (note the
@@ -119,15 +119,12 @@ class DLXMatrix:
 
     def __eq__(self, other):
         r"""
-        Return ``True`` if every attribute of
-        ``other`` matches the attribute of
-        ``self``.
+        Return ``True`` if every attribute of ``other`` matches the attribute
+        of ``self``.
 
         INPUT:
 
-
-        -  ``other`` - a DLX matrix
-
+        - ``other`` -- a DLX matrix
 
         EXAMPLES::
 
@@ -192,7 +189,7 @@ class DLXMatrix:
         'initialsolution' is list of row indexes that are required to be
         part of the solution. They will be removed from the matrix.
 
-        .. NOTE:
+        .. NOTE::
 
             Rows and cols are 1-indexed ; the zero index is reserved for
             the root node and column heads.
@@ -237,7 +234,7 @@ class DLXMatrix:
         for r in ones:
             curRow = r[0]  # row index
             columns = r[1]  # column indexes
-            if not(columns):
+            if not (columns):
                 continue
             columns.sort()
 
@@ -430,15 +427,14 @@ class DLXMatrix:
                 if nodetable[ROOTNODE][RIGHT] == ROOTNODE:
                     self._level -= 1
                     return self._cursolution
-                else:
-                    c = nodetable[ROOTNODE][RIGHT]
-                    maxcount = nodetable[nodetable[ROOTNODE][RIGHT]][COUNT]
-                    for j in self._walknodes(ROOTNODE, RIGHT):
-                        if nodetable[j][COUNT] < maxcount:
-                            c = j
-                            maxcount = nodetable[j][COUNT]
-                    self._covercolumn(c)
-                    self._stack[self._level] = (c, c)
+                c = nodetable[ROOTNODE][RIGHT]
+                maxcount = nodetable[nodetable[ROOTNODE][RIGHT]][COUNT]
+                for j in self._walknodes(ROOTNODE, RIGHT):
+                    if nodetable[j][COUNT] < maxcount:
+                        c = j
+                        maxcount = nodetable[j][COUNT]
+                self._covercolumn(c)
+                self._stack[self._level] = (c, c)
             elif nodetable[r][DOWN] != c:
                 if c != r:
                     self._cursolution = self._cursolution[:-1]
@@ -474,10 +470,11 @@ def AllExactCovers(M):
 
     EXAMPLES::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  #no exact covers
+        sage: # needs sage.modules
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers
         sage: for cover in AllExactCovers(M):
         ....:     print(cover)
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) #two exact covers
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) # two exact covers
         sage: for cover in AllExactCovers(M):
         ....:     print(cover)
         [(1, 1, 0), (0, 0, 1)]
@@ -486,10 +483,7 @@ def AllExactCovers(M):
     ones = []
     r = 1    # damn 1-indexing
     for R in M.rows():
-        row = []
-        for i in range(len(R)):
-            if R[i]:
-                row.append(i + 1)  # damn 1-indexing
+        row = [i for i, Ri in enumerate(R, start=1) if Ri]
         ones.append([r, row])
         r += 1
     for s in DLXMatrix(ones):
@@ -503,11 +497,11 @@ def OneExactCover(M):
 
     EXAMPLES::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers
-        sage: OneExactCover(M)
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers                  # needs sage.modules
+        sage: OneExactCover(M)                                                          # needs sage.modules
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) # two exact covers
-        sage: OneExactCover(M)
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]])  # two exact covers         # needs sage.modules
+        sage: OneExactCover(M)                                                          # needs sage.modules
         [(1, 1, 0), (0, 0, 1)]
     """
     for s in AllExactCovers(M):

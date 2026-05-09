@@ -1,1 +1,1 @@
-"pkgconfig(libpng16)"
+pkgconfig(libpng16)

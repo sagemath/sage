@@ -20,7 +20,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#define register
 #include <Python.h>
 #include "ex.h"
 #include "ex_utils.h"
@@ -1127,6 +1126,9 @@ basic & ex::construct_from_double(double d)
 basic & ex::construct_from_pyobject(PyObject* o)
 {
   Py_INCREF(o);   // since numeric steals a reference
+                  // note: unlike `numeric(o)`, `ex(o)` does not steal a
+                  // reference to `o`. You can explicitly move the reference
+                  // to the newly-constructed `ex` object by `ex(numeric(o))`.
   basic *bp = new numeric(o);
   bp->setflag(status_flags::dynallocated);
   GINAC_ASSERT(bp->get_refcount() == 0);

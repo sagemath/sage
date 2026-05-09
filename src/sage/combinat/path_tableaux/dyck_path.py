@@ -1,5 +1,5 @@
 r"""
-Dyck Paths
+Dyck paths
 
 This is an implementation of the abstract base class
 :class:`sage.combinat.path_tableaux.path_tableau.PathTableau`.
@@ -45,10 +45,10 @@ class DyckPath(PathTableau):
 
     INPUT:
 
-    * a sequence of nonnegative integers
-    * a two row standard skew tableau
-    * a Dyck word
-    * a noncrossing perfect matching
+    - a sequence of nonnegative integers
+    - a two row standard skew tableau
+    - a Dyck word
+    - a noncrossing perfect matching
 
     EXAMPLES::
 
@@ -272,7 +272,7 @@ class DyckPath(PathTableau):
     @combinatorial_map(name='to Dyck word')
     def to_DyckWord(self):
         r"""
-        Converts ``self`` to a Dyck word.
+        Convert ``self`` to a Dyck word.
 
         EXAMPLES::
 
@@ -327,14 +327,14 @@ class DyckPath(PathTableau):
             ValueError: [1, 2, 1, 2, 1, 0, 1] does not start at 0
         """
         if self.is_skew():
-            raise ValueError( "%s does not start at 0" % (str(self)) )
+            raise ValueError("%s does not start at 0" % (str(self)))
         w = self.to_word()
         y = DyckWord(w)
         pairs = set()
         for i, a in enumerate(y):
             c = y.associated_parenthesis(i)
             if i < c:
-                pairs.add((i,c))
+                pairs.add((i, c))
         return PerfectMatching(pairs)
 
     def to_tableau(self):
@@ -356,8 +356,7 @@ class DyckPath(PathTableau):
         bot = [i + 1 for i, a in enumerate(w) if a == 0]
         if self.is_skew():
             return SkewTableau([[None]*self[0]+top, bot])
-        else:
-            return StandardTableau([top, bot])
+        return StandardTableau([top, bot])
 
 
 class DyckPaths(PathTableaux):

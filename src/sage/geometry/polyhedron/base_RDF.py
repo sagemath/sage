@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.real_double
 """
 Base class for polyhedra over ``RDF``
 """
@@ -24,11 +25,9 @@ class Polyhedron_RDF(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -43,7 +42,7 @@ class Polyhedron_RDF(Polyhedron_base):
             sage: p._is_zero(1e-10)
             True
         """
-        return abs(x)<=1e-6
+        return abs(x) <= 1e-6
 
     def _is_nonneg(self, x):
         """
@@ -51,11 +50,9 @@ class Polyhedron_RDF(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -70,7 +67,7 @@ class Polyhedron_RDF(Polyhedron_base):
             sage: p._is_nonneg(-1e-10)
             True
         """
-        return x>=-1e-6
+        return x >= -1e-6
 
     def _is_positive(self, x):
         """
@@ -78,11 +75,9 @@ class Polyhedron_RDF(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -97,6 +92,6 @@ class Polyhedron_RDF(Polyhedron_base):
             sage: p._is_positive(-1e-10)
             True
         """
-        return x>=-1e-6
+        return x >= -1e-6
 
     _base_ring = RDF

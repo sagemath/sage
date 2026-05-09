@@ -1,4 +1,4 @@
-ipywidgets jupyter_packaging $(PYTHON) | $(PYTHON_TOOLCHAIN)
+ipywidgets | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

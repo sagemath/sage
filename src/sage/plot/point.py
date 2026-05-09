@@ -1,13 +1,14 @@
-# -*- coding: utf-8 -*-
 r"""
 Points
 
 TESTS::
 
-    sage: E = EllipticCurve('37a')
-    sage: P = E(0,0)
-    sage: def get_points(n): return sum([point(list(i*P)[:2], size=3) for i in range(-n,n) if i != 0 and (i*P)[0] < 3])
-    sage: sum([get_points(15*n).plot3d(z=n) for n in range(1,10)])
+    sage: E = EllipticCurve('37a')                                                      # needs sage.schemes
+    sage: P = E(0,0)                                                                    # needs sage.schemes
+    sage: def get_points(n):
+    ....:     return sum(point(list(i*P)[:2], size=3)
+    ....:                for i in range(-n,n) if i != 0 and (i*P)[0] < 3)
+    sage: sum(get_points(15*n).plot3d(z=n) for n in range(1,10))                        # needs sage.schemes
     Graphics3d Object
 """
 
@@ -40,15 +41,15 @@ class Point(GraphicPrimitive_xydata):
 
     INPUT:
 
-    - xdata -- list of x values for points in Point object
+    - ``xdata`` -- list of x values for points in Point object
 
-    - ydata -- list of y values for points in Point object
+    - ``ydata`` -- list of y values for points in Point object
 
-    - options -- dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
-    Note this should normally be used indirectly via ``point`` and friends::
+    Note this should normally be used indirectly via :func:`point` and friends::
 
         sage: from sage.plot.point import Point
         sage: P = Point([1,2],[2,3],{'alpha':.5})
@@ -68,7 +69,7 @@ class Point(GraphicPrimitive_xydata):
     """
     def __init__(self, xdata, ydata, options):
         """
-        Initializes base class Point.
+        Initialize base class Point.
 
         EXAMPLES::
 
@@ -140,9 +141,8 @@ class Point(GraphicPrimitive_xydata):
 
         INPUT:
 
-
-        -  ``z`` - optional 3D height above `xy`-plane.  May be a list
-           if self is a list of points.
+        - ``z`` -- (optional) 3D height above `xy`-plane; may be a list
+          if ``self`` is a list of points
 
         EXAMPLES:
 
@@ -246,10 +246,8 @@ class Point(GraphicPrimitive_xydata):
             all = [point3d(list(zip(self.xdata, self.ydata, zdata)), **options)]
             if len(all) == 1:
                 return all[0]
-            else:
-                return Graphics3dGroup(all)
-        else:
-            raise ValueError('incorrect number of heights given')
+            return Graphics3dGroup(all)
+        raise ValueError('incorrect number of heights given')
 
     def _repr_(self):
         """
@@ -265,7 +263,7 @@ class Point(GraphicPrimitive_xydata):
 
     def __getitem__(self, i):
         """
-        Returns tuple of coordinates of point.
+        Return tuple of coordinates of point.
 
         EXAMPLES::
 
@@ -281,7 +279,7 @@ class Point(GraphicPrimitive_xydata):
         r"""
         TESTS:
 
-        We check to make sure that :trac:`2076` is fixed by verifying all
+        We check to make sure that :issue:`2076` is fixed by verifying all
         the points are red::
 
             sage: point(((1, 1), (2, 2), (3, 3)), rgbcolor=hue(1), size=30)
@@ -321,8 +319,8 @@ def point(points, **kwds):
 
     INPUT:
 
-    -  ``points`` - either a single point (as a tuple), a list of
-       points, a single complex number, or a list of complex numbers.
+    - ``points`` -- either a single point (as a tuple), a list of
+      points, a single complex number, or a list of complex numbers
 
     For information regarding additional arguments, see either point2d?
     or point3d?.
@@ -369,13 +367,15 @@ def point(points, **kwds):
 
     Extra options will get passed on to show(), as long as they are valid::
 
-        sage: point([(cos(theta), sin(theta)) for theta in srange(0, 2*pi, pi/8)], frame=True)
+        sage: point([(cos(theta), sin(theta))                                           # needs sage.symbolic
+        ....:        for theta in srange(0, 2*pi, pi/8)], frame=True)
         Graphics object consisting of 1 graphics primitive
-        sage: point([(cos(theta), sin(theta)) for theta in srange(0, 2*pi, pi/8)]).show(frame=True) # These are equivalent
+        sage: point([(cos(theta), sin(theta))               # These are equivalent      # needs sage.symbolic
+        ....:        for theta in srange(0, 2*pi, pi/8)]).show(frame=True)
 
     TESTS:
 
-    One can now use iterators (:trac:`13890`)::
+    One can now use iterators (:issue:`13890`)::
 
         sage: point(iter([(1, 1, 1)]))
         Graphics3d Object
@@ -402,8 +402,8 @@ def point2d(points, **options):
 
     INPUT:
 
-    -  ``points`` -- either a single point (as a tuple), a list of
-       points, a single complex number, or a list of complex numbers
+    - ``points`` -- either a single point (as a tuple), a list of
+      points, a single complex number, or a list of complex numbers
 
     - ``alpha`` -- how transparent the point is
 
@@ -502,8 +502,9 @@ def point2d(points, **options):
 
     The legend can be colored::
 
-        sage: P = points([(0, 0), (1, 0)], pointsize=40, legend_label='origin', legend_color='red')
-        sage: P + plot(x^2, (x, 0, 1), legend_label='plot', legend_color='green')
+        sage: P = points([(0, 0), (1, 0)], pointsize=40,
+        ....:            legend_label='origin', legend_color='red')
+        sage: P + plot(x^2, (x, 0, 1), legend_label='plot', legend_color='green')       # needs sage.symbolic
         Graphics object consisting of 2 graphics primitives
 
     .. PLOT::
@@ -514,9 +515,11 @@ def point2d(points, **options):
 
     Extra options will get passed on to show(), as long as they are valid::
 
-        sage: point([(cos(theta), sin(theta)) for theta in srange(0, 2*pi, pi/8)], frame=True)
+        sage: point([(cos(theta), sin(theta))                                           # needs sage.symbolic
+        ....:        for theta in srange(0, 2*pi, pi/8)], frame=True)
         Graphics object consisting of 1 graphics primitive
-        sage: point([(cos(theta), sin(theta)) for theta in srange(0, 2*pi, pi/8)]).show(frame=True) # These are equivalent
+        sage: point([(cos(theta), sin(theta))               # These are equivalent      # needs sage.symbolic
+        ....:        for theta in srange(0, 2*pi, pi/8)]).show(frame=True)
 
     .. PLOT::
 
@@ -532,7 +535,7 @@ def point2d(points, **options):
 
         sphinx_plot(point([(1, 2),(2, 4),(3, 4),(4, 8),(4.5, 32)], scale='semilogy', base=2))
 
-    Since Sage Version 4.4 (:trac:`8599`), the size of a 2d point can be
+    Since Sage Version 4.4 (:issue:`8599`), the size of a 2d point can be
     given by the argument ``size`` instead of ``pointsize``. The argument
     ``pointsize`` is still supported::
 
@@ -546,9 +549,9 @@ def point2d(points, **options):
 
     We can plot a single complex number::
 
-        sage: point(1 + I, pointsize=100)
+        sage: point(1 + I, pointsize=100)                                               # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
-        sage: point(sqrt(2) + I, pointsize=100)
+        sage: point(sqrt(2) + I, pointsize=100)                                         # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -561,7 +564,7 @@ def point2d(points, **options):
 
     We can also plot a list of complex numbers::
 
-        sage: point([I, 1 + I, 2 + 2*I], pointsize=100)
+        sage: point([I, 1 + I, 2 + 2*I], pointsize=100)                                 # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -572,9 +575,13 @@ def point2d(points, **options):
 
        sage: point2d(iter([]))
        Graphics object consisting of 0 graphics primitives
+
+    Verify that :issue:`36153` does not arise::
+
+        sage: P = point((0.5, 0.5), legend_label='test')
     """
     from sage.plot.plot import xydata_from_point_list
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.structure.element import Expression
 
     # points could be a single number
@@ -590,7 +597,7 @@ def point2d(points, **options):
     l = len(points)
     if l == 0:
         return Graphics()
-    elif l == 2:  # special case for a single 2D point
+    if l == 2:  # special case for a single 2D point
         if all(isinstance(z, numbers.Real)
                or (isinstance(z, Expression) and not complex(z).imag)
                for z in points):

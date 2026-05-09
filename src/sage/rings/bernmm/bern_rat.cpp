@@ -87,7 +87,7 @@ struct Item
 */
 struct Item_cmp
 {
-   bool operator()(const Item* x, const Item* y)
+   bool operator()(const Item* x, const Item* y) const
    {
       return mpz_cmp(x->modulus, y->modulus) < 0;
    }
@@ -331,9 +331,9 @@ void bern_rat(mpq_t res, long k, int num_threads)
 #ifdef USE_THREADS
    for (long i = 0; i < num_threads - 1; i++)
       pthread_join(threads[i], NULL);
-#endif
 
    pthread_attr_destroy (&attr);
+#endif
 
    // reconstruct B_k as a rational number
    Item* item = *(state.items.begin());

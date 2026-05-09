@@ -6,7 +6,7 @@
 #                  https://www.gnu.org/licenses/
 ###############################################################################
 
-from .parent_old cimport Parent as Parent_old
+from sage.structure.parent_old cimport Parent as Parent_old
 
 cdef class ParentWithBase(Parent_old):
     pass

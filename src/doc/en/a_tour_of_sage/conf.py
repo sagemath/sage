@@ -20,11 +20,16 @@ from sage_docbuild.conf import *  # NOQA
 # contains common paths.
 html_static_path = [] + html_common_static_path
 
+# Add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/en/a_tour_of_sage', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/en/a_tour_of_sage', '{filename}'),
+})
+
 # General information about the project.
 project = "A Tour of Sage"
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
+# The name for this set of Sphinx documents. Do not include release info.
 html_title = project
 html_short_title = project
 

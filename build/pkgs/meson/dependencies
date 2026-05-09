@@ -1,4 +1,4 @@
-$(PYTHON) | $(PYTHON_TOOLCHAIN)
+ | setuptools pip setuptools_scm wheel flit_core hatchling python_build $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

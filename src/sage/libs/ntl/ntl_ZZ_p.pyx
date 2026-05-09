@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
@@ -32,7 +32,6 @@ from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer cimport Integer
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.rings.rational cimport Rational
-from sage.rings.integer_ring cimport IntegerRing_class
 
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 from sage.libs.ntl.convert cimport PyLong_to_ZZ, mpz_to_ZZ
@@ -40,10 +39,11 @@ from sage.libs.ntl.convert cimport PyLong_to_ZZ, mpz_to_ZZ
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 
-from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.randstate cimport current_randstate
 
 
 ZZ_sage = IntegerRing()
+
 
 def ntl_ZZ_p_random_element(v):
     """
@@ -61,12 +61,11 @@ def ntl_ZZ_p_random_element(v):
 
     cdef ntl_ZZ_p y
     v = ntl_ZZ_pContext(v)
-    y = ntl_ZZ_p(0,v)
+    y = ntl_ZZ_p(0, v)
     sig_on()
     ZZ_p_random(y.x)
     sig_off()
     return y
-
 
 
 ##############################################################################
@@ -93,7 +92,7 @@ cdef class ntl_ZZ_p():
 
     def __init__(self, v=None, modulus=None):
         r"""
-        Initializes an NTL integer mod p.
+        Initialize an NTL integer mod p.
 
         EXAMPLES::
 
@@ -113,7 +112,6 @@ cdef class ntl_ZZ_p():
         # self.c._assert_is_current_modulus()  # The context was restored in __new__
 
         cdef ZZ_c temp, num, den
-        cdef long failed
         if v is not None:
             if isinstance(v, ntl_ZZ_p):
                 self.x = (<ntl_ZZ_p>v).x
@@ -128,7 +126,7 @@ cdef class ntl_ZZ_p():
                 mpz_to_ZZ(&den, (<Integer>v.denominator()).value)
                 ZZ_p_div(self.x, ZZ_to_ZZ_p(num), ZZ_to_ZZ_p(den))
             else:
-                str_v = str(v)  # can cause modulus to change  trac #25790
+                str_v = str(v)  # can cause modulus to change; Issue #25790
                 self.c.restore_c()
                 ccreadstr(self.x, str_v)
 
@@ -174,7 +172,7 @@ cdef class ntl_ZZ_p():
 
     def modulus_context(self):
         """
-        Return the modulus for self.
+        Return the modulus for ``self``.
 
         EXAMPLES::
 
@@ -192,7 +190,7 @@ cdef class ntl_ZZ_p():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -204,7 +202,7 @@ cdef class ntl_ZZ_p():
 
     def __richcmp__(ntl_ZZ_p self, other, int op):
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -257,7 +255,7 @@ cdef class ntl_ZZ_p():
         cdef ntl_ZZ_p y
         cdef ntl_ZZ_p r = self._new()
         if not isinstance(other, ntl_ZZ_p):
-            other = ntl_ZZ_p(other,self.c)
+            other = ntl_ZZ_p(other, self.c)
         elif self.c is not (<ntl_ZZ_p>other).c:
             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         y = other
@@ -276,7 +274,7 @@ cdef class ntl_ZZ_p():
             3
         """
         if not isinstance(other, ntl_ZZ_p):
-            other = ntl_ZZ_p(other,self.c)
+            other = ntl_ZZ_p(other, self.c)
         elif self.c is not (<ntl_ZZ_p>other).c:
             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_p r = self._new()
@@ -295,7 +293,7 @@ cdef class ntl_ZZ_p():
         cdef ntl_ZZ_p y
         cdef ntl_ZZ_p r = ntl_ZZ_p(modulus=self.c)
         if not isinstance(other, ntl_ZZ_p):
-            other = ntl_ZZ_p(other,modulus=self.c)
+            other = ntl_ZZ_p(other, modulus=self.c)
         elif self.c is not (<ntl_ZZ_p>other).c:
             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         y = other
@@ -337,7 +335,7 @@ cdef class ntl_ZZ_p():
 
     def __int__(self):
         """
-        Return self as an int.
+        Return ``self`` as an int.
 
         EXAMPLES::
 
@@ -349,9 +347,9 @@ cdef class ntl_ZZ_p():
         """
         return self.get_as_int()
 
-    cdef int get_as_int(ntl_ZZ_p self):
+    cdef int get_as_int(ntl_ZZ_p self) noexcept:
         r"""
-        Returns value as C int.
+        Return value as C int.
         Return value is only valid if the result fits into an int.
 
         AUTHOR: David Harvey (2006-08-05)
@@ -376,9 +374,9 @@ cdef class ntl_ZZ_p():
         self.c.restore_c()
         return self.get_as_int()
 
-    cdef void set_from_int(ntl_ZZ_p self, int value):
+    cdef void set_from_int(ntl_ZZ_p self, int value) noexcept:
         r"""
-        Sets the value from a C int.
+        Set the value from a C int.
 
         AUTHOR: David Harvey (2006-08-05)
         """
@@ -406,7 +404,7 @@ cdef class ntl_ZZ_p():
 
     def lift(self):
         """
-        Return a lift of self as an ntl.ZZ object.
+        Return a lift of ``self`` as an ntl.ZZ object.
 
         EXAMPLES::
 
@@ -423,7 +421,7 @@ cdef class ntl_ZZ_p():
 
     def modulus(self):
         r"""
-        Returns the modulus as an NTL ZZ.
+        Return the modulus as an NTL ZZ.
 
         EXAMPLES::
 
@@ -434,7 +432,7 @@ cdef class ntl_ZZ_p():
         """
         cdef ntl_ZZ r = ntl_ZZ()
         self.c.restore_c()
-        ZZ_p_modulus( &r.x, &self.x )
+        ZZ_p_modulus(&r.x, &self.x)
         return r
 
     def lift_centered(self):
@@ -467,7 +465,7 @@ cdef class ntl_ZZ_p():
 
     def _integer_(self, ZZ=None):
         """
-        Return a lift of self as a Sage integer.
+        Return a lift of ``self`` as a Sage integer.
 
         EXAMPLES::
 
@@ -486,7 +484,7 @@ cdef class ntl_ZZ_p():
 
     def _sage_(self):
         r"""
-        Returns the value as a sage IntegerModRing.
+        Return the value as a sage IntegerModRing.
 
         EXAMPLES::
 

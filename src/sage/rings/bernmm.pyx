@@ -13,7 +13,7 @@ Cython wrapper for bernmm library
 
 AUTHOR:
 
-    - David Harvey (2008-06): initial version
+- David Harvey (2008-06): initial version
 """
 
 #*****************************************************************************
@@ -36,24 +36,23 @@ cdef extern from "bernmm/bern_modp.h":
     long bern_modp "bernmm::bern_modp" (long p, long k)
 
 
-
 from sage.rings.rational cimport Rational
 
 
-def bernmm_bern_rat(long k, int num_threads = 1):
+def bernmm_bern_rat(long k, int num_threads=1):
     r"""
-    Computes k-th Bernoulli number using a multimodular algorithm.
+    Compute `k`-th Bernoulli number using a multimodular algorithm.
     (Wrapper for bernmm library.)
 
     INPUT:
 
-    - k -- non-negative integer
-    - num_threads -- integer >= 1, number of threads to use
+    - ``k`` -- nonnegative integer
+    - ``num_threads`` -- integer `\geq 1`, number of threads to use
 
     COMPLEXITY:
 
-        Pretty much quadratic in `k`. See the paper "A multimodular algorithm
-        for computing Bernoulli numbers", David Harvey, 2008, for more details.
+    Pretty much quadratic in `k`. See the paper "A multimodular algorithm
+    for computing Bernoulli numbers", David Harvey, 2008, for more details.
 
     EXAMPLES::
 
@@ -86,7 +85,7 @@ def bernmm_bern_rat(long k, int num_threads = 1):
     cdef Rational x
 
     if k < 0:
-        raise ValueError("k must be non-negative")
+        raise ValueError("k must be nonnegative")
 
     x = Rational()
     sig_on()
@@ -98,18 +97,18 @@ def bernmm_bern_rat(long k, int num_threads = 1):
 
 def bernmm_bern_modp(long p, long k):
     r"""
-    Computes `B_k \mod p`, where `B_k` is the k-th Bernoulli number.
+    Compute `B_k \mod p`, where `B_k` is the `k`-th Bernoulli number.
 
-    If `B_k` is not `p`-integral, returns -1.
+    If `B_k` is not `p`-integral, return `-1`.
 
     INPUT:
 
-        p -- a prime
-        k -- non-negative integer
+    - ``p`` -- a prime
+    - ``k`` -- nonnegative integer
 
     COMPLEXITY:
 
-        Pretty much linear in `p`.
+    Pretty much linear in `p`.
 
     EXAMPLES::
 
@@ -139,7 +138,7 @@ def bernmm_bern_modp(long p, long k):
     TESTS:
 
     Check that bernmm works with the new NTL single precision modular
-    arithmetic from :trac:`19874`::
+    arithmetic from :issue:`19874`::
 
         sage: from sage.rings.bernmm import bernmm_bern_modp
         sage: bernmm_bern_modp(7, 128) == bernoulli(128) % 7
@@ -148,7 +147,7 @@ def bernmm_bern_modp(long p, long k):
     cdef long x
 
     if k < 0:
-        raise ValueError("k must be non-negative")
+        raise ValueError("k must be nonnegative")
 
     sig_on()
     x = bern_modp(p, k)

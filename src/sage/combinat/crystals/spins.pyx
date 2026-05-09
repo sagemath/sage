@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
-Spin Crystals
+Spin crystals
 
 These are the crystals associated with the three spin
 representations: the spin representations of odd orthogonal groups
@@ -11,20 +11,20 @@ We follow Kashiwara and Nakashima (Journal of Algebra 165, 1994) in
 representing the elements of the spin crystal by sequences of signs
 `\pm`.
 """
-#TODO: Do we want the following two representations?
+# TODO: Do we want the following two representations?
 #
-#Two other representations are available as attributes
-#:meth:`Spin.internal_repn` and :meth:`Spin.signature` of the crystal element.
+# Two other representations are available as attributes
+# :meth:`Spin.internal_repn` and :meth:`Spin.signature` of the crystal element.
 #
-#- A numerical internal representation, an integer `n` such that if `n-1`
-#  is written in binary and the `1`'s are replaced by ``-``, the `0`'s by
+# - A numerical internal representation, an integer `n` such that if `n-1`
+#   is written in binary and the `1`'s are replaced by ``-``, the `0`'s by
 #  ``+``
 #
-#- The signature, which is a list in which ``+`` is replaced by `+1` and
-#  ``-`` by `-1`.
+# - The signature, which is a list in which ``+`` is replaced by `+1` and
+#   ``-`` by `-1`.
 
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
 #                          Nicolas Thiery <nthiery at users.sf.net>
 #                          Daniel Bump    <bump at match.stanford.edu>
@@ -39,12 +39,11 @@ representing the elements of the spin crystal by sequences of signs
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from cysignals.memory cimport sig_malloc, sig_free
-from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent cimport Parent
@@ -66,7 +65,7 @@ def CrystalOfSpins(ct):
     Return the spin crystal of the given type `B`.
 
     This is a combinatorial model for the crystal with highest weight
-    `Lambda_n` (the `n`-th fundamental weight). It has
+    `\Lambda_n` (the `n`-th fundamental weight). It has
     `2^n` elements, here called Spins. See also
     :func:`~sage.combinat.crystals.letters.CrystalOfLetters`,
     :func:`~sage.combinat.crystals.spins.CrystalOfSpinsPlus`,
@@ -74,7 +73,7 @@ def CrystalOfSpins(ct):
 
     INPUT:
 
-    -  ``['B', n]`` - A Cartan type `B_n`.
+    - ``['B', n]`` -- a Cartan type `B_n`
 
     EXAMPLES::
 
@@ -100,6 +99,7 @@ def CrystalOfSpins(ct):
     else:
         raise NotImplementedError
 
+
 #########################
 # Type D spins
 #########################
@@ -108,12 +108,12 @@ def CrystalOfSpinsPlus(ct):
     r"""
     Return the plus spin crystal of the given type D.
 
-    This is the crystal with highest weight `Lambda_n` (the
+    This is the crystal with highest weight `\Lambda_n` (the
     `n`-th fundamental weight).
 
     INPUT:
 
-    -  ``['D', n]`` - A Cartan type `D_n`.
+    - ``['D', n]`` -- a Cartan type `D_n`
 
     EXAMPLES::
 
@@ -136,16 +136,17 @@ def CrystalOfSpinsPlus(ct):
     else:
         raise NotImplementedError
 
+
 def CrystalOfSpinsMinus(ct):
     r"""
     Return the minus spin crystal of the given type D.
 
-    This is the crystal with highest weight `Lambda_{n-1}`
+    This is the crystal with highest weight `\Lambda_{n-1}`
     (the `(n-1)`-st fundamental weight).
 
     INPUT:
 
-    -  ``['D', n]`` - A Cartan type `D_n`.
+    - ``['D', n]`` -- a Cartan type `D_n`
 
     EXAMPLES::
 
@@ -169,6 +170,7 @@ def CrystalOfSpinsMinus(ct):
     else:
         raise NotImplementedError
 
+
 class GenericCrystalOfSpins(UniqueRepresentation, Parent):
     """
     A generic crystal of spins.
@@ -182,11 +184,11 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
         """
         self._cartan_type = CartanType(ct)
         if case == "spins":
-            self.rename("The crystal of spins for type %s"%ct)
+            self.rename("The crystal of spins for type %s" % ct)
         elif case == "plus":
-            self.rename("The plus crystal of spins for type %s"%ct)
+            self.rename("The plus crystal of spins for type %s" % ct)
         else:
-            self.rename("The minus crystal of spins for type %s"%ct)
+            self.rename("The minus crystal of spins for type %s" % ct)
 
         self.Element = element_class
         Parent.__init__(self, category=ClassicalCrystals())
@@ -251,6 +253,7 @@ class GenericCrystalOfSpins(UniqueRepresentation, Parent):
             raise ValueError("both elements must be in this crystal")
         return self._digraph_closure.has_edge(x, y)
 
+
 cdef class Spin(Element):
     """
     A spin letter in the crystal of spins.
@@ -292,6 +295,7 @@ cdef class Spin(Element):
         self._value = <bint*>sig_malloc(self._n*sizeof(bint))
         for i in range(self._n):
             self._value[i] = (val[i] != 1)
+        self._hash = -1
         Element.__init__(self, parent)
 
     cdef Spin _new_c(self, bint* value):
@@ -302,7 +306,7 @@ cdef class Spin(Element):
         ret._parent = self._parent
         ret._n = self._n
         ret._value = value
-        ret._hash = 0
+        ret._hash = -1
         return ret
 
     def __dealloc__(self):
@@ -328,7 +332,7 @@ cdef class Spin(Element):
             True
         """
         cdef int i
-        if self._hash == 0:
+        if self._hash == -1:
             self._hash = hash(tuple([-1 if self._value[i] else 1 for i in range(self._n)]))
         return self._hash
 
@@ -491,7 +495,7 @@ cdef class Spin(Element):
 
     def _latex_(self):
         r"""
-        Gives the latex output of a spin column.
+        Give the latex output of a spin column.
 
         EXAMPLES::
 
@@ -597,7 +601,7 @@ cdef class Spin_crystal_type_B_element(Spin):
             return self._new_c(ret)
         return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -614,7 +618,7 @@ cdef class Spin_crystal_type_B_element(Spin):
             return self._value[i-1]
         return self._value[i-1] and not self._value[i]
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 
@@ -717,7 +721,7 @@ cdef class Spin_crystal_type_D_element(Spin):
             return self._new_c(ret)
         return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -734,7 +738,7 @@ cdef class Spin_crystal_type_D_element(Spin):
             return self._value[i-1] and self._value[i-2]
         return self._value[i-1] and not self._value[i]
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 

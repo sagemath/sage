@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.combinat
 r"""
 Classical Crystals
 """
@@ -63,6 +64,8 @@ class ClassicalCrystals(Category_singleton):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_stembridge_local_axioms() . . . pass
     """
@@ -80,7 +83,7 @@ class ClassicalCrystals(Category_singleton):
 
     def example(self, n=3):
         """
-        Returns an example of highest weight crystals, as per
+        Return an example of highest weight crystals, as per
         :meth:`Category.example`.
 
         EXAMPLES::
@@ -180,16 +183,15 @@ class ClassicalCrystals(Category_singleton):
             u = self.algebra(ZZ).sum_of_monomials(self.module_generators)
             u = self.demazure_operator(u, word)
             if f is None:
-                from sage.symbolic.all import SR as P
+                from sage.symbolic.ring import SR as P
                 x = [P.var('x%s' % (i+1)) for i in range(n)]
                 # TODO: use P.linear_combination when PolynomialRing will be a ModulesWithBasis
                 return sum((coeff*prod((x[i]**(c.weight()[i]) for i in range(n)), P.one()) for c, coeff in u), P.zero())
-            else:
-                return sum(coeff * f(c) for c, coeff in u)
+            return sum(coeff * f(c) for c, coeff in u)
 
         def character(self, R=None):
             """
-            Returns the character of this crystal.
+            Return the character of this crystal.
 
             INPUT:
 
@@ -212,7 +214,7 @@ class ClassicalCrystals(Category_singleton):
 
             One may specify an alternate :class:`WeylCharacterRing`::
 
-                sage: R = WeylCharacterRing("A2", style="coroots")
+                sage: R = WeylCharacterRing("A2", style='coroots')
                 sage: chiT = T.character(R); chiT
                 A2(0,0) + 2*A2(1,1) + A2(0,3) + A2(3,0) + A2(2,2)
                 sage: chiT in R
@@ -221,12 +223,11 @@ class ClassicalCrystals(Category_singleton):
             It should have the same Cartan type and use the same
             realization of the weight lattice as ``self``::
 
-                sage: R = WeylCharacterRing("A3", style="coroots")
+                sage: R = WeylCharacterRing("A3", style='coroots')
                 sage: T.character(R)
                 Traceback (most recent call last):
                 ...
                 ValueError: Weyl character ring does not have the right Cartan type
-
             """
             from sage.combinat.root_system.weyl_characters import WeylCharacterRing
             if R is None:
@@ -239,7 +240,7 @@ class ClassicalCrystals(Category_singleton):
 
         def __iter__(self):
             r"""
-            Returns an iterator over the elements of this crystal.
+            Return an iterator over the elements of this crystal.
 
             This iterator uses little memory, storing only one element
             of the crystal at a time. For details on the complexity, see
@@ -287,6 +288,8 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
+                running ._test_random() . . . pass
+                running ._test_rank() . . . pass
                 running ._test_some_elements() . . . pass
                 running ._test_stembridge_local_axioms() . . . pass
 
@@ -316,6 +319,8 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
+                running ._test_random() . . . pass
+                running ._test_rank() . . . pass
                 running ._test_some_elements() . . . pass
                 running ._test_stembridge_local_axioms() . . . pass
 
@@ -327,11 +332,11 @@ class ClassicalCrystals(Category_singleton):
                 sage: fb4 = lambda a,b,c,d: crystals.Tableaux(['B',4],shape=[a+b+c+d,b+c+d,c+d,d])
                 sage: fd4 = lambda a,b,c,d: crystals.Tableaux(['D',4],shape=[a+b+c+d,b+c+d,c+d,d])
                 sage: fd5 = lambda a,b,c,d,e: crystals.Tableaux(['D',5],shape=[a+b+c+d+e,b+c+d+e,c+d+e,d+e,e])
-                sage: def fd4spinplus(a,b,c,d):
+                sage: def fd4spinplus(a, b, c, d):
                 ....:     C = crystals.Tableaux(['D',4],shape=[a+b+c+d,b+c+d,c+d,d])
                 ....:     D = crystals.SpinsPlus(['D',4])
                 ....:     return crystals.TensorProduct(C,D,generators=[[C[0],D[0]]])
-                sage: def fb3spin(a,b,c):
+                sage: def fb3spin(a, b, c):
                 ....:     C = crystals.Tableaux(['B',3],shape=[a+b+c,b+c,c])
                 ....:     D = crystals.Spins(['B',3])
                 ....:     return crystals.TensorProduct(C,D,generators=[[C[0],D[0]]])
@@ -370,6 +375,8 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_new() . . . pass
                 running ._test_not_implemented_methods() . . . pass
                 running ._test_pickling() . . . pass
+                running ._test_random() . . . pass
+                running ._test_rank() . . . pass
                 running ._test_some_elements() . . . pass
                 running ._test_stembridge_local_axioms() . . . pass
 
@@ -383,7 +390,7 @@ class ClassicalCrystals(Category_singleton):
 
         def _test_fast_iter(self, **options):
             r"""
-            Tests whether the elements returned by :meth:`.__iter__`
+            Test whether the elements returned by :meth:`.__iter__`
             and ``Crystal.list(self)`` are the same (the two
             algorithms are different).
 
@@ -401,7 +408,7 @@ class ClassicalCrystals(Category_singleton):
 
         def cardinality(self):
             r"""
-            Returns the number of elements of the crystal, using Weyl's
+            Return the number of elements of the crystal, using Weyl's
             dimension formula on each connected component.
 
             EXAMPLES::

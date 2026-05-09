@@ -3,17 +3,17 @@ Extra functions for quadratic forms
 """
 
 from sage.matrix.constructor import matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.arith.misc import legendre_symbol
 from sage.rings.integer_ring import ZZ
 
 
-def is_triangular_number(n, return_value=False):
+def is_triangular_number(n, return_value=False) -> bool | tuple:
     """
     Return whether ``n`` is a triangular number.
 
     A *triangular number* is a number of the form `k(k+1)/2` for some
-    non-negative integer `n`. See :wikipedia:`Triangular_number`. The sequence
+    nonnegative integer `n`. See :wikipedia:`Triangular_number`. The sequence
     of triangular number is references as A000217 in the Online encyclopedia of
     integer sequences (OEIS).
 
@@ -22,11 +22,11 @@ def is_triangular_number(n, return_value=False):
 
     INPUT:
 
-    - ``n`` - an integer
+    - ``n`` -- integer
 
-    - ``return_value`` - a boolean set to ``False`` by default. If set to
-      ``True`` the function returns a pair made of a boolean and the value ``v``
-      such that `v(v+1)/2 = n`.
+    - ``return_value`` -- boolean (default: ``False``); if set to
+      ``True`` the function returns a pair made of a boolean and the value `v`
+      such that `v(v+1)/2 = n`
 
     EXAMPLES::
 
@@ -75,21 +75,19 @@ def is_triangular_number(n, return_value=False):
 
 
 def extend_to_primitive(A_input):
-    """
+    r"""
     Given a matrix (resp. list of vectors), extend it to a square
     matrix (resp. list of vectors), such that its determinant is the
     gcd of its minors (i.e. extend the basis of a lattice to a
-    "maximal" one in Z^n).
+    "maximal" one in `\ZZ^n`).
 
     Author(s): Gonzalo Tornaria and Jonathan Hanke.
 
     INPUT:
 
-    a matrix, or a list of length n vectors (in the same space)
+    - ``A_input`` -- a matrix or a list of length n vectors (in the same space)
 
-    OUTPUT:
-
-    a square matrix, or a list of n vectors (resp.)
+    OUTPUT: a square matrix or a list of n vectors (resp.)
 
     EXAMPLES::
 
@@ -101,10 +99,9 @@ def extend_to_primitive(A_input):
 
         sage: extend_to_primitive([vector([1,2,3])])
         [(1, 2, 3), (0, 1, 1), (-1, 0, 0)]
-
     """
     # Deal with a list of vectors
-    if not is_Matrix(A_input):
+    if not isinstance(A_input, Matrix):
         A = matrix(A_input)      # Make a matrix A with the given rows.
         vec_output_flag = True
     else:
@@ -140,19 +137,18 @@ def extend_to_primitive(A_input):
     # Return the current information
     if vec_output_flag:
         return D.rows()
-    else:
-        return D
+    return D
 
 
 def least_quadratic_nonresidue(p):
-    """
-    Return the smallest positive integer quadratic non-residue in Z/pZ for primes p>2.
+    r"""
+    Return the smallest positive integer quadratic non-residue in `\ZZ/p\ZZ` for primes `p>2`.
 
     EXAMPLES::
 
         sage: least_quadratic_nonresidue(5)
         2
-        sage: [least_quadratic_nonresidue(p) for p in prime_range(3,100)]
+        sage: [least_quadratic_nonresidue(p) for p in prime_range(3, 100)]              # needs sage.libs.pari
         [2, 2, 3, 2, 2, 3, 2, 5, 2, 3, 2, 3, 2, 5, 2, 2, 2, 2, 7, 5, 3, 2, 3, 5]
 
     TESTS:

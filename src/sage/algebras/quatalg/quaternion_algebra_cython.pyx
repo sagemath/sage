@@ -15,7 +15,6 @@ from a list of n rational quaternions.
 AUTHORS:
 
 - William Stein
-
 """
 
 # ****************************************************************************
@@ -25,7 +24,7 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
@@ -35,14 +34,14 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 
-from .quaternion_algebra_element cimport QuaternionAlgebraElement_rational_field
+from sage.algebras.quatalg.quaternion_algebra_element cimport QuaternionAlgebraElement_rational_field
 
 from sage.libs.gmp.mpz cimport mpz_t, mpz_lcm, mpz_init, mpz_set, mpz_clear, mpz_init_set, mpz_mul, mpz_fdiv_q, mpz_cmp_si
-from sage.libs.gmp.mpq cimport mpq_set_num, mpq_set_den, mpq_canonicalize
 
 from sage.libs.flint.fmpz cimport fmpz_set_mpz
 from sage.libs.flint.fmpq cimport fmpq_canonicalise
 from sage.libs.flint.fmpq_mat cimport fmpq_mat_entry_num, fmpq_mat_entry_den, fmpq_mat_entry
+
 
 def integral_matrix_and_denom_from_rational_quaternions(v, reverse=False):
     r"""
@@ -52,7 +51,7 @@ def integral_matrix_and_denom_from_rational_quaternions(v, reverse=False):
 
     INPUT:
 
-    - ``v`` -- a list of quaternions in a rational quaternion algebra
+    - ``v`` -- list of quaternions in a rational quaternion algebra
     - ``reverse`` -- whether order of the coordinates as well as the
       order of the list ``v`` should be reversed
 
@@ -96,7 +95,6 @@ def integral_matrix_and_denom_from_rational_quaternions(v, reverse=False):
 
     # Now fill in each row x of A, multiplying it by q = d/denom(x)
     cdef mpz_t q
-    cdef mpz_t* row
     cdef mpz_t tmp
     mpz_init(q)
     mpz_init(tmp)
@@ -105,25 +103,26 @@ def integral_matrix_and_denom_from_rational_quaternions(v, reverse=False):
         mpz_fdiv_q(q, d.value, x.d)
         if reverse:
             mpz_mul(tmp, q, x.x)
-            A.set_unsafe_mpz(n-i-1,3,tmp)
+            A.set_unsafe_mpz(n-i-1, 3, tmp)
             mpz_mul(tmp, q, x.y)
-            A.set_unsafe_mpz(n-i-1,2,tmp)
+            A.set_unsafe_mpz(n-i-1, 2, tmp)
             mpz_mul(tmp, q, x.z)
-            A.set_unsafe_mpz(n-i-1,1,tmp)
+            A.set_unsafe_mpz(n-i-1, 1, tmp)
             mpz_mul(tmp, q, x.w)
-            A.set_unsafe_mpz(n-i-1,0,tmp)
+            A.set_unsafe_mpz(n-i-1, 0, tmp)
         else:
             mpz_mul(tmp, q, x.x)
-            A.set_unsafe_mpz(i,0,tmp)
+            A.set_unsafe_mpz(i, 0, tmp)
             mpz_mul(tmp, q, x.y)
-            A.set_unsafe_mpz(i,1,tmp)
+            A.set_unsafe_mpz(i, 1, tmp)
             mpz_mul(tmp, q, x.z)
-            A.set_unsafe_mpz(i,2,tmp)
+            A.set_unsafe_mpz(i, 2, tmp)
             mpz_mul(tmp, q, x.w)
-            A.set_unsafe_mpz(i,3,tmp)
+            A.set_unsafe_mpz(i, 3, tmp)
     mpz_clear(q)
     mpz_clear(tmp)
     return A, d
+
 
 def rational_matrix_from_rational_quaternions(v, reverse=False):
     r"""
@@ -132,13 +131,11 @@ def rational_matrix_from_rational_quaternions(v, reverse=False):
 
     INPUT:
 
-    - ``v`` -- a list of quaternions in a rational quaternion algebra
+    - ``v`` -- list of quaternions in a rational quaternion algebra
     - ``reverse`` -- whether order of the coordinates as well as the
       order of the list ``v`` should be reversed
 
-    OUTPUT:
-
-    - a matrix over `\QQ`
+    OUTPUT: a matrix over `\QQ`
 
     EXAMPLES::
 
@@ -166,7 +163,7 @@ def rational_matrix_from_rational_quaternions(v, reverse=False):
             fmpz_set_mpz(fmpq_mat_entry_num(A._matrix, n-i-1, 1), x.z)
             fmpz_set_mpz(fmpq_mat_entry_num(A._matrix, n-i-1, 0), x.w)
 
-            if mpz_cmp_si(x.d,1):
+            if mpz_cmp_si(x.d, 1):
                 for j in range(4):
                     fmpz_set_mpz(fmpq_mat_entry_den(A._matrix, n-i-1, j), x.d)
                     fmpq_canonicalise(fmpq_mat_entry(A._matrix, n-i-1, j))
@@ -178,12 +175,13 @@ def rational_matrix_from_rational_quaternions(v, reverse=False):
             fmpz_set_mpz(fmpq_mat_entry_num(A._matrix, i, 2), x.z)
             fmpz_set_mpz(fmpq_mat_entry_num(A._matrix, i, 3), x.w)
 
-            if mpz_cmp_si(x.d,1):
+            if mpz_cmp_si(x.d, 1):
                 for j in range(4):
                     fmpz_set_mpz(fmpq_mat_entry_den(A._matrix, i, j), x.d)
                     fmpq_canonicalise(fmpq_mat_entry(A._matrix, i, j))
 
     return A
+
 
 def rational_quaternions_from_integral_matrix_and_denom(A, Matrix_integer_dense H, Integer d, reverse=False):
     r"""
@@ -211,6 +209,18 @@ def rational_quaternions_from_integral_matrix_and_denom(A, Matrix_integer_dense 
 
         sage: f(A, matrix([[3,-4,2,-1],[4,3,2,1]]), 3, reverse=True)
         [1/3 + 2/3*i + j + 4/3*k, -1/3 + 2/3*i - 4/3*j + k]
+
+    TESTS:
+
+    Check that :issue:`41903` is fixed::
+
+        sage: from sage.algebras.quatalg.quaternion_algebra import basis_for_quaternion_lattice as bfql
+        sage: B.<i,j,k> = QuaternionAlgebra(-1,-19)
+        sage: basis = bfql([(1+i)/2, (1+j)/2, (1+k)/2, (i+j)/2])
+        sage: basis[0]
+        1
+        sage: basis[0].is_one()
+        True
     """
     #
     # This is an optimized version of the following interpreted Python code.
@@ -222,14 +232,14 @@ def rational_quaternions_from_integral_matrix_and_denom(A, Matrix_integer_dense 
     cdef Integer a, b
     a = Integer(A.invariants()[0])
     b = Integer(A.invariants()[1])
-    cdef Py_ssize_t i, j
+    cdef Py_ssize_t i
     cdef mpz_t tmp
     mpz_init(tmp)
 
     if reverse:
-        rng = xrange(H.nrows()-1, -1, -1)
+        rng = range(H.nrows()-1, -1, -1)
     else:
-        rng = xrange(H.nrows())
+        rng = range(H.nrows())
 
     for i in rng:
         x = <QuaternionAlgebraElement_rational_field> QuaternionAlgebraElement_rational_field.__new__(QuaternionAlgebraElement_rational_field)
@@ -237,26 +247,25 @@ def rational_quaternions_from_integral_matrix_and_denom(A, Matrix_integer_dense 
         mpz_set(x.a, a.value)
         mpz_set(x.b, b.value)
         if reverse:
-            H.get_unsafe_mpz(i,3,tmp)
+            H.get_unsafe_mpz(i, 3, tmp)
             mpz_init_set(x.x, tmp)
-            H.get_unsafe_mpz(i,2,tmp)
+            H.get_unsafe_mpz(i, 2, tmp)
             mpz_init_set(x.y, tmp)
-            H.get_unsafe_mpz(i,1,tmp)
+            H.get_unsafe_mpz(i, 1, tmp)
             mpz_init_set(x.z, tmp)
-            H.get_unsafe_mpz(i,0,tmp)
+            H.get_unsafe_mpz(i, 0, tmp)
             mpz_init_set(x.w, tmp)
         else:
-            H.get_unsafe_mpz(i,0,tmp)
+            H.get_unsafe_mpz(i, 0, tmp)
             mpz_init_set(x.x, tmp)
-            H.get_unsafe_mpz(i,1,tmp)
+            H.get_unsafe_mpz(i, 1, tmp)
             mpz_init_set(x.y, tmp)
-            H.get_unsafe_mpz(i,2,tmp)
+            H.get_unsafe_mpz(i, 2, tmp)
             mpz_init_set(x.z, tmp)
-            H.get_unsafe_mpz(i,3,tmp)
+            H.get_unsafe_mpz(i, 3, tmp)
             mpz_init_set(x.w, tmp)
         mpz_init_set(x.d, d.value)
-        # WARNING -- we do *not* canonicalize the entries in the quaternion.  This is
-        # I think _not_ needed for quaternion_element.pyx
+        x.canonicalize()  # prevent issues like #41903
         v.append(x)
     mpz_clear(tmp)
     return v

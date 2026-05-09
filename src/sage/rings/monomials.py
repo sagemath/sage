@@ -1,5 +1,6 @@
 "Monomials"
 
+
 def _monomials(gens, R, n, i):
     """
     Given two lists ``gens`` and ``n`` of exactly the same length,
@@ -9,7 +10,7 @@ def _monomials(gens, R, n, i):
 
     EXAMPLES::
 
-        sage: monomials([x], [3]) # indirect doctest
+        sage: monomials([x], [3])  # indirect doctest                                   # needs sage.symbolic
         [1, x, x^2]
     """
     # each power of the ith generator times all products
@@ -20,21 +21,22 @@ def _monomials(gens, R, n, i):
         for _ in range(n[0]-1):
             v.append(v[-1]*b)
         return v
-    else:
-        z = gens[i]
-        w = list(gens)
-        del w[i]
-        nn = list(n)
-        del nn[i]
-        v = monomials(w, nn)
-        k = len(v)
-        for _ in range(n[i]-1):
-            for j in range(k):
-                v.append(v[j]*z)
-            z *= gens[i]
-        return v
+    z = gens[i]
+    w = list(gens)
+    del w[i]
+    nn = list(n)
+    del nn[i]
+    v = monomials(w, nn)
+    k = len(v)
+    for _ in range(n[i]-1):
+        for j in range(k):
+            v.append(v[j]*z)
+        z *= gens[i]
+    return v
+
 
 from sage.structure.sequence import Sequence
+
 
 def monomials(v, n):
     """
@@ -51,7 +53,7 @@ def monomials(v, n):
 
     EXAMPLES::
 
-        sage: monomials([x], [3])
+        sage: monomials([x], [3])                                                       # needs sage.symbolic
         [1, x, x^2]
         sage: R.<x,y,z> = QQ[]
         sage: monomials([x,y], [5,5])

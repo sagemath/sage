@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings sage.schemes
 """
 AG codes
 
@@ -56,7 +57,6 @@ EXAMPLES::
 AUTHORS:
 
 - Kwankyu Lee (2019-03): initial version
-
 """
 
 # ****************************************************************************
@@ -69,19 +69,21 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.modules.free_module_element import vector
+from sage.coding.ag_code_decoders import (
+    DifferentialAGCodeEncoder,
+    DifferentialAGCodeUniqueDecoder,
+    EvaluationAGCodeEncoder,
+    EvaluationAGCodeUniqueDecoder,
+)
+from sage.coding.linear_code import (
+    AbstractLinearCode,
+    LinearCodeGeneratorMatrixEncoder,
+    LinearCodeSyndromeDecoder,
+)
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.modules.free_module_element import vector
 from sage.rings.function_field.place import FunctionFieldPlace
-
-from .linear_code import (AbstractLinearCode,
-                          LinearCodeGeneratorMatrixEncoder,
-                          LinearCodeSyndromeDecoder)
-
-from .ag_code_decoders import (EvaluationAGCodeUniqueDecoder,
-                               EvaluationAGCodeEncoder,
-                               DifferentialAGCodeUniqueDecoder,
-                               DifferentialAGCodeEncoder)
 
 
 class AGCode(AbstractLinearCode):
@@ -120,7 +122,7 @@ class EvaluationAGCode(AGCode):
 
     INPUT:
 
-    - ``pls`` -- a list of rational places of a function field
+    - ``pls`` -- list of rational places of a function field
 
     - ``G`` -- a divisor whose support is disjoint from ``pls``
 
@@ -331,7 +333,7 @@ class EvaluationAGCode(AGCode):
         """
         Return the designed distance of the AG code.
 
-        If the code is of dimension zero, then a ``ValueError`` is raised.
+        If the code is of dimension zero, then a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -355,11 +357,11 @@ class EvaluationAGCode(AGCode):
 
 class DifferentialAGCode(AGCode):
     """
-    Differential AG code defined by rational places ``pls`` and a divisor ``G``
+    Differential AG code defined by rational places ``pls`` and a divisor ``G``.
 
     INPUT:
 
-    - ``pls`` -- a list of rational places of a function field
+    - ``pls`` -- list of rational places of a function field
 
     - ``G`` -- a divisor whose support is disjoint from ``pls``
 
@@ -538,7 +540,8 @@ class DifferentialAGCode(AGCode):
             sage: Q, = C.places_at_infinity()
             sage: pls.remove(Q)
             sage: code = codes.DifferentialAGCode(pls, 3*Q)
-            sage: matrix([[w.residue(p) for p in pls] for w in code.basis_differentials()])
+            sage: matrix([[w.residue(p) for p in pls]
+            ....:         for w in code.basis_differentials()])
             [    1     0     0     0     0 a + 1 a + 1     1]
             [    0     1     0     0     0 a + 1     a     0]
             [    0     0     1     0     0     a     1     a]
@@ -574,7 +577,7 @@ class DifferentialAGCode(AGCode):
         """
         Return the designed distance of the differential AG code.
 
-        If the code is of dimension zero, then a ``ValueError`` is raised.
+        If the code is of dimension zero, then a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -602,7 +605,7 @@ class CartierCode(AGCode):
 
     INPUT:
 
-    - ``pls`` -- a list of rational places
+    - ``pls`` -- list of rational places
 
     - ``G`` -- a divisor whose support is disjoint from ``pls``
 
@@ -610,7 +613,7 @@ class CartierCode(AGCode):
 
     - ``name`` -- string; name of the generator of the subfield `\GF{p^r}`
 
-    OUTPUT: Cartier code over `\GF{p^r}` where `p` is the characteristic of the
+    OUTPUT: cartier code over `\GF{p^r}` where `p` is the characteristic of the
     base constant field of the function field
 
     Note that if ``r`` is 1 the default, then ``name`` can be omitted.

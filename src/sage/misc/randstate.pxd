@@ -12,6 +12,7 @@ cdef class randstate:
     cdef object _python_random
 
     cdef object _gap_saved_seed
+    cdef object _libgap_saved_seed
     cdef object _pari_saved_seed
 
     cdef object _gp_saved_seeds
@@ -19,11 +20,11 @@ cdef class randstate:
     cpdef set_seed_libc(self, bint force)
     cpdef set_seed_ntl(self, bint force)
 
-    cpdef int c_random(self)
-    cpdef double c_rand_double(self)
+    cpdef int c_random(self) noexcept
+    cpdef double c_rand_double(self) noexcept
 
     cpdef ZZ_seed(self)
     cpdef long_seed(self)
 
 cpdef randstate current_randstate()
-cpdef int random()
+cpdef int random() noexcept

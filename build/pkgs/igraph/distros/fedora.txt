@@ -1,1 +1,2 @@
-igraph igraph-devel
+igraph
+igraph-devel

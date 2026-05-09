@@ -53,7 +53,7 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
     INPUT:
 
     - ``R`` -- the base ring
-    - ``elements`` -- a tuple of elements of ``R``
+    - ``elements`` -- tuple of elements of `R`
 
     EXAMPLES::
 
@@ -108,16 +108,16 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
                 R = ()
             elements = R
             if not elements:
-                R = ZZ # default to ZZ as the base ring if no elements are given
+                R = ZZ  # default to ZZ as the base ring if no elements are given
             elif isinstance(R, Parent):
                 elements = ()
             else:
                 R = elements[0].parent()
-        elif R is None: # elements is not None
+        elif R is None:  # elements is not None
             R = elements[0].parent()
-        return super(KoszulComplex, cls).__classcall__(cls, R, tuple(elements))
+        return super().__classcall__(cls, R, tuple(elements))
 
-    def __init__(self, R, elements):
+    def __init__(self, R, elements) -> None:
         """
         Initialize ``self``.
 
@@ -134,12 +134,12 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
         diff = {}
         zero = R.zero()
         for i in I:
-            M = matrix(R, binomial(n,i), binomial(n,i+1), zero)
+            M = matrix(R, binomial(n, i), binomial(n, i+1), zero)
             j = 0
             for comb in itertools.combinations(I, i+1):
-                for k,val in enumerate(comb):
+                for k, val in enumerate(comb):
                     r = rank(comb[:k] + comb[k+1:], n, False)
-                    M[r,j] = (-1)**k * elements[val]
+                    M[r, j] = (-1)**k * elements[val]
                 j += 1
             M.set_immutable()
             diff[i+1] = M
@@ -149,7 +149,7 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
         diff[n+1].set_immutable()
         ChainComplex_class.__init__(self, ZZ, ZZ(-1), R, diff)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

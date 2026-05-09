@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 r"""
 Analytic types of modular forms
 
@@ -8,22 +9,22 @@ list of handled properties.
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
-from sage.sets.set import Set
-from sage.combinat.posets.posets import Poset, FinitePoset
-from sage.combinat.posets.lattices import FiniteLatticePoset
 from sage.combinat.posets.elements import LatticePosetElement
+from sage.combinat.posets.lattices import FiniteLatticePoset
+from sage.combinat.posets.posets import FinitePoset, Poset
+from sage.misc.latex import latex
+from sage.sets.set import Set
 
 
 class AnalyticTypeElement(LatticePosetElement):
@@ -68,7 +69,7 @@ class AnalyticTypeElement(LatticePosetElement):
     """
 
     # We use the same constructor as LatticePosetElement
-    #def __init__(self, poset, element, vertex):
+    # def __init__(self, poset, element, vertex):
     #    super().__init__(poset, element, vertex)
 
     def _repr_(self):
@@ -93,7 +94,6 @@ class AnalyticTypeElement(LatticePosetElement):
             sage: latex(AnalyticType()(["quasi", "cusp"]))
             \text{\texttt{quasi{ }cuspidal}}
         """
-        from sage.misc.latex import latex
         return latex(self.analytic_name())
 
     def analytic_space_name(self):
@@ -205,12 +205,10 @@ class AnalyticTypeElement(LatticePosetElement):
 
         INPUT:
 
-        - ``reduce_type``  -- an analytic type or something which is
+        - ``reduce_type`` -- an analytic type or something which is
           convertible to an analytic type
 
-        OUTPUT:
-
-        The new reduced analytic type.
+        OUTPUT: the new reduced analytic type
 
         EXAMPLES::
 
@@ -235,12 +233,10 @@ class AnalyticTypeElement(LatticePosetElement):
 
         INPUT:
 
-        - ``extend_type``  -- an analytic type or something which is
+        - ``extend_type`` -- an analytic type or something which is
           convertible to an analytic type
 
-        OUTPUT:
-
-        The new extended analytic type.
+        OUTPUT: the new extended analytic type
 
         EXAMPLES::
 
@@ -293,16 +289,16 @@ class AnalyticType(FiniteLatticePoset):
 
     The basic ``analytic properties`` are:
 
-    - ``quasi``  - Whether the element is quasi modular (and not modular)
-                   or modular.
-    - ``mero``   - ``meromorphic``: If the element is meromorphic
-                   and meromorphic at infinity.
-    - ``weak``   - ``weakly holomorphic``: If the element is holomorphic
-                   and meromorphic at infinity.
-    - ``holo``   - ``holomorphic``: If the element is holomorphic and
-                   holomorphic at infinity.
-    - ``cusp``   - ``cuspidal``: If the element additionally has a positive
-                   order at infinity.
+    - ``quasi`` -- whether the element is quasi modular (and not modular)
+      or modular.
+    - ``mero`` -- ``meromorphic`` -- if the element is meromorphic
+      and meromorphic at infinity
+    - ``weak`` -- ``weakly holomorphic`` -- if the element is holomorphic
+      and meromorphic at infinity
+    - ``holo`` -- ``holomorphic`` -- if the element is holomorphic and
+      holomorphic at infinity
+    - ``cusp`` -- ``cuspidal`` -- if the element additionally has a positive
+      order at infinity
 
     The ``zero`` elements/property have no analytic properties (or only ``quasi``).
 
@@ -325,9 +321,9 @@ class AnalyticType(FiniteLatticePoset):
     EXAMPLES::
 
         sage: from sage.modular.modform_hecketriangle.space import QuasiModularForms
-        sage: x,y,z,d = var("x,y,z,d")
-        sage: el = QuasiModularForms(n=3, k=6, ep=-1)(y-z^3)
-        sage: el.analytic_type()
+        sage: x,y,z,d = var("x,y,z,d")                                                  # needs sage.symbolic
+        sage: el = QuasiModularForms(n=3, k=6, ep=-1)(y-z^3)                            # needs sage.symbolic
+        sage: el.analytic_type()                                                        # needs sage.symbolic
         quasi modular
 
     Similarly the type of the ring element ``el2 = E4/Delta - E6/Delta`` is
@@ -335,9 +331,9 @@ class AnalyticType(FiniteLatticePoset):
     a function which is holomorphic at infinity::
 
         sage: from sage.modular.modform_hecketriangle.graded_ring import WeakModularFormsRing
-        sage: x,y,z,d = var("x,y,z,d")
-        sage: el2 = WeakModularFormsRing(n=3)(x/(x^3-y^2)-y/(x^3-y^2))
-        sage: el2.analytic_type()
+        sage: x,y,z,d = var("x,y,z,d")                                                  # needs sage.symbolic
+        sage: el2 = WeakModularFormsRing(n=3)(x/(x^3-y^2)-y/(x^3-y^2))                  # needs sage.symbolic
+        sage: el2.analytic_type()                                                       # needs sage.symbolic
         weakly holomorphic modular
     """
 
@@ -437,14 +433,14 @@ class AnalyticType(FiniteLatticePoset):
             zero
         """
         # We (arbitrarily) choose to model by inclusion instead of restriction
-        P_elements = [ "cusp", "holo", "weak", "mero", "quasi"]
+        P_elements = ["cusp", "holo", "weak", "mero", "quasi"]
         P_relations = [["cusp", "holo"], ["holo", "weak"], ["weak", "mero"]]
 
         self._base_poset = Poset([P_elements, P_relations], cover_relations=True,
                                  linear_extension=True, facade=False)
 
         L = self._base_poset.order_ideals_lattice()
-        H = L._hasse_diagram.relabel({i:x for i,x in enumerate(L._elements)},
+        H = L._hasse_diagram.relabel(dict(enumerate(L._elements)),
                                      inplace=False)
         FiniteLatticePoset.__init__(self, hasse_diagram=H,
                                     elements=L._elements, category=L.category(),
@@ -484,9 +480,8 @@ class AnalyticType(FiniteLatticePoset):
             True
         """
         if len(args) > 1:
-            return super().__call__([arg for arg in args], **kwargs)
-        else:
-            return super().__call__(*args, **kwargs)
+            return super().__call__(list(args), **kwargs)
+        return super().__call__(*args, **kwargs)
 
     def _element_constructor_(self, element):
         r"""
@@ -494,12 +489,9 @@ class AnalyticType(FiniteLatticePoset):
 
         INPUT:
 
-        - ``element``  -- Either something which coerces in the
-                          ``FiniteLatticePoset`` of ``self`` or
-                          a string or a list of strings of basic
-                          properties that should be contained in
-                          the new element.
-
+        - ``element`` -- either something which coerces in the
+          ``FiniteLatticePoset`` of ``self`` or a string or a list of strings
+          of basic properties that should be contained in the new element
 
         OUTPUT:
 
@@ -527,19 +519,20 @@ class AnalyticType(FiniteLatticePoset):
         if isinstance(element, str):
             element = [element]
         if isinstance(element, (list, tuple)):
-            element = Set(self._base_poset.order_ideal([self._base_poset(s) for s in element]))
+            element = Set(self._base_poset.order_ideal([self._base_poset(s)
+                                                        for s in element]))
 
         return super()._element_constructor_(element)
 
-        #res = self.first()
-        #for element in args:
+        # res = self.first()
+        # for element in args:
         #    if type(element)==str:
         #        element=[element]
         #    if isinstance(element,list) or isinstance(element,tuple):
         #        element = Set(self._base_poset.order_ideal([self._base_poset(s) for s in element]))
         #    element = super()._element_constructor_(element)
         #    res += element
-        #return res
+        # return res
 
     def base_poset(self):
         r"""

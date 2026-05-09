@@ -9,22 +9,18 @@ AUTHOR:
 * Martin Albrecht <malb@informatik.uni-bremen.de>
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
-from sage.rings.polynomial.multi_polynomial_libsingular cimport new_MP
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from sage.categories.fields import Fields
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 
-from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 
@@ -104,7 +100,8 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             [     0 -x + y]
         """
         x = self.fetch('echelon_form_'+algorithm)
-        if x is not None: return x
+        if x is not None:
+            return x
 
         if algorithm == "frac":
             E = self.matrix_over_field()
@@ -133,9 +130,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         This returns a list, of the position of the first nonzero entry in each
         row of the echelon form.
 
-        OUTPUT:
-
-        A list of Python ints.
+        OUTPUT: list of Python ints
 
         EXAMPLES::
 
@@ -157,12 +152,12 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         x = self.fetch('pivots')
 
         if x is None:
-            raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'"%self.parent())
+            raise RuntimeError("BUG: matrix pivots should have been set but weren't, matrix parent = '%s'" % self.parent())
         return x
 
     def echelonize(self, algorithm='row_reduction', **kwds):
         """
-        Transform self into a matrix in echelon form over the same base ring as
+        Transform ``self`` into a matrix in echelon form over the same base ring as
         ``self``.
 
         If Gauss-Bareiss algorithm is chosen, column swaps are recorded and can
@@ -270,19 +265,19 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             m = len(E)
             n = len(E[0])
 
-            for r in xrange(m):
+            for r in range(m):
                 for c in range(n):
                     self.set_unsafe(r, c, E[r][c])
-                for c in xrange(n, self.ncols()):
+                for c in range(n, self.ncols()):
                     self.set_unsafe(r, c, R._zero_element)
-            for r in xrange(m, self.nrows()):
-                for c in xrange(self.ncols()):
+            for r in range(m, self.nrows()):
+                for c in range(self.ncols()):
                     self.set_unsafe(r, c, R._zero_element)
 
             from sage.rings.integer_ring import ZZ
             l = [ZZ(e-1) for e in l]
 
-            self.cache('in_echelon_form_bareiss',True)
+            self.cache('in_echelon_form_bareiss', True)
             self.cache('rank', len(E))
             self.cache('pivots', tuple(range(len(E))))
             self.cache('swapped_columns', tuple(l))
@@ -292,24 +287,23 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             self.check_mutability()
             self.clear_cache()
 
-            E,l = self.T._singular_().bareiss()._sage_(self.base_ring())
+            E, l = self.T._singular_().bareiss()._sage_(self.base_ring())
 
             # clear matrix
             for r from 0 <= r < self._nrows:
                 for c from 0 <= c < self._ncols:
-                    self.set_unsafe(r,c,R._zero_element)
+                    self.set_unsafe(r, c, R._zero_element)
 
             for r from 0 <= r < E.nrows():
                 for c from 0 <= c < E.ncols():
-                    self.set_unsafe(c,r, E[r,c])
+                    self.set_unsafe(c, r, E[r, c])
 
-            self.cache('in_echelon_form_bareiss',True)
+            self.cache('in_echelon_form_bareiss', True)
             self.cache('rank', E.nrows())
             self.cache('pivots', tuple(range(E.nrows())))
             self.cache('swapped_columns', l)
 
         else:
-
             raise NotImplementedError("cannot apply Gauss-Bareiss algorithm over this base ring")
 
     def _echelonize_row_reduction(self):
@@ -384,20 +378,20 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         """
         from sage.matrix.constructor import matrix
 
-        cdef int c, r, i, j, rc, start_row, nr, nc
+        cdef Py_ssize_t c, r, i, j, rc, start_row, nr, nc
 
         x = self.fetch('in_echelon_form_row_reduction')
         if x is not None:
             return  # already known to be in echelon form
 
-        nr,nc = self.nrows(),self.ncols()
+        nr, nc = self.nrows(), self.ncols()
         F = self.base_ring().base_ring()
-        cdef Matrix d = matrix(F,nr,nc)
+        cdef Matrix d = matrix(F, nr, nc)
         start_row = 0
 
         for r from 0 <= r < nr:
             for c from 0 <= c < nc:
-                p = self.get_unsafe(r,c)
+                p = self.get_unsafe(r, c)
                 if p.is_constant():
                     d.set_unsafe(r, c, p.constant_coefficient())
 
@@ -408,13 +402,13 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
                     r = rc
                     break
             if r!=-1:
-                a_inverse = ~self.get_unsafe(r,c)
-                self.rescale_row_c(r, a_inverse , c)
+                a_inverse = ~self.get_unsafe(r, c)
+                self.rescale_row_c(r, a_inverse, c)
                 self.swap_rows_c(r, start_row)
 
                 for i from 0 <= i < nr:
                     if i != start_row:
-                        minus_b = -self.get_unsafe(i,c)
+                        minus_b = -self.get_unsafe(i, c)
                         self.add_multiple_of_row(i, start_row, minus_b, 0)
 
                 start_row +=1
@@ -422,21 +416,21 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
                 d = d._parent(0)
                 for i from start_row <= i < nr:
                     for j from c+1 <= j < nc:
-                        if self.get_unsafe(i,j).is_constant():
-                            d.set_unsafe(i,j, self.get_unsafe(i,j).constant_coefficient())
+                        if self.get_unsafe(i, j).is_constant():
+                            d.set_unsafe(i, j, self.get_unsafe(i, j).constant_coefficient())
 
-        self.cache('in_echelon_form_row_reduction',True)
+        self.cache('in_echelon_form_row_reduction', True)
 
     def swapped_columns(self):
         """
-        Return which columns were swapped during the Gauss-Bareiss reduction
+        Return which columns were swapped during the Gauss-Bareiss reduction.
 
         OUTPUT:
 
         Return a tuple representing the column swaps during the last application
         of the Gauss-Bareiss algorithm (see :meth:`echelon_form` for details).
 
-        The tuple as length equal to the rank of self and the value at the
+        The tuple as length equal to the rank of ``self`` and the value at the
         `i`-th position indicates the source column which was put as the `i`-th
         column.
 
@@ -456,9 +450,68 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         """
         return self.fetch('swapped_columns')
 
+    def _fitting_ideal(self, i):
+        r"""
+        Return the `i`-th Fitting ideal of the matrix. This is the ideal generated
+        by the `n - i` minors, where `n` is the number of columns.
+
+        INPUT:
+
+        - ``i`` -- integer
+
+        OUTPUT: an ideal on the base ring
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: M = matrix(R, [[2*x-z, 0, y-z^2, 0], [0, z - y, z - x, 0],[z - y, x^2 - y, 0, z]])
+            sage: M
+            [ 2*x - z        0 -z^2 + y        0]
+            [       0   -y + z   -x + z        0]
+            [  -y + z  x^2 - y        0        z]
+            sage: M.fitting_ideal(0)
+            Ideal (0) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.fitting_ideal(1)
+            Ideal (2*x^4 - 3*x^3*z + x^2*z^2 + y^2*z^2 - 2*y*z^3 + z^4 - 2*x^2*y - y^3 + 3*x*y*z + 2*y^2*z - 2*y*z^2, y*z^3 - z^4 - y^2*z + y*z^2, -2*x*y*z + 2*x*z^2 + y*z^2 - z^3, -2*x^2*z + 3*x*z^2 - z^3) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.fitting_ideal(2)
+            Ideal (-x^3 + x^2*z + x*y - y*z, -y^2 + 2*y*z - z^2, -x^2*z^2 + x^2*y + y*z^2 - y^2, 2*x^3 - x^2*z - 2*x*y + y*z, -x*y + x*z + y*z - z^2, -y*z^2 + z^3 + y^2 - y*z, -2*x*y + 2*x*z + y*z - z^2, y*z^2 - z^3 - y^2 + y*z, 2*x^2 - 3*x*z + z^2, 2*x*z - z^2, -z^3 + y*z, -y*z + z^2, -x*z + z^2) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.fitting_ideal(3)
+            Ideal (2*x - z, -z^2 + y, -y + z, -x + z, -y + z, x^2 - y, z) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.fitting_ideal(4)
+            Ideal (1) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: [R.ideal(M.minors(i)) == M._fitting_ideal(4 - i) for i in range(5)]
+            [True, True, True, True, True]
+        """
+        minor = singular_function("minor")
+        R = self.base_ring()
+        for (nrow, row) in enumerate(self.rows()):
+            if not row:
+                N = self.delete_rows([nrow])
+                return N._fitting_ideal(i)
+            for (ncoef, coef) in enumerate(row):
+                if all(coef.divides(f) for f in row):
+                    N = self.__copy__()
+                    for j in range(self.ncols()):
+                        if j != ncoef:
+                            N.add_multiple_of_column(j, ncoef, -R(self[nrow, j] / coef))
+                    return N.fitting_ideal(i)
+        for (ncolumn, column) in enumerate(self.columns()):
+            if not column:
+                N = self.delete_columns([ncolumn])
+                return N._fitting_ideal(i-1)
+            for (ncoef, coef) in enumerate(column):
+                if all(coef.divides(f) for f in column):
+                    N = self.__copy__()
+                    for j in range(self.nrows()):
+                        if j != ncoef:
+                            N.add_multiple_of_row(j, ncoef, -R(self[j, ncolumn] / coef))
+                    return N.fitting_ideal(i)
+        rank = self.ncols() - i
+        return R.ideal(minor(self, rank))
+
     def determinant(self, algorithm=None):
         """
-        Return the determinant of this matrix
+        Return the determinant of this matrix.
 
         INPUT:
 
@@ -511,7 +564,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             sage: m.det()
             0
 
-        Check :trac:`23535` is fixed::
+        Check :issue:`23535` is fixed::
 
             sage: x = polygen(QQ)
             sage: K.<a,b> = NumberField([x^2 - 2, x^2 - 5])
@@ -546,7 +599,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         else:
             R = self._base_ring
 
-            if isinstance(R, MPolynomialRing_libsingular) and R.base_ring().is_field():
+            if isinstance(R, MPolynomialRing_libsingular) and R.base_ring() in Fields():
                 singular_det = singular_function("det")
                 d = singular_det(self)
 

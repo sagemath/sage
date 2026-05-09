@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Abstract classes for the rigged configuration bijections
 
@@ -17,7 +18,7 @@ AUTHORS:
 - Travis Scrimshaw (2011-04-15): Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011, 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -29,8 +30,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from copy import deepcopy
 from sage.misc.abstract_method import abstract_method
@@ -51,7 +52,7 @@ class KRTToRCBijectionAbstract:
 
         INPUT:
 
-        - ``parent`` -- The parent of tensor product of KR tableaux
+        - ``parent`` -- the parent of tensor product of KR tableaux
 
         EXAMPLES::
 
@@ -98,9 +99,9 @@ class KRTToRCBijectionAbstract:
 
         INPUT:
 
-        - ``tp_krt`` -- A tensor product of KR tableaux
+        - ``tp_krt`` -- a tensor product of KR tableaux
 
-        - ``verbose`` -- (Default: ``False``) Display each step in the
+        - ``verbose`` -- (default: ``False``) display each step in the
           bijection
 
         EXAMPLES::
@@ -120,19 +121,19 @@ class KRTToRCBijectionAbstract:
         """
         if verbose:
             from sage.combinat.rigged_configurations.tensor_product_kr_tableaux_element \
-              import TensorProductOfKirillovReshetikhinTableauxElement
+                import TensorProductOfKirillovReshetikhinTableauxElement
 
         for cur_crystal in reversed(self.tp_krt):
             target = cur_crystal.parent()._r
             # Iterate through the columns
             for col_number, cur_column in enumerate(reversed(cur_crystal.to_array(False))):
-                self.cur_path.insert(0, []) # Prepend an empty list
+                self.cur_path.insert(0, [])  # Prepend an empty list
 
                 self.cur_dims.insert(0, [0, 1])
 
                 for letter in reversed(cur_column):
                     self.cur_dims[0][0] = self._next_index(self.cur_dims[0][0], target)
-                    val = letter.value # Convert from a CrystalOfLetter to an Integer
+                    val = letter.value  # Convert from a CrystalOfLetter to an Integer
 
                     if verbose:
                         print("====================")
@@ -142,7 +143,7 @@ class KRTToRCBijectionAbstract:
                         print("--------------------\n")
 
                     # Build the next state
-                    self.cur_path[0].insert(0, [letter]) # Prepend the value
+                    self.cur_path[0].insert(0, [letter])  # Prepend the value
                     self.next_state(val)
 
                 # If we've split off a column, we need to merge the current column
@@ -166,7 +167,7 @@ class KRTToRCBijectionAbstract:
                     for a in range(self.n):
                         self._update_vacancy_nums(a)
 
-        self.ret_rig_con.set_immutable() # Return it to immutable
+        self.ret_rig_con.set_immutable()  # Return it to immutable
         return self.ret_rig_con
 
     @abstract_method
@@ -176,7 +177,7 @@ class KRTToRCBijectionAbstract:
 
         INPUT:
 
-        - ``val`` -- The value we are adding
+        - ``val`` -- the value we are adding
 
         TESTS::
 
@@ -209,7 +210,7 @@ class KRTToRCBijectionAbstract:
 
         INPUT:
 
-        - ``a`` -- The index of the partition to update
+        - ``a`` -- the index of the partition to update
 
         TESTS::
 
@@ -220,7 +221,7 @@ class KRTToRCBijectionAbstract:
         """
         # Check to make sure we have a valid index (currently removed)
         # If the current tableau is empty, there is nothing to do
-        if not self.ret_rig_con[a]: # Check to see if we have vacancy numbers
+        if not self.ret_rig_con[a]:  # Check to see if we have vacancy numbers
             return
 
         # Setup the first block
@@ -249,7 +250,7 @@ class KRTToRCBijectionAbstract:
 
         INPUT:
 
-        - ``a`` -- The index of the partition to update
+        - ``a`` -- the index of the partition to update
 
         TESTS::
 
@@ -268,7 +269,7 @@ class KRTToRCBijectionAbstract:
                     pos = 0
                     width = rigged_partition[index]
                     val = rigged_partition.rigging[index]
-                    for i in reversed(range(index-1)):
+                    for i in reversed(range(index - 1)):
                         if rigged_partition[i] > width or rigged_partition.rigging[i] >= val:
                             pos = i + 1
                             break
@@ -307,7 +308,7 @@ class RCToKRTBijectionAbstract:
 
         INPUT:
 
-        - ``RC_element`` -- The rigged configuration
+        - ``RC_element`` -- the rigged configuration
 
         EXAMPLES::
 
@@ -333,7 +334,7 @@ class RCToKRTBijectionAbstract:
         # This is a dummy edge to start the process
         cp = RC_element.__copy__()
         cp.set_immutable()
-        self._graph = [ [[], (cp, 0)] ]
+        self._graph = [[[], (cp, 0)]]
 
     def __eq__(self, rhs):
         r"""
@@ -360,9 +361,9 @@ class RCToKRTBijectionAbstract:
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) display each step in the
+        - ``verbose`` -- boolean (default: ``False``); display each step in the
           bijection
-        - ``build_graph`` -- (default: ``False``) build the graph of each
+        - ``build_graph`` -- boolean (default: ``False``); build the graph of each
           step of the bijection
 
         EXAMPLES::
@@ -414,7 +415,7 @@ class RCToKRTBijectionAbstract:
                         y = self.rigged_con.parent()(*[x._clone() for x in self.cur_partitions], use_vacancy_numbers=True)
                         self._graph.append([self._graph[-1][1], (y, len(self._graph)), 'ls'])
 
-                while self.cur_dims[0][0]: # > 0:
+                while self.cur_dims[0][0]:  # > 0:
                     if verbose:
                         print("====================")
                         print(repr(self.rigged_con.parent()(*self.cur_partitions, use_vacancy_numbers=True)))
@@ -427,21 +428,21 @@ class RCToKRTBijectionAbstract:
                     b = self.next_state(ht)
 
                     # Make sure we have a crystal letter
-                    ret_crystal_path[-1].append(letters(b)) # Append the rank
+                    ret_crystal_path[-1].append(letters(b))  # Append the rank
 
                     if build_graph:
                         y = self.rigged_con.parent()(*[x._clone() for x in self.cur_partitions], use_vacancy_numbers=True)
                         self._graph.append([self._graph[-1][1], (y, len(self._graph)), letters(b)])
 
-                self.cur_dims.pop(0) # Pop off the leading column
+                self.cur_dims.pop(0)  # Pop off the leading column
 
         if build_graph:
-            self._graph.pop(0) # Remove the dummy at the start
+            self._graph.pop(0)  # Remove the dummy at the start
             from sage.graphs.digraph import DiGraph
             from sage.graphs.dot2tex_utils import have_dot2tex
-            self._graph = DiGraph(self._graph, format="list_of_edges")
+            self._graph = DiGraph(self._graph, format='list_of_edges')
             if have_dot2tex():
-                self._graph.set_latex_options(format="dot2tex", edge_labels=True)
+                self._graph.set_latex_options(format='dot2tex', edge_labels=True)
         return self.KRT(pathlist=ret_crystal_path)
 
     @abstract_method
@@ -470,7 +471,7 @@ class RCToKRTBijectionAbstract:
 
         INPUT:
 
-        - ``a`` -- The index of the partition to update
+        - ``a`` -- the index of the partition to update
 
         TESTS::
 
@@ -512,9 +513,9 @@ class RCToKRTBijectionAbstract:
 
         INPUT:
 
-        - ``partition`` -- The partition to look in
+        - ``partition`` -- the partition to look in
 
-        - ``last_size`` -- The last size found
+        - ``last_size`` -- the last size found
 
         TESTS::
 

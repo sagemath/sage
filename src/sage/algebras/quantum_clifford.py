@@ -6,7 +6,7 @@ AUTHORS:
 - Travis Scrimshaw (2021-05): initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2021 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -27,7 +27,8 @@ from sage.sets.family import Family
 from sage.rings.fraction_field import FractionField
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from itertools import product
-from sage.misc.misc import powerset
+from sage.combinat.subset import powerset
+
 
 class QuantumCliffordAlgebra(CombinatorialFreeModule):
     r"""
@@ -188,7 +189,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, F, indices, category=cat)
         self._assign_names(self.algebra_generators().keys())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -201,7 +202,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         return "Quantum Clifford algebra of rank {} and twist {} with q={} over {}".format(
             self._n, self._k, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -288,18 +289,18 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         for i in range(self._n):
             r = list(zero)  # Make a copy
             r[i] = 1
-            d['psi%s'%i] = self.monomial( (self._psi(r), one) )
+            d['psi%s' % i] = self.monomial((self._psi(r), one))
             r[i] = -1
-            d['psid%s'%i] = self.monomial( (self._psi(r), one) )
+            d['psid%s' % i] = self.monomial((self._psi(r), one))
         zero = self._psi(zero)
         for i in range(self._n):
             temp = list(zero)  # Make a copy
             temp[i] = 1
-            d['w%s'%i] = self.monomial( (zero, tuple(temp)) )
+            d['w%s' % i] = self.monomial((zero, tuple(temp)))
         return Family(sorted(d), lambda i: d[i])
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 
@@ -323,6 +324,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
             ((0, 0, 0), (0, 0, 0))
         """
         return (self._psi([0]*self._n), (0,)*self._n)
+
 
 class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
     r"""
@@ -377,7 +379,7 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
                    for w in product(*[list(range((4-2*abs(p[i]))*k)) for i in range(n)])]
         super().__init__(n, k, q, F, psi, indices)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -397,10 +399,10 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
             5
         """
         p, v = m
-        rp = '*'.join('psi%s'%i if p[i] > 0 else 'psid%s'%i
+        rp = '*'.join('psi%s' % i if p[i] > 0 else 'psid%s' % i
                       for i in range(self._n) if p[i] != 0)
-        gen_str = lambda e: '' if e == 1 else '^%s'%e
-        rv = '*'.join('w%s'%i + gen_str(v[i]) for i in range(self._n) if v[i] != 0)
+        gen_str = lambda e: '' if e == 1 else '^%s' % e
+        rv = '*'.join('w%s' % i + gen_str(v[i]) for i in range(self._n) if v[i] != 0)
         if rp:
             if rv:
                 return rp + '*' + rv
@@ -409,7 +411,7 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
             return rv
         return '1'
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a latex representation for the basis element indexed by ``m``.
 
@@ -429,10 +431,10 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
             5
         """
         p, v = m
-        rp = ''.join('\\psi_{%s}'%i if p[i] > 0 else '\\psi^{\\dagger}_{%s}'%i
+        rp = ''.join('\\psi_{%s}' % i if p[i] > 0 else '\\psi^{\\dagger}_{%s}' % i
                      for i in range(self._n) if p[i] != 0)
-        gen_str = lambda e: '' if e == 1 else '^{%s}'%e
-        rv = ''.join('\\omega_{%s}'%i + gen_str(v[i])
+        gen_str = lambda e: '' if e == 1 else '^{%s}' % e
+        rv = ''.join('\\omega_{%s}' % i + gen_str(v[i])
                      for i in range(self._n) if v[i] != 0)
         if not rp and not rv:
             return '1'
@@ -486,7 +488,7 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
                 if p1[i] != 0:
                     # We make pairings 1-based because we cannot distinguish 0 and -0
                     pairings.append((i+1) * p1[i])
-            # we know p1[i] != p2[i] if non-zero, so their sum is -1, 0, 1
+            # we know p1[i] != p2[i] if nonzero, so their sum is -1, 0, 1
             p[i] = p1[i] + p2[i]
 
         supported.append(self._n-1) # To get between the last support and the end
@@ -530,7 +532,7 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
         poly *= self._w_poly.monomial(*v)
         poly = poly.reduce([vp[i]**(4*k) - (1 + q**(-2*k)) * vp[i]**(2*k) + q**(-2*k)
                             for i in range(self._n)])
-        pdict = poly.dict()
+        pdict = poly.monomial_coefficients()
         ret = {(self._psi(p), tuple(e)): pdict[e] * q**q_power * sign
                for e in pdict}
 
@@ -607,12 +609,13 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
                               for wi in wp})
             poly = poly.reduce([wi**(4*k) - (1 + q**(-2*k)) * wi**(2*k) + q**(-2*k)
                                 for wi in wp])
-            pdict = poly.dict()
+            pdict = poly.monomial_coefficients()
             coeff = coeff.inverse_of_unit()
             ret = {(p, tuple(e)): coeff * c for e, c in pdict.items()}
             return Cl.element_class(Cl, ret)
 
         __invert__ = inverse
+
 
 class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
     r"""
@@ -676,7 +679,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
                    for w in product(list(range(2*k)), repeat=n)]
         super().__init__(n, k, q, F, psi, indices)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -700,15 +703,15 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
         def ppr(i):
             val = p[i]
             if val == -1:
-                return 'psid%s'%i
-            elif val == 1:
-                return 'psi%s'%i
-            elif val == 2:
-                return 'psi%s*psid%s'%(i,i)
+                return 'psid%s' % i
+            if val == 1:
+                return 'psi%s' % i
+            if val == 2:
+                return 'psi%s*psid%s' % (i,i)
 
         rp = '*'.join(ppr(i) for i in range(self._n) if p[i] != 0)
-        gen_str = lambda e: '' if e == 1 else '^%s'%e
-        rv = '*'.join('w%s'%i + gen_str(v[i]) for i in range(self._n) if v[i] != 0)
+        gen_str = lambda e: '' if e == 1 else '^%s' % e
+        rv = '*'.join('w%s' % i + gen_str(v[i]) for i in range(self._n) if v[i] != 0)
         if rp:
             if rv:
                 return rp + '*' + rv
@@ -717,7 +720,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
             return rv
         return '1'
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a latex representation for the basis element indexed by ``m``.
 
@@ -741,15 +744,15 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
         def ppr(i):
             val = p[i]
             if val == -1:
-                return '\\psi^{\\dagger}_{%s}'%i
-            elif val == 1:
-                return '\\psi_{%s}'%i
-            elif val == 2:
+                return '\\psi^{\\dagger}_{%s}' % i
+            if val == 1:
+                return '\\psi_{%s}' % i
+            if val == 2:
                 return '\\psi_{%s}\\psi^{\\dagger}_{%s}' % (i, i)
 
         rp = ''.join(ppr(i) for i in range(self._n) if p[i] != 0)
-        gen_str = lambda e: '' if e == 1 else '^{%s}'%e
-        rv = ''.join('\\omega_{%s}'%i + gen_str(v[i])
+        gen_str = lambda e: '' if e == 1 else '^{%s}' % e
+        rv = ''.join('\\omega_{%s}' % i + gen_str(v[i])
                      for i in range(self._n) if v[i] != 0)
         if not rp and not rv:
             return '1'
@@ -875,7 +878,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
             return (self._psi(p), tuple(e))
 
         q = self._q
-        ret = {key(X): (-1)**len(X) * sign * q**(q_power+k*(len(pairings)%2))
+        ret = {key(X): (-1)**len(X) * sign * q**(q_power+k*(len(pairings) % 2))
                for X in powerset(pairings)}
 
         return self._from_dict(ret)

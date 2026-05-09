@@ -26,20 +26,20 @@ REFERENCES:
 
 - Chap. 23 of R. Godement : *Algebra* [God1968]_
 - Chap. 15 of S. Lang : *Algebra* [Lan2002]_
-
 """
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
+from sage.tensor.modules.comp import CompFullyAntiSym, Components
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
-from sage.tensor.modules.comp import Components, CompFullyAntiSym
+
 
 class FreeModuleAltForm(FreeModuleTensor):
     r"""
@@ -211,7 +211,6 @@ class FreeModuleAltForm(FreeModuleTensor):
          Integer Ring
         sage: s.display(e)
         zero = 0
-
     """
     def __init__(self, fmodule, degree, name=None, latex_name=None):
         r"""
@@ -224,7 +223,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             sage: e = M.basis('e')
             sage: a = FreeModuleAltForm(M, 2, name='a')
             sage: a[e,0,1] = 2
-            sage: TestSuite(a).run(skip="_test_category") # see below
+            sage: TestSuite(a).run(skip='_test_category') # see below
 
         In the above test suite, _test_category fails because a is not an
         instance of a.parent().category().element_class. Actually alternating
@@ -234,9 +233,8 @@ class FreeModuleAltForm(FreeModuleTensor):
             sage: a1 = M.dual_exterior_power(2).element_class(M, 2, name='a')
             sage: a1[e,0,1] = 2
             sage: TestSuite(a1).run()
-
         """
-        FreeModuleTensor.__init__(self, fmodule, (0,degree), name=name,
+        FreeModuleTensor.__init__(self, fmodule, (0, degree), name=name,
                                   latex_name=latex_name,
                                   antisym=range(degree),
                                   parent=fmodule.dual_exterior_power(degree))
@@ -290,7 +288,6 @@ class FreeModuleAltForm(FreeModuleTensor):
              Rank-3 free module M over the Integer Ring
             sage: b._new_instance().parent() is b.parent()
             True
-
         """
         return self.__class__(self._fmodule, self._tensor_rank)
 
@@ -323,7 +320,6 @@ class FreeModuleAltForm(FreeModuleTensor):
             sage: a._new_comp(e)
             1-index components w.r.t. Basis (e_0,e_1,e_2) on the Rank-3 free
              module M over the Integer Ring
-
         """
         fmodule = self._fmodule  # the base free module
         if self._tensor_rank == 1:
@@ -345,7 +341,6 @@ class FreeModuleAltForm(FreeModuleTensor):
             sage: a = M.alternating_form(2, name='a')
             sage: a.degree()
             2
-
         """
         return self._tensor_rank
 
@@ -383,11 +378,11 @@ class FreeModuleAltForm(FreeModuleTensor):
             e^0 - 3 e^1 + 4 e^2
             sage: latex(a._display_expansion())  # display in the notebook
             e^{0} -3 e^{1} + 4 e^{2}
-
         """
         from sage.misc.latex import latex
         from sage.typeset.unicode_characters import unicode_wedge
-        from .format_utilities import is_atomic, FormattedExpansion
+
+        from .format_utilities import FormattedExpansion, is_atomic
         basis, format_spec = self._preparse_display(basis=basis,
                                                     format_spec=format_spec)
         cobasis = basis.dual_basis()
@@ -552,15 +547,15 @@ class FreeModuleAltForm(FreeModuleTensor):
             sage: b.display(format_spec=10)  # 10 bits of precision
             b = 0.33 e^1∧e^2 + 2.5 e^1∧e^3 + 4.0 e^2∧e^3
 
-        Check that the bug reported in :trac:`22520` is fixed::
+        Check that the bug reported in :issue:`22520` is fixed::
 
-            sage: M = FiniteRankFreeModule(SR, 2, name='M')  # optional - sage.symbolic
-            sage: e = M.basis('e')                           # optional - sage.symbolic
-            sage: a = M.alternating_form(2)                  # optional - sage.symbolic
-            sage: a[0,1] = SR.var('t', domain='real')        # optional - sage.symbolic
-            sage: a.display()                                # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: M = FiniteRankFreeModule(SR, 2, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.alternating_form(2)
+            sage: a[0,1] = SR.var('t', domain='real')
+            sage: a.display()
             t e^0∧e^1
-
         """
         from sage.misc.latex import latex
         from sage.tensor.modules.format_utilities import FormattedExpansion
@@ -641,9 +636,9 @@ class FreeModuleAltForm(FreeModuleTensor):
             True
             sage: d.wedge(c) == c.wedge(d)
             True
-
         """
         from sage.typeset.unicode_characters import unicode_wedge
+
         from .format_utilities import is_atomic
         if not isinstance(other, FreeModuleAltForm):
             raise TypeError("the second argument for the exterior product " +
@@ -673,7 +668,7 @@ class FreeModuleAltForm(FreeModuleTensor):
         for ind_s, val_s in cmp_s._comp.items():
             for ind_o, val_o in cmp_o._comp.items():
                 ind_r = ind_s + ind_o
-                if len(ind_r) == len(set(ind_r)): # all indices are different
+                if len(ind_r) == len(set(ind_r)):  # all indices are different
                     cmp_r[[ind_r]] += val_s * val_o
         result = fmodule.alternating_form(rank_r)
         result._components[basis] = cmp_r
@@ -809,18 +804,17 @@ class FreeModuleAltForm(FreeModuleTensor):
             -60
             sage: c  == a.contract(0, 1, 2, b, 0, 1, 2, swap_indices=False)
             True
-
         """
-        from .format_utilities import is_atomic
         from .alternating_contr_tensor import AlternatingContrTensor
-        if not isinstance(alt_tensor,  AlternatingContrTensor):
+        from .format_utilities import is_atomic
+        if not isinstance(alt_tensor, AlternatingContrTensor):
             raise TypeError("{} is not an alternating ".format(alt_tensor) +
                             "contravariant tensor")
         p_res = alt_tensor._tensor_rank - self._tensor_rank  # degree of result
         if self._tensor_rank == 1:
             # Case p = 1:
-            res = self.contract(alt_tensor, swap_indices=False)  # contract() deals efficiently
-                                             # with antisymmetry for p = 1
+            res = self.contract(alt_tensor, swap_indices=False)
+            # contract() deals efficiently with antisymmetry for p = 1
         else:
             # Case p > 1:
             if alt_tensor._fmodule != self._fmodule:
@@ -857,8 +851,9 @@ class FreeModuleAltForm(FreeModuleTensor):
                 olname = r'\left(' + olname + r'\right)'
             res_latex_name = r'\iota_{' + slname + '} ' + olname
         if res_name:
-            try:  # there is no guarantee that the result has set_name
-                  # and is mutable
+            try:
+                # there is no guarantee that the result has set_name
+                # and is mutable
                 res.set_name(res_name, latex_name=res_latex_name)
             except (AttributeError, TypeError, ValueError):
                 pass

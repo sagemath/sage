@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Weierstrass for elliptic curves in higher codimension
 
@@ -20,14 +21,14 @@ Hence, the Weierstrass form of this complete intersection is `Y^2 =
 X^3 - \frac{1}{4} X Z^4`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.invariants.invariant_theory import invariant_theory
@@ -37,14 +38,12 @@ from sage.schemes.toric.weierstrass import _check_homogeneity
 ######################################################################
 def WeierstrassForm2(polynomial, variables=None, transformation=False):
     r"""
-    Helper function for :func:`~sage.schemes.toric.weierstrass.WeierstrassForm`
+    Helper function for :func:`~sage.schemes.toric.weierstrass.WeierstrassForm`.
 
     Currently, only the case of the complete intersection of two
     quadratic equations in `\mathbb{P}^3` is supported.
 
-    INPUT / OUTPUT:
-
-    See :func:`~sage.schemes.toric.weierstrass.WeierstrassForm`
+    INPUT / OUTPUT: see :func:`~sage.schemes.toric.weierstrass.WeierstrassForm`
 
     TESTS::
 
@@ -57,8 +56,7 @@ def WeierstrassForm2(polynomial, variables=None, transformation=False):
     """
     if transformation:
         return WeierstrassMap_P3(*polynomial, variables=variables)
-    else:
-        return WeierstrassForm_P3(*polynomial, variables=variables)
+    return WeierstrassForm_P3(*polynomial, variables=variables)
 
 
 ######################################################################
@@ -73,14 +71,14 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
     INPUT:
 
     - ``quadratic1``, ``quadratic2`` -- two quadratic polynomials in 4
-      homogeneous or 3 inhomogeneous variables.
+      homogeneous or 3 inhomogeneous variables
 
-    - ``variables`` -- the variables or ``None`` (default).
+    - ``variables`` -- the variables or ``None`` (default)
 
     OUTPUT:
 
     This function returns ``variables``, potentially guessed from the
-    polynomial ring. A ``ValueError`` is raised if the polynomial is
+    polynomial ring. A :exc:`ValueError` is raised if the polynomial is
     not homogeneous.
 
     EXAMPLES::
@@ -123,7 +121,7 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
 ######################################################################
 def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
     r"""
-    Helper function for the Weierstrass form of a biquadratic in `\mathbb{P}^3`
+    Helper function for the Weierstrass form of a biquadratic in `\mathbb{P}^3`.
 
     The invariants and covariants of a quaternary biquadratic satisfy
     the relation
@@ -138,11 +136,9 @@ def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
 
     INPUT:
 
-    See :func:`WeierstrassForm_P3`
+    See :func:`WeierstrassForm_P3`.
 
-    OUTPUT:
-
-    A triple consisting of
+    OUTPUT: a triple consisting of
 
     - The quaternary biquadratic as an algebraic form
       :class:`~sage.rings.invariant_theory.TwoQuaternaryQuadratics`
@@ -168,9 +164,9 @@ def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
     # construct auxiliary polynomial ring to work with the rhs of the syzygy
     R = biquadratic.ring()
     n = R.ngens()
-    R_aux = PolynomialRing(R.base_ring(), n+2, 'aux')
-    to_aux = dict()
-    from_aux = dict()
+    R_aux = PolynomialRing(R.base_ring(), n + 2, 'aux')
+    to_aux = {}
+    from_aux = {}
     for var, var_aux in zip(R.gens(), R_aux.gens()[0:n]):
         to_aux[var] = var_aux
         from_aux[var_aux] = var
@@ -181,9 +177,9 @@ def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
     # Syzygy is J^2 = syz_rhs + (terms that vanish on the biquadratic) with
     # J = biquadratic.J_covariant()
     syz_rhs = T**4 * biquadratic.Delta_invariant().subs(to_aux) \
-        - T**3*T_prime * biquadratic.Theta_invariant().subs(to_aux) \
-        + T**2*T_prime**2 * biquadratic.Phi_invariant().subs(to_aux) \
-        - T*T_prime**3 * biquadratic.Theta_prime_invariant().subs(to_aux) \
+        - T**3 * T_prime * biquadratic.Theta_invariant().subs(to_aux) \
+        + T**2 * T_prime**2 * biquadratic.Phi_invariant().subs(to_aux) \
+        - T * T_prime**3 * biquadratic.Theta_prime_invariant().subs(to_aux) \
         + T_prime**4 * biquadratic.Delta_prime_invariant().subs(to_aux)
     quartic = invariant_theory.binary_quartic(syz_rhs, [T, T_prime])
     return (biquadratic, quartic, from_aux)
@@ -224,7 +220,7 @@ def WeierstrassForm_P3(quadratic1, quadratic2, variables=None):
         _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=variables)
     a = quartic.EisensteinD().subs(from_aux)
     b = quartic.EisensteinE().subs(from_aux)
-    return (-4*a, 16*b)
+    return (-4 * a, 16 * b)
 
 
 ######################################################################
@@ -257,22 +253,22 @@ def WeierstrassMap_P3(quadratic1, quadratic2, variables=None):
         (-1/4, 0)
 
         sage: ideal = R.ideal(quadratic1, quadratic2)
-        sage: (-Y^2 + X^3 + a*X*Z^4 + b*Z^6).reduce(ideal)
+        sage: (-Y^2 + X^3 + a*X*Z^4 + b*Z^6).reduce(ideal)                              # needs sage.libs.singular
         0
 
     TESTS::
 
-        sage: R.<w,x,y,z,a0,a1,a2,a3> = GF(101)[]                                       # optional - sage.rings.finite_rings
-        sage: p1 = w^2 + x^2 + y^2 + z^2                                                # optional - sage.rings.finite_rings
-        sage: p2 = a0*w^2 + a1*x^2 + a2*y^2 + a3*z^2                                    # optional - sage.rings.finite_rings
-        sage: X, Y, Z = WeierstrassMap_P3(p1, p2, [w,x,y,z])                            # optional - sage.rings.finite_rings
-        sage: X.total_degree(), len(X.coefficients())                                   # optional - sage.rings.finite_rings
+        sage: R.<w,x,y,z,a0,a1,a2,a3> = GF(101)[]
+        sage: p1 = w^2 + x^2 + y^2 + z^2
+        sage: p2 = a0*w^2 + a1*x^2 + a2*y^2 + a3*z^2
+        sage: X, Y, Z = WeierstrassMap_P3(p1, p2, [w,x,y,z])
+        sage: X.total_degree(), len(X.coefficients())
         (22, 4164)
-        sage: Y.total_degree(), len(Y.coefficients())                                   # optional - sage.rings.finite_rings
+        sage: Y.total_degree(), len(Y.coefficients())
         (33, 26912)
-        sage: Z.total_degree(), len(Z.coefficients())                                   # optional - sage.rings.finite_rings
+        sage: Z.total_degree(), len(Z.coefficients())
         (10, 24)
-        sage: Z                                                                         # optional - sage.rings.finite_rings
+        sage: Z
         w*x*y*z*a0^3*a1^2*a2 - w*x*y*z*a0^2*a1^3*a2 - w*x*y*z*a0^3*a1*a2^2
         + w*x*y*z*a0*a1^3*a2^2 + w*x*y*z*a0^2*a1*a2^3 - w*x*y*z*a0*a1^2*a2^3
         - w*x*y*z*a0^3*a1^2*a3 + w*x*y*z*a0^2*a1^3*a3 + w*x*y*z*a0^3*a2^2*a3
@@ -287,4 +283,4 @@ def WeierstrassMap_P3(quadratic1, quadratic2, variables=None):
     J = biquadratic.J_covariant()
     g = quartic.g_covariant().subs(from_aux)
     h = quartic.h_covariant().subs(from_aux)
-    return (4*g, 4*h, J)
+    return (4 * g, 4 * h, J)

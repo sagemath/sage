@@ -328,17 +328,18 @@ que for definido pelo comando ``latex.engine()``). Essa lista é
 gerenciada pelos comandos ``latex.add_to_mathjax_avoid_list`` e
 ``latex.mathjax_avoid_list``. ::
 
-    sage: latex.mathjax_avoid_list([])  # not tested
-    sage: latex.mathjax_avoid_list()    # not tested
+    sage: # not tested
+    sage: latex.mathjax_avoid_list([])
+    sage: latex.mathjax_avoid_list()
     []
-    sage: latex.mathjax_avoid_list(['foo', 'bar'])  # not tested
-    sage: latex.mathjax_avoid_list()                # not tested
+    sage: latex.mathjax_avoid_list(['foo', 'bar'])
+    sage: latex.mathjax_avoid_list()
     ['foo', 'bar']
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
-    sage: latex.mathjax_avoid_list()                      # not tested
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
+    sage: latex.mathjax_avoid_list()
     ['foo', 'bar', 'tikzpicture']
-    sage: latex.mathjax_avoid_list([])  # not tested
-    sage: latex.mathjax_avoid_list()    # not tested
+    sage: latex.mathjax_avoid_list([])
+    sage: latex.mathjax_avoid_list()
     []
 
 Suponha que uma expressão em LaTeX é produzida no Notebook com o

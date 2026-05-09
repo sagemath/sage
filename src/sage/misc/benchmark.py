@@ -1,18 +1,32 @@
 "Benchmarks"
 
-from .misc import cputime
+from typing import Literal, overload
+
+from sage.misc.misc import cputime
 
 from sage.all import *
 
-def benchmark(n=-1):
+# Type alias for a single benchmark result
+BenchmarkResult = tuple[int, float, str]
+
+
+@overload
+def benchmark(n: list[int]) -> tuple[list[BenchmarkResult], float]: ...
+@overload
+def benchmark(n: int = ...) -> BenchmarkResult: ...
+@overload
+def benchmark(n: Literal[-1]) -> tuple[list[BenchmarkResult], float]: ...
+
+
+def benchmark(n: list[int] | int = -1) -> tuple[list[BenchmarkResult], float] | BenchmarkResult:
     """
     Run a well-chosen range of Sage commands and record the time it
     takes for each to run.
 
     INPUT:
 
-        n -- int (default: -1) the benchmark number; the default
-             of -1 runs all the benchmarks.
+    - ``n`` -- integer (default: -1); the benchmark number; the default
+      of -1 runs all the benchmarks
 
     OUTPUT:
 
@@ -49,7 +63,6 @@ def benchmark(n=-1):
         Compute the Mordell-Weil group of y^2 = x^3 + 37*x - 997.
         Time: ... seconds
         Running benchmark 8
-
     """
 
     if isinstance(n, list):
@@ -78,7 +91,8 @@ def benchmark(n=-1):
             break
     return v, cputime(t)
 
-def bench0():
+
+def bench0() -> tuple[str, float]:
     """
     Run a benchmark.
 
@@ -88,17 +102,17 @@ def bench0():
         sage: print(bench0()[0])
         Benchmark 0: Factor the following polynomial over
             the rational numbers: (x^97+19*x+1)*(x^103-19*x^97+14)*(x^100-1)
-
     """
     desc = """Benchmark 0: Factor the following polynomial over
     the rational numbers: (x^97+19*x+1)*(x^103-19*x^97+14)*(x^100-1)"""
-    x = polygen(QQ,"x")
+    x = polygen(QQ, "x")
     f = (x**97+19*x+1)*(x**103-19*x**97+14)*(x**100-1)
     t = cputime()
-    F = f.factor()
+    f.factor()
     return (desc, cputime(t))
 
-def bench1():
+
+def bench1() -> tuple[str, float]:
     """
     Run a benchmark.
 
@@ -107,15 +121,15 @@ def bench1():
         sage: from sage.misc.benchmark import *
         sage: print(bench1()[0])
         Find the Mordell-Weil group of the elliptic curve 5077A using mwrank
-
     """
     desc = """Find the Mordell-Weil group of the elliptic curve 5077A using mwrank"""
     E = mwrank_EllipticCurve([0, 0, 1, -7, 6])
     t = cputime()
-    g = E.gens()
+    E.gens()
     return (desc, cputime(t))
 
-def bench2():
+
+def bench2() -> tuple[str, float]:
     """
     Run a benchmark.
 
@@ -124,14 +138,14 @@ def bench2():
         sage: from sage.misc.benchmark import *
         sage: print(bench2()[0])
         Some basic arithmetic with very large Integer numbers: '3^1000001 * 19^100001
-
     """
     desc = """Some basic arithmetic with very large Integer numbers: '3^1000001 * 19^100001"""
     t = cputime()
-    a = ZZ(3)**1000001 * ZZ(19)**100001
+    _ = ZZ(3)**1000001 * ZZ(19)**100001
     return (desc, cputime(t))
 
-def bench3():
+
+def bench3() -> tuple[str, float]:
     """
     Run a benchmark.
 
@@ -140,14 +154,14 @@ def bench3():
         sage: from sage.misc.benchmark import *
         sage: print(bench3()[0])
         Some basic arithmetic with very large Rational numbers: '(2/3)^100001 * (17/19)^100001
-
     """
     desc = """Some basic arithmetic with very large Rational numbers: '(2/3)^100001 * (17/19)^100001"""
     t = cputime()
-    a = QQ((2, 3))**100001 * QQ((17, 19))**100001
+    _ = QQ((2, 3))**100001 * QQ((17, 19))**100001
     return (desc, cputime(t))
 
-def bench4():
+
+def bench4() -> tuple[str, float]:
     """
     Run a benchmark.
 
@@ -156,16 +170,16 @@ def bench4():
         sage: from sage.misc.benchmark import *
         sage: print(bench4()[0])
         Rational polynomial arithmetic using Sage. Compute (x^29+17*x-5)^200.
-
     """
     desc = """Rational polynomial arithmetic using Sage. Compute (x^29+17*x-5)^200."""
     x = PolynomialRing(QQ, 'x').gen()
     t = cputime()
     f = x**29 + 17*x-5
-    a = f**200
+    _ = f**200
     return (desc, cputime(t))
 
-def bench5():
+
+def bench5() -> tuple[str, float]:
     """
     Run a benchmark.
 
@@ -174,16 +188,16 @@ def bench5():
         sage: from sage.misc.benchmark import *
         sage: print(bench5()[0])
         Rational polynomial arithmetic using Sage. Compute (x^19 - 18*x + 1)^50 one hundred times.
-
     """
     desc = """Rational polynomial arithmetic using Sage. Compute (x^19 - 18*x + 1)^50 one hundred times."""
     x = PolynomialRing(QQ, 'x').gen()
     t = cputime()
     f = x**19 - 18*x + 1
-    w = [f**50 for _ in range(100)]
+    _ = [f**50 for _ in range(100)]
     return (desc, cputime(t))
 
-def bench6():
+
+def bench6() -> tuple[str, float]:
     """
     Run a benchmark.
 
@@ -192,16 +206,16 @@ def bench6():
         sage: from sage.misc.benchmark import *
         sage: print(bench6()[0])
         Compute the p-division polynomials of y^2 = x^3 + 37*x - 997 for primes p < 40.
-
     """
     desc = """Compute the p-division polynomials of y^2 = x^3 + 37*x - 997 for primes p < 40."""
-    E = EllipticCurve([0,0,0,37,-997])
+    E = EllipticCurve([0, 0, 0, 37, -997])
     t = cputime()
-    for p in [2,3,5,7,11,13,17,19,23,29,31,37]:
-        f = E.division_polynomial(p)
+    for p in [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]:
+        E.division_polynomial(p)
     return (desc, cputime(t))
 
-def bench7():
+
+def bench7() -> tuple[str, float]:
     """
     Run a benchmark.
 
@@ -210,10 +224,9 @@ def bench7():
         sage: from sage.misc.benchmark import *
         sage: print(bench7()[0])
         Compute the Mordell-Weil group of y^2 = x^3 + 37*x - 997.
-
     """
     desc = """Compute the Mordell-Weil group of y^2 = x^3 + 37*x - 997."""
-    E = EllipticCurve([0,0,0,37,-997])
+    E = EllipticCurve([0, 0, 0, 37, -997])
     t = cputime()
-    G = E.gens()
+    E.gens()
     return (desc, cputime(t))

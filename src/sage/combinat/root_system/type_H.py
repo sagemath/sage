@@ -55,26 +55,26 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
 
     def coxeter_diagram(self):
         """
-        Returns a Coxeter diagram for type H.
+        Return a Coxeter diagram for type H.
 
         EXAMPLES::
 
              sage: ct = CartanType(['H',3])
-             sage: ct.coxeter_diagram()
+             sage: ct.coxeter_diagram()                                                 # needs sage.graphs
              Graph on 3 vertices
-             sage: ct.coxeter_diagram().edges(sort=True)
+             sage: ct.coxeter_diagram().edges(sort=True)                                # needs sage.graphs
              [(1, 2, 3), (2, 3, 5)]
-             sage: ct.coxeter_matrix()
+             sage: ct.coxeter_matrix()                                                  # needs sage.graphs
              [1 3 2]
              [3 1 5]
              [2 5 1]
 
              sage: ct = CartanType(['H',4])
-             sage: ct.coxeter_diagram()
+             sage: ct.coxeter_diagram()                                                 # needs sage.graphs
              Graph on 4 vertices
-             sage: ct.coxeter_diagram().edges(sort=True)
+             sage: ct.coxeter_diagram().edges(sort=True)                                # needs sage.graphs
              [(1, 2, 3), (2, 3, 3), (3, 4, 5)]
-             sage: ct.coxeter_matrix()
+             sage: ct.coxeter_matrix()                                                  # needs sage.graphs
              [1 3 2 2]
              [3 1 3 2]
              [2 3 1 5]

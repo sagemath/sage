@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Inventory builder
 
@@ -8,12 +7,17 @@ inventory files. The documentation files are not written.
 from __future__ import annotations
 
 from os import path
-from typing import Any, Iterable
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
 from urllib.parse import quote
 
-from sphinx.application import Sphinx
 from sphinx.builders.dummy import DummyBuilder
 from sphinx.util.inventory import InventoryFile
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from sphinx.application import Sphinx
 
 INVENTORY_FILENAME = "objects.inv"
 
@@ -23,10 +27,9 @@ class InventoryBuilder(DummyBuilder):
     A customized builder which only generates intersphinx "object.inv"
     inventory files. The documentation files are not written.
     """
-
     name = "inventory"
     format = "inventory"
-    epilog = "The inventory files are in %(outdir)s."
+    epilog = "The inventory file is in %(outdir)s."
 
     def get_outdated_docs(self) -> Iterable[str]:
         """
@@ -47,7 +50,7 @@ class InventoryBuilder(DummyBuilder):
                 srcmtime = path.getmtime(self.env.doc2path(docname))
                 if srcmtime > targetmtime:
                     yield docname
-            except EnvironmentError:
+            except OSError:
                 # source doesn't exist anymore
                 pass
 
@@ -63,6 +66,7 @@ class InventoryBuilder(DummyBuilder):
         """
         assert self.env is not None
 
+        Path(self.outdir).mkdir(parents=True, exist_ok=True)
         InventoryFile.dump(
             path.join(self.outdir, INVENTORY_FILENAME), self.env, self
         )

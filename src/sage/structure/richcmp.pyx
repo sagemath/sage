@@ -32,17 +32,17 @@ AUTHORS:
 - Jeroen Demeyer
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017-2018 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from cpython.object cimport Py_TYPE, PyTypeObject
+from cpython.object cimport PyTypeObject
 from sage.cpython.wrapperdescr cimport get_slotdef, wrapperbase, PyDescr_NewWrapper
 
 cdef extern from *:
@@ -77,15 +77,13 @@ cpdef richcmp_item(x, y, int op):
 
     INPUT:
 
-    - ``x``, ``y`` -- arbitrary Python objects. Typically, these are
-      ``X[i]`` and ``Y[i]`` for sequences ``X`` and ``Y``.
+    - ``x``, ``y`` -- arbitrary Python objects; typically, these are
+      ``X[i]`` and ``Y[i]`` for sequences ``X`` and ``Y``
 
-    - ``op`` -- comparison operator (one of ``op_LT`, ``op_LE``,
+    - ``op`` -- comparison operator (one of ``op_LT``, ``op_LE``,
       ``op_EQ``, ``op_NE``, ``op_GT``, ``op_GE``)
 
-    OUTPUT:
-
-    Assuming that ``x = X[i]`` and ``y = Y[i]``:
+    OUTPUT: assuming that ``x = X[i]`` and ``y = Y[i]``:
 
     - if the comparison ``X {op} Y`` (where ``op`` is the given
       operation) could not be decided yet (i.e. we should compare the

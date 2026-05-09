@@ -98,9 +98,9 @@ Classes and Methods
 # ****************************************************************************
 
 import sage.rings.abc
-from .ring import SymbolicRing, SR
 from sage.categories.pushout import ConstructionFunctor
 from sage.structure.factory import UniqueFactory
+from sage.symbolic.ring import SR, SymbolicRing
 
 
 class SymbolicSubringFactory(UniqueFactory):
@@ -111,16 +111,16 @@ class SymbolicSubringFactory(UniqueFactory):
 
     Specify one of the following keywords to create a subring.
 
-    - ``accepting_variables`` (default: ``None``) -- a tuple or other
+    - ``accepting_variables`` -- (default: ``None``) a tuple or other
       iterable of variables. If specified, then a symbolic subring of
       expressions in only these variables is created.
 
-    - ``rejecting_variables`` (default: ``None``) -- a tuple or other
+    - ``rejecting_variables`` -- (default: ``None``) a tuple or other
       iterable of variables. If specified, then a symbolic subring of
       expressions in variables distinct to these variables is
       created.
 
-    - ``no_variables`` (default: ``False``) -- a boolean. If set,
+    - ``no_variables`` -- boolean (default: ``False``); if set,
       then a symbolic subring of constant expressions (i.e.,
       expressions without a variable) is created.
 
@@ -254,7 +254,7 @@ class GenericSymbolicSubring(SymbolicRing):
 
         INPUT:
 
-        - ``vars`` -- a tuple of symbolic variables.
+        - ``vars`` -- tuple of symbolic variables
 
         TESTS::
 
@@ -286,9 +286,7 @@ class GenericSymbolicSubring(SymbolicRing):
         r"""
         Return a representation string of the variables.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -314,11 +312,9 @@ class GenericSymbolicSubring(SymbolicRing):
 
         INPUT:
 
-        - ``variable`` -- a symbolic variable.
+        - ``variable`` -- a symbolic variable
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -332,15 +328,13 @@ class GenericSymbolicSubring(SymbolicRing):
 
     def _element_constructor_(self, x):
         r"""
-        Creates the element of this subring specified by the input ``x``.
+        Create the element of this subring specified by the input ``x``.
 
         INPUT:
 
-        - ``x`` -- an object.
+        - ``x`` -- an object
 
-        OUTPUT:
-
-        An element of this symbolic subring.
+        OUTPUT: an element of this symbolic subring
 
         TESTS::
 
@@ -368,11 +362,9 @@ class GenericSymbolicSubring(SymbolicRing):
 
         INPUT:
 
-        - ``P`` -- a parent.
+        - ``P`` -- a parent
 
-        OUTPUT:
-
-        A boolean or ``None``.
+        OUTPUT: boolean or ``None``
 
         TESTS::
 
@@ -403,29 +395,25 @@ class GenericSymbolicSubring(SymbolicRing):
             sage: C.has_coerce_map_from(SR)  # indirect doctest
             False
         """
-        if P == SR:
-            # Workaround; can be deleted once #19231 is fixed
-            return False
-
         from sage.rings.infinity import InfinityRing
         from sage.rings.qqbar import AA, QQbar
-        from sage.rings.real_lazy import RLF, CLF
+        from sage.rings.real_lazy import CLF, RLF
 
         if isinstance(P, type):
             return SR._coerce_map_from_(P)
 
-        elif RLF.has_coerce_map_from(P) or \
-             CLF.has_coerce_map_from(P) or \
-             AA.has_coerce_map_from(P) or \
-             QQbar.has_coerce_map_from(P):
+        if RLF.has_coerce_map_from(P) or \
+           CLF.has_coerce_map_from(P) or \
+           AA.has_coerce_map_from(P) or \
+           QQbar.has_coerce_map_from(P):
             return True
 
-        elif (P is InfinityRing or
-              isinstance(P, (sage.rings.abc.RealIntervalField,
-                             sage.rings.abc.ComplexIntervalField))):
+        if (P is InfinityRing or
+            isinstance(P, (sage.rings.abc.RealIntervalField,
+                           sage.rings.abc.ComplexIntervalField))):
             return True
 
-        elif P._is_numerical():
+        if P._is_numerical():
             return P not in (RLF, CLF, AA, QQbar)
 
     def __eq__(self, other):
@@ -491,7 +479,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
 
     INPUT:
 
-    - ``vars`` -- a tuple, set, or other iterable of symbolic variables.
+    - ``vars`` -- tuple, set, or other iterable of symbolic variables
 
     EXAMPLES::
 
@@ -532,9 +520,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
         r"""
         Return a representation string of the variables.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -549,9 +535,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
         r"""
         Return a representation string of this functor.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -573,11 +557,9 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
-        OUTPUT:
-
-        A functor or ``None``.
+        OUTPUT: a functor or ``None``
 
         EXAMPLES::
 
@@ -595,11 +577,9 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -608,7 +588,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
             sage: F == F
             True
         """
-        return type(self) == type(other) and self.vars == other.vars
+        return type(self) is type(other) and self.vars == other.vars
 
     def __ne__(self, other):
         r"""
@@ -616,11 +596,9 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -641,9 +619,7 @@ class SymbolicSubringAcceptingVars(GenericSymbolicSubring):
         r"""
         Return a representation string of this symbolic subring.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -660,11 +636,9 @@ class SymbolicSubringAcceptingVars(GenericSymbolicSubring):
 
         INPUT:
 
-        - ``variable`` -- a symbolic variable.
+        - ``variable`` -- a symbolic variable
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -702,11 +676,9 @@ class SymbolicSubringAcceptingVars(GenericSymbolicSubring):
 
         INPUT:
 
-        - ``P`` -- a parent.
+        - ``P`` -- a parent
 
-        OUTPUT:
-
-        A boolean or ``None``.
+        OUTPUT: boolean or ``None``
 
         TESTS::
 
@@ -726,9 +698,7 @@ class SymbolicSubringAcceptingVars(GenericSymbolicSubring):
         r"""
         Return an element of this symbolic subring.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         TESTS::
 
@@ -753,11 +723,9 @@ class SymbolicSubringAcceptingVarsFunctor(GenericSymbolicSubringFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
-        OUTPUT:
-
-        A functor or ``None``.
+        OUTPUT: a functor or ``None``
 
         EXAMPLES::
 
@@ -771,9 +739,9 @@ class SymbolicSubringAcceptingVarsFunctor(GenericSymbolicSubringFunctor):
         """
         if self == other:
             return self
-        elif type(self) == type(other):
+        if type(self) is type(other):
             return type(self)(self.vars | other.vars)
-        elif isinstance(other, SymbolicSubringRejectingVarsFunctor):
+        if isinstance(other, SymbolicSubringRejectingVarsFunctor):
             if not (self.vars & other.vars):
                 return other
 
@@ -783,11 +751,9 @@ class SymbolicSubringAcceptingVarsFunctor(GenericSymbolicSubringFunctor):
 
         INPUT:
 
-        - ``R`` -- a symbolic ring.
+        - ``R`` -- a symbolic ring
 
-        OUTPUT:
-
-        A subring of ``R``.
+        OUTPUT: a subring of ``R``
 
         EXAMPLES::
 
@@ -820,9 +786,7 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
         r"""
         Return a representation string of this symbolic subring.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -839,11 +803,9 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
 
         INPUT:
 
-        - ``variable`` -- a symbolic variable.
+        - ``variable`` -- a symbolic variable
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -881,11 +843,9 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
 
         INPUT:
 
-        - ``P`` -- a parent.
+        - ``P`` -- a parent
 
-        OUTPUT:
-
-        A boolean or ``None``.
+        OUTPUT: boolean or ``None``
 
         TESTS::
 
@@ -904,7 +864,7 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
         """
         if isinstance(P, SymbolicSubringRejectingVars):
             return self._vars_ <= P._vars_
-        elif isinstance(P, SymbolicSubringAcceptingVars):
+        if isinstance(P, SymbolicSubringAcceptingVars):
             return not (self._vars_ & P._vars_)
         return super()._coerce_map_from_(P)
 
@@ -912,9 +872,7 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
         r"""
         Return an element of this symbolic subring.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         TESTS::
 
@@ -954,11 +912,9 @@ class SymbolicSubringRejectingVarsFunctor(GenericSymbolicSubringFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
-        OUTPUT:
-
-        A functor or ``None``.
+        OUTPUT: a functor or ``None``
 
         EXAMPLES::
 
@@ -972,9 +928,9 @@ class SymbolicSubringRejectingVarsFunctor(GenericSymbolicSubringFunctor):
         """
         if self == other:
             return self
-        elif type(self) == type(other):
+        if type(self) is type(other):
             return type(self)(self.vars & other.vars)
-        elif isinstance(other, SymbolicSubringAcceptingVarsFunctor):
+        if isinstance(other, SymbolicSubringAcceptingVarsFunctor):
             if not (self.vars & other.vars):
                 return self
 
@@ -984,11 +940,9 @@ class SymbolicSubringRejectingVarsFunctor(GenericSymbolicSubringFunctor):
 
         INPUT:
 
-        - ``R`` -- a symbolic ring.
+        - ``R`` -- a symbolic ring
 
-        OUTPUT:
-
-        A subring of ``R``.
+        OUTPUT: a subring of ``R``
 
         EXAMPLES::
 
@@ -1020,9 +974,7 @@ class SymbolicConstantsSubring(SymbolicSubringAcceptingVars):
         r"""
         Return a representation string of this symbolic subring.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -1038,11 +990,9 @@ class SymbolicConstantsSubring(SymbolicSubringAcceptingVars):
 
         INPUT:
 
-        - ``variable`` -- a symbolic variable.
+        - ``variable`` -- a symbolic variable
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1061,9 +1011,7 @@ class SymbolicConstantsSubring(SymbolicSubringAcceptingVars):
         r"""
         Return an element of this symbolic subring.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         TESTS::
 

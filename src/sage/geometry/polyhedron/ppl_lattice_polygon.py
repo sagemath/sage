@@ -32,7 +32,7 @@ from sage.geometry.polyhedron.ppl_lattice_polytope import (
 ########################################################################
 class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
     """
-    A lattice polygon
+    A lattice polygon.
 
     This includes 2-dimensional polytopes as well as degenerate (0 and
     1-dimensional) lattice polygons. Any polytope in 2d is a polygon.
@@ -80,12 +80,12 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
     def _find_isomorphism_degenerate(self, polytope):
         """
-        Helper to pick an isomorphism of degenerate polygons
+        Helper to pick an isomorphism of degenerate polygons.
 
         INPUT:
 
-        - ``polytope`` -- a :class:`LatticePolytope_PPL_class`. The
-          polytope to compare with.
+        - ``polytope`` -- a :class:`LatticePolytope_PPL_class`; the
+          polytope to compare with
 
         EXAMPLES::
 
@@ -177,19 +177,19 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
                                                polytope_origin, p_ray_left,
                                                p_ray_right):
         r"""
-        Helper to find an isomorphism of polygons
+        Helper to find an isomorphism of polygons.
 
         INPUT:
 
-        - ``polytope`` -- the lattice polytope to compare to.
+        - ``polytope`` -- the lattice polytope to compare to
 
-        - ``polytope_origin`` -- `\ZZ`-vector. a vertex of ``polytope``
+        - ``polytope_origin`` -- `\ZZ`-vector; a vertex of ``polytope``
 
-        - ``p_ray_left`` - vector. the vector from ``polytope_origin``
-          to one of its neighboring vertices.
+        - ``p_ray_left`` -- vector; the vector from ``polytope_origin``
+          to one of its neighboring vertices
 
-        - ``p_ray_right`` - vector. the vector from
-          ``polytope_origin`` to the other neighboring vertices.
+        - ``p_ray_right`` -- vector; the vector from
+          ``polytope_origin`` to the other neighboring vertices
 
         OUTPUT:
 
@@ -247,7 +247,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
         INPUT:
 
-        - ``polytope`` -- a polytope, potentially higher-dimensional.
+        - ``polytope`` -- a polytope, potentially higher-dimensional
 
         OUTPUT:
 
@@ -337,11 +337,9 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
         INPUT:
 
-        - ``polytope`` -- a lattice polytope.
+        - ``polytope`` -- a lattice polytope
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -399,19 +397,17 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
         """
         Plot the lattice polygon.
 
-        OUTPUT:
-
-        A graphics object.
+        OUTPUT: a graphics object
 
         EXAMPLES::
 
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: P = LatticePolytope_PPL((1,0), (0,1), (0,0), (2,2))
-            sage: P.plot()  # optional - sage.plot
+            sage: P.plot()                                                              # needs sage.plot
             Graphics object consisting of 6 graphics primitives
-            sage: LatticePolytope_PPL([0], [1]).plot()  # optional - sage.plot
+            sage: LatticePolytope_PPL([0], [1]).plot()                                  # needs sage.plot
             Graphics object consisting of 3 graphics primitives
-            sage: LatticePolytope_PPL([0]).plot()  # optional - sage.plot
+            sage: LatticePolytope_PPL([0]).plot()                                       # needs sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         from sage.plot.point import point2d
@@ -437,7 +433,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 @cached_function
 def polar_P2_polytope():
     """
-    The polar of the `P^2` polytope
+    The polar of the `P^2` polytope.
 
     EXAMPLES::
 
@@ -453,7 +449,7 @@ def polar_P2_polytope():
 @cached_function
 def polar_P1xP1_polytope():
     r"""
-    The polar of the `P^1 \times P^1` polytope
+    The polar of the `P^1 \times P^1` polytope.
 
     EXAMPLES::
 
@@ -469,7 +465,7 @@ def polar_P1xP1_polytope():
 @cached_function
 def polar_P2_112_polytope():
     """
-    The polar of the `P^2[1,1,2]` polytope
+    The polar of the `P^2[1,1,2]` polytope.
 
     EXAMPLES::
 
@@ -485,11 +481,9 @@ def polar_P2_112_polytope():
 @cached_function
 def subpolygons_of_polar_P2():
     """
-    The lattice sub-polygons of the polar `P^2` polytope
+    The lattice sub-polygons of the polar `P^2` polytope.
 
-    OUTPUT:
-
-    A tuple of lattice polytopes.
+    OUTPUT: a tuple of lattice polytopes
 
     EXAMPLES::
 
@@ -503,11 +497,9 @@ def subpolygons_of_polar_P2():
 @cached_function
 def subpolygons_of_polar_P2_112():
     """
-    The lattice sub-polygons of the polar `P^2[1,1,2]` polytope
+    The lattice sub-polygons of the polar `P^2[1,1,2]` polytope.
 
-    OUTPUT:
-
-    A tuple of lattice polytopes.
+    OUTPUT: a tuple of lattice polytopes
 
     EXAMPLES::
 
@@ -521,11 +513,9 @@ def subpolygons_of_polar_P2_112():
 @cached_function
 def subpolygons_of_polar_P1xP1():
     r"""
-    The lattice sub-polygons of the polar `P^1 \times P^1` polytope
+    The lattice sub-polygons of the polar `P^1 \times P^1` polytope.
 
-    OUTPUT:
-
-    A tuple of lattice polytopes.
+    OUTPUT: a tuple of lattice polytopes
 
     EXAMPLES::
 

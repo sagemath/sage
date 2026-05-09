@@ -18,7 +18,7 @@ from .join_feature import JoinFeature
 
 class Tdlib(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of the ``tdlib``.
+    A :class:`~sage.features.Feature` describing the presence of the SageMath interface to the :ref:`tdlib <spkg_tdlib>` library.
     """
     def __init__(self):
         r"""
@@ -28,10 +28,9 @@ class Tdlib(JoinFeature):
             sage: isinstance(Tdlib(), Tdlib)
             True
         """
-        # Currently part of sagemath_standard, conditionally built.
-        # Will be changed to spkg='sagemath_tdlib' later
         JoinFeature.__init__(self, 'tdlib',
-                             [PythonModule('sage.graphs.graph_decompositions.tdlib', spkg='tdlib')])
+                             [PythonModule('sage.graphs.graph_decompositions.tdlib',
+                                           spkg='tdlib')])
 
 
 def all_features():

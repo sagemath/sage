@@ -83,7 +83,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
     - ``L`` -- the Lie algebra of the Lie group; must be a finite
       dimensional nilpotent Lie algebra with basis over a topological
       field, e.g. `\QQ` or `\RR`
-    - ``name`` -- a string; name (symbol) given to the Lie group
+    - ``name`` -- string; name (symbol) given to the Lie group
 
     Two types of exponential coordinates are defined on any
     nilpotent Lie group using the basis of the Lie algebra,
@@ -310,7 +310,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
         return R_a.differential(self.one()).matrix().subs(asubs)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a tuple of elements whose one-parameter subgroups generate
         the Lie group.
@@ -782,8 +782,8 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             sage: g = G.exp(L.basis().list()[0]); g
             exp(X_1)
             sage: Ad_g = G.adjoint(g); Ad_g
-            Lie algebra endomorphism of Free Nilpotent Lie algebra on 5
-            generators (X_1, X_2, X_12, X_112, X_122) over Rational Field
+            Lie algebra endomorphism of Free Nilpotent Lie algebra
+             of rank 2 and step 3 over Rational Field
               Defn: X_1 |--> X_1
                     X_2 |--> X_2 + X_12 + 1/2*X_112
                     X_12 |--> X_12 + X_112
@@ -807,7 +807,8 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             sage: g = G.point([0, 0, var('a')]); g
             exp(a*X_12)
             sage: G.adjoint(g)
-            Lie algebra endomorphism of Free Nilpotent Lie algebra on 3 generators (X_1, X_2, X_12) over Rational Field
+            Lie algebra endomorphism of Free Nilpotent Lie algebra
+             of rank 2 and step 2 over Rational Field
               Defn: X_1 |--> X_1
                     X_2 |--> X_2
                     X_12 |--> X_12

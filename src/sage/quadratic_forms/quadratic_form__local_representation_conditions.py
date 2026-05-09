@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari sage.rings.number_field
 """
 Local Representation Conditions
 """
@@ -16,7 +17,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-class QuadraticFormLocalRepresentationConditions():
+class QuadraticFormLocalRepresentationConditions:
     """
     A class for dealing with the local conditions of a
     quadratic form, and checking local representability of numbers.
@@ -67,8 +68,9 @@ class QuadraticFormLocalRepresentationConditions():
         sage: Q2.is_locally_universal_at_all_primes()
         False
         sage: L = [m  for m in range(-5, 25)  if Q2.is_locally_represented_number(m)]
-        sage: L1 = [0] + [m  for m in range(1,25)  \
-              if len([p  for p in prime_factors(squarefree_part(ZZ(m)))  if (p % 4) == 3]) % 2 == 0]
+        sage: L1 = [0] + [m for m in range(1, 25)
+        ....:             if len([p for p in prime_factors(squarefree_part(ZZ(m)))
+        ....:                       if (p % 4) == 3]) % 2 == 0]
         sage: L == L1
         True
         sage: L
@@ -93,19 +95,17 @@ class QuadraticFormLocalRepresentationConditions():
         [0]
     """
     def __init__(self, Q):
-        """
-        Takes a QuadraticForm and computes its local conditions (if
-        they do not already exist).  The recompute_flag overrides the
+        r"""
+        Take a :class:`QuadraticForm` and computes its local conditions (if
+        they do not already exist).  The ``recompute_flag`` overrides the
         previously computed conditions if they exist, and stores the
         new conditions.
 
         INPUT:
 
-        - Q -- Quadratic form over ZZ
+        - ``Q`` -- Quadratic form over `\ZZ`
 
-        OUTPUT:
-
-        a  QuadraticFormLocalRepresentationConditions object
+        OUTPUT: a :class:`QuadraticFormLocalRepresentationConditions` object
 
         EXAMPLES::
 
@@ -122,7 +122,7 @@ class QuadraticFormLocalRepresentationConditions():
 
         # Basic structure initialization
         self.local_repn_array = []    # List of all local conditions
-        self.dim = Q.dim()       # We allow this to be any non-negative integer.
+        self.dim = Q.dim()       # We allow this to be any nonnegative integer.
         self.exceptional_primes = [infinity]
 
         # Deal with the special cases of 0 and 1-dimensional forms
@@ -201,9 +201,7 @@ class QuadraticFormLocalRepresentationConditions():
         r"""
         Print the local conditions.
 
-        OUTPUT:
-
-        string
+        OUTPUT: string
 
         .. TODO::
 
@@ -246,11 +244,9 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - right -- a QuadraticFormLocalRepresentationConditions object
+        - ``right`` -- a QuadraticFormLocalRepresentationConditions object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -293,11 +289,9 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - `p` -- a positive prime number or "infinity"
+        - ``p`` -- a positive prime number or "infinity"
 
-        OUTPUT:
-
-        a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -320,11 +314,9 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - `p` -- a positive prime number.  (Is 'infinity' allowed here?)
+        - ``p`` -- a positive prime number.  (Is 'infinity' allowed here?)
 
-        OUTPUT:
-
-        a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -344,43 +336,38 @@ class QuadraticFormLocalRepresentationConditions():
         if self.dim >= 3:
             if p == 2:
                 return [2, 0, 0, 0, 0, 0, 0, 0, 0]
-            else:
-                return [p, 0, 0, 0, 0, None, None, None, None]
+            return [p, 0, 0, 0, 0, None, None, None, None]
 
-        elif self.dim == 2:
+        if self.dim == 2:
             if p == 2:
                 return [2, 0, 0, 0, 0, infinity, infinity, infinity, infinity]
-            else:
-                return [p, 0, 0, infinity, infinity, None, None, None, None]
+            return [p, 0, 0, infinity, infinity, None, None, None, None]
 
-        elif self.dim == 1:
+        if self.dim == 1:
             v = [p, None, None, None, None, None, None, None, None]
             sqclass = self.squareclass_vector(p)
 
             for i, sqi in enumerate(sqclass):
                 if QQ(self.coeff / sqi).is_padic_square(p):    # Note:This should happen only once!
-                    nu = valuation(self.coeff / sqi, p) / 2    # UNUSED VARIABLE !
-                else:
-                    v[i + 1] = infinity
+                    continue
+                v[i + 1] = infinity
 
         elif self.dim == 0:
             if p == 2:
                 return [2, infinity, infinity, infinity, infinity, infinity, infinity, infinity, infinity]
             return [p, infinity, infinity, infinity, infinity, None, None, None, None]
 
-        raise RuntimeError("the stored dimension should be a non-negative integer")
+        raise RuntimeError("the stored dimension should be a nonnegative integer")
 
     def is_universal_at_prime(self, p) -> bool:
-        """
-        Determine if the (integer-valued/rational) quadratic form represents all of `Z_p`.
+        r"""
+        Determine if the (integer-valued/rational) quadratic form represents all of `\ZZ_p`.
 
         INPUT:
 
-        - `p` -- a positive prime number or "infinity".
+        - ``p`` -- a positive prime number or "infinity"
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -418,12 +405,10 @@ class QuadraticFormLocalRepresentationConditions():
         return Zp_univ_flag
 
     def is_universal_at_all_finite_primes(self) -> bool:
-        """
-        Determine if the quadratic form represents `Z_p` for all finite/non-archimedean primes.
+        r"""
+        Determine if the quadratic form represents `\ZZ_p` for all finite/non-archimedean primes.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -451,13 +436,11 @@ class QuadraticFormLocalRepresentationConditions():
                    for p in self.exceptional_primes[1:])
 
     def is_universal_at_all_places(self) -> bool:
-        """
-        Determine if the quadratic form represents `Z_p` for all
+        r"""
+        Determine if the quadratic form represents `\ZZ_p` for all
         finite/non-archimedean primes, and represents all real numbers.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -499,13 +482,11 @@ class QuadraticFormLocalRepresentationConditions():
 
         INPUT:
 
-        - `m` -- an integer
+        - ``m`` -- integer
 
-        - `p` -- a positive prime number or "infinity".
+        - ``p`` -- a positive prime number or "infinity"
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -563,18 +544,16 @@ class QuadraticFormLocalRepresentationConditions():
                 return local_vec[sqclass.index(s) + 1] <= (nu / 2)
 
     def is_locally_represented(self, m) -> bool:
-        """
+        r"""
         Determine if the rational number `m` is locally represented by
-        the quadratic form (allowing vectors with coefficients in `Z_p` at all
+        the quadratic form (allowing vectors with coefficients in `\ZZ_p` at all
         places).
 
         INPUT:
 
-        - `m` -- an integer
+        - ``m`` -- integer
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -624,51 +603,45 @@ class QuadraticFormLocalRepresentationConditions():
 
 
 def local_representation_conditions(self, recompute_flag=False, silent_flag=False):
-    """
+    r"""
     .. WARNING::
 
-        THIS ONLY WORKS CORRECTLY FOR FORMS IN >=3 VARIABLES,
-        WHICH ARE LOCALLY UNIVERSAL AT ALMOST ALL PRIMES!
+        This only works correctly for forms in >=3 variables,
+        which are locally universal at almost all primes!
 
     This class finds the local conditions for a number to be integrally
     represented by an integer-valued quadratic form.  These conditions
-    are stored in "self.__local_representability_conditions" and
+    are stored in ``self.__local_representability_conditions`` and
     consist of a list of 9 element vectors, with one for each prime
     with a local obstruction (though only the first 5 are meaningful
-    unless `p=2` ).  The first element is always the prime `p` where the
+    unless `p=2`).  The first element is always the prime `p` where the
     local obstruction occurs, and the next 8 (or 4) entries represent
-    square-classes in the `p`-adic integers `Z_p`, and are labeled by the
-    `Q_p` square-classes `t*(Q_p)^2` with `t` given as follows:
+    square-classes in the `p`-adic integers `\ZZ_p`, and are labeled by the
+    `\QQ_p` square-classes `t\cdot (\QQ_p)^2` with `t` given as follows:
 
-        `p > 2`  ==>  [ *  1  u  p  u p  *  *  *  * ]
+    - for `p > 2`, ``[ *  1  u  p  u p  *  *  *  * ]``,
 
-        `p = 2`  ==>  [ *  1  3  5  7  2  6  10  14 ]
+    - for `p = 2`, ``[ *  1  3  5  7  2  6  10  14 ]``.
 
     The integer appearing in each place tells us how `p`-divisible a
     number needs to be in that square-class in order to be locally
-    represented by Q.  A negative number indicates that the entire `Q_p`
+    represented by `Q`.  A negative number indicates that the entire `\QQ_p`
     square-class is not represented, while a positive number `x` indicates
-    that `t*p^{(2*x)} (Z_p)^2` is locally represented but `t*p^{(2*(x-1))}`
-    `(Z_p)^2` is not.
+    that `t\cdot p^{(2\cdot x)} (\ZZ_p)^2` is locally represented but `t\cdot p^{(2\cdot (x-1))}`
+    `(\ZZ_p)^2` is not.
 
-    As an example, the vector
-
-        [2  3  0  0  0  0  2  0  infinity]
-
-    tells us that all positive integers are locally represented at p=2
+    As an example, the vector ``[2  3  0  0  0  0  2  0  infinity]``
+    tells us that all positive integers are locally represented at `p=2`
     except those of the forms:
 
-        `2^6 * u * r^2` with  `u = 1 (mod 8)`
+    - `2^6\cdot u\cdot r^2` with `u = 1` (mod 8)
 
-        `2^5 * u * r^2` with `u = 3 (mod 8)`
+    - `2^5\cdot u\cdot r^2` with `u = 3` (mod 8)
 
-        `2 * u * r^2` with `u = 7 (mod 8)`
+    - `2\cdot u\cdot r^2` with `u = 7` (mod 8)
 
-    At the real numbers, the vector which looks like
-
-        [infinity, 0, infinity, None, None, None, None, None, None]
-
-    means that Q is negative definite (i.e. the 0 tells us all
+    At the real numbers, the vector which looks like ``[infinity, 0, infinity, None, None, None, None, None, None]``
+    means that `Q` is negative definite (i.e., the 0 tells us all
     positive reals are represented).  The real vector always appears,
     and is listed before the other ones.
 
@@ -738,16 +711,14 @@ def local_representation_conditions(self, recompute_flag=False, silent_flag=Fals
 
 
 def is_locally_universal_at_prime(self, p) -> bool:
-    """
-    Determine if the (integer-valued/rational) quadratic form represents all of `Z_p`.
+    r"""
+    Determine if the (integer-valued/rational) quadratic form represents all of `\ZZ_p`.
 
     INPUT:
 
-    - `p` -- a positive prime number or "infinity".
+    - ``p`` -- a positive prime number or "infinity"
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -784,12 +755,10 @@ def is_locally_universal_at_prime(self, p) -> bool:
 
 
 def is_locally_universal_at_all_primes(self) -> bool:
-    """
-    Determine if the quadratic form represents `Z_p` for all finite/non-archimedean primes.
+    r"""
+    Determine if the quadratic form represents `\ZZ_p` for all finite/non-archimedean primes.
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -814,13 +783,11 @@ def is_locally_universal_at_all_primes(self) -> bool:
 
 
 def is_locally_universal_at_all_places(self) -> bool:
-    """
-    Determine if the quadratic form represents `Z_p` for all
+    r"""
+    Determine if the quadratic form represents `\ZZ_p` for all
     finite/non-archimedean primes, and represents all real numbers.
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -851,13 +818,11 @@ def is_locally_represented_number_at_place(self, m, p) -> bool:
 
     INPUT:
 
-    - `m` -- an integer
+    - ``m`` -- integer
 
-    - `p` -- a prime number > 0 or 'infinity'
+    - ``p`` -- a prime number > 0 or 'infinity'
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -898,11 +863,9 @@ def is_locally_represented_number(self, m) -> bool:
 
     INPUT:
 
-    - `m` -- an integer
+    - ``m`` -- integer
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 

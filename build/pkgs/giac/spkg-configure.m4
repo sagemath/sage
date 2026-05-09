@@ -5,7 +5,7 @@ SAGE_SPKG_CONFIGURE([giac], [
        m4_pushdef([GIAC_MAX_VERSION], [1.9.999])
        AC_CACHE_CHECK([for giac >= ]GIAC_MIN_VERSION[, <= ]GIAC_MAX_VERSION, [ac_cv_path_GIAC], [
          AC_PATH_PROGS_FEATURE_CHECK([GIAC], [giac], [
-            giac_version=$($ac_path_GIAC --version 2> /dev/null | tail -1)
+            giac_version=$($ac_path_GIAC --version 2> /dev/null | tail -n 1)
             AS_IF([test -n "$giac_version"], [
                 AX_COMPARE_VERSION([$giac_version], [ge], GIAC_MIN_VERSION, [
                     AX_COMPARE_VERSION([$giac_version], [le], GIAC_MAX_VERSION, [

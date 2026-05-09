@@ -11,7 +11,7 @@ from sage.rings.rational cimport Rational
 cpdef gauss_table(long long p, int f, int prec, bint use_longs)
 
 cdef class pAdicGenericElement(LocalGenericElement):
-    cdef long valuation_c(self)
+    cdef long valuation_c(self) noexcept
     cpdef val_unit(self)
 
     cdef int _set_from_Integer(self, Integer x, absprec, relprec) except -1

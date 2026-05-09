@@ -23,10 +23,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # **********************************************************************
 
-from sage.rings.complex_mpfr import ComplexNumber
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.integer_mod import Mod
-from sage.symbolic.constants import pi
+
+lazy_import('sage.rings.complex_mpfr', 'ComplexNumber')
+
+lazy_import('sage.symbolic.constants', 'pi')
+
 
 # This list of precomputed factorials is needed to massively
 # accelerate future calculations of the various coefficients
@@ -40,11 +44,9 @@ def _calc_factlist(nn):
 
     INPUT:
 
-    - ``nn`` -- integer, highest factorial to be computed
+    - ``nn`` -- integer; highest factorial to be computed
 
-    OUTPUT:
-
-    list of integers -- the list of precomputed factorials
+    OUTPUT: list of integers -- the list of precomputed factorials
 
     EXAMPLES:
 
@@ -66,10 +68,10 @@ def wigner_3j(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
 
     INPUT:
 
-    -  ``j_1``, ``j_2``, ``j_3``, ``m_1``, ``m_2``, ``m_3`` -- integer or half integer
+    - ``j_1``, ``j_2``, ``j_3``, ``m_1``, ``m_2``, ``m_3`` -- integer or half integer
 
-    -  ``prec`` -- precision, default: ``None``. Providing a precision can
-       drastically speed up the calculation.
+    - ``prec`` -- precision (default: ``None``); providing a precision can
+      drastically speed up the calculation
 
     OUTPUT:
 
@@ -78,15 +80,15 @@ def wigner_3j(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
 
     EXAMPLES::
 
-        sage: wigner_3j(2, 6, 4, 0, 0, 0)
+        sage: wigner_3j(2, 6, 4, 0, 0, 0)                                               # needs sage.symbolic
         sqrt(5/143)
         sage: wigner_3j(2, 6, 4, 0, 0, 1)
         0
-        sage: wigner_3j(0.5, 0.5, 1, 0.5, -0.5, 0)
+        sage: wigner_3j(0.5, 0.5, 1, 0.5, -0.5, 0)                                      # needs sage.symbolic
         sqrt(1/6)
-        sage: wigner_3j(40, 100, 60, -10, 60, -50)
+        sage: wigner_3j(40, 100, 60, -10, 60, -50)                                      # needs sage.symbolic
         95608/18702538494885*sqrt(21082735836735314343364163310/220491455010479533763)
-        sage: wigner_3j(2500, 2500, 5000, 2488, 2400, -4888, prec=64)
+        sage: wigner_3j(2500, 2500, 5000, 2488, 2400, -4888, prec=64)                   # needs sage.rings.real_mpfr
         7.60424456883448589e-12
 
     It is an error to have arguments that are not integer or half
@@ -211,10 +213,10 @@ def clebsch_gordan(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
 
     INPUT:
 
-    -  ``j_1``, ``j_2``, ``j_3``, ``m_1``, ``m_2``, ``m_3`` -- integer or half integer
+    - ``j_1``, ``j_2``, ``j_3``, ``m_1``, ``m_2``, ``m_3`` -- integer or half integer
 
-    -  ``prec`` -- precision, default: ``None``. Providing a precision can
-       drastically speed up the calculation.
+    - ``prec`` -- precision (default: ``None``); providing a precision can
+      drastically speed up the calculation
 
     OUTPUT:
 
@@ -223,11 +225,11 @@ def clebsch_gordan(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
 
     EXAMPLES::
 
-        sage: simplify(clebsch_gordan(3/2,1/2,2, 3/2,1/2,2))
+        sage: simplify(clebsch_gordan(3/2,1/2,2, 3/2,1/2,2))                            # needs sage.symbolic
         1
-        sage: clebsch_gordan(1.5,0.5,1, 1.5,-0.5,1)
+        sage: clebsch_gordan(1.5,0.5,1, 1.5,-0.5,1)                                     # needs sage.symbolic
         1/2*sqrt(3)
-        sage: clebsch_gordan(3/2,1/2,1, -1/2,1/2,0)
+        sage: clebsch_gordan(3/2,1/2,1, -1/2,1/2,0)                                     # needs sage.symbolic
         -sqrt(3)*sqrt(1/6)
 
     .. NOTE::
@@ -260,22 +262,20 @@ def _big_delta_coeff(aa, bb, cc, prec=None):
 
     INPUT:
 
-    -  ``aa`` -- first angular momentum, integer or half integer
+    - ``aa`` -- first angular momentum, integer or half integer
 
-    -  ``bb`` -- second angular momentum, integer or half integer
+    - ``bb`` -- second angular momentum, integer or half integer
 
-    -  ``cc`` -- third angular momentum, integer or half integer
+    - ``cc`` -- third angular momentum, integer or half integer
 
-    -  ``prec`` -- precision of the ``sqrt()`` calculation
+    - ``prec`` -- precision of the ``sqrt()`` calculation
 
-    OUTPUT:
-
-    double - Value of the Delta coefficient
+    OUTPUT: double - Value of the Delta coefficient
 
     EXAMPLES::
 
         sage: from sage.functions.wigner import _big_delta_coeff
-        sage: _big_delta_coeff(1,1,1)
+        sage: _big_delta_coeff(1,1,1)                                                   # needs sage.symbolic
         1/2*sqrt(1/6)
     """
     if int(aa + bb - cc) != (aa + bb - cc):
@@ -313,10 +313,10 @@ def racah(aa, bb, cc, dd, ee, ff, prec=None):
 
     INPUT:
 
-    -  ``aa``, ..., ``ff`` -- integer or half integer
+    - ``aa``, ..., ``ff`` -- integer or half integer
 
-    -  ``prec`` -- precision, default: ``None``. Providing a precision can
-       drastically speed up the calculation.
+    - ``prec`` -- precision (default: ``None``); providing a precision can
+      drastically speed up the calculation
 
     OUTPUT:
 
@@ -325,7 +325,7 @@ def racah(aa, bb, cc, dd, ee, ff, prec=None):
 
     EXAMPLES::
 
-        sage: racah(3,3,3,3,3,3)
+        sage: racah(3,3,3,3,3,3)                                                        # needs sage.symbolic
         -1/14
 
     .. NOTE::
@@ -386,10 +386,10 @@ def wigner_6j(j_1, j_2, j_3, j_4, j_5, j_6, prec=None):
 
     INPUT:
 
-    -  ``j_1``, ..., ``j_6`` -- integer or half integer
+    - ``j_1``, ..., ``j_6`` -- integer or half integer
 
-    -  ``prec`` -- precision, default: ``None``. Providing a precision can
-       drastically speed up the calculation.
+    - ``prec`` -- precision (default: ``None``); providing a precision can
+      drastically speed up the calculation
 
     OUTPUT:
 
@@ -398,6 +398,7 @@ def wigner_6j(j_1, j_2, j_3, j_4, j_5, j_6, prec=None):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: wigner_6j(3,3,3,3,3,3)
         -1/14
         sage: wigner_6j(5,5,5,5,5,5)
@@ -460,7 +461,7 @@ def wigner_6j(j_1, j_2, j_3, j_4, j_5, j_6, prec=None):
     - additional 6 symmetries [Reg1959]_ giving rise to 144 symmetries
       in total
 
-    - only non-zero if any triple of `j`'s fulfill a triangle relation
+    - only nonzero if any triple of `j`'s fulfill a triangle relation
 
     ALGORITHM:
 
@@ -482,10 +483,10 @@ def wigner_9j(j_1, j_2, j_3, j_4, j_5, j_6, j_7, j_8, j_9, prec=None):
 
     INPUT:
 
-    -  ``j_1``, ..., ``j_9`` -- integer or half integer
+    - ``j_1``, ..., ``j_9`` -- integer or half integer
 
-    -  ``prec`` -- precision, default: ``None``. Providing a precision can
-       drastically speed up the calculation.
+    - ``prec`` -- precision (default: ``None``); providing a precision can
+      drastically speed up the calculation
 
     OUTPUT:
 
@@ -497,23 +498,24 @@ def wigner_9j(j_1, j_2, j_3, j_4, j_5, j_6, j_7, j_8, j_9, prec=None):
     A couple of examples and test cases, note that for speed reasons a
     precision is given::
 
-        sage: wigner_9j(1,1,1, 1,1,1, 1,1,0 ,prec=64) # ==1/18
+        sage: # needs sage.symbolic
+        sage: wigner_9j(1,1,1, 1,1,1, 1,1,0, prec=64) # ==1/18
         0.0555555555555555555
         sage: wigner_9j(1,1,1, 1,1,1, 1,1,1)
         0
-        sage: wigner_9j(1,1,1, 1,1,1, 1,1,2 ,prec=64) # ==1/18
+        sage: wigner_9j(1,1,1, 1,1,1, 1,1,2, prec=64) # ==1/18
         0.0555555555555555556
-        sage: wigner_9j(1,2,1, 2,2,2, 1,2,1 ,prec=64) # ==-1/150
+        sage: wigner_9j(1,2,1, 2,2,2, 1,2,1, prec=64) # ==-1/150
         -0.00666666666666666667
-        sage: wigner_9j(3,3,2, 2,2,2, 3,3,2 ,prec=64) # ==157/14700
+        sage: wigner_9j(3,3,2, 2,2,2, 3,3,2, prec=64) # ==157/14700
         0.0106802721088435374
-        sage: wigner_9j(3,3,2, 3,3,2, 3,3,2 ,prec=64) # ==3221*sqrt(70)/(246960*sqrt(105)) - 365/(3528*sqrt(70)*sqrt(105))
+        sage: wigner_9j(3,3,2, 3,3,2, 3,3,2, prec=64) # ==3221*sqrt(70)/(246960*sqrt(105)) - 365/(3528*sqrt(70)*sqrt(105))
         0.00944247746651111739
-        sage: wigner_9j(3,3,1, 3.5,3.5,2, 3.5,3.5,1 ,prec=64) # ==3221*sqrt(70)/(246960*sqrt(105)) - 365/(3528*sqrt(70)*sqrt(105))
+        sage: wigner_9j(3,3,1, 3.5,3.5,2, 3.5,3.5,1, prec=64) # ==3221*sqrt(70)/(246960*sqrt(105)) - 365/(3528*sqrt(70)*sqrt(105))
         0.0110216678544351364
-        sage: wigner_9j(100,80,50, 50,100,70, 60,50,100 ,prec=1000)*1.0
+        sage: wigner_9j(100,80,50, 50,100,70, 60,50,100, prec=1000)*1.0
         1.05597798065761e-7
-        sage: wigner_9j(30,30,10, 30.5,30.5,20, 30.5,30.5,10 ,prec=1000)*1.0 # ==(80944680186359968990/95103769817469)*sqrt(1/682288158959699477295)
+        sage: wigner_9j(30,30,10, 30.5,30.5,20, 30.5,30.5,10, prec=1000)*1.0 # ==(80944680186359968990/95103769817469)*sqrt(1/682288158959699477295)
         0.0000325841699408828
         sage: wigner_9j(64,62.5,114.5, 61.5,61,112.5, 113.5,110.5,60, prec=1000)*1.0
         -3.41407910055520e-39
@@ -529,7 +531,7 @@ def wigner_9j(j_1, j_2, j_3, j_4, j_5, j_6, j_7, j_8, j_9, prec=None):
         Traceback (most recent call last):
         ...
         ValueError: j values must be integer or half integer and fulfill the triangle relation
-        sage: wigner_9j(1,1,1, 0.5,1,1.5, 0.5,1,2.5,prec=64)
+        sage: wigner_9j(1,1,1, 0.5,1,1.5, 0.5,1,2.5,prec=64)                            # needs sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         ValueError: j values must be integer or half integer and fulfill the triangle relation
@@ -572,10 +574,10 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
 
     INPUT:
 
-    -  ``l_1``, ``l_2``, ``l_3``, ``m_1``, ``m_2``, ``m_3`` -- integer
+    - ``l_1``, ``l_2``, ``l_3``, ``m_1``, ``m_2``, ``m_3`` -- integer
 
-    -  ``prec`` -- precision, default: ``None``. Providing a precision can
-       drastically speed up the calculation.
+    - ``prec`` -- precision (default: ``None``); providing a precision can
+      drastically speed up the calculation
 
     OUTPUT:
 
@@ -584,6 +586,7 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: gaunt(1,0,1,1,0,-1)
         -1/2/sqrt(pi)
         sage: gaunt(1,0,1,1,0,0)
@@ -600,7 +603,7 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
         0.00689500421922113448
 
     If the sum of the `l_i` is odd, the answer is zero, even for Python
-    ints (see :trac:`14766`)::
+    ints (see :issue:`14766`)::
 
         sage: gaunt(1,2,2,1,0,-1)
         0
@@ -609,18 +612,18 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
 
     It is an error to use non-integer values for `l` or `m`::
 
-        sage: gaunt(1.2,0,1.2,0,0,0)
+        sage: gaunt(1.2,0,1.2,0,0,0)                                                    # needs sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         TypeError: Attempt to coerce non-integral RealNumber to Integer
-        sage: gaunt(1,0,1,1.1,0,-1.1)
+        sage: gaunt(1,0,1,1.1,0,-1.1)                                                   # needs sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         TypeError: Attempt to coerce non-integral RealNumber to Integer
 
     TESTS:
 
-    Check for :trac:`14735`::
+    Check for :issue:`14735`::
 
         sage: gaunt(int(1),int(1),int(1),int(0),int(1),int(-1))
         0
@@ -653,7 +656,7 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
     - zero for violating any one of the conditions: `l_1 \ge |m_1|`,
       `l_2 \ge |m_2|`, `l_3 \ge |m_3|`
 
-    - non-zero only for an even sum of the `l_i`, i.e.
+    - nonzero only for an even sum of the `l_i`, i.e.
       `J=l_1+l_2+l_3=2n` for `n` in `\Bold{N}`
 
     ALGORITHM:

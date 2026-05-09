@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Hyperbolic Models
 
@@ -83,7 +82,7 @@ from sage.misc.bindable_class import BindableClass
 from sage.misc.lazy_import import lazy_import
 from sage.functions.other import imag, real
 from sage.misc.functional import sqrt
-from sage.functions.all import arccosh
+from sage.functions.hyperbolic import acosh as arccosh
 from sage.rings.cc import CC
 from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RR
@@ -110,7 +109,7 @@ from sage.geometry.hyperbolic_space.hyperbolic_coercion import (
 lazy_import('sage.modules.free_module_element', 'vector')
 
 #####################################################################
-## Abstract model
+#  Abstract model
 
 
 class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
@@ -156,7 +155,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             sage: HyperbolicPlane().UHP()
             Hyperbolic plane in the Upper Half Plane Model
         """
-        return u'Hyperbolic plane in the {}'.format(self._name)
+        return 'Hyperbolic plane in the {}'.format(self._name)
 
     def _element_constructor_(self, x, is_boundary=None, **graphics_options):  # Abstract
         """
@@ -170,7 +169,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self.get_point(x, is_boundary, **graphics_options)
 
-    def name(self):  # Abstract
+    def name(self) -> str:  # Abstract
         """
         Return the name of this model.
 
@@ -182,7 +181,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._name
 
-    def short_name(self):
+    def short_name(self) -> str:
         """
         Return the short name of this model.
 
@@ -194,7 +193,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._short_name
 
-    def is_bounded(self):
+    def is_bounded(self) -> bool:
         """
         Return ``True`` if ``self`` is a bounded model.
 
@@ -211,7 +210,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._bounded
 
-    def is_conformal(self):
+    def is_conformal(self) -> bool:
         """
         Return ``True`` if ``self`` is a conformal model.
 
@@ -223,7 +222,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._conformal
 
-    def is_isometry_group_projective(self):
+    def is_isometry_group_projective(self) -> bool:
         """
         Return ``True`` if the isometry group of ``self`` is projective.
 
@@ -244,9 +243,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
         - any object that can converted into a complex number
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -260,7 +257,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
     def point_test(self, p):  # Abstract
         r"""
         Test whether a point is in the model.  If the point is in the
-        model, do nothing.  Otherwise, raise a ``ValueError``.
+        model, do nothing.  Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -284,9 +281,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
         - any object that can converted into a complex number
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -298,7 +293,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
     def bdry_point_test(self, p):  # Abstract
         r"""
         Test whether a point is in the model.  If the point is in the
-        model, do nothing; otherwise raise a ``ValueError``.
+        model, do nothing; otherwise raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -319,11 +314,9 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
         INPUT:
 
-        - a matrix that represents an isometry in the appropriate model
+        - ``A`` -- a matrix that represents an isometry in the appropriate model
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -340,7 +333,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         Test whether an isometry ``A`` is in the model.
 
         If the isometry is in the model, do nothing. Otherwise, raise
-        a ``ValueError``.
+        a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -370,9 +363,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
         - a point in hyperbolic space or on the ideal boundary
 
-        OUTPUT:
-
-        - a :class:`~sage.geometry.hyperbolic_space.hyperbolic_point.HyperbolicPoint`
+        OUTPUT: a :class:`~sage.geometry.hyperbolic_space.hyperbolic_point.HyperbolicPoint`
 
         EXAMPLES:
 
@@ -407,7 +398,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             sage: HyperbolicPlane().HM().get_point((0,0,1))
             Point in HM (0, 0, 1)
 
-            sage: p = HyperbolicPlane().UHP().get_point(I, color="red")
+            sage: p = HyperbolicPlane().UHP().get_point(I, color='red')
             sage: p.graphics_options()
             {'color': 'red'}
 
@@ -489,13 +480,13 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             [1 0]
             [0 1]
 
-            sage: HyperbolicPlane().KM().get_isometry(identity_matrix(3))
+            sage: HyperbolicPlane().KM().get_isometry(identity_matrix(3))               # needs scipy
             Isometry in KM
             [1 0 0]
             [0 1 0]
             [0 0 1]
 
-            sage: HyperbolicPlane().HM().get_isometry(identity_matrix(3))
+            sage: HyperbolicPlane().HM().get_isometry(identity_matrix(3))               # needs scipy
             Isometry in HM
             [1 0 0]
             [0 1 0]
@@ -566,7 +557,6 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             sage: h = HyperbolicPlane().PD().random_geodesic()
             sage: all( e.coordinates().abs() <= 1 for e in h.endpoints() )
             True
-
         """
         R = self.realization_of().a_realization()
         g_ends = [R.random_point(**kwargs) for k in range(2)]
@@ -581,12 +571,11 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         - ``preserve_orientation`` -- if ``True`` return an
           orientation-preserving isometry
 
-        OUTPUT:
-
-        - a hyperbolic isometry
+        OUTPUT: a hyperbolic isometry
 
         EXAMPLES::
 
+            sage: # needs scipy
             sage: A = HyperbolicPlane().PD().random_isometry()
             sage: A.preserves_orientation()
             True
@@ -610,9 +599,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
         - ``a``, ``b`` -- a point or geodesic
 
-        OUTPUT:
-
-        - the hyperbolic distance
+        OUTPUT: the hyperbolic distance
 
         EXAMPLES::
 
@@ -717,9 +704,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         - ``end`` -- the end ideal point coordinates of the geodesic
         - ``p`` -- the coordinates of the point
 
-        OUTPUT:
-
-        - the hyperbolic distance
+        OUTPUT: the hyperbolic distance
 
         EXAMPLES::
 
@@ -776,7 +761,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
 
 #####################################################################
-## Upper half plane model
+#  Upper half plane model
 
 class HyperbolicModelUHP(HyperbolicModel):
     r"""
@@ -796,7 +781,7 @@ class HyperbolicModelUHP(HyperbolicModel):
             sage: TestSuite(UHP).run()
         """
         HyperbolicModel.__init__(self, space,
-                                 name="Upper Half Plane Model", short_name="UHP",
+                                 name="Upper Half Plane Model", short_name='UHP',
                                  bounded=True, conformal=True, dimension=2,
                                  isometry_group="PSL(2, \\RR)", isometry_group_is_projective=True)
 
@@ -935,7 +920,7 @@ class HyperbolicModelUHP(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: hp = HyperbolicPlane().UHP().get_background_graphic()
+            sage: hp = HyperbolicPlane().UHP().get_background_graphic()                 # needs sage.plot
         """
         from sage.plot.line import line
         bd_min = bdry_options.get('bd_min', -5)
@@ -977,9 +962,7 @@ class HyperbolicModelUHP(HyperbolicModel):
         - ``end`` -- the end ideal point coordinates of the geodesic
         - ``p`` -- the coordinates of the point
 
-        OUTPUT:
-
-        - the hyperbolic distance
+        OUTPUT: the hyperbolic distance
 
         EXAMPLES::
 
@@ -1099,20 +1082,18 @@ class HyperbolicModelUHP(HyperbolicModel):
         - ``preserve_orientation`` -- if ``True`` return an
           orientation-preserving isometry
 
-        OUTPUT:
-
-        - a hyperbolic isometry
+        OUTPUT: a hyperbolic isometry
 
         EXAMPLES::
 
-            sage: A = HyperbolicPlane().UHP().random_isometry()
-            sage: B = HyperbolicPlane().UHP().random_isometry(preserve_orientation=False)
-            sage: B.preserves_orientation()
+            sage: A = HyperbolicPlane().UHP().random_isometry()                         # needs scipy
+            sage: B = HyperbolicPlane().UHP().random_isometry(preserve_orientation=False)           # needs scipy
+            sage: B.preserves_orientation()                                             # needs scipy
             False
         """
-        [a, b, c, d] = [RR.random_element() for k in range(4)]
-        while abs(a*d - b*c) < EPSILON:
-            [a, b, c, d] = [RR.random_element() for k in range(4)]
+        a, b, c, d = (RR.random_element() for k in range(4))
+        while abs(a * d - b * c) < EPSILON:
+            a, b, c, d = (RR.random_element() for k in range(4))
         M = matrix(RDF, 2, [a, b, c, d])
         M = M / (M.det()).abs().sqrt()
         if M.det() > 0:
@@ -1151,7 +1132,7 @@ class HyperbolicModelUHP(HyperbolicModel):
         return B.inverse() * A
 
 #####################################################################
-## Poincaré disk model
+#  Poincaré disk model
 
 
 class HyperbolicModelPD(HyperbolicModel):
@@ -1173,7 +1154,7 @@ class HyperbolicModelPD(HyperbolicModel):
         # name should really be 'Poincaré Disk Model', but utf8 is not
         # accepted by repr
         HyperbolicModel.__init__(self, space,
-                                 name=u'Poincare Disk Model', short_name="PD",
+                                 name='Poincare Disk Model', short_name='PD',
                                  bounded=True, conformal=True, dimension=2,
                                  isometry_group="PU(1, 1)",
                                  isometry_group_is_projective=True)
@@ -1273,14 +1254,14 @@ class HyperbolicModelPD(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: circ = HyperbolicPlane().PD().get_background_graphic()
+            sage: circ = HyperbolicPlane().PD().get_background_graphic()                # needs sage.plot
         """
         from sage.plot.circle import circle
         return circle((0, 0), 1, axes=False, color='black')
 
 
 #####################################################################
-## Klein disk model
+#  Klein disk model
 
 class HyperbolicModelKM(HyperbolicModel):
     r"""
@@ -1299,7 +1280,7 @@ class HyperbolicModelKM(HyperbolicModel):
             sage: TestSuite(KM).run()
         """
         HyperbolicModel.__init__(self, space,
-                                 name="Klein Disk Model", short_name="KM",
+                                 name="Klein Disk Model", short_name='KM',
                                  bounded=True, conformal=False, dimension=2,
                                  isometry_group="PSO(2, 1)", isometry_group_is_projective=True)
 
@@ -1381,12 +1362,12 @@ class HyperbolicModelKM(HyperbolicModel):
         EXAMPLES::
 
             sage: A = matrix(3, [[1, 0, 0], [0, 17/8, 15/8], [0, 15/8, 17/8]])
-            sage: HyperbolicPlane().KM().isometry_in_model(A)
+            sage: HyperbolicPlane().KM().isometry_in_model(A)                           # needs scipy
             True
         """
         if isinstance(A, HyperbolicIsometry):
             return True
-        return bool((A*LORENTZ_GRAM*A.transpose() - LORENTZ_GRAM).norm()**2 <
+        return bool((A * LORENTZ_GRAM * A.transpose() - LORENTZ_GRAM).norm()**2 <
                     EPSILON)
 
     def get_background_graphic(self, **bdry_options):
@@ -1397,13 +1378,13 @@ class HyperbolicModelKM(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: circ = HyperbolicPlane().KM().get_background_graphic()
+            sage: circ = HyperbolicPlane().KM().get_background_graphic()                # needs sage.plot
         """
         from sage.plot.circle import circle
         return circle((0, 0), 1, axes=False, color='black')
 
 #####################################################################
-## Hyperboloid model
+#  Hyperboloid model
 
 
 class HyperbolicModelHM(HyperbolicModel):
@@ -1422,7 +1403,7 @@ class HyperbolicModelHM(HyperbolicModel):
             sage: TestSuite(HM).run()
         """
         HyperbolicModel.__init__(self, space,
-                                 name="Hyperboloid Model", short_name="HM",
+                                 name="Hyperboloid Model", short_name='HM',
                                  bounded=False, conformal=True, dimension=2,
                                  isometry_group="SO(2, 1)", isometry_group_is_projective=False)
 
@@ -1491,12 +1472,12 @@ class HyperbolicModelHM(HyperbolicModel):
         EXAMPLES::
 
            sage: A = diagonal_matrix([1,1,-1])
-           sage: HyperbolicPlane().HM().isometry_in_model(A)
+           sage: HyperbolicPlane().HM().isometry_in_model(A)                            # needs scipy
            True
         """
         if isinstance(A, HyperbolicIsometry):
             return True
-        return bool((A*LORENTZ_GRAM*A.transpose() - LORENTZ_GRAM).norm()**2 < EPSILON)
+        return bool((A * LORENTZ_GRAM * A.transpose() - LORENTZ_GRAM).norm()**2 < EPSILON)
 
     def get_background_graphic(self, **bdry_options):
         r"""
@@ -1506,7 +1487,7 @@ class HyperbolicModelHM(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: H = HyperbolicPlane().HM().get_background_graphic()
+            sage: H = HyperbolicPlane().HM().get_background_graphic()                   # needs sage.plot
         """
         from sage.plot.plot3d.all import plot3d
         from sage.symbolic.ring import SR

@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([pathspec], [SAGE_PYTHON_PACKAGE_CHECK([pathspec])])

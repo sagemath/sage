@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Vertex separation
 
@@ -136,16 +135,16 @@ sets such that an ordering `v_1, ..., v_n` of the vertices correspond to
 **Variables:**
 
 
-- `y_v^t` -- Variable set to 1 if `v\in S_t`, and 0 otherwise. The order of
+- `y_v^t` -- variable set to 1 if `v\in S_t`, and 0 otherwise. The order of
   `v` in the layout is the smallest `t` such that `y_v^t==1`.
 
-- `u_v^t` -- Variable set to 1 if `v\not \in S_t` and `v` has an in-neighbor in
+- `u_v^t` -- variable set to 1 if `v\not \in S_t` and `v` has an in-neighbor in
   `S_t`. It is set to 0 otherwise.
 
-- `x_v^t` -- Variable set to 1 if either `v\in S_t` or if `v` has an in-neighbor
+- `x_v^t` -- variable set to 1 if either `v\in S_t` or if `v` has an in-neighbor
   in `S_t`. It is set to 0 otherwise.
 
-- `z` -- Objective value to minimize. It is equal to the maximum over all step
+- `z` -- objective value to minimize. It is equal to the maximum over all step
   `t` of the number of vertices such that `u_v^t==1`.
 
 **MILP formulation:**
@@ -268,10 +267,9 @@ from cysignals.memory cimport check_malloc, sig_malloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.graphs.graph_decompositions.fast_digraph cimport FastDigraph, compute_out_neighborhood_cardinality, popcount32
-from libc.stdint cimport uint8_t, int8_t
+from libc.stdint cimport uint8_t
 from sage.data_structures.binary_matrix cimport *
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
-from sage.misc.decorators import rename_keyword
 
 
 ###############
@@ -294,7 +292,6 @@ def lower_bound(G):
     .. NOTE::
 
         This method runs in exponential time but has no memory constraint.
-
 
     EXAMPLES:
 
@@ -322,7 +319,6 @@ def lower_bound(G):
         Traceback (most recent call last):
         ...
         ValueError: the (di)graph can have at most 31 vertices
-
     """
     from sage.graphs.graph import Graph
     from sage.graphs.digraph import DiGraph
@@ -333,7 +329,6 @@ def lower_bound(G):
         raise ValueError("the (di)graph can have at most 31 vertices")
 
     cdef FastDigraph FD = FastDigraph(G)
-    cdef int * g = FD.graph
     cdef unsigned int n = <unsigned int>FD.n
 
     # minimums[i] is means to store the value of c'_{i+1}
@@ -369,9 +364,9 @@ def lower_bound(G):
 # Method for turning an ordering to a path decomposition and back #
 ###################################################################
 
-def linear_ordering_to_path_decomposition(G, L):
+def linear_ordering_to_path_decomposition(G, L, immutable=None):
     """
-    Return the path decomposition encoded in the ordering L
+    Return the path decomposition encoded in the ordering L.
 
     INPUT:
 
@@ -379,9 +374,11 @@ def linear_ordering_to_path_decomposition(G, L):
 
     - ``L`` -- a linear ordering for G
 
-    OUTPUT:
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the
+      graph and its path decomposition will behave the same way.
 
-    A path graph whose vertices are the bags of the path decomposition.
+    OUTPUT: a path graph whose vertices are the bags of the path decomposition
 
     EXAMPLES:
 
@@ -435,12 +432,27 @@ def linear_ordering_to_path_decomposition(G, L):
         Traceback (most recent call last):
         ...
         ValueError: the input linear vertex ordering L is not valid for G
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: G = Graph(1)
+        sage: linear_ordering_to_path_decomposition(G, [0]).is_immutable()
+        False
+        sage: linear_ordering_to_path_decomposition(G, [0], immutable=True).is_immutable()
+        True
+        sage: G = Graph(1, immutable=True)
+        sage: linear_ordering_to_path_decomposition(G, [0]).is_immutable()
+        True
+        sage: linear_ordering_to_path_decomposition(G, [0], immutable=False).is_immutable()
+        False
     """
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
         raise ValueError("the first parameter must be a Graph")
+    if immutable is None:
+        immutable = G.is_immutable()
     if not G:
-        return Graph()
+        return Graph(immutable=immutable)
     if not is_valid_ordering(G, L):
         raise ValueError("the input linear vertex ordering L is not valid for G")
 
@@ -464,21 +476,24 @@ def linear_ordering_to_path_decomposition(G, L):
 
     # We now build a graph whose vertices are bags
     from sage.sets.set import Set
-    H = Graph()
-    H.add_path([Set(bag) for bag in bags])
-    return H
+    bags = [Set(bag) for bag in bags]
+    return Graph([bags, zip(bags, bags[1:])], format='vertices_and_edges',
+                 immutable=immutable)
 
 
 ##################################################################
 # Front end methods for path decomposition and vertex separation #
 ##################################################################
 
-def pathwidth(self, k=None, certificate=False, algorithm="BAB", verbose=False,
-              max_prefix_length=20, max_prefix_number=10**6, *, solver=None):
+def pathwidth(G, k=None, certificate=False, algorithm='BAB', verbose=False,
+              max_prefix_length=20, max_prefix_number=10**6,
+              immutable=None, *, solver=None):
     r"""
-    Compute the pathwidth of ``self`` (and provides a decomposition)
+    Compute the pathwidth of ``G`` (and provides a decomposition).
 
     INPUT:
+
+    - ``G`` -- a graph
 
     - ``k`` -- integer (default: ``None``); the width to be considered. When
       ``k`` is an integer, the method checks that the graph has pathwidth
@@ -488,19 +503,19 @@ def pathwidth(self, k=None, certificate=False, algorithm="BAB", verbose=False,
     - ``certificate`` -- boolean (default: ``False``); whether to return the
       path-decomposition itself
 
-    - ``algorithm`` -- string (default: ``"BAB"``); algorithm to use among:
+    - ``algorithm`` -- string (default: ``'BAB'``); algorithm to use among:
 
-      - ``"BAB"`` -- Use a branch-and-bound algorithm. This algorithm has no
+      - ``'BAB'`` -- use a branch-and-bound algorithm. This algorithm has no
         size restriction but could take a very long time on large graphs. It can
         also be used to test is the input graph has pathwidth `\leq k`, in which
         cas it will return the first found solution with width `\leq k` is
         ``certificate==True``.
 
-      - ``exponential`` -- Use an exponential time and space algorithm. This
-        algorithm only works of graphs on less than 32 vertices.
+      - ``exponential`` -- use an exponential time and space algorithm. This
+        algorithm only works of graphs on less than 32 vertices
 
-      - ``MILP`` -- Use a mixed integer linear programming formulation. This
-        algorithm has no size restriction but could take a very long time.
+      - ``MILP`` -- use a mixed integer linear programming formulation. This
+        algorithm has no size restriction but could take a very long time
 
     - ``verbose`` -- boolean (default: ``False``); whether to display
       information on the computations
@@ -513,7 +528,11 @@ def pathwidth(self, k=None, certificate=False, algorithm="BAB", verbose=False,
       number of stored prefixes used to prevent using too much memory. This
       parameter is used only when ``algorithm=="BAB"``.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the
+      graph and its path decomposition will behave the same way.
+
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -570,7 +589,7 @@ def pathwidth(self, k=None, certificate=False, algorithm="BAB", verbose=False,
     Given a wrong algorithm::
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import pathwidth
-        sage: pathwidth(Graph(), algorithm="SuperFast")
+        sage: pathwidth(Graph(), algorithm='SuperFast')
         Traceback (most recent call last):
         ...
         ValueError: algorithm "SuperFast" has not been implemented yet, please contribute
@@ -580,26 +599,46 @@ def pathwidth(self, k=None, certificate=False, algorithm="BAB", verbose=False,
         sage: g = graphs.PetersenGraph()
         sage: g.pathwidth(solver='SCIP')  # optional - pyscipopt
         5
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: G = graphs.PathGraph(2)
+        sage: G.pathwidth(certificate=True)[1].is_immutable()
+        False
+        sage: G.pathwidth(certificate=True, immutable=True)[1].is_immutable()
+        True
+        sage: G = G.copy(immutable=True)
+        sage: G.pathwidth(certificate=True)[1].is_immutable()
+        True
+        sage: G.pathwidth(certificate=True, immutable=False)[1].is_immutable()
+        False
     """
     from sage.graphs.graph import Graph
-    if not isinstance(self, Graph):
+    if not isinstance(G, Graph):
         raise ValueError("the parameter must be a Graph")
 
-    pw, L = vertex_separation(self, algorithm=algorithm, verbose=verbose,
+    if immutable is None:
+        immutable = G.is_immutable()
+
+    pw, L = vertex_separation(G, algorithm=algorithm, verbose=verbose,
                               cut_off=k, upper_bound=None if k is None else (k+1),
                               max_prefix_length=max_prefix_length,
                               max_prefix_number=max_prefix_number,
                               solver=solver)
 
     if k is None:
-        return (pw, linear_ordering_to_path_decomposition(self, L)) if certificate else pw
+        if certificate:
+            return pw, linear_ordering_to_path_decomposition(G, L, immutable=immutable)
+        return pw
     if pw < 0:
         # no solution found
-        return (False, Graph()) if certificate else False
-    return (pw <= k, linear_ordering_to_path_decomposition(self, L)) if certificate else pw <= k
+        return (False, Graph(immutable=immutable)) if certificate else False
+    if certificate:
+        return pw <= k, linear_ordering_to_path_decomposition(G, L, immutable=immutable)
+    return pw <= k
 
 
-def path_decomposition(G, algorithm="BAB", cut_off=None, upper_bound=None, verbose=False,
+def path_decomposition(G, algorithm='BAB', cut_off=None, upper_bound=None, verbose=False,
                        max_prefix_length=20, max_prefix_number=10**6):
     r"""
     Return the pathwidth of the given graph and the ordering of the vertices
@@ -609,28 +648,28 @@ def path_decomposition(G, algorithm="BAB", cut_off=None, upper_bound=None, verbo
 
     - ``G`` -- a Graph
 
-    - ``algorithm`` -- string (default: ``"BAB"``); algorithm to use among:
+    - ``algorithm`` -- string (default: ``'BAB'``); algorithm to use among:
 
-      - ``"BAB"`` -- Use a branch-and-bound algorithm. This algorithm has no
+      - ``'BAB'`` -- use a branch-and-bound algorithm. This algorithm has no
         size restriction but could take a very long time on large graphs. It can
         also be used to test is the input (di)graph has vertex separation at
         most ``upper_bound`` or to return the first found solution with vertex
         separation less or equal to a ``cut_off`` value.
 
-      - ``exponential`` -- Use an exponential time and space algorithm. This
-        algorithm only works of graphs on less than 32 vertices.
+      - ``exponential`` -- use an exponential time and space algorithm. This
+        algorithm only works of graphs on less than 32 vertices
 
-      - ``MILP`` -- Use a mixed integer linear programming formulation. This
-        algorithm has no size restriction but could take a very long time.
+      - ``MILP`` -- use a mixed integer linear programming formulation. This
+        algorithm has no size restriction but could take a very long time
 
     - ``upper_bound`` -- integer (default: ``None``); parameter used by the
-      ``"BAB"`` algorithm. If specified, the algorithm searches for a solution
+      ``'BAB'`` algorithm. If specified, the algorithm searches for a solution
       with ``width < upper_bound``. It helps cutting branches.  However, if the
       given upper bound is too low, the algorithm may not be able to find a
       solution.
 
     - ``cut_off`` -- integer (default: ``None``); parameter used by the
-      ``"BAB"`` algorithm. This bound allows us to stop the search as soon as a
+      ``'BAB'`` algorithm. This bound allows us to stop the search as soon as a
       solution with width at most ``cut_off`` is found, if any. If this bound
       cannot be reached, the best solution found is returned, unless a too low
       ``upper_bound`` is given.
@@ -661,11 +700,11 @@ def path_decomposition(G, algorithm="BAB", cut_off=None, upper_bound=None, verbo
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import path_decomposition
         sage: g = graphs.CycleGraph(6)
-        sage: pw, L = path_decomposition(g, algorithm = "BAB"); pw
+        sage: pw, L = path_decomposition(g, algorithm='BAB'); pw
         2
-        sage: pw, L = path_decomposition(g, algorithm = "exponential"); pw
+        sage: pw, L = path_decomposition(g, algorithm='exponential'); pw
         2
-        sage: pw, L = path_decomposition(g, algorithm = "MILP"); pw
+        sage: pw, L = path_decomposition(g, algorithm='MILP'); pw                       # needs sage.numerical.mip
         2
 
     TESTS:
@@ -681,11 +720,10 @@ def path_decomposition(G, algorithm="BAB", cut_off=None, upper_bound=None, verbo
     Given a wrong algorithm::
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import path_decomposition
-        sage: path_decomposition(Graph(), algorithm="SuperFast")
+        sage: path_decomposition(Graph(), algorithm='SuperFast')
         Traceback (most recent call last):
         ...
         ValueError: algorithm "SuperFast" has not been implemented yet, please contribute
-
     """
     from sage.graphs.graph import Graph
     if not isinstance(G, Graph):
@@ -696,7 +734,7 @@ def path_decomposition(G, algorithm="BAB", cut_off=None, upper_bound=None, verbo
                              max_prefix_number=max_prefix_number)
 
 
-def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbose=False,
+def vertex_separation(G, algorithm='BAB', cut_off=None, upper_bound=None, verbose=False,
                       max_prefix_length=20, max_prefix_number=10**6,
                       *, solver=None, integrality_tolerance=1e-3):
     r"""
@@ -707,28 +745,28 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
 
     - ``G`` -- a Graph or a DiGraph
 
-    - ``algorithm`` -- string (default: ``"BAB"``); algorithm to use among:
+    - ``algorithm`` -- string (default: ``'BAB'``); algorithm to use among:
 
-      - ``"BAB"`` -- Use a branch-and-bound algorithm. This algorithm has no
+      - ``'BAB'`` -- use a branch-and-bound algorithm. This algorithm has no
         size restriction but could take a very long time on large graphs. It can
         also be used to test is the input (di)graph has vertex separation at
         most ``upper_bound`` or to return the first found solution with vertex
         separation less or equal to a ``cut_off`` value.
 
-      - ``exponential`` -- Use an exponential time and space algorithm. This
-        algorithm only works of graphs on less than 32 vertices.
+      - ``exponential`` -- use an exponential time and space algorithm. This
+        algorithm only works of graphs on less than 32 vertices
 
-      - ``MILP`` -- Use a mixed integer linear programming formulation. This
-        algorithm has no size restriction but could take a very long time.
+      - ``MILP`` -- use a mixed integer linear programming formulation. This
+        algorithm has no size restriction but could take a very long time
 
     - ``upper_bound`` -- integer (default: ``None``); parameter used by the
-      ``"BAB"`` algorithm. If specified, the algorithm searches for a solution
+      ``'BAB'`` algorithm. If specified, the algorithm searches for a solution
       with ``width < upper_bound``. It helps cutting branches.  However, if the
       given upper bound is too low, the algorithm may not be able to find a
       solution.
 
     - ``cut_off`` -- integer (default: ``None``); parameter used by the
-      ``"BAB"`` algorithm. This bound allows us to stop the search as soon as a
+      ``'BAB'`` algorithm. This bound allows us to stop the search as soon as a
       solution with width at most ``cut_off`` is found, if any. If this bound
       cannot be reached, the best solution found is returned, unless a too low
       ``upper_bound`` is given.
@@ -744,7 +782,7 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
       number of stored prefixes used to prevent using too much memory. This
       parameter is used only when ``algorithm=="BAB"``.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -766,19 +804,21 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
     Comparison of methods::
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation
+
         sage: G = digraphs.DeBruijn(2,3)
-        sage: vs,L = vertex_separation(G, algorithm="BAB"); vs
+        sage: vs,L = vertex_separation(G, algorithm='BAB'); vs
         2
-        sage: vs,L = vertex_separation(G, algorithm="exponential"); vs
+        sage: vs,L = vertex_separation(G, algorithm='exponential'); vs
         2
-        sage: vs,L = vertex_separation(G, algorithm="MILP"); vs
+        sage: vs,L = vertex_separation(G, algorithm='MILP'); vs                         # needs sage.numerical.mip
         2
+
         sage: G = graphs.Grid2dGraph(3,3)
-        sage: vs,L = vertex_separation(G, algorithm="BAB"); vs
+        sage: vs,L = vertex_separation(G, algorithm='BAB'); vs
         3
-        sage: vs,L = vertex_separation(G, algorithm="exponential"); vs
+        sage: vs,L = vertex_separation(G, algorithm='exponential'); vs
         3
-        sage: vs,L = vertex_separation(G, algorithm="MILP"); vs
+        sage: vs,L = vertex_separation(G, algorithm='MILP'); vs                         # needs sage.numerical.mip
         3
 
     Digraphs with multiple strongly connected components::
@@ -805,7 +845,7 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation
         sage: G = graphs.PetersenGraph()
-        sage: vs, L = vertex_separation(G, algorithm="MILP", solver="SCIP"); vs  # optional - pyscipopt
+        sage: vs, L = vertex_separation(G, algorithm='MILP', solver='SCIP'); vs     # optional - pyscipopt, needs sage.numerical.mip
         5
 
     TESTS:
@@ -813,7 +853,7 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
     Given a wrong algorithm::
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation
-        sage: vertex_separation(Graph(), algorithm="SuperFast")
+        sage: vertex_separation(Graph(), algorithm='SuperFast')
         Traceback (most recent call last):
         ...
         ValueError: algorithm "SuperFast" has not been implemented yet, please contribute
@@ -884,7 +924,7 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
                 L.extend(LH)
 
                 # We also update the cut_off parameter that could speed up
-                # resolution for other components (used when algorithm=="BAB")
+                # resolution for other components (used when algorithm=='BAB')
                 cut_off = max(cut_off, vs)
 
         return vs, L
@@ -954,8 +994,8 @@ def vertex_separation_exp(G, verbose=False):
     Graphs with non-integer vertices::
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation_exp
-        sage: D=digraphs.DeBruijn(2,3)
-        sage: vertex_separation_exp(D)
+        sage: D = digraphs.DeBruijn(2,3)                                                # needs sage.combinat
+        sage: vertex_separation_exp(D)                                                  # needs sage.combinat
         (2, ['000', '001', '100', '010', '101', '011', '110', '111'])
 
     Given a too large graph::
@@ -985,7 +1025,7 @@ def vertex_separation_exp(G, verbose=False):
 
     memset(neighborhoods, <uint8_t> -1, mem)
 
-    cdef int i, j, k
+    cdef int i, k
     for k in range(g.n):
         if verbose:
             print("Looking for a strategy of cost", str(k))
@@ -1009,7 +1049,7 @@ def vertex_separation_exp(G, verbose=False):
 # Actual algorithm, breadth-first search and updates of the costs of the sets #
 ###############################################################################
 
-cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int current, int cost):
+cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int current, int cost) noexcept:
     """
     Check whether an ordering with the given cost exists, and updates data in
     the neighborhoods array at the same time. See the module's documentation.
@@ -1081,14 +1121,14 @@ cdef list find_order(FastDigraph g, uint8_t* neighborhoods, int cost):
 
 # Min/Max functions
 
-cdef inline int minimum(int a, int b):
+cdef inline int minimum(int a, int b) noexcept:
     if a < b:
         return a
     else:
         return b
 
 
-cdef inline int maximum(int a, int b):
+cdef inline int maximum(int a, int b) noexcept:
     if a > b:
         return a
     else:
@@ -1109,16 +1149,14 @@ def is_valid_ordering(G, L):
 
     INPUT:
 
-    - ``G`` -- a Graph or a DiGraph.
+    - ``G`` -- a Graph or a DiGraph
 
-    - ``L`` -- an ordered list of the vertices of ``G``.
-
+    - ``L`` -- an ordered list of the vertices of ``G``
 
     OUTPUT:
 
     Returns ``True`` if `L` is a valid vertex ordering for `G`, and ``False``
     otherwise.
-
 
     EXAMPLES:
 
@@ -1210,6 +1248,7 @@ def width_of_path_decomposition(G, L):
 
     Path decomposition of a BalancedTree::
 
+        sage: # needs networkx
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = graphs.BalancedTree(3,2)
         sage: pw, L = vertex_separation.path_decomposition(G)
@@ -1288,7 +1327,7 @@ def _vertex_separation_MILP_formulation(G, integrality=False, solver=None):
       no impact on the validity of the solution, but it is sometimes faster to
       solve the problem using binary variables only.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1296,18 +1335,16 @@ def _vertex_separation_MILP_formulation(G, integrality=False, solver=None):
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    OUTPUT:
-
-    - the :class:`~sage.numerical.mip.MixedIntegerLinearProgram`
+    OUTPUT: the :class:`~sage.numerical.mip.MixedIntegerLinearProgram`
 
     - :class:`sage.numerical.mip.MIPVariable` objects ``x``, ``u``, ``y``, ``z``.
 
     EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import _vertex_separation_MILP_formulation
-        sage: G = digraphs.DeBruijn(2,3)
-        sage: p, x, u, y, z = _vertex_separation_MILP_formulation(G)
-        sage: p
+        sage: G = digraphs.DeBruijn(2,3)                                                # needs sage.combinat
+        sage: p, x, u, y, z = _vertex_separation_MILP_formulation(G)                    # needs sage.combinat sage.numerical.mip
+        sage: p                                                                         # needs sage.combinat sage.numerical.mip
         Mixed Integer Program (minimization, 193 variables, 449 constraints)
     """
     from sage.graphs.graph import Graph
@@ -1373,7 +1410,6 @@ def _vertex_separation_MILP_formulation(G, integrality=False, solver=None):
     return p, x, u, y, z
 
 
-@rename_keyword(deprecation=32222, verbosity='verbose')
 def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
                            *, integrality_tolerance=1e-3):
     r"""
@@ -1395,7 +1431,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
       no impact on the validity of the solution, but it is sometimes faster to
       solve the problem using binary variables only.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1403,7 +1439,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
@@ -1421,9 +1457,9 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = digraphs.DeBruijn(2,3)
-        sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs
+        sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs                   # needs sage.numerical.mip
         2
-        sage: vs == vertex_separation.width_of_path_decomposition(G, L)
+        sage: vs == vertex_separation.width_of_path_decomposition(G, L)                 # needs sage.numerical.mip
         True
         sage: vse, Le = vertex_separation.vertex_separation(G); vse
         2
@@ -1432,7 +1468,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
         sage: G = digraphs.Circuit(6)
-        sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs
+        sage: vs, L = vertex_separation.vertex_separation_MILP(G); vs                   # needs sage.numerical.mip
         1
 
     TESTS:
@@ -1440,7 +1476,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     Comparison with exponential algorithm::
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: for i in range(10):
+        sage: for i in range(10):                                                       # needs sage.numerical.mip
         ....:     G = digraphs.RandomDirectedGNP(10, 0.2)
         ....:     ve, le = vertex_separation.vertex_separation(G)
         ....:     vm, lm = vertex_separation.vertex_separation_MILP(G)
@@ -1450,7 +1486,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     Comparison with different values of the integrality parameter::
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: for i in range(10):  # long time (11s on sage.math, 2012)
+        sage: for i in range(10):               # long time (11s on sage.math, 2012), needs sage.numerical.mip
         ....:     G = digraphs.RandomDirectedGNP(10, 0.2)
         ....:     va, la = vertex_separation.vertex_separation_MILP(G, integrality=False)
         ....:     vb, lb = vertex_separation.vertex_separation_MILP(G, integrality=True)
@@ -1460,19 +1496,19 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
     Giving anything else than a Graph or a DiGraph::
 
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: vertex_separation.vertex_separation_MILP([])
+        sage: vertex_separation.vertex_separation_MILP([])                              # needs sage.numerical.mip
         Traceback (most recent call last):
         ...
         ValueError: the first input parameter must be a Graph or a DiGraph
     """
     from sage.numerical.mip import MIPSolverException
 
-    p, x, u, y, z = _vertex_separation_MILP_formulation(G, integrality=integrality, solver=solver)
+    p, _, _, y, z = _vertex_separation_MILP_formulation(G, integrality=integrality, solver=solver)
     N = G.order()
     V = list(G)
 
     try:
-        obj = p.solve(log=verbose)
+        _ = p.solve(log=verbose)
     except MIPSolverException:
         if integrality:
             raise ValueError("unbounded or unexpected error")
@@ -1515,7 +1551,7 @@ def vertex_separation_BAB(G,
 
     INPUT:
 
-    - ``G`` -- a Graph or a DiGraph.
+    - ``G`` -- a Graph or a DiGraph
 
     - ``cut_off`` -- integer (default: ``None``); bound to consider in the
       branch and bound algorithm. This allows us to stop the search as soon as a
@@ -1537,9 +1573,7 @@ def vertex_separation_BAB(G,
     - ``verbose`` -- boolean (default: ``False``); display some information when
       set to ``True``
 
-    OUTPUT:
-
-    - ``width`` -- the computed vertex separation
+    OUTPUT: ``width`` -- the computed vertex separation
 
     - ``seq`` -- an ordering of the vertices of width ``width``
 
@@ -1764,7 +1798,7 @@ cdef int vertex_separation_BAB_C(binary_matrix_t H,
                                  set prefix_storage,
                                  int max_prefix_length,
                                  int max_prefix_number,
-                                 bint verbose):
+                                 bint verbose) noexcept:
     r"""
     Branch and Bound algorithm for the process number and the vertex separation.
 
@@ -1835,9 +1869,9 @@ cdef int vertex_separation_BAB_C(binary_matrix_t H,
 
     # ==> Allocate local data structures
 
-    cdef bitset_s *loc_b_prefix         = bm_pool.rows[3 * level]
+    cdef bitset_s *loc_b_prefix = bm_pool.rows[3 * level]
     cdef bitset_s *loc_b_pref_and_neigh = bm_pool.rows[3 * level + 1]
-    cdef bitset_s *b_tmp                = bm_pool.rows[3 * level + 2]
+    cdef bitset_s *b_tmp = bm_pool.rows[3 * level + 2]
     bitset_copy(loc_b_prefix, b_prefix)
     bitset_copy(loc_b_pref_and_neigh, b_prefix_and_neighborhood)
 
@@ -1897,10 +1931,11 @@ cdef int vertex_separation_BAB_C(binary_matrix_t H,
     # The set S of vertices of a prefix P is in prefix_storage if the branch
     # with prefix P is such that c(P)<\min_{L\in{\cal L}_P(V)} c(L). In such
     # case, there is no need to continue exploration for the current branch.
-    cdef frozenset frozen_prefix
+    cdef tuple frozen_prefix
 
     if loc_level <= max_prefix_length:
-        frozen_prefix = frozenset(prefix[i] for i in range(loc_level))
+        frozen_prefix = tuple(loc_b_prefix.bits[i]
+                              for i in range(loc_b_prefix.limbs))
         if frozen_prefix in prefix_storage:
             return upper_bound
 

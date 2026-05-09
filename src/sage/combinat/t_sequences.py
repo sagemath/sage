@@ -18,8 +18,8 @@ the additional constraints that:
 * the last element of `X` is -1
 * the last element of `U` is 1
 
-The nonperiodic autocorrelation of a familiy of sequences `X=\{A_1, A_2, ..., A_n\}` is defined as
-(see Definition 7.2 of [Seb2017]_):
+The nonperiodic autocorrelation of a family of sequences
+`X=\{A_1, A_2, ..., A_n\}` is defined as (see Definition 7.2 of [Seb2017]_):
 
 .. MATH::
 
@@ -28,7 +28,6 @@ The nonperiodic autocorrelation of a familiy of sequences `X=\{A_1, A_2, ..., A_
 AUTHORS:
 
 - Matteo Cati (2022-11-16): initial version
-
 """
 
 # ***************************************************************************
@@ -46,7 +45,7 @@ from sage.structure.sequence import Sequence
 
 def _nonperiodic_autocorrelation(sequences, j):
     r"""
-    Compute the nonperiodic autocorrelation of a familiy of sequences.
+    Compute the nonperiodic autocorrelation of a family of sequences.
 
     Namely, given a family of sequences `X` it computes:
 
@@ -56,20 +55,22 @@ def _nonperiodic_autocorrelation(sequences, j):
 
     INPUT:
 
-    - ``sequences`` -- either a single sequence or a list of sequences for which we want
-      to compute the nonperiodic autocorrelation.
+    - ``sequences`` -- either a single sequence or a list of sequences for
+      which we want to compute the nonperiodic autocorrelation
 
-    - ``j`` -- integer, the parameter `j` used when calculating the nonperiodic autocorrelation.
+    - ``j`` -- integer; the parameter `j` used when calculating the nonperiodic
+      autocorrelation
     """
     if not isinstance(sequences[0], list):
         sequences = [sequences]
 
     t = len(sequences[0])
     result = 0
-    for i in range(t-j):
+    for i in range(t - j):
         for seq in sequences:
-            result += seq[i]*seq[i+j]
+            result += seq[i] * seq[i + j]
     return result
+
 
 def is_skew(seq, verbose=False):
     r"""
@@ -80,10 +81,10 @@ def is_skew(seq, verbose=False):
 
     INPUT:
 
-    - ``seq`` -- the sequence that should be checked.
+    - ``seq`` -- the sequence that should be checked
 
-    - ``verbose`` -- a boolean (default false). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function
+      will be verbose when the sequences do not satisfy the constraints
 
     EXAMPLES::
 
@@ -102,10 +103,9 @@ def is_skew(seq, verbose=False):
         Sequence should be of even length
         False
     """
-
     n = len(seq)
 
-    if n%2 == 1:
+    if n % 2:
         if verbose:
             print('Sequence should be of even length')
         return False
@@ -117,7 +117,8 @@ def is_skew(seq, verbose=False):
             return False
     return True
 
-def is_symmetric(seq, verbose=False):
+
+def is_symmetric(seq, verbose=False) -> bool:
     r"""
     Check if the given sequence is symmetric.
 
@@ -126,10 +127,10 @@ def is_symmetric(seq, verbose=False):
 
     INPUT:
 
-    - ``seq`` -- the sequence that should be checked.
+    - ``seq`` -- the sequence that should be checked
 
-    - ``verbose`` -- a boolean (default false). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function will be
+      verbose when the sequences do not satisfy the constraints
 
     EXAMPLES::
 
@@ -148,10 +149,9 @@ def is_symmetric(seq, verbose=False):
         Sequence should be of odd length
         False
     """
-
     n = len(seq)
 
-    if n%2 == 0:
+    if n % 2 == 0:
         if verbose:
             print('Sequence should be of odd length')
         return False
@@ -177,10 +177,10 @@ def is_T_sequences_set(sequences, verbose=False):
 
     INPUT:
 
-    - ``sequences`` -- a list of four sequences.
+    - ``sequences`` -- list of four sequences
 
-    - ``verbose`` -- a boolean (default false). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function will be
+      verbose when the sequences do not satisfy the constraints
 
     EXAMPLES::
 
@@ -190,7 +190,8 @@ def is_T_sequences_set(sequences, verbose=False):
         True
         sage: seqs = [[1, 1, 0, 1, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, -1], [0, 0, 0, 0, 0]]
         sage: is_T_sequences_set(seqs, verbose=True)
-        There should  be exactly a nonzero element at every index, found 2 such elemnents at index 3
+        There should be exactly a nonzero element at every index, found 2 such
+         elements at index 3
         False
 
 
@@ -227,7 +228,7 @@ def is_T_sequences_set(sequences, verbose=False):
             tot += abs(seq[i])
         if tot != 1:
             if verbose:
-                print(f"There should  be exactly a nonzero element at every index, found {tot} such elemnents at index {i}")
+                print(f"There should be exactly a nonzero element at every index, found {tot} such elements at index {i}")
             return False
 
     for j in range(1, t):
@@ -239,6 +240,7 @@ def is_T_sequences_set(sequences, verbose=False):
 
     return True
 
+
 def turyn_sequences_smallcases(l, existence=False):
     r"""
     Construction of Turyn sequences for small values of `l`.
@@ -247,10 +249,10 @@ def turyn_sequences_smallcases(l, existence=False):
 
     INPUT:
 
-    - ``l`` -- integer, the length of the Turyn sequences.
+    - ``l`` -- integer; the length of the Turyn sequences
 
-    - ``existence`` -- boolean (default False). If true, only return whether the
-      Turyn sequences are available for the given length.
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only return
+      whether the Turyn sequences are available for the given length
 
     EXAMPLES:
 
@@ -296,6 +298,7 @@ def turyn_sequences_smallcases(l, existence=False):
 
     return list(map(Sequence, db[l]))
 
+
 def T_sequences_construction_from_base_sequences(base_sequences, check=True):
     r"""
     Construct T-sequences of length `2n+p` from base sequences of length `n+p, n+p, n, n`.
@@ -314,9 +317,11 @@ def T_sequences_construction_from_base_sequences(base_sequences, check=True):
 
     INPUT:
 
-    - ``base_sequences`` -- the base sequences that should be used to construct the T-sequences.
+    - ``base_sequences`` -- the base sequences that should be used to construct
+      the T-sequences
 
-    - ``check`` -- boolean, if true (default) checks that the sequences created are T-sequences before returning them.
+    - ``check`` -- boolean (default: ``True``); check that the sequences
+      created are T-sequences before returning them
 
     EXAMPLES::
 
@@ -351,15 +356,15 @@ def T_sequences_construction_from_base_sequences(base_sequences, check=True):
 
     A, B, C, D = base_sequences
     n = len(C)
-    p = len(A)-n
+    p = len(A) - n
 
-    assert len(A) == len(B) == len(C)+p == len(D)+p
+    assert len(A) == len(B) == len(C) + p == len(D) + p
 
     def seq_sum(seq1, seq2):
-        return [(a+b)//2 for (a, b) in zip(seq1, seq2)]
+        return [(a + b) // 2 for a, b in zip(seq1, seq2)]
 
     def seq_subtract(seq1, seq2):
-        return [(a-b)//2 for (a, b) in zip(seq1, seq2)]
+        return [(a - b) // 2 for a, b in zip(seq1, seq2)]
 
     def zero_seq(n):
         return [0 for _ in range(n)]
@@ -373,6 +378,7 @@ def T_sequences_construction_from_base_sequences(base_sequences, check=True):
     if check:
         assert is_T_sequences_set(res)
     return res
+
 
 def T_sequences_construction_from_turyn_sequences(turyn_sequences, check=True):
     r"""
@@ -392,9 +398,11 @@ def T_sequences_construction_from_turyn_sequences(turyn_sequences, check=True):
 
     INPUT:
 
-    - ``turyn_sequences`` -- the Turyn sequences that should be used to construct the T-sequences .
+    - ``turyn_sequences`` -- the Turyn sequences that should be used to
+      construct the T-sequences
 
-    - ``check`` -- boolean, if true (default) checks that the sequences created are T-sequences before returning them.
+    - ``check`` -- boolean (default: ``True``); check that the sequences
+      created are T-sequences before returning them
 
     EXAMPLES::
 
@@ -430,13 +438,13 @@ def T_sequences_construction_from_turyn_sequences(turyn_sequences, check=True):
     def interleave(seq1, seq2):
         res = []
         for i in range(len(seq1) + len(seq2)):
-            if i%2 == 0:
+            if i % 2 == 0:
                 res.append(seq1[i//2])
             else:
                 res.append(seq2[i//2])
         return res
 
-    X1 = Sequence([1]+ zero_seq(4*l-2))
+    X1 = Sequence([1] + zero_seq(4*l-2))
     X2 = Sequence([0] + interleave(X, Y) + zero_seq(2*l-1))
     X3 = Sequence(zero_seq(2*l) + interleave(U, zero_seq(l-1)))
     X4 = Sequence(zero_seq(2*l) + interleave(zero_seq(l), V))
@@ -445,6 +453,7 @@ def T_sequences_construction_from_turyn_sequences(turyn_sequences, check=True):
     if check:
         assert is_T_sequences_set(res)
     return res
+
 
 def T_sequences_smallcases(t, existence=False, check=True):
     r"""
@@ -460,12 +469,13 @@ def T_sequences_smallcases(t, existence=False, check=True):
 
     INPUT:
 
-    - ``t`` -- integer, the length of the T-sequences to construct.
+    - ``t`` -- integer; the length of the T-sequences to construct
 
-    - ``existence`` -- boolean (default false). If true, this method only returns whether a T-sequences of
-      the given size can be constructed.
+    - ``existence`` -- boolean (default: ``False``); if ``True``, this method
+      only returns whether a T-sequences of the given size can be constructed
 
-    - ``check`` -- boolean, if true (default) check that the sequences are T-sequences before returning them.
+    - ``check`` -- boolean (default: ``True``); check that the sequences are
+      T-sequences before returning them
 
     EXAMPLES:
 
@@ -501,7 +511,7 @@ def T_sequences_smallcases(t, existence=False, check=True):
             [1,-1,-1,0,0,-1,1,-1]+[0]*8+[1,-1,-1,0,0,-1,-1]+[0]*24,
             [0,0,0,-1,1,0,0,0,-1,-1,-1,1,1,1,1,1,0,0,0,1,-1,0,0,1]+[0]*23,
             [0]*26+[-1,0,1,0,0,0,0,1,-1,1,1,1,0,0,0,0,1,0,-1,0,0],
-            [0]*24+ [1,1,0,-1,0,-1,1,1,-1,0,0,0,0,0,-1,1,-1,-1,0,-1,0,-1,1]
+            [0]*24 + [1,1,0,-1,0,-1,1,1,-1,0,0,0,0,0,-1,1,-1,-1,0,-1,0,-1,1]
         ],
         65: [
             [0]*33+[1,1,1,1,1,-1,-1,1,1,-1,1,-1,1,1,-1,-1,1,1,1,1,1,-1,-1,1,-1,1,-1,1,-1,-1,1,1],
@@ -520,17 +530,17 @@ def T_sequences_smallcases(t, existence=False, check=True):
     if t in db:
         if existence:
             return True
-        sequences =  list(map(Sequence, db[t]))
+        sequences = list(map(Sequence, db[t]))
         if check:
             assert is_T_sequences_set(sequences)
         return sequences
-    if (t+1) %2 == 0 and turyn_sequences_smallcases((t+1)//2, existence=True):
+    if (t+1) % 2 == 0 and turyn_sequences_smallcases((t+1)//2, existence=True):
         if existence:
             return True
         turyn_seqs = turyn_sequences_smallcases((t+1)//2)
         return T_sequences_construction_from_base_sequences(turyn_seqs, check=check)
 
-    if (t+1)%4 == 0 and turyn_sequences_smallcases((t+1)//4, existence=True):
+    if (t+1) % 4 == 0 and turyn_sequences_smallcases((t+1)//4, existence=True):
         if existence:
             return True
         turyn_seqs = turyn_sequences_smallcases((t+1)//4)
@@ -538,7 +548,7 @@ def T_sequences_smallcases(t, existence=False, check=True):
 
     for p in range(1, t):
         n = (t-p)//2
-        if (t-p)%2 == 0 and base_sequences_smallcases(n, p, existence=True):
+        if (t-p) % 2 == 0 and base_sequences_smallcases(n, p, existence=True):
             if existence:
                 return True
             base_seqs = base_sequences_smallcases(n, p, check=False)
@@ -550,10 +560,13 @@ def T_sequences_smallcases(t, existence=False, check=True):
 
 
 def base_sequences_construction(turyn_type_seqs, check=True):
-    r"""Construct base sequences of length `2n-1, 2n-1, n, n` from Turyn type sequences of length `n,n,n,n-1`.
+    r"""
+    Construct base sequences of length `2n-1, 2n-1, n, n` from Turyn type
+    sequences of length `n,n,n,n-1`.
 
-    Given Turyn type sequences `X, Y, Z, W` of length `n,n,n,n-1`, Theorem 1 of [KTR2005]_  shows that the
-    following are base sequences of length `2n-1, 2n-1, n, n`:
+    Given Turyn type sequences `X, Y, Z, W` of length `n,n,n,n-1`, Theorem 1 of
+    [KTR2005]_  shows that the following are base sequences of length
+    `2n-1, 2n-1, n, n`:
 
     .. MATH::
 
@@ -566,12 +579,13 @@ def base_sequences_construction(turyn_type_seqs, check=True):
 
     INPUT:
 
-    - ``turyn_type_seqs`` -- The list of 4 Turyn type sequences that should be used to construct the base sequences.
+    - ``turyn_type_seqs`` -- the list of 4 Turyn type sequences that should be
+      used to construct the base sequences
 
-    - ``check`` -- boolean, if True (default) check that the resulting sequences are base sequences
-      before returning them.
+    - ``check`` -- boolean (default: ``True``); check that the resulting
+      sequences are base sequences before returning them
 
-    OUTPUT: A list containing the four base sequences.
+    OUTPUT: list containing the four base sequences
 
     EXAMPLES::
 
@@ -615,8 +629,8 @@ def base_sequences_construction(turyn_type_seqs, check=True):
 def is_base_sequences_tuple(base_sequences, verbose=False):
     r"""Check if the given sequences are base sequences.
 
-    Four (-1, +1) sequences `A, B, C, D` of length `n+p, n+p, n, n` are called base sequences if
-    for all `j \ge 1`:
+    Four (-1, +1) sequences `A, B, C, D` of length `n+p, n+p, n, n` are called
+    base sequences if for all `j \ge 1`:
 
     .. MATH::
 
@@ -626,10 +640,10 @@ def is_base_sequences_tuple(base_sequences, verbose=False):
 
     INPUT:
 
-    - ``base_sequences`` -- The list of 4 sequences that should be checked.
+    - ``base_sequences`` -- the list of 4 sequences that should be checked
 
-    - ``verbose`` -- a boolean (default false). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function
+      will be verbose when the sequences do not satisfy the constraints
 
     EXAMPLES::
 
@@ -642,7 +656,7 @@ def is_base_sequences_tuple(base_sequences, verbose=False):
 
         sage: seqs = [[1, -1], [1, 1], [-1], [2]]
         sage: is_base_sequences_tuple(seqs, verbose=True)
-        Base sequences should only contiain -1, +1, found 2
+        Base sequences should only contain -1, +1, found 2
         False
 
     TESTS:
@@ -680,7 +694,7 @@ def is_base_sequences_tuple(base_sequences, verbose=False):
         for el in seq:
             if abs(el) != 1:
                 if verbose:
-                    print(f'Base sequences should only contiain -1, +1, found {el}')
+                    print(f'Base sequences should only contain -1, +1, found {el}')
                 return False
 
     for j in range(1, n+p):
@@ -692,6 +706,7 @@ def is_base_sequences_tuple(base_sequences, verbose=False):
 
     return True
 
+
 def turyn_type_sequences_smallcases(n, existence=False):
     r"""
     Construction of Turyn type sequences for small values of `n`.
@@ -700,10 +715,10 @@ def turyn_type_sequences_smallcases(n, existence=False):
 
     INPUT:
 
-    - ``n`` -- integer, the length of the Turyn type sequences.
+    - ``n`` -- integer; the length of the Turyn type sequences
 
-    - ``existence`` -- boolean (default False). If true, only return whether the
-      Turyn type sequences are available for the given length.
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only return
+      whether the Turyn type sequences are available for the given length
 
     EXAMPLES:
 
@@ -730,12 +745,14 @@ def turyn_type_sequences_smallcases(n, existence=False):
     ALGORITHM:
 
     The Turyn type sequences are stored in hexadecimal format.
-    Given `n` hexadecimal digits `h_1, h_2,...,h_n`, it is possible to get the Turyn type sequences
-    by converting each `h_i` (`1 \le i \le n-1`) into a four digits binary number. Then, the j-th binary digit is
-    `0` if the i-th number in the j-th sequence is `1`, and it is `1` if the number in the sequence is -1.
+    Given `n` hexadecimal digits `h_1, h_2,...,h_n`, it is possible to get the
+    Turyn type sequences by converting each `h_i` (`1 \le i \le n-1`) into a
+    four digits binary number. Then, the `j`-th binary digit is `0` if the `i`-th
+    number in the `j`-th sequence is `1`, and it is `1` if the number in the
+    sequence is -1.
 
-    For the n-th digit, it should be converted to a 3 digits binary number, and then the same mapping
-    as before can be used (see also [BDKR2013]_).
+    For the `n`-th digit, it should be converted to a 3 digits binary number, and
+    then the same mapping as before can be used (see also [BDKR2013]_).
     """
     def convertLists(hexstring):
         seqs = [Sequence([]), Sequence([]), Sequence([]), Sequence([])]
@@ -748,10 +765,10 @@ def turyn_type_sequences_smallcases(n, existence=False):
                     seqs[i].append(-1)
         last = bin(int(hexstring[-1], 16))[2:].zfill(3)
         for i in range(3):
-                if last[i] == '0':
-                    seqs[i].append(1)
-                else:
-                    seqs[i].append(-1)
+            if last[i] == '0':
+                seqs[i].append(1)
+            else:
+                seqs[i].append(-1)
         return seqs
 
     db = {
@@ -782,33 +799,37 @@ def turyn_type_sequences_smallcases(n, existence=False):
 
     return convertLists(db[n])
 
+
 def base_sequences_smallcases(n, p, existence=False, check=True):
     r"""Construct base sequences of length `n+p, n+p, n, n` from available data.
 
-    The function uses the construction :func:`base_sequences_construction`, together with
-    Turyn type sequences from :func:`turyn_type_sequences_smallcases` to construct base sequences
-    with `p = n-1`.
+    The function uses the construction :func:`base_sequences_construction`,
+    together with Turyn type sequences from :func:`turyn_type_sequences_smallcases`
+    to construct base sequences with `p = n-1`.
 
-    Furthermore, this function uses also Turyn sequences (i.e. base sequences with `p=1`) from
-    :func:`turyn_sequences_smallcases`.
+    Furthermore, this function uses also Turyn sequences (i.e. base sequences
+    with `p=1`) from :func:`turyn_sequences_smallcases`.
 
     INPUT:
 
-    - ``n`` -- integer, the length of the last two base sequences.
+    - ``n`` -- integer; the length of the last two base sequences
 
-    - ``p`` -- integer, `n+p` will be the length of the first two base sequences.
+    - ``p`` -- integer; `n+p` will be the length of the first two base
+      sequences
 
-    - ``existence`` -- boolean (default False). If True, the function will only check whether the base
-      sequences can be constructed.
+    - ``existence`` -- boolean (default: ``False``); if ``True``, the function
+      will only check whether the base sequences can be constructed
 
-    - ``check`` -- boolean, if True (default) check that the resulting sequences are base sequences
-      before returning them.
+    - ``check`` -- boolean (default: ``True``); check that the resulting
+      sequences are base sequences before returning them
 
     OUTPUT:
 
-    If ``existence`` is ``False``, the function returns a list containing the four base sequences, or raises
-    an error if the base sequences cannot be constructed. If ``existence`` is ``True``, the function returns a
-    boolean, which is ``True`` if the base sequences can be constructed and ``False`` otherwise.
+    If ``existence`` is ``False``, the function returns a list containing the
+    four base sequences, or raises an error if the base sequences cannot be
+    constructed. If ``existence`` is ``True``, the function returns a boolean,
+    which is ``True`` if the base sequences can be constructed and ``False``
+    otherwise.
 
     EXAMPLES::
 
@@ -847,9 +868,9 @@ def base_sequences_smallcases(n, p, existence=False, check=True):
             return True
         turyn_type_seqs = turyn_type_sequences_smallcases(n)
         return base_sequences_construction(turyn_type_seqs, check=check)
-    if p == 1 and turyn_sequences_smallcases(n+p, existence=True):
+    if p == 1 and turyn_sequences_smallcases(n + p, existence=True):
         if existence:
             return True
-        return turyn_sequences_smallcases(n+p)
+        return turyn_sequences_smallcases(n + p)
 
     raise ValueError(f'Base sequences of order {n+p}, {n+p}, {n}, {n} not yet implemented.')

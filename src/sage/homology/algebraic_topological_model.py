@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs
 r"""
 Algebraic topological model for a cell complex
 
@@ -24,14 +24,15 @@ AUTHORS:
 
 # TODO: cythonize this.
 
-from sage.modules.free_module_element import vector
-from sage.modules.free_module import VectorSpace
+from sage.homology.chain_complex import ChainComplex
+from sage.homology.chain_complex_morphism import ChainComplexMorphism
+from sage.homology.chain_homotopy import ChainContraction
 from sage.matrix.constructor import matrix, zero_matrix
 from sage.matrix.matrix_space import MatrixSpace
-from .chain_complex import ChainComplex
-from .chain_complex_morphism import ChainComplexMorphism
-from .chain_homotopy import ChainContraction
+from sage.modules.free_module import VectorSpace
+from sage.modules.free_module_element import vector
 from sage.rings.rational_field import QQ
+
 
 def algebraic_topological_model(K, base_ring=None):
     r"""
@@ -123,7 +124,8 @@ def algebraic_topological_model(K, base_ring=None):
         1
         sage: phi.dual()
         Chain homotopy between:
-          Chain complex endomorphism of Chain complex with at most 3 nonzero terms over Rational Field
+          Chain complex endomorphism of
+            Chain complex with at most 3 nonzero terms over Rational Field
           and Chain complex morphism:
             From: Chain complex with at most 3 nonzero terms over Rational Field
             To:   Chain complex with at most 3 nonzero terms over Rational Field
@@ -335,6 +337,7 @@ def algebraic_topological_model(K, base_ring=None):
     phi = ChainContraction(phi_data, pi, iota)
     return phi, M
 
+
 def algebraic_topological_model_delta_complex(K, base_ring=None):
     r"""
     Algebraic topological model for cell complex ``K``
@@ -441,8 +444,7 @@ def algebraic_topological_model_delta_complex(K, base_ring=None):
         """
         if base_ring == QQ:
             return m.sparse_matrix()
-        else:
-            return m
+        return m
 
     if not base_ring.is_field():
         raise ValueError('the coefficient ring must be a field')
@@ -485,7 +487,7 @@ def algebraic_topological_model_delta_complex(K, base_ring=None):
         iota_cols = {}
         pi_cols_old = pi_cols
         pi_cols = []
-        phi_old = MatrixSpace(base_ring, rank, old_rank, sparse=(base_ring==QQ)).zero()
+        phi_old = MatrixSpace(base_ring, rank, old_rank, sparse=(base_ring == QQ)).zero()
         phi_old_cols = phi_old.columns()
         phi_old = conditionally_sparse(phi_old)
         to_be_deleted = []
@@ -499,13 +501,12 @@ def algebraic_topological_model_delta_complex(K, base_ring=None):
             if not diff:
                 c_bar = c
                 pi_bdry_c_bar = False
+            elif base_ring == QQ:
+                c_bar = c - phi_old * (diff * c)
+                pi_bdry_c_bar = conditionally_sparse(pi_old) * (diff * c_bar)
             else:
-                if base_ring == QQ:
-                    c_bar = c - phi_old * (diff * c)
-                    pi_bdry_c_bar = conditionally_sparse(pi_old) * (diff * c_bar)
-                else:
-                    c_bar = c - phi_old * diff * c
-                    pi_bdry_c_bar = conditionally_sparse(pi_old) * diff * c_bar
+                c_bar = c - phi_old * diff * c
+                pi_bdry_c_bar = conditionally_sparse(pi_old) * diff * c_bar
 
             # One small typo in the published algorithm: it says
             # "if bdry(c_bar) == 0", but should say
@@ -542,8 +543,8 @@ def algebraic_topological_model_delta_complex(K, base_ring=None):
                 # The matrices involved have many zero entries. For
                 # such matrices, using sparse matrices is faster over
                 # the rationals, slower over finite fields.
-                phi_old = matrix(base_ring, phi_old_cols, sparse=(base_ring==QQ)).transpose()
-                keep = vector(base_ring, pi_nrows, {i:1 for i in range(pi_nrows)
+                phi_old = matrix(base_ring, phi_old_cols, sparse=(base_ring == QQ)).transpose()
+                keep = vector(base_ring, pi_nrows, {i: 1 for i in range(pi_nrows)
                                                     if i not in to_be_deleted})
                 cols = [v.pairwise_product(keep) for v in pi_cols_old]
                 pi_old = MS_pi_t.matrix(cols).transpose()

@@ -85,61 +85,29 @@ become symbolic inequalities. See
     construction.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from copy import copy
 
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_function
-from sage.numerical.linear_functions import is_LinearFunction, LinearFunctionsParent_class
+from sage.numerical.linear_functions import LinearFunction, LinearFunctionsParent_class
 from sage.numerical.linear_tensor_element import LinearTensor
 
-
-#*****************************************************************************
-#
-# Utility functions to test that something is a linear function / constraint
-#
-#*****************************************************************************
-
-def is_LinearTensor(x):
-    """
-    Test whether ``x`` is a tensor product of linear functions with a
-    free module.
-
-    INPUT:
-
-    - ``x`` -- anything.
-
-    OUTPUT:
-
-    Boolean.
-
-    EXAMPLES::
-
-        sage: p = MixedIntegerLinearProgram()
-        sage: x = p.new_variable(nonnegative=False)
-        sage: from sage.numerical.linear_tensor import is_LinearTensor
-        sage: is_LinearTensor(x[0] - 2*x[2])
-        False
-        sage: is_LinearTensor('a string')
-        False
-    """
-    return isinstance(x, LinearTensor)
-
-
-#*****************************************************************************
+# ***************************************************************************
 #
 # Factory functions for the parents to ensure uniqueness
 #
-#*****************************************************************************
+# ***************************************************************************
+
 
 @cached_function
 def LinearTensorParent(free_module_parent, linear_functions_parent):
@@ -151,11 +119,10 @@ def LinearTensorParent(free_module_parent, linear_functions_parent):
 
     INPUT:
 
-    - ``free_module_parent`` -- module. A free module, like vector or
-      matrix space.
+    - ``free_module_parent`` -- a free module, like vector or matrix space
 
-    - ``linear_functions_parent`` -- linear functions. The linear
-      functions parent.
+    - ``linear_functions_parent`` -- linear functions; the linear functions
+      parent
 
     OUTPUT:
 
@@ -196,9 +163,7 @@ class LinearTensorParent_class(Parent):
         You should use :func:`LinearTensorParent` to construct
         instances of this class.
 
-    INPUT/OUTPUT:
-
-    See :func:`LinearTensorParent`
+    INPUT/OUTPUT: see :func:`LinearTensorParent`
 
     EXAMPLES::
 
@@ -210,11 +175,9 @@ class LinearTensorParent_class(Parent):
 
     def __init__(self, free_module, linear_functions):
         """
-        The Python constructor
+        The Python constructor.
 
-        INPUT/OUTPUT:
-
-        See :func:`LinearTensorParent`
+        INPUT/OUTPUT: see :func:`LinearTensorParent`
 
         TESTS::
 
@@ -255,10 +218,8 @@ class LinearTensorParent_class(Parent):
         """
         Return whether the free module is a vector space.
 
-        OUTPUT:
-
-        Boolean. Whether the :meth:`free_module` factor in the tensor
-        product is a vector space.
+        OUTPUT: boolean; whether the :meth:`free_module` factor in the tensor
+        product is a vector space
 
         EXAMPLES::
 
@@ -269,17 +230,15 @@ class LinearTensorParent_class(Parent):
             sage: LF.tensor(RDF^(2,2)).is_vector_space()
             False
         """
-        from sage.modules.free_module import is_FreeModule
-        return is_FreeModule(self.free_module())
+        from sage.modules.free_module import FreeModule_generic
+        return isinstance(self.free_module(), FreeModule_generic)
 
     def is_matrix_space(self):
         """
         Return whether the free module is a matrix space.
 
-        OUTPUT:
-
-        Boolean. Whether the :meth:`free_module` factor in the tensor
-        product is a matrix space.
+        OUTPUT: boolean; whether the :meth:`free_module` factor in the tensor
+        product is a matrix space
 
         EXAMPLES::
 
@@ -290,8 +249,8 @@ class LinearTensorParent_class(Parent):
             sage: LF.tensor(RDF^(2,2)).is_matrix_space()
             True
         """
-        from sage.matrix.matrix_space import is_MatrixSpace
-        return is_MatrixSpace(self.free_module())
+        from sage.matrix.matrix_space import MatrixSpace
+        return isinstance(self.free_module(), MatrixSpace)
 
     def linear_functions(self):
         """
@@ -317,11 +276,9 @@ class LinearTensorParent_class(Parent):
 
     def _repr_(self):
         """
-        Return a string representation
+        Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -334,9 +291,7 @@ class LinearTensorParent_class(Parent):
         """
         Convert ``m`` to a constant free module element.
 
-        OUTPUT:
-
-        A :meth:`free_module` element.
+        OUTPUT: a :meth:`free_module` element
 
         EXAMPLES::
 
@@ -357,12 +312,11 @@ class LinearTensorParent_class(Parent):
                 m_matrix[i, i] = m
             m_matrix.set_immutable()
             return m_matrix
-        elif self.is_vector_space():
+        if self.is_vector_space():
             # Turn constants into vectors with all entries equal
             m_vector = M([m] * M.degree())
             return m_vector
-        else:
-            return M(m)
+        return M(m)
 
     def _element_constructor_(self, x):
         """
@@ -413,9 +367,9 @@ class LinearTensorParent_class(Parent):
             (3.0, 3.0) + (2.0, 2.0)*x_1 + (1.0, 1.0)*x_3
         """
         M = self.free_module()
-        if is_LinearTensor(x):
+        if isinstance(x, LinearTensor):
             x = x.dict()
-        elif is_LinearFunction(x):
+        elif isinstance(x, LinearFunction):
             x = dict([key, self._convert_constant(value)] for key, value in x.dict().items())
         elif isinstance(x, dict):
             x = dict([int(key), M(value)] for key, value in x.items())
@@ -433,11 +387,9 @@ class LinearTensorParent_class(Parent):
 
         INPUT:
 
-        - ``R`` -- a ring.
+        - ``R`` -- a ring
 
-        OUTPUT:
-
-        Boolean. Whether there is a coercion map.
+        OUTPUT: boolean; whether there is a coercion map
 
         EXAMPLES::
 
@@ -456,17 +408,13 @@ class LinearTensorParent_class(Parent):
         """
         if self.free_module().has_coerce_map_from(R):
             return True
-        if self.linear_functions().has_coerce_map_from(R):
-            return True
-        return False
+        return self.linear_functions().has_coerce_map_from(R)
 
     def _an_element_(self):
         """
-        Returns an element
+        Return an element.
 
-        OUTPUT:
-
-        A linear function tensored with a free module.
+        OUTPUT: a linear function tensored with a free module
 
         EXAMPLES::
 

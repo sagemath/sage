@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Block designs
 
@@ -23,9 +23,9 @@ REFERENCES:
 
 AUTHORS:
 
-- Quentin Honoré (2015): construction of Hughes plane :trac:`18527`
+- Quentin Honoré (2015): construction of Hughes plane :issue:`18527`
 
-- Vincent Delecroix (2014): rewrite the part on projective planes :trac:`16281`
+- Vincent Delecroix (2014): rewrite the part on projective planes :issue:`16281`
 
 - Peter Dobcsanyi and David Joyner (2007-2008)
 
@@ -42,7 +42,7 @@ Functions and methods
 ---------------------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Peter Dobcsanyi <peter@designtheory.org>
 #       Copyright (C) 2007 David Joyner <wdjoyner@gmail.com>
 #
@@ -51,22 +51,26 @@ Functions and methods
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 from sage.arith.misc import binomial, integer_floor, is_prime_power
 from sage.categories.sets_cat import EmptySetError
-from sage.modules.free_module import VectorSpace
+from sage.misc.lazy_import import lazy_import
+from sage.misc.unknown import Unknown
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+
 from .incidence_structures import IncidenceStructure
-from sage.rings.finite_rings.finite_field_constructor import FiniteField
-from sage.misc.unknown import Unknown
-from sage.matrix.matrix_space import MatrixSpace
-from sage.libs.gap.libgap import libgap
+
+lazy_import('sage.libs.gap.libgap', 'libgap')
+lazy_import('sage.matrix.matrix_space', 'MatrixSpace')
+lazy_import('sage.modules.free_module', 'VectorSpace')
+lazy_import('sage.rings.finite_rings.finite_field_constructor', 'FiniteField')
 
 
 BlockDesign = IncidenceStructure
 
-###  utility functions  -------------------------------------------------------
+#  utility functions  -----------------------------------------------------
+
 
 def tdesign_params(t, v, k, L):
     """
@@ -75,7 +79,7 @@ def tdesign_params(t, v, k, L):
 
     EXAMPLES::
 
-        sage: BD = BlockDesign(7,[[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]])
+        sage: BD = BlockDesign(7, [[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]])
         sage: from sage.combinat.designs.block_design import tdesign_params
         sage: tdesign_params(2,7,3,1)
         (2, 7, 7, 3, 3, 1)
@@ -87,6 +91,7 @@ def tdesign_params(t, v, k, L):
     y = binomial(k-1, t-1)
     r = integer_floor(L * x/y)
     return (t, v, b, r, k, L)
+
 
 def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parameters=False):
     r"""
@@ -104,7 +109,7 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
 
     INPUT:
 
-    - ``v,k,lmbda`` (integers)
+    - ``v``, ``k``, ``lmbda`` -- integers
 
     OUTPUT:
 
@@ -114,17 +119,19 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
     EXAMPLES::
 
         sage: from sage.combinat.designs.block_design import are_hyperplanes_in_projective_geometry_parameters
-        sage: are_hyperplanes_in_projective_geometry_parameters(40,13,4)
+        sage: are_hyperplanes_in_projective_geometry_parameters(40, 13, 4)
         True
-        sage: are_hyperplanes_in_projective_geometry_parameters(40,13,4,return_parameters=True)
+        sage: are_hyperplanes_in_projective_geometry_parameters(40, 13, 4,
+        ....:                                                   return_parameters=True)
         (True, (3, 3))
-        sage: PG = designs.ProjectiveGeometryDesign(3,2,GF(3))
-        sage: PG.is_t_design(return_parameters=True)
+        sage: PG = designs.ProjectiveGeometryDesign(3, 2, GF(3))                        # needs sage.combinat
+        sage: PG.is_t_design(return_parameters=True)                                    # needs sage.combinat
         (True, (2, 40, 13, 4))
 
-        sage: are_hyperplanes_in_projective_geometry_parameters(15,3,1)
+        sage: are_hyperplanes_in_projective_geometry_parameters(15, 3, 1)
         False
-        sage: are_hyperplanes_in_projective_geometry_parameters(15,3,1,return_parameters=True)
+        sage: are_hyperplanes_in_projective_geometry_parameters(15, 3, 1,
+        ....:                                                   return_parameters=True)
         (False, (None, None))
 
     TESTS::
@@ -141,7 +148,7 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
         ....:         assert are_hyperplanes_in_projective_geometry_parameters(v,k,l+1) is False
         ....:         assert are_hyperplanes_in_projective_geometry_parameters(v,k,l-1) is False
     """
-    import sage.arith.all as arith
+    from sage.arith.misc import gcd
 
     q1 = Integer(v - k)
     q2 = Integer(k - lmbda)
@@ -154,7 +161,7 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
     p1,e1 = q1.factor()[0]
     p2,e2 = q2.factor()[0]
 
-    k = arith.gcd(e1,e2)
+    k = gcd(e1,e2)
     d = e1//k
     q = p1**k
     if e2//k != d-1 or lmbda != (q**(d-1)-1)//(q-1):
@@ -162,12 +169,13 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
 
     return (True, (q,d)) if return_parameters else True
 
+
 def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, check=True):
     r"""
     Return a projective geometry design.
 
     The projective geometry design `PG_d(n,q)` has for points the lines of
-    `\GF{q}^{n+1}`, and for blocks the `d+1`-dimensional subspaces of
+    `\GF{q}^{n+1}`, and for blocks the `(d+1)`-dimensional subspaces of
     `\GF{q}^{n+1}`, each of which contains `\frac {|\GF{q}|^{d+1}-1} {|\GF{q}|-1}` lines.
     It is a `2`-design with parameters
 
@@ -189,11 +197,11 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
 
     INPUT:
 
-    - ``n`` is the projective dimension
+    - ``n`` -- the projective dimension
 
-    - ``d`` is the dimension of the subspaces which make up the blocks.
+    - ``d`` -- the dimension of the subspaces which make up the blocks
 
-    - ``F`` -- a finite field or a prime power.
+    - ``F`` -- a finite field or a prime power
 
     - ``algorithm`` -- set to ``None`` by default, which results in using Sage's
       own implementation. In order to use GAP's implementation instead (i.e. its
@@ -205,27 +213,25 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
       ``algorithm="gap"``. If ``True``, the ground set is indexed by coordinates
       in `\GF{q}^{n+1}`.  Otherwise the ground set is indexed by integers.
 
-    - ``check`` -- (optional, default to ``True``) whether to check the output.
+    - ``check`` -- boolean (default: ``True``); whether to check the output
 
     EXAMPLES:
 
     The set of `d`-dimensional subspaces in a `n`-dimensional projective space
     forms `2`-designs (or balanced incomplete block designs)::
 
-        sage: PG = designs.ProjectiveGeometryDesign(4, 2, GF(2))
-        sage: PG
+        sage: PG = designs.ProjectiveGeometryDesign(4, 2, GF(2)); PG                    # needs sage.combinat
         Incidence structure with 31 points and 155 blocks
-        sage: PG.is_t_design(return_parameters=True)
+        sage: PG.is_t_design(return_parameters=True)                                    # needs sage.combinat
         (True, (2, 31, 7, 7))
 
-        sage: PG = designs.ProjectiveGeometryDesign(3, 1, GF(4))
-        sage: PG.is_t_design(return_parameters=True)
+        sage: PG = designs.ProjectiveGeometryDesign(3, 1, GF(4))                        # needs sage.combinat
+        sage: PG.is_t_design(return_parameters=True)                                    # needs sage.combinat
         (True, (2, 85, 5, 1))
 
     Check with ``F`` being a prime power::
 
-        sage: PG = designs.ProjectiveGeometryDesign(3, 2, 4)
-        sage: PG
+        sage: PG = designs.ProjectiveGeometryDesign(3, 2, 4); PG
         Incidence structure with 85 points and 85 blocks
 
     Use coordinates::
@@ -236,14 +242,14 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
 
     Use indexing by integers::
 
-        sage: PG = designs.ProjectiveGeometryDesign(2,1,GF(3),point_coordinates=0)
+        sage: PG = designs.ProjectiveGeometryDesign(2, 1, GF(3), point_coordinates=0)
         sage: PG.blocks()[0]
         [0, 1, 2, 12]
 
     Check that the constructor using gap also works::
 
-        sage: BD = designs.ProjectiveGeometryDesign(2, 1, GF(2), algorithm="gap") # optional - gap_packages (design package)
-        sage: BD.is_t_design(return_parameters=True)                              # optional - gap_packages (design package)
+        sage: BD = designs.ProjectiveGeometryDesign(2, 1, GF(2), algorithm='gap')  # optional - gap_package_design
+        sage: BD.is_t_design(return_parameters=True)                               # optional - gap_package_design
         (True, (2, 7, 3, 1))
     """
     try:
@@ -267,7 +273,7 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
                 m.set_immutable()
                 b.append(points[m])
             blocks.append(b)
-        B = BlockDesign(len(points), blocks, name="ProjectiveGeometryDesign", check=check)
+        B = BlockDesign(len(points), blocks, name='ProjectiveGeometryDesign', check=check)
         if point_coordinates:
             B.relabel({i:p[0] for p,i in points.items()})
 
@@ -279,7 +285,7 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
         gB = []
         for b in gblcks:
             gB.append([x - 1 for x in b])
-        B = BlockDesign(v, gB, name="ProjectiveGeometryDesign", check=check)
+        B = BlockDesign(v, gB, name='ProjectiveGeometryDesign', check=check)
 
     if check:
         from sage.combinat.q_analogues import q_binomial
@@ -302,15 +308,14 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
 
     INPUT:
 
-    - ``n`` -- an integer which must be a power of a prime number
+    - ``n`` -- integer which must be a power of a prime number
 
-    - ``point_coordinates`` (boolean) -- whether to label the points with their
-      homogeneous coordinates (default) or with integers.
+    - ``point_coordinates`` -- boolean (default: ``True``); whether to label the
+      points with their homogeneous coordinates (default) or with integers
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     .. SEEALSO::
 
@@ -330,19 +335,19 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
         Traceback (most recent call last):
         ...
         ValueError: the order of a finite field must be a prime power
-
     """
     K = FiniteField(n, 'a')
     n2 = n**2
-    relabel = {x:i for i,x in enumerate(K)}
-    Kiter = relabel  # it is much faster to iterate through a dict than through
-                     # the finite field K
+    relabel = {x: i for i, x in enumerate(K)}
+    Kiter = relabel
+    # it is much faster to iterate through a dict than through
+    # the finite field K
 
     # we decompose the (equivalence class) of points [x:y:z] of the projective
     # plane into an affine plane, an affine line and a point. At the same time,
     # we relabel the points with the integers from 0 to n^2 + n as follows:
     # - the affine plane is the set of points [x:y:1] (i.e. the third coordinate
-    #   is non-zero) and gets relabeled from 0 to n^2-1
+    #   is nonzero) and gets relabeled from 0 to n^2-1
     affine_plane = lambda x,y: relabel[x] + n * relabel[y]
 
     # - the affine line is the set of points [x:1:0] (i.e. the third coordinate is
@@ -386,16 +391,17 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
              for y in Kiter}
         d.update({line_infinity(x): (x,one,zero)
                   for x in Kiter})
-        d[n2+n]=(one,zero,zero)
+        d[n2+n] = (one,zero,zero)
         B.relabel(d)
 
     return B
+
 
 def q3_minus_one_matrix(K):
     r"""
     Return a companion matrix in `GL(3, K)` whose multiplicative order is `q^3 - 1`.
 
-    This function is used in :func:`HughesPlane`
+    This function is used in :func:`HughesPlane`.
 
     EXAMPLES::
 
@@ -404,7 +410,7 @@ def q3_minus_one_matrix(K):
         sage: m.multiplicative_order() == 3**3 - 1
         True
 
-        sage: m = q3_minus_one_matrix(GF(4,'a'))
+        sage: m = q3_minus_one_matrix(GF(4, 'a'))
         sage: m.multiplicative_order() == 4**3 - 1
         True
 
@@ -412,7 +418,7 @@ def q3_minus_one_matrix(K):
         sage: m.multiplicative_order() == 5**3 - 1
         True
 
-        sage: m = q3_minus_one_matrix(GF(9,'a'))
+        sage: m = q3_minus_one_matrix(GF(9, 'a'))
         sage: m.multiplicative_order() == 9**3 - 1
         True
     """
@@ -437,6 +443,7 @@ def q3_minus_one_matrix(K):
         if m.multiplicative_order() == q**3 - 1:
             return m
 
+
 def normalize_hughes_plane_point(p, q):
     r"""
     Return the normalized form of point ``p`` as a 3-tuple.
@@ -450,21 +457,21 @@ def normalize_hughes_plane_point(p, q):
 
     INPUT:
 
-    - ``p`` - point with the coordinates (x,y,z) (a list, a vector, a tuple...)
+    - ``p`` -- point with the coordinates `(x,y,z)` (a list, a vector, a tuple...)
 
-    - ``q`` - cardinality of the underlying finite field
+    - ``q`` -- cardinality of the underlying finite field
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.block_design import normalize_hughes_plane_point
         sage: K = FiniteField(9,'x')
         sage: x = K.gen()
-        sage: normalize_hughes_plane_point((x, x+1, x), 9)
+        sage: normalize_hughes_plane_point((x, x + 1, x), 9)
         (1, x, 1)
         sage: normalize_hughes_plane_point(vector((x,x,x)), 9)
         (1, 1, 1)
         sage: zero = K.zero()
-        sage: normalize_hughes_plane_point((2*x+2, zero, zero), 9)
+        sage: normalize_hughes_plane_point((2*x + 2, zero, zero), 9)
         (1, 0, 0)
         sage: one = K.one()
         sage: normalize_hughes_plane_point((2*x, one, zero), 9)
@@ -473,12 +480,12 @@ def normalize_hughes_plane_point(p, q):
     for i in [2,1,0]:
         if p[i].is_one():
             return tuple(p)
-        elif not p[i].is_zero():
+        if not p[i].is_zero():
             k = ~p[i]
             if k.is_square():
                 return (p[0] * k,p[1] * k,p[2] * k)
-            else:
-                return ((p[0] * k)**q,(p[1]*k)**q,(p[2]*k)**q)
+            return ((p[0] * k)**q,(p[1]*k)**q,(p[2]*k)**q)
+
 
 def HughesPlane(q2, check=True):
     r"""
@@ -519,15 +526,13 @@ def HughesPlane(q2, check=True):
 
     - ``q2`` -- an even power of an odd prime number
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 
-        sage: H = designs.HughesPlane(9)
-        sage: H
+        sage: H = designs.HughesPlane(9); H
         (91,10,1)-Balanced Incomplete Block Design
 
     We prove in the following computations that the Desarguesian plane ``H`` is
@@ -586,7 +591,7 @@ def HughesPlane(q2, check=True):
     """
     if not q2.is_square():
         raise EmptySetError("No Hughes plane of non-square order exists.")
-    if q2%2 == 0:
+    if q2 % 2 == 0:
         raise EmptySetError("No Hughes plane of even order exists.")
     q = q2.sqrt()
     K = FiniteField(q2, prefix='x')
@@ -621,6 +626,7 @@ def HughesPlane(q2, check=True):
     from .bibd import BalancedIncompleteBlockDesign
     return BalancedIncompleteBlockDesign(q2**2+q2+1, blcks, check=check)
 
+
 def projective_plane_to_OA(pplane, pt=None, check=True):
     r"""
     Return the orthogonal array built from the projective plane ``pplane``.
@@ -632,23 +638,22 @@ def projective_plane_to_OA(pplane, pt=None, check=True):
 
     INPUT:
 
-    - ``pplane`` - a projective plane as a 2-design
+    - ``pplane`` -- a projective plane as a 2-design
 
-    - ``pt`` - a point in the projective plane ``pplane``. If it is not provided
-      then it is set to `n^2 + n`.
+    - ``pt`` -- a point in the projective plane ``pplane``; if it is not provided,
+      then it is set to `n^2 + n`
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 
         sage: from sage.combinat.designs.block_design import projective_plane_to_OA
-        sage: p2 = designs.DesarguesianProjectivePlaneDesign(2,point_coordinates=False)
+        sage: p2 = designs.DesarguesianProjectivePlaneDesign(2, point_coordinates=False)
         sage: projective_plane_to_OA(p2)
         [[0, 0, 0], [0, 1, 1], [1, 0, 1], [1, 1, 0]]
-        sage: p3 = designs.DesarguesianProjectivePlaneDesign(3,point_coordinates=False)
+        sage: p3 = designs.DesarguesianProjectivePlaneDesign(3, point_coordinates=False)
         sage: projective_plane_to_OA(p3)
         [[0, 0, 0, 0],
          [0, 1, 2, 1],
@@ -660,7 +665,7 @@ def projective_plane_to_OA(pplane, pt=None, check=True):
          [2, 1, 0, 2],
          [2, 2, 2, 0]]
 
-        sage: pp = designs.DesarguesianProjectivePlaneDesign(16,point_coordinates=False)
+        sage: pp = designs.DesarguesianProjectivePlaneDesign(16, point_coordinates=False)
         sage: _ = projective_plane_to_OA(pp, pt=0)
         sage: _ = projective_plane_to_OA(pp, pt=3)
         sage: _ = projective_plane_to_OA(pp, pt=7)
@@ -695,9 +700,9 @@ def projective_plane(n, check=True, existence=False):
     `n^2+n+1` points. For more information on finite projective planes, see the
     :wikipedia:`Projective_plane#Finite_projective_planes`.
 
-    If no construction is possible, then the function raises a ``EmptySetError``
-    whereas if no construction is available the function raises a
-    ``NotImplementedError``.
+    If no construction is possible, then the function raises a :exc:`EmptySetError`,
+    whereas if no construction is available, the function raises a
+    :exc:`NotImplementedError`.
 
     INPUT:
 
@@ -705,6 +710,7 @@ def projective_plane(n, check=True, existence=False):
 
     EXAMPLES::
 
+        sage: # needs sage.schemes
         sage: designs.projective_plane(2)
         (7,3,1)-Balanced Incomplete Block Design
         sage: designs.projective_plane(3)
@@ -720,11 +726,14 @@ def projective_plane(n, check=True, existence=False):
         sage: designs.projective_plane(10)
         Traceback (most recent call last):
         ...
-        EmptySetError: No projective plane of order 10 exists by C. Lam, L. Thiel and S. Swiercz "The nonexistence of finite projective planes of order 10" (1989), Canad. J. Math.
+        EmptySetError: No projective plane of order 10 exists by
+        C. Lam, L. Thiel and S. Swiercz "The nonexistence of finite
+        projective planes of order 10" (1989), Canad. J. Math.
         sage: designs.projective_plane(12)
         Traceback (most recent call last):
         ...
-        NotImplementedError: If such a projective plane exists, we do not know how to build it.
+        NotImplementedError: If such a projective plane exists,
+        we do not know how to build it.
         sage: designs.projective_plane(14)
         Traceback (most recent call last):
         ...
@@ -732,6 +741,7 @@ def projective_plane(n, check=True, existence=False):
 
     TESTS::
 
+        sage: # needs sage.schemes
         sage: designs.projective_plane(2197, existence=True)
         True
         sage: designs.projective_plane(6, existence=True)
@@ -753,7 +763,7 @@ def projective_plane(n, check=True, existence=False):
             return False
         ref = ("C. Lam, L. Thiel and S. Swiercz \"The nonexistence of finite "
                "projective planes of order 10\" (1989), Canad. J. Math.")
-        raise EmptySetError("No projective plane of order 10 exists by %s"%ref)
+        raise EmptySetError("No projective plane of order 10 exists by %s" % ref)
 
     if BruckRyserChowla_check(n*n+n+1, n+1, 1) is False:
         if existence:
@@ -769,8 +779,8 @@ def projective_plane(n, check=True, existence=False):
 
     if existence:
         return True
-    else:
-        return DesarguesianProjectivePlaneDesign(n, point_coordinates=False, check=check)
+    return DesarguesianProjectivePlaneDesign(n, point_coordinates=False, check=check)
+
 
 def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
     r"""
@@ -796,21 +806,22 @@ def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
 
     INPUT:
 
-    - ``n`` (integer) -- the Euclidean dimension. The number of points of the
-      design is `v=|\GF{q}^n|`.
+    - ``n`` -- integer; the Euclidean dimension. The number of points of the
+      design is `v=|\GF{q}^n|`
 
-    - ``d`` (integer) -- the dimension of the (affine) subspaces of `\GF{q}^n`
-      which make up the blocks.
+    - ``d`` -- integer; the dimension of the (affine) subspaces of `\GF{q}^n`
+      which make up the blocks
 
-    - ``F`` -- a finite field or a prime power.
+    - ``F`` -- a finite field or a prime power
 
-    - ``point_coordinates`` -- (optional, default ``True``) whether we use
-      coordinates in `\GF{q}^n` or plain integers for the points of the design.
+    - ``point_coordinates`` -- boolean (default: ``True``); whether we use
+      coordinates in `\GF{q}^n` or plain integers for the points of the design
 
-    - ``check`` -- (optional, default ``True``) whether to check the output.
+    - ``check`` -- boolean (default: ``True``); whether to check the output
 
     EXAMPLES::
 
+        sage: # needs sage.combinat
         sage: BD = designs.AffineGeometryDesign(3, 1, GF(2))
         sage: BD.is_t_design(return_parameters=True)
         (True, (2, 8, 2, 1))
@@ -829,9 +840,11 @@ def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
 
     Testing the option ``point_coordinates``::
 
-        sage: designs.AffineGeometryDesign(3, 1, GF(2), point_coordinates=True).blocks()[0]
+        sage: designs.AffineGeometryDesign(3, 1, GF(2),
+        ....:                              point_coordinates=True).blocks()[0]
         [(0, 0, 0), (0, 0, 1)]
-        sage: designs.AffineGeometryDesign(3, 1, GF(2), point_coordinates=False).blocks()[0]
+        sage: designs.AffineGeometryDesign(3, 1, GF(2),
+        ....:                              point_coordinates=False).blocks()[0]
         [0, 1]
     """
     try:
@@ -865,7 +878,7 @@ def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
             b.append(points[m])
         blocks.append(b)
 
-    B = BlockDesign(len(points), blocks, name="AffineGeometryDesign", check=check)
+    B = BlockDesign(len(points), blocks, name='AffineGeometryDesign', check=check)
 
     if point_coordinates:
         rd = {i: p[0][1:] for p, i in points.items()}
@@ -882,7 +895,7 @@ def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
 
 def CremonaRichmondConfiguration():
     r"""
-    Return the Cremona-Richmond configuration
+    Return the Cremona-Richmond configuration.
 
     The Cremona-Richmond configuration is a set system whose incidence graph
     is equal to the
@@ -913,7 +926,7 @@ def WittDesign(n):
     """
     INPUT:
 
-    - ``n`` is in `9,10,11,12,21,22,23,24`.
+    - ``n`` -- integer in `9,10,11,12,21,22,23,24`
 
     Wraps GAP Design's WittDesign. If ``n=24`` then this function returns the
     large Witt design `W_{24}`, the unique (up to isomorphism) `5-(24,8,1)`
@@ -927,19 +940,20 @@ def WittDesign(n):
 
     EXAMPLES::
 
-        sage: BD = designs.WittDesign(9)             # optional - gap_packages (design package)
-        sage: BD.is_t_design(return_parameters=True) # optional - gap_packages (design package)
+        sage: # optional - gap_package_design
+        sage: BD = designs.WittDesign(9)
+        sage: BD.is_t_design(return_parameters=True)
         (True, (2, 9, 3, 1))
-        sage: BD                             # optional - gap_packages (design package)
+        sage: BD
         Incidence structure with 9 points and 12 blocks
-        sage: print(BD)                      # optional - gap_packages (design package)
+        sage: print(BD)
         Incidence structure with 9 points and 12 blocks
     """
     libgap.load_package("design")
     B = libgap.WittDesign(n)
     v = B['v'].sage()
     gB = [[x - 1 for x in b] for b in B['blocks'].sage()]
-    return BlockDesign(v, gB, name="WittDesign", check=True)
+    return BlockDesign(v, gB, name='WittDesign', check=True)
 
 
 def HadamardDesign(n):
@@ -950,14 +964,16 @@ def HadamardDesign(n):
 
     EXAMPLES::
 
+        sage: # needs sage.combinat sage.modules
         sage: designs.HadamardDesign(7)
         Incidence structure with 7 points and 7 blocks
         sage: print(designs.HadamardDesign(7))
         Incidence structure with 7 points and 7 blocks
 
-    For example, the Hadamard 2-design with `n = 11` is a design whose parameters are 2-(11, 5, 2).
+    For example, the Hadamard 2-design with `n = 11` is a design whose parameters are `2-(11, 5, 2)`.
     We verify that `NJ = 5J` for this design. ::
 
+        sage: # needs sage.combinat sage.modules
         sage: D = designs.HadamardDesign(11); N = D.incidence_matrix()
         sage: J = matrix(ZZ, 11, 11, [1]*11*11); N*J
         [5 5 5 5 5 5 5 5 5 5 5]
@@ -979,14 +995,14 @@ def HadamardDesign(n):
     """
     from sage.combinat.matrices.hadamard_matrix import hadamard_matrix
     from sage.matrix.constructor import matrix
-    H = hadamard_matrix(n+1) #assumed to be normalised.
+    H = hadamard_matrix(n + 1)  # assumed to be normalised.
     H1 = H.matrix_from_columns(range(1,n+1))
     H2 = H1.matrix_from_rows(range(1,n+1))
     J = matrix(ZZ,n,n,[1]*n*n)
     MS = J.parent()
-    A = MS((H2+J)/2) # convert -1's to 0's; coerce entries to ZZ
+    A = MS((H2+J)/2)  # convert -1's to 0's; coerce entries to ZZ
     # A is the incidence matrix of the block design
-    return IncidenceStructure(incidence_matrix=A,name="HadamardDesign")
+    return IncidenceStructure(incidence_matrix=A, name='HadamardDesign')
 
 
 def Hadamard3Design(n):
@@ -999,10 +1015,11 @@ def Hadamard3Design(n):
 
     INPUT:
 
-    - ``n`` (integer) -- a multiple of 4 such that `n>4`.
+    - ``n`` -- integer; a multiple of 4 such that `n>4`
 
     EXAMPLES::
 
+        sage: # needs sage.combinat sage.modules
         sage: designs.Hadamard3Design(12)
         Incidence structure with 12 points and 22 blocks
 
@@ -1013,6 +1030,7 @@ def Hadamard3Design(n):
 
     ::
 
+        sage: # needs sage.combinat sage.modules
         sage: D = designs.Hadamard3Design(8)
         sage: N = D.incidence_matrix()
         sage: N.transpose()*N
@@ -1041,10 +1059,10 @@ def Hadamard3Design(n):
         raise ValueError("The Hadamard design with n = %s does not extend to a three design." % n)
     from sage.combinat.matrices.hadamard_matrix import hadamard_matrix
     from sage.matrix.constructor import matrix, block_matrix
-    H = hadamard_matrix(n) #assumed to be normalised.
+    H = hadamard_matrix(n)  # assumed to be normalised.
     H1 = H.matrix_from_columns(range(1, n))
     J = matrix(ZZ, n, n-1, [1]*(n-1)*n)
-    A1 = (H1+J)/2
-    A2 = (J-H1)/2
-    A = block_matrix(1, 2, [A1, A2]) #the incidence matrix of the design.
-    return IncidenceStructure(incidence_matrix=A, name="HadamardThreeDesign")
+    A1 = (H1 + J) / 2
+    A2 = (J - H1) / 2
+    A = block_matrix(1, 2, [A1, A2])  # the incidence matrix of the design.
+    return IncidenceStructure(incidence_matrix=A, name='HadamardThreeDesign')

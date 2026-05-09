@@ -19,10 +19,8 @@ to slow code.
 
 For those willing to sacrifice a (very small) amount of
 speed, we provide a class that wraps our struct.
-
-
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Tom Boothby <tomas.boothby@gmail.com>
 #       Copyright (C) 2017 Travis Scrimshaw <tscrim@ucdavis.edu>
 #       Copyright (C) 2017 Vincent Delecroix <20100.delecroix@gmail.com>
@@ -30,12 +28,10 @@ speed, we provide a class that wraps our struct.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cimport cython
-
-from cpython.object cimport PyObject
 
 from cysignals.memory cimport check_allocarray, sig_free
 
@@ -56,7 +52,7 @@ from cysignals.memory cimport check_allocarray, sig_free
 #
 ##########################################################
 
-cdef void reset_swap(int n, int *c, int *o):
+cdef void reset_swap(int n, int *c, int *o) noexcept:
     """
     Reset the plain_swapper to the initial state.
     """
@@ -65,7 +61,7 @@ cdef void reset_swap(int n, int *c, int *o):
         c[i] = -1
         o[i] = 1
 
-cdef int next_swap(int n, int *c, int *o):
+cdef int next_swap(int n, int *c, int *o) noexcept:
     """
     Here's the translation of Algorithm P.  We've modified
     it to
@@ -78,39 +74,37 @@ cdef int next_swap(int n, int *c, int *o):
     Note, Knuth's descriptions of algorithms tend to encourage
     one to think of finite state machines.  For convenience,
     we have added comments to show what state the machine is
-    in at any given point in the algorithm. `plain_swap_reset`
+    in at any given point in the algorithm. ``plain_swap_reset``
     sets the state to 1, and this function begins and ends in
     state 2.
 
     Returns the index i such that the next permutation can be
     obtained by swapping P[i] <-> P[i+1]
-
     """
+    cdef int j, s, q, offset
 
-    cdef int j,s,q,offset
-
-    #state 3
+    # state 3
     j = n-1
     if j <= 0:
         return -1
     s = -1
 
     while True:
-        #state 4
+        # state 4
         q = c[j] + o[j]
         if q == j:
-            #state 6
+            # state 6
             if j == 1:
                 return -1
             s = s+1
         elif q >= -1:
             break
 
-        #state 7
+        # state 7
         o[j] = -o[j]
         j = j-1
 
-    #state 5
+    # state 5
     offset = c[j]
     if q > offset:
         offset = q
@@ -120,7 +114,7 @@ cdef int next_swap(int n, int *c, int *o):
 
 def permutation_iterator_transposition_list(int n):
     """
-    Returns a list of transposition indices to enumerate the
+    Return a list of transposition indices to enumerate the
     permutations on `n` letters by adjacent transpositions.
     Assumes zero-based lists.  We artificially limit the
     argument to `n < 12` to avoid overflowing 32-bit pointers.
@@ -172,11 +166,11 @@ def permutation_iterator_transposition_list(int n):
 
 
 #####################################################################
-## iterator-type method for getting the next permutation
+#  iterator-type method for getting the next permutation
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cpdef bint next_perm(array l):
+cpdef bint next_perm(array l) noexcept:
     """
     Obtain the next permutation under lex order of ``l``
     by mutating ``l``.
@@ -192,9 +186,7 @@ cpdef bint next_perm(array l):
 
         This method mutates the array ``l``.
 
-    OUTPUT:
-
-    boolean; whether another permutation was obtained
+    OUTPUT: boolean; whether another permutation was obtained
 
     EXAMPLES::
 
@@ -222,7 +214,7 @@ cpdef bint next_perm(array l):
 
     cdef Py_ssize_t one = n - 2
     cdef Py_ssize_t two = n - 1
-    cdef Py_ssize_t j   = n - 1
+    cdef Py_ssize_t j = n - 1
     cdef unsigned int t
 
     # Starting from the end, find the first o such that
@@ -234,19 +226,19 @@ cpdef bint next_perm(array l):
     if two == 0:
         return False
 
-    #starting from the end, find the first j such that
-    #l[j] > l[one]
+    # starting from the end, find the first j such that
+    # l[j] > l[one]
     while l.data.as_uints[j] <= l.data.as_uints[one]:
         j -= 1
 
-    #Swap positions one and j
+    # Swap positions one and j
     t = l.data.as_uints[one]
     l.data.as_uints[one] = l.data.as_uints[j]
     l.data.as_uints[j] = t
 
-    #Reverse the list between two and last
-    #mset_list = mset_list[:two] + [x for x in reversed(mset_list[two:])]
-    n -= 1 # In the loop, we only need n-1, so just do it once here
+    # Reverse the list between two and last
+    # mset_list = mset_list[:two] + [x for x in reversed(mset_list[two:])]
+    n -= 1  # In the loop, we only need n-1, so just do it once here
     cdef Py_ssize_t i
     for i in range((n + 1 - two) // 2 - 1, -1, -1):
         t = l.data.as_uints[i + two]
@@ -271,11 +263,9 @@ cpdef map_to_list(array l, tuple values, int n):
 
     - ``l`` -- array of unsigned int (i.e., type ``'I'``)
     - ``values`` -- tuple; the values of the permutation
-    - ``n`` -- int; the length of the array ``l``
+    - ``n`` -- integer; the length of the array ``l``
 
-    OUTPUT:
-
-    A list representing the permutation.
+    OUTPUT: list representing the permutation
 
     EXAMPLES::
 
@@ -291,7 +281,7 @@ cpdef map_to_list(array l, tuple values, int n):
 
 
 #####################################################################
-## Multiplication functions for permutations
+#  Multiplication functions for permutations
 
 cpdef list left_action_same_n(list S, list lp):
     r"""

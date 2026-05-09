@@ -1,4 +1,4 @@
-$(PYTHON) numpy $(BLAS) gsl glpk suitesparse | $(PYTHON_TOOLCHAIN) pkgconfig
+ numpy $(BLAS) gsl glpk suitesparse | $(PYTHON_TOOLCHAIN) pkgconfig $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

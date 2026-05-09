@@ -15,7 +15,7 @@ from sage.algebras.fusion_rings.fast_parallel_fmats_methods cimport _fmat
 from sage.rings.qqbar import QQbar
 
 ###############
-### Mappers ###
+#   Mappers   #
 ###############
 
 cdef mid_sig_ij(fusion_ring, row, col, a, b):
@@ -96,6 +96,7 @@ cdef cached_odd_one_out_ij(fusion_ring, xi, xj, a, b):
     odd_one_out_ij_cache[xi, xj, a, b] = entry
     return entry
 
+
 @cython.nonecheck(False)
 @cython.cdivision(True)
 cdef sig_2k(fusion_ring, tuple args):
@@ -175,6 +176,7 @@ cdef sig_2k(fusion_ring, tuple args):
                         worker_results.append(((basis_dict[nnz_pos], i), entry))
     return worker_results
 
+
 @cython.nonecheck(False)
 @cython.cdivision(True)
 cdef odd_one_out(fusion_ring, tuple args):
@@ -252,7 +254,7 @@ cdef odd_one_out(fusion_ring, tuple args):
     return worker_results
 
 ##############################
-### Parallel code executor ###
+#   Parallel code executor   #
 ##############################
 
 # Hard-coded module __dict__-style attribute with visible cdef methods
@@ -266,7 +268,7 @@ cpdef executor(tuple params):
     Execute a function registered in this module's ``mappers``
     in a worker process, and supply the ``FusionRing`` parameter by
     constructing a reference to the FMatrix object in the worker's memory
-    adress space from its ``id``.
+    address space from its ``id``.
 
     .. NOTE::
 
@@ -300,7 +302,7 @@ cpdef executor(tuple params):
     return mappers[fn_name](fusion_ring_obj, args)
 
 ######################################
-### Pickling circumvention helpers ###
+#   Pickling circumvention helpers   #
 ######################################
 
 cpdef _unflatten_entries(fusion_ring, list entries):
@@ -308,8 +310,8 @@ cpdef _unflatten_entries(fusion_ring, list entries):
     Restore cyclotomic coefficient object from its tuple of rational
     coefficients representation.
 
-    Used to circumvent pickling issue introduced by PARI settigs
-    in :trac:`30537`.
+    Used to circumvent pickling issue introduced by PARI settings
+    in :issue:`30537`.
 
     EXAMPLES::
 
@@ -323,7 +325,6 @@ cpdef _unflatten_entries(fusion_ring, list entries):
         True
     """
     F = fusion_ring.fvars_field()
-    fm = fusion_ring.get_fmatrix()
     if F != QQbar:
         for i, (coord, entry) in enumerate(entries):
             entries[i] = (coord, F(entry))

@@ -29,7 +29,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+from sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra import (
+    GradedLieConformalAlgebra,
+)
 
 
 class N2LieConformalAlgebra(GradedLieConformalAlgebra):
@@ -39,11 +41,12 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
     INPUT:
 
     - ``R`` -- a commutative ring; the base ring of this super
-      Lie conformal algebra.
+      Lie conformal algebra
 
     EXAMPLES::
 
-        sage: F.<x> = NumberField(x^2 -2)
+        sage: x = polygen(ZZ, 'x')
+        sage: F.<x> = NumberField(x^2 - 2)
         sage: R = lie_conformal_algebras.N2(F); R
         The N=2 super Lie conformal algebra over Number Field in x with defining polynomial x^2 - 2
         sage: R.inject_variables()
@@ -71,14 +74,14 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
         sage: G.bracket(G)
         {0: 2*L, 2: 2/3*C}
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 
             sage: V = lie_conformal_algebras.N2(QQ)
-            sage: TestSuite(V).run()
+            sage: TestSuite(V).run()  # long time (:issue:`39569`)
         """
         n2dict = {('L', 'L'): {0: {('L', 1): 1},
                                1: {('L', 0): 2},
@@ -102,7 +105,7 @@ class N2LieConformalAlgebra(GradedLieConformalAlgebra):
                                            central_elements=('C',),
                                            weights=weights, parity=parity)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The name of this Lie conformal algebra.
 

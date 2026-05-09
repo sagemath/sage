@@ -12,15 +12,15 @@ cpdef inline richcmp(x, y, int op):
 
     - ``x``, ``y`` -- arbitrary Python objects
 
-    - ``op`` -- comparison operator (one of ``op_LT`, ``op_LE``,
-      ``op_EQ``, ``op_NE``, ``op_GT``, ``op_GE``).
+    - ``op`` -- comparison operator (one of ``op_LT``, ``op_LE``,
+      ``op_EQ``, ``op_NE``, ``op_GT``, ``op_GE``)
 
     EXAMPLES::
 
         sage: from sage.structure.richcmp import *
         sage: richcmp(3, 4, op_LT)
         True
-        sage: richcmp(x, x^2, op_EQ)      # optional - sage.symbolic
+        sage: richcmp(x, x^2, op_EQ)                                                    # needs sage.symbolic
         x == x^2
 
     The two examples above are completely equivalent to ``3 < 4``
@@ -117,7 +117,7 @@ cpdef inline richcmp_not_equal(x, y, int op):
     return richcmp(x, y, op)
 
 
-cpdef inline bint rich_to_bool(int op, int c):
+cpdef inline bint rich_to_bool(int op, int c) noexcept:
     """
     Return the corresponding ``True`` or ``False`` value for a rich
     comparison, given the result of an old-style comparison.
@@ -126,7 +126,7 @@ cpdef inline bint rich_to_bool(int op, int c):
 
     - ``op`` -- a rich comparison operation (e.g. ``Py_EQ``)
 
-    - ``c`` -- the result of an old-style comparison: -1, 0 or 1.
+    - ``c`` -- the result of an old-style comparison: -1, 0 or 1
 
     OUTPUT: 1 or 0 (corresponding to ``True`` and ``False``)
 
@@ -184,7 +184,7 @@ cpdef inline bint rich_to_bool(int op, int c):
     return (bits >> (shift & 31)) & 1
 
 
-cpdef inline bint rich_to_bool_sgn(int op, Py_ssize_t c):
+cpdef inline bint rich_to_bool_sgn(int op, Py_ssize_t c) noexcept:
     """
     Same as ``rich_to_bool``, but allow any `c < 0` and `c > 0`
     instead of only `-1` and `1`.
@@ -196,7 +196,7 @@ cpdef inline bint rich_to_bool_sgn(int op, Py_ssize_t c):
     return rich_to_bool(op, (c > 0) - (c < 0))
 
 
-cpdef inline int revop(int op):
+cpdef inline int revop(int op) noexcept:
     """
     Return the reverse operation of ``op``.
 

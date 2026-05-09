@@ -7,8 +7,6 @@
 
 from cysignals.memory cimport sig_malloc, sig_free
 
-from sage.modules.vector_modn_sparse cimport c_vector_modint
-
 
 cdef int allocate_c_vector_modint(c_vector_modint* v, Py_ssize_t num_nonzero) except -1:
     """
@@ -40,12 +38,12 @@ cdef int init_c_vector_modint(c_vector_modint* v, int p, Py_ssize_t degree,
     return 0
 
 
-cdef void clear_c_vector_modint(c_vector_modint* v):
+cdef void clear_c_vector_modint(c_vector_modint* v) noexcept:
     sig_free(v.entries)
     sig_free(v.positions)
 
 
-cdef Py_ssize_t binary_search0_modn(Py_ssize_t* v, Py_ssize_t n, int_fast64_t x):
+cdef Py_ssize_t binary_search0_modn(Py_ssize_t* v, Py_ssize_t n, int_fast64_t x) noexcept:
     """
     Find the position of the int x in the array v, which has length n.
 
@@ -72,7 +70,7 @@ cdef Py_ssize_t binary_search0_modn(Py_ssize_t* v, Py_ssize_t n, int_fast64_t x)
     return -1
 
 
-cdef Py_ssize_t binary_search_modn(Py_ssize_t* v, Py_ssize_t n, int_fast64_t x, Py_ssize_t* ins):
+cdef Py_ssize_t binary_search_modn(Py_ssize_t* v, Py_ssize_t n, int_fast64_t x, Py_ssize_t* ins) noexcept:
     """
     Find the position of the integer x in the array v, which has length n.
 
@@ -123,7 +121,7 @@ cdef int_fast64_t get_entry(c_vector_modint* v, Py_ssize_t n) except -1:
         return 0
     return v.entries[m]
 
-cdef bint is_entry_zero_unsafe(c_vector_modint* v, Py_ssize_t n):
+cdef bint is_entry_zero_unsafe(c_vector_modint* v, Py_ssize_t n) noexcept:
     """
     Return if the ``n``-th entry of the sparse vector ``v`` is zero.
 
@@ -154,7 +152,6 @@ cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int_fast64_t x) except -1:
     if n < 0 or n >= v.degree:
         raise IndexError("index (=%s) must be between 0 and %s" % (n, v.degree-1))
     cdef Py_ssize_t i, m, ins
-    cdef Py_ssize_t m2, ins2
     cdef Py_ssize_t *pos
     cdef int_fast64_t *e
 
@@ -176,10 +173,10 @@ cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int_fast64_t x) except -1:
             e = v.entries
             pos = v.positions
             allocate_c_vector_modint(v, v.num_nonzero - 1)
-            for i from 0 <= i < m:
+            for i in range(m):
                 v.entries[i] = e[i]
                 v.positions[i] = pos[i]
-            for i from m < i < v.num_nonzero:
+            for i in range(m + 1, v.num_nonzero):
                 v.entries[i-1] = e[i]
                 v.positions[i-1] = pos[i]
             sig_free(e)
@@ -200,12 +197,12 @@ cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int_fast64_t x) except -1:
         e = v.entries
         pos = v.positions
         allocate_c_vector_modint(v, v.num_nonzero)
-        for i from 0 <= i < ins:
+        for i in range(ins):
             v.entries[i] = e[i]
             v.positions[i] = pos[i]
         v.entries[ins] = x
         v.positions[ins] = n
-        for i from ins < i < v.num_nonzero:
+        for i in range(ins + 1, v.num_nonzero):
             v.entries[i] = e[i-1]
             v.positions[i] = pos[i-1]
         sig_free(e)
@@ -254,7 +251,7 @@ cdef int add_c_vector_modint_init(c_vector_modint* sum, c_vector_modint* v,
     while i < v.num_nonzero or j < w.num_nonzero:
         if i >= v.num_nonzero:   # just copy w in
             z.positions[k] = w.positions[j]
-            z.entries[k] = (multiple*w.entries[j])%v.p
+            z.entries[k] = (multiple * w.entries[j]) % v.p
             j = j + 1
             k = k + 1
         elif j >= w.num_nonzero:  # just copy v in
@@ -267,8 +264,8 @@ cdef int add_c_vector_modint_init(c_vector_modint* sum, c_vector_modint* v,
             z.entries[k] = v.entries[i]
             i = i + 1
             k = k + 1
-        elif v.positions[i] > w.positions[j]: # copy entry from w in
-            s = (multiple*w.entries[j])%v.p
+        elif v.positions[i] > w.positions[j]:  # copy entry from w in
+            s = (multiple * w.entries[j]) % v.p
             if s != 0:
                 z.positions[k] = w.positions[j]
                 z.entries[k] = s

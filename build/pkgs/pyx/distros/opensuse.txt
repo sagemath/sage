@@ -1,1 +1,1 @@
-python3-PyX
+python3${PYTHON_MINOR}-PyX

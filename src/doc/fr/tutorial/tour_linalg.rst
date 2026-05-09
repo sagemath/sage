@@ -42,17 +42,6 @@ une matrice (ou un vecteur)  :math:`X` tel que :math:`AX=Y`:
     sage: A * X   # vérifions la réponse...
     (0, -4, -1)
 
-Un antislash (contre-oblique) ``\`` peut être employé à la place de
-``solve_right`` : il suffit d'écrire ``A \ Y`` au lieu de
-``A.solve_right(Y)``.
-
-.. link
-
-::
-
-    sage: A \ Y
-    (-2, 1, 0)
-
 S'il n'y a aucune solution, Sage renvoie une erreur :
 
 .. skip
@@ -74,11 +63,7 @@ Sage sait aussi calculer les valeurs propres et vecteurs propres::
     [-2*I, 2*I]
     sage: B = matrix([[1, 3], [3, 1]])
     sage: B.eigenvectors_left()
-    [(4, [
-    (1, 1)
-    ], 1), (-2, [
-    (1, -1)
-    ], 1)]
+    [(4, [(1, 1)], 1), (-2, [(1, -1)], 1)]
 
 (La sortie de ``eigenvectors_left`` est une liste de triplets (valeur propre,
 vecteur propre, multiplicité).) Sur ``QQ`` et ``RR``, on peut aussi utiliser
@@ -252,4 +237,4 @@ Notez que Python distingue les majuscules des minuscules :
     sage: M = MatrixSpace(QQ, 10,10, Sparse=True)
     Traceback (most recent call last):
     ...
-    TypeError: ...__init__() got an unexpected keyword argument 'Sparse'
+    TypeError: ...__init__() got an unexpected keyword argument 'Sparse'...

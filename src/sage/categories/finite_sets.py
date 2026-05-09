@@ -12,6 +12,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.subquotients import SubquotientsCategory
 
+
 class FiniteSets(CategoryWithAxiom):
     r"""
     The category of finite sets.
@@ -36,6 +37,21 @@ class FiniteSets(CategoryWithAxiom):
         sage: C is Sets().Finite()
         True
     """
+    class SubcategoryMethods:
+
+        def Infinite(self):
+            """
+            Incompatible axiom.
+
+            EXAMPLES::
+
+                sage: P = Posets().Finite()
+                sage: P.Infinite()
+                Traceback (most recent call last):
+                ...
+                TypeError: incompatible axioms: finite and infinite
+            """
+            raise TypeError("incompatible axioms: finite and infinite")
 
     class ParentMethods:
 

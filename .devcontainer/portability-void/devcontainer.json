@@ -1,0 +1,28 @@
+// See https://aka.ms/devcontainer.json for format details.
+{
+    "name": "void",
+    // Doesn't include 'bash', so we use a custom dockerfile
+    // "image": "ghcr.io/void-linux/void-glibc-full",
+    "dockerFile": "Dockerfile",
+    "onCreateCommand": ".devcontainer/onCreate-meson.sh || true",
+    "features": {
+        // Git feature is not compatible with Void Linux, so we install it manually in the Dockerfile 
+        // https://github.com/devcontainers/features/issues/824
+        //"ghcr.io/devcontainers/features/git": {},
+        //"ghcr.io/devcontainers/features/python:1": {},
+        "../uv": {
+			"version": "latest"
+		}
+    },
+    "containerEnv": {
+        "devcontainerId": "${devcontainerId}",
+        "UV_PROJECT_ENVIRONMENT": ".venv-${devcontainerId}" 
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python"
+            ]
+        }
+    }
+}

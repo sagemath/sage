@@ -5,7 +5,7 @@ AUTHORS:
 
 - Travis Scrimshaw (2013-04-28) - Initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
@@ -27,10 +27,8 @@ from sage.structure.element cimport Element, ModuleElement
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.semirings import Semirings
 from sage.categories.map cimport Map
-from sage.sets.family import Family
 from sage.rings.integer_ring import ZZ
 
-import operator
 
 cdef class TropicalSemiringElement(Element):
     r"""
@@ -42,7 +40,7 @@ cdef class TropicalSemiringElement(Element):
 
     cdef TropicalSemiringElement _new(self):
         """
-        Return a new tropical semiring element with parent ``self`.
+        Return a new tropical semiring element with parent ``self``.
         """
         cdef TropicalSemiringElement x
         x = TropicalSemiringElement.__new__(TropicalSemiringElement)
@@ -420,6 +418,7 @@ cdef class TropicalSemiringElement(Element):
             return infinity
         return self._val
 
+
 class TropicalSemiring(Parent, UniqueRepresentation):
     r"""
     The tropical semiring.
@@ -469,8 +468,8 @@ class TropicalSemiring(Parent, UniqueRepresentation):
     INPUT:
 
     - ``base`` -- the base ordered additive semigroup `R`
-    - ``use_min`` -- (default: ``True``) if ``True``, then the semiring uses
-      `a \oplus b = \min(a, b)`; otherwise uses `a \oplus b = \max(a, b)`
+    - ``use_min`` -- boolean (default: ``True``); if ``True``, then the semiring uses
+      `a \oplus b = \min(a, b)`. Otherwise uses `a \oplus b = \max(a, b)`.
 
     EXAMPLES::
 
@@ -557,16 +556,17 @@ class TropicalSemiring(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: TQ = TropicalSemiring(QQ)
+            sage: TQ.has_coerce_map_from(TQ)
+            True
+            sage: TQ.has_coerce_map_from(TropicalSemiring(ZZ))
+            True
+
             sage: TR = TropicalSemiring(RR)
             sage: T60 = TropicalSemiring(RealField(60))
             sage: TR.has_coerce_map_from(T60)
             True
-            sage: TQ = TropicalSemiring(QQ)
-            sage: TQ.has_coerce_map_from(TropicalSemiring(ZZ))
-            True
             sage: TR.has_coerce_map_from(TR)
-            True
-            sage: TQ.has_coerce_map_from(TQ)
             True
             sage: TR.has_coerce_map_from(TQ)
             True
@@ -639,7 +639,7 @@ class TropicalSemiring(Parent, UniqueRepresentation):
 
     multiplicative_identity = one
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -650,6 +650,7 @@ class TropicalSemiring(Parent, UniqueRepresentation):
             (1, +infinity)
         """
         return (self.element_class(self, self.base().one()), self.infinity())
+
 
 cdef class TropicalToTropical(Map):
     """

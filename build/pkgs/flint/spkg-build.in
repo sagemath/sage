@@ -1,0 +1,7 @@
+cd src
+
+# See https://github.com/flintlib/flint/issues/2340
+export CFLAGS="$CFLAGS -fno-strict-aliasing"
+
+sdh_configure
+sdh_make

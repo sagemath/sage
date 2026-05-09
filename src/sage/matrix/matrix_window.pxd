@@ -1,4 +1,5 @@
-from .matrix cimport Matrix
+from sage.matrix.matrix cimport Matrix
+
 
 cdef class MatrixWindow:
     cdef Py_ssize_t _row, _col, _nrows, _ncols
@@ -14,7 +15,7 @@ cdef class MatrixWindow:
     cpdef add_prod(MatrixWindow self, MatrixWindow A, MatrixWindow B)
     cpdef subtract_prod(MatrixWindow self, MatrixWindow A, MatrixWindow B)
 
-    cpdef bint element_is_zero(MatrixWindow self, Py_ssize_t i, Py_ssize_t j)
+    cpdef bint element_is_zero(MatrixWindow self, Py_ssize_t i, Py_ssize_t j) noexcept
     cpdef set_to(MatrixWindow self, MatrixWindow A)
     cpdef set_to_zero(MatrixWindow self)
 

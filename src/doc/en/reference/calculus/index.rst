@@ -23,6 +23,7 @@ Using calculus
 
 - :doc:`More about symbolic variables and functions <sage/calculus/var>`
 - :doc:`Main operations on symbolic expressions <sage/symbolic/expression>`
+- :doc:`sage/calculus/expr`
 - :doc:`Assumptions about symbols and functions <sage/symbolic/assumptions>`
 - :doc:`sage/symbolic/relation`
 - :doc:`sage/symbolic/integration/integral`
@@ -53,10 +54,8 @@ Internal functionality supporting calculus
 - :doc:`sage/symbolic/function_factory`
 - :doc:`Internals of Callable Symbolic Expressions <sage/symbolic/callable>`
 - :doc:`sage/symbolic/expression_conversions`
-- :doc:`sage/symbolic/substitution_map`
 - :doc:`sage/symbolic/benchmark`
 - :doc:`sage/symbolic/random_tests`
-- :doc:`sage/symbolic/maxima_wrapper`
 - :doc:`External integrators <sage/symbolic/integration/external>`
 - :doc:`External interpolators <sage/calculus/interpolators>`
 
@@ -66,6 +65,7 @@ Internal functionality supporting calculus
 
    sage/symbolic/expression
    sage/symbolic/callable
+   sage/calculus/expr
    sage/symbolic/assumptions
    sage/symbolic/relation
    sage/calculus/calculus
@@ -93,9 +93,7 @@ Internal functionality supporting calculus
    sage/calculus/interpolators
    sage/calculus/functions
    sage/calculus/var
-   sage/symbolic/maxima_wrapper
    sage/symbolic/operators
-   sage/symbolic/substitution_map
    sage/symbolic/benchmark
    sage/symbolic/random_tests
 

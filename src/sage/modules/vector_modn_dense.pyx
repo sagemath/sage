@@ -3,7 +3,7 @@ Vectors with integer mod `n` entries, with small `n`
 
 EXAMPLES::
 
-    sage: v = vector(Integers(8),[1,2,3,4,5])
+    sage: v = vector(Integers(8), [1,2,3,4,5])
     sage: type(v)
     <class 'sage.modules.vector_modn_dense.Vector_modn_dense'>
     sage: v
@@ -21,8 +21,8 @@ EXAMPLES::
     sage: v * v
     7
 
-    sage: v = vector(Integers(8),[1,2,3,4,5])
-    sage: u = vector(Integers(8),[1,2,3,4,4])
+    sage: v = vector(Integers(8), [1,2,3,4,5])
+    sage: u = vector(Integers(8), [1,2,3,4,4])
     sage: v - u
     (0, 0, 0, 0, 1)
     sage: u - v
@@ -46,7 +46,7 @@ We make a large zero vector::
 We multiply a vector by a matrix::
 
     sage: a = (GF(97)^5)(range(5))
-    sage: m = matrix(GF(97),5,range(25))
+    sage: m = matrix(GF(97), 5, range(25))
     sage: a*m
     (53, 63, 73, 83, 93)
 
@@ -58,20 +58,20 @@ TESTS::
     sage: v = vector(Integers(389), [1,2,3,4,5])
     sage: loads(dumps(v)) == v
     True
-    sage: v = vector(Integers(next_prime(10^20)), [1,2,3,4,5])
+    sage: v = vector(Integers(next_prime(10^20)), [1,2,3,4,5])                          # needs sage.libs.pari
     sage: loads(dumps(v)) == v
     True
 
-    sage: K = GF(previous_prime(2^31))
-    sage: v = vector(K, [42]);  type(v[0])
+    sage: K = GF(previous_prime(2^31))                                                  # needs sage.rings.finite_rings
+    sage: v = vector(K, [42]);  type(v[0])                                              # needs sage.rings.finite_rings
     <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
-    sage: ~v[0]
+    sage: ~v[0]                                                                         # needs sage.rings.finite_rings
     2096353084
 
-    sage: K = GF(next_prime(2^31))
-    sage: v = vector(K, [42]);  type(v[0])
+    sage: K = GF(next_prime(2^31))                                                      # needs sage.rings.finite_rings
+    sage: v = vector(K, [42]);  type(v[0])                                              # needs sage.rings.finite_rings
     <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
-    sage: ~v[0]
+    sage: ~v[0]                                                                         # needs sage.rings.finite_rings
     1482786336
 
     sage: w = vector(GF(11), [-1,0,0,0])
@@ -79,8 +79,9 @@ TESTS::
     sage: isinstance(hash(w), int)
     True
 
-Test that :trac:`28042` is fixed::
+Test that :issue:`28042` is fixed::
 
+    sage: # needs sage.rings.finite_rings
     sage: p = 193379
     sage: K = GF(p)
     sage: a = K(1)
@@ -88,7 +89,7 @@ Test that :trac:`28042` is fixed::
     sage: c = K(109320)
     sage: d = K(167667)
     sage: e = 103937
-    sage: a*c+b*d-e
+    sage: a*c + b*d - e
     102041
     sage: vector([a,b]) * vector([c,d]) - e
     102041
@@ -128,10 +129,10 @@ cdef mod_int ivalue(IntegerMod_abstract x) except -1:
     else:
         raise TypeError("non-fixed size integer")
 
-from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
+from sage.structure.element cimport Element, Vector
 
 cimport sage.modules.free_module_element as free_module_element
-from .free_module_element import vector
+
 
 cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
     cdef _new_c(self):
@@ -140,17 +141,17 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         y._init(self._degree, self._parent, self._p)
         return y
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 1
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 0
 
     def __copy__(self):
         cdef Vector_modn_dense y
         y = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
+        for i in range(self._degree):
             y._entries[i] = self._entries[i]
         return y
 
@@ -167,28 +168,42 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             self._init(parent.degree(), parent, parent.base_ring().order())
 
     def __init__(self, parent, x, coerce=True, copy=True):
+        """
+        Create an element.
+
+        TESTS:
+
+        Note that ``coerce=False`` is dangerous::
+
+            sage: V = VectorSpace(GF(7), 3)
+            sage: v = V([2, 9, -5], coerce=False)
+            sage: v[0] == v[1]
+            False
+            sage: v[0] + 1 == v[1] + 1
+            True
+            sage: v[0] == v[2]
+            False
+        """
         cdef Py_ssize_t i
-        cdef mod_int a, p
-        if isinstance(x, xrange):
+        cdef mod_int a
+        if isinstance(x, range):
             x = tuple(x)
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
                 raise TypeError("x must be a list of the right length")
             if coerce:
                 R = parent.base_ring()
-                p = R.order()
-                for i from 0 <= i < self._degree:
+                for i in range(self._degree):
                     a = int(R(x[i]))
-                    self._entries[i] = a % p
+                    self._entries[i] = a
             else:
-                for i from 0 <= i < self._degree:
+                for i in range(self._degree):
                     self._entries[i] = x[i]
             return
         if x != 0:
             raise TypeError("can't initialize vector from nonzero non-list")
-        else:
-            for i from 0 <= i < self._degree:
-                self._entries[i] = 0
+        for i in range(self._degree):
+            self._entries[i] = 0
 
     def __dealloc__(self):
         sig_free(self._entries)
@@ -270,27 +285,25 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         """
         self._entries[i] = ivalue(<IntegerMod_abstract>value)
 
-
     def __reduce__(self):
         return unpickle_v1, (self._parent, self.list(), self._degree,
-                             self._p, not self._is_immutable)
+                             self._p, self._is_immutable)
 
     cpdef _add_(self, right):
         cdef Vector_modn_dense z, r
         r = right
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
+        for i in range(self._degree):
             z._entries[i] = (self._entries[i] + r._entries[i]) % self._p
         return z
-
 
     cpdef _sub_(self, right):
         cdef Vector_modn_dense z, r
         r = right
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
+        for i in range(self._degree):
             z._entries[i] = (self._p + self._entries[i] - r._entries[i]) % self._p
         return z
 
@@ -301,7 +314,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         cdef Vector_modn_dense r = right
 
         if use_32bit_type(self._p):
-            n =  IntegerMod_int.__new__(IntegerMod_int)
+            n = IntegerMod_int.__new__(IntegerMod_int)
             IntegerMod_abstract.__init__(n, self.base_ring())
             n.ivalue = 0
             for i in range(self._degree):
@@ -329,7 +342,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         r = right
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
+        for i in range(self._degree):
             z._entries[i] = (self._entries[i] * r._entries[i]) % self._p
         return z
 
@@ -340,7 +353,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         z = self._new_c()
         cdef Py_ssize_t i
 
-        for i from 0 <= i < self._degree:
+        for i in range(self._degree):
             z._entries[i] = (self._entries[i] * a) % self._p
         return z
 
@@ -348,12 +361,13 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         cdef Vector_modn_dense z
         z = self._new_c()
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
+        for i in range(self._degree):
             if self._entries[i] > 0:
                 z._entries[i] = self._p - self._entries[i]
             else:
                 z._entries[i] = 0
         return z
+
 
 def unpickle_v0(parent, entries, degree, p):
     # If you think you want to change this function, don't.
@@ -363,15 +377,16 @@ def unpickle_v0(parent, entries, degree, p):
     cdef Vector_modn_dense v
     v = Vector_modn_dense.__new__(Vector_modn_dense)
     v._init(degree, parent, p)
-    for i from 0 <= i < degree:
+    for i in range(degree):
         v._entries[i] = entries[i]
     return v
 
-def unpickle_v1(parent, entries, degree, p, is_mutable):
+
+def unpickle_v1(parent, entries, degree, p, immutable):
     cdef Vector_modn_dense v
     v = Vector_modn_dense.__new__(Vector_modn_dense)
     v._init(degree, parent, p)
-    for i from 0 <= i < degree:
+    for i in range(degree):
         v._entries[i] = entries[i]
-    v._is_immutable = not is_mutable
+    v._is_immutable = immutable
     return v
