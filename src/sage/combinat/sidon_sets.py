@@ -95,9 +95,9 @@ def sidon_sets(N, g=1):
         ValueError: g must be a positive integer
     """
     if not isinstance(N, (int, Integer)) or N < 1:
-        raise ValueError( "N must be a positive integer" )
+        raise ValueError("N must be a positive integer")
     elif not isinstance(g, (int, Integer)) or g < 1:
-        raise ValueError( "g must be a positive integer" )
+        raise ValueError("g must be a positive integer")
     return sidon_sets_rec(N, g=g)
 
 

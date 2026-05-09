@@ -55,6 +55,7 @@ from pexpect import ExceptionPexpect
 import sage.interfaces.abc
 from sage.cpython.string import bytes_to_str, str_to_bytes
 from sage.env import LOCAL_IDENTIFIER, SAGE_EXTCODE
+from sage.interfaces import quit
 from sage.interfaces.interface import (
     Interface,
     InterfaceElement,
@@ -64,8 +65,6 @@ from sage.interfaces.interface import (
 from sage.misc.instancedoc import instancedoc
 from sage.misc.object_multiplexer import Multiplex
 from sage.structure.element import RingElement
-
-from . import quit
 
 BAD_SESSION = -2
 
@@ -500,7 +499,8 @@ If this all works, you can then make calls like:
         # See Issue #12221 and #13859.
         pexpect_env = dict(os.environ)
         pexpect_env.update(self._env)
-        pexpect_del_vars = ['TERM', 'COLUMNS']
+        pexpect_env['TERM'] = "dumb"
+        pexpect_del_vars = ['COLUMNS']
         for i in pexpect_del_vars:
             try:
                 del pexpect_env[i]
@@ -692,7 +692,7 @@ If this all works, you can then make calls like:
         self._reset_expect()
 
     def _quit_string(self):
-        """
+        r"""
         Return the string which will be used to quit the application.
 
         EXAMPLES::
@@ -867,7 +867,7 @@ If this all works, you can then make calls like:
             if self._quit_string() in line:
                 # we expect to get an EOF if we're quitting.
                 return ''
-            elif restart_if_needed:  # the subprocess might have crashed
+            if restart_if_needed:  # the subprocess might have crashed
                 try:
                     self._synchronize()
                     return self._post_process_from_file(self._eval_line_using_file(line, restart_if_needed=False))
@@ -1038,7 +1038,7 @@ If this all works, you can then make calls like:
                     if self._quit_string() in line:
                         # we expect to get an EOF if we're quitting.
                         return ''
-                    elif restart_if_needed:  # the subprocess might have crashed
+                    if restart_if_needed:  # the subprocess might have crashed
                         try:
                             self._synchronize()
                             return self._eval_line(line, allow_use_file=allow_use_file, wait_for_prompt=wait_for_prompt, restart_if_needed=False)
@@ -1060,8 +1060,7 @@ If this all works, you can then make calls like:
             i = out.find("\n")
             j = out.rfind("\r")
             return out[i + 1:j].replace('\r\n', '\n')
-        else:
-            return out.replace('\r\n', '\n')
+        return out.replace('\r\n', '\n')
 
     def _keyboard_interrupt(self):
         print("Interrupting %s..." % self)
@@ -1410,11 +1409,10 @@ If this all works, you can then make calls like:
                 if (split_lines == "nofile" and allow_use_file and
                         self._eval_using_file_cutoff and len(code) > self._eval_using_file_cutoff):
                     return self._eval_line_using_file(code)
-                elif split_lines:
+                if split_lines:
                     return '\n'.join(self._eval_line(L, allow_use_file=allow_use_file, **kwds)
                                      for L in code.split('\n') if L)
-                else:
-                    return self._eval_line(code, allow_use_file=allow_use_file, **kwds)
+                return self._eval_line(code, allow_use_file=allow_use_file, **kwds)
         # DO NOT CATCH KeyboardInterrupt, as it is being caught
         # by _eval_line
         # In particular, do NOT call self._keyboard_interrupt()

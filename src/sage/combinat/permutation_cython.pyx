@@ -166,7 +166,7 @@ def permutation_iterator_transposition_list(int n):
 
 
 #####################################################################
-## iterator-type method for getting the next permutation
+#  iterator-type method for getting the next permutation
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
@@ -214,7 +214,7 @@ cpdef bint next_perm(array l) noexcept:
 
     cdef Py_ssize_t one = n - 2
     cdef Py_ssize_t two = n - 1
-    cdef Py_ssize_t j   = n - 1
+    cdef Py_ssize_t j = n - 1
     cdef unsigned int t
 
     # Starting from the end, find the first o such that
@@ -238,7 +238,7 @@ cpdef bint next_perm(array l) noexcept:
 
     # Reverse the list between two and last
     # mset_list = mset_list[:two] + [x for x in reversed(mset_list[two:])]
-    n -= 1 # In the loop, we only need n-1, so just do it once here
+    n -= 1  # In the loop, we only need n-1, so just do it once here
     cdef Py_ssize_t i
     for i in range((n + 1 - two) // 2 - 1, -1, -1):
         t = l.data.as_uints[i + two]
@@ -281,7 +281,7 @@ cpdef map_to_list(array l, tuple values, int n):
 
 
 #####################################################################
-## Multiplication functions for permutations
+#  Multiplication functions for permutations
 
 cpdef list left_action_same_n(list S, list lp):
     r"""

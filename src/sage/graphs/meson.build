@@ -9,7 +9,7 @@ endif
 cliquer = dependency('libcliquer', required: false, disabler: true)
 if not cliquer.found()
   # fallback for older versions without pkg-config
-  cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
+  cliquer = cc.find_library('cliquer', required: false, disabler: true)
 endif
 
 planarity = dependency('libplanarity', required: false, disabler: true)
@@ -17,7 +17,7 @@ if not planarity.found()
   # fallback for older versions without pkg-config
   planarity = cc.find_library(
     'planarity',
-    required: not is_windows,
+    required: false,
     disabler: true,
   )
 endif
@@ -118,6 +118,12 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, flint, gmp]
+  if name == 'cliquer'
+    deps += cliquer
+  elif name == 'planarity'
+    deps += planarity
+  endif
   py.extension_module(
     name,
     sources: pyx,
@@ -129,7 +135,7 @@ foreach name, pyx : extension_data
       inc_flint,
       inc_rings,
     ],
-    dependencies: [py_dep, cysignals, cliquer, flint, gmp, planarity],
+    dependencies: deps,
   )
 endforeach
 
@@ -153,7 +159,7 @@ foreach name, pyx : extension_data_cpp
       inc_flint,
       inc_rings,
     ],
-    dependencies: [py_dep, cysignals, flint, gmp, planarity],
+    dependencies: [py_dep, cysignals, flint, gmp],
   )
 endforeach
 

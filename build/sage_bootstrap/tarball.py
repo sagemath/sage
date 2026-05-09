@@ -16,6 +16,7 @@ Third-Party Tarballs
 # ****************************************************************************
 
 import os
+
 import logging
 log = logging.getLogger()
 
@@ -40,7 +41,7 @@ class FileNotMirroredError(Exception):
 
 class Tarball(object):
 
-    def __init__(self, tarball_name, package=None):
+    def __init__(self, tarball_name, package=None, tarball_info=None):
         """
         A (third-party downloadable) tarball
 
@@ -52,8 +53,13 @@ class Tarball(object):
 
         - ``tarball_name`` - string. The full filename (``foo-1.3.tar.bz2``)
           of a tarball on the Sage mirror network.
+        - ``package`` - Package object, or None to auto-detect
+        - ``tarball_info`` - dict with tarball info (for multi-tarball packages)
+          containing sha256, sha1, upstream_url
         """
         self.__filename = tarball_name
+        self.__tarball_info = tarball_info
+
         if package is None:
             self.__package = None
             for pkg in Package.all():
@@ -65,7 +71,9 @@ class Tarball(object):
                 raise ValueError(error)
         else:
             self.__package = package
-            if package.tarball_filename != tarball_name:
+            # For multi-tarball packages (with tarball_info), skip the filename check
+            # since we're selecting a platform-specific wheel
+            if tarball_info is None and package.tarball_filename != tarball_name:
                 error = 'tarball {0} is not referenced by the {1} package'.format(tarball_name, package.name)
                 log.error(error)
                 raise ValueError(error)
@@ -126,18 +134,43 @@ class Tarball(object):
     def checksum_verifies(self, force_sha256=False):
         """
         Test whether the checksum of the downloaded file is correct.
+        
+        Uses tarball_info if available (for multi-tarball packages),
+        otherwise falls back to package-level checksums.
         """
-        if self.package.sha256:
+        # Use tarball_info if available (for multi-tarball packages)
+        if self.__tarball_info:
+            sha256_expected = self.__tarball_info.get('sha256')
+            sha1_expected = self.__tarball_info.get('sha1')
+        else:
+            sha256_expected = self.package.sha256
+            sha1_expected = self.package.sha1
+        
+        if sha256_expected:
             sha256 = self._compute_sha256()
-            if sha256 != self.package.sha256:
+            if sha256 != sha256_expected:
+                log.error(f'SHA256 mismatch for {self.filename}')
+                log.error(f'Expected: {sha256_expected}')
+                log.error(f'Got:      {sha256}')
                 return False
         elif force_sha256:
             log.warning('sha256 not available for {0}'.format(self.package.name))
             return False
         else:
             log.warning('sha256 not available for {0}, using sha1'.format(self.package.name))
-        sha1 = self._compute_sha1()
-        return sha1 == self.package.sha1
+            if sha1_expected:
+                sha1 = self._compute_sha1()
+                if sha1 != sha1_expected:
+                    log.error(f'SHA1 mismatch for {self.filename}')
+                    log.error(f'Expected: {sha1_expected}')
+                    log.error(f'Got:      {sha1}')
+                    return False
+                return True
+            else:
+                log.warning('No checksum available for {0}'.format(self.package.name))
+                return False
+        
+        return True
 
     def is_distributable(self):
         return 'do-not-distribute' not in self.filename
@@ -149,10 +182,26 @@ class Tarball(object):
         If allow_upstream is False and the package cannot be found
         on the sage mirrors, fall back to downloading it from
         the upstream URL if the package has one.
+        
+        For platform-specific wheels, this method:
+        1. Checks for a cached wheel matching the current platform
+        2. If cached and checksum valid, uses it
+        3. Otherwise, download from upstream
         """
         if not self.filename:
             raise ValueError('non-normal package does define a tarball, so cannot download')
+        
         destination = self.upstream_fqn
+        
+        # Check if package has multiple tarballs (multi-platform wheels)
+        has_multiple_tarballs = len(self.package.tarballs_info) > 1
+        
+        if has_multiple_tarballs:
+            log.info(f'Package {self.package.name} has {len(self.package.tarballs_info)} platform-specific tarballs')
+            return self._download_multiple_wheels(allow_upstream)
+        
+        # Single tarball case - existing logic
+        # Check if file already exists and is valid
         if os.path.isfile(destination):
             if self.checksum_verifies():
                 log.info('Using cached file {destination}'.format(destination=destination))
@@ -163,6 +212,8 @@ class Tarball(object):
                 # update the checksum (Issue #23972).
                 log.warning('Invalid checksum; ignoring cached file {destination}'
                             .format(destination=destination))
+                
+        # Traditional download logic for tarballs and platform-independent wheels
         successful_download = False
         log.info('Attempting to download package {0} from mirrors'.format(self.filename))
         for mirror in MirrorList():
@@ -189,6 +240,109 @@ class Tarball(object):
                 raise FileNotMirroredError('tarball does not exist on mirror network')
         if not self.checksum_verifies():
             raise ChecksumError('checksum does not match')
+
+    def _download_multiple_wheels(self, allow_upstream=False):
+        """
+        Handle download for packages with multiple platform-specific wheels.
+        
+        Strategy:
+        1. If SAGE_DOWNLOAD_ALL_WHEELS is set, download all wheels (for make dist)
+        2. Otherwise, use find_tarball_for_platform() to get the exact filename for this platform
+        3. Check if file is already cached with valid checksum
+        4. If not cached, download from mirrors/upstream
+        """
+        download_all = os.environ.get('SAGE_DOWNLOAD_ALL_WHEELS', '').lower() in ['yes', '1', 'true']
+        
+        if download_all:
+            # Download all wheels for distribution
+            log.info(f'Downloading all {len(self.package.tarballs_info)} wheels for {self.package.name}')
+            for tarball_info in self.package.tarballs_info:
+                self._download_single_wheel(tarball_info, allow_upstream)
+            # Keep self.__filename pointing to the first one for compatibility
+            tarball_pattern = self.package.tarballs_info[0]['tarball']
+            self.__filename = self.package._substitute_variables(tarball_pattern)
+            return
+        
+        # Find the appropriate tarball for this platform from checksums.ini
+        tarball_info = self.package.find_tarball_for_platform()
+        
+        if not tarball_info:
+            raise ValueError(f'No suitable tarball found for {self.package.name} on current platform')
+        
+        # Download the single platform-specific wheel
+        self._download_single_wheel(tarball_info, allow_upstream)
+    
+    def _download_single_wheel(self, tarball_info, allow_upstream=False):
+        """
+        Download a single wheel given its tarball info.
+        
+        INPUT:
+        - ``tarball_info`` - dict with tarball, sha256, sha1, upstream_url
+        - ``allow_upstream`` - whether to allow downloading from upstream
+        """
+        # Get the actual filename with version substituted
+        tarball_pattern = tarball_info['tarball']
+        tarball_filename = self.package._substitute_variables(tarball_pattern)
+        
+        log.info(f'Selected tarball for platform: {tarball_filename}')
+        
+        # Check if file already exists in cache
+        destination = os.path.join(SAGE_DISTFILES, tarball_filename)
+        
+        # Create a temporary Tarball object for this specific wheel
+        wheel_tarball = Tarball(tarball_filename, 
+                               package=self.package, 
+                               tarball_info=tarball_info)
+        
+        # Check if file already exists and is valid
+        if os.path.isfile(destination):
+            if wheel_tarball.checksum_verifies():
+                log.info('Using cached file {destination}'.format(destination=destination))
+                # Update self to point to the cached wheel
+                self.__filename = tarball_filename
+                self.__tarball_info = tarball_info
+                return
+            else:
+                # Garbage in the upstream directory? Ignore it.
+                # Don't delete it because maybe somebody just forgot to
+                # update the checksum (Issue #23972).
+                log.warning('Invalid checksum; ignoring cached file {destination}'
+                            .format(destination=destination))
+        
+        # Download logic for platform-specific wheels
+        successful_download = False
+        log.info('Attempting to download package {0} from mirrors'.format(tarball_filename))
+        for mirror in MirrorList():
+            url = mirror.replace('${SPKG}', self.package.name)
+            if not url.endswith('/'):
+                url += '/'
+            url += tarball_filename
+            log.info(url)
+            try:
+                Download(url, destination).run()
+                successful_download = True
+                break
+            except IOError:
+                log.debug('File not on mirror')
+        
+        if not successful_download:
+            upstream_url_pattern = tarball_info.get('upstream_url')
+            url = self.package._substitute_variables(upstream_url_pattern) if upstream_url_pattern else None
+            if allow_upstream and url:
+                log.info('Attempting to download from {}'.format(url))
+                try:
+                    Download(url, destination).run()
+                except IOError:
+                    raise FileNotMirroredError('tarball does not exist on mirror network and neither at the upstream URL')
+            else:
+                raise FileNotMirroredError('tarball does not exist on mirror network')
+        
+        if not wheel_tarball.checksum_verifies():
+            raise ChecksumError('checksum does not match')
+        
+        # Update self to point to the successfully downloaded wheel
+        self.__filename = tarball_filename
+        self.__tarball_info = tarball_info
 
     def save_as(self, destination):
         """

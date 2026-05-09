@@ -13,7 +13,7 @@ AUTHORS:
 
 from sage.structure.sage_object import SageObject
 
-import sage.misc.misc as misc
+from sage.misc import misc
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.big_oh import O
@@ -531,7 +531,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         if prec == 1:
             return R(0)
-        elif prec == 2:
+        if prec == 2:
             return t1 + t2 - self.curve().a1()*t1*t2
 
         try:

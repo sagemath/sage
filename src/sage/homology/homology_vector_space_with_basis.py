@@ -243,9 +243,8 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         """
         if d is None:
             return Family(self._indices, self.monomial)
-        else:
-            indices = [(d, i) for i in self._graded_indices.get(d, [])]
-            return Family(indices, self.monomial)
+        indices = [(d, i) for i in self._graded_indices.get(d, [])]
+        return Family(indices, self.monomial)
 
     def degree_on_basis(self, i):
         r"""
@@ -516,8 +515,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
                 return self.base_ring().zero()
             if self.parent()._cohomology:
                 return self.to_cycle().eval(other.to_cycle())
-            else:
-                return other.to_cycle().eval(self.to_cycle())
+            return other.to_cycle().eval(self.to_cycle())
 
 
 class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
@@ -1101,7 +1099,7 @@ class CohomologyRing_mod2(CohomologyRing):
                 # Convert cubical complex to simplicial complex, and
                 # convert self to basis element in the new complex's
                 # cohomology ring.
-                scomplex = SimplicialComplex(scomplex, is_mutable=False)
+                scomplex = SimplicialComplex(scomplex, immutable=True)
                 P = scomplex.cohomology_ring(self.base_ring())
                 self = P.sum_of_terms(self.monomial_coefficients().items())
             if not isinstance(scomplex, (SimplicialComplex, SimplicialSet_arbitrary)):

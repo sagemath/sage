@@ -73,8 +73,7 @@ def print_compare(x, y):
     """
     if x == y:
         return LazyFormat("%s == %s") % (x, y)
-    else:
-        return LazyFormat("%s != %s") % (x, y)
+    return LazyFormat("%s != %s") % (x, y)
 
 
 class EmptySetError(ValueError):
@@ -287,17 +286,16 @@ class Sets(Category_singleton):
         if choice is None:
             from sage.categories.examples.sets_cat import PrimeNumbers
             return PrimeNumbers()
-        elif choice == "inherits":
+        if choice == "inherits":
             from sage.categories.examples.sets_cat import PrimeNumbers_Inherits
             return PrimeNumbers_Inherits()
-        elif choice == "facade":
+        if choice == "facade":
             from sage.categories.examples.sets_cat import PrimeNumbers_Facade
             return PrimeNumbers_Facade()
-        elif choice == "wrapper":
+        if choice == "wrapper":
             from sage.categories.examples.sets_cat import PrimeNumbers_Wrapper
             return PrimeNumbers_Wrapper()
-        else:
-            raise ValueError("unknown choice")
+        raise ValueError("unknown choice")
 
     class SubcategoryMethods:
 
@@ -984,8 +982,7 @@ class Sets(Category_singleton):
             """
             if hasattr(self, "element_class"):
                 return self._element_constructor_from_element_class
-            else:
-                return NotImplemented
+            return NotImplemented
 
         def _element_constructor_from_element_class(self, *args, **keywords):
             """
@@ -2531,7 +2528,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     if is_empty:
                         from sage.rings.integer_ring import ZZ
                         return ZZ.zero()
-                    elif any(c in Sets().Infinite() for c in f):
+                    if any(c in Sets().Infinite() for c in f):
                         from sage.rings.infinity import Infinity
                         return Infinity
 
@@ -2794,9 +2791,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 """
                 if hasattr(self, "_name"):
                     return self._name + " over {}".format(self.base_ring())
-                else:
-                    return 'Algebra of {} over {}'.format(self.basis().keys(),
-                                                          self.base_ring())
+                return 'Algebra of {} over {}'.format(self.basis().keys(),
+                                                      self.base_ring())
 
     class WithRealizations(WithRealizationsCategory):
 
@@ -2980,6 +2976,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                       irreducible symmetric group character basis
                     Defining w as shorthand for
                      Symmetric Functions over Integer Ring in the Witt basis
+                    Defining xt as shorthand for
+                     Symmetric Functions over Integer Ring in the irreducible rook monoid character basis
 
                 The messages can be silenced by setting ``verbose=False``::
 

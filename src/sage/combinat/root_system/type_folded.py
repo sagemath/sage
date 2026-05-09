@@ -293,7 +293,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
             index_set = self._cartan_type.index_set()
             min_f = min(f(j) for j in index_set)
             return Family({i: int(f(i) / min_f) for i in index_set})
-        elif self._cartan_type.is_affine():
+        if self._cartan_type.is_affine():
             c = self._cartan_type.translation_factors()
             cmax = max(c)
             return Family({i: int(cmax / c[i])

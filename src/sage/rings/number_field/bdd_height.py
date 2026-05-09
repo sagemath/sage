@@ -231,13 +231,18 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
         sage: bdd_norm_pr_ideal_gens(K, [1])
         {1: [1]}
 
-    ::
+    In this example the output differs slightly on 32- and 64-bit
+    machines, but in both cases the norm of `g \pm 11` is the same::
 
-        sage: from sage.rings.number_field.bdd_height import bdd_norm_pr_ideal_gens
+        sage: from sage.rings.number_field.bdd_height import (
+        ....:     bdd_norm_pr_ideal_gens
+        ....: )
         sage: K.<g> = QuadraticField(123)
-        sage: bdd_norm_pr_ideal_gens(K, range(5))
-        {0: [0], 1: [1], 2: [g + 11], 3: [], 4: [2]}  # 64-bit
-        {0: [0], 1: [1], 2: [g - 11], 3: [], 4: [2]}  # 32-bit
+        sage: d = bdd_norm_pr_ideal_gens(K, range(5))
+        sage: d  # needs 32_bit
+        {0: [0], 1: [1], 2: [g - 11], 3: [], 4: [2]}
+        sage: d  # needs !32_bit
+        {0: [0], 1: [1], 2: [g + 11], 3: [], 4: [2]}
 
     ::
 

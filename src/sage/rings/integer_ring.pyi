@@ -17,7 +17,7 @@ class IntegerRing_class(CommutativeRing):
     def __hash__(self) -> int:
         ...
 
-    def __richcmp__(self, right: Any, op: int) -> bool:
+    def __richcmp__(self, other: Any, op: int) -> bool:
         ...
 
     def _repr_(self) -> str:

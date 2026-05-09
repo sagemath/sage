@@ -533,8 +533,7 @@ class LiE(ExtraTabCompletion, Expect):
             self._read_info_files()
         if type:
             return sorted(self._tab_completion_dict[type])
-        else:
-            return self._tab_completion_list
+        return self._tab_completion_list
 
     def _an_element_(self):
         """
@@ -667,8 +666,7 @@ class LiE(ExtraTabCompletion, Expect):
         # return s.strip()
         if len(s) > 0 and s.find("\n") != -1:
             return s
-        else:
-            return s.strip()
+        return s.strip()
 
     def set(self, var, value):
         """
@@ -794,8 +792,7 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
             if R is not None:
                 m = m.change_ring(R)
             return m
-        else:
-            raise ValueError("not a matrix")
+        raise ValueError("not a matrix")
 
     def _sage_(self):
         """

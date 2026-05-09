@@ -272,10 +272,6 @@ rectangles. Obviously, there is one solution::
      [25], [26], [27], [28], [29], [30], [31]]
     sage: T.number_of_solutions()                       # long time (fast)
     1
-
-REFERENCES:
-
-.. [Knuth1] Knuth, Donald (2000). "Dancing links". :arxiv:`cs/0011047`.
 """
 # ****************************************************************************
 #       Copyright (C) 2011-2015 Sébastien Labbé <slabqc@gmail.com>
@@ -357,8 +353,7 @@ def ncube_isometry_group(n, orientation_preserving=True):
     L = [w.matrix() for w in WeylGroup(['B', n])]
     if orientation_preserving:
         return [m for m in L if m.det() == 1]
-    else:
-        return L
+    return L
 
 
 @cached_function
@@ -573,8 +568,7 @@ class Polyomino(SageObject):
         """
         if color is None:
             return self._color
-        else:
-            self._color = color
+        self._color = color
 
     def frozenset(self):
         r"""
@@ -967,10 +961,9 @@ class Polyomino(SageObject):
                         for coset in L}
             P_cosets_representents = [min(s, key=lambda a: a.sorted_list()) for s in P_cosets]
             return sorted(P_cosets_representents, key=lambda a: a.sorted_list())
-        else:
-            L = ncube_isometry_group(self._dimension, orientation_preserving)
-            P_images = {(m * self).canonical() for m in L}
-            return sorted(P_images, key=lambda a: a.sorted_list())
+        L = ncube_isometry_group(self._dimension, orientation_preserving)
+        P_images = {(m * self).canonical() for m in L}
+        return sorted(P_images, key=lambda a: a.sorted_list())
 
     def translated_copies(self, box):
         r"""
@@ -1650,9 +1643,8 @@ class TilingSolver(SageObject):
         """
         if self._reusable:
             return len(self.rows()) != 0
-        else:
-            return (sum(len(p) for p in self.pieces()) == len(self._box)
-                    and len(self.rows()) != 0)
+        return (sum(len(p) for p in self.pieces()) == len(self._box)
+                and len(self.rows()) != 0)
 
     def pieces(self):
         r"""

@@ -91,7 +91,7 @@ if not homfly.found()
   homfly = cc.find_library(
     'homfly',
     has_headers: ['homfly.h'],
-    required: false,
+    required: get_option('libhomfly'),
     disabler: true,
   )
 endif
@@ -183,10 +183,13 @@ subdir('lcalc')
 subdir('linbox')
 install_subdir('linkages', install_dir: sage_install_dir / 'libs')
 install_subdir('lrcalc', install_dir: sage_install_dir / 'libs')
+install_subdir('mpc', install_dir: sage_install_dir / 'libs')
+install_subdir('mpfi', install_dir: sage_install_dir / 'libs')
 install_subdir('mpfr', install_dir: sage_install_dir / 'libs')
 subdir('mpmath')
 install_subdir('mwrank', install_dir: sage_install_dir / 'libs')
 subdir('ntl')
 subdir('pari')
+install_subdir('polybori', install_dir: sage_install_dir / 'libs')
 subdir('singular')
 subdir('symmetrica')

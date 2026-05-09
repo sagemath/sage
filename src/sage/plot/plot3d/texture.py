@@ -239,8 +239,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
             t = kwds['texture']
             if isinstance(t, Texture):
                 return t
-            else:
-                raise TypeError("texture keyword must be a texture object")
+            raise TypeError("texture keyword must be a texture object")
         if isinstance(id, dict):
             kwds = id
             if 'rgbcolor' in kwds:
@@ -317,8 +316,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
         """
         if self.name is not None:
             return f"Texture({self.id}, {self.name}, {self.hex_rgb()})"
-        else:
-            return f"Texture({self.id}, {self.hex_rgb()})"
+        return f"Texture({self.id}, {self.hex_rgb()})"
 
     def hex_rgb(self) -> str:
         """

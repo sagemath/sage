@@ -343,8 +343,7 @@ class FreeModulePseudoMorphism(Morphism):
         """
         if self._side == "left":
             return self._matrix.__copy__()
-        else:
-            return self._matrix.transpose()
+        return self._matrix.transpose()
 
     def twisting_derivation(self):
         r"""

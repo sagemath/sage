@@ -49,7 +49,6 @@ Functions
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-cimport cython
 from cysignals.signals cimport sig_check, sig_on, sig_off
 from libcpp.set cimport set as cset
 from libcpp.pair cimport pair
@@ -744,7 +743,7 @@ cpdef min_spanning_tree(g,
     return [(u, v, g.edge_label(u, v)) for u, v in edges]
 
 
-cpdef blocks_and_cut_vertices(g):
+cpdef blocks_and_cut_vertices(g, forbidden_vertices=None):
     r"""
     Compute the blocks and cut vertices of the graph.
 
@@ -754,6 +753,9 @@ cpdef blocks_and_cut_vertices(g):
     INPUT:
 
     - ``g`` -- the input Sage graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     OUTPUT:
 
@@ -772,9 +774,28 @@ cpdef blocks_and_cut_vertices(g):
         sage: blocks_and_cut_vertices(g)
         ([[8, 9], [7, 8], [0, 1, 2, 3, 5, 4, 6, 7]], [8, 7])
 
-        sage: G = Graph([(0,1,{'name':'a','weight':1}), (0,2,{'name':'b','weight':3}), (1,2,{'name':'b','weight':1})])
+        sage: G = Graph([(0,1,{'name':'a','weight':1}),
+        ....:            (0,2,{'name':'b','weight':3}),
+        ....:            (1,2,{'name':'b','weight':1})])
         sage: blocks_and_cut_vertices(G)
         ([[0, 1, 2]], [])
+
+    Check the behavior of parameter ``forbidden_vertices``::
+
+        sage: G = graphs.WindmillGraph(4, 3)
+        sage: blocks_and_cut_vertices(G)
+        ([[0, 1, 2, 3], [0, 4, 5, 6], [0, 7, 8, 9]], [0])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=[0])
+        ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], [])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=[1])
+        ([[0, 2, 3], [0, 4, 5, 6], [0, 7, 8, 9]], [0])
+        sage: G = graphs.PathGraph(3)
+        sage: blocks_and_cut_vertices(G)
+        ([[1, 2], [0, 1]], [1])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=[0])
+        ([[1, 2]], [])
+        sage: blocks_and_cut_vertices(G, forbidden_vertices=[1])
+        ([[0], [2]], [])
 
     TESTS:
 
@@ -790,8 +811,17 @@ cpdef blocks_and_cut_vertices(g):
     if not isinstance(g, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    if g.allows_loops() or g.allows_multiple_edges() or g.is_directed():
-        g = g.to_simple()
+    cdef set forbidden = set() if forbidden_vertices is None else set(forbidden_vertices)
+
+    if (g.allows_loops() or g.allows_multiple_edges()
+            or g.is_directed() or forbidden):
+        # Build the underlying undirected graph without loops or multiple edges,
+        # and without the forbidden vertices
+        V = [v for v in g if v not in forbidden]
+        E = [(u, v) for u, v in g.edge_iterator(vertices=V, labels=False, sort_vertices=False)
+             if u != v and u not in forbidden and v not in forbidden]
+        from sage.graphs.graph import Graph
+        g = Graph([V, E], format='vertices_and_edges')
 
     cdef BoostVecGraph g_boost
     cdef vector[vector[v_index]] result
