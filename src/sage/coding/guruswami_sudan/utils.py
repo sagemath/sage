@@ -101,8 +101,7 @@ def gilt(x):
     """
     if x in ZZ:
         return Integer(x - 1)
-    else:
-        return floor(x)
+    return floor(x)
 
 
 def solve_degree2_to_integer_range(a, b, c):
@@ -138,8 +137,7 @@ def solve_degree2_to_integer_range(a, b, c):
     mini, maxi = (ligt(minx), gilt(maxx))
     if mini > maxi:
         return (-2,-1)
-    else:
-        return (mini,maxi)
+    return (mini,maxi)
 
 
 def _degree_of_vector(v, shifts=None):
@@ -168,8 +166,7 @@ def _degree_of_vector(v, shifts=None):
     """
     if not shifts:
         return max(vi.degree() for vi in v)
-    else:
-        if v.is_zero():
-            return -1
-        return max(degi + si for (degi, si) in zip([vi.degree() for vi in v ], shifts)
-                   if degi > -1)
+    if v.is_zero():
+        return -1
+    return max(degi + si for (degi, si) in zip([vi.degree() for vi in v ], shifts)
+               if degi > -1)

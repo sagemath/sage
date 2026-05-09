@@ -119,8 +119,7 @@ class Profiler(SageObject):
         if name:
             libprofiler = ctypes.CDLL(name)
             return libprofiler
-        else:
-            raise ImportError('failed to open libprofiler, make sure gperftools is installed')
+        raise ImportError('failed to open libprofiler, make sure gperftools is installed')
 
     def start(self):
         """

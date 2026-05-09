@@ -104,8 +104,8 @@ instances to recover all solutions to the system.::
     sage: a = K.gen()
     sage: K = [a]
     sage: P = [1]
-    sage: F,s = sr.polynomial_system(P=P, K=K)                                          # needs sage.rings.polynomial.pbori
-    sage: F.groebner_basis()                                                            # needs sage.rings.polynomial.pbori
+    sage: F,s = sr.polynomial_system(P=P, K=K)                                          # needs brial
+    sage: F.groebner_basis()                                                            # needs brial
     [k100, k101 + 1, k102, k103 + k003,
      x100 + 1, x101 + k003 + 1, x102 + k003 + 1,
      x103 + k003, w100, w101, w102 + 1, w103 + k003 + 1,
@@ -124,8 +124,8 @@ to the same ciphertext::
 
 All solutions can easily be recovered using the variety function for ideals.::
 
-   sage: I = F.ideal()                                                                  # needs sage.rings.polynomial.pbori
-   sage: for V in I.variety():                                                          # needs sage.rings.polynomial.pbori sage.symbolic
+   sage: I = F.ideal()                                                                  # needs brial
+   sage: for V in I.variety():                                                          # needs brial sage.symbolic
    ....:    for k,v in sorted(V.items()):
    ....:       print("{} {}".format(k, v))
    ....:    print("\n")
@@ -174,7 +174,7 @@ All solutions can easily be recovered using the variety function for ideals.::
 We can also verify the correctness of the variety by evaluating all
 ideal generators on all points.::
 
-   sage: for V in I.variety():                                                          # needs sage.rings.polynomial.pbori sage.symbolic
+   sage: for V in I.variety():                                                          # needs brial sage.symbolic
    ....:     for f in I.gens():
    ....:         if f.subs(V) != 0:
    ....:            print("epic fail")
@@ -412,8 +412,7 @@ def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
     """
     if not kwargs.get("gf2", False):
         return SR_gf2n(n, r, c, e, star, **kwargs)
-    else:
-        return SR_gf2(n, r, c, e, star, **kwargs)
+    return SR_gf2(n, r, c, e, star, **kwargs)
 
 
 class SR_generic(MPolynomialSystemGenerator):
@@ -529,8 +528,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         if self._gf2 == kwds.get('gf2'):
             return self.__class__(**kwds)
-        else:
-            return SR(**kwds)
+        return SR(**kwds)
 
     def __getattr__(self, attr):
         """
@@ -549,37 +547,37 @@ class SR_generic(MPolynomialSystemGenerator):
         """
         if attr == "e":
             return self._e
-        elif attr == "c":
+        if attr == "c":
             return self._c
-        elif attr == "n":
+        if attr == "n":
             return self._n
-        elif attr == "r":
+        if attr == "r":
             return self._r
 
-        elif attr == "R":
+        if attr == "R":
             self.R = self.ring()
             return self.R
-        elif attr == "k":
+        if attr == "k":
             self.k = self.base_ring()
             return self.k
 
-        elif attr == "Lin":
+        if attr == "Lin":
             self.Lin = self.lin_matrix()
             return self.Lin
 
-        elif attr == "ShiftRows":
+        if attr == "ShiftRows":
             self.ShiftRows = self.shift_rows_matrix()
             return self.ShiftRows
 
-        elif attr == "MixColumns":
+        if attr == "MixColumns":
             self.MixColumns = self.mix_columns_matrix()
             return self.MixColumns
 
-        elif attr == "M":
+        if attr == "M":
             self.M = self.MixColumns * self.ShiftRows * self.Lin
             return self.M
 
-        elif attr == "Mstar":
+        if attr == "Mstar":
             self.Mstar = self.ShiftRows * self.Lin
             return self.Mstar
 
@@ -596,8 +594,7 @@ class SR_generic(MPolynomialSystemGenerator):
         """
         if self._star:
             return "SR*(%d,%d,%d,%d)" % (self._n, self._r, self._c, self._e)
-        else:
-            return "SR(%d,%d,%d,%d)" % (self._n, self._r, self._c, self._e)
+        return "SR(%d,%d,%d,%d)" % (self._n, self._r, self._c, self._e)
 
     def base_ring(self):
         r"""
@@ -780,10 +777,9 @@ class SR_generic(MPolynomialSystemGenerator):
         k = self.k
         if self.e == 4:
             return k.from_integer(6)
-        elif self.e == 8:
+        if self.e == 8:
             return k.from_integer(99)
-        else:
-            raise TypeError("sbox constant only defined for e in (4, 8)")
+        raise TypeError("sbox constant only defined for e in (4, 8)")
 
     def sbox(self, inversion_only=False):
         r"""
@@ -874,10 +870,9 @@ class SR_generic(MPolynomialSystemGenerator):
             with AllowZeroInversionsContext(self):
                 S = [self.sub_byte(elem) for elem in sorted(k)]
             return SBox(S)
-        else:
-            e = self.e
-            S = [elem ** (2**e - 2) for elem in sorted(k)]
-            return SBox(S)
+        e = self.e
+        S = [elem ** (2**e - 2) for elem in sorted(k)]
+        return SBox(S)
 
     def shift_rows(self, d):
         r"""
@@ -1020,7 +1015,7 @@ class SR_generic(MPolynomialSystemGenerator):
         if isinstance(d, Matrix):
             if d.nrows() == r*c*e:
                 return matrix(k, c, r, self.antiphi(d).list()).transpose()
-            elif d.ncols() == c and d.nrows() == r and d.base_ring() == k:
+            if d.ncols() == c and d.nrows() == r and d.base_ring() == k:
                 return d
 
         if isinstance(d, tuple([list, tuple])):
@@ -1106,10 +1101,9 @@ class SR_generic(MPolynomialSystemGenerator):
         """
         if elem_type == "vector":
             return self.random_vector(*args, **kwds)
-        elif elem_type == "state_array":
+        if elem_type == "state_array":
             return self.random_state_array(*args, **kwds)
-        else:
-            raise TypeError("parameter type not understood")
+        raise TypeError("parameter type not understood")
 
     def key_schedule(self, kj, i):
         """
@@ -1385,10 +1379,9 @@ class SR_generic(MPolynomialSystemGenerator):
         """
         if typ == "matrix":
             return self.hex_str_matrix(M)
-        elif typ == "vector":
+        if typ == "vector":
             return self.hex_str_vector(M)
-        else:
-            raise TypeError("parameter type must either be 'matrix' or 'vector'")
+        raise TypeError("parameter type must either be 'matrix' or 'vector'")
 
     def hex_str_matrix(self, M):
         r"""
@@ -1625,7 +1618,7 @@ class SR_generic(MPolynomialSystemGenerator):
              'x103': x103}
 
             sage: sr = mq.SR(1,1,1,4,gf2=True)
-            sage: sr.variable_dict()                                                    # needs sage.rings.polynomial.pbori
+            sage: sr.variable_dict()                                                    # needs brial
             {'k000': k000,
              'k001': k001,
              'k002': k002,
@@ -1651,8 +1644,7 @@ class SR_generic(MPolynomialSystemGenerator):
             R,gd = self._variable_dict
             if R is self.R:
                 return gd
-            else:
-                pass
+            pass
         except AttributeError:
             pass
 
@@ -1783,8 +1775,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         if self._gf2 and self._polybori:
             return BooleanPolynomialRing(2*n*r*c*e + (n+1)*r*c*e + n*r*e, names, order=self._order)
-        else:
-            return PolynomialRing(k, 2*n*r*c*e + (n+1)*r*c*e + n*r*e, names, order=self._order)
+        return PolynomialRing(k, 2*n*r*c*e + (n+1)*r*c*e + n*r*e, names, order=self._order)
 
     def round_polynomials(self, i, plaintext=None, ciphertext=None):
         r"""
@@ -1828,7 +1819,7 @@ class SR_generic(MPolynomialSystemGenerator):
                 plaintext = matrix(R, r*c*e, 1, self.phi(plaintext))
             return tuple((w1 + k0 + plaintext).list())
 
-        elif i > 0 and i <= n:
+        if i > 0 and i <= n:
 
             if self._star and i == n:
                 M = self.Mstar
@@ -1908,49 +1899,48 @@ class SR_generic(MPolynomialSystemGenerator):
 
         if i == 0:
             return tuple(self.field_polynomials("k", i, r*c))
-        else:
-            L = self.lin_matrix(r)
-            ki = matrix(R, r*c*e, 1, self.vars("k", i  , r*c, e))
-            kj = matrix(R, r*c*e, 1, self.vars("k", i-1, r*c, e))
-            si = matrix(R, r*e, 1, self.vars("s", i-1, r, e))
+        L = self.lin_matrix(r)
+        ki = matrix(R, r*c*e, 1, self.vars("k", i  , r*c, e))
+        kj = matrix(R, r*c*e, 1, self.vars("k", i-1, r*c, e))
+        si = matrix(R, r*e, 1, self.vars("s", i-1, r, e))
 
-            rc = matrix(R, r*e, 1, self.phi([a**(i-1)] + [k(0)]*(r-1)) )
-            d = matrix(R, r*e, 1, self.phi([self.sbox_constant()]*r) )
+        rc = matrix(R, r*e, 1, self.phi([a**(i-1)] + [k(0)]*(r-1)) )
+        d = matrix(R, r*e, 1, self.phi([self.sbox_constant()]*r) )
 
-            sbox = []
+        sbox = []
 
-            sbox += self.field_polynomials("k", i)
-            sbox += self.field_polynomials("s", i-1, r)
+        sbox += self.field_polynomials("k", i)
+        sbox += self.field_polynomials("s", i-1, r)
 
-            if r == 1:
-                sbox += self.inversion_polynomials(kj[(c - 1)*e:(c - 1)*e + e], si[0:e], e)
-            if r == 2:
-                sbox += self.inversion_polynomials( kj[(2*c - 1)*e : (2*c - 1)*e + e] , si[0:1*e], e )
-                sbox += self.inversion_polynomials( kj[(2*c - 2)*e : (2*c - 2)*e + e] , si[e:2*e], e )
-            if r == 4:
-                if self._aes_mode:
-                    sbox += self.inversion_polynomials( kj[(4*c-3)*e  : (4*c-3)*e + e] , si[0*e : 1*e] , e )
-                    sbox += self.inversion_polynomials( kj[(4*c-2)*e  : (4*c-2)*e + e] , si[1*e : 2*e] , e )
-                    sbox += self.inversion_polynomials( kj[(4*c-1)*e  : (4*c-1)*e + e] , si[2*e : 3*e] , e )
-                    sbox += self.inversion_polynomials( kj[(4*c-4)*e  : (4*c-4)*e + e] , si[3*e : 4*e] , e )
-                else:
-                    sbox += self.inversion_polynomials( kj[(4*c-1)*e  : (4*c-1)*e + e] , si[0*e : 1*e] , e )
-                    sbox += self.inversion_polynomials( kj[(4*c-2)*e  : (4*c-2)*e + e] , si[1*e : 2*e] , e )
-                    sbox += self.inversion_polynomials( kj[(4*c-3)*e  : (4*c-3)*e + e] , si[2*e : 3*e] , e )
-                    sbox += self.inversion_polynomials( kj[(4*c-4)*e  : (4*c-4)*e + e] , si[3*e : 4*e] , e )
-
-            si = L * si + d + rc
-            Sum = matrix(R, r*e, 1)
-            lin = []
-            if c > 1:
-                for q in range(c):
-                    t = list(range(r*e*(q) , r*e*(q+1)))
-                    Sum += kj.matrix_from_rows(t)
-                    lin += (ki.matrix_from_rows(t) + si + Sum).list()
-
+        if r == 1:
+            sbox += self.inversion_polynomials(kj[(c - 1)*e:(c - 1)*e + e], si[0:e], e)
+        if r == 2:
+            sbox += self.inversion_polynomials( kj[(2*c - 1)*e : (2*c - 1)*e + e] , si[0:1*e], e )
+            sbox += self.inversion_polynomials( kj[(2*c - 2)*e : (2*c - 2)*e + e] , si[e:2*e], e )
+        if r == 4:
+            if self._aes_mode:
+                sbox += self.inversion_polynomials( kj[(4*c-3)*e  : (4*c-3)*e + e] , si[0*e : 1*e] , e )
+                sbox += self.inversion_polynomials( kj[(4*c-2)*e  : (4*c-2)*e + e] , si[1*e : 2*e] , e )
+                sbox += self.inversion_polynomials( kj[(4*c-1)*e  : (4*c-1)*e + e] , si[2*e : 3*e] , e )
+                sbox += self.inversion_polynomials( kj[(4*c-4)*e  : (4*c-4)*e + e] , si[3*e : 4*e] , e )
             else:
-                lin += (ki + si).list()
-            return tuple(lin + sbox)
+                sbox += self.inversion_polynomials( kj[(4*c-1)*e  : (4*c-1)*e + e] , si[0*e : 1*e] , e )
+                sbox += self.inversion_polynomials( kj[(4*c-2)*e  : (4*c-2)*e + e] , si[1*e : 2*e] , e )
+                sbox += self.inversion_polynomials( kj[(4*c-3)*e  : (4*c-3)*e + e] , si[2*e : 3*e] , e )
+                sbox += self.inversion_polynomials( kj[(4*c-4)*e  : (4*c-4)*e + e] , si[3*e : 4*e] , e )
+
+        si = L * si + d + rc
+        Sum = matrix(R, r*e, 1)
+        lin = []
+        if c > 1:
+            for q in range(c):
+                t = list(range(r*e*(q) , r*e*(q+1)))
+                Sum += kj.matrix_from_rows(t)
+                lin += (ki.matrix_from_rows(t) + si + Sum).list()
+
+        else:
+            lin += (ki + si).list()
+        return tuple(lin + sbox)
 
     def polynomial_system(self, P=None, K=None, C=None):
         """
@@ -1972,16 +1962,16 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
             sage: P = sr.vector([0, 0, 1, 0])
             sage: K = sr.vector([1, 0, 0, 1])
-            sage: F, s = sr.polynomial_system(P, K)                                     # needs sage.rings.polynomial.pbori
+            sage: F, s = sr.polynomial_system(P, K)                                     # needs brial
 
         This returns a polynomial system::
 
-            sage: F                                                                     # needs sage.rings.polynomial.pbori
+            sage: F                                                                     # needs brial
             Polynomial Sequence with 36 Polynomials in 20 Variables
 
         and a solution::
 
-            sage: s  # random -- maybe we need a better doctest here?                   # needs sage.rings.polynomial.pbori
+            sage: s  # random -- maybe we need a better doctest here?                   # needs brial
             {k000: 1, k001: 0, k003: 1, k002: 0}
 
         This solution is not the only solution that we can learn from the
@@ -1989,25 +1979,25 @@ class SR_generic(MPolynomialSystemGenerator):
 
         ::
 
-            sage: F.groebner_basis()[-3:]                                               # needs sage.rings.polynomial.pbori
+            sage: F.groebner_basis()[-3:]                                               # needs brial
             [k000 + 1, k001, k003 + 1]
 
         In particular we have two solutions::
 
-            sage: len(F.ideal().variety())                                              # needs sage.rings.polynomial.pbori
+            sage: len(F.ideal().variety())                                              # needs brial
             2
 
         In the following example we provide ``C`` explicitly::
 
            sage: C = sr(P,K)
-           sage: F,s = sr.polynomial_system(P=P, C=C)                                   # needs sage.rings.polynomial.pbori
-           sage: F                                                                      # needs sage.rings.polynomial.pbori
+           sage: F,s = sr.polynomial_system(P=P, C=C)                                   # needs brial
+           sage: F                                                                      # needs brial
            Polynomial Sequence with 36 Polynomials in 20 Variables
 
         Alternatively, we can use symbols for the ``P`` and
         ``C``. First, we have to create a polynomial ring::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
             sage: R = sr.R
             sage: vn = sr.varstrs("P",0,1,4) + R.variable_names() + sr.varstrs("C",0,1,4)
@@ -2017,7 +2007,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         Now, we can construct the purely symbolic equation system::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: C = sr.vars("C",0); C
             (C000, C001, C002, C003)
             sage: P = sr.vars("P",0)
@@ -2032,13 +2022,13 @@ class SR_generic(MPolynomialSystemGenerator):
         We show that the (returned) key is a solution to the returned system::
 
             sage: sr = mq.SR(3,4,4,8, star=True, gf2=True, polybori=True)
-            sage: while True:  # workaround (see :issue:`31891`)                         # needs sage.rings.polynomial.pbori
+            sage: while True:  # workaround (see :issue:`31891`)                         # needs brial
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
             ....:     except ZeroDivisionError:
             ....:         pass
-            sage: F.subs(s).groebner_basis()    # long time                             # needs sage.rings.polynomial.pbori
+            sage: F.subs(s).groebner_basis()    # long time                             # needs brial
             Polynomial Sequence with 1248 Polynomials in 1248 Variables
         """
         plaintext = P
@@ -2136,7 +2126,7 @@ class SR_gf2n(SR_generic):
 
         if d is None:
             return matrix(k, r*c*e, 1)
-        elif d.ncols() == c and d.nrows() == r and d.base_ring() == k:
+        if d.ncols() == c and d.nrows() == r and d.base_ring() == k:
             return matrix(k, r*c*e, 1, self.phi(d).transpose().list())
 
     def is_vector(self, d):
@@ -2191,12 +2181,11 @@ class SR_gf2n(SR_generic):
                 ret += [e**(2**i) for i in range(self.e)]
         if isinstance(l, list):
             return ret
-        elif isinstance(l, tuple):
+        if isinstance(l, tuple):
             return tuple(ret)
-        elif isinstance(l, Matrix):
+        if isinstance(l, Matrix):
             return matrix(l.base_ring(), l.ncols(), l.nrows()*self.e, ret).transpose()
-        else:
-            raise TypeError
+        raise TypeError
 
     def antiphi(self, l):
         r"""
@@ -2220,13 +2209,12 @@ class SR_gf2n(SR_generic):
 
         if isinstance(l, list):
             return ret
-        elif isinstance(l, tuple):
+        if isinstance(l, tuple):
             return tuple(ret)
-        elif isinstance(l, Matrix):
+        if isinstance(l, Matrix):
             return matrix(self.base_ring(), l.ncols(), l.nrows() // self.e,
                           ret).transpose()
-        else:
-            raise TypeError
+        raise TypeError
 
     def shift_rows_matrix(self):
         """
@@ -2494,17 +2482,16 @@ class SR_gf2(SR_generic):
 
         if d is None:
             return matrix(k, r*c*e, 1)
-        elif isinstance(d, Matrix) and d.ncols() == c and d.nrows() == r and d.base_ring() == self.k:
+        if isinstance(d, Matrix) and d.ncols() == c and d.nrows() == r and d.base_ring() == self.k:
             l = flatten([self.phi(x) for x in d.transpose().list()], (Vector_modn_dense,list,tuple))
             return matrix(k, r*c*e, 1, l)
-        elif isinstance(d, (list, tuple)):
+        if isinstance(d, (list, tuple)):
             if len(d) == self.r*self.c:
                 l = flatten([self.phi(x) for x in d], (Vector_modn_dense,list,tuple))
                 return matrix(k, r*c*e, 1, l)
-            elif len(d) == self.r*self.c*self.e:
+            if len(d) == self.r*self.c*self.e:
                 return matrix(k, r*c*e, 1, d)
-            else:
-                raise TypeError
+            raise TypeError
         else:
             raise TypeError
 
@@ -2590,12 +2577,11 @@ class SR_gf2(SR_generic):
 
         if isinstance(l, list):
             return ret
-        elif isinstance(l, tuple):
+        if isinstance(l, tuple):
             return tuple(ret)
-        elif isinstance(l, Matrix):
+        if isinstance(l, Matrix):
             return matrix(GF(2), l.ncols(), l.nrows()*self.e, ret).transpose()
-        else:
-            raise TypeError
+        raise TypeError
 
     def antiphi(self, l):
         r"""
@@ -2626,12 +2612,11 @@ class SR_gf2(SR_generic):
 
         if isinstance(l, list):
             return ret
-        elif isinstance(l, tuple):
+        if isinstance(l, tuple):
             return tuple(ret)
-        elif isinstance(l, Matrix):
+        if isinstance(l, Matrix):
             return matrix(self.base_ring(), self.r * self.c, 1, ret)
-        else:
-            raise TypeError
+        raise TypeError
 
     def shift_rows_matrix(self):
         """
@@ -2919,99 +2904,98 @@ class SR_gf2(SR_generic):
                           w3*w1 + w3*x3 + w3*x2 + w3*x1 + w3*x0 + w2*w1 + w2*w0 + w2*x2 + w2*x0 + w1*x3 + w1*x0 + w0**2 + w0*x0])
             return l
 
-        else:
-            w7,w6,w5,w4,w3,w2,w1,w0 = w
-            x7,x6,x5,x4,x3,x2,x1,x0 = x
+        w7,w6,w5,w4,w3,w2,w1,w0 = w
+        x7,x6,x5,x4,x3,x2,x1,x0 = x
 
-            l = [w7*x7 + w7*x5 + w7*x4 + w7*x0 + w6*x6 + w6*x5 + w6*x1 + w5*x7 + w5*x6 + w5*x2 + w4*x7 + w4*x3 + w3*x4 + w2*x5 + w1*x6 + w0*x7,
-                 w7*x6 + w7*x4 + w7*x3 + w6*x7 + w6*x5 + w6*x4 + w6*x0 + w5*x6 + w5*x5 + w5*x1 + w4*x7 + w4*x6 + w4*x2 + w3*x7 + w3*x3 + w2*x4 + w1*x5 + w0*x6,
-                 w7*x5 + w7*x3 + w7*x2 + w6*x6 + w6*x4 + w6*x3 + w5*x7 + w5*x5 + w5*x4 + w5*x0 + w4*x6 + w4*x5 + w4*x1 + w3*x7 + w3*x6 + w3*x2 + w2*x7 + w2*x3 + w1*x4 + w0*x5,
-                 w7*x7 + w7*x4 + w7*x2 + w7*x1 + w6*x5 + w6*x3 + w6*x2 + w5*x6 + w5*x4 + w5*x3 + w4*x7 + w4*x5 + w4*x4 + w4*x0 + w3*x6 + w3*x5 + w3*x1 + w2*x7 + w2*x6 + w2*x2 + w1*x7 + w1*x3 + w0*x4,
-                 w7*x7 + w7*x6 + w7*x5 + w7*x4 + w7*x3 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x2 + w5*x7 + w5*x6 + w5*x5 + w5*x3 + w4*x7 + w4*x6 + w4*x4 + w3*x7 + w3*x5 + w3*x0 + w2*x6 + w2*x1
-                     + w1*x7 + w1*x2 + w0*x3,
-                 w7*x6 + w7*x3 + w7*x2 + w6*x7 + w6*x4 + w6*x3 + w5*x5 + w5*x4 + w4*x6 + w4*x5 + w3*x7 + w3*x6 + w2*x7 + w2*x0 + w1*x1 + w0*x2,
-                 w7*x7 + w7*x5 + w7*x2 + w7*x1 + w6*x6 + w6*x3 + w6*x2 + w5*x7 + w5*x4 + w5*x3 + w4*x5 + w4*x4 + w3*x6 + w3*x5 + w2*x7 + w2*x6 + w1*x7 + w1*x0 + w0*x1,
-                 w7*x6 + w7*x5 + w7*x2 + w7*x0 + w6*x7 + w6*x4 + w6*x3 + w5*x7 + w5*x6 + w5*x3 + w5*x1 + w4*x5 + w4*x4 + w3*x7 + w3*x4 + w3*x2 + w2*x6 + w2*x5 + w1*x5 + w1*x3 + w0*x7 + w0*x6 + x7,
-                 w7*x6 + w7*x3 + w7*x2 + w6*x6 + w6*x5 + w6*x2 + w6*x0 + w5*x7 + w5*x4 + w5*x3 + w4*x7 + w4*x6 + w4*x3 + w4*x1 + w3*x5 + w3*x4 + w2*x7 + w2*x4 + w2*x2 + w1*x6 + w1*x5 + w0*x5 + w0*x3
-                     + x6,
-                 w7*x7 + w7*x5 + w7*x4 + w7*x1 + w6*x6 + w6*x3 + w6*x2 + w5*x6 + w5*x5 + w5*x2 + w5*x0 + w4*x7 + w4*x4 + w4*x3 + w3*x7 + w3*x6 + w3*x3 + w3*x1 + w2*x5 + w2*x4 + w1*x7 + w1*x4 + w1*x2
-                     + w0*x6 + w0*x5 + x5,
-                 w7*x7 + w7*x5 + w7*x2 + w7*x1 + w6*x7 + w6*x5 + w6*x4 + w6*x1 + w5*x6 + w5*x3 + w5*x2 + w4*x6 + w4*x5 + w4*x2 + w4*x0 + w3*x7 + w3*x4 + w3*x3 + w2*x7 + w2*x6 + w2*x3 + w2*x1 + w1*x5
-                     + w1*x4 + w0*x7 + w0*x4 + w0*x2 + x4,
-                 w7*x5 + w7*x4 + w7*x3 + w7*x2 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w6*x1 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w4*x6 + w4*x5 + w4*x4 + w4*x3 + w4*x2 + w3*x7 + w3*x6 + w3*x5 + w3*x4 + w3*x0
-                     + w2*x7 + w2*x6 + w2*x5 + w2*x4 + w2*x3 + w1*x7 + w1*x6 + w1*x5 + w1*x1 + w0*x7 + w0*x6 + w0*x5 + w0*x4 + x3,
-                 w7*x7 + w7*x6 + w7*x5 + w7*x4 + w7*x3 + w7*x1 + w6*x7 + w6*x5 + w6*x2 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x2 + w4*x6 + w4*x3 + w3*x7 + w3*x6 + w3*x5 + w3*x3 + w2*x7 + w2*x4 + w2*x0
-                     + w1*x7 + w1*x6 + w1*x4 + w0*x5 + w0*x1 + x2,
-                 w7*x6 + w7*x4 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w5*x7 + w5*x5 + w5*x2 + w4*x7 + w4*x6 + w4*x5 + w4*x4 + w4*x2 + w3*x6 + w3*x3 + w2*x7 + w2*x6 + w2*x5 + w2*x3
-                     + w1*x7 + w1*x4 + w1*x0 + w0*x7 + w0*x6 + w0*x4 + x1,
-                 w7*x7 + w7*x4 + w7*x3 + w6*x7 + w6*x6 + w6*x3 + w6*x1 + w5*x5 + w5*x4 + w4*x7 + w4*x4 + w4*x2 + w3*x6 + w3*x5 + w2*x5 + w2*x3 + w1*x7 + w1*x6 + w0*x6 + w0*x4 + w0*x0 + x0,
-                 w7*x6 + w7*x5 + w7*x3 + w7*x0 + w7 + w6*x7 + w6*x5 + w6*x2 + w6*x0 + w5*x7 + w5*x4 + w5*x2 + w5*x1 + w4*x6 + w4*x4 + w4*x3 + w3*x6 + w3*x5 + w3*x1 + w2*x7 + w2*x3 + w1*x5 + w0*x7,
-                 w7*x5 + w7*x4 + w7*x2 + w6*x7 + w6*x6 + w6*x4 + w6*x1 + w6 + w5*x6 + w5*x3 + w5*x1 + w5*x0 + w4*x5 + w4*x3 + w4*x2 + w3*x7 + w3*x5 + w3*x4 + w3*x0 + w2*x7 + w2*x6 + w2*x2 + w1*x4
-                     + w0*x6,
-                 w7*x7 + w7*x4 + w7*x3 + w7*x1 + w6*x6 + w6*x5 + w6*x3 + w6*x0 + w5*x7 + w5*x5 + w5*x2 + w5*x0 + w5 + w4*x7 + w4*x4 + w4*x2 + w4*x1 + w3*x6 + w3*x4 + w3*x3 + w2*x6 + w2*x5 + w2*x1
-                     + w1*x7 + w1*x3 + w0*x5,
-                 w7*x7 + w7*x6 + w7*x3 + w7*x2 + w7*x0 + w6*x5 + w6*x4 + w6*x2 + w5*x7 + w5*x6 + w5*x4 + w5*x1 + w4*x6 + w4*x3 + w4*x1 + w4*x0 + w4 + w3*x5 + w3*x3 + w3*x2 + w2*x7 + w2*x5 + w2*x4
-                     + w2*x0 + w1*x7 + w1*x6 + w1*x2 + w0*x4,
-                 w7*x3 + w7*x2 + w7*x1 + w7*x0 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w6*x1 + w6*x0 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w5*x2 + w5*x1 + w5*x0 + w4*x7 + w4*x6 + w4*x5 + w4*x4
-                     + w4*x3 + w4*x2 + w4*x0 + w3*x7 + w3*x6 + w3*x5 + w3*x4 + w3*x2 + w3 + w2*x7 + w2*x6 + w2*x4 + w1*x6 + w1*x1 + w0*x3,
-                 w7*x7 + w7*x6 + w7*x5 + w7*x3 + w7*x2 + w7*x1 + w6*x7 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w5*x7 + w5*x6 + w5*x5 + w5*x3 + w5*x0 + w4*x7 + w4*x5 + w4*x2 + w4*x1 + w3*x7 + w3*x4
-                     + w3*x3 + w2*x6 + w2*x5 + w2 + w1*x7 + w1*x0 + w0*x2,
-                 w7*x6 + w7*x5 + w7*x4 + w7*x2 + w7*x1 + w7*x0 + w6*x7 + w6*x6 + w6*x4 + w6*x3 + w6*x2 + w6*x0 + w5*x6 + w5*x5 + w5*x4 + w5*x2 + w4*x7 + w4*x6 + w4*x4 + w4*x1 + w4*x0 + w3*x6
-                     + w3*x3 + w3*x2 + w2*x5 + w2*x4 + w1*x7 + w1*x6 + w1 + w0*x1,
-                 w7*x7 + w7*x6 + w7*x4 + w7*x1 + w6*x6 + w6*x3 + w6*x1 + w6*x0 + w5*x5 + w5*x3 + w5*x2 + w4*x7 + w4*x5 + w4*x4 + w4*x0 + w3*x7 + w3*x6 + w3*x2 + w2*x4 + w1*x6 + w0*x0 + w0]
+        l = [w7*x7 + w7*x5 + w7*x4 + w7*x0 + w6*x6 + w6*x5 + w6*x1 + w5*x7 + w5*x6 + w5*x2 + w4*x7 + w4*x3 + w3*x4 + w2*x5 + w1*x6 + w0*x7,
+             w7*x6 + w7*x4 + w7*x3 + w6*x7 + w6*x5 + w6*x4 + w6*x0 + w5*x6 + w5*x5 + w5*x1 + w4*x7 + w4*x6 + w4*x2 + w3*x7 + w3*x3 + w2*x4 + w1*x5 + w0*x6,
+             w7*x5 + w7*x3 + w7*x2 + w6*x6 + w6*x4 + w6*x3 + w5*x7 + w5*x5 + w5*x4 + w5*x0 + w4*x6 + w4*x5 + w4*x1 + w3*x7 + w3*x6 + w3*x2 + w2*x7 + w2*x3 + w1*x4 + w0*x5,
+             w7*x7 + w7*x4 + w7*x2 + w7*x1 + w6*x5 + w6*x3 + w6*x2 + w5*x6 + w5*x4 + w5*x3 + w4*x7 + w4*x5 + w4*x4 + w4*x0 + w3*x6 + w3*x5 + w3*x1 + w2*x7 + w2*x6 + w2*x2 + w1*x7 + w1*x3 + w0*x4,
+             w7*x7 + w7*x6 + w7*x5 + w7*x4 + w7*x3 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x2 + w5*x7 + w5*x6 + w5*x5 + w5*x3 + w4*x7 + w4*x6 + w4*x4 + w3*x7 + w3*x5 + w3*x0 + w2*x6 + w2*x1
+                 + w1*x7 + w1*x2 + w0*x3,
+             w7*x6 + w7*x3 + w7*x2 + w6*x7 + w6*x4 + w6*x3 + w5*x5 + w5*x4 + w4*x6 + w4*x5 + w3*x7 + w3*x6 + w2*x7 + w2*x0 + w1*x1 + w0*x2,
+             w7*x7 + w7*x5 + w7*x2 + w7*x1 + w6*x6 + w6*x3 + w6*x2 + w5*x7 + w5*x4 + w5*x3 + w4*x5 + w4*x4 + w3*x6 + w3*x5 + w2*x7 + w2*x6 + w1*x7 + w1*x0 + w0*x1,
+             w7*x6 + w7*x5 + w7*x2 + w7*x0 + w6*x7 + w6*x4 + w6*x3 + w5*x7 + w5*x6 + w5*x3 + w5*x1 + w4*x5 + w4*x4 + w3*x7 + w3*x4 + w3*x2 + w2*x6 + w2*x5 + w1*x5 + w1*x3 + w0*x7 + w0*x6 + x7,
+             w7*x6 + w7*x3 + w7*x2 + w6*x6 + w6*x5 + w6*x2 + w6*x0 + w5*x7 + w5*x4 + w5*x3 + w4*x7 + w4*x6 + w4*x3 + w4*x1 + w3*x5 + w3*x4 + w2*x7 + w2*x4 + w2*x2 + w1*x6 + w1*x5 + w0*x5 + w0*x3
+                 + x6,
+             w7*x7 + w7*x5 + w7*x4 + w7*x1 + w6*x6 + w6*x3 + w6*x2 + w5*x6 + w5*x5 + w5*x2 + w5*x0 + w4*x7 + w4*x4 + w4*x3 + w3*x7 + w3*x6 + w3*x3 + w3*x1 + w2*x5 + w2*x4 + w1*x7 + w1*x4 + w1*x2
+                 + w0*x6 + w0*x5 + x5,
+             w7*x7 + w7*x5 + w7*x2 + w7*x1 + w6*x7 + w6*x5 + w6*x4 + w6*x1 + w5*x6 + w5*x3 + w5*x2 + w4*x6 + w4*x5 + w4*x2 + w4*x0 + w3*x7 + w3*x4 + w3*x3 + w2*x7 + w2*x6 + w2*x3 + w2*x1 + w1*x5
+                 + w1*x4 + w0*x7 + w0*x4 + w0*x2 + x4,
+             w7*x5 + w7*x4 + w7*x3 + w7*x2 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w6*x1 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w4*x6 + w4*x5 + w4*x4 + w4*x3 + w4*x2 + w3*x7 + w3*x6 + w3*x5 + w3*x4 + w3*x0
+                 + w2*x7 + w2*x6 + w2*x5 + w2*x4 + w2*x3 + w1*x7 + w1*x6 + w1*x5 + w1*x1 + w0*x7 + w0*x6 + w0*x5 + w0*x4 + x3,
+             w7*x7 + w7*x6 + w7*x5 + w7*x4 + w7*x3 + w7*x1 + w6*x7 + w6*x5 + w6*x2 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x2 + w4*x6 + w4*x3 + w3*x7 + w3*x6 + w3*x5 + w3*x3 + w2*x7 + w2*x4 + w2*x0
+                 + w1*x7 + w1*x6 + w1*x4 + w0*x5 + w0*x1 + x2,
+             w7*x6 + w7*x4 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w5*x7 + w5*x5 + w5*x2 + w4*x7 + w4*x6 + w4*x5 + w4*x4 + w4*x2 + w3*x6 + w3*x3 + w2*x7 + w2*x6 + w2*x5 + w2*x3
+                 + w1*x7 + w1*x4 + w1*x0 + w0*x7 + w0*x6 + w0*x4 + x1,
+             w7*x7 + w7*x4 + w7*x3 + w6*x7 + w6*x6 + w6*x3 + w6*x1 + w5*x5 + w5*x4 + w4*x7 + w4*x4 + w4*x2 + w3*x6 + w3*x5 + w2*x5 + w2*x3 + w1*x7 + w1*x6 + w0*x6 + w0*x4 + w0*x0 + x0,
+             w7*x6 + w7*x5 + w7*x3 + w7*x0 + w7 + w6*x7 + w6*x5 + w6*x2 + w6*x0 + w5*x7 + w5*x4 + w5*x2 + w5*x1 + w4*x6 + w4*x4 + w4*x3 + w3*x6 + w3*x5 + w3*x1 + w2*x7 + w2*x3 + w1*x5 + w0*x7,
+             w7*x5 + w7*x4 + w7*x2 + w6*x7 + w6*x6 + w6*x4 + w6*x1 + w6 + w5*x6 + w5*x3 + w5*x1 + w5*x0 + w4*x5 + w4*x3 + w4*x2 + w3*x7 + w3*x5 + w3*x4 + w3*x0 + w2*x7 + w2*x6 + w2*x2 + w1*x4
+                 + w0*x6,
+             w7*x7 + w7*x4 + w7*x3 + w7*x1 + w6*x6 + w6*x5 + w6*x3 + w6*x0 + w5*x7 + w5*x5 + w5*x2 + w5*x0 + w5 + w4*x7 + w4*x4 + w4*x2 + w4*x1 + w3*x6 + w3*x4 + w3*x3 + w2*x6 + w2*x5 + w2*x1
+                 + w1*x7 + w1*x3 + w0*x5,
+             w7*x7 + w7*x6 + w7*x3 + w7*x2 + w7*x0 + w6*x5 + w6*x4 + w6*x2 + w5*x7 + w5*x6 + w5*x4 + w5*x1 + w4*x6 + w4*x3 + w4*x1 + w4*x0 + w4 + w3*x5 + w3*x3 + w3*x2 + w2*x7 + w2*x5 + w2*x4
+                 + w2*x0 + w1*x7 + w1*x6 + w1*x2 + w0*x4,
+             w7*x3 + w7*x2 + w7*x1 + w7*x0 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w6*x1 + w6*x0 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w5*x2 + w5*x1 + w5*x0 + w4*x7 + w4*x6 + w4*x5 + w4*x4
+                 + w4*x3 + w4*x2 + w4*x0 + w3*x7 + w3*x6 + w3*x5 + w3*x4 + w3*x2 + w3 + w2*x7 + w2*x6 + w2*x4 + w1*x6 + w1*x1 + w0*x3,
+             w7*x7 + w7*x6 + w7*x5 + w7*x3 + w7*x2 + w7*x1 + w6*x7 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w5*x7 + w5*x6 + w5*x5 + w5*x3 + w5*x0 + w4*x7 + w4*x5 + w4*x2 + w4*x1 + w3*x7 + w3*x4
+                 + w3*x3 + w2*x6 + w2*x5 + w2 + w1*x7 + w1*x0 + w0*x2,
+             w7*x6 + w7*x5 + w7*x4 + w7*x2 + w7*x1 + w7*x0 + w6*x7 + w6*x6 + w6*x4 + w6*x3 + w6*x2 + w6*x0 + w5*x6 + w5*x5 + w5*x4 + w5*x2 + w4*x7 + w4*x6 + w4*x4 + w4*x1 + w4*x0 + w3*x6
+                 + w3*x3 + w3*x2 + w2*x5 + w2*x4 + w1*x7 + w1*x6 + w1 + w0*x1,
+             w7*x7 + w7*x6 + w7*x4 + w7*x1 + w6*x6 + w6*x3 + w6*x1 + w6*x0 + w5*x5 + w5*x3 + w5*x2 + w4*x7 + w4*x5 + w4*x4 + w4*x0 + w3*x7 + w3*x6 + w3*x2 + w2*x4 + w1*x6 + w0*x0 + w0]
 
-            if not correct_only:
-                l.append(w7*x6 + w7*x5 + w7*x1 + w6*x7 + w6*x6 + w6*x2 + w5*x7 + w5*x3 + w4*x4 + w3*x5 + w2*x6 + w1*x7 + w0*x0 + 1)
+        if not correct_only:
+            l.append(w7*x6 + w7*x5 + w7*x1 + w6*x7 + w6*x6 + w6*x2 + w5*x7 + w5*x3 + w4*x4 + w3*x5 + w2*x6 + w1*x7 + w0*x0 + 1)
 
-            if not biaffine_only:
-                l.extend([w7**2 + w7*w6 + w7*w3 + w7*w1 + w7*x7 + w7*x6 + w7*x5 + w7*x2 + w7*x1 + w7*x0 + w6**2 + w6*w0 + w6*x6 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w6*x0 + w5**2 + w5*w4 + w5*w3
-                              + w5*w2 + w5*x7 + w5*x5 + w5*x4 + w5*x1 + w5*x0 + w4**2 + w4*w2 + w4*w0 + w4*x5 + w4*x4 + w4*x2 + w3*w2 + w3*x6 + w3*x3 + w3*x1 + w3*x0 + w2*x7 + w2*x5 + w2*x4
-                              + w2*x0 + w1*x4 + w0**2 + w0*x0,
-                          w7*x6 + w7*x4 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x2 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w5*x1 + w4*x5 + w4*x4 + w4*x3 + w4*x1 + w4*x0 + w3*x7 + w3*x5 + w3*x2
-                              + w2*x7 + w2*x6 + w2*x3 + w1*x7 + w1*x6 + w1*x5 + w1*x4 + w1*x2 + w0*x6 + w0*x5 + w0*x4 + w0*x2 + w0*x1 + x7**2 + x7*x6 + x7*x5 + x7*x3 + x7*x1 + x7*x0 + x6*x2
-                              + x6*x1 + x5*x4 + x5*x3 + x5*x2 + x5*x1 + x4*x3 + x4*x2 + x4*x1 + x3**2 + x3*x2 + x2*x1 + x2*x0,
-                          w7*x5 + w7*x4 + w7*x3 + w7*x1 + w7*x0 + w6*x7 + w6*x5 + w6*x2 + w5*x7 + w5*x6 + w5*x3 + w4*x7 + w4*x6 + w4*x5 + w4*x4 + w4*x2 + w3*x6 + w3*x5 + w3*x4 + w3*x2 + w3*x1
-                              + w2*x6 + w2*x3 + w1*x7 + w1*x4 + w0*x7 + w0*x6 + w0*x5 + w0*x3 + x7*x3 + x7*x2 + x6*x5 + x6*x4 + x6*x3 + x6*x2 + x6*x0 + x5*x4 + x5*x3 + x5*x2 + x4**2 + x4*x3
-                              + x3*x2 + x3*x1,
-                          w7*w3 + w7*w2 + w7*x6 + w7*x5 + w7*x4 + w7*x1 + w7*x0 + w6*w5 + w6*w4 + w6*w3 + w6*w2 + w6*w0 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w6*x0 + w5*w4 + w5*w3 + w5*w2 + w5*x7
-                              + w5*x6 + w5*x4 + w5*x3 + w5*x0 + w4**2 + w4*w3 + w4*x7 + w4*x4 + w4*x3 + w4*x1 + w3*w2 + w3*w1 + w3*x7 + w3*x5 + w3*x2 + w3*x0 + w2*x6 + w2*x4 + w2*x3 + w1*x7
-                              + w1*x3 + w0*x7,
-                          w7*x5 + w7*x2 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x2 + w6*x1 + w5*x5 + w5*x3 + w5*x2 + w4*x3 + w4*x2 + w4*x1 + w3*x6 + w3*x3 + w3*x2 + w3*x0 + w2*x7 + w2*x6
-                              + w2*x5 + w2*x3 + w2*x2 + w1*x6 + w1*x4 + w1*x3 + w0*x4 + w0*x3 + w0*x2 + x7*x5 + x7*x4 + x7*x1 + x7*x0 + x6*x0 + x5**2 + x5*x2 + x5*x1 + x5*x0 + x4**2 + x4*x0
-                              + x3*x2 + x3*x0 + x1**2,
-                          w7*w6 + w7*w5 + w7*w4 + w7*w3 + w7*x7 + w7*x5 + w7*x4 + w7*x3 + w7*x0 + w6**2 + w6*w5 + w6*w4 + w6*w2 + w6*w1 + w6*w0 + w6*x7 + w6*x4 + w6*x3 + w6*x2 + w6*x1 + w5*w4
-                              + w5*w1 + w5*w0 + w5*x7 + w5*x6 + w5*x5 + w5*x3 + w5*x2 + w4*w2 + w4*w1 + w4*x7 + w4*x6 + w4*x3 + w4*x2 + w4*x0 + w3*w0 + w3*x7 + w3*x6 + w3*x4 + w3*x1 + w2**2
-                              + w2*x5 + w2*x3 + w2*x2 + w1*x7 + w1*x6 + w1*x2 + w0*x6,
-                          w7*w5 + w7*w4 + w7*w1 + w7*w0 + w7*x6 + w7*x2 + w6*w0 + w6*x6 + w6*x3 + w6*x2 + w6*x1 + w5**2 + w5*w2 + w5*w1 + w5*w0 + w5*x7 + w5*x6 + w5*x5 + w5*x2 + w4**2 + w4*w0
-                              + w4*x6 + w4*x1 + w4*x0 + w3*w2 + w3*w0 + w3*x5 + w3*x4 + w3*x3 + w3*x2 + w3*x1 + w3*x0 + w2*x7 + w2*x6 + w2*x5 + w2*x4 + w2*x3 + w2*x2 + w2*x0 + w1**2 + w1*x7
-                              + w1*x6 + w1*x4 + w0*x3,
-                          w7*x7 + w7*x6 + w7*x5 + w7*x2 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w5*x5 + w5*x4 + w5*x3 + w5*x1 + w5*x0 + w4*x7 + w4*x5 + w4*x2 + w3*x7 + w3*x6 + w3*x3
-                              + w2*x7 + w2*x6 + w2*x5 + w2*x4 + w2*x2 + w1*x6 + w1*x5 + w1*x4 + w1*x2 + w1*x1 + w0*x6 + w0*x3 + x7**2 + x7*x5 + x7*x3 + x6**2 + x6*x5 + x6*x2 + x6*x0 + x5**2
-                              + x4**2 + x4*x3 + x4*x2 + x4*x1 + x3**2 + x3*x1 + x2*x1,
-                          w7**2 + w7*w6 + w7*w5 + w7*w3 + w7*w1 + w7*w0 + w7*x6 + w7*x5 + w7*x3 + w7*x2 + w7*x1 + w6*w2 + w6*w1 + w6*x7 + w6*x6 + w6*x5 + w6*x2 + w6*x1 + w6*x0 + w5*w4 + w5*w3
-                              + w5*w2 + w5*w1 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w5*x1 + w5*x0 + w4*w3 + w4*w2 + w4*w1 + w4*x7 + w4*x5 + w4*x4 + w4*x1 + w4*x0 + w3**2 + w3*w2 + w3*x5 + w3*x4
-                              + w3*x2 + w2*w1 + w2*w0 + w2*x6 + w2*x3 + w2*x1 + w2*x0 + w1*x7 + w1*x5 + w1*x4 + w1*x0 + w0*x4,
-                          w7*x7 + w7*x5 + w7*x2 + w6*x7 + w6*x6 + w6*x3 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x2 + w4*x6 + w4*x5 + w4*x4 + w4*x2 + w4*x1 + w3*x6 + w3*x3 + w2*x7 + w2*x4 + w1*x7
-                              + w1*x6 + w1*x5 + w1*x3 + w0*x7 + w0*x6 + w0*x5 + w0*x3 + w0*x2 + w0*x0 + x7**2 + x7*x6 + x7*x3 + x7*x1 + x6**2 + x6*x0 + x5**2 + x5*x4 + x5*x3 + x5*x2 + x4**2
-                              + x4*x2 + x4*x0 + x3*x2 + x0**2,
-                          w7*x7 + w7*x6 + w7*x5 + w7*x4 + w7*x3 + w7*x1 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w6*x0 + w5*x7 + w5*x5 + w5*x2 + w4*x7 + w4*x6 + w4*x3 + w3*x7 + w3*x6 + w3*x5 + w3*x4
-                              + w3*x2 + w2*x6 + w2*x5 + w2*x4 + w2*x2 + w2*x1 + w1*x6 + w1*x3 + w0*x7 + w0*x4 + x7*x6 + x7*x5 + x7*x4 + x7*x3 + x6**2 + x6*x5 + x6*x4 + x6*x2 + x6*x1 + x6*x0
-                              + x5*x4 + x5*x1 + x5*x0 + x4*x2 + x4*x1 + x3*x0 + x2**2,
-                          w7*x5 + w7*x4 + w7*x3 + w7*x2 + w6*x7 + w6*x1 + w5*x5 + w5*x4 + w5*x3 + w5*x2 + w5*x1 + w4*x7 + w4*x6 + w4*x4 + w4*x3 + w3*x6 + w3*x5 + w3*x4 + w3*x3 + w2*x2 + w2*x0
-                              + w1*x6 + w1*x5 + w1*x4 + w1*x3 + w1*x2 + w0*x7 + w0*x5 + w0*x4 + x7**2 + x7*x4 + x7*x2 + x6*x4 + x6*x3 + x6*x2 + x6*x1 + x5**2 + x5*x4 + x5*x3 + x5*x2 + x5*x0
-                              + x4*x3 + x4*x2 + x4*x1 + x3**2 + x2*x0 + x1*x0,
-                          w7*x6 + w7*x5 + w7*x3 + w7*x2 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w5*x7 + w5*x1 + w4*x5 + w4*x4 + w4*x3 + w4*x2 + w4*x1 + w3*x7 + w3*x6 + w3*x4 + w3*x3 + w2*x6 + w2*x5
-                              + w2*x4 + w2*x3 + w1*x2 + w1*x0 + w0*x6 + w0*x5 + w0*x4 + w0*x3 + w0*x2 + x7*x5 + x7*x2 + x7*x0 + x6**2 + x6*x5 + x6*x2 + x6*x1 + x6*x0 + x5**2 + x5*x4 + x4**2
-                              + x4*x2 + x4*x1 + x4*x0 + x3**2 + x3*x2 + x1*x0,
-                          w7**2 + w7*w5 + w7*w3 + w7*x7 + w7*x6 + w7*x4 + w7*x3 + w7*x2 + w6**2 + w6*w5 + w6*w2 + w6*w0 + w6*x7 + w6*x6 + w6*x3 + w6*x2 + w6*x1 + w6*x0 + w5**2 + w5*x7 + w5*x6
-                              + w5*x5 + w5*x4 + w5*x2 + w5*x1 + w4**2 + w4*w3 + w4*w2 + w4*w1 + w4*x6 + w4*x5 + w4*x2 + w4*x1 + w3**2 + w3*w1 + w3*x6 + w3*x5 + w3*x3 + w3*x0 + w2*w1 + w2*x7
-                              + w2*x4 + w2*x2 + w2*x1 + w1*x6 + w1*x5 + w1*x1 + w0*x5,
-                          w7*w5 + w7*w2 + w7*w0 + w7*x5 + w7*x3 + w6**2 + w6*w5 + w6*w2 + w6*w1 + w6*w0 + w6*x7 + w6*x3 + w6*x2 + w6*x0 + w5**2 + w5*w4 + w5*x7 + w5*x6 + w5*x4 + w5*x2 + w5*x0
-                              + w4**2 + w4*w2 + w4*w1 + w4*w0 + w4*x6 + w4*x4 + w4*x3 + w4*x2 + w4*x0 + w3**2 + w3*w2 + w3*x7 + w3*x6 + w3*x4 + w3*x3 + w3*x2 + w3*x0 + w2*x7 + w2*x6 + w2*x4
-                              + w2*x1 + w2*x0 + w1*w0 + w1*x5 + w1*x4 + w0*x1,
-                          w7**2 + w7*w4 + w7*w2 + w7*x6 + w7*x4 + w7*x0 + w6*w4 + w6*w3 + w6*w2 + w6*w1 + w6*x4 + w6*x3 + w6*x1 + w5**2 + w5*w4 + w5*w3 + w5*w2 + w5*w0 + w5*x7 + w5*x5 + w5*x3
-                              + w5*x1 + w5*x0 + w4*w3 + w4*w2 + w4*w1 + w4*x7 + w4*x5 + w4*x4 + w4*x3 + w4*x1 + w4*x0 + w3**2 + w3*x7 + w3*x5 + w3*x4 + w3*x3 + w3*x1 + w2*w0 + w2*x7 + w2*x5
-                              + w2*x2 + w2*x1 + w1*w0 + w1*x6 + w1*x5 + w0*x2])
+        if not biaffine_only:
+            l.extend([w7**2 + w7*w6 + w7*w3 + w7*w1 + w7*x7 + w7*x6 + w7*x5 + w7*x2 + w7*x1 + w7*x0 + w6**2 + w6*w0 + w6*x6 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w6*x0 + w5**2 + w5*w4 + w5*w3
+                          + w5*w2 + w5*x7 + w5*x5 + w5*x4 + w5*x1 + w5*x0 + w4**2 + w4*w2 + w4*w0 + w4*x5 + w4*x4 + w4*x2 + w3*w2 + w3*x6 + w3*x3 + w3*x1 + w3*x0 + w2*x7 + w2*x5 + w2*x4
+                          + w2*x0 + w1*x4 + w0**2 + w0*x0,
+                      w7*x6 + w7*x4 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x2 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w5*x1 + w4*x5 + w4*x4 + w4*x3 + w4*x1 + w4*x0 + w3*x7 + w3*x5 + w3*x2
+                          + w2*x7 + w2*x6 + w2*x3 + w1*x7 + w1*x6 + w1*x5 + w1*x4 + w1*x2 + w0*x6 + w0*x5 + w0*x4 + w0*x2 + w0*x1 + x7**2 + x7*x6 + x7*x5 + x7*x3 + x7*x1 + x7*x0 + x6*x2
+                          + x6*x1 + x5*x4 + x5*x3 + x5*x2 + x5*x1 + x4*x3 + x4*x2 + x4*x1 + x3**2 + x3*x2 + x2*x1 + x2*x0,
+                      w7*x5 + w7*x4 + w7*x3 + w7*x1 + w7*x0 + w6*x7 + w6*x5 + w6*x2 + w5*x7 + w5*x6 + w5*x3 + w4*x7 + w4*x6 + w4*x5 + w4*x4 + w4*x2 + w3*x6 + w3*x5 + w3*x4 + w3*x2 + w3*x1
+                          + w2*x6 + w2*x3 + w1*x7 + w1*x4 + w0*x7 + w0*x6 + w0*x5 + w0*x3 + x7*x3 + x7*x2 + x6*x5 + x6*x4 + x6*x3 + x6*x2 + x6*x0 + x5*x4 + x5*x3 + x5*x2 + x4**2 + x4*x3
+                          + x3*x2 + x3*x1,
+                      w7*w3 + w7*w2 + w7*x6 + w7*x5 + w7*x4 + w7*x1 + w7*x0 + w6*w5 + w6*w4 + w6*w3 + w6*w2 + w6*w0 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w6*x0 + w5*w4 + w5*w3 + w5*w2 + w5*x7
+                          + w5*x6 + w5*x4 + w5*x3 + w5*x0 + w4**2 + w4*w3 + w4*x7 + w4*x4 + w4*x3 + w4*x1 + w3*w2 + w3*w1 + w3*x7 + w3*x5 + w3*x2 + w3*x0 + w2*x6 + w2*x4 + w2*x3 + w1*x7
+                          + w1*x3 + w0*x7,
+                      w7*x5 + w7*x2 + w7*x1 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x2 + w6*x1 + w5*x5 + w5*x3 + w5*x2 + w4*x3 + w4*x2 + w4*x1 + w3*x6 + w3*x3 + w3*x2 + w3*x0 + w2*x7 + w2*x6
+                          + w2*x5 + w2*x3 + w2*x2 + w1*x6 + w1*x4 + w1*x3 + w0*x4 + w0*x3 + w0*x2 + x7*x5 + x7*x4 + x7*x1 + x7*x0 + x6*x0 + x5**2 + x5*x2 + x5*x1 + x5*x0 + x4**2 + x4*x0
+                          + x3*x2 + x3*x0 + x1**2,
+                      w7*w6 + w7*w5 + w7*w4 + w7*w3 + w7*x7 + w7*x5 + w7*x4 + w7*x3 + w7*x0 + w6**2 + w6*w5 + w6*w4 + w6*w2 + w6*w1 + w6*w0 + w6*x7 + w6*x4 + w6*x3 + w6*x2 + w6*x1 + w5*w4
+                          + w5*w1 + w5*w0 + w5*x7 + w5*x6 + w5*x5 + w5*x3 + w5*x2 + w4*w2 + w4*w1 + w4*x7 + w4*x6 + w4*x3 + w4*x2 + w4*x0 + w3*w0 + w3*x7 + w3*x6 + w3*x4 + w3*x1 + w2**2
+                          + w2*x5 + w2*x3 + w2*x2 + w1*x7 + w1*x6 + w1*x2 + w0*x6,
+                      w7*w5 + w7*w4 + w7*w1 + w7*w0 + w7*x6 + w7*x2 + w6*w0 + w6*x6 + w6*x3 + w6*x2 + w6*x1 + w5**2 + w5*w2 + w5*w1 + w5*w0 + w5*x7 + w5*x6 + w5*x5 + w5*x2 + w4**2 + w4*w0
+                          + w4*x6 + w4*x1 + w4*x0 + w3*w2 + w3*w0 + w3*x5 + w3*x4 + w3*x3 + w3*x2 + w3*x1 + w3*x0 + w2*x7 + w2*x6 + w2*x5 + w2*x4 + w2*x3 + w2*x2 + w2*x0 + w1**2 + w1*x7
+                          + w1*x6 + w1*x4 + w0*x3,
+                      w7*x7 + w7*x6 + w7*x5 + w7*x2 + w6*x7 + w6*x6 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w5*x5 + w5*x4 + w5*x3 + w5*x1 + w5*x0 + w4*x7 + w4*x5 + w4*x2 + w3*x7 + w3*x6 + w3*x3
+                          + w2*x7 + w2*x6 + w2*x5 + w2*x4 + w2*x2 + w1*x6 + w1*x5 + w1*x4 + w1*x2 + w1*x1 + w0*x6 + w0*x3 + x7**2 + x7*x5 + x7*x3 + x6**2 + x6*x5 + x6*x2 + x6*x0 + x5**2
+                          + x4**2 + x4*x3 + x4*x2 + x4*x1 + x3**2 + x3*x1 + x2*x1,
+                      w7**2 + w7*w6 + w7*w5 + w7*w3 + w7*w1 + w7*w0 + w7*x6 + w7*x5 + w7*x3 + w7*x2 + w7*x1 + w6*w2 + w6*w1 + w6*x7 + w6*x6 + w6*x5 + w6*x2 + w6*x1 + w6*x0 + w5*w4 + w5*w3
+                          + w5*w2 + w5*w1 + w5*x6 + w5*x5 + w5*x4 + w5*x3 + w5*x1 + w5*x0 + w4*w3 + w4*w2 + w4*w1 + w4*x7 + w4*x5 + w4*x4 + w4*x1 + w4*x0 + w3**2 + w3*w2 + w3*x5 + w3*x4
+                          + w3*x2 + w2*w1 + w2*w0 + w2*x6 + w2*x3 + w2*x1 + w2*x0 + w1*x7 + w1*x5 + w1*x4 + w1*x0 + w0*x4,
+                      w7*x7 + w7*x5 + w7*x2 + w6*x7 + w6*x6 + w6*x3 + w5*x7 + w5*x6 + w5*x5 + w5*x4 + w5*x2 + w4*x6 + w4*x5 + w4*x4 + w4*x2 + w4*x1 + w3*x6 + w3*x3 + w2*x7 + w2*x4 + w1*x7
+                          + w1*x6 + w1*x5 + w1*x3 + w0*x7 + w0*x6 + w0*x5 + w0*x3 + w0*x2 + w0*x0 + x7**2 + x7*x6 + x7*x3 + x7*x1 + x6**2 + x6*x0 + x5**2 + x5*x4 + x5*x3 + x5*x2 + x4**2
+                          + x4*x2 + x4*x0 + x3*x2 + x0**2,
+                      w7*x7 + w7*x6 + w7*x5 + w7*x4 + w7*x3 + w7*x1 + w6*x5 + w6*x4 + w6*x3 + w6*x1 + w6*x0 + w5*x7 + w5*x5 + w5*x2 + w4*x7 + w4*x6 + w4*x3 + w3*x7 + w3*x6 + w3*x5 + w3*x4
+                          + w3*x2 + w2*x6 + w2*x5 + w2*x4 + w2*x2 + w2*x1 + w1*x6 + w1*x3 + w0*x7 + w0*x4 + x7*x6 + x7*x5 + x7*x4 + x7*x3 + x6**2 + x6*x5 + x6*x4 + x6*x2 + x6*x1 + x6*x0
+                          + x5*x4 + x5*x1 + x5*x0 + x4*x2 + x4*x1 + x3*x0 + x2**2,
+                      w7*x5 + w7*x4 + w7*x3 + w7*x2 + w6*x7 + w6*x1 + w5*x5 + w5*x4 + w5*x3 + w5*x2 + w5*x1 + w4*x7 + w4*x6 + w4*x4 + w4*x3 + w3*x6 + w3*x5 + w3*x4 + w3*x3 + w2*x2 + w2*x0
+                          + w1*x6 + w1*x5 + w1*x4 + w1*x3 + w1*x2 + w0*x7 + w0*x5 + w0*x4 + x7**2 + x7*x4 + x7*x2 + x6*x4 + x6*x3 + x6*x2 + x6*x1 + x5**2 + x5*x4 + x5*x3 + x5*x2 + x5*x0
+                          + x4*x3 + x4*x2 + x4*x1 + x3**2 + x2*x0 + x1*x0,
+                      w7*x6 + w7*x5 + w7*x3 + w7*x2 + w6*x5 + w6*x4 + w6*x3 + w6*x2 + w5*x7 + w5*x1 + w4*x5 + w4*x4 + w4*x3 + w4*x2 + w4*x1 + w3*x7 + w3*x6 + w3*x4 + w3*x3 + w2*x6 + w2*x5
+                          + w2*x4 + w2*x3 + w1*x2 + w1*x0 + w0*x6 + w0*x5 + w0*x4 + w0*x3 + w0*x2 + x7*x5 + x7*x2 + x7*x0 + x6**2 + x6*x5 + x6*x2 + x6*x1 + x6*x0 + x5**2 + x5*x4 + x4**2
+                          + x4*x2 + x4*x1 + x4*x0 + x3**2 + x3*x2 + x1*x0,
+                      w7**2 + w7*w5 + w7*w3 + w7*x7 + w7*x6 + w7*x4 + w7*x3 + w7*x2 + w6**2 + w6*w5 + w6*w2 + w6*w0 + w6*x7 + w6*x6 + w6*x3 + w6*x2 + w6*x1 + w6*x0 + w5**2 + w5*x7 + w5*x6
+                          + w5*x5 + w5*x4 + w5*x2 + w5*x1 + w4**2 + w4*w3 + w4*w2 + w4*w1 + w4*x6 + w4*x5 + w4*x2 + w4*x1 + w3**2 + w3*w1 + w3*x6 + w3*x5 + w3*x3 + w3*x0 + w2*w1 + w2*x7
+                          + w2*x4 + w2*x2 + w2*x1 + w1*x6 + w1*x5 + w1*x1 + w0*x5,
+                      w7*w5 + w7*w2 + w7*w0 + w7*x5 + w7*x3 + w6**2 + w6*w5 + w6*w2 + w6*w1 + w6*w0 + w6*x7 + w6*x3 + w6*x2 + w6*x0 + w5**2 + w5*w4 + w5*x7 + w5*x6 + w5*x4 + w5*x2 + w5*x0
+                          + w4**2 + w4*w2 + w4*w1 + w4*w0 + w4*x6 + w4*x4 + w4*x3 + w4*x2 + w4*x0 + w3**2 + w3*w2 + w3*x7 + w3*x6 + w3*x4 + w3*x3 + w3*x2 + w3*x0 + w2*x7 + w2*x6 + w2*x4
+                          + w2*x1 + w2*x0 + w1*w0 + w1*x5 + w1*x4 + w0*x1,
+                      w7**2 + w7*w4 + w7*w2 + w7*x6 + w7*x4 + w7*x0 + w6*w4 + w6*w3 + w6*w2 + w6*w1 + w6*x4 + w6*x3 + w6*x1 + w5**2 + w5*w4 + w5*w3 + w5*w2 + w5*w0 + w5*x7 + w5*x5 + w5*x3
+                          + w5*x1 + w5*x0 + w4*w3 + w4*w2 + w4*w1 + w4*x7 + w4*x5 + w4*x4 + w4*x3 + w4*x1 + w4*x0 + w3**2 + w3*x7 + w3*x5 + w3*x4 + w3*x3 + w3*x1 + w2*w0 + w2*x7 + w2*x5
+                          + w2*x2 + w2*x1 + w1*w0 + w1*x6 + w1*x5 + w0*x2])
 
         return l
 
@@ -3107,9 +3091,9 @@ class SR_gf2(SR_generic):
         EXAMPLES::
 
             sage: sr = mq.SR(1, 1, 1, 8, gf2=True)
-            sage: xi = sr.vars('x', 1)                                                  # needs sage.rings.polynomial.pbori
-            sage: wi = sr.vars('w', 1)                                                  # needs sage.rings.polynomial.pbori
-            sage: sr.inversion_polynomials(xi, wi, len(xi))[:3]                         # needs sage.rings.polynomial.pbori
+            sage: xi = sr.vars('x', 1)                                                  # needs brial
+            sage: wi = sr.vars('w', 1)                                                  # needs brial
+            sage: sr.inversion_polynomials(xi, wi, len(xi))[:3]                         # needs brial
             [x100*w100 + x100*w102 + x100*w103 + x100*w107 + x101*w101 + x101*w102 + x101*w106 + x102*w100 + x102*w101 + x102*w105 + x103*w100 + x103*w104 + x104*w103 + x105*w102 + x106*w101 + x107*w100,
              x100*w101 + x100*w103 + x100*w104 + x101*w100 + x101*w102 + x101*w103 + x101*w107 + x102*w101 + x102*w102 + x102*w106 + x103*w100 + x103*w101 + x103*w105 + x104*w100 + x104*w104 + x105*w103 + x106*w102 + x107*w101,
              x100*w102 + x100*w104 + x100*w105 + x101*w101 + x101*w103 + x101*w104 + x102*w100 + x102*w102 + x102*w103 + x102*w107 + x103*w101 + x103*w102 + x103*w106 + x104*w100 + x104*w101 + x104*w105 + x105*w100 + x105*w104 + x106*w103 + x107*w102]

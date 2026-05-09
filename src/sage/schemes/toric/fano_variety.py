@@ -830,7 +830,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         """
         if self.base_ring() == F:
             return self
-        elif F not in _Fields:
+        if F not in _Fields:
             raise TypeError("need a field to construct a Fano toric variety!"
                             "\n Got %s" % F)
         else:
@@ -1551,8 +1551,7 @@ def add_variables(field, variables):
             if len(new_variables) > R.ngens():
                 return PolynomialRing(R.base_ring(),
                                       new_variables).fraction_field()
-            else:
-                return field
+            return field
     # "Intelligent extension" didn't work, use the "usual one."
     new_variables = []
     for v in variables:

@@ -592,9 +592,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         if E.systematic_positions() == tuple(range(self.dimension())):
             from sage.combinat.permutation import Permutation
             return self, Permutation([])
-        else:
-            perm = E.systematic_permutation()
-            return self.permuted_code(perm), perm
+        perm = E.systematic_permutation()
+        return self.permuted_code(perm), perm
 
     def redundancy_matrix(self):
         r"""
@@ -1246,8 +1245,7 @@ class LinearCodeSystematicEncoder(Encoder):
             if self._use_pc_matrix == 1:
                 self._use_pc_matrix = 2
                 return C.parity_check_matrix().right_kernel_matrix()
-            else:
-                raise ValueError("a parity check matrix must be specified if LinearCodeSystematicEncoder is the default encoder")
+            raise ValueError("a parity check matrix must be specified if LinearCodeSystematicEncoder is the default encoder")
         else:
             self._use_pc_matrix = 1
             M = copy(C.generator_matrix())

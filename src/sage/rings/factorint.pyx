@@ -47,7 +47,6 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
 
         sage: from sage.rings.factorint import aurifeuillian
 
-        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: aurifeuillian(2, 2)
         [5, 13]
         sage: aurifeuillian(2, 2^5)
@@ -57,7 +56,6 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
         sage: aurifeuillian(15, 1)
         [19231, 142111]
 
-        sage: # needs sage.libs.pari
         sage: aurifeuillian(12, 3)
         Traceback (most recent call last):
         ...
@@ -129,7 +127,6 @@ cpdef factor_aurifeuillian(n, check=True):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: from sage.rings.factorint import factor_aurifeuillian as fa
         sage: fa(2^6 + 1)
         [5, 13]
@@ -148,7 +145,6 @@ cpdef factor_aurifeuillian(n, check=True):
 
     TESTS::
 
-        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: for n in [2,3,5,6,30,31,33]:
         ....:     for m in [8,96,109201283]:
         ....:         s = -1 if n % 4 == 1 else 1

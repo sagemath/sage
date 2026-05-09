@@ -519,8 +519,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
                                for ij, j in enumerate(self._index_set_classical)) )
         if check:
             return all(x in ZZ for x in ret)
-        else:
-            return tuple(ZZ(x) for x in ret)
+        return tuple(ZZ(x) for x in ret)
 
     def from_weight(self, mu):
         r"""
@@ -840,7 +839,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         #   - _freudenthal_accum
         if n in self._mdict:
             return self._mdict[n]
-        elif n in self._ddict:
+        if n in self._ddict:
             self._mdict[n] = self.m(self._ddict[n])
         m = self.to_dominant(n)
         if m in self._mdict:

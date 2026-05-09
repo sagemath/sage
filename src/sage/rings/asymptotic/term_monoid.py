@@ -2721,7 +2721,7 @@ class OTerm(GenericTerm):
             if isinstance(P, AsymptoticRing):
                 return g.O()
 
-            elif isinstance(P, SymbolicRing):
+            if isinstance(P, SymbolicRing):
                 return g.Order()
 
         try:
@@ -3127,11 +3127,11 @@ class TermWithCoefficient(GenericTerm):
 
         if g == '1':
             return c
-        elif c == '1':
+        if c == '1':
             return '{g}'.format(g=g)
-        elif c == '-1':
+        if c == '-1':
             return '-{g}'.format(g=g)
-        elif self.coefficient._is_atomic() or (-self.coefficient)._is_atomic():
+        if self.coefficient._is_atomic() or (-self.coefficient)._is_atomic():
             # note that -pi/2 is not atomic, but -5 is. As subtractions are handled
             # in the asymptotic ring, we ignore such non-atomicity.
             s = '{c} {g}' if latex else '{c}*{g}'
@@ -3834,8 +3834,7 @@ class ExactTerm(TermWithCoefficient):
         coeff_new = self.coefficient + other.coefficient
         if coeff_new.is_zero():
             return None
-        else:
-            return self.parent()(self.growth, coefficient=coeff_new)
+        return self.parent()(self.growth, coefficient=coeff_new)
 
     def log_term(self, base=None, locals=None):
         r"""
@@ -4449,10 +4448,9 @@ class BTerm(TermWithCoefficient):
             valid_from_string = ', '.join(fr'{variable} \ge {value}'
                                           for variable, value in self.valid_from.items())
             return fr'B_{{{valid_from_string}}}\left({self._repr_product_(latex=True)}\right)'
-        else:
-            valid_from_string = ''.join(f', {variable} >= {value}'
-                                        for variable, value in self.valid_from.items())
-            return f'B({self._repr_product_()}{valid_from_string})'
+        valid_from_string = ''.join(f', {variable} >= {value}'
+                                    for variable, value in self.valid_from.items())
+        return f'B({self._repr_product_()}{valid_from_string})'
 
     def _latex_(self):
         r"""

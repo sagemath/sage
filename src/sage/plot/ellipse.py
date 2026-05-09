@@ -189,7 +189,7 @@ class Ellipse(GraphicPrimitive):
             sage: ellipse((3,2),1,2)
             Graphics object consisting of 1 graphics primitive
         """
-        import matplotlib.patches as patches
+        from matplotlib import patches
         from sage.plot.misc import get_matplotlib_linestyle
 
         options = self.options()
@@ -370,5 +370,5 @@ def ellipse(center, r1, r2, angle=0, **options):
         g._legend_colors = [options['legend_color']]
     if len(center) == 2:
         return g
-    elif len(center) == 3:
+    if len(center) == 3:
         raise NotImplementedError("plotting ellipse in 3D is not implemented")

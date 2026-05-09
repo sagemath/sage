@@ -444,8 +444,7 @@ class AbstractCode(Parent):
         if m in self.ambient_space():
             if m in self:
                 return m
-            else:
-                raise ValueError("If the input is a vector which belongs to the ambient space, it has to be a codeword")
+            raise ValueError("If the input is a vector which belongs to the ambient space, it has to be a codeword")
         else:
             return self.encode(m)
 

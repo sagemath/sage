@@ -902,8 +902,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
             if names.issubset(self._gen_names):
                 return self([i.sign()*(self._gen_names.index(P._gen_names[abs(i)-1])+1)
                              for i in x.Tietze()])
-            else:
-                raise ValueError('generators of %s not in the group' % x)
+            raise ValueError('generators of %s not in the group' % x)
         return self.element_class(self, x, **kwds)
 
     def abelian_invariants(self):

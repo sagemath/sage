@@ -483,10 +483,9 @@ class MarkovTraceModuleBasis(Enum):
             # since :class:`Link` does not construct disjoint union of unlinks
             # from the braid representation, we need a pd_code here
             return Link(pd_code)
-        else:
-            from sage.groups.braid import BraidGroup
-            B = BraidGroup(self.strands())
-            return Link(B(self.braid_tietze()))
+        from sage.groups.braid import BraidGroup
+        B = BraidGroup(self.strands())
+        return Link(B(self.braid_tietze()))
 
     def regular_homfly_polynomial(self):
         r"""
@@ -697,8 +696,7 @@ class CubicHeckeFileCache(SageObject):
             """
             if nstrands is None:
                 return '%s.sobj' % self.value
-            else:
-                return '%s_%s.sobj' % (self.value, nstrands)
+            return '%s_%s.sobj' % (self.value, nstrands)
 
         matrix_representations = 'matrix_representations'
         braid_images = 'braid_images'

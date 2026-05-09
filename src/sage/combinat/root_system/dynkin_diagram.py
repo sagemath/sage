@@ -294,8 +294,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
         if ct is None or isinstance(ct, CartanMatrix):
             return result+"Dynkin diagram of rank %s" % self.rank()
-        else:
-            return result+"%s" % ct._repr_(compact=True)
+        return result+"%s" % ct._repr_(compact=True)
 
     def _rich_repr_(self, display_manager, **kwds):
         """
@@ -318,8 +317,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         OutputPlainText = display_manager.types.OutputPlainText
         if OutputAsciiArt in display_manager.supported_output():
             return OutputAsciiArt(self._repr_())
-        else:
-            return OutputPlainText(self._repr_())
+        return OutputPlainText(self._repr_())
 
     def _latex_(self, scale=0.5):
         r"""
@@ -607,10 +605,8 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         if return_map:
             if inplace:
                 return perm
-            else:
-                return G, perm
-        else:
-            return G
+            return G, perm
+        return G
 
     def subtype(self, index_set):
         """
@@ -776,10 +772,9 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             if i in self._odd_isotropic_roots:
                 return 0
             return 2
-        elif self.has_edge(j, i):
+        if self.has_edge(j, i):
             return -self.edge_label(j, i)
-        else:
-            return 0
+        return 0
 
     def column(self, j):
         """

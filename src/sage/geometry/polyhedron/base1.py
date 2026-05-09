@@ -95,7 +95,6 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         r"""
         TESTS::
 
-            sage: # needs sage.rings.number_field
             sage: K.<a> = QuadraticField(2)
             sage: p = Polyhedron(vertices=[(0, 1, a), (3, a, 5)],
             ....:                rays=[(a, 2, 3), (0, 0, 1)],
@@ -226,12 +225,11 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         c1 = other._is_subpolyhedron(self)
         if c0 and c1:
             return rich_to_bool(op, 0)
-        elif c0:
+        if c0:
             return rich_to_bool(op, -1)
-        elif c1:
+        if c1:
             return rich_to_bool(op, 1)
-        else:
-            return op == op_NE
+        return op == op_NE
 
     @coerce_binop
     def _is_subpolyhedron(self, other):
@@ -334,8 +332,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         """
         if self.n_Vrepresentation() == 0:
             return -1   # the empty set
-        else:
-            return self.ambient_dim() - self.n_equations()
+        return self.ambient_dim() - self.n_equations()
 
     dimension = dim
 
@@ -607,7 +604,6 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         The point need not have coordinates in the same field as the
         polyhedron::
 
-            sage: # needs sage.symbolic
             sage: ray = Polyhedron(vertices=[(0,0)], rays=[(1,0)], base_ring=QQ)
             sage: ray.contains([sqrt(2)/3,0])        # irrational coordinates are ok
             True
@@ -651,8 +647,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
                 return False
             if l > 0:
                 return False
-            else:
-                p = vector(self.base_ring(), [])
+            p = vector(self.base_ring(), [])
 
         if len(p) != self.ambient_dim():
             return False
@@ -749,8 +744,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
                 return False
             if l > 0:
                 return False
-            else:
-                p = vector(self.base_ring(), [])
+            p = vector(self.base_ring(), [])
 
         if len(p) != self.ambient_dim():
             return False
@@ -862,8 +856,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
                 return False
             if l > 0:
                 return False
-            else:
-                p = vector(self.base_ring(), [])
+            p = vector(self.base_ring(), [])
 
         if len(p) != self.ambient_dim():
             return False

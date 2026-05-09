@@ -116,12 +116,11 @@ def _common_subgroup(group1, group2):
 
     if group1 == group2:
         return group1
-    elif (group1.n() == 3) and (group2.n() == infinity):
+    if (group1.n() == 3) and (group2.n() == infinity):
         return group2
-    elif (group1.n() == infinity) and (group2.n() == 3):
+    if (group1.n() == infinity) and (group2.n() == 3):
         return group1
-    else:
-        return None
+    return None
 
 
 def ConstantFormsSpaceFunctor(group):
@@ -230,8 +229,7 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
         ambient_space = self._ambient_space_functor(R)
         if isinstance(ambient_space, FormsSpace_abstract):
             return SubSpaceForms(ambient_space, self._generators)
-        else:
-            return ambient_space
+        return ambient_space
 
     def _repr_(self):
         r"""
@@ -297,16 +295,14 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
 
         if (self == other):
             return self
-        elif isinstance(other, FormsSubSpaceFunctor):
+        if isinstance(other, FormsSubSpaceFunctor):
             merged_ambient_space_functor = self._ambient_space_functor.merge(other._ambient_space_functor)
             if isinstance(merged_ambient_space_functor, FormsSpaceFunctor):
                 generators = self._generators + other._generators
                 return FormsSubSpaceFunctor(merged_ambient_space_functor, generators)
             # This includes the case when None is returned
-            else:
-                return merged_ambient_space_functor
-        else:
-            return self._ambient_space_functor.merge(other)
+            return merged_ambient_space_functor
+        return self._ambient_space_functor.merge(other)
 
     def __eq__(self, other):
         r"""
@@ -403,10 +399,9 @@ class FormsSpaceFunctor(ConstructionFunctor):
         if (isinstance(R, BaseFacade)):
             R = _get_base_ring(R._ring)
             return FormsSpace(self._analytic_type, self._group, R, self._k, self._ep)
-        else:
-            R = BaseFacade(_get_base_ring(R))
-            merged_functor = self.merge(ConstantFormsSpaceFunctor(self._group))
-            return merged_functor(R)
+        R = BaseFacade(_get_base_ring(R))
+        merged_functor = self.merge(ConstantFormsSpaceFunctor(self._group))
+        return merged_functor(R)
 
     def _repr_(self):
         r"""
@@ -483,9 +478,8 @@ class FormsSpaceFunctor(ConstructionFunctor):
             analytic_type = self._analytic_type + other._analytic_type
             if (self._k == other._k) and (self._ep == other._ep):
                 return FormsSpaceFunctor(analytic_type, group, self._k, self._ep)
-            else:
-                return FormsRingFunctor(analytic_type, group, True)
-        elif isinstance(other, FormsRingFunctor):
+            return FormsRingFunctor(analytic_type, group, True)
+        if isinstance(other, FormsRingFunctor):
             group = _common_subgroup(self._group, other._group)
             if group is None:
                 return None
@@ -587,10 +581,9 @@ class FormsRingFunctor(ConstructionFunctor):
         if (isinstance(R, BaseFacade)):
             R = _get_base_ring(R._ring)
             return FormsRing(self._analytic_type, self._group, R, self._red_hom)
-        else:
-            R = BaseFacade(_get_base_ring(R))
-            merged_functor = self.merge(ConstantFormsSpaceFunctor(self._group))
-            return merged_functor(R)
+        R = BaseFacade(_get_base_ring(R))
+        merged_functor = self.merge(ConstantFormsSpaceFunctor(self._group))
+        return merged_functor(R)
 
     def _repr_(self):
         r"""
@@ -667,7 +660,7 @@ class FormsRingFunctor(ConstructionFunctor):
             red_hom = self._red_hom
             analytic_type = self._analytic_type + other._analytic_type
             return FormsRingFunctor(analytic_type, group, red_hom)
-        elif isinstance(other, FormsRingFunctor):
+        if isinstance(other, FormsRingFunctor):
             group = _common_subgroup(self._group, other._group)
             if group is None:
                 return None

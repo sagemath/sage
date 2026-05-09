@@ -119,8 +119,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         n = self.dimension()
         if i == n:
             return self.sum(self.monomial(j) for j in range(n)) / 2
-        else:
-            return self.sum(self.monomial(j) for j in range(i))
+        return self.sum(self.monomial(j) for j in range(i))
 
 
 from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanType_crystallographic, CartanType_simply_laced
