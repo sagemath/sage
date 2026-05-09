@@ -434,7 +434,7 @@ def _extract_source(lines, lineno):
 
     if isinstance(lines, str):
         lines = lines.splitlines(True)  # true keeps the '\n'
-    if len(lines):
+    if lines:
         # Fixes an issue with getblock
         lines[-1] += '\n'
 
@@ -2594,11 +2594,8 @@ def sage_getvariablename(self, omit_underscore_names=True):
     # This is a modified version of code taken from
     # https://web.archive.org/web/20100416095847/http://pythonic.pocoo.org/2009/5/30/finding-objects-names
     # written by Georg Brandl.
-    result = []
-    for frame in inspect.stack():
-        for name, obj in frame[0].f_globals.items():
-            if obj is self:
-                result.append(name)
+    result = [name for frame in inspect.stack()
+              for name, obj in frame[0].f_globals.items() if obj is self]
     if len(result) == 1:
         return result[0]
     return sorted(result)

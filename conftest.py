@@ -116,13 +116,6 @@ class SageDoctestModule(DoctestModule):
                 if self.config.getvalue("doctest_ignore_import_errors"):
                     pytest.skip("unable to import module %r" % self.path)
                 else:
-                    if isinstance(exception, ModuleNotFoundError):
-                        # Ignore some missing features/modules for now
-                        # TODO: Remove this once all optional things are using Features
-                        if exception.name == "valgrind":
-                            pytest.skip(
-                                f"unable to import module {self.path} due to missing feature {exception.name}"
-                            )
                     raise
         # Uses internal doctest module parsing mechanism.
         finder = MockAwareDocTestFinder()

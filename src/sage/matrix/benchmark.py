@@ -18,6 +18,7 @@ The basic command syntax is as follows::
     ======================================================================
 """
 
+import inspect
 import sys
 
 from sage.matrix.constructor import Matrix, random_matrix
@@ -69,7 +70,12 @@ def report(F, title, systems=['sage', 'magma'], **kwds):
     print('\n')
     for f in F:
         print("-"*70)
-        print(f.__doc__.strip())
+        parameter_values = []
+        for param, value in inspect.signature(f).parameters.items():
+            if param == 'system':
+                continue
+            parameter_values.append(f'{param}={kwds.get(param, value.default)}')
+        print(f'{f.__name__}:', ', '.join(parameter_values))
         print(('%15s' * len(systems)) % tuple(systems))
         w = []
         for s in systems:
@@ -148,7 +154,7 @@ def nullspace_ZZ(n=200, min=0, max=2**32, system='sage'):
     if system == 'sage':
         A = random_matrix(ZZ, n+1, n, x=min, y=max+1).change_ring(QQ)
         t = cputime()
-        v = A.kernel()
+        A.kernel()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -187,7 +193,7 @@ def charpoly_ZZ(n=100, min=0, max=9, system='sage'):
     if system == 'sage':
         A = random_matrix(ZZ, n, n, x=min, y=max+1)
         t = cputime()
-        v = A.charpoly()
+        A.charpoly()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -226,7 +232,7 @@ def rank_ZZ(n=700, min=0, max=9, system='sage'):
     if system == 'sage':
         A = random_matrix(ZZ, n, n+10, x=min, y=max+1)
         t = cputime()
-        v = A.rank()
+        A.rank()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -265,7 +271,7 @@ def rank2_ZZ(n=400, min=0, max=2**64, system='sage'):
     if system == 'sage':
         A = random_matrix(ZZ, n+10, n, x=min, y=max+1)
         t = cputime()
-        v = A.rank()
+        A.rank()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -306,7 +312,7 @@ def smithform_ZZ(n=128, min=0, max=9, system='sage'):
     if system == 'sage':
         A = random_matrix(ZZ, n, n, x=min, y=max+1)
         t = cputime()
-        v = A.elementary_divisors()
+        A.elementary_divisors()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -348,7 +354,7 @@ def matrix_multiply_ZZ(n=300, min=-9, max=9, system='sage', times=1):
         B = A + 1
         t = cputime()
         for z in range(times):
-            v = A * B
+            _ = A * B
         return cputime(t)/times
     if system == 'magma':
         code = """
@@ -393,7 +399,7 @@ def matrix_add_ZZ(n=200, min=-9, max=9, system='sage', times=50):
         B = random_matrix(ZZ, n, n, x=min, y=max+1)
         t = cputime()
         for z in range(times):
-            v = A + B
+            _ = A + B
         return cputime(t)/times
     if system == 'magma':
         code = """
@@ -460,7 +466,7 @@ def det_ZZ(n=200, min=1, max=100, system='sage'):
     if system == 'sage':
         A = random_matrix(ZZ, n, n, x=min, y=max+1)
         t = cputime()
-        d = A.determinant()
+        A.determinant()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -500,7 +506,7 @@ def det_QQ(n=300, num_bound=10, den_bound=10, system='sage'):
     if system == 'sage':
         A = random_matrix(QQ, n, n, num_bound=num_bound, den_bound=den_bound)
         t = cputime()
-        d = A.determinant()
+        A.determinant()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -544,7 +550,7 @@ def vecmat_ZZ(n=300, min=-9, max=9, system='sage', times=200):
         v = A.row(0)
         t = cputime()
         for z in range(times):
-            w = v * A
+            _ = v * A
         return cputime(t)/times
     if system == 'magma':
         code = """
@@ -565,24 +571,17 @@ s := Cputime(t);
 
 
 #######################################################################
-# Dense Benchmarks over GF(p), for small p.
+# Dense Benchmarks over GF(p).
 #######################################################################
 
 def report_GF(p=16411, **kwds):
     """
-    Run all the reports for finite field matrix operations, for
-    prime p=16411.
+    Run all the reports for finite field matrix operations.
 
     INPUT:
 
-    - ``p`` -- ignored
+    - ``p`` -- prime number (default: ``16411``)
     - ``**kwds`` -- passed through to :func:`report`
-
-    .. NOTE::
-
-        right now, even though p is an input, it is being ignored!  If
-        you need to check the performance for other primes, you can
-        call individual benchmark functions.
 
     EXAMPLES::
 
@@ -596,8 +595,9 @@ def report_GF(p=16411, **kwds):
         ======================================================================
     """
     F = [rank_GF, rank2_GF, nullspace_GF, charpoly_GF,
-         matrix_multiply_GF, det_GF]
+         matrix_multiply_GF, matrix_add_GF, det_GF]
     title = 'Dense benchmarks over GF with prime %i' % p
+    kwds['p'] = p
     report(F, title, **kwds)
 
 # Nullspace over GF
@@ -623,7 +623,7 @@ def nullspace_GF(n=300, p=16411, system='sage'):
     if system == 'sage':
         A = random_matrix(GF(p), n, n+1)
         t = cputime()
-        v = A.kernel()
+        A.kernel()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -662,7 +662,7 @@ def charpoly_GF(n=100, p=16411, system='sage'):
     if system == 'sage':
         A = random_matrix(GF(p), n, n)
         t = cputime()
-        v = A.charpoly()
+        A.charpoly()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -701,7 +701,7 @@ def matrix_add_GF(n=1000, p=16411, system='sage', times=100):
         B = random_matrix(GF(p), n, n)
         t = cputime()
         for n in range(times):
-            v = A + B
+            _ = A + B
         return cputime(t)
     if system == 'magma':
         code = """
@@ -746,7 +746,7 @@ def matrix_multiply_GF(n=100, p=16411, system='sage', times=3):
         B = A + 1
         t = cputime()
         for n in range(times):
-            v = A * B
+            _ = A * B
         return cputime(t) / times
     if system == 'magma':
         code = """
@@ -786,7 +786,7 @@ def rank_GF(n=500, p=16411, system='sage'):
     if system == 'sage':
         A = random_matrix(GF(p), n, n+10)
         t = cputime()
-        v = A.rank()
+        A.rank()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -823,7 +823,7 @@ def rank2_GF(n=500, p=16411, system='sage'):
     if system == 'sage':
         A = random_matrix(GF(p), n+10, n)
         t = cputime()
-        v = A.rank()
+        A.rank()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -861,7 +861,7 @@ def det_GF(n=400, p=16411 , system='sage'):
     if system == 'sage':
         A = random_matrix(GF(p), n, n)
         t = cputime()
-        d = A.determinant()
+        A.determinant()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -924,7 +924,7 @@ def echelon_QQ(n=100, min=0, max=9, system='sage'):
     if system == 'sage':
         A = random_matrix(ZZ, n, 2*n, x=min, y=max+1).change_ring(QQ)
         t = cputime()
-        v = A.echelon_form()
+        A.echelon_form()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -962,9 +962,8 @@ def inverse_QQ(n=100, min=0, max=9, system='sage'):
         sage: tm = b.inverse_QQ(100, system='magma')  # optional - magma
     """
     if system == 'sage':
-        A = random_matrix(ZZ, n, n, x=min, y=max+1).change_ring(QQ)
+        random_matrix(ZZ, n, n, x=min, y=max+1).change_ring(QQ)
         t = cputime()
-        v = ~A
         return cputime(t)
     if system == 'magma':
         code = """
@@ -1006,7 +1005,7 @@ def matrix_multiply_QQ(n=100, bnd=2, system='sage', times=1):
         B = A + 1
         t = cputime()
         for z in range(times):
-            v = A * B
+            _ = A * B
         return cputime(t)/times
     if system == 'magma':
         A = magma(random_matrix(QQ, n, n, num_bound=bnd, den_bound=bnd))
@@ -1047,7 +1046,7 @@ def det_hilbert_QQ(n=80, system='sage'):
     if system == 'sage':
         A = hilbert_matrix(n)
         t = cputime()
-        d = A.determinant()
+        A.determinant()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -1084,7 +1083,7 @@ def invert_hilbert_QQ(n=40, system='sage'):
     if system == 'sage':
         A = hilbert_matrix(n)
         t = cputime()
-        d = A**(-1)
+        _ = A**(-1)
         return cputime(t)
     if system == 'magma':
         code = """
@@ -1124,7 +1123,7 @@ def MatrixVector_QQ(n=1000, h=100, system='sage', times=1):
         M = random_matrix(QQ,n)
         t = cputime()
         for i in range(times):
-            w = M*v
+            _ = M * v
         return cputime(t)
     if system == 'magma':
         code = """
@@ -1177,7 +1176,7 @@ def nullspace_RR(n=300, min=0, max=10, system='sage'):
         from sage.rings.real_mpfr import RR
         A = random_matrix(ZZ, n+1, n, x=min, y=max+1).change_ring(RR)
         t = cputime()
-        v = A.kernel()
+        A.kernel()
         return cputime(t)
     if system == 'magma':
         code = """
@@ -1217,7 +1216,7 @@ def nullspace_RDF(n=300, min=0, max=10, system='sage'):
         from sage.rings.real_double import RDF
         A = random_matrix(ZZ, n+1, n, x=min, y=max+1).change_ring(RDF)
         t = cputime()
-        v = A.kernel()
+        A.kernel()
         return cputime(t)
     if system == 'magma':
         code = """

@@ -7108,6 +7108,54 @@ cdef class Polynomial(CommutativePolynomial):
         v = ','.join(a._magma_init_(magma) for a in self.list())
         return '%s![%s]' % (R.name(), v)
 
+    def _fricas_init_(self):
+        """
+        Return this polynomial in FriCAS.
+
+        EXAMPLES::
+
+            sage: # optional - fricas
+            sage: R.<y> = ZZ[]
+            sage: f = y^3 - 17*y + 5
+            sage: g = fricas(f); g   # indirect doctest
+             3
+            y  - 17 y + 5
+            sage: f._fricas_init_()
+            '[[[0,5],[1,-17],[3,1]]$...]$UnivariatePolynomial(y,Integer)'
+
+        Coefficients in a finite field::
+
+            sage: # optional - fricas
+            sage: R.<y> = GF(7)[]
+            sage: f = y^3 - 17*y + 5
+            sage: g = fricas(f); g
+             3
+            y  + 4 y + 5
+            sage: f._fricas_init_()
+            '[[[0,5::PrimeField(7)],[1,4::PrimeField(7)],[3,1::PrimeField(7)]]$...]$UnivariatePolynomial(y,PrimeField(7))'
+
+        TESTS::
+
+            sage: # optional - fricas
+            sage: R.<y> = GF(7)[]
+            sage: fricas(17*y)
+            3 y
+            sage: (17*y)._fricas_init_()
+            'monomial(3::PrimeField(7),1)$UnivariatePolynomial(y,PrimeField(7))'
+        """
+        R = self.parent()._fricas_init_()
+        B = self.base_ring()._fricas_init_()
+        v = self.variable_name()
+
+        d = list(self.dict().items())
+        if len(d) == 1:
+            k, e = list(d)[0]
+            return f"monomial({e._fricas_init_()},{k})${R}"
+
+        c = ",".join(f"[{k},{e._fricas_init_()}]"
+                     for k, e in self.dict().items())
+        return f"[[{c}]$List(Record(k:NonNegativeInteger,c:{B}))]${R}"
+
     def _gap_(self, gap):
         """
         Return this polynomial in GAP.
@@ -8412,9 +8460,9 @@ cdef class Polynomial(CommutativePolynomial):
         complex ball fields::
 
             sage: Pol.<x> = CBF[]
-            sage: set((x^2 + 2).roots(multiplicities=False))
-            {[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
-             [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I}
+            sage: sorted((x^2 + 2).roots(multiplicities=False), key=imag)
+            [[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
+             [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I]
             sage: (x^3 - 1/2).roots(RBF, multiplicities=False)
             [[0.7937005259840997 +/- ...e-17]]
             sage: ((x - 1)^2).roots(multiplicities=False, proof=False)

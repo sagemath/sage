@@ -269,6 +269,23 @@ cdef class FiniteField(Field):
         return "GF(%s,Variable=>symbol %s)" % (self.order(),
                                                self.variable_name())
 
+    def _fricas_init_(self):
+        """
+        Return a string representation of this finite field that FriCAS
+        can understand.
+
+        EXAMPLES::
+
+            sage: # optional - fricas
+            sage: fricas(GF(5))
+            PrimeField(5)
+            sage: fricas(GF(5,3))
+            FiniteField(5,3)
+        """
+        if self.degree() == 1:
+            return f'PrimeField({self.characteristic()})'
+        return f'FiniteField({self.characteristic()},{self.degree()})'
+
     def _sage_input_(self, sib, coerced):
         r"""
         Produce an expression which will reproduce this value when evaluated.

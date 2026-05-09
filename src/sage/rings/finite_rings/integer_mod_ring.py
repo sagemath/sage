@@ -499,25 +499,22 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return "ZZ/{}".format(self.order())
 
-    def _axiom_init_(self) -> str:
+    def _fricas_init_(self) -> str:
         """
-        Return a string representation of ``self`` in (Pan)Axiom.
+        Return a string representation of ``self`` in FriCAS.
 
         EXAMPLES::
 
             sage: Z7 = Integers(7)
-            sage: Z7._axiom_init_()
+            sage: Z7._fricas_init_()
             'IntegerMod(7)'
 
-            sage: axiom(Z7)  #optional - axiom
-            IntegerMod 7
-
-            sage: fricas(Z7) #optional - fricas
+            sage: fricas(Z7)  # optional - fricas
             IntegerMod(7)
         """
         return 'IntegerMod({})'.format(self.order())
 
-    _fricas_init_ = _axiom_init_
+    _axiom_init_ = _fricas_init_
 
     def krull_dimension(self):
         """
@@ -768,7 +765,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: Integers(15).fraction_field()
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
             sage: Integers(15)._pseudo_fraction_field()
             Ring of integers modulo 15
             sage: R.<x> = Integers(15)[]
