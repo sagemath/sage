@@ -149,12 +149,14 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: J.order()
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            NotImplementedError: order computation is only implemented for Jacobians over finite fields
         """
         if isinstance(self.base_ring(), FiniteField_generic):
             return sum(self.extended_curve().frobenius_polynomial())
 
-        raise NotImplementedError
+        raise NotImplementedError(
+            "order computation is only implemented for Jacobians over finite fields"
+        )
 
     @cached_method
     def _curve_frobenius_roots(self):
@@ -758,14 +760,25 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: JK = H.jacobian()(K)
             sage: JK._random_element_cover() # random
             (x + 1, 1)
+
+        The case "inert & odd genus" is not implemented (see :issue:`41985`)::
+
+            sage: K = GF(101)
+            sage: x = polygen(K)
+            sage: f = 7*x^8 + 74*x^7 + 55*x^6 + 3*x^5 + 74*x^4 + 48*x^3 + 15*x^2 + 26*x + 97
+            sage: HyperellipticCurve(f).jacobian()(K)._random_element_cover()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: unable to perform arithmetic for inert models of odd genus; consider extending the base field to adjoin the points at infinity
         """
         H = self.extended_curve()
         R = H.polynomial_ring()
         g = H.genus()
 
         # For the inert case, the genus must be even
-        if H.is_inert():
-            assert not (g % 2)
+        if H.is_inert() and g % 2:
+            raise NotImplementedError('unable to perform arithmetic for inert models of odd genus; '
+                                      'consider extending the base field to adjoin the points at infinity')
 
         if degree is None:
             degree = (-1, g)
@@ -801,6 +814,18 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: JH = J.point_homset()
             sage: len(set(JH._random_element_rational() for _ in range(300)))
             8
+
+        TESTS:
+
+        The case "inert & odd genus" is not implemented (see :issue:`41985`)::
+
+            sage: K = GF(101)
+            sage: x = polygen(K)
+            sage: f = 7*x^8 + 74*x^7 + 55*x^6 + 3*x^5 + 74*x^4 + 48*x^3 + 15*x^2 + 26*x + 97
+            sage: HyperellipticCurve(f).jacobian()(K)._random_element_rational()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: unable to perform arithmetic for inert models of odd genus; consider extending the base field to adjoin the points at infinity
         """
         H = self.extended_curve()
         g = H.genus()
@@ -999,16 +1024,15 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         """
         n = self.order()
         g = self.curve().genus()
-        from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
-        A = AdditiveAbelianGroupWrapper(self, [], [])
+        from sage.groups.additive_abelian.additive_abelian_wrapper import expand_basis, AdditiveAbelianGroupWrapper
+        gens, ords = [], []
         for fast in (True, False):
             for _ in range(99 * g):
-                assert len(A.invariants()) <= 2 * g
-                assert A.order().divides(n)
-                if A.order() == n:
-                    return A
+                assert len(ords) <= 2 * g
+                order = product(ords)
+                assert order.divides(n)
+                if order == n:
+                    return AdditiveAbelianGroupWrapper(self, gens, ords)
                 D = self.random_element(fast=fast)
-                if D in A:
-                    continue
-                A = AdditiveAbelianGroupWrapper.from_generators(A._gen_elements + (D,))
+                gens, ords = expand_basis(gens, D, ords)
         raise RuntimeError('very unlikely event, or (more likely) bug in HyperellipticJacobianHomset.abelian_group()')

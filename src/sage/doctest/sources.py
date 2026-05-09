@@ -826,6 +826,7 @@ class FileDocTestSource(DocTestSource):
             skipping = False
             in_block = False
             last_line = ''
+        starting_indent = None
         for lineno, line in self:
             if not line.strip():
                 continue

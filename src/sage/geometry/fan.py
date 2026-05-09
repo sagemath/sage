@@ -1203,6 +1203,29 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         rays = [sib(tuple(r)) for r in self.rays()]
         return sib.name('Fan')(cones=cones, rays=rays)
 
+    def _macaulay2_init_(self, macaulay2=None):
+        """
+        Conversion to Macaulay2.
+
+        EXAMPLES::
+
+            sage: # optional - macaulay2
+            sage: F = Fan([Cone([[0,1],[1,1]]),Cone([[1,1],[1,0]])])
+            sage: m2 = macaulay2
+            sage: f = m2(F)  # indirect doctest
+            sage: f.isComplete()
+            false
+            sage: f.fVector()
+            {1, 3, 2}
+            sage: f == F._macaulay2_init_()
+            True
+        """
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2 as m2_default
+            macaulay2 = m2_default
+
+        return macaulay2.fan(self.generating_cones())
+
     def __call__(self, dim=None, codim=None):
         r"""
         Return the specified cones of ``self``.
@@ -1254,17 +1277,17 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             return self
         return self.cones(dim, codim)
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         INPUT:
 
-        - ``right`` -- anything
+        - ``other`` -- anything
 
         OUTPUT: boolean
 
-        There is equality if ``right`` is also a fan, their rays are
+        There is equality if ``other`` is also a fan, their rays are
         the same and stored in the same order, and their generating
         cones are the same and stored in the same order.
 
@@ -1288,11 +1311,11 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: f2 is f3
             False
         """
-        if isinstance(right, RationalPolyhedralFan):
+        if isinstance(other, RationalPolyhedralFan):
             return richcmp([self.rays(), self.virtual_rays(),
                             self.generating_cones()],
-                           [right.rays(), right.virtual_rays(),
-                            right.generating_cones()], op)
+                           [other.rays(), other.virtual_rays(),
+                            other.generating_cones()], op)
         return NotImplemented
 
     def __contains__(self, cone) -> bool:

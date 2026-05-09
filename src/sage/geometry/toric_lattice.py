@@ -847,17 +847,17 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
             args.extend([self._latex_name, self._latex_dual_name])
         return sib.name('ToricLattice')(*args)
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         INPUT:
 
-        - ``right`` -- anything
+        - ``other`` -- anything
 
         OUTPUT: boolean
 
-        There is equality if ``right`` is a toric lattice of the same
+        There is equality if ``other`` is a toric lattice of the same
         dimension as ``self`` and their associated names are the
         same.
 
@@ -873,20 +873,20 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
             sage: N3 == ToricLattice(3)
             True
         """
-        if self is right:
+        if self is other:
             return rich_to_bool(op, 0)
-        if type(self) is not type(right):
+        if type(self) is not type(other):
             return NotImplemented
 
         lx = self.rank()
-        rx = right.rank()
+        rx = other.rank()
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
         # If lattices are the same as ZZ-modules, compare associated names
         return richcmp([self._name, self._dual_name,
                         self._latex_name, self._latex_dual_name],
-                       [right._name, right._dual_name,
-                        right._latex_name, right._latex_dual_name], op)
+                       [other._name, other._dual_name,
+                        other._latex_name, other._latex_dual_name], op)
 
     def _latex_(self):
         r"""

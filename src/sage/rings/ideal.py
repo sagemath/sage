@@ -168,7 +168,7 @@ def Ideal(*args, **kwds):
         sage: S == U                                                                    # needs sage.libs.pari
         True
     """
-    if len(args) == 0:
+    if not args:
         raise ValueError("need at least one argument")
     if len(args) == 1 and args[0] == []:
         raise ValueError("unable to determine which ring to embed the ideal in")
@@ -243,7 +243,7 @@ class Ideal_generic(MonoidElement):
         self.__gens = gens
         MonoidElement.__init__(self, ring.ideal_monoid())
 
-    def _repr_short(self):
+    def _repr_short(self) -> str:
         """
         Represent the list of generators.
 
@@ -283,7 +283,7 @@ class Ideal_generic(MonoidElement):
             return '\n(\n  %s\n)\n' % (',\n\n  '.join(L))
         return '(%s)' % (', '.join(L))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -308,7 +308,7 @@ class Ideal_generic(MonoidElement):
         """
         return sum(self.__ring.random_element(*args, **kwds) * g for g in self.__gens)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare two ideals with respect to set inclusion.
 
@@ -529,7 +529,7 @@ class Ideal_generic(MonoidElement):
         # delegate: morphisms know how to apply themselves to ideals
         return phi(self)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -673,7 +673,7 @@ class Ideal_generic(MonoidElement):
         """
         return self.gens()
 
-    def is_maximal(self):
+    def is_maximal(self) -> bool:
         r"""
         Return ``True`` if the ideal is maximal in the ring containing the
         ideal.
@@ -713,7 +713,7 @@ class Ideal_generic(MonoidElement):
             return self.is_prime()
         raise NotImplementedError
 
-    def is_primary(self, P=None):
+    def is_primary(self, P=None) -> bool:
         r"""
         Return ``True`` if this ideal is primary (or `P`-primary, if
         a prime ideal `P` is specified).
@@ -763,7 +763,7 @@ class Ideal_generic(MonoidElement):
         except (NotImplementedError, ValueError):
             raise NotImplementedError
         if P is None:
-            return (len(ass) == 1)
+            return len(ass) == 1
         return (len(ass) == 1) and (ass[0] == P)
 
     def primary_decomposition(self):
@@ -781,7 +781,7 @@ class Ideal_generic(MonoidElement):
         """
         raise NotImplementedError
 
-    def is_prime(self):
+    def is_prime(self) -> bool:
         r"""
         Return ``True`` if this ideal is prime.
 
@@ -866,7 +866,7 @@ class Ideal_generic(MonoidElement):
         """
         raise NotImplementedError
 
-    def embedded_primes(self):
+    def embedded_primes(self) -> list:
         r"""
         Return the list of embedded primes of this ideal.
 
@@ -890,7 +890,7 @@ class Ideal_generic(MonoidElement):
         emb.sort()
         return emb
 
-    def is_principal(self):
+    def is_principal(self) -> bool:
         r"""
         Return ``True`` if the ideal is principal in the ring containing the
         ideal.
@@ -917,7 +917,7 @@ class Ideal_generic(MonoidElement):
             return True
         raise NotImplementedError
 
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         r"""
         Return ``True`` if this ideal is `(0)` or `(1)`.
 
@@ -1094,10 +1094,10 @@ class Ideal_generic(MonoidElement):
         Return the norm of this ideal.
 
         In the general case, this is just the ideal itself, since the ring it
-        lies in can't be implicitly assumed to be an extension of anything.
+        lies in cannot be implicitly assumed to be an extension of anything.
 
-        We include this function for compatibility with cases such as ideals in
-        number fields.
+        We include this function for compatibility with cases such as
+        ideals in number fields.
 
         EXAMPLES::
 
@@ -1114,10 +1114,10 @@ class Ideal_generic(MonoidElement):
         Return the absolute norm of this ideal.
 
         In the general case, this is just the ideal itself, since the ring it
-        lies in can't be implicitly assumed to be an extension of anything.
+        lies in cannot be implicitly assumed to be an extension of anything.
 
-        We include this function for compatibility with cases such as ideals in
-        number fields.
+        We include this function for compatibility with cases such as
+        ideals in number fields.
 
         .. TODO::
 
@@ -1196,7 +1196,7 @@ class Ideal_generic(MonoidElement):
         R = self.ring()
         macaulay2.use(R._macaulay2_(macaulay2))
         gens = [repr(x) for x in self.gens()]
-        if len(gens) == 0:
+        if not gens:
             gens = ['0']
         return macaulay2.ideal(gens)
 
@@ -1247,7 +1247,7 @@ class Ideal_principal(Ideal_generic):
     # def __init__(self, ring, gen):
     #    Ideal_generic.__init__(self, ring, [gen])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1260,7 +1260,7 @@ class Ideal_principal(Ideal_generic):
         """
         return "Principal ideal (%s) of %s" % (self.gen(), self.ring())
 
-    def is_principal(self):
+    def is_principal(self) -> bool:
         r"""
         Return ``True`` if the ideal is principal in the ring containing the
         ideal. When the ideal construction is explicitly principal (i.e.
@@ -1364,7 +1364,7 @@ class Ideal_principal(Ideal_generic):
         """
         return 0
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare two ideals with respect to set inclusion.
 
@@ -1425,7 +1425,7 @@ class Ideal_principal(Ideal_generic):
 
         return Ideal_generic._richcmp_(self, other, op)
 
-    def divides(self, other):
+    def divides(self, other) -> bool:
         """
         Return ``True`` if ``self`` divides ``other``.
 
@@ -1550,7 +1550,7 @@ class Ideal_pid(Ideal_principal):
             return other
         raise NotImplementedError
 
-    def is_prime(self):
+    def is_prime(self) -> bool:
         """
         Return ``True`` if the ideal is prime.
 
@@ -1591,13 +1591,13 @@ class Ideal_pid(Ideal_principal):
 
         raise NotImplementedError
 
-    def is_maximal(self):
+    def is_maximal(self) -> bool:
         """
         Return whether this ideal is maximal.
 
-        Principal ideal domains have Krull dimension 1 (or 0), so an ideal is
-        maximal if and only if it's prime (and nonzero if the ring is not a
-        field).
+        Principal ideal domains have Krull dimension 1 (or 0), so an
+        ideal is maximal if and only if it is prime (and nonzero if the
+        ring is not a field).
 
         EXAMPLES::
 
@@ -1696,7 +1696,7 @@ class Ideal_fractional(Ideal_generic):
 
     See :func:`Ideal()`.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

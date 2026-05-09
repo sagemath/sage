@@ -239,24 +239,30 @@ Classes and methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
+
 import itertools
 import operator
 from typing import TYPE_CHECKING
 
-from sage.arith.misc import factorial, multinomial, falling_factorial
+from sage.arith.misc import factorial, falling_factorial, multinomial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.finite_permutation_groups import FinitePermutationGroups
 from sage.categories.finite_weyl_groups import FiniteWeylGroups
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.combinat.backtrack import GenericBacktracker
-from sage.combinat.SJT import SJT
 from sage.combinat.combinat import CombinatorialElement, catalan_number
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.composition import Composition
-from sage.combinat.permutation_cython import (left_action_product, right_action_product,
-                                              left_action_same_n, right_action_same_n,
-                                              map_to_list, next_perm)
+from sage.combinat.permutation_cython import (
+    left_action_product,
+    left_action_same_n,
+    map_to_list,
+    next_perm,
+    right_action_product,
+    right_action_same_n,
+)
+from sage.combinat.SJT import SJT
 from sage.combinat.tools import transitive_ideal
 from sage.misc.cachefunc import cached_method
 from sage.misc.decorators import rename_keyword
@@ -264,10 +270,10 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.element import Element, get_coercion_model
 from sage.structure.global_options import GlobalOptions
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
-from sage.structure.element import Element, get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
 
 if TYPE_CHECKING:
@@ -636,25 +642,15 @@ class Permutation(CombinatorialElement):
 
     def __setstate__(self, state):
         r"""
-        In order to maintain backwards compatibility and be able to unpickle a
-        old pickle from ``Permutation_class`` we have to override the default
-        ``__setstate__``.
+        Set state from pickling.
 
         EXAMPLES::
 
-            sage: loads(b'x\x9ck`J.NLO\xd5K\xce\xcfM\xca\xccK,\xd1+H-\xca--I,\xc9\xcc\xcf\xe3\n@\xb0\xe3\x93s\x12\x8b\x8b\xb9\n\x195\x1b'
-            ....:       b'\x0b\x99j\x0b\x995BY\xe33\x12\x8b3\nY\xfc\x80\xac\x9c\xcc\xe2\x92B\xd6\xd8B6\r\x88iE\x99y\xe9\xc5z\x99y%\xa9\xe9'
-            ....:       b'\xa9E\\\xb9\x89\xd9\xa9\xf10N!{(\xa3qkP!G\x06\x90a\x04dp\x82\x18\x86@\x06Wji\x92\x1e\x00i\x8d0q')
-            [3, 2, 1]
             sage: loads(dumps( Permutation([3,2,1]) )) # indirect doctest
             [3, 2, 1]
         """
-        if isinstance(state, dict):   # for old pickles from Permutation_class
-            self._set_parent(Permutations())
-            self.__dict__ = state
-        else:
-            self._set_parent(state[0])
-            self.__dict__ = state[1]
+        self._set_parent(state[0])
+        self.__dict__ = state[1]
 
     @cached_method
     def __hash__(self) -> int:
@@ -1157,9 +1153,8 @@ class Permutation(CombinatorialElement):
                 if singletons:
                     if cycle:
                         cycles.append(tuple(cycle))
-                else:
-                    if len(cycle) > 1:
-                        cycles.append(tuple(cycle))
+                elif len(cycle) > 1:
+                    cycles.append(tuple(cycle))
                 # Start with the first element in the list
                 toConsider = l[0]
                 l.remove(toConsider)
@@ -1183,9 +1178,8 @@ class Permutation(CombinatorialElement):
         if singletons:
             if cycle:
                 cycles.append(tuple(cycle))
-        else:
-            if len(cycle) > 1:
-                cycles.append(tuple(cycle))
+        elif len(cycle) > 1:
+            cycles.append(tuple(cycle))
         return cycles
 
     def _to_cycles_set(self, singletons=True) -> list:
@@ -2406,7 +2400,7 @@ class Permutation(CombinatorialElement):
         if n == 0:
             return [[]]
 
-        from bisect import insort, bisect
+        from bisect import bisect, insort
 
         # getting the column in which each element is inserted
         first_row_p_tableau = []
@@ -2469,7 +2463,7 @@ class Permutation(CombinatorialElement):
         if n == 0:
             return 1
 
-        from bisect import insort, bisect
+        from bisect import bisect, insort
 
         count: list[int] = [0] * (n + 1)
         first_row_p_tableau = []
@@ -2924,9 +2918,8 @@ class Permutation(CombinatorialElement):
             raise ValueError(f"Standardization with weight {weight} is not possible!")
         if ordered_alphabet is None:
             ordered_alphabet = list(range(1, len(weight)+1))
-        else:
-            if len(weight) > len(ordered_alphabet):
-                raise ValueError("Not enough letters in the alphabet are specified compared to the weight")
+        elif len(weight) > len(ordered_alphabet):
+            raise ValueError("Not enough letters in the alphabet are specified compared to the weight")
         q = self.inverse()
         s = [0] * len(self)
         for i in range(len(partial)-1):
@@ -3276,8 +3269,8 @@ class Permutation(CombinatorialElement):
             sage: Iw.is_prime()
             True
         """
-        from sage.rings.rational_field import QQ
         from sage.matrix.constructor import matrix
+        from sage.rings.rational_field import QQ
         n = len(self)
         PR = PolynomialRing(QQ, n, var_array='z')
         z = PR.gens()
@@ -3526,9 +3519,8 @@ class Permutation(CombinatorialElement):
             if p[i-1] > p[i]:
                 if not positive:
                     descents.append(i)
-            else:
-                if positive:
-                    descents.append(i)
+            elif positive:
+                descents.append(i)
 
         if final_descent:
             descents.append(len(p))
@@ -3758,7 +3750,7 @@ class Permutation(CombinatorialElement):
         for j in range(1, len(partial_sum)):
             a = partial_sum[j-1]
             b = partial_sum[j]
-            from bisect import bisect_right, bisect_left
+            from bisect import bisect_left, bisect_right
             start = bisect_right(descents, a)
             end = bisect_left(descents, b)
             multimajor_index.append(sum(descents[start: end])-(end-start)*a)
@@ -5648,10 +5640,11 @@ class Permutation(CombinatorialElement):
             ...
             ValueError: n must be at least 1
         """
+        from itertools import product
+
+        from sage.arith.misc import divisors, gcd
         from sage.combinat.partition import Partitions
         from sage.combinat.set_partition import SetPartitions
-        from itertools import product
-        from sage.arith.misc import divisors, gcd
 
         def merging_cycles(list_of_cycles):
             """
@@ -5758,8 +5751,8 @@ class Permutation(CombinatorialElement):
             ...
             ValueError: n must be at least 1
         """
-        from sage.combinat.partition import Partitions
         from sage.arith.misc import divisors, gcd
+        from sage.combinat.partition import Partitions
 
         if n < 1:
             raise ValueError('n must be at least 1')
@@ -5818,9 +5811,9 @@ class Permutation(CombinatorialElement):
             ...
             ValueError: n must be at least 1
         """
+        from sage.arith.misc import divisors, gcd
         from sage.combinat.partition import Partitions
         from sage.combinat.set_partition import SetPartitions
-        from sage.arith.misc import divisors, gcd
         from sage.misc.misc_c import prod
 
         if n < 1:
@@ -7726,7 +7719,9 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             True
         """
         from sage.combinat.partition import Partitions_n
-        from sage.groups.perm_gps.symgp_conjugacy_class import PermutationsConjugacyClass
+        from sage.groups.perm_gps.symgp_conjugacy_class import (
+            PermutationsConjugacyClass,
+        )
         for la in reversed(Partitions_n(self.n)):
             yield PermutationsConjugacyClass(self, la)
 
@@ -7763,7 +7758,9 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             sage: G.conjugacy_class(Partition([2, 1, 1, 1]))                            # needs sage.combinat sage.graphs sage.groups
             Conjugacy class of cycle type [2, 1, 1, 1] in Standard permutations of 5
         """
-        from sage.groups.perm_gps.symgp_conjugacy_class import PermutationsConjugacyClass
+        from sage.groups.perm_gps.symgp_conjugacy_class import (
+            PermutationsConjugacyClass,
+        )
         return PermutationsConjugacyClass(self, g)
 
     def algebra(self, base_ring, category=None):
@@ -8459,8 +8456,8 @@ def bistochastic_as_sum_of_permutations(M, check=True):
     if not RR.has_coerce_map_from(M.base_ring()):
         raise ValueError("the base ring of the matrix must have a coercion map to RR")
 
-    from sage.graphs.bipartite_graph import BipartiteGraph
     from sage.combinat.free_module import CombinatorialFreeModule
+    from sage.graphs.bipartite_graph import BipartiteGraph
 
     CFM = CombinatorialFreeModule(M.base_ring(), Permutations(n))
     value = 0
@@ -8524,8 +8521,7 @@ def bounded_affine_permutation(A):
     """
     n = A.ncols()
     R = A.base_ring()
-    from sage.modules.free_module import FreeModule
-    from sage.modules.free_module import span
+    from sage.modules.free_module import FreeModule, span
     z = FreeModule(R, A.nrows()).zero()
     v = A.columns()
     perm = []
@@ -10216,6 +10212,7 @@ class PermutationsNK(Permutations_setk):
 
 
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override("sage.combinat.permutation", "Permutation_class", Permutation)
 register_unpickle_override("sage.combinat.permutation", "CyclicPermutationsOfPartition_partition", CyclicPermutationsOfPartition)
 register_unpickle_override("sage.combinat.permutation", "CyclicPermutations_mset", CyclicPermutations)

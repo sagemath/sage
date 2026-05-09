@@ -209,7 +209,7 @@ def init_sage(controller: DocTestController | None = None) -> None:
 
     if controller is not None:
         controller.load_environment()
-    
+
     invalidate_all()
 
     # Disable cysignals debug messages in doctests: this is needed to

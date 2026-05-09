@@ -695,14 +695,15 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         except TypeError:
             raise TypeError("The given generator images do not coerce to codomain.")
 
-        if len(im_gens) is not self.ngens():
-            raise ValueError("You must specify the image of each generator.")
+        if len(im_gens) != self.ngens():
+            raise ValueError("you must specify the image of each generator")
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
             return False
         if all(v == 0 for v in im_gens):
             return True
 
-        if isinstance(codomain, (PowerSeriesRing_generic, MPowerSeriesRing_generic, LazyPowerSeriesRing,
+        if isinstance(codomain, (PowerSeriesRing_generic,
+                                 MPowerSeriesRing_generic, LazyPowerSeriesRing,
                                  LaurentSeriesRing, LazyLaurentSeriesRing)):
             try:
                 B = all(v.valuation() > 0 or v.is_nilpotent() for v in im_gens)
