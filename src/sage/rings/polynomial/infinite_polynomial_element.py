@@ -331,6 +331,38 @@ class InfinitePolynomial(CommutativePolynomial,
         """
         return self._p._latex_()
 
+    def _symbolic_(self, R):
+        """
+        Convert ``self`` to a symbolic expression.
+
+        EXAMPLES::
+
+            sage: # needs sage.symbolic
+            sage: S.<a> = InfinitePolynomialRing(QQ)
+            sage: v = SR(a[0])
+            sage: v
+            a_0
+            sage: v.variables()
+            (a_0,)
+
+        Case 1 from :issue:`41656` -- coercing into a polynomial ring over SR::
+
+            sage: # needs sage.symbolic
+            sage: S.<a> = InfinitePolynomialRing(QQ)
+            sage: v = SR(a[0])
+            sage: v.parent()['x'](v)
+            a_0
+
+        Case 2 from :issue:`41656` -- ``bool()`` of a symbolic relation::
+
+            sage: # needs sage.symbolic
+            sage: S.<a> = InfinitePolynomialRing(QQ)
+            sage: v = SR(a[0])
+            sage: bool(v == v)
+            True
+        """
+        return self._p._symbolic_(R)
+
     def subs(self, fixed=None, **kwargs):
         """
         Substitute variables in ``self``.

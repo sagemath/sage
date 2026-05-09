@@ -39,7 +39,7 @@ AUTHORS:
   doctest errors
 """
 
-# ***************************************************************************
+# **************************************************************************
 #    Copyright (C) 2012 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ AUTHORS:
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#****************************************************************************
+# **************************************************************************
 from cysignals.signals cimport sig_check
 
 from sage.structure.element cimport Element, RingElement, ModuleElement
@@ -452,10 +452,10 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
             sage: eval_pts = [1, t, t^2]
             sage: c = a.multi_point_evaluation(eval_pts); c
             [t + 1, 3*t^2 + 4*t + 4, 4*t]
-            sage: c == [ a(e) for e in eval_pts ]
+            sage: c == [a(e) for e in eval_pts]
             True
         """
-        return [ self(e) for e in eval_pts ]
+        return [self(e) for e in eval_pts]
 
     cpdef ModuleElement _lmul_(self, Element right):
         r"""
@@ -482,7 +482,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         cdef list x = (<SkewPolynomial_generic_dense>self)._coeffs
         cdef Py_ssize_t i
         twisting_morphism = self._parent._morphism
-        r = self._new_c([ (twisting_morphism**i)(right)*x[i] for i from 0 <= i < len(x) ],
+        r = self._new_c([(twisting_morphism**i)(right)*x[i] for i from 0 <= i < len(x)],
                         self._parent, 0)
         return r
 
@@ -510,7 +510,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
             return self.parent().zero()
         cdef list x = (<SkewPolynomial_generic_dense>self)._coeffs
         cdef Py_ssize_t i
-        r = self._new_c([ left*x[i] for i from 0 <= i < len(x) ], self._parent, 0)
+        r = self._new_c([left*x[i] for i from 0 <= i < len(x)], self._parent, 0)
         return r
 
     cpdef _mul_(self, right):
@@ -553,9 +553,9 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         cdef Py_ssize_t dx = len(x)-1, dy = len(y)-1
         parent = self._parent
         if dx == -1:
-            return self # = zero
+            return self  # = zero
         elif dy == -1:
-            return right # = zero
+            return right  # = zero
         elif dx == 0:
             c = x[0]
             r = self._new_c([c*a for a in y], parent, 0)
@@ -607,7 +607,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         cdef Py_ssize_t d1 = len(x)-1, d2 = len(y)-1
         parent = self._parent
         if d2 == -1:
-            self._coeffs = [ ]
+            self._coeffs = []
         elif d1 >= 0:
             if parent._morphism is None:
                 for k from d1 < k <= d1+d2:
@@ -679,7 +679,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
             inv = self.base_ring()(~b[db])
         except (ZeroDivisionError, TypeError):
             raise NotImplementedError("the leading coefficient of the divisor is not invertible")
-        cdef list q = [ ]
+        cdef list q = []
         parent = self._parent
         for i from da-db >= i >= 0:
             if parent._morphism is None:
@@ -716,13 +716,13 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         cdef Py_ssize_t da = self.degree(), db = other.degree()
         parent = self._parent
         if da < db:
-            return (self._new_c([],parent), self)
+            return (self._new_c([], parent), self)
         try:
             inv = self.base_ring()(~b[db])
         except (ZeroDivisionError, TypeError):
             raise NotImplementedError("the leading coefficient of the divisor"
                                       " is not invertible")
-        cdef list q = [ ]
+        cdef list q = []
         parent = self._parent
         for i from da-db >= i >= 0:
             if parent._morphism is None:

@@ -12,3 +12,4 @@ cdef class TreeIterator:
     cdef int *current_level_sequence
     cdef int generate_first_level_sequence(self) noexcept
     cdef int generate_next_level_sequence(self) noexcept
+    cdef bint immutable

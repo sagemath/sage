@@ -749,7 +749,7 @@ class HallLittlewood_p(HallLittlewood_generic):
         t = self.t
         coeff = (1-t)**len(m)
         for i in m.to_exp():
-            for j in range(1,i+1):
+            for j in range(1, i+1):
                 coeff *= (1-t**j)/(1-t)
         return coeff
 
@@ -782,8 +782,7 @@ class HallLittlewood_p(HallLittlewood_generic):
         t = QQt.gen()
         zero = self.base_ring().zero()
         res_dict = schur_to_hl(part, t)
-        f = lambda part2: res_dict.get(part2,zero)
-        return f
+        return lambda part2: res_dict.get(part2, zero)
 
     def _s_cache(self, n):
         r"""
@@ -896,10 +895,10 @@ class HallLittlewood_q(HallLittlewood_generic):
             1/(t^2 - 2*t + 1)
         """
         t = self.t
-        coeff = 1/(1-t)**len(m)
+        coeff = 1 / (1 - t)**len(m)
         for i in m.to_exp():
-            for j in range(1,i+1):
-                coeff *= (1-t)/(1-t**j)
+            for j in range(1, i + 1):
+                coeff *= (1 - t) / (1 - t**j)
         return coeff
 
 

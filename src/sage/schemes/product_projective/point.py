@@ -143,7 +143,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         return '(%s)' % (" , ".join((" : ".join(repr(f) for f in Q))
                                     for Q in self._points))
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         r"""
         Compare two points in products of projective spaces.
 
@@ -194,9 +194,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             True
         """
         #needed for Digraph
-        if not isinstance(right, (ProductProjectiveSpaces_point_ring)):
+        if not isinstance(other, (ProductProjectiveSpaces_point_ring)):
             return NotImplemented
-        return richcmp(self._points, right._points, op)
+        return richcmp(self._points, other._points, op)
 
     def __copy__(self):
         r"""

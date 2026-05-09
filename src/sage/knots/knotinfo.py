@@ -128,6 +128,7 @@ types::
 
 Obtaining the HOMFLY-PT polynomial::
 
+    sage: # needs libhomfly
     sage: L.homfly_polynomial()
     -v^-1*z - v^-3*z - v^-3*z^-1 + v^-5*z^-1
     sage: _ == l.homfly_polynomial(normalization='vz')
@@ -200,6 +201,7 @@ will be reduced to proper links with 7 crossings.
 Finally there is a method :meth:`Link.get_knotinfo` of class :class:`Link` to find an instance
 in the KnotInfo database::
 
+    sage: # needs libhomfly
     sage: L = Link([[3,1,2,4], [8,9,1,7], [5,6,7,3], [4,18,6,5],
     ....:           [17,19,8,18], [9,10,11,14], [10,12,13,11],
     ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
@@ -614,6 +616,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: L = KnotInfo.L4a1_1
             sage: L._homfly_pol_ring('u', 'v')
             Multivariate Laurent Polynomial Ring in u, v over Integer Ring
@@ -1385,6 +1388,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: K3_1 = KnotInfo.K3_1
             sage: PK3_1 = K3_1.homfly_polynomial(); PK3_1
             -v^4 + v^2*z^2 + 2*v^2
@@ -1395,6 +1399,7 @@ class KnotInfoBase(Enum):
 
         for proper links::
 
+            sage: # needs libhomfly
             sage: L4a1_1 = KnotInfo.L4a1_1
             sage: PL4a1_1 = L4a1_1.homfly_polynomial(var1='x', var2='y'); PL4a1_1
             -x^5*y + x^3*y^3 - x^5*y^-1 + 3*x^3*y + x^3*y^-1
@@ -1404,6 +1409,7 @@ class KnotInfoBase(Enum):
         check the skein-relation from the KnotInfo description page (applied to one
         of the positive crossings of the right-handed trefoil)::
 
+            sage: # needs libhomfly
             sage: R = PK3_1.parent()
             sage: PO = R.one()
             sage: L2a1_1 = KnotInfo.L2a1_1
@@ -1414,6 +1420,7 @@ class KnotInfoBase(Enum):
 
         TESTS::
 
+            sage: # needs libhomfly
             sage: H = KnotInfo.L11n459_1_1_1.homfly_polynomial()   # optional - database_knotinfo
             sage: all(L.homfly_polynomial() == L.link().homfly_polynomial(normalization='vz')\
             ....:     for L in KnotInfo if L.crossing_number() < 7)
@@ -2246,6 +2253,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: KnotInfo.L4a1_0.is_unique()
             True
             sage: KnotInfo.L5a1_0.is_unique()
@@ -2299,6 +2307,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: KnotInfo.L4a1_0.inject()
             Defining L4a1_0
             sage: L4a1_0.is_recoverable()
@@ -2812,6 +2821,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: KnotInfo.L4a1_0.series().inject()
             Defining L4a
             sage: L4a.is_recoverable()
