@@ -32,16 +32,15 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
-import pexpect
-import time
 import shlex
+import time
 
-from . import quit
+import pexpect
 
+import sage.features.rubiks
 from sage.cpython.string import bytes_to_str
 from sage.groups.perm_gps.cubegroup import index2singmaster
-import sage.features.rubiks
-
+from sage.interfaces import quit
 
 # Can't seem to find consistency in letter ordering
 # between us and them... These are copied from the source.
@@ -137,19 +136,20 @@ class OptimalSolver:
 
         EXAMPLES::
 
-            sage: from sage.interfaces.rubik import *    # optional - rubiks
-            sage: solver = DikSolver()                   # optional - rubiks
-            sage: solver = OptimalSolver()  # optional - rubiks # long time (28s on sage.math, 2012)
+            sage: # optional - rubiks
+            sage: from sage.interfaces.rubik import *
+            sage: solver = DikSolver()
+            sage: solver = OptimalSolver()      # long time (28s on sage.math, 2012)
             Initializing tables...
             Done.
-            sage: C = RubiksCube("R U")                  # optional - rubiks
-            sage: solver.solve(C.facets())               # optional - rubiks
+            sage: C = RubiksCube("R U")
+            sage: solver.solve(C.facets())
             'R  U'
-            sage: C = RubiksCube("R U F L B D")          # optional - rubiks
-            sage: solver.solve(C.facets())               # optional - rubiks
+            sage: C = RubiksCube("R U F L B D")
+            sage: solver.solve(C.facets())
             'R  U  F  L  B  D'
-            sage: C = RubiksCube("R2 D2")                # optional - rubiks
-            sage: solver.solve(C.facets())               # optional - rubiks
+            sage: C = RubiksCube("R2 D2")
+            sage: solver.solve(C.facets())
             'R2 D2'
         """
         self.ready()
@@ -169,18 +169,18 @@ class OptimalSolver:
 
 
 move_map = {
-    "LD":"L'",
-    "LU":"L",
-    "RD":"R",
-    "RU":"R'",
-    "FA":"F",
-    "FC":"F'",
-    "BA":"B'",
-    "BC":"B",
-    "UR":"U",
-    "UL":"U'",
-    "DR":"D'",
-    "DL":"D"
+    "LD": "L'",
+    "LU": "L",
+    "RD": "R",
+    "RU": "R'",
+    "FA": "F",
+    "FC": "F'",
+    "BA": "B'",
+    "BC": "B",
+    "UR": "U",
+    "UL": "U'",
+    "DR": "D'",
+    "DL": "D"
 }
 
 
@@ -193,21 +193,22 @@ class CubexSolver:
         """
         EXAMPLES::
 
-            sage: from sage.interfaces.rubik import *      # optional - rubiks
-            sage: C = RubiksCube("R U")                    # optional - rubiks
-            sage: CubexSolver().solve(C.facets())          # optional - rubiks
+            sage: # optional - rubiks
+            sage: from sage.interfaces.rubik import *
+            sage: C = RubiksCube("R U")
+            sage: CubexSolver().solve(C.facets())
             'R U'
-            sage: C = RubiksCube("R U F L B D")            # optional - rubiks
-            sage: sol = CubexSolver().solve(C.facets()); sol  # optional - rubiks
+            sage: C = RubiksCube("R U F L B D")
+            sage: sol = CubexSolver().solve(C.facets()); sol
             "U' L' L' U L U' L U D L L D' L' D L' D' L D L' U' L D' L' U L' B' U' L' U B L D L D' U' L' U L B L B' L' U L U' L' F' L' F L' F L F' L' D' L' D D L D' B L B' L B' L B F' L F F B' L F' B D' D' L D B' B' L' D' B U' U' L' B' D' F' F' L D F'"
-            sage: RubiksCube(sol) == C                     # optional - rubiks
+            sage: RubiksCube(sol) == C
             True
-            sage: C = RubiksCube("R2 F'")                  # optional - rubiks
-            sage: CubexSolver().solve(C.facets())          # optional - rubiks
+            sage: C = RubiksCube("R2 F'")
+            sage: CubexSolver().solve(C.facets())
             "R' R' F'"
-            sage: C = RubiksCube().scramble()              # optional - rubiks
-            sage: sol = CubexSolver().solve(C.facets())    # optional - rubiks
-            sage: C == RubiksCube(sol)                     # optional - rubiks
+            sage: C = RubiksCube().scramble()
+            sage: sol = CubexSolver().solve(C.facets())
+            sage: C == RubiksCube(sol)
             True
         """
         s = self.format_cube(facets)
@@ -218,18 +219,17 @@ class CubexSolver:
             child.expect(['211', pexpect.EOF])
             moves = bytes_to_str(child.before).strip().replace(',', '').split(' ')
             return " ".join(move_map[m] for m in reversed(moves))
-        else:
-            s = child.after
-            while child.expect([r'^5\d+', pexpect.EOF]) == 0:
-                s += child.after
-            raise ValueError(bytes_to_str(s))
+        s = child.after
+        while child.expect([r'^5\d+', pexpect.EOF]) == 0:
+            s += child.after
+        raise ValueError(bytes_to_str(s))
 
     def format_cube(self, facets):
         colors = sum([[i]*8 for i in range(1, 7)], [])
         facet_colors = [0] * 54
         for i in range(48):
             f = facets[i]-1
-            f += (f+4) // 8 # to compensate for the centers
+            f += (f + 4) // 8  # to compensate for the centers
             facet_colors[f] = colors[i]
         for i in range(6):
             facet_colors[i*9+4] = i+1
@@ -245,15 +245,16 @@ class DikSolver:
         """
         EXAMPLES::
 
-            sage: from sage.interfaces.rubik import *   # optional - rubiks
-            sage: C = RubiksCube().move("R U")          # optional - rubiks
-            sage: DikSolver().solve(C.facets())         # optional - rubiks
+            sage: # optional - rubiks
+            sage: from sage.interfaces.rubik import *
+            sage: C = RubiksCube().move("R U")
+            sage: DikSolver().solve(C.facets())
             'R U'
-            sage: C = RubiksCube().move("R U F L B D")  # optional - rubiks
-            sage: DikSolver().solve(C.facets())         # optional - rubiks
+            sage: C = RubiksCube().move("R U F L B D")
+            sage: DikSolver().solve(C.facets())
             'R U F L B D'
-            sage: C = RubiksCube().move("R2 F'")        # optional - rubiks
-            sage: DikSolver().solve(C.facets())         # optional - rubiks
+            sage: C = RubiksCube().move("R2 F'")
+            sage: DikSolver().solve(C.facets())
             "R2 F'"
         """
         cube_str = self.format_cube(facets)
@@ -269,7 +270,7 @@ class DikSolver:
         # on OS X.  The Dik C program itself will need to be fixed.
         # See trac #1683. (TODO)      -- willem jp, wstein, mabshoff
         child.send(chr(4))
-        #child.sendeof()
+        # child.sendeof()
 
         ix = child.expect(['Solution[^\n]*:', pexpect.EOF, pexpect.TIMEOUT], timeout=timeout)
         if ix == 0:
@@ -288,7 +289,7 @@ class DikSolver:
             sol = bytes_to_str(sol)
             return ' '.join(self.rot_map[m[0]] + str(4 - int(m[1]))
                             for m in reversed(sol.split(' '))).replace('1', '').replace('3', "'")
-        elif ix == 1:
+        if ix == 1:
             # invalid format
             child.close(True)
             raise ValueError(bytes_to_str(child.before))
@@ -297,7 +298,7 @@ class DikSolver:
             raise RuntimeError("timeout")
 
     def format_cube(self, facets):
-        colors = sum([[i]*8 for i in range(1,7)], [])
+        colors = sum([[i] * 8 for i in range(1, 7)], [])
         facet_colors = [0] * 54
         for i in range(48):
             f = self.facet_map.index(facets[i])
@@ -305,8 +306,8 @@ class DikSolver:
         # now do the centers
         facet_colors[4] = 1
         facet_colors[49] = 6
-        for i in range(2,6):
-            facet_colors[16+i*3] = i
+        for i in range(2, 6):
+            facet_colors[16 + i * 3] = i
         return "".join(str(c) for c in facet_colors)
 
     facet_map = [      1,  2,  3,
@@ -322,7 +323,6 @@ class DikSolver:
 
     # to compensate for different face naming
     rot_map = dict(zip("BLURDF", "ULFRBD"))
-
 
 #    facet_map = [
 #                      1,  2,  3,

@@ -344,8 +344,6 @@ static ex canonical_to_ex(const CanonicalForm& f, const exvector& revmap)
 }
 
 // GCD of two exes which are in polynomial form
-// If giac is requested we stand back
-#ifndef PYNAC_HAVE_LIBGIAC
 ex gcdpoly(const ex &a, const ex &b, ex *ca=nullptr, ex *cb=nullptr, bool check_args=true)
 {
         if (a.is_zero())
@@ -647,8 +645,6 @@ ex poly_mul_expand(const ex& a, const ex& b)
         ex res = canonical_to_ex(d, revmap);
         return res;
 }
-
-#endif //PYNAC_HAVE_LIBGIAC
 
 ex resultantpoly(const ex & ee1, const ex & ee2, const ex & s)
 {

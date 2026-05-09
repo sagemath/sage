@@ -26,12 +26,12 @@ def subsets_with_hereditary_property(f, X, max_obstruction_size=None, ncpus=1):
 
     INPUT:
 
-    - ``f`` -- a boolean function which takes as input a list of elements from
-      ``X``.
+    - ``f`` -- boolean function which takes as input a list of elements from
+      ``X``
 
-    - ``X`` -- a list/iterable.
+    - ``X`` -- list/iterable
 
-    - ``max_obstruction_size`` (integer) -- if you know that there is
+    - ``max_obstruction_size`` -- integer; if you know that there is
       a `k` such that `f(S)` is true if and only if `f(S')` is true
       for all `S'\subseteq S` with `S'\leq k`, set
       ``max_obstruction_size=k``. It may dramatically decrease the
@@ -72,23 +72,24 @@ def subsets_with_hereditary_property(f, X, max_obstruction_size=None, ncpus=1):
     have size 2. We can thus set ``max_obstruction_size=2``, which reduces the
     number of calls to `f` from 91 to 56::
 
+        sage: # needs sage.graphs
         sage: num_calls = 0
-        sage: g = graphs.PetersenGraph()                                                # optional - sage.graphs
+        sage: g = graphs.PetersenGraph()
         sage: def is_independent_set(S):
         ....:     global num_calls
         ....:     num_calls += 1
         ....:     return g.subgraph(S).size() == 0
-        sage: l1 = list(subsets_with_hereditary_property(is_independent_set,            # optional - sage.graphs
+        sage: l1 = list(subsets_with_hereditary_property(is_independent_set,
         ....:                                            g.vertices(sort=False)))
-        sage: num_calls                                                                 # optional - sage.graphs
+        sage: num_calls
         91
         sage: num_calls = 0
-        sage: l2 = list(subsets_with_hereditary_property(is_independent_set,            # optional - sage.graphs
+        sage: l2 = list(subsets_with_hereditary_property(is_independent_set,
         ....:                                            g.vertices(sort=False),
         ....:                                            max_obstruction_size=2))
-        sage: num_calls                                                                 # optional - sage.graphs
+        sage: num_calls
         56
-        sage: l1 == l2                                                                  # optional - sage.graphs
+        sage: l1 == l2
         True
 
     TESTS::

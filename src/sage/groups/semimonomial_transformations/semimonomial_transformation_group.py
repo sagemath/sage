@@ -53,13 +53,16 @@ TESTS::
     sage: TestSuite(S.an_element()).run()
 """
 from __future__ import annotations
-from sage.rings.integer import Integer
 
 from sage.groups.group import FiniteGroup
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.action import Action
 from sage.combinat.permutation import Permutation
 from sage.groups.semimonomial_transformations.semimonomial_transformation import SemimonomialTransformation
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 
 class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
@@ -128,11 +131,9 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
 
         - ``R`` -- a ring
 
-        - ``len`` -- the  degree of the monomial group
+        - ``len`` -- the degree of the monomial group
 
-        OUTPUT:
-
-        - the complete semimonomial group
+        OUTPUT: the complete semimonomial group
 
         EXAMPLES::
 
@@ -154,13 +155,13 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
 
         INPUT:
 
-        - ``arg1`` (optional) -- either the integers 0, 1 or an element of ``self``
+        - ``arg1`` -- (optional) either the integers 0, 1 or an element of ``self``
 
-        - ``v`` (optional) -- a vector of length ``self.degree()``
+        - ``v`` -- (optional) a vector of length ``self.degree()``
 
-        - ``perm`` (optional) -- a permutation of degree ``self.degree()``
+        - ``perm`` -- (optional) a permutation of degree ``self.degree()``
 
-        - ``autom`` (optional) -- an automorphism of the ring
+        - ``autom`` -- (optional) an automorphism of the ring
 
         EXAMPLES::
 
@@ -215,20 +216,19 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
                     raise TypeError('%s of type %s' % (autom, type(autom)) +
                                     ' is not coerceable to an automorphism')
             return self.Element(self, v, perm, autom)
-        else:
-            try:
-                if arg1.parent() is self:
-                    return arg1
-            except AttributeError:
-                pass
-            try:
-                from sage.rings.integer import Integer
-                if Integer(arg1) == 1:
-                    return self()
-            except TypeError:
-                pass
-            raise TypeError('the first argument must be an integer' +
-                            ' or an element of this group')
+        try:
+            if arg1.parent() is self:
+                return arg1
+        except AttributeError:
+            pass
+        try:
+            from sage.rings.integer import Integer
+            if Integer(arg1) == 1:
+                return self()
+        except TypeError:
+            pass
+        raise TypeError('the first argument must be an integer' +
+                        ' or an element of this group')
 
     def base_ring(self):
         r"""
@@ -266,7 +266,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         """
         R = self.base_ring()
         v = [R.primitive_element()] + [R.one()] * (self.degree() - 1)
-        p = Permutation([self.degree()] + [i for i in range(1, self.degree())])
+        p = Permutation([self.degree()] + list(range(1, self.degree())))
 
         if not R.is_prime_field():
             f = R.hom([R.gen()**R.characteristic()])
@@ -311,8 +311,8 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         R = self.base_ring()
         l = [self(v=([R.primitive_element()] + [R.one()] * (self.degree() - 1)))]
-        for g in SymmetricGroup(self.degree()).gens():
-            l.append(self(perm=Permutation(g)))
+        l.extend(self(perm=Permutation(g))
+                 for g in SymmetricGroup(self.degree()).gens())
         if R.is_field() and not R.is_prime_field():
             l.append(self(autom=R.hom([R.primitive_element()**R.characteristic()])))
         return tuple(l)

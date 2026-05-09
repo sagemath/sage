@@ -12,7 +12,7 @@ Base class for old-style parent objects with a base ring
 # ****************************************************************************
 
 cimport sage.structure.parent as parent
-from .coerce_exceptions import CoercionException
+from sage.structure.coerce_exceptions import CoercionException
 
 cdef inline check_old_coerce(parent.Parent p):
     if p._element_constructor is not None:
@@ -26,15 +26,6 @@ cdef class ParentWithBase(Parent_old):
     def __init__(self, base, *args, **kwds):
         Parent_old.__init__(self, *args, **kwds)
         self._base = base
-
-    cdef _coerce_c_impl(self,x):
-        check_old_coerce(self)
-        from sage.misc.superseded import deprecation
-        deprecation(33497, "_coerce_c_impl is deprecated, use coerce instead")
-        if self._base is not self:
-            return self(self._base._coerce_(x))
-        else:
-            raise TypeError("No canonical coercion found.")
 
     # Derived class *must* define base_extend.
     def base_extend(self, X):

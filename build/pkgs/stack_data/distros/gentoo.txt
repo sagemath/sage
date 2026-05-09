@@ -1,1 +1,1 @@
-dev-python/stack_data
+dev-python/stack-data

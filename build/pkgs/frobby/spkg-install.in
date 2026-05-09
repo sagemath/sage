@@ -1,4 +1,3 @@
-rm -rf "$SAGE_LOCAL/bin/frobby"
 
 GMP_INC_DIR="$SAGE_LOCAL/include"; export GMP_INC_DIR
 ldflags="-Wl,-rpath,$SAGE_LOCAL/lib -L$SAGE_LOCAL/lib/ -lgmpxx -lgmp"; export ldflags
@@ -12,14 +11,4 @@ if [ $? -ne 0 ]; then
    exit 1
 fi
 
-if [ ! -f bin/release/frobby ]; then
-   echo "Frobby executable not found."
-   exit 1
-fi
-
-$CP bin/release/frobby "$SAGE_LOCAL/bin/"
-
-if [ ! -f "$SAGE_LOCAL/bin/frobby" ]; then
-   echo "Frobby executable not copied."
-   exit 1
-fi
+sdh_install bin/release/frobby "$SAGE_LOCAL/bin"

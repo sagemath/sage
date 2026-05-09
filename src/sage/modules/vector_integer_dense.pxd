@@ -1,6 +1,7 @@
-from .free_module_element cimport FreeModuleElement
 from sage.libs.gmp.types cimport mpz_t
+from sage.modules.free_module_element cimport FreeModuleElement
 from sage.structure.parent cimport Parent
+
 
 cdef class Vector_integer_dense(FreeModuleElement):
     cdef mpz_t* _entries

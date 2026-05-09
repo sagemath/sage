@@ -1,2 +1,3 @@
-python312
-python312-devel
+python3.12
+python3.12-devel
+python3.12-setuptools

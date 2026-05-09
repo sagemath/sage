@@ -5,24 +5,24 @@ Sage provides an interface to the Magma computational algebra
 system. This system provides extensive functionality for number
 theory, group theory, combinatorics and algebra.
 
-.. note::
+.. NOTE::
 
    You must have Magma installed on your
    computer for this interface to work. Magma is not free, so it is
    not included with Sage, but you can obtain it from
-   http://magma.maths.usyd.edu.au/.
+   https://magma.maths.usyd.edu.au/.
 
 The Magma interface offers three pieces of functionality:
 
-#. ``magma_console()`` - A function that dumps you into an interactive command-line Magma session.
+#. ``magma_console()`` -- a function that dumps you into an interactive command-line Magma session.
 
-#. ``magma.new(obj)`` and alternatively ``magma(obj)`` - Creation of a Magma object from a Sage object ``obj``.
+#. ``magma.new(obj)`` and alternatively ``magma(obj)`` -- creation of a Magma object from a Sage object ``obj``.
    This provides a Pythonic interface to Magma. For example, if ``f=magma.new(10)``, then
    ``f.Factors()`` returns the prime factorization of 10 computed using Magma. If obj is a string containing
    an arbitrary Magma expression, then the expression is evaluated in Magma to create a Magma object. An example
    is ``magma.new('10 div 3')``, which returns Magma integer 3.
 
-#. ``magma.eval(expr)`` - Evaluation of the Magma expression ``expr``, with the result returned as a string.
+#. ``magma.eval(expr)`` -- evaluation of the Magma expression ``expr``, with the result returned as a string.
 
 Type ``magma.[tab]`` for a list of all functions available from your Magma.
 Type ``magma.Function?`` for Magma's help about the Magma ``Function``.
@@ -47,23 +47,25 @@ Some Magma functions return more than one value. You can control
 how many you get using the ``nvals`` named parameter to
 a function call::
 
-    sage: n = magma(100)                                           # optional - magma
-    sage: n.IsSquare(nvals = 1)                                    # optional - magma
+    sage: # optional - magma
+    sage: n = magma(100)
+    sage: n.IsSquare(nvals = 1)
     true
-    sage: n.IsSquare(nvals = 2)                                    # optional - magma
+    sage: n.IsSquare(nvals = 2)
     (true, 10)
-    sage: n = magma(-2006)                                         # optional - magma
-    sage: n.Factorization()                                        # optional - magma
+    sage: n = magma(-2006)
+    sage: n.Factorization()
     [ <2, 1>, <17, 1>, <59, 1> ]
-    sage: n.Factorization(nvals=2)                                 # optional - magma
+    sage: n.Factorization(nvals=2)
     ([ <2, 1>, <17, 1>, <59, 1> ], -1)
 
 We verify that an obviously principal ideal is principal::
 
-    sage: _ = magma.eval('R<x> := PolynomialRing(RationalField())')    # optional - magma
-    sage: O = magma.NumberField('x^2+23').MaximalOrder()               # optional - magma
-    sage: I = magma('ideal<%s|%s.1>'%(O.name(),O.name()))              # optional - magma
-    sage: I.IsPrincipal(nvals=2)                                       # optional - magma
+    sage: # optional - magma
+    sage: _ = magma.eval('R<x> := PolynomialRing(RationalField())')
+    sage: O = magma.NumberField('x^2+23').MaximalOrder()
+    sage: I = magma('ideal<%s|%s.1>'%(O.name(),O.name()))
+    sage: I.IsPrincipal(nvals=2)
     (true, [1, 0])
 
 Long Input
@@ -142,14 +144,15 @@ In Sage/Python (and sort of C++) coercion of an element x into a
 structure S is denoted by S(x). This also works for the Magma
 interface::
 
-    sage: G = magma.DirichletGroup(20)                                    # optional - magma
-    sage: G.AssignNames(['a', 'b'])                                       # optional - magma
-    sage: (G.1).Modulus()                                                 # optional - magma
+    sage: # optional - magma
+    sage: G = magma.DirichletGroup(20)
+    sage: G.AssignNames(['a', 'b'])
+    sage: (G.1).Modulus()
     20
-    sage: e = magma.DirichletGroup(40)(G.1)                               # optional - magma
-    sage: print(e)                                                        # optional - magma
+    sage: e = magma.DirichletGroup(40)(G.1)
+    sage: print(e)
     Kronecker character -4 in modulus 40
-    sage: print(e.Modulus())                                              # optional - magma
+    sage: print(e.Modulus())
     40
 
 We coerce some polynomial rings into Magma::
@@ -211,34 +214,40 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import annotations
+import os
 import re
 import sys
-import os
+from pathlib import Path
 
+import sage.interfaces.abc
+import sage.misc.misc
+import sage.misc.sage_eval
+from sage.env import DOT_SAGE, SAGE_EXTCODE
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
+from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.misc.instancedoc import instancedoc
 from sage.structure.parent import Parent
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
+
 PROMPT = ">>>"
 
 SAGE_REF = "_sage_ref"
 SAGE_REF_RE = re.compile(r'%s\d+' % SAGE_REF)
 
-from sage.env import SAGE_EXTCODE, DOT_SAGE
-import sage.misc.misc
-import sage.misc.sage_eval
-import sage.interfaces.abc
-from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.misc.instancedoc import instancedoc
-
 INTRINSIC_CACHE = '%s/magma_intrinsic_cache.sobj' % DOT_SAGE
 EXTCODE_DIR = None
 
 
-def extcode_dir(iface=None):
+def extcode_dir(iface=None) -> str:
     """
-    Return directory that contains all the Magma extcode.  This is put
-    in a writable directory owned by the user, since when attached,
-    Magma has to write sig and lck files.
+    Return directory that contains all the Magma extcode.
+
+    This is put in a writable directory owned by the user, since when
+    attached, Magma has to write sig and lck files.
 
     EXAMPLES::
 
@@ -259,8 +268,8 @@ def extcode_dir(iface=None):
                 ans = os.system(command)
                 EXTCODE_DIR = "%s/data/" % tmp
                 if ans != 0:
-                    raise IOError
-            except (OSError, IOError):
+                    raise OSError
+            except OSError:
                 out_str = 'Tried to copy the file structure in "%s/magma/" to "%s:%s/data" and failed (possibly because scp is not installed in the system).\nFor the remote Magma to work you should populate the remote directory by some other method, or install scp in the system and retry.' % (SAGE_EXTCODE, iface._server, tmp)
                 from warnings import warn
                 warn(out_str)
@@ -278,7 +287,7 @@ class Magma(ExtraTabCompletion, Expect):
     object, and ``magma.eval(...)`` to run a string using
     Magma (and get the result back as a string).
 
-    .. note::
+    .. NOTE::
 
        If you do not own a local copy of Magma, try using the
        ``magma_free`` command instead, which uses the free demo web
@@ -306,23 +315,23 @@ class Magma(ExtraTabCompletion, Expect):
         """
         INPUT:
 
-        -  ``script_subdirectory`` - directory where scripts
-           are read from
+        - ``script_subdirectory`` -- directory where scripts
+          are read from
 
-        -  ``logfile`` - output logged to this file
+        - ``logfile`` -- output logged to this file
 
-        -  ``server`` - address of remote server
+        - ``server`` -- address of remote server
 
-        - ``server_tmpdir`` - temporary directory to use in remote server
+        - ``server_tmpdir`` -- temporary directory to use in remote server
 
-        -  ``user_config`` - if True, then local user
-           configuration files will be read by Magma. If False (the default),
-           then Magma is started with the -n option which suppresses user
-           configuration files.
+        - ``user_config`` -- if ``True``, then local user
+          configuration files will be read by Magma. If ``False`` (the default),
+          then Magma is started with the -n option which suppresses user
+          configuration files.
 
-        - ``seed`` - Seed to use in the random number generator.
+        - ``seed`` -- seed to use in the random number generator
 
-        -  ``command`` - (Default: 'magma') The command to execute to start Magma.
+        - ``command`` -- (default: ``'magma'``) the command to execute to start Magma
 
         EXAMPLES::
 
@@ -341,8 +350,8 @@ class Magma(ExtraTabCompletion, Expect):
             seed = os.getenv('SAGE_MAGMA_SEED')
 
         Expect.__init__(self,
-                        name="magma",
-                        prompt=">>SAGE>>",
+                        name='magma',
+                        prompt='>>SAGE>>',
                         command=command,
                         server=server,
                         server_tmpdir=server_tmpdir,
@@ -357,7 +366,7 @@ class Magma(ExtraTabCompletion, Expect):
         self.__ref = 0
         self.__available_var = []
         self.__cache = {}
-        self._preparse_colon_equals = False  # if set to try, all "=" become ":=" (some users really appreciate this)
+        self._preparse_colon_equals = False  # if set to True, all "=" become ":=" (some users really appreciate this)
         self._seed = seed
 
     def set_seed(self, seed=None):
@@ -394,6 +403,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.magma import magma
             sage: loads(dumps(magma)) is magma
             True
 
@@ -409,22 +419,18 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return reduce_load_Magma, tuple([])
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         """
         Return the command in Magma that reads in the contents of the given
         file.
 
         INPUT:
 
-
-        -  ``filename`` - string
-
+        - ``filename`` -- string
 
         OUTPUT:
 
-
-        -  ``string`` - a magma command
-
+        - ``string`` -- a magma command
 
         EXAMPLES::
 
@@ -433,7 +439,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return 'load "%s";' % filename
 
-    def _post_process_from_file(self, s):
+    def _post_process_from_file(self, s) -> str:
         r"""
         Used internally in the Magma interface to post-process the result
         of evaluating a string using a file. For Magma what this does is
@@ -442,11 +448,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
+        - ``s`` -- string
 
-        -  ``s`` - a string
-
-
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -467,15 +471,13 @@ class Magma(ExtraTabCompletion, Expect):
     def __getattr__(self, attrname):
         """
         Return a formal wrapper around a Magma function, or raise an
-        AttributeError if attrname starts with an underscore.
+        :exc:`AttributeError` if attrname starts with an underscore.
 
         INPUT:
 
+        - ``attrname`` -- string
 
-        -  ``attrname`` - a string
-
-
-        OUTPUT: MagmaFunction instance
+        OUTPUT: :class:`MagmaFunction` instance
 
         EXAMPLES::
 
@@ -498,17 +500,16 @@ class Magma(ExtraTabCompletion, Expect):
             raise AttributeError
         return MagmaFunction(self, attrname)
 
-    def eval(self, x, strip=True, **kwds):
+    def eval(self, x, strip=True, **kwds) -> str:
         """
         Evaluate the given block x of code in Magma and return the output
         as a string.
 
         INPUT:
 
-        -  ``x`` - string of code
+        - ``x`` -- string of code
 
-        -  ``strip`` - ignored
-
+        - ``strip`` -- ignored
 
         OUTPUT: string
 
@@ -530,7 +531,7 @@ class Magma(ExtraTabCompletion, Expect):
             sage: magma.eval("a := %s;"%(10^10000))    # optional - magma
             ''
 
-        Verify that :trac:`9705` is fixed::
+        Verify that :issue:`9705` is fixed::
 
             sage: nl=chr(10) # newline character
             sage: magma.eval(  # optional - magma
@@ -541,14 +542,13 @@ class Magma(ExtraTabCompletion, Expect):
             ....: "print \"success\";")
             'success'
 
-        Verify that :trac:`11401` is fixed::
+        Verify that :issue:`11401` is fixed::
 
             sage: nl=chr(10) # newline character
             sage: magma.eval("a:=3;"+nl+"b:=5;") == nl  # optional - magma
             True
             sage: magma.eval("[a,b];")                  # optional - magma
             '[ 3, 5 ]'
-
         """
         x = self._preparse(x)
         x = str(x).rstrip()
@@ -559,7 +559,7 @@ class Magma(ExtraTabCompletion, Expect):
             raise RuntimeError("Error evaluating Magma code.\nIN:%s\nOUT:%s" % (x, ans))
         return ans
 
-    def _preparse(self, s):
+    def _preparse(self, s) -> str:
         """
         All input gets preparsed by calling this function before it gets evaluated.
 
@@ -584,7 +584,7 @@ class Magma(ExtraTabCompletion, Expect):
             pass
         return s
 
-    def _start(self):
+    def _start(self) -> None:
         """
         Initialize a Magma interface instance. This involves (1) setting up
         an obfuscated prompt, and (2) attaching the MAGMA_SPEC file (see
@@ -611,11 +611,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
+        - ``var`` -- string; a variable name
 
-        -  ``var`` - string; a variable name
-
-        -  ``value`` - string; what to set var equal to
-
+        - ``value`` -- string; what to set var equal to
 
         EXAMPLES::
 
@@ -627,23 +625,16 @@ class Magma(ExtraTabCompletion, Expect):
         if out.lower().find("error") != -1:
             raise TypeError("Error executing Magma code:\n%s" % out)
 
-    def get(self, var):
+    def get(self, var) -> str:
         """
         Get the value of the variable var.
 
         INPUT:
 
+        - ``var`` -- string; name of a variable defined in the
+          Magma session
 
-        -  ``var`` - string; name of a variable defined in the
-           Magma session
-
-
-        OUTPUT:
-
-
-        -  ``string`` - string representation of the value of
-           the variable.
-
+        OUTPUT: string representation of the value of the variable
 
         EXAMPLES::
 
@@ -659,12 +650,10 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
+        - ``value`` -- something coercible to an element of this Magma
+          interface
 
-        - ``value`` - something coercible to an element of this Magma
-           interface
-
-        - ``gens`` - string; comma separated list of variable names
-
+        - ``gens`` -- string; comma separated list of variable names
 
         OUTPUT: new Magma element that is equal to value with given gens
 
@@ -672,7 +661,7 @@ class Magma(ExtraTabCompletion, Expect):
 
             sage: R = magma.objgens('PolynomialRing(Rationals(),2)', 'alpha,beta')    # optional - magma
             sage: R.gens()          # optional - magma
-            [alpha, beta]
+            (alpha, beta)
 
         Because of how Magma works you can use this to change the variable
         names of the generators of an object::
@@ -702,24 +691,23 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
+        - ``x`` -- object
 
-        -  ``x`` - object
+        - ``gens`` -- string; names of generators of self,
+          separated by commas
 
-        -  ``gens`` - string; names of generators of self,
-           separated by commas
-
-
-        OUTPUT: MagmaElement
+        OUTPUT: :class:`MagmaElement`
 
         EXAMPLES::
 
-            sage: magma(EllipticCurve('37a'))                   # optional - magma
+            sage: # optional - magma
+            sage: magma(EllipticCurve('37a'))
             Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
-            sage: magma('EllipticCurve([GF(5)|1,2,3,4,1])')     # optional - magma
+            sage: magma('EllipticCurve([GF(5)|1,2,3,4,1])')
             Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 1 over GF(5)
-            sage: magma('PowerSeriesRing(Rationals())', 't')    # optional - magma
+            sage: magma('PowerSeriesRing(Rationals())', 't')
             Power series ring in t over Rational Field
-            sage: magma('PolynomialRing(RationalField(), 3)', 'x,y,z')  # optional - magma
+            sage: magma('PolynomialRing(RationalField(), 3)', 'x,y,z')
             Polynomial ring of rank 3 over Rational Field
             Order: Lexicographical
             Variables: x, y, z
@@ -736,25 +724,27 @@ class Magma(ExtraTabCompletion, Expect):
 
         We test caching::
 
-            sage: R.<x> =  ZZ[]                     # optional - magma
-            sage: magma(R) is magma(R)              # optional - magma
+            sage: # optional - magma
+            sage: R.<x> =  ZZ[]
+            sage: magma(R) is magma(R)
             True
-            sage: m = Magma()                       # optional - magma
-            sage: m(R)                              # optional - magma
+            sage: m = Magma()
+            sage: m(R)
             Univariate Polynomial Ring in x over Integer Ring
-            sage: m(R) is magma(R)                  # optional - magma
+            sage: m(R) is magma(R)
             False
-            sage: R._magma_cache                    # optional - magma
+            sage: R._magma_cache
             {Magma: Univariate Polynomial Ring in x over Integer Ring,
              Magma: Univariate Polynomial Ring in x over Integer Ring}
 
-            sage: P.<x,y> = PolynomialRing(GF(127)) # optional - magma
-            sage: m = Magma()                       # optional - magma
-            sage: m(P)                              # optional - magma
+            sage: # optional - magma
+            sage: P.<x,y> = PolynomialRing(GF(127))
+            sage: m = Magma()
+            sage: m(P)
             Polynomial ring of rank 2 over GF(127)
             Order: Graded Reverse Lexicographical
             Variables: x, y
-            sage: P._magma_cache                    # optional - magma
+            sage: P._magma_cache
             {Magma: Polynomial ring of rank 2 over GF(127)
             Order: Graded Reverse Lexicographical
             Variables: x, y}
@@ -809,10 +799,10 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _coerce_from_special_method(self, x):
         """
-        Tries to coerce to self by calling a special underscore method.
+        Try to coerce to ``self`` by calling a special underscore method.
 
-        If no such method is defined, raises an AttributeError instead of a
-        TypeError.
+        If no such method is defined, raises an :exc:`AttributeError` instead
+        of a :exc:`TypeError`.
 
         EXAMPLES::
 
@@ -824,7 +814,7 @@ class Magma(ExtraTabCompletion, Expect):
             sage: magma._coerce_from_special_method('2 + 3')  # optional - magma
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute '_magma_init_'
+            AttributeError: 'str' object has no attribute '_magma_init_'...
         """
         s = x._magma_init_(self)
         a = self(s)
@@ -845,11 +835,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
+        - ``s`` -- string
 
-        -  ``s`` - string
-
-        -  ``names`` - list of strings
-
+        - ``names`` -- list of strings
 
         OUTPUT: string
 
@@ -868,9 +856,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-
-        -  ``var`` - a string
-
+        - ``var`` -- string
 
         EXAMPLES::
 
@@ -891,16 +877,17 @@ class Magma(ExtraTabCompletion, Expect):
 
         ::
 
-            sage: magma = Magma()      # optional - magma
-            sage: a = magma('100')     # optional - magma
-            sage: a.name()             # optional - magma
+            sage: # optional - magma
+            sage: magma = Magma()
+            sage: a = magma('100')
+            sage: a.name()
             '_sage_[1]'
-            sage: del a                # optional - magma
-            sage: b = magma('257')     # optional - magma
-            sage: b.name()             # optional - magma
+            sage: del a
+            sage: b = magma('257')
+            sage: b.name()
             '_sage_[1]'
-            sage: del b                # optional - magma
-            sage: magma('_sage_[1]')   # optional - magma
+            sage: del b
+            sage: magma('_sage_[1]')
             0
         """
         self.__available_var.insert(0, var)  # adds var to front of list
@@ -918,31 +905,27 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-
-        -  ``t`` - float (default: None); if not None, return
-           cputime since t
-
+        - ``t`` -- float (default: ``None``); if not None, return
+          cputime since t
 
         OUTPUT:
 
-
-        -  ``float`` - seconds
-
+        - ``float`` -- seconds
 
         EXAMPLES::
 
-            sage: type(magma.cputime())         # optional - magma
+            sage: # optional - magma
+            sage: type(magma.cputime())
             <... 'float'>
-            sage: magma.cputime()                # random, optional - magma
+            sage: magma.cputime()  # random
             1.9399999999999999
-            sage: t = magma.cputime()            # optional - magma
-            sage: magma.cputime(t)               # random, optional - magma
+            sage: t = magma.cputime()
+            sage: magma.cputime(t)  # random
             0.02
         """
         if t:
             return float(self.eval('Cputime(%s)' % t))
-        else:
-            return float(self.eval('Cputime()'))
+        return float(self.eval('Cputime()'))
 
     def chdir(self, dir):
         """
@@ -950,7 +933,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``dir`` -- a string
+        - ``dir`` -- string
 
         EXAMPLES::
 
@@ -973,9 +956,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-
-        -  ``filename`` - a string
-
+        - ``filename`` -- string
 
         EXAMPLES: Attaching a file that exists is fine::
 
@@ -1003,9 +984,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-
-        -  ``filename`` - a string
-
+        - ``filename`` -- string
 
         EXAMPLES::
 
@@ -1029,31 +1008,30 @@ class Magma(ExtraTabCompletion, Expect):
 
         Loading a file in Magma makes all the functions and procedures in
         the file available. The file should not contain any intrinsics (or
-        you'll get errors). It also runs code in the file, which can
+        you will get errors). It also runs code in the file, which can
         produce output.
 
         INPUT:
 
-
-        -  ``filename`` - string
-
+        - ``filename`` -- string
 
         OUTPUT: output printed when loading the file
 
         EXAMPLES::
 
             sage: from tempfile import NamedTemporaryFile as NTF
-            sage: with NTF(mode="w+t", suffix=".m") as f:  # optional - magma
+            sage: with NTF(mode='w+t', suffix='.m') as f:  # optional - magma
             ....:     _ = f.write('function f(n) return n^2; end function;\nprint "hi";')
             ....:     print(magma.load(f.name))
-            Loading ".../a.m"
+            Loading "....m"
             hi
             sage: magma('f(12)')  # optional - magma
             144
         """
-        return self.eval('load "%s"' % filename)
+        p = Path(filename)
+        return self.eval('load "%s"' % p.absolute())
 
-    def _next_var_name(self):
+    def _next_var_name(self) -> str:
         """
         Return the next available variable name in Magma.
 
@@ -1111,20 +1089,19 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
+        - ``function`` -- string, a Magma function name
 
-        -  ``function`` - string, a Magma function name
+        - ``args`` -- list of objects coercible into this magma
+          interface
 
-        -  ``args`` - list of objects coercible into this magma
-           interface
+        - ``params`` -- Magma parameters, passed in after a
+          colon
 
-        -  ``params`` - Magma parameters, passed in after a
-           colon
+        - ``nvals`` -- number of return values from the
+          function to ask Magma for
 
-        -  ``nvals`` - number of return values from the
-           function to ask Magma for
-
-
-        OUTPUT: MagmaElement or tuple of nvals MagmaElement's
+        OUTPUT: instance of :class:`MagmaElement` or a tuple of ``nvals`` many
+        :class:`MagmaElement` instances
 
         EXAMPLES::
 
@@ -1169,11 +1146,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
+        - ``code`` -- string; code to evaluate
 
-        -  ``code`` - a string; code to evaluate
-
-        -  ``nvals`` - an integer; number of return values
-
+        - ``nvals`` -- integer; number of return values
 
         OUTPUT: nvals distinct values
 
@@ -1223,7 +1198,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def bar_call(self, left, name, gens, nvals=1):
         """
-        This is a wrapper around the Magma constructor
+        This is a wrapper around the Magma constructor.
 
         nameleft gens
 
@@ -1231,18 +1206,16 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
+        - ``left`` -- something coerceable to a magma object
 
-        -  ``left`` - something coerceable to a magma object
+        - ``name`` -- name of the constructor, e.g., sub, quo,
+          ideal, etc.
 
-        -  ``name`` - name of the constructor, e.g., sub, quo,
-           ideal, etc.
+        - ``gens`` -- if a list/tuple, each item is coerced to
+          magma; otherwise gens itself is converted to magma
 
-        -  ``gens`` - if a list/tuple, each item is coerced to
-           magma; otherwise gens itself is converted to magma
-
-        -  ``nvals`` - positive integer; number of return
-           values
-
+        - ``nvals`` -- positive integer; number of return
+          values
 
         OUTPUT: a single magma object if nvals == 1; otherwise a tuple of
         nvals magma objects.
@@ -1251,22 +1224,23 @@ class Magma(ExtraTabCompletion, Expect):
         methods of Magma elements. Here we illustrate directly using
         bar_call to create quotients::
 
-            sage: V = magma.RModule(ZZ,3)    # optional - magma
-            sage: V                          # optional - magma
+            sage: # optional - magma
+            sage: V = magma.RModule(ZZ,3)
+            sage: V
             RModule(IntegerRing(), 3)
-            sage: magma.bar_call(V, 'quo', [[1,2,3]], nvals=1)  # optional - magma
+            sage: magma.bar_call(V, 'quo', [[1,2,3]], nvals=1)
             RModule(IntegerRing(), 2)
-            sage: magma.bar_call(V, 'quo', [[1,2,3]], nvals=2)  # optional - magma
+            sage: magma.bar_call(V, 'quo', [[1,2,3]], nvals=2)
             (RModule(IntegerRing(), 2),
              Mapping from: RModule(IntegerRing(), 3) to RModule(IntegerRing(), 2))
-            sage: magma.bar_call(V, 'quo', V, nvals=2)          # optional - magma
+            sage: magma.bar_call(V, 'quo', V, nvals=2)
             (RModule(IntegerRing(), 0),
              Mapping from: RModule(IntegerRing(), 3) to RModule(IntegerRing(), 0))
         """
         magma = self
         # coerce each arg to be a Magma element
         if isinstance(gens, (list, tuple)):
-            gens = (magma(z) for z in gens)
+            gens = [magma(z) for z in gens]
             # make comma separated list of names (in Magma) of each of the gens
             v = ', '.join(w.name() for w in gens)
         else:
@@ -1294,33 +1268,35 @@ class Magma(ExtraTabCompletion, Expect):
     # It's very painful using the interface without this.
     def _left_list_delim(self):
         """
-        Return the left sequence delimiter in Magma. Despite the name in
-        this function, this is really the least painful choice.
+        Return the left sequence delimiter in Magma.
+
+        Despite the name in this function, this is really the least
+        painful choice.
 
         EXAMPLES::
 
             sage: magma._left_list_delim()
             '['
         """
-        #return "[*"
         return "["
 
     def _right_list_delim(self):
         """
-        Return the right sequence delimiter in Magma. Despite the name in
-        this function, this is really the least painful choice.
+        Return the right sequence delimiter in Magma.
+
+        Despite the name in this function, this is really the least
+        painful choice.
 
         EXAMPLES::
 
             sage: magma._right_list_delim()
             ']'
         """
-        #return "*]"
         return "]"
 
     def _assign_symbol(self):
         """
-        Returns the assignment symbol in Magma.
+        Return the assignment symbol in Magma.
 
         EXAMPLES::
 
@@ -1331,7 +1307,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _equality_symbol(self):
         """
-        Returns the equality testing logical symbol in Magma.
+        Return the equality testing logical symbol in Magma.
 
         EXAMPLES::
 
@@ -1342,7 +1318,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _lessthan_symbol(self):
         """
-        Returns the less than testing logical symbol in Magma.
+        Return the less than testing logical symbol in Magma.
 
         EXAMPLES::
 
@@ -1353,7 +1329,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _greaterthan_symbol(self):
         """
-        Returns the greater than testing logical symbol in Magma.
+        Return the greater than testing logical symbol in Magma.
 
         EXAMPLES::
 
@@ -1366,7 +1342,7 @@ class Magma(ExtraTabCompletion, Expect):
     # in your derived class.
     def _true_symbol(self):
         """
-        Returns the string representation of "truth" in Magma.
+        Return the string representation of "truth" in Magma.
 
         EXAMPLES::
 
@@ -1377,7 +1353,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _false_symbol(self):
         """
-        Returns the string representation of "false" in Magma.
+        Return the string representation of "false" in Magma.
 
         EXAMPLES::
 
@@ -1408,11 +1384,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         OUTPUT:
 
+        - ``numbers`` -- 3-tuple: major, minor, etc.
 
-        -  ``numbers`` - 3-tuple: major, minor, etc.
-
-        -  ``string`` - version as a string
-
+        - ``string`` -- version as a string
 
         EXAMPLES::
 
@@ -1430,9 +1404,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-
-        -  ``s`` - string
-
+        - ``s`` -- string
 
         OUTPUT: string
 
@@ -1462,14 +1434,12 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
+        - ``verbose`` -- boolean (default: ``True``); whether to
+          verbosely output status info the first time the command list is
+          built
 
-        -  ``verbose`` - bool (default: True); whether to
-           verbosely output status info the first time the command list is
-           built
-
-        -  ``use_disk_cache`` - bool (default: True); use
-           cached command list, which is saved to disk.
-
+        - ``use_disk_cache`` -- boolean (default: ``True``); use
+          cached command list, which is saved to disk
 
         OUTPUT: list of strings
 
@@ -1486,7 +1456,7 @@ class Magma(ExtraTabCompletion, Expect):
                 try:
                     self.__tab_completion = sage.misc.persist.load(INTRINSIC_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose:
                 print("\nCreating list of all Magma intrinsics for use in tab completion.")
@@ -1524,12 +1494,10 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
+        - ``L`` -- list of elements of a Sage multivariate
+          polynomial ring
 
-        -  ``L`` - a list of elements of a Sage multivariate
-           polynomial ring.
-
-
-        OUTPUT: The magma ideal generated by the elements of L.
+        OUTPUT: the magma ideal generated by the elements of L
 
         EXAMPLES::
 
@@ -1562,9 +1530,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``type`` -- string (e.g. 'Groebner')
+        - ``type`` -- string (e.g. 'Groebner')
 
-        -  ``level`` -- integer >= 0
+        - ``level`` -- integer >= 0
 
         EXAMPLES::
 
@@ -1584,10 +1552,8 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-
-        -  ``type`` - string (e.g. 'Groebner'), see Magma
-           documentation
-
+        - ``type`` -- string (e.g. 'Groebner'), see Magma
+          documentation
 
         EXAMPLES::
 
@@ -1605,7 +1571,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``n`` - number of threads
+        - ``n`` -- number of threads
 
         EXAMPLES::
 
@@ -1633,6 +1599,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     GetNthreads = get_nthreads
 
+
 @instancedoc
 class MagmaFunctionElement(FunctionElement):
     def __call__(self, *args, **kwds):
@@ -1644,11 +1611,12 @@ class MagmaFunctionElement(FunctionElement):
 
         EXAMPLES: We create a MagmaFunctionElement::
 
-            sage: n = magma(-15)                        # optional - magma
-            sage: f = n.Factorisation                   # optional - magma
-            sage: type(f)                               # optional - magma
+            sage: # optional - magma
+            sage: n = magma(-15)
+            sage: f = n.Factorisation
+            sage: type(f)
             <class 'sage.interfaces.magma.MagmaFunctionElement'>
-            sage: f()                                   # optional - magma
+            sage: f()
             [ <3, 1>, <5, 1> ]
 
         We verify that the nvals argument works.
@@ -1686,12 +1654,13 @@ class MagmaFunctionElement(FunctionElement):
 
         EXAMPLES::
 
-            sage: n = magma(-15)             # optional - magma
-            sage: f = n.Factorisation        # optional - magma
-            sage: print(f.__doc__)           # optional - magma
+            sage: # optional - magma
+            sage: n = magma(-15)
+            sage: f = n.Factorisation
+            sage: print(f.__doc__)
             (n::RngIntElt) -> RngIntEltFact, RngIntElt, SeqEnum
             ...
-            sage: print(n.Factorisation.__doc__)    # optional - magma
+            sage: print(n.Factorisation.__doc__)
             (n::RngIntElt) -> RngIntEltFact, RngIntElt, SeqEnum
             ...
         """
@@ -1728,13 +1697,14 @@ class MagmaFunctionElement(FunctionElement):
 
         ::
 
-            sage: V = magma('VectorSpace(RationalField(),2)')    # optional - magma
-            sage: V.set_magma_attribute('M', 290398)             # optional - magma
-            sage: V.M                                            # optional - magma
+            sage: # optional - magma
+            sage: V = magma('VectorSpace(RationalField(),2)')
+            sage: V.set_magma_attribute('M', 290398)
+            sage: V.M
             290398
-            sage: type(V.M)                                      # optional - magma
+            sage: type(V.M)
             <class 'sage.interfaces.magma.MagmaFunctionElement'>
-            sage: type(V.M.__repr__())                           # optional - magma
+            sage: type(V.M.__repr__())
             <... 'str'>
 
         Displaying a non-attribute function works as above.
@@ -1810,34 +1780,9 @@ class MagmaFunction(ExpectFunction):
         return s
 
 
-def is_MagmaElement(x):
-    """
-    Return True if ``x`` is of type :class:`MagmaElement`, and False otherwise.
-
-    INPUT:
-
-    -  ``x`` - any object
-
-    OUTPUT: bool
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.magma import is_MagmaElement
-        sage: is_MagmaElement(2)
-        doctest:...: DeprecationWarning: the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_MagmaElement(magma(2))                    # optional - magma
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_MagmaElement is deprecated; use isinstance(x, sage.interfaces.abc.MagmaElement) instead")
-
-    return isinstance(x, MagmaElement)
-
-
 @instancedoc
-class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaElement):
+class MagmaElement(ExtraTabCompletion, ExpectElement,
+                   sage.interfaces.abc.MagmaElement):
     def _ref(self):
         """
         Return a variable name that is a new reference to this particular
@@ -1885,26 +1830,27 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         """
         INPUT:
 
-        -  ``attrname`` -- string
+        - ``attrname`` -- string
 
-        OUTPUT: a Magma function partially evaluated with self as the first
-        input.
+        OUTPUT: a Magma function partially evaluated with ``self`` as the first
+        input
 
-        .. note::
+        .. NOTE::
 
            If the input ``attrname`` starts with an underscore, an
-           :class:`AttributeError` is raised so that the actual
+           :exc:`AttributeError` is raised so that the actual
            Python _ method/value can be accessed.
 
         EXAMPLES::
 
-            sage: n = magma(-15)                                     # optional - magma
-            sage: type(n)                                            # optional - magma
+            sage: # optional - magma
+            sage: n = magma(-15)
+            sage: type(n)
             <class 'sage.interfaces.magma.MagmaElement'>
-            sage: f = n.__getattr__('Factorization')                 # optional - magma
-            sage: type(f)                                            # optional - magma
+            sage: f = n.__getattr__('Factorization')
+            sage: type(f)
             <class 'sage.interfaces.magma.MagmaFunctionElement'>
-            sage: f                                                  # optional - magma
+            sage: f
             Partially evaluated Magma function or intrinsic 'Factorization'
             ...
         """
@@ -1914,31 +1860,33 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def _sage_(self):
         """
-        Return Sage version of this object. Use self.sage() to get the Sage
-        version.
+        Return Sage version of this object.
 
-        Edit src/ext/magma/sage/basic.m to add functionality.
+        Use self.sage() to get the Sage version.
+
+        Edit ``src/sage/ext_data/magma/sage/basic.m`` to add functionality.
 
         EXAMPLES: Enumerated Sets::
 
-            sage: a = magma('{1,2/3,-5/9}')       # optional - magma
-            sage: a.sage()                        # optional - magma
+            sage: # optional - magma
+            sage: a = magma('{1,2/3,-5/9}')
+            sage: a.sage()
             {1, -5/9, 2/3}
-            sage: a._sage_()                      # optional - magma
+            sage: a._sage_()
             {1, -5/9, 2/3}
-            sage: type(a.sage())                  # optional - magma
+            sage: type(a.sage())
             <class 'sage.sets.set.Set_object_enumerated_with_category'>
-            sage: a = magma('{1,2/3,-5/9}'); a    # optional - magma
+            sage: a = magma('{1,2/3,-5/9}'); a
             { -5/9, 2/3, 1 }
-            sage: a.Type()                        # optional - magma
+            sage: a.Type()
             SetEnum
-            sage: b = a.sage(); b             # optional - magma
+            sage: b = a.sage(); b
             {1, -5/9, 2/3}
-            sage: type(b)                         # optional - magma
+            sage: type(b)
             <class 'sage.sets.set.Set_object_enumerated_with_category'>
-            sage: c = magma(b); c                 # optional - magma
+            sage: c = magma(b); c
             { -5/9, 2/3, 1 }
-            sage: c.Type()                        # optional - magma
+            sage: c.Type()
             SetEnum
 
         Multisets are converted to lists::
@@ -1986,20 +1934,22 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         Multivariate polynomials::
 
-            sage: R.<x,y,z> = QQ[]                   # optional - magma
-            sage: f = x^2+3*y                        # optional - magma
-            sage: g = magma(f).sage(); g             # optional - magma
+            sage: # optional - magma
+            sage: R.<x,y,z> = QQ[]
+            sage: f = x^2+3*y
+            sage: g = magma(f).sage(); g
             x^2 + 3*y
-            sage: parent(f) == parent(g)             # optional - magma
+            sage: parent(f) == parent(g)
             True
 
         Real and complex numbers::
 
-            sage: m = magma(RealField(200)(1/3))     # optional - magma
-            sage: m.sage()         # indirect doctest, optional - magma
+            sage: # optional - magma
+            sage: m = magma(RealField(200)(1/3))
+            sage: m.sage()
             0.33333333333333333333333333333333333333333333333333333333333
-            sage: m = magma(RealField(1000)(1/3))    # optional - magma
-            sage: m.sage()         # indirect doctest, optional - magma
+            sage: m = magma(RealField(1000)(1/3))
+            sage: m.sage()
             0.333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333
 
             sage: m = magma(ComplexField(200)).1; m  # optional - magma
@@ -2041,14 +1991,15 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         to relative number fields. Conversion of their elements
         has not yet been implemented.::
 
-            sage: magma.eval('P<x> := PolynomialRing(Rationals());') # optional - magma
+            sage: # optional - magma
+            sage: magma.eval('P<x> := PolynomialRing(Rationals());')
             ''
-            sage: K = magma('NumberField([x^2-2,x^2-3]:Abs);')        # optional - magma
-            sage: L = K.sage(); L                                     # optional - magma
+            sage: K = magma('NumberField([x^2-2,x^2-3]:Abs);')
+            sage: L = K.sage(); L
             Number Field in K1 with defining polynomial x^2 - 2 over its base field
-            sage: L.base_field()                                      # optional - magma
+            sage: L.base_field()
             Number Field in K2 with defining polynomial x^2 - 3
-            sage: K.GeneratorsSequence()[1].sage()                    # optional - magma
+            sage: K.GeneratorsSequence()[1].sage()
             Traceback (most recent call last):
             ...
             NameError: name 'K' is not defined
@@ -2061,7 +2012,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         TESTS:
 
-        Tests for :trac:`30341`::
+        Tests for :issue:`30341`::
 
             sage: P.<t> = PolynomialRing(QQ)
             sage: l = [-27563611963/4251528, -48034411/104976, -257/54, 1]
@@ -2083,11 +2034,12 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         """
         EXAMPLES::
 
-            sage: S = magma.PolynomialRing(magma.Integers(), 2)   # optional - magma
-            sage: S.AssignNames(['a', 'b'])       # optional - magma
-            sage: S.1                             # optional - magma
+            sage: # optional - magma
+            sage: S = magma.PolynomialRing(magma.Integers(), 2)
+            sage: S.AssignNames(['a', 'b'])
+            sage: S.1
             a
-            sage: S.1^2 + S.2 # optional - magma
+            sage: S.1^2 + S.2
             a^2 + b
         """
         P = self._check_valid()
@@ -2099,16 +2051,15 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def gen(self, n):
         """
-        Return the n-th generator of this Magma element. Note that
-        generators are 1-based in Magma rather than 0 based!
+        Return the `n`-th generator of this Magma element.
+
+        Note that generators are 1-based in Magma rather than 0-based!
 
         INPUT:
 
+        - ``n`` -- *positive* integer
 
-        -  ``n`` - a *positive* integer
-
-
-        OUTPUT: MagmaElement
+        OUTPUT: :class:`MagmaElement`
 
         EXAMPLES::
 
@@ -2130,7 +2081,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
             sage: m.gen(4)                # optional -- magma
             Traceback (most recent call last):
             ...
-            IndexError: list index out of range
+            IndexError: tuple index out of range
         """
         if n <= 0:
             raise IndexError("index must be positive since Magma indexes are 1-based")
@@ -2140,9 +2091,9 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         """
         Return generators for ``self``.
 
-        If self is named X in Magma, this function evaluates X.1, X.2,
+        If ``self`` is named X in Magma, this function evaluates X.1, X.2,
         etc., in Magma until an error occurs. It then returns a Sage tuple
-        of the resulting X.i. Note - I don't think there is a Magma command
+        of the resulting X.i. Note - I do not think there is a Magma command
         that returns the list of valid X.i. There are numerous ad hoc
         functions for various classes but nothing systematic. This function
         gets around that problem. Again, this is something that should
@@ -2179,9 +2130,9 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def gen_names(self):
         """
-        Return list of Magma variable names of the generators of self.
+        Return list of Magma variable names of the generators of ``self``.
 
-        .. note::
+        .. NOTE::
 
            As illustrated below, these are not the print names of the
            the generators of the Magma object, but special variable
@@ -2204,23 +2155,24 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def evaluate(self, *args):
         r"""
-        Evaluate self at the inputs.
+        Evaluate ``self`` at the inputs.
 
         INPUT:
 
-        -  ``*args`` -- import arguments
+        - ``*args`` -- import arguments
 
         OUTPUT: self(\*args)
 
         EXAMPLES::
 
-            sage: f = magma('Factorization')            # optional - magma
-            sage: f.evaluate(15)                        # optional - magma
+            sage: # optional - magma
+            sage: f = magma('Factorization')
+            sage: f.evaluate(15)
             [ <3, 1>, <5, 1> ]
-            sage: f(15)                                 # optional - magma
+            sage: f(15)
             [ <3, 1>, <5, 1> ]
-            sage: f = magma('GCD')                      # optional - magma
-            sage: f.evaluate(15,20)                     # optional - magma
+            sage: f = magma('GCD')
+            sage: f.evaluate(15,20)
             5
 
             sage: m = matrix(QQ, 2, 2, [2,3,5,7])      # optional - magma
@@ -2242,13 +2194,14 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         EXAMPLES::
 
-            sage: M = magma.RMatrixSpace(magma.IntegerRing(), 2, 2)  # optional - magma
-            sage: A = M([1,2,3,4]); A        # optional - magma
+            sage: # optional - magma
+            sage: M = magma.RMatrixSpace(magma.IntegerRing(), 2, 2)
+            sage: A = M([1,2,3,4]); A
             [1 2]
             [3 4]
-            sage: type(A)                    # optional - magma
+            sage: type(A)
             <class 'sage.interfaces.magma.MagmaElement'>
-            sage: A.Type()                   # optional - magma
+            sage: A.Type()
             ModMatRngElt
         """
         if len(args) > 1:
@@ -2268,22 +2221,23 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         .. warning::
 
-           Internally this constructs the list of elements in self in
+           Internally this constructs the list of elements in ``self`` in
            Magma, which is not a lazy operation. This is because Magma
            doesn't have a notion of lazy iterators, unfortunately.
 
         EXAMPLES::
 
-            sage: V = magma('VectorSpace(GF(3),2)')             # optional - magma
-            sage: V                                             # optional - magma
+            sage: # optional - magma
+            sage: V = magma('VectorSpace(GF(3),2)')
+            sage: V
             Full Vector space of degree 2 over GF(3)
-            sage: w = V.__iter__(); w                           # optional - magma
+            sage: w = V.__iter__(); w
             <generator object ...__iter__ at ...>
-            sage: next(w)                                       # optional - magma
+            sage: next(w)
             (0 0)
-            sage: next(w)                                       # optional - magma
+            sage: next(w)
             (1 0)
-            sage: list(w)                                       # optional - magma
+            sage: list(w)
             [(2 0), (0 1), (1 1), (2 1), (0 2), (1 2), (2 2)]
         """
         P = self._check_valid()
@@ -2299,12 +2253,13 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         EXAMPLES::
 
-            sage: V = magma('VectorSpace(GF(3),2)')           # optional - magma
-            sage: V                                           # optional - magma
+            sage: # optional - magma
+            sage: V = magma('VectorSpace(GF(3),2)')
+            sage: V
             Full Vector space of degree 2 over GF(3)
-            sage: len(V)                                      # optional - magma
+            sage: len(V)
             9
-            sage: V.__len__()                                 # optional - magma
+            sage: V.__len__()
             9
         """
         P = self._check_valid()
@@ -2312,15 +2267,15 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def _polynomial_(self, R):
         """
-        Try to convert self into a polynomial in the univariate polynomial
-        ring R.
+        Try to convert ``self`` into a polynomial in the univariate polynomial
+        ring `R`.
 
         EXAMPLES::
 
             sage: R.<x> = QQ[]
             sage: f = magma(x^2 + 2/3*x + 5)                 # optional - magma
             sage: f                                          # optional - magma
-            t^2 + 2/3*t + 5
+            x^2 + 2/3*x + 5
             sage: f.Type()                                   # optional - magma
             RngUPolElt
             sage: f._polynomial_(R)                          # optional - magma
@@ -2328,34 +2283,32 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         """
         return R(list(self.Eltseq()))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         AUTHORS:
 
         - Jennifer Balakrishnan
 
-        Types that are nicely latex include:
+        Types that are nicely latexed include:
 
+        - rationals
 
-        -  rationals
+        - matrices
 
-        -  matrices
+        - polynomials
 
-        -  polynomials
+        - binary quadratic forms
 
-        -  binary quadratic forms
+        - elements of quadratic, cyclotomic number fields, and general
+          number fields
 
-        -  elements of quadratic, cyclotomic number fields, and general
-           number fields
+        - points
 
-        -  points
+        - elliptic curves
 
-        -  elliptic curves
-
-        -  power series
-
+        - power series
 
         IMPLEMENTATION: Calls latex.m, which is in
         SAGE_EXTCODE/magma/latex.m
@@ -2431,14 +2384,15 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         Power Series::
 
-            sage: _=magma.eval('R<x> := PowerSeriesRing(RationalField())')   # optional - magma
-            sage: latex(magma('(1/(1+x))'))                                  # optional - magma
+            sage: # optional - magma
+            sage: _=magma.eval('R<x> := PowerSeriesRing(RationalField())')
+            sage: latex(magma('(1/(1+x))'))
             1-x+x^{2}-x^{3}+x^{4}-x^{5}+x^{6}-x^{7}+x^{8}-x^{9}+x^{10}-x^{11}+x^{12}-x^{13}+x^{14}-x^{15}+x^{16}-x^{17}+x^{18}-x^{19}+O(x^{20})
-            sage: _=magma.eval('R<x> := PowerSeriesRing(RationalField())')   # optional - magma
-            sage: latex(magma('(-1/(2+x + O(x^3)))'))                        # optional - magma
+            sage: _=magma.eval('R<x> := PowerSeriesRing(RationalField())')
+            sage: latex(magma('(-1/(2+x + O(x^3)))'))
             \frac{-1}{2}+\frac{1}{4}x-\frac{1}{8}x^{2}+O(x^{3})
 
-        p-adic Numbers::
+        `p`-adic Numbers::
 
             sage: latex(magma('pAdicField(7,4)!9333294394/49'))              # optional - magma
             4\cdot{}7^{-2} + 5\cdot{}7^{-1} + 5+ 6\cdot{}7^{1} + O(7^{2})
@@ -2452,16 +2406,19 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def set_magma_attribute(self, attrname, value):
         """
-        INPUT: attrname - string value - something coercible to a
-        MagmaElement
+        INPUT:
+
+        - ``attrname`` -- string
+        - ``value`` -- something coercible to a MagmaElement
 
         EXAMPLES::
 
-            sage: V = magma("VectorSpace(RationalField(),2)")   # optional - magma
-            sage: V.set_magma_attribute('M',10)                 # optional - magma
-            sage: V.get_magma_attribute('M')                    # optional - magma
+            sage: # optional - magma
+            sage: V = magma("VectorSpace(RationalField(),2)")
+            sage: V.set_magma_attribute('M',10)
+            sage: V.get_magma_attribute('M')
             10
-            sage: V.M                                           # optional - magma
+            sage: V.M
             10
         """
         P = self.parent()   # instance of Magma that contains this element.
@@ -2474,15 +2431,16 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         Return value of a given Magma attribute. This is like selfattrname
         in Magma.
 
-        OUTPUT: MagmaElement
+        OUTPUT: :class:`MagmaElement`
 
         EXAMPLES::
 
-            sage: V = magma("VectorSpace(RationalField(),10)")   # optional - magma
-            sage: V.set_magma_attribute('M','"hello"')           # optional - magma
-            sage: V.get_magma_attribute('M')                     # optional - magma
+            sage: # optional - magma
+            sage: V = magma("VectorSpace(RationalField(),10)")
+            sage: V.set_magma_attribute('M','"hello"')
+            sage: V.get_magma_attribute('M')
             hello
-            sage: V.M                                            # optional - magma
+            sage: V.M
             hello
         """
         P = self.parent()
@@ -2510,19 +2468,17 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         Return all Magma functions that have this Magma element as first
         input. This is used for tab completion.
 
-        .. note::
+        .. NOTE::
 
            This function can unfortunately be slow if there are a very
-           large number of functions, e.g., when self is an
+           large number of functions, e.g., when ``self`` is an
            integer. (This could be fixed by the addition of an
            appropriate function to the Magma kernel, which is
            something that can only be done by the Magma developers.)
 
         OUTPUT:
 
-
-        -  ``list`` - sorted list of distinct strings
-
+        - ``list`` -- sorted list of distinct strings
 
         EXAMPLES::
 
@@ -2541,13 +2497,13 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def methods(self, any=False):
         """
-        Return signatures of all Magma intrinsics that can take self as the
+        Return signatures of all Magma intrinsics that can take ``self`` as the
         first argument, as strings.
 
         INPUT:
 
-        - ``any`` -- (bool: default is False) if True, also
-          include signatures with Any as first argument.
+        - ``any`` -- boolean (default: ``False``); if ``True``, also
+          include signatures with Any as first argument
 
         OUTPUT: list of strings
 
@@ -2573,8 +2529,8 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def __floordiv__(self, x):
         """
-        Quotient of division of self by other. This is denoted // ("div" in
-        magma).
+        Quotient of division of ``self`` by ``other``. This is denoted ``//``
+        (``div`` in magma).
 
         EXAMPLES::
 
@@ -2620,18 +2576,19 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         Test use in bool conversions of bools::
 
-            sage: bool(magma(False))                      # optional - magma
+            sage: # optional - magma
+            sage: bool(magma(False))
             False
-            sage: bool(magma(True))                       # optional - magma
+            sage: bool(magma(True))
             True
-            sage: bool(magma(1))                          # optional - magma
+            sage: bool(magma(1))
             True
-            sage: bool(magma(0))                          # optional - magma
+            sage: bool(magma(0))
             False
 
         TESTS:
 
-        Verify that :trac:`32602` is fixed::
+        Verify that :issue:`32602` is fixed::
 
             sage: magma("1 eq 0").bool()                  # optional - magma
             False
@@ -2655,11 +2612,11 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def sub(self, gens):
         """
-        Return the sub-object of self with given gens.
+        Return the sub-object of ``self`` with given gens.
 
         INPUT:
 
-        -  ``gens`` -- object or list/tuple of generators
+        - ``gens`` -- object or list/tuple of generators
 
         EXAMPLES::
 
@@ -2677,24 +2634,20 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def quo(self, gens, **args):
         """
-        Return the quotient of self by the given object or list of
+        Return the quotient of ``self`` by the given object or list of
         generators.
 
         INPUT:
 
-
-        -  ``gens`` - object or list/tuple of generators
+        - ``gens`` -- object or list/tuple of generators
         - further named arguments that are ignored
-
 
         OUTPUT:
 
+        - ``magma element`` -- the quotient object
 
-        -  ``magma element`` - the quotient object
-
-        -  ``magma element`` - mapping from self to the
-           quotient object
-
+        - ``magma element`` -- mapping from ``self`` to the
+          quotient object
 
         EXAMPLES::
 
@@ -2713,38 +2666,36 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         ::
 
-            sage: V = magma.RModule(ZZ,3); V # optional - magma
+            sage: # optional - magma
+            sage: V = magma.RModule(ZZ,3); V
             RModule(IntegerRing(), 3)
-            sage: W, phi = V.quo([[1,2,3]])  # optional - magma
-            sage: W                          # optional - magma
+            sage: W, phi = V.quo([[1,2,3]])
+            sage: W
             RModule(IntegerRing(), 2)
-            sage: phi                        # optional - magma
+            sage: phi
             Mapping from: RModule(IntegerRing(), 3) to RModule(IntegerRing(), 2)
         """
         return self.parent().bar_call(self, 'quo', gens, nvals=2)
 
     def ideal(self, gens):
         """
-        Return the ideal of self with given list of generators.
+        Return the ideal of ``self`` with given list of generators.
 
         INPUT:
 
-
-        -  ``gens`` - object or list/tuple of generators
-
+        - ``gens`` -- object or list/tuple of generators
 
         OUTPUT:
 
-
-        -  ``magma element`` - a Magma ideal
-
+        - ``magma element`` -- a Magma ideal
 
         EXAMPLES::
 
-            sage: R = magma('PolynomialRing(RationalField())')        # optional - magma
-            sage: R.assign_names(['x'])                               # optional - magma
-            sage: x = R.1                                             # optional - magma
-            sage: R.ideal([x^2 - 1, x^3 - 1])                         # optional - magma
+            sage: # optional - magma
+            sage: R = magma('PolynomialRing(RationalField())')
+            sage: R.assign_names(['x'])
+            sage: x = R.1
+            sage: R.ideal([x^2 - 1, x^3 - 1])
             Ideal of Univariate Polynomial Ring in x over Rational Field generated by x - 1
         """
         return self.parent().bar_call(self, 'ideal', gens, nvals=1)
@@ -2803,12 +2754,12 @@ class MagmaGBLogPrettyPrinter:
 
         INPUT:
 
-        - ``verbosity`` - how much information should be printed
+        - ``verbosity`` -- how much information should be printed
           (between 0 and 1)
 
-        - ``style`` - if "magma" the full Magma log is printed; if
+        - ``style`` -- if "magma" the full Magma log is printed; if
           'sage' only the current degree and the number of pairs in
-          the queue is printed (default: "magma").
+          the queue is printed (default: ``'magma'``).
 
         EXAMPLES::
 
@@ -2884,6 +2835,7 @@ class MagmaGBLogPrettyPrinter:
             sage: P.<x,y,z> = GF(32003)[]
             sage: I = sage.rings.ideal.Katsura(P)
             sage: _ = I.groebner_basis('magma',prot=True) # indirect doctest, optional - magma
+            ...
             ********************
             FAUGERE F4 ALGORITHM
             ********************
@@ -2936,16 +2888,14 @@ class MagmaGBLogPrettyPrinter:
                 pol_curr, col_curr = map(int, match.groups())
 
                 if pol_curr != 0:
-                    if self.max_deg < self.curr_deg:
-                        self.max_deg = self.curr_deg
+                    self.max_deg = max(self.max_deg, self.curr_deg)
 
                     if style == "sage" and verbosity >= 1:
                         print("Leading term degree: %2d. Critical pairs: %d." %
                               (self.curr_deg, self.curr_npairs))
-                else:
-                    if style == "sage" and verbosity >= 1:
-                        print("Leading term degree: %2d. Critical pairs: %d (all pairs of current degree eliminated by criteria)." %
-                              (self.curr_deg, self.curr_npairs))
+                elif style == "sage" and verbosity >= 1:
+                    print("Leading term degree: %2d. Critical pairs: %d (all pairs of current degree eliminated by criteria)." %
+                          (self.curr_deg, self.curr_npairs))
 
             if style == "magma" and verbosity >= 1:
                 print(line)
@@ -2971,7 +2921,7 @@ class MagmaGBDefaultContext:
         """
         INPUT:
 
-        - ``magma`` - (default: ``magma_default``)
+        - ``magma`` -- (default: ``magma_default``)
 
         EXAMPLES::
 

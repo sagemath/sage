@@ -1,10 +1,16 @@
 # NOT ready to be used -- possibly should be deleted.
 
-from .power_series_ring_element cimport PowerSeries
+from sage.rings.power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element
-from .infinity import infinity
-from .polynomial.multi_polynomial_ring_base import is_MPolynomialRing
-from . import power_series_poly
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+from sage.rings import power_series_poly
+
+
+try:
+    from cypari2.handle_error import PariError
+except ImportError:
+    PariError = ()
 
 
 cdef class PowerSeries_mpoly(PowerSeries):
@@ -50,13 +56,13 @@ cdef class PowerSeries_mpoly(PowerSeries):
             # avoid having an if statement in the inner loop of a
             # doubly-nested for loop.
             d = {}
-            if is_MPolynomialRing(B):
+            if isinstance(B, MPolynomialRing_base):
                 for i in range(len(v)):
-                    for n, c in v[i].dict().iteritems():
+                    for n, c in v[i].monomial_coefficients().items():
                         d[tuple(n) + (i,)] = c
             else:
                 for i in range(len(v)):
-                    for n, c in v[i].dict().iteritems():
+                    for n, c in v[i].monomial_coefficients().items():
                         d[(n,i)] = c
 
             self.__f = S(d)
@@ -109,7 +115,6 @@ cdef class PowerSeries_mpoly(PowerSeries):
                                  self.__f * (<PowerSeries_mpoly>right_r).__f,
                                  prec = prec,
                                  check =True)
-
 
     def __iter__(self):
         """

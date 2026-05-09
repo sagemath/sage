@@ -18,9 +18,9 @@ from sage.modules.vector_rational_sparse cimport *
 from sage.rings.integer cimport Integer
 from sage.rings.rational_field import QQ
 
-from .matrix0 cimport Matrix
-from .matrix_integer_sparse cimport Matrix_integer_sparse
-from .matrix_rational_sparse cimport Matrix_rational_sparse
+from sage.matrix.matrix0 cimport Matrix
+from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
+from sage.matrix.matrix_rational_sparse cimport Matrix_rational_sparse
 
 matrix_integer_dense_rational_reconstruction = \
   LazyImport('sage.matrix.misc_flint', 'matrix_integer_dense_rational_reconstruction',
@@ -47,7 +47,7 @@ def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integ
 
     TESTS:
 
-    Check that :trac:`9345` is fixed::
+    Check that :issue:`9345` is fixed::
 
         sage: A = random_matrix(ZZ, 3, sparse=True)
         sage: sage.matrix.misc.matrix_integer_sparse_rational_reconstruction(A, 0)
@@ -124,16 +124,17 @@ def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integ
 
 def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, proof=None):
     """
-    Returns reduced row-echelon form using a multi-modular
-    algorithm.  Does not change self.
+    Return reduced row-echelon form using a multi-modular
+    algorithm.  Does not change ``self``.
 
     REFERENCE: Chapter 7 of Stein's "Explicitly Computing Modular Forms".
 
     INPUT:
 
-    - height_guess -- integer or None
-    - proof -- boolean or None (default: None, see proof.linear_algebra or
-      sage.structure.proof). Note that the global Sage default is proof=True
+    - ``height_guess`` -- integer or ``None``
+    - ``proof`` -- boolean or ``None`` (default: ``None``, see
+      ``proof.linear_algebra`` or ``sage.structure.proof``). Note that the
+      global Sage default is proof=True
 
     OUTPUT: a pair consisting of a matrix in echelon form and a tuple of pivot
     positions.
@@ -203,12 +204,55 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         [                0                 0                 1                 2]
         sage: A.pivots()
         (0, 1, 2)
+
+    A small benchmark, showing that flint fraction-free multimodular algorithm
+    is always faster than the fraction-free multimodular algorithm implemented in Python::
+
+        sage: import copy
+        sage: def benchmark(num_row, num_col, entry_size, timeout=2, integer_coefficient=True):
+        ....:     A = matrix(QQ, [[
+        ....:         randint(1, 2^entry_size) if integer_coefficient else ZZ(randint(1, 2^entry_size))/randint(1, 2^entry_size)
+        ....:         for col in range(num_col)] for row in range(num_row)])
+        ....:     data=[]
+        ....:     for algorithm in ("flint:fflu", "flint:multimodular", "padic", "multimodular"):
+        ....:         # classical is too slow
+        ....:         B = copy.copy(A)
+        ....:         t = walltime()
+        ....:         alarm(timeout)
+        ....:         try:
+        ....:             B.echelonize(algorithm=algorithm)
+        ....:         except AlarmInterrupt:
+        ....:             pass
+        ....:         finally:
+        ....:             cancel_alarm()
+        ....:         data.append((round(walltime(t), 4), algorithm))
+        ....:     return sorted(data)
+        sage: benchmark(20, 20, 10000)  # long time
+        [...'flint:multimodular'...'multimodular'...'flint:fflu'...]
+        sage: benchmark(39, 40, 200)  # long time
+        [...'flint:multimodular'...'flint:fflu'...'multimodular'...]
+
+    In older versions of flint
+    before this `issue <https://github.com/flintlib/flint/issues/2129>`_
+    is fixed, ``algorithm='flint'`` (automatic choice) may be slower than
+    ``algorithm='flint:multimodular'``.
+
+    In this case, there are more columns than rows, which means the resulting
+    matrix has height much higher than the input matrix. We check that the function
+    does not take too long::
+
+        sage: A = matrix(QQ, [[randint(1, 2^500) for col in range(40)] for row in range(20)])
+        sage: t = walltime()
+        sage: A.echelonize(algorithm="multimodular")  # long time
+        sage: t = walltime(t)  # long time
+        sage: (t < 10, t)  # long time
+        (True, ...)
     """
     if proof is None:
         from sage.structure.proof.proof import get_flag
         proof = get_flag(proof, "linear_algebra")
 
-    verbose("Multimodular echelon algorithm on %s x %s matrix"%(self._nrows, self._ncols), caller_name="multimod echelon")
+    verbose("Multimodular echelon algorithm on %s x %s matrix" % (self._nrows, self._ncols), caller_name="multimod echelon")
     cdef Matrix E
     if self._nrows == 0 or self._ncols == 0:
         return self, ()
@@ -218,12 +262,14 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
     height = self.height()
     if height_guess is None:
         height_guess = 10000000*(height+100)
-    tm = verbose("height_guess = %s"%height_guess, level=2, caller_name="multimod echelon")
+    tm = verbose("height_guess = %s" % height_guess, level=2, caller_name="multimod echelon")
 
+    cdef Integer M
+    from sage.arith.misc import integer_floor as floor
     if proof:
-        M = self._ncols * height_guess * height  +  1
+        M = floor(max(1, self._ncols * height_guess * height + 1))
     else:
-        M = height_guess + 1
+        M = floor(max(1, height_guess + 1))
 
     if self.is_sparse():
         from sage.matrix.matrix_modn_sparse import MAX_MODULUS
@@ -243,7 +289,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             problem = problem + 1
             if problem > 50:
                 verbose("echelon multi-modular possibly not converging?", caller_name="multimod echelon")
-            t = verbose("echelon modulo p=%s (%.2f%% done)"%(
+            t = verbose("echelon modulo p=%s (%.2f%% done)" % (
                        p, 100*float(len(str(prod))) / len(str(M))), level=2, caller_name="multimod echelon")
 
             # We use denoms=False, since we made self integral by calling clear_denom above.
@@ -280,10 +326,10 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             if cmp_pivots(best_pivots, X[i].pivots()) <= 0:
                 p = X[i].base_ring().order()
                 if p not in lifts:
-                    t0 = verbose("Lifting a good matrix", level=2, caller_name = "multimod echelon")
+                    t0 = verbose("Lifting a good matrix", level=2, caller_name="multimod echelon")
                     lift = X[i].lift()
                     lifts[p] = (lift, p)
-                    verbose("Finished lift", level=2, caller_name= "multimod echelon", t=t0)
+                    verbose("Finished lift", level=2, caller_name="multimod echelon", t=t0)
                 Y.append(lifts[p])
                 prod = prod * X[i].base_ring().order()
         verbose("finished comparing pivots", level=2, t=t, caller_name="multimod echelon")
@@ -308,7 +354,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         except ValueError as msg:
             verbose(msg, level=2)
             verbose("Not enough primes to do CRT lift; redoing with several more primes.", level=2, caller_name="multimod echelon")
-            M = prod * p*p*p
+            M <<= M.bit_length() // 5 + 1
             continue
 
         if not proof:
@@ -320,7 +366,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             verbose("Validity of result checked.", level=2, caller_name="multimod echelon")
             break
         verbose("Validity failed; trying again with more primes.", level=2, caller_name="multimod echelon")
-        M = prod * p*p*p
+        M <<= M.bit_length() // 5 + 1
     #end while
     verbose("total time",tm, level=2, caller_name="multimod echelon")
     return E, tuple(best_pivots)

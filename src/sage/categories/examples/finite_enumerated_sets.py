@@ -16,7 +16,7 @@ from sage.rings.integer_ring import IntegerRing
 
 class Example(UniqueRepresentation, Parent):
     r"""
-    An example of a finite enumerated set: `\{1,2,3\}`
+    An example of a finite enumerated set: `\{1,2,3\}`.
 
     This class provides a minimal implementation of a finite enumerated set.
 
@@ -61,6 +61,8 @@ class Example(UniqueRepresentation, Parent):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
     """
 
@@ -79,7 +81,7 @@ class Example(UniqueRepresentation, Parent):
         Parent.__init__(self, facade=IntegerRing(),
                         category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -88,7 +90,7 @@ class Example(UniqueRepresentation, Parent):
         """
         return "An example of a finite enumerated set: {1,2,3}"
 
-    def __contains__(self, o):
+    def __contains__(self, o) -> bool:
         """
         EXAMPLES::
 
@@ -106,7 +108,6 @@ class Example(UniqueRepresentation, Parent):
 
             sage: list(FiniteEnumeratedSets().example()) # indirect doctest
             [1, 2, 3]
-
         """
         return iter(self._set)
 
@@ -130,7 +131,7 @@ class IsomorphicObjectOfFiniteEnumeratedSet(UniqueRepresentation, Parent):
 
     def ambient(self):
         """
-        Returns the ambient space for ``self``, as per
+        Return the ambient space for ``self``, as per
         :meth:`Sets.Subquotients.ParentMethods.ambient()
         <sage.categories.sets_cat.Sets.Subquotients.ParentMethods.ambient>`.
 
@@ -181,7 +182,7 @@ class IsomorphicObjectOfFiniteEnumeratedSet(UniqueRepresentation, Parent):
         """
         return x ** 2
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Membership testing by checking whether the preimage by the
         bijection is in the ambient space.

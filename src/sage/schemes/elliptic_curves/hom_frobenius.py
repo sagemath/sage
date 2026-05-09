@@ -309,20 +309,6 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
 
     # EllipticCurveHom methods
 
-    def degree(self):
-        """
-        Return the degree of this Frobenius isogeny.
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
-            sage: E = EllipticCurve(GF(11), [1,1])
-            sage: pi = EllipticCurveHom_frobenius(E, 4)
-            sage: pi.degree()
-            14641
-        """
-        return self._degree
-
     def rational_maps(self):
         """
         Return the explicit rational maps defining this Frobenius
@@ -338,7 +324,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
 
         TESTS:
 
-        See :trac:`34811`::
+        See :issue:`34811`::
 
             sage: pi.rational_maps()[0].parent()
             Fraction Field of Multivariate Polynomial Ring in x, y over Finite Field of size 11
@@ -363,7 +349,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
 
         TESTS:
 
-        See :trac:`34811`::
+        See :issue:`34811`::
 
             sage: pi.x_rational_map().parent()
             Fraction Field of Sparse Univariate Polynomial Ring in x over Finite Field of size 11
@@ -515,44 +501,21 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
         iso = find_post_isomorphism(Phi * self, scalar_mul)
         return iso * Phi
 
-    def is_separable(self):
+    def inseparable_degree(self):
         """
-        Determine whether or not this Frobenius isogeny is separable.
+        Return the inseparable degree of this Frobenius isogeny.
 
-        Since Frobenius isogenies are purely inseparable, this method
-        returns ``True`` if and only if the degree is `1`.
+        Since this class implements only purely inseparable isogenies,
+        the inseparable degree equals the degree.
 
         EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
             sage: E = EllipticCurve(GF(11), [1,1])
-            sage: pi = EllipticCurveHom_frobenius(E)
-            sage: pi.degree()
-            11
-            sage: pi.is_separable()
-            False
-            sage: pi = EllipticCurveHom_frobenius(E, 0)
-            sage: pi.degree()
-            1
-            sage: pi.is_separable()
+            sage: pi = EllipticCurveHom_frobenius(E, 4)
+            sage: pi.inseparable_degree()
+            14641
+            sage: pi.inseparable_degree() == pi.degree()
             True
         """
-        return self._degree == 1
-
-    def is_injective(self):
-        """
-        Determine whether or not this Frobenius isogeny has trivial
-        kernel.
-
-        Since Frobenius isogenies are purely inseparable, this method
-        always returns ``True``.
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
-            sage: E = EllipticCurve(GF(11), [1,1])
-            sage: pi = EllipticCurveHom_frobenius(E, 5)
-            sage: pi.is_injective()
-            True
-        """
-        return True
+        return self._degree

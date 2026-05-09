@@ -16,9 +16,7 @@ class POVRay:
     - ``outfile`` -- the filename you want to save your result to
     - ``**kwargs`` -- additionally keyword arguments you want to pass to POVRay
 
-    OUTPUT:
-
-    Image is written to the file you specified in outfile
+    OUTPUT: image is written to the file you specified in outfile
 
     EXAMPLES:
 

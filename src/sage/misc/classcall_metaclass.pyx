@@ -118,7 +118,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
     def _set_classcall(cls, function):
         r"""
-        Change dynamically the classcall function for this class
+        Change dynamically the classcall function for this class.
 
         EXAMPLES::
 
@@ -399,7 +399,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
     def __contains__(cls, x):
         r"""
-        This method implements membership testing for a class
+        This method implements membership testing for a class.
 
         Let ``cls`` be a class in :class:`ClasscallMetaclass`, and consider
         a call of the form::
@@ -438,7 +438,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             sage: 1 in Bar
             Traceback (most recent call last):
             ...
-            TypeError: argument of type 'type' is not iterable
+            TypeError: argument of type 'type' is not... iterable
         """
         if cls.classcontains:
             return cls.classcontains(cls, x)
@@ -448,14 +448,14 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
 def typecall(pytype cls, *args, **kwds):
     r"""
-    Object construction
+    Object construction.
 
     This is a faster equivalent to ``type.__call__(cls, <some arguments>)``.
 
     INPUT:
 
-    - ``cls`` -- the class used for constructing the instance. It must be
-      a builtin type or a new style class (inheriting from :class:`object`).
+    - ``cls`` -- the class used for constructing the instance; it must be
+      a builtin type or a new style class (inheriting from :class:`object`)
 
     EXAMPLES::
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Introduction to combinatorics in Sage
 
@@ -17,8 +16,6 @@ of elements in a finite field), or in the analysis of
 algorithms. Combinatorics covers a much wider domain (partial orders,
 representation theory, …) for which we only give a few pointers
 towards the possibilities offered by ``Sage``.
-
-.. TODO:: Add link to some thematic tutorial on graphs
 
 A characteristic of computational combinatorics is the profusion of
 types of objects and sets that one wants to manipulate. It would be
@@ -143,7 +140,7 @@ We will now attempt a little numerical simulation. The following
 function tests whether a given hand is a flush or not::
 
     sage: def is_flush(hand):
-    ....:     return len(set(suit for (val, suit) in hand)) == 1
+    ....:     return len(set(suit for val, suit in hand)) == 1
 
 We now draw 10000 hands at random, and count the number of flushes
 obtained (this takes about 10 seconds)::
@@ -462,7 +459,7 @@ We continue the calculation of this fraction in `R`::
     sage: fraction = - R(Px) / R(Py); fraction                                          # needs sage.symbolic
     (1/2/(x - 1/4))*ybar - 1/4/(x - 1/4)
 
-.. note::
+.. NOTE::
 
     The following variant does not work yet::
 
@@ -845,15 +842,15 @@ Set partitions::
 
 Partial orders on a set of `8` elements, up to isomorphism::
 
-    sage: C = Posets(8); C
-    Posets containing 8 elements
+    sage: C = Posets(7); C
+    Posets containing 7 elements
     sage: C.cardinality()
-    16999
+    2045
 
 ::
 
     sage: C.unrank(20).plot()
-    Graphics object consisting of 20 graphics primitives
+    Graphics object consisting of ... graphics primitives
 
 .. image:: ../../media/a_poset.png
 
@@ -1315,7 +1312,7 @@ This model of computation, called *continuation*, is very useful in
 combinatorics, especially when combined with recursion. Here is how to
 generate all words of a given length on a given alphabet::
 
-    sage: def words(alphabet,l):
+    sage: def words(alphabet, l):
     ....:    if l == 0:
     ....:        yield []
     ....:    else:
@@ -1541,7 +1538,7 @@ The strictly decreasing partitions of `5`::
 These sets share the same underlying algorithmic structure, implemented
 in the more general (and slightly more cumbersome) class
 ``IntegerListsLex``. This class models sets of vectors
-`(\ell_0,\dots,\ell_k)` of non-negative integers, with
+`(\ell_0,\dots,\ell_k)` of nonnegative integers, with
 constraints on the sum and the length, and bounds on the parts and on
 the consecutive differences between the parts. Here are some more
 examples::
@@ -1638,7 +1635,7 @@ iterator or non-naive counting::
     M(4, 2, 3),
     M(5, 2, 3)
     in 3-d lattice M
-    sage: L.npoints()                                 # random
+    sage: L.n_points()                                 # random
     11
 
 This polytope can be visualized in 3D with ``L.plot3d()`` (see
@@ -1842,9 +1839,10 @@ etc. This can be applied to generate:
 
 REFERENCES:
 
-   .. [CMS2012] Alexandre Casamayou, Nathann Cohen, Guillaume Connan, Thierry Dumont, Laurent Fousse, François Maltey, Matthias Meulien, Marc Mezzarobba, Clément Pernet, Nicolas M. Thiéry, Paul Zimmermann
-         *Calcul Mathématique avec Sage*
-         https://www.sagemath.org/sagebook/french.html
+.. [CMS2012] Alexandre Casamayou, Nathann Cohen, Guillaume Connan, Thierry
+   Dumont, Laurent Fousse, François Maltey, Matthias Meulien, Marc Mezzarobba,
+   Clément Pernet, Nicolas M. Thiéry, Paul Zimmermann *Calcul Mathématique avec
+   Sage* https://www.sagemath.org/sagebook/french.html
 
 .. [1]
    Or at least that should be the case; there are still many corners to
@@ -1855,5 +1853,4 @@ REFERENCES:
    of `G`, i.e., its automorphism group, to reduce the number of
    children to explore, and to reduce the cost of each test of
    canonicity.
-
 """

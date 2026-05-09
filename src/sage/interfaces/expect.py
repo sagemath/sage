@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.gap sage.libs.pari sage.libs.singular sage.symbolic
 """
 Common Interface Functionality through Pexpect
 
@@ -13,7 +13,8 @@ AUTHORS:
 - William Stein (2006-03-01): got rid of infinite loop on startup if
   client system missing
 
-- Felix Lawrence (2009-08-21): edited ._sage_() to support lists and float exponents in foreign notation.
+- Felix Lawrence (2009-08-21): edited ._sage_() to support
+  lists and float exponents in foreign notation.
 
 - Simon King (2010-09-25): Expect._local_tmpfile() depends on
   Expect.pid() and is cached; Expect.quit() clears that cache,
@@ -26,7 +27,7 @@ AUTHORS:
   synchronisation of the GAP interface.
 
 - François Bissey, Bill Page, Jeroen Demeyer (2015-12-09): Upgrade to
-  pexpect 4.0.1 + patches, see :trac:`10295`.
+  pexpect 4.0.1 + patches, see :issue:`10295`.
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -37,31 +38,33 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+import gc
 import io
 import os
 import re
+import shlex
 import signal
 import sys
-import weakref
 import time
-import gc
-from . import quit
+import weakref
 from random import randrange
 
 import pexpect
 from pexpect import ExceptionPexpect
+
 import sage.interfaces.abc
-from sage.interfaces.sagespawn import SageSpawn
-from sage.interfaces.interface import (Interface, InterfaceElement,
-            InterfaceFunction, InterfaceFunctionElement)
-
-from sage.structure.element import RingElement
-
-from sage.env import SAGE_EXTCODE, LOCAL_IDENTIFIER
-from sage.misc.object_multiplexer import Multiplex
+from sage.cpython.string import bytes_to_str, str_to_bytes
+from sage.env import LOCAL_IDENTIFIER, SAGE_EXTCODE
+from sage.interfaces import quit
+from sage.interfaces.interface import (
+    Interface,
+    InterfaceElement,
+    InterfaceFunction,
+    InterfaceFunctionElement,
+)
 from sage.misc.instancedoc import instancedoc
-
-from sage.cpython.string import str_to_bytes, bytes_to_str
+from sage.misc.object_multiplexer import Multiplex
+from sage.structure.element import RingElement
 
 BAD_SESSION = -2
 
@@ -84,7 +87,7 @@ BAD_SESSION = -2
 # "return", "break", or "continue", raising an exception, ...)
 
 
-class gc_disabled():
+class gc_disabled:
     """
     This is a "with" statement context manager. Garbage collection is
     disabled within its scope. Nested usage is properly handled.
@@ -137,11 +140,10 @@ class Expect(Interface):
             server = os.getenv(env_name.format('SERVER'))
         if server_tmpdir is None:
             server_tmpdir = os.getenv(env_name.format('TMPDIR'))
-        if command is None:
-            command = os.getenv(env_name.format('COMMAND'))
         if script_subdirectory is None:
             script_subdirectory = os.getenv(env_name.format('SCRIPT_SUBDIRECTORY'))
         self.__is_remote = False
+        self.__remote_ulimit = None
         self.__remote_cleaner = remote_cleaner
         self._expect = None
         self._eval_using_file_cutoff = eval_using_file_cutoff
@@ -158,7 +160,7 @@ class Expect(Interface):
         else:
             self.__path = os.path.join(SAGE_EXTCODE, name, script_subdirectory)
         if not os.path.isdir(self.__path):
-            raise EnvironmentError("path %r does not exist" % self.__path)
+            raise OSError("path %r does not exist" % self.__path)
         self.__initialized = False
         self.__seq = -1
         self._session_number = 0
@@ -179,32 +181,38 @@ class Expect(Interface):
     def set_server_and_command(self, server=None, command=None, server_tmpdir=None, ulimit=None):
         """
         Changes the server and the command to use for this interface.
-        This raises a Runtime error if the interface is already started.
+
+        This raises a :exc:`RuntimeError` if the interface is already started.
+
+        INPUT:
+
+        - ``server`` -- string or ``None`` (default); name of a remote host to connect to using ``ssh``
+
+        - ``command`` -- one of:
+
+          - a string; command line passed to the shell
+
+          - a sequence of an :class:`~sage.features.Executable` and strings, arguments to
+            pass to the executable.
 
         EXAMPLES::
 
-            sage: magma.set_server_and_command(server = 'remote', command = 'mymagma') # indirect doctest
+            sage: magma.set_server_and_command(server='remote', command='mymagma')  # indirect doctest
             No remote temporary directory (option server_tmpdir) specified, using /tmp/ on remote
             sage: magma.server()
             'remote'
             sage: magma.command()
-            "ssh -t remote 'mymagma'"
+            'ssh -t remote mymagma'
         """
         if self._expect:
             raise RuntimeError("interface has already started")
-        if command is None:
-            command = self.name()
         self._server = server
+        self.__remote_ulimit = ulimit
         if server is not None:
-            if ulimit:
-                command = "ssh -t %s 'ulimit %s; %s'" % (server, ulimit, command)
-            else:
-                command = "ssh -t %s '%s'" % (server, command)
             self.__is_remote = True
             self._eval_using_file_cutoff = 0  # don't allow this!
             if self.__verbose_start:
                 print("Using remote server")
-                print(command)
             if server_tmpdir is None:
                 # TO DO: Why default to /tmp/? Might be better to use the expect process itself to get a tmp folder
                 print("No remote temporary directory (option server_tmpdir) specified, using /tmp/ on " + server)
@@ -221,7 +229,7 @@ class Expect(Interface):
 
         EXAMPLES::
 
-            sage: magma.set_server_and_command(server = 'remote')
+            sage: magma.set_server_and_command(server='remote')
             No remote temporary directory (option server_tmpdir) specified, using /tmp/ on remote
             sage: magma.server() # indirect doctest
             'remote'
@@ -230,15 +238,33 @@ class Expect(Interface):
 
     def command(self):
         """
-        Return the command used in this interface.
+        Return the command used in this interface as a string.
 
         EXAMPLES::
 
-            sage: magma.set_server_and_command(command = 'magma-2.19')
-            sage: magma.command() # indirect doctest
+            sage: magma.set_server_and_command(command='magma-2.19')
+            sage: magma.command()  # indirect doctest
             'magma-2.19'
         """
-        return self.__command
+        command = self.__command
+        server = self.server()
+        if command is None:
+            env_name = 'SAGE_%s_{}' % self.name().upper()  # same as in __init__
+            command = os.getenv(env_name.format('COMMAND'), self.name())
+        elif not isinstance(command, str):
+            executable = command[0]
+            if server:
+                executable = executable.name
+            else:
+                executable = executable.absolute_filename()
+            command = ' '.join([shlex.quote(executable)]
+                               + [shlex.quote(arg) for arg in command[1:]])
+        if server:
+            if self.__remote_ulimit:
+                command = f"ulimit {self.__remote_ulimit}; {command}"
+            command = f"ssh -t {shlex.quote(server)} {shlex.quote(command)}"
+
+        return command
 
     def _get(self, wait=0.1, alternate_prompt=None):
         if self._expect is None:
@@ -271,7 +297,7 @@ class Expect(Interface):
 
     def is_running(self):
         """
-        Return True if self is currently running.
+        Return ``True`` if ``self`` is currently running.
         """
         if self._expect is None:
             return False
@@ -350,7 +376,6 @@ class Expect(Interface):
             sage: gap.quit()
             sage: pid == gap.pid()
             False
-
         """
         if self._expect is None:
             self._start()
@@ -383,7 +408,6 @@ This thus requires passwordless authentication to be setup, which can be done wi
 
 In many cases, the server that can actually run "slave" is not accessible from the internet directly, but you have to hop through an intermediate trusted server, say "gate".
 If that is your case, get help with _install_hints_ssh_through_gate().
-
 """
 
     def _install_hints_ssh_through_gate(self):
@@ -425,8 +449,7 @@ with any other program that might already ssh to "remote" in
 their own way.
 
 If this all works, you can then make calls like:
-         math = Mathematica(server="remote_for_sage")
-
+         math = Mathematica(server='remote_for_sage')
 """
 
     def _do_cleaner(self):
@@ -460,7 +483,7 @@ If this all works, you can then make calls like:
             if self.__logfilename is not None:
                 self.__logfile = open(self.__logfilename, 'wb')
 
-        cmd = self.__command
+        cmd = self.command()
 
         if self.__verbose_start:
             print(cmd)
@@ -476,7 +499,8 @@ If this all works, you can then make calls like:
         # See Issue #12221 and #13859.
         pexpect_env = dict(os.environ)
         pexpect_env.update(self._env)
-        pexpect_del_vars = ['TERM', 'COLUMNS']
+        pexpect_env['TERM'] = "dumb"
+        pexpect_del_vars = ['COLUMNS']
         for i in pexpect_del_vars:
             try:
                 del pexpect_env[i]
@@ -488,6 +512,8 @@ If this all works, you can then make calls like:
         os.chdir(self.__path)
         try:
             try:
+                from sage.interfaces.sagespawn import SageSpawn
+
                 self._expect = SageSpawn(cmd,
                         logfile=self.__logfile,
                         timeout=None,  # no timeout
@@ -613,22 +639,22 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        - ``verbose`` -- (boolean, default ``False``) print a message
-          when quitting this process?
+        - ``verbose`` -- boolean (default: ``False``); whether to print a
+          message when quitting the process
 
         EXAMPLES::
 
-            sage: a = maxima('y')
-            sage: maxima.quit(verbose=True)
-            Exiting Maxima with PID ... running ...maxima...
+            sage: a = gap('(1,2)(3,7)(4,6)(5,8)')
+            sage: gap.quit(verbose=True)
+            Exiting Gap with PID ... running ...gap...
             sage: a._check_valid()
             Traceback (most recent call last):
             ...
-            ValueError: The maxima session in which this object was defined is no longer running.
+            ValueError: The gap session in which this object was defined is no longer running.
 
         Calling ``quit()`` a second time does nothing::
 
-            sage: maxima.quit(verbose=True)
+            sage: gap.quit(verbose=True)
         """
         if self._expect is not None:
             if verbose:
@@ -646,18 +672,18 @@ If this all works, you can then make calls like:
 
         EXAMPLES::
 
-            sage: a = maxima('y')
-            sage: saved_expect = maxima._expect  # Save this to close later
-            sage: maxima.detach()
+            sage: a = gap('(1,2)(3,7)(4,6)(5,8)')
+            sage: saved_expect = gap._expect  # Save this to close later
+            sage: gap.detach()
             sage: a._check_valid()
             Traceback (most recent call last):
             ...
-            ValueError: The maxima session in which this object was defined is no longer running.
+            ValueError: The gap session in which this object was defined is no longer running.
             sage: saved_expect.close()  # Close child process
 
         Calling ``detach()`` a second time does nothing::
 
-            sage: maxima.detach()
+            sage: gap.detach()
         """
         try:
             self._expect._keep_alive()
@@ -666,15 +692,13 @@ If this all works, you can then make calls like:
         self._reset_expect()
 
     def _quit_string(self):
-        """
+        r"""
         Return the string which will be used to quit the application.
 
         EXAMPLES::
 
             sage: gp._quit_string()
             '\\q'
-            sage: maxima._quit_string()
-            'quit();'
         """
         return 'quit'
 
@@ -690,11 +714,11 @@ If this all works, you can then make calls like:
 
     def _local_tmpfile(self):
         """
-        Return a filename that is used to buffer long command lines for this interface
+        Return a filename that is used to buffer long command lines for this interface.
 
         INPUT:
 
-        ``e`` -- an expect interface instance
+        - ``e`` -- an expect interface instance
 
         OUTPUT:
 
@@ -708,7 +732,7 @@ If this all works, you can then make calls like:
             sage: gap._local_tmpfile() is gap._local_tmpfile()
             True
 
-        The following two problems were fixed in :trac:`10004`.
+        The following two problems were fixed in :issue:`10004`.
 
         1. Different interfaces have different temp-files::
 
@@ -746,7 +770,7 @@ If this all works, you can then make calls like:
         # FriCAS uses the ".input" suffix, and the other
         # interfaces are suffix-agnostic, so using ".input" here
         # lets us avoid a subclass override for FriCAS.
-        with NamedTemporaryFile(suffix=".input", delete=False) as f:
+        with NamedTemporaryFile(suffix='.input', delete=False) as f:
             self.__local_tmpfile = f.name
             atexit.register(lambda: os.remove(f.name))
         return self.__local_tmpfile
@@ -778,7 +802,7 @@ If this all works, you can then make calls like:
         os.system(cmd)
 
     def _remove_tmpfile_from_server(self):
-        if not (self.__remote_tmpfile is None):
+        if self.__remote_tmpfile is not None:
             raise NotImplementedError
 
     def _eval_line_using_file(self, line, restart_if_needed=True):
@@ -796,11 +820,11 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        - ``line`` -- (string) a command.
-        - ``restart_if_needed`` - (optional bool, default ``True``) --
-          If it is ``True``, the command evaluation is evaluated
+        - ``line`` -- string; a command
+        - ``restart_if_needed`` -- boolean (default: ``True``);
+          if it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          ``EOFError`` occurred.
+          :exc:`EOFError` occurred.
 
         TESTS::
 
@@ -829,7 +853,6 @@ If this all works, you can then make calls like:
             sage: singular(3)
             Singular crashed -- automatically restarting.
             3
-
         """
         with open(self._local_tmpfile(), 'w') as F:
             F.write(line + '\n')
@@ -844,7 +867,7 @@ If this all works, you can then make calls like:
             if self._quit_string() in line:
                 # we expect to get an EOF if we're quitting.
                 return ''
-            elif restart_if_needed:  # the subprocess might have crashed
+            if restart_if_needed:  # the subprocess might have crashed
                 try:
                     self._synchronize()
                     return self._post_process_from_file(self._eval_line_using_file(line, restart_if_needed=False))
@@ -894,18 +917,19 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        - ``line`` -- (string) a command.
-        - ``allow_use_file`` (optional bool, default ``True``) --
+        - ``line`` -- string; a command
+        - ``allow_use_file`` -- boolean (default: ``True``);
           allow to evaluate long commands using :meth:`_eval_line_using_file`.
-        - ``wait_for_prompt`` (optional bool, default ``True``) --
+        - ``wait_for_prompt`` -- boolean (default: ``True``);
           wait until the prompt appears in the sub-process' output.
-        - ``restart_if_needed`` (optional bool, default ``True``) --
-          If it is ``True``, the command evaluation is evaluated
+        - ``restart_if_needed`` -- boolean (default: ``True``);
+          if it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          ``EOFError`` occurred.
+          :exc:`EOFError` occurred.
 
         TESTS::
 
+            sage: from sage.interfaces.singular import singular
             sage: singular._eval_line('def a=3;')
             ''
             sage: singular('a')
@@ -959,7 +983,6 @@ If this all works, you can then make calls like:
             sage: singular('2+3')
             Singular crashed -- automatically restarting.
             5
-
         """
         if allow_use_file and wait_for_prompt and self._eval_using_file_cutoff and len(line) > self._eval_using_file_cutoff:
             return self._eval_line_using_file(line)
@@ -1015,7 +1038,7 @@ If this all works, you can then make calls like:
                     if self._quit_string() in line:
                         # we expect to get an EOF if we're quitting.
                         return ''
-                    elif restart_if_needed:  # the subprocess might have crashed
+                    if restart_if_needed:  # the subprocess might have crashed
                         try:
                             self._synchronize()
                             return self._eval_line(line, allow_use_file=allow_use_file, wait_for_prompt=wait_for_prompt, restart_if_needed=False)
@@ -1026,11 +1049,10 @@ If this all works, you can then make calls like:
                     out = self._before()
                 else:
                     out = self._before().rstrip('\n\r')
+            elif self._terminal_echo:
+                out = '\n\r'
             else:
-                if self._terminal_echo:
-                    out = '\n\r'
-                else:
-                    out = ''
+                out = ''
         except KeyboardInterrupt:
             self._keyboard_interrupt()
             raise KeyboardInterrupt("Ctrl-c pressed while running %s" % self)
@@ -1038,8 +1060,7 @@ If this all works, you can then make calls like:
             i = out.find("\n")
             j = out.rfind("\r")
             return out[i + 1:j].replace('\r\n', '\n')
-        else:
-            return out.replace('\r\n', '\n')
+        return out.replace('\r\n', '\n')
 
     def _keyboard_interrupt(self):
         print("Interrupting %s..." % self)
@@ -1163,10 +1184,10 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        -  ``expr`` -- None or a string or list of strings
-           (default: None)
+        - ``expr`` -- ``None`` or a string or list of strings
+          (default: ``None``)
 
-        -  ``timeout`` -- None or a number (default: None)
+        - ``timeout`` -- ``None`` or a number (default: ``None``)
 
         EXAMPLES:
 
@@ -1210,15 +1231,15 @@ If this all works, you can then make calls like:
             '...10\r\n> '
 
         We test interrupting ``_expect_expr`` using the GP interface,
-        see :trac:`6661`.  Unfortunately, this test doesn't work reliably using
-        Singular, see :trac:`9163` and the follow-up :trac:`10476`.
+        see :issue:`6661`.  Unfortunately, this test doesn't work reliably using
+        Singular, see :issue:`9163` and the follow-up :issue:`10476`.
         The ``gp.eval('0')`` in this test makes sure that ``gp`` is
         running, so a timeout of 1 second should be sufficient. ::
 
             sage: print(sage0.eval("dummy=gp.eval('0'); alarm(1); gp._expect_expr('1')"))  # long time
             ...Interrupting PARI/GP interpreter. Please wait a few seconds...
             ...
-            AlarmInterrupt:
+            ...AlarmInterrupt...
         """
         if expr is None:
             # the following works around gap._prompt_wait not being defined
@@ -1246,7 +1267,7 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        -  ``string`` -- a string
+        - ``string`` -- string
 
         EXAMPLES: We illustrate this function using the Singular interface::
 
@@ -1308,8 +1329,8 @@ If this all works, you can then make calls like:
             sage: R.<x> = QQ[]; f = x^3 + x + 1;  g = x^3 - x - 1; r = f.resultant(g); gap(ZZ); singular(R)
             Integers
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 1
+            // coefficients: QQ...
+            // number of vars : 1
             //        block   1 : ordering lp
             //                  : names    x
             //        block   2 : ordering C
@@ -1336,32 +1357,34 @@ If this all works, you can then make calls like:
     ###########################################################################
 
     def eval(self, code, strip=True, synchronize=False, locals=None, allow_use_file=True,
-             split_lines="nofile", **kwds):
+             split_lines='nofile', **kwds):
         """
         INPUT:
 
-        -  ``code``       -- text to evaluate
+        - ``code`` -- text to evaluate
 
-        -  ``strip``      -- bool; whether to strip output prompts,
-                             etc. (ignored in the base class).
+        - ``strip`` -- boolean; whether to strip output prompts,
+          etc. (ignored in the base class)
 
-        - ``locals``      -- None (ignored); this is used for compatibility
-                             with the Sage notebook's generic system interface.
+        - ``locals`` -- None (ignored); this is used for compatibility
+          with the Sage notebook's generic system interface
 
-        - ``allow_use_file`` -- bool (default: True); if True and ``code`` exceeds an
-                                interface-specific threshold then ``code`` will be communicated
-                                via a temporary file rather that the character-based interface.
-                                If False then the code will be communicated via the character interface.
+        - ``allow_use_file`` -- boolean (default: ``True``); if ``True`` and
+          ``code`` exceeds an interface-specific threshold then ``code`` will
+          be communicated via a temporary file rather that the character-based
+          interface. If ``False`` then the code will be communicated via the
+          character interface.
 
-        - ``split_lines`` -- Tri-state (default: "nofile"); if "nofile" then ``code`` is sent line by line
-                             unless it gets communicated via a temporary file.
-                             If True then ``code`` is sent line by line, but some lines individually
-                             might be sent via temporary file. Depending on the interface, this may transform
-                             grammatical ``code`` into ungrammatical input.
-                             If False, then the whole block of code is evaluated all at once.
+        - ``split_lines`` -- Tri-state (default: ``'nofile'``); if "nofile"
+          then ``code`` is sent line by line unless it gets communicated via a
+          temporary file. If ``True`` then ``code`` is sent line by line, but
+          some lines individually might be sent via temporary file. Depending
+          on the interface, this may transform grammatical ``code`` into
+          ungrammatical input. If ``False``, then the whole block of code is
+          evaluated all at once.
 
-        -  ``**kwds``     -- All other arguments are passed onto the _eval_line
-                             method. An often useful example is reformat=False.
+        - ``**kwds`` -- all other arguments are passed onto the ``_eval_line``
+          method. An often useful example is ``reformat=False``.
         """
         if synchronize:
             try:
@@ -1386,11 +1409,10 @@ If this all works, you can then make calls like:
                 if (split_lines == "nofile" and allow_use_file and
                         self._eval_using_file_cutoff and len(code) > self._eval_using_file_cutoff):
                     return self._eval_line_using_file(code)
-                elif split_lines:
+                if split_lines:
                     return '\n'.join(self._eval_line(L, allow_use_file=allow_use_file, **kwds)
                                      for L in code.split('\n') if L)
-                else:
-                    return self._eval_line(code, allow_use_file=allow_use_file, **kwds)
+                return self._eval_line(code, allow_use_file=allow_use_file, **kwds)
         # DO NOT CATCH KeyboardInterrupt, as it is being caught
         # by _eval_line
         # In particular, do NOT call self._keyboard_interrupt()
@@ -1409,7 +1431,7 @@ If this all works, you can then make calls like:
         EXAMPLES::
 
             sage: from sage.interfaces.expect import Expect
-            sage: Expect._object_class(maxima)
+            sage: Expect._object_class(gap)
             <class 'sage.interfaces.expect.ExpectElement'>
         """
         return ExpectElement
@@ -1419,7 +1441,7 @@ If this all works, you can then make calls like:
         EXAMPLES::
 
             sage: from sage.interfaces.expect import Expect
-            sage: Expect._function_class(maxima)
+            sage: Expect._function_class(gap)
             <class 'sage.interfaces.expect.ExpectFunction'>
         """
         return ExpectFunction
@@ -1429,7 +1451,7 @@ If this all works, you can then make calls like:
         EXAMPLES::
 
             sage: from sage.interfaces.expect import Expect
-            sage: Expect._function_element_class(maxima)
+            sage: Expect._function_element_class(gap)
             <class 'sage.interfaces.expect.FunctionElement'>
         """
         return FunctionElement
@@ -1449,27 +1471,6 @@ class FunctionElement(InterfaceFunctionElement):
     Expect function element.
     """
     pass
-
-
-def is_ExpectElement(x):
-    """
-    Return True if ``x`` is of type :class:`ExpectElement`
-
-    This function is deprecated; use :func:`isinstance`
-    (of :class:`sage.interfaces.abc.ExpectElement`) instead.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.expect import is_ExpectElement
-        sage: is_ExpectElement(2)
-        doctest:...: DeprecationWarning: the function is_ExpectElement is deprecated; use isinstance(x, sage.interfaces.abc.ExpectElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_ExpectElement is deprecated; use isinstance(x, sage.interfaces.abc.ExpectElement) instead")
-
-    return isinstance(x, ExpectElement)
 
 
 @instancedoc
@@ -1506,10 +1507,10 @@ class ExpectElement(InterfaceElement, sage.interfaces.abc.ExpectElement):
 
     def __hash__(self):
         """
-        Return the hash of self.
+        Return the hash of ``self``.
 
         This is a default implementation of hash
-        which just takes the hash of the string of self.
+        which just takes the hash of the string of ``self``.
         """
         return hash('%s%s' % (self, self._session_number))
 
@@ -1559,11 +1560,11 @@ class StdOutContext:
 
         INPUT:
 
-        - ``interface`` -- the interface whose communication shall be dumped.
+        - ``interface`` -- the interface whose communication shall be dumped
 
         - ``silent`` -- if ``True`` this context does nothing
 
-        - ``stdout`` -- optional parameter for alternative stdout device (default: ``None``)
+        - ``stdout`` -- (optional) parameter for alternative stdout device (default: ``None``)
 
         EXAMPLES::
 

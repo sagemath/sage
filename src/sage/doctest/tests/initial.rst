@@ -1,4 +1,4 @@
-One initial typo causes a ``NameError`` in the first test and many
+One initial typo causes a :exc:`NameError` in the first test and many
 following failures::
 
     sage: a = binomiak(10,5)  # random to test that we still get the exception

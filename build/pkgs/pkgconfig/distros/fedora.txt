@@ -1,1 +1,1 @@
-python-pkgconfig
+python3-pkgconfig

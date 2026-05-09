@@ -12,6 +12,7 @@ Hyperplane arrangements
    :maxdepth: 1
 
    sage/geometry/hyperplane_arrangement/arrangement
+   sage/geometry/hyperplane_arrangement/ordered_arrangement
    sage/geometry/hyperplane_arrangement/library
    sage/geometry/hyperplane_arrangement/hyperplane
    sage/geometry/hyperplane_arrangement/affine_subspace
@@ -79,6 +80,7 @@ Toric geometry
    sage/geometry/toric_lattice
    sage/geometry/cone
    sage/geometry/cone_catalog
+   sage/geometry/cone_critical_angles
    sage/geometry/fan
    sage/geometry/fan_morphism
    sage/geometry/point_collection

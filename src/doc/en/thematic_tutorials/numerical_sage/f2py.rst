@@ -3,7 +3,7 @@ f2py
 
 F2py is a very nice package that automatically wraps fortran code
 and makes it callable from Python. The Fibonacci examples are taken
-from the f2py webpage http://cens.ioc.ee/projects/f2py2e/.
+from the f2py webpage https://numpy.org/doc/stable/f2py/.
 
 From the notebook the magic %fortran will automatically compile any
 fortran code in a cell and all the subroutines will become callable
@@ -204,7 +204,7 @@ you only care about its value before the function is called not
 afterwards. So in the above n tells us how many fiboncci numbers to
 compute we need to specify this as an input, however we don't need
 to get n back as it doesn't contain anything new. Similarly A is
-intent(out) so we don't need A to have an specific value
+intent(out) so we don't need A to have a specific value
 beforehand, we just care about the contents afterwards. F2py
 generates a Python function so you only pass those declared
 intent(in) and supplies empty workspaces for the remaining
@@ -361,7 +361,7 @@ using (inout) or (in,out,overwrite). Remember though that your
 numpy array must use Fortran ordering to avoid the copying.
 
 For more examples and more advanced usage of F2py you should refer
-to the f2py webpage http://cens.ioc.ee/projects/f2py2e/. The
+to the f2py webpage https://numpy.org/doc/stable/f2py/. The
 command line f2py tool which is referred to in the f2py
 documentation can be called from the Sage shell using
 

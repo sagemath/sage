@@ -12,7 +12,8 @@ as demonstrated below::
     sage: A.<d> = R['d', der]
     sage: K = A.fraction_field()
     sage: K
-    Ore Function Field in d over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+    Ore Function Field in d over Fraction Field of Univariate Polynomial Ring in t
+     over Rational Field twisted by d/dt
 
 The simplest way to build elements in `K` is to use the division
 operator over Ore polynomial rings::
@@ -66,7 +67,8 @@ twisting morphism), computing the left numerator and the right denominator fails
     sage: f.left_numerator()
     Traceback (most recent call last):
     ...
-    NotImplementedError: inversion of the twisting morphism Ring endomorphism of Fraction Field of Univariate Polynomial Ring in t over Rational Field
+    NotImplementedError: inversion of the twisting morphism
+    Ring endomorphism of Fraction Field of Univariate Polynomial Ring in t over Rational Field
       Defn: t |--> t^2
 
 On a related note, fractions are systematically simplified when the twisting
@@ -91,7 +93,8 @@ two following computations::
     (x^2 + t*x + 1)^(-1) * (x + t^2)
     sage: g = (D*P)^(-1) * (D*Q)
     sage: g
-    (x^5 + t^8*x^4 + x^3 + (t^2 + 1)*x^2 + (t^3 + t)*x + t^2 + 1)^(-1) * (x^4 + t^16*x^3 + (t^2 + 1)*x + t^4 + t^2)
+    (x^5 + t^8*x^4 + x^3 + (t^2 + 1)*x^2 + (t^3 + t)*x + t^2 + 1)^(-1)
+    * (x^4 + t^16*x^3 + (t^2 + 1)*x + t^4 + t^2)
     sage: f == g
     True
 
@@ -120,6 +123,22 @@ Of course, multiplication remains noncommutative::
     sage: g^(-1) * f
     (d - 1/t)^(-1) * (d + (t^2 - 1)/t)
 
+TESTS:
+
+The Ore function field is commutative if the twisting morphism is the
+identity and the twisting derivation vanishes. ::
+
+    sage: k.<a> = GF(5^3)
+    sage: Frob = k.frobenius_endomorphism()
+    sage: S.<x> = k['x', Frob]
+    sage: K = S.fraction_field()
+    sage: K.is_commutative()
+    False
+    sage: T.<y> = k['y', Frob^3]
+    sage: L = T.fraction_field()
+    sage: L.is_commutative()
+    True
+
 AUTHOR:
 
 - Xavier Caruso (2020-05)
@@ -136,22 +155,21 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-import sage
-
-from sage.structure.richcmp import op_EQ
-from sage.structure.category_object import normalize_names
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.categories.algebras import Algebras
+from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
-from sage.rings.ring import Algebra
-
-from sage.rings.morphism import RingHomomorphism
 from sage.categories.homset import Hom
 from sage.categories.map import Section
-
+from sage.rings.morphism import RingHomomorphism
+from sage.rings.polynomial.ore_function_element import (
+    OreFunction_with_large_center,
+    OreFunctionBaseringInjection,
+)
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
-from sage.rings.polynomial.ore_function_element import OreFunctionBaseringInjection
+from sage.structure.category_object import normalize_names
+from sage.structure.parent import Parent
+from sage.structure.richcmp import op_EQ
+from sage.structure.unique_representation import UniqueRepresentation
 
 WORKING_CENTER_MAX_TRIES = 1000
 
@@ -159,7 +177,7 @@ WORKING_CENTER_MAX_TRIES = 1000
 # Generic implementation of Ore function fields
 ###############################################
 
-class OreFunctionField(Algebra, UniqueRepresentation):
+class OreFunctionField(Parent, UniqueRepresentation):
     r"""
     A class for fraction fields of Ore polynomial rings.
     """
@@ -192,8 +210,12 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             self._simplification = False
         self._ring = ring
         base = ring.base_ring()
-        category = Algebras(base).or_subcategory(category)
-        Algebra.__init__(self, base, names=ring.variable_name(), normalize=True, category=category)
+        if ring in CommutativeRings():
+            category = Algebras(base).Commutative().or_subcategory(category)
+        else:
+            category = Algebras(base).or_subcategory(category)
+        Parent.__init__(self, base=base, names=ring.variable_name(),
+                        normalize=True, category=category)
 
     def _element_constructor_(self, *args, **kwds):
         r"""
@@ -205,7 +227,6 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
             sage: K = S.fraction_field()
-
             sage: f = K(x^2 + a, x + a^2)  # indirect doctest
             sage: f
             (x + a^2)^(-1) * (x^2 + a)
@@ -225,7 +246,8 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             sage: K.coerce_map_from(k)  # indirect doctest
             Ore Function base injection morphism:
               From: Finite Field in t of size 11^2
-              To:   Ore Function Field in x over Finite Field in t of size 11^2 twisted by t |--> t^11
+              To:   Ore Function Field in x over Finite Field in t of size 11^2
+                    twisted by t |--> t^11
         """
         return OreFunctionBaseringInjection(self.base_ring(), self)
 
@@ -252,7 +274,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         if isinstance(P, Parent):
             return P.has_coerce_map_from(self._ring)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this Ore function field.
 
@@ -268,16 +290,16 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             sage: T.<d> = OrePolynomialRing(R, der)
             sage: T.fraction_field()
             Ore Function Field in d over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        TESTS::
+
+            sage: k = GF(7)
+            sage: S.<x> = SkewPolynomialRing(k, polcast=False)
+            sage: S.fraction_field()
+            Ore Function Field in x over Finite Field of size 7 untwisted
         """
-        s = "Ore Function Field in %s over %s twisted by " % (self.variable_name(), self.base_ring())
-        morphism = self.twisting_morphism()
-        derivation = self.twisting_derivation()
-        if derivation is None:
-            s += morphism._repr_short()
-        else:
-            if morphism is not None:
-                s += "%s and " % morphism._repr_short()
-            s += derivation._repr_()
+        s = "Ore Function Field in %s over %s " % (self.variable_name(), self.base_ring())
+        s += self._ring._repr_twist()
         return s
 
     def _latex_(self):
@@ -299,15 +321,20 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             sage: L = T.fraction_field()
             sage: latex(L)  # indirect doctest
             \mathrm{Frac}(\Bold{Q}[t])\left(\delta ; \frac{d}{dt} \right)
+
+        TESTS::
+
+            sage: k = GF(7)
+            sage: S.<x> = SkewPolynomialRing(k, polcast=False)
+            sage: K = S.fraction_field()
+            sage: latex(K)  # indirect doctest
+            \Bold{F}_{7}\left(x\right)
         """
         from sage.misc.latex import latex
         s = "%s\\left(%s" % (latex(self.base_ring()), self.latex_variable_names()[0])
-        sep = ";"
-        if self.twisting_morphism() is not None:
-            s += sep + latex(self.twisting_morphism())
-            sep = ","
-        if self.twisting_derivation() is not None:
-            s += sep + latex(self.twisting_derivation())
+        twist = self._ring._latex_twist()
+        if twist != "":
+            s += ";" + twist
         return s + "\\right)"
 
     def change_var(self, var):
@@ -317,7 +344,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
 
         INPUT:
 
-        - ``var`` -- a string representing the name of the new variable.
+        - ``var`` -- string representing the name of the new variable
 
         EXAMPLES::
 
@@ -327,7 +354,6 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             sage: K = R.fraction_field()
             sage: K
             Ore Function Field in x over Finite Field in t of size 5^3 twisted by t |--> t^5
-
             sage: Ky = K.change_var('y'); Ky
             Ore Function Field in y over Finite Field in t of size 5^3 twisted by t |--> t^5
             sage: Ky is K.change_var('y')
@@ -362,7 +388,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
 
         INPUT:
 
-        -  ``n`` - an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         EXAMPLES::
 
@@ -371,7 +397,8 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             sage: S.<x> = R['x', sigma]
             sage: K = S.fraction_field()
             sage: K.twisting_morphism()
-            Ring endomorphism of Fraction Field of Univariate Polynomial Ring in t over Rational Field
+            Ring endomorphism of
+             Fraction Field of Univariate Polynomial Ring in t over Rational Field
               Defn: t |--> t + 1
 
         When the Ore polynomial ring is only twisted by a derivation, this
@@ -423,8 +450,8 @@ class OreFunctionField(Algebra, UniqueRepresentation):
 
         INPUT:
 
-        - ``n`` -- index of generator to return (default: 0). Exists for
-          compatibility with other polynomial rings.
+        - ``n`` -- index of generator to return (default: 0); exists for
+          compatibility with other polynomial rings
 
         EXAMPLES::
 
@@ -437,9 +464,24 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         """
         return self(self._ring.gen(n))
 
+    def gens(self) -> tuple:
+        """
+        Return the tuple of generators of ``self``.
+
+        EXAMPLES::
+
+            sage: k.<a> = GF(5^4)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: S.<x> = k['x', Frob]
+            sage: K = S.fraction_field()
+            sage: K.gens()
+            (x,)
+        """
+        return (self(self._ring.gen(0)),)
+
     parameter = gen
 
-    def gens_dict(self):
+    def gens_dict(self) -> dict:
         r"""
         Return a {name: variable} dictionary of the generators of
         this Ore function field.
@@ -450,13 +492,12 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             sage: sigma = R.hom([t+1])
             sage: S.<x> = OrePolynomialRing(R, sigma)
             sage: K = S.fraction_field()
-
             sage: K.gens_dict()
             {'x': x}
         """
         return dict(zip(self.variable_names(), self.gens()))
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return ``False`` since Ore function field are not finite.
 
@@ -473,7 +514,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         """
         return False
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         r"""
         Return ``True`` if elements of this Ore function field are exact.
         This happens if and only if elements of the base ring are exact.
@@ -496,7 +537,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         """
         return self.base_ring().is_exact()
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         r"""
         Return ``True`` if the elements of this Ore function field are sparsely
         represented.
@@ -517,7 +558,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         """
         return self._ring.is_sparse()
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
         Return the number of generators of this Ore function field,
         which is `1`.
@@ -542,11 +583,11 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         - ``degree`` -- (default: 2) an integer or a list of
           two integers; the degrees of the denominator and numerator
 
-        - ``monic`` -- (default: ``False``) if ``True``, return a monic
+        - ``monic`` -- boolean (default: ``False``); if ``True``, return a monic
           Ore function with monic numerator and denominator
 
-        - ``*args, **kwds`` -- passed in to the ``random_element`` method
-          for the base ring
+        - ``*args``, ``**kwds`` -- passed in to the :meth:`random_element`
+          method for the base ring
 
         EXAMPLES::
 
@@ -554,15 +595,19 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
             sage: K = S.fraction_field()
-
             sage: K.random_element()              # random
-            (x^2 + (2*t^2 + t + 1)*x + 2*t^2 + 2*t + 3)^(-1) * ((2*t^2 + 3)*x^2 + (4*t^2 + t + 4)*x + 2*t^2 + 2)
+            (x^2 + (2*t^2 + t + 1)*x + 2*t^2 + 2*t + 3)^(-1)
+            * ((2*t^2 + 3)*x^2 + (4*t^2 + t + 4)*x + 2*t^2 + 2)
             sage: K.random_element(monic=True)    # random
-            (x^2 + (4*t^2 + 3*t + 4)*x + 4*t^2 + t)^(-1) * (x^2 + (2*t^2 + t + 3)*x + 3*t^2 + t + 2)
+            (x^2 + (4*t^2 + 3*t + 4)*x + 4*t^2 + t)^(-1)
+            * (x^2 + (2*t^2 + t + 3)*x + 3*t^2 + t + 2)
             sage: K.random_element(degree=3)      # random
-            (x^3 + (2*t^2 + 3)*x^2 + (2*t^2 + 4)*x + t + 3)^(-1) * ((t + 4)*x^3 + (4*t^2 + 2*t + 2)*x^2 + (2*t^2 + 3*t + 3)*x + 3*t^2 + 3*t + 1)
+            (x^3 + (2*t^2 + 3)*x^2 + (2*t^2 + 4)*x + t + 3)^(-1)
+            * ((t + 4)*x^3 + (4*t^2 + 2*t + 2)*x^2 + (2*t^2 + 3*t + 3)*x + 3*t^2 + 3*t + 1)
             sage: K.random_element(degree=[2,5])  # random
-            (x^2 + (4*t^2 + 2*t + 2)*x + 4*t^2 + t + 2)^(-1) * ((3*t^2 + t + 1)*x^5 + (2*t^2 + 2*t)*x^4 + (t^2 + 2*t + 4)*x^3 + (3*t^2 + 2*t)*x^2 + (t^2 + t + 4)*x)
+            (x^2 + (4*t^2 + 2*t + 2)*x + 4*t^2 + t + 2)^(-1)
+            * ((3*t^2 + t + 1)*x^5 + (2*t^2 + 2*t)*x^4 + (t^2 + 2*t + 4)*x^3
+               + (3*t^2 + 2*t)*x^2 + (t^2 + t + 4)*x)
         """
         if isinstance(degree, list):
             degdenom, degnum = degree
@@ -572,28 +617,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         denominator = self._ring.random_element(degdenom, True, *args, **kwds)
         return self(numerator, denominator)
 
-    def is_commutative(self):
-        r"""
-        Return ``True`` if this Ore function field is commutative, i.e. if the
-        twisting morphism is the identity and the twisting derivation vanishes.
-
-        EXAMPLES::
-
-            sage: k.<a> = GF(5^3)
-            sage: Frob = k.frobenius_endomorphism()
-            sage: S.<x> = k['x', Frob]
-            sage: K = S.fraction_field()
-            sage: K.is_commutative()
-            False
-
-            sage: T.<y> = k['y', Frob^3]
-            sage: L = T.fraction_field()
-            sage: L.is_commutative()
-            True
-        """
-        return self._ring.is_commutative()
-
-    def is_field(self, proof=False):
+    def is_field(self, proof=False) -> bool:
         r"""
         Return always ``True`` since Ore function field are (skew) fields.
 
@@ -603,7 +627,6 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x', Frob]
             sage: K = S.fraction_field()
-
             sage: S.is_field()
             False
             sage: K.is_field()
@@ -611,7 +634,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
 
         TESTS:
 
-        We check that :trac:`31470` is fixed::
+        We check that :issue:`31470` is fixed::
 
             sage: k.<a> = GF(5^3)
             sage: S.<x> = k['x', k.frobenius_endomorphism()]
@@ -632,12 +655,14 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             sage: R.<t> = QQ[]
             sage: der = R.derivation()
             sage: A.<d> = R['d', der]
-            sage: K = A.fraction_field()
-
-            sage: K
-            Ore Function Field in d over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: K = A.fraction_field(); K
+            Ore Function Field in d
+             over Fraction Field of Univariate Polynomial Ring in t over Rational Field
+             twisted by d/dt
             sage: K.fraction_field()
-            Ore Function Field in d over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            Ore Function Field in d
+             over Fraction Field of Univariate Polynomial Ring in t over Rational Field
+             twisted by d/dt
             sage: K.fraction_field() is K
             True
         """
@@ -712,7 +737,6 @@ class SectionOreFunctionCenterInjection(Section):
             sage: Z = K.center()
             sage: iota = K.coerce_map_from(Z)
             sage: sigma = iota.section()
-
             sage: s = loads(dumps(sigma))
             sage: s == sigma
             True
@@ -776,7 +800,6 @@ class OreFunctionCenterInjection(RingHomomorphism):
             sage: K = S.fraction_field()
             sage: Z.<z> = K.center()
             sage: iota = K.coerce_map_from(Z)
-
             sage: iota(1/(z+1))
             (x^3 + 1)^(-1)
         """
@@ -795,7 +818,6 @@ class OreFunctionCenterInjection(RingHomomorphism):
             sage: K = S.fraction_field()
             sage: Z = K.center()
             sage: iota = K.coerce_map_from(Z)
-
             sage: i = loads(dumps(iota))
             sage: i == iota
             True
@@ -841,7 +863,7 @@ class OreFunctionField_with_large_center(OreFunctionField):
             sage: TestSuite(K).run()
         """
         if self.Element is None:
-            self.Element = sage.rings.polynomial.ore_function_element.OreFunction_with_large_center
+            self.Element = OreFunction_with_large_center
         OreFunctionField.__init__(self, ring, category)
         self._center = {}
         self._center_variable_name = 'z'
@@ -866,10 +888,10 @@ class OreFunctionField_with_large_center(OreFunctionField):
 
         INPUT:
 
-        - ``name`` -- a string or ``None`` (default: ``None``);
+        - ``name`` -- string or ``None`` (default: ``None``);
           the name for the central variable
 
-        - ``default`` -- a boolean (default: ``False``); if ``True``,
+        - ``default`` -- boolean (default: ``False``); if ``True``,
           set the default variable name for the center to ``name``
 
         EXAMPLES::
@@ -878,7 +900,6 @@ class OreFunctionField_with_large_center(OreFunctionField):
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
             sage: K = S.fraction_field()
-
             sage: Z = K.center(); Z
             Fraction Field of Univariate Polynomial Ring in z over Finite Field of size 5
 
@@ -912,7 +933,6 @@ class OreFunctionField_with_large_center(OreFunctionField):
 
             sage: Zy(x^(-6) + 2)
             (2*y^2 + 1)/y^2
-
             sage: Zy(1/x^2)
             Traceback (most recent call last):
             ...
@@ -929,7 +949,6 @@ class OreFunctionField_with_large_center(OreFunctionField):
             sage: phi = k.frobenius_endomorphism()
             sage: S.<X> = k['X', phi]
             sage: K = S.fraction_field()
-
             sage: C.<u> = K.center()  # first call
             sage: C
             Fraction Field of Univariate Polynomial Ring in u over Finite Field of size 11

@@ -5,7 +5,9 @@ Cryptosystems
 This module contains base classes for various cryptosystems, including
 symmetric key and public-key cryptosystems. The classes defined in this
 module should not be called directly. It is the responsibility of child
-classes to implement specific cryptosystems. Take for example the
+classes to implement specific cryptosystems.
+
+Take for example the
 Hill or matrix cryptosystem as implemented in
 :class:`HillCryptosystem <sage.crypto.classical.HillCryptosystem>`. It is a
 symmetric key cipher so
@@ -27,22 +29,21 @@ diagram shows the inheritance relationship of particular cryptosystems::
     | + VigenereCryptosystem
     + PublicKeyCryptosystem
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-import sage.structure.parent_old as parent_old
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.sets.set import Set_generic
 
-class Cryptosystem(parent_old.Parent, Set_generic):
+
+class Cryptosystem(Set_generic):
     r"""
     A base cryptosystem class. This is meant to be extended by other
     specialized child classes that implement specific cryptosystems.
+
     A cryptosystem is a pair of maps
 
     .. MATH::
@@ -77,15 +78,15 @@ class Cryptosystem(parent_old.Parent, Set_generic):
 
     INPUT:
 
-    - ``plaintext_space`` -- the plaintext alphabet.
+    - ``plaintext_space`` -- the plaintext alphabet
 
-    - ``ciphertext_space`` -- the ciphertext alphabet.
+    - ``ciphertext_space`` -- the ciphertext alphabet
 
-    - ``key_space`` -- the key alphabet.
+    - ``key_space`` -- the key alphabet
 
-    - ``block_length`` -- (default: 1) the block length.
+    - ``block_length`` -- (default: 1) the block length
 
-    - ``period`` -- (default: ``None``) the period.
+    - ``period`` -- (default: ``None``) the period
 
     EXAMPLES:
 
@@ -110,15 +111,15 @@ class Cryptosystem(parent_old.Parent, Set_generic):
 
         INPUT:
 
-        - ``plaintext_space`` -- the plaintext alphabet.
+        - ``plaintext_space`` -- the plaintext alphabet
 
-        - ``ciphertext_space`` -- the ciphertext alphabet.
+        - ``ciphertext_space`` -- the ciphertext alphabet
 
-        - ``key_space`` -- the key alphabet.
+        - ``key_space`` -- the key alphabet
 
-        - ``block_length`` -- (default: 1) the block length.
+        - ``block_length`` -- (default: 1) the block length
 
-        - ``period`` -- (default: ``None``) the period.
+        - ``period`` -- (default: ``None``) the period
 
         EXAMPLES:
 
@@ -143,7 +144,9 @@ class Cryptosystem(parent_old.Parent, Set_generic):
 
     def __eq__(self, right):
         r"""
-        Comparing ``self`` with ``right``. Two ``Cryptosystem`` objects
+        Comparing ``self`` with ``right``.
+
+        Two ``Cryptosystem`` objects
         are the same if they satisfy all of these conditions:
 
         - share the same type
@@ -155,7 +158,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
 
         INPUT:
 
-        - ``right`` -- a ``Cryptosystem`` object.
+        - ``right`` -- a ``Cryptosystem`` object
 
         EXAMPLES:
 
@@ -323,7 +326,9 @@ class Cryptosystem(parent_old.Parent, Set_generic):
 
     def block_length(self):
         r"""
-        Return the block length of this cryptosystem. For some cryptosystems
+        Return the block length of this cryptosystem.
+
+        For some cryptosystems
         this is not relevant, in which case the block length defaults to 1.
 
         EXAMPLES:
@@ -347,6 +352,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
         if self._period is None:
             raise TypeError("Argument has no associated period.")
         return self._period
+
 
 class SymmetricKeyCryptosystem(Cryptosystem):
     r"""
@@ -372,6 +378,7 @@ class SymmetricKeyCryptosystem(Cryptosystem):
             64
         """
         return self._cipher_domain.ngens()
+
 
 class PublicKeyCryptosystem(Cryptosystem):
     r"""

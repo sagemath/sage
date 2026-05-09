@@ -5,7 +5,7 @@ Let `E_2` be the weight 2 Eisenstein series defined by
 
 .. MATH::
 
-    E_2(z) = 1 - \frac{2k}{B_k} \sum_{n=1}^{\infty} \sigma(n) q^n
+    E_2(z) = 1 - 24 \sum_{n=1}^{\infty} \sigma(n) q^n
 
 where `\sigma` is the sum of divisors function and `q = \mathrm{exp}(2\pi i z)`
 is the classical parameter at infinity, with `\mathrm{im}(z)>0`. This weight 2
@@ -14,7 +14,7 @@ modularity condition:
 
 .. MATH::
 
-    z^2 E_2(-1/z) = E_2(z) + \frac{2k}{4\pi i B_k z}.
+    z^2 E_2(-1/z) = E_2(z) + \frac{6}{\pi i z}.
 
 `E_2` is a quasimodular form of weight 2. General quasimodular forms of given
 weight can also be defined. We denote by `QM` the graded ring of quasimodular
@@ -42,10 +42,12 @@ EXAMPLES::
 
     sage: QM = QuasiModularForms(1); QM
     Ring of Quasimodular Forms for Modular Group SL(2,Z) over Rational Field
+    sage: QM.category()
+    Category of commutative graded algebras over Rational Field
     sage: QM.gens()
-    [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+    (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
      1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-     1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+     1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6))
     sage: E2 = QM.0; E4 = QM.1; E6 = QM.2
     sage: E2 * E4 + E6
     2 - 288*q - 20304*q^2 - 185472*q^3 - 855216*q^4 - 2697408*q^5 + O(q^6)
@@ -90,10 +92,10 @@ The other generators correspond to the generators given by the method
 :meth:`sage.modular.modform.ring.ModularFormsRing.gens`::
 
     sage: QM.gens()
-    [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+    (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
      1 + 6*q + 18*q^2 + 24*q^3 + 42*q^4 + 6*q^5 + O(q^6),
      1 + 240*q^5 + O(q^6),
-     q + 10*q^3 + 28*q^4 + 35*q^5 + O(q^6)]
+     q + 10*q^3 + 28*q^4 + 35*q^5 + O(q^6))
     sage: QM.modular_forms_subring().gens()
     [1 + 6*q + 18*q^2 + 24*q^3 + 42*q^4 + 6*q^5 + O(q^6),
      1 + 240*q^5 + O(q^6),
@@ -152,7 +154,6 @@ See section 5.3 (page 58) of [Zag2008]_
 AUTHORS:
 
 - David Ayotte (2021-03-18): initial version
-
 """
 
 # ****************************************************************************
@@ -170,7 +171,7 @@ from itertools import product, chain
 from sage.categories.graded_algebras import GradedAlgebras
 
 from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
-from sage.modular.arithgroup.congroup_generic import is_CongruenceSubgroup
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
 from sage.modular.modform.element import GradedModularFormElement, ModularFormElement
 from sage.modular.modform.space import ModularFormsSpace
 from sage.modular.modform.ring import ModularFormsRing
@@ -199,9 +200,9 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         sage: QM = QuasiModularForms(1); QM
         Ring of Quasimodular Forms for Modular Group SL(2,Z) over Rational Field
         sage: QM.gens()
-        [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+        (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
          1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-         1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+         1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6))
 
     It is possible to access the weight 2 Eisenstein series::
 
@@ -217,19 +218,19 @@ class QuasiModularForms(Parent, UniqueRepresentation):
     """
     Element = QuasiModularFormsElement
 
-    def __init__(self, group=1, base_ring=QQ, name='E2'):
+    def __init__(self, group=1, base_ring=QQ, name='E2') -> None:
         r"""
         INPUT:
 
-        - ``group`` (default: `\SL_2(\ZZ)`) -- a congruence subgroup of
+        - ``group`` -- (default: `\SL_2(\ZZ)`) a congruence subgroup of
           `\SL_2(\ZZ)`, or a positive integer `N` (interpreted as
-          `\Gamma_0(N)`).
+          `\Gamma_0(N)`)
 
-        - ``base_ring`` (ring, default: `\QQ`) -- a base ring, which should be
-          `\QQ`, `\ZZ`, or the integers mod `p` for some prime `p`.
+        - ``base_ring`` -- a base ring (default: `\QQ`); should be
+          `\QQ`, `\ZZ`, or the integers mod `p` for some prime `p`
 
-        - ``name`` (str, default: ``'E2'``) -- a variable name corresponding to
-          the weight 2 Eisenstein series.
+        - ``name`` -- string (default: ``'E2'``); a variable name corresponding to
+          the weight 2 Eisenstein series
 
         TESTS:
 
@@ -251,20 +252,21 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         if not isinstance(name, str):
             raise TypeError("`name` must be a string")
-        #check if the group is SL2(Z)
+        # check if the group is SL2(Z)
         if isinstance(group, (int, Integer)):
             group = Gamma0(group)
-        elif not is_CongruenceSubgroup(group):
+        elif not isinstance(group, CongruenceSubgroupBase):
             raise ValueError("Group (=%s) should be a congruence subgroup" % group)
 
-        #Check if the base ring is the rationnal field
+        # Check if the base ring is the rational field
         if base_ring != QQ:
             raise NotImplementedError("base ring other than Q are not yet supported for quasimodular forms ring")
 
         self.__group = group
         self.__modular_forms_subring = ModularFormsRing(group, base_ring)
         self.__polynomial_subring = self.__modular_forms_subring[name]
-        Parent.__init__(self, base=base_ring, category=GradedAlgebras(base_ring))
+        cat = GradedAlgebras(base_ring).Commutative()
+        Parent.__init__(self, base=base_ring, category=cat)
 
     def group(self):
         r"""
@@ -319,9 +321,9 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``weight`` (int, Integer)
+        - ``weight`` -- integer
 
-        OUTPUT: A quasimodular forms space of the given weight.
+        OUTPUT: a quasimodular forms space of the given weight
 
         EXAMPLES::
 
@@ -329,13 +331,12 @@ class QuasiModularForms(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             NotImplementedError: spaces of quasimodular forms of fixed weight not yet implemented
-
         """
         raise NotImplementedError("spaces of quasimodular forms of fixed weight not yet implemented")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -369,17 +370,15 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         if isinstance(M, (ModularFormsRing, ModularFormsSpace)):
             if M.group() == self.group() and self.has_coerce_map_from(M.base_ring()):
                 return True
-        if self.base_ring().has_coerce_map_from(M):
-            return True
-        return False
+        return self.base_ring().has_coerce_map_from(M)
 
-    def _element_constructor_(self, datum):
+    def _element_constructor_(self, datum) -> QuasiModularFormsElement:
         r"""
-        The call method of self.
+        The call method of ``self``.
 
         INPUT:
 
-        - ``datum`` - list, GradedModularFormElement, ModularFormElement,
+        - ``datum`` -- list; GradedModularFormElement, ModularFormElement,
           Polynomial, base ring element
 
         OUTPUT: QuasiModularFormElement
@@ -421,15 +420,15 @@ class QuasiModularForms(Parent, UniqueRepresentation):
             NotImplementedError: conversion from q-expansion not yet implemented
         """
         if isinstance(datum, list):
-            if len(datum) == 0:
+            if not datum:
                 raise ValueError("the given list should be non-empty")
             for idx, f in enumerate(datum):
                 if not isinstance(f, (GradedModularFormElement, ModularFormElement)):
                     raise ValueError("one list element is not a modular form")
-                datum[idx] = self.__modular_forms_subring(f) #to ensure that every forms is a GradedModularFormElement
+                datum[idx] = self.__modular_forms_subring(f)  # to ensure that every form is a GradedModularFormElement
             datum = self.__polynomial_subring(datum)
         elif isinstance(datum, (GradedModularFormElement, ModularFormElement)):
-            datum = self.__modular_forms_subring(datum) # GradedModularFormElement
+            datum = self.__modular_forms_subring(datum)  # GradedModularFormElement
             datum = self.__polynomial_subring(datum)
         elif isinstance(datum, Polynomial):
             datum = self.__polynomial_subring(datum.coefficients(sparse=False))
@@ -439,7 +438,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
             datum = self.__polynomial_subring.coerce(datum)
         return self.element_class(self, datum)
 
-    def weight_2_eisenstein_series(self):
+    def weight_2_eisenstein_series(self) -> QuasiModularFormsElement:
         r"""
         Return the weight 2 Eisenstein series.
 
@@ -453,9 +452,9 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         return self(self.__polynomial_subring.gen())
 
-    def gens(self):
+    def gens(self) -> tuple[QuasiModularFormsElement, ...]:
         r"""
-        Return a list of generators of the quasimodular forms ring.
+        Return a tuple of generators of the quasimodular forms ring.
 
         Note that the generators of the modular forms subring are the one given
         by the method :meth:`sage.modular.modform.ring.ModularFormsRing.gen_forms`
@@ -464,34 +463,34 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
             sage: QM = QuasiModularForms(1)
             sage: QM.gens()
-            [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+            (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
             1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6))
             sage: QM.modular_forms_subring().gen_forms()
             [1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
             1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
             sage: QM = QuasiModularForms(5)
             sage: QM.gens()
-            [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+            (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
             1 + 6*q + 18*q^2 + 24*q^3 + 42*q^4 + 6*q^5 + O(q^6),
             1 + 240*q^5 + O(q^6),
-            q + 10*q^3 + 28*q^4 + 35*q^5 + O(q^6)]
+            q + 10*q^3 + 28*q^4 + 35*q^5 + O(q^6))
 
         An alias of this method is ``generators``::
 
             sage: QuasiModularForms(1).generators()
-            [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+            (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
             1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6))
         """
         gen_list = [self.weight_2_eisenstein_series()]
-        for f in self.__modular_forms_subring.gen_forms():
-            gen_list.append(self(f))
-        return gen_list
+        gen_list.extend(self(f)
+                        for f in self.__modular_forms_subring.gen_forms())
+        return tuple(gen_list)
 
-    generators = gens # alias
+    generators = gens  # alias
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
         Return the number of generators of the given graded quasimodular forms
         ring.
@@ -503,7 +502,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         return len(self.gens())
 
-    def gen(self, n):
+    def gen(self, n) -> QuasiModularFormsElement:
         r"""
         Return the `n`-th generator of the quasimodular forms ring.
 
@@ -528,11 +527,11 @@ class QuasiModularForms(Parent, UniqueRepresentation):
             sage: QM.4
             Traceback (most recent call last):
             ...
-            IndexError: list index out of range
+            IndexError: tuple index out of range
         """
         return self.gens()[n]
 
-    def zero(self):
+    def zero(self) -> QuasiModularFormsElement:
         r"""
         Return the zero element of this ring.
 
@@ -546,7 +545,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         return self.element_class(self, self.__polynomial_subring.zero())
 
-    def one(self):
+    def one(self) -> QuasiModularFormsElement:
         r"""
         Return the one element of this ring.
 
@@ -560,16 +559,16 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         return self.element_class(self, self.__polynomial_subring.one())
 
-    def some_elements(self):
+    def some_elements(self) -> tuple[QuasiModularFormsElement, ...]:
         r"""
         Return a list of generators of ``self``.
 
         EXAMPLES::
 
             sage: QuasiModularForms(1).some_elements()
-            [1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+            (1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
             1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
-            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)]
+            1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6))
         """
         return self.gens()
 
@@ -603,7 +602,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``names`` (str, default: ``None``) -- a list or tuple of names
+        - ``names``-- string (default: ``None``); list or tuple of names
           (strings), or a comma separated string. Defines the names for the
           generators of the multivariate polynomial ring. The default names are
           of the following form:
@@ -619,7 +618,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
           - In any other cases, we use the letters ``Fk``, ``Gk``, ``Hk``, ...,
             ``FFk``, ``FGk``, ... to denote any generator of weight `k`.
 
-        OUTPUT: A multivariate polynomial ring in the variables ``names``
+        OUTPUT: a multivariate polynomial ring in the variables ``names``
 
         EXAMPLES::
 
@@ -676,7 +675,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         gens = self.__modular_forms_subring.gen_forms()
         weights = [f.weight() for f in gens]
-        gens = iter(gens)
+        it_gens = iter(gens)
         if names is None:
             if self.group() == Gamma0(1):
                 names = ["E2", "E4", "E6"]
@@ -689,11 +688,11 @@ class QuasiModularForms(Parent, UniqueRepresentation):
                     #     F, G, H, I, J, K, FF, FG, FH,..., FFF, FFG,...
                     # the letters E and S are reserved for basis elements of the
                     # Eisenstein subspaces and cuspidal subspaces respectively.
-                    iter_names = (product(letters, repeat=r)
-                                    for r in range(1, len(same_weights)//len(letters) + 2))
-                    iter_names = chain(*iter_names)
+                    pre_iter_names = (product(letters, repeat=r)
+                                  for r in range(1, len(same_weights)//len(letters) + 2))
+                    iter_names = chain(*pre_iter_names)
                     for k in same_weights:
-                        form = next(gens)
+                        form = next(it_gens)
                         Mk = self.__modular_forms_subring.modular_forms_of_weight(k)
                         if form.is_eisenstein():
                             Ek_basis = Mk.eisenstein_subspace().basis()
@@ -714,11 +713,11 @@ class QuasiModularForms(Parent, UniqueRepresentation):
                         else:
                             name = "".join(next(iter_names)) + str(k)
                         names.append(name)
-        weights.insert(0, 2) # add the weight 2 Eisenstein series
+        weights.insert(0, 2)  # add the weight 2 Eisenstein series
         return PolynomialRing(self.base_ring(), len(weights), names,
                               order=TermOrder('wdeglex', weights))
 
-    def from_polynomial(self, polynomial):
+    def from_polynomial(self, polynomial) -> QuasiModularFormsElement:
         r"""
         Convert the given polynomial `P(x,\ldots, y)` to the graded quasiform
         `P(g_0, \ldots, g_n)` where the `g_i` are the generators given
@@ -726,9 +725,9 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``polynomial`` -- A multivariate polynomial
+        - ``polynomial`` -- a multivariate polynomial
 
-        OUTPUT: the graded quasimodular forms `P(g_0, \ldots, g_n)`
+        OUTPUT: the graded quasimodular form `P(g_0, \ldots, g_n)`
 
         EXAMPLES::
 
@@ -777,5 +776,49 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         nb_var = poly_parent.ngens()
         if nb_var > self.ngens():
             raise ValueError("the number of variables (%s) of the given polynomial cannot exceed the number of generators (%s) of the quasimodular forms ring" % (nb_var, self.ngens()))
-        gens_dict = {poly_parent.gen(i):self.gen(i) for i in range(0, nb_var)}
+        gens_dict = {poly_parent.gen(i): self.gen(i) for i in range(nb_var)}
         return self(polynomial.subs(gens_dict))
+
+    def basis_of_weight(self, weight) -> list[QuasiModularFormsElement]:
+        r"""
+        Return a basis of elements generating the subspace of the given
+        weight.
+
+        INPUT:
+
+        - ``weight`` -- integer; the weight of the subspace
+
+        OUTPUT: tuple of quasimodular forms of the given weight
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: QM.basis_of_weight(12)
+            [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6),
+             1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6),
+             1 - 288*q - 129168*q^2 - 1927296*q^3 + 65152656*q^4 + 1535768640*q^5 + O(q^6),
+             1 + 432*q + 39312*q^2 - 1711296*q^3 - 14159664*q^4 + 317412000*q^5 + O(q^6),
+             1 - 576*q + 21168*q^2 + 308736*q^3 - 15034608*q^4 - 39208320*q^5 + O(q^6),
+             1 + 144*q - 17712*q^2 + 524736*q^3 - 2279088*q^4 - 79760160*q^5 + O(q^6),
+             1 - 144*q + 8208*q^2 - 225216*q^3 + 2634192*q^4 + 1488672*q^5 + O(q^6)]
+            sage: QM = QuasiModularForms(Gamma1(3))
+            sage: QM.basis_of_weight(3)
+            [1 + 54*q^2 + 72*q^3 + 432*q^5 + O(q^6),
+             q + 3*q^2 + 9*q^3 + 13*q^4 + 24*q^5 + O(q^6)]
+            sage: QM.basis_of_weight(5)
+            [1 - 90*q^2 - 240*q^3 - 3744*q^5 + O(q^6),
+             q + 15*q^2 + 81*q^3 + 241*q^4 + 624*q^5 + O(q^6),
+             1 - 24*q - 18*q^2 - 1320*q^3 - 5784*q^4 - 10080*q^5 + O(q^6),
+             q - 21*q^2 - 135*q^3 - 515*q^4 - 1392*q^5 + O(q^6)]
+        """
+        basis: list[QuasiModularFormsElement] = []
+        E2 = self.weight_2_eisenstein_series()
+        M = self.__modular_forms_subring
+        E2_pow = self.one()
+        for j in range(weight // 2):
+            basis.extend(f * E2_pow
+                         for f in M.modular_forms_of_weight(weight - 2*j).basis())
+            E2_pow *= E2
+        if not weight % 2:
+            basis.append(E2_pow)
+        return basis

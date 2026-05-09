@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 r"""
 Fast calculation of cyclotomic polynomials
 
 This module provides a function :func:`cyclotomic_coeffs`, which calculates the
 coefficients of cyclotomic polynomials. This is not intended to be invoked
 directly by the user, but it is called by the method
-:meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_general.cyclotomic_polynomial`
+:meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_generic.cyclotomic_polynomial`
 method of univariate polynomial ring objects and the top-level
 :func:`~sage.misc.functional.cyclotomic_polynomial` function.
 """
@@ -37,9 +36,10 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.element cimport parent
 
 try:
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
 except ImportError:
     pass
+
 
 def cyclotomic_coeffs(nn, sparse=None):
     """
@@ -58,7 +58,7 @@ def cyclotomic_coeffs(nn, sparse=None):
     form `1-x^n` can be done very quickly in a single pass.
 
     If ``sparse`` is ``True``, the result is returned as a dictionary of
-    the non-zero entries, otherwise the result is returned as a list
+    the nonzero entries, otherwise the result is returned as a list
     of python ints.
 
     EXAMPLES::
@@ -86,7 +86,7 @@ def cyclotomic_coeffs(nn, sparse=None):
          0, -1, 0, -1, 0, -1, 0, -1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, -1, -1, -2,
          -1, -1, 0, 0, 1, 1, 1]
 
-    In fact the height is not bounded by any polynomial in `n` (Erdos),
+    In fact the height is not bounded by any polynomial in `n` (Erdős),
     although takes a while just to exceed linear::
 
         sage: v = cyclotomic_coeffs(1181895)
@@ -209,9 +209,7 @@ def cyclotomic_value(n, x):
 
     - ``x`` -- an element of a ring
 
-    OUTPUT:
-
-    - the value of the cyclotomic polynomial `\Phi_n` at `x`
+    OUTPUT: the value of the cyclotomic polynomial `\Phi_n` at `x`
 
     ALGORITHM:
 
@@ -274,7 +272,6 @@ def cyclotomic_value(n, x):
         sage: cyclotomic_value(30, -1.0)                                                # needs sage.rings.real_mpfr
         1.00000000000000
 
-        sage: # needs sage.libs.pari
         sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))
         sage: cyclotomic_value(15, t)
         0
@@ -286,7 +283,7 @@ def cyclotomic_value(n, x):
         sage: cyclotomic_value(10, mod(3,4))
         1
 
-    Check that the issue with symbolic element in :trac:`14982` is fixed::
+    Check that the issue with symbolic element in :issue:`14982` is fixed::
 
         sage: a = cyclotomic_value(3, I)                                                # needs sage.rings.number_fields
         sage: parent(a)                                                                 # needs sage.rings.number_fields

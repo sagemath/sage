@@ -8,16 +8,18 @@ Additive magmas
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.lazy_import import LazyImport
-from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_method
-from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.categories.category_singleton import Category_singleton
+from typing import Self
+
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.categories.category_singleton import Category_singleton
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.homsets import HomsetsCategory
-from sage.categories.with_realizations import WithRealizationsCategory
 from sage.categories.sets_cat import Sets
+from sage.categories.with_realizations import WithRealizationsCategory
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
 
 
 class AdditiveMagmas(Category_singleton):
@@ -59,7 +61,6 @@ class AdditiveMagmas(Category_singleton):
 
         sage: C = AdditiveMagmas()
         sage: TestSuite(C).run()
-
     """
 
     def super_categories(self):
@@ -175,7 +176,7 @@ class AdditiveMagmas(Category_singleton):
 
             INPUT:
 
-             - ``x``, ``y`` -- elements of this additive magma
+            - ``x``, ``y`` -- elements of this additive magma
 
             EXAMPLES::
 
@@ -241,16 +242,16 @@ class AdditiveMagmas(Category_singleton):
 
             - ``names`` -- the type of names used:
 
-              * ``'letters'`` - lowercase ASCII letters are used
+              * ``'letters'`` -- lowercase ASCII letters are used
                 for a base 26 representation of the elements'
                 positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading 'a's.
-              * ``'digits'`` - base 10 representation of the
+              * ``'digits'`` -- base 10 representation of the
                 elements' positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading zeros.
-              * ``'elements'`` - the string representations
+              * ``'elements'`` -- the string representations
                 of the elements themselves.
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
@@ -384,8 +385,9 @@ class AdditiveMagmas(Category_singleton):
                 y| y z x
                 z| z x y
             """
-            from sage.matrix.operation_table import OperationTable
             import operator
+
+            from sage.matrix.operation_table import OperationTable
             return OperationTable(self, operation=operator.add,
                                   names=names, elements=elements)
 
@@ -400,9 +402,7 @@ class AdditiveMagmas(Category_singleton):
 
             - ``self``, ``right`` -- two elements with the same parent
 
-            OUTPUT:
-
-            - an element of the same parent
+            OUTPUT: an element of the same parent
 
             EXAMPLES::
 
@@ -424,9 +424,7 @@ class AdditiveMagmas(Category_singleton):
 
             - ``other`` -- an element of the parent of ``self``
 
-            OUTPUT:
-
-            - an element of the parent of ``self``
+            OUTPUT: an element of the parent of ``self``
 
             EXAMPLES::
 
@@ -600,7 +598,7 @@ class AdditiveMagmas(Category_singleton):
 
     class AdditiveUnital(CategoryWithAxiom):
 
-        def additional_structure(self):
+        def additional_structure(self) -> Self:
             r"""
             Return whether ``self`` is a structure category.
 
@@ -655,7 +653,7 @@ class AdditiveMagmas(Category_singleton):
 
             def _test_zero(self, **options):
                 r"""
-                Test that ``self.zero()`` is an element of self and
+                Test that ``self.zero()`` is an element of ``self`` and
                 is neutral for the addition.
 
                 INPUT:
@@ -777,7 +775,7 @@ class AdditiveMagmas(Category_singleton):
                 All parents in the category ``CommutativeAdditiveMonoids()``
                 should implement this method.
 
-                .. note:: This is currently not useful because this method is
+                .. NOTE:: This is currently not useful because this method is
                    overridden by ``Element``.
 
                 TESTS::
@@ -787,7 +785,7 @@ class AdditiveMagmas(Category_singleton):
                     False
                     sage: bool(S.an_element())
                     True
-                 """
+                """
 
             def _test_nonzero_equal(self, **options):
                 r"""
@@ -817,7 +815,7 @@ class AdditiveMagmas(Category_singleton):
 
                 TESTS:
 
-                Check that :trac:`18275` is fixed::
+                Check that :issue:`18275` is fixed::
 
                     sage: C = GF(5).cartesian_product(GF(5))
                     sage: C.one() - C.one()
@@ -954,7 +952,7 @@ class AdditiveMagmas(Category_singleton):
             class ParentMethods:
                 def zero(self):
                     r"""
-                    Returns the zero of this group
+                    Return the zero of this group.
 
                     EXAMPLES::
 
@@ -975,8 +973,8 @@ class AdditiveMagmas(Category_singleton):
                     [Category of unital magmas]
 
                     sage: C.super_categories()
-                    [Category of unital algebras with basis over Rational Field,
-                     Category of additive magma algebras over Rational Field]
+                    [Category of additive magma algebras over Rational Field,
+                     Category of unital algebras with basis over Rational Field]
                 """
                 from sage.categories.magmas import Magmas
                 return [Magmas().Unital()]

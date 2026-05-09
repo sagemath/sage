@@ -1,1 +1,1 @@
-python-mpmath
+python3-mpmath

@@ -1,4 +1,4 @@
-# cython: binding=True
+# sage.doctest: needs sage.libs.flint sage.graphs
 """
 Matching polynomial
 
@@ -9,7 +9,7 @@ This module contains the following methods:
     :widths: 30, 70
     :delim: |
 
-    :meth:`matching_polynomial` | Computes the matching polynomial of a given graph
+    :meth:`matching_polynomial` | Compute the matching polynomial of a given graph.
     :meth:`complete_poly` | Compute the matching polynomial of the complete graph on `n` vertices.
 
 AUTHORS:
@@ -44,13 +44,15 @@ from sage.rings.integer cimport Integer
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
+
 
 x = polygen(ZZ, 'x')
 
 
 def matching_polynomial(G, complement=True, name=None):
     r"""
-    Computes the matching polynomial of the graph `G`.
+    Compute the matching polynomial of the graph `G`.
 
     If `p(G, k)` denotes the number of `k`-matchings (matchings with `k` edges)
     in `G`, then the matching polynomial is defined as [God1993]_:
@@ -61,11 +63,11 @@ def matching_polynomial(G, complement=True, name=None):
 
     INPUT:
 
-    - ``complement`` - (default: ``True``) whether to use Godsil's duality
+    - ``complement`` -- boolean (default: ``True``); whether to use Godsil's duality
       theorem to compute the matching polynomial from that of the graphs
-      complement (see ALGORITHM).
+      complement (see ALGORITHM)
 
-    - ``name`` - optional string for the variable name in the polynomial
+    - ``name`` -- (optional) string for the variable name in the polynomial
 
     .. NOTE::
 
@@ -203,20 +205,26 @@ def matching_polynomial(G, complement=True, name=None):
 
     TESTS:
 
-    Non-integer labels should work, (:trac:`15545`)::
+    Non-integer labels should work, (:issue:`15545`)::
 
         sage: G = Graph(10)
         sage: G.add_vertex((0,1))
         sage: G.add_vertex('X')
         sage: G.matching_polynomial()
         x^12
+
+    Check that :issue:`39930` is fixed::
+
+        sage: G = Graph([(0, 1), (1, 2), (2, 2)], immutable=True, loops=True)
+        sage: G.matching_polynomial()
+        x^3 - 3*x
     """
     if G.has_multiple_edges():
         raise NotImplementedError
 
     cdef int i, j, d
     cdef fmpz_poly_t pol
-    cdef int nverts = G.num_verts()
+    cdef int nverts = G.n_vertices()
 
     # Using Godsil's duality theorem when the graph is dense
 
@@ -228,17 +236,16 @@ def matching_polynomial(G, complement=True, name=None):
             f += complete_poly(j) * f_comp[j] * (-1)**i
         return f
 
-    cdef int nedges = G.num_edges()
+    cdef int nedges = G.n_edges()
 
     # Relabelling the vertices of the graph as [0...n-1] so that they are sorted
     # in increasing order of degree
 
-    cdef list L = []
-    for v, d in G.degree_iterator(labels=True):
-        L.append((d, v))
+    cdef list L = [(d, v) for v, d in G.degree_iterator(labels=True)]
     L.sort(key=lambda pair: pair[0])
-    G = G.relabel(perm={L[i][1]: i for i in range(nverts)}, inplace=False)
-    G.allow_loops(False)
+    Gint = G.relabel(perm={v: i for i, (_, v) in enumerate(L)},
+                     inplace=False, immutable=False)
+    Gint.allow_loops(False)
 
     # Initialization of pol, edges* variables.
 
@@ -261,7 +268,7 @@ def matching_polynomial(G, complement=True, name=None):
     cdef int* edges2 = edges_mem + nedges  # edges[1]
 
     cdef int cur = 0
-    for i, j in sorted(map(sorted, G.edge_iterator(labels=False))):
+    for i, j in Gint.edges(labels=False, sort=True, sort_vertices=True):
         edges1[cur] = i
         edges2[cur] = j
         cur += 1
@@ -347,7 +354,7 @@ def complete_poly(n):
     return b
 
 
-cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int depth, fmpz_poly_t pol):
+cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int depth, fmpz_poly_t pol) noexcept:
     """
     Add matching polynomial to pol via recursion.
 
@@ -388,7 +395,7 @@ cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int 
     cdef int edge1 = edges1[nedges]
     cdef int edge2 = edges2[nedges]
     cdef int new_nedges = 0
-    cdef int i, new_edge1, new_edge2
+    cdef int i
 
     # The new edges are all the edges that are not incident with (edge1, edge2)
 

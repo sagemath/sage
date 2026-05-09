@@ -8,7 +8,6 @@ fi
 # Show all tar files
 ls -l $*
 
-# Cygwin note: We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
 for a in $*; do
     echo Extracting $a
     (cd / && tar xf -) < $a
@@ -33,10 +32,3 @@ fi
 
 # Show how we are doing on free space.
 df -h
-
-# Rebase!
-case "$(uname)" in
-    CYGWIN*)
-        exec src/bin/sage-rebase.sh --all "$SAGE_LOCAL"
-        ;;
-esac

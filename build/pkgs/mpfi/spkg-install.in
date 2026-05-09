@@ -2,7 +2,7 @@ export CFLAGS="-O2 -g -fPIC $CFLAGS"
 
 cd src
 
-# Use newer version of config.guess and config.sub (see Trac #19716)
+# Use newer version of config.guess and config.sub (see Issue #19716)
 cp "$SAGE_ROOT"/config/config.* .
 
 sdh_configure $SAGE_CONFIGURE_MPFR $SAGE_CONFIGURE_GMP

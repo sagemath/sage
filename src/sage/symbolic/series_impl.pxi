@@ -1,4 +1,4 @@
-"""
+r"""
 Symbolic Series
 
 Symbolic series are special kinds of symbolic expressions that are
@@ -85,19 +85,19 @@ expanded to a series. This must be explicitly done by the user::
 
 TESTS:
 
-Check that :trac:`20088` is fixed::
+Check that :issue:`20088` is fixed::
 
     sage: ((1+x).series(x)^pi).series(x,3)
     1 + pi*x + (-1/2*pi + 1/2*pi^2)*x^2 + Order(x^3)
 
-Check that :trac:`14878` is fixed, this should take only microseconds::
+Check that :issue:`14878` is fixed, this should take only microseconds::
 
     sage: sin(x*sin(x*sin(x*sin(x)))).series(x,8)
     1*x^4 + (-1/6)*x^6 + Order(x^8)
     sage: sin(x*sin(x*sin(x*sin(x)))).series(x,12)
     1*x^4 + (-1/6)*x^6 + (-19/120)*x^8 + (-421/5040)*x^10 + Order(x^12)
 
-Check that :trac:`22959` is fixed::
+Check that :issue:`22959` is fixed::
 
     sage: (x/(1-x^2)).series(x==0, 10)
     1*x + 1*x^3 + 1*x^5 + 1*x^7 + 1*x^9 + Order(x^10)
@@ -108,7 +108,7 @@ Check that :trac:`22959` is fixed::
     sage: (x^2/(1-x^2)).series(x==0, 11)
     1*x^2 + 1*x^4 + 1*x^6 + 1*x^8 + 1*x^10 + Order(x^11)
 
-Check that :trac:`22733` is fixed::
+Check that :issue:`22733` is fixed::
 
     sage: _ = var('z')
     sage: z.series(x)
@@ -126,6 +126,44 @@ Check that :trac:`22733` is fixed::
 # ****************************************************************************
 
 
+cpdef bint _is_order(Expression expr):
+    """
+    Return whether ``expr`` has the form ``Order(...)``.
+
+    TESTS::
+
+        sage: from sage.symbolic.expression import _is_order
+        sage: s = (x^2).series(x,1)
+        sage: expr = Expression.coefficients(s)[0][0]; expr
+        Order(x)
+        sage: _is_order(expr)
+        True
+        sage: expr = Expression.coefficients(x.series(x, 0))[0][0]; expr
+        Order(1)
+        sage: _is_order(expr)
+        True
+        sage: expr = Expression.coefficients((x^5).series(x, 3))[0][0]; expr
+        Order(x^3)
+        sage: _is_order(expr)
+        True
+        sage: from sage.functions.other import Order; _is_order(Order(x))
+        True
+        sage: _is_order(Order(x) + 1)
+        False
+        sage: _is_order(Order(x) + 1 - 1)
+        True
+        sage: var("y")
+        y
+        sage: _is_order(Order(y))
+        True
+    """
+    from sage.functions.other import Order
+    from sage.symbolic.operators import add_vararg
+    if expr.operator() is add_vararg and len(expr.operands()) == 1:
+        expr = expr.operands()[0]
+    return expr.operator() is Order
+
+
 cdef class SymbolicSeries(Expression):
     def __init__(self, SR):
         """
@@ -141,16 +179,14 @@ cdef class SymbolicSeries(Expression):
 
     def is_terminating_series(self):
         """
-        Return True if the series is without order term.
+        Return ``True`` if the series is without order term.
 
         A series is terminating if it can be represented exactly,
         without requiring an order term. You can explicitly
         request terminating series by setting the order to
         positive infinity.
 
-        OUTPUT:
-
-        Boolean. ``True`` if the series has no order term.
+        OUTPUT: boolean; ``True`` if the series has no order term
 
         EXAMPLES::
 
@@ -170,9 +206,7 @@ cdef class SymbolicSeries(Expression):
         Given a power series or expression, return the corresponding
         expression without the big oh.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -205,24 +239,11 @@ cdef class SymbolicSeries(Expression):
 
     def coefficients(self, x=None, sparse=True):
         r"""
-        Return the coefficients of this symbolic series as a list of pairs.
+        Return the coefficients of this symbolic series. See :meth:`Expression.coefficients` for more details.
 
-        INPUT:
-
-        -  ``x`` -- optional variable.
-
-        -  ``sparse`` -- Boolean. If ``False`` return a list with as much
-            entries as the order of the series.
-
-        OUTPUT:
-
-        Depending on the value of ``sparse``,
-
-        - A list of pairs ``(expr, n)``, where ``expr`` is a symbolic
-          expression and ``n`` is a power (``sparse=True``, default)
-
-        - A list of expressions where the ``n``-th element is the coefficient of
-          ``x^n`` when self is seen as polynomial in ``x`` (``sparse=False``).
+        When ``sparse=False``, unlike :meth:`Expression.coefficients`, the dense list of coefficients
+        are padded to the degree of the asymptotic term of this series.
+        Also, this correctly handles the case where there is no term below the asymptotic term.
 
         EXAMPLES::
 
@@ -237,24 +258,63 @@ cdef class SymbolicSeries(Expression):
             1 + (y + 1)*x + ((y + 1)^2)*x^2 + Order(x^3)
             sage: s.coefficients(x, sparse=False)
             [1, y + 1, (y + 1)^2]
+
+        TESTS::
+
+            sage: s = (x^-1 + x^2).series(x,6)
+            sage: s.coefficients()
+            [[1, -1], [1, 2]]
+            sage: s.coefficients(sparse=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot return dense coefficient list with negative valuation
+            sage: Expression.coefficients(s)
+            [[1, -1], [1, 2]]
+            sage: Expression.coefficients(s, sparse=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot return dense coefficient list with negative valuation
+
+            sage: s = (x+x^3).series(x,6)
+            sage: s.coefficients()
+            [[1, 1], [1, 3]]
+            sage: s.coefficients(sparse=False)
+            [0, 1, 0, 1, 0, 0]
+            sage: Expression.coefficients(s)
+            [[1, 1], [1, 3]]
+            sage: Expression.coefficients(s, sparse=False)
+            [0, 1, 0, 1]
+
+            sage: s = (x^5).series(x,1)
+            sage: s.coefficients()
+            []
+            sage: s.coefficients(sparse=False)
+            [0]
+            sage: Expression.coefficients(s)  # incorrect result here, but the user will not see this
+            [[Order(x), 0]]
+            sage: Expression.coefficients(s, sparse=False)
+            [Order(x)]
+
+            sage: s = (x^5).series(x,4)
+            sage: s.coefficients()
+            []
+            sage: s.coefficients(sparse=False)
+            [0, 0, 0, 0]
+            sage: Expression.coefficients(s)  # incorrect result here, but the user will not see this
+            [[Order(x^4), 0]]
+            sage: Expression.coefficients(s, sparse=False)
+            [Order(x^4)]
         """
         if x is None:
             x = self.default_variable()
-        l = [[self.coefficient(x, d), d] for d in range(self.degree(x))]
+        result = super().coefficients(x, sparse)
+        if sparse and len(result) == 1 and ZZ(result[0][1]) == 0 and _is_order(result[0][0]):
+            result = []
         if sparse:
-            return l
-
-        from sage.rings.integer_ring import ZZ
-        if any(not c[1] in ZZ for c in l):
-            raise ValueError("cannot return dense coefficient list with noninteger exponents")
-        val = l[0][1]
-        if val < 0:
-            raise ValueError("cannot return dense coefficient list with negative valuation")
-        deg = l[-1][1]
-        ret = [ZZ(0)] * int(deg+1)
-        for c in l:
-            ret[c[1]] = c[0]
-        return ret
+            return result
+        if len(result) == 1 and _is_order(result[0]):
+            result = []
+        return result + [ZZ.zero()] * (self.degree(x) - len(result))
 
     def power_series(self, base_ring):
         """

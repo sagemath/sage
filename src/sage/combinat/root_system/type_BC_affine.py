@@ -70,7 +70,7 @@ class CartanType(CartanType_standard_affine):
 
     def dynkin_diagram(self):
         """
-        Returns the extended Dynkin diagram for affine type BC.
+        Return the extended Dynkin diagram for affine type BC.
 
         EXAMPLES::
 
@@ -103,7 +103,6 @@ class CartanType(CartanType_standard_affine):
             BC1~
             sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 4)]
-
         """
         from .dynkin_diagram import DynkinDiagram_class
         n = self.n
@@ -135,10 +134,9 @@ class CartanType(CartanType_standard_affine):
         """
         if self.options.notation == "Kac":
             return "A_{%s}^{(2)}" % (2 * self.classical().rank())
-        else:
-            return "BC_{%s}^{(2)}" % self.n
+        return "BC_{%s}^{(2)}" % self.n
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -180,6 +178,8 @@ class CartanType(CartanType_standard_affine):
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         if self.n == 1:
@@ -206,7 +206,7 @@ class CartanType(CartanType_standard_affine):
         ret += "}\n" + node(0, 0, label(0))
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return a ascii art representation of the extended Dynkin diagram.
 
@@ -227,6 +227,8 @@ class CartanType(CartanType_standard_affine):
             O=<=O
             2   3
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         n = self.n
@@ -239,7 +241,7 @@ class CartanType(CartanType_standard_affine):
 
     def classical(self):
         """
-        Returns the classical Cartan type associated with self
+        Return the classical Cartan type associated with ``self``.
 
             sage: CartanType(["BC", 3, 2]).classical()
             ['C', 3]

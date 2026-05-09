@@ -164,9 +164,7 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
 
         - ``a`` -- an element of the algebra the parent module is defined over
 
-        OUTPUT:
-
-        The module element `a \cdot x` where `x` is this module element.
+        OUTPUT: the module element `a \cdot x` where `x` is this module element
 
         EXAMPLES::
 
@@ -193,12 +191,12 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
              Sq(1,1,1)*x0 + Sq(1,1,1)*y0 + Sq(5,1)*z3,
              Sq(3,2)*z3]
         """
-        return self.parent()((a * c for c in self.dense_coefficient_list()))
+        return self.parent()(a * c for c in self.dense_coefficient_list())
 
     @cached_method
     def vector_presentation(self):
         r"""
-        A coordinate vector representing ``self`` when it is a non-zero
+        A coordinate vector representing ``self`` when it is a nonzero
         homogeneous element.
 
         These are coordinates with respect to the basis chosen by
@@ -209,7 +207,7 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
         OUTPUT:
 
         A vector of elements in the ground ring of the algebra for
-        this module when this element is non-zero.  Otherwise, the value
+        this module when this element is nonzero.  Otherwise, the value
         ``None``.
 
         .. SEEALSO::

@@ -1,1 +1,1 @@
-python-numpy
+python3-numpy

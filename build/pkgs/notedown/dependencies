@@ -1,4 +1,4 @@
- $(PYTHON_TOOLCHAIN) | pip nbformat nbconvert six pandoc_attributes $(PYTHON)
+nbformat nbconvert six pandoc_attributes | $(PYTHON) $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.

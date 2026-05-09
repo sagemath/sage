@@ -86,7 +86,6 @@ from sage.rings.ideal import Ideal_generic
 from sage.homology.free_resolution import (FiniteFreeResolution,
                                            FiniteFreeResolution_free_module,
                                            FiniteFreeResolution_singular)
-from sage.misc.superseded import deprecated_function_alias
 
 
 class GradedFiniteFreeResolution(FiniteFreeResolution):
@@ -97,18 +96,18 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
 
     - ``module`` -- a homogeneous submodule of a free module `M` of rank `n`
       over `S` or a homogeneous ideal of a multivariate polynomial ring `S`
+
     - ``degrees`` -- (default: a list with all entries `1`) a list of integers
       or integer vectors giving degrees of variables of `S`
-    - ``shifts`` -- a list of integers or integer vectors giving shifts of
+
+    - ``shifts`` -- list of integers or integer vectors giving shifts of
       degrees of `n` summands of the free module `M`; this is a list of zero
       degrees of length `n` by default
-    - ``name`` -- a string; name of the base ring
 
-    .. WARNING::
-
-        This does not check that the module is homogeneous.
+    - ``name`` -- string; name of the base ring
     """
-    def __init__(self, module, degrees=None, shifts=None, name='S', **kwds):
+    def __init__(self, module, degrees=None, shifts=None, name='S',
+                 **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -163,7 +162,7 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
         self._multigrade = multigrade
         self._zero_deg = zero_deg
 
-    def _repr_module(self, i):
+    def _repr_module(self, i) -> str:
         """
         EXAMPLES::
 
@@ -263,14 +262,11 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
         else:
             degrees = [a]
 
-        betti = {}
-        for s in degrees:
-            betti[s] = len([d for d in shifts if d == s])
+        betti = {s: len([d for d in shifts if d == s]) for s in degrees}
 
         if a is None:
             return betti
-        else:
-            return betti[a] if a in betti else 0
+        return betti.get(a, 0)
 
     def K_polynomial(self, names=None):
         r"""
@@ -317,10 +313,6 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
     r"""
     Graded free resolution of free modules.
 
-    .. WARNING::
-
-        This does not check that the module is homogeneous.
-
     EXAMPLES::
 
         sage: from sage.homology.free_resolution import FreeResolution
@@ -330,7 +322,7 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
         sage: res = FreeResolution(M, graded=True); res
         S(0)⊕S(0)⊕S(0) <-- S(-3)⊕S(-1) <-- 0
     """
-    def __init__(self, module, degrees=None, *args, **kwds):
+    def __init__(self, module, degrees=None, *args, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -341,7 +333,7 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
             sage: M = matrix([[x^3, 3*x^3, 5*x^3],
             ....:             [0, x, 2*x]])
             sage: res = FreeResolution(M, graded=True)
-            sage: TestSuite(res).run(skip="_test_pickling")
+            sage: TestSuite(res).run(skip='_test_pickling')
         """
         super().__init__(module, degrees=degrees, *args, **kwds)
 
@@ -413,7 +405,8 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
         return [M]
 
 
-class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFreeResolution_singular):
+class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution,
+                                          FiniteFreeResolution_singular):
     r"""
     Graded free resolutions of submodules and ideals of multivariate
     polynomial rings implemented using Singular.
@@ -426,16 +419,18 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
     - ``degrees`` -- (default: a list with all entries `1`) a list of integers
       or integer vectors giving degrees of variables of `S`
 
-    - ``shifts`` -- a list of integers or integer vectors giving shifts of
+    - ``shifts`` -- list of integers or integer vectors giving shifts of
       degrees of `n` summands of the free module `M`; this is a list of zero
       degrees of length `n` by default
 
-    - ``name`` -- a string; name of the base ring
+    - ``name`` -- string; name of the base ring
 
     - ``algorithm`` -- Singular algorithm to compute a resolution of ``ideal``
 
-    If ``module`` is an ideal of `S`, it is considered as a submodule of a
-    free module of rank `1` over `S`.
+    OUTPUT: a graded minimal free resolution of ``ideal``
+
+    If ``module`` is an ideal of `S`, it is considered as a submodule of a free
+    module of rank `1` over `S`.
 
     The degrees given to the variables of `S` are integers or integer vectors of
     the same length. In the latter case, `S` is said to be multigraded, and the
@@ -446,25 +441,18 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
     rank one over `S`, denoted `S(-d)` with shift `d`.
 
     The computation of the resolution is done by using ``libSingular``.
-    Different Singular algorithms can be chosen for best performance.
-
-    OUTPUT: a graded minimal free resolution of ``ideal``
-
-    The available algorithms and the corresponding Singular commands are shown
+    Different Singular algorithms can be chosen for best performance. The
+    available algorithms and the corresponding Singular commands are shown
     below:
 
-        ============= ============================
-        algorithm     Singular commands
-        ============= ============================
-        ``minimal``   ``mres(ideal)``
-        ``shreyer``   ``minres(sres(std(ideal)))``
-        ``standard``  ``minres(nres(std(ideal)))``
-        ``heuristic`` ``minres(res(std(ideal)))``
-        ============= ============================
-
-    .. WARNING::
-
-        This does not check that the module is homogeneous.
+    ============= ============================
+    algorithm     Singular commands
+    ============= ============================
+    ``minimal``   ``mres(ideal)``
+    ``shreyer``   ``minres(sres(std(ideal)))``
+    ``standard``  ``minres(nres(std(ideal)))``
+    ``heuristic`` ``minres(res(std(ideal)))``
+    ============= ============================
 
     EXAMPLES::
 
@@ -481,7 +469,8 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
         sage: r = I.graded_free_resolution(); r
         S(0) <-- S(-1)⊕S(-2)⊕S(-2) <-- S(-3)⊕S(-3)⊕S(-4) <-- S(-5) <-- 0
     """
-    def __init__(self, module, degrees=None, shifts=None, name='S', algorithm='heuristic', **kwds):
+    def __init__(self, module, degrees=None, shifts=None, name='S',
+                 algorithm='heuristic', **kwds) -> None:
         """
         Initialize.
 
@@ -571,6 +560,3 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
 
         self._res_shifts = res_shifts
         return res_mats
-
-
-GradedFreeResolution = deprecated_function_alias(34873, GradedFiniteFreeResolution_singular)

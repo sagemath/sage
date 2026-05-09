@@ -35,20 +35,22 @@ AUTHORS:
 """
 
 
-#******************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
+from sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefs import (
+    LieConformalAlgebraWithStructureCoefficients,
+)
 from sage.categories.lie_conformal_algebras import LieConformalAlgebras
-from .lie_conformal_algebra_with_structure_coefs import \
-                                LieConformalAlgebraWithStructureCoefficients
+
 
 class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
     r"""
@@ -60,31 +62,31 @@ class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
       ring of this Lie conformal algebra. Behaviour is undefined if
       it is not a field of characteristic zero
 
-    - ``s_coeff`` -- a dictionary (default: ``None``); as in the
+    - ``s_coeff`` -- dictionary (default: ``None``); as in the
       input of :class:`LieConformalAlgebra`
 
-    - ``names`` -- tuple of ``str`` (default: ``None``); as in the
+    - ``names`` -- tuple of strings (default: ``None``); as in the
       input of :class:`LieConformalAlgebra`
 
-    - ``central_elements`` -- tuple of ``str`` (default: ``None``);
+    - ``central_elements`` -- tuple of strings (default: ``None``);
       as in the input of :class:`LieConformalAlgebra`
 
     - ``index_set`` -- enumerated set (default: ``None``); as in the
       input of :class:`LieConformalAlgebra`
 
-    - ``weights`` -- tuple of non-negative rational numbers
+    - ``weights`` -- tuple of nonnegative rational numbers
       (default: tuple of ``1``); a list of degrees for this Lie
       conformal algebra.
       This tuple needs to have the same cardinality as
       ``index_set`` or ``names``. Central elements are assumed
       to have weight ``0``.
 
-    - ``category`` The category that this Lie conformal algebra
-      belongs to.
+    - ``category`` -- the category that this Lie conformal algebra
+      belongs to
 
-    - ``parity`` -- tuple of ``0`` or ``1`` (Default: tuple of
+    - ``parity`` -- tuple of ``0`` or ``1`` (default: tuple of
       ``0``); a tuple specifying the parity of each non-central
-      generator.
+      generator
 
     EXAMPLES::
 
@@ -103,7 +105,7 @@ class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
                  category=None, prefix=None, names=None, latex_names=None,
                  parity=None, weights=None, **kwds):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 
@@ -117,7 +119,8 @@ class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         else:
             category = default_category.or_subcategory(category)
 
-        LieConformalAlgebraWithStructureCoefficients.__init__(self, R,
+        LieConformalAlgebraWithStructureCoefficients.__init__(
+            self, R,
             s_coeff, index_set=index_set, central_elements=central_elements,
             category=category, prefix=prefix,
             names=names, latex_names=latex_names, parity=parity, **kwds)

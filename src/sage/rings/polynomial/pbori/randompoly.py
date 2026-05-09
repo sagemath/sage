@@ -1,10 +1,16 @@
-from random import Random
 from pprint import pformat
+from random import Random
 
-from .PyPolyBoRi import (Monomial, Polynomial, Variable)
-from .pbori import random_set, set_random_seed, ll_red_nf_redsb
-from .ll import ll_encode
-from .blocks import declare_ring
+from sage.rings.polynomial.pbori.blocks import declare_ring
+from sage.rings.polynomial.pbori.ll import ll_encode
+from sage.rings.polynomial.pbori.pbori import (
+    Monomial,
+    Polynomial,
+    Variable,
+    ll_red_nf_redsb,
+    random_set,
+    set_random_seed,
+)
 
 
 def gen_random_poly(ring, l, deg, vars_set, seed=123):
@@ -47,7 +53,7 @@ def sparse_random_system(ring, number_of_polynomials, variables_per_polynomial,
     Generate a sparse random system.
 
     Generate a system, which is sparse in the sense, that each polynomial
-    contains only a small subset of variables. In each variable that occurrs
+    contains only a small subset of variables. In each variable that occurs
     in a polynomial it is dense in the terms up to the given degree
     (every term occurs with probability 1/2).
 
@@ -67,10 +73,8 @@ def sparse_random_system(ring, number_of_polynomials, variables_per_polynomial,
     if random_seed is not None:
         set_random_seed(random_seed)
     random_generator = Random(random_seed)
-    solutions = []
     variables = [ring.variable(i) for i in range(ring.n_variables())]
-    for v in variables:
-        solutions.append(v + random_generator.randint(0, 1))
+    solutions = [v + random_generator.randint(0, 1) for v in variables]
     solutions = ll_encode(solutions)
     res = []
     while len(res) < number_of_polynomials:
@@ -101,5 +105,5 @@ def sparse_random_system_data_file_content(number_of_variables, **kwds):
                      dummy_dict)
     polynomials = sparse_random_system(r, **kwds)
     polynomials = pformat(polynomials)
-    return "declare_ring(['x'+str(i) for in range(%s)])\nideal=\\\n%s\n\n" % (
+    return "declare_ring(['x'+str(i) for in range({})])\nideal=\\\n{}\n\n".format(
         number_of_variables, polynomials)

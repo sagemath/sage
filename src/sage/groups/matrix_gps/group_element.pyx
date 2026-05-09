@@ -77,27 +77,25 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.integer_ring import ZZ
-from sage.structure.element cimport MultiplicativeGroupElement, Matrix
-from sage.structure.element import is_Matrix
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp
 
 
 try:
-    from .group_element_gap import MatrixGroupElement_gap
+    from sage.groups.matrix_gps.group_element_gap import MatrixGroupElement_gap
 except ImportError:
     MatrixGroupElement_gap = ()
 
 
 cpdef is_MatrixGroupElement(x):
     """
-    Test whether ``x`` is a matrix group element
+    Test whether ``x`` is a matrix group element.
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT: Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -129,10 +127,10 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
     - ``parent`` -- the parent
 
-    - ``check`` -- bool (default: ``True``); if ``True``, then
+    - ``check`` -- boolean (default: ``True``); if ``True``, then
       do some type checking
 
-    - ``convert`` -- bool (default: ``True``); if ``True``, then
+    - ``convert`` -- boolean (default: ``True``); if ``True``, then
       convert ``M`` to the right matrix space
 
     EXAMPLES::
@@ -156,7 +154,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         if convert:
             M = parent.matrix_space()(M)
         if check:
-            if not is_Matrix(M):
+            if not isinstance(M, Matrix):
                 raise TypeError('M must be a matrix')
             if M.parent() is not parent.matrix_space():
                 raise TypeError('M must be a in the matrix space of the group')
@@ -172,11 +170,13 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         r"""
         TESTS::
 
-            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)                               # needs sage.graphs
-            sage: g = W.an_element()                                                    # needs sage.graphs
-            sage: hash(g)                                                               # needs sage.graphs
-            660522311176098153  # 64-bit
-            -606138007          # 32-bit
+            sage: # needs sage.graphs
+            sage: W = CoxeterGroup(['A',3], base_ring=ZZ)
+            sage: g = W.an_element()
+            sage: hash32 = -606138007
+            sage: hash64 = 660522311176098153
+            sage: hash(g) in [hash32, hash64]
+            True
         """
         return hash(self._matrix)
 
@@ -370,9 +370,9 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
     def __invert__(self):
         """
-        Return the inverse group element
+        Return the inverse group element.
 
-        OUTPUT: A matrix group element.
+        OUTPUT: a matrix group element
 
         EXAMPLES::
 

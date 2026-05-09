@@ -4,7 +4,6 @@ Partition backtrack functions for lists -- a simple example of using partn_ref
 EXAMPLES::
 
     sage: import sage.groups.perm_gps.partn_ref.refinement_lists
-
 """
 
 #*****************************************************************************
@@ -20,21 +19,20 @@ EXAMPLES::
 
 from cysignals.memory cimport sig_malloc, sig_free
 
-from .data_structures cimport *
-from .double_coset cimport double_coset, int_cmp
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
+from sage.groups.perm_gps.partn_ref.double_coset cimport double_coset, int_cmp
 
 
 def is_isomorphic(self, other):
     r"""
     Return the bijection as a permutation if two lists are isomorphic, return
-    False otherwise.
+    ``False`` otherwise.
 
     EXAMPLES::
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_lists import is_isomorphic
         sage: is_isomorphic([0,0,1],[1,0,0])
         [1, 2, 0]
-
     """
     cdef int i, n = len(self)
     cdef PartitionStack *part
@@ -48,7 +46,7 @@ def is_isomorphic(self, other):
         sig_free(ordering)
         sig_free(output)
         raise MemoryError
-    for i from 0 <= i < (len(self)):
+    for i in range(len(self)):
         ordering[i] = i
 
     cdef bint isomorphic = double_coset(<void *> self, <void *> other, part, ordering, (len(self)), &all_list_children_are_equivalent, &refine_list, &compare_lists, NULL, NULL, output)
@@ -56,19 +54,20 @@ def is_isomorphic(self, other):
     PS_dealloc(part)
     sig_free(ordering)
     if isomorphic:
-        output_py = [output[i] for i from 0 <= i < (len(self))]
+        output_py = [output[i] for i in range(len(self))]
     else:
         output_py = False
     sig_free(output)
     return output_py
 
-cdef bint all_list_children_are_equivalent(PartitionStack *PS, void *S):
+
+cdef bint all_list_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     return 0
 
-cdef int refine_list(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
+cdef int refine_list(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     return 0
 
-cdef int compare_lists(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree):
+cdef int compare_lists(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     r"""
     Compare two lists according to the lexicographic order.
     """

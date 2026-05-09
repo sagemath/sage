@@ -8,7 +8,8 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Eric Gourgoulhon (2017): class :class:`FiniteRankFreeModuleElement` inherits
-  from :class:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor`
+  from
+  :class:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor`
 
 REFERENCES:
 
@@ -16,22 +17,21 @@ REFERENCES:
 - Chap. 12 of J. M. Lee: *Introduction to Smooth Manifolds* [Lee2013]_ (only
   when the free module is a vector space)
 - Chap. 2 of B. O'Neill: *Semi-Riemannian Geometry* [ONe1983]_
-
 """
 
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.tensor.modules.comp import Components
@@ -107,7 +107,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
     elements::
 
         sage: v3 = 2*e[0] - e[2]
-        sage: v3.set_name('v') ; v3 # in this case, the name has to be set separately
+        sage: v3.set_name('v') ; v3 # here the name has to be set separately
         Element v of the Rank-3 free module M over the Integer Ring
         sage: v3.display()
         v = 2 e_0 - e_2
@@ -179,7 +179,8 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
         [ 2 -2  1]
         [ 6 -6  3]
         sage: s = a*s ; s
-        Type-(3,0) tensor a⊗a⊗b on the Rank-3 free module M over the Integer Ring
+        Type-(3,0) tensor a⊗a⊗b on the Rank-3 free module M
+        over the Integer Ring
         sage: s[:]
         [[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
          [[0, 0, 0], [2, -2, 1], [6, -6, 3]],
@@ -192,14 +193,13 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
          module M over the Integer Ring
         sage: s.display()
         a∧b = -2 e_0∧e_1 - 6 e_0∧e_2 + 7 e_1∧e_2
-
     """
 
     def __init__(
         self,
         fmodule: FiniteRankFreeModule,
-        name: Optional[str] = None,
-        latex_name: Optional[str] = None,
+        name: str | None = None,
+        latex_name: str | None = None,
     ):
         r"""
         TESTS::
@@ -209,7 +209,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
             sage: e = M.basis('e')
             sage: v = FiniteRankFreeModuleElement(M, name='v')
             sage: v[e,:] = (-2, 1, 3)
-            sage: TestSuite(v).run(skip="_test_category") # see below
+            sage: TestSuite(v).run(skip='_test_category') # see below
 
         In the above test suite, _test_category fails because v is not an
         instance of v.parent().category().element_class. Actually module
@@ -219,7 +219,6 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
             sage: v1 = M.element_class(M, name='v')
             sage: v1[e,:] = (-2, 1, 3)
             sage: TestSuite(v1).run()
-
         """
         AlternatingContrTensor.__init__(self, fmodule, 1, name=name,
                                         latex_name=latex_name)
@@ -234,7 +233,6 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
             sage: e = M.basis('e')
             sage: M([1,-2,3], name='v')
             Element v of the Rank-3 free module M over the Integer Ring
-
         """
         description = "Element "
         if self._name is not None:
@@ -253,9 +251,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
 
         - ``basis`` -- basis of the free module on which ``self`` is defined
 
-        OUTPUT:
-
-        - an instance of :class:`~sage.tensor.modules.comp.Components`
+        OUTPUT: an instance of :class:`~sage.tensor.modules.comp.Components`
 
         EXAMPLES::
 
@@ -267,7 +263,6 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
              Rank-3 free module M over the Integer Ring
             sage: type(v._new_comp(e))
             <class 'sage.tensor.modules.comp.Components'>
-
         """
         fmodule = self._fmodule  # the base free module
         return Components(fmodule._ring, basis, 1, start_index=fmodule._sindex,
@@ -286,6 +281,5 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
             Element of the Rank-3 free module M over the Integer Ring
             sage: v._new_instance().parent() is v.parent()
             True
-
         """
         return self.__class__(self._fmodule)

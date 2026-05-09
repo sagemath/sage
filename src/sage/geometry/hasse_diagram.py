@@ -7,13 +7,13 @@ partially ordered sets where any two elements have meet and joint. For
 example, the face lattice of a polyhedron.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.graphs.digraph import DiGraph
 from sage.combinat.posets.lattices import FiniteLatticePoset
@@ -30,11 +30,11 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
 
     INPUT:
 
-    - ``atom_to_coatoms`` -- list, ``atom_to_coatom[i]`` should list all
-      coatoms over the ``i``-th atom;
+    - ``atom_to_coatoms`` -- list; ``atom_to_coatom[i]`` should list all
+      coatoms over the ``i``-th atom
 
-    - ``coatom_to_atoms`` -- list, ``coatom_to_atom[i]`` should list all
-      atoms under the ``i``-th coatom;
+    - ``coatom_to_atoms`` -- list; ``coatom_to_atom[i]`` should list all
+      atoms under the ``i``-th coatom
 
     - ``face_constructor`` -- function or class taking as the first two
       arguments sorted :class:`tuple` of integers and any keyword arguments.
@@ -42,15 +42,15 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
       argument and under coatoms passed as the second argument. Default
       implementation will just return these two tuples as a tuple;
 
-    - ``required_atoms`` -- list of atoms (default:None). Each
+    - ``required_atoms`` -- list of atoms (default: ``None``); each
       non-empty "face" requires at least one of the specified atoms
       present. Used to ensure that each face has a vertex.
 
-    - ``key`` -- any hashable value (default: None). It is passed down
-      to :class:`~sage.combinat.posets.posets.FinitePoset`.
+    - ``key`` -- any hashable value (default: ``None``); it is passed down
+      to :class:`~sage.combinat.posets.posets.FinitePoset`
 
     - all other keyword arguments will be passed to ``face_constructor`` on
-      each call.
+      each call
 
     OUTPUT:
 
@@ -146,7 +146,7 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
                 atoms = atoms.intersection(coatom_to_atoms[coatom])
             H[atom] = (atoms, coatoms)
         # 8: compute the set G of minimal sets in H
-        minimals = set([])
+        minimals = set()
         while candidates:
             candidate = candidates.pop()
             atoms = H[candidate][0]
@@ -188,9 +188,7 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
                 if required_atoms is None or atom in required_atoms)
     new_order = head + [n for n in new_order if n not in head]
     # "Invert" this list to a dictionary
-    labels = {}
-    for new, old in enumerate(new_order):
-        labels[old] = new
+    labels = {old: new for new, old in enumerate(new_order)}
     L.relabel(labels)
     # Construct the actual poset elements
     elements = [None] * next_index
@@ -198,6 +196,6 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
         atoms, coatoms = face
         elements[labels[index]] = face_constructor(
                         tuple(sorted(atoms)), tuple(sorted(coatoms)), **kwds)
-    D = {i: f for i, f in enumerate(elements)}
+    D = dict(enumerate(elements))
     L.relabel(D)
     return FiniteLatticePoset(L, elements, key=key)

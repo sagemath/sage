@@ -19,12 +19,15 @@ EXAMPLES::
 # the License, or (at your option) any later version.
 # https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+
+import sage.rings.abc
+
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
-from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.rings.fraction_field import FractionField
-from sage.rings.qqbar import QQbar
+from sage.rings.integer_ring import ZZ
+from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+
 _Fields = Fields()
 
 
@@ -49,12 +52,12 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``parent`` -- Hom-set.
+        - ``parent`` -- Hom-set
 
-        - ``polys`` -- anything that defines a point in the class.
+        - ``polys`` -- anything that defines a point in the class
 
-        - ``check`` -- Boolean. Whether or not to perform input checks.
-          (Default: ``True``)
+        - ``check`` -- boolean; whether or not to perform input checks
+          (default: ``True``)
 
         EXAMPLES::
 
@@ -109,8 +112,8 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
             target = parent.codomain().ambient_space()
             dom = parent.domain().ambient_space()
-            from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-            if is_ProductProjectiveSpaces(target):
+            from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+            if isinstance(target, ProductProjectiveSpaces_ring):
                 splitpolys = target._factors(polys)
                 for m in range(len(splitpolys)):
                     d = dom._degree(splitpolys[m][0])
@@ -128,7 +131,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``i`` -- integer.
+        - ``i`` -- integer
 
         OUTPUT:
 
@@ -148,7 +151,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         r"""
         Return a string representation of this morphism.
 
-        OUTPUT: String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -171,12 +174,12 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``P`` -- a point in the domain.
+        - ``P`` -- a point in the domain
 
-        - ``check`` -- Boolean - whether or not to perform the input checks
-          on the image point (Default: ``True``).
+        - ``check`` -- boolean (default: ``True``); whether or not to perform
+          the input checks on the image point
 
-        OUTPUT: The image point in the codomain.
+        OUTPUT: the image point in the codomain
 
         EXAMPLES::
 
@@ -236,16 +239,16 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
     def __eq__(self, right):
         """
-        Tests the equality of two product projective morphisms.
+        Test the equality of two product projective morphisms.
 
         INPUT:
 
-        - ``right`` - a map on product of projective space.
+        - ``right`` -- a map on product of projective space
 
         OUTPUT:
 
-        - Boolean - True if ``self`` and ``right`` define the same product projective
-          map. False otherwise.
+        boolean; ``True`` if ``self`` and ``right`` define the same product
+        projective map. ``False`` otherwise.
 
         EXAMPLES::
 
@@ -282,7 +285,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             return False
         PP = self.parent().codomain()
 
-        n = PP.num_components()
+        n = PP.n_components()
         dim = [ P.ngens() for P in PP ]
         dim_prefix = [0,dim[0]]
 
@@ -301,16 +304,16 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
     def __ne__(self, right):
         """
-        Tests the inequality of two prduct projective morphisms.
+        Test the inequality of two prduct projective morphisms.
 
         INPUT:
 
-        - ``right`` -- a map on product of projective space.
+        - ``right`` -- a map on product of projective space
 
         OUTPUT:
 
-        - Boolean -- True if ``self`` and ``right`` define different product
-          projective maps. False otherwise.
+        boolean; ``True`` if ``self`` and ``right`` define different product
+        projective maps. ``False`` otherwise.
 
         EXAMPLES::
 
@@ -329,7 +332,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             return True
         PP = self.parent().codomain()
 
-        n = PP.num_components()
+        n = PP.n_components()
         dim = [ P.ngens() for P in PP ]
         dim_prefix = [0,dim[0]]
 
@@ -353,7 +356,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         the domain of this map generated by the corresponding coordinates of the map.
         This map is a morphism if and only if each of these subschemes has no points.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -390,7 +393,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             f = self.change_ring(T.base_ring().fraction_field())
             T = T.change_ring(T.base_ring().fraction_field())
 
-        for i in range(S.num_components()):
+        for i in range(S.n_components()):
             t = S[i].dimension_relative() + 1
             X = T.subscheme(list(f)[m : m + t])
             if X.dimension() > -1:
@@ -403,9 +406,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         """
         Return this endomorphism as a :class:`~sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective`.
 
-        OUTPUT:
-
-        - :class:`~sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective`
+        OUTPUT: :class:`~sage.dynamics.arithmetic_dynamics.product_projective_ds.DynamicalSystem_product_projective`
 
         EXAMPLES::
 
@@ -428,11 +429,9 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         .. TODO::
 
@@ -460,14 +459,14 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             2.56494935746154
         """
         K = self.domain().base_ring()
-        if K in NumberFields() or is_NumberFieldOrder(K):
+        if K in NumberFields() or K == ZZ or isinstance(K, sage.rings.abc.Order):
             H = 0
             for i in range(self.domain().ambient_space().ngens()):
                 C = self[i].coefficients()
                 h = max(c.global_height(prec=prec) for c in C)
                 H = max(H, h)
             return H
-        elif K == QQbar:
+        if isinstance(K, sage.rings.abc.AlgebraicField):
             raise NotImplementedError("not implemented for QQbar")
         else:
             raise TypeError("Must be over a Numberfield or a Numberfield Order or QQbar")
@@ -479,12 +478,12 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``v`` -- a prime or prime ideal of the base ring.
+        - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 

@@ -1,0 +1,9 @@
+# Packages needed for ./bootstrap
+gettext
+autoconf
+automake
+libtool
+# Python packages needed for configure and build
+python313
+py-setuptools
+xz

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Graphs from the World Map
 
@@ -11,14 +10,14 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #           Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+#                         https://www.gnu.org/licenses/
 # ****************************************************************************
 
 # import from Sage library
 from sage.graphs.graph import Graph
 
 
-def AfricaMap(continental=False, year=2018):
+def AfricaMap(continental=False, year=2018, immutable=False):
     """
     Return African states as a graph of common border.
 
@@ -31,7 +30,10 @@ def AfricaMap(continental=False, year=2018):
     - ``continental`` -- boolean (default: ``False``); whether to only return
       states in the continental Africa or all African states
 
-    - ``year`` -- integer (default: ``2018``); reserved for future use
+    - ``year`` -- integer (default: 2018); reserved for future use
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -45,10 +47,12 @@ def AfricaMap(continental=False, year=2018):
         48
         sage: 'Madagaskar' in cont_Africa
         False
+        sage: cont_Africa.is_connected()
+        True
 
     TESTS::
 
-        sage: Africa.plot()  # long time
+        sage: Africa.plot()                     # long time                             # needs sage.plot
         Graphics object consisting of 159 graphics primitives
     """
     if year != 2018:
@@ -92,19 +96,17 @@ def AfricaMap(continental=False, year=2018):
     no_land_border = ['Cape Verde', 'Seychelles', 'Mauritius',
                       'São Tomé and Príncipe', 'Madagascar', 'Comoros']
 
-    G = Graph(common_border, format='dict_of_lists')
-
     if continental:
-        G = G.subgraph(G.connected_component_containing_vertex('Central Africa', sort=False))
-        G.name(new="Continental Africa Map")
+        name = "Continental Africa Map"
     else:
-        G.add_vertices(no_land_border)
-        G.name(new="Africa Map")
+        common_border.update((c, []) for c in no_land_border)
+        name = "Africa Map"
 
-    return G
+    return Graph(common_border, format='dict_of_lists',
+                 name=name, immutable=immutable)
 
 
-def EuropeMap(continental=False, year=2018):
+def EuropeMap(continental=False, year=2018, immutable=False):
     """
     Return European states as a graph of common border.
 
@@ -117,7 +119,10 @@ def EuropeMap(continental=False, year=2018):
     - ``continental`` -- boolean (default: ``False``); whether to only return
       states in the continental Europe or all European states
 
-    - ``year`` -- integer (default: ``2018``); reserved for future use
+    - ``year`` -- integer (default: 2018); reserved for future use
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -131,6 +136,13 @@ def EuropeMap(continental=False, year=2018):
         40
         sage: 'Iceland' in cont_Europe
         False
+        sage: cont_Europe.is_connected()
+        True
+        sage: cont_Europe.is_immutable()
+        False
+        sage: cont_Europe = graphs.EuropeMap(continental=True, immutable=True)
+        sage: cont_Europe.is_immutable()
+        True
     """
     if year != 2018:
         raise ValueError("currently only year 2018 is implemented")
@@ -169,19 +181,19 @@ def EuropeMap(continental=False, year=2018):
     }
     no_land_border = ['Iceland', 'Malta']
 
-    G = Graph(common_border, format='dict_of_lists')
-
     if continental:
+        G = Graph(common_border, format='dict_of_lists',
+                  name="Continental Europe Map", immutable=immutable)
         G = G.subgraph(G.connected_component_containing_vertex('Austria', sort=False))
-        G.name(new="Continental Europe Map")
     else:
-        G.add_vertices(no_land_border)
-        G.name(new="Europe Map")
+        common_border.update((c, []) for c in no_land_border)
+        G = Graph(common_border, format='dict_of_lists',
+                  name="Europe Map", immutable=immutable)
 
     return G
 
 
-def USAMap(continental=False):
+def USAMap(continental=False, immutable=False):
     """
     Return states of USA as a graph of common border.
 
@@ -193,6 +205,9 @@ def USAMap(continental=False):
 
     - ``continental`` -- boolean (default: ``False``); whether to exclude Alaska
       and Hawaii
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -287,10 +302,10 @@ def USAMap(continental=False):
         states['Hawaii'] = []
         name = "USA Map"
 
-    return Graph(states, format='dict_of_lists', name=name)
+    return Graph(states, format='dict_of_lists', name=name, immutable=immutable)
 
 
-def WorldMap():
+def WorldMap(immutable=False):
     """
     Return the Graph of all the countries, in which two countries are adjacent
     in the graph if they have a common boundary.
@@ -300,6 +315,11 @@ def WorldMap():
 
     The returned graph ``G`` has a member ``G.gps_coordinates`` equal to a
     dictionary containing the GPS coordinates of each country's capital city.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -313,7 +333,7 @@ def WorldMap():
 
     TESTS:
 
-    :trac:`24488`::
+    :issue:`24488`::
 
         sage: 'Iceland' in graphs.WorldMap()
         True
@@ -716,9 +736,7 @@ def WorldMap():
         'Zambia': [[15, 'S'], [30, 'E']],
         'Zimbabwe': [[20, 'S'], [30, 'E']]
         }
-    g = Graph()
-    g.add_edges(edges)
-    g.add_vertices(gps_coordinates)
+    g = Graph([gps_coordinates, edges], format="vertices_and_edges",
+              name="World Map", immutable=immutable)
     g.gps_coordinates = gps_coordinates
-    g.name("World Map")
     return g

@@ -20,8 +20,8 @@ from sage.misc.binary_tree cimport BinaryTree
 
 cdef class CompiledPolynomialFunction:
     """
-    Builds a reasonably optimized directed acyclic graph representation
-    for a given polynomial.  A CompiledPolynomialFunction is callable from
+    Build a reasonably optimized directed acyclic graph representation
+    for a given polynomial.  A ``CompiledPolynomialFunction`` is callable from
     python, though it is a little faster to call the eval function from
     pyrex.
 
@@ -95,7 +95,6 @@ cdef class CompiledPolynomialFunction:
           forthcoming) requires the gaps to considered in order, and adds
           additional dummies as it goes.  Hence, the gaps are put into a
           binary tree.
-
         """
         cdef generic_pd max_gap, dag
         cdef BinaryTree gaps
@@ -184,7 +183,7 @@ cdef class CompiledPolynomialFunction:
             gaps.insert(gap,g)
             return g
 
-    cdef void _fill_gaps_binary(CompiledPolynomialFunction self, BinaryTree gaps):
+    cdef void _fill_gaps_binary(CompiledPolynomialFunction self, BinaryTree gaps) noexcept:
         """
         The desired gaps come in a tree, filled with dummy nodes (with the
         exception of the var node, which is not a dummy).  The nodes are
@@ -232,8 +231,6 @@ cdef class CompiledPolynomialFunction:
 
         The r == 0 case in step 3 is equivalent to binary exponentiation.
         """
-
-
         cdef int m,n,k,r,half
         cdef generic_pd T,N,H
         cdef dummy_pd M
@@ -246,9 +243,9 @@ cdef class CompiledPolynomialFunction:
                 M = <dummy_pd>T
             m = M.label
             n = N.label
-            k = m/n
-            r = m%n
-            half = m/2
+            k = m / n
+            r = m % n
+            half = m / 2
 
             found = False
             if m % 2 == 0 and n >= half:
@@ -266,7 +263,6 @@ cdef class CompiledPolynomialFunction:
                     M.fill(mul_pd(self._get_gap(gaps, n*(k-1)), N))
 
             T = gaps.pop_max()
-
 
 
 ########################################################
@@ -331,8 +327,6 @@ cdef class CompiledPolynomialFunction:
 #               reference.
 
 
-
-
 # These inline functions are called wherever a node gets
 # evaluated.  First, pd_eval is called to ensure that the
 # target DAG node will have its .value property set. It
@@ -352,7 +346,7 @@ cdef inline int pd_eval(generic_pd pd, object vars, object coeffs) except -2:
         pd.eval(vars, coeffs)
     pd.hits += 1
 
-cdef inline void pd_clean(generic_pd pd):
+cdef inline void pd_clean(generic_pd pd) noexcept:
     if pd.hits >= pd.refs:
         pd.value = None
         pd.hits = 0
@@ -370,7 +364,7 @@ cdef class generic_pd:
     cdef generic_pd nodummies(generic_pd self):
         return self
 
-    cdef void reset(generic_pd self):
+    cdef void reset(generic_pd self) noexcept:
         self.hits = 0
         self.value = None
 
@@ -378,7 +372,7 @@ cdef class dummy_pd(generic_pd):
     def __init__(dummy_pd self, int label):
         self.label = label
 
-    cdef void fill(dummy_pd self, generic_pd link):
+    cdef void fill(dummy_pd self, generic_pd link) noexcept:
         self.link = link
 
     cdef generic_pd nodummies(dummy_pd self):
@@ -417,7 +411,7 @@ cdef class coeff_pd(generic_pd):
     def __repr__(self):
         return "a%s" % (self.index)
 
-    cdef void reset(self):
+    cdef void reset(self) noexcept:
         pass
 
 cdef class unary_pd(generic_pd):
@@ -430,7 +424,7 @@ cdef class unary_pd(generic_pd):
         self.operand = self.operand.nodummies()
         return self
 
-    cdef void reset(self):
+    cdef void reset(self) noexcept:
         generic_pd.reset(self)
         self.operand.reset()
 
@@ -458,7 +452,6 @@ cdef class pow_pd(unary_pd):
         return "(%s^%s)" % (self.left, self.exponent)
 
 
-
 cdef class binary_pd(generic_pd):
     def __init__(binary_pd self, generic_pd left, generic_pd right):
         generic_pd.__init__(self)
@@ -472,7 +465,7 @@ cdef class binary_pd(generic_pd):
         self.right = self.right.nodummies()
         return self
 
-    cdef void reset(self):
+    cdef void reset(self) noexcept:
         generic_pd.reset(self)
         self.left.reset()
         self.right.reset()

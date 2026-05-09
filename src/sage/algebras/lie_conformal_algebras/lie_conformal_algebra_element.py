@@ -15,9 +15,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.arith.misc import factorial
+from sage.misc.latex import latex
 from sage.misc.misc_c import prod
 from sage.misc.repr import repr_lincomb
-from sage.misc.latex import latex
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 
 
@@ -28,12 +28,12 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
     """
     def T(self, n=1):
         r"""
-        The n-th derivative of this element.
+        The `n`-th derivative of this element.
 
         INPUT:
 
-        - ``n`` -- a non-negative integer (default:``1``); how many
-          times to apply `T` to this element.
+        - ``n`` -- nonnegative integer (default: `1`); how many
+          times to apply `T` to this element
 
         We use the *divided powers* notation
         `T^{(j)} = \frac{T^j}{j!}`.
@@ -50,7 +50,8 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
             sage: C.T()
             0
 
-            sage: R = lie_conformal_algebras.NeveuSchwarz(QQbar); R.inject_variables()
+            sage: R = lie_conformal_algebras.NeveuSchwarz(QQbar)
+            sage: R.inject_variables()
             Defining L, G, C
             sage: (L + 2*G.T() + 4*C).T(2)
             2*T^(2)L + 12*T^(3)G
@@ -68,11 +69,10 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
             if (a, m + n) in p._indices:
                 return coef * prod(range(m + 1, m + n + 1))\
                     * p.monomial((a, m + n))
-            else:
-                return p.zero()
+            return p.zero()
         return sum(mon.T(n) for mon in self.terms())
 
-    def is_monomial(self):
+    def is_monomial(self) -> bool:
         """
         Whether this element is a monomial.
 
@@ -96,7 +96,7 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
         """
         The lambda bracket of these two elements.
 
-        The result is a dictionary with non-negative integer keys.
+        The result is a dictionary with nonnegative integer keys.
         The value corresponding to the entry `j` is ``self_{(j)}right``.
 
         EXAMPLES::
@@ -108,7 +108,8 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
             {1: -TL, 2: -4*L, 4: -2*C}
 
             sage: R = lie_conformal_algebras.Affine(QQbar, 'A1', names=('e','h','f')); R
-            The affine Lie conformal algebra of type ['A', 1] over Algebraic Field
+            The affine Lie conformal algebra of type ['A', 1]
+            over Algebraic Field
             sage: R.inject_variables()
             Defining e, h, f, K
             sage: e.bracket(f)
@@ -147,7 +148,7 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
                 ret[k] = ret.get(k, pz) + d[k]
         return {k: v for k, v in ret.items() if v}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A visual representation of this element.
 
@@ -173,19 +174,19 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
             return "0"
         p = self.parent()
         if p._names:
-            terms = [("T^({}){}".format(k1, p._names[p._index_to_pos[k0]]), v) if k1 > 1
-                     else ("T{}".format(p._names[p._index_to_pos[k0]]), v) if k1 == 1
-                     else ("{}".format(p._names[p._index_to_pos[k0]]), v)
+            terms = [(f"T^({k1}){p._names[p._index_to_pos[k0]]}", v) if k1 > 1
+                     else (f"T{p._names[p._index_to_pos[k0]]}", v) if k1 == 1
+                     else (f"{p._names[p._index_to_pos[k0]]}", v)
                      for (k0, k1), v in self.monomial_coefficients().items()]
         else:
-            terms = [("T^({}){}".format(k1, p._repr_generator(k0)), v) if k1 > 1
-                     else ("T{}".format(p._repr_generator(k0)), v) if k1 == 1
-                     else ("{}".format(p._repr_generator(k0)), v)
+            terms = [(f"T^({k1}){p._repr_generator(k0)}", v) if k1 > 1
+                     else (f"T{p._repr_generator(k0)}", v) if k1 == 1
+                     else (f"{p._repr_generator(k0)}", v)
                      for (k0, k1), v in self.monomial_coefficients().items()]
 
         return repr_lincomb(terms, strip_one=True)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         A visual representation of this element.
 
@@ -221,12 +222,12 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
         except ValueError:
             names = None
         if names:
-            terms = [("T^{{({0})}}{1}".format(k1, names[p._index_to_pos[k0]]), v) if k1 > 1
+            terms = [("T^{{({})}}{}".format(k1, names[p._index_to_pos[k0]]), v) if k1 > 1
                      else ("T{}".format(names[p._index_to_pos[k0]]), v) if k1 == 1
                      else ("{}".format(names[p._index_to_pos[k0]]), v)
                      for (k0, k1), v in self.monomial_coefficients().items()]
         else:
-            terms = [("T^{{({0})}}{1}".format(k1, latex(k0)), v) if k1 > 1
+            terms = [("T^{{({})}}{}".format(k1, latex(k0)), v) if k1 > 1
                      else ("T{}".format(latex(k0)), v) if k1 == 1
                      else ("{}".format(latex(k0)), v)
                      for (k0, k1), v in self.monomial_coefficients().items()]

@@ -59,11 +59,12 @@ class FGP_Element(ModuleElement):
         """
         INPUT:
 
-        - ``parent`` -- parent module M
+        - ``parent`` -- parent module ``M``
 
-        - ``x`` -- element of M.V()
+        - ``x`` -- element of ``M.V()``
 
-        - ``check`` -- (default: True) if True, verify that x in M.V()
+        - ``check`` -- boolean (default: ``True``); if ``True``, verify that x
+          in ``M.V()``
 
         EXAMPLES::
 
@@ -83,7 +84,8 @@ class FGP_Element(ModuleElement):
 
     def lift(self):
         """
-        Lift self to an element of V, where the parent of self is the quotient module V/W.
+        Lift ``self`` to an element of V, where the parent of ``self`` is the
+        quotient module V/W.
 
         EXAMPLES::
 
@@ -193,7 +195,7 @@ class FGP_Element(ModuleElement):
 
         INPUT:
 
-        - ``c`` -- an element of ``self.parent().base_ring()``.
+        - ``c`` -- an element of ``self.parent().base_ring()``
 
         OUTPUT:
 
@@ -238,7 +240,7 @@ class FGP_Element(ModuleElement):
 
         INPUT:
 
-        - ``c`` -- an element of ``self.parent().base_ring()``.
+        - ``c`` -- an element of ``self.parent().base_ring()``
 
         OUTPUT:
 
@@ -355,11 +357,9 @@ class FGP_Element(ModuleElement):
 
         INPUT:
 
-        - ``base_ring`` -- the desired base ring of the vector.
+        - ``base_ring`` -- the desired base ring of the vector
 
-        OUTPUT:
-
-        A vector over the base ring.
+        OUTPUT: a vector over the base ring
 
         EXAMPLES::
 
@@ -386,12 +386,11 @@ class FGP_Element(ModuleElement):
         v = self.vector()
         if base_ring is None or v.base_ring() is base_ring:
             return v.__copy__()
-        else:
-            return v.change_ring(base_ring)
+        return v.change_ring(base_ring)
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         """
-        Compare self and right.
+        Compare ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -409,7 +408,7 @@ class FGP_Element(ModuleElement):
             sage: x + x == 2*x
             True
         """
-        return richcmp(self.vector(), right.vector(), op)
+        return richcmp(self.vector(), other.vector(), op)
 
     def additive_order(self):
         """
@@ -445,10 +444,10 @@ class FGP_Element(ModuleElement):
         from sage.rings.integer import Integer
         from sage.arith.functions import lcm
         n = Integer(1)
-        for i, a in enumerate(I):
+        for vi, a in zip(v, I):
             if a == 0:
-                if v[i] != 0:
+                if vi != 0:
                     return infinity
             else:
-                n = lcm(n, Mod(v[i],a).additive_order())
+                n = lcm(n, Mod(vi, a).additive_order())
         return n

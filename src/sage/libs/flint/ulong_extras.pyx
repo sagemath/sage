@@ -1,16 +1,20 @@
-def n_factor_to_list(unsigned long n, int proved):
-    """
-    A wrapper around ``n_factor``.
+r"""
+Deprecated modules.
 
-    EXAMPLES::
+Functions were moved in ulong_extras_sage.pyx
 
-        sage: from sage.libs.flint.ulong_extras import n_factor_to_list
-        sage: n_factor_to_list(60, 20)
-        [(2, 2), (3, 1), (5, 1)]
-        sage: n_factor_to_list((10**6).next_prime() + 1, 0)
-        [(2, 2), (53, 2), (89, 1)]
-    """
-    cdef n_factor_t f
-    n_factor_init(&f)
-    n_factor(&f, n, proved)
-    return [(f.p[i], int(f.exp[i])) for i in range(f.num)]
+TESTS::
+
+    sage: from sage.libs.flint.ulong_extras import n_factor_to_list
+    sage: n_factor_to_list(60, 20)
+    doctest:warning
+    ...
+    DeprecationWarning:
+    Importing n_factor_to_list from here is deprecated; please use "from sage.libs.flint.ulong_extras_sage import n_factor_to_list" instead.
+    See https://github.com/sagemath/sage/issues/36449 for details.
+    [(2, 2), (3, 1), (5, 1)]
+"""
+
+from sage.misc.lazy_import import LazyImport
+
+n_factor_to_list = LazyImport('sage.libs.flint.ulong_extras_sage', 'n_factor_to_list', deprecation=36449)

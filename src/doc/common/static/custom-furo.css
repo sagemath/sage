@@ -11,3 +11,66 @@ body[data-theme="dark"] div.highlight {
   background: #383838;
 }
 
+/* Copied the style for a.pdf from website/templates/index_furo.html */
+
+a.pdf {
+  margin-right: 0.5em;
+}
+
+a.pdf:hover {
+  text-decoration: none;
+}
+
+/* Style for announcement banner */
+
+.announcement {
+  background: orange;
+}
+
+.announcement-content {
+  color: black;
+}
+
+.announcement-content a {
+  color: white;
+  text-decoration: none;
+}
+
+/* Style for the floating versions menu */
+
+.sidebar-drawer {
+  z-index: 100;
+}
+
+.select-wrapper {
+  display: block;
+  text-align: center;
+}
+
+#versions-menu {
+  display: inline-block;
+  font-size: small;
+  opacity: 1;
+  border: none;
+  background-color: transparent;
+  color: var(--color-sidebar-link-text--top-level);;
+}
+
+#versions-menu:focus {
+  outline: none;
+}
+
+body[data-theme="dark"] {
+  #versions-menu {
+    background-color: transparent;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body[data-theme="auto"] {  /* the same styles with body[data-theme="dark"] */
+    #versions-menu {
+      background-color: transparent;
+    }
+  }
+}
+

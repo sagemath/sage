@@ -8,7 +8,11 @@ for l in bzip2 texinfo polymake; do
     fi
 done
 export PATH
-PKG_CONFIG_PATH="$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH"
+if [ -z "$PKG_CONFIG_PATH" ]; then
+    PKG_CONFIG_PATH="$HOMEBREW/lib/pkgconfig"
+else
+    PKG_CONFIG_PATH="$HOMEBREW/lib/pkgconfig:$PKG_CONFIG_PATH"
+fi
 # libpng.pc depends on zlib.pc
 for l in openblas openssl readline sqlite zlib; do
     if [ -d "$HOMEBREW/opt/$l/lib/pkgconfig" ]; then
@@ -45,3 +49,9 @@ for l in ; do
     fi
 done
 export ACLOCAL_PATH
+
+# Add cvxopt library path
+if [ -d "$HOMEBREW/include/suitesparse" ]; then
+    export CVXOPT_SUITESPARSE_INC_DIR="$HOMEBREW/include/suitesparse"
+    export CVXOPT_SUITESPARSE_LIB_DIR="$HOMEBREW/lib"
+fi

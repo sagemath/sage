@@ -83,7 +83,6 @@ EXAMPLES::
     sage: w = G(f)
     sage: w == x
     True
-
 """
 
 # ****************************************************************************
@@ -99,28 +98,10 @@ EXAMPLES::
 #  is available at:
 #
 #                  https://www.gnu.org/licenses/
-#
 # ****************************************************************************
 
 import sage.categories.homset
 from sage.homology.chain_complex_morphism import ChainComplexMorphism
-
-
-def is_ChainComplexHomspace(x):
-    """
-    Return ``True`` if and only if ``x`` is a morphism of chain complexes.
-
-    EXAMPLES::
-
-        sage: from sage.homology.chain_complex_homspace import is_ChainComplexHomspace
-        sage: T = SimplicialComplex([[1,2,3,4],[7,8,9]])
-        sage: C = T.chain_complex(augmented=True, cochain=True)
-        sage: G = Hom(C, C)
-        sage: is_ChainComplexHomspace(G)
-        True
-
-    """
-    return isinstance(x, ChainComplexHomspace)
 
 
 class ChainComplexHomspace(sage.categories.homset.Homset):
@@ -137,7 +118,6 @@ class ChainComplexHomspace(sage.categories.homset.Homset):
          from Chain complex with at most 5 nonzero terms over Integer Ring
            to Chain complex with at most 5 nonzero terms over Integer Ring
            in Category of chain complexes over Integer Ring
-
     """
     def __call__(self, f):
         """
@@ -155,6 +135,5 @@ class ChainComplexHomspace(sage.categories.homset.Homset):
             sage: y = G(f)
             sage: x == y
             True
-
         """
         return ChainComplexMorphism(f, self.domain(), self.codomain())

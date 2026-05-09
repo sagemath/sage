@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.graphs
 """
-Coxeter Matrices
+Coxeter matrices
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -713,13 +713,15 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: CM = CoxeterMatrix([[1, -2], [-2, 1]], ['a', 'b'])
-            sage: CM.__hash__()
-            -337812865737895661  # 64-bit
-            153276691            # 32-bit
+            sage: hash32 = 153276691
+            sage: hash64 = -337812865737895661
+            sage: CM.__hash__() in [hash32, hash64]
+            True
             sage: CM = CoxeterMatrix([[1, -3], [-3, 1]], ['1', '2'])
-            sage: CM.__hash__()
-            -506719298606843492  # 64-bit
-            -1917568612          # 32-bit
+            sage: hash32 = -1917568612
+            sage: hash64 = -506719298606843492
+            sage: CM.__hash__() in [hash32, hash64]
+            True
         """
         return hash(self._matrix)
 
@@ -775,8 +777,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         if R is not None:
             return self._matrix.change_ring(R)
-        else:
-            return self._matrix
+        return self._matrix
 
     ##########################################################################
     # Coxeter type methods
@@ -850,6 +851,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: CoxeterType(['A', 2, 1]).bilinear_form()
             [   1 -1/2 -1/2]
             [-1/2    1 -1/2]
@@ -943,7 +945,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         return self.coxeter_graph().is_connected()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return if ``self`` is a finite type or ``False`` if unknown.
 
@@ -961,7 +963,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         return self._is_finite
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return if ``self`` is an affine type or ``False`` if unknown.
 
@@ -1077,7 +1079,7 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
         ....:     if C.is_finite() or C.is_affine():
         ....:         assert recognized_type == C.coxeter_type()
 
-    We check the rank 2 cases (:trac:`20419`)::
+    We check the rank 2 cases (:issue:`20419`)::
 
         sage: for i in range(2, 10):
         ....:     M = matrix([[1,i],[i,1]])
@@ -1094,7 +1096,7 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
         Coxeter type of ['A', 1, 1]
 
     Check that this works for reducible types with relabellings
-    (:trac:`24892`)::
+    (:issue:`24892`)::
 
         sage: CM = CoxeterMatrix([[1,2,5],[2,1,2],[5,2,1]]); CM
         [1 2 5]
@@ -1113,7 +1115,7 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
 
     types = []
     for S in G.connected_components_subgraphs():
-        r = S.num_verts()
+        r = S.n_vertices()
         # Handle the special cases first
         if r == 1:
             types.append(CoxeterType(['A', 1]).relabel({1: S.vertices(sort=True)[0]}))

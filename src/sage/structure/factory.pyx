@@ -1,10 +1,6 @@
 r"""
 Factory for cached representations
 
-.. SEEALSO::
-
-    :mod:`sage.structure.unique_representation`
-
 Using a :class:`UniqueFactory` is one way of implementing a *cached
 representation behaviour*. In spite of its name, using a
 :class:`UniqueFactory` is not enough to ensure the *unique representation
@@ -35,14 +31,17 @@ sophisticated, then generally
 :class:`~sage.structure.unique_representation.CachedRepresentation` is much
 easier to use than a factory.
 
+.. SEEALSO::
+
+    :mod:`sage.structure.unique_representation`
+
 AUTHORS:
 
-- Robert Bradshaw (2008): initial version.
-- Simon King (2013): extended documentation.
+- Robert Bradshaw (2008): initial version
+- Simon King (2013): extended documentation
 - Julian Rueth (2014-05-09): use ``_cache_key`` if parameters are unhashable
-
+- Kwankyu Lee (2025-10): added support for ``do_pickle=True`` for cached methods
 """
-
 #*****************************************************************************
 #  Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #                2014 Julian Rueth <julian.rueth@fsfe.org>
@@ -56,7 +55,7 @@ AUTHORS:
 
 import types
 
-from .sage_object cimport SageObject
+from sage.structure.sage_object cimport SageObject
 
 cdef sage_version
 from sage.version import version as sage_version
@@ -171,18 +170,16 @@ cdef class UniqueFactory(SageObject):
         ....:         return args, {'impl':kwds.get('impl', None)}
         ....:     def create_object(self, version, key, **extra_args):
         ....:         impl = extra_args['impl']
-        ....:         if impl=='C':
+        ....:         if impl == 'C':
         ....:             return C(*key)
-        ....:         if impl=='D':
-        ....:             return D(*key)
-        ....:         return E(*key)
+        ....:         return D(*key)
         ....:
 
     Now we can create a factory instance. It is supposed to be found under the
-    name ``"F"`` in the ``"__main__"`` module. Note that in an interactive
+    name ``'F'`` in the ``__main__`` module. Note that in an interactive
     session, ``F`` would automatically be in the ``__main__`` module. Hence,
     the second and third of the following four lines are only needed in
-    doctests.  ::
+    doctests. ::
 
         sage: F = MyFactory("__main__.F")
         sage: import __main__
@@ -190,11 +187,10 @@ cdef class UniqueFactory(SageObject):
         sage: loads(dumps(F)) is F
         True
 
-    Now we create three classes ``C``, ``D`` and ``E``. The first is a Cython
+    Now we create two classes ``C`` and ``D``. The first is a Cython
     extension-type class that does not allow weak references nor attribute
-    assignment. The second is a Python class that is not derived from
-    :class:`object`. The third allows attribute assignment and is derived
-    from :class:`object`.  ::
+    assignment. The second is a Python class, that is derived from
+    :class:`object`. ::
 
         sage: cython("cdef class C: pass")                                              # needs sage.misc.cython
         sage: class D:
@@ -203,7 +199,6 @@ cdef class UniqueFactory(SageObject):
         ....:     def __repr__(self):
         ....:         return "D%s"%repr(self.t)
         ....:
-        sage: class E(D, object): pass
 
     Again, being in a doctest, we need to put the class ``D`` into the
     ``__main__`` module, so that Python can find it::
@@ -237,7 +232,7 @@ cdef class UniqueFactory(SageObject):
     only considered an "extra argument" that does not count for the key.
     ::
 
-        sage: c is F(1, impl='C') is F(1, impl="D") is F(1)                             # needs sage.misc.cython
+        sage: c is F(1, impl='C') is F(1, impl='D') is F(1)                             # needs sage.misc.cython
         True
 
     However, pickling and unpickling does not use the cache. This is because
@@ -250,19 +245,14 @@ cdef class UniqueFactory(SageObject):
         False
 
     We have already seen that our factory will only take the requested
-    implementation into account if the arguments used as key have not been
-    used yet. So, we use other arguments to create an instance of class
-    ``D``::
+    implementation into account if the arguments used as key have not been used
+    yet. So, we use other arguments to create an instance of class ``D``. As
+    the class can be weak-referenced and allows for attribute assignment,
+    everything works::
 
         sage: d = F(2, impl='D')
         sage: isinstance(d, D)
         True
-
-    The factory only knows about the pickling protocol used by new style
-    classes. Hence, again, pickling and unpickling fails to use the cache,
-    even though the "factory data" are now available (this is not the case
-    on Python 3 which *only* has new style classes)::
-
         sage: loads(dumps(d)) is d
         True
         sage: d._factory_data
@@ -271,19 +261,28 @@ cdef class UniqueFactory(SageObject):
          (2,),
          {'impl': 'D'})
 
-    Only when we have a new style class that can be weak referenced and allows
-    for attribute assignment, everything works::
+    When an object constructed by a factory is pickled, the content of
+    ``__dict__`` is not put into the pickle since unpickling either restores
+    the object from the cache or reconstructs the object afresh. This defeats
+    methods decorated with ``@cached_method(do_pickle=True)``. Hence
+    ``UniqueFactory`` makes exceptions to the placeholders for such methods::
 
-        sage: e = F(3)
-        sage: isinstance(e, E)
+        sage: # needs sage.rings.function_field
+        sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+        sage: F = K.extension(y^5 - x^3 - 3*x + x*y)
+        sage: F.genus()
+        4
+        sage: type(F.genus)
+        <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+        sage: F.genus.is_pickled_with_cache()
         True
-        sage: loads(dumps(e)) is e
+        sage: s = dumps(F)
+        sage: F.genus.clear_cache()
+        sage: Fp = loads(s)
+        sage: Fp is F
         True
-        sage: e._factory_data
-        (<__main__.MyFactory object at ...>,
-         (...),
-         (3,),
-         {'impl': None})
+        sage: Fp.genus.cache
+        4
     """
     cdef readonly _name
     cdef readonly _cache
@@ -292,9 +291,9 @@ cdef class UniqueFactory(SageObject):
         """
         INPUT:
 
-        - ``name`` -- string. A name in the global namespace referring
-          to self or a fully qualified path name to self, which is
-          used to locate the factory on unpickling.
+        - ``name`` -- string; a name in the global namespace referring to
+          ``self`` or a fully qualified path name to ``self``, which is used to
+          locate the factory on unpickling
 
         EXAMPLES::
 
@@ -374,7 +373,7 @@ cdef class UniqueFactory(SageObject):
 
     cpdef get_object(self, version, key, extra_args):
         """
-        Returns the object corresponding to ``key``, creating it with
+        Return the object corresponding to ``key``, creating it with
         ``extra_args`` if necessary (for example, it isn't in the cache
         or it is unpickling from an older version of Sage).
 
@@ -395,7 +394,7 @@ cdef class UniqueFactory(SageObject):
 
         TESTS:
 
-        Check that :trac:`16317` has been fixed, i.e., caching works for
+        Check that :issue:`16317` has been fixed, i.e., caching works for
         unhashable objects::
 
             sage: K.<u> = Qq(4)                                                         # needs sage.rings.padics
@@ -403,7 +402,6 @@ cdef class UniqueFactory(SageObject):
             Making object (1 + O(2^20), 'c')
             sage: d is test_factory.get_object(3.0, (K(1), 'c'), {})                    # needs sage.rings.padics
             True
-
         """
         cache_key = key
         try:
@@ -432,6 +430,8 @@ cdef class UniqueFactory(SageObject):
             f = obj.__class__.__reduce__
             if f.__objclass__ is object or f.__name__ == "__reduce_cython__":
                 obj.__reduce_ex__ = types.MethodType(generic_factory_reduce, obj)
+                # Install a custom __setstate__ method to reinstate unpickled state data
+                obj.__setstate__ = types.MethodType(generic_factory_setstate, obj)
         except AttributeError:
             pass
         return obj
@@ -518,9 +518,9 @@ cdef class UniqueFactory(SageObject):
         EXAMPLES:
 
         The ``GF`` factory used to have a custom :meth:`other_keys`
-        method, but this was removed in :trac:`16934`::
+        method, but this was removed in :issue:`16934`::
 
-            sage: # needs sage.libs.linbox sage.ring.finite_rings
+            sage: # needs sage.libs.linbox sage.rings.finite_rings
             sage: key, _ = GF.create_key_and_extra_args(27, 'k'); key
             (27, ('k',), x^3 + 2*x + 1, 'givaro', 3, 3, True, None, 'poly', True, True, True)
             sage: K = GF.create_object(0, key); K
@@ -556,7 +556,7 @@ cdef class UniqueFactory(SageObject):
             sage: a = test_factory(1, 2)
             Making object (1, 2)
             sage: test_factory.reduce_data(a)
-            (<built-in function generic_factory_unpickle>,
+            (<cyfunction generic_factory_unpickle at ...>,
              (<sage.structure.test_factory.UniqueFactoryTester object at ...>,
               (...),
               (1, 2),
@@ -565,10 +565,16 @@ cdef class UniqueFactory(SageObject):
         Note that the ellipsis ``(...)`` here stands for the Sage
         version.
         """
-        return generic_factory_unpickle, obj._factory_data
+        d = generic_factory_getstate(obj)
+        if d:
+            return generic_factory_unpickle, obj._factory_data, d
+        else:
+            return generic_factory_unpickle, obj._factory_data
+
 
 # This is used to handle old UniqueFactory pickles
 factory_unpickles = {}
+
 
 def register_factory_unpickle(name, callable):
     """
@@ -629,8 +635,9 @@ def register_factory_unpickle(name, callable):
         sage: loads(s)
         Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
     """
-    #global factory_unpickles
+    global factory_unpickles
     factory_unpickles[name] = callable
+
 
 def generic_factory_unpickle(factory, *args):
     """
@@ -653,7 +660,7 @@ def generic_factory_unpickle(factory, *args):
 
     TESTS:
 
-    The following was enabled in :trac:`16349`. Suppose we have defined
+    The following was enabled in :issue:`16349`. Suppose we have defined
     (somewhere in the library of an old Sage version) a unique factory; in our
     example below, it returns polynomial rings. Now suppose that we want to
     replace the factory by something else, say, a class that provides the
@@ -713,7 +720,6 @@ def generic_factory_unpickle(factory, *args):
         False
         sage: loads(dumps(b)) is b
         True
-
     """
     cdef UniqueFactory F
     if factory is not None:
@@ -722,20 +728,25 @@ def generic_factory_unpickle(factory, *args):
             return F.get_object(*args)
         except TypeError:
             pass
-    # See trac #16349: When replacing a UniqueFactory by something else (e.g.,
+    # See Issue #16349: When replacing a UniqueFactory by something else (e.g.,
     # a UniqueRepresentation), then we get the object by calling.
     #
     # The first argument of a UniqueFactory pickle is a version number. We
     # strip this.
     return factory(*args[1], **args[2])
 
+
 def generic_factory_reduce(self, proto):
     """
     Used to provide a ``__reduce__`` method if one does not already exist.
 
+    INPUT:
+
+    - ``proto`` -- positive integer; protocol number
+
     EXAMPLES::
 
-        sage: V = QQ^6                                                                  # needs sage.modules
+        sage: V = QQ^6                                                                              # needs sage.modules
         sage: sage.structure.factory.generic_factory_reduce(V, 1) == V.__reduce_ex__(1)             # needs sage.modules
         True
     """
@@ -743,6 +754,73 @@ def generic_factory_reduce(self, proto):
         raise NotImplementedError("__reduce__ not implemented for %s" % type(self))
     else:
         return self._factory_data[0].reduce_data(self)
+
+
+def generic_factory_getstate(obj):
+    """
+    Used for pickling :class:`UniqueFactory` objects.
+
+    The cached value of the method with ``do_pickle=True`` is pickled
+    along with the object.
+
+    TESTS::
+
+        sage: # needs sage.rings.function_field
+        sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+        sage: F = K.extension(y^5 - x^3 - 3*x + x*y)
+        sage: F.genus()
+        4
+        sage: F.genus.cache
+        4
+        sage: s = dumps(F)
+        sage: F.genus.clear_cache()
+        sage: F.genus.cache
+        sage: Fp = loads(s)
+        sage: Fp is F
+        True
+        sage: Fp.genus.cache
+        4
+    """
+    # We filter out cached-method placeholders (CachedFunction) with
+    # do_pickle=True in __dict__ to keep them as the state of the pickled object.
+    #
+    # Note that the same code is used to get the state of UniqueRepresentation objects.
+    from sage.misc.cachefunc import CachedFunction
+    d = {}
+    try:
+        for key, value in obj.__dict__.items():
+            if isinstance(value, CachedFunction) and value.is_pickled_with_cache():
+                d[key] = value
+    except AttributeError:
+        pass
+    return d
+
+
+def generic_factory_setstate(self, d):
+    """
+    Used for unpickling :class:`UniqueFactory` objects.
+
+    TESTS:
+
+    Unpickled value overrides cached value::
+
+        sage: # needs sage.rings.function_field
+        sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+        sage: F = K.extension(y^5 - x^3 - 3*x + x*y)
+        sage: F.genus()
+        4
+        sage: s = dumps(F)
+        sage: F.genus.set_cache(10)
+        sage: F.genus()
+        10
+        sage: Fp = loads(s)
+        sage: Fp is F
+        True
+        sage: Fp.genus()
+        4
+    """
+    self.__dict__.update(d)
+
 
 def lookup_global(name):
     """

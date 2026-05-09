@@ -24,7 +24,7 @@ The algorithm used in this file comes from
 
 from sage.arith.misc import divisors, euler_phi, factorial, gcd
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.composition import Composition
+from sage.combinat.integer_vector import IntegerVector, IntegerVectors
 from sage.combinat.misc import DoublyLinkedList
 from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
@@ -47,7 +47,7 @@ def Necklaces(content):
 
     INPUT:
 
-    - ``content`` -- a list or tuple of non-negative integers
+    - ``content`` -- list or tuple of nonnegative integers
 
     EXAMPLES::
 
@@ -75,7 +75,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``content`` -- a list or tuple of non-negative integers
+    - ``content`` -- list or tuple of nonnegative integers
     """
     @staticmethod
     def __classcall_private__(cls, content):
@@ -87,8 +87,8 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
             sage: Necklaces([2,1,1]) is Necklaces(Composition([2,1,1]))
             True
         """
-        if not isinstance(content, Composition):
-            content = Composition(content)
+        if not isinstance(content, IntegerVector):
+            content = IntegerVectors()(content)
         return super().__classcall__(cls, content)
 
     def __init__(self, content):
@@ -103,7 +103,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
             sage: T = Necklaces([2,1])
             sage: TestSuite(T).run()
         """
-        self._content = content
+        self._content = list(content)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def content(self):
@@ -134,7 +134,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``x`` -- a list of integers
+        - ``x`` -- list of integers
 
         EXAMPLES::
 
@@ -210,9 +210,9 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
 
         ::
 
-            sage: comps = [[],[2,2],[3,2,7],[4,2],[0,4,2],[2,0,4]]+Compositions(4).list()
+            sage: comps = [[],[2,2],[3,2,7],[4,2],[0,4,2],[2,0,4]] + Compositions(4).list()
             sage: ns = [Necklaces(comp) for comp in comps]
-            sage: all(n.cardinality() == len(n.list()) for n in ns)
+            sage: all(n.cardinality() == len(n.list()) for n in ns)                     # needs sage.libs.pari
             True
         """
         evaluation = self._content
@@ -360,12 +360,11 @@ def _fast_fixed_content(a, content, t, p, k, r, s, dll, equality=False):
             content[j] += 1
             j = dll.next(j)
         a[t - 1] = k - 1
-    return
 
 
-################################
-# List Fixed Content Algorithm #
-################################
+# ###############################
+# List Fixed Content Algorithm  #
+# ###############################
 def _lfc(content, equality=False):
     """
     EXAMPLES::
@@ -456,13 +455,13 @@ def _sfc(content, equality=False):
 
     INPUT:
 
-    - ``content`` -- a list of non-negative integers with no leading 0s
-    - ``equality`` -- boolean (optional, default: ``True``)
+    - ``content`` -- list of nonnegative integers with no leading 0s
+    - ``equality`` -- boolean (default: ``True``)
 
     .. WARNING::
 
-        You will get incorrect results if there are leading 0's in ``content``.
-        See :trac:`12997` and :trac:`17436`.
+        You will get incorrect results if there are leading 0s in ``content``.
+        See :issue:`12997` and :issue:`17436`.
 
     EXAMPLES::
 
@@ -544,7 +543,7 @@ def _lyn(w):
         a = w[:i]
         if b < a[i - p] or b > k - 1:
             return p
-        elif b == a[i - p]:
+        if b == a[i - p]:
             pass
         else:
             p = i + 1

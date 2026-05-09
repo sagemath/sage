@@ -1,15 +1,13 @@
 r"""
 Iterable of the keys of a Mapping associated with nonzero values
 """
-
 from collections.abc import MappingView, Sequence, Set
-
-from sage.misc.superseded import deprecation
 
 
 class SupportView(MappingView, Sequence, Set):
     r"""
-    Dynamic view of the set of keys of a dictionary that are associated with nonzero values
+    Dynamic view of the set of keys of a dictionary that are associated with
+    nonzero values.
 
     It behaves like the objects returned by the :meth:`keys`, :meth:`values`,
     :meth:`items` of a dictionary (or other :class:`collections.abc.Mapping`
@@ -17,9 +15,9 @@ class SupportView(MappingView, Sequence, Set):
 
     INPUT:
 
-    - ``mapping`` -- a :class:`dict` or another :class:`collections.abc.Mapping`.
+    - ``mapping`` -- a :class:`dict` or another :class:`collections.abc.Mapping`
 
-    - ``zero`` -- (optional) test for zeroness by comparing with this value.
+    - ``zero`` -- (optional) test for zeroness by comparing with this value
 
     EXAMPLES::
 
@@ -47,7 +45,7 @@ class SupportView(MappingView, Sequence, Set):
         3
     """
 
-    def __init__(self, mapping, *, zero=None):
+    def __init__(self, mapping, *, zero=None) -> None:
         r"""
         TESTS::
 
@@ -59,7 +57,7 @@ class SupportView(MappingView, Sequence, Set):
         self._mapping = mapping
         self._zero = zero
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         TESTS::
 
@@ -118,7 +116,7 @@ class SupportView(MappingView, Sequence, Set):
                 if value != zero:
                     yield key
 
-    def __contains__(self, key):
+    def __contains__(self, key) -> bool:
         r"""
         TESTS::
 
@@ -147,14 +145,8 @@ class SupportView(MappingView, Sequence, Set):
             sage: supp = SupportView(d); supp
             SupportView({1: 17, 2: 0})
             sage: supp == [1]
-            doctest:warning...
-            DeprecationWarning: comparing a SupportView with a list is deprecated
-            See https://github.com/sagemath/sage/issues/34509 for details.
-            True
+            False
         """
-        if isinstance(other, list):
-            deprecation(34509, 'comparing a SupportView with a list is deprecated')
-            return list(self) == other
         return NotImplemented
 
     def __ne__(self, other):
@@ -166,12 +158,6 @@ class SupportView(MappingView, Sequence, Set):
             sage: supp = SupportView(d); supp
             SupportView({1: 17, 2: 0})
             sage: supp != [1]
-            doctest:warning...
-            DeprecationWarning: comparing a SupportView with a list is deprecated
-            See https://github.com/sagemath/sage/issues/34509 for details.
-            False
+            True
         """
-        if isinstance(other, list):
-            deprecation(34509, 'comparing a SupportView with a list is deprecated')
-            return list(self) != other
         return NotImplemented

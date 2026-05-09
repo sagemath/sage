@@ -29,7 +29,7 @@ cdef class _BestValStore:
     cdef int default_data_length
     cdef int storage_length
     cdef long *values
-    cdef long * get_row(self, int i)
+    cdef long * get_row(self, int i) noexcept
 
 cdef class LabelledBranching:
     cdef int n
@@ -38,7 +38,7 @@ cdef class LabelledBranching:
     cdef int *act_perm
     cdef GapElement group, ClosureGroup
     cdef Parent sym_gp
-    cdef bint has_empty_intersection(self, PartitionStack * part)
+    cdef bint has_empty_intersection(self, PartitionStack * part) noexcept
     cpdef add_gen(self, GapElement_Permutation gen)
 
 cdef class PartitionRefinement_generic:
@@ -57,33 +57,33 @@ cdef class PartitionRefinement_generic:
 
     # the following allow us to debug the program via latex
     cdef object _latex_debug_string
-    cdef void _init_latex(self)
-    cdef void _finish_latex(self)
-    cdef void _latex_new_lvl(self)
-    cdef void _latex_finish_lvl(self)
+    cdef void _init_latex(self) noexcept
+    cdef void _finish_latex(self) noexcept
+    cdef void _latex_new_lvl(self) noexcept
+    cdef void _latex_finish_lvl(self) noexcept
 
      # methods which have to be implemented in derived classes
-    cdef bint _inner_min_(self, int pos, bint* inner_group_changed)
-    cdef bint _refine(self, bint *part_changed, bint inner_group_changed, bint first_step)
+    cdef bint _inner_min_(self, int pos, bint* inner_group_changed) noexcept
+    cdef bint _refine(self, bint *part_changed, bint inner_group_changed, bint first_step) noexcept
     cdef tuple _store_state_(self)
-    cdef void _restore_state_(self, tuple act_state)
-    cdef void _store_best_(self)
-    cdef bint _minimization_allowed_on_col(self, int pos)
-    cdef void _latex_act_node(self, str comment=*, int printlvl=*) # only if you want to allow
+    cdef void _restore_state_(self, tuple act_state) noexcept
+    cdef void _store_best_(self) noexcept
+    cdef bint _minimization_allowed_on_col(self, int pos) noexcept
+    cdef void _latex_act_node(self, str comment=*, int printlvl=*) noexcept # only if you want to allow
                                             # some debugging output
 
     # methods used in the main algorithm
-    cdef void _init_partition_stack(self, list partition)
-    cdef void _start_Sn_backtrack(self)
-    cdef void _backtrack(self, bint first_step=?)
-    cdef void _leaf_computations(self)
-    cdef bint _cut_by_known_automs(self)
-    cdef bint _inner_min_unminimized(self, bint *inner_group_changed)
+    cdef void _init_partition_stack(self, list partition) noexcept
+    cdef void _start_Sn_backtrack(self) noexcept
+    cdef void _backtrack(self, bint first_step=?) noexcept
+    cdef void _leaf_computations(self) noexcept
+    cdef bint _cut_by_known_automs(self) noexcept
+    cdef bint _inner_min_unminimized(self, bint *inner_group_changed) noexcept
     cdef bint _one_refinement(self, long *best, int begin, int end,
                               bint* inner_group_changed, bint* changed_partition,
-                              str refine_name)
-    cdef int len(self)
+                              str refine_name) noexcept
+    cdef int len(self) noexcept
 
 
 cdef int PS_first_smallest_PR(PartitionStack *PS, bitset_t b, int *second_pos=?,
-        PartitionRefinement_generic partn_ref_alg=?)
+        PartitionRefinement_generic partn_ref_alg=?) noexcept

@@ -117,7 +117,7 @@ empty_lazy_list.cache = []
 
 
 def lazy_list(data=None, initial_values=None, start=None, stop=None, step=None,
-        update_function=None):
+              update_function=None):
     r"""
     Return a lazy list.
 
@@ -131,11 +131,11 @@ def lazy_list(data=None, initial_values=None, start=None, stop=None, step=None,
       #. or a standard Python container ``list`` or ``tuple``.
 
     - ``initial_values`` -- the beginning of the sequence that will not be computed from
-      the ``data`` provided.
+      the ``data`` provided
 
     - ``update_function`` -- you can also construct a lazy list from a function
       that takes as input a list of precomputed values and updates it with some
-      more values.
+      more values
 
     .. NOTE::
 
@@ -224,7 +224,7 @@ def lazy_list(data=None, initial_values=None, start=None, stop=None, step=None,
         assert callable(update_function)
         return lazy_list_from_update_function(update_function, cache)
 
-    if isinstance(data, (tuple,list)):
+    if isinstance(data, (tuple, list)):
         data = cache + list(data)
         l = lazy_list_generic(data, start=0, stop=len(data), step=1)
     elif isinstance(data, lazy_list_generic):
@@ -252,7 +252,7 @@ def lazy_list(data=None, initial_values=None, start=None, stop=None, step=None,
 
 def slice_unpickle(master, start, stop, step):
     r"""
-    Unpickle helper
+    Unpickle helper.
 
     TESTS::
 
@@ -293,9 +293,7 @@ def lazy_list_formatter(L, name='lazy list',
     - ``preview`` -- (default: ``3``) an integer specifying the number of
       elements shown in the representation string
 
-    OUTPUT:
-
-    A string.
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -351,7 +349,7 @@ def lazy_list_formatter(L, name='lazy list',
 
 cdef class lazy_list_generic():
     r"""
-    A lazy list
+    A lazy list.
 
     EXAMPLES::
 
@@ -374,7 +372,7 @@ cdef class lazy_list_generic():
         INPUT:
 
         - ``cache`` -- an optional list to be used as the cache. Be careful that
-          there is no copy.
+          there is no copy
 
         - ``start``, ``stop``, ``step`` -- for slices
 
@@ -532,20 +530,19 @@ cdef class lazy_list_generic():
 
     def __reduce__(self):
         r"""
-        Pickling support
+        Pickling support.
 
         EXAMPLES::
 
-            sage: from itertools import count
             sage: from sage.misc.lazy_list import lazy_list
-            sage: m = lazy_list(count())
+            sage: m = lazy_list(iter([0, 1, 4, 9, 16, 25, 36, 49, 64, 81]))
             sage: x = loads(dumps(m))
             sage: y = iter(x)
             sage: print("{} {} {}".format(next(y), next(y), next(y)))
-            0 1 2
+            0 1 4
             sage: m2 = m[3::2]
             sage: loads(dumps(m2))
-            lazy list [3, 5, 7, ...]
+            lazy list [9, 25, 49, ...]
         """
         if self.master is None:
             raise NotImplementedError
@@ -573,8 +570,7 @@ cdef class lazy_list_generic():
             sage: l._info()
             cache length 0
             start        2
-            stop         9223372036854775807    # 64-bit
-            stop         2147483647             # 32-bit
+            stop         ...
             step         3
             sage: l._fit(13)
             1
@@ -614,10 +610,10 @@ cdef class lazy_list_generic():
         r"""
         Return the element at position ``i``.
 
-        If the index is not an integer, then raise a ``TypeError``.  If the
-        argument is negative then raise a ``ValueError``.  Finally, if the
+        If the index is not an integer, then raise a :exc:`TypeError`.  If the
+        argument is negative then raise a :exc:`ValueError`.  Finally, if the
         argument is beyond the size of that lazy list it raises a
-        ``IndexError``.
+        :exc:`IndexError`.
 
         EXAMPLES::
 
@@ -646,7 +642,7 @@ cdef class lazy_list_generic():
             TypeError: unable to convert rational 1/2 to an integer
         """
         if i < 0:
-            raise ValueError("indices must be non-negative")
+            raise ValueError("indices must be nonnegative")
 
         i = self.start + i * self.step
         if self._fit(i):
@@ -655,7 +651,7 @@ cdef class lazy_list_generic():
 
     def __call__(self, i):
         r"""
-        An alias for :meth:`get`
+        An alias for :meth:`get`.
 
         TESTS::
 
@@ -817,7 +813,7 @@ cdef class lazy_list_generic():
         if step == 0:
             raise TypeError("step may not be 0")
         if step < 0 or start < 0 or stop < 0:
-            raise ValueError("slice indices must be non negative")
+            raise ValueError("slice indices must be nonnegative")
 
         step = step * self.step
         start = self.start + start * self.step
@@ -825,8 +821,8 @@ cdef class lazy_list_generic():
             stop = self.start + stop * self.step
         if stop > self.stop:
             stop = self.stop
-        if stop != PY_SSIZE_T_MAX and stop%step != start%step:
-            stop = stop - (stop-start)%step + step
+        if stop != PY_SSIZE_T_MAX and stop % step != start % step:
+            stop = stop - (stop - start) % step + step
 
         if stop <= start:
             return empty_lazy_list
@@ -865,8 +861,7 @@ cdef class lazy_list_generic():
             sage: L._info()                                                             # needs sage.libs.pari
             cache length 5
             start        2
-            stop         9223372036854775807    # 64-bit
-            stop         2147483647             # 32-bit
+            stop         ...
             step         1
         """
         if self.master is not None:    # this is a slice
@@ -918,8 +913,9 @@ cdef class lazy_list_from_iterator(lazy_list_generic):
         [0, 1, 2]
         sage: [next(x), next(y)]
         [3, 3]
-        sage: loads(dumps(m))
-        lazy list [0, 1, 2, ...]
+        sage: m2 = lazy_list(iter([0, 1, 4, 9, 16]))
+        sage: loads(dumps(m2))
+        lazy list [0, 1, 4, ...]
     """
 
     def __init__(self, iterator, cache=None, stop=None):
@@ -928,8 +924,8 @@ cdef class lazy_list_from_iterator(lazy_list_generic):
 
         - ``iterator`` -- an iterator
 
-        - ``cache`` -- an optional list to be used as the cache. Be careful that
-          there is no copy.
+        - ``cache`` -- an optional list to be used as the cache; be careful that
+          there is no copy
 
         - ``stop`` -- an optional stop point
 
@@ -971,8 +967,7 @@ cdef class lazy_list_from_iterator(lazy_list_generic):
             sage: L._info()                                                             # needs sage.libs.pari
             cache length 5
             start        2
-            stop         9223372036854775807    # 64-bit
-            stop         2147483647             # 32-bit
+            stop         ...
             step         1
         """
         while len(self.cache) <= i:
@@ -988,10 +983,9 @@ cdef class lazy_list_from_iterator(lazy_list_generic):
         TESTS::
 
             sage: from sage.misc.lazy_list import lazy_list_from_iterator
-            sage: from itertools import count
-            sage: loads(dumps(lazy_list_from_iterator(count())))
-            lazy list [0, 1, 2, ...]
-            sage: loads(dumps(lazy_list_from_iterator(count(), ['a'])))
+            sage: loads(dumps(lazy_list_from_iterator(iter([0, 1, 4, 9, 16]))))
+            lazy list [0, 1, 4, ...]
+            sage: loads(dumps(lazy_list_from_iterator(iter([0, 1, 4, 9, 16]), ['a'])))
             lazy list ['a', 0, 1, ...]
         """
         return lazy_list_from_iterator, (self.iterator, self.cache, self.stop)
@@ -1004,15 +998,14 @@ cdef class lazy_list_from_function(lazy_list_generic):
         INPUT:
 
         - ``function`` -- a function that maps ``n`` to the element
-          at position ``n``. (This
-          function only needs to be defined for length larger than the length of
-          the cache.)
+          at position ``n`` (this function only needs to be defined for length
+          larger than the length of the cache)
 
         - ``cache`` -- an optional list to be used as the cache. Be careful that
-          there is no copy.
+          there is no copy
 
-        - ``stop`` -- an optional integer to specify the length of this lazy list.
-          (Otherwise it is considered infinite).
+        - ``stop`` -- an optional integer to specify the length of this lazy list
+          (Otherwise it is considered infinite)
 
         EXAMPLES::
 
@@ -1054,8 +1047,7 @@ cdef class lazy_list_from_function(lazy_list_generic):
             sage: L._info()
             cache length 5
             start        2
-            stop         9223372036854775807    # 64-bit
-            stop         2147483647             # 32-bit
+            stop         ...
             step         1
         """
         while len(self.cache) <= i:
@@ -1086,15 +1078,15 @@ cdef class lazy_list_from_update_function(lazy_list_generic):
         r"""
         INPUT:
 
-        - ``function`` -- a function that updates a list of precomputed values.
+        - ``function`` -- a function that updates a list of precomputed values
           The update function should take as input a list and make it longer
           (using either the methods ``append`` or ``extend``). If after a call
           to the update function the list of values is shorter a
-          ``RuntimeError`` will occurr. If no value is added then the lazy list
+          :exc:`RuntimeError` will occur. If no value is added then the lazy list
           is considered finite.
 
         - ``cache`` -- an optional list to be used as the cache. Be careful that
-          there is no copy.
+          there is no copy
 
         - ``stop`` -- an optional integer to specify the length of this lazy list
           (otherwise it is considered infinite)
@@ -1136,11 +1128,10 @@ cdef class lazy_list_from_update_function(lazy_list_generic):
             sage: L._info()
             cache length 7
             start        2
-            stop         9223372036854775807    # 64-bit
-            stop         2147483647             # 32-bit
+            stop         ...
             step         1
         """
-        cdef Py_ssize_t l,ll
+        cdef Py_ssize_t l, ll
         l = len(self.cache)
         while l <= i:
             self.update_function(self.cache)

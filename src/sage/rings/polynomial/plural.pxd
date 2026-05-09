@@ -35,8 +35,10 @@ cdef class NCPolynomial_plural(RingElement):
     cpdef _add_(self, other)
     cpdef _mul_(self, other)
     cpdef _repr_short_(self)
-    cdef long _hash_c(self)
+    cdef long _hash_c(self) noexcept
     cpdef is_constant(self)
+    cpdef dict dict(self)
+    cpdef dict monomial_coefficients(self, bint copy=*)
 #    cpdef _homogenize(self, int var)
 
 cdef NCPolynomial_plural new_NCP(NCPolynomialRing_plural parent, poly *juice)

@@ -36,15 +36,17 @@ can create a key pair with the ``ssh-keygen`` tool.
 
 Follow either `the detailed instructions
 <https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key>`_
-or the following brief instructions::
+or the following brief instructions
 
-    [alice@localhost ~]$ ssh-keygen
+.. code-block:: console
+
+    $ ssh-keygen
     Generating public/private rsa key pair.
-    Enter file in which to save the key (/home/user/.ssh/id_rsa):
+    Enter file in which to save the key (/home/alice/.ssh/id_rsa):
     Enter passphrase (empty for no passphrase):
     Enter same passphrase again:
-    Your identification has been saved in /home/user/.ssh/id_rsa.
-    Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+    Your identification has been saved in /home/alice/.ssh/id_rsa.
+    Your public key has been saved in /home/alice/.ssh/id_rsa.pub.
     The key fingerprint is:
     ce:32:b3:de:38:56:80:c9:11:f0:b3:88:f2:1c:89:0a alice@localhost
     The key's randomart image is:
@@ -81,10 +83,12 @@ Adding your public key for authentication to GitHub
 
 Follow the procedure `Adding a new SSH key to your GitHub account
 <https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account>`_.
-Then check that it works by::
+Then check that it works by
 
-    [alice@localhost sage]$ git remote add origin git@github.com:alice/sage.git
-    [alice@localhost sage]$ git remote -v
+.. code-block:: console
+
+    $ git remote add origin git@github.com:alice/sage.git
+    $ git remote -v
     origin  git@github.com:alice/sage.git (fetch)
     origin  git@github.com:alice/sage.git (push)
 
@@ -94,13 +98,17 @@ Then check that it works by::
 Pushing your changes to a remote
 ================================
 
-Push your branch to the remote ``origin`` with either ::
+Push your branch to the remote ``origin`` with either
 
-    [alice@localhost sage]$ git push --set-upstream origin HEAD:my_branch
+.. code-block:: console
 
-or ::
+    $ git push --set-upstream origin HEAD:my_branch
 
-    [alice@localhost sage]$ git push origin HEAD:my_branch
+or
+
+.. code-block:: console
+
+    $ git push origin HEAD:my_branch
 
 if your branch already has an upstream branch. Here "upstream" means the the
 remote ``origin``, which is *upstream* to your local Git repo.
@@ -120,9 +128,11 @@ make a local copy of the branch. In particular, Git has no concept of directly
 working with the remote branch, the remotes are only bookmarks for
 things that you can get from/to the remote server. Hence, the first
 thing you should do is to get everything from the branch
-into your local repository. This is achieved by::
+into your local repository. This is achieved by
 
-    [alice@localhost sage]$ git fetch upstream pull/12345/head
+.. code-block:: console
+
+    $ git fetch upstream pull/12345/head
     remote: Enumerating objects: 12, done.
     remote: Counting objects: 100% (12/12), done.
     remote: Compressing objects: 100% (3/3), done.
@@ -135,9 +145,11 @@ The ``pull/12345/head`` branch refers to the branch of the PR #12345 of the
 remote ``upstream``. The branch is now temporarily (until you fetch something
 else) stored in your local Git database under the alias ``FETCH_HEAD``. In the
 second step, we make it available as a new local branch and switch to it. Your
-local branch can have a different name, for example::
+local branch can have a different name, for example
 
-    [alice@localhost sage]$ git checkout -b my_branch FETCH_HEAD
+.. code-block:: console
+
+    $ git checkout -b my_branch FETCH_HEAD
     Switched to a new branch 'my_branch'
 
 creates a new branch in your local Git repository named ``my_branch``
@@ -157,9 +169,11 @@ downloaded the branch of a PR made by someone else, say Bob, and made some
 suggestions for improvements on the PR. Now Bob incorporated your suggestions
 into his branch, and you want to get the added changes to complete your review.
 Assuming that you originally got your local branch as in
-:ref:`section-git-checkout`, you can just issue::
+:ref:`section-git-checkout`, you can just issue
 
-    [bob@localhost sage]$ git pull upstream pull/12345/head
+.. code-block:: console
+
+    $ git pull upstream pull/12345/head
     From https://github.com/sagemath/sage
      * branch                  refs/pull/35608/head -> FETCH_HEAD
     Merge made by the 'ort' strategy.
@@ -185,16 +199,20 @@ delete them before updating the branch.
 
 One way to ensure that you are notified of potential problems is to use ``git
 pull --ff-only``, which will raise an error if a non-trivial merge would be
-required::
+required
 
-    [alice@localhost sage]$ git checkout develop
-    [alice@localhost sage]$ git pull --ff-only upstream develop
+.. code-block:: console
+
+    $ git checkout develop
+    $ git pull --ff-only upstream develop
 
 If this pull fails, then something is wrong with the local copy of the
-master branch. To switch to the correct Sage master branch, use::
+master branch. To switch to the correct Sage master branch, use
 
-    [alice@localhost sage]$ git checkout develop
-    [alice@localhost sage]$ git reset --hard upstream/develop
+.. code-block:: console
+
+    $ git checkout develop
+    $ git reset --hard upstream/develop
 
 
 .. _section-git-merge:
@@ -206,10 +224,9 @@ Sometimes, a new version of Sage is released while you work on a Git branch.
 
 Let us assume you started ``my_branch`` at commit ``B``. After a while, your
 branch has advanced to commit ``Z``, but you updated ``develop`` (see
-:ref:`section-git-pull-develop`) and now your Git history looks like this (see
-:ref:`section_walkthrough_logs`):
+:ref:`section-git-pull-develop`) and now your Git history looks like this:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
                      X---Y---Z my_branch
                     /
@@ -221,14 +238,14 @@ How should you deal with such changes? In principle, there are two ways:
   new ``develop``. This is called **rebase**, and it rewrites your current
   branch:
 
-  .. CODE-BLOCK:: text
+  .. code-block:: console
 
-      git checkout my_branch
-      git rebase -i develop
+      $ git checkout my_branch
+      $ git rebase -i develop
 
   In terms of the commit graph, this results in:
 
-  .. CODE-BLOCK:: text
+  .. code-block:: text
 
                              X'--Y'--Z' my_branch
                             /
@@ -241,22 +258,22 @@ How should you deal with such changes? In principle, there are two ways:
   **Alternatively**, you can rebase ``my_branch`` while updating ``develop`` at the
   same time (see :ref:`section-git-pull`):
 
-  .. CODE-BLOCK:: text
+  .. code-block:: console
 
-    git checkout my_branch
-    git pull -r develop
+    $ git checkout my_branch
+    $ git pull -r develop
 
 * **Merging** your branch with ``develop`` will create a new commit above the two
   of them:
 
-  .. CODE-BLOCK:: text
+  .. code-block:: console
 
-      git checkout my_branch
-      git merge develop
+      $ git checkout my_branch
+      $ git merge develop
 
   The result is the following commit graph:
 
-  .. CODE-BLOCK:: text
+  .. code-block:: text
 
                      X---Y---Z---W my_branch
                     /           /
@@ -272,10 +289,10 @@ How should you deal with such changes? In principle, there are two ways:
   **Alternatively**, you can merge ``my_branch`` while updating ``develop`` at the
   same time (see :ref:`section-git-pull`):
 
-  .. CODE-BLOCK:: text
+  .. code-block:: console
 
-    git checkout my_branch
-    git pull develop
+    $ git checkout my_branch
+    $ git pull develop
 
 **In case of doubt** use merge rather than rebase. There is less risk involved,
 and rebase in this case is only useful for branches with a very long history.
@@ -290,9 +307,11 @@ Simple conflicts can be easily solved with Git only (see :ref:`section-git-confl
 
 For more complicated ones, a range of specialized programs are
 available. Because the conflict marker includes the hash of the most recent
-common parent, you can use a three-way diff::
+common parent, you can use a three-way diff
 
-    [alice@laptop]$ git mergetool
+.. code-block:: console
+
+    $ git mergetool
 
     This message is displayed because 'merge.tool' is not configured.
     See 'git mergetool --tool-help' or 'git help config' for more details.
@@ -328,7 +347,7 @@ unavoidable consequence of distributed development. Fortunately,
 resolving them is common and easy with Git. As a hypothetical example,
 consider the following code snippet:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     def fibonacci(i):
         """
@@ -339,7 +358,7 @@ consider the following code snippet:
 This is clearly wrong. Two developers, namely Alice and Bob, decide to
 fix it. Bob corrected the seed values:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     def fibonacci(i):
        """
@@ -349,10 +368,12 @@ fix it. Bob corrected the seed values:
            return fibonacci(i-1) * fibonacci(i-2)
        return [0, 1][i]
 
-and turned those changes into a new commit::
+and turned those changes into a new commit
 
-    [bob@laptop sage]$ git add fibonacci.py
-    [bob@laptop sage]$ git commit -m 'return correct seed values'
+.. code-block:: console
+
+    $ git add fibonacci.py
+    $ git commit -m 'return correct seed values'
 
 He made his changes a PR to the GitHub Sage repo and got it merged to the
 ``develop`` branch. His ``fibonacci`` function is not yet perfect but is
@@ -361,7 +382,7 @@ certainly better than the original.
 Meanwhile, Alice changed the multiplication to an addition since that is the
 correct recursion formula:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     def fibonacci(i):
         """
@@ -369,12 +390,14 @@ correct recursion formula:
         """
         return fibonacci(i-1) + fibonacci(i-2)
 
-and merged her branch with the latest ``develop`` branch fetched from the GitHub Sage repo::
+and merged her branch with the latest ``develop`` branch fetched from the GitHub Sage repo
 
-    [alice@home sage]$ git add fibonacci.py
-    [alice@home sage]$ git commit -m 'corrected recursion formula, must be + instead of *'
-    [alice@home sage]$ git fetch upstream develop:develop
-    [alice@home sage]$ git merge develop
+.. code-block:: console
+
+    $ git add fibonacci.py
+    $ git commit -m 'corrected recursion formula, must be + instead of *'
+    $ git fetch upstream develop:develop
+    $ git merge develop
     ...
     CONFLICT (content): Merge conflict in fibonacci.py
     Automatic merge failed; fix conflicts and then commit the result.
@@ -383,7 +406,7 @@ The file now looks like this:
 
 .. skip    # doctester confuses >>> with input marker
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     def fibonacci(i):
         """
@@ -406,7 +429,7 @@ recent common parent of both.
 It is now Alice's job to resolve the conflict by reconciling their
 changes, for example by editing the file. Her result is:
 
-.. CODE-BLOCK:: python
+.. code-block:: python
 
     def fibonacci(i):
         """
@@ -416,21 +439,25 @@ changes, for example by editing the file. Her result is:
             return fibonacci(i-1) + fibonacci(i-2)
         return [0, 1][i]
 
-And then upload both her original change *and* her merge commit to the GitHub Sage repo::
+And then upload both her original change *and* her merge commit to the GitHub Sage repo
 
-    [alice@laptop sage]$ git add fibonacci.py
-    [alice@laptop sage]$ git commit -m "merged Bob's changes with mine"
+.. code-block:: console
 
-The resulting commit graph now has a loop::
+    $ git add fibonacci.py
+    $ git commit -m "merged Bob's changes with mine"
 
-    [alice@laptop sage]$ git log --graph --oneline
+The resulting commit graph now has a loop
+
+.. code-block:: console
+
+    $ git log --graph --oneline
     *   6316447 merged Bob's changes with mine
     |\
     | * 41675df corrected recursion formula, must be + instead of *
     * | 14ae1d3 return correct seed values
     |/
     * 14afe53 initial commit
-    [alice@laptop sage]$ git push origin
+    $ git push origin
 
 This time, there is no merge conflict since Alice's branch already merged the ``develop`` branch.
 

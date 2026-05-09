@@ -16,11 +16,23 @@ AC_DEFUN([SAGE_CHECK_PYTHON_FOR_VENV], [
                     AX_COMPARE_VERSION([$python3_version], [ge], MIN_VERSION, [
                         AX_COMPARE_VERSION([$python3_version], [lt], LT_VERSION, [
                             dnl Because the system python is not used directly but rather in a venv without site-packages,
-                            dnl we test whether the module will be available in a venv.
+                            dnl we should test whether the module will be available in a venv.
                             dnl Otherwise, some system site-package may be providing this module to the system python.
+                            dnl However, on Python >= 3.12, we need setuptools to run our extension compilation tests
+                            dnl because distutils has been removed from the standard library.
+                            AX_COMPARE_VERSION([$python3_version], [ge], [3.12.0], [
+                                conftest_venv_options="--system-site-packages"
+                                distutils_core="setuptools"
+                                distutils_extension="setuptools.extension"
+                            ], [
+                                conftest_venv_options=
+                                distutils_core="distutils.core"
+                                distutils_extension="distutils.extension"
+                            ])
+                            all_required_modules="]REQUIRED_MODULES[, $distutils_core, $distutils_extension"
                             dnl m4_define([conftest_venv], [config-venv]) .... for debugging only
                             rm -rf conftest_venv
-                            AS_IF(["]PYTHON_EXE[" build/bin/sage-venv conftest_venv && conftest_venv/bin/python3 -c "import ]REQUIRED_MODULES[" 2>& ]AS_MESSAGE_LOG_FD, [
+                            AS_IF(["]PYTHON_EXE[" build/bin/sage-venv $conftest_venv_options conftest_venv && conftest_venv/bin/python3 -c "import $all_required_modules" 2>& ]AS_MESSAGE_LOG_FD, [
                                 AS_VAR_SET([python3_result], [yes])
                                 SAGE_PYTHON_CHECK_DISTUTILS([CC="$CC" CXX="$CXX" conftest_venv/bin/python3], [
                                     SAGE_ARCHFLAGS="unset"
@@ -46,7 +58,7 @@ AC_DEFUN([SAGE_CHECK_PYTHON_FOR_VENV], [
                                     AC_MSG_RESULT([$python3_result])
                                 ])
                             ], [
-                                AC_MSG_RESULT([no, the version is in the supported range but cannot import one of the required modules: ]REQUIRED_MODULES)
+                                AC_MSG_RESULT([no, the version is in the supported range but cannot import one of the required modules: $all_required_modules])
                             ])
                         ], [
                             AC_MSG_RESULT([no, $python3_version is too recent])
@@ -73,12 +85,14 @@ AC_DEFUN([SAGE_PYTHON_CHECK_DISTUTILS], [
     m4_pushdef([COMMANDS_IF_DISTUTILS_GOOD], [$2])
     m4_pushdef([COMMANDS_IF_DISTUTILS_NOT_GOOD], [$3])
     SAGE_PYTHON_DISTUTILS_C_CONFTEST
+    dnl Run the test in conftest.dir to avoid reading the main pyproject.toml
     dnl (echo "***ENV***:"; env; echo "***SYSCONFIG***"; conftest_venv/bin/python3 -m sysconfig) >& AS_MESSAGE_LOG_FD
-    echo PYTHON_EXE conftest.py --verbose build --build-base=conftest.dir >& AS_MESSAGE_LOG_FD
-    AS_IF([PYTHON_EXE conftest.py --verbose build --build-base=conftest.dir >& AS_MESSAGE_LOG_FD 2>&1 ], [
+    conftest_python_exe_abs="$PWD/conftest_venv/bin/python3"
+    echo "(cd conftest.dir && $conftest_python_exe_abs conftest.py --verbose build --build-base=build)" >& AS_MESSAGE_LOG_FD
+    AS_IF([(cd conftest.dir && $conftest_python_exe_abs conftest.py --verbose build --build-base=build) >& AS_MESSAGE_LOG_FD 2>&1 ], [
         SAGE_PYTHON_DISTUTILS_CXX_CONFTEST
-        echo PYTHON_EXE conftest.py --verbose build --build-base=conftest.dir >& AS_MESSAGE_LOG_FD 2>&1
-        AS_IF([PYTHON_EXE conftest.py --verbose build --build-base=conftest.dir >& AS_MESSAGE_LOG_FD 2>&1 ], [
+        echo "(cd conftest.dir && $conftest_python_exe_abs conftest.py --verbose build --build-base=build)" >& AS_MESSAGE_LOG_FD 2>&1
+        AS_IF([(cd conftest.dir && $conftest_python_exe_abs conftest.py --verbose build --build-base=build) >& AS_MESSAGE_LOG_FD 2>&1 ], [
             COMMANDS_IF_DISTUTILS_GOOD], [
             reason="distutils cannot build a C++ 11 extension"
             COMMANDS_IF_DISTUTILS_NOT_GOOD
@@ -92,9 +106,10 @@ AC_DEFUN([SAGE_PYTHON_CHECK_DISTUTILS], [
     m4_popdef([COMMANDS_IF_DISTUTILS_NOT_GOOD])
 ])
 
-dnl Write conftest.py and conftest.c
+dnl Write conftest.py and conftest.c in conftest.dir directory
 AC_DEFUN([SAGE_PYTHON_DISTUTILS_C_CONFTEST], [
-                                rm -rf conftest.*
+                                rm -rf conftest.dir
+                                mkdir -p conftest.dir
                                 AC_LANG_PUSH([C])
                                 AC_LANG_CONFTEST([
                                     AC_LANG_SOURCE([[
@@ -122,9 +137,11 @@ PyInit_spam(void)
                                     ]])
                                 ])
                                 AC_LANG_POP([C])
-                                cat > conftest.py <<EOF
-from distutils.core import setup
-from distutils.extension import Extension
+                                mv conftest.c conftest.dir/
+                                cat > conftest.dir/conftest.py <<EOF
+
+from $distutils_core import setup
+from $distutils_extension import Extension
 from sys import exit
 modules = list((Extension("config_check_distutils", list(("conftest.c",))),))
 setup(name="config_check_distutils", ext_modules=modules)
@@ -132,9 +149,10 @@ exit(0)
 EOF
 ])
 
-dnl Write conftest.py and conftest.cpp
+dnl Write conftest.py and conftest.cpp in conftest.dir directory
 AC_DEFUN([SAGE_PYTHON_DISTUTILS_CXX_CONFTEST], [
-                                    rm -rf conftest.*
+                                    rm -rf conftest.dir
+                                    mkdir -p conftest.dir
                                     AC_LANG_PUSH([C++])
                                     AC_LANG_CONFTEST([
                                         AC_LANG_SOURCE([[
@@ -175,13 +193,15 @@ PyInit_spam(void)
                                         ]])
                                     ])
                                     AC_LANG_POP([C++])
-                                    cat > conftest.py <<EOF
-from distutils.core import setup
-from distutils.extension import Extension
+                                    mv conftest.cpp conftest.dir/
+                                    cat > conftest.dir/conftest.py <<EOF
+
+from $distutils_core import setup
+from $distutils_extension import Extension
 from sys import exit
 modules = list((Extension("config_check_distutils_cxx", list(("conftest.cpp",)),
                           extra_compile_args=list(("-std=c++11",)), language="c++"),))
-setup(name="config_check_distutils_cxx", ext_modules=modules)
+setup(name="config_check_distutils_cxx", ext_modules=modules, py_modules=["conftest"])
 exit(0)
 EOF
 ])

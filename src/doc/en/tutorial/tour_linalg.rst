@@ -42,16 +42,6 @@ Evaluating ``A.solve_right(Y)`` returns a matrix (or vector)
     sage: A * X   # checking our answer...
     (0, -4, -1)
 
-A backslash ``\`` can be used in the place of ``solve_right``; use
-``A \ Y`` instead of ``A.solve_right(Y)``.
-
-.. link
-
-::
-
-    sage: A \ Y
-    (-2, 1, 0)
-
 If there is no solution, Sage returns an error:
 
 .. skip
@@ -73,11 +63,7 @@ Sage can also compute eigenvalues and eigenvectors::
     [-2*I, 2*I]
     sage: B = matrix([[1, 3], [3, 1]])
     sage: B.eigenvectors_left()
-    [(4, [
-    (1, 1)
-    ], 1), (-2, [
-    (1, -1)
-    ], 1)]
+    [(4, [(1, 1)], 1), (-2, [(1, -1)], 1)]
 
 (The syntax for the output of ``eigenvectors_left`` is a list of
 triples: (eigenvalue, eigenvector, multiplicity).)  Eigenvalues and
@@ -249,4 +235,4 @@ Note that Python is case sensitive:
     sage: M = MatrixSpace(QQ, 10,10, Sparse=True)
     Traceback (most recent call last):
     ...
-    TypeError: ...__init__() got an unexpected keyword argument 'Sparse'
+    TypeError: ...__init__() got an unexpected keyword argument 'Sparse'...

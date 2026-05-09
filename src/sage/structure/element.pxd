@@ -1,5 +1,5 @@
-from .sage_object cimport SageObject
-from .parent cimport Parent
+from sage.structure.sage_object cimport SageObject
+from sage.structure.parent cimport Parent
 from sage.misc.inherit_comparison cimport InheritComparisonMetaclass
 
 
@@ -61,7 +61,7 @@ cpdef inline parent(x):
     return type(x)
 
 
-cdef inline int classify_elements(left, right):
+cdef inline int classify_elements(left, right) noexcept:
     """
     Given two objects, at least one which is an :class:`Element`,
     classify their type and parent. This is a finer version of
@@ -102,13 +102,13 @@ cdef inline int classify_elements(left, right):
         return 0o07
 
 # Functions to help understand the result of classify_elements()
-cdef inline bint BOTH_ARE_ELEMENT(int cl):
+cdef inline bint BOTH_ARE_ELEMENT(int cl) noexcept:
     return cl & 0o04
-cdef inline bint HAVE_SAME_PARENT(int cl):
+cdef inline bint HAVE_SAME_PARENT(int cl) noexcept:
     return cl & 0o20
 
 
-cpdef inline bint have_same_parent(left, right):
+cpdef inline bint have_same_parent(left, right) noexcept:
     """
     Return ``True`` if and only if ``left`` and ``right`` have the
     same parent.
@@ -150,7 +150,6 @@ cdef bin_op_exception(op, x, y)
 cdef class Element(SageObject):
     cdef Parent _parent
     cpdef _richcmp_(left, right, int op)
-    cpdef int _cmp_(left, right) except -2
     cpdef base_extend(self, R)
 
     cdef getattr_from_category(self, name)
@@ -194,8 +193,8 @@ cdef class ModuleElement(Element):
 
 cdef class ModuleElementWithMutability(ModuleElement):
     cdef bint _is_immutable
-    cpdef bint is_immutable(self)
-    cpdef bint is_mutable(self)
+    cpdef bint is_immutable(self) noexcept
+    cpdef bint is_mutable(self) noexcept
 
 cdef class MonoidElement(Element):
     cpdef _pow_int(self, n)
@@ -253,8 +252,8 @@ cdef class Vector(ModuleElementWithMutability):
 
     cpdef _pairwise_product_(Vector left, Vector right) # override, call if parents the same
 
-    cdef bint is_sparse_c(self)
-    cdef bint is_dense_c(self)
+    cdef bint is_sparse_c(self) noexcept
+    cdef bint is_dense_c(self) noexcept
 
 
 cdef class Matrix(ModuleElement):
@@ -266,5 +265,5 @@ cdef class Matrix(ModuleElement):
     cdef _matrix_times_vector_(matrix_left, Vector vector_right)    # OK to override, AND call directly
     cdef _matrix_times_matrix_(left, Matrix right)                  # OK to override, AND call directly
 
-    cdef bint is_sparse_c(self)
-    cdef bint is_dense_c(self)
+    cdef bint is_sparse_c(self) noexcept
+    cdef bint is_dense_c(self) noexcept

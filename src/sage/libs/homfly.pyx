@@ -57,14 +57,13 @@ def homfly_polynomial_string(link):
 
     INPUT:
 
-    - ``link`` -- a string of space-separated integers representing the link
+    - ``link`` -- string of space-separated integers representing the link
 
-    OUTPUT:
-
-    A string with the HOMFLY polynomial in the variables `M` and `L`
+    OUTPUT: string with the HOMFLY polynomial in the variables `M` and `L`
 
     EXAMPLES::
 
+        sage: # needs libhomfly
         sage: from sage.libs.homfly import homfly_polynomial_string
         sage: trefoil = '1 6 0 1  1 -1  2 1  0 -1  1 1  2 -1 0 1 1 1 2 1'
         sage: homfly_polynomial_string(trefoil)
@@ -83,14 +82,11 @@ def homfly_polynomial_dict(link):
 
     INPUT:
 
-    - ``link`` -- a string of space-separated integers representing the link
-
-    OUTPUT:
-
-    A dictionary representing the HOMFLY polynomial.
+    - ``link`` -- string of space-separated integers representing the link
 
     EXAMPLES::
 
+        sage: # needs libhomfly
         sage: from sage.libs.homfly import homfly_polynomial_dict
         sage: trefoil = '1 6 0 1  1 -1  2 1  0 -1  1 1  2 -1 0 1 1 1 2 1'
         sage: homfly_polynomial_dict(trefoil)

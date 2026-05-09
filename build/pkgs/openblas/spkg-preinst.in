@@ -1,0 +1,2 @@
+# See https://github.com/sagemath/sage/issues/30335
+rm -f "$SAGE_LOCAL/lib/pkgconfig/cblas.pc" "$SAGE_LOCAL/lib/pkgconfig/blas.pc" "$SAGE_LOCAL/lib/pkgconfig/lapack.pc"

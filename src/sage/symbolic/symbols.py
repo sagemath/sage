@@ -22,20 +22,20 @@ def register_symbol(obj, conversions, nargs=None):
 
     INPUT:
 
-    - ``obj`` -- a symbolic object or function.
+    - ``obj`` -- a symbolic object or function
 
-    - ``conversions`` -- a dictionary of conversions, where the keys
+    - ``conversions`` -- dictionary of conversions, where the keys
       are the names of interfaces (e.g., ``'maxima'``), and the values
-      are the string representation of ``obj`` in that system.
+      are the string representation of ``obj`` in that system
 
-    - ``nargs`` -- optional number of arguments. For most functions,
-      this can be deduced automatically.
+    - ``nargs`` -- (optional) number of arguments; for most functions,
+      this can be deduced automatically
 
     EXAMPLES::
 
         sage: from sage.symbolic.symbols import register_symbol as rs
-        sage: rs(SR(5), {'maxima': 'five'})                                             # needs sage.symbolic
-        sage: SR(maxima_calculus('five'))                                               # needs sage.symbolic
+        sage: rs(SR(5), {'maxima': 'five'})
+        sage: SR(maxima_calculus('five'))
         5
     """
     conversions = dict(conversions)

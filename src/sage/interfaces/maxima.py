@@ -29,13 +29,22 @@ AUTHORS:
 - Robert Bradshaw, Nils Bruin, Jean-Pierre Flori (2010,2011): Binary library
   interface
 
+There is also an ECL-based version of the Maxima interface in
+:mod:`sage.interfaces.maxima_lib`.
+That ECL interface is used for all internal symbolic calculations in SageMath,
+providing a more direct and efficient connection to Maxima's core functionality.
+The Pexpect interface defined here is isolated from the ECL-based interface:
+it communicates with Maxima via a subprocess and text-based interaction, and is
+primarily intended for interactive use.
+
 This is the interface used by the maxima object::
 
+    sage: from sage.interfaces.maxima import maxima
     sage: type(maxima)
     <class 'sage.interfaces.maxima.Maxima'>
 
 If the string "error" (case insensitive) occurs in the output of
-anything from Maxima, a RuntimeError exception is raised.
+anything from Maxima, a :exc:`RuntimeError` exception is raised.
 
 EXAMPLES: We evaluate a very simple expression in Maxima.
 
@@ -49,6 +58,7 @@ The first way yields a Maxima object.
 
 ::
 
+    sage: from sage.interfaces.maxima import maxima
     sage: x,y = SR.var('x,y')
     sage: F = maxima.factor('x^5 - y^5')
     sage: F # not tested - depends on maxima version
@@ -76,6 +86,7 @@ data to other systems.
 
 ::
 
+    sage: from sage.interfaces.maxima import maxima
     sage: F = maxima('x * y')
     sage: repr(F)
     'x*y'
@@ -97,6 +108,7 @@ works.
 
 ::
 
+    sage: from sage.interfaces.maxima import maxima
     sage: f = maxima('x^5 + y^5')
     sage: f^2
     (y^5+x^5)^2
@@ -120,6 +132,7 @@ http://maxima.sourceforge.net/docs/intromax/intromax.html.
 
 ::
 
+    sage: from sage.interfaces.maxima import maxima
     sage: maxima('1/100 + 1/101')
     201/10100
 
@@ -171,6 +184,7 @@ http://maxima.sourceforge.net/docs/intromax/intromax.html.
 
 Here is an example of solving an algebraic equation::
 
+    sage: from sage.interfaces.maxima import maxima
     sage: maxima('x^2+y^2=1').solve('y')
     [y = -sqrt(1-x^2),y = sqrt(1-x^2)]
     sage: maxima('x^2 + y^2 = (x^2 - y^2)/sqrt(x^2 + y^2)').solve('y')
@@ -395,11 +409,13 @@ Latex Output
 
 To TeX a maxima object do this::
 
+    sage: from sage.interfaces.maxima import maxima
     sage: latex(maxima('sin(u) + sinh(v^2)'))
     \sinh v^2+\sin u
 
 Here's another example::
 
+    sage: from sage.interfaces.maxima import maxima
     sage: g = maxima('exp(3*%i*x)/(6*%i) + exp(%i*x)/(2*%i) + c')
     sage: latex(g)
     -...{{i\,e^{3\,i\,x}}\over{6}}...-{{i\,e^{i\,x}}\over{2}}+c
@@ -410,7 +426,7 @@ Long Input
 The MAXIMA interface reads in even very long input (using files) in
 a robust manner, as long as you are creating a new object.
 
-.. note::
+.. NOTE::
 
    Using ``maxima.eval`` for long input is much less robust, and is
    not recommended.
@@ -448,14 +464,14 @@ A long complicated input expression::
     sage: maxima._eval_line('((((((((((0) + ((1) / ((n0) ^ (0)))) + ((1) / ((n1) ^ (1)))) + ((1) / ((n2) ^ (2)))) + ((1) / ((n3) ^ (3)))) + ((1) / ((n4) ^ (4)))) + ((1) / ((n5) ^ (5)))) + ((1) / ((n6) ^ (6)))) + ((1) / ((n7) ^ (7)))) + ((1) / ((n8) ^ (8)))) + ((1) / ((n9) ^ (9)));')
     '1/n9^9+1/n8^8+1/n7^7+1/n6^6+1/n5^5+1/n4^4+1/n3^3+1/n2^2+1/n1+1'
 
-Test that Maxima gracefully handles this syntax error (:trac:`17667`)::
+Test that Maxima gracefully handles this syntax error (:issue:`17667`)::
 
     sage: maxima.eval("1 == 1;")
     Traceback (most recent call last):
     ...
     TypeError: ...incorrect syntax: = is not a prefix operator...
 
-Test that conversion of symbolic functions with latex names works (:trac:`31047`)::
+Test that conversion of symbolic functions with latex names works (:issue:`31047`)::
 
     sage: var('phi')
     phi
@@ -467,7 +483,7 @@ Test that conversion of symbolic functions with latex names works (:trac:`31047`
     sage: test.operator()._latex_() == 'C_+'
     True
 
-Test that the output is parseable (:trac:`31796`)::
+Test that the output is parseable (:issue:`31796`)::
 
     sage: foo = maxima('a and (b or c)') ; foo
     a and (b or c)
@@ -475,11 +491,9 @@ Test that the output is parseable (:trac:`31796`)::
     a and (b or c)
     sage: bar == foo
     True
-
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -491,24 +505,25 @@ Test that the output is parseable (:trac:`31796`)::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import re
-import pexpect
 import shlex
-
 from random import randrange
 
-from sage.env import MAXIMA
+import pexpect
 
-from .expect import (Expect, ExpectElement, gc_disabled)
-
-from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
-                             MaximaAbstractElement,
-                             MaximaAbstractFunctionElement,
-                             MaximaAbstractElementFunction)
+from sage.env import MAXIMA, MAXIMA_PREFIX
+from sage.interfaces.expect import Expect, ExpectElement, gc_disabled
+from sage.interfaces.maxima_abstract import (
+    MaximaAbstract,
+    MaximaAbstractElement,
+    MaximaAbstractElementFunction,
+    MaximaAbstractFunction,
+    MaximaAbstractFunctionElement,
+)
 from sage.misc.instancedoc import instancedoc
 
 
@@ -520,6 +535,7 @@ class Maxima(MaximaAbstract, Expect):
 
     EXAMPLES::
 
+        sage: from sage.interfaces.maxima import maxima, Maxima
         sage: m = Maxima()
         sage: m == maxima
         False
@@ -531,6 +547,7 @@ class Maxima(MaximaAbstract, Expect):
 
         TESTS::
 
+            sage: from sage.interfaces.maxima import Maxima, maxima
             sage: Maxima == loads(dumps(Maxima))
             True
             sage: maxima == loads(dumps(maxima))
@@ -542,7 +559,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima == loads(dumps(m))
             True
 
-        We make sure labels are turned off (see :trac:`6816`)::
+        We make sure labels are turned off (see :issue:`6816`)::
 
             sage: 'nolabels : true' in maxima._Expect__init_code
             True
@@ -556,7 +573,7 @@ class Maxima(MaximaAbstract, Expect):
         if not os.path.exists(STARTUP):
             raise RuntimeError('You must get the file sage-maxima.lisp')
 
-        #self.__init_code = init_code
+        # self.__init_code = init_code
         if init_code is None:
             # display2d -- no ascii art output
             # keepfloat -- don't automatically convert floats to rationals
@@ -570,11 +587,16 @@ class Maxima(MaximaAbstract, Expect):
         # See trac # 6818.
         init_code.append('nolabels : true')
 
-        MaximaAbstract.__init__(self,"maxima")
+        env = {}
+        if MAXIMA_PREFIX:
+            env['MAXIMA_PREFIX'] = MAXIMA_PREFIX
+
+        MaximaAbstract.__init__(self, "maxima")
         Expect.__init__(self,
                         name='maxima',
                         prompt=r'\(\%i[0-9]+\) ',
                         command='{0} -p {1}'.format(MAXIMA, shlex.quote(STARTUP)),
+                        env=env,
                         script_subdirectory=script_subdirectory,
                         restart_on_ctrlc=False,
                         verbose_start=False,
@@ -588,10 +610,13 @@ class Maxima(MaximaAbstract, Expect):
         self._ask = [b'zero or nonzero\\?', b'an integer\\?',
                      b'positive, negative or zero\\?', b'positive or negative\\?',
                      b'positive or zero\\?', b'equal to .*\\?']
+
         self._prompt_wait = ([self._prompt] +
                              [re.compile(x) for x in self._ask] +
-                             [b'Break [0-9]+'])  # note that you might need to change _expect_expr if you
-                                                 # change this
+                             [b'Break [0-9]+'])
+        # note that you might need to change _expect_expr if you
+        # change this _prompt_wait
+
         self._error_re = re.compile('(Principal Value|debugmode|incorrect syntax|Maxima encountered a Lisp error)')
         self._display2d = False
 
@@ -603,6 +628,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import Maxima
             sage: m = Maxima()
             sage: m.set_seed(1)
             1
@@ -621,13 +647,13 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import Maxima
             sage: m = Maxima()
             sage: m.is_running()
             False
             sage: m._start()
             sage: m.is_running()
             True
-
         """
         Expect._start(self)
         self._sendline(r":lisp (defun tex-derivative (x l r) (tex (if $derivabbrev (tex-dabbrev x) (tex-d x '\\partial)) l r lop rop ))")
@@ -646,10 +672,11 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima.__reduce__()
             (<function reduce_load_Maxima at 0x...>, ())
         """
-        return reduce_load_Maxima, tuple([]) #(self.__init_code,)
+        return reduce_load_Maxima, tuple()  # (self.__init_code,)
 
     def _sendline(self, string):
         """
@@ -657,6 +684,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima._sendline('t : 9;')
             sage: maxima.get('t')
             '9'
@@ -678,6 +706,7 @@ class Maxima(MaximaAbstract, Expect):
         These tests indirectly show that the interface is working
         and catching certain errors::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima('2+2')
             4
             sage: maxima('integrate(1/(x^3*(a+b*x)^(1/3)),x)')
@@ -728,8 +757,8 @@ class Maxima(MaximaAbstract, Expect):
             if i > 0:
                 v = self._before()
 
-                #We check to see if there is a "serious" error in Maxima.
-                #Note that this depends on the order of self._prompt_wait
+                # We check to see if there is a "serious" error in Maxima.
+                # Note that this depends on the order of self._prompt_wait
                 if expr is self._prompt_wait and i > len(self._ask):
                     self.quit()
                     raise ValueError(
@@ -773,14 +802,13 @@ class Maxima(MaximaAbstract, Expect):
 
         We check that errors are correctly checked::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima._eval_line('1+1;')
             '2'
             sage: maxima._eval_line('sage0: x == x;')
             Traceback (most recent call last):
             ...
             TypeError: Error executing code in Maxima...
-
-
         """
         if len(line) == 0:
             return ''
@@ -798,8 +826,7 @@ class Maxima(MaximaAbstract, Expect):
             # batchmode doesn't display expressions to screen.
             a = self(line)
             return repr(a)
-        else:
-            self._sendline(line)
+        self._sendline(line)
 
         line_echo = self._readline()
         if not wait_for_prompt:
@@ -816,7 +843,7 @@ class Maxima(MaximaAbstract, Expect):
 
         self._expect_expr()
         assert len(self._before()) == 0, \
-                'Maxima expect interface is confused!'
+            'Maxima expect interface is confused!'
         r = self._output_prompt_re
         m = r.search(out)
         if m is not None:
@@ -837,6 +864,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES: This makes Maxima start a calculation::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima._sendstr('1/1'*500)
 
         When you type this command, this synchronize command is implicitly
@@ -882,15 +910,15 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima._batch('10003;')
             '...batchload...'
             sage: maxima._batch('10003;',batchload=False)
             '...batch...10003...'
         """
-        filename = '%s-%s' % (self._local_tmpfile(),randrange(2147483647))
-        F = open(filename, 'w')
-        F.write(s)
-        F.close()
+        filename = '%s-%s' % (self._local_tmpfile(), randrange(2147483647))
+        with open(filename, 'w') as F:
+            F.write(s)
         if self.is_remote():
             self._send_tmpfile_to_server(local_file=filename)
             tmp_to_use = self._remote_tmpfile()
@@ -903,7 +931,7 @@ class Maxima(MaximaAbstract, Expect):
 
         r = randrange(2147483647)
         s = str(r+1)
-        cmd = "%s1+%s;\n" % (cmd,r)
+        cmd = "%s1+%s;\n" % (cmd, r)
 
         self._sendline(cmd)
         self._expect_expr(s)
@@ -918,6 +946,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima._quit_string()
             'quit();'
         """
@@ -929,6 +958,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima._crash_msg()
             Maxima crashed -- automatically restarting.
         """
@@ -940,6 +970,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima._error_check("1+1;","Principal Value")
             Traceback (most recent call last):
             ...
@@ -960,6 +991,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima._error_msg("1+1;","Principal Value")
             Traceback (most recent call last):
             ...
@@ -969,7 +1001,7 @@ class Maxima(MaximaAbstract, Expect):
             Maxima ERROR:
                 Principal Value
         """
-        raise TypeError("Error executing code in Maxima\nCODE:\n\t%s\nMaxima ERROR:\n\t%s" % (cmd, out.replace('-- an error.  To debug this try debugmode(true);','')))
+        raise TypeError("Error executing code in Maxima\nCODE:\n\t%s\nMaxima ERROR:\n\t%s" % (cmd, out.replace('-- an error.  To debug this try debugmode(true);', '')))
 
     ###########################################
     # Direct access to underlying lisp interpreter.
@@ -978,7 +1010,7 @@ class Maxima(MaximaAbstract, Expect):
         """
         Send a lisp command to Maxima.
 
-        .. note::
+        .. NOTE::
 
            The output of this command is very raw - not pretty.
 
@@ -990,7 +1022,7 @@ class Maxima(MaximaAbstract, Expect):
             (
         """
         self._eval_line(':lisp %s\n""' % cmd, allow_use_file=False,
-               wait_for_prompt=False, reformat=False, error_check=False)
+                        wait_for_prompt=False, reformat=False, error_check=False)
         self._expect_expr('(%i)')
         return self._before()
 
@@ -1004,9 +1036,9 @@ class Maxima(MaximaAbstract, Expect):
 
         INPUT:
 
-        - ``var`` - string
+        - ``var`` -- string
 
-        - ``value`` - string
+        - ``value`` -- string
 
         EXAMPLES::
 
@@ -1021,10 +1053,10 @@ class Maxima(MaximaAbstract, Expect):
             self._batch(cmd, batchload=True)
         else:
             self._eval_line(cmd)
-            #self._sendline(cmd)
-            #self._expect_expr()
-            #out = self._before()
-            #self._error_check(cmd, out)
+            # self._sendline(cmd)
+            # self._expect_expr()
+            # out = self._before()
+            # self._error_check(cmd, out)
 
     def clear(self, var):
         """
@@ -1073,6 +1105,7 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima._object_class()
             <class 'sage.interfaces.maxima.MaximaElement'>
         """
@@ -1095,51 +1128,31 @@ class Maxima(MaximaAbstract, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maxima import maxima
             sage: maxima._object_function_class()
             <class 'sage.interfaces.maxima.MaximaElementFunction'>
         """
         return MaximaElementFunction
 
-    ## some old helper functions to wrap the calculus use
-    ## of the Maxima interface. these routines expect arguments
-    ## living in the symbolic ring and return something
-    ## that is hopefully coercible into the symbolic ring again.
-##
-##    def sr_integral(self,*args):
-##        return args[0]._maxima_().integrate(*args[1:])
-##
-##    def sr_sum(self,expression,v,a,b):
-##        sum  = "'sum(%s, %s, %s, %s)" % tuple([repr(expr._maxima_()) for expr in (expression, v, a, b)])
-##        result = self.simplify_sum(sum)
-##        result = result.ratsimp()
-##        return expression.parent()(result)
-##
-##    def sr_limit(self,ex,*args):
-##        return ex._maxima_().limit(*args)
-##
-##    def sr_tlimit(self,ex,*args):
-##        return ex._maxima_().tlimit(*args)
-##
+    # some old helper functions to wrap the calculus use
+    # of the Maxima interface. these routines expect arguments
+    # living in the symbolic ring and return something
+    # that is hopefully coercible into the symbolic ring again.
 
-def is_MaximaElement(x):
-    """
-    Returns True if ``x`` is of type :class:`MaximaElement`.
+#    def sr_integral(self, *args):
+#        return args[0]._maxima_().integrate(*args[1:])
 
-    EXAMPLES::
+#    def sr_sum(self, expression, v, a, b):
+#        sum  = "'sum(%s, %s, %s, %s)" % tuple([repr(expr._maxima_()) for expr in (expression, v, a, b)])
+#        result = self.simplify_sum(sum)
+#        result = result.ratsimp()
+#        return expression.parent()(result)
 
-        sage: from sage.interfaces.maxima import is_MaximaElement
-        sage: is_MaximaElement(1)
-        doctest:...: DeprecationWarning: the function is_MaximaElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: m = maxima(1)
-        sage: is_MaximaElement(m)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_MaximaElement is deprecated; use isinstance(x, sage.interfaces.abc.MaximaElement) instead")
+#    def sr_limit(self, ex, *args):
+#        return ex._maxima_().limit(*args)
 
-    return isinstance(x, MaximaElement)
+#    def sr_tlimit(self, ex, *args):
+#        return ex._maxima_().tlimit(*args)
 
 
 @instancedoc
@@ -1170,7 +1183,7 @@ class MaximaElement(MaximaAbstractElement, ExpectElement):
 
         TESTS::
 
-            sage: from sage.interfaces.maxima import MaximaElement
+            sage: from sage.interfaces.maxima import MaximaElement, maxima
             sage: loads(dumps(MaximaElement))==MaximaElement
             True
             sage: a = maxima(5)
@@ -1244,6 +1257,7 @@ class MaximaElementFunction(MaximaElement, MaximaAbstractElementFunction):
 
         Unpickling a Maxima Pexpect interface gives the default interface::
 
+            sage: from sage.interfaces.maxima import Maxima
             sage: m = Maxima()
             sage: g = m.function('x,y','x+y^9')
             sage: h = loads(dumps(g))
@@ -1261,7 +1275,7 @@ maxima = Maxima(init_code=['display2d : false',
                 script_subdirectory=None)
 
 
-def reduce_load_Maxima(): #(init_code=None):
+def reduce_load_Maxima():  # (init_code=None):
     """
     Unpickle a Maxima Pexpect interface.
 
@@ -1271,7 +1285,8 @@ def reduce_load_Maxima(): #(init_code=None):
         sage: reduce_load_Maxima()
         Maxima
     """
-    return maxima #Maxima(init_code=init_code)
+    return maxima  # Maxima(init_code=init_code)
+
 
 # This is defined for compatibility with the old Maxima interface.
 def reduce_load_Maxima_function(parent, defn, args, latex):
@@ -1289,13 +1304,14 @@ def reduce_load_Maxima_function(parent, defn, args, latex):
     """
     return parent.function(args, defn, defn, latex)
 
+
 def __doctest_cleanup():
     """
     Kill all Pexpect interfaces.
 
     EXAMPLES::
 
-        sage: from sage.interfaces.maxima import __doctest_cleanup
+        sage: from sage.interfaces.maxima import __doctest_cleanup, maxima
         sage: maxima(1)
         1
         sage: maxima.is_running()

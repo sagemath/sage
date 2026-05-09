@@ -12,15 +12,9 @@ Installing Git
 
 Depending on your platform, use the following to install Git:
 
-Debian / Ubuntu
-    Run ``sudo apt-get install git-core``
-
-Fedora
-    Run ``sudo yum install git-core``
-
-Windows (Cygwin)
-    Install the Cygwin package Git. Do not attempt to use native
-    Windows installations of Git.
+Linux
+    See :ref:`spkg_git` for the installation command on your
+    Linux distribution.
 
 Windows (WSL)
     We strongly recommend to install the package using the Linux
@@ -48,15 +42,15 @@ Configuring Git
 
 Assuming your name ``alice`` and email address ``alice@wonderland.com``,
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
-    [alice@localhost ~]$ git config --global user.name "Alice Adventure"
-    [alice@localhost ~]$ git config --global user.email alice@wonderland.com
+    $ git config --global user.name "Alice Adventure"
+    $ git config --global user.email alice@wonderland.com
 
 This will write the settings into your Git configuration file
 ``~/.gitconfig`` with your name and email:
 
-.. CODE-BLOCK:: text
+.. code-block:: text
 
     [user]
         name = Alice Adventure

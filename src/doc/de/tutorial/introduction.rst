@@ -71,7 +71,6 @@ zur Installation von Sage auf Ihrem Computer zu erhalten.
 Hier geben wir nur ein paar Kommentare ab.
 
 
-
 #. Die herunterladbare Sage-Datei wurde nach der *batteries included*
    Philosophie zusammengestellt. In anderen Worten, obwohl Sage
    Python, IPython, PARI, GAP, Singular, Maxima, NTL, GMP und so

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Graphs with a given degree sequence
 
@@ -22,7 +21,7 @@ from sage.graphs.graph import Graph
 from sage.misc.randstate import current_randstate
 
 
-def DegreeSequence(deg_sequence):
+def DegreeSequence(deg_sequence, immutable=False):
     """
     Return a graph with the given degree sequence.
 
@@ -38,6 +37,9 @@ def DegreeSequence(deg_sequence):
 
     - ``deg_sequence`` -- list of integers with each entry corresponding to the
       degree of a different vertex
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -62,10 +64,11 @@ def DegreeSequence(deg_sequence):
         sage: G.show()                          # long time                             # needs networkx sage.plot
     """
     import networkx
-    return Graph(networkx.havel_hakimi_graph([int(i) for i in deg_sequence]))
+    return Graph(networkx.havel_hakimi_graph([int(i) for i in deg_sequence]),
+                 immutable=immutable)
 
 
-def DegreeSequenceBipartite(s1, s2):
+def DegreeSequenceBipartite(s1, s2, immutable=False):
     r"""
     Return a bipartite graph whose two sets have the given degree sequences.
 
@@ -76,11 +79,14 @@ def DegreeSequenceBipartite(s1, s2):
 
     INPUT:
 
-    - ``s_1`` -- list of integers corresponding to the degree sequence of the
+    - ``s1`` -- list of integers corresponding to the degree sequence of the
       first set of vertices
 
-    - ``s_2`` -- list of integers corresponding to the degree sequence of the
+    - ``s2`` -- list of integers corresponding to the degree sequence of the
       second set of vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     ALGORITHM:
 
@@ -93,24 +99,24 @@ def DegreeSequenceBipartite(s1, s2):
     If we are given as sequences ``[2,2,2,2,2]`` and ``[5,5]`` we are given as
     expected the complete bipartite graph `K_{2,5}`::
 
-        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5])                     # needs sage.modules
-        sage: g.is_isomorphic(graphs.CompleteBipartiteGraph(5,2))                       # needs sage.modules
+        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5])                     # needs sage.combinat sage.modules
+        sage: g.is_isomorphic(graphs.CompleteBipartiteGraph(5,2))                       # needs sage.combinat sage.modules
         True
 
     Some sequences being incompatible if, for example, their sums are different,
-    the functions raises a ``ValueError`` when no graph corresponding to the
-    degree sequences exists::
+    the functions raises a :exc:`ValueError` when no graph corresponding
+    to the degree sequences exists::
 
-        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,1],[5,5])                     # needs sage.modules
+        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,1],[5,5])                     # needs sage.combinat sage.modules
         Traceback (most recent call last):
         ...
         ValueError: there exists no bipartite graph corresponding to the given degree sequences
 
     TESTS:
 
-    :trac:`12155`::
+    :issue:`12155`::
 
-        sage: graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5]).complement()            # needs sage.modules
+        sage: graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5]).complement()            # needs sage.combinat sage.modules
         Graph on 7 vertices
     """
     from sage.combinat.integer_vector import gale_ryser_theorem
@@ -124,10 +130,10 @@ def DegreeSequenceBipartite(s1, s2):
     if m is False:
         raise ValueError("there exists no bipartite graph corresponding to "
                          "the given degree sequences")
-    return Graph(BipartiteGraph(m))
+    return Graph(BipartiteGraph(m), immutable=immutable)
 
 
-def DegreeSequenceConfigurationModel(deg_sequence, seed=None):
+def DegreeSequenceConfigurationModel(deg_sequence, seed=None, immutable=False):
     """
     Return a random pseudograph with the given degree sequence.
 
@@ -144,6 +150,9 @@ def DegreeSequenceConfigurationModel(deg_sequence, seed=None):
 
     - ``seed`` -- (optional) a ``random.Random`` seed or a Python ``int`` for
       the random number generator
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -172,10 +181,10 @@ def DegreeSequenceConfigurationModel(deg_sequence, seed=None):
     import networkx
     deg_sequence = [int(i) for i in deg_sequence]
     return Graph(networkx.configuration_model(deg_sequence, seed=seed),
-                 loops=True, multiedges=True, sparse=True)
+                 loops=True, multiedges=True, sparse=True, immutable=immutable)
 
 
-def DegreeSequenceTree(deg_sequence):
+def DegreeSequenceTree(deg_sequence, immutable=False):
     """
     Return a tree with the given degree sequence.
 
@@ -190,6 +199,9 @@ def DegreeSequenceTree(deg_sequence):
     - ``deg_sequence`` -- list of integers with each entry corresponding to the
       expected degree of a different vertex
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: G = graphs.DegreeSequenceTree([3,1,3,3,1,1,1,2,1]); G                     # needs networkx
@@ -197,10 +209,11 @@ def DegreeSequenceTree(deg_sequence):
         sage: G.show()                          # long time                             # needs networkx sage.plot
     """
     import networkx
-    return Graph(networkx.degree_sequence_tree([int(i) for i in deg_sequence]))
+    return Graph(networkx.degree_sequence_tree([int(i) for i in deg_sequence]),
+                 immutable=immutable)
 
 
-def DegreeSequenceExpected(deg_sequence, seed=None):
+def DegreeSequenceExpected(deg_sequence, seed=None, immutable=False):
     """
     Return a random graph with expected given degree sequence.
 
@@ -218,6 +231,9 @@ def DegreeSequenceExpected(deg_sequence, seed=None):
     - ``seed`` -- (optional) a ``random.Random`` seed or a Python ``int`` for
       the random number generator
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: G = graphs.DegreeSequenceExpected([1,2,3,2,3]); G                         # needs networkx
@@ -232,4 +248,5 @@ def DegreeSequenceExpected(deg_sequence, seed=None):
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
     deg_sequence = [int(i) for i in deg_sequence]
-    return Graph(networkx.expected_degree_graph(deg_sequence, seed=seed), loops=True)
+    return Graph(networkx.expected_degree_graph(deg_sequence, seed=seed),
+                 loops=True, immutable=immutable)

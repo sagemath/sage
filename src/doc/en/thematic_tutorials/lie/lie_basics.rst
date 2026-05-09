@@ -789,7 +789,7 @@ and for describing the affine Weyl group.
 In particular, the hyperplane for the reflection `r_0`, used in generating
 the affine Weyl group, is translated off the origin (so it becomes an affine
 hyperplane). Now the root system is not described as linear transformations
-on an Euclidean space, but instead by *affine* transformations. Thus the
+on a Euclidean space, but instead by *affine* transformations. Thus the
 dominant chamber has finite volume and tiles the Eucledian space. Moreover,
 each such tile corresponds to a unique element in the affine Weyl group.
 
@@ -848,7 +848,7 @@ the twisting procedure defined in [Kac]_. It has the following properties:
 Further Generalizations
 -----------------------
 
-If a root system (on an Euclidean space) has only the angles
+If a root system (on a Euclidean space) has only the angles
 `\pi/2, 2\pi/3, 3\pi/4, 5\pi/6` between its roots, then we call the
 root system *crystallographic* (on :wikipedia:`Root_system`, this
 condition is called integrality since for any two roots we have

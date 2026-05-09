@@ -12,7 +12,6 @@ sets. See the documentation of :class:`IndependentSets` for actual examples.
 
 Classes and methods
 -------------------
-
 """
 
 from sage.data_structures.binary_matrix cimport *
@@ -20,7 +19,7 @@ from sage.misc.cachefunc import cached_method
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
 
 
-cdef inline int ismaximal(binary_matrix_t g, int n, bitset_t s):
+cdef inline int ismaximal(binary_matrix_t g, int n, bitset_t s) noexcept:
     cdef int i
     for i in range(n):
         if (not bitset_in(s, i)) and bitset_are_disjoint(g.rows[i], s):
@@ -41,10 +40,10 @@ cdef class IndependentSets:
     - ``G`` -- a graph
 
     - ``maximal`` -- boolean (default: ``False``); whether to only consider
-      (inclusionwise) maximal independent sets.
+      (inclusionwise) maximal independent sets
 
     - ``complement`` -- boolean (default: ``False``); whether to consider the
-      graph's complement (i.e. cliques instead of independent sets).
+      graph's complement (i.e. cliques instead of independent sets)
 
     ALGORITHM:
 
@@ -128,9 +127,9 @@ cdef class IndependentSets:
         ...
         ValueError: a is not a vertex of the graph
     """
-    def __init__(self, G, maximal=False, complement=False):
+    def __init__(self, G, maximal=False, complement=False) -> None:
         r"""
-        Constructor for this class
+        Constructor for this class.
 
         TESTS::
 
@@ -141,12 +140,12 @@ cdef class IndependentSets:
         Compute the number of matchings, and check with Sage's implementation::
 
             sage: from sage.graphs.independent_sets import IndependentSets
-            sage: from sage.graphs.matchpoly import matching_polynomial
+            sage: from sage.graphs.matchpoly import matching_polynomial                 # needs sage.libs.flint
             sage: def check_matching(G):
             ....:     number_of_matchings = sum(map(abs, matching_polynomial(G).coefficients(sparse=False)))
             ....:     if number_of_matchings != IndependentSets(G.line_graph()).cardinality():
             ....:         raise ValueError("something goes wrong")
-            sage: for i in range(30):
+            sage: for i in range(30):                                                   # needs sage.libs.flint
             ....:     check_matching(graphs.RandomGNP(11, .3))
 
         Compare the result with the output of :meth:`subgraph_search`::
@@ -162,7 +161,7 @@ cdef class IndependentSets:
             ....:         IS2.extend(map(Set, list(G.subgraph_search_iterator(Graph(n), induced=True, return_graphs=False))))
             ....:     if len(IS) != len(set(IS2)):
             ....:        raise ValueError("something goes wrong")
-            sage: for i in range(5):                                                    # needs sage.modules
+            sage: for i in range(5):                                                    # needs sage.modules, long time (:issue:`39569`)
             ....:     check_with_subgraph_search(graphs.RandomGNP(11, .3))
 
         Empty graph::
@@ -223,7 +222,6 @@ cdef class IndependentSets:
         bitset_init(tmp, self.n)
 
         cdef uint64_t count = 0
-        cdef list ans
         cdef int j
 
         try:
@@ -330,13 +328,13 @@ cdef class IndependentSets:
         from sage.rings.integer import Integer
         return Integer(i)
 
-    def __contains__(self, S):
+    def __contains__(self, S) -> bool:
         r"""
-        Check whether the set is an independent set (possibly maximal)
+        Check whether the set is an independent set (possibly maximal).
 
         INPUT:
 
-        - ``S`` -- a set of vertices to be tested.
+        - ``S`` -- set of vertices to be tested
 
         TESTS:
 

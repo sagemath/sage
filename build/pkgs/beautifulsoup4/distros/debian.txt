@@ -1,1 +1,1 @@
-beautifulsoup4
+python3-bs4

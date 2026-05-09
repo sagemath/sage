@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Feature for testing the presence of ``lrslib``
 """
@@ -41,8 +40,8 @@ class Lrs(Executable):
             sage: isinstance(Lrs(), Lrs)
             True
         """
-        Executable.__init__(self, "lrs", executable="lrs", spkg="lrslib",
-                            url="http://cgm.cs.mcgill.ca/~avis/C/lrs.html")
+        Executable.__init__(self, "lrs", executable='lrs', spkg='lrslib',
+                            url='http://cgm.cs.mcgill.ca/~avis/C/lrs.html')
 
     def is_functional(self):
         r"""
@@ -61,7 +60,8 @@ class Lrs(Executable):
             tf.write("V-representation\nbegin\n 1 1 rational\n 1 \nend\nvolume")
         command = [self.absolute_filename(), tf_name]
         try:
-            result = subprocess.run(command, capture_output=True, text=True)
+            result = subprocess.run(command, capture_output=True, text=True,
+                                    check=False)
         except OSError as e:
             return FeatureTestResult(self, False, reason='Running command "{}" '
                         'raised an OSError "{}" '.format(' '.join(command), e))
@@ -100,8 +100,8 @@ class LrsNash(Executable):
             sage: isinstance(LrsNash(), LrsNash)
             True
         """
-        Executable.__init__(self, "lrsnash", executable="lrsnash", spkg="lrslib",
-                            url="http://cgm.cs.mcgill.ca/~avis/C/lrs.html")
+        Executable.__init__(self, "lrsnash", executable='lrsnash', spkg='lrslib',
+                            url='http://cgm.cs.mcgill.ca/~avis/C/lrs.html')
 
     def is_functional(self):
         r"""
@@ -122,13 +122,14 @@ class LrsNash(Executable):
             tf.write("1 1\n \n 0\n \n 0\n")
         command = [self.absolute_filename(), tf_name]
         try:
-            result = subprocess.run(command, capture_output=True, text=True)
+            result = subprocess.run(command, capture_output=True, text=True,
+                                    check=False)
         except OSError as e:
             return FeatureTestResult(self, False, reason='Running command "{}" '
                         'raised an OSError "{}" '.format(' '.join(command), e))
         if result.returncode:
             return FeatureTestResult(self, False, reason='Running command "{}" '
-                        'returned non-zero exit status "{}" with stderr '
+                        'returned nonzero exit status "{}" with stderr '
                         '"{}" and stdout "{}".'.format(' '.join(result.args),
                                                         result.returncode,
                                                         result.stderr.strip(),

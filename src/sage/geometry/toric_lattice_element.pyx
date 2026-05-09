@@ -85,50 +85,22 @@ Or you can create a homomorphism from one lattice to any other::
 # The "tutorial" above is a truncated version of one in toric_lattice.py.
 
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.libs.gmp.mpz cimport *
 
-from sage.geometry.toric_plotter import ToricPlotter
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.structure.coerce_exceptions import CoercionException
 from sage.structure.element cimport Vector
 from sage.rings.integer cimport Integer
 from sage.structure.richcmp cimport richcmp_not_equal
-
-
-def is_ToricLatticeElement(x):
-    r"""
-    Check if ``x`` is an element of a toric lattice.
-
-    INPUT:
-
-    - ``x`` -- anything.
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is an element of a toric lattice, ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.geometry.toric_lattice_element import (
-        ....:   is_ToricLatticeElement)
-        sage: is_ToricLatticeElement(1)
-        False
-        sage: e = ToricLattice(3).an_element()
-        sage: e
-        N(1, 0, 0)
-        sage: is_ToricLatticeElement(e)
-        True
-    """
-    return isinstance(x, ToricLatticeElement)
 
 
 # Why do we need a special class:
@@ -147,9 +119,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
     - same as for
       :class:`~sage.modules.vector_integer_dense.Vector_integer_dense`.
 
-    OUTPUT:
-
-    - element of a toric lattice.
+    OUTPUT: element of a toric lattice
 
     TESTS::
 
@@ -161,17 +131,15 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         N(1, 2, 3)
         sage: TestSuite(e).run()
     """
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Compare ``self`` and ``right`` according to the operator ``op``.
+        Compare ``self`` and ``other`` according to the operator ``op``.
 
         INPUT:
 
-        - ``right`` -- another ToricLatticeElement
+        - ``other`` -- another ToricLatticeElement
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         First compare the ambient toric lattice, then compare the vectors.
 
@@ -189,15 +157,15 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             sage: n is n2
             False
         """
-        if not is_ToricLatticeElement(right):
+        if not isinstance(other, ToricLatticeElement):
             return NotImplemented
 
         PL_ambient = self.parent().ambient_module()
-        PR_ambient = right.parent().ambient_module()
+        PR_ambient = other.parent().ambient_module()
         if PL_ambient != PR_ambient:
             return richcmp_not_equal(PL_ambient, PR_ambient, op)
         # Now use the real comparison of vectors
-        return self._richcmp_(right, op)
+        return self._richcmp_(other, op)
 
     # For some reason, vectors work just fine without redefining this function
     # from the base class, but if it is not here, we get "unhashable type"...
@@ -205,9 +173,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         r"""
         Return the hash of ``self``.
 
-        OUTPUT:
-
-        - integer.
+        OUTPUT: integer
 
         TESTS::
 
@@ -229,7 +195,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
         INPUT:
 
-        - ``other`` - :class:`ToricLatticeElement`.
+        - ``other`` -- :class:`ToricLatticeElement`
 
         OUTPUT:
 
@@ -271,7 +237,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         """
         Ns = self.parent()
         # We try to deal only with the case of two lattice elements...
-        if is_ToricLatticeElement(other):
+        if isinstance(other, ToricLatticeElement):
             if other.parent().ambient_module() is Ns.ambient_module().dual():
                 # Our own _dot_product_ is disabled
                 return Vector_integer_dense._dot_product_(self, other)
@@ -285,7 +251,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         # We also allow action on elements of lattice quotients
         try:
             lift = other.lift()
-            if is_ToricLatticeElement(lift):
+            if isinstance(lift, ToricLatticeElement):
                 if other.parent().W().is_submodule(Ns.dual().W()):
                     return Vector_integer_dense._dot_product_(self, lift)
                 raise CoercionException("only elements of dual toric lattices "
@@ -300,18 +266,16 @@ cdef class ToricLatticeElement(Vector_integer_dense):
     # is wrong from our point of view.
     cpdef _dot_product_(self, Vector right):
         """
-        Raise a ``TypeError`` exception.
+        Raise a :exc:`TypeError` exception.
 
         Dot product is not defined on toric lattices (there are actions of
         dual lattices on each other instead).
 
         INPUT:
 
-        - ``right`` - vector.
+        - ``right`` -- vector
 
-        OUTPUT:
-
-        - ``TypeError`` exception is raised.
+        OUTPUT: :exc:`TypeError` exception is raised
 
         TESTS::
 
@@ -332,9 +296,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -350,9 +312,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -375,7 +335,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             N(1, 2, 3)
         """
         return (unpickle_v1, (self._parent, self.list(), self._degree,
-                              not self._is_immutable))
+                              self._is_immutable))
 
     def plot(self, **options):
         r"""
@@ -386,9 +346,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         - any options for toric plots (see :func:`toric_plotter.options
           <sage.geometry.toric_plotter.options>`), none are mandatory.
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
@@ -397,28 +355,27 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             sage: n.plot()                                                              # needs sage.plot
             Graphics3d Object
         """
+        from sage.geometry.toric_plotter import ToricPlotter
         tp = ToricPlotter(options, self.parent().degree())
         tp.adjust_options()
         return tp.plot_points([self])
 
 
-def unpickle_v1(parent, entries, degree, is_mutable):
+def unpickle_v1(parent, entries, degree, immutable):
     """
-    Unpickle a :class:`ToricLatticeElement`
+    Unpickle a :class:`ToricLatticeElement`.
 
     INPUT:
 
-    - ``parent`` -- The parent toric lattice.
+    - ``parent`` -- the parent toric lattice
 
-    - ``entries`` -- a list. The coordinates of the lattice point.
+    - ``entries`` -- list; the coordinates of the lattice point
 
-    - ``degree`` -- integer. the dimension of the toric lattice.
+    - ``degree`` -- integer; the dimension of the toric lattice
 
-    - ``is_mutable`` -- boolean. Whether the lattice element is mutable.
+    - ``immutable`` -- boolean; whether the lattice element is immutable
 
-    OUTPUT:
-
-    The :class:`ToricLatticeElement` determined by the input data.
+    OUTPUT: the :class:`ToricLatticeElement` determined by the input data
 
     EXAMPLES::
 
@@ -437,5 +394,5 @@ def unpickle_v1(parent, entries, degree, is_mutable):
     for i in range(degree):
         z = Integer(entries[i])
         mpz_set(v._entries[i], z.value)
-    v._is_immutable = not is_mutable
+    v._is_immutable = immutable
     return v

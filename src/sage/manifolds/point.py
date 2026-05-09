@@ -74,7 +74,6 @@ for the comparison::
     sage: p4 = U((1, pi/2, -pi))
     sage: p4 == p
     True
-
 """
 
 # *****************************************************************************
@@ -119,9 +118,9 @@ class ManifoldPoint(Element):
     - ``name`` -- (default: ``None``) name given to the point
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the point;
       if ``None``, the LaTeX symbol is set to ``name``
-    - ``check_coords`` -- (default: ``True``) determines whether ``coords``
-      are valid coordinates for the chart ``chart``; for symbolic
-      coordinates, it is recommended to set ``check_coords`` to ``False``
+    - ``check_coords`` -- boolean (default: ``True``); determines whether ``coords``
+      are valid coordinates for the chart ``chart``. For symbolic
+      coordinates, it is recommended to set ``check_coords`` to ``False``.
 
     EXAMPLES:
 
@@ -129,7 +128,7 @@ class ManifoldPoint(Element):
 
         sage: M = Manifold(2, 'M', structure='topological')
         sage: c_xy.<x,y> = M.chart()
-        sage: (a, b) = var('a b') # generic coordinates for the point
+        sage: a, b = var('a b')  # generic coordinates for the point
         sage: p = M.point((a, b), name='P'); p
         Point P on the 2-dimensional topological manifold M
         sage: p.coordinates()  # coordinates of P in the subset's default chart
@@ -187,7 +186,6 @@ class ManifoldPoint(Element):
             sage: q = U((-1,2), name='q'); q
             Point q on the 2-dimensional topological manifold M
             sage: TestSuite(q).run()
-
         """
         if parent.is_empty():
             raise TypeError(f'cannot define a point on the {parent} because it has been declared empty')
@@ -240,7 +238,6 @@ class ManifoldPoint(Element):
             'Point p on the 2-dimensional topological manifold M'
             sage: repr(p)  # indirect doctest
             'Point p on the 2-dimensional topological manifold M'
-
         """
         description = "Point"
         if self._name is not None:
@@ -267,7 +264,6 @@ class ManifoldPoint(Element):
             '\\mathcal{P}'
             sage: latex(p)  # indirect doctest
             \mathcal{P}
-
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
@@ -340,7 +336,7 @@ class ManifoldPoint(Element):
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: c_xy.<x,y> = M.chart()
-            sage: (a, b) = var('a b') # generic coordinates for the point
+            sage: a, b = var('a b')  # generic coordinates for the point
             sage: P = M.point((a, b), name='P')
 
         Coordinates of ``P`` in the manifold's default chart::
@@ -375,7 +371,6 @@ class ManifoldPoint(Element):
             {Chart (M, (u, v)): (a - b, a + b),
              Chart (M, (w, z)): (a^3 - 3*a^2*b + 3*a*b^2 - b^3,
                                  a^3 + 3*a^2*b + 3*a*b^2 + b^3)}
-
         """
         if chart is None:
             dom = self.parent()
@@ -445,7 +440,7 @@ class ManifoldPoint(Element):
 
     def set_coordinates(self, coords, chart=None):
         r"""
-        Sets the point coordinates in the specified chart.
+        Set the point coordinates in the specified chart.
 
         Coordinates with respect to other charts are deleted, in order to
         avoid any inconsistency. To keep them, use the method :meth:`add_coord`
@@ -493,7 +488,6 @@ class ManifoldPoint(Element):
             sage: p.set_coord(Y(p), chart=Y)
             sage: p._coordinates
             {Chart (M, (u, v)): (-1, 5)}
-
         """
         self._coordinates.clear()
         self.add_coord(coords, chart)
@@ -502,7 +496,7 @@ class ManifoldPoint(Element):
 
     def add_coordinates(self, coords, chart=None):
         r"""
-        Adds some coordinates in the specified chart.
+        Add some coordinates in the specified chart.
 
         The previous coordinates with respect to other charts are kept. To
         clear them, use :meth:`set_coord` instead.
@@ -560,24 +554,22 @@ class ManifoldPoint(Element):
             sage: p.set_coordinates((-1,5), chart=Y)
             sage: p._coordinates
             {Chart (M, (u, v)): (-1, 5)}
-
         """
         if len(coords) != self.parent().manifold()._dim:
             raise ValueError("the number of coordinates must be equal to " +
                              "the manifold's dimension.")
         if chart is None:
             chart = self.parent()._def_chart
-        else:
-            if chart not in self.parent()._atlas:
-                raise ValueError("the {}".format(chart) + " has not been " +
-                                 "defined on the {}".format(self.parent()))
+        elif chart not in self.parent()._atlas:
+            raise ValueError("the {}".format(chart) + " has not been " +
+                             "defined on the {}".format(self.parent()))
         self._coordinates[chart] = coords
 
     add_coord = add_coordinates
 
     def __eq__(self, other):
         r"""
-        Compares the current point with another one.
+        Compare the current point with another one.
 
         EXAMPLES:
 
@@ -636,7 +628,6 @@ class ManifoldPoint(Element):
             sage: q = M((3*pi,1), chart=Y)
             sage: p == q or q == p
             False
-
         """
         if other is self:
             return True
@@ -705,12 +696,12 @@ class ManifoldPoint(Element):
             diff = xs - xo
             period = periods[ind]
             if period is not None:
-                if not (diff/period in ZZ):
+                if diff/period not in ZZ:
                     return False
             else:
                 if isinstance(diff, Expression) and not diff.is_trivial_zero():
                     return False
-                elif not (diff == 0):
+                if not (diff == 0):
                     return False
         return True
 
@@ -728,7 +719,6 @@ class ManifoldPoint(Element):
             True
             sage: p != M((2,-3), chart=X)
             False
-
         """
         return not (self == other)
 
@@ -755,7 +745,6 @@ class ManifoldPoint(Element):
             sage: p = M((2,-3), chart=X)
             sage: hash(p) == hash(M)
             True
-
         """
         return hash(self.parent().manifold())
 
@@ -811,6 +800,7 @@ class ManifoldPoint(Element):
 
         Drawing a point on a 2-dimensional manifold::
 
+            sage: # needs sage.plot
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()
             sage: p = M.point((1,3), name='p')
@@ -834,12 +824,14 @@ class ManifoldPoint(Element):
         ``p`` has been defined, it can be skipped in the arguments of
         ``plot``::
 
+            sage: # needs sage.plot
             sage: g = p.plot()
             sage: g + gX
             Graphics object consisting of 20 graphics primitives
 
         Call with some options::
 
+            sage: # needs sage.plot
             sage: g = p.plot(chart=X, size=40, color='green', label='$P$',
             ....:            label_color='blue', fontsize=20, label_offset=0.3)
             sage: g + gX
@@ -859,9 +851,9 @@ class ManifoldPoint(Element):
         symbolic variable::
 
             sage: a = var('a')
-            sage: q = M.point((a,2*a), name='q')
-            sage: gq = q.plot(parameters={a:-2}, label_offset=0.2)
-            sage: g + gX + gq
+            sage: q = M.point((a,2*a), name='q')                                        # needs sage.plot
+            sage: gq = q.plot(parameters={a:-2}, label_offset=0.2)                      # needs sage.plot
+            sage: g + gX + gq                                                           # needs sage.plot
             Graphics object consisting of 22 graphics primitives
 
         .. PLOT::
@@ -879,11 +871,12 @@ class ManifoldPoint(Element):
 
         The numerical value is used only for the plot::
 
-            sage: q.coord()
+            sage: q.coord()                                                             # needs sage.plot
             (a, 2*a)
 
         Drawing a point on a 3-dimensional manifold::
 
+            sage: # needs sage.plot
             sage: M = Manifold(3, 'M', structure='topological')
             sage: X.<x,y,z> = M.chart()
             sage: p = M.point((2,1,3), name='p')
@@ -896,16 +889,17 @@ class ManifoldPoint(Element):
 
         Call with some options::
 
-            sage: g = p.plot(chart=X, size=40, color='green', label='P_1',
+            sage: g = p.plot(chart=X, size=40, color='green', label='P_1',              # needs sage.plot
             ....:            label_color='blue', fontsize=20, label_offset=0.3)
-            sage: g + gX
+            sage: g + gX                                                                # needs sage.plot
             Graphics3d Object
 
         An example of plot via a mapping: plot of a point on a 2-sphere viewed
         in the 3-dimensional space ``M``::
 
+            sage: # needs sage.plot
             sage: S2 = Manifold(2, 'S^2', structure='topological')
-            sage: U = S2.open_subset('U') # the open set covered by spherical coord.
+            sage: U = S2.open_subset('U')  # the open set covered by spherical coord.
             sage: XS.<th,ph> = U.chart(r'th:(0,pi):\theta ph:(0,2*pi):\phi')
             sage: p = U.point((pi/4, pi/8), name='p')
             sage: F = S2.continuous_map(M, {(XS, X): [sin(th)*cos(ph),
@@ -921,6 +915,7 @@ class ManifoldPoint(Element):
         Use of the option ``ambient_coords`` for plots on a 4-dimensional
         manifold::
 
+            sage: # needs sage.plot
             sage: M = Manifold(4, 'M', structure='topological')
             sage: X.<t,x,y,z> = M.chart()
             sage: p = M.point((1,2,3,4), name='p')
@@ -945,7 +940,6 @@ class ManifoldPoint(Element):
             g = p.plot(X, ambient_coords=(y,z), label_offset=0.4)
             gX = X.plot(X, ambient_coords=(y,z))
             sphinx_plot(g+gX)
-
         """
         from sage.manifolds.chart import Chart
         from sage.plot.graphics import Graphics

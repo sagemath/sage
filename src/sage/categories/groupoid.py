@@ -12,7 +12,8 @@ Groupoid
 #******************************************************************************
 
 from sage.categories.category import CategoryWithParameters
-from .sets_cat import Sets
+from sage.categories.sets_cat import Sets
+
 
 class Groupoid(CategoryWithParameters):
     """
@@ -38,7 +39,7 @@ class Groupoid(CategoryWithParameters):
             sage: C = Groupoid(S8)
             sage: TestSuite(C).run()
         """
-        CategoryWithParameters.__init__(self) #, "Groupoid")
+        CategoryWithParameters.__init__(self)  # "Groupoid")
         if G is None:
             from sage.groups.perm_gps.permgroup_named import SymmetricGroup
             G = SymmetricGroup(8)
@@ -54,8 +55,8 @@ class Groupoid(CategoryWithParameters):
         """
         return "Groupoid with underlying set %s" % self.__G
 
-    #def construction(self):
-    #    return (self.__class__, self.__G)
+    # def construction(self):
+    #     return (self.__class__, self.__G)
 
     def _make_named_class_key(self, name):
         """
@@ -65,7 +66,6 @@ class Groupoid(CategoryWithParameters):
 
             sage: Groupoid(DihedralGroup(3)).parent_class is Groupoid(ZZ).parent_class
             True
-
         """
         return None
 
@@ -81,7 +81,7 @@ class Groupoid(CategoryWithParameters):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class.
+        Return an instance of this class.
 
         EXAMPLES::
 

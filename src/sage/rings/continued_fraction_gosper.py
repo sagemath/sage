@@ -1,10 +1,8 @@
-# -*- encoding: utf-8 -*-
 """
 Gosper iterator for homographic transformations
 
 EXAMPLES::
 
-    sage: # needs sage.symbolic
     sage: from sage.rings.continued_fraction_gosper import gosper_iterator
     sage: x = continued_fraction(pi)
     sage: it = iter(gosper_iterator(3,2,3,1,x))
@@ -36,7 +34,8 @@ For more information on the underlying algorithm, see [Gos1972]_.
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 
-class gosper_iterator():
+
+class gosper_iterator:
     r"""
     Iterable for the partial quotients of `(a*x+b)/(c*x+d)`, where `a, b, c, d`
     are integers, and `x` is a continued fraction.
@@ -47,7 +46,7 @@ class gosper_iterator():
 
         INPUT:
 
-        - ``a, b, c, d`` -- integer coefficients of the transformation
+        - ``a``, ``b``, ``c``, ``d`` -- integer coefficients of the transformation
 
         - ``x`` -- a continued fraction
 
@@ -61,7 +60,7 @@ class gosper_iterator():
             sage: preperiod_length = i.output_preperiod_length
             sage: preperiod = l[:preperiod_length]
             sage: period = l[preperiod_length:]
-            sage: c == d == 0 or continued_fraction((preperiod, period), x.value()) == continued_fraction((a*x.value()+b)/(c*x.value()+d))  # not tested, known bug (see :trac:`32127`)
+            sage: c == d == 0 or continued_fraction((preperiod, period), x.value()) == continued_fraction((a*x.value()+b)/(c*x.value()+d))  # not tested, known bug (see :issue:`32127`)
             True
 
         Infinity::
@@ -145,8 +144,7 @@ class gosper_iterator():
             if ub == lb and s < 1:
                 self.emit(ub)
                 return Integer(ub)
-            else:
-                self.ingest()
+            self.ingest()
 
     def emit(self, q):
         """
@@ -215,5 +213,4 @@ class gosper_iterator():
         """
         if not d:
             return +Infinity
-        else:
-            return n // d
+        return n // d

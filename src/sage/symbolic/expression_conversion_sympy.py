@@ -26,9 +26,11 @@ from sage.symbolic.operators import arithmetic_operators
 #########
 # Sympy #
 #########
+
+
 class SympyConverter(Converter):
     """
-    Converts any expression to SymPy.
+    Convert any expression to SymPy.
 
     EXAMPLES::
 
@@ -46,13 +48,12 @@ class SympyConverter(Converter):
 
     TESTS:
 
-    Make sure we can convert I (:trac:`6424`)::
+    Make sure we can convert I (:issue:`6424`)::
 
         sage: bool(I._sympy_() == I)
         True
         sage: (x+I)._sympy_()
         x + I
-
     """
     def __init__(self):
         """
@@ -60,7 +61,7 @@ class SympyConverter(Converter):
 
             sage: from sage.symbolic.expression_conversions import SympyConverter
             sage: s = SympyConverter()  # indirect doctest
-            sage: TestSuite(s).run(skip="_test_pickling")
+            sage: TestSuite(s).run(skip='_test_pickling')
         """
         from sage.interfaces.sympy import sympy_init
         sympy_init()
@@ -114,22 +115,20 @@ class SympyConverter(Converter):
         ops = [sympy.sympify(self(a), evaluate=False) for a in ex.operands()]
         if operator == "+":
             return sympy.Add(*ops)
-        elif operator == "*":
+        if operator == "*":
             return sympy.Mul(*ops)
-        elif operator == "-":
+        if operator == "-":
             return sympy.Sub(*ops)
-        elif operator == "/":
+        if operator == "/":
             return sympy.Div(*ops)
-        elif operator == "^":
+        if operator == "^":
             return sympy.Pow(*ops)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def symbol(self, ex):
         """
         EXAMPLES::
 
-            sage:
             sage: from sage.symbolic.expression_conversions import SympyConverter
             sage: s = SympyConverter()
             sage: s.symbol(x)
@@ -144,7 +143,6 @@ class SympyConverter(Converter):
         """
         EXAMPLES::
 
-            sage:
             sage: import operator
             sage: from sage.symbolic.expression_conversions import SympyConverter
             sage: s = SympyConverter()
@@ -187,8 +185,7 @@ class SympyConverter(Converter):
         f_sympy = getattr(sympy, f, None)
         if f_sympy:
             return f_sympy(*sympy.sympify(g, evaluate=False))
-        else:
-            return sympy.Function(str(f))(*g, evaluate=False)
+        return sympy.Function(str(f))(*g, evaluate=False)
 
     def tuple(self, ex):
         """
@@ -246,7 +243,7 @@ class SympyConverter(Converter):
             sage: df_sympy == f_sympy.diff(x, 2, y, 1)
             True
 
-        Check that :trac:`28964` is fixed::
+        Check that :issue:`28964` is fixed::
 
             sage: f = function('f')
             sage: _ = var('x,t')
@@ -254,7 +251,7 @@ class SympyConverter(Converter):
             (Derivative(f(x, t), x), Derivative(f(x, t), t))
 
         Check differentiating by variables with multiple occurrences
-        (:trac:`28964`)::
+        (:issue:`28964`)::
 
             sage: f = function('f')
             sage: _ = var('x1,x2,x3,x,t')
@@ -310,8 +307,7 @@ class SympyConverter(Converter):
         result = f_sympy.diff(*sympy_arg)
         if subs_new:
             return sympy.Subs(result, subs_new, subs_old)
-        else:
-            return result
+        return result
 
 
 sympy_converter = SympyConverter()

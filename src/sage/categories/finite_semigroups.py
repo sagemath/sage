@@ -62,7 +62,7 @@ class FiniteSemigroups(CategoryWithAxiom):
     class ParentMethods:
         def idempotents(self):
             r"""
-            Returns the idempotents of the semigroup
+            Return the idempotents of the semigroup.
 
             EXAMPLES::
 
@@ -75,7 +75,7 @@ class FiniteSemigroups(CategoryWithAxiom):
         @cached_method
         def j_classes(self):
             r"""
-            Returns the `J`-classes of the semigroup.
+            Return the `J`-classes of the semigroup.
 
             Two elements `u` and `v` of a monoid are in the same `J`-class
             if `u` divides `v` and `v` divides `u`.
@@ -91,16 +91,14 @@ class FiniteSemigroups(CategoryWithAxiom):
                 [['a'], ['ab', 'ba'], ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'],
                  ['ac', 'ca'], ['b'], ['bc', 'cb'], ['c']]
             """
-            return self.cayley_graph(side="twosided", simple=True).strongly_connected_components()
+            return self.cayley_graph(side='twosided', simple=True).strongly_connected_components()
 
         @cached_method
-        def j_classes_of_idempotents(self):
+        def j_classes_of_idempotents(self) -> list[list]:
             r"""
-            Returns all the idempotents of self, grouped by J-class.
+            Return all the idempotents of self, grouped by J-class.
 
-            OUTPUT:
-
-             a list of lists.
+            OUTPUT: list of lists
 
             EXAMPLES::
 
@@ -109,12 +107,14 @@ class FiniteSemigroups(CategoryWithAxiom):
                 [['a'], ['ab', 'ba'], ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'],
                  ['ac', 'ca'], ['b'], ['bc', 'cb'], ['c']]
             """
-            return [l for l in ([x for x in cl if attrcall('is_idempotent')(x)] for cl in self.j_classes()) if len(l) > 0]
+            it = ([x for x in cl if attrcall('is_idempotent')(x)]
+                  for cl in self.j_classes())
+            return [ell for ell in it if ell]
 
         @cached_method
         def j_transversal_of_idempotents(self):
             r"""
-            Returns a list of one idempotent per regular J-class
+            Return a list of one idempotent per regular J-class.
 
             EXAMPLES::
 

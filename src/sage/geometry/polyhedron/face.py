@@ -96,9 +96,7 @@ class PolyhedronFace(ConvexSet_closed):
     manually create :class:`PolyhedronFace` objects unless you know
     what you are doing.
 
-    OUTPUT:
-
-    A :class:`PolyhedronFace`.
+    OUTPUT: a :class:`PolyhedronFace`
 
     EXAMPLES::
 
@@ -134,16 +132,16 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``polyhedron`` -- a :class:`Polyhedron`. The ambient
-          polyhedron.
+        - ``polyhedron`` -- a :class:`Polyhedron`; the ambient
+          polyhedron
 
-        - ``V_indices`` -- list of sorted integers. The indices of the
+        - ``V_indices`` -- list of sorted integers; the indices of the
           face-spanning V-representation objects in the ambient
-          polyhedron.
+          polyhedron
 
-        - ``H_indices`` -- list of sorted integers. The indices of the
+        - ``H_indices`` -- list of sorted integers; the indices of the
           H-representation objects of the ambient polyhedron that are
-          saturated on the face.
+          saturated on the face
 
         TESTS::
 
@@ -155,8 +153,8 @@ class PolyhedronFace(ConvexSet_closed):
         self._polyhedron = polyhedron
         self._ambient_Vrepresentation_indices = tuple(V_indices)
         self._ambient_Hrepresentation_indices = tuple(H_indices)
-        self._ambient_Vrepresentation = tuple( polyhedron.Vrepresentation(i) for i in V_indices )
-        self._ambient_Hrepresentation = tuple( polyhedron.Hrepresentation(i) for i in H_indices )
+        self._ambient_Vrepresentation = tuple(polyhedron.Vrepresentation(i) for i in V_indices)
+        self._ambient_Hrepresentation = tuple(polyhedron.Hrepresentation(i) for i in H_indices)
         if polyhedron.is_mutable():
             polyhedron._add_dependent_object(self)
 
@@ -200,9 +198,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return all vertices of the face.
 
-        OUTPUT:
-
-        A tuple of vertices.
+        OUTPUT: a tuple of vertices
 
         EXAMPLES::
 
@@ -222,9 +218,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return the number of vertices of the face.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -263,9 +257,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return the rays of the face.
 
-        OUTPUT:
-
-        A tuple of rays.
+        OUTPUT: a tuple of rays
 
         EXAMPLES::
 
@@ -281,9 +273,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return the number of rays of the face.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -318,9 +308,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return all lines of the face.
 
-        OUTPUT:
-
-        A tuple of lines.
+        OUTPUT: a tuple of lines
 
         EXAMPLES::
 
@@ -335,9 +323,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return the number of lines of the face.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -353,7 +339,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``other`` -- anything.
+        - ``other`` -- anything
 
         OUTPUT:
 
@@ -389,8 +375,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``index`` -- optional. Either an integer or ``None``
-          (default).
+        - ``index`` -- integer or ``None`` (default)
 
         OUTPUT:
 
@@ -420,8 +405,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         if index is None:
             return self._ambient_Hrepresentation
-        else:
-            return self._ambient_Hrepresentation[index]
+        return self._ambient_Hrepresentation[index]
 
     def ambient_Vrepresentation(self, index=None):
         r"""
@@ -430,8 +414,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``index`` -- optional. Either an integer or ``None``
-          (default).
+        - ``index`` -- integer or ``None`` (default)
 
         OUTPUT:
 
@@ -461,8 +444,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         if index is None:
             return self._ambient_Vrepresentation
-        else:
-            return self._ambient_Vrepresentation[index]
+        return self._ambient_Vrepresentation[index]
 
     def n_ambient_Hrepresentation(self):
         """
@@ -471,9 +453,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         See also :meth:`ambient_Hrepresentation`.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -497,9 +477,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         See also :meth:`ambient_Vrepresentation`.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -520,9 +498,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         See also :meth:`ambient_Hrepresentation`.
 
-        OUTPUT:
-
-        Tuple of indices
+        OUTPUT: tuple of indices
 
         EXAMPLES::
 
@@ -551,9 +527,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         See also :meth:`ambient_Vrepresentation`.
 
-        OUTPUT:
-
-        Tuple of indices
+        OUTPUT: tuple of indices
 
         EXAMPLES::
 
@@ -587,9 +561,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return the dimension of the face.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -601,7 +573,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         TESTS:
 
-        Check that :trac:`28650` is fixed::
+        Check that :issue:`28650` is fixed::
 
             sage: P = Polyhedron(vertices=[[1,0]], rays=[[1,0], [0,1]])
             sage: P.faces(2)
@@ -609,21 +581,18 @@ class PolyhedronFace(ConvexSet_closed):
         """
         if self.n_ambient_Vrepresentation() == 0:
             return -1
-        else:
-            origin = self.vertices()[0].vector()
-            v_list = [vector(v) - origin for v in
-                     self.ambient_Vrepresentation() if v.is_vertex()]
-            v_list += [vector(v) for v in self.ambient_Vrepresentation()
-                      if v.is_ray() or v.is_line()]
-            return matrix(v_list).rank()
+        origin = self.vertices()[0].vector()
+        v_list = [vector(v) - origin for v in
+                 self.ambient_Vrepresentation() if v.is_vertex()]
+        v_list += [vector(v) for v in self.ambient_Vrepresentation()
+                  if v.is_ray() or v.is_line()]
+        return matrix(v_list).rank()
 
     def _repr_(self):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        A string listing the V-representation indices of the face.
+        OUTPUT: a string listing the V-representation indices of the face
 
         EXAMPLES::
 
@@ -695,7 +664,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``base_field`` -- (default: the fraction field of the base ring) a field.
+        - ``base_field`` -- a field (default: the fraction field of the base ring)
 
         EXAMPLES::
 
@@ -710,11 +679,11 @@ class PolyhedronFace(ConvexSet_closed):
         """
         return self.polyhedron().ambient_vector_space(base_field=base_field)
 
-    def is_relatively_open(self):
+    def is_relatively_open(self) -> bool:
         r"""
         Return whether ``self`` is relatively open.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -727,11 +696,11 @@ class PolyhedronFace(ConvexSet_closed):
         """
         return self.as_polyhedron().is_relatively_open()
 
-    def is_compact(self):
+    def is_compact(self) -> bool:
         r"""
         Return whether ``self`` is compact.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -750,9 +719,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return the face as an independent polyhedron.
 
-        OUTPUT:
-
-        A polyhedron.
+        OUTPUT: a polyhedron
 
         EXAMPLES::
 
@@ -827,8 +794,7 @@ class PolyhedronFace(ConvexSet_closed):
         except TypeError:  # point not iterable or no common ring for elements
             if len(point) > 0:
                 return False
-            else:
-                p = vector(self.polyhedron().base_ring(), [])
+            p = vector(self.polyhedron().base_ring(), [])
 
         if len(p) != self.ambient_dim():
             return False
@@ -836,10 +802,7 @@ class PolyhedronFace(ConvexSet_closed):
         if not self.polyhedron().contains(p):
             return False
 
-        for H in self.ambient_Hrepresentation():
-            if H.eval(p) != 0:
-                return False
-        return True
+        return all(H.eval(p) == 0 for H in self.ambient_Hrepresentation())
 
     __contains__ = contains
 
@@ -851,13 +814,11 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``direction`` -- string (default: ``'outer'``), the direction in
+        - ``direction`` -- string (default: ``'outer'``); the direction in
           which to consider the normals. The other allowed option is
           ``'inner'``.
 
-        OUTPUT:
-
-        A polyhedron.
+        OUTPUT: a polyhedron
 
         EXAMPLES::
 
@@ -910,7 +871,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         if self.dim() == -1:
             raise ValueError("the empty face does not have a normal cone")
-        elif direction not in ['outer','inner']:
+        elif direction not in ['outer', 'inner']:
             raise ValueError("the direction should be either 'outer' or 'inner'")
         rays = []
         lines = []
@@ -933,9 +894,7 @@ class PolyhedronFace(ConvexSet_closed):
         It is equal to the sum of ``self`` and the cone of feasible directions
         at any point of the relative interior of ``self``.
 
-        OUTPUT:
-
-        A polyhedron.
+        OUTPUT: a polyhedron
 
         EXAMPLES::
 
@@ -960,7 +919,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         TESTS:
 
-        Check that :trac:`32658` is fixed::
+        Check that :issue:`32658` is fixed::
 
             sage: P = polytopes.hypercube(2)
             sage: P.faces(-1)[0].affine_tangent_cone()
@@ -983,9 +942,7 @@ class PolyhedronFace(ConvexSet_closed):
         Return the polyhedron containing the points that sees every facet
         containing ``self``.
 
-        OUTPUT:
-
-        A polyhedron.
+        OUTPUT: a polyhedron
 
         EXAMPLES::
 
@@ -1027,6 +984,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         return parent.element_class(parent, None, [locus_ieqs, locus_eqns])
 
+
 def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
     r"""
     Convert a combinatorial face to a face of a polyhedron.
@@ -1036,7 +994,7 @@ def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
     - ``polyhedron`` -- a polyhedron containing ``combinatorial_face``
     - ``combinatorial_face`` -- a :class:`CombinatorialFace`
 
-    OUTPUT: a :class:`PolyhedronFace`.
+    OUTPUT: a :class:`PolyhedronFace`
 
     EXAMPLES::
 
@@ -1050,8 +1008,8 @@ def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
 
     TESTS:
 
-    Making sure that backends do not change their order of inequalites/equations
-    without applying the changes to this method::
+    Making sure that backends do not change their order of
+    inequalities/equations without applying the changes to this method::
 
         sage: polytopes.simplex(backend='field').equations()[0].index()
         4

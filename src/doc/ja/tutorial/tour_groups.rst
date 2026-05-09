@@ -35,7 +35,7 @@ Sageを使えば(LaTeX形式で)指標表を作ることもできる:
 ::
 
     sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3)]])
-    sage: latex(G.character_table())
+    sage: latex(G.character_table()) # random
     \left(\begin{array}{rrrr}
     1 & 1 & 1 & 1 \\
     1 & -\zeta_{3} - 1 & \zeta_{3} & 1 \\

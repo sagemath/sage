@@ -7,20 +7,20 @@ evaluation and Maxima, GiNaC, Pynac for symbolics.
 
 The main objects which are exported from this module are:
 
- * :meth:`bessel_J(n, x) <Function_Bessel_J>` -- The Bessel J function
- * :meth:`bessel_Y(n, x) <Function_Bessel_Y>` -- The Bessel Y function
- * :meth:`bessel_I(n, x) <Function_Bessel_I>` -- The Bessel I function
- * :meth:`bessel_K(n, x) <Function_Bessel_K>` -- The Bessel K function
- * :meth:`Bessel(...) <Bessel>`   -- A factory function for producing Bessel functions of
+ * :meth:`bessel_J(n, x) <Function_Bessel_J>` -- the Bessel J function
+ * :meth:`bessel_Y(n, x) <Function_Bessel_Y>` -- the Bessel Y function
+ * :meth:`bessel_I(n, x) <Function_Bessel_I>` -- the Bessel I function
+ * :meth:`bessel_K(n, x) <Function_Bessel_K>` -- the Bessel K function
+ * :meth:`Bessel(...) <Bessel>` -- a factory function for producing Bessel functions of
    various kinds and orders
- * :meth:`hankel1(nu, z) <Function_Hankel1>`  -- The Hankel function of the first kind
- * :meth:`hankel2(nu, z) <Function_Hankel2>`  -- The Hankel function of the second kind
- * :meth:`struve_H(nu, z) <Function_Struve_H>`  -- The Struve function
- * :meth:`struve_L(nu, z) <Function_Struve_L>`  -- The modified Struve function
- * :meth:`spherical_bessel_J(n, z) <SphericalBesselJ>` -- The Spherical Bessel J function
- * :meth:`spherical_bessel_Y(n, z) <SphericalBesselY>` -- The Spherical Bessel J function
- * :meth:`spherical_hankel1(n, z) <SphericalHankel1>` -- The Spherical Hankel function of the first kind
- * :meth:`spherical_hankel2(n, z) <SphericalHankel2>` -- The Spherical Hankel function of the second kind
+ * :meth:`hankel1(nu, z) <Function_Hankel1>` -- the Hankel function of the first kind
+ * :meth:`hankel2(nu, z) <Function_Hankel2>` -- the Hankel function of the second kind
+ * :meth:`struve_H(nu, z) <Function_Struve_H>` -- the Struve function
+ * :meth:`struve_L(nu, z) <Function_Struve_L>` -- the modified Struve function
+ * :meth:`spherical_bessel_J(n, z) <SphericalBesselJ>` -- the Spherical Bessel J function
+ * :meth:`spherical_bessel_Y(n, z) <SphericalBesselY>` -- the Spherical Bessel J function
+ * :meth:`spherical_hankel1(n, z) <SphericalHankel1>` -- the Spherical Hankel function of the first kind
+ * :meth:`spherical_hankel2(n, z) <SphericalHankel2>` -- the Spherical Hankel function of the second kind
 
 -  Bessel functions, first defined by the Swiss mathematician
    Daniel Bernoulli and named after Friedrich Bessel, are canonical
@@ -321,7 +321,7 @@ class Function_Bessel_J(BuiltinFunction):
         Numerical evaluation is handled by the mpmath library. Symbolics are
         handled by a combination of Maxima and Sage (Ginac/Pynac).
 
-    Check whether the return value is real whenever the argument is real (:trac:`10251`)::
+    Check whether the return value is real whenever the argument is real (:issue:`10251`)::
 
         sage: bessel_J(5, 1.5) in RR                                                    # needs mpmath
         True
@@ -377,13 +377,13 @@ class Function_Bessel_J(BuiltinFunction):
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return ZZ.one()
-            elif n.real() > 0 or n in ZZ:
+            if n.real() > 0 or n in ZZ:
                 return ZZ.zero()
-            elif n.real() < 0:
+            if n.real() < 0:
                 return unsigned_infinity
         if n == QQ((1, 2)):
             return sqrt(2 / pi / x) * sin(x)
-        elif n == QQ((-1, 2)):
+        if n == QQ((-1, 2)):
             return sqrt(2 / pi / x) * cos(x)
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
@@ -397,7 +397,7 @@ class Function_Bessel_J(BuiltinFunction):
             sage: bessel_J(0.5, 1.5)                                                    # needs mpmath
             0.649838074753747
 
-        Check for correct rounding (:trac:`17122`)::
+        Check for correct rounding (:issue:`17122`)::
 
             sage: # needs sage.rings.real_mpfr
             sage: R = RealField(113)
@@ -435,12 +435,10 @@ class Function_Bessel_J(BuiltinFunction):
             Traceback (most recent call last):
             ...
             NotImplementedError: derivative with respect to order
-
         """
         if diff_param == 1:
             return (bessel_J(n - 1, x) - bessel_J(n + 1, x)) / Integer(2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
     def _print_latex_(self, n, z):
         """
@@ -509,7 +507,7 @@ class Function_Bessel_Y(BuiltinFunction):
         sage: f.diff(x)
         -1/2*bessel_Y(3, x) + 1/2*bessel_Y(1, x)
 
-    High precision and complex valued inputs (see :trac:`4230`)::
+    High precision and complex valued inputs (see :issue:`4230`)::
 
         sage: bessel_Y(0, 1).n(128)                                                     # needs sage.symbolic
         0.088256964215676957982926766023515162828
@@ -533,12 +531,12 @@ class Function_Bessel_Y(BuiltinFunction):
 
     TESTS:
 
-    Check whether the return value is real whenever the argument is real (:trac:`10251`)::
+    Check whether the return value is real whenever the argument is real (:issue:`10251`)::
 
         sage: bessel_Y(5, 1.5) in RR                                                    # needs mpmath
         True
 
-    Coercion works correctly (see :trac:`17130`)::
+    Coercion works correctly (see :issue:`17130`)::
 
         sage: # needs sage.rings.real_mpfr
         sage: r = bessel_Y(RealField(200)(1), 1.0); r
@@ -599,11 +597,11 @@ class Function_Bessel_Y(BuiltinFunction):
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return -infinity
-            elif n.real() > 0 or n.real() < 0:
+            if n.real() > 0 or n.real() < 0:
                 return unsigned_infinity
         if n == QQ((1, 2)):
             return -sqrt(2 / pi / x) * cos(x)
-        elif n == QQ((-1, 2)):
+        if n == QQ((-1, 2)):
             return sqrt(2 / pi / x) * sin(x)
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
@@ -617,7 +615,7 @@ class Function_Bessel_Y(BuiltinFunction):
             sage: bessel_Y(0, 1).n(256)                                                 # needs mpmath sage.symbolic
             0.08825696421567695798292676602351516282781752309067554671104384761199978932351
 
-        Check for correct rounding (:trac:`17122`)::
+        Check for correct rounding (:issue:`17122`)::
 
             sage: # needs mpmath sage.rings.real_mpfr
             sage: R = RealField(113)
@@ -658,8 +656,7 @@ class Function_Bessel_Y(BuiltinFunction):
         """
         if diff_param == 1:
             return (bessel_Y(n - 1, x) - bessel_Y(n + 1, x)) / Integer(2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
     def _print_latex_(self, n, z):
         """
@@ -758,7 +755,7 @@ class Function_Bessel_I(BuiltinFunction):
         sage: N(bessel_I(1,1),500)                                                      # needs sage.symbolic
         0.565159103992485027207696027609863307328899621621092009480294489479255640964371134092664997766814410064677886055526302676857637684917179812041131208121
 
-    Check whether the return value is real whenever the argument is real (:trac:`10251`)::
+    Check whether the return value is real whenever the argument is real (:issue:`10251`)::
 
         sage: bessel_I(5, 1.5) in RR                                                    # needs mpmath
         True
@@ -813,13 +810,13 @@ class Function_Bessel_I(BuiltinFunction):
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return ZZ.one()
-            elif n.real() > 0 or n in ZZ:
+            if n.real() > 0 or n in ZZ:
                 return ZZ.zero()
-            elif n.real() < 0:
+            if n.real() < 0:
                 return unsigned_infinity
         if n == QQ((1, 2)):
             return sqrt(2 / (pi * x)) * sinh(x)
-        elif n == QQ((-1, 2)):
+        if n == QQ((-1, 2)):
             return sqrt(2 / (pi * x)) * cosh(x)
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
@@ -852,8 +849,7 @@ class Function_Bessel_I(BuiltinFunction):
         """
         if diff_param == 1:
             return (bessel_I(n - 1, x) + bessel_I(n + 1, x)) / Integer(2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
     def _print_latex_(self, n, z):
         """
@@ -944,7 +940,7 @@ class Function_Bessel_K(BuiltinFunction):
 
     TESTS:
 
-    Verify that :trac:`3426` is fixed:
+    Verify that :issue:`3426` is fixed:
 
     The Bessel K function can be evaluated numerically at complex orders::
 
@@ -961,7 +957,7 @@ class Function_Bessel_K(BuiltinFunction):
         4.11189776828337e-45 - 1.01494840019482e-80*I
         1.15159692553603e-88 - 6.75787862113718e-125*I
 
-    Check whether the return value is real whenever the argument is real (:trac:`10251`)::
+    Check whether the return value is real whenever the argument is real (:issue:`10251`)::
 
         sage: bessel_K(5, 1.5) in RR                                                    # needs mpmath
         True
@@ -1013,7 +1009,7 @@ class Function_Bessel_K(BuiltinFunction):
         if not isinstance(x, Expression) and x == 0:
             if n == 0:
                 return infinity
-            elif n.real() > 0 or n.real() < 0:
+            if n.real() > 0 or n.real() < 0:
                 return unsigned_infinity
         if n == QQ((1, 2)) or n == QQ((-1, 2)) and x > 0:
             return sqrt(pi / 2) * exp(-x) * x ** (-Integer(1) / Integer(2))
@@ -1049,8 +1045,7 @@ class Function_Bessel_K(BuiltinFunction):
         """
         if diff_param == 1:
             return -(bessel_K(n - 1, x) + bessel_K(n + 1, x)) / Integer(2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
     def _print_latex_(self, n, z):
         """
@@ -1203,7 +1198,6 @@ def Bessel(*args, **kwds):
         sage: G += plot(Bessel(1, 'J'), 0, 15, color='black', linestyle='dotted')
         sage: G += plot(Bessel(1, 'Y'), 0, 15, color='black', linestyle='dotted')
         sage: show(G, ymin=-1, ymax=1)
-
     """
     # Determine the order and type of function from the arguments and keywords.
     # These are recorded in local variables: _type, _order, _system, _nargs.
@@ -1226,19 +1220,15 @@ def Bessel(*args, **kwds):
         raise ValueError("inconsistent types given")
     # record the function type
     if _type is None:
-        if 'typ' in kwds:
-            _type = kwds['typ']
-        else:
-            _type = 'J'
-    if not (_type in ['I', 'J', 'K', 'Y']):
+        _type = kwds.get('typ', 'J')
+    if _type not in ['I', 'J', 'K', 'Y']:
         raise ValueError("type must be one of I, J, K, Y")
 
     # return the function
     _f = bessel_type_dict[_type]
     if _nargs == 1:
         return lambda x: _f(_order, x)
-    else:
-        return _f
+    return _f
 
 
 class Function_Struve_H(BuiltinFunction):
@@ -1476,7 +1466,7 @@ struve_L = Function_Struve_L()
 
 class Function_Hankel1(BuiltinFunction):
     r"""
-    The Hankel function of the first kind
+    The Hankel function of the first kind.
 
     DEFINITION:
 
@@ -1554,8 +1544,7 @@ class Function_Hankel1(BuiltinFunction):
         """
         if diff_param == 1:
             return (nu * hankel1(nu, z)) / z - hankel1(nu + 1, z)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
 
 hankel1 = Function_Hankel1()
@@ -1563,7 +1552,7 @@ hankel1 = Function_Hankel1()
 
 class Function_Hankel2(BuiltinFunction):
     r"""
-    The Hankel function of the second kind
+    The Hankel function of the second kind.
 
     DEFINITION:
 
@@ -1641,8 +1630,7 @@ class Function_Hankel2(BuiltinFunction):
         """
         if diff_param == 1:
             return (Integer(1) / 2) * (hankel2(nu - 1, z) - hankel2(nu + 1, z))
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
 
 hankel2 = Function_Hankel2()
@@ -1650,7 +1638,7 @@ hankel2 = Function_Hankel2()
 
 class SphericalBesselJ(BuiltinFunction):
     r"""
-    The spherical Bessel function of the first kind
+    The spherical Bessel function of the first kind.
 
     DEFINITION:
 
@@ -1743,8 +1731,7 @@ class SphericalBesselJ(BuiltinFunction):
         if diff_param == 1:
             return (spherical_bessel_J(n - 1, z) -
                     ((n + 1) / z) * spherical_bessel_J(n, z))
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
 
 spherical_bessel_J = SphericalBesselJ()
@@ -1752,7 +1739,7 @@ spherical_bessel_J = SphericalBesselJ()
 
 class SphericalBesselY(BuiltinFunction):
     r"""
-    The spherical Bessel function of the second kind
+    The spherical Bessel function of the second kind.
 
     DEFINITION:
 
@@ -1844,8 +1831,7 @@ class SphericalBesselY(BuiltinFunction):
             return (-spherical_bessel_Y(n, z) / (2 * z) +
                     (spherical_bessel_Y(n - 1, z) -
                      spherical_bessel_Y(n + 1, z)) / 2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
 
 spherical_bessel_Y = SphericalBesselY()
@@ -1853,7 +1839,7 @@ spherical_bessel_Y = SphericalBesselY()
 
 class SphericalHankel1(BuiltinFunction):
     r"""
-    The spherical Hankel function of the first kind
+    The spherical Hankel function of the first kind.
 
     DEFINITION:
 
@@ -1942,8 +1928,7 @@ class SphericalHankel1(BuiltinFunction):
             return (-spherical_hankel1(n, z) / (2 * z) +
                     (spherical_hankel1(n - 1, z) -
                      spherical_hankel1(n + 1, z)) / 2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
 
 spherical_hankel1 = SphericalHankel1()
@@ -1951,7 +1936,7 @@ spherical_hankel1 = SphericalHankel1()
 
 class SphericalHankel2(BuiltinFunction):
     r"""
-    The spherical Hankel function of the second kind
+    The spherical Hankel function of the second kind.
 
     DEFINITION:
 
@@ -2052,8 +2037,7 @@ class SphericalHankel2(BuiltinFunction):
             return (-spherical_hankel2(n, z) / (2 * z) +
                     (spherical_hankel2(n - 1, z) -
                      spherical_hankel2(n + 1, z)) / 2)
-        else:
-            raise NotImplementedError('derivative with respect to order')
+        raise NotImplementedError('derivative with respect to order')
 
 
 spherical_hankel2 = SphericalHankel2()
@@ -2076,7 +2060,7 @@ def spherical_bessel_f(F, n, z):
 
     TESTS:
 
-    Check that :trac:`28474` is fixed::
+    Check that :issue:`28474` is fixed::
 
         sage: from sage.functions.bessel import spherical_bessel_f
         sage: spherical_bessel_f('besselj', 3, -4)                                      # needs mpmath

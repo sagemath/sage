@@ -51,16 +51,16 @@ cdef int singular_polynomial_check(poly *p, ring *r) except -1:
         p = p.next
     return 0
 
-cdef int singular_polynomial_add(poly **ret, poly *p, poly *q, ring *r):
+cdef int singular_polynomial_add(poly **ret, poly *p, poly *q, ring *r) noexcept:
     """
     ``ret[0] = p+q`` where ``p`` and ``p`` in ``r``.
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``q`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``q`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -78,16 +78,16 @@ cdef int singular_polynomial_add(poly **ret, poly *p, poly *q, ring *r):
     ret[0] = p_Add_q(p, q, r)
     return 0
 
-cdef int singular_polynomial_sub(poly **ret, poly *p, poly *q, ring *r):
+cdef int singular_polynomial_sub(poly **ret, poly *p, poly *q, ring *r) noexcept:
     """
     ``ret[0] = p-q`` where ``p`` and ``p`` in ``r``.
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``q`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``q`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -105,16 +105,16 @@ cdef int singular_polynomial_sub(poly **ret, poly *p, poly *q, ring *r):
     ret[0] = p_Add_q(p, p_Neg(q, r), r)
     return 0
 
-cdef int singular_polynomial_rmul(poly **ret, poly *p, RingElement n, ring *r):
+cdef int singular_polynomial_rmul(poly **ret, poly *p, RingElement n, ring *r) noexcept:
     """
     ``ret[0] = n*p`` where ``n`` is a coefficient and ``p`` in ``r``.
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``n`` - a Sage coefficient
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``n`` -- a Sage coefficient
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -132,20 +132,20 @@ cdef int singular_polynomial_rmul(poly **ret, poly *p, RingElement n, ring *r):
     n_Delete(&_n, r.cf)
     return 0
 
-cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args, poly *(*get_element)(object)):
+cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
+                                  poly *(*get_element)(object) noexcept) noexcept:
     """
     ``ret[0] = p(*args)`` where each entry in arg  is a polynomial and ``p`` in ``r``.
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``r`` - a Singular ring
-    - ``args`` - a list/tuple of elements which can be converted to
-      Singular polynomials using the ``(get_element)`` function
-      provided.
-    - ``(*get_element)`` - a function to turn a Sage element into a
-      Singular element.
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
+    - ``args`` -- list/tuple of elements which can be converted to Singular
+      polynomials using the ``(get_element)`` function provided
+    - ``(*get_element)`` -- a function to turn a Sage element into a
+      Singular element
 
     EXAMPLES::
 
@@ -177,7 +177,7 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args, poly 
 
     Loop (at most 30 times) until we have 6 consecutive zeros when
     calling ``leak(10000)``. Depending on the operating system, it is
-    possible to have several non-zero leak values in the beginning, but
+    possible to have several nonzero leak values in the beginning, but
     after a while we should get only zeros. The fact that we require 6
     zeros also means that Singular's pre-allocated buckets should not
     be sufficient if there really would be a memory leak. ::
@@ -200,7 +200,7 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args, poly 
         Leaked 0 bytes
     """
     cdef long l = len(args)
-    cdef ideal *to_id = idInit(l,1)
+    cdef ideal *to_id = idInit(l, 1)
     cdef bint constant_args = 1
     for i from 0 <= i < l:
         to_id.m[i]= p_Copy( get_element(args[i]), r)
@@ -231,15 +231,15 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args, poly 
 
     return 0
 
-cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r):
+cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
     """
     Compare two Singular elements ``p`` and ``q`` in ``r``.
 
     INPUT:
 
-    - ``p`` - a Singular polynomial
-    - ``q`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``p`` -- a Singular polynomial
+    - ``q`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -254,45 +254,69 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r):
 
         sage: (2/3*x^2 + 1/2*y + 3) > (2/3*x^2 + 1/4*y + 10)
         True
+
+    TESTS:
+
+    Ensure that comparison is transitive (as long as ``cfGreater`` is transitive and
+    consistent with ``cfGreaterZero``, see :issue:`39018` for more details)::
+
+        sage: P.<x,y> = GF(5)[]
+        sage: P(1) > P(4)
+        False
+        sage: P(4) > P(2)
+        True
+        sage: P(2) > P(1)
+        True
+
+    ::
+
+        sage: # long time (:issue:`39569`)
+        sage: R.<x,y> = Integers(10)[]
+        sage: l = [i*x+j*y+k for i in range(10) for j in range(10) for k in range(10)]
+        sage: l.sort()
+        sage: for i in range(len(l)):
+        ....:     for b in l[:i]:
+        ....:         assert b < l[i], (b, l[i])
+
+    More tests for :issue:`35681`::
+
+        sage: P.<x,y> = ZZ[]
+        sage: P(0) > P(-1)
+        True
     """
-    cdef number *h
-    cdef int ret = 0
+    # similar to p_Compare in p_polys.h
+    cdef int tmp
 
     if r != currRing:
         rChangeCurrRing(r)
 
-    # handle special cases first (slight slowdown, as special cases
-    # are - well - special
-    if p == NULL:
-        if q == NULL:
-            # compare 0, 0
-            return 0
-        elif p_IsConstant(q,r):
-            # compare 0, const
-            return 1-2*r.cf.cfGreaterZero(p_GetCoeff(q,r), r.cf) # -1: <, 1: > #
-    elif q == NULL:
-        if p_IsConstant(p,r):
-            # compare const, 0
-            return -1+2*r.cf.cfGreaterZero(p_GetCoeff(p,r), r.cf) # -1: <, 1: >
+    while True:
+        # workaround for https://github.com/Singular/Singular/issues/1293
+        while p != NULL and r.cf.cfIsZero(p_GetCoeff(p, r), r.cf):
+            p = pNext(p)
+        while q != NULL and r.cf.cfIsZero(p_GetCoeff(q, r), r.cf):
+            q = pNext(q)
 
-    while ret==0 and p!=NULL and q!=NULL:
-        ret = p_Cmp( p, q, r)
+        if p == NULL:
+            if q == NULL:
+                return 0
+            return -1 if r.cf.cfGreaterZero(p_GetCoeff(q, r), r.cf) else 1
+        elif q == NULL:
+            return 1 if r.cf.cfGreaterZero(p_GetCoeff(p, r), r.cf) else -1
 
-        if ret==0:
-            h = r.cf.cfSub(p_GetCoeff(p, r),p_GetCoeff(q, r),r.cf)
-            # compare coeffs
-            ret = -1+r.cf.cfIsZero(h,r.cf)+2*r.cf.cfGreaterZero(h, r.cf) # -1: <, 0:==, 1: >
-            n_Delete(&h, r.cf)
+        tmp = p_Cmp(p, q, r)
+        if tmp != 0:
+            if tmp < 0:
+                return -1 if r.cf.cfGreaterZero(p_GetCoeff(q, r), r.cf) else 1
+            else:
+                return 1 if r.cf.cfGreaterZero(p_GetCoeff(p, r), r.cf) else -1
+
+        # compare coefficients
+        if not r.cf.cfEqual(p_GetCoeff(p, r), p_GetCoeff(q, r), r.cf):
+            return 1 if r.cf.cfGreater(p_GetCoeff(p, r), p_GetCoeff(q, r), r.cf) else -1
+
         p = pNext(p)
         q = pNext(q)
-
-    if ret==0:
-        if p==NULL and q != NULL:
-            ret = -1
-        elif p!=NULL and q==NULL:
-            ret = 1
-
-    return ret
 
 cdef int singular_polynomial_mul(poly** ret, poly *p, poly *q, ring *r) except -1:
     """
@@ -300,10 +324,10 @@ cdef int singular_polynomial_mul(poly** ret, poly *p, poly *q, ring *r) except -
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``q`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``q`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -331,10 +355,10 @@ cdef int singular_polynomial_div_coeff(poly** ret, poly *p, poly *q, ring *r) ex
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``q`` - a constant Singular polynomial
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``q`` -- a constant Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -357,7 +381,7 @@ cdef int singular_polynomial_div_coeff(poly** ret, poly *p, poly *q, ring *r) ex
     sig_off()
     return 0
 
-cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r) except -1:
+cdef int singular_polynomial_pow(poly **ret, poly *p, int exp, ring *r) except -1:
     """
     ``ret[0] = p**exp`` where ``p`` in ``r`` and ``exp`` > 0.
 
@@ -365,10 +389,10 @@ cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``exp`` - integer
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``exp`` -- integer
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -391,7 +415,7 @@ cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r
 
     if r != currRing:
         rChangeCurrRing(r)
-    cdef int count = singular_polynomial_length_bounded(p,15)
+    cdef int count = singular_polynomial_length_bounded(p, 15)
     if count >= 15 or exp > 15:
         sig_on()
     ret[0] = pPower( p_Copy(p,r), exp)
@@ -399,7 +423,7 @@ cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r
         sig_off()
     return 0
 
-cdef int singular_polynomial_neg(poly **ret, poly *p, ring *r):
+cdef int singular_polynomial_neg(poly **ret, poly *p, ring *r) noexcept:
     """
     ``ret[0] = -p where ``p`` in ``r``.
 
@@ -407,9 +431,9 @@ cdef int singular_polynomial_neg(poly **ret, poly *p, ring *r):
 
     INPUT:
 
-    - ``ret`` - a pointer to a Singular polynomial to store the result in
-    - ``p`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``ret`` -- a pointer to a Singular polynomial to store the result in
+    - ``p`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -431,8 +455,8 @@ cdef object singular_polynomial_str(poly *p, ring *r):
 
     INPUT:
 
-    - ``p`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``p`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -456,8 +480,8 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
 
     INPUT:
 
-    - ``p`` - a Singular polynomial
-    - ``r`` - a Singular ring
+    - ``p`` -- a Singular polynomial
+    - ``r`` -- a Singular ring
 
     EXAMPLES::
 
@@ -467,8 +491,8 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         sage: latex(10*x^2 + 1/2*y)
         10 x^{2} + \frac{1}{2} y
 
-    Demonstrate that coefficients over non-atomic representated rings are
-    properly parenthesized (:trac:`11186`)::
+    Demonstrate that coefficients over non-atomic represented rings are
+    properly parenthesized (:issue:`11186`)::
 
         sage: x = var('x')
         sage: K.<z> = QQ.extension(x^2 + x + 1)
@@ -477,7 +501,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         \left(z + 1\right) v w - z w^{2} + z v + \left(-z - 1\right) w + z + 1
 
     Demonstrate that there are no extra blanks in latex expression of multivariate
-    polynomial (:trac:`12908`)::
+    polynomial (:issue:`12908`)::
 
         sage: R.<X,Y> = ZZ[]
         sage: latex(X-Y)
@@ -504,7 +528,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         multi = multi.lstrip().rstrip()
 
         # Next determine coefficient of multinomial
-        c =  si2sa(p_GetCoeff(p, r), r, base)
+        c = si2sa(p_GetCoeff(p, r), r, base)
         if not multi:
             multi = latex(c)
         elif c != 1:
@@ -555,7 +579,7 @@ cdef object singular_polynomial_str_with_changed_varnames(poly *p, ring *r, obje
     omFree(_names)
     return s
 
-cdef long singular_polynomial_deg(poly *p, poly *x, ring *r):
+cdef long singular_polynomial_deg(poly *p, poly *x, ring *r) noexcept:
     cdef long _deg, deg
     cdef int dummy
 
@@ -573,13 +597,13 @@ cdef long singular_polynomial_deg(poly *p, poly *x, ring *r):
         if p_GetExp(x, i, r):
             break
     while p:
-        _deg =  p_GetExp(p,i,r)
+        _deg = p_GetExp(p, i, r)
         if _deg > deg:
             deg = _deg
         p = pNext(p)
     return deg
 
-cdef int singular_polynomial_length_bounded(poly *p, int bound):
+cdef int singular_polynomial_length_bounded(poly *p, int bound) noexcept:
     """
     Return the number of monomials in ``p`` but stop counting at
     ``bound``.
@@ -589,8 +613,8 @@ cdef int singular_polynomial_length_bounded(poly *p, int bound):
 
     INPUT:
 
-    - ``p`` - a Singular polynomial
-    - ``bound`` - an integer > 0
+    - ``p`` -- a Singular polynomial
+    - ``bound`` -- integer > 0
     """
     cdef int count = 0
     while p != NULL and count < bound:
@@ -603,8 +627,8 @@ cdef int singular_vector_maximal_component(poly *v, ring *r) except -1:
     returns the maximal module component of the vector ``v``.
     INPUT:
 
-    - ``v`` - a polynomial/vector
-    - ``r`` - a ring
+    - ``v`` -- a polynomial/vector
+    - ``r`` -- a ring
     """
     cdef int res=0
     while v!=NULL:
@@ -618,10 +642,10 @@ cdef int singular_polynomial_subst(poly **p, int var_index, poly *value, ring *r
 
     INPUT:
 
-    - ``p`` - a polynomial
-    - ``var_index`` - an integer < ngens (zero based indexing)
-    - ``value`` - a polynomial
-    - ``r`` - a ring
+    - ``p`` -- a polynomial
+    - ``var_index`` -- integer < ngens (zero based indexing)
+    - ``value`` -- a polynomial
+    - ``r`` -- a ring
     """
 
     if r != currRing:

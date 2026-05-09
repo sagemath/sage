@@ -1,5 +1,5 @@
 r"""
-Field of Arbitrary Precision Complex Intervals
+Arbitrary precision complex intervals (parent class)
 
 AUTHORS:
 
@@ -12,7 +12,7 @@ heavily modified:
 
 - Carl Witty (2007-10-24): rewrite for intervals
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()``
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()``
   should pass on ``*args`` and ``**kwds``.
 
 - Travis Scrimshaw (2012-10-18): Added documentation to get full coverage.
@@ -34,23 +34,25 @@ heavily modified:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
-
-from sage.structure.parent import Parent
-from .integer_ring import ZZ
-from .rational_field import QQ
-from .ring import Field
-import sage.rings.abc
-from . import integer
-from . import complex_interval
 import weakref
-from .real_mpfi import RealIntervalField, RealIntervalField_class
-from .complex_mpfr import ComplexField
+from typing import Literal
+
+import sage.rings.abc
 from sage.misc.cachefunc import cached_method
+from sage.rings import complex_interval, integer
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfi import RealIntervalField, RealIntervalField_class
+from sage.rings.ring import Field
+from sage.structure.parent import Parent
+
+cache: dict[int, weakref.ReferenceType[ComplexIntervalField_class]] = {}
 
 
-cache = {}
-def ComplexIntervalField(prec=53, names=None):
+def ComplexIntervalField(prec=53, names=None) -> ComplexIntervalField_class:
     """
     Return the complex interval field with real and imaginary parts having
     ``prec`` *bits* of precision.
@@ -69,7 +71,6 @@ def ComplexIntervalField(prec=53, names=None):
         sage: i^i
         0.207879576350761908546955619834978770033877841631769608075136?
     """
-    global cache
     if prec in cache:
         X = cache[prec]
         C = X()
@@ -149,11 +150,11 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         sage: CIF.category()
         Category of infinite fields
-        sage: TestSuite(CIF).run(skip="_test_gcd_vs_xgcd")
+        sage: TestSuite(CIF).run(skip='_test_gcd_vs_xgcd')
 
     TESTS:
 
-    This checks that :trac:`15355` is fixed::
+    This checks that :issue:`15355` is fixed::
 
         sage: x + CIF(RIF(-2,2), 0)
         x + 0.?e1
@@ -172,10 +173,17 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         sage: CIF.is_finite()
         False
+
+    .. SEEALSO::
+
+        - :mod:`sage.rings.real_mpfi`
+        - :class:`sage.rings.complex_arb.ComplexBallField` (alternative
+          implementation of complex intervals, with more features)
     """
+
     Element = complex_interval.ComplexIntervalFieldElement
 
-    def __init__(self, prec=53):
+    def __init__(self, prec=53) -> None:
         """
         Initialize ``self``.
 
@@ -188,8 +196,10 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         """
         self._prec = int(prec)
         from sage.categories.fields import Fields
-        Field.__init__(self, self.real_field(), ("I",), False,
-                category=Fields().Infinite())
+
+        Field.__init__(
+            self, self.real_field(), ("I",), False, category=Fields().Infinite()
+        )
         self._populate_coercion_lists_(convert_method_name="_complex_mpfi_")
 
     def __reduce__(self):
@@ -201,11 +211,11 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             sage: loads(dumps(CIF)) == CIF
             True
         """
-        return ComplexIntervalField, (self._prec, )
+        return ComplexIntervalField, (self._prec,)
 
     def construction(self):
         """
-        Returns the functorial construction of this complex interval field,
+        Return the functorial construction of this complex interval field,
         namely as the algebraic closure of the real interval field with
         the same precision.
 
@@ -219,7 +229,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         TESTS:
 
-        Test that :trac:`19922` is fixed::
+        Test that :issue:`19922` is fixed::
 
             sage: c = ComplexIntervalField(128).an_element()
             sage: r = RealIntervalField(64).an_element()
@@ -234,9 +244,10 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             Univariate Polynomial Ring in x over Complex Interval Field with 53 bits of precision
         """
         from sage.categories.pushout import AlgebraicClosureFunctor
+
         return (AlgebraicClosureFunctor(), self.real_field())
 
-    def is_exact(self):
+    def is_exact(self) -> Literal[False]:
         """
         The complex interval field is not exact.
 
@@ -247,9 +258,9 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         """
         return False
 
-    def prec(self):
+    def prec(self) -> int:
         """
-        Returns the precision of ``self`` (in bits).
+        Return the precision of ``self`` (in bits).
 
         EXAMPLES::
 
@@ -260,9 +271,9 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         """
         return self._prec
 
-    def to_prec(self, prec):
+    def to_prec(self, prec) -> ComplexIntervalField_class:
         """
-        Returns a complex interval field with the given precision.
+        Return a complex interval field with the given precision.
 
         EXAMPLES::
 
@@ -275,7 +286,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         """
         return ComplexIntervalField(prec)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return a string representation of ``self`` in the Magma language.
 
@@ -314,10 +325,10 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             {call: {atomic:ComplexIntervalField}({atomic:2})}
         """
         if self.prec() == 53:
-            return sib.name('CIF')
+            return sib.name("CIF")
 
-        v = sib.name('ComplexIntervalField')(sib.int(self.prec()))
-        name = 'CIF%d' % self.prec()
+        v = sib.name("ComplexIntervalField")(sib.int(self.prec()))
+        name = "CIF%d" % self.prec()
         sib.cache(self, v, name)
         return v
 
@@ -379,7 +390,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             return False
         return self._prec == other._prec
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash.
 
@@ -393,7 +404,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         """
         return hash((self.__class__, self._prec))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test whether ``self`` is not equal to ``other``.
 
@@ -484,19 +495,20 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             Coercion map:
               From: Set of Python objects of class 'int'
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(GaussianIntegers())
+            sage: CIF.coerce_map_from(GaussianIntegers())                               # needs sage.rings.number_field
             Conversion via _complex_mpfi_ method map:
-              From: Gaussian Integers in Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+              From: Gaussian Integers generated by I in Number Field in I
+               with defining polynomial x^2 + 1 with I = 1*I
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(QQbar)
+            sage: CIF.coerce_map_from(QQbar)                                            # needs sage.rings.number_field
             Conversion via _complex_mpfi_ method map:
               From: Algebraic Field
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(AA)
+            sage: CIF.coerce_map_from(AA)                                               # needs sage.rings.number_field
             Conversion via _complex_mpfi_ method map:
               From: Algebraic Real Field
               To:   Complex Interval Field with 53 bits of precision
-            sage: CIF.coerce_map_from(UniversalCyclotomicField())
+            sage: CIF.coerce_map_from(UniversalCyclotomicField())                       # needs sage.libs.gap sage.rings.number_field
             Conversion via _complex_mpfi_ method map:
               From: Universal Cyclotomic Field
               To:   Complex Interval Field with 53 bits of precision
@@ -513,8 +525,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         # Direct and efficient conversions
         if S is ZZ or S is QQ or S is int:
             return True
-        if isinstance(S, (ComplexIntervalField_class,
-                          RealIntervalField_class)):
+        if isinstance(S, (ComplexIntervalField_class, RealIntervalField_class)):
             return S.precision() >= self._prec
 
         # If coercion to CC is possible and there is a _complex_mpfi_
@@ -524,7 +535,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             if f is not None:
                 return f
 
-        return self._coerce_map_via( (self.real_field(),), S)
+        return self._coerce_map_via((self.real_field(),), S)
 
     def _repr_(self):
         """
@@ -532,9 +543,9 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         EXAMPLES::
 
-            sage: ComplexIntervalField() # indirect doctest
+            sage: ComplexIntervalField()  # indirect doctest
             Complex Interval Field with 53 bits of precision
-            sage: ComplexIntervalField(100) # indirect doctest
+            sage: ComplexIntervalField(100)  # indirect doctest
             Complex Interval Field with 100 bits of precision
         """
         return "Complex Interval Field with %s bits of precision" % self._prec
@@ -619,7 +630,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
     def pi(self):
         r"""
-        Returns `\pi` as an element in the complex (interval) field.
+        Return `\pi` as an element in the complex (interval) field.
 
         EXAMPLES::
 
@@ -642,7 +653,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         """
         return 1
 
-    def zeta(self, n=2):
+    def zeta(self, n: int = 2):
         r"""
         Return a primitive `n`-th root of unity.
 
@@ -653,11 +664,9 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         INPUT:
 
-        - ``n`` -- an integer (default: 2)
+        - ``n`` -- integer (default: 2)
 
-        OUTPUT:
-
-        A complex `n`-th root of unity.
+        OUTPUT: a complex `n`-th root of unity
 
         EXAMPLES::
 
@@ -667,6 +676,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             0.309016994374948? + 0.9510565162951536?*I
         """
         from .integer import Integer
+
         n = Integer(n)
         if n == 1:
             x = self.element_class(self, 1)
@@ -677,10 +687,10 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
             # e^(2*pi*i/n) = cos(2pi/n) + i *sin(2pi/n)
             RIF = self.real_field()
             pi = RIF.pi()
-            z = 2*pi/n
+            z = 2 * pi / n
             x = self.element_class(self, z.cos(), z.sin())
         # Uncomment after implemented
-        #x._set_multiplicative_order( n )
+        # x._set_multiplicative_order( n )
         return x
 
     def scientific_notation(self, status=None):

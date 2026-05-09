@@ -74,7 +74,6 @@ cdef extern from "gsl/gsl_interp.h":
                             size_t index_lo, size_t index_hi)
 
 
-
 cdef extern from "gsl/gsl_spline.h":
   ctypedef struct gsl_spline
 

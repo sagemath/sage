@@ -19,7 +19,7 @@ Important note. Below we do s.expand().real() because s.real() takes forever (TO
 
 Problem R2::
 
-    sage: def hermite(n,y):
+    sage: def hermite(n, y):
     ....:     if n == 1: return 2*y
     ....:     if n == 0: return 1
     ....:     return expand(2*y*hermite(n-1,y) - 2*(n-1)*hermite(n-2,y))
@@ -37,7 +37,7 @@ Problem R4::
 
 Problem R5::
 
-    sage: def blowup(L,n):
+    sage: def blowup(L, n):
     ....:    for i in [0..n]:
     ....:        L.append( (L[i] + L[i+1]) * L[i+2] )
     sage: L = list(var('x,y,z'))
@@ -89,5 +89,4 @@ PROBLEM S3::
 PROBLEM S4::
 
     sage: w = (sin(x)*cos(x)).series(x,400)
-
 """

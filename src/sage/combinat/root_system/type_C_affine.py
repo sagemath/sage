@@ -50,7 +50,7 @@ class CartanType(CartanType_standard_untwisted_affine):
 
     def dynkin_diagram(self):
         """
-        Returns the extended Dynkin diagram for affine type C.
+        Return the extended Dynkin diagram for affine type C.
 
         EXAMPLES::
 
@@ -60,7 +60,6 @@ class CartanType(CartanType_standard_untwisted_affine):
              C3~
             sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 2), (1, 0, 1), (1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
-
         """
         n = self.n
         if n == 1:
@@ -76,7 +75,7 @@ class CartanType(CartanType_standard_untwisted_affine):
         g.add_edge(0,1,2)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -117,6 +116,8 @@ class CartanType(CartanType_standard_untwisted_affine):
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         if self.n == 1:
@@ -134,7 +135,7 @@ class CartanType(CartanType_standard_untwisted_affine):
         ret += "}\n" + node(0, 0, label(0))
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return a ascii art representation of the extended Dynkin diagram.
 
@@ -156,6 +157,8 @@ class CartanType(CartanType_standard_untwisted_affine):
             O<=>O
             0   1
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         n = self.n

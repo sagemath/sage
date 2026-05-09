@@ -87,7 +87,7 @@ AUTHORS:
 
 from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import richcmp
-import sage.rings.polynomial.polynomial_singular_interface as polynomial_singular_interface
+from sage.rings.polynomial import polynomial_singular_interface
 
 
 class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_singular_repr, CommutativeRingElement):
@@ -104,7 +104,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         xi
         sage: (singular(xi)*singular(xi)).NF('std(0)')                                  # needs sage.libs.singular
         -1
-
     """
     def __init__(self, parent, polynomial, check=True):
         """
@@ -112,14 +111,13 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         INPUT:
 
+        - ``parent`` -- a quotient of a polynomial ring
 
-        -  ``parent`` - a quotient of a polynomial ring
+        - ``polynomial`` -- a polynomial
 
-        -  ``polynomial`` - a polynomial
-
-        -  ``check`` - bool (optional): whether or not to
-           verify that x is a valid element of the polynomial ring and reduced
-           (mod the modulus).
+        - ``check`` -- boolean (default: ``True``); whether or not to
+          verify that x is a valid element of the polynomial ring and reduced
+          (mod the modulus).
         """
         from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
         from sage.rings.polynomial.polynomial_element import Polynomial
@@ -147,7 +145,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
                 Q = P(0)
                 X = P.gen()
                 while R.degree() >= B.degree():
-                    S = P((R.leading_coefficient()/B.leading_coefficient())) * X**(R.degree()-B.degree())
+                    S = P(R.leading_coefficient()/B.leading_coefficient()) * X**(R.degree()-B.degree())
                     Q = Q + S
                     R = R - S*B
                 polynomial = R
@@ -161,7 +159,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
             sage: K.<i> = NumberField(x^2 + 1)
             sage: cc = K.hom([-i])
@@ -353,7 +350,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         TESTS:
 
         Raise an exception if the base ring is not a field
-        (see :trac:`13303`)::
+        (see :issue:`13303`)::
 
             sage: Z16x.<x> = Integers(16)[]
             sage: S.<y> =  Z16x.quotient(x^2 + x + 1)
@@ -362,7 +359,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             ...
             NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
 
-        Check that :trac:`29469` is fixed::
+        Check that :issue:`29469` is fixed::
 
             sage: S(3).is_unit()
             True
@@ -388,10 +385,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         """
         Return the inverse of this element.
 
-        .. WARNING::
-
-            Only implemented when the base ring is a field.
-
         EXAMPLES::
 
             sage: R.<x> = QQ[]
@@ -399,52 +392,43 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: (2*y)^(-1)
             -1/2*y - 1
 
-        Raises a ``ZeroDivisionError`` if this element is not a unit::
+        Raises a :exc:`ZeroDivisionError` if this element is not a unit::
 
             sage: (y+1)^(-1)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: element y + 1 of quotient polynomial ring not invertible
+            ArithmeticError: element is non-invertible
 
         TESTS:
 
         An element is not invertible if the base ring is not a field
-        (see :trac:`13303`)::
+        (see :issue:`13303`) (the test no longer makes sense when inversion is
+        implemented for this particular base ring, need better test)::
 
             sage: Z16x.<x> = Integers(16)[]
             sage: S.<y> =  Z16x.quotient(x^2 + x + 1)
             sage: (2*y)^(-1)
             Traceback (most recent call last):
             ...
-            NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
+            ArithmeticError: element is non-invertible
+            sage: (2*y+1)^(-1)  # this cannot raise ValueError because...
+            10*y + 5
+            sage: (2*y+1) * (10*y+5)  # the element is in fact invertible
+            1
 
-        Check that :trac:`29469` is fixed::
+        Check that :issue:`29469` is fixed::
 
             sage: ~S(3)
             11
         """
-        if self._polynomial.is_zero():
-            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible" % self)
-        if self._polynomial.is_one():
-            return self
-
-        parent = self.parent()
-
+        P = self.parent()
         try:
-            if self._polynomial.is_unit():
-                inv_pol = self._polynomial.inverse_of_unit()
-                return parent(inv_pol)
-        except (TypeError, NotImplementedError):
-            pass
-
-        base = parent.base_ring()
-        if not base.is_field():
-            raise NotImplementedError("The base ring (=%s) is not a field" % base)
-        g, _, a = parent.modulus().xgcd(self._polynomial)
-        if g.degree() != 0:
-            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible" % self)
-        c = g[0]
-        return self.__class__(self.parent(), (~c)*a, check=False)
+            return type(self)(P, self._polynomial.inverse_mod(P.modulus()), check=False)
+        except ValueError as e:
+            if e.args[0] == "Impossible inverse modulo":
+                raise ZeroDivisionError(f"element {self} of quotient polynomial ring not invertible")
+            else:
+                raise NotImplementedError
 
     def field_extension(self, names):
         r"""
@@ -455,8 +439,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         INPUT:
 
-        - ``names`` - name of generator of output field
-
+        - ``names`` -- name of generator of output field
 
         OUTPUT:
 
@@ -466,10 +449,8 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         -  homomorphism from field to ``self``
 
-
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<alpha> = R.quotient(x^3 - 2)
             sage: F.<a>, f, g = alpha.field_extension()
@@ -484,7 +465,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         Over a finite field, the corresponding field extension is not a
         number field::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x> = GF(25,'b')['x']
             sage: S.<a> = R.quo(x^3 + 2*x + 1)
             sage: F.<b>, g, h = a.field_extension()
@@ -495,7 +475,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         We do an example involving a relative number field::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ['x']
             sage: K.<a> = NumberField(x^3 - 2)
             sage: S.<X> = K['X']
@@ -504,7 +483,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         Another more awkward example::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ['x']
             sage: K.<a> = NumberField(x^3 - 2)
             sage: S.<X> = K['X']
@@ -565,8 +543,8 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         f = R.hom([alpha], F, check=False)
 
-        import sage.rings.number_field.number_field_rel as number_field_rel
-        if number_field_rel.is_RelativeNumberField(F):
+        from sage.rings.number_field.number_field_rel import NumberField_relative
+        if isinstance(F, NumberField_relative):
 
             base_map = F.base_field().hom([R.base_ring().gen()])
             g = F.Hom(R)(x, base_map)
@@ -584,15 +562,13 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         INPUT:
 
-
-        -  ``var`` - string - the variable name
-
+        - ``var`` -- string; the variable name
 
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quo(x^3 -389*x^2 + 2*x - 5)
-            sage: a.charpoly('X')
+            sage: a.charpoly('X')                                                       # needs sage.modules
             X^3 - 389*X^2 + 2*X - 5
         """
         return self.matrix().charpoly(var)
@@ -606,9 +582,9 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quotient(x^3 -389*x^2 + 2*x - 5)
-            sage: a.fcp('x')
+            sage: a.fcp('x')                                                            # needs sage.modules
             x^3 - 389*x^2 + 2*x - 5
-            sage: S(1).fcp('y')
+            sage: S(1).fcp('y')                                                         # needs sage.modules
             (y - 1)^3
         """
         return self.charpoly(var).factor()
@@ -621,7 +597,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<a> = R.quotient(x^3-2)
+            sage: S.<a> = R.quotient(x^3 - 2)
             sage: b = a^2 - 3
             sage: b
             a^2 - 3
@@ -661,7 +637,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quotient(x^3 + 2*x - 5)
-            sage: a.matrix()
+            sage: a.matrix()                                                            # needs sage.modules
             [ 0  1  0]
             [ 0  0  1]
             [ 5 -2  0]
@@ -699,29 +675,28 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quotient(x^3 + 2*x - 5)
-            sage: (a + 123).minpoly()
+            sage: (a + 123).minpoly()                                                   # needs sage.modules
             x^3 - 369*x^2 + 45389*x - 1861118
-            sage: (a + 123).matrix().minpoly()
+            sage: (a + 123).matrix().minpoly()                                          # needs sage.modules
             x^3 - 369*x^2 + 45389*x - 1861118
 
         One useful application of this function is to compute a minimal
         polynomial of a finite-field element over an intermediate extension,
         rather than the absolute minimal polynomial over the prime field::
 
-            sage: # needs sage.rings.finite_rings
             sage: F2.<i> = GF((431,2), modulus=[1,0,1])
             sage: F6.<u> = F2.extension(3)
-            sage: (u + 1).minpoly()
+            sage: (u + 1).minpoly()                                                     # needs sage.modules
             x^6 + 425*x^5 + 19*x^4 + 125*x^3 + 189*x^2 + 239*x + 302
-            sage: ext = F6.over(F2)
-            sage: ext(u + 1).minpoly()  # indirect doctest
+            sage: ext = F6.over(F2)                                                     # needs sage.modules
+            sage: ext(u + 1).minpoly()  # indirect doctest                              # needs sage.modules # random
             x^3 + (396*i + 428)*x^2 + (80*i + 39)*x + 9*i + 178
 
         TESTS:
 
         We make sure that the previous example works on random examples::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # long time
             sage: p = random_prime(50)
             sage: K.<u> = GF((p, randrange(1,20)))
             sage: L.<v> = K.extension(randrange(2,20))
@@ -750,7 +725,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: S.<a> = R.quotient(x^3 - 389*x^2 + 2*x - 5)
-            sage: a.norm()
+            sage: a.norm()                                                              # needs sage.modules
             5
         """
         return self.matrix().determinant()
@@ -763,8 +738,8 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<a> = R.quotient(x^3 -389*x^2 + 2*x - 5)
-            sage: a.trace()
+            sage: S.<a> = R.quotient(x^3 - 389*x^2 + 2*x - 5)
+            sage: a.trace()                                                             # needs sage.modules
             389
         """
         return self.matrix().trace()
@@ -779,7 +754,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x> = GF(65537)[]
             sage: m = (x^11 + 25345*x^10 + 10956*x^9 + 13873*x^8 + 23962*x^7
             ....:      + 17496*x^6 + 30348*x^5 + 7440*x^4 + 65438*x^3 + 7676*x^2

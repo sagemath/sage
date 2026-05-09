@@ -16,6 +16,7 @@ from sage.categories.algebras import Algebras
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.tensor import TensorProductsCategory
 
+
 class CommutativeAlgebras(CategoryWithAxiom_over_base_ring):
     """
     The category of commutative algebras with unit over a given base ring.
@@ -45,7 +46,7 @@ class CommutativeAlgebras(CategoryWithAxiom_over_base_ring):
      - coproduct ( = tensor product over base ring)
     """
 
-    def __contains__(self, A):
+    def __contains__(self, A) -> bool:
         """
         EXAMPLES::
 

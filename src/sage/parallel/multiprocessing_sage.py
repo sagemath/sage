@@ -25,11 +25,9 @@ def pyprocessing(processes=0):
     INPUT:
 
     - ``processes`` -- integer (default: 0); if 0, set to the number
-      of processors on the computer.
+      of processors on the computer
 
-    OUTPUT:
-
-    - a (partially evaluated) function
+    OUTPUT: a (partially evaluated) function
 
     EXAMPLES::
 
@@ -55,9 +53,7 @@ def parallel_iter(processes, f, inputs):
     - ``f`` -- function
     - ``inputs`` -- an iterable of pairs (args, kwds)
 
-    OUTPUT:
-
-    - iterator over values of ``f`` at ``args,kwds`` in some random order.
+    OUTPUT: iterator over values of ``f`` at ``args, kwds`` in some random order
 
     EXAMPLES::
 

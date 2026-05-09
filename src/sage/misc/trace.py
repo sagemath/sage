@@ -13,12 +13,10 @@ def trace(code, preparse=True):
 
     INPUT:
 
+    - ``code`` -- string
 
-    -  ``code`` - str
-
-    -  ``preparse`` - bool (default: True); if True, run
-       expression through the Sage preparser.
-
+    - ``preparse`` -- boolean (default: ``True``); if ``True``, run
+      expression through the Sage preparser
 
     REMARKS: This function is extremely powerful! For example, if you
     want to step through each line of execution of, e.g.,
@@ -46,7 +44,7 @@ def trace(code, preparse=True):
 
     TESTS:
 
-    For tests we disable garbage collection, see :trac:`21258` ::
+    For tests we disable garbage collection, see :issue:`21258` ::
 
         sage: import gc
         sage: gc.disable()

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# cython: binding=True
 # distutils: language = c++
 r"""
 Decomposition by clique minimal separators
@@ -26,6 +24,8 @@ from libc.stdint cimport uint32_t
 from cysignals.signals cimport sig_on, sig_off, sig_check
 from memory_allocator cimport MemoryAllocator
 
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
@@ -140,7 +140,7 @@ def make_labelled_rooted_tree(atoms, cliques):
     return to_tree(0, len(cliques))
 
 
-cdef inline bint is_clique(short_digraph sd, vector[int] Hx):
+cdef inline bint is_clique(short_digraph sd, vector[int] Hx) noexcept:
     """
     Check if the subgraph sd[Hx] is a clique.
 
@@ -414,6 +414,17 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
             {1}   _{}_
                  /   /
                 {3} {2}
+
+    Immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.atoms_and_clique_separators() == H.atoms_and_clique_separators()
+        True
     """
     cdef list A = []   # atoms
     cdef list Sh = []  # separators
@@ -453,13 +464,20 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
         return A, Sc
 
     cdef int N = G.order()
-    cdef list int_to_vertex = list(G)
 
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     # variables for the manipulation of the short digraph
     cdef uint32_t** p_vertices = sd.neighbors
@@ -575,7 +593,8 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
                 for u in Cint:
                     active[u] = False
 
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
     H.clear()
 
     # We add the last atom

@@ -10,6 +10,7 @@ Root system data for type D
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from . import ambient_space
+from sage.misc.persist import register_unpickle_override
 
 
 class AmbientSpace(ambient_space.AmbientSpace):
@@ -71,7 +72,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         res = []
         for p in [0, 1]:
             for j in range(self.n):
-                res.extend([self.root(i, j, 0, p) for i in range(j)])
+                res.extend(self.root(i, j, 0, p) for i in range(j))
         return res
 
     def negative_roots(self):
@@ -95,7 +96,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         res = []
         for p in [0, 1]:
             for j in range(self.n):
-                res.extend([self.root(i, j, 1, p) for i in range(j)])
+                res.extend(self.root(i, j, 1, p) for i in range(j))
         return res
 
     def fundamental_weight(self, i):
@@ -110,14 +111,10 @@ class AmbientSpace(ambient_space.AmbientSpace):
         n = self.dimension()
         if i == n:
             return self.sum(self.monomial(j) for j in range(n)) / 2
-        elif i == n - 1:
+        if i == n - 1:
             return (self.sum(self.monomial(j) for j in range(n-1)) - self.monomial(n-1)) / 2
-        else:
-            return self.sum(self.monomial(j) for j in range(i))
+        return self.sum(self.monomial(j) for j in range(i))
 
-
-from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_A', 'ambient_space',  AmbientSpace)
 
 from sage.misc.cachefunc import cached_method
 from .cartan_type import CartanType_standard_finite, CartanType_simply_laced, CartanType_simple
@@ -182,7 +179,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
 
     def is_atomic(self):
         """
-        Implements :meth:`CartanType_abstract.is_atomic`
+        Implement :meth:`CartanType_abstract.is_atomic`.
 
         `D_2` is atomic, like all `D_n`, despite being non irreducible.
 
@@ -220,7 +217,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
     @cached_method
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type D.
+        Return a Dynkin diagram for type D.
 
         EXAMPLES::
 
@@ -272,7 +269,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             g.add_edge(n-2, n)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -288,6 +285,8 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             \draw[fill=white] (4 cm, -0.7 cm) circle (.25cm) node[right=3pt]{$3$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         if self.n == 2:
@@ -305,7 +304,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
         ret += node(rt_most, -0.7, label(self.n-1), 'right=3pt')
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return a ascii art representation of the extended Dynkin diagram.
 
@@ -336,6 +335,8 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
             O---O---O---O---O
             3   4   5   6   7
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         n = self.n
@@ -345,10 +346,10 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
         ret = (4*(n-3))*" "+"{} {}\n".format(node(label(n)), label(n))
         ret += ((4*(n-3))*" " + "|\n")*2
         ret += "---".join(node(label(i)) for i in range(1, n)) + "\n"
-        ret += "".join("{!s:4}".format(label(i)) for i in range(1,n))
+        ret += "".join("{!s:4}".format(label(i)) for i in range(1, n))
         return ret
 
 
 # For unpickling backward compatibility (Sage <= 4.1)
-from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_D', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_D',
+                           'ambient_space', AmbientSpace)

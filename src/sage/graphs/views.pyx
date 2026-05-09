@@ -204,7 +204,7 @@ cdef class EdgesView:
         sage: G.has_edge(1, 0)
         False
 
-    We can consider only the edges between two specifed sets of vertices::
+    We can consider only the edges between two specified sets of vertices::
 
         sage: G = Graph([(0, 1), (1, 2)])
         sage: E = EdgesView(G, vertices=[0], vertices2=[1], labels=False)
@@ -342,7 +342,7 @@ cdef class EdgesView:
 
     def __init__(self, G, vertices=None, vertices2=None, labels=True,
                  ignore_direction=False,
-                 sort=False, key=None, sort_vertices=True):
+                 sort=False, key=None, sort_vertices=True) -> None:
         """
         Construction of this :class:`EdgesView`.
 
@@ -385,7 +385,7 @@ cdef class EdgesView:
         self._sort_edges_key = key
         self._sort_vertices = sort_vertices
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of edges in ``self``.
 
@@ -414,7 +414,7 @@ cdef class EdgesView:
             return self._graph.size()
         return sum(1 for _ in self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -499,7 +499,7 @@ cdef class EdgesView:
         else:
             yield from self._iter_unsorted()
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Check whether ``self`` is not empty.
 
@@ -517,7 +517,7 @@ cdef class EdgesView:
             return True
         return False
 
-    def __eq__(self, right):
+    def __eq__(self, right) -> bool:
         """
         Check whether ``self`` and ``right`` are equal.
 
@@ -564,7 +564,7 @@ cdef class EdgesView:
             sage: G == E
             False
 
-        Check that :trac:`29180` is fixed::
+        Check that :issue:`29180` is fixed::
 
             sage: G = graphs.CycleGraph(4)
             sage: E = graphs.EmptyGraph()
@@ -587,7 +587,7 @@ cdef class EdgesView:
         # Check that the same edges are reported in the same order
         return all(es == eo for es, eo in zip(self, other))
 
-    def __contains__(self, e):
+    def __contains__(self, e) -> bool:
         """
         Check whether edge ``e`` is part of ``self``.
 
@@ -716,7 +716,7 @@ cdef class EdgesView:
 
         INPUT:
 
-        - ``left,right`` -- :class:`EdgesView` or list of edges
+        - ``left``, ``right`` -- :class:`EdgesView` or list of edges
 
         EXAMPLES::
 

@@ -181,8 +181,8 @@ You can compute Laplace transforms also; the Laplace transform of
     sage: s = var("s")
     sage: t = var("t")
     sage: f = t^2*exp(t) - sin(t)
-    sage: f.laplace(t,s)
-    -1/(s^2 + 1) + 2/(s - 1)^3
+    sage: f.laplace(t,s).simplify_rational()
+    -(s^3 - 5*s^2 + 3*s - 3)/(s^5 - 3*s^4 + 4*s^3 - 4*s^2 + 3*s - 1)
 
 Here is a more involved example. The displacement from equilibrium
 (respectively) for a coupled spring attached to a wall on the left
@@ -199,7 +199,6 @@ is modeled by the system of 2nd order differential equations
     m_1 x_1'' + (k_1+k_2) x_1 - k_2 x_2 = 0
 
     m_2 x_2''+ k_2 (x_2-x_1) = 0,
-
 
 
 where :math:`m_{i}` is the mass of object *i*, :math:`x_{i}` is

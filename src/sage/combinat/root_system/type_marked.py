@@ -8,11 +8,11 @@ Root system data for Cartan types with marked nodes
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.combinat.root_system import cartan_type
-from sage.combinat.root_system import ambient_space
+from sage.combinat.root_system import ambient_space, cartan_type
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
+from sage.misc.lazy_attribute import lazy_attribute
 
 
 class CartanType(cartan_type.CartanType_decorator):
@@ -23,7 +23,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
     - ``ct`` -- a Cartan type
 
-    - ``marked_nodes`` -- a list of marked nodes
+    - ``marked_nodes`` -- list of marked nodes
 
     EXAMPLES:
 
@@ -207,7 +207,6 @@ class CartanType(cartan_type.CartanType_decorator):
             D_4^{(3)} \text{ with node $0$ marked}
             sage: CartanType.options._reset()
         """
-        from sage.misc.latex import latex
         ret = self._type._latex_()
         if self.options('latex_marked'):
             if len(self._marked_nodes) == 1:
@@ -233,7 +232,7 @@ class CartanType(cartan_type.CartanType_decorator):
             return self.options('marked_node_str')
         return 'O'
 
-    def _latex_draw_node(self, x, y, label, position="below=4pt", fill='white'):
+    def _latex_draw_node(self, x, y, label, position='below=4pt', fill='white'):
         r"""
         Draw (possibly marked [crossed out]) circular node ``i`` at the
         position ``(x,y)`` with node label ``label`` .
@@ -278,7 +277,7 @@ class CartanType(cartan_type.CartanType_decorator):
         ret += "\\draw[shift={{({}, {})}}, {}, {}] (0.25cm, -0.25cm) -- (-0.25cm, 0.25cm);\n".format(x, y, color, thickness)
         return ret
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -296,11 +295,13 @@ class CartanType(cartan_type.CartanType_decorator):
             \draw[fill=white] (6 cm, 0 cm) circle (.25cm) node[below=4pt]{$4$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         return self._type._latex_dynkin_diagram(label, node, node_dist)
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of this Cartan type.
 
@@ -320,6 +321,8 @@ class CartanType(cartan_type.CartanType_decorator):
             X---O---X=>=O---O
             0   1   2   3   4
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         return self._type.ascii_art(label, node)
@@ -353,7 +356,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
     def dual(self):
         """
-        Implements
+        Implement
         :meth:`sage.combinat.root_system.cartan_type.CartanType_abstract.dual`,
         using that taking the dual and marking nodes are commuting operations.
 
@@ -551,8 +554,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         if self._space._plot_projection == self._space._plot_projection_barycentric:
             return self._plot_projection_barycentric
-        else:
-            RootLatticeRealizations.ParentMethods.__dict__["_plot_projection"]
+        RootLatticeRealizations.ParentMethods.__dict__["_plot_projection"]
 
 ###########################################################################
 
@@ -610,7 +612,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         sage: TestSuite(L).run()
     """
 
-    def _latex_draw_node(self, x, y, label, position="below=4pt"):
+    def _latex_draw_node(self, x, y, label, position='below=4pt'):
         r"""
         Draw the possibly marked (crossed out) circular node ``i`` at the
         position ``(x,y)`` with node label ``label`` .

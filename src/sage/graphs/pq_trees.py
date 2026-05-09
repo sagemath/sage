@@ -164,7 +164,7 @@ def _set_contiguous(tree, x):
     """
     if isinstance(tree, PQ):
         return tree.set_contiguous(x)
-    elif x in tree:
+    if x in tree:
         return (FULL, ALIGNED)
     return (EMPTY, ALIGNED)
 
@@ -236,16 +236,14 @@ def reorder_sets(sets):
 
     INPUT:
 
-    - ``sets`` - a list of instances of ``list, Set`` or ``set``
+    - ``sets`` -- list of instances of ``list, Set`` or ``set``
 
-    ALGORITHM:
-
-    PQ-Trees
+    ALGORITHM: PQ-Trees
 
     EXAMPLES:
 
     There is only one way (up to reversal) to represent contiguously
-    the sequence ofsets `\{i-1, i, i+1\}`::
+    the sequence of sets `\{i-1, i, i+1\}`::
 
         sage: from sage.graphs.pq_trees import reorder_sets
         sage: seq = [Set([i-1,i,i+1]) for i in range(1,15)]
@@ -287,16 +285,16 @@ class PQ:
     AUTHOR : Nathann Cohen
     """
 
-    def __init__(self, seq):
+    def __init__(self, seq) -> None:
         r"""
-        Construction of a PQ-Tree
+        Construction of a PQ-Tree.
 
         EXAMPLES::
 
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([[1,2], [2,3], P([[2,4], [2,8], [2,9]])])
 
-        :trac:`17787`::
+        :issue:`17787`::
 
             sage: Graph('GvGNp?').is_interval()
             False
@@ -313,7 +311,7 @@ class PQ:
 
     def reverse(self):
         r"""
-        Recursively reverses ``self`` and its children
+        Recursively reverse ``self`` and its children.
 
         EXAMPLES::
 
@@ -331,10 +329,10 @@ class PQ:
 
         self._children.reverse()
 
-    def __contains__(self, v):
+    def __contains__(self, v) -> bool:
         r"""
-        Tests whether there exists an element of ``self`` containing
-        an element ``v``
+        Test whether there exists an element of ``self`` containing
+        an element ``v``.
 
         INPUT:
 
@@ -353,7 +351,7 @@ class PQ:
 
     def __iter__(self):
         r"""
-        Iterates over the children of ``self``.
+        Iterate over the children of ``self``.
 
         EXAMPLES::
 
@@ -369,7 +367,7 @@ class PQ:
 
     def number_of_children(self):
         r"""
-        Returns the number of children of ``self``
+        Return the number of children of ``self``.
 
         EXAMPLES::
 
@@ -380,9 +378,9 @@ class PQ:
         """
         return len(self._children)
 
-    def ordering(self):
+    def ordering(self) -> list:
         r"""
-        Returns the current ordering given by listing the leaves from
+        Return the current ordering given by listing the leaves from
         left to right.
 
         EXAMPLES::
@@ -401,9 +399,9 @@ class PQ:
 
         return value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
-        Succintly represents ``self``.
+        Succinctly represent ``self``.
 
         EXAMPLES::
 
@@ -416,7 +414,7 @@ class PQ:
 
     def simplify(self, v, left=False, right=False):
         r"""
-        Returns a simplified copy of self according to the element ``v``
+        Return a simplified copy of ``self`` according to the element ``v``.
 
         If ``self`` is a partial P-tree for ``v``, we would like to
         restrict the permutations of its children to permutations
@@ -428,10 +426,10 @@ class PQ:
 
         INPUT:
 
-        - ``left, right`` (boolean) -- whether ``v`` is aligned to the
+        - ``left``, ``right`` -- booleans; whether ``v`` is aligned to the
           right or to the left
 
-        - ``v``-- an element of the ground set
+        - ``v`` -- an element of the ground set
 
         OUTPUT:
 
@@ -476,35 +474,33 @@ class PQ:
                 else:
                     L.append(c)
             return L
-        else:
-            empty = []
-            full = []
-            partial = []
+        empty = []
+        full = []
+        partial = []
 
-            for c in self._children:
-                if v in c:
-                    if (isinstance(c, PQ) and               # Is c partial? (does c contain
-                            any(v not in cc for cc in c)):  # sets with and without v ?)
-                        partial = c.simplify(v, right=right, left=left)
-                    else:
-                        full.append(c)
+        for c in self._children:
+            if v in c:
+                if (isinstance(c, PQ) and               # Is c partial? (does c contain
+                        any(v not in cc for cc in c)):  # sets with and without v ?)
+                    partial = c.simplify(v, right=right, left=left)
                 else:
-                    empty.append(c)
-            if empty:
-                empty = [_new_P(empty)]
-            if full:
-                full = [_new_P(full)]
-
-            if right:
-                return empty + partial + full
+                    full.append(c)
             else:
-                return full + partial + empty
+                empty.append(c)
+        if empty:
+            empty = [_new_P(empty)]
+        if full:
+            full = [_new_P(full)]
+
+        if right:
+            return empty + partial + full
+        return full + partial + empty
 
     def flatten(self):
         r"""
-        Returns a flattened copy of ``self``
+        Return a flattened copy of ``self``.
 
-        If self has only one child, we may as well consider its
+        If ``self`` has only one child, we may as well consider its
         child's children, as ``self`` encodes no information. This
         method recursively "flattens" trees having only on PQ-tree
         child, and returns it.
@@ -518,9 +514,8 @@ class PQ:
         """
         if self.number_of_children() == 1:
             return _flatten(self._children[0])
-        else:
-            self._children = [_flatten(x) for x in self._children]
-            return self
+        self._children = [_flatten(x) for x in self._children]
+        return self
 
 
 class P(PQ):
@@ -531,7 +526,7 @@ class P(PQ):
     """
     def set_contiguous(self, v):
         r"""
-        Updates ``self`` so that the sets containing ``v`` are
+        Update ``self`` so that the sets containing ``v`` are
         contiguous for any admissible permutation of its subtrees.
 
         INPUT:
@@ -540,7 +535,7 @@ class P(PQ):
 
         OUTPUT:
 
-        According to the cases :
+        According to the cases:
 
             * ``(EMPTY, ALIGNED)`` if no set of the tree contains
               an occurrence of ``v``
@@ -558,7 +553,7 @@ class P(PQ):
 
         In any case, the sets containing ``v`` are contiguous when this
         function ends. If there is no possibility of doing so, the function
-        raises a ``ValueError`` exception.
+        raises a :exc:`ValueError` exception.
 
         EXAMPLES:
 
@@ -719,35 +714,34 @@ class P(PQ):
             # ends. We also know it will not be possible to align the
             # interval of sets containing v to the right
 
-            else:
-                new = []
+            new = []
 
-                # The second partial element is aligned to the right
-                # while, as we want to put it at the end of the
-                # interval, it should be aligned to the left
-                set_PARTIAL_ALIGNED[1].reverse()
+            # The second partial element is aligned to the right
+            # while, as we want to put it at the end of the
+            # interval, it should be aligned to the left
+            set_PARTIAL_ALIGNED[1].reverse()
 
-                # 1/3
-                # Left partial subtree
-                subtree = set_PARTIAL_ALIGNED[0]
-                new.extend(subtree.simplify(v, right=ALIGNED))
+            # 1/3
+            # Left partial subtree
+            subtree = set_PARTIAL_ALIGNED[0]
+            new.extend(subtree.simplify(v, right=ALIGNED))
 
-                # 2/3
-                # Center (Full elements, in a P-tree, as they can be
-                # permuted)
+            # 2/3
+            # Center (Full elements, in a P-tree, as they can be
+            # permuted)
 
-                if n_FULL > 0:
-                    new.append(_new_P(set_FULL))
+            if n_FULL > 0:
+                new.append(_new_P(set_FULL))
 
-                # 3/3
-                # Right partial subtree
-                subtree = set_PARTIAL_ALIGNED[1]
-                new.extend(subtree.simplify(v, left=ALIGNED))
+            # 3/3
+            # Right partial subtree
+            subtree = set_PARTIAL_ALIGNED[1]
+            new.extend(subtree.simplify(v, left=ALIGNED))
 
-                # We add all of it, locked in a Q-Tree
-                self._children.append(_new_Q(new))
+            # We add all of it, locked in a Q-Tree
+            self._children.append(_new_Q(new))
 
-                return PARTIAL, False
+            return PARTIAL, False
 
     def cardinality(self):
         r"""
@@ -803,14 +797,14 @@ class P(PQ):
 
 class Q(PQ):
     r"""
-    A Q-Tree is a PQ-Tree whose children are ordered up to reversal
+    A Q-Tree is a PQ-Tree whose children are ordered up to reversal.
 
     For more information, see the documentation of :mod:`sage.graphs.pq_trees`.
     """
 
     def set_contiguous(self, v):
         r"""
-        Updates ``self`` so that the sets containing ``v`` are
+        Update ``self`` so that the sets containing ``v`` are
         contiguous for any admissible permutation of its subtrees.
 
         INPUT:
@@ -819,7 +813,7 @@ class Q(PQ):
 
         OUTPUT:
 
-        According to the cases :
+        According to the cases:
 
             * ``(EMPTY, ALIGNED)`` if no set of the tree contains
               an occurrence of ``v``
@@ -837,7 +831,7 @@ class Q(PQ):
 
         In any case, the sets containing ``v`` are contiguous when this
         function ends. If there is no possibility of doing so, the function
-        raises a ``ValueError`` exception.
+        raises a :exc:`ValueError` exception.
 
         EXAMPLES:
 
@@ -974,8 +968,7 @@ class Q(PQ):
             if set_PARTIAL_ALIGNED[0] == self._children[-1]:
                 return (PARTIAL, ALIGNED)
 
-            else:
-                return (PARTIAL, UNALIGNED)
+            return (PARTIAL, UNALIGNED)
 
         ##############################################################
         # 2/2                                                        #
@@ -1104,7 +1097,7 @@ class Q(PQ):
 
     def orderings(self):
         r"""
-        Iterates over all orderings of the sets allowed by the structure
+        Iterate over all orderings of the sets allowed by the structure.
 
         .. SEEALSO::
 

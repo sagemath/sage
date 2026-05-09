@@ -68,16 +68,16 @@ class PackageSystem(Feature):
             sage: fedora.spkg_installation_hint('openblas')  # optional - SAGE_ROOT
             'To install openblas using the fedora package manager, you can try to run:\n!sudo yum install openblas-devel'
         """
-        from subprocess import run, CalledProcessError, PIPE
+        from subprocess import run, CalledProcessError
         lines = []
         system = self.name
         try:
             proc = run(f'sage-get-system-packages {system} {spkgs}',
-                       shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True, check=True)
+                       shell=True, capture_output=True, text=True, check=True)
             system_packages = proc.stdout.strip()
             print_sys = f'sage-print-system-package-command {system} --verbose --sudo --prompt="{prompt}"'
             command = f'{print_sys} update && {print_sys} install {system_packages}'
-            proc = run(command, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True, check=True)
+            proc = run(command, shell=True, capture_output=True, text=True, check=True)
             command = proc.stdout.strip()
             if command:
                 lines.append(f'To install {feature} using the {system} package manager, you can try to run:')
@@ -183,12 +183,19 @@ class PipPackageSystem(PackageSystem):
         EXAMPLES::
 
             sage: from sage.features.pkg_systems import PipPackageSystem
-            sage: bool(PipPackageSystem().is_present())    # indirect doctest
+            sage: bool(PipPackageSystem().is_present())    # indirect doctest, needs pip
             True
         """
         from subprocess import run, DEVNULL, CalledProcessError
         try:
-            run('sage -pip --version', shell=True, stdout=DEVNULL, stderr=DEVNULL, check=True)
+            # The command below is missing the arguments to pip, but
+            # when run from within the sage distribution, it will
+            # still succeed. If, on the other hand, "sage" is the
+            # script provided by a minimal sage library installation,
+            # then the command will fail regardless of whether or not
+            # pip is installed. This is fine: the PackageSystem
+            # concept is helpful only within the sage distribution.
+            run('sage -pip', shell=True, stdout=DEVNULL, stderr=DEVNULL, check=True)
             return True
         except CalledProcessError:
             return False

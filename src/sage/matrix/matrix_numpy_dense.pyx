@@ -40,7 +40,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 cimport sage.structure.element
 
 cimport numpy as cnumpy
@@ -134,7 +134,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             [0.0 1.0 2.0]
             [3.0 4.0 5.0]
             [6.0 7.0 8.0]
-            sage: matrix(CDF,2,2,[CDF(1+I)*j for j in range(4)])
+            sage: matrix(CDF,2,2,[CDF(1+I)*j for j in range(4)])                        # needs sage.symbolic
             [        0.0 1.0 + 1.0*I]
             [2.0 + 2.0*I 3.0 + 3.0*I]
         """
@@ -177,15 +177,54 @@ cdef class Matrix_numpy_dense(Matrix_dense):
         return self._sage_dtype(cnumpy.PyArray_GETITEM(self._matrix_numpy,
                                                 cnumpy.PyArray_GETPTR2(self._matrix_numpy, i, j)))
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_numpy_dense
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: M = MatrixSpace(RDF, 3, 4)(range(12))
+            sage: M
+            [ 0.0  1.0  2.0  3.0]
+            [ 4.0  5.0  6.0  7.0]
+            [ 8.0  9.0 10.0 11.0]
+            sage: M.transpose()
+            [ 0.0  4.0  8.0]
+            [ 1.0  5.0  9.0]
+            [ 2.0  6.0 10.0]
+            [ 3.0  7.0 11.0]
+            sage: M.matrix_from_rows([0,2])
+            [ 0.0  1.0  2.0  3.0]
+            [ 8.0  9.0 10.0 11.0]
+            sage: M.matrix_from_columns([1,3])
+            [ 1.0  3.0]
+            [ 5.0  7.0]
+            [ 9.0 11.0]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 4.0  7.0]
+            [ 8.0 11.0]
+        """
+        cdef Matrix_numpy_dense _src = <Matrix_numpy_dense>src
+        cnumpy.PyArray_SETITEM(self._matrix_numpy, cnumpy.PyArray_GETPTR2(self._matrix_numpy, iDst, jDst), cnumpy.PyArray_GETITEM(_src._matrix_numpy, cnumpy.PyArray_GETPTR2(_src._matrix_numpy, iSrc, jSrc)))
+
     cdef Matrix_numpy_dense _new(self, int nrows=-1, int ncols=-1):
         """
         Return a new uninitialized matrix with same parent as ``self``.
 
         INPUT:
 
-        - nrows -- (default self._nrows) number of rows in returned matrix
-        - ncols -- (default self._ncols) number of columns in returned matrix
-
+        - ``nrows`` -- (default: ``self._nrows``) number of rows in returned matrix
+        - ``ncols`` -- (default: ``self._ncols``) number of columns in returned matrix
         """
         cdef Matrix_numpy_dense m
         if nrows == -1 and ncols == -1:
@@ -240,7 +279,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
     def transpose(self):
         """
-        Return the transpose of this matrix, without changing self.
+        Return the transpose of this matrix, without changing ``self``.
 
         EXAMPLES::
 
@@ -268,13 +307,39 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             sage: m.transpose().parent()
             Full MatrixSpace of 3 by 0 dense matrices over Real Double Field
 
-        """
-        if self._nrows == 0 or self._ncols == 0:
-            return self.new_matrix(self._ncols, self._nrows)
+        TESTS::
 
-        cdef Matrix_numpy_dense trans
-        trans = self._new(self._ncols, self._nrows)
-        trans._matrix_numpy = self._matrix_numpy.transpose().copy()
+            sage: m = matrix(RDF,2,3,range(6))
+            sage: m.subdivide([1],[2])
+            sage: m
+            [0.0 1.0|2.0]
+            [-------+---]
+            [3.0 4.0|5.0]
+            sage: m.transpose()
+            [0.0|3.0]
+            [1.0|4.0]
+            [---+---]
+            [2.0|5.0]
+
+            sage: m = matrix(RDF,0,2)
+            sage: m.subdivide([],[1])
+            sage: m.subdivisions()
+            ([], [1])
+            sage: m.transpose().subdivisions()
+            ([1], [])
+
+            sage: m = matrix(RDF,2,0)
+            sage: m.subdivide([1],[])
+            sage: m.subdivisions()
+            ([1], [])
+            sage: m.transpose().subdivisions()
+            ([], [1])
+        """
+        cdef Matrix_numpy_dense trans = self._new(self._ncols, self._nrows)
+
+        if self._nrows != 0 and self._ncols != 0:
+            trans._matrix_numpy = self._matrix_numpy.transpose().copy()
+
         if self._subdivisions is not None:
             row_divs, col_divs = self.subdivisions()
             trans.subdivide(col_divs, row_divs)
@@ -306,10 +371,10 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         TESTS:
 
-        Complex entries are supported (:trac:`27831`).  ::
+        Complex entries are supported (:issue:`27831`).  ::
 
-            sage: a = matrix(CDF, [(21, 0.6 + 18.5*i), (0.6 - 18.5*i, 21)])
-            sage: a.is_symmetric()
+            sage: a = matrix(CDF, [(21, 0.6 + 18.5*i), (0.6 - 18.5*i, 21)])             # needs sage.symbolic
+            sage: a.is_symmetric()                                                      # needs sage.symbolic
             False
         """
         cdef Py_ssize_t i, j
@@ -336,7 +401,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         INPUT:
 
-        - ``tol`` -  the largest value of the absolute value of the
+        - ``tol`` -- the largest value of the absolute value of the
           difference between two matrix entries for which they will
           still be considered equal.
 
@@ -374,7 +439,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         INPUT:
 
-        - ``dtype`` - The desired data-type for the array. If not given,
+        - ``dtype`` -- the desired data-type for the array. If not given,
           then the type will be determined as the minimum type required
           to hold the objects in the sequence.
 

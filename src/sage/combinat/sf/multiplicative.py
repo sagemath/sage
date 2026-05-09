@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Multiplicative symmetric functions
 
@@ -19,8 +20,9 @@ a partition `\lambda = (\lambda_1,\lambda_2,\ldots)` we have
 #
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from . import classical
 import sage.combinat.partition
+
+from . import classical
 
 
 class SymmetricFunctionAlgebra_multiplicative(classical.SymmetricFunctionAlgebra_classical):
@@ -45,9 +47,7 @@ class SymmetricFunctionAlgebra_multiplicative(classical.SymmetricFunctionAlgebra
 
         - ``left``, ``right`` -- partitions
 
-        OUTPUT:
-
-        - an element of ``self``
+        OUTPUT: an element of ``self``
 
         EXAMPLES::
 

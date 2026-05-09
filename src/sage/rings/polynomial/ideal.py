@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Ideals in Univariate Polynomial Rings
 
@@ -19,6 +18,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.ideal import Ideal_pid
+
 
 class Ideal_1poly_field(Ideal_pid):
     """
@@ -85,3 +85,17 @@ class Ideal_1poly_field(Ideal_pid):
         gb = self.gens_reduced()
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
         return PolynomialSequence_generic([gb], self.ring(), immutable=True)
+
+    def change_ring(self, R):
+        """
+        Coerce an ideal into a new ring.
+
+        EXAMPLES::
+
+            sage: R.<q> = QQ[]
+            sage: I = R.ideal([q^2 + q - 1])
+            sage: I.change_ring(RR['q'])                                                # needs sage.rings.real_mpfr
+            Principal ideal (q^2 + q - 1.00000000000000) of
+             Univariate Polynomial Ring in q over Real Field with 53 bits of precision
+        """
+        return R.ideal(self.gens())

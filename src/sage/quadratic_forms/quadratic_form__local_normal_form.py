@@ -143,7 +143,7 @@ def local_normal_form(self, p):
         else:
             min_val = valuation(Q[min_i, min_j], p)
 
-        # Error if we still haven't seen non-zero coefficients!
+        # Error if we still haven't seen nonzero coefficients!
         if min_val == Infinity:
             raise RuntimeError("the original matrix is degenerate")
 
@@ -261,7 +261,7 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
     - `s_i` is an integer,
     - `L_i` is a block-diagonal unimodular quadratic form over `\ZZ_p`.
 
-    .. note::
+    .. NOTE::
 
         These forms `L_i` are defined over the `p`-adic integers, but by a
         matrix over `\ZZ` (or `\QQ`?).
@@ -297,8 +297,7 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
     try:
         if safe_flag:
             return copy.deepcopy(self.__jordan_blocks_by_scale_and_unimodular_dict[p])
-        else:
-            return self.__jordan_blocks_by_scale_and_unimodular_dict[p]
+        return self.__jordan_blocks_by_scale_and_unimodular_dict[p]
     except (KeyError, AttributeError):
         # Initialize the global dictionary if it doesn't exist
         if not hasattr(self, '__jordan_blocks_by_scale_and_unimodular_dict'):
@@ -368,7 +367,7 @@ def jordan_blocks_in_unimodular_list_by_scale_power(self, p):
     - ``self`` -- a quadratic form over `\ZZ`, which has integer Gram matrix if `p = 2`
     - ``p`` -- a prime number > 0
 
-    OUTPUT: a list of `p`-unimodular quadratic forms
+    OUTPUT: list of `p`-unimodular quadratic forms
 
     EXAMPLES::
 

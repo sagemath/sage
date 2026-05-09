@@ -9,7 +9,6 @@ AUTHORS:
 - Marco Mancini (2017): initial version
 - Eric Gourgoulhon (2019): add :meth:`~CalculusMethod.set_simplify_function`
   and various accessors
-
 """
 
 # *****************************************************************************
@@ -22,7 +21,8 @@ AUTHORS:
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Literal, Optional, Union
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Literal, Optional, Union
 
 import sympy
 
@@ -51,9 +51,7 @@ def _SR_to_Sympy(expression: Expression) -> Expression:
 
     - ``expression`` -- ``SR`` or ``sympy`` symbolic expression
 
-    OUTPUT:
-
-    - ``expression`` -- ``sympy`` symbolic expression
+    OUTPUT: ``expression`` -- ``sympy`` symbolic expression
 
     EXAMPLES::
 
@@ -71,7 +69,6 @@ def _SR_to_Sympy(expression: Expression) -> Expression:
 
         sage: _SR_to_Sympy(b) is b
         True
-
     """
     # Nothing to do if expression is already a SymPy object:
     if isinstance(expression, sympy.Basic):
@@ -89,9 +86,7 @@ def _Sympy_to_SR(expression: Expression) -> Expression:
 
     - ``expression`` -- ``sympy`` symbolic expression
 
-    OUTPUT:
-
-    - ``expression`` -- ``SR`` or ``sympy`` symbolic expression
+    OUTPUT: ``expression`` -- ``SR`` or ``sympy`` symbolic expression
 
     EXAMPLES::
 
@@ -107,7 +102,6 @@ def _Sympy_to_SR(expression: Expression) -> Expression:
         x^2 + sin(x)^2 == x^2 + sin(x)^2
         sage: bool(_)
         True
-
     """
     try:
         return SR(expression)
@@ -183,7 +177,6 @@ class CalculusMethod(SageObject):
     See :meth:`simplify_function` for the default simplification algorithms
     associated with each calculus method and :meth:`set_simplify_function` for
     introducing a new simplification algorithm.
-
     """
     # default calculus method
     _default: CalculusMethodName = "SR"
@@ -196,7 +189,7 @@ class CalculusMethod(SageObject):
 
     def __init__(self, current: Optional[CalculusMethodName] = None, base_field_type: str = "real"):
         r"""
-        Initializes ``self``.
+        Initialize ``self``.
 
         TESTS::
 
@@ -206,7 +199,6 @@ class CalculusMethod(SageObject):
             Available calculus methods (* = current):
              - SR (default) (*)
              - sympy
-
         """
         self._current = self._default if current is None else current
         # Initialization of the dictionary of simplifying functions:
@@ -219,7 +211,7 @@ class CalculusMethod(SageObject):
             self._simplify_dict['SR'] = simplify_chain_generic
         # The default simplifying functions are saved:
         self._simplify_dict_default = self._simplify_dict.copy()
-        self._latex_dict = {'sympy': sympy.latex, 'SR': latex}
+        self._latex_dict = {'sympy': sympy_latex, 'SR': latex}
 
     def simplify(
         self, expression: Expression, method: Optional[CalculusMethodName] = None
@@ -237,11 +229,9 @@ class CalculusMethod(SageObject):
 
           - ``'SR'``: Sage's default symbolic engine (Symbolic Ring)
           - ``'sympy'``: SymPy
-          - ``None``: the current calculus method of ``self`` is used.
+          - ``None``: the current calculus method of ``self`` is used
 
-        OUTPUT:
-
-        - the simplified version of ``expression``
+        OUTPUT: the simplified version of ``expression``
 
         EXAMPLES::
 
@@ -276,7 +266,7 @@ class CalculusMethod(SageObject):
             sage: cm.simplify(f)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.symbolic.expression.Expression' object has no attribute 'combsimp'
+            AttributeError: 'sage.symbolic.expression.Expression' object has no attribute 'combsimp'...
 
         In the present case, one should either transform ``f`` to a SymPy
         object::
@@ -288,7 +278,6 @@ class CalculusMethod(SageObject):
 
             sage: cm.simplify(f, method='SR')
             x^2 + 1
-
         """
         if method is None:
             method = self._current
@@ -306,11 +295,9 @@ class CalculusMethod(SageObject):
         - ``expression`` -- expression
 
         - ``method`` -- (default: ``None``) string defining the calculus method
-          to use; if ``None`` the current calculus method of ``self`` is used.
+          to use; if ``None`` the current calculus method of ``self`` is used
 
-        OUTPUT:
-
-        - ``True`` is expression is trivially zero, ``False`` elsewhere.
+        OUTPUT: ``True`` is expression is trivially zero, ``False`` elsewhere
 
         EXAMPLES::
 
@@ -329,17 +316,14 @@ class CalculusMethod(SageObject):
             False
             sage: cm.is_trivial_zero(f._sympy_(), method='sympy')
             False
-
         """
         if method is None:
             method = self._current
         if method == 'SR':
             return expression.is_trivial_zero()
-        elif method == 'sympy':
+        if method == 'sympy':
             # we have to test SymPy's is_zero because it could be 'NoneType'
-            if expression.is_zero:
-                return True
-            return False
+            return bool(expression.is_zero)
 
     def set(self, method: CalculusMethodName):
         r"""
@@ -364,11 +348,9 @@ class CalculusMethod(SageObject):
             Traceback (most recent call last):
             ...
             NotImplementedError: method lala not implemented
-
         """
         if method not in self._methods:
-            raise NotImplementedError("method {} not ".format(method) +
-                                      "implemented")
+            raise NotImplementedError("method {} not ".format(method) + "implemented")
         self._current = method
 
     def current(self) -> CalculusMethodName:
@@ -377,10 +359,10 @@ class CalculusMethod(SageObject):
 
         OUTPUT:
 
-        - string defining the calculus method, one of
+        String defining the calculus method; one of
 
-          - ``'SR'``: Sage's default symbolic engine (Symbolic Ring)
-          - ``'sympy'``: SymPy
+        - ``'SR'`` -- Sage's default symbolic engine (Symbolic Ring)
+        - ``'sympy'`` -- SymPy
 
         EXAMPLES::
 
@@ -394,7 +376,6 @@ class CalculusMethod(SageObject):
             sage: cm.set('sympy')
             sage: cm.current()
             'sympy'
-
         """
         return self._current
 
@@ -462,7 +443,6 @@ class CalculusMethod(SageObject):
             sage: cm.simplify_function() is \
             ....: sage.manifolds.utilities.simplify_chain_real
             True
-
         """
         if method is None:
             method = self._current
@@ -491,9 +471,7 @@ class CalculusMethod(SageObject):
           - ``None``: the currently active calculus method of ``self`` is
             assumed
 
-        OUTPUT:
-
-        - the simplifying function
+        OUTPUT: the simplifying function
 
         EXAMPLES::
 
@@ -542,7 +520,6 @@ class CalculusMethod(SageObject):
 
         Note that the simplifying functions can be customized via
         :meth:`set_simplify_function`.
-
         """
         if method is None:
             method = self._current
@@ -570,7 +547,6 @@ class CalculusMethod(SageObject):
             Available calculus methods (* = current):
              - SR (default) (*)
              - sympy
-
         """
         self._current = self._default
 
@@ -584,7 +560,6 @@ class CalculusMethod(SageObject):
             sage: cm = CalculusMethod(base_field_type='complex')
             sage: cm._repr_()
             'Available calculus methods (* = current):\n - SR (default) (*)\n - sympy'
-
         """
         resu = 'Available calculus methods (* = current):\n'
         for method in self._methods:

@@ -1,10 +1,2 @@
 cd src
-# Use --use-pep517 because https://github.com/igraph/python-igraph as of 0.9.11 does not have pyproject.toml
-# and so "pip wheel" would use a legacy build method, ignoring --config-settings.
-#
-# TODO: With setuptools 63.2.0, passing another --config-settings "--global-option=--no-wait" (not really needed)
-# kills the "--global-option=--use-pkg-config".
-# https://github.com/pypa/setuptools/issues/3380 makes changes to this, so we can revisit this after
-# the next setuptools upgrade.
-#
-sdh_pip_install --use-pep517 --config-settings "--global-option=--use-pkg-config"  .
+sdh_pip_install --config-settings "--global-option=--use-pkg-config" --config-settings "--global-option=--no-wait" .

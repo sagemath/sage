@@ -1,0 +1,58 @@
+name: Static type check
+
+on:
+  merge_group:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+  workflow_dispatch:
+    # Allow to run manually
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pyright:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Merge CI fixes from sagemath/sage
+        run: |
+          .github/workflows/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Cache conda packages
+        uses: actions/cache@v4
+        with:
+          path: ~/conda_pkgs_dir
+          key:
+            ${{ runner.os }}-conda-${{ hashFiles('environment-3.12-linux.yml') }}
+
+      - name: Setup Conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: 3.12
+          miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage-dev
+          environment-file: environment-3.12-linux.yml
+
+        # No need to build sagelib; pyright only needs the libraries from which sagelib imports
+
+      - name: Static code check with pyright
+        uses: jakebailey/pyright-action@v2.3.3
+        with:
+          version: 1.1.332
+          annotate: "errors"
+        env:
+          # To avoid out of memory errors
+          NODE_OPTIONS: --max-old-space-size=8192

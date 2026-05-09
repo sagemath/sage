@@ -7,12 +7,12 @@ symbolics.
 
 The main objects which are exported from this module are:
 
- * :meth:`erf <Function_erf>` -- The error function
- * :meth:`erfc <Function_erfc>` -- The complementary error function
- * :meth:`erfi <Function_erfi>` -- The imaginary error function
- * :meth:`erfinv <Function_erfinv>` -- The inverse error function
- * :meth:`fresnel_sin <Function_Fresnel_sin>` -- The Fresnel integral `S(x)`
- * :meth:`fresnel_cos <Function_Fresnel_cos>` -- The Fresnel integral `C(x)`
+ * :meth:`erf <Function_erf>` -- the error function
+ * :meth:`erfc <Function_erfc>` -- the complementary error function
+ * :meth:`erfi <Function_erfi>` -- the imaginary error function
+ * :meth:`erfinv <Function_erfinv>` -- the inverse error function
+ * :meth:`fresnel_sin <Function_Fresnel_sin>` -- the Fresnel integral `S(x)`
+ * :meth:`fresnel_cos <Function_Fresnel_cos>` -- the Fresnel integral `C(x)`
 
 AUTHORS:
 
@@ -135,19 +135,19 @@ class Function_erf(BuiltinFunction):
         sage: (integrate(exp(-x**2), (x,0,3))*2/sqrt(pi)).n()                           # needs sage.symbolic
         0.999977909503001
 
-    :trac:`9044`::
+    :issue:`9044`::
 
         sage: N(erf(sqrt(2)),200)                                                       # needs sage.symbolic
         0.95449973610364158559943472566693312505644755259664313203267
 
-    :trac:`11626`::
+    :issue:`11626`::
 
         sage: n(erf(2),100)                                                             # needs sage.symbolic
         0.99532226501895273416206925637
         sage: erf(2).n(100)                                                             # needs sage.symbolic
         0.99532226501895273416206925637
 
-    Test (indirectly) :trac:`11885`::
+    Test (indirectly) :issue:`11885`::
 
         sage: erf(float(0.5))
         0.5204998778130465
@@ -238,13 +238,12 @@ class Function_erf(BuiltinFunction):
         if isinstance(x, Expression):
             if x.is_trivial_zero():
                 return x
-            elif x.is_infinity():
+            if x.is_infinity():
                 if x.is_positive_infinity():
                     return 1
-                elif x.is_negative_infinity():
+                if x.is_negative_infinity():
                     return -1
-                else:
-                    return unsigned_infinity
+                return unsigned_infinity
         elif not x:
             return x
 
@@ -256,8 +255,8 @@ class Function_erf(BuiltinFunction):
             0.995322265018953
             sage: erf(2).n(200)                                                         # needs sage.symbolic
             0.99532226501895273416206925636725292861089179704006007673835
-            sage: erf(pi - 1/2*I).n(100)                                                # needs sage.symbolic
-            1.0000111669099367825726058952 + 1.6332655417638522934072124547e-6*I
+            sage: erf(pi - 1/2*I).n(100)                                                # needs sage.symbolic # abs tol 1e-28
+            1.0000111669099367825726058952 + 1.6332655417638522934072124548e-6*I
 
         TESTS:
 
@@ -265,19 +264,19 @@ class Function_erf(BuiltinFunction):
 
             sage: gp.set_real_precision(59)  # random                                   # needs sage.libs.pari
             38
-            sage: print(gp.eval("1 - erfc(1)")); print(erf(1).n(200))                   # needs sage.libs.pari
+            sage: print(gp.eval("1 - erfc(1)")); print(erf(1).n(200))                   # needs mpmath sage.libs.pari
             0.84270079294971486934122063508260925929606699796630290845994
             0.84270079294971486934122063508260925929606699796630290845994
 
         Check that for an imaginary input, the output is also imaginary, see
-        :trac:`13193`::
+        :issue:`13193`::
 
             sage: erf(3.0*I)                                                            # needs sage.symbolic
             1629.99462260157*I
             sage: erf(33.0*I)                                                           # needs sage.symbolic
             1.51286977510409e471*I
 
-        Check that real ball evaluation is fixed :trac:`28061`::
+        Check that real ball evaluation is fixed :issue:`28061`::
 
             sage: RealBallField(128)(erf(5))  # abs tol 1e-38                           # needs sage.symbolic
             [0.99999999999846254020557196514981165651 +/- 7.33e-39]
@@ -297,7 +296,7 @@ class Function_erf(BuiltinFunction):
 
         TESTS:
 
-        Check if :trac:`8568` is fixed::
+        Check if :issue:`8568` is fixed::
 
             sage: var('c,x')                                                            # needs sage.symbolic
             (c, x)
@@ -356,7 +355,7 @@ class Function_erfi(BuiltinFunction):
         if isinstance(x, Expression):
             if x.is_trivial_zero():
                 return x
-            elif x.is_infinity():
+            if x.is_infinity():
                 return unsigned_infinity
         elif not x:
             return x
@@ -383,7 +382,6 @@ class Function_erfi(BuiltinFunction):
 
             sage: erfi(x).diff(x)                                                       # needs sage.symbolic
             2*e^(x^2)/sqrt(pi)
-
         """
         return 2*exp(x**2)/sqrt(pi)
 
@@ -417,11 +415,10 @@ class Function_erfc(BuiltinFunction):
 
     TESTS:
 
-    Check that :trac:`25991` is fixed::
+    Check that :issue:`25991` is fixed::
 
             sage: erfc(x)._fricas_()                                            # optional - fricas, needs sage.symbolic
             - erf(x) + 1
-
     """
     def __init__(self):
         r"""
@@ -456,13 +453,12 @@ class Function_erfc(BuiltinFunction):
         if isinstance(x, Expression):
             if x.is_trivial_zero():
                 return 1
-            elif x.is_infinity():
+            if x.is_infinity():
                 if x.is_positive_infinity():
                     return 0
-                elif x.is_negative_infinity():
+                if x.is_negative_infinity():
                     return 2
-                else:
-                    return unsigned_infinity
+                return unsigned_infinity
         elif not x:
             return 1
 
@@ -518,7 +514,7 @@ class Function_erfinv(BuiltinFunction):
 
         TESTS:
 
-        Check that :trac:`11349` is fixed::
+        Check that :issue:`11349` is fixed::
 
             sage: # needs sage.symbolic
             sage: _ = var('z,t')
@@ -549,7 +545,7 @@ class Function_erfinv(BuiltinFunction):
         if isinstance(x, Expression):
             if x.is_trivial_zero():
                 return x
-            elif (x-1).is_trivial_zero():
+            if (x-1).is_trivial_zero():
                 return unsigned_infinity
         elif not x:
             return x
@@ -651,9 +647,9 @@ class Function_Fresnel_sin(BuiltinFunction):
             if x.is_infinity():
                 if x.is_positive_infinity():
                     return Rational((1, 2))
-                elif x.imag_part().is_positive_infinity():
+                if x.imag_part().is_positive_infinity():
                     return -I*Rational((1, 2))
-                elif x.imag_part().is_negative_infinity():
+                if x.imag_part().is_negative_infinity():
                     return I*Rational((1, 2))
         elif x < 0:
             return -fresnel_sin(-x)
@@ -749,9 +745,9 @@ class Function_Fresnel_cos(BuiltinFunction):
             if x.is_infinity():
                 if x.is_positive_infinity():
                     return Rational((1, 2))
-                elif x.imag_part().is_positive_infinity():
+                if x.imag_part().is_positive_infinity():
                     return I*Rational((1, 2))
-                elif x.imag_part().is_negative_infinity():
+                if x.imag_part().is_negative_infinity():
                     return -I*Rational((1, 2))
         elif x < 0:
             return -fresnel_cos(-x)

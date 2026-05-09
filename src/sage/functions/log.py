@@ -3,13 +3,12 @@ Logarithmic functions
 
 AUTHORS:
 
-- Yoora Yi Tenen (2012-11-16): Add documentation for :meth:`log()` (:trac:`12113`)
+- Yoora Yi Tenen (2012-11-16): Add documentation for :meth:`log()` (:issue:`12113`)
 
-- Tomas Kalvoda (2015-04-01): Add :meth:`exp_polar()` (:trac:`18085`)
-
+- Tomas Kalvoda (2015-04-01): Add :meth:`exp_polar()` (:issue:`18085`)
 """
 
-from sage.misc.functional import log as log
+from sage.misc.functional import log
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -27,7 +26,7 @@ lazy_import('sage.symbolic.constants', 'e', as_='const_e')
 lazy_import('sage.symbolic.constants', 'pi', as_='const_pi')
 lazy_import('sage.rings.complex_double', 'CDF')
 
-lazy_import('sage.libs.flint.arith', 'harmonic_number', as_='_flint_harmonic_number')
+lazy_import('sage.libs.flint.arith_sage', 'harmonic_number', as_='_flint_harmonic_number')
 
 lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
 lazy_import('mpmath', 'harmonic', as_='_mpmath_harmonic')
@@ -63,7 +62,7 @@ class Function_exp(GinacFunction):
 
         sage: exp(float(2.5))
         12.182493960703473
-        sage: exp(RDF('2.5'))
+        sage: exp(RDF('2.5'))                                                           # needs sage.symbolic
         12.182493960703473
 
     To prevent automatic evaluation, use the ``hold`` parameter::
@@ -132,7 +131,7 @@ class Function_exp(GinacFunction):
         sage: conjugate(exp(x))                                                         # needs sage.symbolic
         e^conjugate(x)
 
-    Test simplifications when taking powers of exp (:trac:`7264`)::
+    Test simplifications when taking powers of exp (:issue:`7264`)::
 
         sage: # needs sage.symbolic
         sage: var('a,b,c,II')
@@ -154,12 +153,20 @@ class Function_exp(GinacFunction):
         sage: exp(x)*exp(a)^2
         e^(2*a + x)
 
-    Another instance of the same problem (:trac:`7394`)::
+    Another instance of the same problem (:issue:`7394`)::
 
         sage: 2*sqrt(e)                                                                 # needs sage.symbolic
         2*e^(1/2)
 
-    Check that :trac:`19918` is fixed::
+    Test substitution into an exponential whose argument contains ``I``.
+    During simplification the coefficient of the logarithm can be an exact
+    Python object equal to the integer `-1`::
+
+        sage: t, q = var('t, q')                                                        # needs sage.symbolic
+        sage: exp(-I*pi*q).subs(q=-I/pi*log(2*t))                                       # needs sage.symbolic
+        1/2/t
+
+    Check that :issue:`19918` is fixed::
 
         sage: exp(-x^2).subs(x=oo)                                                      # needs sage.symbolic
         0
@@ -238,7 +245,7 @@ class Function_log1(GinacFunction):
         sage: log(x).subs(x=float(-1))                                                  # needs sage.symbolic
         3.141592653589793j
 
-    :trac:`22142`::
+    :issue:`22142`::
 
         sage: log(QQbar(sqrt(2)))                                                       # needs sage.rings.number_field sage.symbolic
         log(1.414213562373095?)
@@ -282,6 +289,18 @@ class Function_log2(GinacFunction):
         log(7)/log(2)
         sage: logb(int(7), 2)                                                           # needs sage.symbolic
         log(7)/log(2)
+
+    Check that :issue:`40883` is fixed::
+
+        sage: from sage.functions.log import logb
+        sage: logb(int(4294967300), 2)                                                  # needs sage.symbolic
+        log(4294967300)/log(2)
+        sage: float(logb(int(4294967300), 2))                                           # needs sage.symbolic
+        32.00000000134...
+        sage: logb(int(21743271936), 2)                                                 # needs sage.symbolic
+        log(21743271936)/log(2)
+        sage: float(logb(int(21743271936), 2))                                          # needs sage.symbolic
+        34.33985000288...
     """
     def __init__(self):
         """
@@ -361,7 +380,7 @@ class Function_polylog(GinacFunction):
 
         TESTS:
 
-        Check if :trac:`8459` is fixed::
+        Check if :issue:`8459` is fixed::
 
             sage: t = maxima(polylog(5,x)).sage(); t                                    # needs sage.symbolic
             polylog(5, x)
@@ -370,7 +389,7 @@ class Function_polylog(GinacFunction):
             sage: t.subs(x=.5).n()                                                      # needs sage.symbolic
             0.50840057924226...
 
-        Check if :trac:`18386` is fixed::
+        Check if :issue:`18386` is fixed::
 
             sage: polylog(2.0, 1)                                                       # needs sage.symbolic
             1.64493406684823
@@ -396,7 +415,7 @@ class Function_polylog(GinacFunction):
             sage: polylog(1, -1)                # known bug                             # needs sage.symbolic
             -log(2)
 
-        Check for :trac:`21907`::
+        Check for :issue:`21907`::
 
             sage: bool(x*polylog(x,x)==0)                                               # needs sage.symbolic
             False
@@ -430,8 +449,7 @@ class Function_polylog(GinacFunction):
         n, x = args_maxima
         if int(n) in [1, 2, 3]:
             return 'li[%s](%s)' % (n, x)
-        else:
-            return 'polylog(%s, %s)' % (n, x)
+        return 'polylog(%s, %s)' % (n, x)
 
     def _method_arguments(self, k, z):
         r"""
@@ -500,7 +518,7 @@ class Function_dilog(GinacFunction):
             sage: float(dilog(1))
             1.6449340668482262
 
-    TESTS:
+        TESTS:
 
         ``conjugate(dilog(x))==dilog(conjugate(x))`` unless on the branch cuts
         which run along the positive real axis beginning at 1.::
@@ -522,7 +540,7 @@ class Function_dilog(GinacFunction):
             conjugate(dilog(2))
 
         Check that return type matches argument type where possible
-        (:trac:`18386`)::
+        (:issue:`18386`)::
 
             sage: dilog(0.5)                                                            # needs sage.symbolic
             0.582240526465012
@@ -574,7 +592,7 @@ class Function_lambert_w(BuiltinFunction):
 
     INPUT:
 
-    - ``n`` -- an integer. `n=0` corresponds to the principal branch.
+    - ``n`` -- integer; `n=0` corresponds to the principal branch
 
     - ``z`` -- a complex number
 
@@ -658,7 +676,7 @@ class Function_lambert_w(BuiltinFunction):
 
         TESTS:
 
-        Check that :trac:`25987` is fixed::
+        Check that :issue:`25987` is fixed::
 
             sage: lambert_w(x)._fricas_()                                       # optional - fricas, needs sage.symbolic
             lambertW(x)
@@ -696,10 +714,9 @@ class Function_lambert_w(BuiltinFunction):
         """
         if len(args) == 2:
             return BuiltinFunction.__call__(self, *args, **kwds)
-        elif len(args) == 1:
+        if len(args) == 1:
             return BuiltinFunction.__call__(self, 0, args[0], **kwds)
-        else:
-            raise TypeError("lambert_w takes either one or two arguments.")
+        raise TypeError("lambert_w takes either one or two arguments.")
 
     def _method_arguments(self, n, z):
         r"""
@@ -718,8 +735,7 @@ class Function_lambert_w(BuiltinFunction):
         """
         if n == 0:
             return [z]
-        else:
-            return [z, n]
+        return [z, n]
 
     def _eval_(self, n, z):
         """
@@ -769,9 +785,9 @@ class Function_lambert_w(BuiltinFunction):
         elif n == 0:
             if z.is_trivial_zero():
                 return s_parent(z)(Integer(0))
-            elif (z - const_e).is_trivial_zero():
+            if (z - const_e).is_trivial_zero():
                 return s_parent(z)(Integer(1))
-            elif (z + 1 / const_e).is_trivial_zero():
+            if (z + 1 / const_e).is_trivial_zero():
                 return s_parent(z)(Integer(-1))
 
     def _evalf_(self, n, z, parent=None, algorithm=None):
@@ -805,14 +821,12 @@ class Function_lambert_w(BuiltinFunction):
             # SciPy always returns a complex value, make it real if possible
             if not res.imag:
                 return R(res.real)
-            elif R is float:
+            if R is float:
                 return complex(res)
-            else:
-                return CDF(res)
-        elif R is complex or R is CDF:
+            return CDF(res)
+        if R is complex or R is CDF:
             return R(_scipy_lambertw(z, n))
-        else:
-            return _mpmath_utils_call(_mpmath_lambertw, z, n, parent=R)
+        return _mpmath_utils_call(_mpmath_lambertw, z, n, parent=R)
 
     def _derivative_(self, n, z, diff_param=None):
         r"""
@@ -829,7 +843,7 @@ class Function_lambert_w(BuiltinFunction):
 
         TESTS:
 
-        Differentiation in the first parameter raises an error :trac:`14788`::
+        Differentiation in the first parameter raises an error :issue:`14788`::
 
             sage: n = var('n')                                                          # needs sage.symbolic
             sage: lambert_w(n, x).diff(n)                                               # needs sage.symbolic
@@ -868,8 +882,7 @@ class Function_lambert_w(BuiltinFunction):
             maxima_z = str(z)
         if n == 0:
             return "lambert_w(%s)" % maxima_z
-        else:
-            return "generalized_lambert_w(%s,%s)" % (n, maxima_z)
+        return "generalized_lambert_w(%s,%s)" % (n, maxima_z)
 
     def _print_(self, n, z):
         """
@@ -885,8 +898,7 @@ class Function_lambert_w(BuiltinFunction):
         """
         if n == 0:
             return "lambert_w(%s)" % z
-        else:
-            return "lambert_w(%s, %s)" % (n, z)
+        return "lambert_w(%s, %s)" % (n, z)
 
     def _print_latex_(self, n, z):
         r"""
@@ -907,8 +919,7 @@ class Function_lambert_w(BuiltinFunction):
         """
         if n == 0:
             return r"\operatorname{W}({%s})" % z._latex_()
-        else:
-            return r"\operatorname{W_{%s}}({%s})" % (n, z._latex_())
+        return r"\operatorname{W_{%s}}({%s})" % (n, z._latex_())
 
 
 lambert_w = Function_lambert_w()
@@ -921,7 +932,7 @@ class Function_exp_polar(BuiltinFunction):
 
         INPUT:
 
-        - ``z`` -- a complex number `z = a + ib`.
+        - ``z`` -- a complex number `z = a + ib`
 
         OUTPUT:
 
@@ -949,7 +960,7 @@ class Function_exp_polar(BuiltinFunction):
             sage: exp_polar(-4*pi*I)                                                    # needs sage.symbolic
             exp_polar(-4*I*pi)
 
-        This fixes :trac:`18085`::
+        This fixes :issue:`18085`::
 
             sage: integrate(1/sqrt(1+x^3), x, algorithm='sympy')                        # needs sage.symbolic
             1/3*x*gamma(1/3)*hypergeometric((1/3, 1/2), (4/3,), -x^3)/gamma(4/3)
@@ -990,13 +1001,11 @@ class Function_exp_polar(BuiltinFunction):
             Traceback (most recent call last):
             ...
             ValueError: invalid attempt to numerically evaluate exp_polar()
-
         """
         if (not isinstance(z, Expression) and
                 bool(-const_pi < imag(z) <= const_pi)):
             return exp(z)
-        else:
-            raise ValueError("invalid attempt to numerically evaluate exp_polar()")
+        raise ValueError("invalid attempt to numerically evaluate exp_polar()")
 
     def _eval_(self, z):
         """
@@ -1010,7 +1019,7 @@ class Function_exp_polar(BuiltinFunction):
 
         TESTS:
 
-        Check that :trac:`24441` is fixed::
+        Check that :issue:`24441` is fixed::
 
             sage: exp_polar(arcsec(jacobi_sn(1.1*I*x, x)))  # should be fast            # needs sage.symbolic
             exp_polar(arcsec(jacobi_sn(1.10000000000000*I*x, x)))
@@ -1163,7 +1172,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         """
         if m == 0:
             return z
-        elif m == 1:
+        if m == 1:
             return harmonic_m1._eval_(z)
 
         if z in ZZ and z >= 0:
@@ -1187,7 +1196,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
             if parent is None:
                 return z
             return parent(z)
-        elif m == 1:
+        if m == 1:
             return harmonic_m1._evalf_(z, parent, algorithm)
 
         return zeta(m) - hurwitz_zeta(m, z + 1)
@@ -1238,8 +1247,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
             raise ValueError("cannot differentiate harmonic_number in the second parameter")
         if m == 1:
             return harmonic_m1(n).diff()
-        else:
-            return m * (zeta(m + 1) - harmonic_number(n, m + 1))
+        return m * (zeta(m + 1) - harmonic_number(n, m + 1))
 
     def _print_(self, z, m):
         """
@@ -1252,8 +1260,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         """
         if m == 1:
             return "harmonic_number(%s)" % z
-        else:
-            return "harmonic_number(%s, %s)" % (z, m)
+        return "harmonic_number(%s, %s)" % (z, m)
 
     def _print_latex_(self, z, m):
         """
@@ -1266,8 +1273,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         """
         if m == 1:
             return r"H_{%s}" % z
-        else:
-            return r"H_{{%s},{%s}}" % (z, m)
+        return r"H_{{%s},{%s}}" % (z, m)
 
 
 harmonic_number = Function_harmonic_number_generalized()
@@ -1354,9 +1360,9 @@ class Function_harmonic_number(BuiltinFunction):
         if z in ZZ:
             if z == 0:
                 return Integer(0)
-            elif z == 1:
+            if z == 1:
                 return Integer(1)
-            elif z > 1:
+            if z > 1:
                 return _flint_harmonic_number(z)
         elif z in QQ:
             return psi1(z + 1) - psi1(1)

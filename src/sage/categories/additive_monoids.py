@@ -55,7 +55,7 @@ class AdditiveMonoids(CategoryWithAxiom_singleton):
 
             INPUT:
 
-            - ``args`` -- a list (or iterable) of elements of ``self``
+            - ``args`` -- list (or iterable) of elements of ``self``
 
             EXAMPLES::
 
@@ -67,8 +67,24 @@ class AdditiveMonoids(CategoryWithAxiom_singleton):
                 0
                 sage: S.sum(()).parent() == S
                 True
+
+            TESTS:
+
+            The following should be reasonably fast (0.5s each)::
+
+                sage: R.<x,y> = QQ[]
+                sage: ignore = R.sum(
+                ....:     QQ.random_element()*x^i*y^j for i in range(200) for j in range(200))
+                sage: ignore = R.sum([
+                ....:     QQ.random_element()*x^i*y^j for i in range(200) for j in range(200)])
+
+            Summing an empty iterator::
+
+                sage: R.sum(1 for i in range(0))
+                0
             """
-            return sum(args, self.zero())
+            from sage.misc.misc_c import balanced_sum
+            return balanced_sum(args, self.zero(), 20)
 
     class Homsets(HomsetsCategory):
 

@@ -1,4 +1,3 @@
-# cython: binding = True
 r"""
 Isoperimetric inequalities
 
@@ -23,9 +22,11 @@ Authors:
 from cysignals.signals cimport sig_on, sig_off
 from cysignals.memory cimport check_malloc, sig_free
 
-from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph
 from sage.data_structures.binary_matrix cimport *
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
+from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph
 
 from sage.rings.infinity import Infinity
 from sage.rings.rational_field import QQ
@@ -88,17 +89,29 @@ def cheeger_constant(g):
         Traceback (most recent call last):
         ...
         ValueError: Cheeger constant is not defined for the empty graph
+
+    Immutable graph::
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.cheeger_constant() == H.cheeger_constant()
+        True
     """
     if g.is_directed():
         raise ValueError("Cheeger constant is only defined on non-oriented graph")
     g._scream_if_not_simple()
-    if g.num_verts() == 0:
+    if not g.n_vertices():
         raise ValueError("Cheeger constant is not defined for the empty graph")
-    elif g.num_verts() == 1:
+    elif g.n_vertices() == 1:
         return Infinity
     elif not g.is_connected():
-        return QQ((0, 1))
+        return QQ.zero()
 
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd         # a copy of the graph g
     cdef int * subgraph           # vertices of the subgraph (stack)
     cdef int * bitsubgraph        # vertices of the subgraph (bit array of +1 (in) or -1 (not in))
@@ -110,7 +123,11 @@ def cheeger_constant(g):
     cdef unsigned long vmin = 1   # value of the volume for the min
     cdef int i
 
-    init_short_digraph(sd, g)
+    if isinstance(g, StaticSparseBackend):
+        cg = <StaticSparseCGraph> g._cg
+        sd = <short_digraph> cg.g
+    else:
+        init_short_digraph(sd, g, edge_labelled=False, vertex_list=list(g))
 
     subgraph = <int *> check_malloc(sd.n * sizeof(int))
     bitsubgraph = <int *> check_malloc(sd.n * sizeof(int))
@@ -170,7 +187,8 @@ def cheeger_constant(g):
         return QQ((bmin, vmin))
 
     finally:
-        free_short_digraph(sd)
+        if not isinstance(g, StaticSparseBackend):
+            free_short_digraph(sd)
         sig_free(subgraph)
         sig_free(bitsubgraph)
         sig_off()
@@ -224,17 +242,29 @@ def edge_isoperimetric_number(g):
         Traceback (most recent call last):
         ...
         ValueError: edge-isoperimetric number not defined for the empty graph
+
+    Immutable graph::
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.edge_isoperimetric_number() == H.edge_isoperimetric_number()
+        True
     """
     if g.is_directed():
         raise ValueError("edge isoperimetric number is only defined on non-oriented graph")
     g._scream_if_not_simple()
-    if g.num_verts() == 0:
+    if not g.n_vertices():
         raise ValueError("edge-isoperimetric number not defined for the empty graph")
-    elif g.num_verts() == 1:
+    elif g.n_vertices() == 1:
         return Infinity
     elif not g.is_connected():
         return QQ((0, 1))
 
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd           # a copy of the graph g
     cdef int * subgraph           # vertices of the subgraph (stack)
     cdef int * bitsubgraph        # vertices of the subgraph (bit array of +1 (in) or -1 (not in))
@@ -244,7 +274,11 @@ def edge_isoperimetric_number(g):
     cdef int u = 0                  # current vertex
     cdef int i
 
-    init_short_digraph(sd, g)
+    if isinstance(g, StaticSparseBackend):
+        cg = <StaticSparseCGraph> g._cg
+        sd = <short_digraph> cg.g
+    else:
+        init_short_digraph(sd, g, edge_labelled=False, vertex_list=list(g))
 
     cdef unsigned long bmin = sd.neighbors[1] - sd.neighbors[0]  # value of boundary for the min
     cdef unsigned long vmin = 1  # value of the volume for the min
@@ -310,7 +344,8 @@ def edge_isoperimetric_number(g):
 
     finally:
         sig_off()
-        free_short_digraph(sd)
+        if not isinstance(g, StaticSparseBackend):
+            free_short_digraph(sd)
         sig_free(subgraph)
         sig_free(bitsubgraph)
 

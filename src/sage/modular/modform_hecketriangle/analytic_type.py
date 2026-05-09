@@ -9,7 +9,6 @@ list of handled properties.
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************
@@ -21,10 +20,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.sets.set import Set
-from sage.combinat.posets.posets import Poset, FinitePoset
-from sage.combinat.posets.lattices import FiniteLatticePoset
 from sage.combinat.posets.elements import LatticePosetElement
+from sage.combinat.posets.lattices import FiniteLatticePoset
+from sage.combinat.posets.posets import FinitePoset, Poset
+from sage.misc.latex import latex
+from sage.sets.set import Set
 
 
 class AnalyticTypeElement(LatticePosetElement):
@@ -94,7 +94,6 @@ class AnalyticTypeElement(LatticePosetElement):
             sage: latex(AnalyticType()(["quasi", "cusp"]))
             \text{\texttt{quasi{ }cuspidal}}
         """
-        from sage.misc.latex import latex
         return latex(self.analytic_name())
 
     def analytic_space_name(self):
@@ -206,12 +205,10 @@ class AnalyticTypeElement(LatticePosetElement):
 
         INPUT:
 
-        - ``reduce_type``  -- an analytic type or something which is
+        - ``reduce_type`` -- an analytic type or something which is
           convertible to an analytic type
 
-        OUTPUT:
-
-        The new reduced analytic type.
+        OUTPUT: the new reduced analytic type
 
         EXAMPLES::
 
@@ -236,12 +233,10 @@ class AnalyticTypeElement(LatticePosetElement):
 
         INPUT:
 
-        - ``extend_type``  -- an analytic type or something which is
+        - ``extend_type`` -- an analytic type or something which is
           convertible to an analytic type
 
-        OUTPUT:
-
-        The new extended analytic type.
+        OUTPUT: the new extended analytic type
 
         EXAMPLES::
 
@@ -294,16 +289,16 @@ class AnalyticType(FiniteLatticePoset):
 
     The basic ``analytic properties`` are:
 
-    - ``quasi``  - Whether the element is quasi modular (and not modular)
-                   or modular.
-    - ``mero``   - ``meromorphic``: If the element is meromorphic
-                   and meromorphic at infinity.
-    - ``weak``   - ``weakly holomorphic``: If the element is holomorphic
-                   and meromorphic at infinity.
-    - ``holo``   - ``holomorphic``: If the element is holomorphic and
-                   holomorphic at infinity.
-    - ``cusp``   - ``cuspidal``: If the element additionally has a positive
-                   order at infinity.
+    - ``quasi`` -- whether the element is quasi modular (and not modular)
+      or modular.
+    - ``mero`` -- ``meromorphic`` -- if the element is meromorphic
+      and meromorphic at infinity
+    - ``weak`` -- ``weakly holomorphic`` -- if the element is holomorphic
+      and meromorphic at infinity
+    - ``holo`` -- ``holomorphic`` -- if the element is holomorphic and
+      holomorphic at infinity
+    - ``cusp`` -- ``cuspidal`` -- if the element additionally has a positive
+      order at infinity
 
     The ``zero`` elements/property have no analytic properties (or only ``quasi``).
 
@@ -326,9 +321,9 @@ class AnalyticType(FiniteLatticePoset):
     EXAMPLES::
 
         sage: from sage.modular.modform_hecketriangle.space import QuasiModularForms
-        sage: x,y,z,d = var("x,y,z,d")
-        sage: el = QuasiModularForms(n=3, k=6, ep=-1)(y-z^3)
-        sage: el.analytic_type()
+        sage: x,y,z,d = var("x,y,z,d")                                                  # needs sage.symbolic
+        sage: el = QuasiModularForms(n=3, k=6, ep=-1)(y-z^3)                            # needs sage.symbolic
+        sage: el.analytic_type()                                                        # needs sage.symbolic
         quasi modular
 
     Similarly the type of the ring element ``el2 = E4/Delta - E6/Delta`` is
@@ -336,9 +331,9 @@ class AnalyticType(FiniteLatticePoset):
     a function which is holomorphic at infinity::
 
         sage: from sage.modular.modform_hecketriangle.graded_ring import WeakModularFormsRing
-        sage: x,y,z,d = var("x,y,z,d")
-        sage: el2 = WeakModularFormsRing(n=3)(x/(x^3-y^2)-y/(x^3-y^2))
-        sage: el2.analytic_type()
+        sage: x,y,z,d = var("x,y,z,d")                                                  # needs sage.symbolic
+        sage: el2 = WeakModularFormsRing(n=3)(x/(x^3-y^2)-y/(x^3-y^2))                  # needs sage.symbolic
+        sage: el2.analytic_type()                                                       # needs sage.symbolic
         weakly holomorphic modular
     """
 
@@ -445,7 +440,7 @@ class AnalyticType(FiniteLatticePoset):
                                  linear_extension=True, facade=False)
 
         L = self._base_poset.order_ideals_lattice()
-        H = L._hasse_diagram.relabel({i: x for i, x in enumerate(L._elements)},
+        H = L._hasse_diagram.relabel(dict(enumerate(L._elements)),
                                      inplace=False)
         FiniteLatticePoset.__init__(self, hasse_diagram=H,
                                     elements=L._elements, category=L.category(),
@@ -485,9 +480,8 @@ class AnalyticType(FiniteLatticePoset):
             True
         """
         if len(args) > 1:
-            return super().__call__([arg for arg in args], **kwargs)
-        else:
-            return super().__call__(*args, **kwargs)
+            return super().__call__(list(args), **kwargs)
+        return super().__call__(*args, **kwargs)
 
     def _element_constructor_(self, element):
         r"""
@@ -495,12 +489,9 @@ class AnalyticType(FiniteLatticePoset):
 
         INPUT:
 
-        - ``element``  -- Either something which coerces in the
-                          ``FiniteLatticePoset`` of ``self`` or
-                          a string or a list of strings of basic
-                          properties that should be contained in
-                          the new element.
-
+        - ``element`` -- either something which coerces in the
+          ``FiniteLatticePoset`` of ``self`` or a string or a list of strings
+          of basic properties that should be contained in the new element
 
         OUTPUT:
 

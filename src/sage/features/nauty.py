@@ -24,9 +24,10 @@ class NautyExecutable(Executable):
     EXAMPLES::
 
         sage: from sage.features.nauty import NautyExecutable
-        sage: NautyExecutable('converseg').is_present()         # optional - nauty
+        sage: NautyExecutable('converseg').is_present()                                 # needs nauty
         FeatureTestResult('nauty_converseg', True)
     """
+
     def __init__(self, name):
         r"""
         TESTS::
@@ -35,10 +36,13 @@ class NautyExecutable(Executable):
             sage: isinstance(NautyExecutable('geng'), NautyExecutable)
             True
         """
-        Executable.__init__(self, name=f"nauty_{name}",
-                            executable=f"{SAGE_NAUTY_BINS_PREFIX}{name}",
-                            spkg="nauty",
-                            type="standard")
+        Executable.__init__(
+            self,
+            name=f"nauty_{name}",
+            executable=f"{SAGE_NAUTY_BINS_PREFIX}{name}",
+            spkg="nauty",
+            type="standard",
+        )
 
 
 class Nauty(JoinFeature):
@@ -49,9 +53,10 @@ class Nauty(JoinFeature):
     EXAMPLES::
 
         sage: from sage.features.nauty import Nauty
-        sage: Nauty().is_present()                              # optional - nauty
+        sage: Nauty().is_present()                                                      # needs nauty
         FeatureTestResult('nauty', True)
     """
+
     def __init__(self):
         r"""
         TESTS::
@@ -60,9 +65,22 @@ class Nauty(JoinFeature):
             sage: isinstance(Nauty(), Nauty)
             True
         """
-        JoinFeature.__init__(self, "nauty",
-                             [NautyExecutable(name)
-                              for name in ('directg', 'gentourng', 'geng', 'genbg', 'gentreeg', 'converseg')])
+        JoinFeature.__init__(
+            self,
+            "nauty",
+            [
+                NautyExecutable(name)
+                for name in (
+                    "directg",
+                    "gentourng",
+                    "geng",
+                    "genbg",
+                    "gentreeg",
+                    "genktreeg",
+                    "genposetg",
+                )
+            ],
+        )
 
 
 def all_features():

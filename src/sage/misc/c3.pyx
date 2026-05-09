@@ -29,14 +29,14 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
     resolution order for new style classes involving multiple
     inheritance.
 
-    After :trac:`11943` this implementation was used to compute the
+    After :issue:`11943` this implementation was used to compute the
     list of super categories of a category; see
     :meth:`~sage.categories.category.Category.all_super_categories`.
     The purpose is to ensure that list of super categories matches
     with the method resolution order of the parent or element classes
     of a category.
 
-    Since :trac:`13589`, this implementation is superseded by that in
+    Since :issue:`13589`, this implementation is superseded by that in
     :mod:`sage.misc.c3_controlled`, that puts the ``C3`` algorithm
     under control of some total order on categories.  This guarantees
     that ``C3`` always finds a consistent Method Resolution Order. For
@@ -45,10 +45,10 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
     INPUT:
 
     - ``start`` -- an object; the returned list is built upon data
-      provided by certain attributes of ``start``.
-    - ``bases`` -- a string; the name of an attribute of ``start``
-      providing a list of objects.
-    - ``attribute`` -- a string; the name of an attribute of the
+      provided by certain attributes of ``start``
+    - ``bases`` -- string; the name of an attribute of ``start``
+      providing a list of objects
+    - ``attribute`` -- string; the name of an attribute of the
       objects provided in ``getattr(start,bases)``. That attribute is
       supposed to provide a list.
 
@@ -121,7 +121,7 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
 
     TESTS:
 
-    Regression test for bug #1 of :trac:`13501`::
+    Regression test for bug #1 of :issue:`13501`::
 
         sage: class C(): pass
         sage: class F(): pass
@@ -143,7 +143,7 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
         sage: A._all_bases
         [A, B, C, D, E, F, G]
 
-    Regression test for bug #2 of :trac:`13501`. The following should
+    Regression test for bug #2 of :issue:`13501`. The following should
     fail since ``A`` asks for ``B`` to come before ``C``, where as
     ``B`` is a super class of ``C``::
 
@@ -163,7 +163,7 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
         ...
         ValueError: Cannot merge the items B, C, B.
 
-    Since :trac:`11943`, the following consistency tests are part
+    Since :issue:`11943`, the following consistency tests are part
     of the test suites of categories (except for hom categories)::
 
         sage: C = Category.join([HopfAlgebrasWithBasis(QQ), FiniteEnumeratedSets()])
@@ -177,7 +177,7 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
         out = []
     else:
         out = [start]
-    cdef list args = getattr(start,bases)
+    cdef list args = getattr(start, bases)
     if not args:
         return out
     # Data structure / invariants:
@@ -192,9 +192,10 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
     cdef object O, X
     cdef list tails = [getattr(obj, attribute) for obj in args]
     tails.append(args)
-    tails              = [list(reversed(tail))                   for tail in tails]
-    cdef list heads    = [tail.pop()                             for tail in tails]
-    cdef list tailsets = [set([<size_t><void *>O for O in tail]) for tail in tails]
+    tails = [list(reversed(tail)) for tail in tails]
+    cdef list heads = [tail.pop() for tail in tails]
+    cdef list tailsets = [set([<size_t><void *>O for O in tail])
+                          for tail in tails]
 
     cdef int i, j, nbheads
     nbheads = len(heads)
@@ -202,11 +203,11 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
     cdef list tail_list
 
     while nbheads:
-        for i from 0 <= i < nbheads:
+        for i in range(nbheads):
             O = heads[i]
             # Does O appear in none of the tails?  ``all(O not in tail for tail in tailsets)``
             next_item_found = True
-            for j from 0 <= j < nbheads:
+            for j in range(nbheads):
                 if j == i:
                     continue
                 if <size_t><void *>O in <set>tailsets[j]:
@@ -217,7 +218,7 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
                 # Clear O from other heads, removing the line altogether
                 # if the tail is already empty.
                 # j goes down so that ``del heads[j]`` does not screw up the numbering
-                for j from nbheads > j >= 0:
+                for j in range(nbheads - 1, -1, -1):
                     if heads[j] is O:
                         tail_list = tails[j]
                         if tail_list:

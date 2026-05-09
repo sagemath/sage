@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Video Output Types
 
@@ -22,14 +21,13 @@ class OutputVideoBase(OutputBase):
 
     def __init__(self, video, loop=True):
         """
-        Abstract base class for rich video output
+        Abstract base class for rich video output.
 
         INPUT:
 
-        - ``video`` --
-          :class:`~sage.repl.rich_output.buffer.OutputBuffer`.
-          The video data.
-        - ``loop`` -- boolean. Whether to repeat the video in an endless loop.
+        - ``video`` -- :class:`~sage.repl.rich_output.buffer.OutputBuffer`;
+          the video data
+        - ``loop`` -- boolean; whether to repeat the video in an endless loop
 
         EXAMPLES::
 
@@ -44,16 +42,14 @@ class OutputVideoBase(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample video output container
+        Construct a sample video output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.  The method is implemented in the abstract
         :class:`OutputVideoBase` class, but should get invoked on a
         concrete subclass for which an actual example can exist.
 
-        OUTPUT:
-
-        An instance of the class on which this method is called.
+        OUTPUT: an instance of the class on which this method is called
 
         EXAMPLES::
 
@@ -73,14 +69,14 @@ class OutputVideoBase(OutputBase):
 
     def html_fragment(self, url, link_attrs=''):
         r"""
-        Construct a HTML fragment for embedding this video
+        Construct a HTML fragment for embedding this video.
 
         INPUT:
 
-        - ``url`` -- string. The URL where the data of this video can be found.
+        - ``url`` -- string; the URL where the data of this video can be found
 
-        - ``link_attrs`` -- string. Can be used to style the fallback link
-          which is presented to the user if the video is not supported.
+        - ``link_attrs`` -- string; can be used to style the fallback link
+          which is presented to the user if the video is not supported
 
         EXAMPLES::
 
@@ -114,7 +110,7 @@ class OutputVideoBase(OutputBase):
 
 class OutputVideoOgg(OutputVideoBase):
     """
-    Ogg video, Ogg Theora in particular
+    Ogg video, Ogg Theora in particular.
 
     EXAMPLES::
 
@@ -129,7 +125,7 @@ class OutputVideoOgg(OutputVideoBase):
 
 class OutputVideoWebM(OutputVideoBase):
     """
-    WebM video
+    WebM video.
 
     The video can be encoded using VP8, VP9 or an even more recent codec.
 
@@ -146,7 +142,7 @@ class OutputVideoWebM(OutputVideoBase):
 
 class OutputVideoMp4(OutputVideoBase):
     """
-    MPEG 4 video
+    MPEG 4 video.
 
     EXAMPLES::
 
@@ -161,7 +157,7 @@ class OutputVideoMp4(OutputVideoBase):
 
 class OutputVideoFlash(OutputVideoBase):
     """
-    Flash video
+    Flash video.
 
     EXAMPLES::
 
@@ -176,7 +172,7 @@ class OutputVideoFlash(OutputVideoBase):
 
 class OutputVideoMatroska(OutputVideoBase):
     """
-    Matroska Video
+    Matroska Video.
 
     EXAMPLES::
 
@@ -191,7 +187,7 @@ class OutputVideoMatroska(OutputVideoBase):
 
 class OutputVideoAvi(OutputVideoBase):
     """
-    AVI video
+    AVI video.
 
     EXAMPLES::
 
@@ -206,7 +202,7 @@ class OutputVideoAvi(OutputVideoBase):
 
 class OutputVideoWmv(OutputVideoBase):
     """
-    Windows Media Video
+    Windows Media Video.
 
     EXAMPLES::
 
@@ -221,7 +217,7 @@ class OutputVideoWmv(OutputVideoBase):
 
 class OutputVideoQuicktime(OutputVideoBase):
     """
-    Quicktime video
+    Quicktime video.
 
     EXAMPLES::
 

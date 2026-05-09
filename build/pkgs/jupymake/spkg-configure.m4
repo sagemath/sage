@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([jupymake], [SAGE_PYTHON_PACKAGE_CHECK([jupymake])])

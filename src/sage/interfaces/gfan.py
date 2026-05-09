@@ -37,33 +37,31 @@ TODO -- much functionality of gfan-0.3 is still not exposed::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from subprocess import Popen, PIPE
 
 from sage.features.gfan import GfanExecutable
 
-from sage.misc.decorators import rename_keyword
 
-class Gfan():
+class Gfan:
     """
     Interface to Anders Jensen's Groebner Fan program.
     """
-    @rename_keyword(deprecation=33468, I='input')
-    def __call__(self, input, cmd='', verbose=False, format=None):
+    def __call__(self, input, cmd='', verbose=False):
         r"""
-        Call Groebner Fan program with given input
+        Call Groebner Fan program with given input.
 
         INPUT:
 
-        - ``input`` -- string, input
-        - ``cmd`` -- string (default:``''``), GFan command
-        - ``verbose`` -- bool (default:``False``)
+        - ``input`` -- string; input
+        - ``cmd`` -- string (default: ``''``); GFan command
+        - ``verbose`` -- boolean (default: ``False``)
 
         EXAMPLES::
 
-            sage: print(gfan('Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases')) # optional - gfan
+            sage: print(gfan('Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases'))                # needs gfan
             Q[x,y]
             {{
             y^4+4/9-7/3*y^2-y^3,
@@ -82,22 +80,7 @@ class Gfan():
             x^4+1/3+x-2*x^2-x^3,
             y+1-x^2}
             }
-
-        TESTS::
-
-            sage: _ = gfan(I='Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases') # optional - gfan
-            doctest:...:
-            DeprecationWarning: use the option 'input' instead of 'I'
-            See https://github.com/sagemath/sage/issues/33468 for details.
-
         """
-        if format is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(33468, 'argument `format` is ignored in the code: '
-                               'it is now deprecated. Please update your code '
-                               'without this argument as it will be removed in a later '
-                               'version of SageMath.')
-
         if cmd:
             cmd = cmd.split(' ')
             cmd[0] = GfanExecutable(cmd[0]).absolute_filename()
@@ -112,9 +95,9 @@ class Gfan():
                                encoding='latin-1')
         ans, err = gfan_processes.communicate(input=input)
 
-        # sometimes, gfan outputs stuff to stderr even though everything is fine
-        # we avoid interpreting this as an error
-        if (len(err) > 0) and not (err.startswith('_application PolyhedralCone')):
+        # sometimes, gfan outputs stuff to stderr even though
+        # everything is fine ; we avoid interpreting this as an error
+        if len(err) > 0 and not err.startswith('_application PolyhedralCone'):
             raise RuntimeError(err)
 
         return ans

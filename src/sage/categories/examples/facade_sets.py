@@ -16,6 +16,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 
+
 class PositiveIntegerMonoid(UniqueRepresentation, Parent):
     r"""
 
@@ -79,13 +80,12 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: S = Sets().Facade().example()   # indirect doctest
-
         """
         return "An example of facade set: the monoid of positive integers"
 
     def _element_constructor_(self, object):
         r"""
-        Construction of elements
+        Construction of elements.
 
         Since ``self`` is a strict subset of the parent it is a facade
         for, it is mandatory to override this method. This method
@@ -116,8 +116,8 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
         object = ZZ(object)
         if object > ZZ(0):
             return object
-        else:
-            raise ValueError("%s should be positive")
+        raise ValueError("%s should be positive")
+
 
 class IntegersCompletion(UniqueRepresentation, Parent):
     r"""

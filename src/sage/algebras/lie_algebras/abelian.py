@@ -26,6 +26,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.infinity import infinity
 from sage.sets.family import Family
 
+
 class AbelianLieAlgebra(LieAlgebraWithStructureCoefficients):
     r"""
     An abelian Lie algebra.
@@ -97,7 +98,7 @@ class AbelianLieAlgebra(LieAlgebraWithStructureCoefficients):
         """
         return PolynomialRing(self.base_ring(), self.variable_names())
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` since ``self`` is an abelian Lie algebra.
 
@@ -124,6 +125,7 @@ class AbelianLieAlgebra(LieAlgebraWithStructureCoefficients):
                 0
             """
             return self.parent().zero()
+
 
 class InfiniteDimensionalAbelianLieAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
     r"""
@@ -157,7 +159,7 @@ class InfiniteDimensionalAbelianLieAlgebra(InfinitelyGeneratedLieAlgebra, Indexe
         """
         return infinity
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` since ``self`` is an abelian Lie algebra.
 

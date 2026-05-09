@@ -1,2 +1,2 @@
 curl
-"pkgconfig(libcurl)"
+pkgconfig(libcurl)

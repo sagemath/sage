@@ -25,17 +25,17 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.element import coercion_model
 
 
-class CellComplexReference():
+class CellComplexReference:
 
-    def __init__(self, cell_complex, degree, cells=None):
+    def __init__(self, cell_complex, degree, cells=None) -> None:
         """
-        Auxiliary base class for chains and cochains
+        Auxiliary base class for chains and cochains.
 
         INPUT:
 
-        - ``cell_complex`` -- The cell complex to reference
+        - ``cell_complex`` -- the cell complex to reference
 
-        - ``degree`` -- integer. The degree of the (co)chains
+        - ``degree`` -- integer; the degree of the (co)chains
 
         - ``cells`` -- tuple of cells or ``None``. Does not necessarily have to
           be the cells in the given degree, for computational purposes this
@@ -60,11 +60,9 @@ class CellComplexReference():
 
     def cell_complex(self):
         """
-        Return the underlying cell complex
+        Return the underlying cell complex.
 
-        OUTPUT:
-
-        A cell complex.
+        OUTPUT: a cell complex
 
         EXAMPLES::
 
@@ -76,11 +74,9 @@ class CellComplexReference():
 
     def degree(self):
         """
-        Return the dimension of the cells
+        Return the dimension of the cells.
 
-        OUTPUT:
-
-        Integer. The dimension of the cells.
+        OUTPUT: integer; the dimension of the cells
 
         EXAMPLES::
 
@@ -99,7 +95,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
     - ``n_cells`` -- tuple of `n`-cells, which thus forms a basis for
       this module
-    - ``base_ring`` -- optional (default `\ZZ`)
+    - ``base_ring`` -- (default: `\ZZ`)
 
     One difference between chains and cochains is notation. In a
     simplicial complex, for example, a simplex ``(0,1,2)`` is written
@@ -128,7 +124,8 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
         sage: c.eval(z)
         6
     """
-    def __init__(self, cell_complex, degree, cells=None, base_ring=None):
+    def __init__(self, cell_complex, degree, cells=None,
+                 base_ring=None) -> None:
         """
         EXAMPLES::
 
@@ -175,9 +172,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
         """
         Return the cochains.
 
-        OUTPUT:
-
-        The cochains of the same cells with the same base ring.
+        OUTPUT: the cochains of the same cells with the same base ring
 
         EXAMPLES::
 
@@ -200,9 +195,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
         """
         Return the chain complex.
 
-        OUTPUT:
-
-        Chain complex, see :mod:`sage.homology.chain_complex`.
+        OUTPUT: chain complex, see :mod:`sage.homology.chain_complex`
 
         EXAMPLES::
 
@@ -225,11 +218,9 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
         def to_complex(self):
             """
-            Return the corresponding chain complex element
+            Return the corresponding chain complex element.
 
-            OUTPUT:
-
-            An element of the chain complex, see :mod:`sage.homology.chain_complex`.
+            OUTPUT: an element of the chain complex, see :mod:`sage.homology.chain_complex`
 
             EXAMPLES::
 
@@ -251,11 +242,9 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
         def boundary(self):
             """
-            Return the boundary of the chain
+            Return the boundary of the chain.
 
-            OUTPUT:
-
-            The boundary as a chain in one degree lower.
+            OUTPUT: the boundary as a chain in one degree lower
 
             EXAMPLES::
 
@@ -276,13 +265,11 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
             )
             return codomain.from_vector(d * self.to_vector())
 
-        def is_cycle(self):
+        def is_cycle(self) -> bool:
             """
-            Test whether the chain is a cycle
+            Test whether the chain is a cycle.
 
-            OUTPUT:
-
-            Boolean. Whether the :meth:`boundary` vanishes.
+            OUTPUT: boolean; whether the :meth:`boundary` vanishes
 
             EXAMPLES::
 
@@ -298,18 +285,16 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
                 sage: chain.is_cocycle()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Chains_with_category.element_class' object has no attribute 'is_cocycle'
+                AttributeError: 'Chains_with_category.element_class' object has no attribute 'is_cocycle'...
             """
             return self.to_complex().is_cycle()
 
-        def is_boundary(self):
+        def is_boundary(self) -> bool:
             """
-            Test whether the chain is a boundary
+            Test whether the chain is a boundary.
 
-            OUTPUT:
-
-            Boolean. Whether the chain is the :meth:`boundary` of a chain in one
-            degree higher.
+            OUTPUT: boolean; whether the chain is the :meth:`boundary` of a
+            chain in one degree higher
 
             EXAMPLES::
 
@@ -325,7 +310,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
                 sage: chain.is_coboundary()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Chains_with_category.element_class' object has no attribute 'is_coboundary'
+                AttributeError: 'Chains_with_category.element_class' object has no attribute 'is_coboundary'...
             """
             return self.to_complex().is_boundary()
 
@@ -338,7 +323,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
     - ``n_cells`` -- tuple of `n`-cells, which thus forms a basis for
       this module
-    - ``base_ring`` -- optional (default `\ZZ`)
+    - ``base_ring`` -- (default: `\ZZ`)
 
     One difference between chains and cochains is notation. In a
     simplicial complex, for example, a simplex ``(0,1,2)`` is written
@@ -367,7 +352,8 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
         sage: c.eval(z)
         6
     """
-    def __init__(self, cell_complex, degree, cells=None, base_ring=None):
+    def __init__(self, cell_complex, degree, cells=None,
+                 base_ring=None) -> None:
         """
         EXAMPLES::
 
@@ -413,11 +399,9 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
     def dual(self):
         """
-        Return the chains
+        Return the chains.
 
-        OUTPUT:
-
-        The chains of the same cells with the same base ring.
+        OUTPUT: the chains of the same cells with the same base ring
 
         EXAMPLES::
 
@@ -440,9 +424,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
         """
         Return the cochain complex.
 
-        OUTPUT:
-
-        Cochain complex, see :mod:`sage.homology.chain_complex`.
+        OUTPUT: cochain complex, see :mod:`sage.homology.chain_complex`
 
         EXAMPLES::
 
@@ -466,11 +448,9 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
         def to_complex(self):
             """
-            Return the corresponding cochain complex element
+            Return the corresponding cochain complex element.
 
-            OUTPUT:
-
-            An element of the cochain complex, see :mod:`sage.homology.chain_complex`.
+            OUTPUT: an element of the cochain complex, see :mod:`sage.homology.chain_complex`
 
             EXAMPLES::
 
@@ -492,11 +472,9 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
         def coboundary(self):
             r"""
-            Return the coboundary of this cochain
+            Return the coboundary of this cochain.
 
-            OUTPUT:
-
-            The coboundary as a cochain in one degree higher.
+            OUTPUT: the coboundary as a cochain in one degree higher
 
             EXAMPLES::
 
@@ -517,13 +495,11 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
             )
             return codomain.from_vector(d * self.to_vector())
 
-        def is_cocycle(self):
+        def is_cocycle(self) -> bool:
             """
-            Test whether the cochain is a cocycle
+            Test whether the cochain is a cocycle.
 
-            OUTPUT:
-
-            Boolean. Whether the :meth:`coboundary` vanishes.
+            OUTPUT: boolean; whether the :meth:`coboundary` vanishes
 
             EXAMPLES::
 
@@ -539,18 +515,16 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
                 sage: cochain.is_cycle()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Cochains_with_category.element_class' object has no attribute 'is_cycle'
+                AttributeError: 'Cochains_with_category.element_class' object has no attribute 'is_cycle'...
             """
             return self.to_complex().is_cycle()
 
-        def is_coboundary(self):
+        def is_coboundary(self) -> bool:
             """
-            Test whether the cochain is a coboundary
+            Test whether the cochain is a coboundary.
 
-            OUTPUT:
-
-            Boolean. Whether the cochain is the :meth:`coboundary` of a cochain
-            in one degree lower.
+            OUTPUT: boolean; whether the cochain is the :meth:`coboundary` of a cochain
+            in one degree lower
 
             EXAMPLES::
 
@@ -566,7 +540,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
                 sage: cochain.is_boundary()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Cochains_with_category.element_class' object has no attribute 'is_boundary'
+                AttributeError: 'Cochains_with_category.element_class' object has no attribute 'is_boundary'...
             """
             return self.to_complex().is_boundary()
 
@@ -604,7 +578,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
                 sage: z.eval(c) # z is not a cochain
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Chains_with_category.element_class' object has no attribute 'eval'
+                AttributeError: 'Chains_with_category.element_class' object has no attribute 'eval'...
                 sage: c.eval(c) # can't evaluate a cochain on a cochain
                 Traceback (most recent call last):
                 ...

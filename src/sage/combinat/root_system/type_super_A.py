@@ -43,7 +43,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             sage: R = RootSystem(['A', [4,2]])
             sage: AL = R.ambient_space(); AL
             Ambient space of the Root system of type ['A', [4, 2]]
-            sage: TestSuite(AL).run(skip="_test_norm_of_simple_roots")
+            sage: TestSuite(AL).run(skip='_test_norm_of_simple_roots')
         """
         ct = root_system.cartan_type()
         if index_set is None:
@@ -375,10 +375,10 @@ class AmbientSpace(ambient_space.AmbientSpace):
             I = P.index_set()
             return P.sum((-c/dep[0]) * h[I[i]] for i,c in dep[1:].items())
 
-        def has_descent(self, i, positive=False):
+        def has_descent(self, i, positive=False) -> bool:
             """
             Test if ``self`` has a descent at position `i`, that is
-            if ``self`` is on the strict negative side of the `i^{th}`
+            if ``self`` is on the strict negative side of the `i`-th
             simple reflection hyperplane.
 
             If ``positive`` is ``True``, tests if it is on the strict
@@ -411,10 +411,9 @@ class AmbientSpace(ambient_space.AmbientSpace):
                 s = -s
             if positive:
                 return s > 0
-            else:
-                return s < 0
+            return s < 0
 
-        def is_dominant_weight(self):
+        def is_dominant_weight(self) -> bool:
             """
             Test whether ``self`` is a dominant element of the weight lattice.
 
@@ -508,7 +507,7 @@ class CartanType(SuperCartanType_standard):
 
     AmbientSpace = AmbientSpace
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         """
         Return whether ``self`` is irreducible, which is ``True``.
 
@@ -521,7 +520,7 @@ class CartanType(SuperCartanType_standard):
 
     # A lot of these methods should be implemented by the ABCs of CartanType
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return whether ``self`` is affine or not.
 
@@ -532,7 +531,7 @@ class CartanType(SuperCartanType_standard):
         """
         return False
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return whether ``self`` is finite or not.
 
@@ -710,7 +709,7 @@ class CartanType(SuperCartanType_standard):
         from . import type_relabel
         return type_relabel.CartanType(self, relabelling)
 
-    def _latex_draw_node(self, x, y, label, position="below=4pt"):
+    def _latex_draw_node(self, x, y, label, position='below=4pt'):
         r"""
         Draw (possibly marked [crossed out]) circular node ``i`` at the
         position ``(x,y)`` with node label ``label`` .
@@ -737,7 +736,7 @@ class CartanType(SuperCartanType_standard):
                                     x+.17, y-.17, x-.17, y+.17)
         return ret
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -775,6 +774,8 @@ class CartanType(SuperCartanType_standard):
             \draw[-,thick] (0.17 cm, 0.17 cm) -- (-0.17 cm, -0.17 cm);
             \draw[-,thick] (0.17 cm, -0.17 cm) -- (-0.17 cm, 0.17 cm);
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         if self.n + self.m > 1:
@@ -784,7 +785,7 @@ class CartanType(SuperCartanType_standard):
         return ret + "".join(node((self.m+i)*node_dist, 0, label(i))
                              for i in self.index_set())
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of the Dynkin diagram.
 
@@ -812,6 +813,8 @@ class CartanType(SuperCartanType_standard):
             O---O---O---O---O---X
             -5  -4  -3  -2  -1  0
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = lambda i: 'O'
         ret = "---".join(node(label(i)) for i in range(1,self.m+1))

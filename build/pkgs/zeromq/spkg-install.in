@@ -1,5 +1,7 @@
 cd src
 
+cp "$SAGE_ROOT"/config/config.* config/
+
 # Do not treat warnings as errors, see
 # https://github.com/zeromq/libzmq/issues/2818
 sdh_configure --disable-Werror

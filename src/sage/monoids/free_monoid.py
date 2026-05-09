@@ -24,42 +24,15 @@ the optional ``names`` argument to the
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.integer import Integer
-from sage.structure.category_object import normalize_names
 from .free_monoid_element import FreeMonoidElement
-
 from .monoid import Monoid_class
 
+from sage.categories.monoids import Monoids
 from sage.combinat.words.finite_word import FiniteWord_class
-
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-
-
-def is_FreeMonoid(x):
-    """
-    Return ``True`` if `x` is a free monoid.
-
-    EXAMPLES::
-
-        sage: from sage.monoids.free_monoid import is_FreeMonoid
-        sage: is_FreeMonoid(5)
-        False
-        sage: is_FreeMonoid(FreeMonoid(7,'a'))
-        True
-        sage: is_FreeMonoid(FreeAbelianMonoid(7,'a'))
-        False
-        sage: is_FreeMonoid(FreeAbelianMonoid(0,''))
-        False
-        sage: is_FreeMonoid(FreeMonoid(index_set=ZZ))
-        True
-        sage: is_FreeMonoid(FreeAbelianMonoid(index_set=ZZ))
-        False
-    """
-    if isinstance(x, FreeMonoid):
-        return True
-    from sage.monoids.indexed_free_monoid import IndexedFreeMonoid
-    return isinstance(x, IndexedFreeMonoid)
+from sage.structure.category_object import normalize_names
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class FreeMonoid(Monoid_class, UniqueRepresentation):
@@ -67,7 +40,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
     Return a free monoid on `n` generators or with the generators
     indexed by a set `I`.
 
-    We construct free monoids by specifing either:
+    We construct free monoids by specifying either:
 
     - the number of generators and/or the names of the generators
     - the indexing set for the generators
@@ -79,12 +52,10 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
     - ``names`` -- names of generators
 
-    - ``commutative`` -- (default: ``False``) whether the free
+    - ``commutative`` -- boolean (default: ``False``); whether the free
       monoid is commutative or not
 
-    OUTPUT:
-
-    A free monoid.
+    OUTPUT: a free monoid
 
     EXAMPLES::
 
@@ -135,7 +106,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             True
 
         Fix a bug when ``index_set`` is ``None`` and ``names`` is a
-        string (:trac:`26221`)::
+        string (:issue:`26221`)::
 
             sage: FreeMonoid(2, names=['a','b']) is FreeMonoid(names='a,b')
             True
@@ -193,10 +164,11 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
         if n < 0:
             raise ValueError("n (=%s) must be nonnegative" % n)
         self.__ngens = int(n)
-        Monoid_class.__init__(self, names)
+        cat = Monoids().Infinite() if names else None
+        Monoid_class.__init__(self, names, category=cat)
 
     def _repr_(self):
-        return "Free monoid on %s generators %s" % (self.__ngens, self.gens())
+        return f"Free monoid on {self.__ngens} generators {self.gens()}"
 
     def _element_constructor_(self, x, check=True):
         """
@@ -237,12 +209,26 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
             sage: F(F(w), check=False)
             a^2*b^2*c*a*b*a*c
+
+            sage: F = FreeMonoid(3, 'a,b,c')
+            sage: G = FreeMonoid(2, 'a,c')
+            sage: F(G(Word("ac")))
+            a*c
         """
         # There should really be some careful type checking here...
-        if isinstance(x, FreeMonoidElement) and x.parent() is self:
-            return x
-        if isinstance(x, FreeMonoidElement) and x.parent() == self:
-            return self.element_class(self, x._element_list, check)
+        if isinstance(x, FreeMonoidElement):
+            P = x.parent()
+            if P is self:
+                return x
+            if P == self:
+                return self.element_class(self, x._element_list, check)
+            if all(v in self.variable_names()
+                     for v in P.variable_names()):
+                reindex = [next(j for j, w in enumerate(self.variable_names())
+                                if v == w)
+                           for v in P.variable_names()]
+                elt = [(reindex[i], exp) for i, exp in x._element_list]
+                return self.element_class(self, elt, check)
         if isinstance(x, (int, Integer)) and x == 1:
             return self.element_class(self, x, check)
         if isinstance(x, FiniteWord_class):
@@ -253,7 +239,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
         raise TypeError("argument x (= %s) is of the wrong type" % x)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         return isinstance(x, FreeMonoidElement) and x.parent() == self
 
     def gen(self, i=0):
@@ -311,6 +297,6 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             1
         """
         if self.__ngens == 0:
-            return Integer(1)
+            return ZZ.one()
         from sage.rings.infinity import infinity
         return infinity

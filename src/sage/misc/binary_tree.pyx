@@ -11,7 +11,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 
 from cpython.ref cimport PyObject, Py_INCREF, Py_XDECREF
 
-cdef binary_tree_node *BinaryTreeNode(int key, object value):
+cdef binary_tree_node *BinaryTreeNode(int key, object value) noexcept:
     cdef binary_tree_node *t
     t = <binary_tree_node *>sig_malloc(sizeof(binary_tree_node))
     t.key = key
@@ -21,18 +21,18 @@ cdef binary_tree_node *BinaryTreeNode(int key, object value):
     t.value = <void *>value
     return t
 
-cdef void free_binary_tree_node(binary_tree_node *self):
+cdef void free_binary_tree_node(binary_tree_node *self) noexcept:
     Py_XDECREF(<PyObject *>self.value)
     sig_free(self)
 
-cdef inline void binary_tree_dealloc(binary_tree_node *self):
+cdef inline void binary_tree_dealloc(binary_tree_node *self) noexcept:
     if self != NULL:
         binary_tree_dealloc(self.left)
         binary_tree_dealloc(self.right)
         free_binary_tree_node(self)
 
 
-cdef void binary_tree_insert(binary_tree_node *self, int key, object value):
+cdef void binary_tree_insert(binary_tree_node *self, int key, object value) noexcept:
     if self.key == key:
         return
     elif self.key > key:
@@ -81,7 +81,7 @@ cdef object binary_tree_delete(binary_tree_node *self, int key):
         else:
             return binary_tree_delete(self.right, key)
 
-cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self):
+cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self) noexcept:
     cdef binary_tree_node *left
     cdef binary_tree_node *cur
     if self.left == NULL:
@@ -98,8 +98,7 @@ cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self):
     return left
 
 
-
-cdef binary_tree_node *binary_tree_right_excise(binary_tree_node *self):
+cdef binary_tree_node *binary_tree_right_excise(binary_tree_node *self) noexcept:
     cdef binary_tree_node *right
     cdef binary_tree_node *cur
     if self.right == NULL:
@@ -116,7 +115,7 @@ cdef binary_tree_node *binary_tree_right_excise(binary_tree_node *self):
     return right
 
 
-cdef binary_tree_node *binary_tree_head_excise(binary_tree_node *self):
+cdef binary_tree_node *binary_tree_head_excise(binary_tree_node *self) noexcept:
     cdef binary_tree_node *cur
     cdef int right
     # We have a pointer we're about to free.  Chances are, we'll never
@@ -146,7 +145,7 @@ cdef binary_tree_node *binary_tree_head_excise(binary_tree_node *self):
 
 
 cdef int LIST_PREORDER, LIST_POSTORDER, LIST_INORDER, LIST_KEYS, LIST_VALUES
-LIST_PREORDER  = 1
+LIST_PREORDER = 1
 LIST_INORDER = 2
 LIST_POSTORDER = 4
 LIST_KEYS = 8
@@ -178,7 +177,6 @@ cdef object binary_tree_list(binary_tree_node *cur, int behavior):
     return arry
 
 
-
 cdef class BinaryTree:
     """
     A simple binary tree with integer keys.
@@ -190,7 +188,7 @@ cdef class BinaryTree:
         """
         TESTS:
 
-        We test that :trac:`18897` is fixed::
+        We test that :issue:`18897` is fixed::
 
             sage: def test():
             ....:     from sage.rings.polynomial.polynomial_compiled import CompiledPolynomialFunction
@@ -310,7 +308,7 @@ cdef class BinaryTree:
             sage: t = BinaryTree()
             sage: t.contains(1)
             False
-            sage: t.insert(1,1)
+            sage: t.insert(1, 1)
             sage: t.contains(1)
             True
         """
@@ -440,7 +438,7 @@ cdef class BinaryTree:
         """
         return self.head == NULL
 
-    def keys(BinaryTree self, order="inorder"):
+    def keys(BinaryTree self, order='inorder'):
         """
         Return the keys sorted according to "order" parameter.
 
@@ -459,7 +457,7 @@ cdef class BinaryTree:
 
         return binary_tree_list(self.head, LIST_KEYS + o)
 
-    def values(BinaryTree self, order="inorder"):
+    def values(BinaryTree self, order='inorder'):
         """
         Return the keys sorted according to "order" parameter.
 
@@ -493,7 +491,7 @@ class Test:
     def random(self):
         self.binary_tree()
 
-    def binary_tree(self, values = 100, cycles = 100000):
+    def binary_tree(self, values=100, cycles=100000):
         """
         Perform a sequence of random operations, given random inputs
         to stress test the binary tree structure.

@@ -217,7 +217,7 @@ ACKNOWLEDGEMENT:
 Classes and Methods
 ===================
 """
-#*****************************************************************************
+# ***************************************************************************
 # Copyright (C) 2014--2015 Benjamin Hackl <benjamin.hackl@aau.at>
 #               2014--2015 Daniel Krenn <dev@danielkrenn.at>
 #
@@ -225,8 +225,8 @@ Classes and Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from collections import namedtuple
 
 from sage.misc.lazy_import import lazy_import
@@ -242,6 +242,8 @@ from sage.structure.unique_representation import (CachedRepresentation,
 from sage.structure.richcmp import richcmp_by_eq_and_lt
 import sage.rings.abc
 from .misc import WithLocals
+
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
 
 class Variable(CachedRepresentation, SageObject):
@@ -259,10 +261,10 @@ class Variable(CachedRepresentation, SageObject):
       e.g. ``log(x)^ZZ``: ``var`` is then used to specify the variable `x`.
 
     - ``latex_name`` -- (default: ``None``) if specified, then this string
-      will be used as LaTeX-representation of ``var``.
+      will be used as LaTeX-representation of ``var``
 
     - ``ignore`` -- (default: ``None``) a tuple (or other iterable)
-      of strings which are not variables.
+      of strings which are not variables
 
     TESTS::
 
@@ -338,7 +340,7 @@ class Variable(CachedRepresentation, SageObject):
             ...
             ValueError: ':-' is not a valid name for a variable.
 
-        Check :trac:`26452`::
+        Check :issue:`26452`::
 
             sage: Variable(('w',),
             ....:          repr='w^(Number Field in i with defining polynomial x^2 + 1) * log(w)^ZZ')
@@ -404,11 +406,9 @@ class Variable(CachedRepresentation, SageObject):
 
         INPUT:
 
-        - ``other`` -- another variable.
+        - ``other`` -- another variable
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -426,11 +426,9 @@ class Variable(CachedRepresentation, SageObject):
 
         INPUT:
 
-        - ``other`` -- another variable.
+        - ``other`` -- another variable
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -446,9 +444,7 @@ class Variable(CachedRepresentation, SageObject):
         r"""
         Return a representation string of this variable.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -462,9 +458,7 @@ class Variable(CachedRepresentation, SageObject):
         r"""
         Return a LaTeX-representation string of this variable.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -482,9 +476,7 @@ class Variable(CachedRepresentation, SageObject):
         r"""
         Return the names of the variables.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -500,9 +492,7 @@ class Variable(CachedRepresentation, SageObject):
         r"""
         Return whether this is a monomial variable.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -521,11 +511,9 @@ class Variable(CachedRepresentation, SageObject):
 
         INPUT:
 
-        - ``s`` -- a string.
+        - ``s`` -- string
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -601,11 +589,9 @@ class Variable(CachedRepresentation, SageObject):
 
         INPUT:
 
-        - ``rules`` -- a dictionary.
+        - ``rules`` -- dictionary
 
-        OUTPUT:
-
-        An object.
+        OUTPUT: an object
 
         TESTS::
 
@@ -653,7 +639,7 @@ class PartialConversionValueError(ValueError):
     """
     def __init__(self, element, *args, **kwds):
         r"""
-        See :class:`PartialConversionValueError` for more information.
+        See :exc:`PartialConversionValueError` for more information.
 
         TESTS::
 
@@ -679,9 +665,9 @@ class PartialConversionElement(SageObject):
     - ``raw_element`` -- an object
 
     A :class:`PartialConversionElement` is an element ``growth_group(raw_element)``
-    which usually appears in conjunction with :class:`PartialConversionValueError`.
+    which usually appears in conjunction with :exc:`PartialConversionValueError`.
     In this case, it was to possible to create that element, although
-    the conversion went partially well in the sense that a `raw_element``
+    the conversion went partially well in the sense that a ``raw_element``
     (e.g. an exponent for :class:`MonomialGrowthElement` or a base for
     :class:`ExponentialGrowthElement`) could be extracted.
 
@@ -777,13 +763,7 @@ def _is_lt_one_(self):
     r"""
     Return whether this element is less than `1`.
 
-    INPUT:
-
-    Nothing.
-
-    OUTPUT:
-
-    A boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -809,9 +789,7 @@ def _log_(self, base=None):
     - ``base`` -- the base of the logarithm. If ``None``
       (default value) is used, the natural logarithm is taken.
 
-    OUTPUT:
-
-    A growth element.
+    OUTPUT: a growth element
 
     EXAMPLES::
 
@@ -926,7 +904,7 @@ def _log_factor_(self, base=None, locals=None):
     - ``base`` -- the base of the logarithm. If ``None``
       (default value) is used, the natural logarithm is taken.
 
-    - ``locals`` -- a dictionary which may contain the following keys and values:
+    - ``locals`` -- dictionary which may contain the following keys and values:
 
       - ``'log'`` -- value: a function. If not used, then the usual
         :class:`log <sage.functions.log.Function_log>` is taken.
@@ -1000,11 +978,9 @@ def _rpow_(self, base):
 
     INPUT:
 
-    - ``base`` -- an element.
+    - ``base`` -- an element
 
-    OUTPUT:
-
-    A growth element.
+    OUTPUT: a growth element
 
     EXAMPLES::
 
@@ -1122,9 +1098,9 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
     INPUT:
 
-    - ``parent`` -- a :class:`GenericGrowthGroup`.
+    - ``parent`` -- a :class:`GenericGrowthGroup`
 
-    - ``raw_element`` -- an element from the base of the parent.
+    - ``raw_element`` -- an element from the base of the parent
 
     EXAMPLES::
 
@@ -1207,13 +1183,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         r"""
         A representation string for this generic element.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1234,13 +1204,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         r"""
         Return the hash of this element.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1257,7 +1221,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``other`` -- a :class:`GenericGrowthElement`.
+        - ``other`` -- a :class:`GenericGrowthElement`
 
         OUTPUT:
 
@@ -1284,9 +1248,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         r"""
         Return the inverse of this growth element.
 
-        OUTPUT:
-
-        An instance of :class:`GenericGrowthElement`.
+        OUTPUT: an instance of :class:`GenericGrowthElement`
 
         TESTS::
 
@@ -1319,9 +1281,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         - ``other`` -- a :class:`GenericGrowthElement`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -1390,9 +1350,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         - ``other`` -- a :class:`GenericGrowthElement`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -1434,7 +1392,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         - ``base`` -- the base of the logarithm. If ``None``
           (default value) is used, the natural logarithm is taken.
 
-        - ``locals`` -- a dictionary which may contain the following keys and values:
+        - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
@@ -1467,11 +1425,9 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``base`` -- an element.
+        - ``base`` -- an element
 
-        OUTPUT:
-
-        Nothing since a ``ValueError`` is raised in this generic method.
+        OUTPUT: nothing since a :exc:`ValueError` is raised in this generic method
 
         TESTS::
 
@@ -1491,13 +1447,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         Return the atomic factors of this growth element. An atomic factor
         cannot be split further.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A tuple of growth elements.
+        OUTPUT: a tuple of growth elements
 
         EXAMPLES::
 
@@ -1516,11 +1466,9 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``rules`` -- a dictionary.
+        - ``rules`` -- dictionary
 
-        OUTPUT:
-
-        An object.
+        OUTPUT: an object
 
         TESTS::
 
@@ -1543,9 +1491,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         r"""
         Return the names of the variables of this growth element.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -1572,12 +1518,11 @@ class GenericGrowthElement(MultiplicativeGroupElement):
             Traceback (most recent call last):
             ...
             AttributeError: 'GenericGrowthGroup_with_category.element_class' object
-            has no attribute 'is_one'
+            has no attribute 'is_one'...
         """
         if self.is_one():
             return tuple()
-        else:
-            return self.parent().variable_names()
+        return self.parent().variable_names()
 
     def _singularity_analysis_(self, var, zeta, precision):
         r"""
@@ -1585,11 +1530,11 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``var`` -- a string denoting the variable
+        - ``var`` -- string denoting the variable
 
         - ``zeta`` -- a number
 
-        - ``precision`` -- an integer
+        - ``precision`` -- integer
 
         OUTPUT:
 
@@ -1617,14 +1562,12 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``valid_from`` -- a dictionary describing the range of the minimization:
+        - ``valid_from`` -- dictionary describing the range of the minimization:
           the keys are names of variables and the range is the intersection over
           the ranges where the absolute value of the variable designated by the
           key is at least the corresponding value
 
-        OUTPUT:
-
-        A number
+        OUTPUT: a number
 
         TESTS::
 
@@ -1646,7 +1589,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
     INPUT:
 
     - ``base`` -- one of SageMath's parents, out of which the elements
-      get their data (``raw_element``).
+      get their data (``raw_element``)
 
     - ``category`` -- (default: ``None``) the category of the newly
       created growth group. It has to be a subcategory of ``Join of
@@ -1693,7 +1636,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
     @staticmethod
     def __classcall__(cls, base, var=None, category=None, ignore_variables=None):
         r"""
-        Normalizes the input in order to ensure a unique
+        Normalize the input in order to ensure a unique
         representation.
 
         For more information see :class:`GenericGrowthGroup`.
@@ -1787,9 +1730,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         - ``base`` -- a SageMath parent
 
-        OUTPUT:
-
-        A category or ``None``.
+        OUTPUT: a category or ``None``
 
         TESTS::
 
@@ -1805,13 +1746,12 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         # The following block can be removed once #19269 is fixed.
         from sage.rings.integer_ring import ZZ
         from sage.rings.rational_field import QQ
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         if base is ZZ or base is QQ or \
-                is_PolynomialRing(base) and \
+                isinstance(base, PolynomialRing_generic) and \
                 (base.base_ring() is ZZ or base.base_ring() is QQ):
             return Posets()
-        else:
-            return None
+        return None
 
     def __init__(self, base, var, category):
         r"""
@@ -1882,7 +1822,6 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
             Traceback (most recent call last):
             ...
             TypeError: x is not a valid base.
-
         """
         self._var_ = var
         super().__init__(category=category, base=base)
@@ -1891,13 +1830,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         r"""
         A short representation string of this abstract growth group.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1921,13 +1854,11 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``condense`` -- (default: ``False``) if set, then a shorter
-          output is returned, e.g. the prefix-string ``Growth Group``
-          is not show in this case.
+        - ``condense`` -- boolean (default: ``False``); if set, then a shorter
+          output is returned, e.g. the prefix-string ``Growth Group`` is not
+          shown in this case
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1949,13 +1880,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         r"""
         Return the hash of this group.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2005,13 +1930,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         See :class:`TestSuite` for a typical use case.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -2035,11 +1954,9 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``raw_element`` -- the element data.
+        - ``raw_element`` -- the element data
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
@@ -2064,13 +1981,11 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``left`` -- an element.
+        - ``left`` -- an element
 
-        - ``right`` -- an element.
+        - ``right`` -- an element
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -2097,16 +2012,13 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``data`` -- an object representing the element to be
-          initialized.
+        - ``data`` -- an object representing the element to be initialized
 
         - ``raw_element`` -- (default: ``None``) if given, then this is
           directly passed to the element constructor (i.e., no conversion
           is performed).
 
-        OUTPUT:
-
-        An element of this growth group.
+        OUTPUT: an element of this growth group
 
         .. NOTE::
 
@@ -2249,7 +2161,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``data`` -- an object.
+        - ``data`` -- an object
 
         OUTPUT:
 
@@ -2313,9 +2225,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         - ``raw_element`` -- an object
 
-        OUTPUT:
-
-        A pair of objects.
+        OUTPUT: a pair of objects
 
         .. NOTE::
 
@@ -2339,11 +2249,9 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``S`` -- a parent.
+        - ``S`` -- a parent
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -2462,18 +2370,12 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
             from sage.categories.cartesian_product import cartesian_product
             return cartesian_product([self, other])
 
-    def gens_monomial(self):
+    def gens_monomial(self) -> tuple:
         r"""
         Return a tuple containing monomial generators of this growth
         group.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        An empty tuple.
+        OUTPUT: an empty tuple
 
         .. NOTE::
 
@@ -2497,19 +2399,13 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
             sage: GrowthGroup('QQ^x').gens_monomial()
             ()
         """
-        return tuple()
+        return ()
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a tuple of all generators of this growth group.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A tuple whose entries are growth elements.
+        OUTPUT: a tuple whose entries are growth elements
 
         EXAMPLES::
 
@@ -2528,11 +2424,9 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``n`` -- default: `0`.
+        - ``n`` -- (default: `0`)
 
-        OUTPUT:
-
-        A :class:`MonomialGrowthElement`.
+        OUTPUT: a :class:`MonomialGrowthElement`
 
         EXAMPLES::
 
@@ -2555,13 +2449,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         r"""
         Return the number of generators (as a group) of this growth group.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A Python integer.
+        OUTPUT: a Python integer
 
         EXAMPLES::
 
@@ -2584,9 +2472,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         r"""
         Return the names of the variables of this growth group.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -2618,9 +2504,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         Extend to a cartesian product of this growth group
         and a suitable non growth group.
 
-        OUTPUT:
-
-        A group group.
+        OUTPUT: a group group
 
         EXAMPLES::
 
@@ -2647,9 +2531,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         r"""
         Return a non-growth group compatible with this growth group.
 
-        OUTPUT:
-
-        A group group.
+        OUTPUT: a group group
 
         EXAMPLES::
 
@@ -2668,10 +2550,10 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
 
     INPUT:
 
-    - ``var`` -- a string or list of strings (or anything else
-      :class:`Variable` accepts).
+    - ``var`` -- string or list of strings (or anything else :class:`Variable`
+      accepts)
 
-    - ``domain`` -- a category.
+    - ``domain`` -- a category
 
     EXAMPLES::
 
@@ -2716,9 +2598,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
         r"""
         Return a representation string of this functor.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -2734,11 +2614,9 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
-        OUTPUT:
-
-        A functor or ``None``.
+        OUTPUT: a functor or ``None``
 
         EXAMPLES::
 
@@ -2759,11 +2637,9 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2783,11 +2659,9 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2816,7 +2690,7 @@ class DecreasingGrowthElementError(ValueError):
     """
     def __init__(self, element, *args, **kwds):
         r"""
-        See :class:`DecreasingGrowthElementError` for more information.
+        See :exc:`DecreasingGrowthElementError` for more information.
 
         TESTS::
 
@@ -2837,9 +2711,9 @@ class MonomialGrowthElement(GenericGrowthElement):
 
     INPUT:
 
-    - ``parent`` -- a :class:`MonomialGrowthGroup`.
+    - ``parent`` -- a :class:`MonomialGrowthGroup`
 
-    - ``raw_element`` -- an element from the base ring of the parent.
+    - ``raw_element`` -- an element from the base ring of the parent
 
       This ``raw_element`` is the exponent of the created monomial
       growth element.
@@ -2884,12 +2758,10 @@ class MonomialGrowthElement(GenericGrowthElement):
 
         INPUT:
 
-        - ``latex`` -- (default: ``False``) a boolean. If set, then
-          LaTeX-output is returned.
+        - ``latex`` -- boolean (default: ``False``); if set, then LaTeX-output
+          is returned
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -2930,24 +2802,21 @@ class MonomialGrowthElement(GenericGrowthElement):
         var = f(self.parent()._var_)
         if self.exponent.is_zero():
             return '1'
-        elif self.exponent == 1:
+        if self.exponent == 1:
             return var
-        elif latex:
+        if latex:
             return repr_op(var, '^', latex=True) + \
                 '{' + latex_repr(self.exponent)._latex_() + '}'
-        elif self.exponent in ZZ and self.exponent > 0 \
+        if self.exponent in ZZ and self.exponent > 0 \
                 or isidentifier(str(self.exponent)):
             return repr_op(var, '^') + str(self.exponent)
-        else:
-            return repr_op(var, '^') + '(' + str(self.exponent) + ')'
+        return repr_op(var, '^') + '(' + str(self.exponent) + ')'
 
     def _latex_(self):
         r"""
         A LaTeX-representation string for this monomial growth element.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -2977,9 +2846,7 @@ class MonomialGrowthElement(GenericGrowthElement):
 
         - ``other`` -- a :class:`MonomialGrowthElement`
 
-        OUTPUT:
-
-        The product as a :class:`MonomialGrowthElement`.
+        OUTPUT: the product as a :class:`MonomialGrowthElement`
 
         .. NOTE::
 
@@ -3005,13 +2872,7 @@ class MonomialGrowthElement(GenericGrowthElement):
         r"""
         Return the multiplicative inverse of this monomial growth element.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        The multiplicative inverse as a :class:`MonomialGrowthElement`.
+        OUTPUT: the multiplicative inverse as a :class:`MonomialGrowthElement`
 
         EXAMPLES::
 
@@ -3041,9 +2902,7 @@ class MonomialGrowthElement(GenericGrowthElement):
           valid right hand side of ``*`` with elements of the
           parent's base.
 
-        OUTPUT:
-
-        The result of this exponentiation, a :class:`MonomialGrowthElement`.
+        OUTPUT: the result of this exponentiation, a :class:`MonomialGrowthElement`
 
         EXAMPLES::
 
@@ -3077,10 +2936,10 @@ class MonomialGrowthElement(GenericGrowthElement):
 
         INPUT:
 
-        - ``base`` -- the base of the logarithm. If ``None``
-          (default value) is used, the natural logarithm is taken.
+        - ``base`` -- the base of the logarithm. If ``None`` (default value) is
+          used, the natural logarithm is taken.
 
-        - ``locals`` -- a dictionary which may contain the following keys and values:
+        - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
@@ -3137,7 +2996,7 @@ class MonomialGrowthElement(GenericGrowthElement):
                 return ((e, coefficient),)
 
         if var.startswith('exp('):
-            assert(var[-1] == ')')
+            assert (var[-1] == ')')
             v = var[4:-1]
         else:
             v = 'log(%s)' % (var,)
@@ -3154,23 +3013,21 @@ class MonomialGrowthElement(GenericGrowthElement):
 
         INPUT:
 
-        - ``base`` -- an element.
+        - ``base`` -- an element
 
-        - ``locals`` -- a dictionary which may contain the following keys and values:
+        - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
 
-        OUTPUT:
-
-        A growth element.
+        OUTPUT: a growth element
 
         .. NOTE::
 
             The parent of the result can be different from the parent
             of this element.
 
-        A ``ValueError`` is raised if the calculation is not possible
+        A :exc:`ValueError` is raised if the calculation is not possible
         within this method. (Then the calling method should take care
         of the calculation.)
 
@@ -3207,18 +3064,17 @@ class MonomialGrowthElement(GenericGrowthElement):
             x^(log(2))
         """
         var = str(self.parent()._var_)
-        if not(var.startswith('log(') and self.exponent.is_one()):
+        if not (var.startswith('log(') and self.exponent.is_one()):
             raise ValueError('Variable %s is not a log of something.' % (var,))
         new_var = var[4:-1]
         if base == 'e':
             from sage.rings.integer_ring import ZZ
             M = MonomialGrowthGroup(ZZ, new_var)
             return M(raw_element=ZZ(1))
-        else:
-            log = self.parent().locals(locals)['log']
-            new_exponent = log(base)
-            M = MonomialGrowthGroup(new_exponent.parent(), new_var)
-            return M(raw_element=new_exponent)
+        log = self.parent().locals(locals)['log']
+        new_exponent = log(base)
+        M = MonomialGrowthGroup(new_exponent.parent(), new_var)
+        return M(raw_element=new_exponent)
 
     def _lt_(self, other):
         r"""
@@ -3229,9 +3085,7 @@ class MonomialGrowthElement(GenericGrowthElement):
 
         - ``other`` -- a :class:`MonomialGrowthElement`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -3254,13 +3108,10 @@ class MonomialGrowthElement(GenericGrowthElement):
 
         INPUT:
 
-        - ``rules`` -- a dictionary.
-          The neutral element of the group is replaced by the value
-          to key ``'_one_'``.
+        - ``rules`` -- dictionary; the neutral element of the group is replaced
+          by the value to key ``'_one_'``
 
-        OUTPUT:
-
-        An object.
+        OUTPUT: an object
 
         TESTS::
 
@@ -3296,11 +3147,11 @@ class MonomialGrowthElement(GenericGrowthElement):
 
         INPUT:
 
-        - ``var`` -- a string denoting the variable
+        - ``var`` -- string denoting the variable
 
         - ``zeta`` -- a number
 
-        - ``precision`` -- an integer
+        - ``precision`` -- integer
 
         OUTPUT:
 
@@ -3345,7 +3196,7 @@ class MonomialGrowthElement(GenericGrowthElement):
             return asymptotic_expansions.SingularityAnalysis(
                 var=var, zeta=zeta, alpha=self.exponent, beta=0, delta=0,
                 precision=precision)
-        elif self.parent().gens_logarithmic():
+        if self.parent().gens_logarithmic():
             if self.exponent not in ZZ:
                 raise NotImplementedError(
                     'singularity analysis of {} not implemented '
@@ -3356,9 +3207,8 @@ class MonomialGrowthElement(GenericGrowthElement):
             return asymptotic_expansions.SingularityAnalysis(
                 var=var, zeta=zeta, alpha=0, beta=ZZ(self.exponent), delta=0,
                 precision=precision, normalized=False)
-        else:
-            raise NotImplementedError(
-                'singularity analysis of {} not implemented'.format(self))
+        raise NotImplementedError(
+            'singularity analysis of {} not implemented'.format(self))
 
     def _find_minimum_(self, valid_from):
         r"""
@@ -3366,14 +3216,12 @@ class MonomialGrowthElement(GenericGrowthElement):
 
         INPUT:
 
-        - ``valid_from`` -- a dictionary describing the range of the minimization:
+        - ``valid_from`` -- dictionary describing the range of the minimization:
           the keys are names of variables and the range is the intersection over
           the ranges where the absolute value of the variable designated by the
           key is at least the corresponding value
 
-        OUTPUT:
-
-        A number
+        OUTPUT: a number
 
         TESTS::
 
@@ -3424,12 +3272,12 @@ class MonomialGrowthGroup(GenericGrowthGroup):
     INPUT:
 
     - ``base`` -- one of SageMath's parents, out of which the elements
-      get their data (``raw_element``).
+      get their data (``raw_element``)
 
       As monomials are represented by this group, the elements in
       ``base`` are the exponents of these monomials.
 
-    - ``var`` -- an object.
+    - ``var`` -- an object
 
       The string representation of ``var`` acts as a base of the
       monomials represented by this group.
@@ -3483,13 +3331,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
         r"""
         A short representation string of this monomial growth group.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3517,7 +3359,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
 
         INPUT:
 
-        - ``data`` -- an object.
+        - ``data`` -- an object
 
         OUTPUT:
 
@@ -3618,17 +3460,17 @@ class MonomialGrowthGroup(GenericGrowthGroup):
             from sage.symbolic.ring import SR
             return self._convert_(SR(data))
 
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         from sage.rings.polynomial.multi_polynomial_ring_base import \
             MPolynomialRing_base
         from sage.rings.power_series_ring import PowerSeriesRing_generic
         import operator
-        if isinstance(P, sage.rings.abc.SymbolicRing):
+        if isinstance(P, SymbolicRing):
             if data.operator() == operator.pow:
                 base, exponent = data.operands()
                 if str(base) == var:
                     return exponent
-        elif isinstance(P, (PolynomialRing_general, MPolynomialRing_base)):
+        elif isinstance(P, (PolynomialRing_generic, MPolynomialRing_base)):
             if data.is_monomial() and len(data.variables()) == 1:
                 if var == str(data.variables()[0]):
                     return data.degree()
@@ -3657,9 +3499,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
 
         - ``raw_element`` -- an object
 
-        OUTPUT:
-
-        A pair of objects.
+        OUTPUT: a pair of objects
 
         .. NOTE::
 
@@ -3676,18 +3516,12 @@ class MonomialGrowthGroup(GenericGrowthGroup):
         from sage.functions.other import real, imag
         return real(raw_element), imag(raw_element)
 
-    def gens_monomial(self):
+    def gens_monomial(self) -> tuple:
         r"""
         Return a tuple containing monomial generators of this growth
         group.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A tuple containing elements of this growth group.
+        OUTPUT: a tuple containing elements of this growth group
 
         .. NOTE::
 
@@ -3709,18 +3543,12 @@ class MonomialGrowthGroup(GenericGrowthGroup):
             return tuple()
         return (self(raw_element=self.base().one()),)
 
-    def gens_logarithmic(self):
+    def gens_logarithmic(self) -> tuple:
         r"""
         Return a tuple containing logarithmic generators of this growth
         group.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A tuple containing elements of this growth group.
+        OUTPUT: a tuple containing elements of this growth group
 
         .. NOTE::
 
@@ -3741,8 +3569,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
         """
         if str(self.gen()) == "log({})".format(self.variable_name()):
             return (self(raw_element=self.base().one()),)
-        else:
-            return tuple()
+        return tuple()
 
     def construction(self):
         r"""
@@ -3777,17 +3604,15 @@ class MonomialGrowthGroup(GenericGrowthGroup):
           exponential growth group; see :class:`MonomialGrowthGroup`
           for details.
 
-        - ``extend_by_non_growth_group`` -- a boolean (default ``False``). If set, then
-          the growth group consists of two parts, one part dealing with
-          the absolute values of the bases and one for their arguments.
+        - ``extend_by_non_growth_group`` -- boolean (default: ``False``); if
+          set, then the growth group consists of two parts, one part dealing
+          with the absolute values of the bases and one for their arguments.
 
-        - ``return_factors`` -- a boolean (default: ``False``). If set,
+        - ``return_factors`` -- boolean (default: ``False``); if set,
           then a tuple of the (cartesian) factors of this growth group
-          is returned.
+          is returned
 
-        OUTPUT:
-
-        A growth group or tuple of growth groups.
+        OUTPUT: a growth group or tuple of growth groups
 
         EXAMPLES::
 
@@ -3821,8 +3646,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
 
         if return_factors:
             return tuple(groups)
-        else:
-            return cartesian_product(groups)
+        return cartesian_product(groups)
 
     def non_growth_group(self):
         r"""
@@ -3830,9 +3654,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
         (with an imaginary group as base)
         compatible with this monomial growth group.
 
-        OUTPUT:
-
-        A group group.
+        OUTPUT: a group group
 
         EXAMPLES::
 
@@ -3844,6 +3666,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
         J = ImaginaryGroup(self.base())
         return self._non_growth_group_class_(J, self._var_)
 
+
 class MonomialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
     r"""
     A :class:`construction functor <sage.categories.pushout.ConstructionFunctor>`
@@ -3851,8 +3674,8 @@ class MonomialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
 
     INPUT:
 
-    - ``var`` -- a string or list of strings (or anything else
-      :class:`Variable` accepts).
+    - ``var`` -- string or list of strings (or anything else
+      :class:`Variable` accepts)
 
     EXAMPLES::
 
@@ -3899,11 +3722,9 @@ class MonomialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
 
         INPUT:
 
-        - ``base`` - anything :class:`MonomialGrowthGroup` accepts.
+        - ``base`` -- anything :class:`MonomialGrowthGroup` accepts
 
-        OUTPUT:
-
-        A monomial growth group.
+        OUTPUT: a monomial growth group
 
         EXAMPLES::
 
@@ -3921,9 +3742,9 @@ class ExponentialGrowthElement(GenericGrowthElement):
 
     INPUT:
 
-    - ``parent`` -- an :class:`ExponentialGrowthGroup`.
+    - ``parent`` -- an :class:`ExponentialGrowthGroup`
 
-    - ``raw_element`` -- an element from the base ring of the parent.
+    - ``raw_element`` -- an element from the base ring of the parent
 
       This ``raw_element`` is the base of the created exponential
       growth element.
@@ -3992,12 +3813,10 @@ class ExponentialGrowthElement(GenericGrowthElement):
 
         INPUT:
 
-        - ``latex`` -- (default: ``False``) a boolean. If set, then
-          LaTeX-output is returned.
+        - ``latex`` -- boolean (default: ``False``); if set, then
+          LaTeX-output is returned
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -4042,16 +3861,13 @@ class ExponentialGrowthElement(GenericGrowthElement):
         if latex:
             return repr_op(latex_repr(self.base)._latex_(), '^', latex=True) + \
                 '{' + latex_repr(var)._latex_() + '}'
-        else:
-            return repr_op(str(self.base), '^', var)
+        return repr_op(str(self.base), '^', var)
 
     def _latex_(self):
         r"""
         A LaTeX-representation string for this exponential growth element.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -4092,9 +3908,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
 
         - ``other`` -- a :class:`ExponentialGrowthElement`
 
-        OUTPUT:
-
-        The product as a :class:`ExponentialGrowthElement`.
+        OUTPUT: the product as a :class:`ExponentialGrowthElement`
 
         .. NOTE::
 
@@ -4120,13 +3934,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
         r"""
         Return the multiplicative inverse of this exponential growth element.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        The multiplicative inverse as a :class:`ExponentialGrowthElement`.
+        OUTPUT: the multiplicative inverse as a :class:`ExponentialGrowthElement`
 
         EXAMPLES::
 
@@ -4165,9 +3973,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
           on the right hand side of ``*`` with an elements of the
           parent's base.
 
-        OUTPUT:
-
-        The result of this exponentiation as an :class:`ExponentialGrowthElement`.
+        OUTPUT: the result of this exponentiation as an :class:`ExponentialGrowthElement`
 
         EXAMPLES::
 
@@ -4209,7 +4015,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
         - ``base`` -- the base of the logarithm. If ``None``
           (default value) is used, the natural logarithm is taken.
 
-        - ``locals`` -- a dictionary which may contain the following keys and values:
+        - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
@@ -4264,9 +4070,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
 
         - ``other`` -- a :class:`ExponentialGrowthElement`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -4283,7 +4087,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
             True
             sage: forget()
 
-        Check that :trac:`19999` is fixed::
+        Check that :issue:`19999` is fixed::
 
             sage: P_ZZ_UU = GrowthGroup('ZZ^x * UU^x')
             sage: P_ZZ_UU((-2)^x) <= P_ZZ_UU(2^x) or P_ZZ_UU(2^x) <= P_ZZ_UU((-2)^x)
@@ -4297,13 +4101,10 @@ class ExponentialGrowthElement(GenericGrowthElement):
 
         INPUT:
 
-        - ``rules`` -- a dictionary.
-          The neutral element of the group is replaced by the value
-          to key ``'_one_'``.
+        - ``rules`` -- dictionary; the neutral element of the group is replaced
+          by the value to key ``'_one_'``
 
-        OUTPUT:
-
-        An object.
+        OUTPUT: an object
 
         TESTS::
 
@@ -4341,12 +4142,12 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
     INPUT:
 
     - ``base`` -- one of SageMath's parents, out of which the elements
-      get their data (``raw_element``).
+      get their data (``raw_element``)
 
       As exponential expressions are represented by this group,
       the elements in ``base`` are the bases of these exponentials.
 
-    - ``var`` -- an object.
+    - ``var`` -- an object
 
       The string representation of ``var`` acts as an exponent of the
       elements represented by this group.
@@ -4414,7 +4215,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         from warnings import warn
 
         super().__init__(base, *args, **kwds)
-        if isinstance(base, sage.rings.abc.SymbolicRing) and not self._an_element_base_() > 0:
+        if isinstance(base, SymbolicRing) and not self._an_element_base_() > 0:
             warn("When using the Exponential {}, make "
                  "assumptions on the used symbolic elements.\n"
                  "In particular, use something like "
@@ -4426,13 +4227,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         r"""
         A short representation string of this exponential growth group.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -4453,12 +4248,12 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
 
     def _convert_(self, data):
         r"""
-        Converts given ``data`` to something the constructor of the
+        Convert given ``data`` to something the constructor of the
         element class accepts (``raw_element``).
 
         INPUT:
 
-        - ``data`` -- an object.
+        - ``data`` -- an object
 
         OUTPUT:
 
@@ -4535,23 +4330,22 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             if var not in s:
                 return  # this has to end here
 
-            elif s.endswith('^' + var):
+            if s.endswith('^' + var):
                 return self.base()(s.replace('^' + var, '')
                                    .replace('(', '').replace(')', ''))
-            else:
-                return  # end of parsing
+            return  # end of parsing
 
         import operator
         from sage.functions.log import Function_exp
         from sage.symbolic.operators import mul_vararg
 
-        if isinstance(P, sage.rings.abc.SymbolicRing):
+        if isinstance(P, SymbolicRing):
             op = data.operator()
             if op == operator.pow:
                 base, exponent = data.operands()
                 if str(exponent) == var:
                     return base
-                elif exponent.operator() == mul_vararg:
+                if exponent.operator() == mul_vararg:
                     return base ** (exponent / P(var))
             elif isinstance(op, Function_exp):
                 from sage.functions.log import exp
@@ -4559,7 +4353,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
                 exponent = data.operands()[0]
                 if str(exponent) == var:
                     return base
-                elif exponent.operator() == mul_vararg:
+                if exponent.operator() == mul_vararg:
                     return base ** (exponent / P(var))
 
         elif data == 1:  # can be expensive, so let's put it at the end
@@ -4578,9 +4372,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
 
         - ``raw_element`` -- an object
 
-        OUTPUT:
-
-        A pair of objects.
+        OUTPUT: a pair of objects
 
         .. NOTE::
 
@@ -4651,7 +4443,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         from sage.structure.element import parent
 
         P = base.parent()
-        if isinstance(P, sage.rings.abc.SymbolicRing):
+        if isinstance(P, SymbolicRing):
             try:
                 base = base.pyobject()
             except TypeError:
@@ -4659,7 +4451,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             else:
                 P = base.parent()
 
-        if P in (ZZ, QQ, AA) or isinstance(P, (sage.rings.abc.SymbolicRing,
+        if P in (ZZ, QQ, AA) or isinstance(P, (SymbolicRing,
                                                sage.rings.abc.RealField,
                                                sage.rings.abc.RealIntervalField,
                                                sage.rings.abc.RealBallField)):
@@ -4719,13 +4511,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
 
         See :class:`TestSuite` for a typical use case.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -4736,18 +4522,12 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         return iter(self.element_class(self, e)
                     for e in self.base().some_elements() if e > 0)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a tuple of all generators of this exponential growth
         group.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        An empty tuple.
+        OUTPUT: an empty tuple
 
         EXAMPLES::
 
@@ -4756,7 +4536,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             sage: E.gens()
             ()
         """
-        return tuple()
+        return ()
 
     def construction(self):
         r"""
@@ -4794,17 +4574,15 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
           exponential growth group; see :class:`ExponentialGrowthGroup`
           for details.
 
-        - ``extend_by_non_growth_group`` -- a boolean (default ``True``). If set, then
-          the growth group consists of two parts, one part dealing with
-          the absolute values of the bases and one for their arguments.
+        - ``extend_by_non_growth_group`` -- boolean (default: ``True``); if
+          set, then the growth group consists of two parts, one part dealing
+          with the absolute values of the bases and one for their arguments.
 
-        - ``return_factors`` -- a boolean (default: ``False``). If set,
+        - ``return_factors`` -- boolean (default: ``False``); if set,
           then a tuple of the (cartesian) factors of this growth group
-          is returned.
+          is returned
 
-        OUTPUT:
-
-        A growth group or tuple of growth groups.
+        OUTPUT: a growth group or tuple of growth groups
 
         EXAMPLES::
 
@@ -4857,8 +4635,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
 
         if return_factors:
             return tuple(groups)
-        else:
-            return cartesian_product(groups)
+        return cartesian_product(groups)
 
     def non_growth_group(self):
         r"""
@@ -4866,9 +4643,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         (with an argument group, e.g. roots of unity, as base)
         compatible with this exponential growth group.
 
-        OUTPUT:
-
-        A group group.
+        OUTPUT: a group group
 
         EXAMPLES::
 
@@ -4900,8 +4675,8 @@ class ExponentialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
 
     INPUT:
 
-    - ``var`` -- a string or list of strings (or anything else
-      :class:`Variable` accepts).
+    - ``var`` -- string or list of strings (or anything else
+      :class:`Variable` accepts)
 
     EXAMPLES::
 
@@ -4948,11 +4723,9 @@ class ExponentialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
 
         INPUT:
 
-        - ``base`` - anything :class:`ExponentialGrowthGroup` accepts.
+        - ``base`` -- anything :class:`ExponentialGrowthGroup` accepts
 
-        OUTPUT:
-
-        An exponential growth group.
+        OUTPUT: an exponential growth group
 
         EXAMPLES::
 
@@ -5011,9 +4784,7 @@ class GenericNonGrowthGroup(GenericGrowthGroup):
 
         - ``base`` -- a SageMath parent
 
-        OUTPUT:
-
-        Always the category of posets.
+        OUTPUT: always the category of posets
 
         TESTS::
 
@@ -5129,11 +4900,9 @@ class ExponentialNonGrowthGroupFunctor(ExponentialGrowthGroupFunctor):
 
         INPUT:
 
-        - ``base`` - anything :class:`ExponentialNonGrowthGroup` accepts.
+        - ``base`` -- anything :class:`ExponentialNonGrowthGroup` accepts
 
-        OUTPUT:
-
-        An exponential argument growth group.
+        OUTPUT: an exponential argument growth group
 
         EXAMPLES::
 
@@ -5211,11 +4980,9 @@ class MonomialNonGrowthGroupFunctor(MonomialGrowthGroupFunctor):
 
         INPUT:
 
-        - ``base`` - anything :class:`MonomialNonGrowthGroup` accepts.
+        - ``base`` -- anything :class:`MonomialNonGrowthGroup` accepts
 
-        OUTPUT:
-
-        An exponential argument growth group.
+        OUTPUT: an exponential argument growth group
 
         EXAMPLES::
 
@@ -5238,7 +5005,7 @@ class GrowthGroupFactory(UniqueFactory):
 
     INPUT:
 
-    - ``specification`` -- a string.
+    - ``specification`` -- string
 
     - keyword arguments are passed on to the growth group
       constructor.
@@ -5246,9 +5013,7 @@ class GrowthGroupFactory(UniqueFactory):
       ``ignore_variables=('e',)`` (to ignore ``e`` as a variable name)
       is used.
 
-    OUTPUT:
-
-    An asymptotic growth group.
+    OUTPUT: an asymptotic growth group
 
     .. NOTE::
 
@@ -5473,18 +5238,18 @@ class GrowthGroupFactory(UniqueFactory):
         sfactors = split_str_by_op(
             ' '.join(specification.split()).replace('**', '^'), '*')
 
-        def remove_parentheses(s):
+        def remove_parentheses(s: str) -> str:
             while s.startswith('(') and s.endswith(')'):
                 s = s[1:-1].strip()
             return s
 
-        def has_l_property(s, properties, invert=False):
+        def has_l_property(s, properties, invert=False) -> tuple[str, bool]:
             for p in properties:
                 if s.startswith(p):
                     return s[len(p):].strip(), not invert
             return s, invert
 
-        def has_r_property(s, properties, invert=False):
+        def has_r_property(s, properties, invert=False) -> tuple[str, bool]:
             for p in properties:
                 if s.endswith(p):
                     return s[:-len(p)].strip(), not invert

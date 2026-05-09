@@ -136,6 +136,37 @@ from .ell_finite_field import EllipticCurve_finite_field
 from .hom import EllipticCurveHom, compare_via_evaluation
 
 
+class _VeluBoundObj:
+    """
+    Helper object to define the point in which isogeny
+    computation should start using square-root Vélu formulae
+    instead of Vélu.
+
+    EXAMPLES ::
+
+        sage: from sage.schemes.elliptic_curves.hom_velusqrt import _velu_sqrt_bound
+        sage: _velu_sqrt_bound.get()
+        1000
+        sage: _velu_sqrt_bound.set(50)
+        sage: _velu_sqrt_bound.get()
+        50
+    """
+    def __init__(self):
+        self.bound = Integer(1000)
+
+    def set(self, b):
+        self.bound = b
+
+    def get(self):
+        return self.bound
+
+    def __repr__(self):
+        return f"VeluSqrtBound Object with bound = {self.bound}"
+
+
+_velu_sqrt_bound = _VeluBoundObj()
+
+
 def _choose_IJK(n):
     r"""
     Helper function to choose an "index system" for the set
@@ -171,6 +202,7 @@ def _choose_IJK(n):
     J = range(1, 2*b, 2)
     K = range(4*b*c+1, n, 2)
     return I, J, K
+
 
 def _points_range(rr, P, Q=None):
     r"""
@@ -260,7 +292,7 @@ class FastEllipticPolynomial:
         Fast elliptic polynomial prod(Z - x(i*P) for i in range(1,n,2)) with n = 19, P = (4 : 35 : 1)
         sage: hP(7)
         19
-        sage: prod(7 - (i*P).xy()[0] for i in range(1,P.order(),2))
+        sage: prod(7 - (i*P).x() for i in range(1,P.order(),2))
         19
 
     Passing `Q` changes the index set::
@@ -269,7 +301,7 @@ class FastEllipticPolynomial:
         sage: hPQ = FastEllipticPolynomial(E, P.order(), P, Q)
         sage: hPQ(7)
         58
-        sage: prod(7 - (Q+i*P).xy()[0] for i in range(P.order()))
+        sage: prod(7 - (Q+i*P).x() for i in range(P.order()))
         58
 
     The call syntax has an optional keyword argument ``derivative``, which
@@ -279,7 +311,7 @@ class FastEllipticPolynomial:
         sage: hP(7, derivative=True)
         (19, 15)
         sage: R.<Z> = E.base_field()[]
-        sage: HP = prod(Z - (i*P).xy()[0] for i in range(1,P.order(),2))
+        sage: HP = prod(Z - (i*P).x() for i in range(1,P.order(),2))
         sage: HP
         Z^9 + 16*Z^8 + 57*Z^7 + 6*Z^6 + 45*Z^5 + 31*Z^4 + 46*Z^3 + 10*Z^2 + 28*Z + 41
         sage: HP(7)
@@ -292,7 +324,7 @@ class FastEllipticPolynomial:
         sage: hPQ(7, derivative=True)
         (58, 62)
         sage: R.<Z> = E.base_field()[]
-        sage: HPQ = prod(Z - (Q+i*P).xy()[0] for i in range(P.order()))
+        sage: HPQ = prod(Z - (Q+i*P).x() for i in range(P.order()))
         sage: HPQ
         Z^19 + 53*Z^18 + 67*Z^17 + 39*Z^16 + 56*Z^15 + 32*Z^14 + 44*Z^13 + 6*Z^12 + 27*Z^11 + 29*Z^10 + 38*Z^9 + 48*Z^8 + 38*Z^7 + 43*Z^6 + 21*Z^5 + 25*Z^4 + 33*Z^3 + 49*Z^2 + 60*Z
         sage: HPQ(7)
@@ -342,9 +374,9 @@ class FastEllipticPolynomial:
             )
 
         I, J, K = IJK
-        xI = (R.xy()[0] for R in _points_range(I, P, Q))
-        xJ = [R.xy()[0] for R in _points_range(J, P   )]
-        xK = (R.xy()[0] for R in _points_range(K, P, Q))
+        xI = (R.x() for R in _points_range(I, P, Q))
+        xJ = [R.x() for R in _points_range(J, P   )]
+        xK = (R.x() for R in _points_range(K, P, Q))
 
         self.hItree = ProductTree(Z - xi for xi in xI)
 
@@ -495,7 +527,7 @@ def _point_outside_subgroup(P):
         sage: P = E(4, 35)
         sage: Q = _point_outside_subgroup(P); Q     # random
         (14 : 11 : 1)
-        sage: Q.curve()(P).discrete_log(Q)
+        sage: Q.log(P)
         Traceback (most recent call last):
         ...
         ValueError: ECDLog problem has no solution (...)
@@ -507,7 +539,7 @@ def _point_outside_subgroup(P):
         True
         sage: Q = _point_outside_subgroup(P); Q     # random
         (35*z2 + 7 : 24*z2 + 7 : 1)
-        sage: Q.curve()(P).discrete_log(Q)
+        sage: Q.log(Q.curve()(P))
         Traceback (most recent call last):
         ...
         ValueError: ECDLog problem has no solution (...)
@@ -522,7 +554,7 @@ def _point_outside_subgroup(P):
         (18*z2 + 46 : 58*z2 + 61 : 1)
         sage: Q in E
         True
-        sage: P.discrete_log(Q)
+        sage: Q.log(P)
         Traceback (most recent call last):
         ...
         ValueError: ECDLog problem has no solution (...)
@@ -549,8 +581,7 @@ def _point_outside_subgroup(P):
         Q = E.random_point()
         if n*Q or not P.weil_pairing(Q,n).is_one():
             return Q
-    else:
-        raise NotImplementedError('could not find a point outside the kernel')
+    raise NotImplementedError('could not find a point outside the kernel')
 
 
 class EllipticCurveHom_velusqrt(EllipticCurveHom):
@@ -586,14 +617,14 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         (0 : 1 : 0)
         sage: P = E(2, 3163*t^2 + 7293*t + 5999)
         sage: phi(P)
-        (6085*t^2 + 855*t + 8720 : 8078*t^2 + 9889*t + 6030 : 1)
+        (6085*t^2 + 855*t + 8720 : 1931*t^2 + 120*t + 3979 : 1)
         sage: Q = E(6, 5575*t^2 + 6607*t + 9991)
         sage: phi(Q)
-        (626*t^2 + 9749*t + 1291 : 5931*t^2 + 8549*t + 3111 : 1)
+        (626*t^2 + 9749*t + 1291 : 4078*t^2 + 1460*t + 6898 : 1)
         sage: phi(P + Q)
-        (983*t^2 + 4894*t + 4072 : 5047*t^2 + 9325*t + 336 : 1)
+        (983*t^2 + 4894*t + 4072 : 4962*t^2 + 684*t + 9673 : 1)
         sage: phi(P) + phi(Q)
-        (983*t^2 + 4894*t + 4072 : 5047*t^2 + 9325*t + 336 : 1)
+        (983*t^2 + 4894*t + 4072 : 4962*t^2 + 684*t + 9673 : 1)
 
     TESTS:
 
@@ -670,7 +701,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             Elliptic-curve isogeny (using square-root Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + 385*x + 42 over Finite Field of size 419
-            sage: EllipticCurveHom_velusqrt(E, K, model="montgomery")
+            sage: EllipticCurveHom_velusqrt(E, K, model='montgomery')
             Elliptic-curve isogeny (using square-root Vélu) of degree 105:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Finite Field of size 419
@@ -682,7 +713,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         over `\GF{3}`, the point `Q` required in the formulas has to be
         defined over a cubic extension rather than an at most quadratic
         extension, which can result in the constructed isogeny being
-        irrational. See :trac:`34467`. The assertion in the following
+        irrational. See :issue:`34467`. The assertion in the following
         example currently fails if the minimum degree is lowered::
 
             sage: E = EllipticCurve(GF(3), [2,1])
@@ -766,7 +797,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: phi._raw_codomain
             Elliptic Curve defined by y^2 = x^3 + ... over Finite Field of size 65537
             sage: Q = E(42, 15860)
-            sage: phi._raw_eval(Q.xy()[0])
+            sage: phi._raw_eval(Q.x())
             11958
             sage: phi._raw_eval(*Q.xy())
             (11958, 42770)
@@ -794,8 +825,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             h0, h0d = self._h0(x, derivative=True)
             h1, h1d = self._h1(x, derivative=True)
 
-#        assert h0 == prod(x - (        i*self._P).xy()[0] for i in range(1,self._P.order(),2))
-#        assert h1 == prod(x - (self._Q+i*self._P).xy()[0] for i in range(  self._P.order()  ))
+#        assert h0 == prod(x - (        i*self._P).x() for i in range(1,self._P.order(),2))
+#        assert h1 == prod(x - (self._Q+i*self._P).x() for i in range(  self._P.order()  ))
 
         if not h0:
             return ()
@@ -805,8 +836,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         if y is None:
             return xx
 
-#        assert h0d == sum(prod(x - (        i*self._P).xy()[0] for i in range(1,self._P.order(),2) if i!=j) for j in range(1,self._P.order(),2))
-#        assert h1d == sum(prod(x - (self._Q+i*self._P).xy()[0] for i in range(  self._P.order()  ) if i!=j) for j in range(  self._P.order()  ))
+#        assert h0d == sum(prod(x - (        i*self._P).x() for i in range(1,self._P.order(),2) if i!=j) for j in range(1,self._P.order(),2))
+#        assert h1d == sum(prod(x - (self._Q+i*self._P).x() for i in range(  self._P.order()  ) if i!=j) for j in range(  self._P.order()  ))
 
         yy = y * (h1d - 2 * h1 / h0 * h0d) / h0**2
 
@@ -983,7 +1014,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
         INPUT:
 
-        - ``left, right`` -- :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom` objects
+        - ``left``, ``right`` -- :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`
+          objects
 
         ALGORITHM:
 
@@ -1026,7 +1058,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             x^15 + 21562*x^14 + 8571*x^13 + 20029*x^12 + 1775*x^11 + 60402*x^10 + 17481*x^9 + 46543*x^8 + 46519*x^7 + 18590*x^6 + 36554*x^5 + 36499*x^4 + 48857*x^3 + 3066*x^2 + 23264*x + 53937
             sage: h == E.isogeny(K).kernel_polynomial()
             True
-            sage: h(K.xy()[0])
+            sage: h(K.x())
             0
 
         TESTS::
@@ -1040,6 +1072,39 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         return R(h).monic()
 
     @cached_method
+    def as_EllipticCurveIsogeny(self):
+        r"""
+        Return the mathematically identical isogeny represented as a
+        :class:`EllipticCurveIsogeny` object.
+
+        .. NOTE::
+
+            The result is computed by :class:`EllipticCurveIsogeny`,
+            hence it obviously does not benefit from the square-root
+            Vélu speedup.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
+            sage: K = E.cardinality() // 11 * E.gens()[0]
+            sage: phi = E.isogeny(K, algorithm='velusqrt'); phi
+            Elliptic-curve isogeny (using square-root Vélu) of degree 11:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
+            sage: psi = phi.as_EllipticCurveIsogeny(); psi
+            Isogeny of degree 11
+              from Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+              to Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
+            sage: phi == psi
+            True
+        """
+        ker = self.kernel_polynomial()
+        phi = self.domain().isogeny(ker, degree=self.degree(), codomain=self.codomain(), check=False)
+        from sage.schemes.elliptic_curves.hom import find_post_isomorphism
+        iso = find_post_isomorphism(self, phi)
+        return iso * phi
+
+    # not explicitly cached here since .as_EllipticCurveIsogeny() and EllipticCurveIsogeny.dual() already cache their results
     def dual(self):
         r"""
         Return the dual of this square-root Vélu
@@ -1050,6 +1115,10 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             The dual is computed by :class:`EllipticCurveIsogeny`,
             hence it does not benefit from the square-root Vélu speedup.
 
+        ALGORITHM: In the separable case, similar to :meth:`EllipticCurveIsogeny.dual`.
+        In the inseparable case, converts to an :class:`EllipticCurveIsogeny` using
+        :meth:`as_EllipticCurveIsogeny`, then runs :meth:`EllipticCurveIsogeny.dual`.
+
         EXAMPLES::
 
             sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
@@ -1059,13 +1128,34 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
               To:   Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
             sage: phi.dual()
-            Isogeny of degree 11 from Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2 to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+            Composite morphism of degree 11 = 1*11:
+              From: Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
             sage: phi.dual() * phi == phi.domain().scalar_multiplication(11)
             True
             sage: phi * phi.dual() == phi.codomain().scalar_multiplication(11)
             True
+
+        Inseparable duals are computed correctly::
+
+            sage: # needs sage.rings.finite_rings
+            sage: z2 = GF(71^2).gen()
+            sage: E = EllipticCurve(j=57*z2+51)
+            sage: E.isogeny(3*E.lift_x(0), algorithm='velusqrt').dual()
+            Composite morphism of degree 71 = 71*1:
+              From: Elliptic Curve defined by y^2 = x^3 + (8*z2+70)*x + (3*z2+49) over Finite Field in z2 of size 71^2
+              To:   Elliptic Curve defined by y^2 = x^3 + (41*z2+56)*x + (18*z2+42) over Finite Field in z2 of size 71^2
+            sage: E.isogeny(E.lift_x(0), algorithm='velusqrt').dual()
+            Composite morphism of degree 213 = 71*3:
+              From: Elliptic Curve defined by y^2 = x^3 + (50*z2+61)*x + (22*z2+25) over Finite Field in z2 of size 71^2
+              To:   Elliptic Curve defined by y^2 = x^3 + (41*z2+56)*x + (18*z2+42) over Finite Field in z2 of size 71^2
         """
-        # FIXME: This code fails if the degree is divisible by the characteristic.
+        if self.base_ring().characteristic().divides(self.degree()):
+            # The dual is inseparable.
+            #TODO: This is a lazy workaround; it could be optimized more.
+            return self.as_EllipticCurveIsogeny().dual()
+
+        # The dual is separable.
         F = self._raw_domain.base_ring()
         from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
         isom = ~WeierstrassIsomorphism(self._raw_domain, (~F(self._degree), 0, 0, 0))
@@ -1173,21 +1263,62 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         """
         return self._pre_iso.scaling_factor() * self._post_iso.scaling_factor()
 
-    def is_separable(self):
+    def inseparable_degree(self):
         r"""
-        Determine whether or not this isogeny is separable.
+        Return the inseparable degree of this square-root Vélu
+        isogeny.
 
         Since :class:`EllipticCurveHom_velusqrt` only implements
-        separable isogenies, this method always returns ``True``.
+        separable isogenies, this method always returns one.
+
+        TESTS::
+
+            sage: from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
+            sage: EllipticCurveHom_velusqrt.inseparable_degree(None)
+            1
+        """
+        return Integer(1)
+
+    def kernel_subgroup(self, *, extend=False):
+        r"""
+        Return the kernel subgroup of this isogeny as an
+        :class:`AdditiveAbelianGroupWrapper`.
+
+        (The keyword argument ``extend`` is provided for
+        compatibility with :class:`EllipticCurveHom`,
+        but ignored in this implementation.)
+
+        ALGORITHM:
+
+        In this implementation, the kernel is
+        a cyclic group generated by a single rational
+        kernel point provided to the constructor.
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
-            sage: phi = E.isogeny(E((1,2)), algorithm='velusqrt')
-            sage: phi.is_separable()
-            True
+            sage: E = EllipticCurve(GF(419^2), [1,0])
+            sage: P, _ = E.torsion_basis(5)
+            sage: Q, _ = E.torsion_basis(7)
+            sage: phi = E.isogeny(P + Q, algorithm='velusqrt'); phi
+            Elliptic-curve isogeny (using square-root Vélu) of degree 35:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
+              To:   Elliptic Curve defined by y^2 = x^3 + ... over Finite Field in z2 of size 419^2
+            sage: phi.kernel_subgroup()
+            Additive abelian group isomorphic to Z/35
+              embedded in Abelian group of points
+                on Elliptic Curve defined by y^2 = x^3 + x
+                  over Finite Field in z2 of size 419^2
+
+        TESTS:
+
+        Check that it matches another implementation of the same isogeny::
+
+            sage: psi = E.isogeny([P, Q], algorithm='factored')
+            sage: assert phi.kernel_subgroup() == psi.kernel_subgroup()
         """
-        return True
+        from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
+        pt = (~self._pre_iso)(self._P)
+        return AdditiveAbelianGroupWrapper(pt.parent(), [pt], [self._degree])
 
 
 def _random_example_for_testing():

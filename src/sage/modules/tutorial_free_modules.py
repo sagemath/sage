@@ -58,7 +58,7 @@ instead one can use tuples::
     sage: F = CombinatorialFreeModule(ZZ, ([1],[2],[3])); F.an_element()
     Traceback (most recent call last):
     ...
-    TypeError: unhashable type: 'list'
+    TypeError: ...unhashable type: 'list'...
 
     sage: F = CombinatorialFreeModule(ZZ, ((1,), (2,), (3,))); F.an_element()
     2*B[(1,)] + 2*B[(2,)] + 3*B[(3,)]
@@ -137,12 +137,12 @@ manipulating them::
 Some definitions:
 
  * A *monomial* is an element of the basis `B_i`;
- * A *term* is an element of the basis multiplied by a non zero
+ * A *term* is an element of the basis multiplied by a nonzero
    *coefficient*: `c B_i`;
  * The support of that term is `i`.
  * The corresponding *item* is the :class:`tuple` ``(i, c)``.
  * The *support* of an element `f` is the collection of indices `i`
-   such that `B_i` appears in `f` with non zero coefficient.
+   such that `B_i` appears in `f` with nonzero coefficient.
  * The *monomials*, *terms*, *items*, and *coefficients* of an element
    `f` are defined accordingly.
  * *Leading*/*trailing* refers to the *greatest*/*least* index.

@@ -12,4 +12,4 @@ including documentation and Jupyter.
 Downstream Contact
 ------------------
 
-See :trac:`Trac wiki page Distribution <wiki/Distribution>`
+See `wiki page Distribution <https://github.com/sagemath/sage/wiki/Distribution>`_

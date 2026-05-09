@@ -43,7 +43,7 @@ fi
 
 # Make the special target _clean-broken-gcc before trying to build any other
 # packages.  This is necessary if configure detected a broken GCC installed
-# in Sage; Trac #25011
+# in Sage; Issue #25011
 $MAKE _clean-broken-gcc
 
 # If "make" doesn't understand the -q option (although we require
@@ -55,10 +55,17 @@ if $MAKE -q "$@" >/dev/null 2>/dev/null; then
 fi
 
 # Dump environment for debugging purposes:
-echo "*** ALL ENVIRONMENT VARIABLES BEFORE BUILD: ***"
+if [ -n "$GITHUB_ACTIONS" ]; then
+    echo "::group::*** ALL ENVIRONMENT VARIABLES BEFORE BUILD: ***"
+else
+    echo "*** ALL ENVIRONMENT VARIABLES BEFORE BUILD: ***"
+fi
 env | sort
 printf '\E[m'
 echo "***********************************************"
+if [ -n "$GITHUB_ACTIONS" ]; then
+    echo "::endgroup::"
+fi
 
 # look_for_errors: search log files for error messages and print a summary.
 # arguments:
@@ -96,7 +103,7 @@ EOF
 ###############################################################################
 # NOW do the actual build:
 ###############################################################################
-time $MAKE "$@"
+$MAKE "$@"
 if [ $? -ne 0 ]; then
     cat >&2 <<EOF
 ***************************************************************

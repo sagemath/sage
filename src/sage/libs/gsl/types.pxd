@@ -4,7 +4,7 @@ from libc.stdio cimport FILE
 cdef enum:
     GSL_SUCCESS
 
-from .blas_types cimport *
+from sage.libs.gsl.blas_types cimport *
 
 cdef extern from "gsl/gsl_mode.h":
     ctypedef unsigned int gsl_mode_t

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Galois groups of Finite Fields
 """
@@ -6,6 +7,7 @@ from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
 from sage.groups.galois_group import GaloisGroup_cyc
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic, FrobeniusEndomorphism_finite_field
+
 
 class GaloisGroup_GFElement(AbelianGroupElement):
     def as_hom(self):
@@ -51,6 +53,7 @@ class GaloisGroup_GFElement(AbelianGroupElement):
         """
         return self.as_hom().fixed_field()
 
+
 class GaloisGroup_GF(GaloisGroup_cyc):
     r"""
     The Galois group of a finite field.
@@ -65,11 +68,11 @@ class GaloisGroup_GF(GaloisGroup_cyc):
 
             sage: TestSuite(GF(9).galois_group()).run()
         """
-        GaloisGroup_cyc.__init__(self, field, (field.degree(),), gen_names="Frob")
+        GaloisGroup_cyc.__init__(self, field, (field.degree(),), gen_names='Frob')
 
     def _repr_(self):
         r"""
-        String representation of this Galois group
+        String representation of this Galois group.
 
         EXAMPLES::
 
@@ -109,7 +112,7 @@ class GaloisGroup_GF(GaloisGroup_cyc):
             Frob^2
             sage: G(G.gens()[0])
             Frob
-            sage: G([(1,3,2)])
+            sage: G([(1,3,2)])                                                          # needs sage.libs.gap
             Frob^2
             sage: G(k.hom(k.gen()^3, k))
             Frob
@@ -139,7 +142,7 @@ class GaloisGroup_GF(GaloisGroup_cyc):
             else:
                 raise RuntimeError("Automorphism was not a power of Frobenius")
         elif isinstance(x, FrobeniusEndomorphism_finite_field):
-            if check and not x.domain() is k:
+            if check and x.domain() is not k:
                 raise ValueError("Not an automorphism of the correct finite field")
             n = x.power()
         elif isinstance(x, list) and len(x) == 1 and x[0] in ZZ:

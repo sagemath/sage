@@ -6,7 +6,7 @@ The ``timeit`` command
 This uses the function :func:`~sage.misc.sage_timeit.sage_timeit`.
 """
 
-from . import sage_timeit
+from sage.misc import sage_timeit
 
 
 class SageTimeit:
@@ -51,18 +51,18 @@ class SageTimeit:
 
         INPUT:
 
-        - ``code`` -- string of code to evaluate; may contain newlines.
+        - ``code`` -- string of code to evaluate; may contain newlines
 
-        - ``globs``  -- global variables; if not given, uses module scope
-          globals.
+        - ``globs`` -- global variables; if not given, uses module scope
+          globals
 
-        - ``locals`` -- ignored completely.
+        - ``locals`` -- ignored completely
 
         - ``kwds`` -- passed onto sage_timeit. Common options are
           ``preparse``, ``number``, ``repeat``, ``precision``. See
           :func:`~sage.misc.sage_timeit.sage_timeit` for details.
 
-        OUTPUT: string -- timing information as a string
+        OUTPUT: string; timing information
 
         EXAMPLES::
 
@@ -84,15 +84,15 @@ class SageTimeit:
         """
         INPUT:
 
-        - ``code`` -- a string. A line or block of code, which may
-          contain newlines.
+        - ``code`` -- string; a line or block of code, which may
+          contain newlines
 
-        - ``globals`` -- optional global variables; if not given the
+        - ``globals`` -- (optional) global variables; if not given the
           globals of the calling module are used (e.g., if using this
           from the command line, the globals of the command line are
           used).
 
-        - ``preparse`` -- Boolean or ``None`` (default). Whether or
+        - ``preparse`` -- boolean or ``None`` (default). Whether or
           not to preparse the input code using the Sage preparser.  If
           not specified, do the same thing as whatever was set by the
           preparser command.

@@ -15,7 +15,6 @@ from a list of n rational quaternions.
 AUTHORS:
 
 - William Stein
-
 """
 
 # ****************************************************************************
@@ -35,7 +34,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 
-from .quaternion_algebra_element cimport QuaternionAlgebraElement_rational_field
+from sage.algebras.quatalg.quaternion_algebra_element cimport QuaternionAlgebraElement_rational_field
 
 from sage.libs.gmp.mpz cimport mpz_t, mpz_lcm, mpz_init, mpz_set, mpz_clear, mpz_init_set, mpz_mul, mpz_fdiv_q, mpz_cmp_si
 
@@ -52,7 +51,7 @@ def integral_matrix_and_denom_from_rational_quaternions(v, reverse=False):
 
     INPUT:
 
-    - ``v`` -- a list of quaternions in a rational quaternion algebra
+    - ``v`` -- list of quaternions in a rational quaternion algebra
     - ``reverse`` -- whether order of the coordinates as well as the
       order of the list ``v`` should be reversed
 
@@ -132,13 +131,11 @@ def rational_matrix_from_rational_quaternions(v, reverse=False):
 
     INPUT:
 
-    - ``v`` -- a list of quaternions in a rational quaternion algebra
+    - ``v`` -- list of quaternions in a rational quaternion algebra
     - ``reverse`` -- whether order of the coordinates as well as the
       order of the list ``v`` should be reversed
 
-    OUTPUT:
-
-    - a matrix over `\QQ`
+    OUTPUT: a matrix over `\QQ`
 
     EXAMPLES::
 
@@ -212,6 +209,18 @@ def rational_quaternions_from_integral_matrix_and_denom(A, Matrix_integer_dense 
 
         sage: f(A, matrix([[3,-4,2,-1],[4,3,2,1]]), 3, reverse=True)
         [1/3 + 2/3*i + j + 4/3*k, -1/3 + 2/3*i - 4/3*j + k]
+
+    TESTS:
+
+    Check that :issue:`41903` is fixed::
+
+        sage: from sage.algebras.quatalg.quaternion_algebra import basis_for_quaternion_lattice as bfql
+        sage: B.<i,j,k> = QuaternionAlgebra(-1,-19)
+        sage: basis = bfql([(1+i)/2, (1+j)/2, (1+k)/2, (i+j)/2])
+        sage: basis[0]
+        1
+        sage: basis[0].is_one()
+        True
     """
     #
     # This is an optimized version of the following interpreted Python code.
@@ -256,8 +265,7 @@ def rational_quaternions_from_integral_matrix_and_denom(A, Matrix_integer_dense 
             H.get_unsafe_mpz(i, 3, tmp)
             mpz_init_set(x.w, tmp)
         mpz_init_set(x.d, d.value)
-        # WARNING -- we do *not* canonicalize the entries in the quaternion.
-        # This is I think _not_ needed for quaternion_element.pyx
+        x.canonicalize()  # prevent issues like #41903
         v.append(x)
     mpz_clear(tmp)
     return v

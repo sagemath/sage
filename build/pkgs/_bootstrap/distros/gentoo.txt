@@ -1,3 +1,7 @@
-sys-devel/autoconf
-sys-devel/automake
-sys-devel/libtool
+dev-build/autoconf
+dev-build/automake
+dev-build/libtool
+# Python packages needed for configure and build
+dev-lang/python
+dev-python/setuptools
+app-arch/xz-utils

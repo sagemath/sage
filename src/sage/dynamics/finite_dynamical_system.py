@@ -70,7 +70,6 @@ dynamical systems:
 
     - Interact with sage.dynamics. This requires someone who
       knows the latter part of the Sage library well.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2018 Darij Grinberg <darijgrinberg@gmail.com>,
@@ -98,21 +97,14 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
 
     A *discrete dynamical system* (henceforth *DDS*) is a
     pair `(X, \phi)` of a set `X` and a map `\phi : X \to X`.
-    This set `X` is called the *ground set* of the DDS, while
-    the map `\phi` is called the *evolution* of the DDS.
-
-    A *discrete dynamical system* (short: *DDS*) is a pair
-    `(X, \phi)` of a set `X` and a map `\phi : X \to X`.
-    (This is one of several things known as a "discrete
-    dynamical system" in mathematics.)
-    Thus, a DDS is the same as an endomorphism of a set.
-    The DDS is said to be *finite* if `X` is finite.
-    The DDS is said to be *invertible* if the map `\phi` is
-    invertible.
     The set `X` is called the *ground set* of the DDS;
     the map `\phi` is called the *evolution* of the DDS;
     the inverse map `\phi^{-1}` (when it exists) is called the
     *inverse evolution* of the DDS.
+
+    The DDS is called *finite* if `X` is finite.
+    The DDS is called *invertible* if the map `\phi` is
+    invertible.
 
     Given a DDS `(X, \phi)`, we can study
 
@@ -138,7 +130,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
 
     - ``X`` -- set, list, tuple, or another iterable, or
       ``None`` (default: ``None``); the ground set for the DDS.
-      Tthis can be ``None`` (in which case Sage will not know
+      This can be ``None`` (in which case Sage will not know
       the ground set, but can still apply evolution to any
       elements that are provided to it).
       Make sure to set the ``create_tuple`` argument to
@@ -147,7 +139,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
       (and thus subject to mutation or exhaustion).
 
     - ``phi`` -- function, or callable that acts like a
-      function; the evolution of the DDS.
+      function; the evolution of the DDS
 
     - ``cache_orbits`` -- boolean (default: ``False``);
       whether or not the orbits should be cached once they
@@ -240,7 +232,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
         sage: D.inverse_evolution()(4)
         Traceback (most recent call last):
         ...
-        AttributeError: 'DiscreteDynamicalSystem' object has no attribute 'inverse_evolution'
+        AttributeError: 'DiscreteDynamicalSystem' object has no attribute 'inverse_evolution'...
         sage: D.orbit(3)
         [3, 5, 1]
 
@@ -252,7 +244,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
         sage: D.inverse_evolution()(4)
         Traceback (most recent call last):
         ...
-        AttributeError: 'DiscreteDynamicalSystem' object has no attribute 'inverse_evolution'
+        AttributeError: 'DiscreteDynamicalSystem' object has no attribute 'inverse_evolution'...
         sage: D.orbit(3)
         [3, 5, 1]
 
@@ -374,15 +366,15 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: (3 if x == 4 else 1), create_tuple=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: (3 if x == 4 else 1), create_tuple=True, is_finite=False)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem(NN, lambda x: (3 if x == 4 else 1))
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem(None, lambda x: (3 if x == 4 else 1))
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: x, create_tuple=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
         """
         if create_tuple:
             X = tuple(X)
@@ -686,6 +678,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
             return True
         return orbavgs[0] == average
 
+
 class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
     r"""
     An invertible discrete dynamical system.
@@ -713,7 +706,7 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
       ``X``, as otherwise the input would be exposed.
 
     - ``phi`` -- function, or callable that acts like a
-      function; the evolution of the DDS.
+      function; the evolution of the DDS
 
     - ``inverse`` -- function, or callable that acts like a
       function; the inverse evolution of the DDS. (A
@@ -764,13 +757,13 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
         EXAMPLES::
 
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: x, create_tuple=True, inverse=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: x, create_tuple=True, is_finite=False, inverse=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem(NN, lambda x: x, inverse=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem(None, lambda x: x, inverse=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
         """
         if create_tuple:
             X = tuple(X)
@@ -977,6 +970,7 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
         """
         return self.orbit(x)[-1]
 
+
 class FiniteDynamicalSystem(DiscreteDynamicalSystem):
     r"""
     A finite discrete dynamical system.
@@ -1087,31 +1081,39 @@ class FiniteDynamicalSystem(DiscreteDynamicalSystem):
 
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 2) % 6)
             sage: D.cycles()
-            [[5, 1, 3], [4, 0, 2]]
+            [[0, 2, 4], [1, 3, 5]]
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x ** 2) % 6)
             sage: D.cycles()
-            [[1], [4], [3], [0]]
+            [[0], [1], [4], [3]]
             sage: D = DiscreteDynamicalSystem(tuple(range(11)), lambda x: (x ** 2 - 1) % 11)
             sage: D.cycles()
-            [[10, 0], [8], [4]]
+            [[0, 10], [8], [4]]
 
             sage: F = finite_dynamical_systems.one_line([4, 7, 2, 6, 2, 10, 9, 11, 5, 6, 12, 12, 12, 6])
             sage: F.cycles()
-            [[6, 10], [12], [9, 5, 2, 7]]
+            [[6, 10], [2, 7, 9, 5], [12]]
+
+        TESTS:
+
+        Check that creating the orbit decomposition is done efficiently::
+
+            sage: BS = finite_dynamical_systems.bulgarian_solitaire
+            sage: len(BS(32).cycles())
+            10
         """
-        l = list(self)
+        l = set(self)
         cycs = []
         while l:
-            start = l[-1]
-            (orb, ix) = self.orbit(start, preperiod=True)
-            if orb[ix] in l:
+            start = l.pop()
+            orb, ix = self.orbit(start, preperiod=True)
+            if orb[ix] == start or orb[ix] in l:
                 # This means we've actually found a new cycle,
                 # not just a new path to an old cycle.
                 cycs.append(orb[ix:])
-            for j in orb:
+            for j in orb[1:]:
                 try:
                     l.remove(j)
-                except ValueError:
+                except KeyError:
                     # Here we break out of the for-loop, because
                     # if ``j`` has already been removed from
                     # ``l``, then all later elements of the orbit
@@ -1120,6 +1122,7 @@ class FiniteDynamicalSystem(DiscreteDynamicalSystem):
                     # removed from ``l`` is closed under ``phi``).
                     break
         return cycs
+
 
 class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteDynamicalSystem):
     r"""
@@ -1145,7 +1148,7 @@ class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteD
         sage: D.evolution()(4)
         1
         sage: D.orbits()
-        [[4, 1, 3, 0, 2]]
+        [[0, 2, 4, 1, 3]]
         sage: D.inverse_evolution()(2)
         0
         sage: D.inverse_evolution()(1)
@@ -1189,13 +1192,21 @@ class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteD
 
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 2) % 6, inverse=True)
             sage: D.orbits()
-            [[5, 1, 3], [4, 0, 2]]
+            [[0, 2, 4], [1, 3, 5]]
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 3) % 6, inverse=True)
             sage: D.orbits()
-            [[5, 2], [4, 1], [3, 0]]
+            [[0, 3], [1, 4], [2, 5]]
+
+        TESTS:
+
+        Check that creating the orbit decomposition is done efficiently::
+
+            sage: D = DiscreteDynamicalSystem(StandardTableaux(10), lambda T: T.promotion(), inverse=True)
+            sage: sum(D.orbit_lengths())
+            9496
         """
         phi = self._phi
-        l = list(self)
+        l = set(self)
         orbs = []
         while l:
             start = l.pop()
@@ -1229,10 +1240,10 @@ class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteD
 
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 2) % 6, inverse=True)
             sage: D.cycles()
-            [[5, 1, 3], [4, 0, 2]]
+            [[0, 2, 4], [1, 3, 5]]
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 3) % 6, inverse=True)
             sage: D.cycles()
-            [[5, 2], [4, 1], [3, 0]]
+            [[0, 3], [1, 4], [2, 5]]
         """
         return self.orbits()
 

@@ -99,7 +99,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
             False
 
         Test that the produced Cartan type is in the appropriate
-        abstract classes (see :trac:`13724`)::
+        abstract classes (see :issue:`13724`)::
 
             sage: from sage.combinat.root_system import cartan_type
             sage: ct = CartanType(['B',3,1]).dual()
@@ -179,7 +179,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
                 if compact:
                     return 'A%s^2' % (self.classical().rank()*2-1)
                 return "['A', %s, 2]" % (self.classical().rank()*2-1)
-            elif self._type.type() == 'BC':
+            if self._type.type() == 'BC':
                 dual_str = '+'
             elif self._type.type() == 'C':
                 if compact:
@@ -209,7 +209,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
         """
         return (attrcall("dual"), (self._type,))
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         EXAMPLES::
 
@@ -229,13 +229,15 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
             }
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         return self._type._latex_dynkin_diagram(label, node, node_dist, dual=True)
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
-        Return an ascii art representation of this Cartan type
+        Return an ascii art representation of this Cartan type.
 
         (by hacking the ascii art representation of the dual Cartan type)
 
@@ -261,6 +263,8 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
             O=>=O---O---O=>=O
             0   1   2   3   4
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         res = self._type.ascii_art(label, node)
@@ -511,8 +515,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         dual_space = self.cartan_type().dual().root_system().ambient_space(self.base_ring())
         if dual_space._plot_projection == dual_space._plot_projection_barycentric:
             return self._plot_projection_barycentric
-        else:
-            RootLatticeRealizations.ParentMethods.__dict__["_plot_projection"]
+        RootLatticeRealizations.ParentMethods.__dict__["_plot_projection"]
 
 
 class CartanType_finite(CartanType, cartan_type.CartanType_finite):
@@ -524,7 +527,7 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
 class CartanType_affine(CartanType, cartan_type.CartanType_affine):
     def classical(self):
         """
-        Return the classical Cartan type associated with self (which should
+        Return the classical Cartan type associated with ``self`` (which should
         be affine).
 
         EXAMPLES::
@@ -561,18 +564,18 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         from . import cartan_type
         if self.dual().type() == 'B':
             return cartan_type.CartanType(['A', self.classical().rank()*2-1])
-        elif self.dual().type() == 'BC':
+        if self.dual().type() == 'BC':
             return cartan_type.CartanType(['A', self.classical().rank()*2])
-        elif self.dual().type() == 'C':
+        if self.dual().type() == 'C':
             return cartan_type.CartanType(['D', self.classical().rank()+1])
-        elif self.dual().type() == 'F':
+        if self.dual().type() == 'F':
             return cartan_type.CartanType(['E', 6])
-        elif self.dual().type() == 'G':
+        if self.dual().type() == 'G':
             return cartan_type.CartanType(['D', 4])
 
     def special_node(self):
         """
-        Implement :meth:`CartanType_affine.special_node`
+        Implement :meth:`CartanType_affine.special_node`.
 
         The special node of the dual of an affine type `T` is the
         special node of `T`.
@@ -605,7 +608,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
                 if compact:
                     return 'A%s^2' % (self.classical().rank()*2-1)
                 return "['A', %s, 2]" % (self.classical().rank()*2-1)
-            elif self._type.type() == 'BC':
+            if self._type.type() == 'BC':
                 pass
             elif self._type.type() == 'C':
                 if compact:
@@ -648,18 +651,17 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         if self.options('notation') == "Kac":
             if self._type.type() == 'B':
                 return "A_{%s}^{(2)}" % (self.classical().rank()*2-1)
-            elif self._type.type() == 'BC':
+            if self._type.type() == 'BC':
                 return "A_{%s}^{(2)\\dagger}" % (2*self.classical().rank())
-            elif self._type.type() == 'C':
+            if self._type.type() == 'C':
                 return "D_{%s}^{(2)}" % (self.rank)()
-            elif self._type.type() == 'F':
+            if self._type.type() == 'F':
                 return "E_6^{(2)}"
         result = self._type._latex_()
         import re
         if re.match(r".*\^{\(\d\)}$", result):
             return "%s%s}" % (result[:-1], self.options('dual_latex'))
-        else:
-            return "{%s}^%s" % (result, self.options('dual_latex'))
+        return "{%s}^%s" % (result, self.options('dual_latex'))
 
     def _default_folded_cartan_type(self):
         """

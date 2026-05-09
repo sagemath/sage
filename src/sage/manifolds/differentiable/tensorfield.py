@@ -38,7 +38,6 @@ REFERENCES:
 - [KN1963]_
 - [Lee2013]_
 - [ONe1983]_
-
 """
 
 # *****************************************************************************
@@ -53,7 +52,7 @@ REFERENCES:
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, Optional, TypeVar, Union
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -73,8 +72,8 @@ if TYPE_CHECKING:
     from sage.tensor.modules.comp import Components
 
 
-TensorType = Tuple[int, int]
-T = TypeVar("T", bound="TensorField")
+TensorType = tuple[int, int]
+T = TypeVar("T", bound='TensorField')
 
 
 class TensorField(ModuleElementWithMutability):
@@ -84,7 +83,7 @@ class TensorField(ModuleElementWithMutability):
     An instance of this class is a tensor field along a differentiable
     manifold `U` with values on a differentiable manifold `M`, via a
     differentiable map `\Phi: U \rightarrow M`. More precisely, given two
-    non-negative integers `k` and `l` and a differentiable map
+    nonnegative integers `k` and `l` and a differentiable map
 
     .. MATH::
 
@@ -245,17 +244,18 @@ class TensorField(ModuleElementWithMutability):
     The vectors can be defined only on subsets of `S^2`, the domain of the
     result is then the common subset::
 
-        sage: s = t(a.restrict(U), b) ; s  # long time
+        sage: # long time
+        sage: s = t(a.restrict(U), b) ; s
         Scalar field t(a,b) on the Open subset U of the 2-dimensional
          differentiable manifold S^2
-        sage: s.display()  # long time
+        sage: s.display()
         t(a,b): U → ℝ
            (x, y) ↦ -2*x*y - y^2 - 3*x
         on W: (u, v) ↦ -(3*u^3 + (3*u + 1)*v^2 + 2*u*v)/(u^4 + 2*u^2*v^2 + v^4)
-        sage: s = t(a.restrict(U), b.restrict(W)) ; s  # long time
+        sage: s = t(a.restrict(U), b.restrict(W)) ; s
         Scalar field t(a,b) on the Open subset W of the 2-dimensional
          differentiable manifold S^2
-        sage: s.display()  # long time
+        sage: s.display()
         t(a,b): W → ℝ
            (x, y) ↦ -2*x*y - y^2 - 3*x
            (u, v) ↦ -(3*u^3 + (3*u + 1)*v^2 + 2*u*v)/(u^4 + 2*u^2*v^2 + v^4)
@@ -407,7 +407,6 @@ class TensorField(ModuleElementWithMutability):
         Traceback (most recent call last):
         ...
         ValueError: the name of an immutable element cannot be changed
-
     """
 
     _name: Optional[str]
@@ -467,7 +466,6 @@ class TensorField(ModuleElementWithMutability):
              manifold M
             sage: type(t1) == type(t)
             True
-
         """
         if parent is None:
             parent = vector_field_module.tensor_module(*tensor_type)
@@ -475,8 +473,9 @@ class TensorField(ModuleElementWithMutability):
         self._vmodule = vector_field_module
         self._tensor_type = tuple(tensor_type)
         self._tensor_rank = self._tensor_type[0] + self._tensor_type[1]
-        self._is_zero = False # a priori, may be changed below or via
-                              # method __bool__()
+        self._is_zero = False
+        # a priori, may be changed below or via  method __bool__()
+
         self._name = name
         if latex_name is None:
             self._latex_name = self._name
@@ -502,7 +501,7 @@ class TensorField(ModuleElementWithMutability):
         # Initialization of derived quantities:
         self._init_derived()
 
-    ####### Required methods for ModuleElement (beside arithmetic) #######
+    # ###### Required methods for ModuleElement (beside arithmetic) #######
 
     def __bool__(self):
         r"""
@@ -546,9 +545,9 @@ class TensorField(ModuleElementWithMutability):
         self._is_zero = True
         return False
 
-    ##### End of required methods for ModuleElement (beside arithmetic) #####
+    # #### End of required methods for ModuleElement (beside arithmetic) #####
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -558,7 +557,6 @@ class TensorField(ModuleElementWithMutability):
             sage: t = M.tensor_field(1, 3, name='t')
             sage: t
             Tensor field t of type (1,3) on the 2-dimensional differentiable manifold M
-
         """
         # Special cases
         if self._tensor_type == (0,2) and self._sym == ((0,1),):
@@ -566,7 +564,7 @@ class TensorField(ModuleElementWithMutability):
             if self._name is not None:
                 description += self._name + " "
         else:
-        # Generic case
+            # Generic case
             description = "Tensor field "
             if self._name is not None:
                 description += self._name + " "
@@ -587,12 +585,10 @@ class TensorField(ModuleElementWithMutability):
             sage: t = M.tensor_field(1, 3, name='t', latex_name=r'\tau')
             sage: latex(t)
             \tau
-
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def set_name(self, name: Optional[str] = None, latex_name: Optional[str] = None):
         r"""
@@ -627,7 +623,6 @@ class TensorField(ModuleElementWithMutability):
              manifold M
             sage: latex(t)
             a
-
         """
         if self.is_immutable():
             raise ValueError("the name of an immutable element "
@@ -657,7 +652,6 @@ class TensorField(ModuleElementWithMutability):
             True
             sage: t1.parent() is t.parent()
             True
-
         """
         return type(self)(self._vmodule, self._tensor_type, sym=self._sym,
                           antisym=self._antisym, parent=self.parent())
@@ -673,7 +667,6 @@ class TensorField(ModuleElementWithMutability):
             sage: t = M.tensor_field(1, 3, name='t')
             sage: t._final_repr('Tensor field t ')
             'Tensor field t on the 2-dimensional differentiable manifold M'
-
         """
         if self._domain == self._ambient_domain:
             description += "on the {}".format(self._domain)
@@ -691,7 +684,6 @@ class TensorField(ModuleElementWithMutability):
             sage: M = Manifold(2, 'M')
             sage: t = M.tensor_field(1, 3, name='t')
             sage: t._init_derived()
-
         """
         self._lie_derivatives = {} # dict. of Lie derivatives of self (keys: id(vector))
 
@@ -704,10 +696,9 @@ class TensorField(ModuleElementWithMutability):
             sage: M = Manifold(2, 'M')
             sage: t = M.tensor_field(1, 3, name='t')
             sage: t._del_derived()
-
         """
         # First deletes any reference to self in the vectors' dictionaries:
-        for vid, val in self._lie_derivatives.items():
+        for val in self._lie_derivatives.values():
             del val[0]._lie_der_along_self[id(self)]
         # Then clears the dictionary of Lie derivatives
         self._lie_derivatives.clear()
@@ -730,7 +721,6 @@ class TensorField(ModuleElementWithMutability):
             sage: t._del_restrictions()
             sage: t._restrictions
             {}
-
         """
         self._restrictions.clear()
         self._extensions_graph = {self._domain: self}
@@ -775,13 +765,12 @@ class TensorField(ModuleElementWithMutability):
 
         TESTS:
 
-        Check that :trac:`29639` is fixed::
+        Check that :issue:`29639` is fixed::
 
             sage: v = M.vector_field()
             sage: v._init_components(1/2, -1)
             sage: v.display()
             1/2 ∂/∂x - ∂/∂y
-
         """
         comp0 = comp[0]
         self._is_zero = False  # a priori
@@ -826,7 +815,6 @@ class TensorField(ModuleElementWithMutability):
             sage: h = t.restrict(U)
             sage: h.domain()
             Open subset U of the 2-dimensional differentiable manifold M
-
         """
         return self._domain
 
@@ -853,7 +841,6 @@ class TensorField(ModuleElementWithMutability):
             sage: XM = M.vector_field_module()
             sage: XM.an_element().base_module() is XM
             True
-
         """
         return self._vmodule
 
@@ -875,7 +862,6 @@ class TensorField(ModuleElementWithMutability):
             sage: v = M.vector_field()
             sage: v.tensor_type()
             (1, 0)
-
         """
         return self._tensor_type
 
@@ -897,7 +883,6 @@ class TensorField(ModuleElementWithMutability):
             sage: v = M.vector_field()
             sage: v.tensor_rank()
             1
-
         """
         return self._tensor_rank
 
@@ -920,7 +905,6 @@ class TensorField(ModuleElementWithMutability):
             sage: t = M.tensor_field(2,2, antisym=[(0,1),(2,3)])
             sage: t.symmetries()
             no symmetry;  antisymmetries: [(0, 1), (2, 3)]
-
         """
         if not self._sym:
             s = "no symmetry; "
@@ -952,7 +936,6 @@ class TensorField(ModuleElementWithMutability):
             sage: a.set_immutable()
             sage: aU.is_immutable()
             True
-
         """
         for rst in self._restrictions.values():
             rst.set_immutable()
@@ -992,7 +975,6 @@ class TensorField(ModuleElementWithMutability):
             sage: v.set_restriction(t)
             sage: v.restrict(U) == t.restrict(U)
             True
-
         """
         if self.is_immutable():
             raise ValueError("the restrictions of an immutable element "
@@ -1046,9 +1028,7 @@ class TensorField(ModuleElementWithMutability):
           to `U` is used, `\Phi` being the differentiable map
           `S \rightarrow M` associated with the tensor field
 
-        OUTPUT:
-
-        - :class:`TensorField` representing the restriction
+        OUTPUT: :class:`TensorField` representing the restriction
 
         EXAMPLES:
 
@@ -1108,7 +1088,6 @@ class TensorField(ModuleElementWithMutability):
             True
             sage: vU.restrict(U) is vU
             True
-
         """
         if (subdomain == self._domain
                 and (dest_map is None or dest_map == self._vmodule._dest_map)):
@@ -1235,7 +1214,6 @@ class TensorField(ModuleElementWithMutability):
             ...
             ValueError: no basis could be found for computing the components
              in the Coordinate frame (V, (∂/∂u,∂/∂v))
-
         """
         if basis is None:
             basis = self._domain._def_frame
@@ -1306,7 +1284,6 @@ class TensorField(ModuleElementWithMutability):
             ...
             ValueError: the components of an immutable element cannot be
              changed
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -1369,7 +1346,6 @@ class TensorField(ModuleElementWithMutability):
 
             sage: t.display(e_uv)
             t = (u + v) ∂/∂v⊗du⊗dv
-
         """
         if basis is None:
             basis = self._domain._def_frame
@@ -1436,7 +1412,6 @@ class TensorField(ModuleElementWithMutability):
             ...
             ValueError: the components of an immutable element cannot be
              changed
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -1511,7 +1486,6 @@ class TensorField(ModuleElementWithMutability):
             a = (-4*u*v - u) ∂/∂u + (2*u^2 - 2*v^2 - v) ∂/∂v
 
         and `a` is defined on the entire manifold `S^2`.
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -1537,14 +1511,14 @@ class TensorField(ModuleElementWithMutability):
 
         - ``frame`` -- vector frame `e` in which the components are to be set
         - ``subdomain`` -- open subset of `e`'s domain in which the
-          components have additional expressions.
+          components have additional expressions
 
         EXAMPLES:
 
         We are going to consider a vector field in `\RR^3` along the 2-sphere::
 
-            sage: M = Manifold(3, 'M', structure="Riemannian")
-            sage: S = Manifold(2, 'S', structure="Riemannian")
+            sage: M = Manifold(3, 'M', structure='Riemannian')
+            sage: S = Manifold(2, 'S', structure='Riemannian')
             sage: E.<X,Y,Z> = M.chart()
 
         Let us define ``S`` in terms of stereographic charts::
@@ -1611,7 +1585,6 @@ class TensorField(ModuleElementWithMutability):
             S → ℝ
             on U: (x, y) ↦ x^2 + y^2
             on V: (xp, yp) ↦ 1/(xp^2 + yp^2)
-
         """
         if self.is_immutable():
             raise ValueError("the expressions of an immutable element "
@@ -1701,7 +1674,6 @@ class TensorField(ModuleElementWithMutability):
             sage: t.comp(h)[:]
             [             0 -u^3*v/(v + 1)]
             [             0           -u*v]
-
         """
         if basis is None:
             basis = self._domain._def_frame
@@ -1822,7 +1794,6 @@ class TensorField(ModuleElementWithMutability):
             sage: t.disp(e_uv)
             t = (1/2*u + 1/2) ∂/∂u⊗du + (1/2*u - 1/2) ∂/∂u⊗dv
               + (1/2*v + 1/2) ∂/∂v⊗du + (1/2*v - 1/2) ∂/∂v⊗dv
-
         """
         if frame is None:
             if chart is not None:
@@ -1876,12 +1847,12 @@ class TensorField(ModuleElementWithMutability):
         - ``chart`` -- (default: ``None``) chart specifying the coordinate
           expression of the components; if ``None``, the default chart of the
           tensor field domain is used
-        - ``coordinate_labels`` -- (default: ``True``) boolean; if ``True``,
+        - ``coordinate_labels`` -- boolean (default: ``True``); if ``True``,
           coordinate symbols are used by default (instead of integers) as
           index labels whenever ``frame`` is a coordinate frame
-        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``True``); if ``True``, only
           nonzero components are displayed
-        - ``only_nonredundant`` -- (default: ``False``) boolean; if ``True``,
+        - ``only_nonredundant`` -- boolean (default: ``False``); if ``True``,
           only nonredundant components are displayed in case of symmetries
 
         EXAMPLES:
@@ -1918,7 +1889,6 @@ class TensorField(ModuleElementWithMutability):
         See documentation of
         :meth:`sage.manifolds.differentiable.tensorfield_paral.TensorFieldParal.display_comp`
         for more options.
-
         """
         if frame is None:
             if chart is not None:
@@ -1985,7 +1955,6 @@ class TensorField(ModuleElementWithMutability):
             sage: t.__getitem__('^a_a').display()
             M → ℝ
             on U: (x, y) ↦ (x + 1)*y + x
-
         """
         if isinstance(args, str): # tensor with specified indices
             return TensorWithIndices(self, args).update()
@@ -2007,7 +1976,7 @@ class TensorField(ModuleElementWithMutability):
 
     def __setitem__(self, args, value):
         r"""
-        Sets a component with respect to some vector frame.
+        Set a component with respect to some vector frame.
 
         INPUT:
 
@@ -2037,7 +2006,6 @@ class TensorField(ModuleElementWithMutability):
             sage: t.__setitem__(slice(None), [[x+y, -2], [3*y^2, x*y]])
             sage: t.display()
             t = (x + y) ∂/∂x⊗dx - 2 ∂/∂x⊗dy + 3*y^2 ∂/∂y⊗dx + x*y ∂/∂y⊗dy
-
         """
         if isinstance(args, list):  # case of [[...]] syntax
             if not isinstance(args[0], (int, Integer, slice)):
@@ -2101,7 +2069,6 @@ class TensorField(ModuleElementWithMutability):
             s = (x + y) ∂/∂x⊗dx + 2 ∂/∂y⊗dx + (-y + 1) ∂/∂y⊗dy
             sage: s == t
             False
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -2163,7 +2130,6 @@ class TensorField(ModuleElementWithMutability):
             (x + y) ∂/∂x⊗dx + 2 ∂/∂y⊗dx + (-y + 1) ∂/∂y⊗dy
             sage: s == t
             False
-
         """
         resu = self._new_instance()
         # set resu name
@@ -2213,7 +2179,6 @@ class TensorField(ModuleElementWithMutability):
             sage: sorted(t._common_subdomains(a), key=str)
             [Open subset U of the 2-dimensional differentiable manifold M,
              Open subset V of the 2-dimensional differentiable manifold M]
-
         """
         resu = []
         for dom in self._restrictions:
@@ -2229,9 +2194,7 @@ class TensorField(ModuleElementWithMutability):
 
         - ``other`` -- a tensor field or 0
 
-        OUTPUT:
-
-        - ``True`` if ``self`` is equal to ``other`` and ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` is equal to ``other`` and ``False`` otherwise
 
         TESTS::
 
@@ -2264,7 +2227,7 @@ class TensorField(ModuleElementWithMutability):
             sage: t.parent().zero() == 0
             True
         """
-        from .mixed_form import MixedForm
+        from sage.manifolds.differentiable.mixed_form import MixedForm
 
         if other is self:
             return True
@@ -2272,44 +2235,44 @@ class TensorField(ModuleElementWithMutability):
             if other == 0:
                 return self.is_zero()
             return False
-        elif isinstance(other, MixedForm):
+        if isinstance(other, MixedForm):
             # use comparison of MixedForm:
             return other == self
-        elif not isinstance(other, TensorField):
+        if not isinstance(other, TensorField):
             return False
-        else: # other is another tensor field
-            if other._vmodule != self._vmodule:
-                return False
-            if other._tensor_type != self._tensor_type:
-                return False
-            # Non-trivial open covers of the domain:
-            for oc in self._domain.open_covers(trivial=False):
-                resu = True
-                for dom in oc:
-                    try:
-                        resu = resu and \
-                                bool(self.restrict(dom) == other.restrict(dom))
-                    except ValueError:
-                        break
-                else:
-                    # If this point is reached, no exception has occurred; hence
-                    # the result is valid and can be returned:
-                    return resu
-            # If this point is reached, the comparison has not been possible
-            # on any open cover; we then compare the restrictions to
-            # subdomains:
-            if not self._restrictions:
-                return False  # self is not initialized
-            if len(self._restrictions) != len(other._restrictions):
-                return False  # the restrictions are not on the same subdomains
+        # other is another tensor field
+        if other._vmodule != self._vmodule:
+            return False
+        if other._tensor_type != self._tensor_type:
+            return False
+        # Non-trivial open covers of the domain:
+        for oc in self._domain.open_covers(trivial=False):
             resu = True
-            for dom, rst in self._restrictions.items():
-                if dom in other._restrictions:
-                    resu = resu and bool(rst == other._restrictions[dom])
-                else:
-                    return False  # the restrictions are not on the same
-                                  # subdomains
-            return resu
+            for dom in oc:
+                try:
+                    resu = resu and \
+                            bool(self.restrict(dom) == other.restrict(dom))
+                except ValueError:
+                    break
+            else:
+                # If this point is reached, no exception has occurred; hence
+                # the result is valid and can be returned:
+                return resu
+        # If this point is reached, the comparison has not been possible
+        # on any open cover; we then compare the restrictions to
+        # subdomains:
+        if not self._restrictions:
+            return False  # self is not initialized
+        if len(self._restrictions) != len(other._restrictions):
+            return False  # the restrictions are not on the same subdomains
+        resu = True
+        for dom, rst in self._restrictions.items():
+            if dom in other._restrictions:
+                resu = resu and bool(rst == other._restrictions[dom])
+            else:
+                return False  # the restrictions are not on the same
+                              # subdomains
+        return resu
 
     def __ne__(self, other):
         r"""
@@ -2344,7 +2307,6 @@ class TensorField(ModuleElementWithMutability):
             False
             sage: t != 0
             True
-
         """
         return not (self == other)
 
@@ -2352,9 +2314,7 @@ class TensorField(ModuleElementWithMutability):
         r"""
         Unary plus operator.
 
-        OUTPUT:
-
-        - an exact copy of ``self``
+        OUTPUT: an exact copy of ``self``
 
         TESTS::
 
@@ -2375,14 +2335,15 @@ class TensorField(ModuleElementWithMutability):
              manifold M
             sage: s.display(e_xy)
             +t = (x + y) ∂/∂x⊗dx + 2 ∂/∂y⊗dx + (-y + 1) ∂/∂y⊗dy
-
         """
         resu = self._new_instance()
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = + rst
         # Compose names:
-        from sage.tensor.modules.format_utilities import (format_unop_txt,
-                                                          format_unop_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_unop_latex,
+            format_unop_txt,
+        )
         resu._name = format_unop_txt('+', self._name)
         resu._latex_name = format_unop_latex(r'+', self._latex_name)
         return resu
@@ -2391,9 +2352,7 @@ class TensorField(ModuleElementWithMutability):
         r"""
         Unary minus operator.
 
-        OUTPUT:
-
-        - the tensor field `-T`, where `T` is ``self``
+        OUTPUT: the tensor field `-T`, where `T` is ``self``
 
         TESTS::
 
@@ -2422,14 +2381,15 @@ class TensorField(ModuleElementWithMutability):
             -t = -u ∂/∂u⊗dv - v ∂/∂v⊗dv
             sage: s == -t  # indirect doctest
             True
-
         """
         resu = self._new_instance()
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = - rst
         # Compose names:
-        from sage.tensor.modules.format_utilities import (format_unop_txt,
-                                                          format_unop_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_unop_latex,
+            format_unop_txt,
+        )
         resu._name = format_unop_txt('-', self._name)
         resu._latex = format_unop_latex(r'-', self._latex_name)
         return resu
@@ -2484,7 +2444,6 @@ class TensorField(ModuleElementWithMutability):
             True
             sage: z._add_(a) == a
             True
-
         """
         # Case zero:
         if self._is_zero:
@@ -2553,7 +2512,6 @@ class TensorField(ModuleElementWithMutability):
             True
             sage: z._sub_(a) == -a
             True
-
         """
         # Case zero:
         if self._is_zero:
@@ -2578,7 +2536,7 @@ class TensorField(ModuleElementWithMutability):
 
     def _rmul_(self, scalar):
         r"""
-        Reflected multiplication operator: performs ``scalar * self``
+        Reflected multiplication operator: performs ``scalar * self``.
 
         This is actually the multiplication by an element of the ring over
         which the tensor field module is constructed.
@@ -2588,9 +2546,7 @@ class TensorField(ModuleElementWithMutability):
         - ``scalar`` -- scalar field in the scalar field algebra over which
           the module containing ``self`` is defined
 
-        OUTPUT:
-
-        - the tensor field ``scalar * self``
+        OUTPUT: the tensor field ``scalar * self``
 
         TESTS::
 
@@ -2632,7 +2588,6 @@ class TensorField(ModuleElementWithMutability):
             True
             sage: z._rmul_(f) == z
             True
-
         """
         # Case zero:
         if scalar._is_zero:
@@ -2645,8 +2600,10 @@ class TensorField(ModuleElementWithMutability):
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = scalar.restrict(dom) * rst
         # Compose names:
-        from sage.tensor.modules.format_utilities import (format_mul_txt,
-                                                          format_mul_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_mul_latex,
+            format_mul_txt,
+        )
         resu_name = format_mul_txt(scalar._name, '*', self._name)
         resu_latex = format_mul_latex(scalar._latex_name, r' \cdot ',
                                       self._latex_name)
@@ -2738,7 +2695,7 @@ class TensorField(ModuleElementWithMutability):
             sage: s == 2*a
             True
 
-       Test with SymPy as calculus engine::
+        Test with SymPy as calculus engine::
 
             sage: M.set_calculus_method('sympy')
             sage: f.add_expr_by_continuation(c_uv, U.intersection(V))
@@ -2754,7 +2711,6 @@ class TensorField(ModuleElementWithMutability):
             v**2/8) ∂/∂v⊗dv
             sage: s == f*a
             True
-
         """
         from sage.manifolds.differentiable.mixed_form import MixedForm
         if isinstance(other, MixedForm):
@@ -2801,9 +2757,7 @@ class TensorField(ModuleElementWithMutability):
         - ``scalar`` -- scalar field in the scalar field algebra over which
           the module containing ``self`` is defined
 
-        OUTPUT:
-
-        - the tensor field ``scalar * self``
+        OUTPUT: the tensor field ``scalar * self``
 
         TESTS::
 
@@ -2848,7 +2802,6 @@ class TensorField(ModuleElementWithMutability):
             True
             sage: 2*s == a
             True
-
         """
         resu = self._new_instance()
         for dom, rst in self._restrictions.items():
@@ -2929,7 +2882,6 @@ class TensorField(ModuleElementWithMutability):
             True
             sage: s.restrict(V) == t.restrict(V)(w.restrict(V))
             True
-
         """
         p = len(args)
         if p == 1 and self._tensor_type == (1,1):
@@ -2976,60 +2928,59 @@ class TensorField(ModuleElementWithMutability):
         if ambient_dom.is_manifestly_parallelizable():
             # TensorFieldParal version
             return self_r(*args_r)
-        else:
-            resu = dom_resu.scalar_field()
-            com_dom = []
-            for dom in self_r._restrictions:
-                for arg in args_r:
-                    if dom not in arg._restrictions:
-                        break
+        resu = dom_resu.scalar_field()
+        com_dom = []
+        for dom in self_r._restrictions:
+            for arg in args_r:
+                if dom not in arg._restrictions:
+                    break
+            else:
+                com_dom.append(dom)
+        for dom in com_dom:
+            self_rr = self_r._restrictions[dom]
+            args_rr = [args_r[i]._restrictions[dom] for i in range(p)]
+            resu_rr = self_rr(*args_rr)
+            if resu_rr.is_trivial_zero():
+                for chart in resu_rr._domain._atlas:
+                    resu._express[chart] = chart.zero_function()
+            else:
+                for chart, expr in resu_rr._express.items():
+                    resu._express[chart] = expr
+        if resu.is_trivial_zero():
+            return dom_resu._zero_scalar_field
+        # Name of the output:
+        res_name = None
+        if self._name is not None:
+            res_name = self._name + "("
+            for i in range(p-1):
+                if args[i]._name is not None:
+                    res_name += args[i]._name + ","
                 else:
-                    com_dom.append(dom)
-            for dom in com_dom:
-                self_rr = self_r._restrictions[dom]
-                args_rr = [args_r[i]._restrictions[dom] for i in range(p)]
-                resu_rr = self_rr(*args_rr)
-                if resu_rr.is_trivial_zero():
-                    for chart in resu_rr._domain._atlas:
-                        resu._express[chart] = chart.zero_function()
+                    res_name = None
+                    break
+            if res_name is not None:
+                if args[p-1]._name is not None:
+                    res_name += args[p-1]._name + ")"
                 else:
-                    for chart, expr in resu_rr._express.items():
-                        resu._express[chart] = expr
-            if resu.is_trivial_zero():
-                return dom_resu._zero_scalar_field
-            # Name of the output:
-            res_name = None
-            if self._name is not None:
-                res_name = self._name + "("
-                for i in range(p-1):
-                    if args[i]._name is not None:
-                        res_name += args[i]._name + ","
-                    else:
-                        res_name = None
-                        break
-                if res_name is not None:
-                    if args[p-1]._name is not None:
-                        res_name += args[p-1]._name + ")"
-                    else:
-                        res_name = None
-            resu._name = res_name
-            # LaTeX symbol of the output:
-            res_latex = None
-            if self._latex_name is not None:
-                res_latex = self._latex_name + r"\left("
-                for i in range(p-1):
-                    if args[i]._latex_name is not None:
-                        res_latex += args[i]._latex_name + ","
-                    else:
-                        res_latex = None
-                        break
-                if res_latex is not None:
-                    if args[p-1]._latex_name is not None:
-                        res_latex += args[p-1]._latex_name + r"\right)"
-                    else:
-                        res_latex = None
-            resu._latex_name = res_latex
-            return resu
+                    res_name = None
+        resu._name = res_name
+        # LaTeX symbol of the output:
+        res_latex = None
+        if self._latex_name is not None:
+            res_latex = self._latex_name + r"\left("
+            for i in range(p-1):
+                if args[i]._latex_name is not None:
+                    res_latex += args[i]._latex_name + ","
+                else:
+                    res_latex = None
+                    break
+            if res_latex is not None:
+                if args[p-1]._latex_name is not None:
+                    res_latex += args[p-1]._latex_name + r"\right)"
+                else:
+                    res_latex = None
+        resu._latex_name = res_latex
+        return resu
 
     def trace(
         self,
@@ -3158,7 +3109,6 @@ class TensorField(ModuleElementWithMutability):
 
             sage: b['^k_.k'] == s  # long time
             True
-
         """
         if using is not None:
             if self.tensor_type() != (0, 2):
@@ -3369,7 +3319,6 @@ class TensorField(ModuleElementWithMutability):
             zero: M → ℝ
             on U: (x, y) ↦ 0
             on V: (u, v) ↦ 0
-
         """
         nargs = len(args)
         for i, arg in enumerate(args):
@@ -3495,7 +3444,6 @@ class TensorField(ModuleElementWithMutability):
 
             For more details and examples, see
             :meth:`sage.tensor.modules.free_module_tensor.FreeModuleTensor.symmetrize`.
-
         """
         resu_rst = []
         for rst in self._restrictions.values():
@@ -3557,7 +3505,6 @@ class TensorField(ModuleElementWithMutability):
 
             For more details and examples, see
             :meth:`sage.tensor.modules.free_module_tensor.FreeModuleTensor.antisymmetrize`.
-
         """
         resu_rst = []
         for rst in self._restrictions.values():
@@ -3639,7 +3586,6 @@ class TensorField(ModuleElementWithMutability):
             sage: f = M.scalar_field({c_xy: 3*x-1, c_uv:  3/2*(u+v)-1})
             sage: a.lie_der(w)(f) == w(a(f)) - a(w(f))  # long time
             True
-
         """
         if vector._tensor_type != (1,0):
             raise TypeError("the argument must be a vector field")
@@ -3728,7 +3674,6 @@ class TensorField(ModuleElementWithMutability):
             a = 11/2 ∂/∂u⊗du - 3/2 ∂/∂u⊗dv + 1/2 ∂/∂v⊗du + 7/2 ∂/∂v⊗dv
             sage: p.coord(c_uv) # to check the above expression
             (5, -1)
-
         """
         if point not in self._domain:
             raise ValueError("the {} is not a point in the ".format(point) +
@@ -3741,7 +3686,7 @@ class TensorField(ModuleElementWithMutability):
         self,
         non_degenerate_form: Union[PseudoRiemannianMetric, SymplecticForm, PoissonTensorField],
         pos: Optional[int] = None,
-    ) -> "TensorField":
+    ) -> TensorField:
         r"""
         Compute a dual of the tensor field by raising some index with the
         given tensor field (usually, a pseudo-Riemannian metric, a symplectic form or a Poisson tensor).
@@ -3871,7 +3816,6 @@ class TensorField(ModuleElementWithMutability):
             False
             sage: dd1tuu == t # should be true
             True
-
         """
         n_con = self._tensor_type[0] # number of contravariant indices = k
         if pos is None:
@@ -3886,17 +3830,16 @@ class TensorField(ModuleElementWithMutability):
             raise ValueError("position out of range")
 
         from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
-        from sage.manifolds.differentiable.symplectic_form import SymplecticForm
         from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+        from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 
         if isinstance(non_degenerate_form, PseudoRiemannianMetric):
             return self.contract(pos, non_degenerate_form.inverse(), 1)
-        elif isinstance(non_degenerate_form, SymplecticForm):
+        if isinstance(non_degenerate_form, SymplecticForm):
             return self.contract(pos, non_degenerate_form.poisson(), 1)
-        elif isinstance(non_degenerate_form, PoissonTensorField):
+        if isinstance(non_degenerate_form, PoissonTensorField):
             return self.contract(pos, non_degenerate_form, 1)
-        else:
-            raise ValueError("The non-degenerate form has to be a metric, a symplectic form or a Poisson tensor field")
+        raise ValueError("The non-degenerate form has to be a metric, a symplectic form or a Poisson tensor field")
 
     def down(
         self,
@@ -4030,7 +3973,6 @@ class TensorField(ModuleElementWithMutability):
             True
             sage: uu1tdd == t # not true, because of the order of index raising to get uu1tdd
             False
-
         """
         n_con = self._tensor_type[0]  # number of contravariant indices = k
         if pos is None:
@@ -4041,7 +3983,7 @@ class TensorField(ModuleElementWithMutability):
             return result
         if not isinstance(pos, (int, Integer)):
             raise TypeError("the argument 'pos' must be an integer")
-        if pos<0 or pos>=n_con:
+        if pos < 0 or pos >= n_con:
             print("pos = {}".format(pos))
             raise ValueError("position out of range")
         return non_degenerate_form.contract(0, self, pos)
@@ -4165,7 +4107,6 @@ class TensorField(ModuleElementWithMutability):
             Vector field div(v⊗w) on the Euclidean plane E^2
             sage: s.display()
             div(v⊗w) = -y e_x + x e_y
-
         """
         n_con = self._tensor_type[0] # number of contravariant indices = k
         n_cov = self._tensor_type[1] # number of covariant indices = l
@@ -4264,7 +4205,6 @@ class TensorField(ModuleElementWithMutability):
             sage: Dv.display()
             Delta_h(v) = -(8*x^5 - 2*x^4 - x^2*y^2 + 15*x^3 - 4*x^2 + 6*x
              - 2)/(x^4 + 2*x^2 + 1) e_x - 3*x^3*y/(x^4 + 2*x^2 + 1) e_y
-
         """
         n_con = self._tensor_type[0] # number of contravariant indices = k
         trank = self._tensor_rank    # k + l
@@ -4356,7 +4296,6 @@ class TensorField(ModuleElementWithMutability):
 
             sage: De.display() # long time
             Box(e) = 0
-
         """
         default_metric = metric is None
         if default_metric:
@@ -4398,9 +4337,7 @@ class TensorField(ModuleElementWithMutability):
 
         - ``mapping`` -- differentiable map `\Phi: U \rightarrow M`
 
-        OUTPUT:
-
-        - tensor field `\tilde t` along `U` defined above.
+        OUTPUT: tensor field `\tilde t` along `U` defined above
 
         EXAMPLES:
 
@@ -4464,7 +4401,6 @@ class TensorField(ModuleElementWithMutability):
             True
             sage: wa.at(K(7*pi/4)) == eU[0].at(Phi(I(7*pi/4))) # since eU[0]=∂/∂x
             True
-
         """
         dom = self._domain
         if self._ambient_domain is not dom:
@@ -4525,7 +4461,7 @@ class TensorField(ModuleElementWithMutability):
         - ``order`` -- integer; the order `n` of the expansion, defined as the
           degree of the polynomial representing the truncated power series in
           ``symbol``
-        - ``truncate`` -- (default: ``False``) determines whether the
+        - ``truncate`` -- boolean (default: ``False``); determines whether the
           components of ``self`` are replaced by their expansions to the
           given order
 
@@ -4580,7 +4516,6 @@ class TensorField(ModuleElementWithMutability):
             sage: a[eV,:]
             [-1/8*(u^2 + 2*u*v + v^2)*h^2 - 1/2*u + 1/2*v + 1,
              -1/8*(u^2 + 2*u*v + v^2)*h^2 + 1/2*u - 1/2*v + 1]
-
         """
         for rst in self._restrictions.values():
             rst.set_calc_order(symbol, order, truncate)
@@ -4608,7 +4543,7 @@ class TensorField(ModuleElementWithMutability):
           with respect to ``chart`` of the components w.r.t. ``frame``; if
           ``None``, the operation ``fun`` is performed on all available
           coordinate expressions
-        - ``keep_other_components`` -- (default: ``False``) determine whether
+        - ``keep_other_components`` -- boolean (default: ``False``); determine whether
           the components with respect to vector frames distinct from ``frame``
           and having the same domain as ``frame`` are kept. If ``fun`` is
           non-destructive, ``keep_other_components`` can be set to ``True``;
@@ -4693,6 +4628,19 @@ class TensorField(ModuleElementWithMutability):
             sage: v.display(X.frame(), X)
             (x + y)*(x - y) ∂/∂x + 2*pi*(pi - 1)*x ∂/∂y
 
+        TESTS:
+
+        Check that the cached quantities derived from the components are
+        erased::
+
+            sage: w = M.vector_field(a*x, 0)
+            sage: diff(w[[0]]).display()
+            a dx
+            sage: w.apply_map(lambda t: t.subs(a=-2))
+            sage: w.display()
+            -2*x ∂/∂x
+            sage: diff(w[[0]]).display()
+            -2 dx
         """
         # The dictionary of components w.r.t. frame:
         if keep_other_components:
@@ -4710,3 +4658,4 @@ class TensorField(ModuleElementWithMutability):
                 for ch, fct in scalar._express.items():
                     cfunc_dict[ch] = ch.function(fun(fct.expr()))
                 scalar._express = cfunc_dict
+                scalar._del_derived()

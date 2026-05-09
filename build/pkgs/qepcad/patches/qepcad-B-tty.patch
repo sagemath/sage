@@ -1,5 +1,11 @@
---- a/source/db/SINGULAR.c.orig	2018-08-29 20:10:06.406075801 -0600
-+++ b/source/db/SINGULAR.c	2018-08-29 20:11:02.229992773 -0600
+Description: Tell Singular not to steal the TTY 
+Origin: https://src.fedoraproject.org/rpms/qepcad-B/blob/91dd25b/f/qepcad-B-tty.patch
+Bug: https://bugzilla.redhat.com/1257471
+Forwarded: https://github.com/chriswestbrown/qepcad/pull/2
+Last-Update: 2021-06-23
+
+--- a/source/db/SINGULAR.c
++++ b/source/db/SINGULAR.c
 @@ -1,6 +1,7 @@
  #include "SINGULAR.h"
  #include <iostream>
@@ -8,7 +14,7 @@
  using namespace std;
  
  
-@@ -15,6 +16,12 @@ SingularServer::SingularServer(string Si
+@@ -15,6 +16,12 @@
    if (childpid == 0) {
      intoSingular.setStdinToPipe();
      outofSingular.setStdoutToPipe();
@@ -21,7 +27,7 @@
  
      // Begin: Just for debug!!
      //system("/home/wcbrown/bin/Singular -q --no-warn --min-time=0.001 --ticks-per-sec=1000 | tee /tmp/SingOutLog");
-@@ -30,9 +37,10 @@ SingularServer::SingularServer(string Si
+@@ -30,9 +37,10 @@
  	   "--ticks-per-sec=1000",
  	   NULL);
        perror("SingularServer Constructor: Singular startup failed! (Set SINGULAR environment variable)");
@@ -33,9 +39,9 @@
  }
  
  SingularServer::~SingularServer()
---- a/source/db/unnamedpipe.h.orig	2018-08-29 20:10:06.406075801 -0600
-+++ b/source/db/unnamedpipe.h	2018-08-29 20:11:02.229992773 -0600
-@@ -113,6 +113,7 @@ public:
+--- a/source/db/unnamedpipe.h
++++ b/source/db/unnamedpipe.h
+@@ -113,6 +113,7 @@
    int fdout() { return fd[1]; }
    int setStdinToPipe() { return dup2(fdin(),fileno(stdin)); }
    int setStdoutToPipe() { return dup2(fdout(),fileno(stdout)); }

@@ -1,4 +1,4 @@
- mpmath | $(PYTHON_TOOLCHAIN) $(PYTHON)
+mpmath | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

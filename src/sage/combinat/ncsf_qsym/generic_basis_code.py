@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Generic code for bases
 
@@ -10,7 +11,7 @@ AUTHORS:
 - Franco Saliola
 - Chris Berg
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Jason Bandlow <jbandlow@gmail.com>,
 #                     2012 Franco Saliola <saliola@gmail.com>,
 #
@@ -23,8 +24,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+#  ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.realizations import Category_realization_of_parent
@@ -56,7 +57,6 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             'bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the Rational Field'
             sage: C
             Category of bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the Rational Field
-
         """
         return "bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the %s" % self.base().base_ring()
 
@@ -68,8 +68,8 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             sage: QSym = QuasiSymmetricFunctions(QQ)
             sage: BasesOfQSymOrNCSF(QSym).super_categories()
             [Category of realizations of Quasisymmetric functions over the Rational Field,
-             Category of graded hopf algebras with basis over Rational Field,
-             Join of Category of realizations of hopf algebras over Rational Field
+             Category of graded Hopf algebras with basis over Rational Field,
+             Join of Category of realizations of Hopf algebras over Rational Field
               and Category of graded algebras over Rational Field
               and Category of graded coalgebras over Rational Field]
         """
@@ -116,13 +116,15 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 This could possibly be shared with Sym, FQSym, and
                 other algebras with bases indexed by list-like objects
             """
-            if isinstance(c, Composition):
-                assert len(rest) == 0
-            else:
-                if len(rest) > 0 or isinstance(c, (int, Integer)):
-                    c = self._indices([c] + list(rest))
+            if isinstance(c, (int, Integer)):
+                if c:
+                    c = self._indices([c] + [e for e in rest if e])
                 else:
-                    c = self._indices(list(c))
+                    c = self._indices([e for e in rest if e])
+            else:
+                assert not rest
+                if not isinstance(c, Composition):
+                    c = self._indices([e for e in c if e])
             return self.monomial(c)
 
         # could go to Algebras(...).Graded().Connected() or Modules(...).Graded().Connected()
@@ -131,9 +133,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             r"""
             Return the empty composition.
 
-            OUTPUT:
-
-            - The empty composition.
+            OUTPUT: the empty composition
 
             EXAMPLES::
 
@@ -208,7 +208,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             OUTPUT:
 
@@ -242,7 +242,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             INPUT:
 
             - ``composition`` -- a composition
-            - ``conjugate`` -- (default: ``False``) a boolean
+            - ``conjugate`` -- boolean (default: ``False``)
 
             OUTPUT:
 
@@ -475,8 +475,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 return self.sum(coeff * y[IJ[1-v]] * self[IJ[v]]
                                 for (IJ, coeff) in x.coproduct()
                                 if IJ[1-v] in y.support())
-            else:
-                return self._skew_by_coercion(x, y, side=side)
+            return self._skew_by_coercion(x, y, side=side)
 
         def _skew_by_coercion(self, x, y, side='left'):
             r"""
@@ -578,8 +577,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 x = self(x)
                 y = self.dual()(y)
                 return self.base_ring().sum(coeff * y[I] for (I, coeff) in x)
-            else:
-                return self.duality_pairing_by_coercion(x, y)
+            return self.duality_pairing_by_coercion(x, y)
 
         def duality_pairing_by_coercion(self, x, y):
             r"""
@@ -632,8 +630,8 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             INPUT:
 
-            - ``basis`` -- A basis of the dual Hopf algebra
-            - ``degree`` -- a non-negative integer
+            - ``basis`` -- a basis of the dual Hopf algebra
+            - ``degree`` -- nonnegative integer
 
             OUTPUT:
 
@@ -741,8 +739,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             """
             if I:
                 return self.base_ring().zero()
-            else:
-                return self.base_ring().one()
+            return self.base_ring().one()
 
         def degree_negation(self, element):
             r"""
@@ -856,9 +853,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             - ``y`` -- an element of the dual Hopf algebra of ``self``
 
-            OUTPUT:
-
-            - The result of pairing ``self`` with ``y``.
+            OUTPUT: the result of pairing ``self`` with ``y``
 
             EXAMPLES::
 
@@ -877,7 +872,6 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 0
                 sage: L[1,1,1].duality_pairing(F[1,2])
                 1
-
             """
             return self.parent().duality_pairing(self, y)
 
@@ -892,11 +886,9 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             INPUT:
 
             - ``y`` -- an element of the dual Hopf algebra of ``self``
-            - ``side`` -- (Default='left') Either 'left' or 'right'
+            - ``side`` -- (default: ``'left'``) either ``'left'`` or ``'right'``
 
-            OUTPUT:
-
-            - The result of skewing ``self`` by ``y``, on the side ``side``
+            OUTPUT: the result of skewing ``self`` by ``y``, on the side ``side``
 
             EXAMPLES:
 
@@ -956,7 +948,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             EXAMPLES::
 
                 sage: S = NonCommutativeSymmetricFunctions(QQ).S()
-                sage: (x, y) = (S[2], S[3])
+                sage: x, y = S[2], S[3]
                 sage: x.degree()
                 2
                 sage: (x^3 + 4*y^2).degree()
@@ -967,7 +959,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             ::
 
                 sage: F = QuasiSymmetricFunctions(QQ).F()
-                sage: (x, y) = (F[2], F[3])
+                sage: x, y = F[2], F[3]
                 sage: x.degree()
                 2
                 sage: (x^3 + 4*y^2).degree()
@@ -1007,13 +999,11 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
         - ``domain`` -- an algebra with a multiplicative basis
         - ``on_generators`` -- a function defined on the index set of the generators
         - ``codomain`` -- the codomain
-        - ``position`` -- integer; default is 0
-        - ``category`` -- a category; defaults to None
-        - ``anti`` -- a boolean; defaults to False
+        - ``position`` -- integer (default: 0)
+        - ``category`` -- a category (default: ``None``)
+        - ``anti`` -- boolean (default: ``False``)
 
-        OUTPUT:
-
-        - module morphism
+        OUTPUT: module morphism
 
         EXAMPLES:
 
@@ -1050,7 +1040,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
             sage: f(2*Psi[[]] + 3 * Psi[1,3,2] + Psi[2,4] )
             2*Psi[] - 3*Psi[1, 3, 2] + Psi[2, 4]
             sage: f.category()
-            Category of endsets of hopf algebras over Rational Field and graded modules over Rational Field
+            Category of endsets of Hopf algebras over Rational Field and graded modules over Rational Field
 
         If ``anti`` is true, this returns an anti-algebra morphism::
 
@@ -1131,16 +1121,14 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
 
     def _on_basis(self, c):
         r"""
-        Computes the image of this morphism on the basis element indexed by
+        Compute the image of this morphism on the basis element indexed by
         ``c``.
 
         INPUT:
 
         - ``c`` -- an iterable that spits out generators
 
-        OUTPUT:
-
-        - element of the codomain
+        OUTPUT: element of the codomain
 
         EXAMPLES::
 
@@ -1151,7 +1139,6 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
             sage: f = AlgebraMorphism(Psi, lambda i : Phi[i,i], codomain=Phi)
             sage: f._on_basis([ 3, 2 ])
             Phi[3, 3, 2, 2]
-
         """
         if self._anti:
             c = reversed(c)
@@ -1160,7 +1147,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
 
 class GradedModulesWithInternalProduct(Category_over_base_ring):
     r"""
-    Constructs the class of modules with internal product. This is used to give an internal
+    Construct the class of modules with internal product. This is used to give an internal
     product structure to the non-commutative symmetric functions.
 
     EXAMPLES::
@@ -1193,7 +1180,7 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
 
             INPUT:
 
-             - ``I``, ``J`` -- compositions indexing two elements of the basis of self
+            - ``I``, ``J`` -- compositions indexing two elements of the basis of self
 
             Returns the internal product of the corresponding basis elements.
             If this method is implemented, the internal product is defined from
@@ -1246,7 +1233,6 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
                 R[2]
                 sage: R.internal_product(R[2,2], R[1,2])
                 0
-
             """
             if self.internal_product_on_basis is not NotImplemented:
                 return self.module_morphism(
@@ -1254,8 +1240,7 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
                                                      position=0,
                                                      codomain=self),
                                 position=1)
-            else:
-                return self.internal_product_by_coercion
+            return self.internal_product_by_coercion
 
         itensor = internal_product
         kronecker_product = internal_product
@@ -1425,9 +1410,7 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
                 - ``left`` -- an element of the non-commutative symmetric functions
                 - ``right`` -- an element of the non-commutative symmetric functions
 
-                OUTPUT:
-
-                - The internal product of ``left`` and ``right``.
+                OUTPUT: the internal product of ``left`` and ``right``
 
                 EXAMPLES::
 

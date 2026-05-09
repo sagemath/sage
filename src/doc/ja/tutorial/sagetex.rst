@@ -12,8 +12,8 @@ SageTeXパッケージを使うと，Sageによる処理結果をLaTeX文書に�
 =======
 
 ここでは，ごく簡単な例題を通してSageTeXの利用手順を紹介する．
-完全な解説ドキュメントと例題ファイルは，ディレクトリ ``SAGE_ROOT/venv/share/doc/sagetex`` に置いてある．
-``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex`` にあるPythonスクリプトは何か役に立つ場面があるはずだ．
+完全な解説ドキュメントと例題ファイルは，ディレクトリ :file:`SAGE_ROOT/venv/share/doc/sagetex` に置いてある．
+:file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex` にあるPythonスクリプトは何か役に立つ場面があるはずだ．
 以上の ``SAGE_ROOT`` は，Sageをインストールしたディレクトリである．
 
 
@@ -81,7 +81,7 @@ SageTeXの動作を体験するために，まずSageTeXのインストール手
 ここでLaTeX処理を実行すると，Sageの演算結果とプロットの全てがLaTeX文書に収められることになる．
 
 
-上の処理に用いられた各マクロの内容はごく簡単に理解できる． 
+上の処理に用いられた各マクロの内容はごく簡単に理解できる．
 ``sageblock`` 環境はSageコードを入力通りに組版し，ユーザーがSageを動かすとそのコードを実行する．
 ``\sage{foo}`` とすると， Sage上で ``latex(foo)`` を実行したのと同じ結果がLaTeX文書に挿入される．
 プロット命令はやや複雑だが，もっとも単純な場合である ``\sageplot{foo}`` は ``foo.save('filename.eps')`` を実行して得られた画像を文書へ挿入する役割を果たす．
@@ -98,7 +98,7 @@ SageTeXの動作を体験するために，まずSageTeXのインストール手
 
 
 SageTeXは到底以上で語り尽せるものでなく，SageとLaTeXは共に複雑で強力なツールだ．
-``SAGE_ROOT/venv/share/doc/sagetex`` にあるSageTeXのドキュメントを読むことを強くお勧めする．
+:file:`SAGE_ROOT/venv/share/doc/sagetex` にあるSageTeXのドキュメントを読むことを強くお勧めする．
 
 
 .. _sec-sagetex_install:
@@ -115,10 +115,9 @@ SageTeXパッケージを使えばSageによる演算やプロットをLaTeX文�
 SageTeXはデフォルトでSageにインストールされるが，LaTeX文書で利用する前に，運用しているTeXシステムへSageTeXの存在を教えておかねばならない．
 
 
-
 鍵になるのは， TeXが ``sagetex.sty`` を発見できるかどうかである．
 この ``sagetex.sty`` は， ``SAGE_ROOT`` をSageがビルトあるいはインストールされたディレクトリとすると，
-``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/`` に置かれているはずだ．
+:file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/` に置かれているはずだ．
 TeXが ``sagetex.sty`` を読めるようにしてやらなければ，SageTeXも動作できないのである．
 これを実現するには何通りかのやり方がある．
 
@@ -129,7 +128,6 @@ TeXが ``sagetex.sty`` を読めるようにしてやらなければ，SageTeX�
   ただし，このやり方には二つのちょっとした問題点がある．
   一つ目は，このやり方では使用しているシステムが重複した ``sagetex.sty`` だらけになってしまうこと．
   二つ目の，もっと厄介な問題は，この状態でSageが更新されてSageTeXも新しいバージョンになった場合，SageTeXを構成するPythonコードやLaTeXコードとの食い違いが生じて実行時にエラーが発生しかねない点である．
-
 
 
 - 第二の方法は，環境変数 ``TEXINPUTS`` を利用することである．
@@ -154,7 +152,6 @@ TeXが ``sagetex.sty`` を読めるようにしてやらなければ，SageTeX�
   先に紹介したコマンドも新しい ``SAGE_ROOT`` を反映させるように変更する必要がある．
 
 
-
 - TeXに ``sagetex.sty`` の在処を教える第三の(かつ最善の)方法は，このスタイルファイルを自分のホームディレクトリのどこか都合のよい所にコピーしておくことだ．
   TeXディストリビューションの多くは，パッケージを求めてホームディレクトリにある ``texmf`` ディレクトリを自動的に探索するようになっている．
   このディレクトリを正確に特定するには，コマンド
@@ -163,7 +160,7 @@ TeXが ``sagetex.sty`` を読めるようにしてやらなければ，SageTeX�
 
       kpsewhich -var-value=TEXMFHOME
 
-  を実行する．すると ``/home/drake/texmf`` や ``/Users/drake/Library/texmf`` などと表示されるはずだから， ``SAGE_ROOT/venv/share/texmf/`` 内の ``tex/`` ディレクトリをホームディレクトリの ``texmf`` にコピーするには
+  を実行する．すると ``/home/drake/texmf`` や ``/Users/drake/Library/texmf`` などと表示されるはずだから， :file:`SAGE_ROOT/venv/share/texmf/` 内の ``tex/`` ディレクトリをホームディレクトリの ``texmf`` にコピーするには
 
   ::
 
@@ -205,15 +202,13 @@ TeXが ``sagetex.sty`` を読めるようにしてやらなければ，SageTeX�
   第三の方法にしておけば，Sage更新後もSageTeXを正常に動作させるために必要な作業はディレクトリを一つコピーするだけになる．
 
 
-
 SageTeXドキュメント
 ---------------------
 
 厳密にはSageのインストール一式には含まれないものの，ここで
-SageTeXのドキュメントが ``SAGE_ROOT/venv/share/doc/sagetex/sagetex.pdf`` に配置されていることに触れておきたい．
+SageTeXのドキュメントが :file:`SAGE_ROOT/venv/share/doc/sagetex/sagetex.pdf` に配置されていることに触れておきたい．
 同じディレクトリには例題ファイルと，これをLaTeXとSageTeXによってすでに組版処理した結果も用意されている(``example.tex`` と ``example.pdf`` を参照)．
 これらのファイルは `SageTeX ページ <https://github.com/sagemath/sagetex>`_ からダンロードすることもできる．
-
 
 
 SageTeXとTeXLive

@@ -11,7 +11,7 @@ AUTHORS:
 - Nick Alexander (Sage interface)
 
 - Jeroen Demeyer (2014-09-23): use PARI instead of GP scripts,
-  return vectors instead of tuples (:trac:`16997`).
+  return vectors instead of tuples (:issue:`16997`).
 
 - Tyler Gaona (2015-11-14): added the `solve` method
 """
@@ -31,7 +31,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.modules.free_module_element import vector
-from sage.matrix.constructor import Matrix
+from sage.matrix.constructor import matrix
+from sage.structure.element import Matrix
 
 
 def qfsolve(G):
@@ -39,15 +40,8 @@ def qfsolve(G):
     Find a solution `x = (x_0,...,x_n)` to `x G x^t = 0` for an
     `n \times n`-matrix ``G`` over `\QQ`.
 
-    OUTPUT:
-
-    If a solution exists, return a vector of rational numbers `x`.
-    Otherwise, returns `-1` if no solution exists over the reals or a
-    prime `p` if no solution exists over the `p`-adic field `\QQ_p`.
-
-    ALGORITHM:
-
-    Uses PARI/GP function :pari:`qfsolve`.
+    OUTPUT: May return an integer, a vector or a matrix.
+    The output format is identical to that of :pari:`qfsolve`.
 
     EXAMPLES::
 
@@ -74,11 +68,26 @@ def qfsolve(G):
         sage: M = Matrix(QQ, [[3, 0, 0, 0], [0, 5, 0, 0], [0, 0, -7, 0], [0, 0, 0, -11]])
         sage: qfsolve(M)
         (3, 4, -3, -2)
+
+        sage: M = Matrix(QQ, [[0, 0], [0, 0]])
+        sage: ret = qfsolve(M); ret
+        [1 0]
+        [0 1]
+        sage: ret.parent()
+        Full MatrixSpace of 2 by 2 dense matrices over Rational Field
+
+        sage: M = Matrix(QQ, [[1, 0], [0, -2]])
+        sage: ret = qfsolve(M); ret
+        -2
+        sage: ret.parent()
+        Integer Ring
     """
     ret = G.__pari__().qfsolve()
     if ret.type() == 't_COL':
         return vector(QQ, ret)
-    return ZZ(ret)
+    if ret.type() == 't_MAT':
+        return ret.sage().change_ring(QQ)
+    return ret.sage()
 
 
 def qfparam(G, sol):
@@ -129,11 +138,12 @@ def solve(self, c=0):
 
     - ``c`` -- (default: 0) a rational number
 
-    OUTPUT: A non-zero vector `x` satisfying ``self(x) == c``.
+    OUTPUT: a nonzero vector `x` satisfying ``self(x) == c``
 
     ALGORITHM:
 
-    Uses PARI's :pari:`qfsolve`. Algorithm described by Jeroen Demeyer; see comments on :trac:`19112`
+    Uses PARI's :pari:`qfsolve`, with an extension to handle the case ``c != 0``
+    described by Jeroen Demeyer in :issue:`19112`.
 
     EXAMPLES::
 
@@ -158,7 +168,7 @@ def solve(self, c=0):
         sage: F.solve()
         Traceback (most recent call last):
         ...
-        ArithmeticError: no solution found (local obstruction at -1)
+        ArithmeticError: no solution found (local obstruction at RR)
 
     ::
 
@@ -203,7 +213,37 @@ def solve(self, c=0):
         Traceback (most recent call last):
         ...
         TypeError: solving quadratic forms is only implemented over QQ
+
+    TESTS::
+
+        sage: R.<x1,x2,x3> = QQ[]
+        sage: QuadraticForm(x3^2).solve(9)
+        (0, 0, 3)
+        sage: QuadraticForm(R.zero()).solve(9)
+        Traceback (most recent call last):
+        ...
+        ArithmeticError: no solution found (local obstruction at RR)
+        sage: DiagonalQuadraticForm(QQ, [1, -2]).solve()
+        Traceback (most recent call last):
+        ...
+        ArithmeticError: no solution found (local obstruction at some prime factor of det(self.matrix()))
     """
+    def check_obstruction(x):
+        """
+        Local helper. ``x`` is the return value of ``qfsolve``.
+        Raise an exception if ``x`` indicates an obstruction,
+        otherwise return ``x``.
+        """
+        if isinstance(x, Integer):
+            if x == -1:
+                x = "RR"
+            elif x == -2:
+                # we faithfully report what pari tells us
+                # it is likely pari doesn't report the prime is because it requires factorizing the determinant
+                x = "some prime factor of det(self.matrix())"
+            raise ArithmeticError(f"no solution found (local obstruction at {x})")
+        return x
+
     if self.base_ring() is not QQ:
         raise TypeError("solving quadratic forms is only implemented over QQ")
 
@@ -211,24 +251,23 @@ def solve(self, c=0):
 
     # If no argument passed for c, we just pass self into qfsolve().
     if not c:
-        x = qfsolve(M)
-        if isinstance(x, Integer):
-            raise ArithmeticError("no solution found (local obstruction at {})".format(x))
+        x = check_obstruction(qfsolve(M))
+        if isinstance(x, Matrix):
+            return x.column(0)
         return x
 
     # If c != 0, define a new quadratic form Q = self - c*z^2
     d = self.dim()
-    N = Matrix(self.base_ring(), d+1, d+1)
+    N = matrix(self.base_ring(), d+1, d+1)
     for i in range(d):
         for j in range(d):
             N[i, j] = M[i, j]
     N[d, d] = -c
 
     # Find a solution x to Q(x) = 0, using qfsolve()
-    x = qfsolve(N)
-    # Raise an error if qfsolve() doesn't find a solution
-    if isinstance(x, Integer):
-        raise ArithmeticError("no solution found (local obstruction at {})".format(x))
+    x = check_obstruction(qfsolve(N))
+    if isinstance(x, Matrix):
+        x = x.column(0)
 
     # Let z be the last term of x, and remove z from x
     z = x[-1]
@@ -248,6 +287,14 @@ def solve(self, c=0):
     while self.bilinear_map(x, e) == 0:
         e[i] = 0
         i += 1
+        if i >= d:
+            # Restrict the quadratic form to a subspace complement to x, then solve recursively
+            # note that complementary_subform_to_vector returns the orthogonal (not necessary complement)
+            # subspace with respect to self, which is not what we want
+            i = next(i for i in range(d) if x[i])
+            from sage.quadratic_forms.quadratic_form import QuadraticForm
+            x = QuadraticForm(self.matrix().delete_rows([0]).delete_columns([0])).solve(c)
+            return vector([*x[:i], 0, *x[i:]])
         e[i] = 1
 
     a = (c - self(e)) / (2 * self.bilinear_map(x, e))

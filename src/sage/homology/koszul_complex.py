@@ -53,7 +53,7 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
     INPUT:
 
     - ``R`` -- the base ring
-    - ``elements`` -- a tuple of elements of ``R``
+    - ``elements`` -- tuple of elements of `R`
 
     EXAMPLES::
 
@@ -115,9 +115,9 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
                 R = elements[0].parent()
         elif R is None:  # elements is not None
             R = elements[0].parent()
-        return super(KoszulComplex, cls).__classcall__(cls, R, tuple(elements))
+        return super().__classcall__(cls, R, tuple(elements))
 
-    def __init__(self, R, elements):
+    def __init__(self, R, elements) -> None:
         """
         Initialize ``self``.
 
@@ -149,7 +149,7 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
         diff[n+1].set_immutable()
         ChainComplex_class.__init__(self, ZZ, ZZ(-1), R, diff)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

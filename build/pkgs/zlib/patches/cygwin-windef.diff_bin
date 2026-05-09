@@ -1,9 +1,0 @@
-diff --git a/win32/zlib.def b/win32/zlib.def
-index 784b138..b69fa3e 100644
---- a/win32/zlib.def
-+++ b/win32/zlib.def
-@@ -91,4 +91,3 @@ EXPORTS
-     inflateCodesUsed
-     inflateResetKeep
-     deflateResetKeep
--    gzopen_w

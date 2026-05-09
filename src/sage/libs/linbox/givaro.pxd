@@ -25,6 +25,23 @@ cdef extern from "gmp++/gmp++.h" namespace "Givaro":
         mpz_ptr get_mpz()
         mpz_srcptr get_mpz_const()
 
+cdef extern from "givaro/givrational.h" namespace "Givaro":
+    cdef cppclass Rational:
+        Rational()
+        Rational(int32_t)
+        Rational(int64_t)
+        Rational(uint32_t)
+        Rational(uint64_t)
+        Rational(Integer&)
+        Rational(int32_t, int32_t)
+        Rational(int64_t, int64_t)
+        Rational(uint32_t, uint32_t)
+        Rational(uint64_t, uint64_t)
+        Rational(Integer&, Integer&, int)
+
+        Integer nume()
+        Integer deno()
+
 cdef extern from "givaro/givcategory.h" namespace "Givaro":
     cdef cppclass Sporadic:
         pass
@@ -40,6 +57,14 @@ cdef extern from "givaro/zring.h":
         Element zero
         Element one
         Element mone
+
+cdef extern from "givaro/qfield.h":
+    ## template<class RatElement> class QField
+    cdef cppclass QField "Givaro::QField<Givaro::Rational>":
+        ctypedef Rational Element
+        Element one
+        Element mOne
+        Element zero
 
 cdef extern from "givaro/modular-integral.h":
     cdef cppclass Modular_uint64 "Givaro::Modular<uint64_t>":

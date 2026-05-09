@@ -11,19 +11,18 @@ from sage.rings.power_series_ring import PowerSeriesRing
 
 from math import sqrt
 
+
 def theta2_qexp(prec=10, var='q', K=ZZ, sparse=False):
     r"""
     Return the `q`-expansion of the series `\theta_2 = \sum_{n \text{ odd}} q^{n^2}`.
 
     INPUT:
 
-    - prec -- integer; the absolute precision of the output
-    - var -- (default: 'q') variable name
-    - K -- (default: ZZ) base ring of answer
+    - ``prec`` -- integer; the absolute precision of the output
+    - ``var`` -- (default: ``'q'``) variable name
+    - ``K`` -- (default: ZZ) base ring of answer
 
-    OUTPUT:
-
-    a power series over K
+    OUTPUT: a power series over K
 
     EXAMPLES::
 
@@ -60,6 +59,7 @@ def theta2_qexp(prec=10, var='q', K=ZZ, sparse=False):
     R = PowerSeriesRing(K, sparse=sparse, names=var)
     return R(v, prec=prec)
 
+
 def theta_qexp(prec=10, var='q', K=ZZ, sparse=False):
     r"""
     Return the `q`-expansion of the standard `\theta` series
@@ -67,13 +67,11 @@ def theta_qexp(prec=10, var='q', K=ZZ, sparse=False):
 
     INPUT:
 
-    - prec -- integer; the absolute precision of the output
-    - var -- (default: 'q') variable name
-    - K -- (default: ZZ) base ring of answer
+    - ``prec`` -- integer; the absolute precision of the output
+    - ``var`` -- (default: ``'q'``) variable name
+    - ``K`` -- (default: ZZ) base ring of answer
 
-    OUTPUT:
-
-    a power series over K
+    OUTPUT: a power series over K
 
     EXAMPLES::
 
@@ -91,7 +89,6 @@ def theta_qexp(prec=10, var='q', K=ZZ, sparse=False):
         1 + 2*q + 2*q^4 + 2*q^9 + 2*q^16 + O(q^20)
         sage: parent(f)
         Sparse Power Series Ring in q over Integer Ring
-
     """
     prec = Integer(prec)
     if prec <= 0:

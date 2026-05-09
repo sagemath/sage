@@ -21,7 +21,7 @@ design from this database, we include extra information:
 REFERENCES:
 
 .. [1] La Jolla Covering Repository,
-  https://ljcr.dmgordon.org/cover.html
+  https://dmgordon.org/cover
 
 .. [2] Daniel M. Gordon and Douglas R. Stinson, *Coverings*,
   Chapter 1 in: Charles J. Colbourn and Jeffrey H. Dinitz,
@@ -54,7 +54,6 @@ from sage.rings.rational import Rational
 from sage.arith.misc import binomial
 from sage.combinat.combination import Combinations
 from sage.combinat.designs.incidence_structures import IncidenceStructure
-from sage.cpython.string import bytes_to_str
 
 
 def schonheim(v, k, t):
@@ -63,11 +62,11 @@ def schonheim(v, k, t):
 
     INPUT:
 
-    - ``v`` -- integer, size of point set
+    - ``v`` -- integer; size of point set
 
-    - ``k`` -- integer, cardinality of each block
+    - ``k`` -- integer; cardinality of each block
 
-    - ``t`` -- integer, cardinality of sets being covered
+    - ``t`` -- integer; cardinality of sets being covered
 
     OUTPUT:
 
@@ -95,11 +94,11 @@ def trivial_covering_design(v, k, t):
 
     INPUT:
 
-    - ``v`` -- integer, size of point set
+    - ``v`` -- integer; size of point set
 
-    - ``k`` -- integer, cardinality of each block
+    - ``k`` -- integer; cardinality of each block
 
-    - ``t`` -- integer, cardinality of sets being covered
+    - ``t`` -- integer; cardinality of sets being covered
 
     OUTPUT:
 
@@ -141,24 +140,16 @@ def trivial_covering_design(v, k, t):
           `k` does not divide `v`.
 
         * anything else: Just use every `k`-subset of `[0, 1,..., v-1]`.
-
     """
     if t == 0:  # single block [0, ..., k-1]
-        blk = []
-        for i in range(k):
-            blk.append(i)
+        blk = list(range(k))
         return CoveringDesign(v, k, t, 1, range(v), [blk], 1, "Trivial")
     if t == 1:  # blocks [0, ..., k-1], [k, ..., 2k-1], ...
         size = Rational((v, k)).ceil()
-        blocks = []
-        for i in range(size - 1):
-            blk = []
-            for j in range(i * k, (i + 1) * k):
-                blk.append(j)
-            blocks.append(blk)
-        blk = []  # last block: if k does not divide v, wrap around
-        for j in range((size - 1) * k, v):
-            blk.append(j)
+        blocks = [list(range(i * k, (i + 1) * k))
+                  for i in range(size - 1)]
+        # last block: if k does not divide v, wrap around
+        blk = list(range((size - 1) * k, v))
         for j in range(k - len(blk)):
             blk.append(j)
         blk.sort()
@@ -178,13 +169,13 @@ class CoveringDesign(SageObject):
 
     - ``v``, ``k``, ``t`` -- integer parameters of the covering design
 
-    - ``size`` (integer)
+    - ``size`` -- integer
 
-    - ``points`` -- list of points (default points are `[0, ..., v-1]`)
+    - ``points`` -- list of points (default: `[0, ..., v-1]`)
 
     - ``blocks``
 
-    - ``low_bd`` (integer) -- lower bound for such a design
+    - ``low_bd`` -- integer; lower bound for such a design
 
     - ``method``, ``creator``, ``timestamp`` -- database information
     """
@@ -320,10 +311,7 @@ class CoveringDesign(SageObject):
             for z in Skt:
                 y = (a[x] for x in z)
                 tset[tuple(y)] = True
-        for i in Svt:
-            if not tset[tuple(i)]:  # uncovered
-                return False
-        return True                 # everything was covered
+        return all(tset[tuple(i)] for i in Svt)                 # everything was covered
 
     def v(self):
         """
@@ -342,7 +330,7 @@ class CoveringDesign(SageObject):
 
     def k(self):
         """
-        Return `k`, the size of blocks of the covering design
+        Return `k`, the size of blocks of the covering design.
 
         EXAMPLES::
 
@@ -373,7 +361,7 @@ class CoveringDesign(SageObject):
 
     def size(self):
         """
-        Return the number of blocks in the covering design
+        Return the number of blocks in the covering design.
 
         EXAMPLES::
 
@@ -425,7 +413,7 @@ class CoveringDesign(SageObject):
 
     def creator(self):
         """
-        Return the creator of the covering design
+        Return the creator of the covering design.
 
         This field is optional, and is used in a database to give
         attribution for the covering design It can refer to the person
@@ -444,7 +432,7 @@ class CoveringDesign(SageObject):
 
     def timestamp(self):
         """
-        Return the time that the covering was submitted to the database
+        Return the time that the covering was submitted to the database.
 
         EXAMPLES::
 
@@ -474,7 +462,6 @@ class CoveringDesign(SageObject):
             sage: D.blocks()
             [[0, 1, 2], [0, 3, 4], [0, 5, 6], [1, 3, 5],
             [1, 4, 6], [2, 3, 6], [2, 4, 5]]
-
         """
         return self.__incidence_structure
 
@@ -488,13 +475,13 @@ def best_known_covering_design_www(v, k, t, verbose=False):
 
     INPUT:
 
-    - ``v`` -- integer, the size of the point set for the design
+    - ``v`` -- integer; the size of the point set for the design
 
-    - ``k`` -- integer, the number of points per block
+    - ``k`` -- integer; the number of points per block
 
-    - ``t`` -- integer, the size of sets covered by the blocks
+    - ``t`` -- integer; the size of sets covered by the blocks
 
-    - ``verbose`` -- bool (default: ``False``), print verbose message
+    - ``verbose`` -- boolean (default: ``False``); print verbose message
 
     OUTPUT:
 
@@ -518,22 +505,19 @@ def best_known_covering_design_www(v, k, t, verbose=False):
         2  3  6
         2  4  5
 
-    A :class:`ValueError` is raised if the ``(v, k, t)`` parameters are not
+    A :exc:`ValueError` is raised if the ``(v, k, t)`` parameters are not
     found in the database.
     """
     v = int(v)
     k = int(k)
     t = int(t)
     param = "?v=%s&k=%s&t=%s" % (v, k, t)
-    url = "https://ljcr.dmgordon.org/cover/get_cover.php" + param
+    url = "https://ljcr.dmgordon.org/get_cover.php" + param
     if verbose:
         print("Looking up the bounds at %s" % url)
 
-    f = urlopen(url, context=default_context())
-    try:
-        s = bytes_to_str(f.read())
-    finally:
-        f.close()
+    with urlopen(url, context=default_context()) as f:
+        s = f.read().decode()
 
     if 'covering not in database' in s:  # not found
         str = "no (%d, %d, %d) covering design in database\n" % (v, k, t)

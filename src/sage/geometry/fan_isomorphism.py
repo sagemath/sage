@@ -1,16 +1,14 @@
 """
 Find isomorphisms between fans
 """
-
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import column_matrix, matrix
 from sage.geometry.cone import Cone
@@ -29,11 +27,9 @@ def fan_isomorphic_necessary_conditions(fan1, fan2):
 
     INPUT:
 
-    - ``fan1``, ``fan2`` -- two fans.
+    - ``fan1``, ``fan2`` -- two fans
 
-    OUTPUT:
-
-    Boolean. ``False`` if the two fans cannot be isomorphic. ``True``
+    OUTPUT: boolean; ``False`` if the two fans cannot be isomorphic. ``True``
     if the two fans may be isomorphic.
 
     EXAMPLES::
@@ -48,13 +44,11 @@ def fan_isomorphic_necessary_conditions(fan1, fan2):
         return False
     if fan1.dim() != fan2.dim():
         return False
-    if fan1.nrays() != fan2.nrays():
+    if fan1.n_rays() != fan2.n_rays():
         return False
-    if fan1.ngenerating_cones() != fan2.ngenerating_cones():
+    if fan1.n_generating_cones() != fan2.n_generating_cones():
         return False
-    if fan1.is_complete() != fan2.is_complete():
-        return False
-    return True
+    return fan1.is_complete() == fan2.is_complete()
 
 
 def fan_isomorphism_generator(fan1, fan2):
@@ -69,7 +63,7 @@ def fan_isomorphism_generator(fan1, fan2):
 
     INPUT:
 
-    - ``fan1``, ``fan2`` -- two fans.
+    - ``fan1``, ``fan2`` -- two fans
 
     OUTPUT:
 
@@ -193,16 +187,16 @@ def find_isomorphism(fan1, fan2, check=False):
 
     INPUT:
 
-    - ``fan1``, ``fan2`` -- two fans.
+    - ``fan1``, ``fan2`` -- two fans
 
-    - ``check`` -- boolean (default: False). Passed to the fan
+    - ``check`` -- boolean (default: ``False``); passed to the fan
       morphism constructor, see
-      :func:`~sage.geometry.fan_morphism.FanMorphism`.
+      :func:`~sage.geometry.fan_morphism.FanMorphism`
 
     OUTPUT:
 
     A fan isomorphism. If the fans are not isomorphic, a
-    :class:`FanNotIsomorphicError` is raised.
+    :exc:`FanNotIsomorphicError` is raised.
 
     EXAMPLES::
 
@@ -251,7 +245,7 @@ def fan_2d_cyclically_ordered_rays(fan):
 
     INPUT:
 
-    - ``fan`` -- a 2-dimensional fan.
+    - ``fan`` -- a 2-dimensional fan
 
     OUTPUT:
 
@@ -302,7 +296,7 @@ def fan_2d_echelon_forms(fan):
 
     INPUT:
 
-    - ``fan`` -- a fan.
+    - ``fan`` -- a fan
 
     OUTPUT:
 
@@ -346,7 +340,7 @@ def fan_2d_echelon_forms(fan):
         ....:     fan2 = Fan(perm_cones, rays=[m*vector(r) for r in perm_rays])
         ....:     assert fan_2d_echelon_form(fan2) in echelon_forms
 
-    The trivial case was fixed in :trac:`18613`::
+    The trivial case was fixed in :issue:`18613`::
 
         sage: fan = Fan([], lattice=ToricLattice(2))
         sage: fan_2d_echelon_forms(fan)
@@ -354,7 +348,7 @@ def fan_2d_echelon_forms(fan):
         sage: parent(list(_)[0])
         Full MatrixSpace of 2 by 0 dense matrices over Integer Ring
     """
-    if fan.nrays() == 0:
+    if fan.n_rays() == 0:
         return frozenset([fan_2d_echelon_form(fan)])
     rays = list(fan_2d_cyclically_ordered_rays(fan))
     echelon_forms = []
@@ -373,7 +367,7 @@ def fan_2d_echelon_form(fan):
 
     INPUT:
 
-    - ``fan`` -- a fan.
+    - ``fan`` -- a fan
 
     OUTPUT:
 

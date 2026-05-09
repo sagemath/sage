@@ -1,4 +1,11 @@
 # Packages needed for ./bootstrap
-autoconf automake libtool
-# Fedora 26 needs:
-pkg-config
+autoconf
+automake
+libtool
+# Python packages needed for configure and build
+python3
+python3-devel
+python3-setuptools
+xz
+xz-devel
+xz

@@ -21,11 +21,13 @@ We construct products projective spaces of various dimensions over the same ring
 # https://www.gnu.org/licenses/
 # ****************************************************************************
 from copy import copy
+
+import sage.rings.abc
+
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
 from sage.rings.fraction_field import FractionField
-from sage.rings.number_field.order import is_NumberFieldOrder
-from sage.rings.qqbar import QQbar
+from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.morphism import SchemeMorphism
 from sage.schemes.generic.morphism import SchemeMorphism_point
 from sage.structure.sequence import Sequence
@@ -50,12 +52,12 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``parent`` -- Hom-set.
+        - ``parent`` -- Hom-set
 
-        - ``polys`` -- anything that defines a point in the class.
+        - ``polys`` -- anything that defines a point in the class
 
-        - ``check`` -- Boolean. Whether or not to perform input checks.
-          (Default: ``True``)
+        - ``check`` -- boolean (default: ``True``); whether or not to perform
+          input checks
 
         EXAMPLES::
 
@@ -108,11 +110,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``i`` - integer.
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        The projective space point that is the ``i``-th coordinate.
+        OUTPUT: the projective space point that is the ``i``-th coordinate
 
         EXAMPLES::
 
@@ -131,7 +131,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         r"""
         Return a string representation of this point.
 
-        OUTPUT: String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -143,7 +143,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         return '(%s)' % (" , ".join((" : ".join(repr(f) for f in Q))
                                     for Q in self._points))
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         r"""
         Compare two points in products of projective spaces.
 
@@ -151,9 +151,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         - ``other`` -- another point
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -196,18 +194,15 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             True
         """
         #needed for Digraph
-        if not isinstance(right, (ProductProjectiveSpaces_point_ring)):
+        if not isinstance(other, (ProductProjectiveSpaces_point_ring)):
             return NotImplemented
-        else:
-            return richcmp(self._points, right._points, op)
+        return richcmp(self._points, other._points, op)
 
     def __copy__(self):
         r"""
         Return a copy of this point.
 
-        OUTPUT:
-
-        - a point in the same space as third point.
+        OUTPUT: a point in the same space as third point
 
         EXAMPLES::
 
@@ -219,14 +214,14 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: P == Q
             True
         """
-        P = [copy(self[i]) for i in range(self.codomain().ambient_space().num_components())]
+        P = [copy(self[i]) for i in range(self.codomain().ambient_space().n_components())]
         return (self.codomain().point(P, False))
 
     def __iter__(self):
         r"""
         Iterate over the coordinates of the point.
 
-        OUTPUT: An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -254,13 +249,13 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             4
         """
         image = self.codomain().ambient_space()
-        return image.dimension() + image.num_components()
+        return image.dimension() + image.n_components()
 
     def __hash__(self):
         """
         Compute the hash value of this point.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -302,7 +297,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         r"""
         Remove common factors (componentwise) from the coordinates of this point (including `-1`).
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -312,23 +307,21 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: P
             (1 : 2 : 3 , 2 : 1 : 3)
         """
-        for i in range(self.codomain().ambient_space().num_components()):
+        for i in range(self.codomain().ambient_space().n_components()):
             self[i].normalize_coordinates()
 
     def dehomogenize(self, L):
         r"""
-        Dehomogenize `k^{th}` point at `L[k]^{th}` coordinate.
+        Dehomogenize `k`-th point at `L[k]`-th coordinate.
 
         This function computes the appropriate affine patch using ``L``
         and then returns the dehomogenized point on of this affine space.
 
         INPUT:
 
-        - ``L`` - a list of non-negative integers
+        - ``L`` -- list of nonnegative integers
 
-        OUTPUT:
-
-        - :class:`SchemeMorphism_point_affine`.
+        OUTPUT: :class:`SchemeMorphism_point_affine`
 
         EXAMPLES::
 
@@ -339,7 +332,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         ::
 
-            sage: # needs sage.rings.real_mpfr
+            sage: # needs sage.rings.real_mpfr sage.symbolic
             sage: PP.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], CC)
             sage: X = PP.subscheme([a^2 + b^2])
             sage: P = X([2, 2*i, -3, 6*i, 3 - 6*i])
@@ -358,7 +351,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         PP = self.codomain()
         A = PP.affine_patch(L)
         pt = []
-        for i in range(PP.ambient_space().num_components()):
+        for i in range(PP.ambient_space().n_components()):
             pt.extend(self[i].dehomogenize(L[i]))
         return A(pt)
 
@@ -366,8 +359,8 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         r"""
         Scale the coordinates of the point by ``t``, done componentwise.
 
-        A ``TypeError`` occurs if the point is not in the base ring of the
-        codomain after scaling.
+        A :exc:`TypeError` occurs if the point is not in the base ring
+        of the codomain after scaling.
 
         INPUT:
 
@@ -383,9 +376,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         """
         if not isinstance(t, (tuple, list)):
             raise TypeError("%s must be a list or tuple" % t)
-        if len(t) != self.codomain().ambient_space().num_components():
+        if len(t) != self.codomain().ambient_space().n_components():
             raise TypeError("%s must have same number of components as %r" % (t, self))
-        for i in range(self.codomain().ambient_space().num_components()):
+        for i in range(self.codomain().ambient_space().n_components()):
             self[i].scale_by(t[i])
 
     def change_ring(self, R, **kwds):
@@ -397,15 +390,15 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``R`` -- ring.
+        - ``R`` -- ring
 
         kwds:
 
-        - ``check`` -- Boolean.
+        - ``check`` -- boolean
 
-        - ``embedding`` -- field embedding from the base ring of this point to ``R``.
+        - ``embedding`` -- field embedding from the base ring of this point to ``R``
 
-        OUTPUT: :class:`ProductProjectiveSpaces_point`.
+        OUTPUT: :class:`ProductProjectiveSpaces_point`
 
         EXAMPLES::
 
@@ -430,9 +423,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -466,10 +459,10 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             0.536479304144700
         """
         K = self.codomain().base_ring()
-        if K not in NumberFields() and not is_NumberFieldOrder(K) and K != QQbar:
+        if K not in NumberFields() and K != ZZ and not isinstance(K, (sage.rings.abc.Order, sage.rings.abc.AlgebraicField)):
             raise TypeError("must be over a number field or a number field order or QQbar")
 
-        n = self.codomain().ambient_space().num_components()
+        n = self.codomain().ambient_space().n_components()
         return max(self[i].global_height(prec=prec) for i in range(n))
 
     def local_height(self, v, prec=None):
@@ -482,12 +475,12 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``v`` -- a prime or prime ideal of the base ring.
+        - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -507,7 +500,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         if K not in NumberFields():
             raise TypeError("must be over a number field or a number field order")
 
-        n = self.codomain().ambient_space().num_components()
+        n = self.codomain().ambient_space().n_components()
         return max(self[i].local_height(v, prec=prec) for i in range(n))
 
 
@@ -522,9 +515,9 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
 
         INPUT:
 
-        - ``X`` -- a subscheme in the same ambient space as the codomain of this point.
+        - ``X`` -- a subscheme in the same ambient space as the codomain of this point
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -535,8 +528,8 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
             sage: Q.intersection_multiplicity(Y)                                        # needs sage.libs.singular
             2
         """
-        from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-        if is_ProductProjectiveSpaces(self.codomain()):
+        from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+        if isinstance(self.codomain(), ProductProjectiveSpaces_ring):
             raise TypeError("this point must be a point on a subscheme of a product of projective spaces")
         return self.codomain().intersection_multiplicity(X, self)
 
@@ -547,7 +540,7 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
         This uses the subscheme implementation of multiplicity. This point must be a point
         on a subscheme of a product of projective spaces.
 
-        OUTPUT: an integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -563,8 +556,8 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
             sage: Q3.multiplicity()                                                     # needs sage.libs.singular
             6
         """
-        from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-        if is_ProductProjectiveSpaces(self.codomain()):
+        from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+        if isinstance(self.codomain(), ProductProjectiveSpaces_ring):
             raise TypeError("this point must be a point on a subscheme of a product of projective spaces")
         return self.codomain().multiplicity(self)
 

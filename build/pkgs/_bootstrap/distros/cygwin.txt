@@ -1,2 +1,0 @@
-# Packages needed for ./bootstrap
-autoconf automake libtool

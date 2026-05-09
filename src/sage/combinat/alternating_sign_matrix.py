@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
-Alternating Sign Matrices
+Alternating sign matrices
 
 AUTHORS:
 
@@ -41,25 +41,28 @@ from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import zero_vector
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.arith.misc import factorial
 from sage.rings.integer import Integer
-from sage.combinat.posets.lattices import LatticePoset
 from sage.combinat.gelfand_tsetlin_patterns import GelfandTsetlinPatternsTopRow
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.non_decreasing_parking_function import NonDecreasingParkingFunction
 from sage.combinat.permutation import Permutation
 from sage.combinat.six_vertex_model import SquareIceModel
 
+lazy_import('sage.combinat.posets.lattices', 'LatticePoset')
+
 
 def _inplace_height_function_gyration(hf):
     k = hf.nrows() - 1
-    for i in range(1,k):
-        for j in range(1,k):
+    for i in range(1, k):
+        for j in range(1, k):
             if (i+j) % 2 == 0 \
                     and hf[i-1,j] == hf[i+1,j] == hf[i,j+1] == hf[i,j-1]:
                 if hf[i,j] < hf[i+1,j]:
@@ -82,7 +85,7 @@ class AlternatingSignMatrix(Element,
     An alternating sign matrix.
 
     An alternating sign matrix is a square matrix of `0`'s, `1`'s and `-1`'s
-    such that the sum of each row and column is `1` and the non-zero
+    such that the sum of each row and column is `1` and the nonzero
     entries in each row and column alternate in sign.
 
     These were introduced in [MRR1983]_.
@@ -106,7 +109,7 @@ class AlternatingSignMatrix(Element,
 
         TESTS:
 
-        Check that :trac:`22032` is fixed::
+        Check that :issue:`22032` is fixed::
 
             sage: AlternatingSignMatrix([])
             []
@@ -260,13 +263,12 @@ class AlternatingSignMatrix(Element,
             True
         """
         n = self._matrix.nrows()
-        triangle = [None] * n
-        prev = zero_vector(ZZ, n)
+        triangle = [0] * n
+        add_row = zero_vector(ZZ, n)
         for j, row in enumerate(self._matrix):
-            add_row = row + prev
+            add_row = row + add_row
             triangle[n - 1 - j] = [i + 1 for i in range(n - 1, -1, -1)
                                    if add_row[i] == 1]
-            prev = add_row
         return MonotoneTriangles(n)(triangle)
 
     @combinatorial_map(name='rotate counterclockwise')
@@ -291,7 +293,7 @@ class AlternatingSignMatrix(Element,
         li.reverse()
         return AlternatingSignMatrix(li)
 
-    def inversion_number(self):
+    def number_of_inversions(self):
         r"""
         Return the inversion number of ``self``.
 
@@ -305,26 +307,29 @@ class AlternatingSignMatrix(Element,
         EXAMPLES::
 
             sage: A = AlternatingSignMatrices(3)
-            sage: A([[1, 0, 0],[0, 1, 0],[0, 0, 1]]).inversion_number()
+            sage: A([[1, 0, 0],[0, 1, 0],[0, 0, 1]]).number_of_inversions()
             0
             sage: asm = A([[0, 0, 1],[1, 0, 0],[0, 1, 0]])
-            sage: asm.inversion_number()
+            sage: asm.number_of_inversions()
             2
             sage: asm = A([[0, 1, 0],[1, -1, 1],[0, 1, 0]])
-            sage: asm.inversion_number()
+            sage: asm.number_of_inversions()
             2
             sage: P = Permutations(5)
-            sage: all(p.number_of_inversions()==AlternatingSignMatrix(p.to_matrix()).inversion_number() for p in P)
+            sage: A = AlternatingSignMatrix
+            sage: all(p.number_of_inversions() == A(p.to_matrix()).number_of_inversions() for p in P)
             True
         """
         inversion_num = 0
         asm_matrix = self.to_matrix()
         nonzero_cells = asm_matrix.nonzero_positions()
-        for (i, j) in nonzero_cells:
-            for (k, l) in nonzero_cells:
+        for i, j in nonzero_cells:
+            for k, l in nonzero_cells:
                 if i > k and j < l:
                     inversion_num += asm_matrix[i][j] * asm_matrix[k][l]
         return inversion_num
+
+    inversion_number = number_of_inversions
 
     @combinatorial_map(name='rotate clockwise')
     def rotate_cw(self):
@@ -517,18 +522,17 @@ class AlternatingSignMatrix(Element,
             sage: asm = AlternatingSignMatrix([[1,0,0],[0,1,0],[0,0,1]])
             sage: fpl = asm.to_fully_packed_loop()
             sage: fpl
-                |         |
-                |         |
-                +    + -- +
-                |    |
-                |    |
-             -- +    +    + --
-                     |    |
-                     |    |
-                + -- +    +
-                |         |
-                |         |
-
+                │         │
+                │         │
+                +    + ── +
+                │    │
+                │    │
+             ── +    +    + ──
+                     │    │
+                     │    │
+                + ── +    +
+                │         │
+                │         │
         """
         from sage.combinat.fully_packed_loop import FullyPackedLoop
         return FullyPackedLoop(self)
@@ -693,7 +697,7 @@ class AlternatingSignMatrix(Element,
 
         Given an `n \times n` alternating sign matrix `A`, there are as many
         ASM's of size `n+1` compatible with `A` as 2 raised to the power of
-        the number of 1's in `A` [EKLP1992]_.
+        the number of 1s in `A` [EKLP1992]_.
 
         EXAMPLES::
 
@@ -775,7 +779,6 @@ class AlternatingSignMatrix(Element,
             [1 0]
             [0 1]
             ]
-
         """
         n = self.parent()._n
         M = AlternatingSignMatrices(n-1)
@@ -801,11 +804,11 @@ class AlternatingSignMatrix(Element,
             N = len(output)
             for c in range(N):
                 d = copy.copy(output[c])
-                output[c][sign[b][0],sign[b][1]] = -output[c][sign[b][0], sign[b][1]]+1
-                d[sign[b][0],sign[b][1]] = -d[sign[b][0], sign[b][1]]-3
+                output[c][sign[b][0], sign[b][1]] = -output[c][sign[b][0], sign[b][1]]+1
+                d[sign[b][0], sign[b][1]] = -d[sign[b][0], sign[b][1]]-3
                 output.append(d)
         for k in range(len(output)):
-            output[k] = M.from_height_function((output[k]-matrix.ones(n,n))/2)
+            output[k] = M.from_height_function((output[k]-matrix.ones(n, n))/2)
         return output
 
     @combinatorial_map(name='to Dyck word')
@@ -823,7 +826,7 @@ class AlternatingSignMatrix(Element,
 
         INPUT:
 
-        - ``algorithm`` - either ``'last_diagonal'`` or ``'link_pattern'``
+        - ``algorithm`` -- either ``'last_diagonal'`` or ``'link_pattern'``
 
         EXAMPLES::
 
@@ -860,7 +863,7 @@ class AlternatingSignMatrix(Element,
             parkfn = [nplus - row[0] for row in list(MT) if row]
             return NonDecreasingParkingFunction(parkfn).to_dyck_word().reverse()
 
-        elif algorithm == 'link_pattern':
+        if algorithm == 'link_pattern':
             from sage.combinat.perfect_matching import PerfectMatching
             from sage.combinat.dyck_word import DyckWords
             p = PerfectMatching(self.link_pattern()).to_noncrossing_set_partition()
@@ -871,7 +874,7 @@ class AlternatingSignMatrix(Element,
 
         raise ValueError("unknown algorithm '%s'" % algorithm)
 
-    def number_negative_ones(self):
+    def number_of_negative_ones(self):
         """
         Return the number of entries in ``self`` equal to -1.
 
@@ -879,16 +882,18 @@ class AlternatingSignMatrix(Element,
 
             sage: A = AlternatingSignMatrices(3)
             sage: asm = A([[0,1,0],[1,0,0],[0,0,1]])
-            sage: asm.number_negative_ones()
+            sage: asm.number_of_negative_ones()
             0
             sage: asm = A([[0,1,0],[1,-1,1],[0,1,0]])
-            sage: asm.number_negative_ones()
+            sage: asm.number_of_negative_ones()
             1
         """
         a = self._matrix
         return ZZ((len(a.nonzero_positions()) - a.nrows()) // 2)
 
-    def is_permutation(self):
+    number_negative_ones = number_of_negative_ones
+
+    def is_permutation(self) -> bool:
         """
         Return ``True`` if ``self`` is a permutation matrix
         and ``False`` otherwise.
@@ -903,7 +908,7 @@ class AlternatingSignMatrix(Element,
             sage: asm.is_permutation()
             False
         """
-        return self.number_negative_ones() == 0
+        return self.number_of_negative_ones() == 0
 
     def to_permutation(self):
         """
@@ -927,7 +932,7 @@ class AlternatingSignMatrix(Element,
         if not self.is_permutation():
             raise ValueError('not a permutation matrix')
         asm_matrix = self.to_matrix()
-        return Permutation([j + 1 for (i, j) in asm_matrix.nonzero_positions()])
+        return Permutation([j + 1 for _, j in asm_matrix.nonzero_positions()])
 
     @combinatorial_map(name='to semistandard tableau')
     def to_semistandard_tableau(self):
@@ -944,7 +949,7 @@ class AlternatingSignMatrix(Element,
             [[1, 1, 2], [2, 3], [3]]
             sage: parent(t)
             Semistandard tableaux
-            """
+        """
         from sage.combinat.tableau import SemistandardTableau
         mt = self.to_monotone_triangle()
         ssyt = [[0]*(len(mt) - j) for j in range(len(mt))]
@@ -1018,14 +1023,14 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
 
     An alternating sign matrix of size `n` is an `n \times n` matrix of `0`'s,
     `1`'s and `-1`'s such that the sum of each row and column is `1` and the
-    non-zero entries in each row and column alternate in sign.
+    nonzero entries in each row and column alternate in sign.
 
     Alternating sign matrices of size `n` are in bijection with
     :class:`monotone triangles <MonotoneTriangles>` with `n` rows.
 
     INPUT:
 
-    - `n` -- an integer, the size of the matrices.
+    - ``n`` -- integer; the size of the matrices
 
     EXAMPLES:
 
@@ -1044,10 +1049,10 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         sage: L
         Finite lattice containing 7 elements
         sage: L.category()
-        Category of facade finite enumerated lattice posets
+        Category of facade finite enumerated distributive lattices
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -1060,7 +1065,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         self._matrix_space = MatrixSpace(ZZ, n)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1085,7 +1090,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         """
         return self._matrix_space._repr_option(key)
 
-    def __contains__(self, asm):
+    def __contains__(self, asm) -> bool:
         """
         Check if ``asm`` is in ``self``.
 
@@ -1242,7 +1247,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             [ 0  0  0  1  0  0  0]
             [ 0  1  0  0  0  0  0]
             sage: a = AlternatingSignMatrices(5).random_element()
-            sage: bool(a.number_negative_ones()) or a.is_permutation()
+            sage: bool(a.number_of_negative_ones()) or a.is_permutation()
             True
 
         This is done using a modified version of Propp and Wilson's "coupling
@@ -1472,7 +1477,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         m.set_immutable()
         return self.element_class(self, m)
 
-    def _lattice_initializer(self):
+    def _lattice_initializer(self) -> tuple:
         r"""
         Return a 2-tuple to use in argument of ``LatticePoset``.
 
@@ -1493,7 +1498,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         """
         mts, rels = MonotoneTriangles(self._n)._lattice_initializer()
         bij = {t: self.from_monotone_triangle(t) for t in mts}
-        return (bij.values(), [(bij[a], bij[b]) for (a, b) in rels])
+        return (bij.values(), [(bij[a], bij[b]) for a, b in rels])
 
     def cover_relations(self):
         r"""
@@ -1503,7 +1508,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: A = AlternatingSignMatrices(3)
-            sage: for (a,b) in A.cover_relations():
+            sage: for a, b in A.cover_relations():
             ....:   eval('a, b')
             (
             [1 0 0]  [0 1 0]
@@ -1545,7 +1550,6 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             [0 0 1]  [0 1 0]
             [1 0 0], [1 0 0]
             )
-
         """
         return iter(self._lattice_initializer()[1])
 
@@ -1560,10 +1564,10 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             sage: L = A.lattice()
             sage: L
             Finite lattice containing 7 elements
-
         """
+        cat = FiniteLatticePosets().Distributive()
         return LatticePoset(self._lattice_initializer(), cover_relations=True,
-                            check=False)
+                            check=False, category=cat)
 
     @cached_method
     def gyration_orbits(self):
@@ -1633,7 +1637,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
 
     INPUT:
 
-    - ``n`` -- The number of rows in the monotone triangles
+    - ``n`` -- the number of rows in the monotone triangles
 
     EXAMPLES:
 
@@ -1737,7 +1741,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
         EXAMPLES::
 
             sage: M = MonotoneTriangles(3)
-            sage: for (a,b) in M.cover_relations():
+            sage: for a, b in M.cover_relations():
             ....:   eval('a, b')
             ([[3, 2, 1], [2, 1], [1]], [[3, 2, 1], [2, 1], [2]])
             ([[3, 2, 1], [2, 1], [1]], [[3, 2, 1], [3, 1], [1]])
@@ -1782,7 +1786,7 @@ def _is_a_cover(mt0, mt1):
         False
     """
     diffs = 0
-    for (a, b) in zip(flatten(mt0), flatten(mt1)):
+    for a, b in zip(flatten(mt0), flatten(mt1)):
         if a != b:
             if a + 1 == b:
                 diffs += 1
@@ -1821,9 +1825,8 @@ class ContreTableaux(Parent, metaclass=ClasscallMetaclass):
             sage: C = ContreTableaux(4)
             sage: type(C)
             <class 'sage.combinat.alternating_sign_matrix.ContreTableaux_n'>
-
         """
-        assert(isinstance(n, (int, Integer)))
+        assert isinstance(n, (int, Integer))
         return ContreTableaux_n(n, **kwds)
 
 
@@ -1909,8 +1912,7 @@ class ContreTableaux_n(ContreTableaux):
              [[1, 2, 3], [2, 3], [2]],
              [[1, 2, 3], [2, 3], [3]]]
         """
-        for z in self._iterator_rec(self.n):
-            yield z
+        yield from self._iterator_rec(self.n)
 
 
 def _next_column_iterator(previous_column, height, i=None):
@@ -1983,9 +1985,8 @@ class TruncatedStaircases(Parent, metaclass=ClasscallMetaclass):
             sage: T = TruncatedStaircases(4, [2,3])
             sage: type(T)
             <class 'sage.combinat.alternating_sign_matrix.TruncatedStaircases_nlastcolumn'>
-
         """
-        assert(isinstance(n, (int, Integer)))
+        assert isinstance(n, (int, Integer))
         return TruncatedStaircases_nlastcolumn(n, last_column, **kwds)
 
 

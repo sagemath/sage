@@ -11,12 +11,13 @@ SetsWithPartialMaps
 #******************************************************************************
 
 from sage.categories.category_singleton import Category_singleton
-from .objects import Objects
+from sage.categories.objects import Objects
+
 
 class SetsWithPartialMaps(Category_singleton):
     """
     The category whose objects are sets and whose morphisms are
-    maps that are allowed to raise a ValueError on some inputs.
+    maps that are allowed to raise a :exc:`ValueError` on some inputs.
 
     This category is equivalent to the category of pointed sets,
     via the equivalence sending an object X to X union {error},

@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
-Free Dendriform Algebras
+Free dendriform algebras
 
 AUTHORS:
 
-Frédéric Chapoton (2017)
+- Frédéric Chapoton (2017)
 """
 # ****************************************************************************
 #       Copyright (C) 2010-2015 Frédéric Chapoton <chapoton@unistra.fr>,
@@ -87,7 +87,8 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         sage: F = algebras.FreeDendriform(ZZ, 'xyz')
         sage: x,y,z = F.gens()
         sage: (x * y) * z
-        B[x[., y[., z[., .]]]] + B[x[., z[y[., .], .]]] + B[y[x[., .], z[., .]]] + B[z[x[., y[., .]], .]] + B[z[y[x[., .], .], .]]
+        B[x[., y[., z[., .]]]] + B[x[., z[y[., .], .]]] + B[y[x[., .], z[., .]]]
+         + B[z[x[., y[., .]], .]] + B[z[y[x[., .], .], .]]
 
     The free dendriform algebra is associative::
 
@@ -114,7 +115,8 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         sage: w = F1.gen(0); w
         B[[., .]]
         sage: w * w * w
-        B[[., [., [., .]]]] + B[[., [[., .], .]]] + B[[[., .], [., .]]] + B[[[., [., .]], .]] + B[[[[., .], .], .]]
+        B[[., [., [., .]]]] + B[[., [[., .], .]]] + B[[[., .], [., .]]]
+         + B[[[., [., .]], .]] + B[[[[., .], .], .]]
 
     The set `E` can be infinite::
 
@@ -178,7 +180,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
         cat = HopfAlgebras(R).WithBasis().Graded().Connected()
         CombinatorialFreeModule.__init__(self, R, Trees,
-                                         latex_prefix="",
+                                         latex_prefix='',
                                          sorting_key=key,
                                          category=cat)
 
@@ -222,11 +224,11 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
     def gen(self, i):
         r"""
-        Return the ``i``-th generator of the algebra.
+        Return the `i`-th generator of the algebra.
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -285,7 +287,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         """
         return FreeDendriformAlgebra(R, names=self.variable_names())
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self`` (as an algebra).
 
@@ -311,10 +313,9 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
             sage: A.degree_on_basis(u.over(u))
             2
         """
-        return t.node_number()
+        return t.number_of_nodes()
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -626,7 +627,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         """
         B = self.basis()
         Trees = B.keys()
-        if not x.node_number():
+        if not x.number_of_nodes():
             return self.one().tensor(self.one())
         L, R = list(x)
         try:
@@ -896,12 +897,11 @@ class DendriformFunctor(ConstructionFunctor):
                 raise CoercionException("Overlapping variables (%s,%s)" %
                                         (self.vars, other.vars))
             return DendriformFunctor(other.vars + self.vars)
-        elif (isinstance(other, CompositeConstructionFunctor) and
+        if (isinstance(other, CompositeConstructionFunctor) and
               isinstance(other.all[-1], DendriformFunctor)):
             return CompositeConstructionFunctor(other.all[:-1],
                                                 self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def merge(self, other):
         """
@@ -937,14 +937,12 @@ class DendriformFunctor(ConstructionFunctor):
                 return self
             ret = list(self.vars)
             cur_vars = set(ret)
-            for v in other.vars:
-                if v not in cur_vars:
-                    ret.append(v)
+            ret.extend(v for v in other.vars if v not in cur_vars)
             return DendriformFunctor(Alphabet(ret))
-        else:
-            return None
 
-    def _repr_(self):
+        return None
+
+    def _repr_(self) -> str:
         """
         TESTS::
 

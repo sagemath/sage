@@ -1,5 +1,6 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
-Rigged Configuration Elements
+Rigged configuration elements
 
 A rigged configuration element is a sequence of
 :class:`~sage.combinat.rigged_configurations.rigged_partition.RiggedPartition`
@@ -7,8 +8,8 @@ objects.
 
 AUTHORS:
 
-- Travis Scrimshaw (2010-09-26): Initial version
-- Travis Scrimshaw (2012-10-25): Added virtual rigged configurations
+- Travis Scrimshaw (2010-09-26): initial version
+- Travis Scrimshaw (2012-10-25): added virtual rigged configurations
 """
 
 # ****************************************************************************
@@ -54,7 +55,7 @@ class RiggedConfigurationElement(ClonableArray):
 
     - ``parent`` -- the parent of this element
 
-    - ``rigged_partitions`` -- a list of rigged partitions
+    - ``rigged_partitions`` -- list of rigged partitions
 
     There are two optional arguments to explicitly construct a rigged
     configuration. The first is ``partition_list`` which gives a list of
@@ -155,7 +156,7 @@ class RiggedConfigurationElement(ClonableArray):
             if the rigged partitions comes from another rigged configuration,
             a deep copy should be made before being passed here. We do not
             make a deep copy here because the crystal operators generate
-            their own rigged partitions. See :trac:`17054`.
+            their own rigged partitions. See :issue:`17054`.
 
         EXAMPLES::
 
@@ -198,9 +199,7 @@ class RiggedConfigurationElement(ClonableArray):
             if len(data) == 0:
                 # Create a size n array of empty rigged tableau since no tableau
                 #   were given
-                nu = []
-                for i in range(n):
-                    nu.append(RiggedPartition())
+                nu = [RiggedPartition() for _ in range(n)]
             else:
                 if len(data) != n:  # otherwise n should be equal to the number of tableaux
                     raise ValueError("incorrect number of partitions")
@@ -463,9 +462,7 @@ class RiggedConfigurationElement(ClonableArray):
         Return the list `\nu` of rigged partitions of this rigged
         configuration element.
 
-        OUTPUT:
-
-        The `\nu` array as a list.
+        OUTPUT: the `\nu` array as a list
 
         EXAMPLES::
 
@@ -504,9 +501,7 @@ class RiggedConfigurationElement(ClonableArray):
 
         - ``a`` -- the index of the partition to remove a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -626,9 +621,7 @@ class RiggedConfigurationElement(ClonableArray):
         - ``k`` -- the length of the string with the smallest negative
           rigging of smallest length
 
-        OUTPUT:
-
-        The constructed rigged partition.
+        OUTPUT: the constructed rigged partition
 
         TESTS::
 
@@ -678,9 +671,7 @@ class RiggedConfigurationElement(ClonableArray):
 
         - ``a`` -- the index of the partition to add a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -785,9 +776,7 @@ class RiggedConfigurationElement(ClonableArray):
         - ``k`` -- the length of the string with smallest nonpositive rigging
           of largest length
 
-        OUTPUT:
-
-        The constructed rigged partition.
+        OUTPUT: the constructed rigged partition
 
         TESTS::
 
@@ -837,7 +826,7 @@ class RiggedConfigurationElement(ClonableArray):
         a = self.parent()._rc_index_inverse[a]
         if not self[a]:
             return ZZ.zero()
-        return Integer(-min(0, min(self[a].rigging)))
+        return Integer(-min(0, *self[a].rigging))
 
     def phi(self, a):
         r"""
@@ -862,7 +851,7 @@ class RiggedConfigurationElement(ClonableArray):
         p_inf = self.parent()._calc_vacancy_number(self, a, float("inf"))
         if not self[a]:
             return Integer(p_inf)
-        return Integer(p_inf - min(0, min(self[a].rigging)))
+        return Integer(p_inf - min(0, *self[a].rigging))
 
     def vacancy_number(self, a, i):
         r"""
@@ -1098,9 +1087,7 @@ class RCHighestWeightElement(RiggedConfigurationElement):
 
         - ``a`` -- the index of the partition to add a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -1307,9 +1294,8 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
             shape_data = data[0]
             rigging_data = data[1]
             vac_data = data[2]
-            nu = []
-            for i in range(n):
-                nu.append(RiggedPartition(shape_data[i], rigging_data[i], vac_data[i]))
+            nu = [RiggedPartition(a, b, c)
+                  for a, b, c in zip(shape_data, rigging_data, vac_data)]
             # Special display case
             if parent.cartan_type().type() == 'B':
                 nu[-1] = RiggedPartitionTypeB(nu[-1])
@@ -1356,9 +1342,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         - ``a`` -- the index of the partition to remove a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -1410,9 +1394,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         - ``a`` -- the index of the partition to add a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -1575,10 +1557,10 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         INPUT:
 
-        - ``display_steps`` -- (default: ``False``) boolean which indicates
-          if we want to print each step in the algorithm
-        - ``build_graph`` -- (default: ``False``) boolean which indicates
-          if we want to construct and return a graph of the bijection whose
+        - ``display_steps`` -- boolean (default: ``False``); indicates whether
+          to print each step in the algorithm
+        - ``build_graph`` -- boolean (default: ``False``); indicates whether
+          to construct and return a graph of the bijection whose
           vertices are rigged configurations obtained at each step and edges
           are labeled by either the return value of `\delta` or the
           doubling/halving map
@@ -1661,10 +1643,10 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         INPUT:
 
-        - ``display_steps`` -- (default: ``False``) boolean which indicates
-          if we want to print each step in the algorithm
-        - ``build_graph`` -- (default: ``False``) boolean which indicates
-          if we want to construct and return a graph of the bijection whose
+        - ``display_steps`` -- boolean (default: ``False``); indicates whether
+          to print each step in the algorithm
+        - ``build_graph`` -- boolean (default: ``False``); indicates whether
+          to construct and return a graph of the bijection whose
           vertices are rigged configurations obtained at each step and edges
           are labeled by either the return value of `\delta` or the
           doubling/halving map
@@ -1804,7 +1786,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         INPUT:
 
-        - ``return_b`` -- (default: ``False``) whether to return the
+        - ``return_b`` -- boolean (default: ``False``); whether to return the
           resulting letter from `\delta`
 
         OUTPUT:
@@ -1992,7 +1974,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         INPUT:
 
-        - ``reverse_factors`` -- (default: ``False``) if ``True``, then this
+        - ``reverse_factors`` -- boolean (default: ``False``); if ``True``, then this
           returns an element in `RC(B')` where `B'` is the tensor factors
           of ``self`` in reverse order
 
@@ -2037,7 +2019,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         TESTS:
 
-        We check that :trac:`18898` is fixed::
+        We check that :issue:`18898` is fixed::
 
             sage: RC = RiggedConfigurations(['D',4,1], [[2,1], [2,1], [2,3]])
             sage: x = RC(partition_list=[[1], [1,1], [1], [1]], rigging_list=[[0], [2,1], [0], [0]])
@@ -2333,7 +2315,7 @@ class KRRCTypeA2DualElement(KRRCNonSimplyLacedElement):
         if not self[a]:
             epsilon = 0
         else:
-            epsilon = -min(0, min(self[a].rigging))
+            epsilon = -min(0, *self[a].rigging)
         n = len(self.parent()._rc_index)
         if a == n-1: # -1 for indexing
             epsilon *= 2
@@ -2367,7 +2349,7 @@ class KRRCTypeA2DualElement(KRRCNonSimplyLacedElement):
         if not self[a]:
             phi = p_inf
         else:
-            phi = p_inf - min(0, min(self[a].rigging))
+            phi = p_inf - min(0, *self[a].rigging)
         n = len(self.parent()._rc_index)
         if a == n-1: # -1 for indexing
             phi *= 2

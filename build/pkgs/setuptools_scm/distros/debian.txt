@@ -1,1 +1,1 @@
-setuptools-scm
+python3-setuptools-scm

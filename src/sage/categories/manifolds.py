@@ -15,6 +15,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.sets_cat import Sets
 from sage.categories.fields import Fields
 
+
 class Manifolds(Category_over_base_ring):
     r"""
     The category of manifolds over any topological field.
@@ -34,7 +35,7 @@ class Manifolds(Category_over_base_ring):
 
     TESTS::
 
-        sage: TestSuite(C).run(skip="_test_category_over_bases")                        # needs sage.rings.real_mpfr
+        sage: TestSuite(C).run(skip='_test_category_over_bases')                        # needs sage.rings.real_mpfr
     """
     def __init__(self, base, name=None):
         r"""
@@ -44,7 +45,7 @@ class Manifolds(Category_over_base_ring):
 
             sage: from sage.categories.manifolds import Manifolds
             sage: C = Manifolds(RR)
-            sage: TestSuite(C).run(skip="_test_category_over_bases")
+            sage: TestSuite(C).run(skip='_test_category_over_bases')
         """
         if base not in Fields().Topological():
             raise ValueError("base must be a topological field")
@@ -316,7 +317,7 @@ class Manifolds(Category_over_base_ring):
 
             sage: from sage.categories.manifolds import Manifolds
             sage: C = Manifolds(RR).FiniteDimensional()
-            sage: TestSuite(C).run(skip="_test_category_over_bases")
+            sage: TestSuite(C).run(skip='_test_category_over_bases')
         """
 
     class Connected(CategoryWithAxiom_over_base_ring):
@@ -327,8 +328,9 @@ class Manifolds(Category_over_base_ring):
 
             sage: from sage.categories.manifolds import Manifolds
             sage: C = Manifolds(RR).Connected()
-            sage: TestSuite(C).run(skip="_test_category_over_bases")
+            sage: TestSuite(C).run(skip='_test_category_over_bases')
         """
+
 
 class ComplexManifolds(Category_over_base_ring):
     r"""

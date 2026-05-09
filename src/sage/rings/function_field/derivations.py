@@ -18,7 +18,6 @@ AUTHORS:
   derivation classes; morphisms to/from fraction fields
 
 - Kwankyu Lee (2017-04-30): added higher derivations and completions
-
 """
 
 # ****************************************************************************
@@ -55,7 +54,7 @@ class FunctionFieldDerivation(RingDerivationWithoutTwist):
         sage: d
         d/dx
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         r"""
         Initialize a derivation.
 

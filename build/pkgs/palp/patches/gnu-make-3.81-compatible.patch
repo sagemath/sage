@@ -1,0 +1,28 @@
+Support building with GNU make 3.81
+
+The Makefile does not work on macOS
+
+    make[5]: *** No rule to make target `poly-d.x', needed by `poly.x'.
+    make[5]: *** No rule to make target `class-d.x', needed by `class.x'.
+    make[5]: *** No rule to make target `cws-d.x', needed by `cws.x'.
+    make[5]: *** No rule to make target `nef-d.x', needed by `nef.x'.
+    make[5]: *** No rule to make target `mori-d.x', needed by `mori.x'.
+    make[5]: Target `all' not remade because of errors.
+
+because the Makefile uses =-sign after the canned recipe define which
+is only supported on GNU make 3.82. And Apple, in their infinite
+wisdom, still ships the absolutely ancient 3.81
+
+
+
+--- a/GNUmakefile	2025-06-09 08:12:58
++++ b/GNUmakefile	2025-06-09 08:30:59
+@@ -41,7 +41,7 @@
+ .PHONY: cleanall
+ cleanall: ;	rm -f *.o *.x palp_* core
+ 
+-define PROG_DIM_template =
++define PROG_DIM_template
+ #
+ # Define separate build rules for every combination of PROGRAMS and
+ # DIMENSIONS. This really is necessary: we can't reuse an object file

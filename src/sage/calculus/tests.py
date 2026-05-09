@@ -16,7 +16,7 @@ Compute the Christoffel symbol.
 
 ::
 
-    sage: def christoffel(i,j,k,vars,g):
+    sage: def christoffel(i, j, k, vars, g):
     ....:     s = 0
     ....:     ginv = g^(-1)
     ....:     for l in range(g.nrows()):
@@ -139,7 +139,7 @@ No problems here::
     sqrt(pi)/sqrt(c)
     sage: forget()
 
-Other examples that now (:trac:`27958`) work::
+Other examples that now (:issue:`27958`) work::
 
     sage: integrate(log(x)*exp(-x^2), x)  # long time
     1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)
@@ -204,7 +204,8 @@ Maple documentation::
     sage: f = exp(-x^2)*log(x)
     sage: f.nintegral(x, 0, 999)
     (-0.87005772672831..., 7.5584...e-10, 567, 0)
-    sage: integral(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)     # long time  # todo: maple can do this
+    sage: ans = integral(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)     # long time  # random - ignore giac stderr output # todo: maple can do this
+    sage: ans  # long time
     integrate(1/(sqrt(2*t^2 + 1)*sqrt(t^2 - 2)), t, 2, 3)
     sage: integral(integral(x*y^2, x, 0, y), y, -2, 2)
     32/5

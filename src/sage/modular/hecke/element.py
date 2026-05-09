@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Elements of Hecke modules
 
@@ -23,22 +24,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.richcmp import richcmp, op_NE
+from typing import Self
+
 from sage.structure.element import ModuleElement
-
-
-def is_HeckeModuleElement(x):
-    """
-    Return ``True`` if x is a Hecke module element, i.e., of type HeckeModuleElement.
-
-    EXAMPLES::
-
-        sage: sage.modular.hecke.all.is_HeckeModuleElement(0)
-        False
-        sage: sage.modular.hecke.all.is_HeckeModuleElement(BrandtModule(37)([1,2,3]))
-        True
-    """
-    return isinstance(x, HeckeModuleElement)
+from sage.structure.richcmp import op_NE, richcmp
 
 
 class HeckeModuleElement(ModuleElement):
@@ -149,7 +138,7 @@ class HeckeModuleElement(ModuleElement):
         EXAMPLES::
 
             sage: M = ModularSymbols(11, 2)
-            sage: M.0 == M.1 # indirect doctest
+            sage: M.0 == M.1  # indirect doctest
             False
             sage: M.0 == (M.1 + M.0 - M.1)
             True
@@ -202,7 +191,7 @@ class HeckeModuleElement(ModuleElement):
         """
         return self.parent()(-self.element())
 
-    def _pos_(self):
+    def _pos_(self) -> Self:
         """
         EXAMPLES::
 
@@ -243,7 +232,7 @@ class HeckeModuleElement(ModuleElement):
 
         TESTS:
 
-        Verify that :trac:`21497` is fixed::
+        Verify that :issue:`21497` is fixed::
 
             sage: M = ModularSymbols(Gamma0(3),weight=22,sign=1)
             sage: N = next(S for S in M.decomposition(anemic=False) if S.hecke_matrix(3).trace()==-128844)
@@ -275,9 +264,9 @@ class HeckeModuleElement(ModuleElement):
 
     def is_new(self, p=None) -> bool:
         r"""
-        Return ``True`` if this element is p-new.
+        Return ``True`` if this element is `p`-new.
 
-        If p is ``None``, return ``True`` if the element is new.
+        If `p` is ``None``, return ``True`` if the element is new.
 
         EXAMPLES::
 
@@ -292,9 +281,9 @@ class HeckeModuleElement(ModuleElement):
 
     def is_old(self, p=None) -> bool:
         r"""
-        Return ``True`` if this element is p-old.
+        Return ``True`` if this element is `p`-old.
 
-        If p is ``None``, return ``True`` if the element is old.
+        If `p` is ``None``, return ``True`` if the element is old.
 
         EXAMPLES::
 

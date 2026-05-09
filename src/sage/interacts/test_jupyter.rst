@@ -205,7 +205,7 @@ Test all interacts from the Sage interact library::
     Exact value of the integral \(\displaystyle\int_{0}^{2}x^{2} +
     1\,\mathrm{d}x=4.666666666666668\)
 
-    sage: test(interacts.calculus.function_tool)
+    sage: test(interacts.calculus.function_tool)  # long time
     ...Interactive function <function function_tool at ...> with 7 widgets
       f: EvalText(value='sin(x)', description='f')
       g: EvalText(value='cos(x)', description='g')
@@ -218,7 +218,7 @@ Test all interacts from the Sage interact library::
     <center><font color="green">\(g = \cos\left(x\right)\)</font></center>
     <center><font color="blue"><b>\(h = f = \sin\left(x\right)\)</b></font></center>
 
-    sage: test(interacts.fractals.mandelbrot)
+    sage: test(interacts.fractals.mandelbrot)  # long time
     ...Interactive function <function mandelbrot at ...> with 6 widgets
       expo: FloatSlider(value=2.0, description='expo', max=10.0, min=-10.0)
       iterations: IntSlider(value=20, description='# iterations', min=1)
@@ -229,7 +229,7 @@ Test all interacts from the Sage interact library::
     <h2>Mandelbrot Fractal</h2>
     Recursive Formula: \(z \leftarrow z^{2.00} + c\) for \(c \in \mathbb{C}\)
 
-    sage: test(interacts.fractals.julia)
+    sage: test(interacts.fractals.julia)  # long time
     ...Interactive function <function julia at ...> with 8 widgets
       expo: FloatSlider(value=2.0, description='expo', max=10.0, min=-10.0)
       c_real: FloatSlider(value=0.5, description='real part const.', max=2.0, min=-2.0, step=0.01)
@@ -265,7 +265,7 @@ Test all interacts from the Sage interact library::
     \(AB = 1.931852\), \(BC = 1.732051\), \(CA = 1.414214\)
     Area of triangle \(ABC = 1.183013\)
 
-    sage: test(interacts.geometry.special_points)
+    sage: test(interacts.geometry.special_points)  # long time
     ...Interactive function <function special_points at ...> with 10 widgets
       title: HTMLText(value='<h2>Special points in triangle</h2>')
       a0: IntSlider(value=30, description='A', max=360)
@@ -283,7 +283,7 @@ Test all interacts from the Sage interact library::
       n: IntSlider(value=1000, description='Number of Tosses', max=10000, min=2, step=100)
       interval: FloatRangeSlider(value=(0.45, 0.55), description='Plotting range (y)', max=1.0)
 
-Test matrix control (see :trac:`27735`)::
+Test matrix control (see :issue:`27735`)::
 
     sage: @library_interact(A=lambda: matrix(QQ, 2, 2, range(4)))
     ....: def matrix_test(A):

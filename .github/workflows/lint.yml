@@ -1,6 +1,12 @@
 name: Lint
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+  merge_group:
 
 concurrency:
   # Cancel previous runs of this workflow for the same branch
@@ -8,60 +14,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-pycodestyle:
-    name: Code style check with pycodestyle
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
     - name: Merge CI fixes from sagemath/sage
       run: |
-        .ci/merge-fixes.sh
+        .github/workflows/merge-fixes.sh
       env:
         GH_TOKEN: ${{ github.token }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
-    - name: Install pycodestyle
-      run: pip install tox pycodestyle
-    - name: Lint using pycodestyle
-      run: tox -e pycodestyle-minimal
-  lint-relint:
-    name: Code style check with relint
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Merge CI fixes from sagemath/sage
+
+    - name: Install prerequisites
+      id: deps
+      run: pip install uv
+
+    - name: Code style check with ruff
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
       run: |
-        .ci/merge-fixes.sh
-      env:
-        GH_TOKEN: ${{ github.token }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
+        uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --no-preview
+        uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --preview
+
+    - name: Code style check with relint
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+      run: uv run --frozen --only-group lint -- relint -c src/.relint.yml -- src/sage/
+
+    - name: Validate docstring markup as RST
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+      run: uv run --frozen --only-group lint -- flake8 --select=RST src/sage/ --config src/tox.ini
+    
+    - name: TOML format check with taplo
+      uses: docker://tamasfe/taplo:0.10.0
       with:
-        python-version: 3.9
-    - name: Install relint
-      run: pip install tox relint
-    - name: Lint using relint
-      run: tox -e relint -- src/sage/
-  lint-rst:
-    name: Validate docstring markup as RST
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Merge CI fixes from sagemath/sage
-      run: |
-        .ci/merge-fixes.sh
-      env:
-        GH_TOKEN: ${{ github.token }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
-    - name: Install tox
-      run: pip install tox
-    - name: Lint using tox -e rst
-      run: tox -e rst
+        args: format --check --diff pyproject.toml .taplo.toml 
