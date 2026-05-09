@@ -3036,6 +3036,9 @@ REFERENCES:
 
 .. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
              algebra, 1(141):187-203, 1991.
+             
+.. [Gek2001] \E.-U. Gekeler. Invariants of some algebraic curves related to 
+              Drinfeld modular curves. Journal of Number Theory 90, No. 1, 166-183, 2001.
 
 .. [Gek2008] \E.-U. Gekeler. Frobenius Distributions of Drinfeld Modules over
              Finite Fields. Transactions of the American Mathematical Society,
