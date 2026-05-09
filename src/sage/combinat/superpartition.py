@@ -314,6 +314,11 @@ class SuperPartition(ClonableArray,
 
         - a (possibly weak) composition
 
+        .. TODO::
+
+            :class:`Composition` is for strict compositions, we
+            should use :class:`IntegerVectors` instead.
+
         EXAMPLES::
 
             sage: SuperPartition([[3,1],[2,2,1]]).to_composition()

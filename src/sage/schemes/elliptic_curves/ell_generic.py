@@ -2662,8 +2662,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def isomorphism_to(self, other):
         """
-        Given another weierstrass model ``other`` of ``self``, return an
+        Given another Weierstrass model ``other`` of ``self``, return an
         isomorphism from ``self`` to ``other``.
+
+        If possible, this method returns a normalized isomorphism.
 
         INPUT:
 
@@ -2671,7 +2673,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         OUTPUT:
 
-        (Weierstrassmorphism) An isomorphism from ``self`` to ``other``.
+        (:class:`~wm.WeierstrassIsomorphism`) An isomorphism from ``self`` to ``other``.
 
         .. NOTE::
 
@@ -3120,7 +3122,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
               To:   Projective Plane Curve over Finite Field of size 257
                     defined by -x^3 + 8*x^2*z - 127*y^2*z - x*z^2
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (x + 116*z : -y : -85*z)
+                    (x + 116*z : y : -85*z)
             sage: g = f.inverse(); g
             Scheme morphism:
               From: Projective Plane Curve over Finite Field of size 257
@@ -3128,7 +3130,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
               To:   Elliptic Curve defined by y^2 = x^3 + 10*x + 10
                     over Finite Field of size 257
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (-85*x - 116*z : 85*y : z)
+                    (-85*x - 116*z : -85*y : z)
             sage: P = C(70, 8)
             sage: Q = C(17, 17)
             sage: P + Q             # this doesn't work...

@@ -409,9 +409,9 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                             sp += d[s_part][ds_part]*d[p_part][ds_part]
                     if sp != zero:
                         s_mcs[p_part] = sp
-                        transition_matrix_n[i,j] = sp
+                        transition_matrix_n[i, j] = sp
 
-                self._to_self_cache[ s_part ] = s_mcs
+                self._to_self_cache[s_part] = s_mcs
 
         else:
             # Now the other case. Note that just being in this case doesn't
@@ -450,11 +450,11 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                             sp += d[s_part][ds_part]*d[p_part][ds_part]*self._scalar(ds_part)
                     if sp != zero:
                         s_mcs[p_part] = sp
-                        transition_matrix_n[i,j] = sp
+                        transition_matrix_n[i, j] = sp
 
                     j += 1
 
-                self._to_self_cache[ s_part ] = s_mcs
+                self._to_self_cache[s_part] = s_mcs
                 i += 1
 
         # Save the transition matrix
@@ -468,10 +468,10 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         for i in range(len(partitions_n)):
             d_mcs = {}
             for j in range(len(partitions_n)):
-                if inverse_transition[i,j] != zero:
-                    d_mcs[ partitions_n[j] ] = inverse_transition[i,j]
+                if inverse_transition[i, j] != zero:
+                    d_mcs[partitions_n[j]] = inverse_transition[i, j]
 
-            self._from_self_cache[ partitions_n[i] ] = d_mcs
+            self._from_self_cache[partitions_n[i]] = d_mcs
 
         self._inverse_transition_matrices[n] = inverse_transition
 

@@ -561,30 +561,34 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         return '%s!%s' % (self.parent()._magma_init_(magma), self)
 
-    def _axiom_init_(self) -> str:
+    def _fricas_init_(self) -> str:
         """
-        Return a string representation of the corresponding to
-        (Pan)Axiom object.
+        Return a string representation of the corresponding
+        FriCAS object.
 
         EXAMPLES::
 
             sage: a = Integers(15)(4)
-            sage: a._axiom_init_()
-            '4 :: IntegerMod(15)'
-
-            sage: aa = axiom(a); aa             # optional - axiom
-            4
-            sage: aa.type()                     # optional - axiom
-            IntegerMod 15
+            sage: a._fricas_init_()
+            '4::IntegerMod(15)'
 
             sage: aa = fricas(a); aa            # optional - fricas
             4
             sage: aa.typeOf()                   # optional - fricas
             IntegerMod(15)
-        """
-        return '%s :: %s' % (self, self.parent()._axiom_init_())
 
-    _fricas_init_ = _axiom_init_
+            sage: a = GF(7)(4)
+            sage: a._fricas_init_()
+            '4::PrimeField(7)'
+
+            sage: aa = fricas(a); aa            # optional - fricas
+            4
+            sage: aa.typeOf()                   # optional - fricas
+            PrimeField(7)
+        """
+        return '%s::%s' % (self, self.parent()._fricas_init_())
+
+    _axiom_init_ = _fricas_init_
 
     def _sage_input_(self, sib, coerced):
         r"""

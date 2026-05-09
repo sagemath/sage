@@ -87,7 +87,8 @@ class LaTeX(Executable):
         from subprocess import run
         cmd = [self.name, '-interaction=nonstopmode', filename_tex]
         cmd = ' '.join(cmd)
-        result = run(cmd, shell=True, cwd=base, capture_output=True, text=True)
+        result = run(cmd, shell=True, cwd=base, capture_output=True, text=True,
+                     check=False)
 
         # return
         if result.returncode == 0:

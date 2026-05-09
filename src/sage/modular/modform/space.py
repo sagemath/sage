@@ -1088,9 +1088,9 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         if isinstance(other, ModularFormsRing) and other.has_coerce_map_from(self):
             return other
 
-    def __richcmp__(self, x, op):
+    def __richcmp__(self, other, op):
         """
-        Compare ``self`` and ``x``.
+        Compare ``self`` and ``other``.
 
         For spaces of modular forms, we order first by signature, then by
         dimension, and then by the ordering on the underlying free
@@ -1113,22 +1113,22 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         from sage.modular.modform.constructor import canonical_parameters as params
 
-        if self is x:
+        if self is other:
             return rich_to_bool(op, 0)
-        if not isinstance(x, ModularFormsSpace):
+        if not isinstance(other, ModularFormsSpace):
             return NotImplemented
 
         left_ambient = self.ambient()
-        right_ambient = x.ambient()
+        right_ambient = other.ambient()
         lx = params(left_ambient.character(), left_ambient.level(),
                     left_ambient.weight(), left_ambient.base_ring())
         rx = params(right_ambient.character(), right_ambient.level(),
                     right_ambient.weight(), right_ambient.base_ring())
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
-        if self.is_ambient() or x.is_ambient():
-            return richcmp(self.dimension(), x.dimension(), op)
-        return self.free_module()._echelon_matrix_richcmp(x.free_module(), op)
+        if self.is_ambient() or other.is_ambient():
+            return richcmp(self.dimension(), other.dimension(), op)
+        return self.free_module()._echelon_matrix_richcmp(other.free_module(), op)
 
     def span_of_basis(self, B):
         """

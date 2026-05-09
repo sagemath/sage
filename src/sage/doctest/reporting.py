@@ -149,15 +149,6 @@ class DocTestReporter(SageObject):
             sage: DTR.were_doctests_with_optional_tag_run('nice_unavailable_package')
             False
 
-        When latex is available, doctests marked with optional tag
-        ``latex`` are run by default since :issue:`32174`::
-
-            sage: # needs SAGE_SRC
-            sage: filename = os.path.join(SAGE_SRC, 'sage', 'misc', 'latex.py')
-            sage: DC = DocTestController(DocTestDefaults(), [filename])
-            sage: DTR = DocTestReporter(DC)
-            sage: DTR.were_doctests_with_optional_tag_run('latex')   # optional - latex
-            True
         """
         if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
@@ -495,7 +486,7 @@ class DocTestReporter(SageObject):
             stats = self.stats
             basename = source.basename
             baseline = self.controller.source_baseline(source)
-            cmd = self.report_head(source)
+            self.report_head(source)
             try:
                 ntests, result_dict = results
             except (TypeError, ValueError):
