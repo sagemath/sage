@@ -2497,13 +2497,13 @@ class DocTestWorker(multiprocessing.Process):
             import subprocess
             self.process_tree_before_kill = subprocess.run(["ps", "-ef", "--cols", "1000", "--forest"],
                                                            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-                                                           text=True, errors="ignore").stdout
+                                                           text=True, errors="ignore", check=False).stdout
         except FileNotFoundError:  # ps not available? Unlikely
             pass
         except subprocess.CalledProcessError:
             self.process_tree_before_kill = subprocess.run(["ps", "-efwww"],
                                                            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-                                                           text=True, errors="ignore").stdout
+                                                           text=True, errors="ignore", check=False).stdout
 
         if self.rmessages is not None:
             os.close(self.rmessages)

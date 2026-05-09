@@ -2957,7 +2957,7 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
                 Mp00116: Kasraoui-Zeng: Perfect matchings -> Perfect matchings
                 St000042: The number of crossings of a perfect matching.
         """
-        if len(self.compound_map()):
+        if self.compound_map():
             self.compound_map().info()
         self.statistic().info()
 
@@ -3070,7 +3070,7 @@ class FindStatMatchingStatistic(FindStatCompoundStatistic):
             print("after subtracting %s from every value" % (-self.offset()))
         if self.offset() > 0:
             print("after adding %s to every value" % self.offset())
-        if len(self.compound_map()):
+        if self.compound_map():
             if self.offset():
                 print("and applying")
             else:

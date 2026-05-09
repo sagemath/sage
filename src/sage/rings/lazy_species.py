@@ -1774,7 +1774,6 @@ class HadamardProductSpeciesElement(LazyCombinatorialSpeciesElement):
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
         P = cm.common_parent(left.base_ring(), parent(other))
-        R = P._laurent_poly_ring
 
         coeff_stream = Stream_function(lambda n: left[n].hadamard_product(other[n]), P._sparse, 0)
         super().__init__(P, coeff_stream)

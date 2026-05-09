@@ -26,6 +26,7 @@ import sage.env
 
 from sage.libs.gap.gap_includes cimport *
 from sage.libs.gap.element cimport *
+from sage.misc.cachefunc import cached_function
 from sage.cpython.string import FS_ENCODING
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.interfaces.gap_workspace import prepare_workspace_dir
@@ -34,6 +35,54 @@ from sage.interfaces.gap_workspace import prepare_workspace_dir
 ############################################################################
 ### Hooking into the GAP memory management #################################
 ############################################################################
+
+
+@cached_function
+def kernel_info() -> tuple[str, str, str]:
+    r"""
+    Return the GAP version, architecture, and root paths in a tuple.
+
+    The first two are used as cache keys to invalidate old workspaces
+    in :func:`sage.interfaces.gap_workspace.gap_workspace_file`. The
+    root paths are required to initialize libgap. In the past we
+    computed the root paths at build-time, but that may not work if
+    (say) the build and target hosts have different libdirs.
+
+    This is fast enough that it should suffice until a more reliable
+    method is available (GAP Github issue 6252).
+
+    OUTPUT:
+
+    A tuple containing three strings:
+
+    1. The GAP version
+    2. The GAP architecture
+    3. A semicolon-delimited list of GAP's RootPaths
+
+    TESTS:
+
+    Confirm the claims of our ``OUTPUT`` block::
+
+        sage: from sage.libs.gap.util import kernel_info
+        sage: ki = kernel_info()
+        sage: isinstance(ki, tuple)
+        True
+        sage: len(ki) == 3
+        True
+        sage: all( isinstance(p, str) for p in ki )
+        True
+
+    """
+    import subprocess
+    from importlib.resources import files
+    systemfile = files("sage").joinpath("ext_data/gap/kernel-info.g")
+    cmd_and_args = ["gap", "--systemfile", systemfile]
+    result = subprocess.run(cmd_and_args,
+                            capture_output=True,
+                            check=True,
+                            text=True)
+    version, arch, roots = result.stdout.strip().split("\n")
+    return (version, arch, roots)
 
 
 cdef class ObjWrapper():
@@ -232,7 +281,8 @@ cdef initialize():
     argv[0] = "sage"
     argv[1] = "-A"
     argv[2] = "-l"
-    s = str_to_bytes(sage.env.GAP_ROOT_PATHS, FS_ENCODING, "surrogateescape")
+    gap_roots = kernel_info()[2]
+    s = str_to_bytes(gap_roots, FS_ENCODING, "surrogateescape")
     argv[3] = s
 
     argv[4] = "-m"

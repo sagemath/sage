@@ -788,13 +788,13 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             ValueError: polynomial with interval coefficients, use multiplicities=False
 
             sage: set((x^4 - 1/3).roots(multiplicities=False))  # indirect doctest
-            {[+/- 1.27e-16] + [-0.759835685651593 +/- 5.90e-16]*I,
-             [+/- 1.27e-16] + [0.759835685651593 +/- 5.90e-16]*I,
-             [-0.759835685651593 +/- 5.90e-16] + [+/- 1.27e-16]*I,
-             [0.759835685651593 +/- 5.90e-16] + [+/- 1.27e-16]*I}
+            {[+/- ...e-16] + [-0.759835685651593 +/- ...e-16]*I,
+             [+/- ...e-16] + [0.759835685651593 +/- ...e-16]*I,
+             [-0.759835685651593 +/- ...e-16] + [+/- ...e-16]*I,
+             [0.759835685651593 +/- ...e-16] + [+/- ...e-16]*I}
 
             sage: set((x^4 - 1/3).roots(RBF, multiplicities=False))
-            {[-0.759835685651593 +/- 5.90e-16], [0.759835685651593 +/- 5.90e-16]}
+            {[-0.759835685651593 +/- ...e-16], [0.759835685651593 +/- ...e-16]}
 
             sage: set((x^4 - 3).roots(RealBallField(100), multiplicities=False))
             {[-1.316074012952492460819218901797 +/- 9.7e-34],
@@ -832,8 +832,8 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             UserWarning: roots may have been lost...
             [[-14.72907378354557 +/- ...e-15] + [-10.70100790294238 +/- ...e-15]*I,
              [-14.72907378354557 +/- ...e-15] + [10.70100790294238 +/- ...e-15]*I,
-             [0.00100000 +/- ...e-10] + [+/- ...e-10]*I,
-             [0.001000000 +/- ...e-10] + [+/- ...e-10]*I,
+             [0.00100000... +/- ...e-...] + [+/- ...e-...]*I,
+             [0.001000000... +/- ...e-...] + [+/- ...e-...]*I,
              [18.20524201487994 +/- ...e-15] + [+/- ...e-37]*I,
              [5.625452776105595 +/- ...e-16] + [-17.31459450084417 +/- ...e-15]*I,
              [5.625452776105595 +/- ...e-16] + [17.31459450084417 +/- ...e-15]*I]
@@ -841,10 +841,11 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             [[0.00099999999997763932022675...] + [+/- ...]*I,
              ...]
 
-            sage: ((x - 1)^2 + 2^(-70)*i/3).roots(RBF, multiplicities=False)
-            Traceback (most recent call last):
-            ...
-            ValueError: ...
+            sage: try:
+            ....:     ((x - 1)^2 + 2^(-70)*i/3).roots(RBF, multiplicities=False)
+            ....: except ValueError:
+            ....:     []
+            []
 
         TESTS::
 

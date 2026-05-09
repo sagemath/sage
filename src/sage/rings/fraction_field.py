@@ -81,9 +81,10 @@ Test that :issue:`15971` is fixed::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc import latex
-from sage.categories.basic import QuotientFields, Rings
 from sage.categories.map import Section
+from sage.categories.quotient_fields import QuotientFields
+from sage.categories.rings import Rings
+from sage.misc import latex
 from sage.misc.cachefunc import cached_method
 from sage.rings import fraction_field_element, ring
 from sage.rings.integer_ring import ZZ
@@ -178,7 +179,7 @@ class FractionField_generic(ring.Field):
             cat = cat.Infinite()
         elif R in Rings().Finite():
             cat = cat.Finite()
-        Parent.__init__(self, base=R, names=R._names, category=cat)
+        Parent.__init__(self, base=R, names=R._names, normalize=False, category=cat)
 
     def __reduce__(self):
         """
@@ -501,6 +502,17 @@ class FractionField_generic(ring.Field):
         s = 'FieldOfFractions(%s)' % self.ring()._magma_init_(magma)
         return magma._with_names(s, self.variable_names())
 
+    def _fricas_init_(self) -> str:
+        r"""
+        Return the FriCAS representation of `\QQ`.
+
+        EXAMPLES::
+
+           sage: fricas(FractionField(GF(3)['t']))   #optional - fricas # indirect doctest
+           Fraction(UnivariatePolynomial(t,PrimeField(3)))
+        """
+        return f'Fraction {self._R._fricas_init_()}'
+
     def ring(self):
         """
         Return the ring that this is the fraction field of.
@@ -727,8 +739,8 @@ class FractionField_generic(ring.Field):
                 return x
             from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
             if isinstance(self.ring(), PolynomialRing_generic):
-                from sage.rings.power_series_ring_element import PowerSeries
                 from sage.rings.laurent_series_ring_element import LaurentSeries
+                from sage.rings.power_series_ring_element import PowerSeries
                 if isinstance(x, PowerSeries):
                     from sage.misc.superseded import deprecation
                     deprecation(
