@@ -1061,9 +1061,9 @@ class Graph(GenericGraph):
         if immutable:
             data_structure = 'static_sparse'
 
-        # If the data structure is static_sparse, we first build a graph
-        # using the sparse data structure, then re-encode the resulting graph
-        # as a static sparse graph.
+        # For ``static_sparse``, construction still defaults to a mutable sparse
+        # backend followed by conversion, though selected simple formats are
+        # handled directly below.
         from sage.graphs.base.sparse_graph import SparseGraphBackend
         from sage.graphs.base.dense_graph import DenseGraphBackend
         if data_structure in ["sparse", "static_sparse"]:
@@ -1160,6 +1160,13 @@ class Graph(GenericGraph):
                 multiedges = False
             format = 'adjacency_matrix'
 
+        direct_static_sparse = False
+        if data_structure == "static_sparse":
+            from sage.graphs.base.static_sparse_backend import (
+                StaticSparseBackend,
+                _direct_static_sparse_backend_from_edges,
+            )
+
         # At this point, 'format' has been set. We build the graph
 
         if format == 'graph6':
@@ -1235,18 +1242,48 @@ class Graph(GenericGraph):
                 loops = any(f(v, v) for v in verts)
             if weighted is None:
                 weighted = False
-            self.allow_loops(loops, check=False)
-            self.allow_multiple_edges(bool(multiedges), check=False)
-            self.add_vertices(verts)
-            self.add_edges(e for e in itertools.combinations(verts, 2) if f(*e))
-            if loops:
-                self.add_edges((v, v) for v in verts if f(v, v))
+            loops_allowed = bool(loops)
+            multiedges_allowed = bool(multiedges)
+            if data_structure == "static_sparse":
+                edge_data = (e for e in itertools.combinations(verts, 2) if f(*e))
+                if loops:
+                    edge_data = itertools.chain(edge_data,
+                                                ((v, v) for v in verts if f(v, v)))
+                self._backend = _direct_static_sparse_backend_from_edges(
+                    verts,
+                    edge_data,
+                    directed=False,
+                    loops_allowed=loops_allowed,
+                    multiedges_allowed=multiedges_allowed,
+                    sort_vertices=True,
+                )
+                direct_static_sparse = True
+            else:
+                self.allow_loops(loops, check=False)
+                self.allow_multiple_edges(bool(multiedges), check=False)
+                self.add_vertices(verts)
+                self.add_edges(e for e in itertools.combinations(verts, 2) if f(*e))
+                if loops:
+                    self.add_edges((v, v) for v in verts if f(v, v))
 
         elif format == "vertices_and_edges":
-            self.allow_multiple_edges(bool(multiedges), check=False)
-            self.allow_loops(bool(loops), check=False)
-            self.add_vertices(data[0])
-            self.add_edges(data[1])
+            loops_allowed = bool(loops)
+            multiedges_allowed = bool(multiedges)
+            if data_structure == "static_sparse" and not multiedges_allowed:
+                self._backend = _direct_static_sparse_backend_from_edges(
+                    data[0],
+                    data[1],
+                    directed=False,
+                    loops_allowed=loops_allowed,
+                    multiedges_allowed=multiedges_allowed,
+                    sort_vertices=False,
+                )
+                direct_static_sparse = True
+            else:
+                self.allow_multiple_edges(bool(multiedges), check=False)
+                self.allow_loops(bool(loops), check=False)
+                self.add_vertices(data[0])
+                self.add_edges(data[1])
 
         elif format == 'dict_of_dicts':
             from .graph_input import from_dict_of_dicts
@@ -1259,18 +1296,44 @@ class Graph(GenericGraph):
             from_dict_of_lists(self, data, loops=loops, multiedges=multiedges, weighted=weighted)
 
         elif format == 'int':
-            self.allow_loops(loops if loops else False, check=False)
-            self.allow_multiple_edges(multiedges if multiedges else False, check=False)
             if data < 0:
                 raise ValueError("The number of vertices cannot be strictly negative!")
-            if data:
-                self.add_vertices(range(data))
+            loops_allowed = bool(loops)
+            multiedges_allowed = bool(multiedges)
+            if data_structure == "static_sparse":
+                self._backend = _direct_static_sparse_backend_from_edges(
+                    range(data),
+                    [],
+                    directed=False,
+                    loops_allowed=loops_allowed,
+                    multiedges_allowed=multiedges_allowed,
+                    sort_vertices=True,
+                )
+                direct_static_sparse = True
+            else:
+                self.allow_loops(loops if loops else False, check=False)
+                self.allow_multiple_edges(multiedges if multiedges else False, check=False)
+                if data:
+                    self.add_vertices(range(data))
 
         elif format == 'list_of_edges':
-            self.allow_multiple_edges(bool(multiedges),
-                                      check=False)
-            self.allow_loops(bool(loops), check=False)
-            self.add_edges(data)
+            loops_allowed = bool(loops)
+            multiedges_allowed = bool(multiedges)
+            if data_structure == "static_sparse" and not multiedges_allowed:
+                self._backend = _direct_static_sparse_backend_from_edges(
+                    [],
+                    data,
+                    directed=False,
+                    loops_allowed=loops_allowed,
+                    multiedges_allowed=multiedges_allowed,
+                    sort_vertices=True,
+                )
+                direct_static_sparse = True
+            else:
+                self.allow_multiple_edges(bool(multiedges),
+                                          check=False)
+                self.allow_loops(bool(loops), check=False)
+                self.add_edges(data)
         else:
             raise ValueError("Unknown input format '{}'".format(format))
 
@@ -1288,12 +1351,12 @@ class Graph(GenericGraph):
             self.name(name)
 
         if data_structure == "static_sparse":
-            from sage.graphs.base.static_sparse_backend import StaticSparseBackend
-            ib = StaticSparseBackend(self,
-                                     loops=self.allows_loops(),
-                                     multiedges=self.allows_multiple_edges(),
-                                     sort=(format != "vertices_and_edges"))
-            self._backend = ib
+            if not direct_static_sparse:
+                ib = StaticSparseBackend(self,
+                                         loops=self.allows_loops(),
+                                         multiedges=self.allows_multiple_edges(),
+                                         sort=(format != "vertices_and_edges"))
+                self._backend = ib
             self._immutable = True
 
     # Formats
@@ -9464,8 +9527,8 @@ class Graph(GenericGraph):
     from sage.graphs.graph_decompositions.cutwidth import cutwidth
     from sage.graphs.graph_decompositions.slice_decomposition import slice_decomposition
     matching_polynomial = LazyImport('sage.graphs.matchpoly', 'matching_polynomial', at_startup=True)
-    from sage.graphs.cliquer import all_max_clique as cliques_maximum
-    from sage.graphs.cliquer import all_cliques
+    cliques_maximum = LazyImport('sage.graphs.cliquer', 'all_max_clique', at_startup=True)
+    all_cliques = LazyImport('sage.graphs.cliquer', 'all_cliques', at_startup=True)
     from sage.graphs.spanning_tree import random_spanning_tree
     from sage.graphs.spanning_tree import spanning_trees
     from sage.graphs.graph_decompositions.graph_products import is_cartesian_product

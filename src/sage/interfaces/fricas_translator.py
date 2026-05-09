@@ -270,7 +270,6 @@ class SEXPorter:
         fricas.eval(f"{name}(obj:{self._unparse()}): SExpression == ({items});")
         return name
 
-
     def export_call(self):
         """
         Return the function call doing the export, as a string.
@@ -543,15 +542,13 @@ class SEXEvaluator:
         if isinstance(P, PolynomialRing_generic):
 
             def to_exponent(mon):
-                if len(mon):
-                    return mon[0][1]
-                return 0
+                return mon[0][1] if mon else 0
 
             return P._from_dict({to_exponent(mon): SEXEvaluator(c, base).eval()
                                  for mon, c in self._ast})
 
         def to_tuple(mon):
-            t = [0]*len(P._names)
+            t = [0] * len(P._names)
             for v, e in mon:
                 t[P._names.index(v)] = e
             return tuple(t)

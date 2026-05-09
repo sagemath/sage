@@ -11,8 +11,6 @@ AUTHORS:
 .. TODO::
 
     - provide examples for the P and Q-symbol in the skew case
-    - implement a method providing a visualization of the growth
-      diagram with all labels, perhaps as LaTeX code
     - when shape is given, check that it is compatible with filling
       or labels
     - optimize rules, mainly for :class:`RuleRSK` and
@@ -42,7 +40,7 @@ a so-called 'backward' rule that recovers the integer and `t` given
 
 As an example, the growth rules for the classical RSK correspondence
 are provided by :class:`RuleRSK`.  To produce a growth diagram, pass
-the desired rule and a permutation to :class:`GrowthDiagram`::
+the rule and a permutation to :class:`GrowthDiagram`::
 
     sage: RuleRSK = GrowthDiagram.rules.RSK()
     sage: w = [2,3,6,1,4,5]; G = GrowthDiagram(RuleRSK, w); G
@@ -54,7 +52,7 @@ the desired rule and a permutation to :class:`GrowthDiagram`::
     0  0  1  0  0  0
 
 The forward rule just mentioned assigns 49 partitions to the corners
-of each of the 36 cells of this matrix (i.e., 49 the vertices of a
+of each of the 36 cells of this matrix (i.e., the vertices of a
 `(6+1) \times (6+1)` grid graph), with the exception of the corners
 on the left and top boundary, which are initialized with the empty
 partition. More precisely, for each cell, the
@@ -68,9 +66,28 @@ of a cell and the other three partitions::
 
 .. WARNING::
 
-    Note that a growth diagram is printed with matrix coordinates,
-    the origin being in the top-left corner.  Therefore, the growth
-    is from the top left to the bottom right!
+    Note that, by default, a growth diagram is printed with matrix
+    coordinates, the origin being in the top-left corner.  Thus, the
+    growth is from the top left to the bottom right and the
+    `P`-symbol is computed along the right hand border.
+
+    This can be changed using :obj:`GrowthDiagram.options`::
+
+        sage: RuleRSK = GrowthDiagram.rules.RSK()
+        sage: pi = [4,2,1,3]; H = GrowthDiagram(RuleRSK, pi); H
+          0  0  1  0
+          0  1  0  0
+          0  0  0  1
+          1  0  0  0
+        sage: GrowthDiagram.options.convention = "cartesian"
+        sage: H
+          1  0  0  0
+          0  0  0  1
+          0  1  0  0
+          0  0  1  0
+        sage: GrowthDiagram.options._reset()
+
+    Within this documentation, we stick to matrix coordinates.
 
 The partitions along the boundary opposite of the origin, reading
 from the bottom left to the top right, are obtained by using the
@@ -150,7 +167,7 @@ that we encode as the dictionary::
     sage: P = {(1-1,4-1): 1, (2-1,2-1): 1, (2-1,3-1): 2, (4-1,2-1): 1, (4-1,3-1): 1}
 
 Note that we are subtracting `1` from all entries because of
-zero-based indexing, we obtain::
+zero-based indexing.  We obtain::
 
     sage: GrowthDiagram(RuleRSK, P)
     0  0  0  0
@@ -198,9 +215,9 @@ is a pair in the perfect matching, the entry in column `i-1` and row
     0  0
     0
 
-The partitions labelling the bottom-right corners along the boundary
+The partitions labelling the bottom right corners along the boundary
 opposite of the origin then form a so-called oscillating tableau -
-the remaining partitions along the bottom-right boundary are
+the remaining partitions along the bottom right boundary are
 redundant::
 
     sage: G.out_labels()[1::2]
@@ -236,7 +253,7 @@ oscillating tableau, as given, is::
     sage: o = [[2,1],[2,2],[3,2],[4,2],[4,1],[4,1,1],[3,1,1],[3,1],[3,2],[3,1],[2,1]]
 
 From this, we have to construct the list of labels of the corners
-along the bottom-right boundary.  The labels with odd indices are
+along the bottom right boundary.  The labels with odd indices are
 given by the oscillating tableau, the other labels are obtained by
 taking the smaller of the two neighbouring partitions::
 
@@ -286,6 +303,28 @@ particular, we have implemented the following local rules:
 - The Young-Fibonacci correspondence
   (:class:`~sage.combinat.growth.RuleYoungFibonacci`).
 - LLMS insertion (:class:`~sage.combinat.growth.RuleLLMS`).
+
+Displaying diagrams
+-------------------
+
+Since labels usually take a significant amount of space, only the
+filling is shown when displaying a diagram using ASCII art.  However,
+the `\LaTeX` output shows the diagram as usually typeset, including edge
+labels.::
+
+    sage: shape = SkewPartition([[5,5,5,4,4],[4,3]])
+    sage: f = [3, 5, 4, 2, 1]
+    sage: view(GrowthDiagram.rules.RSK()(f, shape))                             # not tested
+    sage: view(GrowthDiagram.rules.Sylvester()(f, shape))                       # not tested
+    sage: view(GrowthDiagram.rules.BinaryWord()(f, shape))                      # not tested
+    sage: f = [3, 5, -4, 2, 1]
+    sage: view(GrowthDiagram.rules.Domino()(f, shape))                          # not tested
+
+Edge labels are also displayed::
+
+    sage: LLMS3 = GrowthDiagram.rules.LLMS(3)
+    sage: G = LLMS3([4,1,2,6,3,5])
+    sage: view(G)                                                               # not tested
 
 Background
 ----------
@@ -400,8 +439,8 @@ requires additional information (the edge labels as arguments).
 
 Let us thus continue with the example from Section 4.7 of [Fom1995]_
 instead, which defines dual graded graphs with multiple edges on the
-integers.  The color ``self.zero_edge``, which defaults to ``0`` is
-reserved for degenerate edges, but may be abused for the unique edge
+integers.  The color ``self.zero_edge``, which defaults to ``0``, is
+reserved for degenerate edges, but may also be used for the unique edge
 if one of the graphs has no multiple edges.  For greater clarity in
 this example we set it to ``None``::
 
@@ -414,7 +453,7 @@ this example we set it to ``None``::
     ....:     def is_P_edge(self, v, w): return [0] if w == v + 1 else []
     ....:     def is_Q_edge(self, v, w): return list(range(w)) if w == v+1 else []
 
-We verify these are `1` dual at level `5`::
+We verify these are `1`-dual at level `5`::
 
     sage: RulePascal()._check_duality(5)
 
@@ -474,6 +513,7 @@ from __future__ import annotations
 from copy import copy
 from itertools import zip_longest
 
+from sage.structure.global_options import GlobalOptions
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.words.word import Word
@@ -488,6 +528,7 @@ from sage.combinat.core import Core, Cores
 from sage.combinat.k_tableau import WeakTableau, StrongTableau
 from sage.combinat.shifted_primed_tableau import ShiftedPrimedTableau
 from sage.misc.lazy_import import lazy_import
+from sage.misc.latex import latex
 
 lazy_import('sage.graphs.digraph', 'DiGraph')
 lazy_import('sage.combinat.posets.posets', 'Poset')
@@ -597,14 +638,17 @@ class GrowthDiagram(SageObject):
 
     .. NOTE::
 
-        Coordinates are of the form ``(col, row)`` where the origin is
-        in the upper left, to be consistent with permutation matrices
-        and skew tableaux (in English convention).  This is different
-        from Fomin's convention, who uses a Cartesian coordinate system.
+        Coordinates are of the form ``(col, row)`` where the
+        `P`-symbol is labelling the last column and the `Q`-symbol
+        the last row.  This convention is different from Fomin's
+        convention, who uses a Cartesian coordinate system.
 
-        Conventions are chosen such that for permutations, the same
-        growth diagram is constructed when passing the permutation
-        matrix instead.
+        It is chosen such that for permutations, the same growth
+        diagram is constructed when passing the permutation matrix
+        instead.
+
+        The display of growth diagrams can be modified by setting
+        :obj:`GrowthDiagram.options`.
 
     EXAMPLES:
 
@@ -647,7 +691,6 @@ class GrowthDiagram(SageObject):
         0  0  0  1
         1  0
     """
-
     def __init__(self, rule, filling=None, shape=None, labels=None):
         r"""
         Initialize ``self``.
@@ -702,6 +745,49 @@ class GrowthDiagram(SageObject):
 
             self._check_labels(self._in_labels)
             self._grow()
+
+    class options(GlobalOptions):
+        """
+        Set and display the options for elements of the growth diagram
+        class.  If no parameters are set, then the function returns a copy of
+        the options dictionary.
+
+        The ``options`` to growth diagrams can be accessed as the method
+        :obj:`GrowthDiagram.options` of :class:`GrowthDiagram`.
+
+        @OPTIONS@
+
+        EXAMPLES::
+
+            sage: RuleRSK = GrowthDiagram.rules.RSK()
+            sage: w = [4,2,1,3]; G = GrowthDiagram(RuleRSK, w); G
+              0  0  1  0
+              0  1  0  0
+              0  0  0  1
+              1  0  0  0
+            sage: G.options.convention = "cartesian"
+            sage: G
+              1  0  0  0
+              0  0  0  1
+              0  1  0  0
+              0  0  1  0
+            sage: GrowthDiagram.options._reset()
+        """
+        NAME = 'GrowthDiagram'
+        module = 'sage.combinat.growth'
+        convention = dict(default='matrix',
+                          description='Sets the convention used for displaying a growth diagram',
+                          values=dict(
+                              Cartesian='use Cartesian coordinates',
+                              matrix='use matrix coordinates',
+                          ),
+                          case_sensitive=False)
+        x_unit = dict(default="0.9em",
+                      description='Sets the horizontal size of a cell',
+                      checker=lambda x: isinstance(x, str))
+        y_unit = dict(default="0.9em",
+                      description='Sets the vertical size of a cell',
+                      checker=lambda x: isinstance(x, str))
 
     def filling(self):
         r"""
@@ -919,7 +1005,7 @@ class GrowthDiagram(SageObject):
         Check that :issue:`25631` is fixed::
 
             sage: BinaryWord = GrowthDiagram.rules.BinaryWord()
-            sage: BinaryWord(filling = {}).P_chain()
+            sage: BinaryWord(filling={}).P_chain()
             [word: ]
         """
         if not self.is_rectangular():
@@ -948,7 +1034,7 @@ class GrowthDiagram(SageObject):
         Check that :issue:`25631` is fixed::
 
             sage: BinaryWord = GrowthDiagram.rules.BinaryWord()
-            sage: BinaryWord(filling = {}).Q_chain()
+            sage: BinaryWord(filling={}).Q_chain()
             [word: ]
         """
         if not self.is_rectangular():
@@ -1085,6 +1171,8 @@ class GrowthDiagram(SageObject):
         Return a string with the filling of the growth diagram
         as a skew tableau.
 
+        The orientation can be changed using :obj:`GrowthDiagram.options`.
+
         TESTS::
 
             sage: RuleRSK = GrowthDiagram.rules.RSK()
@@ -1096,10 +1184,19 @@ class GrowthDiagram(SageObject):
             .  0  1
             1
         """
-        return SkewTableau(expr=[self._mu,
-                                 [[self._filling.get((self._mu[r]+j,r), 0)
-                                   for j in range(self._lambda[r]-self._mu[r])]
-                                  for r in range(len(self._lambda))][::-1]])._repr_diagram()
+        S = SkewTableau(expr=[self._mu,
+                              [[self._filling.get((self._mu[r]+j,r), 0)
+                                for j in range(self._lambda[r]-self._mu[r])]
+                               for r in range(len(self._lambda))][::-1]])
+
+        def none_str(x):
+            return "  ." if x is None else "%3s" % str(x)
+        if self.options.convention == 'Cartesian':
+            new_rows = ["".join(map(none_str, row)) for row in reversed(S)]
+        elif self.options.convention == 'matrix':
+            new_rows = ["".join(map(none_str, row)) for row in S]
+
+        return '\n'.join(new_rows)
 
     def __eq__(self, other):
         r"""
@@ -1638,6 +1735,260 @@ class GrowthDiagram(SageObject):
         self._in_labels = labels
         self._filling = F
 
+    def _latex_(self):
+        r"""
+        Return a `\LaTeX` representation of ``self``.
+
+        The latex output of the growth diagram is given using TikZ as follows:
+
+        - The skew region drawn as a grid of light boxes.
+        - The filling values at cell centers.
+        - The labels at lattice vertices (converted via ``rule.normalize_vertex``),
+          scaled to fit within about one third of a cell.
+
+        TESTS::
+
+            sage: fn = tmp_filename()
+            sage: G = GrowthDiagram.rules.RSK()([1])
+            sage: latex(G)
+            \begingroup
+            ...
+            \begin{tikzpicture}[baseline=(BL.base),x=0.9em,y=0.9em]
+            ...
+              \node at (0.5,0.5) {$1$};
+            ...
+            \end{tikzpicture}
+            \endgroup
+
+            sage: latex.eval(latex(G), locals(), filename=fn)                   # optional - latex
+            ''
+
+        Check that we can have two growth diagrams in the same
+        `\LaTeX` document::
+
+            sage: latex.eval("$" + latex([G, G]) + "$", locals(), filename=fn)  # optional - latex
+            ''
+
+        Check that fillings of skew regions work::
+
+            sage: shape = SkewPartition([[2,2],[1]])
+            sage: f = [2, 1]
+            sage: G = GrowthDiagram.rules.Sylvester()(f, shape)
+            sage: G
+             .  1
+             1  0
+            sage: latex(G)
+            \begingroup
+            ...
+            \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
+            ...
+            \begin{tikzpicture}[baseline=(BL.base),x=0.9em,y=0.9em]
+            ...
+            \end{tikzpicture}
+            \endgroup
+
+            sage: latex.eval(latex(G), locals(), filename=fn)                   # optional - latex
+            ''
+
+        Check that non-hashable labels work::
+
+            sage: class RuleNonHashable(GrowthDiagram.rules.RSK):
+            ....:     def normalize_vertex(self, v):
+            ....:         return v
+            sage: G = RuleNonHashable()([1])
+            sage: latex.eval(latex(G), locals(), filename=fn)                   # optional - latex
+            ''
+
+        Check that it is not necessary that both the forward and the
+        backward rules are implemented::
+
+            sage: from sage.combinat.growth import Rule
+            sage: class RulePascal(Rule):
+            ....:     zero = 0
+            ....:     has_multiple_edges = True
+            ....:     zero_edge = None
+            ....:     def rank(self, v): return v
+            ....:     def vertices(self, n): return [n]
+            ....:     def is_P_edge(self, v, w): return [0] if w == v + 1 else []
+            ....:     def is_Q_edge(self, v, w): return list(range(w)) if w == v+1 else []
+            ....:     def backward_rule(self, y, g, z, h, x):
+            ....:         if g is None:
+            ....:             return (0, x, None, 0)
+            ....:         if h is None:
+            ....:             return (None, y, g, 0)
+            ....:         if g == 0:
+            ....:             return (None, y, None, 1)
+            ....:         else:
+            ....:             return (0, x-1, g-1, 0)
+
+            sage: G = RulePascal()(labels=[0,0,1,1,2,0,1,1,2,0,1,0,0])
+            sage: G
+              0  0  1
+              0  1  0
+              1  0
+            sage: latex.eval(latex(G), locals(), filename=fn)                   # optional - latex
+            ''
+        """
+        latex.add_package_to_preamble_if_available("tikz")
+
+        x_unit = self.options.x_unit
+        y_unit = self.options.y_unit
+
+        # Coordinate transforms (draw top row at the top)
+        if self.options.convention == 'matrix':
+            def y_rect(j):
+                return h - 1 - j
+
+            def y_vert(y):
+                return h - y
+        elif self.options.convention == 'Cartesian':
+            def y_rect(j):
+                return j
+
+            def y_vert(y):
+                return y
+
+        if not self._lambda:
+            return (f"\\begin{{tikzpicture}}[baseline=(BL.base),x={x_unit},y={y_unit}]\n"
+                    "  \\coordinate (BL) at (0,0);\n"
+                    "\\end{tikzpicture}")
+
+        h = len(self._lambda)
+        rule = self.rule
+        V = {}  # (x, y) -> raw vertex label
+        E = {}  # (x, y) -> raw edge label
+        try:
+            forward = rule.forward_rule
+        except AttributeError:
+            forward = None
+
+        if forward is not None:
+            labels = list(self._in_labels)  # local copy
+
+            for j in range(h):
+                for c in range(self._mu[j] + h - j, self._lambda[j] + h - j):
+                    i = c - h + j
+                    fill_val = self._filling.get((i, j), 0)
+                    if rule.has_multiple_edges:
+                        NW, mW, SW, mS, SE = labels[2*c-2 : 2*c+3]
+                        labels[2*c-1 : 2*c+2] = forward(NW, mW, SW, mS, SE, fill_val)
+                        mN, NE, mE = labels[2*c-1 : 2*c+2]
+
+                        E[i, j+0.5], E[i+1, j+0.5], E[i+0.5, j], E[i+0.5, j+1] = mW, mE, mS, mN
+                    else:
+                        NW, SW, SE = labels[c-1 : c+2]
+                        labels[c] = forward(NW, SW, SE, fill_val)
+                        NE = labels[c]
+
+                    V[i, j], V[i+1, j], V[i, j+1], V[i+1, j+1] = SW, SE, NW, NE
+
+        else:
+            labels = list(self._out_labels)  # local copy
+
+            for r in range(h):
+                j = h - r - 1
+                for c in range(self._lambda[j] + r, self._mu[j] + r, -1):
+                    i = c - r - 1
+                    if rule.has_multiple_edges:
+                        NW, mN, NE, mE, SE = labels[2*c-2 : 2*c+3]
+                        labels[2*c-1], labels[2*c], labels[2*c+1], _ = rule.backward_rule(NW, mN, NE, mE, SE)
+                        mW, SW, mS = labels[2*c-1 : 2*c+2]
+
+                        E[i, j+0.5], E[i+1, j+0.5], E[i+0.5, j], E[i+0.5, j+1] = mW, mE, mS, mN
+                    else:
+                        NW, NE, SE = labels[c-1 : c+2]
+                        labels[c] = rule.backward_rule(NW, NE, SE)[0]
+                        SW = labels[c]
+
+                    V[i, j], V[i+1, j], V[i, j+1], V[i+1, j+1] = SW, SE, NW, NE
+
+        # Target size inside a 1x1 cell (in ems, consistent with x=..., y=...):
+        target_em = 0.80
+        default_scale = 0.33  # fallback if measurement degenerates
+
+        tikz = []
+        tikz.append("\\begingroup")
+        tikz.append("\\def\\GDwrap#1{$\\displaystyle #1$}")
+
+        tikz.append("\\newdimen\\GDWmax\\newdimen\\GDHmax\\newdimen\\GDtmp")
+        tikz.append("\\GDWmax=0pt\\GDHmax=0pt")
+
+        tikz.append("\\newdimen\\GDtargetW\\newdimen\\GDtargetH")
+        tikz.append("\\GDtargetW=" + f"{target_em:.3f}" + "em")
+        tikz.append("\\GDtargetH=" + f"{target_em:.3f}" + "em")
+
+        coord_dict = {}  # coordinates in the tikz grid to box_id "GDlbl@1", "GDlbl@2", ...
+        all_labels = []  # distinct (possibly non-hashable) labels
+
+        def add_label(coords, label):
+            try:
+                k = all_labels.index(label)
+                box_id = f"GDlbl@{k}"
+            except ValueError:
+                k = len(all_labels)
+                all_labels.append(label)
+                box_id = f"GDlbl@{k}"
+                tikz.append(f"\\expandafter\\newbox\\csname {box_id}\\endcsname")
+                tikz.append(f"\\expandafter\\sbox\\csname {box_id}\\endcsname{{\\GDwrap{{{latex(label)}}}}}")
+                # width max
+                tikz.append(f"\\GDtmp=\\wd\\csname {box_id}\\endcsname")
+                tikz.append("\\ifdim\\GDtmp>\\GDWmax\\GDWmax=\\GDtmp\\fi")
+                # height+depth max
+                tikz.append(f"\\GDtmp=\\ht\\csname {box_id}\\endcsname")
+                tikz.append(f"\\advance\\GDtmp by\\dp\\csname {box_id}\\endcsname")
+                tikz.append("\\ifdim\\GDtmp>\\GDHmax\\GDHmax=\\GDtmp\\fi")
+
+            coord_dict[coords] = box_id
+
+        for coords, raw_label in V.items():
+            add_label(coords, rule.normalize_vertex(raw_label))
+
+        for coords, raw_label in E.items():
+            if raw_label != rule.zero_edge:
+                add_label(coords, raw_label)
+
+        # determine scale = min(targetW/Wmax, targetH/Hmax, 1)
+        tikz.append("\\ifdim\\GDWmax<1pt\\GDWmax=1pt\\fi")
+        tikz.append("\\ifdim\\GDHmax<1pt\\GDHmax=1pt\\fi")
+        tikz.append("\\pgfmathsetlengthmacro{\\GDWmaxNum}{\\GDWmax}")
+        tikz.append("\\pgfmathsetlengthmacro{\\GDHmaxNum}{\\GDHmax}")
+        tikz.append("\\pgfmathsetlengthmacro{\\GDtargetWNum}{\\GDtargetW}")
+        tikz.append("\\pgfmathsetlengthmacro{\\GDtargetHNum}{\\GDtargetH}")
+        tikz.append("\\pgfmathsetmacro{\\GDscaleW}{\\GDtargetWNum/\\GDWmaxNum}")
+        tikz.append("\\pgfmathsetmacro{\\GDscaleH}{\\GDtargetHNum/\\GDHmaxNum}")
+        tikz.append("\\pgfmathparse{min(\\GDscaleW,\\GDscaleH,1)}")
+        tikz.append("\\xdef\\GDscale{\\pgfmathresult}")
+
+        # Begin outer TikZ picture
+        tikz.append(f"\\begin{{tikzpicture}}[baseline=(BL.base),x={x_unit},y={y_unit}]")
+        tikz.append("  \\coordinate (BL) at (0,0);")
+        # Region boxes
+        tikz.append("  \\begin{scope}[draw=black!40,line width=0.2pt]")
+
+        for j in range(h):
+            for i in range(self._mu[j], self._lambda[j]):
+                y = y_rect(j)
+                tikz.append(f"    \\draw ({i},{y}) rectangle ++(1,1);")
+        tikz.append("  \\end{scope}")
+
+        # Filling values at cell centers
+        if self._filling:
+            tikz.append("  % filling values")
+            tikz.append("  \\begin{scope}[black]")
+            for (i, j), v in self._filling.items():
+                if v != 0:
+                    y = y_rect(j)
+                    tikz.append(f"    \\node at ({i+0.5},{y+0.5}) {{${rule.latex_vertex(v)}$}};")
+            tikz.append("  \\end{scope}")
+
+        tikz.append("  \\begin{scope}[every node/.style={inner sep=0.2pt,outer sep=0pt}]")
+        tikz.extend(f"\\node at ({x},{y_vert(y)}) {{\\scalebox{{\\GDscale}}{{\\usebox{{\\csname {box_id}\\endcsname}}}}}};"
+                    for (x, y), box_id in coord_dict.items())
+        tikz.append("  \\end{scope}")
+        tikz.append("\\end{tikzpicture}")
+        tikz.append("\\endgroup")
+        return "\n".join(tikz)
+
 ######################################################################
 # ABC for rules of growth diagrams
 ######################################################################
@@ -1744,6 +2095,18 @@ class Rule(UniqueRepresentation):
             True
         """
         return v
+
+    def latex_vertex(self, v):
+        r"""
+        Return `\LaTeX` used to typeset a vertex.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.growth import Rule
+            sage: Rule().latex_vertex(5)
+            5
+        """
+        return latex(v)
 
     def __call__(self, *args, **kwds):
         r"""
@@ -3764,7 +4127,7 @@ class RuleRSK(RulePartitions):
 
     For rectangular fillings, we could also use the (faster)
     implementation provided via :func:`~sage.combinat.rsk.RSK`.
-    Because the of the coordinate conventions in
+    Because of the coordinate conventions in
     :func:`~sage.combinat.rsk.RSK`, we have to transpose matrices::
 
         sage: [G.P_symbol(), G.Q_symbol()] == RSK(m.transpose())
@@ -4147,6 +4510,20 @@ class RuleDomino(Rule):
             Partitions
         """
         return _make_partition(v)
+
+    def latex_vertex(self, v):
+        r"""
+        Return `\LaTeX` used to typeset a vertex.
+
+        EXAMPLES::
+
+            sage: Domino = GrowthDiagram.rules.Domino()
+            sage: Domino.latex_vertex(-42)
+            \bar{ 42 }
+        """
+        if v > 0:
+            return latex(v)
+        return latex(r"\bar{"+ latex(-v) + "}")
 
     def vertices(self, n):
         r"""
