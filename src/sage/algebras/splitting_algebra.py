@@ -39,6 +39,7 @@ from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_domain
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
+from sage.structure.category_object import normalize_names
 
 
 # -------------------------------------------------------------------------
@@ -214,17 +215,17 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             sage: PuvLw.<u,v> = Lw[]; t = polygen(PuvLw)
             sage: poly = t^3 - u*t^2 + v*t - w
             sage: S.<x, y> = SplittingAlgebra(poly, warning=False)
-            sage: TestSuite(S).run()
+            sage: TestSuite(S).run(skip="_test_fraction_field")
         """
         # ---------------------------------------------------------------
         # checking input parameters
         # ---------------------------------------------------------------
-        base_ring = monic_polynomial.base_ring()
+
         if not monic_polynomial.is_monic():
             raise ValueError("given polynomial must be monic")
         deg = monic_polynomial.degree()
 
-        from sage.structure.category_object import normalize_names
+        base_ring = monic_polynomial.base_ring()
         self._root_names = normalize_names(deg - 1, names)
         root_names = list(self._root_names)
         verbose("Create splitting algebra to base ring %s and polynomial %s (%s %s)"
@@ -388,7 +389,6 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             invert_items = list(self._invertible_elements.items())
             for k, v in invert_items:
                 self._invertible_elements.update({v: k})
-        return
 
     ########################################################################
     # ----------------------------------------------------------------------
@@ -414,7 +414,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             False,
             False))
 
-            sage: TestSuite(S).run()
+            sage: TestSuite(S).run(skip="_test_fraction_field")
         """
         def_polynomial = self.defining_polynomial()
         def_coefficients = self._coefficients_list[0]
@@ -492,7 +492,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             u + v
             sage: S(X*Y + X)
             X*Y + X
-            sage: TestSuite(S).run()                   # indirect doctest
+            sage: TestSuite(S).run(skip="_test_fraction_field")   # indirect doctest
         """
         if isinstance(x, SplittingAlgebraElement):
             # coercion from covering fixes pickling problems

@@ -28,7 +28,9 @@ see :issue:`12849`::
 
 Check that sphinx is not imported at Sage start-up::
 
-    sage: os.system("sage -c \"if 'sphinx' in sys.modules: sys.exit(1)\"")
+    sage: # long time
+    sage: cmd = 'if "sphinx" in sys.modules: sys.exit(1)'
+    sage: os.system(f"python3 -m sage.cli -c '{cmd}'")
     0
 """
 # ****************************************************************************
@@ -957,11 +959,9 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
             base_path = os.path.join(base_path, 'sage')
         module = module.replace(".", os.sep)
         exts = ['py', 'pyx', 'pxd']
-        title = 'Source Code'
     else:
         module = ''
         exts = ['html']
-        title = 'Documentation'
         base_path = os.path.join(SAGE_DOC, 'html')
     if not os.path.exists(base_path):
         print("""Warning: the Sage documentation is not available""")
@@ -972,7 +972,7 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
     # 'SWORD' or 'WORDS'.  so if the user requests a whole_word
     # search, append and prepend '\b' to each string.
     regexp = string
-    extra_regexps = extras = [extra1, extra2, extra3, extra4, extra5]
+    extra_regexps = [extra1, extra2, extra3, extra4, extra5]
     if whole_word:
         regexp = r'\b' + regexp + r'\b'
         extra_regexps = [r'\b%s\b' % e for e in extra_regexps]
@@ -1022,9 +1022,6 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
 
     if not interact:
         return text_results
-
-    html_results = format_search_as_html(title, results, [string] + extras)
-    # potentially used below
 
     # Pass through the IPython pager in a mime bundle
     from IPython.core.page import page

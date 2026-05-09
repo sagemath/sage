@@ -446,10 +446,8 @@ def _setup_r_to_sage_converter():
 
     def _list_vector(vec):
         # we have a R list (vector of arbitrary elements)
-        attrs = vec.list_attrs()
         names = vec.do_slot('names')
         values = [rpy2py(val) for val in vec]
-        rclass = list(vec.do_slot('class')) if 'class' in attrs else vec.rclass
         data = zip(names, values)
         return {
             'DATA': dict(data),
@@ -1823,7 +1821,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         self._check_valid()
         P = self.parent()
 
-        with localconverter(P._r_to_sage_converter) as cv:
+        with localconverter(P._r_to_sage_converter):
             return robjects.r(self.name())
 
     def _latex_(self):

@@ -1564,7 +1564,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
         """
         return hash((self.parent(), tuple(self.__quadratic_form)))
 
-    def __richcmp__(self, right, op) -> bool:
+    def __richcmp__(self, other, op: int) -> bool:
         """
         Comparison.
 
@@ -1588,15 +1588,15 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
             sage: s == 0
             False
         """
-        if not isinstance(right, GaloisAutomorphismQuadraticForm):
+        if not isinstance(other, GaloisAutomorphismQuadraticForm):
             return NotImplemented
         lx = self.parent()
-        rx = right.parent()
+        rx = other.parent()
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
-        if self.quadratic_form().is_equivalent(right.quadratic_form()):
+        if self.quadratic_form().is_equivalent(other.quadratic_form()):
             return rich_to_bool(op, 0)
-        return richcmp(self.quadratic_form(), right.quadratic_form(), op)
+        return richcmp(self.quadratic_form(), other.quadratic_form(), op)
 
     def _repr_(self) -> str:
         """
@@ -1762,7 +1762,7 @@ class HeegnerPoint(SageObject):
         self.__D = D
         self.__c = c
 
-    def __richcmp__(self, x, op) -> bool:
+    def __richcmp__(self, other, op: int) -> bool:
         """
         Compare two Heegner points.
 
@@ -1784,10 +1784,10 @@ class HeegnerPoint(SageObject):
             sage: H == 0
             False
         """
-        if not isinstance(x, HeegnerPoint):
+        if not isinstance(other, HeegnerPoint):
             return NotImplemented
         return richcmp((self.__N, self.__D, self.__c),
-                       (x.__N, x.__D, x.__c), op)
+                       (other.__N, other.__D, other.__c), op)
 
     def _repr_(self) -> str:
         """
@@ -2762,7 +2762,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
         """
         return hash((HeegnerPoint.__hash__(self), self.reduced_quadratic_form()))
 
-    def __richcmp__(self, x, op) -> bool:
+    def __richcmp__(self, other, op: int) -> bool:
         """
         Compare two Heegner points with character.
 
@@ -2777,12 +2777,12 @@ class HeegnerPointOnX0N(HeegnerPoint):
             sage: x5 > x1
             True
         """
-        if not isinstance(x, HeegnerPointOnX0N):
+        if not isinstance(other, HeegnerPointOnX0N):
             return NotImplemented
         return richcmp((self.level(), self.discriminant(),
                         self.conductor(), self.__f),
-                       (x.level(), x.discriminant(),
-                        x.conductor(), x.__f), op)
+                       (other.level(), other.discriminant(),
+                        other.conductor(), other.__f), op)
 
     def _repr_(self) -> str:
         """

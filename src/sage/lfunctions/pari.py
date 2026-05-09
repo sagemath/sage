@@ -664,7 +664,10 @@ class LFunction(SageObject):
 
         self._conductor = ZZ(self._L[4])
         self._weight = ZZ(self._L[3])
-        self._eps = ZZ(self._L[5])
+        try:
+            self._eps = ZZ(self._L[5])
+        except (TypeError, ValueError):
+            self._eps = self._L[5]
 
         self._max_im = max_im
 
@@ -876,9 +879,21 @@ class LFunction(SageObject):
             sage: L = EllipticCurve("24a1").modular_form().lseries()
             sage: L.taylor_series(-1, 3)
             0.000000000000000 - 0.702565506265199*z + 0.638929001045535*z^2 + O(z^3)
+
+        Check that :issue:`25965` is fixed::
+
+            sage: L2 = EllipticCurve("37a1").modular_form().lseries(); L2
+            L-series associated to the cusp form q - 2*q^2 - 3*q^3 + 2*q^4 - 2*q^5 + O(q^6)
+            sage: L2.taylor_series(0,3)
+            0.000000000000000 - 0.357620466127498*z + 0.273373112603865*z^2 + 0.303362857047671*z^3 + O(z^4)
+            sage: L2.taylor_series(0,1)
+            O(z^1)
+            sage: L2(0)
+            0.000000000000000
         """
         pt = pari.Ser([s, 1], d=k)  # s + x + O(x^k)
         B = PowerSeriesRing(self._CC, var)
+        # note: more terms are given when the first terms vanish.
         return B(pari.lfun(self._L, pt, precision=self.prec))
 
     def zeros(self, maxi):

@@ -17,7 +17,7 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import sqrt
-from sage.structure.element cimport Element, parent
+from sage.structure.element cimport Element, parent as _parent
 from sage.structure.parent cimport Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp cimport richcmp
@@ -933,7 +933,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         """
         if isinstance(x, Octonion_generic):
             v = self._module((<Octonion_generic> x).vec)
-        elif self.base_ring().has_coerce_map_from(parent(x)):
+        elif self.base_ring().has_coerce_map_from(_parent(x)):
             R = self.base_ring()
             v = self._module([R(x)] + [R.zero()]*7)
         else:

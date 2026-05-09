@@ -333,7 +333,6 @@ def semidistributive_rowmotion(L):
         True
     """
     H = L._hasse_diagram
-    d = L._element_to_vertex_dict
     meet_irr = [u for u in H if sum(1 for _ in H.upper_covers_iterator(u)) == 1]
     join_irr = [u for u in H if sum(1 for _ in H.lower_covers_iterator(u)) == 1]
     kappa_dual = {L._vertex_to_element(u): L._vertex_to_element(H.kappa_dual(u))

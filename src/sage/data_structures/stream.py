@@ -3116,7 +3116,6 @@ class Stream_pseudo_diff_mul(Stream_binary):
             [0, 0, a*b^2, 2*a^2*b^3 + 4*a*b^3 - a*b,
              3*a^3*b^4 + 8*a^2*b^4 + 9*a*b^4 - 4*a^2*b^2 - 8*a*b^2]
         """
-        x = self._variable
         R = self._ring
         # We want to compute the coefficient of -n = i + j - k.
         # self._right[-j] is the coefficient of \partial^j.

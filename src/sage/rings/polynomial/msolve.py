@@ -57,9 +57,8 @@ def _run_msolve(ideal, options):
                 sep=',\n', file=msolve_in)
         msolve_in.close()
         command = [msolve().absolute_filename(), "-f", msolve_in.name] + options
-        msolve_out = subprocess.run(command,
-                                    capture_output=True,
-                                    text=True)
+        msolve_out = subprocess.run(command, capture_output=True, text=True,
+                                    check=False)
         msolve_out.check_returncode()
 
     return msolve_out.stdout
@@ -128,10 +127,10 @@ def variety(ideal, ring, *, proof=True):
         sage: R.<x, y> = PolynomialRing(GF(p), 2, order='lex')
         sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
         sage: sorted(variety(I, GF(p^2), proof=False), key=lambda d: str(sorted(d.items()))) # optional - msolve
-        [{x: 1, y: 1},
-         {x: 254228855*z2 + 114981228, y: 232449571*z2 + 402714189},
-         {x: 267525699, y: 473946006},
-         {x: 282642054*z2 + 154363985, y: 304421338*z2 + 197081624}]
+        [{y: 1, x: 1},
+         {y: 232449571*z2 + 402714189, x: 254228855*z2 + 114981228},
+         {y: 304421338*z2 + 197081624, x: 282642054*z2 + 154363985},
+         {y: 473946006, x: 267525699}]
 
     TESTS::
 
@@ -140,14 +139,14 @@ def variety(ideal, ring, *, proof=True):
         sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
 
         sage: sorted(I.variety(algorithm='msolve', proof=False), key=lambda d: str(sorted(d.items()))) # optional - msolve
-        [{x: 1, y: 1}, {x: 267525699, y: 473946006}]
+        [{y: 1, x: 1}, {y: 473946006, x: 267525699}]
 
         sage: K.<a> = GF(p^2)
         sage: sorted(I.variety(K, algorithm='msolve', proof=False), key=lambda d: str(sorted(d.items()))) # optional - msolve
-        [{x: 1, y: 1},
-         {x: 118750849*a + 194048031, y: 510295713*a + 18174854},
-         {x: 267525699, y: 473946006},
-         {x: 418120060*a + 75297182, y: 26575196*a + 44750050}]
+        [{y: 1, x: 1},
+         {y: 26575196*a + 44750050, x: 418120060*a + 75297182},
+         {y: 473946006, x: 267525699},
+         {y: 510295713*a + 18174854, x: 118750849*a + 194048031}]
 
         sage: R.<x, y> = PolynomialRing(GF(2147483659), 2, order='lex')
         sage: ideal([x, y]).variety(algorithm='msolve', proof=False)
@@ -159,26 +158,26 @@ def variety(ideal, ring, *, proof=True):
         sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
 
         sage: I.variety(algorithm='msolve', proof=False) # optional - msolve
-        [{x: 1, y: 1}]
+        [{y: 1, x: 1}]
         sage: I.variety(RealField(100), algorithm='msolve', proof=False) # optional - msolve
-        [{x: 2.7692923542386314152404094643, y: 0.36110308052864737763464656216},
-         {x: 1.0000000000000000000000000000, y: 1.0000000000000000000000000000}]
+        [{y: 0.36110308052864737763464656216, x: 2.7692923542386314152404094643},
+         {y: 1.0000000000000000000000000000, x: 1.0000000000000000000000000000}]
         sage: I.variety(RealIntervalField(100), algorithm='msolve', proof=False) # optional - msolve
-        [{x: 2.76929235423863141524040946434?, y: 0.361103080528647377634646562159?},
-         {x: 1, y: 1}]
+        [{y: 0.361103080528647377634646562159?, x: 2.76929235423863141524040946434?},
+         {y: 1, x: 1}]
         sage: I.variety(RBF, algorithm='msolve', proof=False) # optional - msolve
-        [{x: [2.76929235423863 +/- 2.08e-15], y: [0.361103080528647 +/- 4.53e-16]},
-         {x: 1.000000000000000, y: 1.000000000000000}]
+        [{y: [0.361103080528647 +/- 4.53e-16], x: [2.76929235423863 +/- 2.08e-15]},
+         {y: 1.000000000000000, x: 1.000000000000000}]
         sage: I.variety(RDF, algorithm='msolve', proof=False) # optional - msolve
-        [{x: 2.7692923542386314, y: 0.36110308052864737}, {x: 1.0, y: 1.0}]
+        [{y: 0.36110308052864737, x: 2.7692923542386314}, {y: 1.0, x: 1.0}]
         sage: I.variety(AA, algorithm='msolve', proof=False) # optional - msolve
-        [{x: 2.769292354238632?, y: 0.3611030805286474?},
-         {x: 1.000000000000000?, y: 1.000000000000000?}]
+        [{y: 0.3611030805286474?, x: 2.769292354238632?},
+         {y: 1.000000000000000?, x: 1.000000000000000?}]
         sage: I.variety(QQbar, algorithm='msolve', proof=False) # optional - msolve
-        [{x: 2.769292354238632?, y: 0.3611030805286474?},
-         {x: 1, y: 1},
-         {x: 0.11535382288068429? + 0.5897428050222055?*I, y: 0.3194484597356763? - 1.633170240915238?*I},
-         {x: 0.11535382288068429? - 0.5897428050222055?*I, y: 0.3194484597356763? + 1.633170240915238?*I}]
+        [{y: 0.3611030805286474?, x: 2.769292354238632?},
+         {y: 1, x: 1},
+         {y: 0.3194484597356763? - 1.633170240915238?*I, x: 0.11535382288068429? + 0.5897428050222055?*I},
+         {y: 0.3194484597356763? + 1.633170240915238?*I, x: 0.11535382288068429? - 0.5897428050222055?*I}]
         sage: I.variety(ComplexField(100))
         [{y: 1.0000000000000000000000000000, x: 1.0000000000000000000000000000},
          {y: 0.36110308052864737763464656216, x: 2.7692923542386314152404094643},
@@ -186,18 +185,18 @@ def variety(ideal, ring, *, proof=True):
          {y: 0.31944845973567631118267671892 + 1.6331702409152376561188467320*I, x: 0.11535382288068429237979526783 - 0.58974280502220550164728074602*I}]
 
         sage: Ideal(x^2 + y^2 - 1, x - y).variety(RBF, algorithm='msolve', proof=False) # optional - msolve
-        [{x: [-0.707106781186547 +/- 6.29e-16], y: [-0.707106781186547 +/- 6.29e-16]},
-         {x: [0.707106781186547 +/- 6.29e-16], y: [0.707106781186547 +/- 6.29e-16]}]
+        [{y: [-0.707106781186547 +/- 6.29e-16], x: [-0.707106781186547 +/- 6.29e-16]},
+         {y: [0.707106781186547 +/- 6.29e-16], x: [0.707106781186547 +/- 6.29e-16]}]
         sage: sorted(Ideal(x^2 - 1, y^2 - 1).variety(QQ, algorithm='msolve', proof=False), key=lambda d: str(sorted(d.items()))) # optional - msolve
-        [{x: -1, y: -1}, {x: -1, y: 1}, {x: 1, y: -1}, {x: 1, y: 1}]
+        [{y: -1, x: -1}, {y: -1, x: 1}, {y: 1, x: -1}, {y: 1, x: 1}]
         sage: Ideal(x^2-1, y^2-2).variety(CC, algorithm='msolve', proof=False) # optional - msolve
-        [{x: 1.00000000000000, y: 1.41421356237310},
-         {x: -1.00000000000000, y: 1.41421356237309},
-         {x: 1.00000000000000, y: -1.41421356237309},
-         {x: -1.00000000000000, y: -1.41421356237310}]
+        [{y: 1.41421356237310, x: 1.00000000000000},
+         {y: 1.41421356237309, x: -1.00000000000000},
+         {y: -1.41421356237309, x: 1.00000000000000},
+         {y: -1.41421356237310, x: -1.00000000000000}]
 
         sage: Ideal([x, y, x + y]).variety(algorithm='msolve', proof=False) # optional - msolve
-        [{x: 0, y: 0}]
+        [{y: 0, x: 0}]
 
         sage: Ideal([x, y, x + y - 1]).variety(algorithm='msolve', proof=False) # optional - msolve
         []
