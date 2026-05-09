@@ -1735,7 +1735,6 @@ class PolynomialRing_generic(Ring):
 
         - Joel B. Mohler
         """
-
         if self.base_ring().order() is infinity:
             raise NotImplementedError
         if of_degree is not None and max_degree is None:
@@ -1766,6 +1765,89 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         PolynomialRing_generic.__init__(self, base_ring, name=name,
                                         sparse=sparse, implementation=implementation,
                                         element_class=element_class, category=category)
+
+    def completion(self, p=None, prec=20, extras=None):
+        r"""
+        Return the completion of this polynomial ring with respect to
+        the irreducible polynomial ``p``.
+
+        INPUT:
+
+        - ``p`` (default: ``None``) -- an irreduclible polynomial or
+          ``Infinity``
+
+        - ``prec`` (default: 20) -- an integer or ``Infinity``; if
+          ``Infinity``, return a
+          :class:`sage.rings.lazy_series_ring.LazyPowerSeriesRing`.
+
+        - ``extras`` (default: ``None``) -- ignored; for compatibility
+          with the construction mecanism
+
+        .. SEEALSO::
+
+            :mod:`sage.rings.completion_polynomial_ring`
+
+        EXAMPLES::
+
+            sage: P.<x> = PolynomialRing(QQ)
+            sage: P
+            Univariate Polynomial Ring in x over Rational Field
+
+        Without any argument, this method returns the power series ring
+        with the same variable name::
+
+            sage: PP = P.completion()
+            sage: PP
+            Power Series Ring in x over Rational Field
+            sage: f = 1 - x
+            sage: PP(f)
+            1 - x
+            sage: 1 / f
+            -1/(x - 1)
+            sage: g = 1 / PP(f); g
+            1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + x^10 + x^11
+             + x^12 + x^13 + x^14 + x^15 + x^16 + x^17 + x^18 + x^19 + O(x^20)
+            sage: 1 / g
+            1 - x + O(x^20)
+
+        We can construct the completion at other ideals by passing in an
+        irreducible polynomial::
+
+            sage: C1 = P.completion(x - 1)
+            sage: C1
+            Completion of Univariate Polynomial Ring in x over Rational Field at x - 1
+            sage: C2 = P.completion(x^2 + x + 1)
+            sage: C2
+            Completion of Univariate Polynomial Ring in x over Rational Field at x^2 + x + 1
+
+        Constructing the completion at the place of infinity also works::
+
+            sage: C3 = P.completion(infinity)
+            sage: C3
+            Completion of Fraction Field of Univariate Polynomial Ring in x over Rational Field at infinity
+
+        When the precision is infinity, a lazy series ring is returned::
+
+            sage: # needs sage.combinat
+            sage: PP = P.completion(x, prec=oo)
+            sage: PP.backend(force=True)
+            Lazy Taylor Series Ring in u_... over Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x
+            sage: g = 1 / PP(f); g
+            1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + ...
+            sage: 1 / g == f
+            True
+
+        TESTS::
+
+            sage: P.completion('x')
+            Power Series Ring in x over Rational Field
+            sage: P.completion('y')
+            Power Series Ring in y over Rational Field
+        """
+        if p is None:
+            p = self.variable_name()
+        from sage.rings.completion_polynomial_ring import CompletionPolynomialRing
+        return CompletionPolynomialRing(self, p, default_prec=prec, sparse=self.is_sparse())
 
     def quotient_by_principal_ideal(self, f, names=None, **kwds):
         """
