@@ -11,20 +11,41 @@ SageMath version and banner info
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sys
-from typing import LiteralString, TypedDict
+from typing import TypedDict, cast, LiteralString, TypedDict
 
 from sage.env import SAGE_BANNER, SAGE_VERSION
 from sage.version import banner as sage_banner
 
 
-class VersionInfo(TypedDict):
+class VersionDict(TypedDict):
     major: int
     minor: int
     tiny: float
     prerelease: bool
 
 
-def banner_text(full: bool = True) -> LiteralString:
+def version() -> str:
+    """
+    Return the version of Sage.
+
+    OUTPUT: string
+
+    EXAMPLES::
+
+       sage: version()
+       doctest:warning
+       ...
+       DeprecationWarning: Use sage.version.version instead.
+       ...
+       'SageMath version ..., Release Date: ...'
+    """
+    from sage.misc.superseded import deprecation
+
+    deprecation(39015, "Use sage.version.version instead.")
+    return sage_banner
+
+
+def banner_text(full: bool = True) -> str:
     """
     Text for the Sage banner.
 
@@ -74,6 +95,7 @@ def banner_text(full: bool = True) -> LiteralString:
 
 
 def banner() -> None:
+def banner() -> None:
     """
     Print the Sage banner.
 
@@ -108,7 +130,7 @@ def banner() -> None:
     print(banner_text(full=False))
 
 
-def version_dict() -> VersionInfo:
+def version_dict() -> VersionDict:
     """
     A dictionary describing the version of Sage.
 
@@ -146,25 +168,25 @@ def version_dict() -> VersionInfo:
         sage: version_dict()['major'] == int(sage.version.version.split('.')[0])
         True
     """
-    v = SAGE_VERSION.split(".")
-    dict: VersionInfo = {
-        "major": int(v[0]),
-        "minor": int(v[1]),
-        "tiny": 0,
-        "prerelease": False,
+    v = cast("str", SAGE_VERSION).split('.')
+    version_info: VersionDict = {
+        'major': int(v[0]),
+        'minor': int(v[1]),
+        'tiny': 0,
+        'prerelease': False,
     }
     try:
         int(v[-1])
     except ValueError:  # when last entry is not an integer
-        dict["prerelease"] = True
-    if (len(v) == 3 and not dict["prerelease"]) or len(v) > 3:
-        dict["tiny"] = int(v[2])
+        version_info['prerelease'] = True
+    if (len(v) == 3 and not version_info['prerelease']) or len(v) > 3:
+        version_info['tiny'] = int(v[2])
     try:
         teeny = int(v[3])
-        dict["tiny"] += 0.1 * teeny
+        version_info['tiny'] += 0.1 * teeny
     except (ValueError, IndexError):
         pass
-    return dict
+    return version_info
 
 
 def require_version(
@@ -227,8 +249,9 @@ def require_version(
         )
     ):
         return True
-    if print_message:
-        txt = "This code requires at least version {} of SageMath to run correctly."
-        print(txt.format(major + 0.1 * minor + 0.01 * tiny))
-        print("You are running version {}.".format(SAGE_VERSION))
-    return False
+    else:
+        if print_message:
+            txt = "This code requires at least version {} of SageMath to run correctly."
+            print(txt.format(major + 0.1 * minor + 0.01 * tiny))
+            print("You are running version {}.".format(SAGE_VERSION))
+        return False

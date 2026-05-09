@@ -319,7 +319,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     # def _unpickle(self, data, int version):   # use version >= 0
     # cpdef _add_(self, right):
     # cdef _mul_(self, Matrix right):
-    # cpdef _richcmp_(self, Matrix right, int op):
+    # cpdef _richcmp_(self, Matrix other, int op):
     # def __neg__(self):
     # def __invert__(self):
     # def __copy__(self):

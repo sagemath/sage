@@ -749,9 +749,9 @@ class PermutationGroup_generic(FiniteGroup):
         g = ', '.join([g._gap_cycle_string() for g in self.gens()])
         return 'PermutationGroup<%s | %s>' % (self.degree(), g)
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op: int):
         """
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         The comparison extends the subgroup relation. Hence, it is first checked
         whether one of the groups is subgroup of the other. If this is not the
@@ -795,23 +795,23 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G != H
             False
         """
-        if not isinstance(right, PermutationGroup_generic):
+        if not isinstance(other, PermutationGroup_generic):
             return NotImplemented
 
-        if self is right:
+        if self is other:
             return rich_to_bool(op, 0)
 
         gSelf = self._libgap_()
-        gRight = right._libgap_()
+        gOther = other._libgap_()
         if op in [op_EQ, op_NE]:
-            return gSelf._richcmp_(gRight, op)
+            return gSelf._richcmp_(gOther, op)
 
-        if gSelf.IsSubgroup(gRight):
+        if gSelf.IsSubgroup(gOther):
             return rich_to_bool(op, 1)
-        if gRight.IsSubgroup(gSelf):
+        if gOther.IsSubgroup(gSelf):
             return rich_to_bool(op, -1)
 
-        return gSelf._richcmp_(gRight, op)
+        return gSelf._richcmp_(gOther, op)
 
     def __hash__(self):
         r"""
@@ -5161,7 +5161,7 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
                     if g._libgap_() not in ambient_gap_group:
                         raise TypeError("each generator must be in the ambient group")
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op: int):
         r"""
         Compare ``self`` and ``other``.
 

@@ -44,7 +44,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         sage: K.<a> = NumberField(x^3 - 3, 'a')
         sage: Conic([a, 1, -1])._test_pickling()
     """
-    def __init__(self, A, f):
+    def __init__(self, A, f) -> None:
         r"""
         See ``Conic`` for full documentation.
 
@@ -330,14 +330,15 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             raise ValueError("Invalid combination: obstruction=True and "
                              "algorithm=%s" % algorithm)
 
-        return ProjectiveConic_field.has_rational_point(self, point=point,
-                           algorithm=algorithm, read_cache=False)
+        return ProjectiveConic_field.has_rational_point(
+            self, point=point, algorithm=algorithm, read_cache=False)
 
-    def is_locally_solvable(self, p):
+    def is_locally_solvable(self, p) -> bool:
         r"""
         Return ``True`` if and only if ``self`` has a solution over the
-        completion of the base field `B` of ``self`` at ``p``. Here ``p``
-        is a finite prime or infinite place of `B`.
+        completion of the base field `B` of ``self`` at ``p``.
+
+        Here ``p`` is a finite prime or infinite place of `B`.
 
         EXAMPLES::
 
@@ -448,5 +449,5 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
                 self._infinite_obstructions = obs1
         obs = obs1 + obs0
         if finite and infinite:
-            assert len(obs) % 2 == 0
+            assert not len(obs) % 2
         return obs
