@@ -61,7 +61,7 @@ from sage.structure.parent import Parent
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
-import sage.misc.prandom as prandom
+from sage.misc import prandom
 from sage.rings.integer import Integer
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from typing import TYPE_CHECKING

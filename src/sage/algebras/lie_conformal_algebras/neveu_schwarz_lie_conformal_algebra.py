@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Neveu-Schwarz Super Lie Conformal Algebra
 
@@ -25,7 +24,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+from sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra import (
+    GradedLieConformalAlgebra,
+)
 
 
 class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):

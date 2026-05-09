@@ -202,28 +202,6 @@ def make_permgroup_element_v2(G, x, domain):
     return G.element_class(x, G, check=False)
 
 
-def is_PermutationGroupElement(x):
-    r"""
-    Return ``True`` if ``x`` is a :class:`PermutationGroupElement`.
-
-    EXAMPLES::
-
-        sage: p = PermutationGroupElement([(1,2),(3,4,5)])
-        sage: from sage.groups.perm_gps.permgroup_element import is_PermutationGroupElement
-        sage: is_PermutationGroupElement(p)
-        doctest:warning...
-        DeprecationWarning: The function is_PermutationGroupElement is deprecated;
-        use 'isinstance(..., PermutationGroupElement)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38184,
-                       "The function is_PermutationGroupElement is deprecated; "
-                       "use 'isinstance(..., PermutationGroupElement)' instead.")
-    return isinstance(x, PermutationGroupElement)
-
-
 cdef class PermutationGroupElement(MultiplicativeGroupElement):
     r"""
     An element of a permutation group.
@@ -1533,9 +1511,10 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         EXAMPLES::
 
             sage: G = SymmetricGroup(5)
-            sage: hash(G([2,1,5,3,4]))
-            -1203337681           # 32-bit
-            -1527414595000039889  # 64-bit
+            sage: hash32 = -1203337681
+            sage: hash64 = -1527414595000039889
+            sage: hash(G([2,1,5,3,4])) in [hash32, hash64]
+            True
 
         Check that the hash looks reasonable::
 

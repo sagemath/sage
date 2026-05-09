@@ -312,8 +312,7 @@ class AnInfinity:
         """
         if self._sign < 0:
             return 'minf'
-        else:
-            return 'inf'
+        return 'inf'
 
     def _fricas_init_(self) -> str:
         """
@@ -328,10 +327,9 @@ class AnInfinity:
         """
         if self._sign_char == '':
             return r"%infinity"
-        elif self._sign > 0:
+        if self._sign > 0:
             return r"%plusInfinity"
-        else:
-            return r"%minusInfinity"
+        return r"%minusInfinity"
 
     def __pari__(self):
         """
@@ -348,8 +346,7 @@ class AnInfinity:
 
         if self._sign >= 0:
             return pari('oo')
-        else:
-            return pari('-oo')
+        return pari('-oo')
 
     def _latex_(self) -> str:
         r"""
@@ -549,8 +546,7 @@ class AnInfinity:
         """
         if x == 0:
             return x
-        else:
-            return abs(self)
+        return abs(self)
 
     def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         """
@@ -567,10 +563,9 @@ class AnInfinity:
         """
         if self._sign == 0:
             return sib.name('unsigned_infinity')
-        elif self._sign > 0:
+        if self._sign > 0:
             return sib.name('oo')
-        else:
-            return -sib.name('oo')
+        return -sib.name('oo')
 
 
 class UnsignedInfinityRing_class(Singleton, Parent):
@@ -704,7 +699,7 @@ class UnsignedInfinityRing_class(Singleton, Parent):
             (Infinity, Infinity)
             sage: UnsignedInfinityRing(CC(oo)), UnsignedInfinityRing(CC(-oo))           # needs sage.rings.real_mpfr
             (Infinity, Infinity)
-            sage: UnsignedInfinityRing(RIF(oo)), UnsignedInfinityRing(RIF(-oo))         # needs sage.rings.real_interval_field
+            sage: UnsignedInfinityRing(RIF(oo)), UnsignedInfinityRing(RIF(-oo))
             (Infinity, Infinity)
             sage: UnsignedInfinityRing(float('+inf')), UnsignedInfinityRing(float('-inf'))
             (Infinity, Infinity)
@@ -730,7 +725,7 @@ class UnsignedInfinityRing_class(Singleton, Parent):
         # Handle all ways to represent infinity first
         if isinstance(x, InfinityElement):
             return self.gen()
-        elif isinstance(x, float):
+        if isinstance(x, float):
             if x in [float('+inf'), float('-inf')]:
                 return self.gen()
         elif isinstance(x, RingElement) and isinstance(x.parent(), sage.rings.abc.RealIntervalField):
@@ -917,9 +912,10 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
         r"""
         TESTS::
 
-            sage: hash(unsigned_infinity)
-            9223372036854775806 # 64-bit
-            2147483646          # 32-bit
+            sage: hash32 = 2147483646
+            sage: hash64 = 9223372036854775806
+            sage: hash(unsigned_infinity) in [hash32, hash64]
+            True
         """
         return maxsize - 1
 
@@ -1050,12 +1046,17 @@ class InfinityRing_class(Singleton, CommutativeRing):
             ...
             IndexError: n must be 0 or 1
         """
-        if n == 0:
-            if self._gen0 is None:
+        try:
+            if n == 0:
+                return self._gen0
+            if n == 1:
+                return self._gen1
+            raise IndexError("n must be 0 or 1")
+        except AttributeError:
+            if n == 0:
                 self._gen0 = PlusInfinity()
-            return self._gen0
-        elif n == 1:
-            if self._gen1 is None:
+                return self._gen0
+            if n == 1:
                 self._gen1 = MinusInfinity()
             return self._gen1
         else:
@@ -1129,7 +1130,7 @@ class InfinityRing_class(Singleton, CommutativeRing):
             (+Infinity, -Infinity)
             sage: InfinityRing(RR(oo)), InfinityRing(RR(-oo))
             (+Infinity, -Infinity)
-            sage: InfinityRing(RIF(oo)), InfinityRing(RIF(-oo))                         # needs sage.rings.real_interval_field
+            sage: InfinityRing(RIF(oo)), InfinityRing(RIF(-oo))
             (+Infinity, -Infinity)
             sage: InfinityRing(float('+inf')), InfinityRing(float('-inf'))
             (+Infinity, -Infinity)
@@ -1174,9 +1175,8 @@ class InfinityRing_class(Singleton, CommutativeRing):
         if isinstance(x, InfinityElement):
             if x < 0:
                 return self.gen(1)
-            else:
-                return self.gen(0)
-        elif isinstance(x, float):
+            return self.gen(0)
+        if isinstance(x, float):
             if x == float('+inf'):
                 return self.gen(0)
             if x == float('-inf'):
@@ -1221,7 +1221,7 @@ class InfinityRing_class(Singleton, CommutativeRing):
             True
             sage: InfinityRing.has_coerce_map_from(RDF)
             True
-            sage: InfinityRing.has_coerce_map_from(RIF)                                 # needs sage.rings.real_interval_field
+            sage: InfinityRing.has_coerce_map_from(RIF)
             True
 
         As explained above, comparison works by coercing to the
@@ -1562,9 +1562,10 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
         r"""
         TESTS::
 
-            sage: hash(-infinity)
-            -9223372036854775808 # 64-bit
-            -2147483648          # 32-bit
+            sage: hash32 = -2147483648
+            sage: hash64 = -9223372036854775808
+            sage: hash(-infinity) in [hash32, hash64]
+            True
         """
         return ~maxsize
 
@@ -1661,9 +1662,10 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
         r"""
         TESTS::
 
-            sage: hash(+infinity)
-            9223372036854775807 # 64-bit
-            2147483647          # 32-bit
+            sage: hash32 = 2147483647
+            sage: hash64 = 9223372036854775807
+            sage: hash(+infinity) in [hash32, hash64]
+            True
         """
         return maxsize
 

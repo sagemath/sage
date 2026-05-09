@@ -837,15 +837,14 @@ def compute_definiteness(self):
     if sig_zer > 0:
         self.__definiteness_string = "degenerate"
         return
-    elif sig_neg == n:
+    if sig_neg == n:
         self.__definiteness_string = "neg_def"
         return
-    elif sig_pos == n:
+    if sig_pos == n:
         self.__definiteness_string = "pos_def"
         return
-    else:
-        self.__definiteness_string = "indefinite"
-        return
+    self.__definiteness_string = "indefinite"
+    return
 
 
 def compute_definiteness_string_by_determinants(self):

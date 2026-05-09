@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.singular sage.modules (because all doctests need laurent_polynomial_mpair, Groebner bases)
 r"""
-Ideals in Laurent polynomial rings.
+Ideals in Laurent polynomial rings
 
 For `R` a commutative ring, ideals in the Laurent polynomial ring
 `R[x_1^{\pm 1}, x_2^{\pm 1}, \ldots, x_n^{\pm 1}]` are implemented as
@@ -171,18 +171,17 @@ class LaurentPolynomialIdeal( Ideal_generic ):
             if set(self.gens()) == set(right_r.gens()): # Early abort
                 return (op == op_EQ)
             return ((self.polynomial_ideal() == right_r.polynomial_ideal()) == (op == op_EQ))
-        elif op == op_LE:
+        if op == op_LE:
             if all(f in right_r.gens() for f in self.gens()): # Early abort
                 return True
             return self.polynomial_ideal(saturate=False) <= right_r.polynomial_ideal()
-        elif op == op_GE:
+        if op == op_GE:
             return right_r._richcmp_(self, op_LE)
-        elif op == op_LT:
+        if op == op_LT:
             return self._richcmp_(right_r, op_LE) and self._richcmp_(right_r, op_NE)
-        elif op == op_GT:
+        if op == op_GT:
             return right_r._richcmp_(self, op_LE) and right_r._richcmp_(self, op_NE)
-        else:
-            raise ValueError("invalid comparison")
+        raise ValueError("invalid comparison")
 
     def __contains__(self, f) -> bool:
         """
@@ -304,7 +303,6 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: K.<z> = CyclotomicField(3)
             sage: P.<x,y> = LaurentPolynomialRing(K, 2)
             sage: I = P.ideal([x + z, y - z])
@@ -339,7 +337,6 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: K.<z> = CyclotomicField(3)
             sage: P.<x,y> = LaurentPolynomialRing(K, 2)
             sage: I = P.ideal([x + 1, y - 1])
@@ -500,8 +497,8 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         """
         Determine whether every generator of ``self`` is a binomial.
 
-        If ``groebner_basis`` is True, this becomes intrinsic (for a choice of
-        term order).
+        If ``groebner_basis`` is ``True``, this becomes intrinsic (for a choice
+        of term order).
 
         EXAMPLES::
 

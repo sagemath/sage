@@ -1794,6 +1794,18 @@ const numeric numeric::pow_intexp(const numeric &exponent) const
 			throw std::runtime_error("size of exponent exceeds signed long size");
 		return power(mpz_get_si(mpq_numref(exponent.v._bigrat)));
         }
+        if (exponent.t == PYOBJECT) {
+                // exponent.v._long would alias the PyObject* pointer and be
+                // garbage; convert via the Python integer protocol instead.
+                // to_long() throws conversion_error if it does not fit in a
+                // signed long, which we re-raise as the same overflow message
+                // used for MPZ above.
+                try {
+                        return power(exponent.to_long());
+                } catch (const conversion_error&) {
+                        throw std::runtime_error("size of exponent exceeds signed long size");
+                }
+        }
         return power(exponent.v._long);
 }
 

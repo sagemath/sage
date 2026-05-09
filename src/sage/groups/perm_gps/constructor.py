@@ -241,7 +241,7 @@ def standardize_generator(g, convert_dict=None, as_cycles=False):
         if as_cycles:
             return g.cycle_tuples()
         return g._list
-    elif isinstance(g, permgroup_element.PermutationGroupElement):
+    if isinstance(g, permgroup_element.PermutationGroupElement):
         if not as_cycles:
             l = list(range(1, g.parent().degree() + 1))
             return g._act_on_list_on_position(l)

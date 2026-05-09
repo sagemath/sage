@@ -391,8 +391,7 @@ class Primes(Set_generic, UniqueRepresentation):
         if not classes:
             if not included:
                 return "Empty set of prime numbers"
-            else:
-                return "Finite set of prime numbers: %s" % _repr_items(included)
+            return "Finite set of prime numbers: %s" % _repr_items(included)
         if self._modulus == 1:
             s = "Set of all prime numbers"
         else:
@@ -1040,8 +1039,7 @@ class Primes(Set_generic, UniqueRepresentation):
         P = self.intersection(other)
         if almost:
             return P.is_almost_equal(self)
-        else:
-            return P == self
+        return P == self
 
     def is_superset(self, other, almost=False):
         r"""
@@ -1089,8 +1087,7 @@ class Primes(Set_generic, UniqueRepresentation):
         P = self.intersection(other)
         if almost:
             return P.is_almost_equal(other)
-        else:
-            return P == other
+        return P == other
 
     def is_disjoint(self, other, almost=False):
         r"""
@@ -1137,5 +1134,4 @@ class Primes(Set_generic, UniqueRepresentation):
         P = self.intersection(other)
         if almost:
             return P.is_finite()
-        else:
-            return P.is_empty()
+        return P.is_empty()

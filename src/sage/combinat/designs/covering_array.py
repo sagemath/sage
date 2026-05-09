@@ -212,8 +212,7 @@ def database_check(number_columns, strength, levels):
                 f = getattr(DB, CA)
                 return truncate_columns(f(), number_columns)
         return False
-    else:
-        return False
+    return False
 
 
 def covering_array(strength, number_columns, levels):
@@ -262,7 +261,6 @@ def covering_array(strength, number_columns, levels):
     if orthogonal_array(number_columns, levels, strength, existence=True) is True:
         return orthogonal_array(number_columns, levels, strength)
 
-    else:
-        print("No direct construction known and/or implemented for a CA(N; {}, {}, {})".format(
-            strength, number_columns, levels))
-        return
+    print("No direct construction known and/or implemented for a CA(N; {}, {}, {})".format(
+        strength, number_columns, levels))
+    return

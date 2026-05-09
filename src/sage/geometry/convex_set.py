@@ -421,10 +421,9 @@ class ConvexSet_base(SageObject, Set_base):
         # assemble result
         if return_all_data or (as_convex_set and as_affine_map):
             return result
-        elif as_affine_map:
+        if as_affine_map:
             return (result.projection_linear_map, result.projection_translation)
-        else:
-            return result.image
+        return result.image
 
     def codimension(self):
         r"""

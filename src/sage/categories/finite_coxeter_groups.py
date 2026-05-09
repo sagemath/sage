@@ -150,12 +150,10 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 if i is None:
                     if as_word:
                         return word
-                    else:
-                        return w
-                else:
-                    if as_word:
-                        word.append(i)
-                    w = w.apply_simple_reflection(i)
+                    return w
+                if as_word:
+                    word.append(i)
+                w = w.apply_simple_reflection(i)
 
         @cached_method
         def bruhat_poset(self, facade=False):

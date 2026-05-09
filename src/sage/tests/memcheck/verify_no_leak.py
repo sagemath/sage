@@ -1,7 +1,5 @@
 from typing import Any
 from collections.abc import Callable
-import valgrind
-
 
 def verify_no_leak(callback: Callable[[], Any],
                    repeat: int = 10000,
@@ -12,6 +10,8 @@ def verify_no_leak(callback: Callable[[], Any],
 
     Raises an assertion if the callback leaks memory
     """
+    import valgrind
+
     callback()   # warm_up
     initial_blocks = (0, 0, 0, 0)
     valgrind.memcheck_do_leak_check()

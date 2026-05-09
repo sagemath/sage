@@ -3,3 +3,9 @@ gettext-dev
 autoconf
 automake
 libtool
+# Python packages needed for configure and build
+python3
+python3-dev
+py3-setuptools
+xz
+xz-dev

@@ -7,6 +7,8 @@ py.install_sources(
   'expect.py',
   'four_ti_2.py',
   'fricas.py',
+  'fricas.spad',
+  'fricas_translator.py',
   'frobby.py',
   'gap.py',
   'gap3.py',
@@ -58,7 +60,6 @@ py.install_sources(
   'sympy_wrapper.py',
   'tab_completion.py',
   'tachyon.py',
-  'tests.py',
   'tides.py',
   subdir: 'sage/interfaces',
 )
@@ -83,4 +84,3 @@ foreach name, pyx : extension_data
     dependencies: [py_dep, gmp],
   )
 endforeach
-

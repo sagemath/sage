@@ -24,7 +24,7 @@ rings but rather quotients of them (see module
 from sage.structure.category_object import normalize_names
 
 try:
-    import sage.rings.padics.padic_base_leaves as padic_base_leaves
+    from sage.rings.padics import padic_base_leaves
 except ImportError:
     class padic_base_leaves:
         pAdicFieldCappedRelative = ()
@@ -32,18 +32,19 @@ except ImportError:
         pAdicRingCappedAbsolute = ()
         pAdicRingFixedMod = ()
 
-import sage.rings.abc
-from sage.rings.integer import Integer
-from sage.rings.finite_rings.finite_field_base import FiniteField
-
-from sage.misc.cachefunc import weak_cached_function
 import sage.misc.weak_dict
-
-from sage.categories.rings import Rings
-from sage.categories.fields import Fields
+import sage.rings.abc
 from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.complete_discrete_valuation import (
+    CompleteDiscreteValuationFields,
+    CompleteDiscreteValuationRings,
+)
 from sage.categories.domains import Domains
-from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings, CompleteDiscreteValuationFields
+from sage.categories.fields import Fields
+from sage.categories.rings import Rings
+from sage.misc.cachefunc import weak_cached_function
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.integer import Integer
 
 _CommutativeRings = CommutativeRings()
 _Fields = Fields()
@@ -356,7 +357,6 @@ def PolynomialRing(base_ring, *args, **kwds):
     You can alternatively create a polynomial ring over a ring `R` with
     square brackets::
 
-        sage: # needs sage.rings.real_mpfr
         sage: RR["x"]
         Univariate Polynomial Ring in x over Real Field with 53 bits of precision
         sage: RR["x,y"]
@@ -419,13 +419,11 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R is S
         True
 
-        sage: # needs sage.rings.number_field
         sage: R = PolynomialRing(QQbar, 'j,k', implementation='generic')
         sage: S = PolynomialRing(QQbar, 'j,k', implementation=None)
         sage: R is S
         True
 
-        sage: # needs sage.libs.singular
         sage: R = PolynomialRing(ZZ, 'j,k', implementation='singular')
         sage: S = PolynomialRing(ZZ, 'j,k', implementation=None)
         sage: R is S
@@ -491,7 +489,6 @@ def PolynomialRing(base_ring, *args, **kwds):
     Polynomial rings over double-precision real and complex fields are supported
     by the ``'singular'`` implementation::
 
-        sage: # needs sage.libs.singular
         sage: R.<x> = PolynomialRing(RDF, implementation='singular')
         sage: x^2 + 1
         x^2 + (1.000e + 00)
@@ -502,7 +499,6 @@ def PolynomialRing(base_ring, *args, **kwds):
     The ring printing via libsingular matches the output of the Singular
     interface::
 
-        sage: # needs sage.libs.singular
         sage: from sage.libs.singular.function import singular_function
         sage: print(singular_function("print")(R))
         polynomial ring, over a field, global ordering
@@ -520,7 +516,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         //        block   2 : ordering C
         sage: print(singular(R))
         polynomial ring, over a field, global ordering
-        // coefficients: Float() considered as a field
+        // coefficients: Float(...) considered as a field
         // number of vars : 1
         //        block   1 : ordering dp
         //                  : names    x
@@ -551,7 +547,6 @@ def PolynomialRing(base_ring, *args, **kwds):
     We verify that polynomials with interval coefficients from
     :issue:`7712` and :issue:`13760` are fixed::
 
-        sage: # needs sage.rings.real_interval_field
         sage: P.<y,z> = PolynomialRing(RealIntervalField(2))
         sage: TestSuite(P).run(skip=['_test_elements', '_test_elements_eq_transitive'])
         sage: Q.<x> = PolynomialRing(P)
@@ -658,7 +653,6 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R = PolynomialRing(GF(49), 'j', sparse=True); TestSuite(R).run(); type(R)             # needs sage.rings.finite_rings
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
 
-        sage: # needs sage.rings.real_interval_field
         sage: P.<y,z> = PolynomialRing(RealIntervalField(2))
         sage: TestSuite(P).run(skip=['_test_elements', '_test_elements_eq_transitive'])
         sage: Q.<x> = PolynomialRing(P)
@@ -769,8 +763,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     if multivariate or len(names) != 1:
         return _multi_variate(base_ring, names, **kwds)
-    else:
-        return _single_variate(base_ring, names, **kwds)
+    return _single_variate(base_ring, names, **kwds)
 
 
 def unpickle_PolynomialRing(base_ring, arg1=None, arg2=None, sparse=False):
@@ -785,6 +778,7 @@ def unpickle_PolynomialRing(base_ring, arg1=None, arg2=None, sparse=False):
 
 
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.rings.polynomial.polynomial_ring_constructor', 'PolynomialRing', unpickle_PolynomialRing)
 
 
@@ -845,7 +839,9 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
     if constructor is None:
         from sage.rings.semirings.tropical_semiring import TropicalSemiring
         if isinstance(base_ring, TropicalSemiring):
-            from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
+            from sage.rings.semirings.tropical_polynomial import (
+                TropicalPolynomialSemiring,
+            )
             constructor = TropicalPolynomialSemiring
         elif base_ring not in _CommutativeRings:
             constructor = polynomial_ring.PolynomialRing_generic
@@ -903,7 +899,9 @@ def _multi_variate(base_ring, names, sparse=None, order='degrevlex', implementat
 
     if implementation is None or implementation == "singular":
         try:
-            from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
+            from sage.rings.polynomial.multi_polynomial_libsingular import (
+                MPolynomialRing_libsingular,
+            )
             R = MPolynomialRing_libsingular(base_ring, n, names, order)
         except (ImportError, TypeError, NotImplementedError):
             if implementation is not None:
@@ -919,10 +917,13 @@ def _multi_variate(base_ring, names, sparse=None, order='degrevlex', implementat
         R = _get_from_cache(key)
 
     if R is None and implementation == "generic":
-        from . import multi_polynomial_ring
         from sage.rings.semirings.tropical_semiring import TropicalSemiring
+
+        from . import multi_polynomial_ring
         if isinstance(base_ring, TropicalSemiring):
-            from sage.rings.semirings.tropical_mpolynomial import TropicalMPolynomialSemiring
+            from sage.rings.semirings.tropical_mpolynomial import (
+                TropicalMPolynomialSemiring,
+            )
             constructor = TropicalMPolynomialSemiring
         elif base_ring in _Domains:
             constructor = multi_polynomial_ring.MPolynomialRing_polydict_domain
@@ -944,6 +945,7 @@ def _multi_variate(base_ring, names, sparse=None, order='degrevlex', implementat
 # Choice of a category
 from sage import categories
 from sage.categories.algebras import Algebras
+
 # Some fixed categories, in order to avoid the function call overhead
 _FiniteSets = categories.sets_cat.Sets().Finite()
 _InfiniteSets = categories.sets_cat.Sets().Infinite()
@@ -1008,11 +1010,11 @@ def polynomial_default_category(base_ring_category, n_variables):
 
     if base_ring_category.is_subcategory(_Fields) and n_variables == 1:
         return category & _EuclideanDomains
-    elif base_ring_category.is_subcategory(_UniqueFactorizationDomains):
+    if base_ring_category.is_subcategory(_UniqueFactorizationDomains):
         return category & _UniqueFactorizationDomains
-    elif base_ring_category.is_subcategory(_IntegralDomains):
+    if base_ring_category.is_subcategory(_IntegralDomains):
         return category & _IntegralDomains
-    elif base_ring_category.is_subcategory(_CommutativeRings):
+    if base_ring_category.is_subcategory(_CommutativeRings):
         return category & _CommutativeRings
     return category
 
@@ -1030,7 +1032,7 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order='lex'):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.polynomial.pbori
+        sage: # needs brial
         sage: R.<x, y, z> = BooleanPolynomialRing(); R  # indirect doctest
         Boolean PolynomialRing in x, y, z
         sage: p = x*y + x*z + y*z
@@ -1039,29 +1041,29 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order='lex'):
         sage: R.term_order()
         Lexicographic term order
 
-        sage: R = BooleanPolynomialRing(5, 'x', order='deglex(3),deglex(2)')            # needs sage.rings.polynomial.pbori
-        sage: R.term_order()                                                            # needs sage.rings.polynomial.pbori
+        sage: R = BooleanPolynomialRing(5, 'x', order='deglex(3),deglex(2)')            # needs brial
+        sage: R.term_order()                                                            # needs brial
         Block term order with blocks:
         (Degree lexicographic term order of length 3,
          Degree lexicographic term order of length 2)
 
-        sage: R = BooleanPolynomialRing(3, 'x', order='degneglex')                      # needs sage.rings.polynomial.pbori
-        sage: R.term_order()                                                            # needs sage.rings.polynomial.pbori
+        sage: R = BooleanPolynomialRing(3, 'x', order='degneglex')                      # needs brial
+        sage: R.term_order()                                                            # needs brial
         Degree negative lexicographic term order
 
-        sage: BooleanPolynomialRing(names=('x','y'))                                    # needs sage.rings.polynomial.pbori
+        sage: BooleanPolynomialRing(names=('x','y'))                                    # needs brial
         Boolean PolynomialRing in x, y
 
-        sage: BooleanPolynomialRing(names='x,y')                                        # needs sage.rings.polynomial.pbori
+        sage: BooleanPolynomialRing(names='x,y')                                        # needs brial
         Boolean PolynomialRing in x, y
 
     TESTS::
 
-        sage: P.<x,y> = BooleanPolynomialRing(2, order='deglex')                        # needs sage.rings.polynomial.pbori
-        sage: x > y                                                                     # needs sage.rings.polynomial.pbori
+        sage: P.<x,y> = BooleanPolynomialRing(2, order='deglex')                        # needs brial
+        sage: x > y                                                                     # needs brial
         True
 
-        sage: # needs sage.rings.polynomial.pbori
+        sage: # needs brial
         sage: P.<x0, x1, x2, x3> = BooleanPolynomialRing(4, order='deglex(2),deglex(2)')
         sage: x0 > x1
         True

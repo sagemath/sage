@@ -500,9 +500,8 @@ class ResidueSequence(ClonableArray,
         """
         if shape is None:
             return StandardTableaux_residue(residue=self)
-        else:
-            return StandardTableaux_residue_shape(residue=self,
-                                                  shape=PartitionTuple(shape))
+        return StandardTableaux_residue_shape(residue=self,
+                                              shape=PartitionTuple(shape))
 
     def row_standard_tableaux(self, shape=None):
         r"""
@@ -533,8 +532,7 @@ class ResidueSequence(ClonableArray,
         """
         if shape is None:
             return RowStandardTableauTuples_residue(residue=self)
-        else:
-            return RowStandardTableauTuples_residue_shape(residue=self, shape=PartitionTuple(shape))
+        return RowStandardTableauTuples_residue_shape(residue=self, shape=PartitionTuple(shape))
 
     def negative(self):
         r"""
@@ -832,8 +830,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
         # used by the iterators for the corresponding standard tableaux classes.
         if len(self._multicharge) == 1:
             return self._cell_residue_level_one
-        else:
-            return self._cell_residue_higher_levels
+        return self._cell_residue_higher_levels
 
     def check_element(self, element):
         r"""

@@ -388,17 +388,15 @@ class FormalSums(UniqueRepresentation, Module):
             P = x.parent()
             if P is self:
                 return x
-            else:
-                x = x._data
+            x = x._data
         if isinstance(x, list):
             return self.element_class(x, check=check,
                                       reduce=reduce, parent=self)
         if x == 0:
             return self.element_class([], check=False,
                                       reduce=False, parent=self)
-        else:
-            return self.element_class([(self.base_ring()(1), x)],
-                                      check=False, reduce=False, parent=self)
+        return self.element_class([(self.base_ring()(1), x)],
+                                  check=False, reduce=False, parent=self)
 
     def _coerce_map_from_(self, X):
         r"""
@@ -434,7 +432,7 @@ class FormalSums(UniqueRepresentation, Module):
         """
         if self.base_ring().has_coerce_map_from(R):
             return self
-        elif R.has_coerce_map_from(self.base_ring()):
+        if R.has_coerce_map_from(self.base_ring()):
             return FormalSums(R)
 
     def _get_action_(self, other, op, self_is_left):

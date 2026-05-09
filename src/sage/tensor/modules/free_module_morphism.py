@@ -271,8 +271,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         """
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def __eq__(self, other):
         r"""
@@ -342,18 +341,16 @@ class FiniteRankFreeModuleMorphism(Morphism):
         if isinstance(other, (int, Integer)): # other should be 0
             if other == 0:
                 return self.is_zero()
-            else:
-                return False
-        elif not isinstance(other, FiniteRankFreeModuleMorphism):
             return False
-        elif self.parent() != other.parent():
+        if not isinstance(other, FiniteRankFreeModuleMorphism):
             return False
-        else:
-            bases = self._common_bases(other)
-            if bases is None:
-                raise ValueError("no common pair of bases has been found to " +
-                                 "compare {} and {}".format(self, other))
-            return bool( self.matrix(*bases) == other.matrix(*bases) )
+        if self.parent() != other.parent():
+            return False
+        bases = self._common_bases(other)
+        if bases is None:
+            raise ValueError("no common pair of bases has been found to " +
+                             "compare {} and {}".format(self, other))
+        return bool( self.matrix(*bases) == other.matrix(*bases) )
 
     def __ne__(self, other):
         r"""

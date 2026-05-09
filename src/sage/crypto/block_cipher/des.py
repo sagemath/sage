@@ -433,11 +433,10 @@ class DES(SageObject):
         """
         if algorithm == 'encrypt':
             return self.encrypt(block, key)
-        elif algorithm == 'decrypt':
+        if algorithm == 'decrypt':
             return self.decrypt(block, key)
-        else:
-            raise ValueError('Algorithm must be \'encrypt\' or \'decrypt\' and'
-                             ' not \'%s\'' % algorithm)
+        raise ValueError('Algorithm must be \'encrypt\' or \'decrypt\' and'
+                         ' not \'%s\'' % algorithm)
 
     def __eq__(self, other):
         r"""
@@ -460,8 +459,7 @@ class DES(SageObject):
         """
         if not isinstance(other, DES):
             return False
-        else:
-            return self.__dict__ == other.__dict__
+        return self.__dict__ == other.__dict__
 
     def __repr__(self):
         r"""
@@ -899,8 +897,7 @@ class DES_KS(SageObject):
         """
         if not isinstance(other, DES_KS):
             return False
-        else:
-            return self.__dict__ == other.__dict__
+        return self.__dict__ == other.__dict__
 
     def __repr__(self):
         r"""
