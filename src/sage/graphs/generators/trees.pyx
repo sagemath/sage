@@ -105,6 +105,7 @@ from libc.limits cimport INT_MAX
 from cysignals.memory cimport check_allocarray, sig_free
 from sage.graphs.base.sparse_graph cimport SparseGraph
 from sage.graphs.base.sparse_graph cimport SparseGraphBackend
+from sage.graphs.base.static_sparse_backend import StaticSparseBackend
 
 from sage.graphs.graph import Graph
 from sage.misc.randstate import current_randstate
@@ -640,13 +641,16 @@ def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None, immutable=False):
         return False
 
 
-def trees(n):
+def trees(n, immutable=False):
     r"""
     Return a generator of the distinct trees on a fixed number of vertices.
 
     INPUT:
 
     - ``n`` -- integer; the size of the trees created
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -684,14 +688,30 @@ def trees(n):
 
         sage: [len(list(graphs.trees(i))) for i in range(15)]
         [1, 1, 1, 1, 2, 3, 6, 11, 23, 47, 106, 235, 551, 1301, 3159]
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: any(g.is_immutable() for g in graphs.trees(6, immutable=False))
+        False
+        sage: all(g.is_immutable() for g in graphs.trees(6, immutable=True))
+        True
     """
     from sage.graphs.generators.trees import TreeIterator
-    return iter(TreeIterator(n))
+    return iter(TreeIterator(n, immutable=immutable))
 
 
 cdef class TreeIterator:
     r"""
     This class iterates over all trees with n vertices (up to isomorphism).
+
+    INPUT:
+
+    - ``n`` -- integer; the size of the trees created
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -723,7 +743,7 @@ cdef class TreeIterator:
         7741
     """
 
-    def __init__(self, int n):
+    def __init__(self, int n, bint immutable=False):
         r"""
         Initialize an iterator over all trees with `n` vertices.
 
@@ -738,6 +758,7 @@ cdef class TreeIterator:
         self.l = NULL
         self.current_level_sequence = NULL
         self.first_time = 1
+        self.immutable = immutable
 
     def __dealloc__(self):
         r"""
@@ -812,17 +833,16 @@ cdef class TreeIterator:
             self.generate_next_level_sequence()
 
         cdef int i
-        cdef int vertex1
-        cdef int vertex2
-        cdef object G
 
-        G = Graph(self.n, sparse=True)
+        cdef object G = Graph(self.n, sparse=True)
         cdef SparseGraph SG = (<SparseGraphBackend?> G._backend)._cg
 
-        for i in range(2, self.n + 1):
-            vertex1 = i - 1
-            vertex2 = self.current_level_sequence[i - 1] - 1
-            SG.add_arc_unsafe(vertex1, vertex2)
+        for i in range(1, self.n):
+            SG.add_arc_unsafe(i, self.current_level_sequence[i] - 1)
+
+        if self.immutable:
+            G._backend = StaticSparseBackend(G, loops=False, multiedges=False)
+            G._immutable = True
 
         return G
 

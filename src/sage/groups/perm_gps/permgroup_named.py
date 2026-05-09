@@ -311,7 +311,7 @@ class SymmetricGroup(PermutationGroup_symalt):
         """
         return tuple(self.domain()[:-1])
 
-    def __richcmp__(self, x, op):
+    def __richcmp__(self, other, op: int) -> bool:
         """
         Fast comparison for SymmetricGroups.
 
@@ -322,9 +322,10 @@ class SymmetricGroup(PermutationGroup_symalt):
             sage: S8 > S3
             True
         """
-        if isinstance(x, SymmetricGroup):
-            return richcmp((self._deg, self._domain), (x._deg, x._domain), op)
-        return super().__richcmp__(x, op)
+        if isinstance(other, SymmetricGroup):
+            return richcmp((self._deg, self._domain),
+                           (other._deg, other._domain), op)
+        return super().__richcmp__(other, op)
 
     def _repr_(self):
         """

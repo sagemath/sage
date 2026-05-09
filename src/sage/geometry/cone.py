@@ -791,17 +791,17 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         self._rays = PointCollection(rays, lattice)
         self._lattice = lattice
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         INPUT:
 
-        - ``right`` -- anything
+        - ``other`` -- anything
 
         OUTPUT: boolean
 
-        There is equality if ``right`` is of the same type as
+        There is equality if ``other`` is of the same type as
         ``self``, they have the same ambient lattices, and their
         rays are the same and listed in the same order.
 
@@ -819,14 +819,14 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
             sage: c2 is c3
             False
         """
-        if type(self) is not type(right):
+        if type(self) is not type(other):
             return NotImplemented
 
         # We probably do need to have explicit comparison of lattices here
         # since if one of the collections does not live in a toric lattice,
         # comparison of rays may miss the difference.
         return richcmp((self.lattice(), self.rays()),
-                       (right.lattice(), right.rays()), op)
+                       (other.lattice(), other.rays()), op)
 
     def __hash__(self):
         r"""
@@ -1277,6 +1277,27 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
 
         return L.span(self, base_ring)
 
+    def _macaulay2_init_(self, macaulay2=None):
+        """
+        Conversion to Macaulay2.
+
+        EXAMPLES::
+
+            sage: # optional - macaulay2
+            sage: m2 = macaulay2
+            sage: c = Cone([(3,4), (0,1)])
+            sage: m2(c).rays()  # indirect doctest
+            | 0 3 |
+            | 1 4 |
+            sage: m2(c) == c._macaulay2_init_()
+            True
+        """
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2 as m2_default
+            macaulay2 = m2_default
+
+        return macaulay2(matrix([tuple(v) for v in self._rays]).transpose())
+
 
 def classify_cone_2d(ray0, ray1, check=True):
     r"""
@@ -1527,6 +1548,30 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                 gs.insert( PPL_ray(Linear_Expression(r,0)) )
             self._PPL_C_Polyhedron = C_Polyhedron(gs)
         return self._PPL_C_Polyhedron
+
+    def _macaulay2_init_(self, macaulay2=None):
+        """
+        Conversion to Macaulay2.
+
+        EXAMPLES::
+
+            sage: # optional - macaulay2
+            sage: C = Cone([[1,1],[1,2]])
+            sage: m2 = macaulay2
+            sage: c = m2(C); c.rays()  # indirect doctest
+            | 1 1 |
+            | 1 2 |
+            sage: c.dualCone().rays()  # random
+            | 2  -1 |
+            | -1 1  |
+            sage: c == C._macaulay2_init_()
+            True
+        """
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2 as m2_default
+            macaulay2 = m2_default
+
+        return super()._macaulay2_init_(macaulay2).coneFromVData()
 
     def __contains__(self, point) -> bool:
         r"""
@@ -1878,17 +1923,17 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         rc = super().__neg__()
         return ConvexRationalPolyhedralCone(rc.rays(), rc.lattice())
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         INPUT:
 
-        - ``right`` -- anything
+        - ``other`` -- anything
 
         OUTPUT: boolean
 
-        There is equality if ``self`` and ``right`` are cones of any
+        There is equality if ``self`` and ``other`` are cones of any
         kind in the same lattice with the same rays listed in the
         same order.
 
@@ -1906,10 +1951,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: c2 is c3
             False
         """
-        if isinstance(right, sage.geometry.abc.ConvexRationalPolyhedralCone):
-            # We don't care about particular type of right in this case
+        if isinstance(other, sage.geometry.abc.ConvexRationalPolyhedralCone):
+            # We don't care about particular type of other in this case
             return richcmp((self.lattice(), self.rays()),
-                           (right.lattice(), right.rays()), op)
+                           (other.lattice(), other.rays()), op)
         return NotImplemented
 
     def _latex_(self):
@@ -5863,6 +5908,68 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         M = MatrixSpace(F, m, n)
         return [ M(v.list()) for v in pi_cone ]
 
+    def _cross_positive_operators_dual(self):
+        r"""
+        Return the dual cone of the cross-positive operators on
+        ``self`` under the matrix <-> long-vector isometry.
+
+        In :meth:`cross_positive_operators_gens` we compute the cone
+        of cross positive operators on ``self`` by taking the dual of
+        its dual. This method computes that dual. Matrices cannot
+        generate cones in Sage, so long vectors are used as proxies in
+        this step. The matrix <-> long-vector map is an isometry, so
+        everything works out the same in the end.
+
+        The intermediate dual cone of long vectors turns out to be
+        useful in one of the tests for :meth:`is_reducible`, so it has
+        been factored out for convenience.
+
+        REFERENCES:
+
+        - [Or2018b]_
+
+        EXAMPLES:
+
+        For the nonnegative orthant generated by the standard basis
+        vectors `e_{i}`, we should return the cone generated by the
+        long-vector counterparts of all `e_{i}e_{j}^{T}` such that
+        `e_{i}` and `e_{j}` are orthogonal. There are `n^{2} - n` such
+        pairs::
+
+            sage: K = cones.nonnegative_orthant(3)
+            sage: K._cross_positive_operators_dual().rays()
+            N(0, 0, 0, 1, 0, 0, 0, 0, 0),
+            N(0, 0, 0, 0, 0, 0, 1, 0, 0),
+            N(0, 1, 0, 0, 0, 0, 0, 0, 0),
+            N(0, 0, 0, 0, 0, 0, 0, 1, 0),
+            N(0, 0, 1, 0, 0, 0, 0, 0, 0),
+            N(0, 0, 0, 0, 0, 1, 0, 0, 0)
+            in 9-d lattice N
+        """
+        # These tensor products contain generators for the dual cone of
+        # the cross-positive operators.
+        tensor_products = ( s.tensor_product(x)
+                            for (x,s) in self.discrete_complementarity_set() )
+
+        # Turn our matrices into long vectors (lists of coordinates).
+        vectors = ( m.list() for m in tensor_products )
+
+        check = True
+        if self.is_proper():
+            # All of the generators involved are extreme vectors and
+            # therefore minimal. If this cone is neither solid nor
+            # strictly convex, then the tensor product of ``s`` and
+            # ``x`` is the same as that of ``-s`` and ``-x``. However,
+            # as a /set/, ``tensor_products`` may still be minimal.
+            check = False
+
+        # Create the dual cone of the cross-positive operators,
+        # expressed as long vectors. Specify a lattice in case
+        # I'm the trivial cone.
+        return Cone(vectors,
+                    lattice=ToricLattice(self.lattice_dim()**2),
+                    check=check)
+
     def cross_positive_operators_gens(self):
         r"""
         Compute minimal generators of the cross-positive operators on this
@@ -6095,42 +6202,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: cp_cone.contains(W(L.transpose().list()))
             True
         """
-        # Matrices are not vectors in Sage, so we have to convert them
-        # to vectors explicitly before we can find a basis. We need these
-        # two values to construct the appropriate "long vector" space.
-        F = self.lattice().base_field()
-        n = self.lattice_dim()
+        # Compute the desired cone from its dual...
+        cp_cone = self._cross_positive_operators_dual().dual()
 
-        # These tensor products contain generators for the dual cone of
-        # the cross-positive operators.
-        tensor_products = ( s.tensor_product(x)
-                            for (x,s) in self.discrete_complementarity_set() )
-
-        # Turn our matrices into long vectors...
-        W = VectorSpace(F, n**2)
-        vectors = ( W(m.list()) for m in tensor_products )
-
-        check = True
-        if self.is_proper():
-            # All of the generators involved are extreme vectors and
-            # therefore minimal. If this cone is neither solid nor
-            # strictly convex, then the tensor product of ``s`` and
-            # ``x`` is the same as that of ``-s`` and ``-x``. However,
-            # as a /set/, ``tensor_products`` may still be minimal.
-            check = False
-
-        # Create the dual cone of the cross-positive operators,
-        # expressed as long vectors.
-        cp_dual = Cone(vectors,
-                       lattice=ToricLattice(W.dimension()),
-                       check=check)
-
-        # Now compute the desired cone from its dual...
-        cp_cone = cp_dual.dual()
-
-        # And finally convert its rays back to matrix representations.
-        M = MatrixSpace(F, n)
-        return [ M(v.list()) for v in cp_cone ]
+        # Convert its rays from long vectors back to matrices.
+        MS = MatrixSpace(self.lattice().base_field(), self.lattice_dim())
+        return [MS(v.list()) for v in cp_cone]
 
     def Z_operators_gens(self):
         r"""
@@ -6372,6 +6449,309 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         from sage.geometry.cone_critical_angles import max_angle
         return max_angle(self, other, exact, epsilon)
+
+    def irreducible_factors(self):
+        r"""
+        Decompose a strictly convex (AKA pointed) convex cone
+        into nontrivial irreducible factors.
+
+        A convex cone is said to be *reducible* if it can be expressed as
+        the direct sum of two subcones. An *irreducible* cone is a cone
+        that is not reducible. Every cone that :meth:`is_proper` can be
+        uniquely decomposed -- up to isomorphism and the order of the
+        factors -- as a direct sum of irreducible, pointed, nontrivial
+        factors (subcones).
+
+        In the literature, "reducible" and "decomposable" are
+        interchangeable.
+
+        The cone being strictly convex / pointed is essential to the
+        uniqueness of the decomposition: the plane is a cone, and it can
+        be decomposed into the direct sum of the x-axis and y-axis, but
+        any other pair of (unequal) lines through the origin would work
+        just as well.
+
+        Being solid is less essential. The definition of "direct sum"
+        requires that the ambient space be fully decomposed into a set of
+        subspaces, and if the cone is not solid, we must (to satisfy the
+        definition) manufacture trivial cones to use as the factors in the
+        subspaces orthogonal to the given cone. This destroys the
+        uniqueness of the direct sum decomposition in the sense that the
+        vector subspaces corresponding to the trivial factors are
+        arbitrary. If the given cone is one-dimensional and the ambient
+        space three-dimensional, then a full decomposition would include
+        two trivial cones in any two one-dimensional subspaces of the
+        plane. As in the preceding paragraph, those one-dimensional
+        subspaces can be chosen arbitrarily.
+
+        Considering that this method does not return the ambient vector
+        space decomposition, adding trivial cones to the list of
+        irreducible factors is not helpful: any cone is equal to the sum
+        of itself with a trivial cone, or two trivial cones, etc. This is
+        all to say: this method will accept non-solid cones, but it will
+        not return any trivial factors. The result does not technically
+        correspond to a direct sum, but by omitting the trivial factors,
+        we recover uniqueness of the factors in the non-solid case.
+
+        OUTPUT:
+
+        A set of ``sage.geometry.cone.ConvexRationalPolyhedralCone``,
+        each of which is nontrivial, strictly convex (pointed), and
+        irreducible. Each factor lives in the same ambient space as
+        ``K`` to avoid confusing isomorphic factors that live in
+        different subspaces. As a consequence, factors of solid cones
+        will not in general be solid.
+
+        ALGORITHM:
+
+        If a strictly convex / pointed cone ``K`` is reducible to ``K1 +
+        K2`` in the vector space ``V = V1 + V2``, then the generators
+        (extreme rays) of ``K`` can be split into subsets ``G1`` and
+        ``G2`` of ``V1`` and ``V2`` that generate ``K1`` and ``K2``,
+        respectively. Following [BSPRS2014]_, we find a basis for the
+        span of ``K`` consisting of extreme rays of ``K``, and then
+        express each extreme ray in terms of that basis. By looking for
+        groups of rays that require a common subset of basis elements, we
+        determine which, if any, generators can be split accordingly.
+
+        REFERENCES:
+
+        - [HausGul2002]_
+        - [BSPRS2014]_
+
+        .. SEEALSO::
+
+            :meth:`is_reducible`
+
+        EXAMPLES:
+
+        The nonnegative orthant is a direct sum of its extreme rays::
+
+            sage: K = cones.nonnegative_orthant(3)
+            sage: expected = {Cone([r]) for r in K.rays()}
+            sage: K.irreducible_factors() == expected
+            True
+
+        An irreducible example (the l1-norm cone)::
+
+            sage: K = Cone([(1,0,1), (0,1,1), (-1,0,1), (0,-1,1)])
+            sage: K.irreducible_factors() == {K}
+            True
+
+        We can decompose reducible cones that are not solid::
+
+            sage: K = Cone([(1,0,0), (0,1,0)])
+            sage: expected = {Cone([r]) for r in K.rays()}
+            sage: K.irreducible_factors() == expected
+            True
+
+        And nothing bad happens with irreducible ones::
+
+            sage: K = Cone([(1,0,1,0), (0,1,1,0), (-1,0,1,0), (0,-1,1,0)])
+            sage: K.irreducible_factors() == {K}
+            True
+
+        The rays of the Schur cone are linearly-independent::
+
+            sage: K = cones.schur(5)
+            sage: expected = {Cone([r]) for r in K.rays()}
+            sage: K.irreducible_factors() == expected
+            True
+
+        The Cartesian product can be used to construct larger
+        examples. Here, two of the factors are irreducible, but the
+        nonnegative orthant should reduce to two rays::
+
+            sage: J1 = Cone([(1,0,1,0), (0,1,1,0), (-1,0,1,0), (0,-1,1,0)])
+            sage: J2 = cones.nonnegative_orthant(2)
+            sage: J3 = cones.rearrangement(2, 5)
+            sage: J1
+            3-d cone in 4-d lattice N
+            sage: J3
+            5-d cone in 5-d lattice N
+            sage: K = J1.cartesian_product(J2).cartesian_product(J3)
+            sage: sorted(K.irreducible_factors())
+            [5-d cone in 11-d lattice N+N+N,
+             1-d cone in 11-d lattice N+N+N,
+             1-d cone in 11-d lattice N+N+N,
+             3-d cone in 11-d lattice N+N+N]
+
+        All proper cones in two dimensions are isomorphic to the
+        nonnegative orthant and should decompose::
+
+            sage: K = Cone([(1,2), (-3,4)])
+            sage: sorted(K.irreducible_factors())
+            [1-d cone in 2-d lattice N, 1-d cone in 2-d lattice N]
+
+        In three dimensions, we can hit the nonnegative orthant with an
+        invertible map, and it will still decompose::
+
+            sage: A = matrix(QQ, [[1, -1/2, 0], [1, 1, -2], [-2, 0, -1]])
+            sage: K = cones.nonnegative_orthant(3)
+            sage: AK = Cone([ r*A for r in K.rays() ])
+            sage: expected = {Cone([r]) for r in AK.rays()}
+            sage: AK.irreducible_factors() == expected
+            True
+
+        This example decomposes into a ray and a cone with four
+        generators in a three-dimensional subspace that trivially
+        intersects the span of the ray::
+
+            sage: K = Cone([ (-1, -1, 0, -1),
+            ....:            (-1,  0, 1,  0),
+            ....:            ( 0,  1, 4, -2),
+            ....:            ( 1,  0, 0, -1),
+            ....:            ( 1,  1, 0, -1) ])
+            sage: K1, K2 = sorted(K.irreducible_factors())
+            sage: K1
+            3-d cone in 4-d lattice N
+            sage: K1.rays()
+            N(-1, -1, 0, -1),
+            N( 1,  0, 0, -1),
+            N( 0,  1, 4, -2),
+            N(-1,  0, 1,  0)
+            in 4-d lattice N
+            sage: K2
+            1-d cone in 4-d lattice N
+            sage: K2.rays()
+            N(1, 1, 0, -1)
+            in 4-d lattice N
+            sage: K1.span().intersection(K2.span())
+            Sublattice <>
+
+        TESTS:
+
+        The error message looks right::
+
+            sage: K = Cone([(1,0),(-1,0)])
+            sage: K.irreducible_factors()
+            Traceback (most recent call last):
+            ...
+            ValueError: cone must be strictly convex (AKA pointed) for its
+            irreducible factors to be well-defined
+
+        Trivial cones are handled correctly::
+
+            sage: K = cones.trivial(0)
+            sage: K.irreducible_factors() == {K}
+            True
+            sage: K = cones.trivial(4)
+            sage: K.irreducible_factors() == {K}
+            True
+        """
+        if not self.is_strictly_convex():
+            raise ValueError("cone must be strictly convex (AKA pointed) for"
+                             " its irreducible factors to be well-defined")
+
+        if self.is_trivial():
+            # Trivial cones are valid inputs, but they have no generators
+            # so a special case is required.
+            return {self}
+
+        V = self.ambient_vector_space()
+
+        # Create a column matrix from the generators of K, and then
+        # perform Gaussian elimination so that the resulting pivots
+        # specify a linearly-independent subset of the original columns.
+        M = self.rays().column_matrix().change_ring(V.base_ring())
+        pivots = M.echelon_form(algorithm="classical").pivots()
+        M = M.matrix_from_columns(pivots)
+
+        # A basis for span(self)
+        B = M.columns(copy=False)
+
+        # The span of self, but now with a basis of extreme rays. If
+        # self is not solid, B will not be a basis of the entire space
+        # V, only of a subspace.
+        W = V.subspace_with_basis(B)
+
+        # Make a graph with ray -> ray edges where the coefficients in
+        # the W-representation nonzero. Beware: while they ultimately
+        # represent rays of self, the W-coordinates have been
+        # renumbered by pivots().
+        vertices = list(range(self.nrays()))
+        edges = [(i, pivots[j])
+                 for i in vertices
+                 for j in W.coordinate_vector(self.ray(i)).nonzero_positions()
+                 if pivots[j] != i]
+        from sage.graphs.graph import Graph
+        G = Graph([vertices, edges], format='vertices_and_edges')
+
+        from sage.geometry.cone import Cone
+        if G.connected_components_number() == 1:
+            # Special case where we don't want to pointlessly return an
+            # equivalent but unequal copy of the input cone.
+            return {self}
+        return {Cone(self.rays(c)) for c in G.connected_components()}
+
+    def is_reducible(self) -> bool:
+        r"""
+        Return whether or not this cone is reducible.
+
+        A pointed convex cone is reducible if some other cone appears
+        in its :meth:`irreducible_factors`.
+
+        .. SEEALSO::
+
+            :meth:`irreducible_factors`
+
+        EXAMPLES:
+
+        The nonnegative orthant is always reducible in dimension two or
+        more::
+
+            sage: cones.nonnegative_orthant(1).is_reducible()
+            False
+            sage: cones.nonnegative_orthant(2).is_reducible()
+            True
+            sage: cones.nonnegative_orthant(3).is_reducible()
+            True
+
+        Theorem 4.1 in [JG2018]_ says that the Lyapunov rank of a
+        permutation-invariant cone is either ``n`` or ``1``, depending
+        on whether or not it is reducible. Corollary 5.2.4 of
+        [Jeong2017]_ then implies that the ``(p,n)`` rearrangement
+        cone is reducible if and only if ``p`` is either ``1`` or
+        ``n-1``. We exclude the possibility of ``p == n`` since that
+        returns a (not pointed) half-space::
+
+            sage: n = ZZ.random_element(10) + 2
+            sage: p = ZZ.random_element(1, n)
+            sage: K = cones.rearrangement(p, n)
+            sage: K.is_reducible() == (p in [1, n-1])
+            True
+
+        TESTS:
+
+        Reducibility is preserved under linear isomorphisms::
+
+            sage: # long time
+            sage: K = random_cone(strictly_convex=True,
+            ....:                 max_ambient_dim=6)
+            sage: n = K.ambient_dim()
+            sage: q = QQ._random_nonzero_element()
+            sage: A = q*matrix.random(QQ, n, algorithm='unimodular')
+            sage: AK = Cone([ r*A for r in K.rays() ], lattice=K.lattice())
+            sage: K.is_reducible() == AK.is_reducible()
+            True
+
+        In [GT2014]_ it is shown that a (nontrivial) proper polyhedral
+        cone is irreducible if and only if its Lyapunov rank is one.
+        A related test combines Theorem 4.7 of [HFP1976]_ with the
+        Z-operator algorithm in [Or2018b]_::
+
+            sage: # long time
+            sage: K = random_cone(strictly_convex=True,
+            ....:                 solid=True,
+            ....:                 max_ambient_dim=6,
+            ....:                 min_rays=1)
+            sage: K.is_reducible() == (K.lyapunov_rank() != 1)
+            True
+            sage: d = K._cross_positive_operators_dual().dim()
+            sage: K.is_reducible() == (d < K.dim()**2 - 1)
+            True
+        """
+        return len(self.irreducible_factors()) > 1
 
 
 def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,

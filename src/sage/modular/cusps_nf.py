@@ -716,9 +716,9 @@ class NFCusp(Element):
         return "\\[%s: %s\\]" % (self.__a._latex_(),
                                  self.__b._latex_())
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         """
-        Compare the cusps ``self`` and ``right``.
+        Compare the cusps ``self`` and ``other``.
 
         Comparison is as for elements in the number field, except with
         the cusp oo which is greater than everything but itself.
@@ -748,13 +748,13 @@ class NFCusp(Element):
             False
         """
         if self.__b.is_zero():
-            if right.__b.is_zero():
+            if other.__b.is_zero():
                 return rich_to_bool(op, 0)
             return rich_to_bool(op, 1)
-        if right.__b.is_zero():
+        if other.__b.is_zero():
             return rich_to_bool(op, -1)
         return richcmp(self._number_field_element_(),
-                       right._number_field_element_(), op)
+                       other._number_field_element_(), op)
 
     def __neg__(self):
         """

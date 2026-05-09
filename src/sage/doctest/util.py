@@ -887,7 +887,6 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         e.__traceback__ = None  # workaround for https://github.com/python/cpython/pull/129276
         alarm_raised = True
     finally:
-        before_cancel_alarm_elapsed = walltime() - start_time
         cancel_alarm()
         elapsed = walltime() - start_time
         data["elapsed"] = elapsed

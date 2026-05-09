@@ -211,13 +211,33 @@ cdef paramset_to_PyTuple(const_paramset_ref s):
 
 def paramset_from_Expression(Expression e):
     """
+    Return the parameter set of an unevaluated symbolic function derivative.
+
+    INPUT:
+
+    - ``e`` -- a symbolic expression representing an unevaluated
+      derivative of a symbolic function
+
+    OUTPUT: list of indices of the function arguments with respect to
+    which the function is differentiated
+
     EXAMPLES::
 
         sage: from sage.symbolic.expression import paramset_from_Expression
         sage: f = function('f')
         sage: paramset_from_Expression(f(x).diff(x))
         [0]
+
+    Invalid arguments raise an exception::
+
+        sage: paramset_from_Expression(x)
+        Traceback (most recent call last):
+        ...
+        TypeError: argument must be an unevaluated derivative of a symbolic function
     """
+    if not is_a_fderivative(e._gobj):
+        raise TypeError("argument must be an unevaluated derivative "
+                        "of a symbolic function")
     return paramset_to_PyTuple(ex_to_fderivative(e._gobj).get_parameter_set())
 
 

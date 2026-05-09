@@ -137,8 +137,8 @@ class Character_generic(SFA_generic):
         if k == 1:
             return self._p([1])
         if k > 0:
-            return ~k * self._p.linear_combination((self._p([d]),moebius(k//d))
-                                    for d in divisors(k))
+            return ~k * self._p.linear_combination((self._p([d]), moebius(k//d))
+                                                   for d in divisors(k))
 
 
 class InducedCharacterBases(Character_generic):
@@ -572,9 +572,9 @@ class IrreducibleCharacterBasis(Character_generic):
             p[] + 5*p[1] + p[1, 1] - 5*p[3] - 2*p[3, 1] + p[3, 3]
         """
         p = self._p
-        return p.sum( (-1)**(r-j) * k**j * binomial(r,j)
-                      * p.prod(self._b_power_k(k) - i*p.one() for i in range(j))
-                      for j in range(r+1) )
+        return p.sum((-1)**(r - j) * k**j * binomial(r, j)
+                     * p.prod(self._b_power_k(k) - i*p.one() for i in range(j))
+                     for j in range(r + 1))
 
     def _b_power_gamma(self, gamma):
         r"""

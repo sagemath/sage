@@ -663,8 +663,6 @@ def acyclic_orientations(G):
             else:
                 starting_of_Ek += 1
 
-        # s is the size of E_k
-        s = m - 1 - starting_of_Ek
 
         # Recursively generate acyclic orientations
         orientations_G_small = helper(G, globO, starting_of_Ek, k - 2)
