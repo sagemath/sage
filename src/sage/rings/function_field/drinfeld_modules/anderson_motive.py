@@ -142,27 +142,27 @@ There are many rings and ring extensions associated to an Anderson motive. For
 the convenience of the reader, we hereby list the methods that can be used to
 retrieve them. We stress that some of the methods below share their name with
 methods of the class
-:class:`sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`
+:class:`~sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`
 while returning different objects (see Rubric *Getters to context objects*).
 This is because contrary to Drinfeld modules, Anderson motives are implemented as
 modules (more precisely, as Ore modules).
-
-- :meth:`~sage.categories.anderson_motives.AndersonMotives.ParentMethods.A_field`:
-  see Rubric *Getters to context objects* in class
-  :class:`~sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
 
 - :meth:`~sage.categories.anderson_motives.AndersonMotives.ParentMethods.base`:
   the polynomial ring `K[T]`; this is because we implement Anderson motives as
   modules over the ring `K[T]`
 
-- :meth:`~sage.categories.anderson_motives.AndersonMotives.ParentMethods.base_field`:
-  the fraction field of the
-  :meth:`~sage.categories.anderson_motives.AndersonMotives.ParentMethods.base`, *i.e.* `K(T)`
-
 - :meth:`~sage.categories.anderson_motives.AndersonMotives.ParentMethods.base_ring`:
   a reference to :meth:`~sage.categories.anderson_motives.AndersonMotives.ParentMethods.base`.
 
+- :meth:`~sage.modules.free_module.FreeModule_generic.base_field`:
+  the fraction field of the
+  :meth:`~sage.categories.anderson_motives.AndersonMotives.ParentMethods.base`, *i.e.* `K(T)`
+
 - :meth:`~sage.categories.anderson_motives.AndersonMotives.ParentMethods.function_ring`:
+  see Rubric *Getters to context objects* in class
+  :class:`~sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
+
+- :meth:`~sage.categories.anderson_motives.AndersonMotives.ParentMethods.A_field`:
   see Rubric *Getters to context objects* in class
   :class:`~sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
 
@@ -174,7 +174,7 @@ modules (more precisely, as Ore modules).
   for the class
   :class:`~sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
 
-- :meth:`~sage.categories.anderson_motives.AndersonMotives.ParentMethods.ore_ring`:
+- :meth:`~sage.modules.ore_module.OreModule.ore_ring`:
   the same Ore polynomial ring, but in the variable `x`; this method is inherited
   from the class :class:`sage.modules.ore_module.OreModule`.
 

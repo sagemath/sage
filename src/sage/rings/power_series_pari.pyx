@@ -432,7 +432,7 @@ cdef class PowerSeries_pari(PowerSeries):
             if a.valuation() <= 0:
                 raise ValueError("can only substitute elements of positive valuation")
         elif isinstance(Q, PolynomialRing_generic):
-            Q = Q.completion(Q.variable_name())
+            Q = Q.completion(Q.gen())
         elif Q.is_exact() and not a:
             pass
         else:

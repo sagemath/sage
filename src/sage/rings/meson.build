@@ -14,7 +14,6 @@ py.install_sources(
   'cfinite_sequence.py',
   'cif.py',
   'commutative_algebra.py',
-  'completion_polynomial_ring.py',
   'complex_arb.pxd',
   'complex_arb.pyi',
   'complex_arb.pyx',

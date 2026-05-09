@@ -631,6 +631,8 @@ class DrinfeldModules(Category_over_base_ring):
             # should we add a deprecation?
             return self.category().base()
 
+        base_ring = base
+
         def base_morphism(self):
             r"""
             Return the base morphism of this Drinfeld module.
