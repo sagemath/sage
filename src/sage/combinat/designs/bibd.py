@@ -1,5 +1,5 @@
 r"""
-Balanced Incomplete Block Designs (BIBD)
+Balanced incomplete block designs (BIBD)
 
 This module gathers everything related to Balanced Incomplete Block Designs. One can build a
 BIBD (or check that it can be built) with :func:`balanced_incomplete_block_design`::
@@ -334,11 +334,10 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
                     return False
                 raise EmptySetError(f"there exists no ({v},{k},{lambd})-BIBD")
             B = B.incidence_structure()
-            if B.num_blocks() == expected_n_of_blocks:
+            if B.n_blocks() == expected_n_of_blocks:
                 if existence:
                     return True
-                else:
-                    return BIBD(B.ground_set(), B.blocks(), k=k, lambd=1, copy=False)
+                return BIBD(B.ground_set(), B.blocks(), k=k, lambd=1, copy=False)
 
     if ( (k+lambd)*(k+lambd-1) == lambd*(v+k+lambd-1) and
          balanced_incomplete_block_design(v+k+lambd, k+lambd, lambd, existence=True) is True):
@@ -359,8 +358,7 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
 
     if existence:
         return Unknown
-    else:
-        raise NotImplementedError("I don't know how to build a ({},{},{})-BIBD!".format(v, k, lambd))
+    raise NotImplementedError("I don't know how to build a ({},{},{})-BIBD!".format(v, k, lambd))
 
 
 def BruckRyserChowla_check(v, k, lambd):
@@ -430,7 +428,7 @@ def BruckRyserChowla_check(v, k, lambd):
     g = 1 if v % 4 == 1 else -1
     C = Conic(QQ, [1, lambd - k, -g * lambd])
 
-    (flag, sol) = C.has_rational_point(point=True)
+    flag, sol = C.has_rational_point(point=True)
 
     return flag
 
@@ -659,8 +657,7 @@ def BIBD_from_TD(v, k, existence=False):
     else:
         if existence:
             return Unknown
-        else:
-            raise NotImplementedError("I do not know how to build a ({},{},1)-BIBD!".format(v,k))
+        raise NotImplementedError("I do not know how to build a ({},{},1)-BIBD!".format(v,k))
 
     return BIBD
 
@@ -1093,7 +1090,6 @@ def _get_t_u(v):
     """
     # Table 7.1
     v = int(v)
-    global table_7_1
     d = table_7_1[v % 48]
     s = v//48
     if s < d['s']:
@@ -1467,7 +1463,7 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
             (13,3,1)-Balanced Incomplete Block Design
         """
         bsizes = list(frozenset(self.block_sizes()))
-        return "Pairwise Balanced Design on {} points with sets of sizes in {}".format(self.num_points(), bsizes)
+        return "Pairwise Balanced Design on {} points with sets of sizes in {}".format(self.n_points(), bsizes)
 
 
 class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
@@ -1526,10 +1522,10 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
             sage: b=designs.balanced_incomplete_block_design(9,3); b
             (9,3,1)-Balanced Incomplete Block Design
         """
-        v = self.num_points()
+        v = self.n_points()
         k = len(self._blocks[0]) if self._blocks else 0
         l = self._lambd
-        return "({},{},{})-Balanced Incomplete Block Design".format(v,k,l)
+        return f"({v},{k},{l})-Balanced Incomplete Block Design"
 
     def arc(self, s=2, solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
@@ -1634,7 +1630,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
         # trivial cases
         if s <= 0:
             return []
-        elif s >= max(self.block_sizes()):
+        if s >= max(self.block_sizes()):
             return self._points[:]
 
         # integer linear program

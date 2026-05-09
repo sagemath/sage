@@ -20,7 +20,7 @@ from sage.rings.polynomial.polynomial_ring import polygen
 cdef object x_ZZ = polygen(ZZ)
 from sage.rings.polynomial.real_roots import real_roots
 from sage.arith.misc import prime_divisors
-import sage.libs.ntl.all as ntl
+from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX as ZZ_pX
 
 from sage.rings.integer cimport Integer
 from sage.libs.gmp.mpz cimport *
@@ -383,26 +383,26 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             mpz_sub_ui(ccc, c, qq)
             rr = nmod_poly_get_coeff_ui(f, 0)
             ss = rr*qq
-            mpz_set(ddd,d)
+            mpz_set(ddd, d)
             mpz_sub_ui(ddd, ddd, ss*2)
-            mpz_set(eee,e)
+            mpz_set(eee, e)
             mpz_sub_ui(eee, eee, ss*rr)
         elif i == 2:  # g == x^2 + rr*x + ss
             mpz_sub_ui(aaa, a, qq)
             rr = nmod_poly_get_coeff_ui(f, 1)
             mpz_init(tt)
             mpz_set_ui(tt, rr*qq)
-            mpz_set(bbb,b)
+            mpz_set(bbb, b)
             mpz_submul_ui(bbb, tt, 2)
-            mpz_set(ccc,c)
+            mpz_set(ccc, c)
             mpz_submul_ui(ccc, tt, rr)
             ss = nmod_poly_get_coeff_ui(f, 0)
             mpz_set_ui(tt, ss*qq)
-            mpz_set(eee,e)
+            mpz_set(eee, e)
             mpz_submul_ui(eee, tt, ss)
             mpz_mul_ui(tt, tt, 2)
             mpz_sub(ccc, ccc, tt)
-            mpz_set(ddd,d)
+            mpz_set(ddd, d)
             mpz_submul_ui(ddd, tt, rr)
             mpz_clear(tt)
         mpz_divexact(aaa, aaa, pp)
@@ -579,8 +579,8 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         mpz_set(D.value, d)
         mpz_set(E.value, e)
         mpz_set(P.value, pp)
-        f = ntl.ZZ_pX([E, D, C, B, A], P)
-        f /= ntl.ZZ_pX([A], P)  # now f is monic, and we are done with A,B,C,D,E
+        f = ZZ_pX([E, D, C, B, A], P)
+        f /= ZZ_pX([A], P)  # now f is monic, and we are done with A,B,C,D,E
         mpz_set(qq, A.value)  # qq is the leading coefficient of the polynomial
         f_factzn = f.factor()
         result = 0
@@ -593,7 +593,7 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         if result:
             return 1
 
-        f = ntl.ZZ_pX([1], P)
+        f = ZZ_pX([1], P)
         for factor, exponent in f_factzn:
             for j in range(exponent // 2):
                 f *= factor
@@ -632,10 +632,10 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             A = Integer(f[0])
             mpz_set(rr, A.value)
             mpz_mul(ss, rr, qq)
-            mpz_set(ddd,d)
+            mpz_set(ddd, d)
             mpz_sub(ddd, ddd, ss)
             mpz_sub(ddd, ddd, ss)
-            mpz_set(eee,e)
+            mpz_set(eee, e)
             mpz_mul(ss, ss, rr)
             mpz_sub(eee, eee, ss)
             mpz_divexact(ss, ss, rr)
@@ -645,18 +645,18 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             mpz_set(rr, A.value)
             mpz_init(tt)
             mpz_mul(tt, rr, qq)
-            mpz_set(bbb,b)
+            mpz_set(bbb, b)
             mpz_submul_ui(bbb, tt, 2)
-            mpz_set(ccc,c)
+            mpz_set(ccc, c)
             mpz_submul(ccc, tt, rr)
             A = Integer(f[0])
             mpz_set(ss, A.value)
             mpz_mul(tt, ss, qq)
-            mpz_set(eee,e)
+            mpz_set(eee, e)
             mpz_submul(eee, tt, ss)
             mpz_mul_ui(tt, tt, 2)
             mpz_sub(ccc, ccc, tt)
-            mpz_set(ddd,d)
+            mpz_set(ddd, d)
             mpz_submul(ddd, tt, rr)
             mpz_clear(tt)
         mpz_divexact(aaa, aaa, pp)
@@ -732,8 +732,8 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         mpz_set(D.value, d)
         mpz_set(E.value, e)
         mpz_set(P.value, pp)
-        f = ntl.ZZ_pX([E, D, C, B, A], P)
-        f /= ntl.ZZ_pX([A], P)  # now f is monic
+        f = ZZ_pX([E, D, C, B, A], P)
+        f /= ZZ_pX([A], P)  # now f is monic
         f_factzn = f.factor()
 
         has_roots = 0
@@ -818,7 +818,7 @@ cdef bint Qp_soluble_siksek(mpz_t A, mpz_t B, mpz_t C, mpz_t D, mpz_t E,
         mpz_set(d, D)
         mpz_set(e, E)
         if Zp_soluble_siksek(e, d, c, b, a,
-                             p, P,f_factzn, f, f1, linear):
+                             p, P, f_factzn, f, f1, linear):
             result = 1
 
     mpz_clear(a)
@@ -840,22 +840,22 @@ cdef bint Qp_soluble_siksek_large_p(mpz_t A, mpz_t B, mpz_t C, mpz_t D, mpz_t E,
     cdef int result = 0
     cdef mpz_t a, b, c, d, e
 
-    mpz_init_set(a,A)
-    mpz_init_set(b,B)
-    mpz_init_set(c,C)
-    mpz_init_set(d,D)
-    mpz_init_set(e,E)
+    mpz_init_set(a, A)
+    mpz_init_set(b, B)
+    mpz_init_set(c, C)
+    mpz_init_set(d, D)
+    mpz_init_set(e, E)
 
     if Zp_soluble_siksek_large_p(a, b, c, d, e,
                                  p, f1, linear):
         result = 1
     else:
-        mpz_set(a,A)
-        mpz_set(b,B)
-        mpz_set(c,C)
-        mpz_set(d,D)
-        mpz_set(e,E)
-        if Zp_soluble_siksek_large_p(e,d,c,b,a,p,f1,linear):
+        mpz_set(a, A)
+        mpz_set(b, B)
+        mpz_set(c, C)
+        mpz_set(d, D)
+        mpz_set(e, E)
+        if Zp_soluble_siksek_large_p(e, d, c, b, a, p, f1, linear):
             result = 1
 
     mpz_clear(a)
@@ -892,14 +892,14 @@ cdef bint Qp_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t p) noexc
     cdef fmpz_poly_t f1, linear
     cdef nmod_poly_factor_t f_factzn
     bsd_sol = Qp_soluble_BSD(a, b, c, d, e, p)
-    if mpz_cmp_ui(p,N_RES_CLASSES_BSD)>0 and not bsd_sol:
+    if mpz_cmp_ui(p, N_RES_CLASSES_BSD) > 0 and not bsd_sol:
         fmpz_poly_init(f1)
         fmpz_poly_init(linear)
         if mpz_fits_ulong_p(p):
             nmod_poly_factor_init(f_factzn)
             pp = mpz_get_ui(p)
             sik_sol = Qp_soluble_siksek(a, b, c, d, e,
-                                        p, pp, f_factzn, f1,linear)
+                                        p, pp, f_factzn, f1, linear)
             nmod_poly_factor_clear(f_factzn)
         else:
             sik_sol = Qp_soluble_siksek_large_p(a, b, c, d, e,
@@ -950,7 +950,7 @@ cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e)
     """
     Return whether the quartic has local solutions at all primes `p`.
     """
-    cdef Integer A, B, C, D, E, Delta,p
+    cdef Integer A, B, C, D, E, Delta, p
     cdef mpz_t mpz_2
     A = Integer(0)
     B = Integer(0)
@@ -978,6 +978,8 @@ cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e)
 
     # Odd finite primes
     Delta = f.discriminant()
+    if not Delta:
+        raise ValueError("the curve is singular, Delta is zero")
     for p in prime_divisors(Delta):
         if p == 2:
             continue
@@ -1002,6 +1004,15 @@ def test_els(a, b, c, d, e):
         ....:                 print("This never happened", a, b, c, d, e)
         ....:         except ValueError:
         ....:             continue
+
+    TESTS:
+
+    Check that :issue:`39864` is fixed::
+
+        sage: test_els(194, 617, 846, 617, 194)
+        Traceback (most recent call last):
+        ...
+        ValueError: the curve is singular, Delta is zero
     """
     cdef Integer A, B, C, D, E
     A = Integer(a)
@@ -1208,10 +1219,8 @@ def two_descent_by_two_isogeny(E,
         Elliptic Curve defined by y^2 = x^3 - x^2 - 900*x - 10098 over Rational Field
         sage: E.sha().an()
         4
-        sage: alarm(0.5); two_descent_by_two_isogeny(E, global_limit_large=10^8)
-        Traceback (most recent call last):
-        ...
-        AlarmInterrupt
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(0.5): two_descent_by_two_isogeny(E, global_limit_large=10^8)
     """
     cdef Integer a1, a2, a3, a4, a6, s2, s4, s6
     cdef Integer c, d, x0
@@ -1318,7 +1327,7 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
                 p_list_len += 1
     else:
         # Factor more slowly using Pari via Python.
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         d = Integer(0)
         mpz_set(d.value, d_mpz)
         primes = list(pari(d).factor()[0])

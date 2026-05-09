@@ -171,6 +171,15 @@ class CellModule(CombinatorialFreeModule):
             sage: matrix([[W._bilinear_form_on_basis(s, t) for t in K] for s in K])
             [1 0]
             [0 1]
+
+        TESTS::
+
+            sage: C5.<z5> = CyclotomicField(5)
+            sage: TL = TemperleyLiebAlgebra(2, z5 + ~z5, C5)
+            sage: m = TL.cell_module(0)
+            sage: c = m.basis().keys()[0]
+            sage: m._bilinear_form_on_basis(c, c)
+            -z5^3 - z5^2 - 1
         """
         B = self._algebra.basis()
         elt = B[(self._la, s, s)] * B[(self._la, t, t)]
@@ -241,6 +250,14 @@ class CellModule(CombinatorialFreeModule):
             sage: S = SymmetricGroupAlgebra(QQ, 3)
             sage: W = S.cell_module([2,1])
             sage: W.nonzero_bilinear_form()
+            True
+
+        TESTS::
+
+            sage: C5.<z5> = CyclotomicField(5)
+            sage: TL = TemperleyLiebAlgebra(2, z5 + ~z5, C5)
+            sage: m = TL.cell_module(0)
+            sage: m.nonzero_bilinear_form()
             True
         """
         C = list(self.basis().keys())

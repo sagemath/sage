@@ -533,7 +533,7 @@ cdef class EvenlyDistributedSetsBacktracker:
                     x += 1
                 else:
                     kk += 1
-                    x += m - x%m
+                    x += m - x % m
             else:
                 x += 1
 
@@ -554,7 +554,7 @@ cdef class EvenlyDistributedSetsBacktracker:
                     if self.check:
                         self._check_cosets(kk)
                 elif self.cosets[x / m]:
-                    x += m - x%m
+                    x += m - x % m
                 elif kk == 2:
                     if self.min_orb[x] < x:
                         x += 1
@@ -649,12 +649,12 @@ cdef class EvenlyDistributedSetsBacktracker:
         c = 0
         for i in range(self.e):
             c += self.cosets[i]
-        if c != (kk * (kk-1)) / 2:
+        if 2 * c != (kk * (kk-1)):
             raise RuntimeError("the number of elements in cosets is wrong! Got {} instead of {}.".format(c, (kk*(kk-1))/2))
 
         for i in range(kk):
             for j in range(i):
                 if self.cosets[ self.diff[self.B[i]][self.B[j]] / m ] != 1:
-                    raise RuntimeError("self.cosets misses the difference B[{}]-B[{}]".format(i,j))
+                    raise RuntimeError("self.cosets misses the difference B[{}]-B[{}]".format(i, j))
 
         return 0

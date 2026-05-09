@@ -134,14 +134,14 @@ class Homology_abvar(Homology):
         """
         if not isinstance(other, Homology_abvar):
             return NotImplemented
-        else:
-            return richcmp((self.abelian_variety(), self.base_ring()),
-                           (other.abelian_variety(), other.base_ring()), op)
+        return richcmp((self.abelian_variety(), self.base_ring()),
+                       (other.abelian_variety(), other.base_ring()), op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
-        Return string representation of ``self``. This must be defined in the
-        derived class.
+        Return string representation of ``self``.
+
+        This must be defined in the derived class.
 
         EXAMPLES::
 
@@ -154,7 +154,7 @@ class Homology_abvar(Homology):
         """
         raise NotImplementedError("please override this in the derived class")
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return generators of ``self``.
 
@@ -403,8 +403,7 @@ class IntegralHomology(Homology_abvar):
         """
         n = Integer(n)
         M = self.abelian_variety().modular_symbols(sign=1)
-        f = (M.hecke_polynomial(n, var)**2).change_ring(ZZ)
-        return f
+        return (M.hecke_polynomial(n, var)**2).change_ring(ZZ)
 
 
 class RationalHomology(Homology_abvar):
@@ -671,8 +670,7 @@ class Homology_submodule(Homology):
         """
         if self.rank() <= 2:
             return ZZ(1)
-        else:
-            return self.__ambient.hecke_bound()
+        return self.__ambient.hecke_bound()
 
     def hecke_matrix(self, n):
         """

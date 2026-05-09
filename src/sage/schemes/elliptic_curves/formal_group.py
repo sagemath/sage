@@ -13,7 +13,7 @@ AUTHORS:
 
 from sage.structure.sage_object import SageObject
 
-import sage.misc.misc as misc
+from sage.misc import misc
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.big_oh import O
@@ -531,7 +531,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         if prec == 1:
             return R(0)
-        elif prec == 2:
+        if prec == 2:
             return t1 + t2 - self.curve().a1()*t1*t2
 
         try:
@@ -551,7 +551,7 @@ class EllipticCurveFormalGroup(SageObject):
         # note that the following formula differs from the one in Silverman page 119.
         # See github issue 9646 for the explanation and justification.
         t3 = -t1 - t2 - \
-             (a1*lam + a3*lam2 + a2*nu + 2*a4*lam*nu + 3*a6*lam2*nu) /  \
+             (a1*lam + a3*lam2 + a2*nu + 2*a4*lam*nu + 3*a6*lam2*nu) / \
              (1 + a2*lam + a4*lam2 + a6*lam3)
         inv = self.inverse(prec)
 

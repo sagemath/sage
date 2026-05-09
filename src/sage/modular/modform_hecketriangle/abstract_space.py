@@ -16,9 +16,9 @@ AUTHORS:
 # ****************************************************************************
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
-from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module_element import vector
+from sage.modules.free_module_element import FreeModuleElement, vector
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -117,8 +117,6 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: latex(QuasiWeakModularForms())
             QM^!_{ n=3 }(0,\ 1)(\Bold{Z})
         """
-
-        from sage.misc.latex import latex
         return r"{}_{{ n={} }}({},\ {})({})".format(self._analytic_type.latex_space_name(), self._group.n(), self._weight, self._ep, latex(self._base_ring))
 
     def _element_constructor_(self, el):
@@ -259,8 +257,7 @@ class FormsSpace_abstract(FormsRing_abstract):
                           LazyLaurentSeriesRing, LazyPowerSeriesRing)):
             if self.is_modular():
                 return self.construct_form(el)
-            else:
-                return self.construct_quasi_form(el)
+            return self.construct_quasi_form(el)
         if isinstance(el, FreeModuleElement) and (self.module() is P or self.ambient_module() is P):
             return self.element_from_ambient_coordinates(el)
         if not self.is_ambient() and isinstance(el, (list, tuple, FreeModuleElement)) and len(el) == self.rank():
@@ -319,27 +316,24 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: subspace3.has_coerce_map_from(subspace2)
             True
         """
-
         from .space import ZeroForm
         from .subspace import SubSpaceForms
         if isinstance(S, ZeroForm):
             return True
         if (isinstance(S, SubSpaceForms)
-            and isinstance(self, SubSpaceForms)):
-                if (self.ambient_space().has_coerce_map_from(S.ambient_space())):
-                    S2 = S.change_ambient_space(self.ambient_space())
-                    return self.module().has_coerce_map_from(S2.module())
-                else:
-                    return False
-        elif (  isinstance(S, FormsSpace_abstract)
-            and self.graded_ring().has_coerce_map_from(S.graded_ring())
-            and S.weight() == self._weight
-            and S.ep() == self._ep
-            and not isinstance(self, SubSpaceForms)):
-                return True
-        else:
-            return self.contains_coeff_ring() \
-                and self.coeff_ring().has_coerce_map_from(S)
+                and isinstance(self, SubSpaceForms)):
+            if (self.ambient_space().has_coerce_map_from(S.ambient_space())):
+                S2 = S.change_ambient_space(self.ambient_space())
+                return self.module().has_coerce_map_from(S2.module())
+            return False
+        if (isinstance(S, FormsSpace_abstract)
+              and self.graded_ring().has_coerce_map_from(S.graded_ring())
+              and S.weight() == self._weight
+              and S.ep() == self._ep
+              and not isinstance(self, SubSpaceForms)):
+            return True
+        return self.contains_coeff_ring() \
+            and self.coeff_ring().has_coerce_map_from(S)
 
     # Since forms spaces are modules instead of rings
     # we have to manually define one().
@@ -362,7 +356,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
         return self.extend_type("holo", ring=True)(1).reduce()
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         r"""
         Return whether ``self`` is an ambient space.
 
@@ -489,8 +483,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         if (self.is_ambient()):
             return (ambient_space_functor, BaseFacade(self._base_ring))
-        else:
-            return (FormsSubSpaceFunctor(ambient_space_functor, self._basis), BaseFacade(self._base_ring))
+        return (FormsSubSpaceFunctor(ambient_space_functor, self._basis), BaseFacade(self._base_ring))
 
     @cached_method
     def weight(self):
@@ -630,8 +623,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         if (k == self._weight and ep == self._ep):
             return self
-        else:
-            raise ValueError("{} already is homogeneous with degree ({}, {}) != ({}, {})!".format(self, self._weight, self._ep, k, ep))
+        raise ValueError("{} already is homogeneous with degree ({}, {}) != ({}, {})!".format(self, self._weight, self._ep, k, ep))
 
     def weight_parameters(self):
         r"""
@@ -752,15 +744,14 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         if (gamma.is_translation()):
             return ZZ(1)
-        elif (gamma.is_reflection()):
+        if (gamma.is_reflection()):
             return self._ep * (t/QQbar(I))**self._weight
-        else:
-            L = list(gamma.word_S_T()[0])
-            aut_f = ZZ(1)
-            while (len(L) > 0):
-                M = L.pop(-1)
-                aut_f *= self.aut_factor(M, t)
-                t = M.acton(t)
+        L = list(gamma.word_S_T()[0])
+        aut_f = ZZ(1)
+        while (len(L) > 0):
+            M = L.pop(-1)
+            aut_f *= self.aut_factor(M, t)
+            t = M.acton(t)
         return aut_f
 
     @cached_method
@@ -1310,13 +1301,12 @@ class FormsSpace_abstract(FormsRing_abstract):
                 new_space = self.extend_type("weak")
             else:
                 new_space = self.extend_type("holo")
+        elif (m > 0):
+            new_space = self.extend_type("cusp")
+        elif (m >= 0):
+            new_space = self.extend_type("holo")
         else:
-            if (m > 0):
-                new_space = self.extend_type("cusp")
-            elif (m >= 0):
-                new_space = self.extend_type("holo")
-            else:
-                new_space = self.extend_type("weak")
+            new_space = self.extend_type("weak")
 
         return new_space(basis_pol)
 
@@ -1352,7 +1342,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         return (min_exp, order_1)
 
-    def quasi_part_gens(self, r=None, min_exp=0, max_exp=infinity, order_1=ZZ.zero()):
+    def quasi_part_gens(self, r=None, min_exp=0, max_exp=infinity, order_1=ZZ.zero()) -> tuple:
         r"""
         Return a basis in ``self`` of the subspace of (quasi) weakly
         holomorphic forms which satisfy the specified properties on
@@ -1391,17 +1381,20 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: QF = QuasiWeakModularForms(n=8, k=10/3, ep=-1)
             sage: QF.default_prec(1)
             sage: QF.quasi_part_gens(min_exp=-1)
-            [q^-1 + O(q), 1 + O(q), q^-1 - 9/(128*d) + O(q), 1 + O(q), q^-1 - 19/(64*d) + O(q), q^-1 + 1/(64*d) + O(q)]
+            (q^-1 + O(q), 1 + O(q), q^-1 - 9/(128*d) + O(q),
+             1 + O(q), q^-1 - 19/(64*d) + O(q), q^-1 + 1/(64*d) + O(q))
 
             sage: QF.quasi_part_gens(min_exp=-1, max_exp=-1)
-            [q^-1 + O(q), q^-1 - 9/(128*d) + O(q), q^-1 - 19/(64*d) + O(q), q^-1 + 1/(64*d) + O(q)]
+            (q^-1 + O(q), q^-1 - 9/(128*d) + O(q),
+             q^-1 - 19/(64*d) + O(q), q^-1 + 1/(64*d) + O(q))
             sage: QF.quasi_part_gens(min_exp=-2, r=1)
-            [q^-2 - 9/(128*d)*q^-1 - 261/(131072*d^2) + O(q), q^-1 - 9/(128*d) + O(q), 1 + O(q)]
+            (q^-2 - 9/(128*d)*q^-1 - 261/(131072*d^2) + O(q),
+             q^-1 - 9/(128*d) + O(q), 1 + O(q))
 
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
             sage: MF = ModularForms(k=36)
             sage: MF.quasi_part_gens(min_exp=2)
-            [q^2 + 194184*q^4 + O(q^5), q^3 - 72*q^4 + O(q^5)]
+            (q^2 + 194184*q^4 + O(q^5), q^3 - 72*q^4 + O(q^5))
 
             sage: from sage.modular.modform_hecketriangle.space import QuasiModularForms
             sage: MF = QuasiModularForms(n=5, k=6, ep=-1)
@@ -1409,17 +1402,17 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: MF.dimension()
             3
             sage: MF.quasi_part_gens(r=0)
-            [1 - 37/(200*d)*q + O(q^2)]
+            (1 - 37/(200*d)*q + O(q^2),)
             sage: MF.quasi_part_gens(r=0)[0] == MF.E6()
             True
             sage: MF.quasi_part_gens(r=1)
-            [1 + 33/(200*d)*q + O(q^2)]
+            (1 + 33/(200*d)*q + O(q^2),)
             sage: MF.quasi_part_gens(r=1)[0] == MF.E2()*MF.E4()
             True
             sage: MF.quasi_part_gens(r=2)
-            []
+            ()
             sage: MF.quasi_part_gens(r=3)
-            [1 - 27/(200*d)*q + O(q^2)]
+            (1 - 27/(200*d)*q + O(q^2),)
             sage: MF.quasi_part_gens(r=3)[0] == MF.E2()^3
             True
 
@@ -1429,18 +1422,18 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: MF.dimension()
             8
             sage: MF.quasi_part_gens(r=0)
-            [q - 34743/(640000*d^2)*q^3 + O(q^4), q^2 - 69/(200*d)*q^3 + O(q^4)]
+            (q - 34743/(640000*d^2)*q^3 + O(q^4), q^2 - 69/(200*d)*q^3 + O(q^4))
             sage: MF.quasi_part_gens(r=1)
-            [q - 9/(200*d)*q^2 + 37633/(640000*d^2)*q^3 + O(q^4),
-             q^2 + 1/(200*d)*q^3 + O(q^4)]
+            (q - 9/(200*d)*q^2 + 37633/(640000*d^2)*q^3 + O(q^4),
+             q^2 + 1/(200*d)*q^3 + O(q^4))
             sage: MF.quasi_part_gens(r=2)
-            [q - 1/(4*d)*q^2 - 24903/(640000*d^2)*q^3 + O(q^4)]
+            (q - 1/(4*d)*q^2 - 24903/(640000*d^2)*q^3 + O(q^4),)
             sage: MF.quasi_part_gens(r=3)
-            [q + 1/(10*d)*q^2 - 7263/(640000*d^2)*q^3 + O(q^4)]
+            (q + 1/(10*d)*q^2 - 7263/(640000*d^2)*q^3 + O(q^4),)
             sage: MF.quasi_part_gens(r=4)
-            [q - 11/(20*d)*q^2 + 53577/(640000*d^2)*q^3 + O(q^4)]
+            (q - 11/(20*d)*q^2 + 53577/(640000*d^2)*q^3 + O(q^4),)
             sage: MF.quasi_part_gens(r=5)
-            [q - 1/(5*d)*q^2 + 4017/(640000*d^2)*q^3 + O(q^4)]
+            (q - 1/(5*d)*q^2 + 4017/(640000*d^2)*q^3 + O(q^4),)
 
             sage: MF.quasi_part_gens(r=1)[0] == MF.E2() * CuspForms(n=5, k=16, ep=1).gen(0)
             True
@@ -1453,9 +1446,9 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: MF.quasi_part_gens(r=1, min_exp=-2) == MF.quasi_part_gens(r=1, min_exp=1)
             True
             sage: MF.quasi_part_gens(r=1)
-            [q - 8*q^2 - 8*q^3 + 5952*q^4 + O(q^5),
+            (q - 8*q^2 - 8*q^3 + 5952*q^4 + O(q^5),
              q^2 - 8*q^3 + 208*q^4 + O(q^5),
-             q^3 - 16*q^4 + O(q^5)]
+             q^3 - 16*q^4 + O(q^5))
 
             sage: MF = QuasiWeakModularForms(n=infinity, k=4, ep=1)
             sage: MF.quasi_part_gens(r=2, min_exp=2, order_1=-2)[0] == MF.E2()^2 * MF.E4()^(-2) * MF.f_inf()^2
@@ -1463,23 +1456,22 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: [v.order_at(-1) for v in MF.quasi_part_gens(r=0, min_exp=2, order_1=-2)]
             [-2, -2]
         """
-
-        if (not self.is_weakly_holomorphic()):
+        if not self.is_weakly_holomorphic():
             from warnings import warn
             warn("This function only determines generators of (quasi) weakly modular forms!")
 
-        (min_exp, order_1) = self._canonical_min_exp(min_exp, order_1)
+        min_exp, order_1 = self._canonical_min_exp(min_exp, order_1)
 
         # For modular forms spaces the quasi parts are all zero except for r=0
-        if (self.is_modular()):
+        if self.is_modular():
             r = ZZ(r)
-            if (r != 0):
-                return []
+            if r:
+                return ()
 
         # The lower bounds on the powers of f_inf and E4 determine
         # how large powers of E2 we can fit in...
         n = self.hecke_n()
-        if (n == infinity):
+        if n == infinity:
             max_numerator_weight = self._weight - 4*min_exp - 4*order_1 + 4
         else:
             max_numerator_weight = self._weight - 4*n/(n-2)*min_exp + 4
@@ -1487,30 +1479,28 @@ class FormsSpace_abstract(FormsRing_abstract):
         # If r is not specified we gather all generators for all possible r's
         if r is None:
             gens = []
-            for rnew in range(QQ(max_numerator_weight/ZZ(2)).floor() + 1):
-                gens += self.quasi_part_gens(r=rnew, min_exp=min_exp, max_exp=max_exp, order_1=order_1)
-            return gens
+            for rnew in range(QQ(max_numerator_weight / ZZ(2)).floor() + 1):
+                gens.extend(self.quasi_part_gens(r=rnew, min_exp=min_exp, max_exp=max_exp, order_1=order_1))
+            return tuple(gens)
 
         r = ZZ(r)
         if r < 0 or 2*r > max_numerator_weight:
-            return []
+            return ()
 
         E2 = self.E2()
-        ambient_weak_space = self.graded_ring().reduce_type("weak", degree=(self._weight-QQ(2*r), self._ep*(-1)**r))
+        ambient_weak_space = self.graded_ring().reduce_type("weak",
+                                                            degree=(self._weight-QQ(2*r), self._ep*(-1)**r))
         order_inf = ambient_weak_space._l1 - order_1
 
-        if (max_exp == infinity):
+        if max_exp == infinity:
             max_exp = order_inf
-        elif (max_exp < min_exp):
-            return []
+        elif max_exp < min_exp:
+            return ()
         else:
             max_exp = min(ZZ(max_exp), order_inf)
 
-        gens = []
-        for m in range(min_exp, max_exp + 1):
-            gens += [ self(ambient_weak_space.F_basis(m, order_1=order_1)*E2**r) ]
-
-        return gens
+        return tuple(self(ambient_weak_space.F_basis(m, order_1=order_1) * E2**r)
+                     for m in range(min_exp, max_exp + 1))
 
     def quasi_part_dimension(self, r=None, min_exp=0, max_exp=infinity, order_1=ZZ.zero()):
         r"""
@@ -1823,7 +1813,7 @@ class FormsSpace_abstract(FormsRing_abstract):
                 verbose("Encountered a base change matrix with not-yet-maximal rank (rare, please report)!")
             incr_prec_by += column_size//ZZ(5) + 1
             return self._quasi_form_matrix(min_exp=min_exp, order_1=order_1, incr_prec_by=incr_prec_by)
-        elif (incr_prec_by == 0):
+        if (incr_prec_by == 0):
             return A
 
         # At this point the matrix has maximal rank but might be too big.
@@ -2027,7 +2017,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
             b = vector(self.coeff_ring(), [laurent_series[m] for m in range(min_exp, min_exp + len(basis))])
 
-            el = self(sum([b[k]*basis[k] for k in range(0, len(basis))]))
+            el = self(sum([b[k]*basis[k] for k in range(len(basis))]))
         else:
             A = self._quasi_form_matrix(min_exp=min_exp, order_1=order_1)
             row_size = A.dimensions()[0]
@@ -2049,7 +2039,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             max_exp = order_inf + 1
             basis = self.quasi_part_gens(min_exp=min_exp, max_exp=max_exp, order_1=order_1)
 
-            el = self(sum([coord_vector[k]*basis[k] for k in range(0, len(coord_vector))]))
+            el = self(sum([coord_vector[k]*basis[k] for k in range(len(coord_vector))]))
 
         if (check):
             if (el.q_expansion(prec=prec) != laurent_series):
@@ -2096,7 +2086,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             q^-1 + O(q^5)
 
             sage: MF = ModularForms(k=36)
-            sage: MF.q_basis() == MF.gens()
+            sage: MF.q_basis() == list(MF.gens())
             True
 
             sage: QF = QuasiModularForms(k=6)
@@ -2129,13 +2119,12 @@ class FormsSpace_abstract(FormsRing_abstract):
 
                 column_len = A.dimensions()[1]
                 q_basis = []
-                for k in range(0, column_len):
-                    el = self(sum([B[l][k] * basis[l] for l in range(0, column_len)]))
+                for k in range(column_len):
+                    el = self(sum([B[l][k] * basis[l] for l in range(column_len)]))
                     q_basis += [el]
 
                 return q_basis
-            else:
-                raise ValueError("Unfortunately a q_basis doesn't exist in this case (this is rare/interesting, please report)")
+            raise ValueError("Unfortunately a q_basis doesn't exist in this case (this is rare/interesting, please report)")
         else:
             if (m < min_exp):
                 raise ValueError("Index out of range: m={} < {}=min_exp".format(m, min_exp))
@@ -2149,26 +2138,25 @@ class FormsSpace_abstract(FormsRing_abstract):
                     raise ValueError("Index out of range: m={} >= {}=dimension + min_exp".format(m, column_len + min_exp))
 
                 return q_basis[m - min_exp]
-            else:
-                row_len = self.required_laurent_prec(min_exp=min_exp, order_1=order_1) - min_exp
-                if (m >= row_len + min_exp):
-                    raise ValueError("Index out of range: m={} >= {}=required_precision + min_exp".format(m, row_len + min_exp))
 
-                A = self._quasi_form_matrix(min_exp=min_exp, order_1=order_1)
-                b = vector(self.coeff_ring(), row_len)
-                b[m - min_exp] = 1
-                try:
-                    coord_vector = A.solve_right(b)
-                except ValueError:
-                    raise ValueError("Unfortunately the q_basis vector (m={}, min_exp={}) doesn't exist in this case (this is rare/interesting, please report)".format(m, min_exp))
+            row_len = self.required_laurent_prec(min_exp=min_exp, order_1=order_1) - min_exp
+            if (m >= row_len + min_exp):
+                raise ValueError("Index out of range: m={} >= {}=required_precision + min_exp".format(m, row_len + min_exp))
 
-                max_exp = order_inf + 1
-                basis = self.quasi_part_gens(min_exp=min_exp, max_exp=max_exp, order_1=order_1)
+            A = self._quasi_form_matrix(min_exp=min_exp, order_1=order_1)
+            b = vector(self.coeff_ring(), row_len)
+            b[m - min_exp] = 1
+            try:
+                coord_vector = A.solve_right(b)
+            except ValueError:
+                raise ValueError("Unfortunately the q_basis vector (m={}, min_exp={}) doesn't exist in this case (this is rare/interesting, please report)".format(m, min_exp))
 
-                column_len = A.dimensions()[1]
-                el = self(sum([coord_vector[l] * basis[l] for l in range(0, column_len)]))
+            max_exp = order_inf + 1
+            basis = self.quasi_part_gens(min_exp=min_exp, max_exp=max_exp, order_1=order_1)
 
-                return el
+            column_len = A.dimensions()[1]
+            return self(sum([coord_vector[l] * basis[l]
+                             for l in range(column_len)]))
 
     def rationalize_series(self, laurent_series, coeff_bound=1e-10, denom_factor=ZZ(1)):
         r"""
@@ -2272,8 +2260,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         if (isinstance(base_ring.base(), PolynomialRing_generic)):
             if (self.coeff_ring().has_coerce_map_from(base_ring)):
                 return laurent_series
-            else:
-                raise ValueError("The Laurent coefficients don't coerce into the coefficient ring of self!")
+            raise ValueError("The Laurent coefficients don't coerce into the coefficient ring of self!")
         # Else the case that the Laurent series is exact but the group is non-arithmetic
         # shouldn't occur (except for trivial cases)
         elif (base_ring.is_exact() and not self.group().is_arithmetic()):
@@ -2304,17 +2291,16 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         if (first_coeff < 0):
             return -self.rationalize_series(-laurent_series, coeff_bound=coeff_bound)
-        elif (first_exp + d_power != 0):
+        if (first_exp + d_power != 0):
             cor_factor = dvalue**(-(first_exp + d_power))
             return d**(first_exp + d_power) * self.rationalize_series(cor_factor * laurent_series, coeff_bound=coeff_bound)
+        if (base_ring.is_exact() and self.group().is_arithmetic()):
+            tolerance = 0
         else:
-            if (base_ring.is_exact() and self.group().is_arithmetic()):
-                tolerance = 0
-            else:
-                tolerance = 10*ZZ(1).n(prec).ulp()
+            tolerance = 10*ZZ(1).n(prec).ulp()
 
-            if (first_coeff * dvalue**first_exp - ZZ(1)) > tolerance:
-                raise ValueError("The Laurent series is not normalized correctly!")
+        if (first_coeff * dvalue**first_exp - ZZ(1)) > tolerance:
+            raise ValueError("The Laurent series is not normalized correctly!")
 
         # TODO: This is not a good enough estimate, see e.g. E12
         # (however for exact base rings + arithmetic groups we don't need it)
@@ -2346,9 +2332,8 @@ class FormsSpace_abstract(FormsRing_abstract):
 
             return rational_coeff / d**m
 
-        laurent_series = sum([rationalize_coefficient(laurent_series[m], m) * q**m for m in range(first_exp, laurent_series.exponents()[-1] + 1)]).add_bigoh(series_prec)
-
-        return laurent_series
+        return sum([rationalize_coefficient(laurent_series[m], m) * q**m
+                    for m in range(first_exp, laurent_series.exponents()[-1] + 1)]).add_bigoh(series_prec)
 
     # DEFAULT METHODS (should be overwritten in concrete classes)
 
@@ -2490,11 +2475,11 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         return self.module()(self.ambient_space().coordinate_vector(v))
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         This method should be overloaded by subclasses.
 
-        Return a basis of ``self``.
+        Return a basis of ``self`` as a tuple.
 
         Note that the coordinate vector of elements of ``self``
         are with respect to this basis.
@@ -2503,11 +2488,10 @@ class FormsSpace_abstract(FormsRing_abstract):
 
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
             sage: ModularForms(k=12).gens() # defined in space.py
-            [1 + 196560*q^2 + 16773120*q^3 + 398034000*q^4 + O(q^5),
-             q - 24*q^2 + 252*q^3 - 1472*q^4 + O(q^5)]
+            (1 + 196560*q^2 + 16773120*q^3 + 398034000*q^4 + O(q^5),
+             q - 24*q^2 + 252*q^3 - 1472*q^4 + O(q^5))
         """
-
-        raise NotImplementedError("No generators are implemented yet for {}!".format(self))
+        raise NotImplementedError(f"No generators are implemented yet for {self}!")
 
     def gen(self, k=0):
         r"""
@@ -2526,5 +2510,4 @@ class FormsSpace_abstract(FormsRing_abstract):
         k = ZZ(k)
         if k >= 0 and k < self.dimension():
             return self.gens()[k]
-        else:
-            raise ValueError("Invalid index: k={} does not satisfy 0 <= k <= {}!".format(k, self.dimension()))
+        raise ValueError("Invalid index: k={} does not satisfy 0 <= k <= {}!".format(k, self.dimension()))

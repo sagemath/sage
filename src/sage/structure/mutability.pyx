@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Mutability Cython Implementation
 """
@@ -13,7 +12,7 @@ Mutability Cython Implementation
 ##########################################################################
 
 cimport cython
-from sage.misc.decorators import sage_wraps
+from sage.misc.decorators import rename_keyword, sage_wraps
 
 cdef class Mutability:
     r"""
@@ -47,8 +46,8 @@ cdef class Mutability:
         sage: hash(a)
         6
     """
-
-    def __init__(self, is_immutable=False):
+    @rename_keyword(deprecation=41756, is_immutable='immutable')
+    def __init__(self, immutable=False):
         r"""
         TESTS::
 
@@ -64,7 +63,7 @@ cdef class Mutability:
             sage: a = A(4)
             sage: TestSuite(a).run(skip ='_test_pickling')
         """
-        self._is_immutable = is_immutable
+        self._is_immutable = immutable
 
     cpdef _require_mutable(self):
         r"""
@@ -287,7 +286,6 @@ def require_mutable(f):
     - Simon King <simon.king@uni-jena.de>
     """
     @sage_wraps(f)
-    @cython.binding(True)
     def new_f(self, *args, **kwds):
         if getattr(self, '_is_immutable', False):
             raise ValueError("{} instance is immutable, {} must not be called".format(type(self), repr(f)))
@@ -340,7 +338,6 @@ def require_immutable(f):
     - Simon King <simon.king@uni-jena.de>
     """
     @sage_wraps(f)
-    @cython.binding(True)
     def new_f(self, *args, **kwds):
         if not getattr(self,'_is_immutable',False):
             raise ValueError("{} instance is mutable, {} must not be called".format(type(self), repr(f)))

@@ -21,12 +21,11 @@ import pickle
 import re
 import textwrap
 
-from .expect import Expect, ExpectElement, FunctionElement
 import sage.repl.preparse
-
+from sage.interfaces.expect import Expect, ExpectElement, FunctionElement
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.misc.persist import dumps, load
 from sage.misc.instancedoc import instancedoc
+from sage.misc.persist import dumps, load
 
 
 class Sage(ExtraTabCompletion, Expect):
@@ -130,7 +129,6 @@ class Sage(ExtraTabCompletion, Expect):
     def __init__(self,
                  logfile=None,
                  preparse=True,
-                 python=False,
                  init_code=None,
                  server=None,
                  server_tmpdir=None,
@@ -155,24 +153,10 @@ class Sage(ExtraTabCompletion, Expect):
                     'init_code should be a string or an iterable of lines '
                     'of code')
 
-        if python:
-            command = 'python -u'
-            prompt = re.compile(b'>>> ')
-            environment = 'sage.all'
-            init_code.append(f'from {environment} import *')
-        else:
-            command = ' '.join([
-                'sage-ipython',
-                # Disable the IPython history (implemented as SQLite database)
-                # to avoid problems with locking.
-                '--HistoryManager.hist_file=:memory:',
-                # Disable everything that prints ANSI codes
-                '--colors=NoColor',
-                '--no-term-title',
-                '--simple-prompt',
-            ])
-            prompt = re.compile(b'sage: ')
-
+        command = 'python3 -u'
+        prompt = re.compile(b'>>> |sage: |In : ')
+        environment = 'sage.all'
+        init_code.append(f'from {environment} import *')
         init_code.append('import pickle')
         init_code.append(textwrap.dedent("""
             def _sage0_load_local(filename):
@@ -248,8 +232,7 @@ class Sage(ExtraTabCompletion, Expect):
         if isinstance(x, ExpectElement):
             if x.parent() is self:
                 return x
-            else:
-                return self(x.sage())
+            return self(x.sage())
 
         if isinstance(x, str):
             return SageElement(self, x)
@@ -259,12 +242,11 @@ class Sage(ExtraTabCompletion, Expect):
                 fobj.write(pickle.dumps(x, 2))
             code = '_sage0_load_local({!r})'.format(self._local_tmpfile())
             return SageElement(self, code)
-        else:
-            with open(self._local_tmpfile(), 'wb') as fobj:
-                fobj.write(dumps(x))   # my dumps is compressed by default
-            self._send_tmpfile_to_server()
-            code = '_sage0_load_remote({!r})'.format(self._remote_tmpfile())
-            return SageElement(self, code)
+        with open(self._local_tmpfile(), 'wb') as fobj:
+            fobj.write(dumps(x))   # my dumps is compressed by default
+        self._send_tmpfile_to_server()
+        code = '_sage0_load_remote({!r})'.format(self._remote_tmpfile())
+        return SageElement(self, code)
 
     def __reduce__(self):
         """
@@ -445,8 +427,7 @@ class Sage(ExtraTabCompletion, Expect):
 
         if '\n' in s:
             return "eval(compile({!r}, '<stdin>', 'single'))".format(s.strip())
-        else:
-            return s
+        return s
 
 
 @instancedoc
@@ -512,9 +493,8 @@ class SageElement(ExpectElement):
             P.eval('save({}, {!r})'.format(self.name(), P._remote_tmpfile()))
             P._get_tmpfile_from_server(self)
             return load(P._local_tmp_file())
-        else:
-            P.eval('save({}, {!r})'.format(self.name(), P._local_tmpfile()))
-            return load(P._local_tmpfile())
+        P.eval('save({}, {!r})'.format(self.name(), P._local_tmpfile()))
+        return load(P._local_tmpfile())
 
 
 @instancedoc
@@ -551,7 +531,7 @@ class SageFunction(FunctionElement):
         EXAMPLES::
 
             sage: sage0(4).gcd
-            <built-in method gcd of sage.rings.integer.Integer object at 0x...>
+            <bound method PrincipalIdealDomainElement.gcd of 4>
         """
         return str(self._obj.parent().eval('%s.%s' % (self._obj._name,
                                                       self._name)))

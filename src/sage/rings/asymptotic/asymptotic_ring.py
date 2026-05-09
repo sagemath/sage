@@ -1603,9 +1603,9 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         if not self.summands:
             if exponent == 0:
                 return self.parent().one()
-            elif exponent > 0:
+            if exponent > 0:
                 return self.parent().zero()
-            elif exponent < 0:
+            if exponent < 0:
                 raise ZeroDivisionError('Cannot take %s to the negative exponent %s.' %
                                         (self, exponent))
             else:
@@ -1762,9 +1762,9 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         if not self.summands:
             if exponent > 0:
                 return self.parent().zero()
-            elif exponent.is_zero():
+            if exponent.is_zero():
                 return self.parent().one()
-            elif exponent < 0:
+            if exponent < 0:
                 raise ZeroDivisionError(
                     'Cannot take {} to the negative '
                     'exponent {}.'.format(self, exponent))
@@ -2210,13 +2210,13 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
             sage: R.<n> = AsymptoticRing('n^ZZ', QQ)
             sage: ex = 2*n^2 + n + O(1/n)
-            sage: (m, x) = ex._main_term_relative_error_()
+            sage: m, x = ex._main_term_relative_error_()
             sage: m
             2*n^2
             sage: x
             1/2*n^(-1) + O(n^(-3))
             sage: ex = 2*n^2 + n
-            sage: (m, x) = ex._main_term_relative_error_()
+            sage: m, x = ex._main_term_relative_error_()
             sage: m
             2*n^2
             sage: x
@@ -2260,8 +2260,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         if return_inverse_main_term:
             return (imax_elem, x)
-        else:
-            return (max_elem, x)
+        return (max_elem, x)
 
     @staticmethod
     def _power_series_(coefficients, start, ratio, ratio_start, precision):
@@ -2817,15 +2816,13 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             else:
                 raise NotImplementedError(f"unsupported error term: {error}")
             error_growth = error_terms[0].growth
-            points = list(
-                (k, ring((main.subs({variable: k}) - function(k)) /
-                         (error_coeff * error_growth._substitute_(
-                             {str(variable): k, '_one_': ZZ.one()}))))
-                for k in values)
+            points = [(k, ring((main.subs({variable: k}) - function(k)) /
+                               (error_coeff * error_growth._substitute_(
+                                   {str(variable): k, '_one_': ZZ.one()}))))
+                      for k in values]
         else:
-            points = list(
-                (k, ring(main.subs({variable: k}) - function(k)))
-                for k in values)
+            points = [(k, ring(main.subs({variable: k}) - function(k)))
+                      for k in values]
 
         return points
 
@@ -2971,8 +2968,8 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             from sage.symbolic.ring import SR
             R = SR
 
-        return self.substitute(dict((g, R(R.var(str(g))))
-                                    for g in self.parent().gens()),
+        return self.substitute({g: R(R.var(str(g)))
+                                for g in self.parent().gens()},
                                domain=R)
 
     _symbolic_ = symbolic_expression  # will be used by SR._element_constructor_
@@ -3021,8 +3018,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                 if c.is_zero():
                     return None
                 return T(term.growth, coefficient=c)
-            else:
-                return T(term.growth)
+            return T(term.growth)
 
         P = self.parent().change_parameter(coefficient_ring=new_coefficient_ring)
         S = self.summands.copy()
@@ -3123,10 +3119,9 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             P = cm.common_parent(self, S)
             return S.subs({var: P.coerce(self)})
 
-        else:
-            raise ValueError(
-                'Cannot build the factorial of {} since it is not '
-                'univariate.'.format(self))
+        raise ValueError(
+            'Cannot build the factorial of {} since it is not '
+            'univariate.'.format(self))
 
     def variable_names(self):
         r"""
@@ -3272,20 +3267,19 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
             :meth:`is_little_o_of_one`
         """
-        non_o_one_terms = list(
-            term for term in self.summands
-            if not term.is_little_o_of_one()
-        )
+        non_o_one_terms = [term for term in self.summands
+                           if not term.is_little_o_of_one()]
         if not non_o_one_terms:
             return self.parent().base_ring()(0)
-        elif (
+
+        if (
             len(non_o_one_terms) == 1
             and non_o_one_terms[0].growth.is_one()
             and non_o_one_terms[0].is_exact()
         ):
             return non_o_one_terms[0].coefficient
-        else:
-            raise ValueError("Cannot determine limit of {}".format(self))
+
+        raise ValueError(f"Cannot determine limit of {self}")
 
     def B(self, valid_from=0):
         r"""
@@ -4105,7 +4099,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             return True
         if self.growth_group.has_coerce_map_from(R):
             return True
-        elif isinstance(R, AsymptoticRing):
+        if isinstance(R, AsymptoticRing):
             if self.growth_group.has_coerce_map_from(R.growth_group) and \
                     self.coefficient_ring.has_coerce_map_from(R.coefficient_ring):
                 return True
@@ -4393,8 +4387,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             return SingularityAnalysisResult(
                 asymptotic_expansion=result,
                 singular_expansions=singular_expansions)
-        else:
-            return result
+        return result
 
     def create_summand(self, type, data=None, **kwds):
         r"""

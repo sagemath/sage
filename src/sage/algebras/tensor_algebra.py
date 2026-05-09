@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Tensor Algebras
 
@@ -11,12 +10,12 @@ AUTHORS:
     - Coerce to/from free algebra.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.categories.algebras import Algebras
 from sage.categories.pushout import ConstructionFunctor
@@ -114,7 +113,7 @@ class TensorAlgebra(CombinatorialFreeModule):
         # the following is not the best option, but it's better than nothing.
         self._print_options['tensor_symbol'] = options.get('tensor_symbol', tensor.symbol)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -126,7 +125,7 @@ class TensorAlgebra(CombinatorialFreeModule):
         """
         return "Tensor Algebra of {}".format(self._base_module)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         """
         Return a string of representation of the term indexed by ``m``.
 
@@ -152,7 +151,7 @@ class TensorAlgebra(CombinatorialFreeModule):
             symb = tensor.symbol
         return symb.join(self._base_module._repr_term(k) for k,e in m._monomial for i in range(e))
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a latex representation of the term indexed by ``m``.
 
@@ -528,8 +527,7 @@ class TensorAlgebra(CombinatorialFreeModule):
         R = self.base_ring()
         if len(m) % 2 == 1:
             return self.term(m, -R.one())
-        else:
-            return self.term(m, R.one())
+        return self.term(m, R.one())
 
     def coproduct_on_basis(self, m):
         r"""
@@ -616,7 +614,7 @@ class TensorAlgebraFunctor(ConstructionFunctor):
         """
         ConstructionFunctor.__init__(self, Modules(base), Algebras(base))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

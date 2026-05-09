@@ -631,8 +631,7 @@ class OverconvergentDistributions_abstract(Module):
         """
         if self._prec_cap > 1:
             return self([2, 1])
-        else:
-            return self([1])
+        return self([1])
 
 
 class Symk_class(OverconvergentDistributions_abstract):
@@ -702,7 +701,7 @@ class Symk_class(OverconvergentDistributions_abstract):
             s += " twisted by %s" % self._character
         return s
 
-    def is_symk(self):
+    def is_symk(self) -> bool:
         """
         Whether or not this distributions space is `Sym^k(R)` for some ring `R`.
 
@@ -802,7 +801,7 @@ class OverconvergentDistributions_class(OverconvergentDistributions_abstract):
             s += " twistted by " + " * ".join(twiststuff)
         return s
 
-    def is_symk(self):
+    def is_symk(self) -> bool:
         """
         Whether or not this distributions space is `Sym^k(R)` for some ring `R`.
 

@@ -17,8 +17,8 @@ Elements of posets, lattices, semilattices, etc.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.structure.element import Element
-from sage.structure.element import have_same_parent
+from sage.misc.latex import latex
+from sage.structure.element import Element, have_same_parent
 
 
 class PosetElement(Element):
@@ -53,7 +53,7 @@ class PosetElement(Element):
             self.element = element
         self.vertex = vertex
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -64,7 +64,7 @@ class PosetElement(Element):
         """
         return hash(self.element)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -73,7 +73,7 @@ class PosetElement(Element):
         """
         return "%s" % str(self.element)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex code of the poset element.
 
@@ -91,7 +91,6 @@ class PosetElement(Element):
             3 & 4
             \end{array}\right)
         """
-        from sage.misc.latex import latex
         return latex(self.element)
 
     def __eq__(self, other):

@@ -7,6 +7,7 @@ cd src
 cp "$SAGE_ROOT"/config/config.* .
 sdh_configure \
     --enable-shared --disable-static \
+    $SAGE_CONFIGURE_BOOST \
     --with-boost-unit-test-framework=no
 sdh_make
 sdh_make_install

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of the SageMath interfaces to ``gap`` and of GAP packages
 """
@@ -71,9 +70,8 @@ class GapPackage(Feature):
         if presence:
             return FeatureTestResult(self, True,
                     reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
-        else:
-            return FeatureTestResult(self, False,
-                    reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
+        return FeatureTestResult(self, False,
+                reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
 
 
 def all_features():

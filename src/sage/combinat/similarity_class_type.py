@@ -276,8 +276,7 @@ def primitives(n, invertible=False, q=None):
     p = sum(moebius(n // d) * q**d for d in divisors(n)) / n
     if invertible and n == 1:
         return p - 1
-    else:
-        return p
+    return p
 
 
 @cached_function
@@ -809,16 +808,15 @@ class SimilarityClassType(CombinatorialElement):
             f = [dict(list(p.factor())) for p in L]
             d = {p: Partition([h[p] for h in f if p in h]) for p in f[0]}
             return SimilarityClassType([[p.degree(), d[p]] for p in d])
-        else:
-            ret = []
-            for l in tau:
-                if isinstance(l, PrimarySimilarityClassType):
-                    ret.append(l)
-                else:
-                    ret.append(PrimarySimilarityClassType(*l))
-            n = sum([PT.size() for PT in ret])
-            T = SimilarityClassTypes(n)
-            return T(tau)
+        ret = []
+        for l in tau:
+            if isinstance(l, PrimarySimilarityClassType):
+                ret.append(l)
+            else:
+                ret.append(PrimarySimilarityClassType(*l))
+        n = sum([PT.size() for PT in ret])
+        T = SimilarityClassTypes(n)
+        return T(tau)
 
     def __init__(self, parent, tau):
         """
@@ -919,11 +917,11 @@ class SimilarityClassType(CombinatorialElement):
         maximum_degree = max(list_of_degrees)
         numerator = prod([prod([primitives(d+1, invertible=invertible, q=q)-i for i in range(list_of_degrees.count(d+1))]) for d in range(maximum_degree)])
         tau_list = list(self)
-        D = dict((i, tau_list.count(i)) for i in tau_list)
+        D = {i: tau_list.count(i) for i in tau_list}
         denominator = prod(factorial(D[primary_type]) for primary_type in D)
         return numerator / denominator
 
-    def is_semisimple(self):
+    def is_semisimple(self) -> bool:
         """
         Return ``True`` if every primary similarity class type in ``self`` has
         all parts equal to ``1``.
@@ -939,7 +937,7 @@ class SimilarityClassType(CombinatorialElement):
         """
         return all(PT.partition().get_part(0) == 1 for PT in self)
 
-    def is_regular(self):
+    def is_regular(self) -> bool:
         """
         Return ``True`` if every primary type in ``self`` has partition with one
         part.
@@ -1290,12 +1288,11 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
         """
         if sumover == "matrices":
             return sum([tau.statistic(stat, q=q)*tau.number_of_matrices(invertible=invertible, q=q) for tau in self])
-        elif sumover == "classes":
+        if sumover == "classes":
             return sum([tau.statistic(stat, q=q)*tau.number_of_classes(invertible=invertible, q=q) for tau in self])
-        elif sumover == "types":
+        if sumover == "types":
             return sum([tau.statistic(stat, invertible=invertible, q=q) for tau in self])
-        else:
-            raise ValueError("invalid parameter %s" % (sumover))
+        raise ValueError("invalid parameter %s" % (sumover))
 
 ################################################################################
 #                 Similarity over rings of length two                          #
@@ -1325,8 +1322,9 @@ def dictionary_from_generator(gen):
         high.
     """
     L = list(gen)
-    setofkeys = list(set(item[0] for item in L))
-    return dict((key, sum(entry[1] for entry in (pair for pair in L if pair[0] == key))) for key in setofkeys)
+    setofkeys = set(item[0] for item in L)
+    return {key: sum(pair[1] for pair in L if pair[0] == key)
+            for key in setofkeys}
 
 
 def matrix_similarity_classes(n, q=None, invertible=False):
@@ -1477,24 +1475,21 @@ def ext_orbits(input_data, q=None, selftranspose=False):
             return q.parent()(1)
         if max(la) == 1:
             return matrix_similarity_classes(len(la), q=q)
-        elif len(la) == 1:
+        if len(la) == 1:
             return q**la.size()
-        elif len(la) == 2 and list(la).count(1) == 1:  # see Table 3
+        if len(la) == 2 and list(la).count(1) == 1:  # see Table 3
             m = max(la) - 1
             if selftranspose:
                 return q**(m + 2) + q**(m + 1) - q**m
-            else:
-                return q**(m + 2) + q**(m + 1) + q**m
-        elif len(la) == 3 and list(la).count(1) == 2:  # see Table 4
+            return q**(m + 2) + q**(m + 1) + q**m
+        if len(la) == 3 and list(la).count(1) == 2:  # see Table 4
             m = max(la) - 1
             if not selftranspose:
                 return q**m*(q**3 + 2*q**2 + 2*q + 2)
-            else:
-                return q**m*(q**3 + 2*q**2)
-        elif min(la) == 2 and max(la) == 2:
+            return q**m*(q**3 + 2*q**2)
+        if min(la) == 2 and max(la) == 2:
             return matrix_similarity_classes_length_two(len(la), q=q, selftranspose=selftranspose)
-        else:
-            raise ValueError('partition %s not implemented for ExtOrbitClasses.orbits' % (la))
+        raise ValueError('partition %s not implemented for ExtOrbitClasses.orbits' % (la))
     elif case == 'pri':
         tau = data
         return ext_orbits(tau.partition(), q=q, selftranspose=selftranspose).substitute(q=q**tau.degree())

@@ -361,7 +361,7 @@ cdef class ntl_ZZX():
         if not divisible:
             del q
             sig_off()
-            raise ArithmeticError("self (=%s) is not divisible by other (=%s)"%(self, other))
+            raise ArithmeticError("self (=%s) is not divisible by other (=%s)" % (self, other))
         result = make_ZZX_sig_off(q)
         return result
 
@@ -1088,14 +1088,16 @@ cdef class ntl_ZZX():
         sig_on()
         return make_ZZ_sig_off(ZZX_discriminant(&self.x, proof))
 
-    #def __call__(self, ntl_ZZ a):
-    #    sig_on()
-    #    return make_ZZ_sig_off(ZZX_polyeval(&self.x, a.x))
+    # def __call__(self, ntl_ZZ a):
+    #     sig_on()
+    #     return make_ZZ_sig_off(ZZX_polyeval(&self.x, a.x))
 
     def charpoly_mod(self, ntl_ZZX modulus, proof=None):
         """
         Return the characteristic polynomial of this polynomial modulo
-        the modulus.  The modulus must be monic of degree bigger than
+        the modulus.
+
+        The modulus must be monic of degree bigger than
         ``self``. If proof=False (the default is proof=None, see
         proof.polynomial or sage.structure.proof, but the global
         default is proof=True), then this function may use a

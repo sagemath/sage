@@ -14,6 +14,7 @@ Functions and Methods
 
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
+from math import isnan
 
 
 def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=False):
@@ -119,8 +120,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
             if val < rtol:
                 if full_output:
                     return s, "No extra data"
-                else:
-                    return s
+                return s
             raise RuntimeError("f appears to have no zero on the interval")
         # If we found such an s, then we just instead find
         # a root between left and s or s and right.
@@ -133,8 +133,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
             if abs(val) < rtol:
                 if full_output:
                     return s, "No extra data"
-                else:
-                    return s
+                return s
             raise RuntimeError("f appears to have no zero on the interval")
         a = s
 
@@ -143,11 +142,10 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
     # Note - this could be used in all cases, but it requires some more
     # computation
 
-    if (left != left) or (right != right):
+    if isnan(left) or isnan(right):
         minval, s_1 = find_local_minimum(f, a, b)
         maxval, s_2 = find_local_maximum(f, a, b)
-        if ((minval > 0) or (maxval < 0) or
-           (minval != minval) or (maxval != maxval)):
+        if minval > 0 or maxval < 0 or isnan(minval) or isnan(maxval):
             raise RuntimeError("f appears to have no zero on the interval")
         a = min(s_1, s_2)
         b = max(s_1, s_2)
@@ -381,7 +379,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
         sage: import numpy
         sage: if int(numpy.version.short_version[0]) > 1:
-        ....:     numpy.set_printoptions(legacy="1.25")
+        ....:     _ = numpy.set_printoptions(legacy="1.25")
         sage: from numpy import zeros
         sage: def rosen_der(x):
         ....:    xm = x[1r:-1r]
@@ -519,9 +517,9 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
         sage: x, y = var('x y')
         sage: f(x,y) = (100 - x) + (1000 - y)
         sage: c(x,y) = x + y - 479  # > 0
-        sage: minimize_constrained(f, [c], [100, 300])
+        sage: minimize_constrained(f, [c], [100, 300]) # random
         (805.985..., 1005.985...)
-        sage: minimize_constrained(f, c, [100, 300])
+        sage: minimize_constrained(f, c, [100, 300])   # random
         (805.985..., 1005.985...)
 
     If ``func`` is symbolic, its minimizer should be in the same order
@@ -532,7 +530,7 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
         sage: f(y,x) = x - y
         sage: c1(y,x) = x
         sage: c2(y,x) = 1-y
-        sage: minimize_constrained(f, [c1, c2], (0,0))
+        sage: minimize_constrained(f, [c1, c2], (0,0)) # abs tol 1e-04
         (1.0, 0.0)
     """
     from sage.structure.element import Expression
@@ -567,12 +565,12 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
         if isinstance(cons[0], (tuple, list)) or cons[0] is None:
             if gradient is not None:
                 if algorithm == 'l-bfgs-b':
-                    min = optimize.fmin_l_bfgs_b(f, x0, gradient, bounds=cons, iprint=-1, **args)[0]
+                    min = optimize.fmin_l_bfgs_b(f, x0, gradient, bounds=cons, **args)[0]
                 else:
                     min = optimize.fmin_tnc(f, x0, gradient, bounds=cons, messages=0, **args)[0]
             else:
                 if algorithm == 'l-bfgs-b':
-                    min = optimize.fmin_l_bfgs_b(f, x0, approx_grad=True, bounds=cons, iprint=-1, **args)[0]
+                    min = optimize.fmin_l_bfgs_b(f, x0, approx_grad=True, bounds=cons, **args)[0]
                 else:
                     min = optimize.fmin_tnc(f, x0, approx_grad=True, bounds=cons, messages=0, **args)[0]
         elif isinstance(cons[0], (function_type, Expression)):

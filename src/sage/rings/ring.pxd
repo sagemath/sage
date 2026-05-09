@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 from sage.structure.parent_gens cimport ParentWithGens
 
 cpdef bint _is_Field(x) except -2
@@ -9,7 +8,7 @@ cdef class Ring(ParentWithGens):
 
 
 cdef class CommutativeRing(Ring):
-    cdef public object __fraction_field
+    pass
 
 cdef class IntegralDomain(CommutativeRing):
     pass

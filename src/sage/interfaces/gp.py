@@ -48,11 +48,9 @@ computation of integrals.
 ::
 
     sage: gp("a = intnum(x=0,6,sin(x))")
-    0.03982971334963397945434770208               # 32-bit
-    0.039829713349633979454347702077075594548     # 64-bit
+    0.039829713349633979454347702077075594548
     sage: gp("a")
-    0.03982971334963397945434770208               # 32-bit
-    0.039829713349633979454347702077075594548     # 64-bit
+    0.039829713349633979454347702077075594548
     sage: gp.kill("a")
     sage: gp("a")
     a
@@ -142,17 +140,21 @@ AUTHORS:
 import os
 
 import sage.interfaces.abc
-
 from sage.env import DOT_SAGE
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.misc.instancedoc import instancedoc
 from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose
 
 lazy_import('sage.rings.cc', 'CC')
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
 
 
 class Gp(ExtraTabCompletion, Expect):
@@ -212,6 +214,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.gp import gp
             sage: gp == loads(dumps(gp))
             True
         """
@@ -310,7 +313,7 @@ class Gp(ExtraTabCompletion, Expect):
         return GpFunction
 
     def _quit_string(self):
-        """
+        r"""
         Return the string used to quit the GP interpreter.
 
         EXAMPLES::
@@ -375,8 +378,7 @@ class Gp(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: gp.get_precision()
-            28              # 32-bit
-            38              # 64-bit
+            38
         """
         return self.get_default('realprecision')
 
@@ -396,15 +398,13 @@ class Gp(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: old_prec = gp.set_precision(53); old_prec
-            28              # 32-bit
-            38              # 64-bit
+            38
             sage: gp.get_precision()
             57
             sage: gp.set_precision(old_prec)
             57
             sage: gp.get_precision()
-            28              # 32-bit
-            38              # 64-bit
+            38
         """
         return self.set_default('realprecision', prec)
 
@@ -465,8 +465,7 @@ class Gp(ExtraTabCompletion, Expect):
                 raise RuntimeError(a)
             return self._eval_line(line, allow_use_file=allow_use_file,
                                    wait_for_prompt=wait_for_prompt)
-        else:
-            return a
+        return a
 
     def cputime(self, t=None):
         """
@@ -520,8 +519,7 @@ class Gp(ExtraTabCompletion, Expect):
             sage: gp.set_default('realprecision', old_prec)
             115
             sage: gp.get_default('realprecision')
-            28              # 32-bit
-            38              # 64-bit
+            38
         """
         old = self.get_default(var)
         self._eval_line('default(%s,%s)' % (var, value))
@@ -547,8 +545,7 @@ class Gp(ExtraTabCompletion, Expect):
             sage: gp.get_default('seriesprecision')
             16
             sage: gp.get_default('realprecision')
-            28              # 32-bit
-            38              # 64-bit
+            38
         """
         return eval(self._eval_line('default(%s)' % var))
 
@@ -773,8 +770,7 @@ class Gp(ExtraTabCompletion, Expect):
         ::
 
             sage: repr(gp(10.^80)).replace(gp._exponent_symbol(), 'e')
-            '1.0000000000000000000000000000000000000e80'    # 64-bit
-            '1.000000000000000000000000000e80'              # 32-bit
+            '1.0000000000000000000000000000000000000e80'
         """
         return ' E'
 
@@ -800,27 +796,23 @@ class Gp(ExtraTabCompletion, Expect):
 
             sage: # needs sage.symbolic
             sage: pi_def = gp(pi); pi_def
-            3.141592653589793238462643383                  # 32-bit
-            3.1415926535897932384626433832795028842        # 64-bit
+            3.1415926535897932384626433832795028842
             sage: pi_def.precision()
-            28                                             # 32-bit
-            38                                             # 64-bit
+            38
             sage: pi_150 = gp.new_with_bits_prec(pi, 150)
-            sage: new_prec = pi_150.precision(); new_prec
-            48                                             # 32-bit
-            57                                             # 64-bit
+            sage: new_prec = pi_150.precision();
+            sage: prec32 = 48
+            sage: prec64 = 57
+            sage: new_prec in [prec32, prec64]  # 32 vs 64 bit answers
+            True
             sage: old_prec = gp.set_precision(new_prec); old_prec
-            28                                             # 32-bit
-            38                                             # 64-bit
+            38
             sage: pi_150
-            3.14159265358979323846264338327950288419716939938  # 32-bit
-            3.14159265358979323846264338327950288419716939937510582098  # 64-bit
-            sage: gp.set_precision(old_prec)
-            48                                             # 32-bit
-            57                                             # 64-bit
+            3.1415926535897932384626433832795028841971693993...
+            sage: gp.set_precision(old_prec) in [prec32, prec64]
+            True
             sage: gp.get_precision()
-            28                                             # 32-bit
-            38                                             # 64-bit
+            38
         """
         if precision:
             old_prec = self.get_real_precision()
@@ -856,11 +848,9 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
         sage: loads(dumps(x)) == x
         False
         sage: x
-        1.047197551196597746154214461            # 32-bit
-        1.0471975511965977461542144610931676281  # 64-bit
+        1.0471975511965977461542144610931676281
         sage: loads(dumps(x))
-        1.047197551196597746154214461            # 32-bit
-        1.0471975511965977461542144610931676281  # 64-bit
+        1.0471975511965977461542144610931676281
 
     The two elliptic curves look the same, but internally the floating
     point numbers are slightly different.
@@ -1049,29 +1039,6 @@ GpFunctionElement = FunctionElement
 GpFunction = ExpectFunction
 
 
-def is_GpElement(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`GpElement`.
-
-    This function is deprecated; use :func:`isinstance`
-    (of :class:`sage.interfaces.abc.GpElement`) instead.
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.gp import is_GpElement
-        sage: is_GpElement(gp(2))
-        doctest:...: DeprecationWarning: the function is_GpElement is deprecated; use isinstance(x, sage.interfaces.abc.GpElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        True
-        sage: is_GpElement(2)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_GpElement is deprecated; use isinstance(x, sage.interfaces.abc.GpElement) instead")
-
-    return isinstance(x, GpElement)
-
-
 # An instance
 gp = Gp(logfile=os.path.join(DOT_SAGE, 'gp-expect.log'))
 # useful for debugging!
@@ -1104,7 +1071,8 @@ def gp_console():
     """
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
-        raise RuntimeError('Can use the console only in the terminal. Try %%gp magics instead.')
+        raise RuntimeError('Can use the console only in the terminal. '
+                           'Try %%gp magics instead.')
     os.system('gp')
 
 

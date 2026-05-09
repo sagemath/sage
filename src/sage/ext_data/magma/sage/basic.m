@@ -8,7 +8,7 @@ function PreparseElts(R)
 end function;
 
 intrinsic Sage(X::.) -> MonStgElt, BoolElt
-{Default way to convert a Magma object to Sage if we haven't
+{Default way to convert a Magma object to Sage if we have not
 written anything better.}
     return Sprintf("%o", X), true;
 end intrinsic;
@@ -125,7 +125,7 @@ intrinsic Sage(X::RngIntRes) -> MonStgElt, BoolElt
   return Sprintf("Zmod(%o)", Characteristic(X)), false;
 end intrinsic;
 
-/* Approximate fields */
+/* Approximate real and complex fields */
 
 intrinsic Sage(X::FldRe) -> MonStgElt, BoolElt
 {}
@@ -147,22 +147,54 @@ intrinsic Sage(X::FldComElt) -> MonStgElt, BoolElt
   return Sprintf("%o([%o, %o])", Sage(Parent(X)), Sage(Real(X)), Sage(Imaginary(X))), true;
 end intrinsic;
 
+/* p-adic rings and fields */
+
+intrinsic Sage(X::RngPad) -> MonStgElt, BoolElt
+{p-adic rings, either free precision model or exact model}
+    prec := Precision(X);
+    if Type(prec) eq Infty then
+      return Sprintf("Zp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(prec)), false;
+    else
+      return Sprintf("Zp(%o, %o, 'capped-abs')", Sage(Prime(X)), Sage(prec)), false;
+    end if;
+end intrinsic;
+
+intrinsic Sage(X::FldPad) -> MonStgElt, BoolElt
+{p-adic fields, either free precision model or exact model}
+    prec := Precision(X);
+    if Type(prec) eq Infty then
+      return Sprintf("Qp(%o, %o, 'relaxed')", Sage(Prime(X)), Sage(prec)), false;
+    else
+      return Sprintf("Qp(%o, %o, 'capped-rel')", Sage(Prime(X)), Sage(prec)), false;
+    end if;
+end intrinsic;
+
+intrinsic Sage(X::RngPadRes) -> MonStgElt, BoolElt
+{fixed precision model}
+    return Sprintf("Zp(%o, %o, 'fixed-mod')", Sage(Prime(X)), Sage(Precision(X))), false;
+end intrinsic;
+
+
 /* Polynomials */
 
 intrinsic SageNamesHelper(X::.) -> MonStgElt
 {}
   /* XXX */
   i := NumberOfNames(X);
-  if i ge 2 then
-      return (&* [ Sprintf("%o, ", X.j) : j in [ 1..i-1 ] ]) * Sprintf("%o", X.i);
+  if "$" in Sprint(X.i) then
+    /* unnamed variables */
+    return "(" * (&* [ Sprintf("'x%o', ", j) : j in [ 1..i ] ]) * ")";
   else
-      return Sprintf("%o", X.i);
-  end if;
+    /* named variables */
+    return "(" * (&* [ Sprintf("'%o'.replace('.', ''), ", X.j) : j in [ 1..i ] ]) * ")";
+
+end if;
 end intrinsic;
 
 intrinsic Sage(X::RngUPol) -> MonStgElt, BoolElt
 {}
-  return Sprintf("%o['%o'.replace('$.', 'x').replace('.', '')]", Sage(BaseRing(X)), SageNamesHelper(X)), false;
+  txt := "PolynomialRing(%o, %o)";
+  return Sprintf(txt, Sage(BaseRing(X)), SageNamesHelper(X)), false;
 end intrinsic;
 
 intrinsic Sage(X::RngUPolElt) -> MonStgElt, BoolElt
@@ -173,7 +205,8 @@ end intrinsic;
 
 intrinsic Sage(X::RngMPol) -> MonStgElt, BoolElt
 {}
-  return Sprintf("%o['%o'.replace('$.', 'x').replace('.', '')]", Sage(BaseRing(X)), SageNamesHelper(X)), false;
+  txt := "PolynomialRing(%o, %o)";
+  return Sprintf(txt, Sage(BaseRing(X)), SageNamesHelper(X)), false;
 end intrinsic;
 
 intrinsic Sage(X::RngMPolElt) -> MonStgElt, BoolElt
@@ -187,9 +220,16 @@ end intrinsic;
 
 intrinsic Sage(K::FldNum) -> MonStgElt, BoolElt
 {}
-    names := [Sprintf("'%o'.replace('$.', 'a').replace('.', '')", a) : a in GeneratorsSequence(K)];
-    polynomials := DefiningPolynomial(K);
-    return Sprintf("NumberField(%o, %o)", Sage(polynomials), names), false;
+  gens := GeneratorsSequence(K);
+  if "$" in Sprint(gens[1]) then
+    /* unnamed variables */
+    names := "(" * (&* [ Sprintf("'a%o', ", j) : j in [ 1..#gens ] ]) * ")";
+  else
+    /* named variables */
+    names := "(" * (&* [ Sprintf("'%o'.replace('.', ''), ", a) : a in gens]) * ")";
+  end if;
+  polynomials := DefiningPolynomial(K);
+  return Sprintf("NumberField(%o, %o)", Sage(polynomials), names), false;
 end intrinsic;
 
 intrinsic Sage(A::FldNumElt) -> MonStgElt, BoolElt
@@ -233,6 +273,33 @@ seq := [K!gens[i] : i in [1..#gens]];
 return Sprintf("%o.ideal(%o)", Sage(K),Sage(seq)), true;
 end intrinsic;
 
+/* Symmetric functions */
+
+intrinsic Sage(X::AlgSym) -> MonStgElt, BoolElt
+{}
+if HasSchurBasis(X) then
+  return Sprintf("SymmetricFunctions(%o).s()", Sage(BaseRing(X))), false;
+elif HasHomogeneousBasis(X) then
+  return Sprintf("SymmetricFunctions(%o).h()", Sage(BaseRing(X))), false;
+elif HasElementaryBasis(X) then
+  return Sprintf("SymmetricFunctions(%o).e()", Sage(BaseRing(X))), false;
+elif HasPowerSumBasis(X) then
+  return Sprintf("SymmetricFunctions(%o).p()", Sage(BaseRing(X))), false;
+elif HasMonomialBasis(X) then
+  return Sprintf("SymmetricFunctions(%o).m()", Sage(BaseRing(X))), false;
+end if;
+end intrinsic;
+
+intrinsic Sage(X::AlgSymElt) -> MonStgElt, BoolElt
+{}
+PA := Parent(X);
+SF := Sage(PA);
+BR := Sage(BaseRing(PA));
+parts, coeffs := Support(X);
+dict := (&* [ Sprintf("Partition(%o):%o(%o),", Sage(parts[i]), BR, Sage(coeffs[i])) : i in [1..#parts] ]);
+return Sprintf("%o._from_dict({%o})", SF, dict), false;
+end intrinsic;
+
 /* Elliptic curves */
 
 intrinsic Sage(X::CrvEll) -> MonStgElt, BoolElt
@@ -263,4 +330,27 @@ end intrinsic;
 intrinsic Sage(X::ModTupRngElt) -> MonStgElt, BoolElt
 {}
     return Sprintf("%o(%o)", Sage(Parent(X)), Sage(ElementToSequence(X))), true;
+end intrinsic;
+
+/* Power series rings */
+
+intrinsic Sage(X::RngSerPow) -> MonStgElt, BoolElt
+{}
+  txt := "PowerSeriesRing(%o, %o)";
+  var := Sprintf("['%o']", X.1);
+  return Sprintf(txt, Sage(BaseRing(X)), var), false;
+end intrinsic;
+
+intrinsic Sage(X::RngSerLaur) -> MonStgElt, BoolElt
+{}
+  txt := "LaurentSeriesRing(%o, %o)";
+  var := Sprintf("['%o']", X.1);
+  return Sprintf(txt, Sage(BaseRing(X)), var), false;
+end intrinsic;
+
+intrinsic Sage(X::RngSerPuis) -> MonStgElt, BoolElt
+{}
+  txt := "PuiseuxSeriesRing(%o, %o)";
+  var := Sprintf("['%o']", X.1);
+  return Sprintf(txt, Sage(BaseRing(X)), var), false;
 end intrinsic;

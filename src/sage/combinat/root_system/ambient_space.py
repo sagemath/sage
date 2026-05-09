@@ -193,9 +193,8 @@ class AmbientSpace(CombinatorialFreeModule):
         # This adds coercion from a list
         if isinstance(v, (list, tuple)):
             K = self.base_ring()
-            return self._from_dict(dict((i,K(c)) for i,c in enumerate(v) if c))
-        else:
-            return CombinatorialFreeModule.__call__(self, v)
+            return self._from_dict({i: K(c) for i, c in enumerate(v) if c})
+        return CombinatorialFreeModule.__call__(self, v)
 
     def __getitem__(self, i):
         """

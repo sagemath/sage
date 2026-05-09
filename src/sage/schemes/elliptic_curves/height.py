@@ -76,7 +76,7 @@ class UnionOfIntervals:
         Unify :class:`UnionOfIntervals` with the class ``RealSet``
         introduced by :issue:`13125`; see :issue:`16063`.
     """
-    def __init__(self, endpoints):
+    def __init__(self, endpoints) -> None:
         r"""
         An union of intervals is initialized by giving an increasing list
         of endpoints, the first of which may be `-\infty` and the last of
@@ -197,10 +197,9 @@ class UnionOfIntervals:
         """
         if not isinstance(right, UnionOfIntervals):
             return UnionOfIntervals([e*right for e in left._endpoints])
-        elif not isinstance(left, UnionOfIntervals):
+        if not isinstance(left, UnionOfIntervals):
             return UnionOfIntervals([left*e for e in right._endpoints])
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def __rmul__(self, other):
         r"""
@@ -419,7 +418,7 @@ class UnionOfIntervals:
         """
         return left.intersection([left, right])
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is in the UnionOfIntervals.
 
@@ -443,7 +442,7 @@ class UnionOfIntervals:
         """
         return x in self._endpoints or bisect.bisect_left(self._endpoints, x) % 2 == 1
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return the string representation of this UnionOfIntervals.
 
@@ -456,7 +455,7 @@ class UnionOfIntervals:
         """
         return repr(self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of this UnionOfIntervals.
 
@@ -627,14 +626,15 @@ def min_on_disk(f, tol, max_iter=10000):
 
             fs = f(s)
 
-            if fs.upper() < min_max: # we definitely beat the record
+            if fs.upper() < min_max:  # we definitely beat the record
                 min_max = fs.upper()
                 unneeded = bisect.bisect(L, (-min_max,))
                 if unneeded > 100:   # discard the worse entries (if there are many)
                     L = L[unneeded:]
 
-            if fs.lower() < min_max: # we may beat the record, cannot yet tell: insert this region
-                                     # into the list at the appropriate place to maintain sorting
+            if fs.lower() < min_max:
+                # we may beat the record, cannot yet tell: insert this region
+                # into the list at the appropriate place to maintain sorting
                 bisect.insort(L, (-fs.lower(), fs.relative_diameter(), s, s_in_disk))
 
     # If we get here, then even after max_iter iterations the tolerance has not been reached.
@@ -740,8 +740,7 @@ def eps(err, is_real):
     e = RIF(-err, err)
     if is_real:
         return e
-    else:
-        return CIF(e, e)
+    return CIF(e, e)
 
 
 class EllipticCurveCanonicalHeight:
@@ -765,7 +764,7 @@ class EllipticCurveCanonicalHeight:
          Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
     """
 
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         r"""
         Initialize the class with an elliptic curve.
 
@@ -814,7 +813,7 @@ class EllipticCurveCanonicalHeight:
         else:
             raise ValueError("EllipticCurveCanonicalHeight class can only be created from an elliptic curve")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation.
 
@@ -936,33 +935,32 @@ class EllipticCurveCanonicalHeight:
             min_FG = inf_max_abs(F, G, nonneg_region(F) & I)
             return min(min_fg, min_FG) ** (-1/QQ(3))
 
-        else:
-            # def pair_max(f, g):
-            #     f = f.change_ring(CIF)
-            #     g = g.change_ring(CIF)
-            #     max = type(RIF(0)).max
-            #     def max_f_g(z):
-            #         return max(abs(f(z)), abs(g(z)))
-            #     return max_f_g
-            def pair_max(f, g):
-                f = f.change_ring(CDF)
-                g = g.change_ring(CDF)
-                dfn = [fast_callable(f.derivative(n)/factorial(n), CDF) for n in range(f.degree()+1)]
-                dgn = [fast_callable(g.derivative(n)/factorial(n), CDF) for n in range(g.degree()+1)]
+        # def pair_max(f, g):
+        #     f = f.change_ring(CIF)
+        #     g = g.change_ring(CIF)
+        #     max = type(RIF(0)).max
+        #     def max_f_g(z):
+        #         return max(abs(f(z)), abs(g(z)))
+        #     return max_f_g
+        def pair_max(f, g):
+            f = f.change_ring(CDF)
+            g = g.change_ring(CDF)
+            dfn = [fast_callable(f.derivative(n)/factorial(n), CDF) for n in range(f.degree()+1)]
+            dgn = [fast_callable(g.derivative(n)/factorial(n), CDF) for n in range(g.degree()+1)]
 
-                def max_f_g(s):
-                    (a,b), (c,d) = s.real().endpoints(), s.imag().endpoints()
-                    dx = a - b
-                    dy = c - d
-                    eta = RDF(dx*dx + dy*dy).sqrt()
-                    z = CDF(s.center())
-                    err_f = sum(eta ** n * abs(df(z)) for n, df in enumerate(dfn) if n)
-                    err_g = sum(eta ** n * abs(dg(z)) for n, dg in enumerate(dgn) if n)
-                    return RIF(max(abs(f(z)), abs(g(z)))) + eps(max(err_f, err_g), True)
-                return max_f_g
-            _, min_fg = min_on_disk(pair_max(f, g), tol)
-            _, min_FG = min_on_disk(pair_max(F, G), tol)
-            return min(min_fg, min_FG) ** QQ((-1, 3))
+            def max_f_g(s):
+                (a,b), (c,d) = s.real().endpoints(), s.imag().endpoints()
+                dx = a - b
+                dy = c - d
+                eta = RDF(dx*dx + dy*dy).sqrt()
+                z = CDF(s.center())
+                err_f = sum(eta ** n * abs(df(z)) for n, df in enumerate(dfn) if n)
+                err_g = sum(eta ** n * abs(dg(z)) for n, dg in enumerate(dgn) if n)
+                return RIF(max(abs(f(z)), abs(g(z)))) + eps(max(err_f, err_g), True)
+            return max_f_g
+        _, min_fg = min_on_disk(pair_max(f, g), tol)
+        _, min_FG = min_on_disk(pair_max(F, G), tol)
+        return min(min_fg, min_FG) ** QQ((-1, 3))
 
     @cached_method
     def e_p(self, p):
@@ -1232,12 +1230,11 @@ class EllipticCurveCanonicalHeight:
         beta = L.elliptic_exponential(w1/2)[0]
         if xi2 < beta:
             return UnionOfIntervals([])
-        elif xi1 < beta <= xi2:
+        if xi1 < beta <= xi2:
             a = self.psi(xi2, v)
             return UnionOfIntervals([1-a, a])
-        else:
-            a, b = self.psi(xi1, v), self.psi(xi2, v)
-            return UnionOfIntervals([1-b, 1-a, a, b])
+        a, b = self.psi(xi1, v), self.psi(xi2, v)
+        return UnionOfIntervals([1-b, 1-a, a, b])
 
     def Sn(self, xi1, xi2, n, v):
         r"""
@@ -1755,9 +1752,7 @@ class EllipticCurveCanonicalHeight:
                     start, end = z00, z11
                 else:
                     start, end = z01, z10
-                if wp(start) > B and wp(end) > B:
-                    return True
-                return False
+                return wp(start) > B and wp(end) > B
 
             # This step here is the bottleneck.
             while not T.verify(check_line):

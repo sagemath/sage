@@ -88,6 +88,13 @@ if [ "x$SAGE_BUILD_ENV_SOURCED" = "x" ]; then
         export SAGE_CONFIGURE_PARI="--with-pari=$SAGE_PARI_PREFIX"
     fi
 
+    # This is usually blank if the system boost is used
+    if [ -n "$SAGE_BOOST_PREFIX" ]; then
+        # Some packages that depend on boost accept a --with-boost=<prefix> flag to
+        # their ./configure scripts. Thus we deal with this just as with GMP above.
+        export SAGE_CONFIGURE_BOOST="--with-boost=$SAGE_BOOST_PREFIX"
+    fi
+
     # Optimization flags.
     #
     # The compiler flags are set in order of priority by

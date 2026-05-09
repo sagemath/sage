@@ -269,8 +269,7 @@ def is_partial_cube(G, certificate=False):
     if not G.order():
         if certificate:
             return (True, {})
-        else:
-            return True
+        return True
 
     if certificate:
         fail = (False, None)
@@ -454,5 +453,4 @@ def is_partial_cube(G, certificate=False):
     if certificate:
         format = "{0:0%db}" % dim
         return (True, {v: format.format(l) for v, l in embed.items()})
-    else:
-        return True
+    return True

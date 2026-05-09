@@ -71,15 +71,13 @@ cdef class CircuitsMatroid(Matroid):
             self._C = set(M.circuits())
         else:
             self._groundset = frozenset(groundset)
-            self._C = set([frozenset(C) for C in circuits])
+            self._C = {frozenset(C) for C in circuits}
         # k-circuits
         self._k_C = {}
         for C in self._C:
-            try:
-                self._k_C[len(C)].add(C)
-            except KeyError:
+            if len(C) not in self._k_C:
                 self._k_C[len(C)] = set()
-                self._k_C[len(C)].add(C)
+            self._k_C[len(C)].add(C)
         self._sorted_C_lens = sorted(self._k_C)
         self._matroid_rank = self.rank(self._groundset)
         self._nsc_defined = nsc_defined
@@ -441,8 +439,7 @@ cdef class CircuitsMatroid(Matroid):
         C = []
         for i in self._k_C:
             C += [[d[y] for y in x] for x in self._k_C[i]]
-        M = CircuitsMatroid(groundset=E, circuits=C)
-        return M
+        return CircuitsMatroid(groundset=E, circuits=C)
 
     # enumeration
 
@@ -549,10 +546,15 @@ cdef class CircuitsMatroid(Matroid):
             sage: M = CircuitsMatroid(matroids.CompleteGraphic(6))
             sage: len(M.nonbases())
             1707
+            sage: M = CircuitsMatroid(matroids.Uniform(5, 5))
+            sage: M.dependent_sets(3)  # self._k_C is empty
+            SetSystem of 0 sets over 5 elements
         """
         cdef int i
         cdef set D_k = set()
         cdef frozenset S
+        if not self._k_C:
+            return SetSystem(self._groundset)
         for i in range(min(self._k_C), k + 1):
             if i in self._k_C:
                 for S in self._k_C[i]:
@@ -822,11 +824,19 @@ cdef class CircuitsMatroid(Matroid):
             Traceback (most recent call last):
             ...
             ValueError: broken circuit complex of matroid with loops is not defined
+
+        TESTS::
+
+            sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
+            sage: assert M.broken_circuit_complex().is_immutable()                      # needs sage.graphs
         """
         from sage.topology.simplicial_complex import SimplicialComplex
         if self.loops():
             raise ValueError("broken circuit complex of matroid with loops is not defined")
-        return SimplicialComplex(self.no_broken_circuits_facets(ordering, reduced), maximality_check=False)
+        return SimplicialComplex(
+            self.no_broken_circuits_facets(ordering, reduced),
+            maximality_check=False, immutable=True
+        )
 
     # properties
 
@@ -911,26 +921,17 @@ cdef class CircuitsMatroid(Matroid):
               'element': 3,
               'error': 'elimination axiom failed'})
         """
-        from itertools import combinations_with_replacement
-        cdef int i, j
+        from itertools import combinations
         cdef frozenset C1, C2, I12, U12
-        for (i, j) in combinations_with_replacement(self._sorted_C_lens, 2):
-            # loop through all circuit length pairs (i, j) with i <= j
-            for C1 in self._k_C[i]:
-                if not C1:  # the empty set can't be a circuit
-                    return False if not certificate else (False, {"error": "the empty set can't be a circuit"})
-                for C2 in self._k_C[j]:
-                    I12 = C1 & C2
-                    if not I12:  # C1 and C2 are disjoint; nothing to test
-                        continue
-                    if len(I12) == len(C1):
-                        if len(C1) == len(C2):  # they are the same circuit
-                            break
-                        # C1 < C2; a circuit can't be a subset of another circuit
-                        return False if not certificate else (False, {"error": "a circuit can't be a subset of another circuit", "circuit 1": C1, "circuit 2": C2})
-                    # check circuit elimination axiom
-                    U12 = C1 | C2
-                    for e in I12:
-                        if self._is_independent(U12 - {e}):
-                            return False if not certificate else (False, {"error": "elimination axiom failed", "circuit 1": C1, "circuit 2": C2, "element": e})
+        if 0 in self._k_C:  # the empty set can't be a circuit
+            return False if not certificate else (False, {"error": "the empty set can't be a circuit"})
+        for C1, C2 in combinations(self._C, 2):
+            I12 = C1 & C2
+            if len(C1) == len(I12) or len(C2) == len(I12):  # a circuit can't be a subset of another circuit
+                return False if not certificate else (False, {"error": "a circuit can't be a subset of another circuit", "circuit 1": C1, "circuit 2": C2})
+            # check circuit elimination axiom
+            U12 = C1 | C2
+            for e in I12:
+                if self._is_independent(U12 - {e}):
+                    return False if not certificate else (False, {"error": "elimination axiom failed", "circuit 1": C1, "circuit 2": C2, "element": e})
         return True if not certificate else (True, {})

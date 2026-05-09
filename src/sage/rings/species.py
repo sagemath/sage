@@ -28,11 +28,12 @@ actions.
 AUTHORS:
 
 - Mainak Roy and Martin Rubey (2024-11): Initial version
-
 """
 
+from collections import defaultdict
 from itertools import accumulate, chain, product
 
+from sage.arith.misc import divisors
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.modules import Modules
 from sage.categories.monoids import Monoids
@@ -42,35 +43,107 @@ from sage.categories.tensor import tensor
 from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.combinat.partition import Partitions, _Partitions
+from sage.combinat.set_partition_ordered import OrderedSetPartitions
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.features import FeatureNotPresentError
+from sage.functions.other import factorial
 from sage.groups.perm_gps.constructor import PermutationGroupElement
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
-from sage.misc.cachefunc import cached_method
+from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
-from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
-                                              IndexedFreeAbelianMonoidElement)
-from sage.rings.rational_field import QQ
+from sage.monoids.indexed_free_monoid import (
+    IndexedFreeAbelianMonoid,
+    IndexedFreeAbelianMonoidElement,
+)
+from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 from sage.sets.set import Set
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Element, parent
 from sage.structure.factorization import Factorization
+from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
-from sage.structure.richcmp import op_LT, op_LE, op_EQ, op_NE, op_GT, op_GE
-from sage.structure.unique_representation import (UniqueRepresentation,
-                                                  WithPicklingByInitArgs)
+from sage.structure.richcmp import op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE
+from sage.structure.unique_representation import (
+    UniqueRepresentation,
+    WithPicklingByInitArgs,
+)
 
 try:
     GAP_FAIL = libgap.eval('fail')
 except FeatureNotPresentError:
-    GAP_FAIL = None
+    GAP_FAIL = None# for each key (currently size and orbit-sizes) a list of canonical
+# representatives of directly indecomposable groups
+# TODO: most likely, it would be better to store the groups as GAP groups
+_dis_cache = dict()
+
+
+def _SymmetricGroup(n):
+    r"""
+    Return a symmetric group quickly.
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _SymmetricGroup
+        sage: _SymmetricGroup(1)
+        Symmetric group of order 1! as a permutation group
+    """
+    key = factorial(n), (n,)  # the key for the symmetric group is unique
+    if key not in _dis_cache:
+        _dis_cache[key] = [SymmetricGroup(n)]
+    return _dis_cache[key][0]
+
+
+def _label_sets(arity, labels):
+    r"""
+    Return labels as a list of tuples.
+
+    INPUT:
+
+    - ``arity`` -- the arity of the species
+    - ``labels`` -- an iterable of iterables
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _label_sets
+        sage: _label_sets(2, [[1, 2], ["x", "y", "z"]])
+        [(1, 2), ('x', 'y', 'z')]
+
+    TESTS::
+
+        sage: _label_sets(2, [[1, 1], ["x", "y", "z"]])
+        Traceback (most recent call last):
+        ...
+        ValueError: The argument labels must be a set, but [[1, 1], ['x', 'y', 'z']] has duplicates
+
+        sage: _label_sets(2, [[1, 2]])
+        Traceback (most recent call last):
+        ...
+        ValueError: arity of must be equal to the number of arguments provided
+    """
+    if len(labels) != arity:
+        raise ValueError("arity of must be equal to the number of arguments provided")
+
+    label_sets = [set(U) for U in labels]
+    if not all(len(U) == len(V) for U, V in zip(labels, label_sets)):
+        raise ValueError(f"The argument labels must be a set, but {labels} has duplicates")
+    try:
+        label_sets_sorted = [sorted(x) for x in label_sets]
+    except TypeError:
+        label_sets_sorted = [sorted(x, key=str) for x in label_sets]
+
+    return [tuple(U) for U in label_sets_sorted]
+
 
 class AtomicSpeciesElement(WithEqualityById,
                            Element,
@@ -91,20 +164,20 @@ class AtomicSpeciesElement(WithEqualityById,
       element of the domain of ``dis`` to a sort
     """
     @staticmethod
-    def __classcall__(cls, parent, C, dompart):
+    def __classcall__(cls, parent, G, dompart):
         r"""
         Normalize the input for unique representation.
 
         INPUT:
 
-        - ``C`` -- a directly indecomposable permutation group
+        - ``G`` -- a directly indecomposable permutation group
         - ``dompart`` -- a `k`-tuple of iterables, where `k` is the
           arity, representing the assignment of each element of the
           domain of ``dis`` to a sort
 
         .. WARNING::
 
-            We do not check whether ``C`` is indeed directly
+            We do not check whether ``G`` is indeed directly
             indecomposable.
 
         TESTS::
@@ -158,36 +231,36 @@ class AtomicSpeciesElement(WithEqualityById,
         """
         # a directly indecomposable group has no fixed points, so we
         # can use the gap group without worrying about the domain
-        G = C.gap()
-        dompart = [[ZZ(C._domain_to_gap[e]) for e in b] for b in dompart]
-        orbits = sorted(G.Orbits().sage(), key=len, reverse=True)
+        G_gap = G.gap()
+        dompart = [[ZZ(G._domain_to_gap[e]) for e in b] for b in dompart]
+        orbits = sorted(G_gap.Orbits().sage(), key=len, reverse=True)
         for orbit in orbits:
             if not any(set(orbit).issubset(b) for b in dompart):
-                o = [C._domain_from_gap[e] for e in orbit]
+                o = [G._domain_from_gap[e] for e in orbit]
                 raise ValueError(f"All elements of orbit {o} must have the same sort")
-
-        S = SymmetricGroup(C.degree())
 
         def new_dis():
             """
             Return a representative ``dis`` in the conjugacy
-            class of subgroups conjugate to ``C``, together with the
+            class of subgroups conjugate to ``G``, together with the
             conjugating map ``mp``
             """
-            # create a group conjugate to `C` whose orbits
+            # create a group conjugate to `G` whose orbits
             # consist of contiguous sets of numbers, with larger
             # orbits having smaller numbers, and compute a small
             # generating set
             mp = PermutationGroupElement([e for o in orbits for e in o]).inverse().gap()
-            H = PermutationGroup(G.SmallGeneratingSet().sage())
+            H = PermutationGroup(G_gap.SmallGeneratingSet().sage())
             return H.conjugate(mp), mp
 
-        key = G.Size().sage(), tuple([len(o) for o in orbits])
-        S_gap = S.gap()
-        if key in parent._dis_cache:
-            lookup_dis = parent._dis_cache[key]
+        n = G.degree()
+        S_gap = _SymmetricGroup(n).gap()
+        key = G_gap.Size().sage(), tuple([len(o) for o in orbits])
+        if key in _dis_cache:
+            lookup_dis = _dis_cache[key]
             for dis in lookup_dis:
-                mp = libgap.RepresentativeAction(S_gap, G, dis)
+                dis_gap = dis.gap()
+                mp = libgap.RepresentativeAction(S_gap, G_gap, dis_gap)
                 if mp != GAP_FAIL:
                     break
             else:
@@ -195,7 +268,7 @@ class AtomicSpeciesElement(WithEqualityById,
                 lookup_dis.append(dis)
         else:
             dis, mp = new_dis()
-            lookup_dis = parent._dis_cache[key] = [dis]
+            lookup_dis = _dis_cache[key] = [dis]
 
         dompart = [[ZZ(e ** mp) for e in b] for b in dompart]
         mc = tuple([len(b) for b in dompart])
@@ -223,7 +296,7 @@ class AtomicSpeciesElement(WithEqualityById,
         lookup.append(elm)
         return elm
 
-    def __init__(self, parent, dis, domain_partition):
+    def __init__(self, parent, dis, domain_partition) -> None:
         r"""
         Initialize an atomic species.
 
@@ -258,6 +331,22 @@ class AtomicSpeciesElement(WithEqualityById,
             sage: a = A(G, {1: [1,2,3,4,5,6,7,8,9,10]}); a
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({}, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})}
         """
+        P = self.parent()
+        renamed = False
+        if self._tc not in P._renamed:
+            P._renamed.add(self._tc)
+            P._rename(self._tc)
+            renamed = True
+        if (self._tc not in P._renamed_set_like
+            and self._tc <= P.options.rename()):
+            P._renamed.add(self._tc)
+            P._renamed_set_like.add(self._tc)
+            _atomic_set_like_species(self._tc, P._names)
+            renamed = True
+
+        if renamed:
+            return repr(self)
+
         if self.parent()._arity == 1:
             return "{" + f"{self._dis.gens()}" + "}"
         dompart = ', '.join("{" + repr(sorted(b))[1:-1] + "}"
@@ -280,7 +369,7 @@ class AtomicSpeciesElement(WithEqualityById,
         S = self.parent().grading_set()
         return S(self._mc)
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         r"""
         Return whether ``self`` is less than ``other``.
 
@@ -300,13 +389,13 @@ class AtomicSpeciesElement(WithEqualityById,
             sage: len(P.cover_relations())
             7
             sage: sorted(P.cover_relations(), key=str)
-            [[C_4, {((1,2)(3,4),)}],
+            [[C_4, E_2(X^2)],
+             [E_2(E_2), C_4],
+             [E_2(E_2), Pb_4],
+             [E_4, E_2(E_2)],
              [E_4, Eo_4],
-             [E_4, P_4],
              [Eo_4, Pb_4],
-             [P_4, C_4],
-             [P_4, Pb_4],
-             [Pb_4, {((1,2)(3,4),)}]]
+             [Pb_4, E_2(X^2)]]
 
         TESTS::
 
@@ -325,7 +414,7 @@ class AtomicSpeciesElement(WithEqualityById,
             return (sum(self._mc) < sum(other._mc)
                     or (sum(self._mc) == sum(other._mc)
                         and self._mc > other._mc))
-        S = SymmetricGroup(sum(self._mc)).young_subgroup(self._mc)
+        S = _SymmetricGroup(sum(self._mc)).young_subgroup(self._mc)
         # conjugate self and other to match S
         g = list(chain.from_iterable(self._dompart))
         conj_self = PermutationGroupElement(g).inverse()
@@ -335,7 +424,7 @@ class AtomicSpeciesElement(WithEqualityById,
         H = libgap.ConjugateGroup(other._dis, conj_other)
         return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
 
-    def __le__(self, other):
+    def __le__(self, other) -> bool:
         r"""
         Return whether ``self`` is less than or equal to ``other``.
 
@@ -348,6 +437,121 @@ class AtomicSpeciesElement(WithEqualityById,
         """
         return self is other or self < other
 
+    def structures(self, *labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        This yields a list of relabelled representatives of the
+        cosets of corresponding groups.
+
+        The relabelling is such that the first few labels correspond
+        to the first sort, etc.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import AtomicSpecies
+            sage: A = AtomicSpecies("X, Y")
+            sage: G = PermutationGroup([[("a", "b", "c", "d"), ("e", "f")]])
+            sage: a = A(G, {0: "abcd", 1: "ef"})
+            sage: list(a.structures([1, 2, 3, 4], ["a", "b"]))
+            [(1, 2, 3, 4, 'a', 'b'),
+             (1, 2, 3, 4, 'b', 'a'),
+             (1, 2, 4, 3, 'a', 'b'),
+             (1, 2, 4, 3, 'b', 'a'),
+             (1, 3, 2, 4, 'a', 'b'),
+             (1, 3, 2, 4, 'b', 'a'),
+             (1, 3, 4, 2, 'a', 'b'),
+             (1, 3, 4, 2, 'b', 'a'),
+             (1, 4, 2, 3, 'a', 'b'),
+             (1, 4, 2, 3, 'b', 'a'),
+             (1, 4, 3, 2, 'a', 'b'),
+             (1, 4, 3, 2, 'b', 'a')]
+
+            sage: G = PermutationGroup([[(2,3),(4,5)]], domain=[2,3,4,5])
+            sage: a = A(G, {0: [2, 3], 1: [4, 5]})
+            sage: list(a.structures([1, 2],["a", "b"]))
+            [(1, 2, 'a', 'b'), (1, 2, 'b', 'a')]
+        """
+        labels = _label_sets(self.parent()._arity, labels)
+        n = tuple([len(U) for U in labels])
+        S = _SymmetricGroup(sum(n)).young_subgroup(n)
+        l = [e for l in labels for e in l]
+        if self._mc == n:
+            for rep in libgap.RightTransversal(S, self._dis):
+                yield tuple(S(rep)._act_on_list_on_position(l))
+
+    def __call__(self, *args):
+        r"""
+        Substitute `M_1,\ldots, M_k` into ``self``.
+
+        ``self`` must not be a singleton.  The arguments must all
+        have the same parent and must all be molecular.  The number
+        of arguments must be equal to the arity of ``self``.
+
+        The result is an atomic species, whose parent has the
+        same variable names as the arguments.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import AtomicSpecies, MolecularSpecies
+            sage: A = AtomicSpecies("X")
+            sage: M = MolecularSpecies("X")
+            sage: Xmol = M(SymmetricGroup(1))
+            sage: E2atom = M(SymmetricGroup(2))
+            sage: E2mol = M(SymmetricGroup(2))
+            sage: E2atom(Xmol)
+            E_2
+            sage: E2atom(E2mol)
+            E_2(E_2)
+
+        A multisort example::
+
+            sage: A = AtomicSpecies("X")
+            sage: M2 = MolecularSpecies("X, Y")
+            sage: C3 = A(CyclicPermutationGroup(3))
+            sage: X = M2(SymmetricGroup(1), {0: [1]})
+            sage: Y = M2(SymmetricGroup(1), {1: [1]})
+            sage: C3(X*Y)
+            {((1,2,3)(4,5,6),): ({1, 2, 3}, {4, 5, 6})}
+        """
+        if sum(self._mc) == 1:
+            raise ValueError("self must not be a singleton")
+        if len(args) != self.parent()._arity:
+            raise ValueError("number of args must match arity of self")
+        if len(set(arg.parent() for arg in args)) > 1:
+            raise ValueError("all args must have the same parent")
+        if not all(isinstance(arg, MolecularSpecies.Element) for arg in args):
+            raise ValueError("all args must be molecular species")
+
+        Mlist = [None] * sum(self.grade())
+        G = self._dis
+        dompart = self._dompart
+        for i, v in enumerate(dompart):
+            for k in v:
+                Mlist[k - 1] = args[i]
+        starts = list(accumulate([sum(M.grade()) for M in Mlist],
+                                 initial=0))
+
+        # gens from self
+        gens = [[tuple([k + starts[i - 1] for i in cyc])
+                 for cyc in gen.cycle_tuples()
+                 for k in range(1, sum(Mlist[cyc[0] - 1].grade()) + 1)]
+                for gen in G.gens()]
+
+        # gens from M_i and dompart
+        P = args[0].parent()
+        pi = {i: [] for i in range(P._arity)}
+        for start, M in zip(starts, Mlist):
+            K, K_dompart = M.permutation_group()
+            for i, v in enumerate(K_dompart):
+                pi[i].extend([start + k for k in v])
+            gens.extend([tuple([start + k for k in cyc])
+                         for cyc in gen.cycle_tuples()]
+                        for gen in K.gens())
+
+        H = PermutationGroup(gens, domain=range(1, starts[-1] + 1))
+        return P._indices(H, pi, check=False)
+
 
 class AtomicSpecies(UniqueRepresentation, Parent):
     r"""
@@ -358,6 +562,52 @@ class AtomicSpecies(UniqueRepresentation, Parent):
     - ``names`` -- an iterable of strings for the sorts of the
       species
     """
+    class options(GlobalOptions):
+        r"""
+        Set and display the options for species.
+
+        If no parameters are set, then the function returns a copy of
+        the options dictionary.
+
+        The ``options`` to species can be accessed using
+        :class:`LazyCombinatorialSpecies.options`.
+
+        @OPTIONS@
+
+        EXAMPLES:
+
+        The species corresponding to the symmetric, cyclic, dihedral
+        and alternating groups are always renamed::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: L(SymmetricGroup(20))
+            E_20
+
+        By contrast, the species `E_2(E_3)` of subsets of size three
+        of a six element set is only renamed, if the option
+        ``rename`` is at least six::
+
+           sage: L.options.rename = 5
+           sage: F = L(SymmetricGroup(2))(L(SymmetricGroup(3)))
+           sage: F
+           ({((1,2,4)(3,6),(1,3)(2,5)(4,6))}) + O^13
+
+           sage: L.options.rename = 6
+           sage: F
+           E_2(E_3) + O^13
+
+        The default is chosen such that there is only a small delay
+        when printing a species.  Note that there are already 1001
+        atomic set like species in four alphabets of size twelve.::
+
+            sage: L.options._reset()
+        """
+        NAME = 'species'
+        module = 'sage.rings.species'
+        rename = dict(default=12,
+                      description='the maximal size of set like species to rename',
+                      checker=lambda x: x is Infinity or x in ZZ and x >= 0)
+
     @staticmethod
     def __classcall__(cls, names):
         """
@@ -378,7 +628,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         names = normalize_names(-1, names)
         return super().__classcall__(cls, names)
 
-    def __init__(self, names):
+    def __init__(self, names) -> None:
         r"""
         Initialize the class of atomic species.
 
@@ -397,9 +647,16 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         category = SetsWithGrading().Infinite()
         Parent.__init__(self, names=names, category=category)
         self._arity = len(names)
+
+        # for each multicardinality and canonical representative, a
+        # list of atomic species - more than one beginning with 2
+        # sorts and cardinality 8
         self._cache = dict()
-        self._dis_cache = dict()
-        self._renamed = set()  # the degrees that have been renamed already
+
+        # the degrees that have been renamed already
+        self._renamed = set()
+        # the degrees of set like species that have been renamed already
+        self._renamed_set_like = set()
 
     def _repr_(self):
         r"""
@@ -424,7 +681,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         INPUT:
 
         - ``G`` -- element of ``self`` (in this case ``pi`` must be
-          ``None``) or permutation group
+          ``None``) or a permutation group
         - ``pi`` -- `k`-tuple or list of iterables or a dict mapping
           sorts to iterables whose union is the domain; if `k=1`,
           ``pi`` can be omitted
@@ -453,7 +710,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
             sage: G = PermutationGroup([[(1,3),(5,7)]], domain=[1,3,5,7])
             sage: A(G, ([1,3], [5,7]))
-            {((1,2)(3,4),): ({1, 2}, {3, 4})}
+            E_2(X*Y)
 
         Test that errors are raised on some possible misuses::
 
@@ -519,22 +776,20 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
         elif not isinstance(pi, dict):
-            pi = {i: v for i, v in enumerate(pi)}
+            pi = dict(enumerate(pi))
         if check:
-            if not set(pi.keys()).issubset(range(self._arity)):
+            if not set(pi).issubset(range(self._arity)):
                 raise ValueError(f"keys of pi (={pi.keys()}) must be in range({self._arity})")
             if (sum(len(p) for p in pi.values()) != len(G.domain())
                 or set(chain.from_iterable(pi.values())) != set(G.domain())):
                 raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
         dompart = [pi.get(s, []) for s in range(self._arity)]
         elm = self.element_class(self, G, dompart)
-        if elm._tc not in self._renamed:
-            self._rename(elm._tc)
         return elm
 
     def _rename(self, n):
         r"""
-        Names for common species.
+        Give common species of degree `n` their traditional names.
 
         EXAMPLES::
 
@@ -558,17 +813,16 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             Eo_4(Y)
         """
         from sage.groups.perm_gps.permgroup import PermutationGroup
-        from sage.groups.perm_gps.permgroup_named import (AlternatingGroup,
-                                                          CyclicPermutationGroup,
-                                                          DihedralGroup,
-                                                          SymmetricGroup)
+        from sage.groups.perm_gps.permgroup_named import (
+            AlternatingGroup,
+            CyclicPermutationGroup,
+            DihedralGroup,
+        )
 
-        # prevent infinite recursion in self._element_constructor_
-        self._renamed.add(n)
         for s in range(self._arity):
             pi = {s: range(1, n+1)}
             if n == 1:
-                self(SymmetricGroup(1), pi, check=False).rename(self._names[s])
+                self(_SymmetricGroup(1), pi, check=False).rename(self._names[s])
 
             if self._arity == 1:
                 sort = ""
@@ -576,7 +830,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
                 sort = f"({self._names[s]})"
 
             if n >= 2:
-                self(SymmetricGroup(n), pi, check=False).rename(f"E_{n}" + sort)
+                self(_SymmetricGroup(n), pi, check=False).rename(f"E_{n}" + sort)
 
             if n >= 3:
                 self(CyclicPermutationGroup(n), pi, check=False).rename(f"C_{n}" + sort)
@@ -592,7 +846,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
                         [(i, i+1) for i in range(1, n, 2)]]
                 self(PermutationGroup(gens), pi, check=False).rename(f"Pb_{n}" + sort)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return whether ``x`` is in ``self``.
 
@@ -640,7 +894,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             G, pi = x
         if not isinstance(G, PermutationGroup_generic):
             return False
-        if not set(pi.keys()).issubset(range(self._arity)):
+        if not set(pi).issubset(range(self._arity)):
             return False
         if (sum(len(p) for p in pi.values()) != len(G.domain())
             or set(chain.from_iterable(pi.values())) != set(G.domain())):
@@ -701,7 +955,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         """
         if len(mc) != self._arity:
             raise ValueError("invalid degree")
-        S = SymmetricGroup(sum(mc)).young_subgroup(mc)
+        S = _SymmetricGroup(sum(mc)).young_subgroup(mc)
         domain = S.domain()
         pi = {i: domain[sum(mc[:i]): sum(mc[:i+1])] for i in range(len(mc))}
         return Set([self(G, pi, check=False) for G in S.conjugacy_classes_subgroups()
@@ -720,11 +974,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
             sage: A = AtomicSpecies("X, Y")
             sage: a = A.an_element(); a
-            {((1,2)(3,4),): ({1, 2}, {3, 4})}
-
-            sage: a.rename("E_2(XY)")
-            sage: a
-            E_2(XY)
+            E_2(X*Y)
         """
         G = PermutationGroup([[(2 * s + 1, 2 * s + 2) for s in range(self._arity)]])
         m = {s: [2 * s + 1, 2 * s + 2] for s in range(self._arity)}
@@ -787,7 +1037,13 @@ def _stabilizer_subgroups(G, X, a, side='right', check=True):
         sage: X = [1, 2, 3]
         sage: _stabilizer_subgroups(G, X, lambda pi, x: pi(x), side='left')
         [Permutation Group with generators [(2,3)]]
+
+    Be warned that the product in permutation groups is left-to-right composition::
+
         sage: _stabilizer_subgroups(G, X, lambda x, pi: pi(x), side='right')
+        [Permutation Group with generators [(2,3)]]
+
+        sage: _stabilizer_subgroups(G, X, lambda x, pi: pi.inverse()(x), side='right')
         Traceback (most recent call last):
         ...
         ValueError: The given function is not a right group action: g=(1,3,2), h=(2,3), x=1 do not satisfy the condition
@@ -811,7 +1067,7 @@ def _stabilizer_subgroups(G, X, a, side='right', check=True):
     elif side == "right":
         if check:
             for g, h, x in product(G, G, X):
-                if not a(x, h * g) == a(a(x, g), h):
+                if not a(x, h * g) == a(a(x, h), g):
                     raise ValueError(f"The given function is not a right group action: g={g}, h={h}, x={x} do not satisfy the condition")
 
         g_orbits = [orbit_decomposition(X_set, lambda x: a(x, g))
@@ -848,7 +1104,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         sage: M = MolecularSpecies("X,Y")
         sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
         sage: M(G, {0: [5,6], 1: [1,2,3,4]})
-        E_2(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
+        E_2(X)*E_2(Y^2)
     """
     @staticmethod
     def __classcall__(cls, names):
@@ -867,7 +1123,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         names = normalize_names(-1, names)
         return UniqueRepresentation.__classcall__(cls, names)
 
-    def __init__(self, names):
+    def __init__(self, names) -> None:
         r"""
         Initialize the monoid of molecular species.
 
@@ -911,16 +1167,23 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
         INPUT:
 
-        - ``G`` -- element of ``self`` (in this case ``pi`` must be
-          ``None``) or permutation group, or triple ``(X, a, side)``
-          consisting of a finite set, a transitive action and
-          a string 'left' or 'right'; the side can be omitted, it is
-          then assumed to be 'right'
+        - ``G`` -- one of the following:
+
+          - an element of ``self`` (in this case ``pi`` must be
+            ``None``)
+          - a permutation group
+          - a triple ``(X, a, side)`` consisting of a finite set, a
+            transitive action and a string 'left' or 'right'; the
+            side can be omitted, it is then assumed to be 'right',
+          - a ``dict`` from ``AtomicSpecies`` to integers (in this case ``pi`` must be
+            ``None``)
+
         - ``pi`` -- ``dict`` mapping sorts to iterables whose union
           is the domain of ``G`` (if ``G`` is a permutation group) or
           the domain of the acting symmetric group (if ``G`` is a
           triple ``(X, a, side)``); if `k=1` and ``G`` is a
           permutation group, ``pi`` can be omitted
+
         - ``check`` -- boolean (default: ``True``); skip input
           checking if ``False``
 
@@ -943,11 +1206,19 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
             sage: X = SetPartitions(4, [2, 2])
             sage: M((X, a, 'left'), {0: X.base_set()})
-            P_4
+            E_2(E_2)
 
             sage: X = SetPartitions(8, [4, 2, 2])
             sage: M((X, a, 'left'), {0: X.base_set()}, check=False)
-            E_4*P_4
+            E_4*E_2(E_2)
+
+        Create a molecular species from a ``dict`` of :class:`AtomicSpecies`::
+
+            sage: from sage.rings.species import AtomicSpecies
+            sage: A = AtomicSpecies("X, Y")
+            sage: M = MolecularSpecies("X, Y")
+            sage: M({a: 1 for a in A.subset(3)})
+            E_3(X)*C_3(X)*E_3(Y)*C_3(Y)
 
         TESTS::
 
@@ -959,7 +1230,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             sage: G = PermutationGroup([[(2,3),(4,5)]], domain=[2,3,4,5])
             sage: M(G, {0: [2, 3], 1: [4, 5]})
-            E_2(XY)
+            E_2(X*Y)
 
             sage: X = SetPartitions(4, 2)
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
@@ -970,7 +1241,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             sage: G = PermutationGroup([[(1,3),(5,7)]], domain=[1,3,5,7])
             sage: M(G, ([1,3], [5,7]))
-            E_2(XY)
+            E_2(X*Y)
 
             sage: G = PermutationGroup([[(1,2), (3,4,5,6)]])
             sage: a = M(G, {0:[1,2], 1:[3,4,5,6]})
@@ -1009,6 +1280,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             # pi cannot be None because of framework
             raise ValueError("cannot reassign sorts to a molecular species")
 
+        if isinstance(G, dict):
+            if check:
+                if not all(A.parent() == self._indices for A in G):
+                    raise ValueError(f"all keys of the dict {G} must be {self._indices}")
+                if not all(isinstance(e, Integer) for e in G.values()):
+                    raise ValueError(f"all values of the dict {G} must be Integers")
+            return self.element_class(self, G)
+
         if isinstance(G, tuple):
             if len(G) == 2:
                 X, a = G
@@ -1035,19 +1314,31 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 else:
                     raise ValueError("the assignment of sorts to the domain elements must be provided")
             elif not isinstance(pi, dict):
-                pi = {i: v for i, v in enumerate(pi)}
+                pi = dict(enumerate(pi))
             domain = [e for p in pi.values() for e in p]
             if check and len(domain) != len(set(domain)) or set(G.domain()) != set(domain):
                 raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
+
             components = G.disjoint_direct_product_decomposition()
+            if len(components) == 1:
+                return self.gen(self._indices(G, pi, check=check))
+
             elm = self.one()
             for component in components:
-                gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in component]
-                        for gen in G.gens()]
-                H = PermutationGroup([gen for gen in gens if gen],
-                                     domain=component)
-                pi_H = {k: [e for e in v if e in component]
-                        for k, v in pi.items()}
+                if len(component) == 1:
+                    H = _SymmetricGroup(1)
+                    c = set(component).pop()
+                    pi_H = {k: [1] if c in v else [] for k, v in pi.items()}
+                else:
+                    # the following appears to be slower
+                    # H_gap = libgap.Action(G, [G._domain_to_gap[i] for i in component], libgap.OnPoints)
+                    # H = PermutationGroup(gap_group=H_gap, domain=component)
+                    gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in component]
+                            for gen in G.gens()]
+                    H = PermutationGroup([gen for gen in gens if gen],
+                                         domain=component)
+                    pi_H = {k: [e for e in v if e in component]
+                            for k, v in pi.items()}
                 a = self._indices(H, pi_H, check=check)
                 elm *= self.gen(a)
             return elm
@@ -1107,7 +1398,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         """
         if len(mc) != self._arity:
             raise ValueError("invalid degree")
-        S = SymmetricGroup(sum(mc)).young_subgroup(mc)
+        S = _SymmetricGroup(sum(mc)).young_subgroup(mc)
         domain = S.domain()
         pi = {i: domain[sum(mc[:i]): sum(mc[:i+1])] for i in range(len(mc))}
         return Set([self(G, pi, check=False) for G in S.conjugacy_classes_subgroups()])
@@ -1125,7 +1416,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
         TESTS::
 
-            sage: X = M(CyclicPermutationGroup(3))
+            sage: X = M(SymmetricGroup(1))
             sage: C3 = M(CyclicPermutationGroup(3))
             sage: TestSuite(X*C3).run()
         """
@@ -1173,29 +1464,29 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: M(DihedralGroup(4)) < M(CyclicPermutationGroup(4))
                 True
 
-            We create the lattice of molecular species of degree four::
+            We create the poset of molecular species of degree four::
 
                 sage: P = Poset([M.subset(4), lambda b, c: b <= c])
                 sage: len(P.cover_relations())
                 17
                 sage: sorted(P.cover_relations(), key=str)
-                [[C_4, {((1,2)(3,4),)}],
+                [[C_4, E_2(X^2)],
+                 [E_2(E_2), C_4],
+                 [E_2(E_2), E_2^2],
+                 [E_2(E_2), Pb_4],
+                 [E_2(X^2), X^4],
+                 [E_2^2, E_2(X^2)],
                  [E_2^2, X^2*E_2],
-                 [E_2^2, {((1,2)(3,4),)}],
+                 [E_4, E_2(E_2)],
                  [E_4, Eo_4],
-                 [E_4, P_4],
                  [E_4, X*E_3],
                  [Eo_4, Pb_4],
                  [Eo_4, X*C_3],
-                 [P_4, C_4],
-                 [P_4, E_2^2],
-                 [P_4, Pb_4],
-                 [Pb_4, {((1,2)(3,4),)}],
+                 [Pb_4, E_2(X^2)],
                  [X*C_3, X^4],
                  [X*E_3, X*C_3],
                  [X*E_3, X^2*E_2],
-                 [X^2*E_2, X^4],
-                 [{((1,2)(3,4),)}, X^4]]
+                 [X^2*E_2, X^4]]
 
             TESTS::
 
@@ -1227,7 +1518,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                             or (sum(self.grade()) == sum(other.grade())
                                 and self.grade() > other.grade()))
 
-                S = SymmetricGroup(sum(self.grade())).young_subgroup(self.grade())
+                S = _SymmetricGroup(sum(self.grade())).young_subgroup(self.grade())
                 # conjugate self and other to match S
                 G, G_dompart = self.permutation_group()
                 g = list(chain.from_iterable(G_dompart))
@@ -1252,7 +1543,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: M = MolecularSpecies("X,Y")
                 sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
                 sage: A = M(G, {0: [5,6], 1: [1,2,3,4]}); A
-                E_2(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
+                E_2(X)*E_2(Y^2)
                 sage: A.permutation_group()
                 (Permutation Group with generators [(3,4)(5,6), (1,2)],
                  (frozenset({1, 2}), frozenset({3, 4, 5, 6})))
@@ -1277,7 +1568,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
                 sage: A = M(G, {0: [5,6], 1: [1,2,3,4]})
                 sage: A * B
-                E_2(X)*C_3(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
+                E_2(X)*C_3(X)*E_2(Y^2)
                 sage: (A*B).permutation_group()
                 (Permutation Group with generators [(6,7)(8,9), (3,4,5), (1,2)],
                  (frozenset({1, 2, 3, 4, 5}), frozenset({6, 7, 8, 9})))
@@ -1317,7 +1608,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             factors = list(self)
             if not factors:
                 k = self.parent()._arity
-                return SymmetricGroup(0), tuple([frozenset()]*k)
+                return _SymmetricGroup(0), tuple([frozenset()]*k)
 
             if len(factors) == 1:
                 A, n = factors[0]
@@ -1377,11 +1668,37 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: A.cycle_index()
                 1/4*p[1, 1] # p[1, 1, 1, 1] + 1/4*p[1, 1] # p[2, 2] + 1/4*p[2] # p[1, 1, 1, 1] + 1/4*p[2] # p[2, 2]
 
+            Find two molecular species with the same cycle index::
+
+                sage: M = MolecularSpecies("X")
+                sage: n = 6
+                sage: Ms = M.subset(n)  # long time
+                sage: Cs = [m.cycle_index() for m in Ms]  # long time
+                sage: d = [m for m in Ms if Cs.count(m.cycle_index()) > 1]  # long time
+                sage: len(d)  # long time
+                2
+                sage: Pb_4 = M(PermutationGroup([[(1,2), (3,4)], [(1,4), (2,3)]]))
+                sage: X = M(SymmetricGroup(1))
+                sage: X^2*Pb_4 in d  # long time
+                True
+
+            Find two atomic species with the same cycle index::
+
+                sage: from sage.rings.species import AtomicSpecies
+                sage: A = AtomicSpecies("X")
+                sage: n = 8
+                sage: As = A.subset(n)  # long time
+                sage: Cs = [M({a: 1}).cycle_index() for a in As]  # long time
+                sage: len([a for a in As if Cs.count(M({a: 1}).cycle_index()) > 1])  # long time
+                10
+
             TESTS:
 
             Check that we support different parents::
 
                 sage: F = CombinatorialFreeModule(QQ, Partitions())
+                sage: M = MolecularSpecies("X,Y")
+                sage: A = M(G, {0: [5,6], 1: [1,2,3,4]})
                 sage: P = A.cycle_index(parent=tensor([F, F]))
                 sage: P
                 1/4*B[[1, 1]] # B[[1, 1, 1, 1]] + 1/4*B[[1, 1]] # B[[2, 2]] + 1/4*B[[2]] # B[[1, 1, 1, 1]] + 1/4*B[[2]] # B[[2, 2]]
@@ -1405,7 +1722,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             G, dompart = self.permutation_group()
             pi = {}
             for i, s in enumerate(dompart):
-                pi.update({e: i for e in s})
+                pi.update(dict.fromkeys(s, i))
 
             def cycle_type(g):
                 tuples = g.cycle_tuples(singletons=True)
@@ -1439,10 +1756,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: E2 = M(SymmetricGroup(2))
                 sage: E2(X)
                 E_2
+                sage: E2(X^2)
+                E_2(X^2)
+                sage: (X^2)(E2^3)
+                E_2^6
                 sage: X(E2)
                 E_2
                 sage: E2(E2)
-                P_4
+                E_2(E_2)
 
                 sage: M = MolecularSpecies(["X","Y"])
                 sage: X = M(SymmetricGroup(1), {0: [1]})
@@ -1492,36 +1813,70 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             # TODO: the case that G in F(G) has a constant part and F
             # is a polynomial species is not yet covered - see
             # section 4.3 of [ALL2002]_
-            Mlist = [None] * sum(self.grade())
-            G, dompart = self.permutation_group()
-            for i, v in enumerate(dompart):
-                for k in v:
-                    Mlist[k - 1] = args[i]
-            starts = list(accumulate([sum(M.grade()) for M in Mlist],
-                                     initial=0))
+            M = args[0].parent()
 
-            # gens from self
-            gens = []
-            for gen in G.gens():
-                newgen = []
-                for cyc in gen.cycle_tuples():
-                    for k in range(1, sum(Mlist[cyc[0] - 1].grade()) + 1):
-                        newgen.append(tuple([k + starts[i - 1] for i in cyc]))
-                gens.append(newgen)
+            atoms = defaultdict(ZZ)
+            for A, e in self.dict().items():
+                if sum(A._mc) > 1:
+                    atoms[A(*args)] += e
+                else:
+                    for B, f in args[A._mc.index(1)].dict().items():
+                        atoms[B] += e * f
+            return M(atoms, check=False)
 
-            # gens from M_i and dompart
-            P = args[0].parent()
-            pi = {i: [] for i in range(P._arity)}
-            for start, M in zip(starts, Mlist):
-                K, K_dompart = M.permutation_group()
-                for i, v in enumerate(K_dompart):
-                    pi[i].extend([start + k for k in v])
-                for gen in K.gens():
-                    gens.append([tuple([start + k for k in cyc])
-                                 for cyc in gen.cycle_tuples()])
+        def structures(self, *labels):
+            r"""
+            Iterate over the structures on the given set of labels.
 
-            return P(PermutationGroup(gens, domain=range(1, starts[-1] + 1)),
-                     pi, check=False)
+            This yields a list of relabelled representatives of the
+            cosets of corresponding groups.
+
+            The relabelling is such that the first few labels
+            correspond to the first factor in the atomic
+            decomposition, etc.
+
+            EXAMPLES::
+
+                sage: from sage.rings.species import MolecularSpecies
+                sage: M = MolecularSpecies("X,Y")
+                sage: a = M(PermutationGroup([(3,4),(5,)]), {0:[1,3,4], 1:[2,5]})
+                sage: a
+                X*Y^2*E_2(X)
+                sage: sorted(a.structures([1, 2, 3], ["a", "b"]))
+                [((1,), ('a',), ('b',), (2, 3)),
+                 ((1,), ('b',), ('a',), (2, 3)),
+                 ((2,), ('a',), ('b',), (1, 3)),
+                 ((2,), ('b',), ('a',), (1, 3)),
+                 ((3,), ('a',), ('b',), (1, 2)),
+                 ((3,), ('b',), ('a',), (1, 2))]
+
+                sage: G = PermutationGroup([[(2,3),(4,5)]])
+                sage: a = M(G, {0: [1, 2, 3], 1: [4, 5]})
+                sage: a
+                X*E_2(X*Y)
+                sage: sorted(a.structures([1, 2, 3], ["a", "b"]))
+                [((1,), (2, 3, 'a', 'b')),
+                 ((1,), (2, 3, 'b', 'a')),
+                 ((2,), (1, 3, 'a', 'b')),
+                 ((2,), (1, 3, 'b', 'a')),
+                 ((3,), (1, 2, 'a', 'b')),
+                 ((3,), (1, 2, 'b', 'a'))]
+            """
+            k = self.parent()._arity
+            labels = _label_sets(k, labels)
+            atoms = [a for a, n in self._monomial.items() for _ in range(n)]
+            sizes = [a._mc for a in atoms]
+            try:
+                # TODO: maybe OrderedSetPartitions should not raise
+                # an error if the second argument is a composition,
+                # but not of the right size
+                dissections = [OrderedSetPartitions(l, [mc[i] for mc in sizes])
+                               for i, l in enumerate(labels)]
+            except ValueError:
+                return
+            for d in product(*dissections):
+                yield from product(*[a.structures(*[l[i] for l in d])
+                                     for i, a in enumerate(atoms)])
 
 
 class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
@@ -1640,27 +1995,25 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: P = PolynomialSpecies(QQ, "X")
             sage: sortkey = lambda x: (len(x[1]), sum(x[1].coefficients()), str(x[0]))
             sage: n=4; table(sorted([(m, P.monomial(m).tilde()) for m in M.subset(n)], key=sortkey))
-            X^4               X^4
-            X^2*E_2           2*X^2*E_2
-            {((1,2)(3,4),)}   2*{((1,2)(3,4),)}
-            X*C_3             3*X*C_3
-            C_4               4*C_4
-            E_2^2             4*E_2^2
-            Pb_4              4*Pb_4
-            X*E_3             X*E_3 + X^2*E_2 + X*C_3
-            Eo_4              Eo_4 + 2*X*C_3 + Pb_4
-            P_4               2*P_4 + E_2^2 + Pb_4 + C_4
-            E_4               E_4 + E_2^2 + X*C_3 + P_4 + C_4
+            X^4        X^4
+            E_2(X^2)   2*E_2(X^2)
+            X^2*E_2    2*X^2*E_2
+            X*C_3      3*X*C_3
+            C_4        4*C_4
+            E_2^2      4*E_2^2
+            Pb_4       4*Pb_4
+            X*E_3      X*E_3 + X^2*E_2 + X*C_3
+            Eo_4       Eo_4 + 2*X*C_3 + Pb_4
+            E_2(E_2)   2*E_2(E_2) + E_2^2 + Pb_4 + C_4
+            E_4        E_4 + E_2(E_2) + E_2^2 + X*C_3 + C_4
 
             sage: P.<X,Y> = PolynomialSpecies(QQ)
             sage: E2 = PolynomialSpecies(QQ, "X")(SymmetricGroup(2))
             sage: E2(X*Y).tilde()
-            2*E_2(XY)
+            2*E_2(X*Y)
         """
         P = self.parent()
-        M = P._indices
         P_one = P.one()
-        one = ZZ.one()
         result = P.zero()
         for m, c in self:
             result_m = P_one
@@ -1715,6 +2068,14 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             Traceback (most recent call last):
             ...
             ValueError: the factors of a Hadamard product must have the same parent
+
+        A performance test::
+
+            sage: from sage.rings.species import AtomicSpecies, PolynomialSpecies
+            sage: A = AtomicSpecies("X")
+            sage: P = PolynomialSpecies(QQ, "X")
+            sage: l = [P(a._dis, check=False) for a in A.subset(5)]
+            sage: p = [a.hadamard_product(b) for a in l for b in l]
         """
         P = self.parent()
         if P is not other.parent():
@@ -1725,7 +2086,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         for L, c in self:
             mc = L.grade()
             tc = sum(mc)
-            S = SymmetricGroup(tc).young_subgroup(mc)
+            S = _SymmetricGroup(tc).young_subgroup(mc)
             # conjugate L and R to match S
             G, dompart = L.permutation_group()
             g = list(chain.from_iterable(dompart))
@@ -1744,10 +2105,11 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                 # loop over representatives
                 new = P.zero()
                 for tau, _ in taus:
-                    G_H = libgap.Intersection(libgap.ConjugateGroup(H, tau), G)
+                    G_H = libgap.Intersection(libgap.ConjugateGroup(G, tau), H)
                     K = PermutationGroup(gap_group=G_H, domain=range(1, tc + 1))
                     F = P(K, pi, check=False)
                     new += F
+
                 result += c * d * new
 
         return result
@@ -1779,7 +2141,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: P = PolynomialSpecies(ZZ, "X")
             sage: C4 = P(CyclicPermutationGroup(4))
             sage: C4._compose_with_singletons("X, Y", [[2, 2]])
-            E_2(XY) + X^2*Y^2
+            E_2(X*Y) + X^2*Y^2
 
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
             sage: F = P(PermutationGroup([[(1,2,3), (4,5,6)]]), {0: [1,2,3], 1: [4,5,6]})
@@ -1806,7 +2168,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         comp = list(chain.from_iterable(args))
         pi = {i: range(x - comp[i] + 1, x + 1)
               for i, x in enumerate(accumulate(comp))}
-        S_down = SymmetricGroup(sum(comp)).young_subgroup(comp)
+        S_down = _SymmetricGroup(sum(comp)).young_subgroup(comp)
 
         P = PolynomialSpecies(self.parent().base_ring(), names)
         result = P.zero()
@@ -1819,7 +2181,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
             mc = M.grade()
             tc = sum(mc)
-            S_up = SymmetricGroup(tc).young_subgroup(mc)
+            S_up = _SymmetricGroup(tc).young_subgroup(mc)
             taus = libgap.DoubleCosetRepsAndSizes(S_up, S_down, G)
 
             # sum over double coset representatives.
@@ -1867,12 +2229,12 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
             sage: C4 = P(CyclicPermutationGroup(4))
             sage: C4._compose_with_weighted_singletons(["X"], [-1], [[4]])
-            -C_4 + {((1,2)(3,4),)}
+            -C_4 + E_2(X^2)
 
         Exercise (2.5.17) in [BLL1998]_::
 
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[2, 2]])
-            E_2(XY) + X^2*Y^2
+            E_2(X*Y) + X^2*Y^2
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[3, 1]])
             X^3*Y
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[4, 0]])
@@ -1881,7 +2243,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         Equation (4.60) in [ALL2002]_::
 
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, -1], [[2, 2]])
-            -E_2(XY) + 2*X^2*Y^2
+            -E_2(X*Y) + 2*X^2*Y^2
 
         A bivariate example::
 
@@ -1897,7 +2259,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         TESTS::
 
             sage: (C4+E2^2)._compose_with_weighted_singletons(["X"], [-1], [[4]])
-            -C_4 + E_2^2 + {((1,2)(3,4),)} - 2*X^2*E_2 + X^4
+            -C_4 + E_2^2 + E_2(X^2) - 2*X^2*E_2 + X^4
 
             sage: C4._compose_with_weighted_singletons(["X"], [-1, 0], [[4]])
             Traceback (most recent call last):
@@ -1970,10 +2332,10 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: E2(-X)
             -E_2 + X^2
             sage: E2(X^2)
-            {((1,2)(3,4),)}
+            E_2(X^2)
 
             sage: E2(X + X^2)
-            E_2 + X^3 + {((1,2)(3,4),)}
+            E_2 + X^3 + E_2(X^2)
 
             sage: P2 = PolynomialSpecies(QQ, ["X", "Y"])
             sage: X = P2(SymmetricGroup(1), {0: [1]})
@@ -1982,7 +2344,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             E_2(X) + X*Y + E_2(Y)
 
             sage: E2(X*Y)(E2(X), E2(Y))
-            {((7,8), (5,6), (3,4), (1,2), (1,3)(2,4)(5,7)(6,8)): ({1, 2, 3, 4}, {5, 6, 7, 8})}
+            E_2(E_2(X)*E_2(Y))
 
             sage: R.<q> = QQ[]
             sage: P = PolynomialSpecies(R, ["X"])
@@ -2088,6 +2450,44 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                    for factor, exponent in factors]
         return Factorization(factors, unit=unit, sort=False)
 
+    def structures(self, *labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        This yields a list of pairs consisting of a molecular species
+        and a relabelled representative of the cosets of
+        corresponding groups.
+
+        The relabelling is such that the first few labels correspond
+        to the first factor in the atomic decomposition, etc.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(ZZ, ["X"])
+            sage: C3 = P(CyclicPermutationGroup(3))
+            sage: X = P(SymmetricGroup(1))
+            sage: E2 = P(SymmetricGroup(2))
+            sage: f = 2*E2*X + E2^2
+            sage: list(f.structures([1, 2, 3]))
+            [(X*E_2, ((1, 3), (2,)), 0),
+             (X*E_2, ((2, 3), (1,)), 0),
+             (X*E_2, ((1, 2), (3,)), 0),
+             (X*E_2, ((1, 3), (2,)), 1),
+             (X*E_2, ((2, 3), (1,)), 1),
+             (X*E_2, ((1, 2), (3,)), 1)]
+        """
+        labels = _label_sets(self.parent()._arity, labels)
+        for M, c in self.monomial_coefficients().items():
+            if c not in ZZ or c < 0:
+                raise NotImplementedError("only implemented for proper non-virtual species")
+            if c == 1:
+                for s in M.structures(*labels):
+                    yield M, s
+            else:
+                for e, s in cartesian_product([range(c), M.structures(*labels)]):
+                    yield M, s, e
+
 
 class PolynomialSpecies(CombinatorialFreeModule):
     r"""
@@ -2125,7 +2525,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         names = normalize_names(-1, names)
         return super().__classcall__(cls, base_ring, names)
 
-    def __init__(self, base_ring, names):
+    def __init__(self, base_ring, names) -> None:
         r"""
         Initialize the ring of polynomial species.
 
@@ -2168,16 +2568,24 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``G`` -- element of ``self`` (in this case ``pi`` must be
-          ``None``) or permutation group, or triple ``(X, a, side)``
-          consisting of a finite set, an action and a string 'left'
-          or 'right'; the side can be omitted, it is then assumed to
-          be 'right'
+        - ``G`` -- one of the following:
+
+          - an element of ``self``, a ``MolecularSpecies`` or an
+            ``AtomicSpecies`` (in these cases ``pi`` must be
+            ``None``)
+          - a permutation group
+          - a triple ``(X, a, side)`` consisting of a finite set, an action
+            and a string 'left' or 'right'; the side can be omitted, it is
+            then assumed to be 'right'
+          - a ``dict`` from ``MolecularSpecies`` to the base ring (in
+            this case ``pi`` must be ``None``)
+
         - ``pi`` -- ``dict`` mapping sorts to iterables whose union
           is the domain of ``G`` (if ``G`` is a permutation group) or
           the domain of the acting symmetric group (if ``G`` is a
           pair ``(X, a)``); if `k=1` and ``G`` is a permutation
           group, ``pi`` can be omitted
+
         - ``check`` -- boolean (default: ``True``); skip input
           checking if ``False``
 
@@ -2191,13 +2599,13 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: X = SetPartitions(4, 2)
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
             sage: P((X, a, 'left'), {0: [1,2], 1: [3,4]})
-            E_2(X)*E_2(Y) + X^2*E_2(Y) + E_2(XY) + Y^2*E_2(X)
+            E_2(X)*E_2(Y) + X^2*E_2(Y) + E_2(X*Y) + Y^2*E_2(X)
 
             sage: P = PolynomialSpecies(ZZ, ["X"])
             sage: X = SetPartitions(4, 2)
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
             sage: P((X, a, 'left'), {0: [1,2,3,4]})
-            X*E_3 + P_4
+            X*E_3 + E_2(E_2)
 
         The species of permutation groups::
 
@@ -2209,25 +2617,19 @@ class PolynomialSpecies(CombinatorialFreeModule):
             ....:     H = S.subgroup(G.conjugate(pi).gens())
             ....:     return next(K for K in X if K == H)
             sage: P((X, act), {0: range(1, n+1)}, check=False)
-            4*E_4 + 4*P_4 + E_2^2 + 2*X*E_3
+            4*E_4 + 4*E_2(E_2) + E_2^2 + 2*X*E_3
 
         Create a multisort species given an action::
 
             sage: P = PolynomialSpecies(QQ, "X,Y")
             sage: G = PermutationGroup([(2,3)])
-            sage: pi = {0: [2, 3], 1: [1]}
-            sage: X = [(s, a) for s in libgap.RightCosets(G, G) for a in G if libgap.OnRight(s, a) == s]
-            sage: def act(s, a, g):
-            ....:     g_dict = g.dict()
-            ....:     g_gap = libgap.PermList([g_dict[i] for i in range(1, max(g_dict)+1)])
-            ....:     t = libgap.OnRight(s, g_gap)
-            ....:     b = a ** g_gap
-            ....:     for r, c in X:
-            ....:         if r == t and c == b:
-            ....:             return r, c
-            ....:     raise ValueError
-            sage: P((X, lambda g, x: act(x[0], x[1], g), 'left'), pi)
-            2*Y*E_2(X)
+            sage: pi = {0: [1, 2, 3], 1: [4, 5]}
+            sage: X = [(1, 2, 3, 4, 5), (1, 2, 3, 5, 4)]
+            sage: def act(x, g):
+            ....:     y = tuple(g(i) for i in x)
+            ....:     return tuple(sorted(y[:3])) + y[3:]
+            sage: P((X, act, 'right'), pi)
+            Y^2*E_3(X)
 
         TESTS::
 
@@ -2257,10 +2659,37 @@ class PolynomialSpecies(CombinatorialFreeModule):
              group or a pair (X, a) specifying a group action of the symmetric
              group on pi=None
 
+        Atomic and molecular species are accepted as arguments::
+
+            sage: from sage.rings.species import AtomicSpecies, PolynomialSpecies
+            sage: P = PolynomialSpecies(ZZ, "X, Y")
+            sage: A = AtomicSpecies("X, Y")
+            sage: P(A(SymmetricGroup(3), {1: [1,2,3]}))
+            E_3(Y)
+
+            sage: A = AtomicSpecies("Z")
+            sage: P(A(SymmetricGroup(3)))
+            Traceback (most recent call last):
+            ...
+            ValueError: all keys of the dict {E_3: 1} must be Atomic species in X, Y
         """
         if parent(G) is self:
             # pi cannot be None because of framework
             raise ValueError("cannot reassign sorts to a polynomial species")
+
+        if isinstance(G, AtomicSpecies.Element):
+            G = self._indices({G: ZZ.one()})
+
+        if isinstance(G, MolecularSpecies.Element):
+            return self._from_dict({G: self.base_ring().one()})
+
+        if isinstance(G, dict):
+            if check:
+                if not all(M.parent() == self._indices for M in G):
+                    raise ValueError(f"all keys of the dict {G} must be {self._indices}")
+                if not all(e in self.base_ring() for e in G.values()):
+                    raise ValueError(f"all values of the dict {G} must be in {self.base_ring()}")
+            return self._from_dict(G)
 
         if isinstance(G, tuple):
             if len(G) == 2:
@@ -2284,7 +2713,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
                     return self._from_dict({self._indices(G, check=check): ZZ.one()})
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
             elif not isinstance(pi, dict):
-                pi = {i: v for i, v in enumerate(pi)}
+                pi = dict(enumerate(pi))
             return self._from_dict({self._indices(G, pi, check=check): ZZ.one()})
 
         raise ValueError(f"{G} must be an element of the base ring, a permutation group or a pair (X, a) specifying a group action of the symmetric group on pi={pi}")
@@ -2436,9 +2865,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
         if n not in ZZ or n <= 0:
             raise ValueError("n must be a positive integer")
         if n == 1:
-            return self(SymmetricGroup(1), {s: [1]}, check=False)
-        return (ZZ(n) * self(SymmetricGroup(n), {s: range(1, n+1)}, check=False)
-                - sum(self(SymmetricGroup(i), {s: range(1, i+1)}, check=False)
+            return self(_SymmetricGroup(1), {s: [1]}, check=False)
+        return (ZZ(n) * self(_SymmetricGroup(n), {s: range(1, n+1)}, check=False)
+                - sum(self(_SymmetricGroup(i), {s: range(1, i+1)}, check=False)
                       * self._powersum(s, n-i)
                       for i in range(1, n)))
 
@@ -2479,6 +2908,25 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         TESTS::
 
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: P = PolynomialSpecies(QQ, ["X"])
+
+            sage: c = 3/2; all((E^c)[i] == P._exponential([c], [i]) for i in range(6))
+            True
+
+            sage: c = -5/3; all((E^c)[i] == P._exponential([c], [i]) for i in range(6))
+            True
+
+            sage: c = 0; all((E^c)[i] == P._exponential([c], [i]) for i in range(6))
+            True
+
+            sage: c = 1; all((E^c)[i] == P._exponential([c], [i]) for i in range(6))
+            True
+
+            sage: c = -1; all((E^c)[i] == P._exponential([c], [i]) for i in range(6))
+            True
+
             sage: P = PolynomialSpecies(QQ, ["X"])
             sage: P._exponential([1], [0]).parent()
             Polynomial species in X over Rational Field
@@ -2508,3 +2956,64 @@ class PolynomialSpecies(CombinatorialFreeModule):
                          for s in range(self._arity))
 
     Element = PolynomialSpeciesElement
+
+
+@cached_function
+def _atomic_set_like_species(n, names):
+    r"""
+    Return a list of the atomic set like species of degree `n`,
+    and provide their traditional names.
+
+    INPUT:
+
+    - ``n`` -- positive integer, the degree
+    - ``names`` -- an iterable of strings for the sorts of the species
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _atomic_set_like_species
+        sage: _atomic_set_like_species(6, "X")
+        (E_2(E_3), E_2(X*E_2), E_2(X^3), E_3(E_2), E_3(X^2), E_6)
+
+        sage: l = [len(_atomic_set_like_species(n, "X")) for n in range(12)]
+        sage: l
+        [0, 1, 1, 1, 3, 1, 6, 1, 10, 4, 12, 1]
+        sage: oeis(l)                                                           # optional - internet
+        0: A007650: Number of set-like atomic species of degree n.
+
+        sage: _atomic_set_like_species(4, "U, V")
+        (E_2(E_2(V)), E_2(E_2(U)), E_2(V^2), E_2(U*V), E_2(U^2), E_4(U), E_4(V))
+    """
+    if not n:
+        return ()
+    M1 = MolecularSpecies("X")
+    A1 = AtomicSpecies("X")
+    M = MolecularSpecies(names)
+    A = AtomicSpecies(names)
+    if n == 1:
+        return tuple([M({A(_SymmetricGroup(1), {s: [1]}, check=False): ZZ.one()},
+                        check=False)
+                      for s in range(M._arity)])
+    result = []
+    for d in divisors(n):
+        if d == 1:
+            continue
+        if d == n:
+            result.extend(M({A(_SymmetricGroup(n), {s: range(1, n+1)}, check=False): ZZ.one()},
+                            check=False)
+                          for s in range(M._arity))
+            continue
+        E_d = M1({A1(_SymmetricGroup(d), check=False): ZZ.one()},
+                 check=False)
+        l = []
+        w = []
+        for degree in range(1, n // d + 1):
+            a_degree = _atomic_set_like_species(degree, names)
+            l.extend(a_degree)
+            w.extend([degree]*len(a_degree))
+        for a in WeightedIntegerVectors(n // d, w):
+            G = prod(F ** e for F, e in zip(l, a))
+            F = E_d(G)  # TODO: can we make this faster?
+            F.support()[0].rename(f"E_{d}({G})")
+            result.append(F)
+    return tuple(result)

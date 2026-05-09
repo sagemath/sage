@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Modules With Basis
 
@@ -178,7 +177,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg, x, self))
         return M
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return whether this category is abelian.
 
@@ -573,17 +572,15 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                         domain=self, on_basis=on_basis,
                         triangular=triangular, unitriangular=unitriangular,
                         **keywords)
-                else:
-                    return TriangularModuleMorphismFromFunction(
-                        domain=self, function=function,
-                        triangular=triangular, unitriangular=unitriangular,
-                        **keywords)
+                return TriangularModuleMorphismFromFunction(
+                    domain=self, function=function,
+                    triangular=triangular, unitriangular=unitriangular,
+                    **keywords)
             if on_basis is not None:
                 return ModuleMorphismByLinearity(
                     domain=self, on_basis=on_basis, **keywords)
-            else:
-                return ModuleMorphismFromFunction(  # Or just SetMorphism?
-                    domain=self, function=function, **keywords)
+            return ModuleMorphismFromFunction(  # Or just SetMorphism?
+                domain=self, function=function, **keywords)
 
         _module_morphism = module_morphism
 
@@ -1270,12 +1267,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 mc = x.monomial_coefficients(copy=False)
                 return codomain.linear_combination((on_basis(key), coeff)
                                                    for key, coeff in mc.items())
-            else:
-                return_sum = codomain.zero()
-                mc = x.monomial_coefficients(copy=False)
-                for key, coeff in mc.items():
-                    return_sum += coeff * on_basis(key)
-                return return_sum
+            return_sum = codomain.zero()
+            mc = x.monomial_coefficients(copy=False)
+            for key, coeff in mc.items():
+                return_sum += coeff * on_basis(key)
+            return return_sum
 
         def _apply_module_endomorphism(self, x, on_basis):
             """
@@ -1308,6 +1304,30 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             except (AttributeError, TypeError):
                 from sage.rings.integer_ring import ZZ
                 return ZZ(len(self.basis()))
+
+        def rank(self):
+            """
+            Return the rank of ``self``.
+
+            Since there is a (distinguished) basis, the rank of ``self``
+            is equal to the cardinality of the basis (which equals
+            the :meth:`dimension` of ``self``).
+
+            EXAMPLES::
+
+                sage: A.<x,y> = algebras.DifferentialWeyl(QQ)                           # needs sage.modules
+                sage: A.rank()                                                          # needs sage.modules
+                +Infinity
+
+                sage: R.<x,y> = QQ[]
+                sage: R.rank()
+                +Infinity
+
+                sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+                sage: F.rank()
+                3
+            """
+            return self.dimension()
 
         def _from_dict(self, d, coerce=True, remove_zeros=True):
             """
@@ -1407,12 +1427,23 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 True
             """
             indices = self.basis().keys()
-            a = self.zero()
-            if not indices.is_empty():
-                for i in range(n):
-                    a += self.term(indices.random_element(),
-                                   self.base_ring().random_element())
-            return a
+            if not indices:
+                return self.zero()
+
+            # Some container types (list, tuple, etc.) won't have
+            # a random_element() method.
+            if hasattr(indices, "random_element"):
+                random_element = lambda c: c.random_element()
+            else:
+                from random import choice
+                random_element = choice
+
+            return self.sum(
+                self.term(random_element(indices),
+                          self.base_ring().random_element())
+                for _ in range(n)
+            )
+
 
     class ElementMethods:
         # TODO: Define the appropriate element methods here (instead of in
@@ -1514,8 +1545,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             res = self.monomial_coefficients(copy=False).get(m)
             if res is None:
                 return self.base_ring().zero()
-            else:
-                return res
+            return res
 
         def coefficient(self, m):
             """
@@ -1572,6 +1602,30 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if hasattr(C, "element_class") and not isinstance(m, C.element_class):
                 m = C(m)
             return self[m]
+
+        def items(self):
+            r"""
+            Return a list of pairs ``(i, c)``, where ``c`` is the
+            ``i``-th coefficient of ``i`` in the standard basis.
+
+
+            EXAMPLES::
+
+                sage: # needs sage.algebras
+                sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]),
+                ....:                                   Matrix([[0,1], [-1,0]])])
+                sage: elt = B(Matrix([[1,2], [-2,1]]))
+                sage: elt.items()
+                dict_items([(0, 1), (1, 2)])
+
+            ::
+
+                sage: # needs sage.combinat sage.modules
+                sage: h = SymmetricFunctions(QQ).h()
+                sage: (h[2]+3*h[3]).items()
+                dict_items([([2], 1), ([3], 3)])
+            """
+            return self.monomial_coefficients(copy=False).items()
 
         def is_zero(self):
             """
@@ -1768,7 +1822,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             zero = self.parent().base_ring().zero()
             mc = self.monomial_coefficients(copy=False)
             if not sort:
-                return [value for key, value in mc.items() if value != zero]
+                return [value for value in mc.values() if value != zero]
 
             v = sorted([(key, value) for key, value in mc.items()
                         if value != zero])
@@ -1796,8 +1850,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             if len(self) == 1:
                 return self.support()[0]
-            else:
-                raise ValueError("{} is not a single term".format(self))
+            raise ValueError("{} is not a single term".format(self))
 
         def leading_support(self, *args, **kwds):
             r"""
@@ -2311,7 +2364,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: y.parent() is B                                                   # needs sage.modules
                 True
             """
-            return self.parent().sum_of_terms((f(m), c) for m, c in self)
+            return self.parent().sum_of_terms((f(m), c) for m, c in self.items())
 
         def map_support_skip_none(self, f):
             """
@@ -2346,7 +2399,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 True
             """
             return self.parent().sum_of_terms((fm, c)
-                                              for fm, c in ((f(m), c) for m, c in self)
+                                              for fm, c in ((f(m), c) for m, c in self.items())
                                               if fm is not None)
 
         def map_item(self, f):
@@ -2381,7 +2434,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: a.map_item(f)                                                     # needs sage.combinat sage.modules
                 2*s[2, 1] + 2*s[3]
             """
-            return self.parent().sum_of_terms(f(m, c) for m, c in self)
+            return self.parent().sum_of_terms(f(m, c) for m, c in self.items())
 
         def tensor(*elements):
             """
@@ -2560,7 +2613,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     B[()] + B[(1,2)] + 3*B[(1,2,3)] + 2*B[(1,3,2)]
                     sage: ABA = cartesian_product((A, B, A))
                     sage: ABA.an_element()  # indirect doctest
-                    2*B[(0, word: )] + 2*B[(0, word: a)] + 3*B[(0, word: b)]
+                    2*B[(0, word: )] + 2*B[(1, ())] + 3*B[(1, (1,3,2))]
                 """
                 from .cartesian_product import cartesian_product
                 return cartesian_product([module.an_element() for module in self.modules])
@@ -2719,12 +2772,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 if codomain in ModulesWithBasis(K):
                     return codomain.linear_combination((f(*[module.monomial(t)
                                                             for module, t in zip(modules, m)]), c)
-                                                       for m, c in self)
-                else:
-                    return sum((c * f(*[module.monomial(t)
-                                        for module, t in zip(modules, m)])
-                                for m, c in self),
-                               codomain.zero())
+                                                       for m, c in self.items())
+                return sum((c * f(*[module.monomial(t)
+                                    for module, t in zip(modules, m)])
+                            for m, c in self.items()),
+                           codomain.zero())
 
     class DualObjects(DualObjectsCategory):
 

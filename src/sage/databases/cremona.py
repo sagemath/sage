@@ -20,8 +20,8 @@ package, run the following command in the shell ::
 This causes the latest version of the database to be downloaded from
 the internet.
 
-Both the mini and full versions of John Cremona's tables are stored in
-SAGE_SHARE/cremona as SQLite databases. The mini version has the layout::
+Both the mini and full versions of John Cremona's tables are stored
+as SQLite databases. The mini version has the layout::
 
     CREATE TABLE t_class(conductor INTEGER, class TEXT PRIMARY KEY, rank INTEGER);
     CREATE TABLE t_curve(class TEXT, curve TEXT PRIMARY KEY, eqn TEXT UNIQUE, tors INTEGER);
@@ -115,8 +115,8 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
 
         sage: d = sage.databases.cremona.build('cremona','ecdata.tgz')   # not tested
     """
-    from sage.env import SAGE_SHARE
-    db_path = os.path.join(SAGE_SHARE,'cremona',name.replace(' ','_')+'.db')
+    from sage.env import DOT_SAGE
+    db_path = os.path.join(DOT_SAGE, 'db', 'cremona', name.replace(' ','_')+'.db')
     if os.path.exists(db_path):
         raise RuntimeError('Please (re)move %s before building ' % db_path
                 + 'database')
@@ -177,7 +177,7 @@ def is_optimal_id(id):
     return id[-1] == '1' and not id[-2].isdigit()
 
 
-def cremona_letter_code(n):
+def cremona_letter_code(n) -> str:
     """
     Return the Cremona letter code corresponding to an integer.
 
@@ -252,7 +252,7 @@ def cremona_letter_code(n):
     return s
 
 
-def old_cremona_letter_code(n):
+def old_cremona_letter_code(n) -> str:
     r"""
     Return the *old* Cremona letter code corresponding to an integer.
 
@@ -559,7 +559,7 @@ def cremona_to_lmfdb(cremona_label, CDB=None):
         sage: for label in ['438.c2','306.b','462.f3']:
         ....:     assert(cremona_to_lmfdb(lmfdb_to_cremona(label)) == label)
     """
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     m = cremona_label_regex.match(cremona_label)
     if m is None:
         raise ValueError("Invalid Cremona label")
@@ -582,8 +582,7 @@ def cremona_to_lmfdb(cremona_label, CDB=None):
         sorted_numbers = [curve[1] for curve in iso_class]
         lmfdb_number = str(sorted_numbers.index(cremona_number)+1)
         return N + '.' + lmfdb_iso + lmfdb_number
-    else:
-        return N + '.' + lmfdb_iso
+    return N + '.' + lmfdb_iso
 
 
 def lmfdb_to_cremona(lmfdb_label, CDB=None):
@@ -609,7 +608,7 @@ def lmfdb_to_cremona(lmfdb_label, CDB=None):
         sage: cremona_to_lmfdb('990j1')
         '990.h3'
     """
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     m = lmfdb_label_regex.match(lmfdb_label)
     if m is None:
         raise ValueError("Invalid LMFDB label")
@@ -630,8 +629,7 @@ def lmfdb_to_cremona(lmfdb_label, CDB=None):
         iso_class = sorted([(curve[0],i+1) for i,curve in enumerate(classes[class_to_int(cremona_iso)])])
         cremona_number = str(iso_class[int(lmfdb_number)-1][1])
         return N + cremona_iso + cremona_number
-    else:
-        return N + cremona_iso
+    return N + cremona_iso
 
 
 class MiniCremonaDatabase(SQLDatabase):
@@ -1651,9 +1649,11 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
 _db = None
 
 
-def CremonaDatabase(name=None, mini=None, set_global=None):
+def CremonaDatabase(name=None, mini=None):
     """
-    Initialize the Cremona database with name ``name``. If ``name`` is
+    Initialize the Cremona database with name ``name``.
+
+    If ``name`` is
     ``None`` it instead initializes large Cremona database (named 'cremona'),
     if available or default mini Cremona database (named 'cremona mini').
 
@@ -1690,10 +1690,6 @@ def CremonaDatabase(name=None, mini=None, set_global=None):
         ...
         ValueError: the full Cremona database is not available; consider using the mini Cremona database by setting mini=True
     """
-    if set_global is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(25825, "the set_global argument for CremonaDatabase is deprecated and ignored")
-
     if name is None:
         if mini is None:
             if DatabaseCremona().is_present():
@@ -1719,5 +1715,4 @@ def CremonaDatabase(name=None, mini=None, set_global=None):
 
     if mini:
         return MiniCremonaDatabase(name)
-    else:
-        return LargeCremonaDatabase(name)
+    return LargeCremonaDatabase(name)

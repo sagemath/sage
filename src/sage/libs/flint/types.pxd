@@ -266,9 +266,9 @@ cdef extern from "flint_wrap.h":
 
 
     # flint/flint.h
-    ctypedef struct flint_rand_s:
+    ctypedef struct flint_rand_struct:
         pass
-    ctypedef flint_rand_s flint_rand_t[1]
+    ctypedef flint_rand_struct flint_rand_t[1]
 
     cdef long FLINT_BITS
     cdef long FLINT_D_BITS

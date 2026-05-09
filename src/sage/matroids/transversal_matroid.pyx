@@ -41,19 +41,18 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from collections import Counter
 from copy import copy
 from cpython.object cimport Py_EQ, Py_NE
-from sage.graphs.graph import Graph
+
 from sage.graphs.digraph import DiGraph
 from sage.graphs.bipartite_graph import BipartiteGraph
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
 from sage.matroids.minor_matroid import MinorMatroid
 from sage.matroids.utilities import newlabel
-import networkx as nx
 
 
 cdef class TransversalMatroid(BasisExchangeMatroid):
@@ -157,7 +156,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             sage: len(M.bases())
             9
         """
-        contents = set([e for subset in sets for e in subset])
+        contents = {e for subset in sets for e in subset}
         if groundset is None:
             groundset = contents
         elif not contents.issubset(groundset):
@@ -230,28 +229,27 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             self._matching = {self._idx[e]: matching_temp[e] for e in matching_temp}
 
         # Build a DiGraph for doing basis exchange
-        self._D = nx.DiGraph()
+        self._D = <GenericGraph_pyx?> DiGraph()
         # Make sure we get isolated vertices, corresponding to loops
-        self._D.add_nodes_from(self._idx.itervalues())
+        self._D.add_vertices(self._idx.values())
         # Also get isolated vertices corresponding to empty sets
-        self._D.add_nodes_from(self._set_labels)
+        self._D.add_vertices(self._set_labels)
 
         # For sets in the matching, orient them as starting from the collections
-        matching_reversed = [(v, k) for k, v in self._matching.iteritems()]
-        self._D.add_edges_from(matching_reversed)
+        matching_reversed = ((v, k) for k, v in self._matching.items())
+        self._D.add_edges(matching_reversed)
 
-        other_edges = []
-        for i, s in enumerate(sets):
-            for e in s:
-                if e not in matching_temp or matching_temp[e] != set_labels[i]:
-                    other_edges.append((self._idx[e], set_labels[i]))
-        self._D.add_edges_from(other_edges)
+        other_edges = ((self._idx[e], set_labels[i])
+                       for i, s in enumerate(sets)
+                       for e in s
+                       if e not in matching_temp or matching_temp[e] != set_labels[i])
+        self._D.add_edges(other_edges)
 
     cdef bint _is_exchange_pair(self, long x, long y) except -1:
         r"""
         Check for `M`-alternating path from `x` to `y`.
         """
-        return nx.has_path(self._D, y, x)
+        return x in self._D.depth_first_search(y)
 
     cdef int _exchange(self, long x, long y) except -1:
         r"""
@@ -260,16 +258,16 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         Internal method, does no checks.
         """
         # update the internal matching
-        sh = nx.shortest_path(self._D, y, x)
+        sh = self._D.shortest_path(y, x)
         del self._matching[x]
         for i in range(0, len(sh)-1, 2):
             self._matching[sh[i]] = sh[i+1]
 
         # update the graph to reflect this new matching
-        sh_edges = [(sh[i], sh[i + 1]) for i in xrange(len(sh) - 1)]
-        sh_edges_r = [(sh[i + 1], sh[i]) for i in xrange(len(sh) - 1)]
-        self._D.remove_edges_from(sh_edges)
-        self._D.add_edges_from(sh_edges_r)
+        # i.e., reverse the orientation of edges along the shortest path sh
+        self._D.delete_edges(zip(sh, sh[1:]))
+        sh.reverse()
+        self._D.add_edges(zip(sh, sh[1:]))
 
         BasisExchangeMatroid._exchange(self, x, y)
 
@@ -471,16 +469,14 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             sage: B2.is_isomorphic(B)
             True
         """
-        # cast the internal networkx as a sage DiGraph
-        D = DiGraph(self._D)
         # relabel the vertices, then return as a BipartiteGraph
-        vertex_map = {i: e for i, e in enumerate(self._E)}
+        vertex_map = dict(enumerate(self._E))
         for i, l in enumerate(self._set_labels):
             vertex_map[l] = self._set_labels_input[i]
-        D.relabel(vertex_map)
         partition = [list(self._E), self._set_labels_input]
 
-        return BipartiteGraph(D, partition=partition)
+        return BipartiteGraph(self._D.relabel(vertex_map, inplace=False),
+                              partition=partition)
 
     cpdef _minor(self, contractions, deletions):
         """
@@ -668,7 +664,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             labels.append(l)
         return TransversalMatroid(sets, groundset=self.groundset(), set_labels=labels)
 
-    cpdef transversal_extension(self, element=None, newset=False, sets=[]):
+    cpdef transversal_extension(self, element=None, newset=False, sets=None):
         r"""
         Return a :class:`TransversalMatroid` extended by an element.
 
@@ -751,6 +747,8 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             Transversal matroid of rank 3 on 5 elements, with 3 sets
             sage: Ne = N.transversal_extension(element='f', sets=['s2'])
         """
+        if sets is None:
+            sets = []
         cdef set parsed_sets = set(sets)
         if element is None:
             element = newlabel(self._groundset)
@@ -781,17 +779,17 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             else:
                 new_sets.append(s)
 
+        groundset = self._groundset.union([element])
         if newset:
             if newset is True:
-                newset = newlabel(self._groundset.union(labels))
+                newset = newlabel(groundset.union(labels))
             new_sets.append([element])
             labels = list(labels)  # Make a shallow copy since we mutate it
             labels.append(newset)
 
-        groundset = self._groundset.union([element])
         return TransversalMatroid(new_sets, groundset, labels)
 
-    def transversal_extensions(self, element=None, sets=[]):
+    def transversal_extensions(self, element=None, sets=None):
         r"""
         Return an iterator of extensions based on the transversal presentation.
 
@@ -829,7 +827,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             raise ValueError("cannot extend by element already in groundset")
 
         labels = self._set_labels_input
-        if not sets:
+        if sets is None:
             sets = labels
         elif not set(sets).issubset(labels):
             raise ValueError("sets do not match presentation")

@@ -16,20 +16,22 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.cachefunc import cached_method
+from typing import Self
+
+from sage.algebras.lie_algebras.verma_module import ModulePrinting
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.monoids import Monoids
-from sage.structure.parent import Parent
-from sage.structure.indexed_generators import IndexedGenerators
-from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedMonoid
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.data_structures.blas_dict import iaxpy
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedMonoid
+from sage.rings.integer_ring import ZZ
 from sage.sets.family import Family
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.matrix.constructor import matrix
-from sage.rings.integer_ring import ZZ
-from sage.data_structures.blas_dict import iaxpy
-from sage.algebras.lie_algebras.verma_module import ModulePrinting
+from sage.structure.indexed_generators import IndexedGenerators
+from sage.structure.parent import Parent
 
 
 class BGGDualModule(CombinatorialFreeModule):
@@ -98,7 +100,7 @@ class BGGDualModule(CombinatorialFreeModule):
 
     - [Humphreys08]_
     """
-    def __init__(self, module):
+    def __init__(self, module) -> None:
         r"""
         Initialize ``self``.
 
@@ -456,7 +458,7 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
         """
         return super(IndexedMonoid, cls).__classcall__(cls, simple, prefix=prefix, **kwds)
 
-    def __init__(self, simple, prefix, category=None, **kwds):
+    def __init__(self, simple, prefix, category=None, **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -589,7 +591,7 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
             self._construct_next_level()
         return self._weight_space_bases.get(mu, [])
 
-    def __contains__(self, m):
+    def __contains__(self, m) -> bool:
         r"""
         Check if ``m`` is contained in ``self``.
 
@@ -744,10 +746,10 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
                 mat = matrix(R, [[b[s] for s in supp] for b in wt_basis])
                 mat.echelonize()
                 for i, k in enumerate(self._weight_space_bases[mu]):
-                    data = {supp[ind]: R(c) for ind, c in mat[i].iteritems() if c}
+                    data = {supp[ind]: R(c) for ind, c in mat[i].items() if c}
                     self._basis[k] = ambient.element_class(ambient, data)
                 i = mat.nrows() - 1
-                data = {supp[ind]: R(c) for ind, c in mat[i].iteritems() if c}
+                data = {supp[ind]: R(c) for ind, c in mat[i].items() if c}
                 if data:
                     next_level[key] = ambient.element_class(ambient, data)
                     self._basis[key] = next_level[key]
@@ -779,7 +781,9 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
             P = Phi.weight_lattice()
             coroots = Phi.root_lattice().simple_coroots()
             la = P._from_dict({i: weight.scalar(ac) for i, ac in coroots.items()})
-            from sage.combinat.crystals.monomial_crystals import CrystalOfNakajimaMonomials
+            from sage.combinat.crystals.monomial_crystals import (
+                CrystalOfNakajimaMonomials,
+            )
             return CrystalOfNakajimaMonomials(la).cardinality()
         from sage.rings.infinity import infinity
         return infinity
@@ -811,7 +815,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
             return FiniteDimensionalSimpleModule(g, weight, *args, **kwds)
         return super().__classcall__(cls, g, weight, *args, **kwds)
 
-    def __init__(self, g, weight, prefix='f', basis_key=None, **kwds):
+    def __init__(self, g, weight, prefix='f', basis_key=None, **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -979,7 +983,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
             raise ValueError(f"{m} does not index a basis element")
         return self._indices._basis[m]
 
-    def dual(self):
+    def dual(self) -> Self:
         r"""
         Return the dual module of ``self``, which is ``self`` since simple
         modules are self-dual.

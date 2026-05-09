@@ -96,7 +96,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         TESTS::
 
-            sage: # needs sage.libs.ntl
             sage: QQq.<zz> = Qq(25,4)
             sage: FFp = Zp(5,5).residue_field()
             sage: QQq(FFp.zero())
@@ -116,6 +115,23 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             Traceback (most recent call last):
             ...
             TypeError: no conversion between padics when prime numbers differ
+
+        Check that bug :issue:`28555` is fixed::
+
+            sage: A.<a> = Qq(5^2)
+            sage: A.base_ring()(A(1))
+            1 + O(5^20)
+            sage: A.base_ring()(a)
+            Traceback (most recent call last):
+            ...
+            TypeError: element in a proper extension
+
+        Check that bug :issue:`33527` is fixed::
+
+            sage: K = Qq(25, names='a')
+            sage: K0 = K.base_ring()
+            sage: K0(K(1))
+            1 + O(5^20)
         """
         self.prime_pow = <PowComputer_?>parent.prime_pow
         pAdicGenericElement.__init__(self, parent)
@@ -137,7 +153,11 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
                 if x.parent().modulus().change_ring(self.base_ring()) == self.parent().modulus():
                     x = x.polynomial().change_ring(self.base_ring()).list()
                 else:
-                    x = self.base_ring()(x)
+                    if x.polynomial().degree() >= 1:
+                        if self.parent() is x.parent().base_ring():
+                            raise TypeError("element in a proper extension")
+                        raise NotImplementedError("conversion between different p-adic extensions not implemented")
+                    x = self.base_ring()(x.polynomial().constant_coefficient())
                     if x.is_zero():
                         absprec = min(absprec, x.precision_absolute()*self.prime_pow.e)
                         x = []
@@ -516,7 +536,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         Check to see that :issue:`10292` is resolved::
 
-            sage: # needs sage.schemes
             sage: E = EllipticCurve('37a')
             sage: R = E.padic_regulator(7)
             sage: len(R.expansion())
@@ -613,7 +632,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<a> = Qq(125)
             sage: b = a^2 + 5*a + 1
             sage: b._ext_p_list(True)
@@ -634,7 +652,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(125)
             sage: (5*a).unit_part()
             a + O(5^20)
@@ -693,7 +710,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(27, 4)
             sage: (3 + 3*a).residue()
             0
@@ -702,7 +718,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         TESTS::
 
-            sage: # needs sage.libs.ntl
             sage: a.residue(0)
             0
             sage: a.residue(2)
@@ -718,14 +733,12 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             ...
             NotImplementedError: reduction modulo p^n with n>1
 
-            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(27, 4)
             sage: (3 + 3*a).residue()
             0
             sage: (a + 1).residue()
             a0 + 1
 
-            sage: # needs sage.libs.ntl
             sage: R.<a> = Qq(27, 4)
             sage: (3 + 3*a).residue()
             0
@@ -1044,7 +1057,7 @@ cdef class ExpansionIterable():
 
     def __cinit__(self, pAdicTemplateElement elt, long prec, long val_shift, expansion_mode mode):
         """
-        Allocate memory for the iteratable.
+        Allocate memory for the iterable.
 
         TESTS::
 
@@ -1064,7 +1077,7 @@ cdef class ExpansionIterable():
 
     def __dealloc__(self):
         """
-        Deallocate memory for the iteratable.
+        Deallocate memory for the iterable.
 
         TESTS::
 

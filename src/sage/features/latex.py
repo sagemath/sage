@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``latex`` and equivalent programs
 """
@@ -88,19 +87,19 @@ class LaTeX(Executable):
         from subprocess import run
         cmd = [self.name, '-interaction=nonstopmode', filename_tex]
         cmd = ' '.join(cmd)
-        result = run(cmd, shell=True, cwd=base, capture_output=True, text=True)
+        result = run(cmd, shell=True, cwd=base, capture_output=True, text=True,
+                     check=False)
 
         # return
         if result.returncode == 0:
             return FeatureTestResult(self, True)
-        else:
-            return FeatureTestResult(self, False, reason="Running latex on "
-                                     "a sample file (with command='{}') returned nonzero "
-                                     "exit status='{}' with stderr='{}' "
-                                     "and stdout='{}'".format(result.args,
-                                                              result.returncode,
-                                                              result.stderr.strip(),
-                                                              result.stdout.strip()))
+        return FeatureTestResult(self, False, reason="Running latex on "
+                                 "a sample file (with command='{}') returned nonzero "
+                                 "exit status='{}' with stderr='{}' "
+                                 "and stdout='{}'".format(result.args,
+                                                          result.returncode,
+                                                          result.stderr.strip(),
+                                                          result.stdout.strip()))
 
 
 class latex(LaTeX):
@@ -242,7 +241,7 @@ class TeXFile(StaticFile):
             sage: feature.absolute_filename()  # optional - latex
             '.../latex/base/article.cls'
         """
-        from subprocess import run, CalledProcessError, PIPE
+        from subprocess import run, CalledProcessError
         try:
             proc = run(['kpsewhich', self.filename],
                        capture_output=True, text=True, check=True)

@@ -101,16 +101,16 @@ AUTHORS:
 
 from sage.arith.functions import lcm
 from sage.arith.misc import CRT_basis
-from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor
+from sage.groups.perm_gps.constructor import (
+    PermutationGroupElement as PermutationConstructor,
+)
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
+from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
+from sage.modular.arithgroup.congroup_sl2z import SL2Z
 from sage.rings.integer_ring import ZZ
-
-from .all import SL2Z
-from .arithgroup_generic import ArithmeticSubgroup
-
 
 Idm = SL2Z([1,0,0,1])    # identity
 
@@ -535,11 +535,10 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
                     self.relabel(inplace=False)._S2 == other.relabel(inplace=False)._S2 and
                     self.relabel(inplace=False)._S3 == other.relabel(inplace=False)._S3)
 
-        elif isinstance(other, ArithmeticSubgroup):
+        if isinstance(other, ArithmeticSubgroup):
             return self == other.as_permutation_group()
 
-        else:
-            return False
+        return False
 
     def __ne__(self, other):
         """
@@ -596,8 +595,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             return "Arithmetic subgroup with permutations of right cosets\n S2=%s\n S3=%s\n L=%s\n R=%s" % (
                 self.S2(), self.S3(), self.L(), self.R())
 
-        else:
-            return "Arithmetic subgroup of index %d" % self.index()
+        return "Arithmetic subgroup of index %d" % self.index()
 
     #
     # Attribute access
@@ -1116,7 +1114,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
     # Group stuff
     #
 
-    def is_normal(self):
+    def is_normal(self) -> bool:
         r"""
         Test whether the group is normal.
 
@@ -1134,9 +1132,9 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         G = self.relabel(inplace=False)
         s2 = G._S2
         s3 = G._S3
-        ss2 = [None]*N
-        ss3 = [None]*N
-        for j in [s2[0],s3[0]]:
+        ss2 = [None] * N
+        ss3 = [None] * N
+        for j in [s2[0], s3[0]]:
             m = G._canonical_rooted_labels(j)
             for i in range(N):
                 ss2[m[i]] = m[s2[i]]
@@ -1332,7 +1330,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         from .congroup_generic import CongruenceSubgroup_constructor as CS
         return CS(N, [x.matrix() for x in self.gens()])
 
-    def is_congruence(self):
+    def is_congruence(self) -> bool:
         r"""
         Return ``True`` if this is a congruence subgroup, and ``False``
         otherwise.
@@ -1433,14 +1431,14 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             True
         """
         from sage.misc.verbose import verbose
-        if self.index() == 1: # the group is SL2Z (trivial case)
+        if self.index() == 1:  # the group is SL2Z (trivial case)
             return True
 
-        L = self.L() # action of L
-        R = self.R() # action of R
+        L = self.L()  # action of L
+        R = self.R()  # action of R
 
         if self.is_even():
-            N = L.order() # generalised level of the group
+            N = L.order()  # generalised level of the group
         else:
             N = 2 * L.order()
 
@@ -1451,13 +1449,13 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         if e == 1:
             # N is odd
             # this only gets called if self is even
-            onehalf = ZZ(2).inverse_mod(N) # i.e. 2^(-1) mod N
+            onehalf = ZZ(2).inverse_mod(N)  # i.e. 2^(-1) mod N
             rel = (R*R*L**(-onehalf))**3
             return rel.is_one()
 
-        elif m == 1:
+        if m == 1:
             # N is a power of 2
-            onefifth = ZZ(5).inverse_mod(N) # i.e. 5^(-1) mod N
+            onefifth = ZZ(5).inverse_mod(N)  # i.e. 5^(-1) mod N
             S = L**20*R**onefifth*L**(-4)*~R
 
             # congruence if the three below permutations are trivial
@@ -1478,55 +1476,54 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
 
             return True
 
-        else:
-            # e>1, m>1
-            onehalf = ZZ(2).inverse_mod(m) # i.e. 2^(-1) mod m
-            onefifth = ZZ(5).inverse_mod(e) # i.e. 5^(-1) mod e
-            c, d = CRT_basis([m, e])
-            # c=0 mod e, c=1 mod m; d=1 mod e, d=0 mod m
-            a = L**c
-            b = R**c
-            l = L**d
-            r = R**d
-            s = l**20 * r**onefifth * l**(-4) * ~r
+        # e>1, m>1
+        onehalf = ZZ(2).inverse_mod(m) # i.e. 2^(-1) mod m
+        onefifth = ZZ(5).inverse_mod(e) # i.e. 5^(-1) mod e
+        c, d = CRT_basis([m, e])
+        # c=0 mod e, c=1 mod m; d=1 mod e, d=0 mod m
+        a = L**c
+        b = R**c
+        l = L**d
+        r = R**d
+        s = l**20 * r**onefifth * l**(-4) * ~r
 
-            # Congruence if the seven permutations below are trivial:
-            rel = ~a*~r*a*r
-            if not rel.is_one():
-                verbose("Failed relation B1")
-                return False
+        # Congruence if the seven permutations below are trivial:
+        rel = ~a*~r*a*r
+        if not rel.is_one():
+            verbose("Failed relation B1")
+            return False
 
-            rel = (a*~b*a)**4
-            if not rel.is_one():
-                verbose("Failed relation B2")
-                return False
+        rel = (a*~b*a)**4
+        if not rel.is_one():
+            verbose("Failed relation B2")
+            return False
 
-            rel = (a*~b*a)**2*(~a*b)**3
-            if not rel.is_one():
-                verbose("Failed relation B3")
-                return False
+        rel = (a*~b*a)**2*(~a*b)**3
+        if not rel.is_one():
+            verbose("Failed relation B3")
+            return False
 
-            rel = (a*~b*a)**2*(b*b*a**(-onehalf))**(-3)
-            if not rel.is_one():
-                verbose("Failed relation B4")
-                return False
+        rel = (a*~b*a)**2*(b*b*a**(-onehalf))**(-3)
+        if not rel.is_one():
+            verbose("Failed relation B4")
+            return False
 
-            rel = (~l*r*~l)*s*(l*~r*l)*s
-            if not rel.is_one():
-                verbose("Failed relation B5")
-                return False
+        rel = (~l*r*~l)*s*(l*~r*l)*s
+        if not rel.is_one():
+            verbose("Failed relation B5")
+            return False
 
-            rel = ~s*r*s*r**(-25)
-            if not rel.is_one():
-                verbose("Failed relation B6")
-                return False
+        rel = ~s*r*s*r**(-25)
+        if not rel.is_one():
+            verbose("Failed relation B6")
+            return False
 
-            rel = (l*~r*l)**2*(s*r**5*l*~r*l)**(-3)
-            if not rel.is_one():
-                verbose("Failed relation B7")
-                return False
+        rel = (l*~r*l)**2*(s*r**5*l*~r*l)**(-3)
+        if not rel.is_one():
+            verbose("Failed relation B7")
+            return False
 
-            return True
+        return True
 
     def surgroups(self):
         r"""
@@ -1630,7 +1627,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         return (OddArithmeticSubgroup_Permutation,
                 (self._S2,self._S3,self._L,self._R,canonical_labels))
 
-    def is_odd(self):
+    def is_odd(self) -> bool:
         r"""
         Test whether the group is odd.
 
@@ -1642,7 +1639,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         """
         return True
 
-    def is_even(self):
+    def is_even(self) -> bool:
         r"""
         Test whether the group is even.
 
@@ -1947,7 +1944,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         return (EvenArithmeticSubgroup_Permutation,
                 (self._S2, self._S3, self._L, self._R, canonical_labels))
 
-    def is_odd(self):
+    def is_odd(self) -> bool:
         r"""
         Return ``True`` if this subgroup does not contain the matrix `-Id`.
 
@@ -1959,7 +1956,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         """
         return False
 
-    def is_even(self):
+    def is_even(self) -> bool:
         r"""
         Return ``True`` if this subgroup contains the matrix `-Id`.
 
@@ -2459,8 +2456,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         """
         if relabel:
             return self.relabel(inplace=False)
-        else:
-            return self
+        return self
 
     def one_odd_subgroup(self, random=False):
         r"""
@@ -2488,7 +2484,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             sage: Go == G
             True
 
-        Strating from `\Gamma(6)` we get a different group::
+        Starting from `\Gamma(6)` we get a different group::
 
             sage: G = Gamma(6).as_permutation_group()
             sage: G.is_odd(), G.index()

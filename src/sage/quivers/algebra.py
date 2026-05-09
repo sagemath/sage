@@ -19,9 +19,9 @@ Path Algebras
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.combinat.free_module import CombinatorialFreeModule
-from .algebra_elements import PathAlgebraElement
+from sage.misc.cachefunc import cached_method
+from sage.quivers.algebra_elements import PathAlgebraElement
 
 
 class PathAlgebra(CombinatorialFreeModule):
@@ -615,9 +615,8 @@ class PathAlgebra(CombinatorialFreeModule):
         if factor_on_left:
             return self.sum(coeff * element
                             for element, coeff in iter_of_elements_coeff)
-        else:
-            return self.sum(element * coeff
-                            for element, coeff in iter_of_elements_coeff)
+        return self.sum(element * coeff
+                        for element, coeff in iter_of_elements_coeff)
 
     def homogeneous_component(self, n):
         """

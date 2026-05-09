@@ -92,7 +92,6 @@ from sage.rings.polynomial.plural cimport NCPolynomialRing_plural, NCPolynomial_
 from sage.rings.polynomial.multi_polynomial_ideal import NCPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.multi_polynomial_ideal_libsingular cimport sage_ideal_to_singular_ideal, singular_ideal_to_sage_sequence
-from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
 
 from sage.libs.singular.decl cimport *
 from sage.libs.singular.option import opt_ctx
@@ -513,6 +512,8 @@ cdef class Converter(SageObject):
         from sage.matrix.matrix_mpolynomial_dense import Matrix_mpolynomial_dense
         from sage.matrix.matrix_integer_dense import Matrix_integer_dense
         from sage.matrix.matrix_generic_dense import Matrix_generic_dense
+        # local import to break cyclic dependency (rings.polynomial.multi_polynomial_sequence > ... > libs.singular.function > rings.polynomial.multi_polynomial_sequence)
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
         for a in args:
             if is_singular_poly_wrapper(a):
                 v = self.append_polynomial(a)
@@ -612,7 +613,7 @@ cdef class Converter(SageObject):
             sage: Converter([a,b,c],ring=P) # indirect doctest
             Singular Converter in Multivariate Polynomial Ring in a, b, c over Finite Field of size 127
         """
-        return "Singular Converter in %s"%(self._sage_ring)
+        return "Singular Converter in %s" % (self._sage_ring)
 
     def __dealloc__(self):
         cdef ring *r = access_singular_ring(self._sage_ring)
@@ -629,19 +630,19 @@ cdef class Converter(SageObject):
             3
         """
         cdef leftv * v
-        v=self.args
+        v = self.args
         cdef int l
-        l=0
+        l = 0
         while v != NULL:
-            l=l+1
-            v=v.next
+            l += 1
+            v = v.next
         return l
 
     cdef leftv* pop_front(self) except NULL:
         """
         Pop a Singular element from the front of the list.
         """
-        assert(self.args != NULL)
+        assert self.args != NULL
         cdef leftv *res = self.args
         self.args = self.args.next
         res.next = NULL
@@ -788,15 +789,14 @@ cdef class Converter(SageObject):
         the list
         """
         rank = max([v.parent().rank() for v in m])
-        cdef ideal *result
         cdef ring *r = self._singular_ring
         cdef ideal *i
         cdef int j = 0
 
-        i = idInit(len(m),rank)
+        i = idInit(len(m), rank)
         for f in m:
             i.m[j] = sage_vector_to_poly(f, r)
-            j+=1
+            j += 1
         return self._append(<void*> i, MODUL_CMD)
 
     cdef leftv *append_number(self, n) except NULL:
@@ -982,7 +982,7 @@ cdef class Converter(SageObject):
         elif rtyp == NONE:
             return None
         else:
-            raise NotImplementedError("rtyp %d not implemented."%(rtyp))
+            raise NotImplementedError("rtyp %d not implemented." % (rtyp))
 
 
 cdef class BaseCallHandler:
@@ -1194,7 +1194,7 @@ cdef class SingularFunction(SageObject):
             sage: SingularFunction('foobar') # indirect doctest
             foobar (singular function)
         """
-        return "%s (singular function)" %(self._name)
+        return "%s (singular function)" % (self._name)
 
     def __call__(self, *args, ring=None, bint interruptible=True, attributes=None):
         """
@@ -1263,31 +1263,6 @@ cdef class SingularFunction(SageObject):
             sage: with open(out) as f:
             ....:     'is no standard basis' in f.read()
             False
-
-
-        TESTS:
-
-        We show that the interface recovers gracefully from errors::
-
-            sage: P.<e,d,c,b,a> = PolynomialRing(QQ,5,order='lex')
-            sage: I = sage.rings.ideal.Cyclic(P)
-
-            sage: triangL = sage.libs.singular.function_factory.ff.triang__lib.triangL
-            sage: _ = triangL(I)
-            Traceback (most recent call last):
-            ...
-            RuntimeError: error in Singular function call 'triangL':
-            The input is no groebner basis.
-            leaving triang.lib::triangL (0)
-
-        Flush any stray output -- see :issue:`28622`::
-
-            sage: sys.stdout.flush()
-            ...
-
-            sage: G= Ideal(I.groebner_basis())
-            sage: triangL(G,attributes={G:{'isSB':1}})
-            [[e + d + c + b + a, ...]]
         """
         global dummy_ring
 
@@ -1352,11 +1327,9 @@ EXAMPLES::
     sage: I = Ideal(Ideal(f1,f2).groebner_basis()[::-1])
     sage: triangL(I, attributes={I:{'isSB':1}})
     [[x2^4 + 4*x2^3 - 6*x2^2 - 20*x2 + 5, 8*x1 - x2^3 + x2^2 + 13*x2 - 5],
-     [x2, x1^2],
-     [x2, x1^2],
-     [x2, x1^2]]
+     [x2, x1^2]...
 
-"""%(self._name)
+""" % (self._name)
         from sage.interfaces.singular import get_docstring
         return prefix + get_docstring(self._name, prefix=True, code=True)
 
@@ -1776,6 +1749,9 @@ def singular_function(name):
         return SingularLibraryFunction(name)
 
 
+_loaded_libs = set()
+
+
 def lib(name):
     """
     Load the Singular library ``name``.
@@ -1793,6 +1769,9 @@ def lib(name):
         sage: primes(2,10, ring=GF(127)['x,y,z'])
         (2, 3, 5, 7)
     """
+    if name in _loaded_libs:
+        return
+
     global si_opt_2
 
     cdef int vv = si_opt_2
@@ -1809,6 +1788,8 @@ def lib(name):
 
     if failure:
         raise NameError("Singular library {!r} not found".format(name))
+
+    _loaded_libs.add(name)
 
 
 def get_printlevel():

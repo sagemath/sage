@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Examples of infinite enumerated sets
 """
@@ -92,7 +91,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=InfiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -101,7 +100,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         return "An example of an infinite enumerated set: the nonnegative integers"
 
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         """
         EXAMPLES::
 

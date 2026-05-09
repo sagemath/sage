@@ -72,13 +72,13 @@ List representatives for Gamma_0(N) - equivalence classes of cusps::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Any
 
+from sage.misc.cachefunc import cached_method, cached_function
 from sage.structure.parent import Parent
 from sage.structure.element import Element, InfinityElement
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
-
-from sage.misc.cachefunc import cached_method, cached_function
 
 
 @cached_function
@@ -506,7 +506,7 @@ class NFCusp(Element):
                 self.__a = R.zero()
                 self.__b = R.one()
                 return
-            elif not b:
+            if not b:
                 if not a:
                     raise TypeError("unable to convert (%r, %r) "
                                     "to a cusp of the number field" % (a, b))
@@ -579,9 +579,8 @@ class NFCusp(Element):
         """
         if self.__b.is_zero():
             return "Cusp Infinity of %s" % self.parent().number_field()
-        else:
-            return "Cusp [%s: %s] of %s" % (self.__a, self.__b,
-                                            self.parent().number_field())
+        return "Cusp [%s: %s] of %s" % (self.__a, self.__b,
+                                        self.parent().number_field())
 
     def number_field(self):
         """
@@ -597,7 +596,7 @@ class NFCusp(Element):
         """
         return self.parent().number_field()
 
-    def is_infinity(self):
+    def is_infinity(self) -> bool:
         """
         Return ``True`` if this is the cusp infinity.
 
@@ -714,13 +713,12 @@ class NFCusp(Element):
         """
         if self.__b.is_zero():
             return "\\infty"
-        else:
-            return "\\[%s: %s\\]" % (self.__a._latex_(),
-                                     self.__b._latex_())
+        return "\\[%s: %s\\]" % (self.__a._latex_(),
+                                 self.__b._latex_())
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         """
-        Compare the cusps ``self`` and ``right``.
+        Compare the cusps ``self`` and ``other``.
 
         Comparison is as for elements in the number field, except with
         the cusp oo which is greater than everything but itself.
@@ -750,16 +748,13 @@ class NFCusp(Element):
             False
         """
         if self.__b.is_zero():
-            if right.__b.is_zero():
+            if other.__b.is_zero():
                 return rich_to_bool(op, 0)
-            else:
-                return rich_to_bool(op, 1)
-        else:
-            if right.__b.is_zero():
-                return rich_to_bool(op, -1)
-            else:
-                return richcmp(self._number_field_element_(),
-                               right._number_field_element_(), op)
+            return rich_to_bool(op, 1)
+        if other.__b.is_zero():
+            return rich_to_bool(op, -1)
+        return richcmp(self._number_field_element_(),
+                       other._number_field_element_(), op)
 
     def __neg__(self):
         """
@@ -822,7 +817,7 @@ class NFCusp(Element):
         k = self.number_field()
         return k.ideal(self.__a, self.__b)
 
-    def ABmatrix(self):
+    def ABmatrix(self) -> list:
         """
         Return AB-matrix associated to the cusp ``self``.
 
@@ -897,11 +892,10 @@ class NFCusp(Element):
         r = A1.element_1_mod(A2)
         b1 = -(1 - r) / a2 * g
         b2 = (r / a1) * g
-        ABM = [a1, b1, a2, b2]
+        return [a1, b1, a2, b2]
 
-        return ABM
-
-    def is_Gamma0_equivalent(self, other, N, Transformation=False):
+    def is_Gamma0_equivalent(self, other, N,
+                             Transformation=False) -> bool | tuple[bool, Any]:
         r"""
         Check if cusps ``self`` and ``other`` are `\Gamma_0(N)`- equivalent.
 
@@ -956,8 +950,7 @@ class NFCusp(Element):
         if not (self.ideal() / other.ideal()).is_principal():
             if not Transformation:
                 return False
-            else:
-                return False, 0
+            return False, 0
 
         reps = list_of_representatives(N)
         alpha1 = NFCusp(k, self, lreps=reps)
@@ -967,8 +960,7 @@ class NFCusp(Element):
         if (k.ideal(alpha2.__b) + N) != delta:
             if not Transformation:
                 return False
-            else:
-                return False, 0
+            return False, 0
 
         M1 = alpha1.ABmatrix()
         M2 = alpha2.ABmatrix()
@@ -983,29 +975,27 @@ class NFCusp(Element):
             if (M2[2] * M1[3] - u * M1[2] * M2[3]) in ABdelta:
                 if not Transformation:
                     return True
-                else:
-                    AuxCoeff = [1, 0, 0, 1]
-                    Aux = M2[2] * M1[3] - u * M1[2] * M2[3]
-                    if Aux in A * B * N:
-                        if u != 1:
-                            AuxCoeff[3] = u
-                    else:
-                        A1 = (A * B * N) / ABdelta
-                        A2 = B * k.ideal(M1[2] * M2[2]) / (A * ABdelta)
-                        f = A1.element_1_mod(A2)
-                        w = ((1 - f) * Aux) / (M1[2] * M2[2])
+                AuxCoeff = [1, 0, 0, 1]
+                Aux = M2[2] * M1[3] - u * M1[2] * M2[3]
+                if Aux in A * B * N:
+                    if u != 1:
                         AuxCoeff[3] = u
-                        AuxCoeff[1] = w
-                    from sage.matrix.constructor import Matrix
-                    Maux = Matrix(k, 2, AuxCoeff)
-                    M1inv = Matrix(k, 2, M1).inverse()
-                    Mtrans = Matrix(k, 2, M2) * Maux * M1inv
-                    assert Mtrans[1][0] in N
-                    return True, Mtrans.list()
+                else:
+                    A1 = (A * B * N) / ABdelta
+                    A2 = B * k.ideal(M1[2] * M2[2]) / (A * ABdelta)
+                    f = A1.element_1_mod(A2)
+                    w = ((1 - f) * Aux) / (M1[2] * M2[2])
+                    AuxCoeff[3] = u
+                    AuxCoeff[1] = w
+                from sage.matrix.constructor import Matrix
+                Maux = Matrix(k, 2, AuxCoeff)
+                M1inv = Matrix(k, 2, M1).inverse()
+                Mtrans = Matrix(k, 2, M2) * Maux * M1inv
+                assert Mtrans[1][0] in N
+                return True, Mtrans.list()
         if not Transformation:
             return False
-        else:
-            return False, 0
+        return False, 0
 
 # *************************************************************************
 #  Global functions:
@@ -1184,9 +1174,9 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
         sage: from sage.modular.cusps_nf import NFCusps_ideal_reps_for_levelN
         sage: NFCusps_ideal_reps_for_levelN(N)
         [(Fractional ideal (1),
-          Fractional ideal (67, a + 17),
-          Fractional ideal (127, a + 48),
-          Fractional ideal (157, a - 19))]
+          Fractional ideal (67, -4/7*a^3 + 13/7*a^2 + 39/7*a - 43),
+          Fractional ideal (127, -4/7*a^3 + 13/7*a^2 + 39/7*a - 42),
+          Fractional ideal (157, -4/7*a^3 + 13/7*a^2 + 39/7*a + 48))]
         sage: L = NFCusps_ideal_reps_for_levelN(N, 5)
         sage: all(len(L[i]) == k.class_number() for i in range(len(L)))
         True
@@ -1244,7 +1234,7 @@ def units_mod_ideal(I):
         sage: I = k.ideal(5, a + 1)
         sage: units_mod_ideal(I)
         [1,
-        -2*a^2 - 4*a + 1,
+        2*a^2 + 4*a - 1,
         ...]
 
     ::

@@ -289,6 +289,9 @@ def Q6(groundset='abcdef'):
     A = Matrix(F, [[1, 0, 0, 1, 0, 1], [0, 1, 0, 1, 1, x], [0, 0, 1, 0, 1, 1]])
     M = QuaternaryMatroid(A, groundset)
     M = _rename_and_relabel(M, "Q6")
+    pos = dict(zip(groundset, [(1, -1), (-1, 0), (1, 1),
+                               (0, -0.5), (0, 0.5), (1.5, 0)]))
+    M._fix_positions(pos_dict=pos)
     return M
 
 
@@ -322,6 +325,9 @@ def P6(groundset=None):
     CC = {2: ['abc'], 3: ['abcdef']}
     M = Matroid(circuit_closures=CC)
     M = _rename_and_relabel(M, "P6", groundset)
+    pos = dict(zip(groundset or 'abcdef',
+                   [(-1, 0), (0, 0), (1, 0), (-0.8, 0.7), (0, 1), (0.8, 0.7)]))
+    M._fix_positions(pos_dict=pos)
     return M
 
 
@@ -392,6 +398,9 @@ def R6(groundset='abcdef'):
     )
     M = TernaryMatroid(A, groundset)
     M = _rename_and_relabel(M, "R6")
+    pos = dict(zip(groundset, [(-1, 0), (1, 0), (1, 1),
+                               (-1, 1), (0, 0), (0, 1)]))
+    M._fix_positions(pos_dict=pos)
     return M
 
 
@@ -622,6 +631,9 @@ def P7(groundset='abcdefg'):
     )
     M = TernaryMatroid(A, groundset)
     M = _rename_and_relabel(M, "P7")
+    pos = dict(zip(groundset, [(0, 1), (-1, -1), (1, -1), (0, 0), (-0.5, 0),
+                               (0.5, 0), (0, -1)]))
+    M._fix_positions(pos_dict=pos)
     return M
 
 
@@ -2133,7 +2145,7 @@ def Z(r, t=True, groundset=None):
     Id = Matrix(GF(2), identity_matrix(r))
     J = Matrix(GF(2), ones_matrix(r))
     tip = Matrix(GF(2), ones_matrix(r, 1))
-    A = Id.augment(J-Id).augment(tip)
+    A = Id.augment(J - Id).augment(tip)
 
     M = Matroid(A)
     X = [f'x{i}' for i in range(1, r + 1)]
@@ -2250,7 +2262,7 @@ def Spike(r, t=True, C3=[], groundset=None):
     else:
         for S in C3:
             for xy in S:
-                if xy not in X+Y:
+                if xy not in X + Y:
                     raise ValueError(
                         "The sets in C3 must contain elements xi and yi only."
                     )
@@ -2401,8 +2413,8 @@ def Psi(r, groundset=None):
 
     [Oxl2011]_, p. 664.
     """
-    A = [f'a{i}' for i in range(0, r)]
-    B = [f'b{i}' for i in range(0, r)]
+    A = [f'a{i}' for i in range(r)]
+    B = [f'b{i}' for i in range(r)]
     E = A + B
 
     def generate_binary_strings(bit_count):
@@ -2419,16 +2431,16 @@ def Psi(r, groundset=None):
         return binary_strings
 
     NSC = []  # nonspanning circuits
-    for i in range(0, r):
+    for i in range(r):
         for k in range(1, r - 2):
             I0 = [f'a{i}', f'b{i}']
-            IK = [f'a{(i+k) % r}', f'b{(i+k) % r}']
+            IK = [f'a{(i + k) % r}', f'b{(i + k) % r}']
             for AB in generate_binary_strings(k - 1):
                 C = []
                 C += I0 + IK
                 j = 1
                 for z in AB:
-                    C += [f'{z}{(i+j) % r}']
+                    C += [f'{z}{(i + j) % r}']
                     j += 1
                 NSC += [C]
 
@@ -5029,6 +5041,19 @@ def BetsyRoss(groundset=None):
            'cjk', 'dfk', 'dgh', 'dij', 'efj', 'egk', 'ehi']
     M = Matroid(rank=3, nonspanning_circuits=NSC)
     M = _rename_and_relabel(M, "BetsyRoss", groundset)
+    pos = dict(zip(groundset or 'abcdefghijk',
+                   [(0, 1.61000000000000),
+                    (1.53120099123520, 0.497517360943665),
+                    (0.946334256190882, -1.30251736094367),
+                    (-0.946334256190882, -1.30251736094367),
+                    (-1.53120099123520, 0.497517360943665),
+                    (0.365084007635076, 0.502495027562079),
+                    (0.590718333102580, -0.191936021350899),
+                    (0, -0.621118012422360),
+                    (-0.590718333102580, -0.191936021350899),
+                    (-0.365084007635076, 0.502495027562079),
+                    (0, 0)]))
+    M._fix_positions(pos_dict=pos)
     return M
 
 
@@ -5243,9 +5268,9 @@ def _rename_and_relabel(M, name=None, groundset=None):
                 "the groundset should be of size %s (%s given)" %
                 (len(M.groundset()), len(groundset))
             )
-        M = M.relabel(dict(zip(M.groundset(), groundset)))
+        M = M.relabel(dict(zip(sorted(M.groundset()), groundset)))
 
     if name is not None:
-        M.rename(name+": " + repr(M))
+        M.rename(name + ": " + repr(M))
 
     return M

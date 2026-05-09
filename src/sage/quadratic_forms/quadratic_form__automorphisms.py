@@ -90,8 +90,7 @@ def basis_of_short_vectors(self, show_lengths=False):
     if show_lengths:
         pivot_lengths = tuple(self(v) for v in basis)
         return basis, pivot_lengths
-    else:
-        return basis
+    return basis
 
 
 def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
@@ -181,7 +180,7 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
         raise ValueError("Quadratic form must be positive definite "
                          "in order to enumerate short vectors")
 
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
 
     if len_bound <= 0:
         return []

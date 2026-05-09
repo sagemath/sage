@@ -1,9 +1,9 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Non-Commutative Symmetric Functions
+Noncommutative symmetric functions
 """
-#*****************************************************************************
-#       Copyright (C) 2009 Nicolas M. Thiery <nthiery at users.sf.net>,
+# ****************************************************************************
+#       Copyright (C) 2009 Nicolas M. Thiéry <nthiery at users.sf.net>,
 #                     2012 Franco Saliola <saliola@gmail.com>,
 #                     2012 Chris Berg <chrisjamesberg@gmail.com>
 #
@@ -16,13 +16,10 @@ Non-Commutative Symmetric Functions
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-########################################
-# TODO:
-# 1. Make Coercion run faster between multiple bases.
-########################################
+# TODO: Make Coercion run faster between multiple bases
 
 from sage.misc.bindable_class import BindableClass
 from sage.misc.cachefunc import cached_method
@@ -403,7 +400,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         sage: TestSuite(complete).run()
     """
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         r"""
         TESTS::
 
@@ -445,7 +442,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         Phi.algebra_morphism(Phi._to_complete_on_generators,
                              codomain=complete).register_as_coercion()
 
-    def _repr_(self): # could be taken care of by the category
+    def _repr_(self) -> str:  # could be taken care of by the category
         r"""
         EXAMPLES::
 
@@ -472,7 +469,8 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.complete()
 
-    _shorthands = tuple(['S', 'R', 'L', 'Phi', 'Psi', 'nM', 'I', 'dQS', 'dYQS', 'ZL', 'ZR'])
+    _shorthands = ('S', 'R', 'L', 'Phi', 'Psi', 'nM', 'I',
+                   'dQS', 'dYQS', 'ZL', 'ZR')
 
     def dual(self):
         r"""
@@ -2223,8 +2221,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 """
                 if hasattr(self, "antipode_on_generators"):
                     return self.algebra_morphism(self.antipode_on_generators, codomain=self, anti=True)
-                else:
-                    return NotImplemented
+                return NotImplemented
 
             @lazy_attribute
             def coproduct(self):
@@ -2247,8 +2244,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 from sage.categories.tensor import tensor
                 if hasattr(self, "coproduct_on_generators"):
                     return self.algebra_morphism(self.coproduct_on_generators, codomain=tensor([self, self]))
-                else:
-                    return NotImplemented
+                return NotImplemented
 
     class MultiplicativeBasesOnGroupLikeElements(Category_realization_of_parent):
         r"""
@@ -2606,11 +2602,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             """
             if not I._list:
                 return self.monomial(J)
-            elif not J._list:
+            if not J._list:
                 return self.monomial(I)
-            else:
-                return self.monomial(self._indices(I[:] + J[:])) + \
-                       self.monomial(self._indices(I[:-1] + [I[-1]+J[0]] + J[1:]))
+            return self.monomial(self._indices(I[:] + J[:])) + \
+                   self.monomial(self._indices(I[:-1] + [I[-1]+J[0]] + J[1:]))
 
         def antipode_on_basis(self, composition):
             """
@@ -2646,8 +2641,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             """
             if composition.size() % 2 == 0:
                 return self[composition.conjugate()]
-            else:
-                return - self[composition.conjugate()]
+            return - self[composition.conjugate()]
 
         def to_symmetric_function_on_basis(self, I):
             r"""
@@ -2816,8 +2810,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     Jn = C([j // n for j in J])
                     if (len(I) - len(J)) % 2:
                         return (Jn, - coeff)
-                    else:
-                        return (Jn, coeff)
+                    return (Jn, coeff)
                 return parent.sum_of_terms([ribbon_mapper(I, coeff)
                                             for (I, coeff) in self
                                             if sum(I) % n == 0])
@@ -4840,7 +4833,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     -I[1, 1, 3, 2] - I[1, 2, 2, 2] - I[1, 2, 3, 1] + I[2, 3, 2]
                 """
                 if n <= 0:
-                    return super(NonCommutativeSymmetricFunctions.Immaculate.Element, self).bernstein_creation_operator(n)
+                    return super().bernstein_creation_operator(n)
 
                 C = Compositions()
                 P = self.parent()

@@ -26,7 +26,7 @@ include "sage/libs/ntl/ntl_GF2X_linkage.pxi"
 # and then the interface
 include "polynomial_template.pxi"
 
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 
 from sage.libs.m4ri cimport mzd_write_bit, mzd_read_bit
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
@@ -162,7 +162,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
             sig_on()
             GF2X_CompMod(res.x, self.x, g.x, modulus)
             sig_off()
-            verbose("NTL %5.3f s"%cputime(t),level=1)
+            verbose("NTL %5.3f s" % cputime(t), level=1)
             return res
 
         cdef Py_ssize_t i, j, k, l, n, maxlength
@@ -214,7 +214,8 @@ cdef class Polynomial_GF2X(Polynomial_template):
             GF2X_MulMod_pre(gpow, gpow, g2, modulus)
         else:          # k is even, last j is k-1
             GF2X_MulMod_pre(gpow, gpow, _g, modulus)
-        verbose("G %d x %d %5.3f s"%(G.nrows(), G.ncols(),cputime(t)),level=1)
+        verbose("G %d x %d %5.3f s" % (G.nrows(), G.ncols(), cputime(t)),
+                level=1)
 
         # split f in chunks of degree < k
         t = cputime()
@@ -227,11 +228,13 @@ cdef class Polynomial_GF2X(Polynomial_template):
                 for i from j*k <= i < maxlength:
                     mzd_write_bit(F._entries, j, i-j*k, GF2_conv_to_long(GF2X_coeff(_f, i)))
 
-        verbose("F %d x %d %5.3f s"%(F.nrows(), F.ncols(), cputime(t)),level=1)
+        verbose("F %d x %d %5.3f s" % (F.nrows(), F.ncols(), cputime(t)),
+                level=1)
 
         t = cputime()
         H = <Matrix_mod2_dense>(F * G)
-        verbose("H %d x %d %5.3f s"%(H.nrows(), H.ncols(), cputime(t)),level=1)
+        verbose("H %d x %d %5.3f s" % (H.nrows(), H.ncols(), cputime(t)),
+                level=1)
 
         t = cputime()
         # H is a n x l matrix now H[i,j] = sum(G[i,m]*F[m,j],
@@ -253,7 +256,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
             GF2X_add(res.x, res.x, tt)
             j = j - 1
 
-        verbose("Res %5.3f s"%cputime(t),level=1)
+        verbose("Res %5.3f s" % cputime(t), level=1)
         return res
 
     # Other polynomials have compose_mod as methods following the naming of

@@ -9,14 +9,18 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function, absolute_import
 
-from .base import StackInterpreter
-from ..instructions import (params_gen, instr_infix, instr_funcall_2args,
-                            instr_unary, InstrSpec)
+from ..instructions import (
+    InstrSpec,
+    instr_funcall_2args,
+    instr_infix,
+    instr_unary,
+    params_gen,
+)
 from ..memory import MemoryChunkConstants
 from ..storage import ty_double_complex, ty_python
 from ..utils import reindent_lines as ri
+from .base import StackInterpreter
 
 
 class CDFInterpreter(StackInterpreter):
@@ -71,7 +75,7 @@ class CDFInterpreter(StackInterpreter):
             13.0 + 26.0*I
         """
 
-        super(CDFInterpreter, self).__init__(ty_double_complex)
+        super().__init__(ty_double_complex)
         self.mc_py_constants = MemoryChunkConstants('py_constants', ty_python)
         # See comment for RDFInterpreter
         self.err_return = '-1094648119105371'
@@ -191,27 +195,26 @@ class CDFInterpreter(StackInterpreter):
                     result = CDF(py_result)
                 retval[0] = CDE_to_dz(result)
                 return 1
-
             """[1:])
 
         instrs = [
             InstrSpec('load_arg', pg('A[D]', 'S'),
-                       code='o0 = i0;'),
+                      code='o0 = i0;'),
             InstrSpec('load_const', pg('C[D]', 'S'),
-                       code='o0 = i0;'),
+                      code='o0 = i0;'),
             InstrSpec('return', pg('S', ''),
-                       code='return i0;'),
+                      code='return i0;'),
             InstrSpec('py_call', pg('P[D]S@D', 'S'),
-                       uses_error_handler=True,
-                       code="""
+                      uses_error_handler=True,
+                      code="""
 if (!cdf_py_call_helper(i0, n_i1, i1, &o0)) {
   goto error;
 }
 """)
             ]
-        for (name, op) in [('add', '+'), ('sub', '-'),
-                           ('mul', '*'), ('div', '/'),
-                           ('truediv', '/')]:
+        for name, op in [('add', '+'), ('sub', '-'),
+                         ('mul', '*'), ('div', '/'),
+                         ('truediv', '/')]:
             instrs.append(instr_infix(name, pg('SS', 'S'), op))
         instrs.append(instr_funcall_2args('pow', pg('SS', 'S'), 'cpow'))
         instrs.append(instr_funcall_2args('ipow', pg('SD', 'S'), 'cpow_int'))
@@ -221,8 +224,8 @@ if (!cdf_py_call_helper(i0, n_i1, i1, &o0)) {
         for name in ['sqrt', 'sin', 'cos', 'tan',
                      'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh',
                      'asinh', 'acosh', 'atanh', 'exp', 'log']:
-            instrs.append(instr_unary(name, pg('S',  'S'), "c%s(i0)" % name))
+            instrs.append(instr_unary(name, pg('S', 'S'), "c%s(i0)" % name))
         self.instr_descs = instrs
         self._set_opcodes()
         # supported for exponents that fit in an int
-        self.ipow_range = (int(-2**31), int(2**31-1))
+        self.ipow_range = (int(-2**31), int(2**31 - 1))

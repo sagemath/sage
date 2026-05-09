@@ -1,14 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Crystals of Generalized Young Walls
-
-AUTHORS:
-
-- Lucas David-Roesler: Initial version
-
-- Ben Salisbury: Initial version
-
-- Travis Scrimshaw: Initial version
+Crystals of generalized Young walls
 
 Generalized Young walls are certain generalizations of Young tableaux
 introduced in [KS2010]_ and designed to be a realization of the crystals
@@ -18,6 +10,12 @@ REFERENCES:
 
 - [KLRS2016]_
 - [KS2010]_
+
+AUTHORS:
+
+- Lucas David-Roesler: initial version
+- Ben Salisbury: initial version
+- Travis Scrimshaw: initial version
 """
 
 # *****************************************************************************
@@ -81,7 +79,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         self.data = data
         CombinatorialElement.__init__(self, parent, data)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -91,7 +89,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         """
         return repr(self.data)
 
-    def _repr_diagram(self):
+    def _repr_diagram(self) -> str:
         r"""
         Return a string representation of the diagram of ``self``.
 
@@ -156,15 +154,15 @@ class GeneralizedYoungWall(CombinatorialElement):
                                 ┤
                                 │
                     ┌───┬───┬───┐
-                    │ 1 │ 0 │ 2 │
+                    │ 2 │ 0 │ 1 │
                     └───┴───┼───┤
                             │ 0 │
                             └───┘
                                 │
             ┌───┬───┬───┬───┬───┐
-            │ 1 │ 0 │ 2 │ 1 │ 0 │
+            │ 0 │ 1 │ 2 │ 0 │ 1 │
             └───┴───┼───┼───┼───┤
-                    │ 0 │ 2 │ 1 │
+                    │ 1 │ 2 │ 0 │
                     └───┴───┴───┘
         """
         from sage.typeset.unicode_art import UnicodeArt
@@ -175,7 +173,8 @@ class GeneralizedYoungWall(CombinatorialElement):
         import unicodedata
         v = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL')
         vl = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND LEFT')
-        table = [[None] * (self.cols - len(row)) + row for row in reversed(self)]
+        table = [[None] * (self.cols - len(row)) + list(reversed(row))
+                 for row in reversed(self)]
         ret = []
         for i, row in enumerate(ascii_art_table(table, use_unicode=True).splitlines()):
             if row[-1] == " ":
@@ -426,7 +425,11 @@ class GeneralizedYoungWall(CombinatorialElement):
             15
         """
         n = self.parent().cartan_type().rank() - 1
-        m = lambda i: len([1 for r in self.data if r and r[0] == (i - 1) % (n + 1)])
+
+        def m(i):
+            mod = (i - 1) % (n + 1)
+            return len([1 for r in self.data if r and r[0] == mod])
+
         for r in self.data:
             if r and r[0] == n:
                 raise ValueError('Statistic only valid for generalized Young walls in Y_0')
@@ -463,8 +466,7 @@ class GeneralizedYoungWall(CombinatorialElement):
                 else:
                     newdata.append(list(self.data[r]))
             return self.__class__(self.parent(), newdata)
-        else:
-            return None
+        return None
 
     def f(self, i):
         r"""
@@ -499,16 +501,17 @@ class GeneralizedYoungWall(CombinatorialElement):
             newdata.append([i])
         return self.__class__(self.parent(), newdata)
 
-    def latex_large(self):
+    def latex_large(self) -> str:
         r"""
         Generate LaTeX code for ``self`` but the output is larger.
-        Requires TikZ.
+
+        This requires TikZ.
 
         EXAMPLES::
 
             sage: x = crystals.infinity.GeneralizedYoungWalls(3)([[],[1,0,3,2],[2,1],[3,2,1,0,3,2],[],[],[2]])
             sage: x.latex_large()
-            '\\begin{tikzpicture}[baseline=5,scale=.45] \n \\foreach \\x [count=\\s from 0] in \n{{},{1,0,3,2},{2,1},{3,2,1,0,3,2},{},{},{2}} \n{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n'
+            '\\begin{tikzpicture}[baseline=5,scale=.45] \n \\foreach \\x [count=\\s from 0] in \n{{},{1,0,3,2},{2,1},{3,2,1,0,3,2},{},{},{2}} \n{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\s-1,-.5); } \n \\end{tikzpicture} \n'
         """
         s = ""
         if not self.data:
@@ -517,18 +520,20 @@ class GeneralizedYoungWall(CombinatorialElement):
             s += "\\begin{tikzpicture}[baseline=5,scale=.45] \n \\foreach \\x [count=\\s from 0] in \n"
             s += "{" + ','.join("{" + ','.join(str(i) for i in r) + "}"
                                 for r in self.data) + "} \n"
-            s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
+            s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\s-1,-.5); } \n \\end{tikzpicture} \n"
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
-        Generate LaTeX code for ``self``.  Requires TikZ.
+        Generate LaTeX code for ``self``.
+
+        This requires TikZ.
 
         EXAMPLES::
 
             sage: x = crystals.infinity.GeneralizedYoungWalls(3)([[],[1,0,3,2],[2,1],[3,2,1,0,3,2],[],[],[2]])
             sage: x._latex_()
-            '\\begin{tikzpicture}[baseline=5,scale=.25] \\foreach \\x [count=\\s from 0] in \n{{},{1,0,3,2},{2,1},{3,2,1,0,3,2},{},{},{2}} \n{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n'
+            '\\begin{tikzpicture}[baseline=5,scale=.25] \\foreach \\x [count=\\s from 0] in \n{{},{1,0,3,2},{2,1},{3,2,1,0,3,2},{},{},{2}} \n{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\s-1,-.5); } \n \\end{tikzpicture} \n'
         """
         s = ""
         if not self.data:
@@ -537,7 +542,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             s += "\\begin{tikzpicture}[baseline=5,scale=.25] \\foreach \\x [count=\\s from 0] in \n"
             s += "{" + ','.join("{" + ','.join(str(i) for i in r) + "}"
                                 for r in self.data) + "} \n"
-            s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
+            s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\s-1,-.5); } \n \\end{tikzpicture} \n"
         return s
 
     def weight(self, root_lattice=False):
@@ -707,24 +712,18 @@ class GeneralizedYoungWall(CombinatorialElement):
             False
         """
         if La not in self.parent().weight_lattice_realization():
-            raise TypeError("Must be an element in the weight lattice realization")
+            raise TypeError("must be an element in the weight lattice realization")
         ac = self.parent().weight_lattice_realization().simple_coroots()
         n = self.cartan_type().classical().rank()
         index_set = self.index_set()
         for k in range(1, self.cols + 1):
             for j in index_set:
-                if self.a(j, k) - self.a((j - 1) % (n + 1), k) <= 0:
+                diff = self.a(j, k) - self.a((j - 1) % (n + 1), k)
+                if diff <= 0:
                     continue
-                else:
-                    p_not_found = True
-                    for p in index_set:
-                        if (j + k - p - 1) % (n + 1) == 0 and self.a(j, k) - self.a((j - 1) % (n + 1), k) <= La.scalar(ac[p]):
-                            p_not_found = False
-                            continue
-                        else:
-                            continue
-                    if p_not_found:
-                        return False
+                if not any((j + k - p - 1) % (n + 1) == 0
+                           and diff <= La.scalar(ac[p]) for p in index_set):
+                    return False
         return True
 
 
@@ -1036,8 +1035,10 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
 
             sage: TestSuite(YLa).run(skip=["_test_enumerated_set_contains","_test_stembridge_local_axioms"]) # long time
         """
+        cat = (RegularCrystals(), HighestWeightCrystals(),
+               InfiniteEnumeratedSets())
         InfinityCrystalOfGeneralizedYoungWalls.__init__(self, n,
-                category=(RegularCrystals(), HighestWeightCrystals(), InfiniteEnumeratedSets()))
+                                                        category=cat)
         self.hw = La
 
     Element = CrystalOfGeneralizedYoungWallsElement

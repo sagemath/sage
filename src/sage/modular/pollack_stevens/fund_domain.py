@@ -31,7 +31,7 @@ from sage.misc.cachefunc import cached_method
 
 from .sigma0 import Sigma0
 
-M2ZSpace = MatrixSpace(ZZ,2)
+M2ZSpace = MatrixSpace(ZZ, 2)
 
 
 def M2Z(x):
@@ -129,20 +129,16 @@ class PollackStevensModularDomain(SageObject):
         self._reps = reps
 
         self._indices = sorted(indices)
-        self._gens = [M2Z(reps[i]) for i in self._indices]
+        self._gens = tuple(M2Z(reps[i]) for i in self._indices)
         self._ngens = len(indices)
 
         if len(rels) != len(reps):
             raise ValueError("length of reps and length of rels must be equal")
         self._rels = rels
-        self._rel_dict = {}
-        for j, L in enumerate(rels):
-            self._rel_dict[reps[j]] = L
+        self._rel_dict = {reps[j]: L for j, L in enumerate(rels)}
 
         self._equiv_ind = equiv_ind
-        self._equiv_rep = {}
-        for ky in equiv_ind:
-            self._equiv_rep[ky] = reps[equiv_ind[ky]]
+        self._equiv_rep = {ky: reps[vy] for ky, vy in equiv_ind.items()}
 
     def _repr_(self):
         r"""
@@ -203,19 +199,19 @@ class PollackStevensModularDomain(SageObject):
         """
         return iter(self._reps)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return the list of coset representatives chosen as generators.
+        Return the tuple of coset representatives chosen as generators.
 
         EXAMPLES::
 
             sage: from sage.modular.pollack_stevens.fund_domain import ManinRelations
             sage: A = ManinRelations(11)
             sage: A.gens()
-            [
+            (
             [1 0]  [ 0 -1]  [-1 -1]
             [0 1], [ 1  3], [ 3  2]
-            ]
+            )
         """
         return self._gens
 
@@ -311,8 +307,7 @@ class PollackStevensModularDomain(SageObject):
         """
         if n is None:
             return self._indices
-        else:
-            return self._indices[n]
+        return self._indices[n]
 
     def reps(self, n=None):
         r"""
@@ -352,8 +347,7 @@ class PollackStevensModularDomain(SageObject):
         """
         if n is None:
             return self._reps
-        else:
-            return self._reps[n]
+        return self._reps[n]
 
     def relations(self, A=None):
         r"""
@@ -464,10 +458,9 @@ class PollackStevensModularDomain(SageObject):
         """
         if A is None:
             return self._rels
-        elif isinstance(A, (int, Integer, slice)):
+        if isinstance(A, (int, Integer, slice)):
             return self._rels[A]
-        else:
-            return self._rel_dict[A]
+        return self._rel_dict[A]
 
     def equivalent_index(self, A):
         r"""
@@ -1147,7 +1140,7 @@ class ManinRelations(PollackStevensModularDomain):
 
         # Initialize some lists
 
-        C = [QQ(-1), "?", QQ(0)]
+        C = [QQ(-1), "?", QQ.zero()]
 
         # Initialize the list of cusps at the bottom of the fund. domain.
         # The ? denotes that it has not yet been checked if more cusps need
@@ -1155,12 +1148,12 @@ class ManinRelations(PollackStevensModularDomain):
 
         full_domain = False     # Says that we are not done yet!
 
-        v = [False for r in range(sP)]
+        v = [False] * sP
         # This initializes a list indexed by P^1(Z/NZ) which keeps track of
         # which right coset representatives we've found for Gamma_0(N)/SL_2(Z)
         # thru the construction of a fundamental domain
 
-        # Includeds the coset repns formed by the original ideal triangle
+        # Includes the coset repns formed by the original ideal triangle
         # (with corners at -1, 0, infty)
 
         v[P.index(0, 1)] = True
@@ -1175,8 +1168,8 @@ class ManinRelations(PollackStevensModularDomain):
             # This loop runs through the current set of cusps
             # and checks to see if more cusps should be added
             # -----------------------------------------------
-            for s in range(1, len(C), 2):  # range over odd indices in the
-                                           # final list C
+            for s in range(1, len(C), 2):
+                # range over odd indices in the final list C
                 if C[s] == "?":
 
                     # Single out our two cusps (path from cusp2 to cusp1)
@@ -1192,9 +1185,9 @@ class ManinRelations(PollackStevensModularDomain):
                     # This is the point where it is determined whether
                     # or not the adjacent triangle should be added
                     # ------------------------------------------------
-                    pos = P.index(b2, b1)   # The Sage index of the bottom
-                                                 # row of our unimodular
-                                           # transformation gam
+                    pos = P.index(b2, b1)
+                    # The Sage index of the bottom row of our
+                    # unimodular transformation gam
 
                     # Check if we need to flip (since this P1 element has not
                     # yet been accounted for!)
@@ -1218,16 +1211,18 @@ class ManinRelations(PollackStevensModularDomain):
                             # where gam is the matrix corresponding to the
                             # unimodular path connecting cusp1 to cusp2
 
-                            C[s] = "i"  # The '?' is changed to an 'i'
-                             # indicating that a new cusp needs to
-                                        #  be inserted here
+                            C[s] = "i"
+                            # The '?' is changed to an 'i' indicating
+                            # that a new cusp needs to be inserted here
                             full_domain = False
                         else:
-                            C[s] = "x"  # The '?' is changed to an 'x' and no
-                                        # more checking below is needed! =)
+                            C[s] = "x"
+                            # The '?' is changed to an 'x' and no
+                            # more checking below is needed! =)
                     else:
-                        C[s] = "x"  # The '?' is changed to an 'x' and no more
-                                           # checking below is needed! =)
+                        C[s] = "x"
+                        # The '?' is changed to an 'x' and no more
+                        # checking below is needed! =)
 
             # Now insert the missing cusps (where there is an 'i' in
             # the final list)
@@ -1259,10 +1254,9 @@ class ManinRelations(PollackStevensModularDomain):
 
         # Remove the (now superfluous) extra string characters that appear
         # in the odd list entries
-        C = [QQ(C[ss]) for ss in range(0, len(C), 2)]
-        return C
+        return [QQ(C[ss]) for ss in range(0, len(C), 2)]
 
-    def is_unimodular_path(self, r1, r2):
+    def is_unimodular_path(self, r1, r2) -> bool:
         r"""
         Determine whether two (non-infinite) cusps are connected by a
         unimodular path.
@@ -1568,5 +1562,4 @@ def basic_hecke_matrix(a, l):
     """
     if a < l:
         return M2Z([1, a, 0, l])
-    else:
-        return M2Z([l, 0, 0, 1])
+    return M2Z([l, 0, 0, 1])

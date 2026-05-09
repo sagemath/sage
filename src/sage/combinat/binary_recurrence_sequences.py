@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Binary Recurrence Sequences
+Binary recurrence sequences
 
 This class implements several methods relating to general linear binary
 recurrence sequences, including a sieve to find perfect powers in integral
@@ -348,7 +348,7 @@ class BinaryRecurrenceSequence(SageObject):
         """
         return self(1) - self(0) == self(2) - self(1) == self(3) - self(2)
 
-    def period(self, m):
+    def period(self, m, *, eventual=False):
         """
         Return the period of the binary recurrence sequence modulo
         an integer ``m``.
@@ -359,6 +359,11 @@ class BinaryRecurrenceSequence(SageObject):
         INPUT:
 
         - ``m`` -- integer; modulo which the period of the recurrence relation is calculated
+
+        - ``eventual`` -- boolean (default: ``False``); if ``True``, allow the
+          sequence to be eventually periodic, rather than requiring it to be
+          purely periodic. So `n_1` might not be congruent to `n_2` modulo
+          ``period(m)`` unless `n_1` and `n_2` are large.
 
         OUTPUT: integer (the period of the sequence modulo m)
 
@@ -392,7 +397,36 @@ class BinaryRecurrenceSequence(SageObject):
             sage: S.period(17)
             8
 
+        Letting ``eventual`` be ``True`` allows us to find the period of a
+        sequence that is not purely periodic. ::
+
+            sage: T = BinaryRecurrenceSequence(5,12,u0=0,u1=1)
+            sage: [T(n) % 10 for n in range(20)]
+            [0, 1, 5, 7, 5, 9, 5, 3, 5, 1, 5, 7, 5, 9, 5, 3, 5, 1, 5, 7]
+            sage: T.period(10)
+            Traceback (most recent call last):
+            ...
+            ValueError: Binary recurrence sequence modulo 10 is not a purely
+            periodic sequence.
+            sage: T.period(10,eventual=True)
+            8
+
         .. NOTE:: The answer is cached.
+
+        TESTS:
+
+        Verify that :issue:`38112` is fixed::
+
+            sage: T = BinaryRecurrenceSequence(3,2,u0=0,u1=1)
+            sage: [T(n) % 4 for n in range(5)]
+            [0, 1, 3, 3, 3]
+            sage: T.period(4)
+            Traceback (most recent call last):
+            ...
+            ValueError: Binary recurrence sequence modulo 4 is not a purely
+            periodic sequence.
+            sage: T.period(4,eventual=True)
+            1
         """
 
         # If we have already computed the period mod m, then we return the stored value.
@@ -400,102 +434,115 @@ class BinaryRecurrenceSequence(SageObject):
         if m in self._period_dict:
             return self._period_dict[m]
 
-        else:
-            R = Integers(m)
-            A = matrix(R, [[0, 1], [self.c, self.b]])
-            w = vector(R, [self.u0, self.u1])
-            Fac = list(m.factor())
-            Periods = {}
+        R = Integers(m)
+        A = matrix(R, [[0, 1], [self.c, self.b]])
+        w = vector(R, [self.u0, self.u1])
+        Fac = list(m.factor())
+        Periods = {}
 
-            # To compute the period mod m, we compute the least integer n such that A^n*w == w.  This necessarily
-            # divides the order of A as a matrix in GL_2(Z/mZ).
+        if eventual is True:
+            # There are only m^2 possible pairs modulo m. Since the numbering
+            # of the sequence starts at 0, this implies that the term numbered
+            # m^2 must be in periodic part of the sequence. Hence, the
+            # sequence starting with the terms numbered m^2 and m^2 + 1 must
+            # be purely periodic.
+            an = (A**(m**2)) * w
+            return BinaryRecurrenceSequence(self.b, self.c,
+                an[0], an[1]).period(m, eventual=False)
 
-            # We compute the period modulo all distinct prime powers dividing m, and combine via the lcm.
-            # To compute the period mod p^e, we first compute the order mod p.  Then the period mod p^e
-            # must divide p^{4e-4}*period(p), as the subgroup of matrices mod p^e, which reduce to
-            # the identity mod p is of order (p^{e-1})^4.  So we compute the period mod p^e by successively
-            # multiplying the period mod p by powers of p.
+        # To compute the period mod m, we compute the least integer n such that A^n*w == w.  This necessarily
+        # divides the order of A as a matrix in GL_2(Z/mZ).
 
-            for p, e in Fac:
-                # first compute the period mod p
-                if p in self._period_dict:
-                    perp = self._period_dict[p]
-                else:
-                    F = A.change_ring(GF(p))
-                    v = w.change_ring(GF(p))
-                    FF = F**(p-1)
-                    p1fac = list((p-1).factor())
+        # We compute the period modulo all distinct prime powers dividing m, and combine via the lcm.
+        # To compute the period mod p^e, we first compute the order mod p.  Then the period mod p^e
+        # must divide p^{4e-4}*period(p), as the subgroup of matrices mod p^e, which reduce to
+        # the identity mod p is of order (p^{e-1})^4.  So we compute the period mod p^e by successively
+        # multiplying the period mod p by powers of p.
 
-                    # The order of any matrix in GL_2(F_p) either divides p(p-1) or (p-1)(p+1).
-                    # The order divides p-1 if it is diagonalizable.  In any case, det(F^(p-1))=1,
-                    # so if tr(F^(p-1)) = 2, then it must be triangular of the form [[1,a],[0,1]].
-                    # The order of the subgroup of matrices of this form is p, so the order must divide
-                    # p(p-1) -- in fact it must be a multiple of p.  If this is not the case, then the
-                    # order divides (p-1)(p+1).  As the period divides the order of the matrix in GL_2(F_p),
-                    # these conditions hold for the period as well.
+        for p, e in Fac:
+            # first compute the period mod p
+            if p in self._period_dict:
+                perp = self._period_dict[p]
+            else:
+                F = A.change_ring(GF(p))
+                v = w.change_ring(GF(p))
+                FF = F**(p-1)
+                p1fac = list((p-1).factor())
 
-                    # check if the order divides (p-1)
-                    if FF*v == v:
-                        M = p-1
-                        Mfac = p1fac
+                # The order of any matrix in GL_2(F_p) either divides p(p-1) or (p-1)(p+1).
+                # The order divides p-1 if it is diagonalizable.  In any case, det(F^(p-1))=1,
+                # so if tr(F^(p-1)) = 2, then it must be triangular of the form [[1,a],[0,1]].
+                # The order of the subgroup of matrices of this form is p, so the order must divide
+                # p(p-1) -- in fact it must be a multiple of p.  If this is not the case, then the
+                # order divides (p-1)(p+1).  As the period divides the order of the matrix in GL_2(F_p),
+                # these conditions hold for the period as well.
 
-                    # check if the trace is 2, then the order is a multiple of p dividing p*(p-1)
-                    elif FF.trace() == 2:
-                        M = p-1
-                        Mfac = p1fac
-                        F = F**p        # replace F by F^p as now we only need to determine the factor dividing (p-1)
-
-                    # otherwise it will divide (p+1)(p-1)
-                    else:
-                        M = (p+1)*(p-1)
-                        p2fac = list((p+1).factor())        # factor the (p+1) and (p-1) terms separately and then combine for speed
-                        Mfac_dic = {}
-                        for i0, i1 in list(p1fac + p2fac):
-                            if i0 not in Mfac_dic:
-                                Mfac_dic[i0] = i1
-                            else:
-                                Mfac_dic[i0] += i1
-                        Mfac = list(Mfac_dic.items())
-
-                    # Now use a fast order algorithm to compute the period.  We know that the period divides
-                    # M = i_1*i_2*...*i_l where the i_j denote not necessarily distinct prime factors.  As
-                    # F^M*v == v, for each i_j, if F^(M/i_j)*v == v, then the period divides (M/i_j).  After
-                    # all factors have been iterated over, the result is the period mod p.
-
-                    Mfac = list(Mfac)
-
-                    # expand the list of prime factors so every factor is with multiplicity 1
-                    C = [i0 for i0, i1 in Mfac for _ in range(i1)]
-
-                    Mfac = C
-                    n = M
-                    for ii in Mfac:
-                        b = n // ii
-                        if F**b * v == v:
-                            n = b
-                    perp = n
-
-                # Now compute the period mod p^e by stepping up by multiples of p
-                F = A.change_ring(Integers(p**e))
-                v = w.change_ring(Integers(p**e))
-                FF = F**perp
+                # check if the order divides (p-1)
                 if FF*v == v:
-                    perpe = perp
+                    M = p-1
+                    Mfac = p1fac
+
+                # check if the trace is 2, then the order is a multiple of p dividing p*(p-1)
+                elif FF.trace() == 2:
+                    M = p-1
+                    Mfac = p1fac
+                    F = F**p        # replace F by F^p as now we only need to determine the factor dividing (p-1)
+
+                # otherwise it will divide (p+1)(p-1)
                 else:
-                    tries = 0
-                    while True:
-                        tries += 1
-                        FF = FF**p
-                        if FF*v == v:
-                            perpe = perp*p**tries
-                            break
-                Periods[p] = perpe
+                    M = (p+1)*(p-1)
+                    p2fac = list((p+1).factor())        # factor the (p+1) and (p-1) terms separately and then combine for speed
+                    Mfac_dic = {}
+                    for i0, i1 in list(p1fac + p2fac):
+                        if i0 not in Mfac_dic:
+                            Mfac_dic[i0] = i1
+                        else:
+                            Mfac_dic[i0] += i1
+                    Mfac = list(Mfac_dic.items())
 
-            # take the lcm of the periods mod all distinct primes dividing m
-            period = lcm(Periods.values())
+                # Now use a fast order algorithm to compute the period.  We know that the period divides
+                # M = i_1*i_2*...*i_l where the i_j denote not necessarily distinct prime factors.  As
+                # F^M*v == v, for each i_j, if F^(M/i_j)*v == v, then the period divides (M/i_j).  After
+                # all factors have been iterated over, the result is the period mod p.
 
-            self._period_dict[m] = period        # cache the period mod m
-            return period
+                Mfac = list(Mfac)
+
+                # expand the list of prime factors so every factor is with multiplicity 1
+                C = [i0 for i0, i1 in Mfac for _ in range(i1)]
+
+                Mfac = C
+                n = M
+                for ii in Mfac:
+                    b = n // ii
+                    if F**b * v == v:
+                        n = b
+                perp = n
+
+            # Now compute the period mod p^e by stepping up by multiples of p
+            F = A.change_ring(Integers(p**e))
+            v = w.change_ring(Integers(p**e))
+            FF = F**perp
+            if FF*v == v:
+                perpe = perp
+            else:
+                tries = 0
+                while True:
+                    tries += 1
+                    FF = FF**p
+                    if FF*v == v:
+                        perpe = perp*p**tries
+                        break
+                    if tries > e:
+                        raise ValueError("Binary recurrence sequence " +
+                                         f"modulo {m} is not a purely " +
+                                         "periodic sequence.")
+            Periods[p] = perpe
+
+        # take the lcm of the periods mod all distinct primes dividing m
+        period = lcm(Periods.values())
+
+        self._period_dict[m] = period        # cache the period mod m
+        return period
 
     def pthpowers(self, p, Bound):
         """
@@ -583,8 +630,7 @@ class BinaryRecurrenceSequence(SageObject):
                 if _is_p_power(self.u0, p):
                     return [0]
                 return []
-            else:
-                raise ValueError("the degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers")
+            raise ValueError("the degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers")
 
         # If the sequence is degenerate without being geometric or quasigeometric, there
         # may be many ``p`` th powers or no ``p`` th powers.
@@ -884,34 +930,32 @@ def _next_good_prime(p, R, qq, patience, qqold):
 
     # If nothing is already stored in R._PGoodness, we start (from where we left off at R._ell) checking
     # for good primes.  We only tolerate patience number of tries before giving up.
-    else:
-        i = 0
-        while i < patience:
-            i += 1
-            R._ell = next_prime(R._ell)
+    i = 0
+    while i < patience:
+        i += 1
+        R._ell = next_prime(R._ell)
 
-            # we require that R._ell is 1 mod p, so that p divides the order of the multiplicative
-            # group mod R._ell, so that not all elements of GF(R._ell) are pth powers.
-            if R._ell % p == 1:
+        # we require that R._ell is 1 mod p, so that p divides the order of the multiplicative
+        # group mod R._ell, so that not all elements of GF(R._ell) are pth powers.
+        if R._ell % p == 1:
 
-                # requiring that b^2 + 4c is a square in GF(R._ell) ensures that the period mod R._ell
-                # divides R._ell - 1
-                if legendre_symbol(R.b**2 + 4*R.c, R._ell) == 1:
+            # requiring that b^2 + 4c is a square in GF(R._ell) ensures that the period mod R._ell
+            # divides R._ell - 1
+            if legendre_symbol(R.b**2 + 4*R.c, R._ell) == 1:
 
-                    N = _goodness(R._ell, R, p)
+                N = _goodness(R._ell, R, p)
 
-                    # proceed only if R._ell satisfies the goodness requirements
-                    if qqold < N <= qq:
-                        return R._ell
+                # proceed only if R._ell satisfies the goodness requirements
+                if qqold < N <= qq:
+                    return R._ell
 
-                    # if we do not use the prime, we store it in R._PGoodness
-                    else:
-                        if N in R._PGoodness:
-                            R._PGoodness[N].append(R._ell)
-                        else:
-                            R._PGoodness[N] = [R._ell]
+                # if we do not use the prime, we store it in R._PGoodness
+                if N in R._PGoodness:
+                    R._PGoodness[N].append(R._ell)
+                else:
+                    R._PGoodness[N] = [R._ell]
 
-        return False
+    return False
 
 
 def _is_p_power_mod(a, p, N):

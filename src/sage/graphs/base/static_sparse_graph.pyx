@@ -1,4 +1,3 @@
-# cython: binding=True
 # distutils: language = c++
 r"""
 Static sparse graphs
@@ -280,10 +279,9 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
     g.m = G.size()
 
     cdef int isdigraph = G.is_directed()
-    cdef uint32_t i, v_id, j
+    cdef uint32_t i, j
     cdef list vertices = vertex_list if vertex_list is not None else list(G)
     cdef dict v_to_id = {v: i for i, v in enumerate(vertices)}
-    cdef list neighbor_label
     cdef list edge_labels
     # Loops are not stored twice for undirected graphs
     cdef int n_edges = g.m if isdigraph else 2*g.m - G.number_of_loops()
@@ -337,6 +335,138 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
     for i in range(g.n-1, 0, -1):
         g.neighbors[i] = g.neighbors[i-1]
     g.neighbors[0] = g.edges
+
+    if edge_labelled:
+        g.edge_labels = <PyObject *> <void *> edge_labels
+        cpython.Py_XINCREF(g.edge_labels)
+
+
+cdef int init_short_digraph_from_data(short_digraph g, vertices, edges,
+                                      bint isdigraph,
+                                      edge_labelled=False) except -1:
+    r"""
+    Initialize ``short_digraph g`` from raw vertices and edges.
+
+    INPUT:
+
+    - ``g`` -- a ``short_digraph``
+
+    - ``vertices`` -- iterable listing the vertices in the desired order
+
+    - ``edges`` -- iterable containing edges/arcs as ``(u, v)`` or
+      ``(u, v, label)``
+
+    - ``isdigraph`` -- boolean; whether the input should be considered directed
+
+    - ``edge_labelled`` -- boolean (default: ``False``); whether to store edge
+      labels
+
+    The edges must only use vertices contained in ``vertices``.
+
+    TESTS:
+
+    Indirect doctests for sorted output and labels (directed case)::
+
+        sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
+        sage: B = StaticSparseBackend(vertex_list=['b', 'a', 'd', 'c'],
+        ....:                        edges=[('b', 'a', 'ba'),
+        ....:                               ('d', 'a', 'da'),
+        ....:                               ('c', 'a', 'ca')],
+        ....:                        directed=True, edge_labelled=True, sort=False)
+        sage: list(B.iterator_in_edges(['a'], True))
+        [('b', 'a', 'ba'), ('d', 'a', 'da'), ('c', 'a', 'ca')]
+
+    Same with undirected edges and a loop::
+
+        sage: B = StaticSparseBackend(vertex_list=['b', 'a'],
+        ....:                        edges=[('b', 'a', 'x'), ('a', 'a', 'loop')],
+        ....:                        directed=False, edge_labelled=True, sort=False)
+        sage: set(B.iterator_edges(['b', 'a'], True)) == {('a', 'a', 'loop'), ('b', 'a', 'x')}
+        True
+    """
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef list vertex_list = list(vertices)
+    cdef object e, u, v, l
+    cdef list edge_data = []
+    cdef uint32_t *degrees
+    cdef int u_id, v_id
+    cdef int i
+    cdef int number_of_loops = 0
+    cdef int n_edges
+    cdef uint32_t *starts
+    cdef uint32_t *next_pos
+    cdef list by_target
+    cdef int source, target, idx
+    cdef list edge_labels
+
+    if len(vertex_list) >= INT_MAX:
+        raise ValueError(f"short_digraph can handle at most {INT_MAX} vertices")
+
+    cdef dict v_to_id = {v: i for i, v in enumerate(vertex_list)}
+    if len(v_to_id) != len(vertex_list):
+        raise ValueError("vertex_list has duplicates")
+
+    g.edge_labels = NULL
+    g.n = len(vertex_list)
+    degrees = <uint32_t *> mem.calloc(g.n, sizeof(uint32_t))
+
+    for e in edges:
+        if len(e) == 3:
+            u, v, l = e
+        else:
+            u, v = e
+            l = None
+        try:
+            u_id = v_to_id[u]
+            v_id = v_to_id[v]
+        except KeyError:
+            raise ValueError("edge contains a vertex not in vertex_list")
+        edge_data.append((u_id, v_id, l))
+
+        if isdigraph:
+            degrees[u_id] += 1
+        elif u_id == v_id:
+            degrees[u_id] += 1
+            number_of_loops += 1
+        else:
+            degrees[u_id] += 1
+            degrees[v_id] += 1
+
+    g.m = len(edge_data)
+    n_edges = g.m if isdigraph else 2 * g.m - number_of_loops
+
+    g.edges = <uint32_t *>check_allocarray(n_edges, sizeof(uint32_t))
+    g.neighbors = <uint32_t **>check_allocarray(1 + g.n, sizeof(uint32_t *))
+
+    starts = <uint32_t *> mem.calloc(g.n + 1, sizeof(uint32_t))
+    for i in range(g.n):
+        starts[i + 1] = starts[i] + degrees[i]
+        g.neighbors[i] = g.edges + starts[i]
+    g.neighbors[g.n] = g.edges + starts[g.n]
+    next_pos = starts
+
+    if edge_labelled:
+        edge_labels = [None] * n_edges
+
+    # Grouping by target lets us fill each source adjacency segment in
+    # increasing target order, matching the sorted-neighbor invariant.
+    by_target = [[] for _ in range(g.n)]
+    if isdigraph:
+        for source, target, l in edge_data:
+            by_target[target].append((source, l))
+    else:
+        for source, target, l in edge_data:
+            by_target[source].append((target, l))
+            if source != target:
+                by_target[target].append((source, l))
+
+    for target in range(g.n):
+        for source, l in by_target[target]:
+            idx = next_pos[source]
+            g.edges[idx] = <uint32_t>target
+            if edge_labelled:
+                edge_labels[idx] = l
+            next_pos[source] = idx + 1
 
     if edge_labelled:
         g.edge_labels = <PyObject *> <void *> edge_labels
@@ -802,21 +932,43 @@ def tarjan_strongly_connected_components(G):
         ....:      s2 = Set(map(Set,scc2))
         ....:      if s1 != s2:
         ....:          print("Ooch !")
+
+    Immutable digraphs::
+
+        sage: from sage.graphs.base.static_sparse_graph import tarjan_strongly_connected_components
+        sage: G = digraphs.RandomDirectedGNP(10, .4)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = DiGraph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: tarjan_strongly_connected_components(G) == tarjan_strongly_connected_components(H)
+        True
     """
     from sage.graphs.digraph import DiGraph
 
     if not isinstance(G, DiGraph):
         raise ValueError("G must be a DiGraph.")
 
-    cdef MemoryAllocator mem = MemoryAllocator()
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph g
-    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        g = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+
+    cdef MemoryAllocator mem = MemoryAllocator()
     cdef int * scc = <int*> mem.malloc(g.n * sizeof(int))
     sig_on()
     cdef int nscc = tarjan_strongly_connected_components_C(g, scc)
     sig_off()
-    free_short_digraph(g)
+
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(g)
 
     cdef int i
     cdef list output = [[] for i in range(nscc)]
@@ -872,6 +1024,7 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
 
     output.n = nscc
     output.m = m
+    output.edge_labels = NULL
 
     output.neighbors = <uint32_t **> check_allocarray((1+<int>output.n), sizeof(uint32_t *))
 
@@ -920,15 +1073,37 @@ def strongly_connected_components_digraph(G):
         ....:     for e in g.edges(sort=False):
         ....:         assert(sccs[e[0]]==sccs[e[1]] or scc_digraph.has_edge(sccs[e[0]],sccs[e[1]]))
         ....:         assert(sccs[e[0]] >= sccs[e[1]])
+
+    Immutable digraphs::
+
+        sage: from sage.graphs.base.static_sparse_graph import strongly_connected_components_digraph
+        sage: G = digraphs.RandomDirectedGNP(10, .4)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = DiGraph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: A = strongly_connected_components_digraph(G)[0]
+        sage: B = strongly_connected_components_digraph(H)[0]
+        sage: A.is_isomorphic(B)
+        True
     """
     from sage.graphs.digraph import DiGraph
     if not isinstance(G, DiGraph):
         raise ValueError("G must be a DiGraph.")
 
-    cdef MemoryAllocator mem = MemoryAllocator()
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph g, scc_g
-    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        g = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+
+    cdef MemoryAllocator mem = MemoryAllocator()
     cdef int * scc = <int*> mem.malloc(g.n * sizeof(int))
     cdef int i, j, nscc
     cdef list edges = []
@@ -944,7 +1119,11 @@ def strongly_connected_components_digraph(G):
             edges.append((i, scc_g.neighbors[i][j]))
     output.add_edges(edges)
     sig_off()
-    free_short_digraph(g)
+
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(g)
+    free_short_digraph(scc_g)
+
     return output, {v: scc[i] for i, v in enumerate(int_to_vertex)}
 
 
@@ -968,7 +1147,8 @@ cdef void free_short_digraph(short_digraph g) noexcept:
     """
     sig_free(g.edges)
     sig_free(g.neighbors)
-    cpython.Py_XDECREF(g.edge_labels)
+    if g.edge_labels != NULL:
+        cpython.Py_XDECREF(g.edge_labels)
 
 
 def triangles_count(G):
@@ -986,14 +1166,35 @@ def triangles_count(G):
         {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
         sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3*binomial(15,3)           # needs sage.symbolic
         True
+
+    TESTS:
+
+    Immutable graphs::
+
+        sage: from sage.graphs.base.static_sparse_graph import triangles_count
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: triangles_count(G) == triangles_count(H)
+        True
     """
     from sage.rings.integer import Integer
     G._scream_if_not_simple()
 
     # g is a copy of G. If G is internally a static sparse graph, we use it.
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph g
-    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        g = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     cdef uint64_t * count = <uint64_t *> check_calloc(G.order(), sizeof(uint64_t))
 
@@ -1027,7 +1228,8 @@ def triangles_count(G):
 
     ans = {w: Integer(count[i] // 2) for i, w in enumerate(int_to_vertex)}
 
-    free_short_digraph(g)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(g)
     sig_free(count)
     return ans
 
@@ -1091,7 +1293,6 @@ def spectral_radius(G, prec=1e-10):
 
     A larger example::
 
-        sage: # needs sage.modules
         sage: G = DiGraph()
         sage: G.add_edges((i,i+1) for i in range(200))
         sage: G.add_edge(200,0)
@@ -1111,7 +1312,7 @@ def spectral_radius(G, prec=1e-10):
         sage: while not G.is_strongly_connected():
         ....:     shuffle(r)
         ....:     G.add_edges(enumerate(r), loops=False)
-        sage: spectral_radius(G, 1e-10)  # random
+        sage: spectral_radius(G, 1e-10)  # random  # long time
         (1.9997956006500042, 1.9998043797692782)
 
     The algorithm takes care of multiple edges::
@@ -1180,8 +1381,8 @@ def spectral_radius(G, prec=1e-10):
 
     cdef double e_min, e_max
 
-    if G.num_verts() == 1:
-        e_min = e_max = G.num_edges()
+    if G.n_vertices() == 1:
+        e_min = e_max = G.n_edges()
         return (e_min, e_max)
 
     is_bipartite, colors = G.is_bipartite(certificate=True)

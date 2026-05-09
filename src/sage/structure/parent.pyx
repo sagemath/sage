@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Base class for parent objects
 
@@ -124,7 +123,7 @@ from sage.structure.category_object import CategoryObject
 from sage.structure.coerce cimport coercion_model
 from sage.structure.coerce cimport parent_is_integers
 from sage.structure.coerce_exceptions import CoercionException
-from sage.structure.coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
+from sage.structure.coerce_maps cimport (NamedConvertMap,
                            DefaultConvertMap_unique, CallableConvertMap)
 from sage.structure.element cimport parent
 from sage.features.mock import MockInstance
@@ -884,7 +883,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         if self._element_constructor is None:
             raise NotImplementedError(f"cannot construct elements of {self}")
-        cdef Py_ssize_t i
         cdef R = parent(x)
         cdef bint no_extra_args = (not args and not kwds)
         if R is self and no_extra_args:
@@ -1089,7 +1087,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             True
             sage: I in RR                                                               # needs sage.rings.real_mpfr sage.symbolic
             False
-            sage: RIF(1, 2) in RIF                                                      # needs sage.rings.real_interval_field
+            sage: RIF(1, 2) in RIF
             True
 
             sage: # needs sage.symbolic
@@ -1112,31 +1110,31 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         ::
 
-            sage: 3/2 in RIF                                                            # needs sage.rings.real_interval_field
+            sage: 3/2 in RIF
             True
 
         because ``3/2`` has an exact representation in ``RIF`` (i.e. can be
         represented as an interval that contains exactly one value)::
 
-            sage: RIF(3/2).is_exact()                                                   # needs sage.rings.real_interval_field
+            sage: RIF(3/2).is_exact()
             True
 
         On the other hand, we have
 
         ::
 
-            sage: 2/3 in RIF                                                            # needs sage.rings.real_interval_field
+            sage: 2/3 in RIF
             False
 
         because ``2/3`` has no exact representation in ``RIF``. Since
         ``RIF(2/3)`` is a nontrivial interval, it cannot be equal to anything
         (not even itself)::
 
-            sage: RIF(2/3).is_exact()                                                   # needs sage.rings.real_interval_field
+            sage: RIF(2/3).is_exact()
             False
-            sage: RIF(2/3).endpoints()                                                  # needs sage.rings.real_interval_field
+            sage: RIF(2/3).endpoints()
             (0.666666666666666, 0.666666666666667)
-            sage: RIF(2/3) == RIF(2/3)                                                  # needs sage.rings.real_interval_field
+            sage: RIF(2/3) == RIF(2/3)
             False
 
         TESTS:
@@ -1661,6 +1659,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         assert not (self._coercions_used and D in self._coerce_from_hash and
                     self._coerce_from_hash.get(D) is not None), "coercion from {} to {} already registered or discovered".format(D, self)
+        assert not (self._coercions_used and D in self._convert_from_hash), "conversion from %s to %s already registered or discovered" % (D, self)
+
         mor._is_coercion = True
         self._coerce_from_list.append(mor)
         self._registered_domains.append(D)
@@ -1942,8 +1942,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         If a ``convert_method_name`` is provided, it creates a
         ``NamedConvertMap``, otherwise it creates a
-        ``DefaultConvertMap`` or ``DefaultConvertMap_unique``
-        depending on whether or not init_no_parent is set.
+        ``DefaultConvertMap_unique``.
 
         EXAMPLES::
 
@@ -1972,11 +1971,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             f = self.convert_method_map(S, m)
             if f is not None:
                 return f
-        if self._element_init_pass_parent:
-            # deprecation(26879)
-            return DefaultConvertMap(S, self, category=category)
-        else:
-            return DefaultConvertMap_unique(S, self, category=category)
+        return DefaultConvertMap_unique(S, self, category=category)
 
     def _convert_method_map(self, S, method_name=None):
         """
@@ -2277,7 +2272,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         2. If ``self._coerce_map_from_(S)`` is not exactly one of
 
-           - DefaultConvertMap
            - DefaultConvertMap_unique
            - NamedConvertMap
 
@@ -2390,7 +2384,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             best_mor = None
         elif user_provided_mor is True:
             best_mor = self._generic_coerce_map(S)
-            if not isinstance(best_mor, DefaultConvertMap):
+            if not isinstance(best_mor, DefaultConvertMap_unique):
                 return best_mor
             # Continue searching for better maps.  If there is something
             # better in the list, return that instead.  This is so, for
@@ -2413,7 +2407,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         # setting this to 1 will make it return the first path found.
 
         cdef int mor_found = 0
-        cdef Parent R, D
+        cdef Parent D
         # Recurse.  Note that if S is the domain of one of the maps in self._coerce_from_list,
         # we will have stuck the map into _coerce_map_hash and thus returned it already.
         for mor in self._coerce_from_list:
@@ -2867,17 +2861,17 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     cpdef bint is_exact(self) except -2:
         """
-        Test whether the ring is exact.
+        Test whether elements of this parent are represented exactly.
 
         .. NOTE::
 
             This defaults to true, so even if it does return ``True``
-            you have no guarantee (unless the ring has properly
+            you have no guarantee (unless the parent has properly
             overloaded this).
 
         OUTPUT:
 
-        Return ``True`` if elements of this ring are represented exactly, i.e.,
+        Return ``True`` if elements of this parent are represented exactly, i.e.,
         there is no precision loss when doing arithmetic.
 
         EXAMPLES::
@@ -2913,7 +2907,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             [False, False]
             sage: [R._is_numerical() for R in [RBF, CBF]]                               # needs sage.libs.flint
             [False, False]
-            sage: [R._is_numerical() for R in [RIF, CIF]]                               # needs sage.rings.real_interval_field
+            sage: [R._is_numerical() for R in [RIF, CIF]]
             [False, False]
         """
         try:

@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 r"""
 Cubic Hecke matrix representations
 
@@ -74,7 +73,7 @@ class RepresentationType(Enum):
         sage: chmr.RepresentationType.RegularLeft.is_regular()
         True
     """
-    def is_split(self):
+    def is_split(self) -> bool:
         r"""
         Return ``True`` if this representation type is absolutely split,
         ``False`` else-wise.
@@ -88,7 +87,7 @@ class RepresentationType(Enum):
         """
         return self.value['split']
 
-    def is_regular(self):
+    def is_regular(self) -> bool:
         r"""
         Return ``True`` if this representation type is regular, ``False``
         else-wise.
@@ -509,7 +508,7 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
         """
         if isinstance(item, AbsIrreducibeRep):
             return self._get_block(self._irr_to_ind(item))
-        elif isinstance(item, (Integer, int)):
+        if isinstance(item, (Integer, int)):
             return self._get_block(item)
 
         return super().__getitem__(item)
@@ -708,7 +707,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             sage: MS = c1.matrix().parent()
             sage: MS._test_category()   # indirect doctest
         """
-        return None
+        return
 
     def __reduce__(self):
         r"""
@@ -894,8 +893,8 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             matri += cf2 * matr
             matri += cf3 * matr**2
             d1, d2 = matr.dimensions()
-            matrI = matrix(original_base_ring, d1, d2, lambda i, j: original_base_ring(matri[i, j]))
-            return matrI
+            return matrix(original_base_ring, d1, d2,
+                          lambda i, j: original_base_ring(matri[i, j]))
 
         if n == 2:
             if representation_type.is_split():

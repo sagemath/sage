@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Morphisms
 
@@ -38,8 +37,6 @@ AUTHORS:
 # ****************************************************************************
 
 from cpython.object cimport *
-
-from sage.misc.constant_function import ConstantFunction
 
 from sage.structure.element cimport Element, ModuleElement
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
@@ -92,6 +89,8 @@ cdef class Morphism(Map):
             sage: phi
             Defunct morphism
         """
+        from sage.misc.constant_function import ConstantFunction
+
         D = self.domain()
         if D is None:
             return "Defunct morphism"
@@ -704,12 +703,12 @@ cdef class SetMorphism(Morphism):
         """
         return isinstance(other, SetMorphism) and self.parent() == other.parent() and self._function == (<SetMorphism>other)._function
 
-    def __richcmp__(self, right, int op):
+    def __richcmp__(self, other, int op):
         """
         INPUT:
 
         - ``self`` -- SetMorphism
-        - ``right`` -- any object
+        - ``other`` -- any object
         - ``op`` -- integer
 
         EXAMPLES::
@@ -732,11 +731,10 @@ cdef class SetMorphism(Morphism):
             (True, True, True)
         """
         if op == Py_EQ or op == Py_LE or op == Py_GE:
-            return isinstance(right, Element) and self._eq_c_impl(right)
-        elif op == Py_NE:
-            return not (isinstance(right, Element) and self._eq_c_impl(right))
-        else:
-            return False
+            return isinstance(other, Element) and self._eq_c_impl(other)
+        if op == Py_NE:
+            return not (isinstance(other, Element) and self._eq_c_impl(other))
+        return False
 
 
 cdef class SetIsomorphism(SetMorphism):

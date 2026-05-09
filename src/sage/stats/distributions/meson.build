@@ -4,13 +4,14 @@ py.install_sources(
   'catalog.py',
   'dgs.pxd',
   'discrete_gaussian_integer.pxd',
+  'discrete_gaussian_integer.pyx',
   'discrete_gaussian_lattice.py',
   'discrete_gaussian_polynomial.py',
   subdir: 'sage/stats/distributions',
 )
 
 extension_data = {
-  'discrete_gaussian_integer' : files(
+  'discrete_gaussian_integer': files(
     'dgs_bern.c',
     'dgs_gauss_dp.c',
     'dgs_gauss_mp.c',

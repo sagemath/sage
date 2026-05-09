@@ -22,15 +22,15 @@ AUTHORS:
        Vector_double_dense class
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2008 Jason Grout <jason-sage@creativetrax.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.rings.real_double import RDF
 
@@ -89,7 +89,7 @@ cdef class Vector_real_double_dense(Vector_double_dense):
             True
         """
         return (unpickle_v1, (self._parent, self.list(), self._degree,
-                              not self._is_immutable))
+                              self._is_immutable))
 
 
 # For backwards compatibility, we must keep the function unpickle_v0
@@ -107,7 +107,7 @@ def unpickle_v0(parent, entries, degree):
     return unpickle_v1(parent, entries, degree)
 
 
-def unpickle_v1(parent, entries, degree, is_mutable=None):
+def unpickle_v1(parent, entries, degree, immutable=None):
     """
     Create a real double vector with the given parent, entries,
     degree, and mutability.
@@ -120,6 +120,6 @@ def unpickle_v1(parent, entries, degree, is_mutable=None):
         True
     """
     cdef Vector_real_double_dense v = Vector_real_double_dense(parent, entries)
-    if is_mutable is not None:
-        v._is_immutable = not is_mutable
+    if immutable is not None:
+        v._is_immutable = immutable
     return v

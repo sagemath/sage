@@ -86,7 +86,7 @@ cdef inline void binary_matrix_fill(binary_matrix_t m, bint bit) noexcept:
     """
     cdef mp_bitcnt_t i
 
-    if bit: # set the matrix to 1
+    if bit:  # set the matrix to 1
         for i in range(m.n_rows):
             bitset_set_first_n(m.rows[i], m.n_cols)
     else:
@@ -117,7 +117,7 @@ cdef inline void binary_matrix_set(binary_matrix_t m, mp_bitcnt_t row, mp_bitcnt
     r"""
     Set an entry
     """
-    bitset_set_to(m.rows[row],col,value)
+    bitset_set_to(m.rows[row], col, value)
 
 cdef inline bint binary_matrix_get(binary_matrix_t m, mp_bitcnt_t row, mp_bitcnt_t col) noexcept:
     r"""
@@ -129,7 +129,7 @@ cdef inline binary_matrix_print(binary_matrix_t m):
     r"""
     Print the binary matrix
     """
-    cdef mp_bitcnt_t i,j
+    cdef mp_bitcnt_t i, j
     import sys
     for i in range(m.n_rows):
         for j in range(m.n_cols):

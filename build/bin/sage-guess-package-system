@@ -17,7 +17,7 @@ elif emerge --version > /dev/null 2>&1; then
     echo gentoo
 elif apt-get --version > /dev/null 2>&1; then
     echo debian
-elif yum --version > /dev/null 2>&1; then
+elif dnf5 --version > /dev/null 2>&1; then
     echo fedora
 elif pacman --version > /dev/null 2>&1; then
     echo arch

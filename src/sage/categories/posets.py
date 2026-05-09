@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.graphs, sage.combinat
 r"""
 Posets
@@ -13,6 +12,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category import Category
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.sets_cat import Sets
 
 
@@ -120,8 +120,7 @@ class Posets(Category):
         from sage.categories.examples.posets import FiniteSetsOrderedByInclusion, PositiveIntegersOrderedByDivisibilityFacade
         if choice == "facade":
             return PositiveIntegersOrderedByDivisibilityFacade()
-        else:
-            return FiniteSetsOrderedByInclusion()
+        return FiniteSetsOrderedByInclusion()
 
     def __iter__(self):
         r"""
@@ -615,12 +614,11 @@ class Posets(Category):
             list_o = list(o)
             if ordered:
                 return all(self.lt(a, b) for a, b in zip(list_o, list_o[1:]))
-            else:
-                for (i, x) in enumerate(list_o):
-                    for y in list_o[:i]:
-                        if (not self.le(x, y)) and (not self.gt(x, y)):
-                            return False
-                return True
+            for (i, x) in enumerate(list_o):
+                for y in list_o[:i]:
+                    if (not self.le(x, y)) and (not self.gt(x, y)):
+                        return False
+            return True
 
         def is_antichain_of_poset(self, o):
             """
@@ -720,3 +718,41 @@ class Posets(Category):
         #         sage: x <= y
         #     """
         #     return self.parent().le(self, other)
+
+    class SubcategoryMethods:
+        def Bounded(self):
+            r"""
+            A bounded poset is a poset with a unique maximal element
+            and a unique minimal element.
+
+            EXAMPLES::
+
+                sage: P = posets.DivisorLattice(24)
+                sage: P in Posets().Bounded()
+                True
+            """
+            return self._with_axiom("Bounded")
+
+    class Bounded(CategoryWithAxiom):
+        """
+        The category of bounded posets.
+
+        EXAMPLES::
+
+            sage: cat = Posets().Bounded(); cat
+            Category of bounded posets
+
+            sage: cat.super_categories()
+            [Category of posets]
+        """
+        class ParentMethods:
+            def is_bounded(self):
+                """
+                Return whether ``self`` is a bounded poset.
+
+                EXAMPLES::
+
+                    sage: posets.TamariLattice(4).is_bounded()
+                    True
+                """
+                return True

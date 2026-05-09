@@ -160,13 +160,10 @@ def Subsets(s, k=None, submultiset=False):
     if k is None:
         if submultiset:
             return SubMultiset_s(s)
-        else:
-            return Subsets_s(s)
-    else:
-        if submultiset:
-            return SubMultiset_sk(s, k)
-        else:
-            return Subsets_sk(s, k)
+        return Subsets_s(s)
+    if submultiset:
+        return SubMultiset_sk(s, k)
+    return Subsets_sk(s, k)
 
 
 class Subsets_s(Parent):
@@ -503,8 +500,7 @@ class Subsets_s(Parent):
         """
         if not isinstance(el, Element):
             return self._element_constructor_(el)
-        else:
-            return Parent.__call__(self, el)
+        return Parent.__call__(self, el)
 
     def _element_constructor_(self, X):
         """
@@ -855,7 +851,7 @@ class Subsets_sk(Subsets_s):
         else:
             return self.element_class([lset[i] for i in combination.from_rank(r, n, self._k)])
 
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an example of subset.
 
@@ -1145,8 +1141,7 @@ class SubMultiset_s(Parent):
         """
         if not isinstance(el, Element):
             return self._element_constructor_(el)
-        else:
-            return Parent.__call__(self, el)
+        return Parent.__call__(self, el)
 
     def _element_constructor_(self, X):
         """

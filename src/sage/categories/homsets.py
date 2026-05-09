@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Homset categories
 """
@@ -10,13 +9,13 @@ Homset categories
 # *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.categories.category import Category, JoinCategory
+from sage.categories.category import Category, JoinCategory, CategoryWithParameters
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.covariant_functorial_construction import FunctorialConstructionCategory
 
 
-class HomsetsCategory(FunctorialConstructionCategory):
+class HomsetsCategory(FunctorialConstructionCategory, CategoryWithParameters):
 
     _functor_category = "Homsets"
 
@@ -113,12 +112,10 @@ class HomsetsCategory(FunctorialConstructionCategory):
         if category.full_super_categories():
             return Category.join([getattr(cat, cls._functor_category)()
                                   for cat in category.full_super_categories()])
-        else:
-            functor_category = getattr(category.__class__, cls._functor_category)
-            if isinstance(functor_category, type) and issubclass(functor_category, Category):
-                return Homsets()
-            else:
-                return HomsetsOf(Category.join(category.structure()))
+        functor_category = getattr(category.__class__, cls._functor_category)
+        if isinstance(functor_category, type) and issubclass(functor_category, Category):
+            return Homsets()
+        return HomsetsOf(Category.join(category.structure()))
 
     def _test_homsets_category(self, **options):
         r"""
@@ -154,6 +151,22 @@ class HomsetsCategory(FunctorialConstructionCategory):
             if isinstance(C,Category_over_base):
                 return C.base()
         raise AttributeError("This hom category has no base")
+
+    def _make_named_class_key(self, name):
+        r"""
+        Return what the element/parent/... classes depend on.
+
+        .. SEEALSO::
+
+            - :meth:`CategoryWithParameters`
+            - :meth:`CategoryWithParameters._make_named_class_key`
+
+        TESTS::
+
+            sage: ModulesWithBasis(ZZ).Homsets()._make_named_class_key('parent_class')
+            <class 'sage.categories.modules_with_basis.ModulesWithBasis.parent_class'>
+        """
+        return getattr(self.base_category(), name)
 
 
 class HomsetsOf(HomsetsCategory):

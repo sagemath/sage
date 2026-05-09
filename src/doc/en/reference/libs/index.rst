@@ -48,13 +48,6 @@ FLINT
    sage/libs/flint/qsieve_sage
    sage/libs/flint/ulong_extras_sage
 
-Giac
-----
-.. toctree::
-   :maxdepth: 1
-
-   sage/libs/giac
-
 GMP-ECM
 -------
 .. toctree::
@@ -96,10 +89,8 @@ GAP
 
    sage/libs/gap/context_managers
    sage/libs/gap/gap_functions
-   sage/libs/gap/test_long
    sage/libs/gap/util
    sage/libs/gap/libgap
-   sage/libs/gap/test
    sage/libs/gap/element
    sage/libs/gap/saved_workspace
 

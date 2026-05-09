@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.graphs sage.groups
 r"""
-Fundamental Group of an Extended Affine Weyl Group
+Fundamental group of an extended affine Weyl group
 
 AUTHORS:
 
@@ -198,8 +198,7 @@ def FundamentalGroupOfExtendedAffineWeylGroup(cartan_type, prefix='pi',
     if general_linear is True:
         if cartan_type.is_untwisted_affine() and cartan_type.type() == "A":
             return FundamentalGroupGL(cartan_type, prefix)
-        else:
-            raise ValueError("General Linear Fundamental group is untwisted type A")
+        raise ValueError("General Linear Fundamental group is untwisted type A")
     return FundamentalGroupOfExtendedAffineWeylGroup_Class(cartan_type, prefix,
                                                            finite=True)
 
@@ -267,9 +266,9 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
         par = self.parent()
         return self.__class__(par, par.dual_node(self.value()))
 
-    def _richcmp_(self, x, op):
+    def _richcmp_(self, other, op):
         r"""
-        Compare ``self`` with `x`.
+        Compare ``self`` with ``other``.
 
         EXAMPLES::
 
@@ -285,7 +284,7 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
             sage: x <= y
             True
         """
-        return richcmp(self.value(), x.value(), op)
+        return richcmp(self.value(), other.value(), op)
 
     def act_on_affine_weyl(self, w):
         r"""
@@ -531,8 +530,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
         """
         return iter(self.group_generators())
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return an element of ``self``.
 
@@ -707,8 +705,7 @@ class FundamentalGroupGL(FundamentalGroupOfExtendedAffineWeylGroup_Class):
         """
         return LazyFamily(ZZ, lambda i: i)
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         r"""
         An element of ``self``.
 

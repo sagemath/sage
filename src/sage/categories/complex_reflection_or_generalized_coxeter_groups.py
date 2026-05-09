@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.groups
 r"""
 Common category for Generalized Coxeter Groups or Complex Reflection Groups
@@ -740,8 +739,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             """
             if word_type == 'simple':
                 return self.one().apply_simple_reflections(word)
-            else:
-                return self.one().apply_reflections(word, word_type=word_type)
+            return self.one().apply_reflections(word, word_type=word_type)
 
         ##########################################################################
         # Irreducible components
@@ -999,8 +997,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             """
             if side == 'right':
                 return self.apply_simple_reflection_right(i)
-            else:
-                return self.apply_simple_reflection_left(i)
+            return self.apply_simple_reflection_left(i)
 
         def apply_simple_reflections(self, word, side='right', type='simple'):
             r"""

@@ -285,7 +285,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             return False
         PP = self.parent().codomain()
 
-        n = PP.num_components()
+        n = PP.n_components()
         dim = [ P.ngens() for P in PP ]
         dim_prefix = [0,dim[0]]
 
@@ -332,7 +332,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             return True
         PP = self.parent().codomain()
 
-        n = PP.num_components()
+        n = PP.n_components()
         dim = [ P.ngens() for P in PP ]
         dim_prefix = [0,dim[0]]
 
@@ -393,7 +393,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             f = self.change_ring(T.base_ring().fraction_field())
             T = T.change_ring(T.base_ring().fraction_field())
 
-        for i in range(S.num_components()):
+        for i in range(S.n_components()):
             t = S[i].dimension_relative() + 1
             X = T.subscheme(list(f)[m : m + t])
             if X.dimension() > -1:
@@ -466,7 +466,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
                 h = max(c.global_height(prec=prec) for c in C)
                 H = max(H, h)
             return H
-        elif isinstance(K, sage.rings.abc.AlgebraicField):
+        if isinstance(K, sage.rings.abc.AlgebraicField):
             raise NotImplementedError("not implemented for QQbar")
         else:
             raise TypeError("Must be over a Numberfield or a Numberfield Order or QQbar")

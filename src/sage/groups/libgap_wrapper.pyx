@@ -294,7 +294,7 @@ class ParentLibGAP(SageObject):
         """
         return self._libgap
 
-    _libgap_ = _gap_ = gap
+    _libgap_ = gap
 
     def ngens(self):
         """
@@ -362,7 +362,7 @@ class ParentLibGAP(SageObject):
                 for gap_subgroup in self._libgap.MaximalNormalSubgroups()]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of the group.
 
@@ -526,7 +526,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
         """
         return self._libgap
 
-    _libgap_ = _gap_ = gap
+    _libgap_ = gap
 
     def _test_libgap_conversion(self, **options):
         r"""

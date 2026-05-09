@@ -54,9 +54,9 @@
 # export CPUTHREADS=8                                                          #
 # export RAMTHREADS=8                                                          #
 # export RAMTHREADS_DOCBUILD=8                                                 #
-# . .ci/update-env.sh                                                          #
-# . .ci/setup-make-parallelity.sh                                              #
-# .ci/build-docker.sh                                                          #
+# . docker/update-env.sh                                                          #
+# . docker/setup-make-parallelity.sh                                              #
+# docker/build-docker.sh                                                          #
 #                                                                              #
 # Now you can push the relevant images to the Docker Hub:                      #
 #                                                                              #
@@ -75,33 +75,33 @@ ARG MAKE_BUILD=make-build
 ################################################################################
 # Image containing the run-time dependencies for Sage                          #
 ################################################################################
-FROM ubuntu:jammy AS run-time-dependencies
+FROM ubuntu:noble AS run-time-dependencies
 LABEL maintainer="Erik M. Bray <erik.bray@lri.fr>, Julian Rüth <julian.rueth@fsfe.org>, Sebastian Oehms <seb.oehms@gmail.com>"
 # Set sane defaults for common environment variables.
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
-ENV SHELL /bin/bash
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+ENV SHELL=/bin/bash
 # Create symlinks for sage and sagemath - we copy a built sage to the target of these symlinks later.
 ARG SAGE_ROOT=/home/sage/sage
 RUN ln -s "$SAGE_ROOT/sage" /usr/bin/sage
 RUN ln -s /usr/bin/sage /usr/bin/sagemath
 # Sage needs the fortran libraries at run-time because we do not build gfortran
 # with Sage but use the system's.
-# We need gcc/g++ and libstdc++-10-dev to allow compilation of cython at run-time from the notebook.
+# We need gcc/g++ to allow compilation of cython at run-time from the notebook.
 # We also install sudo for the sage user, see below.
 RUN apt-get -qq update \
-    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-10-dev sudo openssl \
+    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ sudo openssl pkg-config patch libz-dev libbz2-dev bzip2 ca-certificates perl libboost-dev \
     && apt-get -qq clean \
     && rm -r /var/lib/apt/lists/*
 # Sage refuses to build as root, so we add a "sage" user that can sudo without a password.
 # We also want this user at runtime as some commands in sage know about the user that was used during build.
 ARG HOME=/home/sage
-RUN adduser --quiet --shell /bin/bash --gecos "Sage user,101,," --disabled-password --home "$HOME" sage \
+RUN useradd --create-home --home-dir "$HOME" --shell /bin/bash --comment "Sage user,101,," sage \
     && echo "sage ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/01-sage \
     && chmod 0440 /etc/sudoers.d/01-sage
 # Run everything from now on as the sage user in sage's home
 USER sage
-ENV HOME $HOME
+ENV HOME=$HOME
 WORKDIR $HOME
 
 ################################################################################
@@ -111,7 +111,7 @@ WORKDIR $HOME
 FROM run-time-dependencies AS build-time-dependencies
 # Install the build time dependencies & git & rdfind
 RUN sudo apt-get -qq update \
-    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 libssl-dev git rdfind \
+    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 python3-dev python3-setuptools python3-venv libssl-dev git rdfind autoconf automake libtool bc binutils flex xz-utils liblzma-dev \
     && sudo apt-get -qq clean \
     && sudo rm -r /var/lib/apt/lists/*
 
@@ -185,17 +185,17 @@ RUN patch -p1 < "$HOME"/sage-context.patch
 ################################################################################
 FROM source-from-context AS make-build
 # Make sure that the result runs on most CPUs.
-ENV SAGE_FAT_BINARY yes
+ENV SAGE_FAT_BINARY=yes
 # Just to be sure Sage doesn't try to build its own GCC (even though
 # it shouldn't with a recent GCC package from the system and with gfortran)
-ENV SAGE_INSTALL_GCC no
+ENV SAGE_INSTALL_GCC=no
 # Set MAKEFLAGS and SAGE_NUM_THREADS to build things in parallel during the
 # docker build. Note that these do not leak into the sagemath and sagemath-dev
 # images.
 ARG MAKEFLAGS="-j2"
-ENV MAKEFLAGS $MAKEFLAGS
+ENV MAKEFLAGS=$MAKEFLAGS
 ARG SAGE_NUM_THREADS="2"
-ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS
+ENV SAGE_NUM_THREADS=$SAGE_NUM_THREADS
 RUN make configure
 # Old default before https://github.com/sagemath/sage/issues/32406
 RUN ./configure --disable-editable
@@ -210,9 +210,9 @@ FROM $MAKE_BUILD AS make-all
 # overcommit limit of the system (no RAM is actually used, but this limit is
 # very low because there is not even swap on most CI systems.)
 ARG MAKEFLAGS_DOCBUILD=$MAKEFLAGS
-ENV MAKEFLAGS_DOCBUILD $MAKEFLAGS_DOCBUILD
+ENV MAKEFLAGS_DOCBUILD=$MAKEFLAGS_DOCBUILD
 ARG SAGE_NUM_THREADS_DOCBUILD=$SAGE_NUM_THREADS
-ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS_DOCBUILD
+ENV SAGE_NUM_THREADS=$SAGE_NUM_THREADS_DOCBUILD
 RUN make
 
 ################################################################################

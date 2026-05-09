@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Quotient fields
 """
@@ -100,7 +99,7 @@ class QuotientFields(Category_singleton):
                 sage: R = ZZ.extension(x^2 + 1, names='i')
                 sage: i = R.1
                 sage: gcd(5, 3 + 4*i)
-                -i - 2
+                2*i - 1
                 sage: P.<t> = R[]
                 sage: gcd(t, i)
                 Traceback (most recent call last):
@@ -332,10 +331,9 @@ class QuotientFields(Category_singleton):
                 one = self.parent().one()
                 if self != zero:
                     return (one, ~self, zero)
-                elif other != zero:
+                if other != zero:
                     return (one, zero, ~other)
-                else:
-                    return (zero, zero, zero)
+                return (zero, zero, zero)
 
         def factor(self, *args, **kwds):
             """

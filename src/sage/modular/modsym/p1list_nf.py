@@ -61,7 +61,7 @@ Lift an MSymbol to a matrix in `SL(2, R)`:
 
     sage: alpha = MSymbol(N, a + 2, 3*a^2)
     sage: alpha.lift_to_sl2_Ok()
-    [-1, 4*a^2 - 13*a + 23, a + 2, 5*a^2 + 3*a - 3]
+    [-a - 1, 15*a^2 - 38*a + 86, a + 2, -a^2 + 9*a - 19]
     sage: Ok = k.ring_of_integers()
     sage: M = Matrix(Ok, 2, alpha.lift_to_sl2_Ok())
     sage: det(M)
@@ -433,19 +433,16 @@ class MSymbol(SageObject):
         if self.__c in N:
             if with_scalar:
                 return N.reduce(self.d), MSymbol(N, 0, 1)
-            else:
-                return MSymbol(N, 0, 1)
+            return MSymbol(N, 0, 1)
         if self.d in N:
             if with_scalar:
                 return N.reduce(self.c), MSymbol(N, 1, 0)
-            else:
-                return MSymbol(N, 1, 0)
+            return MSymbol(N, 1, 0)
         if N.is_coprime(self.c):
             cinv = R(self.c).inverse_mod(N)
             if with_scalar:
                 return N.reduce(self.c), MSymbol(N, 1, N.reduce(self.d*cinv))
-            else:
-                return MSymbol(N, 1, N.reduce(self.d*cinv))
+            return MSymbol(N, 1, N.reduce(self.d*cinv))
 
         if N in _level_cache:
             Lfacs, Lxs = _level_cache[N]
@@ -469,8 +466,7 @@ class MSymbol(SageObject):
             c = R(1)
         if with_scalar:
             return u.inverse_mod(N), MSymbol(N, c, d)
-        else:
-            return MSymbol(N, c, d)
+        return MSymbol(N, c, d)
 
 
 # ************************************************************************
@@ -764,8 +760,7 @@ class P1NFList(SageObject):
         if t:
             if with_scalar:
                 return u, i
-            else:
-                return i
+            return i
         return False
 
     def index_of_normalized_pair(self, c, d=None):
@@ -977,11 +972,11 @@ class P1NFList(SageObject):
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
             sage: u = k.unit_group().gens_values(); u
-            [-1, -2*a^2 - 4*a + 1]
+            [-1, 2*a^2 + 4*a - 1]
             sage: P.apply_J_epsilon(4, -1)
             2
             sage: P.apply_J_epsilon(4, u[0], u[1])
-            5
+            1
 
         ::
 
@@ -1122,7 +1117,7 @@ def lift_to_sl2_Ok(N, c, d):
         sage: M = Matrix(Ok, 2, lift_to_sl2_Ok(N, 0, 7))
         Traceback (most recent call last):
         ...
-        ValueError: <0> + <7> and the Fractional ideal (7, a) are not coprime.
+        ValueError: <0> + <7> and the Fractional ideal (7, -4/7*a^3 + 13/7*a^2 + 39/7*a - 19) are not coprime.
     """
     k = N.number_field()
     # check the input
@@ -1197,16 +1192,15 @@ def make_coprime(N, c, d):
     k = N.number_field()
     if k.ideal(c).is_coprime(d):
         return c, d
-    else:
-        q = k.ideal(c).prime_to_idealM_part(d)
-        it = k.primes_of_degree_one_iter()
-        r = k.ideal(1)
-        qN = q*N
-        while not (r.is_coprime(c) and (r*qN).is_principal()):
-            r = next(it)
-        m = (r*qN).gens_reduced()[0]
-        d1 = d + m
-        return c, d1
+    q = k.ideal(c).prime_to_idealM_part(d)
+    it = k.primes_of_degree_one_iter()
+    r = k.ideal(1)
+    qN = q*N
+    while not (r.is_coprime(c) and (r*qN).is_principal()):
+        r = next(it)
+    m = (r*qN).gens_reduced()[0]
+    d1 = d + m
+    return c, d1
 
 
 def psi(N):

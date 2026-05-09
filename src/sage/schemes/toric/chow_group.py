@@ -119,6 +119,7 @@ Chow cycles can be of mixed degrees::
 # ****************************************************************************
 from __future__ import annotations
 
+from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.fast_methods import WithEqualityById
 from sage.modules.fg_pid.fgp_module import FGP_Module_class
@@ -226,6 +227,7 @@ class ChowCycle(FGP_Element):
         s += ')'
         return s
 
+    @cached_method
     def degree(self) -> int:
         r"""
         Return the degree of the Chow cycle.
@@ -245,9 +247,6 @@ class ChowCycle(FGP_Element):
             sage: [ a.degree() for a in A.gens() ]
             [2, 1, 0]
         """
-        if '_dim' in self.__dict__:
-            return self._dim
-
         ambient_dim = self.parent()._variety.dimension()
         cone_dim = None
         for i, cone in enumerate(self.parent()._cones):
@@ -255,8 +254,7 @@ class ChowCycle(FGP_Element):
                 if cone_dim not in [None, cone.dim()]:
                     raise ValueError('Chow cycle is not of definite degree')
                 cone_dim = cone.dim()
-        self._dim = ambient_dim - cone_dim
-        return self._dim
+        return ambient_dim - cone_dim
 
     def project_to_degree(self, degree):
         r"""
@@ -789,10 +787,9 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         """
         if self.base_ring() == QQ:
             return "QQ-Chow group of " + str(self._variety)
-        elif self.base_ring() == ZZ:
+        if self.base_ring() == ZZ:
             return "Chow group of " + str(self._variety)
-        else:
-            raise ValueError
+        raise ValueError
 
     def _cone_to_V(self, cone):
         r"""
@@ -817,6 +814,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         x[self._cones.index(cone)] = 1
         return self._V(x)
 
+    @cached_method
     def degree(self, k=None):
         r"""
         Return the degree-`k` Chow group.
@@ -911,15 +909,8 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         """
         if k is not None:
             return self.degree()[k]
-
-        try:
-            return self._degree
-        except AttributeError:
-            pass
-
-        self._degree = tuple(ChowGroup_degree_class(self, d)
-                             for d in range(self._variety.dimension() + 1))
-        return self._degree
+        return tuple(ChowGroup_degree_class(self, d)
+                     for d in range(self._variety.dimension() + 1))
 
     def coordinate_vector(self, chow_cycle, degree=None, reduce=True):
         r"""
@@ -958,7 +949,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         a = chow_cycle.project_to_degree(degree)
         return self.degree(degree).module().coordinate_vector(a, reduce=reduce)
 
-    def gens(self, degree=None):
+    def gens(self, degree=None) -> tuple:
         r"""
         Return the generators of the Chow group.
 
@@ -1055,7 +1046,7 @@ class ChowGroup_degree_class(SageObject):
         <class 'sage.schemes.toric.chow_group.ChowGroup_degree_class'>
     """
 
-    def __init__(self, A, d):
+    def __init__(self, A, d) -> None:
         r"""
         Construct a :class:`ChowGroup_degree_class`.
 
@@ -1177,7 +1168,7 @@ class ChowGroup_degree_class(SageObject):
         """
         return self._gens[i]
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of the Chow group of fixed degree.
 
@@ -1192,64 +1183,3 @@ class ChowGroup_degree_class(SageObject):
             (( 0 | 0 | 1 ),)
         """
         return self._gens
-
-
-def is_ChowGroup(x) -> bool:
-    r"""
-    Return whether ``x`` is a :class:`ChowGroup_class`.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: P2 = toric_varieties.P2()
-        sage: A = P2.Chow_group()
-        sage: from sage.schemes.toric.chow_group import is_ChowGroup
-        sage: is_ChowGroup(A)
-        doctest:warning...
-        DeprecationWarning: The function is_ChowGroup is deprecated; use 'isinstance(..., ChowGroup_class)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_ChowGroup('Victoria')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_ChowGroup is deprecated; use 'isinstance(..., ChowGroup_class)' instead.")
-    return isinstance(x, ChowGroup_class)
-
-
-def is_ChowCycle(x) -> bool:
-    r"""
-    Return whether ``x`` is a :class:`ChowCycle`.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: P2 = toric_varieties.P2()
-        sage: A = P2.Chow_group()
-        sage: from sage.schemes.toric.chow_group import *
-        sage: is_ChowCycle(A)
-        doctest:warning...
-        DeprecationWarning: The function is_ChowCycle is deprecated;
-        use 'isinstance(..., ChowCycle)' instead.
-        See https://github.com/sagemath/sage/issues/38277 for details.
-        False
-        sage: is_ChowCycle(A.an_element())
-        True
-        sage: is_ChowCycle('Victoria')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38277,
-                "The function is_ChowCycle is deprecated; "
-                "use 'isinstance(..., ChowCycle)' instead.")
-    return isinstance(x, ChowCycle)

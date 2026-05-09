@@ -93,38 +93,14 @@ from sage.rings.cc import CC
 TUNE_CHARPOLY_NF = 25
 
 
-def is_NumberFieldElement(x):
-    """
-    Return ``True`` if `x` is of type :class:`NumberFieldElement`, i.e., an element of
-    a number field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field_element import is_NumberFieldElement
-        sage: is_NumberFieldElement(2)
-        doctest:warning...
-        DeprecationWarning: is_NumberFieldElement is deprecated;
-        use isinstance(..., sage.rings.number_field.number_field_element_base.NumberFieldElement_base) instead
-        See https://github.com/sagemath/sage/issues/34931 for details.
-        False
-        sage: x = polygen(ZZ, 'x')
-        sage: k.<a> = NumberField(x^7 + 17*x + 1)
-        sage: is_NumberFieldElement(a+1)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34931,
-                'is_NumberFieldElement is deprecated; '
-                'use isinstance(..., sage.rings.number_field.number_field_element_base.NumberFieldElement_base) instead')
-    return isinstance(x, NumberFieldElement)
-
-
 def _inverse_mod_generic(elt, I):
     r"""
-    Return an inverse of ``elt`` modulo the given ideal. This is a separate
-    function called from each of the ``OrderElement_xxx`` classes, since
-    otherwise we'd have to have the same code three times over (there
-    is no ``OrderElement_generic`` class - no multiple inheritance). See
+    Return an inverse of ``elt`` modulo the given ideal ``I``.
+
+    This is a separate function called from each of the
+    ``OrderElement_xxx`` classes, since otherwise we'd have to have
+    the same code three times over (there is no
+    ``OrderElement_generic`` class - no multiple inheritance). See
     :issue:`4190`.
 
     EXAMPLES::
@@ -477,13 +453,12 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         latex_name = self.number_field().latex_variable_names()[0]
         return self.polynomial()._latex_(name=latex_name)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Return gap string representation of ``self``.
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: (a**2 - a + 1)._gap_init_()
@@ -507,7 +482,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         Check that :issue:`15276` is fixed::
 
-            sage: for n in range(2,20):                                                 # needs sage.libs.gap
+            sage: for n in range(2,20):                                                 # needs sage.libs.gap, long time (:issue:`39569`)
             ....:     K = CyclotomicField(n)
             ....:     assert K(gap(K.gen())) == K.gen(), "n = {}".format(n)
             ....:     assert K(gap(K.one())) == K.one(), "n = {}".format(n)
@@ -538,7 +513,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: F = CyclotomicField(8)
             sage: F.gen()._libgap_()
             E(8)
@@ -578,7 +552,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
-            sage: # needs sage.libs.pari
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K.zero()._pari_polynomial('x')
@@ -610,7 +583,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K(1).__pari__()
@@ -888,6 +860,43 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         - ``distribution`` -- distribution to use for coefficients of result
 
         EXAMPLES::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: a._random_element()  # random
+            -1/2*a^2 - 4
+            sage: K.<a> = NumberField(x^2 - 5)
+            sage: a._random_element()  # random
+            -1/48*a - 1/2
+
+        With denominator bound one, we always get integral elements::
+
+            sage: K = QuadraticField(2)
+            sage: uu = [K.random_element(den_bound=1) for _ in range(5)]
+            sage: uu  # random
+            [0, a + 2, -12*a - 2, -a + 1, -a - 2]
+            sage: all(u.is_integral() for u in uu)
+            True
+
+        Without this constraint, we do not always get them::
+
+            sage: K = QuadraticField(2)
+            sage: uu = [K.random_element() for _ in range(100)]
+            sage: all(u.is_integral() for u in uu)
+            False
+
+        Random integral elements can also be picked using the random_element
+        method of the number field's "ring of integers" or "maximal order" ::
+
+            sage: K = QuadraticField(2)
+            sage: O = K.maximal_order()
+            sage: O.random_element()  # random
+            5*a - 6
+            sage: O = K.ring_of_integers()
+            sage: O.random_element()  # random
+            -4*a + 1
+
+        TESTS::
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
@@ -1954,14 +1963,14 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: (6*i + 6).factor()
-            (-i) * (i + 1)^3 * 3
+            (i - 1)^3 * 3
 
         In the following example, the class number is 2.  If a factorization
         in prime elements exists, we will find it::
 
             sage: K.<a> = NumberField(x^2 - 10)
             sage: factor(169*a + 531)
-            (-6*a - 19) * (-3*a - 1) * (-2*a + 9)
+            (-6*a - 19) * (2*a - 9) * (3*a + 1)
             sage: factor(K(3))
             Traceback (most recent call last):
             ...
@@ -1990,7 +1999,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         # Compute the product of the p^e to figure out the unit
         from sage.misc.misc_c import prod
         element_product = prod([p**e for p,e in element_fac], K.one())
-        from sage.structure.all import Factorization
+        from sage.structure.factorization import Factorization
         return Factorization(element_fac, unit=self/element_product)
 
     def is_prime(self):
@@ -2043,7 +2052,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             0
             sage: R = K.maximal_order()
             sage: R(i+1).gcd(2)
-            i + 1
+            i - 1
             sage: R = K.order(2*i)
             sage: R(1).gcd(R(4*i))
             1
@@ -2875,7 +2884,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: K.<a> = QuadraticField(2)
             sage: SR(a)         # indirect doctest
             sqrt(2)
@@ -4009,10 +4017,10 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: L.<b, c> = NumberFieldTower([x^2 - 5, x^3 + x + 3])
             sage: [(b + c).local_height_arch(i) for i in range(4)]
-            [1.238223390757884911842206617439,
-            0.02240347229957875780769746914391,
-            0.780028961749618,
-            1.16048938497298]
+            [1.238223390757884911842206617260,
+             0.02240347229957875780769746914391,
+             0.780028961749618,
+             1.16048938497298]
         """
         K = self.number_field()
         emb = K.places(prec=prec)[i]
@@ -4238,7 +4246,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: P5s = F(5).support()
             sage: P5s
-            [Fractional ideal (-t^2 - 1), Fractional ideal (t^2 - 2*t - 1)]
+            [Fractional ideal (t^2 + 1), Fractional ideal (t^2 - 2*t - 1)]
             sage: all(5 in P5 for P5 in P5s)
             True
             sage: all(P5.is_prime() for P5 in P5s)
@@ -4487,7 +4495,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: f = Qi.embeddings(K)[0]
             sage: a = f(2+3*i) * (2-zeta)^2
             sage: a.descend_mod_power(Qi,2)
-            [-2*i + 3, 3*i + 2]
+            [3*i + 2, 2*i - 3]
 
         An absolute example::
 
@@ -5306,6 +5314,23 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         """
         return self._parent.number_field()(NumberFieldElement_absolute.__invert__(self))
 
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        Only implemented here because order elements inherit from field elements,
+        but the canonical associate implemented there does not apply here.
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: K = NumberField(x^3 - x + 2, 'a')
+            sage: OK = K.ring_of_integers()
+            sage: (OK.1).canonical_associate()
+            NotImplemented
+        """
+        return NotImplemented
+
 
 cdef class OrderElement_relative(NumberFieldElement_relative):
     """
@@ -5518,6 +5543,24 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         K = self.parent().number_field()
         R = ZZ[var]
         return R(K(self).absolute_minpoly(var))
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        Only implemented here because order elements inherit from
+        field elements, but the canonical associate implemented there
+        does not apply here.
+
+        EXAMPLES::
+
+            sage: x = ZZ['x'].0
+            sage: K.<a,b> = NumberField([x^2 + 1, x^2 - 3])
+            sage: OK = K.maximal_order()
+            sage: (OK.1).canonical_associate()
+            NotImplemented
+        """
+        return NotImplemented
 
 
 class CoordinateFunction():

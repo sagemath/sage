@@ -121,7 +121,7 @@ class pAdicLseries(SageObject):
         self._gamma = gamma
         self._quadratic_twist = quadratic_twist
         self._precision = precision
-        self._cinf = ZZ(1)  # is set when called for an elliptic curve
+        self._cinf = ZZ.one()  # is set when called for an elliptic curve
 
     def __getitem__(self, n):
         r"""
@@ -138,33 +138,32 @@ class pAdicLseries(SageObject):
         """
         if n in self._coefficients:
             return self._coefficients[n]
+        p = self.prime()
+        symb = self.symbol()
+        # ap = symb.Tq_eigenvalue(p)
+        gamma = self._gamma
+        precision = self._precision
+
+        M = symb.precision_relative()
+        K = pAdicField(p, M)
+        dn = 0
+        if n == 0:
+            precision = M
+            lb = [1] + [0] * (M - 1)
         else:
-            p = self.prime()
-            symb = self.symbol()
-            # ap = symb.Tq_eigenvalue(p)
-            gamma = self._gamma
-            precision = self._precision
+            lb = log_gamma_binomial(p, gamma, n, 2 * M)
+            if precision is None:
+                precision = min(j + lb[j].valuation(p)
+                                for j in range(M, len(lb)))
+            lb = [lb[a] for a in range(M)]
 
-            M = symb.precision_relative()
-            K = pAdicField(p, M)
-            dn = 0
-            if n == 0:
-                precision = M
-                lb = [1] + [0] * (M - 1)
-            else:
-                lb = log_gamma_binomial(p, gamma, n, 2 * M)
-                if precision is None:
-                    precision = min(j + lb[j].valuation(p)
-                                    for j in range(M, len(lb)))
-                lb = [lb[a] for a in range(M)]
-
-            for j, cjn in enumerate(lb):
-                temp = sum((ZZ(K.teichmuller(a)) ** (-j)) *
-                           self._basic_integral(a, j) for a in range(1, p))
-                dn += cjn * temp
-            self._coefficients[n] = dn.add_bigoh(precision)
-            self._coefficients[n] /= self._cinf
-            return self._coefficients[n]
+        for j, cjn in enumerate(lb):
+            temp = sum((ZZ(K.teichmuller(a)) ** (-j)) *
+                       self._basic_integral(a, j) for a in range(1, p))
+            dn += cjn * temp
+        self._coefficients[n] = dn.add_bigoh(precision)
+        self._coefficients[n] /= self._cinf
+        return self._coefficients[n]
 
     def __eq__(self, other):
         r"""
@@ -373,7 +372,7 @@ class pAdicLseries(SageObject):
         ap = ap * kronecker(D, p)
         K = pAdicField(p, M)
         symb_twisted = symb.evaluate_twisted(a, D)
-        return sum(binomial(j, r) *
+        return sum(ZZ(j).binomial(r) *
                    ((a - ZZ(K.teichmuller(a))) ** (j - r)) *
                    (p ** r) *
                    symb_twisted.moment(r) for r in range(j + 1)) / ap

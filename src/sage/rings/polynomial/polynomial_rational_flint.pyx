@@ -24,6 +24,7 @@ AUTHOR:
 
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
+from libc.limits cimport LONG_MIN
 from cpython.long cimport PyLong_AsLong
 from sage.arith.long cimport pyobject_to_long
 
@@ -38,7 +39,7 @@ from sage.libs.flint.fmpq_poly_sage cimport *
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
 
-from cypari2.gen import Gen as pari_gen
+from cypari2.gen cimport Gen as pari_gen
 
 from sage.rings.complex_arb cimport ComplexBall
 from sage.rings.integer cimport Integer, smallInteger
@@ -262,7 +263,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 #               deg += 1
 
         elif isinstance(x, dict):
-            for deg, e in x.iteritems():
+            for deg, e in x.items():
                 c = Rational(e)
                 fmpq_poly_set_coeff_mpq(self._poly, deg, c.value)
 
@@ -779,7 +780,7 @@ cdef class Polynomial_rational_flint(Polynomial):
     # Shifting                                                                #
     ###########################################################################
 
-    def __lshift__(self, n):
+    def __lshift__(self, long n):
         """
         Notationally multiply ``self`` by `t^n`.
 
@@ -792,27 +793,34 @@ cdef class Polynomial_rational_flint(Polynomial):
         TESTS::
 
             sage: R.<t> = QQ[]
+            sage: t << (-1)
+            1
+            sage: t << (-10)
+            0
             sage: f = R.random_element(1000)
             sage: (f << 23) >> 23 == f        # indirect doctest
             True
         """
-        cdef unsigned long k = <unsigned long> n
+        if n < 0:
+            assert n != LONG_MIN
+            return self >> (-n)
+
         cdef Polynomial_rational_flint f = <Polynomial_rational_flint> self
         cdef Polynomial_rational_flint res
         cdef bint do_sig
 
-        if k == 0 or fmpq_poly_is_zero(f._poly):
+        if n == 0 or fmpq_poly_is_zero(f._poly):
             return self
         else:
             res = f._new()
             do_sig = fmpq_poly_length(f._poly) > 5000 or n > 5000
 
             if do_sig: sig_str("FLINT exception")
-            fmpq_poly_shift_left(res._poly, f._poly, k)
+            fmpq_poly_shift_left(res._poly, f._poly, n)
             if do_sig: sig_off()
             return res
 
-    def __rshift__(self, n):
+    def __rshift__(self, long n):
         """
         Notationally return the quotient of Euclidean division of ``self``
         by `t^n`.
@@ -823,20 +831,25 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f = 1 + t + t^2/2 + t^3/3 + t^4/4
             sage: f >> 2
             1/4*t^2 + 1/3*t + 1/2
+            sage: f >> (-2)
+            1/4*t^6 + 1/3*t^5 + 1/2*t^4 + t^3 + t^2
         """
-        cdef unsigned long k = <unsigned long> n
+        if n < 0:
+            assert n != LONG_MIN
+            return self << (-n)
+
         cdef Polynomial_rational_flint f = <Polynomial_rational_flint> self
         cdef Polynomial_rational_flint res
         cdef bint do_sig
 
-        if k == 0 or fmpq_poly_is_zero(f._poly):
+        if n == 0 or fmpq_poly_is_zero(f._poly):
             return self
         else:
             res = f._new()
             do_sig = _do_sig(f._poly)
 
             if do_sig: sig_str("FLINT exception")
-            fmpq_poly_shift_right(res._poly, f._poly, k)
+            fmpq_poly_shift_right(res._poly, f._poly, n)
             if do_sig: sig_off()
             return res
 
@@ -1489,10 +1502,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             3
         """
         cdef Integer den = Integer.__new__(Integer)
-        if fmpq_poly_denref(self._poly) is NULL:
-            mpz_set_ui(den.value, 1)
-        else:
-            fmpz_get_mpz(den.value, <fmpz *> fmpq_poly_denref(self._poly))
+        fmpz_get_mpz(den.value, <fmpz *> fmpq_poly_denref(self._poly))
         return den
 
     def _derivative(self, var=None):
@@ -2114,7 +2124,6 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.groups sage.libs.pari
             sage: R.<x> = QQ[]
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(); G
@@ -2131,7 +2140,6 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         ::
 
-            sage: # needs sage.groups sage.libs.pari
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(pari_group=True); G
             PARI group [24, -1, 5, "S4"] of degree 4
@@ -2150,7 +2158,6 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f.galois_group(algorithm='kash')   # optional - kash
             Transitive group number 5 of degree 4
 
-            sage: # needs sage.libs.gap
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: f.galois_group(algorithm='gap')
             Transitive group number 5 of degree 4
@@ -2162,7 +2169,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             Transitive group number 183 of degree 12
 
             sage: f.galois_group(algorithm='magma')  # optional - magma
-            Transitive group number 5 of degree 4
+            Transitive group number 183 of degree 12
 
         TESTS:
 
@@ -2214,9 +2221,9 @@ cdef class Polynomial_rational_flint(Polynomial):
                 from sage.interfaces.kash import kash
                 kash.eval('X := PolynomialRing(RationalField()).1')
                 s = self._repr(name='X')
-                G = kash('Galois(%s)'%s)
-                d = int(kash.eval('%s.ext1'%G.name()))
-                n = int(kash.eval('%s.ext2'%G.name()))
+                G = kash('Galois(%s)' % s)
+                d = int(kash.eval('%s.ext1' % G.name()))
+                n = int(kash.eval('%s.ext2' % G.name()))
                 return TransitiveGroup(d, n)
             except RuntimeError as msg:
                 raise NotImplementedError(str(msg) + "\nSorry, " +
@@ -2308,7 +2315,6 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.padic
             sage: R.<x> = QQ[]
             sage: f = x^3 - 2
             sage: f.factor_padic(2)
@@ -2329,7 +2335,6 @@ cdef class Polynomial_rational_flint(Polynomial):
         the same as first coercing to `\QQ_p` and then factoring
         (see also :issue:`15422`)::
 
-            sage: # needs sage.rings.padic
             sage: f = x^2 - 3^6
             sage: f.factor_padic(3, 5)
             ((1 + O(3^5))*x + 3^3 + O(3^5)) * ((1 + O(3^5))*x + 2*3^3 + 2*3^4 + O(3^5))
@@ -2349,7 +2354,6 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         Try some bogus inputs::
 
-            sage: # needs sage.rings.padic
             sage: f.factor_padic(3, -1)
             Traceback (most recent call last):
             ...

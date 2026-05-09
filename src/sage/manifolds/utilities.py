@@ -31,6 +31,7 @@ from operator import pow as _pow
 from sage.functions.other import abs_symbolic
 from sage.functions.trig import cos, sin
 from sage.misc.functional import sqrt
+from sage.misc.latex import latex, latex_variable_name
 from sage.rings.rational import Rational
 from sage.symbolic.constants import pi
 from sage.symbolic.expression import Expression
@@ -972,12 +973,10 @@ class ExpressionNice(Expression):
                     strv[i] = "(" + sv + ")"
 
             # dictionary to group multiple occurrences of differentiation: d/dxdx -> d/dx^2 etc.
-            occ = dict((i, strv[i] + "^" + str(diffargs.count(i))
-                       if (diffargs.count(i) > 1) else strv[i])
-                       for i in diffargs)
+            occ = {i: strv[i] + "^" + str(D) if (D := diffargs.count(i)) > 1
+                   else strv[i] for i in diffargs}
 
-            res = "d" + str(numargs) + "(" + str(funcname) + ")/d" + "d".join(
-                occ.values())
+            res = f"d{numargs}({funcname})/d" + "d".join(occ.values())
 
             # str representation of the operator
             s = self._parent._repr_element_(m[0])
@@ -1044,8 +1043,6 @@ class ExpressionNice(Expression):
             \frac{\partial\,f}{\partial \left( x + y \right)}
              - \frac{\partial\,f}{\partial \left( x - y \right)}
         """
-        from sage.misc.latex import latex
-
         d = self._parent._latex_element_(self)
 
         # find all occurrences of diff
@@ -1147,7 +1144,6 @@ def _list_derivatives(ex, list_d, exponent=0):
 
     import operator
 
-    from sage.misc.latex import latex, latex_variable_name
     from sage.symbolic.operators import FDerivativeOperator
 
     if op:
@@ -1207,8 +1203,6 @@ def _list_functions(ex, list_f):
     """
     op = ex.operator()
     operands = ex.operands()
-
-    from sage.misc.latex import latex, latex_variable_name
 
     if op:
         # FIXME: This hack is needed because the NewSymbolicFunction is

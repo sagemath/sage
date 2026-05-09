@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of Python modules in the Sage library
 
@@ -44,30 +43,6 @@ from . import PythonModule, StaticFile
 from .join_feature import JoinFeature
 
 
-class SAGE_SRC(StaticFile):
-    r"""
-    A :class:`~sage.features.Feature` which describes the presence of the
-    monolithic source tree of the Sage library.
-    """
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.sagemath import SAGE_SRC
-            sage: isinstance(SAGE_SRC(), SAGE_SRC)
-            True
-        """
-        from sage.env import SAGE_SRC
-        # We check the file bin/sage-src-env-config.in, which by design is:
-        # - never installed,
-        # - not included in the sagemath-standard sdist,
-        # - included only in one modularized sdist, of pkgs/sage-conf_pypi,
-        #   where it appears in a subdirectory (sage_root/src/bin/)
-        StaticFile.__init__(self, 'SAGE_SRC',
-                            filename='bin/sage-src-env-config.in',
-                            search_path=(SAGE_SRC,) if SAGE_SRC else ())
-
-
 class sagemath_doc_html(StaticFile):
     r"""
     A :class:`~sage.features.Feature` which describes the presence of the documentation
@@ -101,7 +76,7 @@ class sagemath_doc_html(StaticFile):
                             filename='html',
                             search_path=(SAGE_DOC,),
                             spkg='sagemath_doc_html',
-                            type='standard')
+                            type='optional')
 
 
 class sage__combinat(JoinFeature):
@@ -560,33 +535,8 @@ class sage__libs__giac(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.giac',
                              [PythonModule('sage.libs.giac.giac')],
-                             spkg='sagemath_giac', type='standard')
+                             spkg='sagemath_giac', type='optional')
 
-
-class sage__libs__homfly(JoinFeature):
-    r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.homfly`.
-
-    In addition to the modularization purposes that this tag serves,
-    it also provides attribution to the upstream project.
-
-    TESTS::
-
-        sage: from sage.features.sagemath import sage__libs__homfly
-        sage: sage__libs__homfly().is_present()                                         # needs sage.libs.homfly
-        FeatureTestResult('sage.libs.homfly', True)
-    """
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.sagemath import sage__libs__homfly
-            sage: isinstance(sage__libs__homfly(), sage__libs__homfly)
-            True
-        """
-        JoinFeature.__init__(self, 'sage.libs.homfly',
-                             [PythonModule('sage.libs.homfly')],
-                             spkg='sagemath_homfly', type='standard')
 
 
 class sage__libs__pari(JoinFeature):
@@ -966,28 +916,6 @@ class sage__rings__padics(JoinFeature):
                              type='standard')
 
 
-class sage__rings__polynomial__pbori(JoinFeature):
-    r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`sage.rings.polynomial.pbori`.
-
-    TESTS::
-
-        sage: from sage.features.sagemath import sage__rings__polynomial__pbori
-        sage: sage__rings__polynomial__pbori().is_present()                             # needs sage.rings.polynomial.pbori
-        FeatureTestResult('sage.rings.polynomial.pbori', True)
-    """
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.sagemath import sage__rings__polynomial__pbori
-            sage: isinstance(sage__rings__polynomial__pbori(), sage__rings__polynomial__pbori)
-            True
-        """
-        JoinFeature.__init__(self, 'sage.rings.polynomial.pbori',
-                             [PythonModule('sage.rings.polynomial.pbori.pbori')],
-                             spkg='sagemath_brial', type='standard')
-
 
 class sage__rings__real_double(PythonModule):
     r"""
@@ -1140,7 +1068,6 @@ class sage__symbolic(JoinFeature):
                               PythonModule('sage.interfaces.maple'),
                               PythonModule('sage.interfaces.mathematica'),
                               PythonModule('sage.interfaces.mathics'),
-                              PythonModule('sage.interfaces.maxima'),
                               PythonModule('sage.interfaces.maxima_abstract'),
                               PythonModule('sage.interfaces.maxima_lib'),
                               PythonModule('sage.interfaces.qepcad'),
@@ -1171,35 +1098,34 @@ def all_features():
         sage: list(all_features())
         [...Feature('sage.combinat'), ...]
     """
-    return [SAGE_SRC(),
-            sagemath_doc_html(),
-            sage__combinat(),
-            sage__geometry__polyhedron(),
-            sage__graphs(),
-            sage__groups(),
-            sage__libs__braiding(),
-            sage__libs__ecl(),
-            sage__libs__flint(),
-            sage__libs__gap(),
-            sage__libs__giac(),
-            sage__libs__homfly(),
-            sage__libs__linbox(),
-            sage__libs__m4ri(),
-            sage__libs__ntl(),
-            sage__libs__pari(),
-            sage__libs__singular(),
-            sage__modular(),
-            sage__modules(),
-            sage__numerical__mip(),
-            sage__plot(),
-            sage__rings__complex_double(),
-            sage__rings__finite_rings(),
-            sage__rings__function_field(),
-            sage__rings__number_field(),
-            sage__rings__padics(),
-            sage__rings__polynomial__pbori(),
-            sage__rings__real_double(),
-            sage__rings__real_mpfr(),
-            sage__sat(),
-            sage__schemes(),
-            sage__symbolic()]
+    return [
+        sagemath_doc_html(),
+        sage__combinat(),
+        sage__geometry__polyhedron(),
+        sage__graphs(),
+        sage__groups(),
+        sage__libs__braiding(),
+        sage__libs__ecl(),
+        sage__libs__flint(),
+        sage__libs__gap(),
+        sage__libs__giac(),
+        sage__libs__linbox(),
+        sage__libs__m4ri(),
+        sage__libs__ntl(),
+        sage__libs__pari(),
+        sage__libs__singular(),
+        sage__modular(),
+        sage__modules(),
+        sage__numerical__mip(),
+        sage__plot(),
+        sage__rings__complex_double(),
+        sage__rings__finite_rings(),
+        sage__rings__function_field(),
+        sage__rings__number_field(),
+        sage__rings__padics(),
+        sage__rings__real_double(),
+        sage__rings__real_mpfr(),
+        sage__sat(),
+        sage__schemes(),
+        sage__symbolic(),
+    ]

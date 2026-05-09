@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Finite dimensional algebras with basis
 
@@ -37,6 +36,9 @@ from sage.categories.tensor import TensorProductsCategory
 class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     r"""
     The category of finite dimensional algebras with a distinguished basis.
+
+    These algebras are assumed to be associative and
+    unital.
 
     EXAMPLES::
 
@@ -180,14 +182,16 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     def product_on_basis(i, j):
                         return B[i] * B[j]
 
+                zero = F.zero()
                 keys = B.keys()
-                cache = [{(i, j): c for i in keys for j, c in product_on_basis(y, i)}
+                cache = [{(i, j): c for i in keys
+                         for j, c in product_on_basis(y, i).monomial_coefficients().items()}
                          for y in keys]
-                mat = [[sum(x.get((j, i), 0) * c for (i,j), c in y.items())
+                mat = [[F.sum(x.get((j, i), zero) * c for (i,j), c in y.items())
                         for x in cache]
                        for y in cache]
 
-                mat = matrix(self.base_ring(), mat)
+                mat = matrix(F, mat)
                 rad_basis = mat.kernel().basis()
 
             else:
@@ -196,10 +200,9 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 # some only have a ``nth_root`` element such as ``GF(2)``
                 # I imagine that ``pth_root`` would be fastest, but it is not
                 # always available....
-                if hasattr(self.base_ring().one(), 'nth_root'):
+                if hasattr(F.one(), 'nth_root'):
                     def root_fcn(s, x):
                         return x.nth_root(s)
-
                 else:
                     def root_fcn(s, x):
                         return x ** (1 / s)
@@ -415,9 +418,95 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             center.rename("Center of {}".format(self))
             return center
 
-        def subalgebra(self, gens, category=None, *args, **opts):
+        def _build_basis_by_generators(self, S, gens, order=None, side=2):
+            """
+            Build a basis of elements of ``self`` that contains ``S``
+            and closed under left/right multiplication by ``gens``.
+
+            INPUT:
+
+            - ``S`` -- list of elements of ``self``
+            - ``gens`` -- list of generators
+            - ``order`` -- (optional) iterable defining an ordering of
+              the basis elements of ``self``
+            - ``side`` -- (default: 2) one of the following
+
+              * 0 - closed under left multiplication
+              * 1 - closed under right multiplication
+              * 2 - closed under twosided multiplication
+
+            EXAMPLES::
+
+                sage: E.<w,x,y,z> = ExteriorAlgebra(QQ)
+                sage: gens = E.algebra_generators()
+                sage: elts = [x*y + z]
+                sage: E._build_basis_by_generators(elts, gens, side=0)
+                [x*y + z, w*x*y + w*z, x*z, y*z, w*x*z, w*y*z, x*y*z, w*x*y*z]
+                sage: E._build_basis_by_generators(elts, gens, side=1)
+                [x*y + z, -w*x*y + w*z, x*z, y*z, w*x*z, w*y*z, x*y*z, w*x*y*z]
+                sage: E._build_basis_by_generators(elts, gens, side=2)
+                [x*y + z, w*z, x*z, y*z, w*x*y, w*x*z, w*y*z, x*y*z, w*x*y*z]
+                sage: E.ideal_submodule(elts, side="left", algorithm="basis").dimension()
+                8
+                sage: E.ideal_submodule(elts, side="right", algorithm="basis").dimension()
+                8
+                sage: E.ideal_submodule(elts, side="twosided", algorithm="basis").dimension()
+                9
+            """
+            if order is None:
+                try:
+                    order = self.get_order()
+                except (ValueError, TypeError, NotImplementedError, AttributeError):
+                    order = list(self.basis().keys())
+
+            order_dict = {k: i for i, k in enumerate(order)}
+            key = order_dict.__getitem__
+
+            def reduce_pivots(elt, trailsupp, sortsupp):
+                if not elt:
+                    return elt
+                return elt - self.linear_combination((trailsupp[s], c // trailsupp[s][s])
+                                                     for s in sortsupp if (c := elt[s]))
+
+            dim = self.dimension()
+            basis = []
+            new_elts = list(S)
+            trailsupp = {}
+            while new_elts:
+                basis = self.echelon_form(basis + new_elts, order=order)
+                if len(basis) == dim:  # already the full algebra
+                    break
+                prevsupp = set(trailsupp)
+                trailsupp = {b.trailing_support(key=key): b for b in basis}
+                sortsupp = sorted(trailsupp, key=key)
+                new_elts = []
+                # We (re)implement the reduction here
+                for s in trailsupp:
+                    if s in prevsupp:
+                        continue
+                    b = trailsupp[s]
+                    for g in gens:
+                        if side != 0:
+                            elt = reduce_pivots(b * g, trailsupp, sortsupp)
+                            if elt:
+                                new_elts.append(elt)
+                        if side != 1:
+                            elt = reduce_pivots(g * b, trailsupp, sortsupp)
+                            if elt:
+                                new_elts.append(elt)
+            return basis
+
+        def subalgebra(self, gens, category=None, order=None, *args, **opts):
             r"""
             Return the subalgebra of ``self`` generated by ``gens``.
+
+            INPUT:
+
+            - ``gens`` -- iterable containing elements of ``self``
+            - ``category`` -- (optional) a subcategory of finite dimensional
+              algebras with basis
+            - ``order`` -- (optional) iterable defining an ordering of
+              the basis elements of ``self``
 
             EXAMPLES::
 
@@ -437,34 +526,54 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A = MS.subalgebra(gens)
                 sage: A.dimension()
                 5
+
+                sage: WA = SignedPermutations(3).algebra(QQ)
+                sage: s1,s2,s3 = WA.algebra_generators()
+                sage: J2 = s1
+                sage: J3 = s2 + s1*s2*s1
+                sage: J4 = (s3 + s2*s3*s2 + s3*s2*s3 + s1*s2*s3*s2*s1
+                ....:       + s1*s3*s2*s3*s1 + s2*s1*s3*s2*s3*s1*s2)
+                sage: SA = WA.subalgebra([J2, J3, J4])
+                sage: SA.dimension()
+                14
             """
+            if order is None:
+                try:
+                    order = self.get_order()
+                except (ValueError, TypeError, NotImplementedError, AttributeError):
+                    order = list(self.basis().keys())
+
+            gens = self.echelon_form([self(g) for g in gens], order=order)
             # add the unit to make sure it is unital
-            basis = []
-            new_elts = [self(g) for g in gens] + [self.one()]
-            while new_elts:
-                basis = self.echelon_form(basis + new_elts)
-                trailsupp = {b.trailing_support(): b for b in basis}
-                sortsupp = sorted(trailsupp)
-                new_elts = []
-                # We (re)implement the reduction here
-                for b in basis:
-                    for bp in basis:
-                        elt = b * bp
-                        for s in sortsupp:
-                            c = elt[s]
-                            if c:
-                                elt -= c / trailsupp[s].trailing_coefficient() * trailsupp[s]
-                        if elt:
-                            new_elts.append(elt)
+            basis = self._build_basis_by_generators(gens + [self.one()], gens, order=order, side=2)
+
             C = FiniteDimensionalAlgebrasWithBasis(self.category().base_ring())
             category = C.Subobjects().or_subcategory(category)
             return self.submodule(basis, check=False, already_echelonized=True,
-                                  category=category)
+                                  category=category, support_order=order, *args, **opts)
 
-        def ideal_submodule(self, gens, side='left', category=None, *args, **opts):
+        def ideal_submodule(self, gens, side='left', category=None, algorithm=None, *args, **opts):
             r"""
             Return the ``side`` ideal of ``self`` generated by ``gens``
             as a submodule.
+
+            INPUT:
+
+            - ``gens`` -- iterable containing elements of ``self``
+              or a single element of ``self``
+            - ``side`` -- string; either ``'left'`` or ``'right'``
+              or ``'twosided'``
+            - ``algorithm`` -- string (optional); must be one of the following:
+
+              * ``"generators"`` -- generate the ideal by successively
+                enlarging the basis by multiplying by the generators of the
+                algebra
+              * ``"basis" -- multiply all elements in ``gens`` by the basis
+                of ``self``
+
+            If ``algorithm`` is not specified, if the dimension of ``self``
+            is `\leq 10`, then this uses the ``"basis"`` algorithm and
+            otherwise it uses the ``"generators"`` algorithm.
 
             .. TODO::
 
@@ -475,40 +584,124 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.modules
                 sage: scoeffs = {('a','e'): {'a':1}, ('b','e'): {'a':1, 'b':1},
                 ....:            ('c','d'): {'a':1}, ('c','e'): {'c':1}}
                 sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
                 sage: MS = MatrixSpace(QQ, 5)
-                sage: I = MS.ideal_submodule([bg.adjoint_matrix() for bg in L.lie_algebra_generators()])
+                sage: gens = [bg.adjoint_matrix() for bg in L.lie_algebra_generators()]
+                sage: I = MS.ideal_submodule(gens)
                 sage: I.dimension()
                 25
+
+                sage: I2 = MS.ideal_submodule(gens, algorithm="basis")
+                sage: I2.dimension()
+                25
+                sage: I.is_equal_subspace(I2)
+                True
+
+            We demonstrate the ideal property by using the ``reduce()`` method
+            to check for containment::
+
+                sage: E.<w,x,y,z> = ExteriorAlgebra(QQ)
+                sage: gens = E.algebra_generators()
+                sage: elts = [x*y + z]
+                sage: LI = E.ideal_submodule(elts, side="left")
+                sage: all(LI.reduce(g * b.lift()) == 0 for b in LI.basis() for g in gens)
+                True
+                sage: all(LI.reduce(b.lift() * g) == 0 for b in LI.basis() for g in gens)
+                False
+                sage: RI = E.ideal_submodule(elts, side="right")
+                sage: all(RI.reduce(g * b.lift()) == 0 for b in RI.basis() for g in gens)
+                False
+                sage: all(RI.reduce(b.lift() * g) == 0 for b in RI.basis() for g in gens)
+                True
+                sage: TI = E.ideal_submodule(elts, side="twosided")
+                sage: all(TI.reduce(g * b.lift()) == 0 for b in TI.basis() for g in gens)
+                True
+                sage: all(TI.reduce(b.lift() * g) == 0 for b in TI.basis() for g in gens)
+                True
+
+            TESTS::
+
+                sage: MS = MatrixSpace(QQ, 5)
+                sage: gens = [MS.random_element() for _ in range(ZZ.random_element(5))]
+                sage: I = MS.ideal_submodule(gens, algorithm="generators")
+                sage: J = MS.ideal_submodule(gens, algorithm="basis")
+                sage: I.is_equal_subspace(J)
+                True
             """
-            C = AssociativeAlgebras(self.category().base_ring()).WithBasis().FiniteDimensional()
-            category = C.Subobjects().or_subcategory(category)
+            alggens = self.algebra_generators()
             if gens in self:
                 gens = [self(gens)]
-            if side == 'left':
-                return self.submodule([b * self(g) for b in self.basis() for g in gens],
-                                      category=category, *args, **opts)
-            if side == 'right':
-                return self.submodule([self(g) * b for b in self.basis() for g in gens],
-                                      category=category, *args, **opts)
-            if side == 'twosided':
-                return self.submodule([b * self(g) * bp for b in self.basis()
-                                       for bp in self.basis() for g in gens],
-                                      category=category, *args, **opts)
-            raise ValueError("side must be either 'left', 'right', or 'twosided'")
+            else:
+                gens = [self(g) for g in gens]
+
+            if algorithm is None:
+                if self.dimension() <= 10:
+                    algorithm = "basis"
+                else:
+                    algorithm = "generators"
+
+            # If the generators is "large" compared to the dimension
+            if len(gens) > self.dimension() // 2:
+                # Then we perform a linear reduction
+                gens = self.echelon_form(gens)
+                # Special case: gens is a basis for the algebra
+                if len(gens) == self.dimension():
+                    return self.submodule(gens, already_echelonized=True)
+
+            if algorithm == "basis":
+                if side == 'left':
+                    return self.submodule([b * g for b in self.basis() for g in gens],
+                                          category=category, *args, **opts)
+                if side == 'right':
+                    return self.submodule([g * b for b in self.basis() for g in gens],
+                                          category=category, *args, **opts)
+                if side == 'twosided':
+                    spanset = [b * g for b in self.basis() for g in gens]
+                    spanset.extend(g * b for b in self.basis() for g in gens)
+                    return self.submodule([b * g * bp for b in self.basis()
+                                           for bp in self.basis() for g in gens],
+                                          category=category, *args, **opts)
+                raise ValueError("side must be either 'left', 'right', or 'twosided'")
+
+            if algorithm == "generators":
+                try:
+                    order = self.get_order()
+                except (ValueError, TypeError, NotImplementedError, AttributeError):
+                    order = list(self.basis().keys())
+
+                if side == 'left':
+                    basis = self._build_basis_by_generators(gens, alggens, order=order, side=0)
+                elif side == 'right':
+                    basis = self._build_basis_by_generators(gens, alggens, order=order, side=1)
+                elif side == 'twosided':
+                    basis = self._build_basis_by_generators(gens, alggens, order=order, side=2)
+                else:
+                    raise ValueError("side must be either 'left', 'right', or 'twosided'")
+
+                C = AssociativeAlgebras(self.category().base_ring()).WithBasis().FiniteDimensional()
+                category = C.Subobjects().or_subcategory(category)
+                return self.submodule(basis, category=category, already_echelonized=True,
+                                      support_order=order, *args, **opts)
+
+            raise ValueError("invalid algorithm")
 
         def principal_ideal(self, a, side='left', *args, **opts):
             r"""
             Construct the ``side`` principal ideal generated by ``a``.
 
+            INPUT:
+
+            - ``a`` -- an element
+            - ``side`` -- ``left`` (default) or ``right`` or ``twosided``
+            - ``coerce`` -- ignored, for compatibility with categories
+
             EXAMPLES:
 
             In order to highlight the difference between left and
-            right principal ideals, our first example deals with a non
-            commutative algebra::
+            right principal ideals, our first example deals with a
+            noncommutative algebra::
 
                 sage: # needs sage.graphs sage.modules
                 sage: A = Algebras(QQ).FiniteDimensional().WithBasis().example(); A
@@ -543,18 +736,58 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: [B.lift() for B in xA.basis()]                                    # needs sage.graphs sage.modules
                 [x, a, b]
 
+            For another example::
+
+                sage: A = MatrixSpace(QQ, 2)
+                sage: A.basis()
+                Finite family {(0, 0): [1 0]
+                [0 0], (0, 1): [0 1]
+                [0 0], (1, 0): [0 0]
+                [1 0], (1, 1): [0 0]
+                [0 1]}
+                sage: e = list(A.basis())
+                sage: [b.lift() for b in A.principal_ideal(e[0], side="left").basis()]
+                [
+                [1 0]  [0 0]
+                [0 0], [1 0]
+                ]
+                sage: [b.lift() for b in A.principal_ideal(e[0], side="right").basis()]
+                [
+                [1 0]  [0 1]
+                [0 0], [0 0]
+                ]
+                sage: [b.lift() for b in A.principal_ideal(e[0], side="twosided").basis()]
+                [
+                [1 0]  [0 1]  [0 0]  [0 0]
+                [0 0], [0 0], [1 0], [0 1]
+                ]
+
             .. SEEALSO::
 
                 - :meth:`peirce_summand`
             """
-            return self.submodule([(a * b if side == 'right' else b * a)
-                                   for b in self.basis()], *args, **opts)
+            opts.pop("coerce", None)
+            if side == 'right':
+                return self.submodule([a * b
+                                       for b in self.basis()], *args, **opts)
+            if side == 'left':
+                return self.submodule([b * a
+                                       for b in self.basis()], *args, **opts)
+            if side == 'twosided':
+                return self.submodule([b1 * a * b2 for b1 in self.basis()
+                                       for b2 in self.basis()], *args, **opts)
+            raise ValueError("side must be either 'left', 'right', or 'twosided'")
 
         @cached_method
         def orthogonal_idempotents_central_mod_radical(self):
             r"""
             Return a family of orthogonal idempotents of ``self`` that project
             on the central orthogonal idempotents of the semisimple quotient.
+
+            .. TODO::
+
+                The implementation assumes that the algebra
+                is split over its base field.
 
             OUTPUT:
 
@@ -571,7 +804,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             idempotents of the semisimple quotient of `A`. We
             recursively construct orthogonal idempotents of `A` by the
             following procedure: assuming `(f_i)_{i < n}` is a set of
-            already constructed orthogonal idempotent, we construct
+            already constructed orthogonal idempotents, we construct
             `f_k` by idempotent lifting of `(1-f) g (1-f)`, where `g`
             is any lift of `\overline{e_k}` and `f=\sum_{i<k} f_i`.
 
@@ -680,9 +913,17 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A.idempotent_lift(A.basis()['y'])
                 y
 
-            .. TODO::
+            A less trivial example::
 
-                Add some non trivial example
+                sage: B = DescentAlgebra(QQ, 4).B()
+                sage: a = 1/8*B[[1, 1, 1, 1]] - 1/2*B[[2, 1, 1]] + 1/2*B[[2, 2]]
+                sage: a ** 2 == a  # not idempotent, but idempotent mod radical
+                False
+                sage: al = B.idempotent_lift(a)
+                sage: al ** 2 == al
+                True
+                sage: (a - al) ** 2
+                0
             """
             if not self.is_parent_of(x):
                 x = x.lift()
@@ -690,10 +931,10 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             if p * p != p:
                 raise ValueError("%s does not retract to an idempotent." % p)
             x_prev = None
-            one = self.one()
             while x != x_prev:
                 tmp = x
-                x = (one - (one - x**2)**2)
+                y = x ** 2
+                x = 2*y - y**2  # == one - (one - x**2)**2
                 x_prev = tmp
             return x
 
@@ -704,7 +945,13 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             OUTPUT: a matrix of nonnegative integers
 
-            Let `A` be this finite dimensional algebra and
+            .. TODO::
+
+                Both the implementation and the documentation
+                assume that the algebra is split over its
+                base field.
+
+            Let `A` be this finite-dimensional algebra and
             `(S_i)_{i\in I}` be representatives of the right simple
             modules of `A`. Note that their adjoints `S_i^*` are
             representatives of the left simple modules.
@@ -816,7 +1063,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             idempotents_quo = A_quo.central_orthogonal_idempotents()
             # Dimension of simple modules
             dim_simples = [A_quo.principal_ideal(e).dimension().sqrt()
-                          for e in idempotents_quo]
+                           for e in idempotents_quo]
             # Orthogonal idempotents
             idempotents = self.orthogonal_idempotents_central_mod_radical()
 
@@ -830,6 +1077,11 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         def isotypic_projective_modules(self, side='left'):
             r"""
             Return the isotypic projective ``side`` ``self``-modules.
+
+            .. TODO::
+
+                The current implementation assumes that the
+                algebra is split over its base field.
 
             Let `P_i` be representatives of the indecomposable
             projective ``side``-modules of this finite dimensional
@@ -922,7 +1174,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS:
 
-            We check each idempotent belong to its own Peirce summand
+            We check each idempotent belongs to its own Peirce summand
             (see :issue:`24687`)::
 
                 sage: # needs sage.combinat sage.groups sage.rings.number_field
@@ -1298,6 +1550,8 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             except (AttributeError, TypeError, ValueError):
                 pass
             if ob is not None:
+                # inverting a scalar multiple of 1
+                # (a trivial but frequent use case)
                 mc = self.monomial_coefficients(copy=False)
                 if len(mc) == 1 and ob in mc:
                     try:

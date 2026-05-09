@@ -375,8 +375,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
         """
         if self == 0:
             return Infinity
-        else:
-            return min(self._F[e].valuation() for e in range(self._nE))
+        return min(self._F[e].valuation() for e in range(self._nE))
 
     def _compute_element(self):
         r"""
@@ -631,8 +630,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
             return sum([self.riemann_sum(subst(v), center, level) for v in V])
         if z is None:
             return F
-        else:
-            return F(z)
+        return F(z)
 
 
 class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
@@ -862,7 +860,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         # return BruhatTitsHarmonicCocyclesSubmodule(self, v)
         raise NotImplementedError
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Whether ``self`` is irreducible.
 
@@ -949,9 +947,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         if isinstance(S, (BruhatTitsHarmonicCocycles, pAdicAutomorphicForms)):
             if S._k != self._k:
                 return False
-            if S._X != self._X:
-                return False
-            return True
+            return S._X == self._X
         return False
 
     def __eq__(self, other):
@@ -1046,14 +1042,13 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
             parent = x.parent()
             if isinstance(parent, BruhatTitsHarmonicCocycles):
                 return self.element_class(self, [self._U(o) for o in x._F])
-            elif isinstance(parent, pAdicAutomorphicForms):
+            if isinstance(parent, pAdicAutomorphicForms):
                 tmp = [self._E[ii].rep * self._U(x._F[ii]) for ii in range(self._nE)]
                 return self.element_class(self, tmp)
         if x == 0:
             tmp = [self._U([0] * (self.weight() - 1))] * self._X._num_edges
             return self.element_class(self, tmp)
-        else:
-            raise TypeError
+        raise TypeError
 
     def free_module(self):
         r"""
@@ -2355,15 +2350,11 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         if isinstance(S, BruhatTitsHarmonicCocycles):
             if S.weight() - 2 != self._n:
                 return False
-            if S._X != self._source:
-                return False
-            return True
+            return S._X == self._source
         if isinstance(S, pAdicAutomorphicForms):
             if S._n != self._n:
                 return False
-            if S._source != self._source:
-                return False
-            return True
+            return S._source == self._source
         return False
 
     def _element_constructor_(self, data):
@@ -2497,7 +2488,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
             sage: H = X.harmonic_cocycles(2,prec = 5)
             sage: A = X.padic_automorphic_forms(2,prec = 5)
             sage: h = H.basis()[0]
-            sage: A.lift(h) # indirect doctest long time
+            sage: A.lift(h)  # indirect doctest, long time
             p-adic automorphic form of cohomological weight 0
         """
         S = self._source.get_stabilizers()

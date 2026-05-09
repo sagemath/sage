@@ -134,8 +134,8 @@ class ExtendedCode(AbstractLinearCode):
         EXAMPLES::
 
             sage: C = LinearCode(matrix(GF(2),[[1,0,0,1,1],\
-                                               [0,1,0,1,0],\
-                                               [0,0,1,1,1]]))
+            ....:                              [0,1,0,1,0],\
+            ....:                              [0,0,1,1,1]]))
             sage: C.parity_check_matrix()
             [1 0 1 0 1]
             [0 1 0 1 1]
@@ -259,8 +259,8 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
         EXAMPLES::
 
             sage: C = LinearCode(matrix(GF(2),[[1,0,0,1,1],\
-                                               [0,1,0,1,0],\
-                                               [0,0,1,1,1]]))
+            ....:                              [0,1,0,1,0],\
+            ....:                              [0,0,1,1,1]]))
             sage: Ce = codes.ExtendedCode(C)
             sage: E = codes.encoders.ExtendedCodeExtendedMatrixEncoder(Ce)
             sage: E.generator_matrix()
@@ -430,13 +430,12 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
                 word_list.append(last_pos)
                 l.append(vector(F, word_list))
             return l
-        else:
-            last_pos = F.zero()
-            for i in decoded:
-                last_pos += i
-            decoded_list = list(decoded)
-            decoded_list.append(last_pos)
-            return vector(F, decoded_list)
+        last_pos = F.zero()
+        for i in decoded:
+            last_pos += i
+        decoded_list = list(decoded)
+        decoded_list.append(last_pos)
+        return vector(F, decoded_list)
 
     def decoding_radius(self, *args, **kwargs):
         r"""

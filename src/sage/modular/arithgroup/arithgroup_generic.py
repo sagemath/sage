@@ -14,40 +14,21 @@ Arithmetic subgroups, finite index subgroups of `\SL_2(\ZZ)`
 #
 ################################################################################
 
-from sage.groups.group import Group
-from sage.categories.groups import Groups
-from sage.rings.integer_ring import ZZ
-from sage.arith.functions import lcm
-from sage.misc.cachefunc import cached_method
 from copy import copy  # for making copies of lists of cusps
-from sage.modular.modsym.p1list import lift_to_sl2z
-from sage.modular.cusps import Cusp
 
+from sage.arith.functions import lcm
+from sage.categories.groups import Groups
+from sage.groups.group import Group
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
+from sage.modular.cusps import Cusp
+from sage.modular.modsym.p1list import lift_to_sl2z
+from sage.rings.integer_ring import ZZ
+
 lazy_import('sage.modular.arithgroup.congroup_sl2z', 'SL2Z')
+from sage.modular.arithgroup.arithgroup_element import M2Z as Mat2Z
+from sage.modular.arithgroup.arithgroup_element import ArithmeticSubgroupElement
 from sage.structure.element import parent
-
-from .arithgroup_element import ArithmeticSubgroupElement, M2Z as Mat2Z
-
-
-def is_ArithmeticSubgroup(x) -> bool:
-    r"""
-    Return ``True`` if ``x`` is of type :class:`ArithmeticSubgroup`.
-
-    EXAMPLES::
-
-        sage: from sage.modular.arithgroup.all import is_ArithmeticSubgroup
-        sage: is_ArithmeticSubgroup(GL(2, GF(7)))
-        doctest:warning...
-        DeprecationWarning: The function is_ArithmeticSubgroup is deprecated; use 'isinstance(..., ArithmeticSubgroup)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        False
-        sage: is_ArithmeticSubgroup(Gamma0(4))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_ArithmeticSubgroup is deprecated; use 'isinstance(..., ArithmeticSubgroup)' instead.")
-    return isinstance(x, ArithmeticSubgroup)
 
 
 class ArithmeticSubgroup(Group):
@@ -144,7 +125,7 @@ class ArithmeticSubgroup(Group):
             return x
         raise TypeError("matrix %s is not an element of %s" % (x, self))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Test if x is an element of this group.
 
@@ -173,14 +154,13 @@ class ArithmeticSubgroup(Group):
             if a*d - b*c != 1:
                 return False
             return self._contains_sl2(a, b, c, d)
-        else:
-            if parent(x) is not SL2Z:
-                try:
-                    y = SL2Z(x)
-                except TypeError:
-                    return False
-                x = y
-            return self._contains_sl2(x.a(), x.b(), x.c(), x.d())
+        if parent(x) is not SL2Z:
+            try:
+                y = SL2Z(x)
+            except TypeError:
+                return False
+            x = y
+        return self._contains_sl2(x.a(), x.b(), x.c(), x.d())
 
     def _contains_sl2(self, a, b, c, d):
         r"""
@@ -199,7 +179,7 @@ class ArithmeticSubgroup(Group):
         """
         raise NotImplementedError("Please implement _contains_sl2 for %s" % self.__class__)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash of ``self``.
 
@@ -463,7 +443,8 @@ class ArithmeticSubgroup(Group):
         # Cheap trick: if self is a subgroup of something with no elliptic points,
         # then self has no elliptic points either.
 
-        from .all import Gamma0, CongruenceSubgroupBase
+        from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+        from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
         if isinstance(self, CongruenceSubgroupBase):
             if self.is_subgroup(Gamma0(self.level())) and Gamma0(self.level()).nu2() == 0:
                 return 0
@@ -504,7 +485,7 @@ class ArithmeticSubgroup(Group):
         # Cheap trick: if self is a subgroup of something with no elliptic points,
         # then self has no elliptic points either.
 
-        from .all import Gamma0, CongruenceSubgroupBase
+        from .all import CongruenceSubgroupBase, Gamma0
         if isinstance(self, CongruenceSubgroupBase):
             if self.is_subgroup(Gamma0(self.level())) and Gamma0(self.level()).nu3() == 0:
                 return 0
@@ -643,8 +624,7 @@ class ArithmeticSubgroup(Group):
         """
         if self.is_even():
             return self
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def order(self):
         r"""
@@ -807,13 +787,11 @@ class ArithmeticSubgroup(Group):
             if dy * SL2Z([1,i,0,1])*(~dx) in self:
                 if trans:
                     return dy * SL2Z([1,i,0,1]) * ~dx
-                else:
-                    return True
-            elif (self.is_odd() and dy * SL2Z([-1,-i,0,-1]) * ~dx in self):
+                return True
+            if (self.is_odd() and dy * SL2Z([-1,-i,0,-1]) * ~dx in self):
                 if trans:
                     return dy * SL2Z([-1,-i,0,-1]) * ~dx
-                else:
-                    return True
+                return True
         return False
 
     def cusp_data(self, c) -> tuple:
@@ -839,7 +817,7 @@ class ArithmeticSubgroup(Group):
         for d in range(1,1+self.index()):
             if g * SL2Z([1, d, 0, 1]) * (~g) in self:
                 return (g * SL2Z([1,d,0,1]) * (~g), d, 1)
-            elif g * SL2Z([-1, -d, 0, -1]) * (~g) in self:
+            if g * SL2Z([-1, -d, 0, -1]) * (~g) in self:
                 return (g * SL2Z([-1, -d, 0, -1]) * (~g), d, -1)
         raise ArithmeticError("Can't get here!")
 
@@ -940,8 +918,7 @@ class ArithmeticSubgroup(Group):
         """
         if self.is_even():
             return self.index()
-        else:
-            return self.index() // 2
+        return self.index() // 2
 
     def is_congruence(self) -> bool:
         r"""
@@ -1029,10 +1006,9 @@ class ArithmeticSubgroup(Group):
         """
         if algorithm == "farey":
             return self.farey_symbol().generators()
-        elif algorithm == "todd-coxeter":
+        if algorithm == "todd-coxeter":
             return self.todd_coxeter()[1]
-        else:
-            raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
+        raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
 
     def gens(self, *args, **kwds) -> tuple:
         r"""
@@ -1206,26 +1182,21 @@ class ArithmeticSubgroup(Group):
             if k == 2:
                 return self.genus()
 
-            else:
-                return (k-1) * (self.genus() - 1) + (k // ZZ(4))*self.nu2() + (k // ZZ(3))*self.nu3() + (k // ZZ(2) - 1)*self.ncusps()
+            return (k-1) * (self.genus() - 1) + (k // ZZ(4))*self.nu2() + (k // ZZ(3))*self.nu3() + (k // ZZ(2) - 1)*self.ncusps()
 
-        else:
-            # k odd
+        # k odd
 
-            if self.is_even():
-                return ZZ.zero()
+        if self.is_even():
+            return ZZ.zero()
 
-            else:
-                e_reg = self.nregcusps()
-                e_irr = self.nirregcusps()
+        e_reg = self.nregcusps()
+        e_irr = self.nirregcusps()
 
-                if k > 1:
-                    return (k-1)*(self.genus()-1) + (k // ZZ(3)) * self.nu3() + (k-2)/ZZ(2) * e_reg + (k-1)/ZZ(2) * e_irr
-                else:
-                    if e_reg > 2*self.genus() - 2:
-                        return ZZ.zero()
-                    else:
-                        raise NotImplementedError("Computation of dimensions of weight 1 cusp forms spaces not implemented in general")
+        if k > 1:
+            return (k-1)*(self.genus()-1) + (k // ZZ(3)) * self.nu3() + (k-2)/ZZ(2) * e_reg + (k-1)/ZZ(2) * e_irr
+        if e_reg > 2*self.genus() - 2:
+            return ZZ.zero()
+        raise NotImplementedError("Computation of dimensions of weight 1 cusp forms spaces not implemented in general")
 
     def dimension_eis(self, k=2):
         r"""
@@ -1256,16 +1227,16 @@ class ArithmeticSubgroup(Group):
         if not (k % 2):  # k even
             if k > 2:
                 return self.ncusps()
-            else:  # k = 2
-                return self.ncusps() - 1
+            # k = 2
+            return self.ncusps() - 1
 
-        else:  # k odd
-            if self.is_even():
-                return ZZ.zero()
-            if k > 1:
-                return self.nregcusps()
-            else:  # k = 1
-                return ZZ(self.nregcusps() // ZZ(2))
+        # k odd
+        if self.is_even():
+            return ZZ.zero()
+        if k > 1:
+            return self.nregcusps()
+        # k = 1
+        return ZZ(self.nregcusps() // ZZ(2))
 
     def as_permutation_group(self):
         r"""
@@ -1302,10 +1273,14 @@ class ArithmeticSubgroup(Group):
             s3_edges[ii] = i
             r_edges[ii] = s2_edges[i]
         if self.is_even():
-            from sage.modular.arithgroup.arithgroup_perm import EvenArithmeticSubgroup_Permutation
+            from sage.modular.arithgroup.arithgroup_perm import (
+                EvenArithmeticSubgroup_Permutation,
+            )
             g = EvenArithmeticSubgroup_Permutation(S2=s2_edges,S3=s3_edges,L=l_edges,R=r_edges)
         else:
-            from sage.modular.arithgroup.arithgroup_perm import OddArithmeticSubgroup_Permutation
+            from sage.modular.arithgroup.arithgroup_perm import (
+                OddArithmeticSubgroup_Permutation,
+            )
             g = OddArithmeticSubgroup_Permutation(S2=s2_edges,S3=s3_edges,L=l_edges,R=r_edges)
         g.relabel()
         return g

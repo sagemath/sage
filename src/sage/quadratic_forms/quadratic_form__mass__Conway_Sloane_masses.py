@@ -126,7 +126,7 @@ def is_even(self, allow_rescaling_flag=True) -> bool:
     return self.parity(allow_rescaling_flag) == "even"
 
 
-def is_odd(self, allow_rescaling_flag=True):
+def is_odd(self, allow_rescaling_flag=True) -> bool:
     r"""
     Return true iff after rescaling by some appropriate factor, the
     form represents some odd integers.  For more details, see :meth:`parity`.
@@ -326,8 +326,7 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
         d = self.Gram_matrix().det()
         if d % 8 == 1 or d % 8 == 7:
             return 0
-        else:
-            return 4
+        return 4
 
     # Deal with 'odd' forms by diagonalizing, and then computing the octane.
     n = self.dim()

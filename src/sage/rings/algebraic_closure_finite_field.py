@@ -147,8 +147,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         F, x, _ = self.as_finite_field_element(minimal=True)
         if F.degree() == 1:
             return hash(x)
-        else:
-            return hash((x, F.degree()))
+        return hash((x, F.degree()))
 
     def _repr_(self):
         """
@@ -631,8 +630,7 @@ class AlgebraicClosureFiniteField_generic(Field):
             if x.parent() is not self:
                 raise ValueError('no conversion defined between different algebraic closures')
             return x
-        else:
-            return self.element_class(self, x)
+        return self.element_class(self, x)
 
     def _coerce_map_from_(self, other):
         """
@@ -647,9 +645,9 @@ class AlgebraicClosureFiniteField_generic(Field):
         """
         if other is self:
             return True
-        elif isinstance(other, FiniteField) and self._subfield(other.degree()) is other:
+        if isinstance(other, FiniteField) and self._subfield(other.degree()) is other:
             return True
-        elif self._subfield(1).has_coerce_map_from(other):
+        if self._subfield(1).has_coerce_map_from(other):
             return True
 
     def _repr_(self):
@@ -745,13 +743,12 @@ class AlgebraicClosureFiniteField_generic(Field):
         """
         if n == 1:
             return self.base_ring()
-        else:
-            from sage.rings.finite_rings.finite_field_constructor import FiniteField
-            return FiniteField(self.base_ring().cardinality() ** n,
-                               name=self.variable_name() + str(n),
-                               prefix=self.variable_name(),
-                               modulus=self._get_polynomial(n),
-                               check_irreducible=False)
+        from sage.rings.finite_rings.finite_field_constructor import FiniteField
+        return FiniteField(self.base_ring().cardinality() ** n,
+                           name=self.variable_name() + str(n),
+                           prefix=self.variable_name(),
+                           modulus=self._get_polynomial(n),
+                           check_irreducible=False)
 
     def subfield(self, n):
         """
@@ -801,8 +798,7 @@ class AlgebraicClosureFiniteField_generic(Field):
             # infinite loop in checking the morphism involving
             # polynomial_compiled.pyx on the modulus().
             return self._subfield(m).hom( (self._get_im_gen(m, n),), check=False)
-        else:
-            raise ValueError("subfield of degree %s not contained in subfield of degree %s" % (m, n))
+        raise ValueError("subfield of degree %s not contained in subfield of degree %s" % (m, n))
 
     def ngens(self):
         """
@@ -942,28 +938,27 @@ class AlgebraicClosureFiniteField_generic(Field):
 
         new_coeffs = [self.inclusion(c[0].degree(), l)(c[1]) for c in coeffs]
 
-        polys = [(g,m,l,phi) for g,m in P(new_coeffs).factor()]
+        polys = [(g, m, l, phi) for g, m in P(new_coeffs).factor()]
         roots = []    # a list of pair (root,multiplicity)
         while polys:
-            g,m,l,phi = polys.pop()
+            g, m, l, phi = polys.pop()
 
-            if g.degree() == 1: # found a root
+            if g.degree() == 1:  # found a root
                 r = phi(-g.constant_coefficient())
-                roots.append((r,m))
-            else: # look at the extension of degree g.degree() which contains at
-                  # least one root of g
+                roots.append((r, m))
+            else:
+                # look at the extension of degree g.degree() which
+                # contains at least one root of g
                 ll = l * g.degree()
                 psi = self.inclusion(l, ll)
                 FF, pphi = self.subfield(ll)
-                # note: there is no coercion from the l-th subfield to the ll-th
-                # subfield. The line below does the conversion manually.
+                # note: there is no coercion from the l-th subfield to
+                # the ll-th subfield. The line below does the
+                # conversion manually.
                 g = PolynomialRing(FF, 'x')([psi(_) for _ in g])
-                polys.extend((gg,m,ll,pphi) for gg,_ in g.factor())
+                polys.extend((gg, m, ll, pphi) for gg, _ in g.factor())
 
-        if multiplicities:
-            return roots
-        else:
-            return [r[0] for r in roots]
+        return roots if multiplicities else [r[0] for r in roots]
 
     def _factor_univariate_polynomial(self, p, **kwds):
         r"""
@@ -1149,6 +1144,5 @@ def AlgebraicClosureFiniteField(base_ring, name, category=None, implementation=N
 
     if implementation == 'pseudo_conway':
         return AlgebraicClosureFiniteField_pseudo_conway(base_ring, name, category, **kwds)
-    else:
-        raise ValueError('unknown implementation for algebraic closure of finite field: %s'
-                         % implementation)
+    raise ValueError('unknown implementation for algebraic closure of finite field: %s'
+                     % implementation)

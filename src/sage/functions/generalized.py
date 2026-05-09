@@ -40,14 +40,14 @@ Kronecker delta function::
     kronecker_delta(m, n)
 """
 
-##############################################################################
+# ############################################################################
 #
 #       Copyright (C) 2009 Golam Mortuza Hossain <gmhossain@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL v2+)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
-##############################################################################
+# ############################################################################
 
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
@@ -165,8 +165,7 @@ class FunctionDiracDelta(BuiltinFunction):
         if bool(approx_x.imag() == 0):      # x is real
             if bool(approx_x.real() == 0):  # x is zero
                 return None
-            else:
-                return 0
+            return 0
         raise ValueError("Numeric evaluation of symbolic expression")
 
 
@@ -516,8 +515,7 @@ class FunctionSignum(BuiltinFunction):
             # Now we have a nonzero real
             if bool((approx_x**(0.5)).imag() == 0):  # Check: x > 0
                 return ZZ(1)
-            else:
-                return ZZ(-1)
+            return ZZ(-1)
         raise ValueError("Numeric evaluation of symbolic expression")
 
     def _derivative_(self, x, diff_param=None):
@@ -635,8 +633,7 @@ class FunctionKroneckerDelta(BuiltinFunction):
         if approx_x.imag() == 0:      # x is real
             if approx_x.real() == 0:  # x is zero
                 return 1
-            else:
-                return 0
+            return 0
         return 0            # x is complex
 
     def _derivative_(self, *args, **kwds):

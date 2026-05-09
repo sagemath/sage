@@ -1,6 +1,9 @@
 import argparse
 import os
+import shlex
 import sys
+
+import pytest
 
 # Note: the DOT_SAGE and SAGE_STARTUP_FILE environment variables have already been set by sage-env
 DOT_SAGE = os.environ.get('DOT_SAGE', os.path.join(os.environ.get('HOME'),
@@ -53,6 +56,9 @@ def _make_parser():
     parser.add_argument("-T", "--timeout", type=int, default=-1, help="timeout (in seconds) for doctesting one file, 0 for no timeout")
     what = parser.add_mutually_exclusive_group()
     what.add_argument("-a", "--all", action="store_true", default=False, help="test all files in the Sage library")
+    what.add_argument("--all-except", type=shlex.split, default=None,
+                      help="test all files in the Sage library except the specified space-separated list "
+                      "(backslash or quote are needed to escape spaces or backslashes or quotes)")
     what.add_argument("--installed", action="store_true", default=False, help="test all installed modules of the Sage library")
     parser.add_argument("--logfile", type=argparse.FileType('a'), metavar="FILE", help="log all output to FILE")
 
@@ -141,7 +147,7 @@ def _make_parser():
                         choices=["DEFAULT", "ALWAYS", "NEVER"],
                         default=0,
                         action=GCAction,
-                        help="control garbarge collection "
+                        help="control garbage collection "
                         "(ALWAYS: collect garbage before every test; NEVER: disable gc; DEFAULT: Python default)")
 
     # The --serial option is only really for internal use, better not
@@ -155,6 +161,9 @@ def _make_parser():
 
 
 def main():
+    from sage.doctest.control import DocTestController
+    from sage.env import SAGE_SRC
+
     parser = _make_parser()
     # custom treatment to separate properly
     # one or several file names at the end
@@ -163,7 +172,7 @@ def main():
     in_filenames = False
     afterlog = False
     for arg in sys.argv[1:]:
-        if arg in ('-n', '--new', '-a', '--all', '--installed'):
+        if arg in ('-n', '--new', '-a', '--all', '--installed') or arg.startswith("--all-except"):
             need_filenames = False
         elif need_filenames and not (afterlog or in_filenames) and os.path.exists(arg):
             in_filenames = True
@@ -174,8 +183,8 @@ def main():
 
     args = parser.parse_args(new_arguments)
 
-    if not args.filenames and not (args.all or args.new or args.installed):
-        print('either use --new, --all, --installed, or some filenames')
+    if not args.filenames and not (args.all or args.new or args.installed) and args.all_except is None:
+        print('either use --new, --all, --all-except=..., --installed, or some filenames')
         return 2
 
     # Limit the number of threads to 2 to save system resources.
@@ -187,44 +196,33 @@ def main():
 
     os.environ["SAGE_NUM_THREADS"] = "2"
 
-    from sage.doctest.control import DocTestController
     DC = DocTestController(args, args.filenames)
     err = DC.run()
 
-    # Issue #33521: Do not run pytest if the pytest configuration is not available.
-    # This happens when the source tree is not available and SAGE_SRC falls back
-    # to SAGE_LIB.
-    from sage.env import SAGE_SRC
-    if not all(os.path.isfile(os.path.join(SAGE_SRC, f))
-               for f in ["conftest.py", "tox.ini"]):
-        return err
+    exit_code_pytest = 0
+    pytest_options = []
+    if args.verbose:
+        pytest_options.append("-v")
 
-    try:
-        exit_code_pytest = 0
-        import pytest
-        pytest_options = []
-        if args.verbose:
-            pytest_options.append("-v")
-
-        # #35999: no filename in arguments defaults to "src"
-        if not args.filenames:
-            filenames = [SAGE_SRC]
-        else:
-            # #31924: Do not run pytest on individual Python files unless
-            # they match the pytest file pattern.  However, pass names
-            # of directories. We use 'not os.path.isfile(f)' for this so that
-            # we do not silently hide typos.
-            filenames = [f for f in args.filenames
-                         if f.endswith("_test.py") or not os.path.isfile(f)]
-        if filenames:
-            print(f"Running pytest on {filenames} with options {pytest_options}")
-            exit_code_pytest = pytest.main(filenames + pytest_options)
-            if exit_code_pytest == 5:
-                # Exit code 5 means there were no test files, pass in this case
-                exit_code_pytest = 0
-
-    except ModuleNotFoundError:
-        print("pytest is not installed in the venv, skip checking tests that rely on it")
+    # #35999: no filename in arguments defaults to "src"
+    if not args.filenames:
+        filenames = [SAGE_SRC]
+    else:
+        # #31924: Do not run pytest on individual Python files unless
+        # they match the pytest file pattern.  However, pass names
+        # of directories. We use 'not os.path.exists(f)' for this so that
+        # we do not silently hide typos.
+        filenames = [
+            f
+            for f in args.filenames
+            if f.endswith("_test.py") or os.path.isdir(f) or not os.path.exists(f)
+        ]
+    if filenames:
+        print(f"Running pytest on {filenames} with options {pytest_options}")
+        exit_code_pytest = pytest.main(filenames + pytest_options)
+        if exit_code_pytest == 5:
+            # Exit code 5 means there were no test files, pass in this case
+            exit_code_pytest = 0
 
     if err == 0:
         return exit_code_pytest

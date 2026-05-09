@@ -90,7 +90,7 @@ class SteenrodFPModuleMorphism(FPModuleMorphism):
         return enveloping_profile_elements(elements,
                                            char=self.base_ring().characteristic())
 
-    def is_injective(self, top_dim=None, verbose=False):
+    def is_injective(self, top_dim=None, verbose=False) -> bool:
         r"""
         Return ``True`` if ``self`` is injective.
 

@@ -16,7 +16,7 @@ Product Projective, over `\QQ`::
 
     sage: PP.<x,y,z> = ProductProjectiveSpaces([1,0], QQ)
     sage: from sage.schemes.product_projective.rational_point import \
-            enum_product_projective_rational_field
+    ....:   enum_product_projective_rational_field
     sage: enum_product_projective_rational_field(PP, 3)
     [(-3 : 1 , 1), (-2 : 1 , 1), (-3/2 : 1 , 1),
      (-1 : 1 , 1), (-2/3 : 1 , 1), (-1/2 : 1 , 1),
@@ -30,7 +30,7 @@ Product projective over finite field::
     sage: P1.<x,y,a,b> = ProductProjectiveSpaces([1, 1], GF(7))
     sage: X = P1.subscheme([2*x + 3*y])
     sage: from sage.schemes.product_projective.rational_point import \
-            enum_product_projective_finite_field
+    ....:   enum_product_projective_finite_field
     sage: enum_product_projective_finite_field(X)
     [(2 : 1 , 0 : 1), (2 : 1 , 1 : 0), (2 : 1 , 1 : 1),
      (2 : 1 , 2 : 1), (2 : 1 , 3 : 1), (2 : 1 , 4 : 1),
@@ -89,7 +89,7 @@ def enum_product_projective_rational_field(X, B):
 
         sage: PP.<x0,x1,x2,x3,x4> = ProductProjectiveSpaces([1, 2], QQ)
         sage: from sage.schemes.product_projective.rational_point import \
-                enum_product_projective_rational_field
+        ....:   enum_product_projective_rational_field
         sage: enum_product_projective_rational_field(PP, 1)
         [(-1 : 1 , -1 : -1 : 1), (-1 : 1 , -1 : 0 : 1), (-1 : 1 , -1 : 1 : 0),
          (-1 : 1 , -1 : 1 : 1), (-1 : 1 , 0 : -1 : 1), (-1 : 1 , 0 : 0 : 1),
@@ -115,7 +115,7 @@ def enum_product_projective_rational_field(X, B):
         sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2, 1], QQ)
         sage: X = PP.subscheme([x^2 + x*y + y*z, u*u - v*u])
         sage: from sage.schemes.product_projective.rational_point import \
-                enum_product_projective_rational_field
+        ....:   enum_product_projective_rational_field
         sage: enum_product_projective_rational_field(X, 4)
         [(-2 : 4 : 1 , 0 : 1), (-2 : 4 : 1 , 1 : 1), (-1 : 1 : 0 , 0 : 1),
          (-1 : 1 : 0 , 1 : 1), (-2/3 : -4/3 : 1 , 0 : 1), (-2/3 : -4/3 : 1 , 1 : 1),
@@ -132,11 +132,11 @@ def enum_product_projective_rational_field(X, B):
             raise TypeError("codomain must be product of projective space over the rational field")
 
     R = X.codomain().ambient_space()
-    m = R.num_components()
-    iters = [ R[i].points_of_bounded_height(bound=B) for i in range(m) ]
+    m = R.n_components()
+    iters = [R[i].points_of_bounded_height(bound=B) for i in range(m)]
     dim = [R[i].dimension_relative() + 1 for i in range(m)]
 
-    dim_prefix = [0, dim[0]] # prefixes dim list
+    dim_prefix = [0, dim[0]]  # prefixes dim list
     for i in range(1, len(dim)):
         dim_prefix.append(dim_prefix[i] + dim[i])
 
@@ -144,10 +144,9 @@ def enum_product_projective_rational_field(X, B):
     P = []
     for i in range(m):
         pt = next(iters[i])
-        for j in range(dim[i]):
-            P.append(pt[j]) # initial value of P
+        P.extend(pt[j] for j in range(dim[i]))  # initial value of P
 
-    try: # add the initial point
+    try:  # add the initial point
         pts.append(X(P))
     except TypeError:
         pass
@@ -215,7 +214,7 @@ def enum_product_projective_number_field(X, **kwds):
         sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], K)
         sage: X = PP.subscheme([x^2 + 2*y^2])
         sage: from sage.schemes.product_projective.rational_point import \
-                enum_product_projective_number_field
+        ....:   enum_product_projective_number_field
         sage: enum_product_projective_number_field(X, bound=1.5)
         [(-v : 1 , -1 : 1), (-v : 1 , -v : 1), (-v : 1 , -1/2*v : 1),
          (-v : 1 , 0 : 1), (-v : 1 , 1/2*v : 1), (-v : 1 , v : 1),
@@ -267,7 +266,7 @@ def enum_product_projective_finite_field(X):
 
         sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], GF(3))
         sage: from sage.schemes.product_projective.rational_point import \
-                enum_product_projective_finite_field
+        ....:   enum_product_projective_finite_field
         sage: enum_product_projective_finite_field(PP)
         [(0 : 1 , 0 : 1), (0 : 1 , 1 : 0), (0 : 1 , 1 : 1),
          (0 : 1 , 2 : 1), (1 : 0 , 0 : 1), (1 : 0 , 1 : 0),
@@ -281,7 +280,7 @@ def enum_product_projective_finite_field(X):
         sage: PP.<x0,x1,x2,x3> = ProductProjectiveSpaces([1, 1], GF(17))
         sage: X = PP.subscheme([x0^2 + 2*x1^2])
         sage: from sage.schemes.product_projective.rational_point import \
-                enum_product_projective_finite_field
+        ....:   enum_product_projective_finite_field
         sage: len(enum_product_projective_finite_field(X))
         36
     """
@@ -357,7 +356,7 @@ def sieve(X, bound):
     N = P.ngens()
     dim_scheme = X.dimension()
 
-    num_comp = P.num_components()
+    num_comp = P.n_components()
     comp_dim_relative = [P[i].dimension_relative() + 1 for i in range(num_comp)]
 
     dim_prefix = [0, comp_dim_relative[0]] # prefixes dim list
@@ -450,18 +449,12 @@ def sieve(X, bound):
         Return a list of rational points modulo all `p` in primes,
         computed parallelly.
         """
-        normalized_input = []
-        for p in primes_list:
-            normalized_input.append(((X, p, ), {}))
+        normalized_input = [((X, p, ), {}) for p in primes_list]
         p_iter = p_iter_fork(ncpus())
 
         points_pair = list(p_iter(parallel_function, normalized_input))
         points_pair.sort()
-        modulo_points = []
-        for pair in points_pair:
-            modulo_points.append(pair[1])
-
-        return modulo_points
+        return [pair[1] for pair in points_pair]
 
     def parallel_function_combination(point_p_max):
         r"""
@@ -511,12 +504,10 @@ def sieve(X, bound):
         r"""
         Return list of all rational points lifted parallelly.
         """
-        normalized_input = []
-        points = modulo_points.pop() # remove the list of points corresponding to largest prime
+        points = modulo_points.pop()  # remove the list of points corresponding to largest prime
         len_modulo_points.pop()
 
-        for point in points:
-            normalized_input.append(( (point, ), {}))
+        normalized_input = [((point, ), {}) for point in points]
         p_iter = p_iter_fork(ncpus())
         points_satisfying = list(p_iter(parallel_function_combination, normalized_input))
 

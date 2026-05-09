@@ -22,18 +22,17 @@ AUTHORS:
 import builtins
 import os
 import re
-import sys
 import shutil
+import sys
 import webbrowser
 from pathlib import Path
 
-from sage.env import (SAGE_LOCAL, cython_aliases,
-                      sage_include_directories)
+from sage.config import get_include_dirs
+from sage.env import SAGE_LOCAL, cython_aliases
+from sage.misc.cachefunc import cached_function
+from sage.misc.sage_ostools import redirection, restore_cwd
 from sage.misc.temporary_file import spyx_tmp, tmp_filename
 from sage.repl.user_globals import get_globals
-from sage.misc.sage_ostools import restore_cwd, redirection
-from sage.cpython.string import str_to_bytes
-from sage.misc.cachefunc import cached_function
 
 
 @cached_function
@@ -51,16 +50,12 @@ def _standard_libs_libdirs_incdirs_aliases():
          {...})
     """
     aliases = cython_aliases()
-    standard_libs = [
-        'mpfr', 'gmp', 'gmpxx', 'pari', 'm',
-        'ec', 'gsl',
-    ] + aliases["CBLAS_LIBRARIES"] + [
-        'ntl']
+    standard_libs = ["mpfr", "gmp", "gmpxx", "pari", "m", "ec", "gsl", "ntl"]
     standard_libdirs = []
     if SAGE_LOCAL:
         standard_libdirs.append(os.path.join(SAGE_LOCAL, "lib"))
-    standard_libdirs.extend(aliases["CBLAS_LIBDIR"] + aliases["NTL_LIBDIR"])
-    standard_incdirs = sage_include_directories() + aliases["CBLAS_INCDIR"] + aliases["NTL_INCDIR"]
+    standard_libdirs.extend(aliases["NTL_LIBDIR"])
+    standard_incdirs = [dir.as_posix() for dir in get_include_dirs()] + aliases["NTL_INCDIR"]
     return standard_libs, standard_libdirs, standard_incdirs, aliases
 
 ################################################################
@@ -89,7 +84,7 @@ def _webbrowser_open_file(path):
 
 def cython(filename, verbose=0, compile_message=False,
            use_cache=False, create_local_c_file=False, annotate=True, view_annotate=False,
-           view_annotate_callback=_webbrowser_open_file, sage_namespace=True, create_local_so_file=False):
+           view_annotate_callback=None, sage_namespace=True, create_local_so_file=False):
     r"""
     Compile a Cython file. This converts a Cython file to a C (or C++ file),
     and then compiles that. The .c file and the .so file are
@@ -125,7 +120,8 @@ def cython(filename, verbose=0, compile_message=False,
     - ``view_annotate_callback`` -- function; a function that takes a string
       being the path to the html file. This can be overridden to change
       what to do with the annotated html file. Have no effect unless
-      ``view_annotate`` is ``True``.
+      ``view_annotate`` is ``True``. By default, the html file is opened in a
+      web browser.
 
     - ``sage_namespace`` -- boolean (default: ``True``); if ``True``, import
       ``sage.all``
@@ -272,6 +268,9 @@ def cython(filename, verbose=0, compile_message=False,
         sage: len(collected_paths)
         1
     """
+    if view_annotate_callback is None:
+        # needed because of https://github.com/sagemath/sage/pull/38946#issuecomment-2656329774
+        view_annotate_callback = _webbrowser_open_file
     if not filename.endswith('pyx'):
         print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
 
@@ -330,7 +329,6 @@ def cython(filename, verbose=0, compile_message=False,
     if create_local_so_file:
         name = base
     else:
-        global sequence_number
         if base not in sequence_number:
             sequence_number[base] = 0
         name = '%s_%s' % (base, sequence_number[base])
@@ -352,20 +350,13 @@ def cython(filename, verbose=0, compile_message=False,
     includes = [os.getcwd()] + standard_includes
 
     # Now do the actual build, directly calling Cython and distutils
+    from distutils.log import set_verbosity
+
+    import Cython.Compiler.Options
     from Cython.Build import cythonize
     from Cython.Compiler.Errors import CompileError
-    import Cython.Compiler.Options
-
-    try:
-        from setuptools.dist import Distribution
-        from setuptools.extension import Extension
-    except ImportError:
-        # Fall back to distutils (stdlib); note that it is deprecated
-        # in Python 3.10, 3.11; https://www.python.org/dev/peps/pep-0632/
-        from distutils.dist import Distribution
-        from distutils.core import Extension
-
-    from distutils.log import set_verbosity
+    from setuptools.dist import Distribution
+    from setuptools.extension import Extension
     set_verbosity(verbose)
 
     Cython.Compiler.Options.annotate = annotate
@@ -660,8 +651,8 @@ def compile_and_load(code, **kwds):
     r"""
     INPUT:
 
-    - ``code`` -- string containing code that could be in a .pyx file
-      that is attached or put in a %cython block in the notebook
+    - ``code`` -- string containing code that could be in a ``.pyx`` file
+      that is attached or put in a ``%%cython`` block
 
     See the function :func:`sage.misc.cython.cython` for documentation
     for the other inputs.

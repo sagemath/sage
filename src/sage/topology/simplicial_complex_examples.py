@@ -63,15 +63,6 @@ EXAMPLES::
     {0: 0, 1: C4, 2: 0}
     sage: simplicial_complexes.MatchingComplex(6).homology()                            # needs sage.modules
     {0: 0, 1: Z^16, 2: 0}
-
-TESTS::
-
-    sage: from sage.topology.simplicial_complex_examples import PseudoQuaternionicProjectivePlane
-    sage: H = PseudoQuaternionicProjectivePlane()                                       # needs sage.groups
-    doctest:warning...:
-    DeprecationWarning: PseudoQuaternionicProjectivePlane is deprecated.
-    Please use sage.topology.simplicial_complex_examples.QuaternionicProjectivePlane instead.
-    See https://github.com/sagemath/sage/issues/34568 for details.
 """
 
 from .simplicial_complex import SimplicialComplex
@@ -199,10 +190,9 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
 
     INPUT:
 
-    - the inputs are the same as for a :class:`SimplicialComplex`,
-      with one addition and two exceptions. The exceptions are that
-      ``is_mutable`` and ``is_immutable`` are ignored: all instances
-      of this class are immutable. The addition:
+    - the inputs are the same as for a :class:`SimplicialComplex`, with one
+      addition and one exception. The exception is that ``immutable`` is
+      ignored: all instances of this class are immutable. The addition:
 
     - ``name`` -- string (optional); the string representation for this complex
 
@@ -262,15 +252,13 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
         TESTS::
 
             sage: from sage.topology.simplicial_complex_examples import UniqueSimplicialComplex
-            sage: UniqueSimplicialComplex([[1, 2, 3], [0, 1, 3]], is_mutable=True).is_mutable()
+            sage: UniqueSimplicialComplex([[1, 2, 3], [0, 1, 3]], immutable=False).is_mutable()
             False
         """
-        if 'is_mutable' in kwds:
-            del kwds['is_mutable']
-        if 'is_immutable' in kwds:
-            del kwds['is_immutable']
+        if 'immutable' in kwds:
+            del kwds['immutable']
         self._name = name
-        SimplicialComplex.__init__(self, maximal_faces=maximal_faces, is_mutable=False, **kwds)
+        SimplicialComplex.__init__(self, maximal_faces=maximal_faces, immutable=True, **kwds)
 
     def _repr_(self):
         """
@@ -619,9 +607,6 @@ def QuaternionicProjectivePlane():
                                     for g in PermutationGroup([P, S])])
 
 
-PseudoQuaternionicProjectivePlane = deprecated_function_alias(34568, QuaternionicProjectivePlane)
-
-
 def PoincareHomologyThreeSphere():
     """
     A triangulation of the Poincaré homology 3-sphere.
@@ -839,7 +824,7 @@ def RealProjectiveSpace(n):
             name='Minimal triangulation of RP^4')
     if n >= 5:
         # Use the construction given by Datta in Example 3.21.
-        V = set(range(0, n+2))
+        V = set(range(n+2))
         S = Sphere(n).barycentric_subdivision()
         X = S.facets()
         facets = set()
@@ -1266,13 +1251,12 @@ def RandomComplex(n, d, p=0.5):
     """
     if d+1 > n:
         return Simplex(n-1)
-    else:
-        vertices = range(n)
-        facets = Subsets(vertices, d).list()
-        maybe = Subsets(vertices, d+1)
-        facets.extend([f for f in maybe if random.random() <= p])
-        return UniqueSimplicialComplex(facets,
-                                       name='Random {}-dimensional simplicial complex on {} vertices'.format(d, n))
+    vertices = range(n)
+    facets = Subsets(vertices, d).list()
+    maybe = Subsets(vertices, d+1)
+    facets.extend([f for f in maybe if random.random() <= p])
+    return UniqueSimplicialComplex(facets,
+                                   name='Random {}-dimensional simplicial complex on {} vertices'.format(d, n))
 
 
 def SumComplex(n, A):
@@ -1438,7 +1422,7 @@ def RandomTwoSphere(n):
     graph = RandomTriangulation(n)
 
     graph = graph.relabel(inplace=False)
-    triangles = [(u, v, w) for u, L in graph._embedding.items()
+    triangles = [(u, v, w) for u, L in graph.get_embedding().items()
                  for v, w in zip(L, L[1:] + [L[0]]) if u < v and u < w]
 
     return SimplicialComplex(triangles, maximality_check=False)
@@ -1483,10 +1467,10 @@ def ShiftedComplex(generators):
     """
     from sage.combinat.partition import Partitions
     Facets = []
-    for G in generators:
-        G = sorted(G, reverse=True)
+    for _G in generators:
+        G = sorted(_G, reverse=True)
         L = len(G)
-        for k in range(L * (L+1) // 2, sum(G) + 1):
+        for k in range(L * (L + 1) // 2, sum(G) + 1):
             for P in Partitions(k, length=L, max_slope=-1, outer=G):
                 Facets.append(list(reversed(P)))
     return SimplicialComplex(Facets)
@@ -1628,7 +1612,7 @@ def FareyMap(p):
         x, y = pair
         if x != 0 and p - x < x:
             return ((-x) % p, (-y) % p)
-        elif x == 0 and p - y < y:
+        if x == 0 and p - y < y:
             return (0, (-y) % p)
         return (x, y)
 

@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Partition Shifting Algebras
+Partition shifting algebras
 
 This module contains families of operators that act on partitions or,
 more generally, integer sequences. In particular, this includes Young's
@@ -10,7 +10,7 @@ case is acting on partitions.
 
 AUTHORS:
 
-- Matthew Lancellotti, George H. Seelinger (2018): Initial version
+- Matthew Lancellotti, George H. Seelinger (2018): initial version
 """
 # ****************************************************************************
 #  Copyright (C) 2018 Matthew Lancellotti <mvlancellotti@gmail.com>
@@ -401,8 +401,7 @@ class ShiftingOperatorAlgebra(CombinatorialFreeModule):
         gamma = sorted(supp, reverse=True)
         if gamma in _Partitions:
             return self._sym_h(gamma)
-        else:
-            return self._sym_h.zero()
+        return self._sym_h.zero()
 
     def _supp_to_s(self, gamma):
         r"""
@@ -439,8 +438,7 @@ class ShiftingOperatorAlgebra(CombinatorialFreeModule):
             sort_combined = sorted(combined, reverse=True)
             new_gamma = [sc - r for sc, r in zip(sort_combined, rho)]
             return sign * self._sym_s(_Partitions(new_gamma))
-        else:
-            return self._sym_s.zero()
+        return self._sym_s.zero()
 
     def build_and_register_conversion(self, support_map, codomain):
         r"""

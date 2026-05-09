@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Macdonald Polynomials
+Macdonald polynomials
 
 Notation used in the definitions follows mainly [Mac1995]_.
 
@@ -12,28 +12,9 @@ where `K_{\mu\nu}(q,t)` are the Macdonald `q,t`-Koskta coefficients.
 
 The `Ht` in this case is short for `{\tilde H}` and is the basis which is
 the graded Frobenius image of the Garsia-Haiman modules [GH1993]_.
-
-REFERENCES:
-
-- [Mac1995]_
-
-.. [GH1993] \A. Garsia, M. Haiman, A graded representation module for Macdonald's
-   polynomials, Proc. Nat. Acad. U.S.A. no. 90, 3607--3610.
-
-.. [BGHT1999] \F. Bergeron, A. M. Garsia, M. Haiman, and G. Tesler, Identities and
-   positivity conjectures for some remarkable operators in the theory of symmetric
-   functions, Methods Appl. Anal. 6 (1999), no. 3, 363--420.
-
-.. [LLM1998] \L. Lapointe, A. Lascoux, J. Morse, Determinantal Expressions for
-   Macdonald Polynomials, IRMN no. 18 (1998).
-   :arxiv:`math/9808050`.
-
-.. [BH2013] \F. Bergeron, M. Haiman, Tableaux Formulas for Macdonald Polynomials,
-   Special edition in honor of Christophe Reutenauer 60 birthday, International
-   Journal of Algebra and Computation, Volume 23, Issue 4, (2013), pp. 833-852.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -45,20 +26,22 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.morphism import SetMorphism
+import functools
+
 from sage.categories.homset import Hom
 from sage.categories.modules_with_basis import ModulesWithBasis
-from . import sfa
+from sage.categories.morphism import SetMorphism
 from sage.combinat.partition import Partitions_n, _Partitions
 from sage.matrix.matrix_space import MatrixSpace
-from sage.rings.rational_field import QQ
-from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_function
-import functools
+from sage.misc.misc_c import prod
+from sage.rings.rational_field import QQ
+from sage.structure.unique_representation import UniqueRepresentation
+
+from . import sfa
 
 # cache in q,t globally and subs locally with q and t values
 # these caches are stored in self._self_to_s_cache and self._s_to_self_cache
@@ -270,7 +253,7 @@ class Macdonald(UniqueRepresentation):
         ::
 
             sage: Sym = SymmetricFunctions(QQ['x','y','z'].fraction_field())
-            sage: (x,y,z) = Sym.base_ring().gens()
+            sage: x, y, z = Sym.base_ring().gens()
             sage: Macxy = Sym.macdonald(q=x,t=y)
             sage: Macyz = Sym.macdonald(q=y,t=z)
             sage: Maczx = Sym.macdonald(q=z,t=x)
@@ -1264,8 +1247,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
         """
         if self.t:
             return self._s(self._self_to_m(x))
-        else:
-            return sum(cmu*self._s(self._Qp(mu.conjugate())) for mu,cmu in x).omega()
+        return sum(cmu*self._s(self._Qp(mu.conjugate())) for mu,cmu in x).omega()
 
     def _s_to_self(self, x):
         r"""
@@ -1289,7 +1271,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
             sage: s = Sym.s()
             sage: H(s[1,1])
             -(1/(q*t-1))*McdH[1, 1] + (t/(q*t-1))*McdH[2]
-            sage: (q,t) = Sym.base_ring().gens()
+            sage: q, t = Sym.base_ring().gens()
             sage: H(q*s[1, 1, 1] + (q*t+1)*s[2, 1] + t*s[3])
             McdH[2, 1]
             sage: H2 = Sym.macdonald(t=0).H()
@@ -1305,8 +1287,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
         """
         if self.t:
             return self._m_to_self(self._m(x))
-        else:
-            return self._from_dict({mu.conjugate() : cmu for mu,cmu in self._Qp(x.omega())})
+        return self._from_dict({mu.conjugate() : cmu for mu,cmu in self._Qp(x.omega())})
 
     def _self_to_m(self, x):
         r"""
@@ -1347,8 +1328,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
                                 * self._Lmunu(part2, mu).subs(q=self.q, t=tinv)
                                 for mu,c in part_coeff(x, d)) )
                 for d in range(x.degree()+1) for part2 in Partitions_n(d) })
-        else:
-            return self._m(self._self_to_s(x))
+        return self._m(self._self_to_s(x))
 
     def _m_to_self( self, f ):
         r"""
@@ -1377,7 +1357,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
             sage: m = Sym.m()
             sage: H(m[1,1])
             -(1/(q*t-1))*McdH[1, 1] + (t/(q*t-1))*McdH[2]
-            sage: (q,t) = Sym.base_ring().gens()
+            sage: q, t = Sym.base_ring().gens()
             sage: H((2*q*t+q+t+2)*m[1, 1, 1] + (q*t+t+1)*m[2, 1] + t*m[3])
             McdH[2, 1]
 
@@ -1524,8 +1504,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
         if not mu:
             if not nu:
                 return QQqt.one()
-            else:
-                return QQqt.zero()
+            return QQqt.zero()
         if (mu,nu) in self._self_to_m_cache:
             return self._self_to_m_cache[(mu,nu)]
         if len(nu) == 1:
@@ -1599,7 +1578,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
             sage: m = Sym.m()
             sage: Ht(m[1,1])
             (1/(-q+t))*McdHt[1, 1] - (1/(-q+t))*McdHt[2]
-            sage: (q,t) = Sym.base_ring().gens()
+            sage: q, t = Sym.base_ring().gens()
             sage: Ht((q*t+2*q+2*t+1)*m[1, 1, 1] + (q+t+1)*m[2, 1] + m[3])
             McdHt[2, 1]
 
@@ -1767,14 +1746,13 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
             (q*t - t^2 - q + t)/(-q^3 + q^2 + q - 1)
         """
         # Convert to the power sum
-        (q, t) = QQqt.gens()
+        q, t = QQqt.gens()
         p = self._sym.p()
         s = self._s
         p_x = p(s(part))
         f = lambda m, c: (m, c * prod([(1 - t**k) / (1 - q**k) for k in m]))
         res = s(p_x.map_item(f))
-        f = res.coefficient
-        return f
+        return res.coefficient
 
     def _s_cache(self, n):
         r"""
@@ -1832,7 +1810,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
                 sage: a._creation_by_determinant_helper(2,[1])
                 (q^3*t-q^2*t-q+1)*McdS[2, 1] + (q^3-q^2*t-q+t)*McdS[3]
             """
-            (q,t) = QQqt.gens()
+            q, t = QQqt.gens()
             from sage.combinat.sf.sf import SymmetricFunctions
             S = SymmetricFunctions(QQqt).macdonald().S()
 
@@ -2007,6 +1985,7 @@ def qt_kostka(lam, mu):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_h', MacdonaldPolynomials_h.Element)
 register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_ht', MacdonaldPolynomials_ht.Element)
 register_unpickle_override('sage.combinat.sf.macdonald', 'MacdonaldPolynomial_j', MacdonaldPolynomials_j.Element)

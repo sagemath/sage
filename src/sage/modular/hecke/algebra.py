@@ -44,28 +44,7 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_method, richcmp
 
 
-def is_HeckeAlgebra(x) -> bool:
-    r"""
-    Return ``True`` if x is of type HeckeAlgebra.
-
-    EXAMPLES::
-
-        sage: from sage.modular.hecke.algebra import is_HeckeAlgebra
-        sage: is_HeckeAlgebra(CuspForms(1, 12).anemic_hecke_algebra())
-        doctest:warning...
-        DeprecationWarning: the function is_HeckeAlgebra is deprecated;
-        use 'isinstance(..., HeckeAlgebra_base)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        True
-        sage: is_HeckeAlgebra(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_HeckeAlgebra is deprecated; use 'isinstance(..., HeckeAlgebra_base)' instead")
-    return isinstance(x, HeckeAlgebra_base)
-
-
-def _heckebasis(M):
+def _heckebasis(M) -> list:
     r"""
     Return a basis of the Hecke algebra of M as a ZZ-module.
 
@@ -267,10 +246,9 @@ class HeckeAlgebra_base(CachedRepresentation, Parent):
             if x.parent() == self or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()):
                 if x.parent().module().basis_matrix() == self.module().basis_matrix():
                     return HeckeAlgebraElement_matrix(self, x.matrix())
-                else:
-                    A = matrix([self.module().coordinate_vector(x.parent().module().gen(i))
-                                for i in range(x.parent().module().rank())])
-                    return HeckeAlgebraElement_matrix(self, ~A * x.matrix() * A)
+                A = matrix([self.module().coordinate_vector(x.parent().module().gen(i))
+                            for i in range(x.parent().module().rank())])
+                return HeckeAlgebraElement_matrix(self, ~A * x.matrix() * A)
 
         try:
             A = self.matrix_space()(x)
@@ -518,10 +496,12 @@ class HeckeAlgebra_base(CachedRepresentation, Parent):
                 trace_matrix[i, j] = trace_matrix[j, i] = basis[i].matrix().trace_of_product(basis[j].matrix())
         return trace_matrix.det()
 
-    def gens(self):
+    def gens(self) -> Iterator:
         r"""
-        Return a generator over all Hecke operator `T_n` for
-        `n = 1, 2, 3, \ldots`. This is infinite.
+        Return a generator over all Hecke operator `T_n`
+        for `n = 1, 2, 3, \ldots`.
+
+        This is infinite.
 
         EXAMPLES::
 
@@ -626,9 +606,9 @@ class HeckeAlgebra_full(HeckeAlgebra_base):
             return NotImplemented
         return richcmp(self.module(), other.module(), op)
 
-    def is_anemic(self):
+    def is_anemic(self) -> bool:
         """
-        Return False, since this the full Hecke algebra.
+        Return ``False``, since this the full Hecke algebra.
 
         EXAMPLES::
 

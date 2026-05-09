@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Algebras
 
@@ -60,7 +59,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
     _base_category_class_and_axiom = (AssociativeAlgebras, 'Unital')
 
     # For backward compatibility?
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Membership testing.
 
@@ -159,7 +158,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
             """
             return self.base_ring().characteristic()
 
-        def has_standard_involution(self):
+        def has_standard_involution(self) -> bool:
             r"""
             Return ``True`` if the algebra has a standard involution and ``False`` otherwise.
 

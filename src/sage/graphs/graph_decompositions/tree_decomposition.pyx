@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Tree decompositions
 
@@ -453,7 +452,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
       tree-decomposition itself
 
     - ``algorithm`` -- whether to use ``'sage'`` or ``'tdlib'`` (requires the
-      installation of the :ref:`spkg_sagemath_tdlib` package). The default behaviour is to use
+      installation of the :ref:`spkg_tdlib` package). The default behaviour is to use
       'tdlib' if it is available, and Sage's own algorithm when it is not.
 
     - ``nice`` -- boolean (default: ``False``); whether or not to return the
@@ -955,7 +954,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
     for ui in list(directed_tree):
         if directed_tree.out_degree(ui) > 2:
             children = directed_tree.neighbors_out(ui)
-            children.pop() # one vertex remains a child of ui
+            children.pop()  # one vertex remains a child of ui
 
             directed_tree.delete_edges((ui, vi) for vi in children)
 
@@ -1548,7 +1547,7 @@ cdef class TreelengthConnected:
             cdef frozenset reduced_cut
 
             if len(cc) == 1:
-                [v] = cc
+                v, = cc
                 # We identify the neighbors of v in cut
                 reduced_cut = cut.intersection(g.neighbor_iterator(v))
                 # We can form a new bag with its closed neighborhood, and this

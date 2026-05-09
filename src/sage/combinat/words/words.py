@@ -99,12 +99,11 @@ def Words(alphabet=None, length=None, finite=True, infinite=True):
     if length is None:
         if finite and infinite:
             return FiniteOrInfiniteWords(alphabet)
-        elif finite:
+        if finite:
             return FiniteWords(alphabet)
-        elif infinite:
+        if infinite:
             return InfiniteWords(alphabet)
-        else:
-            raise ValueError("either finite or infinite must be True")
+        raise ValueError("either finite or infinite must be True")
 
     elif isinstance(length, (int, Integer)):
         return Words_n(FiniteWords(alphabet), length)
@@ -332,7 +331,56 @@ class FiniteWords(AbstractLanguage):
         sage: W = FiniteWords('ab')
         sage: W
         Finite words over {'a', 'b'}
+
+    TESTS::
+
+        sage: TestSuite(FiniteWords('ab')).run()
+        sage: TestSuite(FiniteWords([])).run()
+        sage: TestSuite(FiniteWords(['a'])).run()
     """
+
+    def __init__(self, alphabet=None, category=None):
+        """
+        INPUT:
+
+        - ``alphabet`` -- the underlying alphabet
+        - ``category`` -- the suggested category of the set
+          (normally should be automatically determined)
+
+        TESTS::
+
+            sage: FiniteWords('ab').is_finite()
+            False
+            sage: FiniteWords('ab').category()
+            Category of infinite sets
+            sage: FiniteWords([]).is_finite()
+            True
+            sage: FiniteWords([]).category()
+            Category of finite sets
+            sage: FiniteWords([], Sets()).category()
+            Category of finite sets
+        """
+        if category is None:
+            category = Sets()
+        if alphabet:
+            category = category.Infinite()
+        else:
+            category = category.Finite()
+        super().__init__(alphabet, category)
+
+    def is_empty(self):
+        """
+        Return ``False``, because the empty word is in the set.
+
+        TESTS::
+
+            sage: FiniteWords('ab').is_empty()
+            False
+            sage: FiniteWords([]).is_empty()
+            False
+        """
+        return False
+
     def cardinality(self):
         r"""
         Return the cardinality of this set.
@@ -415,7 +463,7 @@ class FiniteWords(AbstractLanguage):
             sage: d == e
             True
         """
-        import sage.combinat.words.word as word
+        from sage.combinat.words import word
         classes = {
             'list': word.FiniteWord_list,
             'str': word.FiniteWord_str,
@@ -475,8 +523,7 @@ class FiniteWords(AbstractLanguage):
             data = list(data)
             if 'char' in self._element_classes:
                 return self._element_classes['char'](self, data)
-            else:
-                return self._element_classes['list'](self, data)
+            return self._element_classes['list'](self, data)
 
         from sage.combinat.words.word_datatypes import (WordDatatype_str,
                                                         WordDatatype_list,
@@ -879,6 +926,8 @@ class FiniteWords(AbstractLanguage):
         except (TypeError, ValueError, AttributeError, NotImplementedError):
             return self([])
 
+        if len(some_letters) == 0:
+            return self([])
         if len(some_letters) == 1:
             return self([some_letters[0]] * 3)
 
@@ -1286,10 +1335,9 @@ class InfiniteWords(AbstractLanguage):
         """
         if not self.alphabet().cardinality():
             return ZZ.zero()
-        elif self.alphabet().cardinality().is_one():
+        if self.alphabet().cardinality().is_one():
             return ZZ.one()
-        else:
-            return Infinity
+        return Infinity
 
     def __hash__(self):
         r"""
@@ -1358,7 +1406,7 @@ class InfiniteWords(AbstractLanguage):
             sage: d == e
             True
         """
-        import sage.combinat.words.word as word
+        from sage.combinat.words import word
         return {
             'callable_with_caching': word.InfiniteWord_callable_with_caching,
             'callable': word.InfiniteWord_callable,
@@ -1411,7 +1459,7 @@ class InfiniteWords(AbstractLanguage):
         ###########################
         if data.parent() is self or data.parent() == self:
             return data
-        elif data.length() != Infinity:
+        if data.length() != Infinity:
             raise ValueError("cannot build an infinite word from a finite one")
 
         ###########################
@@ -1423,11 +1471,10 @@ class InfiniteWords(AbstractLanguage):
         if isinstance(data, WordDatatype_callable):
             data = data._func
             return self._word_from_callable(data, caching=False)
-        elif isinstance(data, WordDatatype_iter):
+        if isinstance(data, WordDatatype_iter):
             data = iter(data)
             return self._word_from_iter(data, caching=False)
-        else:
-            raise TypeError("any instance of Word_class must be an instance of WordDatatype")
+        raise TypeError("any instance of Word_class must be an instance of WordDatatype")
 
     def _word_from_callable(self, data, caching=True):
         r"""
@@ -1617,9 +1664,8 @@ class InfiniteWords(AbstractLanguage):
             from sage.combinat.words.word_generators import words
             letters = some_letters[:2]
             return self(words.ThueMorseWord(alphabet=letters))
-        else:
-            letter = some_letters[0]
-            return self(lambda n: letter)
+        letter = some_letters[0]
+        return self(lambda n: letter)
 
 
 class FiniteOrInfiniteWords(AbstractLanguage):
@@ -1677,7 +1723,7 @@ class FiniteOrInfiniteWords(AbstractLanguage):
             {'iter': <class 'sage.combinat.words.word.Word_iter'>,
              'iter_with_caching': <class 'sage.combinat.words.word.Word_iter_with_caching'>}
         """
-        import sage.combinat.words.word as word
+        from sage.combinat.words import word
         return {'iter_with_caching': word.Word_iter_with_caching,
                 'iter': word.Word_iter}
 
@@ -1750,10 +1796,9 @@ class FiniteOrInfiniteWords(AbstractLanguage):
         if P is self or P is self.finite_words() or P is self.infinite_words() or \
            P == self or P == self.finite_words() or P == self.infinite_words():
             return data
-        elif data.is_finite():
+        if data.is_finite():
             return self.finite_words()._word_from_word(data)
-        else:
-            return self.infinite_words()._word_from_word(data)
+        return self.infinite_words()._word_from_word(data)
 
     def _word_from_iter(self, data, caching=True):
         r"""
@@ -2044,10 +2089,10 @@ class FiniteOrInfiniteWords(AbstractLanguage):
         if length == 'finite' or length in ZZ:
             return self.finite_words()(data, datatype=datatype, length=length, caching=caching, check=check)
 
-        elif length == 'infinite' or length == Infinity:
+        if length == 'infinite' or length == Infinity:
             return self.infinite_words()(data, datatype=datatype, check=check, caching=caching)
 
-        elif length == 'unknown' or length is None:
+        if length == 'unknown' or length is None:
             from sage.combinat.words.abstract_word import Word_class
             if isinstance(data, Word_class):
                 w = self._word_from_word(data)
@@ -2060,8 +2105,7 @@ class FiniteOrInfiniteWords(AbstractLanguage):
                 w.parent()._check(w)
             return w
 
-        else:
-            raise ValueError("invalid argument length (={!r})".format(length))
+        raise ValueError("invalid argument length (={!r})".format(length))
 
     def _repr_(self):
         r"""
@@ -2328,8 +2372,7 @@ class Words_n(Parent):
         """
         if length == self._n:
             return iter(self)
-        else:
-            return iter([])
+        return iter([])
 
 
 ###############

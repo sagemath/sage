@@ -62,15 +62,13 @@ from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.misc import gcd
-from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.polynomial.polynomial_ring import polygens
 from sage.rings.ideal import Ideal_generic
 
 import sage.rings.number_field.order
 
-#TODO I*u works when u lies in I.ring().number_field(), but u*I doesn't
+# TODO I*u works when u lies in I.ring().number_field(), but u*I doesn't
 
 
 def NumberFieldOrderIdeal(O, *args, **kwds):
@@ -458,7 +456,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             alpha = 0
         return tuple(map(O, (N, alpha)))
 
-    def is_principal(self):
+    def is_principal(self) -> bool:
         r"""
         Determine whether or not this ideal is principal.
 
@@ -554,7 +552,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         assert NumberFieldOrderIdeal(self.ring(), gen) == self
         return (gen,)
 
-    def is_equivalent(self, other, narrow=False):
+    def is_equivalent(self, other, narrow=False) -> bool:
         r"""
         Determine whether this ideal is equivalent to another ideal
         in the same order.
@@ -619,7 +617,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         assert len(gs) in (1,2)
         if len(gs) > 1:
             return False
-        elif narrow:
+        if narrow:
             return gs[0].norm() > 0
         return True
 
@@ -776,9 +774,8 @@ def _random_for_testing():
     from sage.rings.number_field.number_field import QuadraticField
     from sage.arith.misc import primes
     from sage.rings.finite_rings.integer_mod_ring import Zmod
-    from sage.misc.misc_c import prod
     while True:
-        d = ZZ(choice((-1,+1)) * randrange(1,10**5))
+        d = ZZ(choice((-1, +1)) * randrange(1, 10**5))
         if not d.is_square():
             break
     K,t = QuadraticField(d).objgen()

@@ -174,7 +174,7 @@ Packaging
    :maxdepth: 2
 
    packaging
-   packaging_sage_library
+   downstream
 
 
 Indices and tables

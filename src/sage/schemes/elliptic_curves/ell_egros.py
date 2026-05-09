@@ -396,7 +396,6 @@ def egros_get_j(S=[], proof=None, verbose=False):
     SS = [-1] + S
 
     jlist = []
-    wcount = 0
     nw = 6**len(S) * 2
 
     if verbose:
@@ -404,9 +403,8 @@ def egros_get_j(S=[], proof=None, verbose=False):
         print("Using ", nw, " twists of base curve")
         sys.stdout.flush()
 
-    for ei in xmrange([6] * len(S) + [2]):
+    for wcount, ei in enumerate(xmrange([6] * len(S) + [2]), 1):
         w = QQ.prod(p**e for p, e in zip(reversed(SS), ei))
-        wcount += 1
         if verbose:
             print("Curve #", wcount, "/", nw, ":")
             print("w = ", w, "=", w.factor())

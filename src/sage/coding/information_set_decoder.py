@@ -157,10 +157,10 @@ class InformationSetAlgorithm(SageObject):
         EXAMPLES::
 
             sage: M = matrix(GF(2), [[1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0],\
-                                     [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1],\
-                                     [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],\
-                                     [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1],\
-                                     [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1]])
+            ....:                    [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1],\
+            ....:                    [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],\
+            ....:                    [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1],\
+            ....:                    [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1]])
             sage: C = codes.LinearCode(M)
             sage: from sage.coding.information_set_decoder import LeeBrickellISDAlgorithm
             sage: A = LeeBrickellISDAlgorithm(C, (2,2))
@@ -448,10 +448,10 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         EXAMPLES::
 
             sage: M = matrix(GF(2), [[1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0],\
-                                     [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1],\
-                                     [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],\
-                                     [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1],\
-                                     [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1]])
+            ....:                    [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1],\
+            ....:                    [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],\
+            ....:                    [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1],\
+            ....:                    [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1]])
             sage: C = codes.LinearCode(M)
             sage: from sage.coding.information_set_decoder import LeeBrickellISDAlgorithm
             sage: A = LeeBrickellISDAlgorithm(C, (2,2))
@@ -569,7 +569,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
                 I = sample(range(n), k)
                 Gi = G.matrix_from_columns(I)
                 try:
-                    Gi_inv = Gi.inverse()
+                    Gi.inverse()
                 except ZeroDivisionError:
                     continue
                 return process_time() - before
@@ -581,7 +581,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
                              for s in range(100) ]
             before = process_time()
             for m in scalars:
-                e = y - sum(m[i]*g[i] for i in range(p))
+                _ = y - sum(m[i]*g[i] for i in range(p))
             return (process_time() - before) / 100.
         T = sum([ time_information_set_steps() for s in range(5) ]) / 5.
         P = [ time_search_loop(p) for p in range(tau+1) ]
@@ -892,8 +892,7 @@ class LinearCodeInformationSetDecoder(Decoder):
         """
         if dictionary:
             return LinearCodeInformationSetDecoder._known_algorithms
-        else:
-            return LinearCodeInformationSetDecoder._known_algorithms.keys()
+        return LinearCodeInformationSetDecoder._known_algorithms.keys()
 
     def algorithm(self):
         r"""
@@ -929,10 +928,10 @@ class LinearCodeInformationSetDecoder(Decoder):
         EXAMPLES::
 
             sage: M = matrix(GF(2), [[1,0,0,0,0,0,1,0,1,0,1,1,0,0,1],\
-                                     [0,1,0,0,0,1,1,1,1,0,0,0,0,1,1],\
-                                     [0,0,1,0,0,0,0,1,0,1,1,1,1,1,0],\
-                                     [0,0,0,1,0,0,1,0,1,0,0,0,1,1,0],\
-                                     [0,0,0,0,1,0,0,0,1,0,1,1,0,1,0]])
+            ....:                    [0,1,0,0,0,1,1,1,1,0,0,0,0,1,1],\
+            ....:                    [0,0,1,0,0,0,0,1,0,1,1,1,1,1,0],\
+            ....:                    [0,0,0,1,0,0,1,0,1,0,0,0,1,1,0],\
+            ....:                    [0,0,0,0,1,0,0,0,1,0,1,1,0,1,0]])
             sage: C = LinearCode(M)
             sage: c = C.random_element()
             sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), 2)

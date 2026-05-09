@@ -192,7 +192,7 @@ def covariant_z0(F, z0_cov=False, prec=53, emb=None, error_limit=0.000001):
         FM = f  # for Julia's invariant
     else:
         # solve the minimization problem for 'true' covariant
-        CF = ComplexIntervalField(prec=prec)  # keeps trac of our precision error
+        CF = ComplexIntervalField(prec=prec)  # keeps track of our precision error
         z = CF(z)
         FM = F(list(mat * vector(R.gens()))).subs({R.gen(1): 1}).univariate_polynomial()
         from sage.rings.polynomial.complex_roots import complex_roots
@@ -232,10 +232,9 @@ def covariant_z0(F, z0_cov=False, prec=53, emb=None, error_limit=0.000001):
             z = v0[1].constant_coefficient() + v0[0].constant_coefficient()*CF.gen(0)
             err = z.diameter() # precision
             zz = (w - z).abs().lower() # difference in w and z
-        else:
-            # despite there is no break, this happens
-            if err > error_limit or err.is_NaN():
-                raise ValueError("accuracy of Newton's root not within tolerance(%s > %s), increase precision" % (err, error_limit))
+        # despite there is no break, this happens
+        if err > error_limit or err.is_NaN():
+            raise ValueError("accuracy of Newton's root not within tolerance(%s > %s), increase precision" % (err, error_limit))
         if z.imag().upper() <= z.diameter():
             raise ArithmeticError("Newton's method converged to z not in the upper half plane")
         z = z.center()
@@ -503,20 +502,20 @@ def smallest_poly(F, prec=53, norm_type='norm', emb=None):
         N = len(pts)
         if N == 0:
             return [item]
-        elif N == 1:
+        if N == 1:
             if item[index] > pts[0][index]:
                 pts.insert(0, item)
             else:
                 pts.append(item)
             return pts
-        else:  # binary insertion
-            left = 1
-            right = N
-            mid = (left + right) // 2  # these are ints so this is .floor()
-            if item[index] > pts[mid][index]:  # item goes into first half
-                return insert_item(pts[:mid], item, index) + pts[mid:N]
-            else:  # item goes into second half
-                return pts[:mid] + insert_item(pts[mid:N], item, index)
+        # binary insertion
+        left = 1
+        right = N
+        mid = (left + right) // 2  # these are ints so this is .floor()
+        if item[index] > pts[mid][index]:  # item goes into first half
+            return insert_item(pts[:mid], item, index) + pts[mid:N]
+        # item goes into second half
+        return pts[:mid] + insert_item(pts[mid:N], item, index)
 
     def coshdelta(z):
         # The cosh of the hyperbolic distance from z = t+uj to j

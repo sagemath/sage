@@ -264,15 +264,15 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         if kwds:
             if x:
-                raise TypeError("%s__call__() takes exactly 1 argument"%type(self))
+                raise TypeError("%s__call__() takes exactly 1 argument" % type(self))
             try:
                 x = [kwds.pop(self.variable_name())]
             except KeyError:
                 pass
         if kwds:
-            raise TypeError("%s__call__() accepts no named argument except '%s'"%(type(self),self.variable_name()))
+            raise TypeError("%s__call__() accepts no named argument except '%s'" % (type(self), self.variable_name()))
         if len(x)!=1:
-            raise TypeError("%s__call__() takes exactly 1 positional argument"%type(self))
+            raise TypeError("%s__call__() takes exactly 1 positional argument" % type(self))
 
         a = x[0]
         try:

@@ -40,7 +40,7 @@ Here, the expansion lists the remainders of repeated division by `x^2 + x + 1`::
     [x + 1, 1]
 """
 # ****************************************************************************
-#       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C) 2013-2025 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -102,6 +102,29 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: v = GaussValuation(S)                                                 # needs sage.libs.ntl
             sage: v.phi()                                                               # needs sage.libs.ntl
             (1 + O(2^5))*x
+
+        Use
+        :meth:`~sage.rings.valuation.inductive_valuation.InductiveValuation.augmentation_chain`
+        to obtain the sequence of key polynomials of an
+        :class:`~sage.rings.valuation.inductive_valuation.InductiveValuation`::
+
+            sage: R.<x> = QQ[]
+            sage: v = GaussValuation(R, QQ.valuation(2))
+            sage: v = v.augmentation(x, 1)
+            sage: v = v.augmentation(x^2 + 2*x + 4, 3)
+
+            sage: v
+            [ Gauss valuation induced by 2-adic valuation, v(x) = 1, v(x^2 + 2*x + 4) = 3 ]
+
+            sage: [w.phi() for w in v.augmentation_chain()[:-1]]
+            [x^2 + 2*x + 4, x]
+
+        A similar approach can be used to obtain the key polynomials and their
+        corresponding valuations::
+
+            sage: [(w.phi(), w.mu()) for w in v.augmentation_chain()[:-1]]
+            [(x^2 + 2*x + 4, 3), (x, 1)]
+
         """
         return self._phi
 
@@ -119,7 +142,6 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Zp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -151,7 +173,6 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Zp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -165,9 +186,8 @@ class DevelopingValuation(DiscretePseudoValuation):
         if e % 2 == 0:
             return self._pow(self.simplify(f*f, error=error*2/e, effective_degree=effective_degree*2/e),
                              e//2, error=error, effective_degree=effective_degree)
-        else:
-            return self.simplify(f*self._pow(f, e-1, error=error*(e-1)/e, effective_degree=effective_degree*(e-1)/e),
-                                 error=error, effective_degree=effective_degree)
+        return self.simplify(f*self._pow(f, e-1, error=error*(e-1)/e, effective_degree=effective_degree*(e-1)/e),
+                             error=error, effective_degree=effective_degree)
 
     def coefficients(self, f):
         r"""
@@ -184,7 +204,6 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -234,7 +253,6 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -264,7 +282,6 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -272,7 +289,6 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: v(f)
             0
 
-            sage: # needs sage.libs.ntl
             sage: v = v.augmentation( x^2 + x + 1, 1)
             sage: v(f)
             0
@@ -310,7 +326,6 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Qp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S, R.valuation())

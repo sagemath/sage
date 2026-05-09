@@ -19,7 +19,7 @@ Submodules of Hecke modules
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.arith.all as arith
+import sage.arith.misc as arith
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module import FreeModule_generic
@@ -28,32 +28,13 @@ from sage.structure.richcmp import richcmp_method, richcmp_not_equal
 from . import module
 
 
-def is_HeckeSubmodule(x):
-    r"""
-    Return ``True`` if x is of type HeckeSubmodule.
-
-    EXAMPLES::
-
-        sage: sage.modular.hecke.submodule.is_HeckeSubmodule(ModularForms(1, 12))
-        doctest:warning...
-        DeprecationWarning: the function is_HeckeSubmodule is deprecated;
-        use 'isinstance(..., HeckeSubmodule)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        False
-        sage: sage.modular.hecke.submodule.is_HeckeSubmodule(CuspForms(1, 12))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_HeckeSubmodule is deprecated; use 'isinstance(..., HeckeSubmodule)' instead")
-    return isinstance(x, HeckeSubmodule)
-
-
 @richcmp_method
 class HeckeSubmodule(module.HeckeModule_free_module):
     """
     Submodule of a Hecke module.
     """
-    def __init__(self, ambient, submodule, dual_free_module=None, check=True):
+    def __init__(self, ambient, submodule,
+                 dual_free_module=None, check=True) -> None:
         r"""
         Initialise a submodule of an ambient Hecke module.
 
@@ -383,8 +364,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
                 break
 
         if V.rank() + self.rank() == A.rank():
-            C = A.submodule(V, check=False)
-            return C
+            return A.submodule(V, check=False)
 
         # first attempt to compute the complement failed, we now try
         # the following naive approach: decompose the ambient space,
@@ -519,8 +499,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         if self.complement.is_in_cache():
             verbose('This module knows its complement already -- cheating in dual_free_module')
             C = self.complement()
-            V = C.basis_matrix().right_kernel()
-            return V
+            return C.basis_matrix().right_kernel()
 
         verbose("computing dual")
 
@@ -672,7 +651,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
         return M
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         r"""
         Return ``True`` if ``self`` is an ambient space of modular symbols.
 
@@ -688,7 +667,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         """
         return self.free_module() == self.ambient_hecke_module().free_module()
 
-    def is_new(self, p=None):
+    def is_new(self, p=None) -> bool:
         """
         Return ``True`` if this Hecke module is `p`-new. If `p` is None,
         returns ``True`` if it is new.
@@ -710,7 +689,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         self.__is_new[p] = self.is_submodule(N)
         return self.__is_new[p]
 
-    def is_old(self, p=None):
+    def is_old(self, p=None) -> bool:
         """
         Return ``True`` if this Hecke module is `p`-old. If `p` is ``None``,
         returns ``True`` if it is old.
@@ -735,7 +714,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         self.__is_old[p] = self.is_submodule(O)
         return self.__is_old[p]
 
-    def is_submodule(self, V):
+    def is_submodule(self, V) -> bool:
         """
         Return ``True`` if and only if ``self`` is a submodule of V.
 
@@ -982,5 +961,4 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         """
         if self.is_cuspidal():
             return self.sturm_bound()
-        else:
-            return self.ambient_hecke_module().hecke_bound()
+        return self.ambient_hecke_module().hecke_bound()

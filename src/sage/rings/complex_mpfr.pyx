@@ -54,11 +54,13 @@ from sage.rings.integer_ring import ZZ
 
 cimport gmpy2
 gmpy2.import_gmpy2()
+from mpmath import mp
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen import Gen as pari_gen
+    from cypari2.handle_error import PariError
 except ImportError:
-    pari_gen = ()
+    pari_gen = PariError = ()
 
 # Some objects that are not imported at startup in order to break
 # circular imports
@@ -115,47 +117,6 @@ def set_global_complex_round_mode(n):
     """
     global rnd
     rnd = n
-
-
-def is_ComplexNumber(x):
-    r"""
-    Return ``True`` if ``x`` is a complex number. In particular, if ``x`` is
-    of the :class:`ComplexNumber` type.
-
-    EXAMPLES::
-
-        sage: from sage.rings.complex_mpfr import is_ComplexNumber
-        sage: a = ComplexNumber(1, 2); a
-        1.00000000000000 + 2.00000000000000*I
-        sage: is_ComplexNumber(a)
-        doctest:warning...
-        DeprecationWarning: The function is_ComplexNumber is deprecated;
-        use 'isinstance(..., ComplexNumber)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: b = ComplexNumber(1); b
-        1.00000000000000
-        sage: is_ComplexNumber(b)
-        True
-
-    Note that the global element ``I`` is a number field element, of type
-    :class:`sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian`,
-    while elements of the class :class:`ComplexField_class`
-    are of type :class:`ComplexNumber`::
-
-        sage: # needs sage.symbolic
-        sage: c = 1 + 2*I
-        sage: is_ComplexNumber(c)
-        False
-        sage: d = CC(1 + 2*I)
-        sage: is_ComplexNumber(d)
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_ComplexNumber is deprecated; "
-                       "use 'isinstance(..., ComplexNumber)' instead.")
-    return isinstance(x, ComplexNumber)
 
 
 cache = {}
@@ -618,7 +579,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             return self._generic_coerce_map(S)
         return self._coerce_map_via([CLF], S)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -629,9 +590,9 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             sage: ComplexField(15) # indirect doctest
             Complex Field with 15 bits of precision
         """
-        return "Complex Field with %s bits of precision"%self._prec
+        return "Complex Field with %s bits of precision" % self._prec
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -868,7 +829,6 @@ class ComplexField_class(sage.rings.abc.ComplexField):
 
         TESTS::
 
-            sage: # needs sage.libs.pari
             sage: k = ComplexField(100)
             sage: R.<x> = k[]
             sage: k._factor_univariate_polynomial(x)
@@ -983,7 +943,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
                 real, imag = real
             elif isinstance(real, complex):
                 real, imag = real.real, real.imag
-            elif type(real) is gmpy2.mpc:
+            elif isinstance(real, (gmpy2.mpc, mp.mpc)):
                 real, imag = (<gmpy2.mpc>real).real, (<gmpy2.mpc>real).imag
             else:
                 imag = 0
@@ -1286,7 +1246,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: a = CC(pi + I*e); a
             3.14159265358979 + 2.71828182845905*I
             sage: a.str(truncate=True)
@@ -1330,7 +1289,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``format_spec`` -- string; a floating point format specificier as
+        - ``format_spec`` -- string; a floating point format specifier as
           defined by :python:`the format specification mini-language
           <library/string.html#formatspec>` in Python
 
@@ -1411,7 +1370,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         Coerce the object using the ``pari`` function::
 
-            sage: # needs sage.libs.pari
             sage: a = ComplexNumber(2,1)
             sage: pari(a)
             2.00000000000000 + 1.00000000000000*I
@@ -1434,7 +1392,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         if self.is_real():
             return self.real().__pari__()
-        return sage.libs.pari.all.pari.complex(self.real() or 0, self.imag())
+        return sage.libs.pari.pari.complex(self.real() or 0, self.imag())
 
     def __mpc__(self):
         """
@@ -2265,7 +2223,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: (1+CC(I)).cot()
             0.217621561854403 - 0.868014142895925*I
             sage: i = ComplexField(200).0
@@ -2401,7 +2358,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         try:
             return self._parent(self.__pari__().eta(not omit_frac))
-        except sage.libs.pari.all.PariError:
+        except PariError:
             raise ValueError("value must be in the upper half plane")
 
     def sin(self):
@@ -2878,7 +2835,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         try:
             return self._parent(self.__pari__().gamma())
-        except sage.libs.pari.all.PariError:
+        except PariError:
             from sage.rings.infinity import UnsignedInfinityRing
             return UnsignedInfinityRing.gen()
 
@@ -2889,7 +2846,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: C, i = ComplexField(30).objgen()
             sage: (1+i).gamma_inc(2 + 3*i)  # abs tol 2e-10
             0.0020969149 - 0.059981914*I
@@ -3256,21 +3212,23 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         ALGORITHM: Uses the PARI C-library :pari:`algdep` command.
 
-        INPUT: Type ``algdep?`` at the top level prompt. All additional
-        parameters are passed onto the top-level :func:`algdep` command.
+        INPUT: Type ``algebraic_dependency?`` at the top level prompt.
+
+        All additional parameters are passed onto the top-level
+        :func:`algebraic_dependency` command.
 
         EXAMPLES::
 
             sage: C = ComplexField()
             sage: z = (1/2)*(1 + sqrt(3.0) *C.0); z
             0.500000000000000 + 0.866025403784439*I
-            sage: p = z.algdep(5); p
+            sage: p = z.algebraic_dependency(5); p
             x^2 - x + 1
             sage: p(z)
             1.11022302462516e-16
         """
-        from sage.arith.misc import algdep
-        return algdep(self, n, **kwds)
+        from sage.arith.misc import algebraic_dependency
+        return algebraic_dependency(self, n, **kwds)
 
     # Alias
     algdep = algebraic_dependency

@@ -21,11 +21,11 @@ Shuffle product of words
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.combinat.words.word import Word_class, Word
-from sage.arith.misc import binomial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.composition import Composition
+from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat.words.word import Word_class, Word
+from sage.rings.integer import Integer
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -174,7 +174,7 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
         """
         len_w1 = self._w1.length()
         len_w2 = self._w2.length()
-        return binomial(len_w1 + len_w2, len_w1)
+        return Integer(len_w1 + len_w2).binomial(len_w1)
 
     def __iter__(self):
         """

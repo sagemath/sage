@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Rigged Configurations of `\mathcal{B}(\infty)`
+Rigged configurations of `\mathcal{B}(\infty)`
 
 AUTHORS:
 
-- Travis Scrimshaw (2013-04-16): Initial version
+- Travis Scrimshaw (2013-04-16): initial version
 """
 
 # ****************************************************************************

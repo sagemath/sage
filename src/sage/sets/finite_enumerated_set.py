@@ -288,7 +288,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: S[-4]
             Traceback (most recent call last):
             ...
-            IndexError: list index out of range
+            IndexError: index out of range
         """
         return self._elements[i]
 

@@ -28,11 +28,9 @@ from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom, Homset
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.modules.free_module_element import vector
 from sage.sets.family import Family
 from sage.structure.richcmp import richcmp
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
 
 
 class ModulePrinting:
@@ -356,7 +354,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         return self._from_dict({self._indices.one(): one},
                                remove_zeros=False, coerce=False)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self`` as a `U(\mathfrak{g})`-module.
 
@@ -554,7 +552,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         wt, w = (self._weight + P.rho()).to_dominant_chamber(reduced_word=True)
         return (wt - P.rho(), w)
 
-    def is_singular(self):
+    def is_singular(self) -> bool:
         r"""
         Return if ``self`` is a singular Verma module.
 
@@ -584,7 +582,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         """
         return not self._dominant_data[0].is_dominant()
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return if ``self`` is a simple module.
 
@@ -614,7 +612,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         """
         return self._weight.is_verma_dominant(positive=False)
 
-    def is_projective(self):
+    def is_projective(self) -> bool:
         r"""
         Return if ``self`` is a projective module in Category `\mathcal{O}`.
 
@@ -820,12 +818,12 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
             for m in ret._monomial_coefficients:
                 c = ret._monomial_coefficients[m]
                 mp = {}
-                for k,e in reversed(m._sorted_items()):
+                for k, e in reversed(m._sorted_items()):
                     part = P._g._part_on_basis(k)
                     if part > 0:
                         mp = None
                         break
-                    elif part == 0:
+                    if part == 0:
                         c *= P._g._weight_action(k, P._weight)**e
                     else:
                         mp[k] = e
@@ -1085,7 +1083,7 @@ class VermaModuleMorphism(Morphism):
             return homset.element_class(homset, right._scalar * self._scalar)
         return super()._composition_(right, homset)
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         Return if ``self`` is injective or not.
 
@@ -1114,7 +1112,7 @@ class VermaModuleMorphism(Morphism):
             return False
         return bool(self._scalar)
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         Return if ``self`` is surjective or not.
 
@@ -1492,7 +1490,8 @@ class VermaModuleHomset(Homset):
                             continue
                         M = matrix(pbw.base_ring(), [[v[s] for v in image] for s in supp])
                         ker = M.right_kernel_matrix()
-                        basis = [C.linear_combination((basis[j], c) for j, c in kv.iteritems())
+                        basis = [C.linear_combination((basis[j], c)
+                                                      for j, c in kv.items())
                                  for kv in ker.rows()]
 
                     assert len(basis) == 1

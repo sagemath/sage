@@ -26,6 +26,7 @@ EXAMPLES::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Any
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import Singleton
@@ -41,7 +42,8 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 
 try:
-    from sage.libs.pari.all import pari, pari_gen
+    from sage.libs.pari import pari
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
@@ -212,7 +214,7 @@ class Cusp(Element):
             self.__a = ZZ.zero()
             self.__b = ZZ.one()
             return
-        elif not b:
+        if not b:
             if not a:
                 raise TypeError("unable to convert (%r, %r) to a cusp" % (a, b))
             self.__a = ZZ.one()
@@ -258,9 +260,9 @@ class Cusp(Element):
         """
         return hash((self.__a, self.__b))
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         """
-        Compare the cusps ``self`` and ``right``.
+        Compare the cusps ``self`` and ``other``.
 
         Comparison is as for rational numbers, except with the cusp oo
         greater than everything but itself.
@@ -310,13 +312,13 @@ class Cusp(Element):
             s = Infinity
         else:
             s = self._rational_()
-        if not right.__b:
+        if not other.__b:
             o = Infinity
         else:
-            o = right._rational_()
+            o = other._rational_()
         return richcmp(s, o, op)
 
-    def is_infinity(self):
+    def is_infinity(self) -> bool:
         """
         Return ``True`` if this is the cusp infinity.
 
@@ -428,8 +430,7 @@ class Cusp(Element):
             return "Infinity"
         if self.__b != 1:
             return "%s/%s" % (self.__a, self.__b)
-        else:
-            return str(self.__a)
+        return str(self.__a)
 
     def _latex_(self):
         r"""
@@ -448,8 +449,7 @@ class Cusp(Element):
             return "\\infty"
         if self.__b != 1:
             return "\\frac{%s}{%s}" % (self.__a, self.__b)
-        else:
-            return str(self.__a)
+        return str(self.__a)
 
     def __neg__(self):
         """
@@ -464,7 +464,8 @@ class Cusp(Element):
         """
         return Cusp(-self.__a, self.__b)
 
-    def is_gamma0_equiv(self, other, N, transformation=None):
+    def is_gamma0_equiv(self, other, N,
+                        transformation=None) -> bool | tuple[bool, Any]:
         r"""
         Return whether ``self`` and ``other`` are equivalent modulo the action of
         `\Gamma_0(N)` via linear fractional transformations.
@@ -538,17 +539,15 @@ class Cusp(Element):
         if v1 == v2 and u1 == u2:
             if not transformation:
                 return True
-            elif transformation == "matrix":
+            if transformation == "matrix":
                 return True, matrix(ZZ, [[1, 0], [0, 1]])
-            else:
-                return True, one
+            return True, one
 
         # a necessary, but not sufficient condition unless N is square-free
         if v1.gcd(N) != v2.gcd(N):
             if not transformation:
                 return False
-            else:
-                return False, None
+            return False, None
 
         if (u1, v1) != (zero, one):
             if v1 in [zero, one]:
@@ -569,8 +568,7 @@ class Cusp(Element):
         if a % g != 0:
             if not transformation:
                 return False
-            else:
-                return False, None
+            return False, None
 
         if not transformation:
             return True
@@ -581,23 +579,19 @@ class Cusp(Element):
             if v2 == 0:  # both are oo
                 if transformation == "matrix":
                     return (True, matrix(ZZ, [[1, 0], [0, 1]]))
-                else:
-                    return (True, one)
-            else:
-                dum, s2, r2 = u2.xgcd(-v2)
-                assert dum.is_one()
-                if transformation == "matrix":
-                    return (True, matrix(ZZ, [[u2, r2], [v2, s2]]))
-                else:
-                    return (True, u2)
+                return (True, one)
+            dum, s2, r2 = u2.xgcd(-v2)
+            assert dum.is_one()
+            if transformation == "matrix":
+                return (True, matrix(ZZ, [[u2, r2], [v2, s2]]))
+            return (True, u2)
 
-        elif v2 == 0:  # the second is oo
+        if v2 == 0:  # the second is oo
             dum, s1, r1 = u1.xgcd(-v1)
             assert dum.is_one()
             if transformation == "matrix":
                 return (True, matrix(ZZ, [[s1, -r1], [-v1, u1]]))
-            else:
-                return (True, s1)
+            return (True, s1)
 
         dum, s2, r2 = u2.xgcd(-v2)
         assert dum.is_one()
@@ -637,15 +631,14 @@ class Cusp(Element):
             assert (A * u1 + B * v1) / (C * u1 + D * v1) == u2 / v2
             return (True, ga)
 
-        else:
-            # mainly for backwards compatibility and
-            # for how it is used in modular symbols
-            A = (u2 * s1p - r2 * v1)
-            if u2 != 0 and v1 != 0:
-                A = A % (u2 * v1 * M)
-            return (True, A)
+        # mainly for backwards compatibility and
+        # for how it is used in modular symbols
+        A = (u2 * s1p - r2 * v1)
+        if u2 != 0 and v1 != 0:
+            A = A % (u2 * v1 * M)
+        return (True, A)
 
-    def is_gamma1_equiv(self, other, N):
+    def is_gamma1_equiv(self, other, N) -> tuple[bool, int]:
         r"""
         Return whether ``self`` and ``other`` are equivalent modulo the action of
         `\Gamma_1(N)` via linear fractional transformations.
@@ -696,11 +689,11 @@ class Cusp(Element):
         g = v1.gcd(N)
         if ((v2 - v1) % N == 0 and (u2 - u1) % g == 0):
             return True, 1
-        elif ((v2 + v1) % N == 0 and (u2 + u1) % g == 0):
+        if ((v2 + v1) % N == 0 and (u2 + u1) % g == 0):
             return True, -1
         return False, 0
 
-    def is_gamma_h_equiv(self, other, G):
+    def is_gamma_h_equiv(self, other, G) -> tuple[bool, int]:
         r"""
         Return a pair ``(b, t)``, where ``b`` is ``True`` or ``False`` as
         ``self`` and ``other`` are equivalent under the action of `G`, and `t`
@@ -769,7 +762,7 @@ class Cusp(Element):
             sage: G.dimension_cusp_forms(2)
             0
         """
-        from sage.modular.arithgroup.all import GammaH_class
+        from sage.modular.arithgroup.congroup_gammaH import GammaH_class
         if not isinstance(other, Cusp):
             other = Cusp(other)
         if not isinstance(G, GammaH_class):
@@ -1094,9 +1087,7 @@ class Cusps_class(Singleton, Parent):
     def _coerce_map_from_(self, R):
         if QQ.has_coerce_map_from(R):
             return True
-        if R is InfinityRing:
-            return True
-        return False
+        return R is InfinityRing
 
     def _element_constructor_(self, x):
         return Cusp(x)

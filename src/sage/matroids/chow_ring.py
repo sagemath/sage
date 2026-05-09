@@ -15,25 +15,46 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug, AugmentedChowRingIdeal_fy, AugmentedChowRingIdeal_atom_free
+from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug_fy, ChowRingIdeal_nonaug_af, ChowRingIdeal_nonaug_sp, AugmentedChowRingIdeal_fy, AugmentedChowRingIdeal_atom_free
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.categories.kahler_algebras import KahlerAlgebras
 from sage.categories.commutative_rings import CommutativeRings
 from sage.misc.cachefunc import cached_method
+from sage.modules.with_basis.representation import Representation_abstract
 
 
-class ChowRing(QuotientRing_generic):
+class ChowRing(QuotientRing_generic, Representation_abstract):
     r"""
     The Chow ring of a matroid.
 
-    The *Chow ring of the matroid* `M` is defined as the quotient ring
+    The *Chow ring of the matroid* `M` has three different presentations.
+
+    The *Feitchner-Yuzvinsky presentation* is the quotient ring
 
     .. MATH::
 
         A^*(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / (I_M + J_M),
 
     where `(I_M + J_M)` is the :class:`Chow ring ideal
-    <sage.matroids.chow_ring_ideal.ChowRingIdeal_nonaug>` of matroid `M`.
+    <sage.matroids.chow_ring_ideal.ChowRingIdeal_nonaug_fy>` of matroid `M`.
+
+    The *atom-free presentation* is the quotient ring
+
+    .. MATH::
+
+        A^*(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / (I_M + J_M + K_M),
+
+    where `(I_M + J_M + K_M)` is the :class:`Chow ring ideal
+    <sage.matroids.chow_ring_ideal.ChowRingIdeal_nonaug_af>` of matroid `M`.
+
+    The *simplicial presentation* is the quotient ring
+
+    .. MATH::
+
+        A^*(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / (I_M + J_M),
+
+    where `(I_M + J_M)` is the :class:`Chow ring ideal
+    <sage.matroids.chow_ring_ideal.ChowRingIdeal_nonaug_sp>` of matroid `M`.
 
     The *augmented Chow ring of matroid* `M` has two different presentations
     as quotient rings:
@@ -74,10 +95,10 @@ class ChowRing(QuotientRing_generic):
     - ``augmented`` -- boolean; when ``True``, this is the augmented
       Chow ring and if ``False``, this is the non-augmented Chow ring
     - ``presentation`` -- string (default: ``None``); one of the following
-      (ignored if ``augmented=False``)
 
       * ``"fy"`` - the Feitchner-Yuzvinsky presentation
       * ``"atom-free"`` - the atom-free presentation
+      * ``"simplicial"`` - the simplicial presentation
 
     REFERENCES:
 
@@ -87,10 +108,10 @@ class ChowRing(QuotientRing_generic):
     EXAMPLES::
 
         sage: M1 = matroids.catalog.P8pp()
-        sage: ch = M1.chow_ring(QQ, False)
+        sage: ch = M1.chow_ring(QQ, False, 'fy')
         sage: ch
-        Chow ring of P8'': Matroid of rank 4 on 8 elements with 8 nonspanning circuits
-        over Rational Field
+        Chow ring of P8'': Matroid of rank 4 on 8 elements with 8 nonspanning
+         circuits in Feitchner-Yuzvinsky presentation over Rational Field
     """
     def __init__(self, R, M, augmented, presentation=None):
         r"""
@@ -98,42 +119,56 @@ class ChowRing(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: ch = matroids.Wheel(3).chow_ring(QQ, False)
+            sage: ch = matroids.Wheel(3).chow_ring(QQ, False, 'fy')
             sage: TestSuite(ch).run()
         """
         self._matroid = M
         self._augmented = augmented
+        if presentation is None:
+            presentation = "fy"
         self._presentation = presentation
-        if augmented is True:
+        if augmented:
             if presentation == 'fy':
                 self._ideal = AugmentedChowRingIdeal_fy(M, R)
             elif presentation == 'atom-free':
                 self._ideal = AugmentedChowRingIdeal_atom_free(M, R)
+            else:
+                raise ValueError(f"invalid presentation '{presentation}'")
         else:
-            self._ideal = ChowRingIdeal_nonaug(M, R)
+            if presentation == 'fy':
+                self._ideal = ChowRingIdeal_nonaug_fy(M, R)
+            elif presentation == 'atom-free':
+                self._ideal = ChowRingIdeal_nonaug_af(M, R)
+            elif presentation == 'simplicial':
+                self._ideal = ChowRingIdeal_nonaug_sp(M, R)
+            else:
+                raise ValueError(f"invalid presentation '{presentation}'")
         C = CommutativeRings().Quotients() & KahlerAlgebras(R)
         QuotientRing_generic.__init__(self, R=self._ideal.ring(),
                                       I=self._ideal,
                                       names=self._ideal.ring().variable_names(),
                                       category=C)
+        Representation_abstract.__init__(self, semigroup=M.automorphism_group(), side="left")
 
     def _repr_(self):
         r"""
         EXAMPLES::
 
             sage: M1 = matroids.catalog.Fano()
-            sage: ch = M1.chow_ring(QQ, False)
+            sage: ch = M1.chow_ring(QQ, False, 'fy')
             sage: ch
-            Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
-            over Rational Field
+            Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
+             type (3, 0) in Feitchner-Yuzvinsky presentation over Rational Field
         """
         output = "Chow ring of {}".format(self._matroid)
-        if self._augmented is True:
+        if self._augmented:
             output = "Augmented " + output
-            if self._presentation == 'fy':
-                output += " in Feitchner-Yuzvinsky presentation"
-            elif self._presentation == 'atom-free':
-                output += " in atom-free presentation"
+        if self._presentation == 'fy':
+            output += " in Feitchner-Yuzvinsky presentation"
+        elif self._presentation == 'atom-free':
+            output += " in atom-free presentation"
+        elif self._presentation == 'simplicial':
+            output += " in simplicial presentation"
         return output + " over " + repr(self.base_ring())
 
     def _latex_(self):
@@ -143,7 +178,7 @@ class ChowRing(QuotientRing_generic):
         EXAMPLES::
 
             sage: M1 = matroids.Uniform(2, 5)
-            sage: ch = M1.chow_ring(QQ, False)
+            sage: ch = M1.chow_ring(QQ, False, 'fy')
             sage: ch._latex_()
             'A(\\begin{array}{l}\n\\text{\\texttt{U(2,{ }5):{ }Matroid{ }of{ }rank{ }2{ }on{ }5{ }elements{ }with{ }circuit{-}closures}}\\\\\n\\text{\\texttt{{\\char`\\{}2:{ }{\\char`\\{}{\\char`\\{}0,{ }1,{ }2,{ }3,{ }4{\\char`\\}}{\\char`\\}}{\\char`\\}}}}\n\\end{array})_{\\Bold{Q}}'
         """
@@ -162,7 +197,7 @@ class ChowRing(QuotientRing_generic):
             sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, True, 'fy')
             sage: ch.matroid()
             U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
-            {3: {{0, 1, 2, 3, 4, 5}}}
+             {3: {{0, 1, 2, 3, 4, 5}}}
         """
         return self._matroid
 
@@ -172,7 +207,7 @@ class ChowRing(QuotientRing_generic):
 
         TESTS::
 
-            sage: ch = matroids.Wheel(3).chow_ring(QQ, False)
+            sage: ch = matroids.Wheel(3).chow_ring(QQ, False, 'atom-free')
             sage: ch._coerce_map_from_base_ring() is None
             True
         """
@@ -186,25 +221,24 @@ class ChowRing(QuotientRing_generic):
 
             sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, True, 'fy')
             sage: ch.basis()
-            Family (1, B1, B1*B012345, B0, B0*B012345, B01, B01^2, B2,
-            B2*B012345, B02, B02^2, B12, B12^2, B3, B3*B012345, B03, B03^2,
-            B13, B13^2, B23, B23^2, B4, B4*B012345, B04, B04^2, B14, B14^2,
-            B24, B24^2, B34, B34^2, B5, B5*B012345, B05, B05^2, B15, B15^2,
-            B25, B25^2, B35, B35^2, B45, B45^2, B012345, B012345^2, B012345^3)
+            Family (1, B0, B0*B012345, B1, B1*B012345, B01, B01^2, B2,
+             B2*B012345, B12, B12^2, B02, B02^2, B3, B3*B012345, B23, B23^2,
+             B13, B13^2, B03, B03^2, B4, B4*B012345, B34, B34^2, B24, B24^2,
+             B14, B14^2, B04, B04^2, B5, B5*B012345, B45, B45^2, B35, B35^2,
+             B25, B25^2, B15, B15^2, B05, B05^2, B012345, B012345^2, B012345^3)
             sage: set(ch.defining_ideal().normal_basis()) == set(ch.basis())
             True
-            sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
+            sage: ch = matroids.catalog.Fano().chow_ring(QQ, False, 'fy')
             sage: ch.basis()
-            Family (1, Abcd, Aace, Aabf, Adef, Aadg, Abeg, Acfg, Aabcdefg,
-            Aabcdefg^2)
+            Family (1, Abcd, Aace, Adef, Aabf, Acfg, Abeg, Aadg, Aabcdefg, Aabcdefg^2)
             sage: set(ch.defining_ideal().normal_basis()) == set(ch.basis())
             True
             sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
             sage: ch.basis()
-            Family (1, A0, A0*A012345, A2, A2*A012345, A3, A3*A012345, A23,
-            A23^2, A1, A1*A012345, A013, A013^2, A4, A4*A012345, A04, A04^2,
-            A124, A124^2, A5, A5*A012345, A025, A025^2, A15, A15^2, A345,
-            A345^2, A012345, A012345^2, A012345^3)
+            Family (1, A0, A0*A012345, A1, A1*A012345, A2, A2*A012345, A3,
+             A3*A012345, A23, A23^2, A013, A013^2, A4, A4*A012345, A124, A124^2,
+             A04, A04^2, A5, A5*A012345, A345, A345^2, A15, A15^2, A025, A025^2,
+             A012345, A012345^2, A012345^3)
             sage: set(ch.defining_ideal().normal_basis()) == set(ch.basis())
             True
         """
@@ -219,7 +253,7 @@ class ChowRing(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: ch = matroids.catalog.P8pp().chow_ring(QQ, False)
+            sage: ch = matroids.catalog.P8pp().chow_ring(QQ, False, 'fy')
             sage: ch.lefschetz_element()
             -2*Aab - 2*Aac - 2*Aad - 2*Aae - 2*Aaf - 2*Aag - 2*Aah - 2*Abc
             - 2*Abd - 2*Abe - 2*Abf - 2*Abg - 2*Abh - 2*Acd - 2*Ace - 2*Acf
@@ -236,7 +270,7 @@ class ChowRing(QuotientRing_generic):
         It is then multiplied with the elements of FY-monomial bases of
         different degrees::
 
-            sage: ch = matroids.Uniform(4, 5).chow_ring(QQ, False)
+            sage: ch = matroids.Uniform(4, 5).chow_ring(QQ, False, 'fy')
             sage: basis_deg = {}
             sage: for b in ch.basis():
             ....:     deg = b.homogeneous_degree()
@@ -245,12 +279,14 @@ class ChowRing(QuotientRing_generic):
             ....:     basis_deg[deg].append(b)
             ....:
             sage: basis_deg
-            {0: [1], 1: [A02, A12, A01, A012, A03, A13, A013, A23, A023,
-                A123, A04, A14, A014, A24, A024, A124, A34, A034, A134, A234,
-                A01234], 2: [A02*A01234, A12*A01234, A01*A01234, A012^2,
-                A03*A01234, A13*A01234, A013^2, A23*A01234, A023^2, A123^2,
-                A04*A01234, A14*A01234, A014^2, A24*A01234, A024^2, A124^2,
-                A34*A01234, A034^2, A134^2, A234^2, A01234^2], 3: [A01234^3]}
+            {0: [1],
+             1: [A01, A12, A02, A012, A23, A13, A123, A03, A013, A023, A34,
+                 A24, A234, A14, A124, A134, A04, A014, A024, A034, A01234],
+             2: [A01*A01234, A12*A01234, A02*A01234, A012^2, A23*A01234,
+                 A13*A01234, A123^2, A03*A01234, A013^2, A023^2, A34*A01234,
+                 A24*A01234, A234^2, A14*A01234, A124^2, A134^2, A04*A01234,
+                 A014^2, A024^2, A034^2, A01234^2],
+            3: [A01234^3]}
             sage: g_eq_maps = {}
             sage: lefschetz_el = ch.lefschetz_element(); lefschetz_el
             -2*A01 - 2*A02 - 2*A03 - 2*A04 - 2*A12 - 2*A13 - 2*A14 - 2*A23
@@ -262,37 +298,38 @@ class ChowRing(QuotientRing_generic):
             ....:     g_eq_maps[deg].extend([i*lefschetz_el for i in basis_deg[deg]])
             ....:
             sage: g_eq_maps
-            {0: [-2*A01 - 2*A02 - 2*A03 - 2*A04 - 2*A12 - 2*A13 - 2*A14
-                - 2*A23 - 2*A24 - 2*A34 - 6*A012 - 6*A013 - 6*A014 - 6*A023
-                - 6*A024 - 6*A034 - 6*A123 - 6*A124 - 6*A134 - 6*A234
-                - 20*A01234], 1: [2*A012^2 + 2*A023^2 + 2*A024^2
-                - 10*A02*A01234 + 2*A01234^2, 2*A012^2 + 2*A123^2 + 2*A124^2
-                - 10*A12*A01234 + 2*A01234^2, 2*A012^2 + 2*A013^2 + 2*A014^2
-                - 10*A01*A01234 + 2*A01234^2, -6*A012^2 + 2*A01*A01234
-                + 2*A02*A01234 + 2*A12*A01234, 2*A013^2 + 2*A023^2 + 2*A034^2
-                - 10*A03*A01234 + 2*A01234^2, 2*A013^2 + 2*A123^2 + 2*A134^2
-                - 10*A13*A01234 + 2*A01234^2, -6*A013^2 + 2*A01*A01234
-                + 2*A03*A01234 + 2*A13*A01234, 2*A023^2 + 2*A123^2 + 2*A234^2
-                - 10*A23*A01234 + 2*A01234^2, -6*A023^2 + 2*A02*A01234
-                + 2*A03*A01234 + 2*A23*A01234, -6*A123^2 + 2*A12*A01234
-                + 2*A13*A01234 + 2*A23*A01234, 2*A014^2 + 2*A024^2 + 2*A034^2
-                - 10*A04*A01234 + 2*A01234^2, 2*A014^2 + 2*A124^2 + 2*A134^2
-                - 10*A14*A01234 + 2*A01234^2, -6*A014^2 + 2*A01*A01234
-                + 2*A04*A01234 + 2*A14*A01234, 2*A024^2 + 2*A124^2 + 2*A234^2
-                - 10*A24*A01234 + 2*A01234^2, -6*A024^2 + 2*A02*A01234
-                + 2*A04*A01234 + 2*A24*A01234, -6*A124^2 + 2*A12*A01234
-                + 2*A14*A01234 + 2*A24*A01234, 2*A034^2 + 2*A134^2 + 2*A234^2
-                - 10*A34*A01234 + 2*A01234^2, -6*A034^2 + 2*A03*A01234
-                + 2*A04*A01234 + 2*A34*A01234, -6*A134^2 + 2*A13*A01234
-                + 2*A14*A01234 + 2*A34*A01234, -6*A234^2 + 2*A23*A01234
-                + 2*A24*A01234 + 2*A34*A01234, -2*A01*A01234 - 2*A02*A01234
-                - 2*A03*A01234 - 2*A04*A01234 - 2*A12*A01234 - 2*A13*A01234
-                - 2*A14*A01234 - 2*A23*A01234 - 2*A24*A01234 - 2*A34*A01234
-                - 20*A01234^2], 2: [2*A01234^3, 2*A01234^3, 2*A01234^3,
-                6*A01234^3, 2*A01234^3, 2*A01234^3, 6*A01234^3, 2*A01234^3,
-                6*A01234^3, 6*A01234^3, 2*A01234^3, 2*A01234^3, 6*A01234^3,
-                2*A01234^3, 6*A01234^3, 6*A01234^3, 2*A01234^3, 6*A01234^3,
-                6*A01234^3, 6*A01234^3, -20*A01234^3], 3: [0]}
+            {0: [-2*A01 - 2*A02 - 2*A03 - 2*A04 - 2*A12 - 2*A13 - 2*A14 - 2*A23
+                 - 2*A24 - 2*A34 - 6*A012 - 6*A013 - 6*A014 - 6*A023 - 6*A024 -
+                 6*A034 - 6*A123 - 6*A124 - 6*A134 - 6*A234 - 20*A01234],
+             1: [2*A012^2 + 2*A013^2 + 2*A014^2 - 10*A01*A01234 + 2*A01234^2,
+                 2*A012^2 + 2*A123^2 + 2*A124^2 - 10*A12*A01234 + 2*A01234^2,
+                 2*A012^2 + 2*A023^2 + 2*A024^2 - 10*A02*A01234 + 2*A01234^2,
+                 -6*A012^2 + 2*A01*A01234 + 2*A02*A01234 + 2*A12*A01234,
+                 2*A023^2 + 2*A123^2 + 2*A234^2 - 10*A23*A01234 + 2*A01234^2,
+                 2*A013^2 + 2*A123^2 + 2*A134^2 - 10*A13*A01234 + 2*A01234^2,
+                 -6*A123^2 + 2*A12*A01234 + 2*A13*A01234 + 2*A23*A01234,
+                 2*A013^2 + 2*A023^2 + 2*A034^2 - 10*A03*A01234 + 2*A01234^2,
+                 -6*A013^2 + 2*A01*A01234 + 2*A03*A01234 + 2*A13*A01234,
+                 -6*A023^2 + 2*A02*A01234 + 2*A03*A01234 + 2*A23*A01234,
+                 2*A034^2 + 2*A134^2 + 2*A234^2 - 10*A34*A01234 + 2*A01234^2,
+                 2*A024^2 + 2*A124^2 + 2*A234^2 - 10*A24*A01234 + 2*A01234^2,
+                 -6*A234^2 + 2*A23*A01234 + 2*A24*A01234 + 2*A34*A01234,
+                 2*A014^2 + 2*A124^2 + 2*A134^2 - 10*A14*A01234 + 2*A01234^2,
+                 -6*A124^2 + 2*A12*A01234 + 2*A14*A01234 + 2*A24*A01234,
+                 -6*A134^2 + 2*A13*A01234 + 2*A14*A01234 + 2*A34*A01234,
+                 2*A014^2 + 2*A024^2 + 2*A034^2 - 10*A04*A01234 + 2*A01234^2,
+                 -6*A014^2 + 2*A01*A01234 + 2*A04*A01234 + 2*A14*A01234,
+                 -6*A024^2 + 2*A02*A01234 + 2*A04*A01234 + 2*A24*A01234,
+                 -6*A034^2 + 2*A03*A01234 + 2*A04*A01234 + 2*A34*A01234,
+                 -2*A01*A01234 - 2*A02*A01234 - 2*A03*A01234 - 2*A04*A01234 -
+                 2*A12*A01234 - 2*A13*A01234 - 2*A14*A01234 - 2*A23*A01234 -
+                 2*A24*A01234 - 2*A34*A01234 - 20*A01234^2],
+             2: [2*A01234^3, 2*A01234^3, 2*A01234^3, 6*A01234^3, 2*A01234^3,
+                 2*A01234^3, 6*A01234^3, 2*A01234^3, 6*A01234^3, 6*A01234^3,
+                 2*A01234^3, 2*A01234^3, 6*A01234^3, 2*A01234^3, 6*A01234^3,
+                 6*A01234^3, 2*A01234^3, 6*A01234^3, 6*A01234^3, 6*A01234^3,
+                 -20*A01234^3],
+             3: [0]}
         """
         w = sum(len(F) * (len(self.matroid().groundset()) - len(F)) * gen
                 for F, gen in self.defining_ideal().flats_to_generator_dict().items())
@@ -325,6 +362,29 @@ class ChowRing(QuotientRing_generic):
             new_el += hom_components1[i] * hom_components2[r - i]
         return new_el.degree()
 
+    def graded_character(self, G=None):
+        r"""
+        Return the graded character of ``self`` as a representation of the
+        automorphism group of the defining matroid.
+
+        EXAMPLES::
+
+            sage: ch = matroids.Z(3).chow_ring(QQ, False, 'simplicial')
+            sage: q = polygen(QQ, 'x')
+            sage: gchi = ch.graded_character(); gchi
+            (q^2 + 8*q + 1, q^2 + 8*q + 1, q^2 + 8*q + 1, q^2 + 8*q + 1,
+             q^2 + 8*q + 1, q^2 + 8*q + 1)
+        """
+        if G is None:
+            G = self._matroid.automorphism_group()
+        from sage.rings.rational_field import QQ
+        q = QQ['q'].gen()
+        B = self.basis()
+        from sage.modules.free_module_element import vector
+        return vector(q.parent(), [sum(q**b.degree() * (g * b).lift().monomial_coefficient(b.lift()) for b in B)
+                       for g in G.conjugacy_classes_representatives()],
+                      immutable=True)
+
     class Element(QuotientRing_generic.Element):
         def to_vector(self, order=None):
             r"""
@@ -332,11 +392,11 @@ class ChowRing(QuotientRing_generic):
 
             EXAMPLES::
 
-                sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False)
+                sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False, 'fy')
                 sage: v = ch.an_element(); v
                 -A01 - A02 - A03 - A04 - A05 - A012345
                 sage: v.to_vector()
-                (0, -1, -1, 0, -1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0)
+                (0, -1, 0, -1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0, -1, -1, 0)
             """
             P = self.parent()
             B = P.basis()
@@ -372,25 +432,25 @@ class ChowRing(QuotientRing_generic):
 
             EXAMPLES::
 
-                sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False)
+                sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False, 'fy')
                 sage: for b in ch.basis():
                 ....:     print(b, b.degree())
                 1 0
                 A01 1
-                A02 1
                 A12 1
-                A03 1
-                A13 1
+                A02 1
                 A23 1
-                A04 1
-                A14 1
-                A24 1
+                A13 1
+                A03 1
                 A34 1
-                A05 1
-                A15 1
-                A25 1
-                A35 1
+                A24 1
+                A14 1
+                A04 1
                 A45 1
+                A35 1
+                A25 1
+                A15 1
+                A05 1
                 A012345 1
                 A012345^2 2
                 sage: v = sum(ch.basis())
@@ -426,18 +486,18 @@ class ChowRing(QuotientRing_generic):
                 Bace^2 2
                 Bf 1
                 Bf*Babcdefg 2
-                Babf 1
-                Babf^2 2
                 Bdef 1
                 Bdef^2 2
+                Babf 1
+                Babf^2 2
                 Bg 1
                 Bg*Babcdefg 2
-                Badg 1
-                Badg^2 2
-                Bbeg 1
-                Bbeg^2 2
                 Bcfg 1
                 Bcfg^2 2
+                Bbeg 1
+                Bbeg^2 2
+                Badg 1
+                Badg^2 2
                 Babcdefg 1
                 Babcdefg^2 2
                 Babcdefg^3 3
@@ -466,3 +526,30 @@ class ChowRing(QuotientRing_generic):
             if not f.is_homogeneous():
                 raise ValueError("element is not homogeneous")
             return f.degree()
+
+        def _acted_upon_(self, scalar, self_on_left=True):
+            r"""
+            Return the action of ``scalar`` on ``self``.
+
+            EXAMPLES::
+
+                sage: ch = matroids.catalog.P8pp().chow_ring(QQ, False, 'atom-free')
+                sage: y = ch.an_element(); y
+                Aab
+                sage: semigroup = ch.semigroup()
+                sage: x = semigroup([('a','c'),('d','b')])
+                sage: x * y  # indirect doctest
+                Aab
+            """
+            P = self.parent()
+            if scalar in P.base_ring():
+                return super()._acted_upon_(scalar, self_on_left)
+            if scalar in P._matroid.automorphism_group():
+                gens = P.ambient().gens()
+                return P.retract(self.lift().subs({g: gens[scalar(i+1)-1] for i, g in enumerate(gens)}))
+            if not self_on_left and scalar in P._matroid.automorphism_group():
+                scalar = P._semigroup_algebra(scalar)
+                gens = P.ambient().gens()
+                return P.sum(c * P.retract(self.lift().subs({g: gens[sigma(i+1)-1] for i, g in enumerate(gens)}))
+                             for sigma, c in scalar.monomial_coefficients(copy=False).items())
+            return super()._acted_upon_(scalar, self_on_left)
