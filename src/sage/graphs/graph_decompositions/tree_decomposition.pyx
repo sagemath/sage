@@ -954,7 +954,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
     for ui in list(directed_tree):
         if directed_tree.out_degree(ui) > 2:
             children = directed_tree.neighbors_out(ui)
-            children.pop() # one vertex remains a child of ui
+            children.pop()  # one vertex remains a child of ui
 
             directed_tree.delete_edges((ui, vi) for vi in children)
 

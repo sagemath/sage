@@ -102,8 +102,7 @@ class ImageManifoldSubset(ManifoldSubset):
         """
         if self._domain_subset is self._map.domain():
             return f"Image of the {self._map}"
-        else:
-            return f"Image of the {self._domain_subset} under the {self._map}"
+        return f"Image of the {self._domain_subset} under the {self._map}"
 
     def _an_element_(self):
         r"""

@@ -2,22 +2,10 @@
 r"""
 Jack symmetric functions
 
-Jack's symmetric functions appear in [Ma1995]_ Chapter VI, section 10.
-Zonal polynomials are the subject of [Ma1995]_ Chapter VII.
+Jack's symmetric functions appear in [Mac1995]_ Chapter VI, section 10.
+Zonal polynomials are the subject of [Mac1995]_ Chapter VII.
 The parameter `\alpha` in that reference is the parameter `t` in this
 implementation in sage.
-
-REFERENCES:
-
-.. [Jack1970] \H. Jack,
-   *A class of symmetric functions with a parameter*,
-   Proc. R. Soc. Edinburgh (A), 69, 1-18.
-
-.. [Ma1995] \I. G. Macdonald,
-   *Symmetric functions and Hall polynomials*,
-   second ed.,
-   The Clarendon Press, Oxford University Press, New York, 1995, With contributions
-   by A. Zelevinsky, Oxford Science Publications.
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
@@ -487,8 +475,7 @@ def normalize_coefficients(self, c):
         numer = numer // l
 
         return c.parent()(numer, denom)
-    else:
-        return c
+    return c
 
 ####################################################################
 
@@ -782,11 +769,11 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         """
         from sage.categories.tensor import tensor
         s = self.realization_of().schur()
-        g = self.tensor_square().sum(coeff*tensor([self(s[x]), self(s[y])])
-                                        for ((x,y), coeff) in s(elt).coproduct())
+        g = self.tensor_square().sum(coeff * tensor([self(s[x]), self(s[y])])
+                                     for (x, y), coeff in s(elt).coproduct())
         normalize = self._normalize_coefficients
-        return self.tensor_square().sum(normalize(coeff)*tensor([self(x), self(y)])
-                    for ((x,y), coeff) in g)
+        return self.tensor_square().sum(normalize(coeff) * tensor([self(x), self(y)])
+                                        for (x, y), coeff in g)
 
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         def scalar_jack(self, x, t=None):
@@ -846,8 +833,7 @@ def part_scalar_jack(part1, part2, t):
     """
     if part1 != part2:
         return 0
-    else:
-        return part1.centralizer_size()*t**len(part1)
+    return part1.centralizer_size()*t**len(part1)
 
 #P basis
 
@@ -1052,8 +1038,7 @@ class JackPolynomials_p(JackPolynomials_generic):
             if isinstance(x, JackPolynomials_p) and t is None:
                 P = self.parent()
                 return P._apply_multi_module_morphism(self, x, P.scalar_jack_basis, orthogonal=True)
-            else:
-                return JackPolynomials_generic.Element.scalar_jack(self, x, t)
+            return JackPolynomials_generic.Element.scalar_jack(self, x, t)
 
 #J basis
 
@@ -1219,9 +1204,8 @@ class JackPolynomials_qp(JackPolynomials_generic):
         """
         if n in self._self_to_h_cache:
             return
-        else:
-            self._self_to_h_cache[n] = {}
-            self._h_to_self_cache[n] = {}
+        self._self_to_h_cache[n] = {}
+        self._h_to_self_cache[n] = {}
         self._P._m_cache(n)
         from_cache_1 = self._P._self_to_m_cache[n]
         to_cache_1 = self._self_to_h_cache[n]
@@ -1313,10 +1297,10 @@ class JackPolynomials_qp(JackPolynomials_generic):
         parent = elt.parent()
         from sage.categories.tensor import tensor
         cfunc = lambda x, y: tensor([parent(x), parent(y)])
-        cprod = h(elt).coproduct().apply_multilinear_morphism( cfunc )
-        normalize = lambda c: normalize_coefficients( parent, c )
-        return cprod.parent().sum(normalize(coeff)*tensor([parent(x), parent(y)])
-                        for ((x,y), coeff) in cprod)
+        cprod = h(elt).coproduct().apply_multilinear_morphism(cfunc)
+        normalize = lambda c: normalize_coefficients(parent, c)
+        return cprod.parent().sum(normalize(coeff) * tensor([parent(x), parent(y)])
+                                  for (x, y), coeff in cprod)
 
     class Element(JackPolynomials_generic.Element):
         pass
@@ -1412,7 +1396,7 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
                 [ 0  0 48]
             """
             P = self.parent()._P
-            return P(self).scalar_jack(P(x),2)
+            return P(self).scalar_jack(P(x), 2)
 
 
 # Backward compatibility for unpickling

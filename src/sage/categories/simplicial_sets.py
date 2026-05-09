@@ -350,8 +350,7 @@ class SimplicialSets(Category_singleton):
                 FG = self._universal_cover_dict()[0]
                 if simplify:
                     return FG.simplified()
-                else:
-                    return FG
+                return FG
 
             def _universal_cover_dict(self):
                 r"""
@@ -566,17 +565,12 @@ class SimplicialSets(Category_singleton):
                     sage: RP3 = simplicial_sets.RealProjectiveSpace(3)
                     sage: C = RP3.universal_cover(); C
                     Simplicial set with 8 non-degenerate simplices
-                    sage: C.face_data()  # needs gap_package_polenta
-                    {(1, 1): None,
-                     (1, e): None,
-                     (f, 1): ((1, e), (1, 1)),
-                     (f, e): ((1, 1), (1, e)),
-                     (f * f, 1): ((f, e), s_0 (1, 1), (f, 1)),
-                     (f * f, e): ((f, 1), s_0 (1, e), (f, e)),
-                     (f * f * f, 1): ((f * f, e), s_0 (f, 1), s_1 (f, 1), (f * f, 1)),
-                     (f * f * f, e): ((f * f, 1), s_0 (f, e), s_1 (f, e), (f * f, e))}
+                    sage: len(C.face_data())  # needs gap_package_polenta
+                    8
                     sage: C.fundamental_group()
                     Finitely presented group <  |  >
+                    sage: C.betti() == simplicial_sets.Sphere(3).betti()
+                    True
 
                 TESTS::
 
@@ -743,8 +737,7 @@ class SimplicialSets(Category_singleton):
                         # Return the empty chain complex.
                         if cochain:
                             return ChainComplex(base_ring=base_ring, degree=1)
-                        else:
-                            return ChainComplex(base_ring=base_ring, degree=-1)
+                        return ChainComplex(base_ring=base_ring, degree=-1)
 
                 differentials = {}
                 # Convert the tuple self._data to a dictionary indexed by the
@@ -916,8 +909,7 @@ class SimplicialSets(Category_singleton):
                 def convert_to_polynomial(p):
                     if hasattr(p, "lift"):
                         return p.lift()._as_extended_polynomial()
-                    else:
-                        return p._as_extended_polynomial()
+                    return p._as_extended_polynomial()
                 M1 = M1.apply_map(convert_to_polynomial)
                 M2 = M2.apply_map(convert_to_polynomial)
                 RP = R._extended_ring

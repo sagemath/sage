@@ -327,26 +327,10 @@ Likewise for :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`, and :envvar:`F77FLAGS`.
 
     .. code-block:: text
 
-        exec sage-bootstrap-python spkg-install.py
-
-    or
-
-    .. code-block:: text
-
         exec python3 spkg-install.py
 
-    In more detail: ``sage-bootstrap-python`` runs a version of Python
-    pre-installed on the machine, which is a build prerequisite of Sage.
-    Note that ``sage-bootstrap-python`` accepts a wide range of Python
-    versions, Python >= 2.6 and >= 3.4, see :sage_root:`build/tox.ini`
-    for details.  You should only use ``sage-bootstrap-python`` for
-    installation tasks that must be able to run before Sage has made
-    ``python3`` available.  It must not be used for running ``pip`` or
-    ``setup.py`` for any package.
-
-    ``python3`` runs the version of Python managed by Sage (either its
-    own installation of Python 3 from an SPKG or a venv over a system
-    python3.  You should use this if you are installing a Python package
+    ``python3`` runs from the venv over a system python3.
+    You should use this if you are installing a Python package
     to make sure that the libraries are installed in the right place.
 
 Many packages currently do not separate the build and install steps and only
@@ -634,8 +618,7 @@ be declared in the ``requires`` block of ``pyproject.toml``.
 Sage uses these version constraints for two purposes:
 
 - As a source for generating the metadata of the Python
-  distribution packages in ``SAGE_ROOT/pkgs/``, see
-  :ref:`section_dependencies_distributions`.
+  distribution packages in ``SAGE_ROOT/pkgs/``.
 
 - When the experimental option ``configure --enable-system-site-packages`` is used,
   then the ``configure`` script checks these constraints to determine whether
@@ -684,8 +667,7 @@ Sage uses this version for two purposes:
 - This is the version that the Sage distribution ships.
 
 - As a source for generating the ``requirements.txt`` files of
-  the Python distribution packages in ``SAGE_ROOT/pkgs/``, see
-  :ref:`section_dependencies_distributions`.
+  the Python distribution packages in ``SAGE_ROOT/pkgs/``.
 
   For the use of the generated ``requirements.txt`` files, see
   the `pip User Guide <https://pip.pypa.io/en/stable/user_guide/#requirements-files>`_.

@@ -334,6 +334,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import builtins
 import os
 import platform
 import re
@@ -626,7 +627,7 @@ class Singular(ExtraTabCompletion, Expect):
             sage: o = s.hilb()
             ...// dimension (affine) = 0
             // degree (affine)  = 8
-            // ** right side is not a datum, assignment ignored
+            // ** right side is not a datum, assignment...ignored
             ...
 
         rather than ignored
@@ -673,8 +674,7 @@ class Singular(ExtraTabCompletion, Expect):
                 if line.startswith("//"):
                     print(line)
             return s
-        else:
-            return s
+        return s
 
     def set(self, type, name, value):
         """
@@ -794,9 +794,9 @@ class Singular(ExtraTabCompletion, Expect):
         """
         if isinstance(x, SingularElement) and x.parent() is self:
             return x
-        elif isinstance(x, ExpectElement):
+        if isinstance(x, ExpectElement):
             return self(x.sage())
-        elif not isinstance(x, ExpectElement) and hasattr(x, '_singular_'):
+        if not isinstance(x, ExpectElement) and hasattr(x, '_singular_'):
             return x._singular_(self)
 
         # some convenient conversions
@@ -845,8 +845,7 @@ class Singular(ExtraTabCompletion, Expect):
         """
         if t:
             return float(self.eval('timer-(%d)' % (int(1000 * t)))) / 1000.0
-        else:
-            return float(self.eval('timer')) / 1000.0
+        return float(self.eval('timer')) / 1000.0
 
     ###########################################################
     # Singular libraries
@@ -1005,16 +1004,15 @@ class Singular(ExtraTabCompletion, Expect):
         def strify(x):
             if isinstance(x, (list, tuple, Sequence_generic)):
                 return 'list(' + ','.join(strify(i) for i in x) + ')'
-            elif isinstance(x, SingularElement):
+            if isinstance(x, SingularElement):
                 return x.name()
-            elif isinstance(x, (int, sage.rings.integer.Integer)):
+            if isinstance(x, (int, sage.rings.integer.Integer)):
                 return repr(x)
-            elif hasattr(x, '_singular_'):
+            if hasattr(x, '_singular_'):
                 e = x._singular_()
                 singular_elements.append(e)
                 return e.name()
-            else:
-                return str(x)
+            return str(x)
 
         return self(strify(x), 'list')
 
@@ -1045,7 +1043,7 @@ class Singular(ExtraTabCompletion, Expect):
             self.eval('matrix %s[%s][%s] = %s' % (name, nrows, ncols, entries))
         return SingularElement(self, None, name, True)
 
-    def ring(self, char=0, vars='(x)', order='lp', check=None):
+    def ring(self, char=0, vars='(x)', order='lp'):
         r"""
         Create a Singular ring and makes it the current ring.
 
@@ -1125,10 +1123,6 @@ class Singular(ExtraTabCompletion, Expect):
             s = '; '.join('if(defined(%s)>0){kill %s;};' % (x, x)
                           for x in vars[1:-1].split(','))
             self.eval(s)
-
-        if check is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(33319, 'The check= keyword argument does nothing.' + f'({check})')
 
         R = self('%s,%s,%s' % (char, vars, order), 'ring')
         self.eval('short=0')  # make output include *'s for multiplication for *THIS* ring.
@@ -1222,10 +1216,9 @@ class Singular(ExtraTabCompletion, Expect):
         name = self.current_ring_name()
         if name:
             return self(name)
-        else:
-            return None
+        return None
 
-    def _tab_completion(self) -> list:
+    def _tab_completion(self) -> builtins.list[str]:
         """
         Return a list of all Singular commands.
 
@@ -1315,10 +1308,10 @@ class Singular(ExtraTabCompletion, Expect):
         """
         if cmd is None:
             return SingularFunction(self, "option")()
-        elif cmd == "get":
+        if cmd == "get":
             # return SingularFunction(self, "option")("\"get\"")
             return self(self.eval("option(get)"), "intvec")
-        elif cmd == "set":
+        if cmd == "set":
             if not isinstance(val, SingularElement):
                 raise TypeError("singular.option('set') needs SingularElement as second parameter")
             # SingularFunction(self,"option")("\"set\"",val)
@@ -1456,8 +1449,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             OUT = (self.ringlist()).ring()
             br.set_ring()
             return OUT
-        else:
-            return self.parent()(self.name())
+        return self.parent()(self.name())
 
     def __len__(self):
         """
@@ -1767,7 +1759,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             -4.00000000000000*z^3 - 27.0000000000000
             sage: Rx.<x> = RR[]
             sage: Rx("x + 7.5")._singular_().sage_poly()
-            x + 7.50000
+            x + 7.50000...
             sage: Rx("x + 7.5")._singular_().sage_poly(Rx)
             x + 7.50000000000000
 
@@ -1883,7 +1875,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
             return R(sage_repr)
 
-        elif isinstance(R, PolynomialRing_generic) and (ring_is_fine or can_convert_to_singular(R)):
+        if isinstance(R, PolynomialRing_generic) and (ring_is_fine or can_convert_to_singular(R)):
 
             sage_repr = [0] * int(self.deg() + 1)
 
@@ -1908,8 +1900,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
             return R(sage_repr)
 
-        else:
-            raise TypeError("Cannot coerce %s into %s" % (self, R))
+        raise TypeError("Cannot coerce %s into %s" % (self, R))
 
     def sage_matrix(self, R, sparse=True):
         """
@@ -2036,21 +2027,21 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         typ = self.type()
         if typ == 'poly':
             return self.sage_poly(R)
-        elif typ == 'int':
+        if typ == 'int':
             return sage.rings.integer.Integer(repr(self))
-        elif typ == 'module':
+        if typ == 'module':
             return self.sage_matrix(R, sparse=True)
-        elif typ == 'matrix':
+        if typ == 'matrix':
             return self.sage_matrix(R, sparse=False)
-        elif typ == 'list':
+        if typ == 'list':
             return [f._sage_(R) for f in self]
-        elif typ == 'intvec':
+        if typ == 'intvec':
             from sage.modules.free_module_element import vector
             return vector([sage.rings.integer.Integer(str(e)) for e in self])
-        elif typ == 'bigintvec':
+        if typ == 'bigintvec':
             from sage.modules.free_module_element import vector
             return vector([sage.rings.rational.Rational(str(e)) for e in self])
-        elif typ == 'intmat':
+        if typ == 'intmat':
             from sage.matrix.constructor import matrix
             from sage.rings.integer_ring import ZZ
             A = matrix(ZZ, int(self.nrows()), int(self.ncols()))
@@ -2058,12 +2049,12 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
                 for j in range(A.ncols()):
                     A[i, j] = sage.rings.integer.Integer(str(self[i + 1, j + 1]))
             return A
-        elif typ == 'string':
+        if typ == 'string':
             return repr(self)
-        elif typ == 'ideal':
+        if typ == 'ideal':
             R = R or self.sage_global_ring()
             return R.ideal([p.sage_poly(R) for p in self])
-        elif typ in ['ring', 'qring']:
+        if typ in ['ring', 'qring']:
             br = singular('basering')
             self.set_ring()
             R = self.sage_global_ring()
@@ -2267,8 +2258,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         """
         if value is None:
             return int(self.parent().eval('attrib(%s,"%s")' % (self.name(), name)))
-        else:
-            self.parent().eval('attrib(%s,"%s",%d)' % (self.name(), name, value))
+        self.parent().eval('attrib(%s,"%s",%d)' % (self.name(), name, value))
 
 
 @instancedoc

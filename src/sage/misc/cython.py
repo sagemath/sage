@@ -329,7 +329,6 @@ def cython(filename, verbose=0, compile_message=False,
     if create_local_so_file:
         name = base
     else:
-        global sequence_number
         if base not in sequence_number:
             sequence_number[base] = 0
         name = '%s_%s' % (base, sequence_number[base])

@@ -214,19 +214,24 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from pathlib import Path
+import os
 import re
 import sys
-import os
+from pathlib import Path
 
-from sage.structure.parent import Parent
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
-from sage.env import SAGE_EXTCODE, DOT_SAGE
+import sage.interfaces.abc
 import sage.misc.misc
 import sage.misc.sage_eval
-import sage.interfaces.abc
+from sage.env import DOT_SAGE, SAGE_EXTCODE
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from sage.structure.parent import Parent
 
 PROMPT = ">>>"
 
@@ -2888,10 +2893,9 @@ class MagmaGBLogPrettyPrinter:
                     if style == "sage" and verbosity >= 1:
                         print("Leading term degree: %2d. Critical pairs: %d." %
                               (self.curr_deg, self.curr_npairs))
-                else:
-                    if style == "sage" and verbosity >= 1:
-                        print("Leading term degree: %2d. Critical pairs: %d (all pairs of current degree eliminated by criteria)." %
-                              (self.curr_deg, self.curr_npairs))
+                elif style == "sage" and verbosity >= 1:
+                    print("Leading term degree: %2d. Critical pairs: %d (all pairs of current degree eliminated by criteria)." %
+                          (self.curr_deg, self.curr_npairs))
 
             if style == "magma" and verbosity >= 1:
                 print(line)

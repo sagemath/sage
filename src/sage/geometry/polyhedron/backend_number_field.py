@@ -75,7 +75,6 @@ class Polyhedron_number_field(Polyhedron_field, Polyhedron_base_number_field):
         sage: p = Polyhedron([(0,0), (1,0), (1/2, sqrt3/2)], backend='number_field')    # needs sage.rings.number_field
         sage: TestSuite(p).run()                                                        # needs sage.rings.number_field
 
-        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
         sage: K.<phi> = NumberField(x^2 - x - 1, embedding=1.618)
         sage: P1 = Polyhedron([[0,1], [1,1], [1,-phi+1]], backend='number_field')

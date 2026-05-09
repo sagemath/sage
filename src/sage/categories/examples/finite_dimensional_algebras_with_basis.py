@@ -106,8 +106,7 @@ class KroneckerQuiverPathAlgebra(CombinatorialFreeModule):
         """
         if w1+w2 in self._nonzero_products:
             return self.monomial(self._nonzero_products[w1+w2])
-        else:
-            return self.zero()
+        return self.zero()
 
     @cached_method
     def algebra_generators(self):

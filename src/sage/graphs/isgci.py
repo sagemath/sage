@@ -488,8 +488,7 @@ class GraphClass(SageObject, CachedRepresentation):
         inclusion_digraph = GraphClasses().inclusion_digraph()
         if inclusion_digraph.shortest_path(self._gc_id, other._gc_id):
             return True
-        else:
-            return Unknown
+        return Unknown
 
     def __eq__(self, other):
         r"""
@@ -682,10 +681,9 @@ class GraphClasses(UniqueRepresentation):
                 name = "class " + str(id)
 
             return GraphClass(name, id)
-        else:
-            raise ValueError("The given class id does not exist in the ISGCI "
-                             "database. Is the db too old ? You can update it "
-                             "with graph_classes.update_db().")
+        raise ValueError("The given class id does not exist in the ISGCI "
+                         "database. Is the db too old ? You can update it "
+                         "with graph_classes.update_db().")
 
     @cached_method
     def classes(self):

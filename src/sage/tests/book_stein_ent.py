@@ -32,7 +32,7 @@ sage: len(n.str(10))
 sage: n.is_prime()              # this is instant
 False
 sage: p = 2^32582657 - 1
-sage: p.ndigits()                                                                       # needs sage.rings.real_interval_field
+sage: p.ndigits()
 9808358
 sage: s = p.str(10) # this takes a long time
 sage: len(s)        # s is a very long string  (long time)

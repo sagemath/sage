@@ -277,19 +277,15 @@ def FormsSpace(analytic_type, group=3, base_ring=ZZ, k=QQ(0), ep=None):
                     if analytic_type <= AT([]):
                         from .space import ZeroForm
                         return ZeroForm(group=group, base_ring=base_ring, k=k, ep=ep)
-                    else:
-                        from .space import CuspForms
-                        return CuspForms(group=group, base_ring=base_ring, k=k, ep=ep)
-                else:
-                    from .space import ModularForms
-                    return ModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
-            else:
-                from .space import WeakModularForms
-                return WeakModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
-        else:
-            from .space import MeromorphicModularForms
-            return MeromorphicModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
-    elif analytic_type <= AT(["mero", "quasi"]):
+                    from .space import CuspForms
+                    return CuspForms(group=group, base_ring=base_ring, k=k, ep=ep)
+                from .space import ModularForms
+                return ModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
+            from .space import WeakModularForms
+            return WeakModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
+        from .space import MeromorphicModularForms
+        return MeromorphicModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
+    if analytic_type <= AT(["mero", "quasi"]):
         if analytic_type <= AT(["weak", "quasi"]):
             if analytic_type <= AT(["holo", "quasi"]):
                 if analytic_type <= AT(["cusp", "quasi"]):

@@ -156,38 +156,13 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
     return FreeAbelianMonoid_factory(index_set, names)
 
 
-def is_FreeAbelianMonoid(x):
-    """
-    Return ``True`` if `x` is a free abelian monoid.
-
-    EXAMPLES::
-
-        sage: from sage.monoids.free_abelian_monoid import is_FreeAbelianMonoid
-        sage: is_FreeAbelianMonoid(5)
-        doctest:warning...
-        DeprecationWarning: the function is_FreeAbelianMonoid is deprecated;
-        use 'isinstance(..., FreeAbelianMonoid_class)' instead
-        See https://github.com/sagemath/sage/issues/37897 for details.
-        False
-        sage: is_FreeAbelianMonoid(FreeAbelianMonoid(7,'a'))
-        True
-        sage: is_FreeAbelianMonoid(FreeMonoid(7,'a'))
-        False
-        sage: is_FreeAbelianMonoid(FreeMonoid(0,''))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37897, "the function is_FreeAbelianMonoid is deprecated; use 'isinstance(..., FreeAbelianMonoid_class)' instead")
-    return isinstance(x, FreeAbelianMonoid_class)
-
-
 class FreeAbelianMonoid_class(Parent):
     """
     Free abelian monoid on `n` generators.
     """
     Element = FreeAbelianMonoidElement
 
-    def __init__(self, n, names):
+    def __init__(self, n, names) -> None:
         """
         Initialize ``self``.
 
@@ -204,7 +179,7 @@ class FreeAbelianMonoid_class(Parent):
         assert names is not None
         Parent.__init__(self, names=names, category=Monoids().Commutative())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         n = self.__ngens
         return f"Free abelian monoid on {n} generators {self.gens()}"
 

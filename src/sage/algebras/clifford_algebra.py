@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 r"""
 Clifford Algebras
 
@@ -141,8 +140,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
         """
         if not isinstance(el, Element):
             return self._element_constructor_(el)
-        else:
-            return Parent.__call__(self, el)
+        return Parent.__call__(self, el)
 
     def cardinality(self):
         r"""
@@ -1871,7 +1869,6 @@ class ExteriorAlgebra(CliffordAlgebra):
 
         Check :issue:`34694`::
 
-            sage: # needs sage.symbolic
             sage: E = ExteriorAlgebra(SR,'e',3)
             sage: E.inject_variables()
             Defining e0, e1, e2
@@ -2881,7 +2878,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         # comparison for >= and > : swap the arguments
         if op == op_GE:
             return other.__richcmp__(self, op_LE)
-        elif op == op_GT:
+        if op == op_GT:
             return other.__richcmp__(self, op_LT)
 
         s_gens = {g for g in self.gens() if g}
@@ -3008,6 +3005,10 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         - ``reduced`` -- boolean (default: ``True``); whether or not to return
           the reduced Gröbner basis
 
+        .. SEEALSO::
+
+            :mod:`sage.algebras.exterior_algebra_groebner`
+
         EXAMPLES:
 
         We compute an example::
@@ -3057,20 +3058,20 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         Gröber bases (which are not unique)::
 
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
-            sage: I = E.ideal([x+y*z])
+            sage: I = E.ideal([x+y*z, x - z - y])
             sage: I.groebner_basis(reduced=False)
-            (x*y, x*z, y*z + x, x*y*z)
-            sage: I.groebner_basis(reduced=True)
-            (x*y, x*z, y*z + x)
+            (x, x*y, -x + y + z, y*z + x)
+            sage: I.groebner_basis()
+            (x, y + z)
 
         However, if we have already computed a reduced Gröbner basis (with
         a given term order), then we return that::
 
-            sage: I = E.ideal([x+y*z])  # A fresh ideal
+            sage: I = E.ideal([x+y*z, x - z - y])  # A fresh ideal
             sage: I.groebner_basis()
-            (x*y, x*z, y*z + x)
+            (x, y + z)
             sage: I.groebner_basis(reduced=False)
-            (x*y, x*z, y*z + x)
+            (x, y + z)
 
         TESTS::
 

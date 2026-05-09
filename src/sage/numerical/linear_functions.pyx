@@ -109,74 +109,6 @@ from sage.structure.element cimport ModuleElement, Element
 from sage.misc.cachefunc import cached_function
 from sage.misc.superseded import deprecated_function_alias
 
-#*****************************************************************************
-#
-# Utility functions to test that something is a linear function / constraint
-#
-#*****************************************************************************
-
-cpdef is_LinearFunction(x):
-    """
-    Test whether ``x`` is a linear function.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: p = MixedIntegerLinearProgram()
-        sage: x = p.new_variable()
-        sage: from sage.numerical.linear_functions import is_LinearFunction
-        sage: is_LinearFunction(x[0] - 2*x[2])
-        doctest:warning...
-        DeprecationWarning: The function is_LinearFunction is deprecated;
-        use 'isinstance(..., LinearFunction)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        True
-        sage: is_LinearFunction('a string')
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38184,
-                       "The function is_LinearFunction is deprecated; "
-                       "use 'isinstance(..., LinearFunction)' instead.")
-    return isinstance(x, LinearFunction)
-
-
-def is_LinearConstraint(x):
-    """
-    Test whether ``x`` is a linear constraint.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: p = MixedIntegerLinearProgram()
-        sage: x = p.new_variable()
-        sage: ieq = (x[0] <= x[1])
-        sage: from sage.numerical.linear_functions import is_LinearConstraint
-        sage: is_LinearConstraint(ieq)
-        doctest:warning...
-        DeprecationWarning: The function is_LinearConstraint is deprecated;
-        use 'isinstance(..., LinearConstraint)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        True
-        sage: is_LinearConstraint('a string')
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38184,
-                       "The function is_LinearConstraint is deprecated; "
-                       "use 'isinstance(..., LinearConstraint)' instead.")
-    return isinstance(x, LinearConstraint)
-
 
 # ****************************************************************************
 #
@@ -971,7 +903,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             15*x_2 + 6*x_3
         """
         P = self.parent()
-        return P(dict([(id,b*coeff) for (id, coeff) in self._f.items()]))
+        return P({id: b * coeff for id, coeff in self._f.items()})
 
     cpdef _acted_upon_(self, x, bint self_on_left):
         """

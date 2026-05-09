@@ -103,27 +103,22 @@ usage() {
     ####  |.....................--.|...................................................|
     echo
     echo "Running Sage:"
-    if command -v sage-ipython &>/dev/null; then
-        echo
-        echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
-        echo "  -c <cmd>            -- evaluate cmd as sage code"
-        echo "  --notebook=[...]    -- start the Sage notebook (valid options are"
-        echo "                         'default', 'jupyter', 'jupyterlab', and 'export')"
-        echo "                         Current default is 'jupyter'"
-        echo "  -n, --notebook      -- shortcut for --notebook=default"
-        echo "  --nodotsage         -- run Sage without using the user's .sage directory:"
-        echo "                         create and use a temporary .sage directory instead"
-        echo "  -t [options] <--all|files|dir>"
-        echo "                      -- test examples in .py, .pyx, .sage, .tex or .rst files"
-        echo "                         selected options:"
-        echo "                           --long - include lines with the phrase 'long time'"
-        echo "                           --verbose - print debugging output during the test"
-        echo "                           --optional - controls which optional tests are run"
-        echo "                           --help - show all testing options"
-    else
-        echo "                         (not installed currently, "
-        echo "                          to install, run sage --pip install sagemath-repl)"
-    fi
+    echo
+    echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
+    echo "  -c <cmd>            -- evaluate cmd as sage code"
+    echo "  --notebook=[...]    -- start the Sage notebook (valid options are"
+    echo "                         'default', 'jupyter', 'jupyterlab', and 'export')"
+    echo "                         Current default is 'jupyter'"
+    echo "  -n, --notebook      -- shortcut for --notebook=default"
+    echo "  --nodotsage         -- run Sage without using the user's .sage directory:"
+    echo "                         create and use a temporary .sage directory instead"
+    echo "  -t [options] <--all|files|dir>"
+    echo "                      -- test examples in .py, .pyx, .sage, .tex or .rst files"
+    echo "                         selected options:"
+    echo "                           --long - include lines with the phrase 'long time'"
+    echo "                           --verbose - print debugging output during the test"
+    echo "                           --optional - controls which optional tests are run"
+    echo "                           --help - show all testing options"
     echo
     echo "Running external programs:"
     echo
@@ -191,13 +186,33 @@ fi
 # build/bin/sage-site. See #29111; but OTOH #34627.
 
 build_sage() {
-    ( cd "$SAGE_ROOT" && make sagelib-no-deps ) || exit $?
+    # Check for the expected editable meson build directory
+    SCRIPT=$(readlink -f "$0") # this shell script
+    SAGE_ROOT=$(dirname "$SCRIPT")/../..
+    if [ -f "$SAGE_ROOT/build/sage-distro/build.ninja" ]; then
+         echo "Building Sage with ninja..."
+       ninja -C $SAGE_ROOT/build/sage-distro || exit $?
+    else
+        echo "Error: 'sage -b' is for editable sage-distro developer builds." >&2
+        echo "Please use 'make' or 'meson' directly for other builds." >&2
+        exit 1
+    fi
 }
 
 # Check for '-i' etc. before sourcing sage-env: running "make"
 # should be run outside of the Sage shell.
 case "$1" in
     -i|-f|-p)
+        echo "\"sage -i\" is obsolete, and might not work." >&2
+        echo "Please use \"./configure --with-<package name>\" followed by \"make\" to update/install Sage's spkg," >&2
+        echo "and \"./sage --pip install <package name>\" to install external packages." >&2
+
+        if [ -n "$CONDA_PREFIX" ]; then
+            echo "Error: 'sage $1' is not supported in Conda environments." >&2
+            echo "Please use 'conda install' to install packages." >&2
+            exit 1
+        fi
+
         # Delegate further option handling to the non-installed sage-site script.
         # (These options become unavailable if the directory $SAGE_ROOT is removed.)
         if [ -d "$SAGE_ROOT" ]; then
@@ -212,8 +227,10 @@ case "$1" in
         exit 0
         ;;
     -br|--br)
+        echo "Warning: 'sage -br' is deprecated." >&2
+        echo "In an editable install, just run './sage' to use the latest built code." >&2
         build_sage
-        shift; set -- -r "$@"  # delegate to handling of "-r" below, after sourcing sage-env
+        shift; set -- -r "$@"
         ;;
     -bn|--build-and-notebook)
         build_sage
@@ -930,11 +947,6 @@ fi
 
 if [ "$1" = '-startuptime' -o "$1" = '--startuptime' ]; then
     exec sage-startuptime.py "$@"
-fi
-
-if [ "$1" = '-fixdistributions' -o "$1" = '--fixdistributions' ]; then
-    shift
-    exec python3 -m sage.misc.package_dir "$@"
 fi
 
 if [ "$1" = '-tox' -o "$1" = '--tox' ]; then

@@ -769,7 +769,7 @@ cdef class SageObject:
             G = sage.interfaces.gap.gap
         return self._interface_(G)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Return a string that provides a representation of ``self`` in GAP.
 

@@ -201,7 +201,8 @@ def ShufflePoset(m, n) -> FiniteLatticePoset:
     dg = DiGraph([(x, y) for x in bubbles
                   for y in bubble_coverings(m, n, x, transpose=False)])
     # here we just have the cover relations
-    return LatticePoset(dg, cover_relations=True)
+    cat = FiniteLatticePosets().ChainGraded()
+    return LatticePoset(dg, cover_relations=True, check=False, category=cat)
 
 
 def noncrossing_bipartite_complex(m, n):

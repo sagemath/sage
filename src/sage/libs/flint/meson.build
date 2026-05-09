@@ -24,6 +24,7 @@ py.install_sources(
   'arb_mat.pxd',
   'arb_mat_macros.pxd',
   'arb_poly.pxd',
+  'arb_poly_macros.pxd',
   'arf.pxd',
   'arith.pxd',
   'arith.pyx',

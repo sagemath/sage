@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+
+# A pre-commit hook for SageMath
+#
+# Consider activating it so that your code is automatically checked before each
+# commit:
+#
+#   $ git config core.hooksPath git-hooks
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+# Text formatting
+RED='\e[1;31m'
+GRN="\e[1;32m"
+YLLW='\e[1;33m'
+BLUE='\e[1;34m'
+NRM='\e[0m'  # normal
+
+display() {
+  case "$1" in
+    ruff)         printf "${YLLW}ruff${NRM}" ;;
+    cython-lint)  printf "${GRN}cython-lint${NRM}" ;;
+    clang-format) printf "${BLUE}clang-format${NRM}" ;;
+  esac
+}
+
+# ---------------------------------------------------------------------------
+# Init
+# ---------------------------------------------------------------------------
+
+init_file_lists() {
+  python_files=$(git diff --staged --name-only | grep "\.py$\|\.pyi$")
+  cython_files=$(git diff --staged --name-only | grep "\.pyx$\|\.pxd$\|\.pxi$")
+  c_files=$(git diff --staged --name-only | grep "\.c$\|\.cpp$\|\.h$")
+  [ -z "$python_files" ] && [ -z "$cython_files" ] && [ -z "$c_files" ] && exit 0
+}
+
+init_tools() {
+  _check_tool() {
+    command -v "$1" > /dev/null && return 0
+    if [ "$mode" == "check-only" ]; then
+      local tool=$(display "$1")
+      printf "${YLLW}Warning${NRM}: $tool not found; skipping related checks.\n"
+    fi
+    return 1
+  }
+
+  ruff_flag=false
+  cython_lint_flag=false
+  clang_format_flag=false
+
+  [ -n "$python_files" ] && _check_tool ruff         && ruff_flag=true
+  [ -n "$cython_files" ] && _check_tool cython-lint  && cython_lint_flag=true
+  [ -n "$c_files" ]      && _check_tool clang-format && clang_format_flag=true
+}
+
+# ---------------------------------------------------------------------------
+# Tool config and common dispatcher
+# ---------------------------------------------------------------------------
+
+check_flags() {
+  # E501: line too long
+  # E741: ambiguous variable name
+  case "$1" in
+    ruff)         echo "check --config .github/workflows/ruff.toml --preview" ;;
+    cython-lint)  echo "--ignore=E501,E741" ;;
+    clang-format) echo "--dry-run --Werror" ;;
+  esac
+}
+
+format_flags() {
+  case "$1" in
+    ruff)         echo "check --config .github/workflows/ruff.toml --preview -q --fix" ;;
+    clang-format) echo "-i --Werror" ;;
+  esac
+}
+
+files() {
+  case "$1" in
+    ruff)         echo "$python_files" ;;
+    cython-lint)  echo "$cython_files" ;;
+    clang-format) echo "$c_files" ;;
+  esac
+}
+
+# run <check|format> <tool>
+run() {
+  local action="$1" tool="$2"
+  local display=$(display $tool)
+
+  if [ "$action" = "check" ]; then
+    printf "%s: Checking code formatting..." "$display"
+    if [ "$verbose" = true ]; then
+      printf "\n"
+      $tool $(check_flags $tool) $(files $tool)
+    elif ! $tool $(check_flags $tool) $(files $tool) > /dev/null 2>&1; then
+      printf " failure.\n" && return 1
+    else
+      printf " success.\n"
+    fi
+
+  elif [ "$action" = "format" ]; then
+    if [ $tool == "cython-lint" ]; then
+      printf "$display: auto-formatting not supported.\n"
+      return 0
+    fi
+    printf "%s: Auto-formatting..." "$display"
+    if ! $tool $(check_flags $tool) $(files $tool) > /dev/null 2>&1; then
+      $tool $(format_flags $tool) $(files $tool)
+      printf " check the unstaged changes.\n" && return 1
+    fi
+    printf " no changes required.\n"
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+mode="check-only"
+verbose=false
+
+for arg in "$@"; do
+  case "$arg" in
+    in-place) mode="in-place" ;;
+    verbose)  verbose=true ;;
+    *)
+      printf "${RED}Error${NRM}: Unknown argument: $arg\n"
+      exit 1
+      ;;
+  esac
+done
+
+init_file_lists
+init_tools
+
+action="check"
+[ "$mode" = "in-place" ] && action="format"
+
+changes=false
+$ruff_flag         && { run "$action" ruff         || changes=true; }
+$cython_lint_flag  && { run "$action" cython-lint  || changes=true; }
+$clang_format_flag && { run "$action" clang-format || changes=true; }
+
+if [ "$mode" = "check-only" ] && $changes; then
+  printf "${RED}Error${NRM}: Ill-formatted files staged for commit.\n\
+To view the issues, use 'git hook run pre-commit -- verbose'.\n\
+To attempt to auto-format the files, use 'git hook run pre-commit -- in-place'.\n\
+To avoid these pre-commit checks, use 'git commit --no-verify'.\n"
+  exit 1
+fi

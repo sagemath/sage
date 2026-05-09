@@ -125,36 +125,6 @@ except ImportError:
     RR = None
 
 
-def is_FilteredVectorSpace(X):
-    """
-    Test whether ``X`` is a filtered vector space.
-
-    This function is for library use only.
-
-    INPUT:
-
-    - ``X`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: from sage.modules.filtered_vector_space import is_FilteredVectorSpace
-        sage: V = FilteredVectorSpace(2, 1)
-        sage: is_FilteredVectorSpace(V)
-        doctest:warning...:
-        DeprecationWarning: the function is_FilteredVectorSpace is deprecated;
-        use 'isinstance(..., FilteredVectorSpace_class)' instead
-        See https://github.com/sagemath/sage/issues/37924 for details.
-        True
-        sage: is_FilteredVectorSpace('ceci n\'est pas une pipe')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37924, "the function is_FilteredVectorSpace is deprecated; use 'isinstance(..., FilteredVectorSpace_class)' instead")
-    return isinstance(X, FilteredVectorSpace_class)
-
-
 def FilteredVectorSpace(arg1, arg2=None, base_ring=QQ, check=True):
     r"""
     Construct a filtered vector space.
@@ -210,10 +180,9 @@ def FilteredVectorSpace(arg1, arg2=None, base_ring=QQ, check=True):
         raise ValueError('the base_ring argument must be a field')
     if arg1 in ZZ:
         return construct_from_dim_degree(arg1, arg2, base_ring, check)
-    elif arg2 is None:
+    if arg2 is None:
         return construct_from_generators(arg1, base_ring, check)
-    else:
-        return construct_from_generators_indices(arg1, arg2, base_ring, check)
+    return construct_from_generators_indices(arg1, arg2, base_ring, check)
 
 
 def normalize_degree(deg):
@@ -666,10 +635,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         if d == infinity:
             if len(f) == 1:
                 return minus_infinity
-            else:
-                return f[-2][0] + 1
-        else:
-            return d + 1
+            return f[-2][0] + 1
+        return d + 1
 
     def get_degree(self, d):
         r"""
@@ -791,15 +758,14 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         """
         if self.base_ring() == QQ:
             return 'QQ'
-        elif self.base_ring() == RDF:
+        if self.base_ring() == RDF:
             return 'RDF'
-        elif self.base_ring() == RR:
+        if self.base_ring() == RR:
             return 'RR'
         from sage.categories.finite_fields import FiniteFields
         if self.base_ring() in FiniteFields():
             return 'GF({})'.format(len(self.base_ring()))
-        else:
-            raise NotImplementedError()
+        raise NotImplementedError()
 
     def _repr_vector_space(self, dim):
         """

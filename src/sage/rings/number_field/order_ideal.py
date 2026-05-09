@@ -456,7 +456,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             alpha = 0
         return tuple(map(O, (N, alpha)))
 
-    def is_principal(self):
+    def is_principal(self) -> bool:
         r"""
         Determine whether or not this ideal is principal.
 
@@ -552,7 +552,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         assert NumberFieldOrderIdeal(self.ring(), gen) == self
         return (gen,)
 
-    def is_equivalent(self, other, narrow=False):
+    def is_equivalent(self, other, narrow=False) -> bool:
         r"""
         Determine whether this ideal is equivalent to another ideal
         in the same order.
@@ -617,7 +617,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         assert len(gs) in (1,2)
         if len(gs) > 1:
             return False
-        elif narrow:
+        if narrow:
             return gs[0].norm() > 0
         return True
 

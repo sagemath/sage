@@ -4,7 +4,7 @@ Dependency usage tracking for citations
 """
 
 from sage.misc.temporary_file import tmp_filename
-from sage.env import SAGE_LOCAL, SAGE_VENV
+from sage.env import SAGE_LOCAL
 
 systems = {}
 systems['PARI'] = ['cypari2', 'sage.interfaces.gp']
@@ -107,8 +107,6 @@ def get_systems(cmd):
         s = a[0]
         if SAGE_LOCAL:
             s = s.replace(SAGE_LOCAL, "")
-        if SAGE_VENV:
-            s = s.replace(SAGE_VENV, "")
         return s + " " + a[2]
 
     strings = [string_from_stat(a)

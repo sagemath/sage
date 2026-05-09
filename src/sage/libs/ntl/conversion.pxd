@@ -9,7 +9,7 @@ conventions for conversion functions
 - ``set_ntl_XXX`` : set the entries of the ntl object
 - ``set_sage_XXX``   : set the entries of the Sage object
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Martin Albrecht
 #       Copyright (C) 2008 Clement Pernet
 #       Copyright (C) 2018 Vincent Delecroix
@@ -20,7 +20,7 @@ conventions for conversion functions
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 from sage.libs.ntl.types cimport mat_ZZ_p_c
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
@@ -49,7 +49,7 @@ cdef inline void set_ntl_matrix_modn_dense_float(mat_ZZ_p_c& A, ntl_ZZ_pContext_
     A.SetDims(m._nrows, m._ncols)
     for i in range(m._nrows):
         for j in range(m._ncols):
-            tmp = ntl_ZZ_p(m[i,j], c)
+            tmp = ntl_ZZ_p(m[i, j], c)
             A.put(i, j, tmp.x)
 
 cdef inline void set_ntl_matrix_modn_dense_double(mat_ZZ_p_c& A, ntl_ZZ_pContext_class c, Matrix_modn_dense_double m) noexcept:
@@ -66,7 +66,7 @@ cdef inline void set_ntl_matrix_modn_dense_double(mat_ZZ_p_c& A, ntl_ZZ_pContext
     A.SetDims(m._nrows, m._ncols)
     for i in range(m._nrows):
         for j in range(m._ncols):
-            tmp = ntl_ZZ_p(m[i,j], c)
+            tmp = ntl_ZZ_p(m[i, j], c)
             A.put(i, j, tmp.x)
 
 cdef inline void set_ntl_matrix_modn_generic_dense(mat_ZZ_p_c& A, ntl_ZZ_pContext_class c, Matrix_generic_dense m) noexcept:
@@ -83,7 +83,7 @@ cdef inline void set_ntl_matrix_modn_generic_dense(mat_ZZ_p_c& A, ntl_ZZ_pContex
     A.SetDims(m._nrows, m._ncols)
     for i in range(m._nrows):
         for j in range(m._ncols):
-            tmp = ntl_ZZ_p(m[i,j], c)
+            tmp = ntl_ZZ_p(m[i, j], c)
             A.put(i, j, tmp.x)
 
 cdef inline void set_ntl_matrix_modn_dense(mat_ZZ_p_c& A, ntl_ZZ_pContext_class c, m) noexcept:

@@ -1,4 +1,4 @@
- pytz_deprecation_shim | $(PYTHON_TOOLCHAIN) $(PYTHON)
+ pytz_deprecation_shim tzdata | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
