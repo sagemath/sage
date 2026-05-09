@@ -49,6 +49,13 @@ option(
 )
 
 option(
+  'libhomfly',
+  type: 'feature',
+  value: 'auto',
+  description: 'libhomfly interface to the homfly polynomial of a link'
+)
+
+option(
   'mcqd',
   type: 'feature',
   value: 'auto',

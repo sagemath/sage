@@ -386,7 +386,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         return self._vector.ncols()
 
     # (Rich) comparison
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -419,7 +419,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: A(1) <= 0
             False
         """
-        return richcmp(self._vector, <FiniteDimensionalAlgebraElement>right._vector, op)
+        return richcmp(self._vector, <FiniteDimensionalAlgebraElement>other._vector, op)
 
     cpdef _add_(self, other):
         """

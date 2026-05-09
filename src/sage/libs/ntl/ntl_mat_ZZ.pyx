@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr
@@ -136,7 +136,7 @@ cdef class ntl_mat_ZZ():
             sage: M = ntl.mat_ZZ(2,3,[5..10]) ; M.__repr__()
             '[\n[5 6 7]\n[8 9 10]\n]'
         """
-        return ccrepr(self.x).replace('[[','[\n[',1)
+        return ccrepr(self.x).replace('[[', '[\n[', 1)
 
     def __mul__(ntl_mat_ZZ self, other):
         """
@@ -308,7 +308,7 @@ cdef class ntl_mat_ZZ():
             y = x
         if not isinstance(ij, tuple) or len(ij) != 2:
             raise TypeError('ij must be a 2-tuple')
-        i, j = int(ij[0]),int(ij[1])
+        i, j = int(ij[0]), int(ij[1])
         if i < 0 or i >= self.__nrows or j < 0 or j >= self.__ncols:
             raise IndexError("array index out of range")
         sig_on()
@@ -353,9 +353,9 @@ cdef class ntl_mat_ZZ():
         """
         cdef int i, j
         sig_on()
-        L = [make_ZZ(mat_ZZ_getitem(&self.x, i+1, j+1))
-                    for i from 0 <= i < self.__nrows
-                        for j from 0 <= j < self.__ncols]
+        L = [make_ZZ(mat_ZZ_getitem(&self.x, i + 1, j + 1))
+             for i in range(self.__nrows)
+             for j in range(self.__ncols)]
         sig_off()
         return L
 
@@ -1267,7 +1267,7 @@ cdef class ntl_mat_ZZ():
             return rank, make_ZZ_sig_off(det2), U
         else:
             sig_on()
-            rank = int(mat_ZZ_LLL(&det2,&self.x,int(a),int(b),int(verbose)))
+            rank = int(mat_ZZ_LLL(&det2, &self.x, int(a), int(b), int(verbose)))
             return rank, make_ZZ_sig_off(det2)
 
     def LLL_FP(self, delta=0.75, return_U=False, verbose=False):
@@ -1355,7 +1355,7 @@ cdef class ntl_mat_ZZ():
             return rank, U
         else:
             sig_on()
-            rank = int(mat_ZZ_LLL_FP(self.x,float(delta),0,0,int(verbose)))
+            rank = int(mat_ZZ_LLL_FP(self.x, float(delta), 0, 0, int(verbose)))
             sig_off()
             return rank
 
@@ -1379,7 +1379,7 @@ cdef class ntl_mat_ZZ():
             return rank, U
         else:
             sig_on()
-            rank = int(mat_ZZ_LLL_QP(self.x,float(delta),0,0,int(verbose)))
+            rank = int(mat_ZZ_LLL_QP(self.x, float(delta), 0, 0, int(verbose)))
             sig_off()
             return rank
 
@@ -1404,7 +1404,7 @@ cdef class ntl_mat_ZZ():
             return rank, U
         else:
             sig_on()
-            rank = int(mat_ZZ_LLL_XD(self.x,float(delta),0,0,int(verbose)))
+            rank = int(mat_ZZ_LLL_XD(self.x, float(delta), 0, 0, int(verbose)))
             sig_off()
             return rank
 
@@ -1429,7 +1429,7 @@ cdef class ntl_mat_ZZ():
             return rank, U
         else:
             sig_on()
-            rank = int(mat_ZZ_LLL_RR(self.x,float(delta),0,0,int(verbose)))
+            rank = int(mat_ZZ_LLL_RR(self.x, float(delta), 0, 0, int(verbose)))
             sig_off()
             return rank
 
@@ -1459,7 +1459,7 @@ cdef class ntl_mat_ZZ():
             return rank, U
         else:
             sig_on()
-            rank = int(mat_ZZ_G_LLL_FP(self.x,float(delta),0,0,int(verbose)))
+            rank = int(mat_ZZ_G_LLL_FP(self.x, float(delta), 0, 0, int(verbose)))
             sig_off()
             return rank
 
@@ -1477,7 +1477,7 @@ cdef class ntl_mat_ZZ():
             return rank, U
         else:
             sig_on()
-            rank = int(mat_ZZ_G_LLL_QP(self.x,float(delta),0,0,int(verbose)))
+            rank = int(mat_ZZ_G_LLL_QP(self.x, float(delta), 0, 0, int(verbose)))
             sig_off()
             return rank
 
@@ -1496,7 +1496,7 @@ cdef class ntl_mat_ZZ():
             return rank, U
         else:
             sig_on()
-            rank = int(mat_ZZ_G_LLL_XD(self.x,float(delta),0,0,int(verbose)))
+            rank = int(mat_ZZ_G_LLL_XD(self.x, float(delta), 0, 0, int(verbose)))
             sig_off()
             return rank
 
@@ -1515,6 +1515,6 @@ cdef class ntl_mat_ZZ():
             return rank, U
         else:
             sig_on()
-            rank = int(mat_ZZ_G_LLL_RR(self.x,float(delta),0,0,int(verbose)))
+            rank = int(mat_ZZ_G_LLL_RR(self.x, float(delta), 0, 0, int(verbose)))
             sig_off()
             return rank
