@@ -2254,10 +2254,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E.isogenies_prime_degree(13)
             [Isogeny of degree 13
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
-                to Elliptic Curve defined by y^2 = x^3 + 878063*x + 845666 over Finite Field of size 1000003,
+                to Elliptic Curve defined by y^2 = x^3 + 626451*x + 440563 over Finite Field of size 1000003,
              Isogeny of degree 13
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
-                to Elliptic Curve defined by y^2 = x^3 + 375648*x + 342776 over Finite Field of size 1000003]
+                to Elliptic Curve defined by y^2 = x^3 + 37327*x + 182964 over Finite Field of size 1000003]
             sage: E.isogenies_prime_degree(max_l=13)
             [Isogeny of degree 2
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
@@ -2270,10 +2270,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 to Elliptic Curve defined by y^2 = x^3 + 999960*x + 78 over Finite Field of size 1000003,
              Isogeny of degree 13
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
-                to Elliptic Curve defined by y^2 = x^3 + 878063*x + 845666 over Finite Field of size 1000003,
+                to Elliptic Curve defined by y^2 = x^3 + 626451*x + 440563 over Finite Field of size 1000003,
              Isogeny of degree 13
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
-                to Elliptic Curve defined by y^2 = x^3 + 375648*x + 342776 over Finite Field of size 1000003]
+                to Elliptic Curve defined by y^2 = x^3 + 37327*x + 182964 over Finite Field of size 1000003]
             sage: E.isogenies_prime_degree()  # Default limit of 31
             [Isogeny of degree 2
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
@@ -2286,10 +2286,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 to Elliptic Curve defined by y^2 = x^3 + 999960*x + 78 over Finite Field of size 1000003,
              Isogeny of degree 13
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
-                to Elliptic Curve defined by y^2 = x^3 + 878063*x + 845666 over Finite Field of size 1000003,
+                to Elliptic Curve defined by y^2 = x^3 + 626451*x + 440563 over Finite Field of size 1000003,
              Isogeny of degree 13
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
-                to Elliptic Curve defined by y^2 = x^3 + 375648*x + 342776 over Finite Field of size 1000003,
+                to Elliptic Curve defined by y^2 = x^3 + 37327*x + 182964 over Finite Field of size 1000003,
              Isogeny of degree 17
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
                 to Elliptic Curve defined by y^2 = x^3 + 347438*x + 594729 over Finite Field of size 1000003,

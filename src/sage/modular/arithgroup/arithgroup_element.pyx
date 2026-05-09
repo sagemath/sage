@@ -157,9 +157,9 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         """
         return '%s' % self.__x._latex_()
 
-    cpdef _richcmp_(self, right_r, int op):
+    cpdef _richcmp_(self, other, int op):
         """
-        Compare ``self`` to ``right``, where ``right`` is guaranteed to have
+        Compare ``self`` to ``other``, where ``other`` is guaranteed to have
         the same parent as ``self``.
 
         EXAMPLES::
@@ -187,7 +187,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: s*u == v
             True
         """
-        cdef ArithmeticSubgroupElement right = <ArithmeticSubgroupElement>right_r
+        cdef ArithmeticSubgroupElement right = <ArithmeticSubgroupElement>other
         return richcmp(self.__x, right.__x, op)
 
     def __bool__(self):
