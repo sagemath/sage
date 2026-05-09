@@ -2455,6 +2455,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = x^2 - 2*x + 1
             sage: f.perfect_power()
             (-x + 1, 2)
+            sage: (f^2).perfect_power()
+            (-x + 1, 4)
 
         ::
 
@@ -2467,16 +2469,19 @@ cdef class Polynomial(CommutativePolynomial):
             sage: (P*Q).perfect_power()
             (x^3 + 4*x^2 + 5*x + 2, 50)
         """
-        f = self
+        f = self.monic()
         n = Integer(1)
         for e, m in self.degree().factor():
+            exponent = e**m
             for _ in range(m):
                 try:
-                    f = f.nth_root(e)
-                    n *= e
+                    _ = self.nth_root(exponent)
                 except ValueError:
-                    break
-        return f, n
+                    exponent //= e
+                    continue
+                n *= exponent
+                break
+        return self.nth_root(n), n
 
     def any_root(self, ring=None, degree=None, assume_squarefree=False, assume_equal_deg=False):
         """
