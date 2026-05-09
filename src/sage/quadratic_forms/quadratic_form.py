@@ -1044,7 +1044,7 @@ class QuadraticForm(SageObject):
             Q2 = QuadraticForm(self.base_ring(), m)
             return QFEvaluateMatrix(self, v, Q2)
 
-        elif isinstance(v, (Vector, list, tuple)):
+        if isinstance(v, (Vector, list, tuple)):
             # Check the vector/tuple/list has the correct length
             if len(v) != n:
                 raise TypeError(f"your vector needs to have length {n}")
@@ -1059,8 +1059,7 @@ class QuadraticForm(SageObject):
             # Attempt to evaluate Q[v]
             return QFEvaluateVector(self, v)
 
-        else:
-            raise TypeError
+        raise TypeError
 
     # ===============================================
 

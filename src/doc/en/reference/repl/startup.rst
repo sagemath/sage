@@ -42,3 +42,22 @@ in this file.
 
 The default location of this file can be changed using the
 environment variable :envvar:`SAGE_STARTUP_FILE`.
+
+.. _sage_subcommands:
+
+Sage Subcommands
+----------------
+
+The ``sage`` script can be used to invoke several subcommands, including:
+
+* ``sage -b``: Rebuilds the Sage library. This is intended for developer-only
+  editable Meson builds. It runs ``ninja -C build`` to recompile. If a
+  non-Meson build is detected, it will error out with a message.
+
+* ``sage -br``: **Deprecated.** This command is no longer supported and
+  will be removed in a future release. Use ``sage -b`` to build and
+  ``./sage`` to run.
+
+* ``sage --python``: Runs the Python interpreter included with Sage.
+
+* ``sage -i <package>``: **Deprecated.** This command is obsolete. Use ``./configure --with-<package>`` followed by ``make`` instead.

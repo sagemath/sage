@@ -110,7 +110,7 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     k = Integer(k)
     if k % 2 == 1 or k == 2:
         return Sequence([])
-    elif k < 0:
+    if k < 0:
         raise ValueError("k must be nonnegative")
     elif k == 0:
         return Sequence([PowerSeriesRing(ZZ,var)(1).add_bigoh(prec)], cr=True)
@@ -374,6 +374,5 @@ def delta_qexp(prec=10, var='q', K=ZZ):
     ch = K.characteristic()
     if ch > 0 and prec > 150:
         return R(_delta_poly_modulo(ch, prec), prec, check=False)
-    else:
-        # compute over ZZ and coerce
-        return R(_delta_poly(prec).list(), prec, check=True)
+    # compute over ZZ and coerce
+    return R(_delta_poly(prec).list(), prec, check=True)

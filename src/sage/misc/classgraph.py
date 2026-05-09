@@ -125,5 +125,4 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph=True):
     if as_graph:
         from sage.graphs.digraph import DiGraph
         return DiGraph(classes)
-    else:
-        return classes
+    return classes

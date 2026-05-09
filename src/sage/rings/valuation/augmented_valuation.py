@@ -48,7 +48,6 @@ Run the test suite for a valuation with a residual extension::
 Run the test suite for an iterated residual extension starting from a
 non-prime residue field::
 
-    sage: # needs sage.libs.ntl
     sage: R.<u> = Qq(4, 40)
     sage: S.<x> = R[]
     sage: v = GaussValuation(S)
@@ -60,7 +59,6 @@ non-prime residue field::
 
 Run the test suite for an augmentation of a ramified augmentation::
 
-    sage: # needs sage.libs.ntl
     sage: R.<u> = Qq(4, 5)
     sage: S.<x> = R[]
     sage: v = GaussValuation(S)
@@ -80,7 +78,6 @@ Run the test suite for a ramified augmentation of an unramified augmentation::
 
 Run the test suite for a ramified augmentation of a ramified augmentation::
 
-    sage: # needs sage.libs.ntl
     sage: R.<u> = Qq(4, 20)
     sage: S.<x> = R[]
     sage: v = GaussValuation(S)
@@ -91,7 +88,6 @@ Run the test suite for a ramified augmentation of a ramified augmentation::
 
 Run the test suite for another augmentation with iterated residue field extensions::
 
-    sage: # needs sage.libs.ntl
     sage: R.<u> = Qq(4, 10)
     sage: S.<x> = R[]
     sage: v = GaussValuation(S)
@@ -102,7 +98,6 @@ Run the test suite for another augmentation with iterated residue field extensio
 
 Run the test suite for a rather trivial pseudo-valuation::
 
-    sage: # needs sage.libs.ntl
     sage: R.<u> = Qq(4, 5)
     sage: S.<x> = R[]
     sage: v = GaussValuation(S)
@@ -111,7 +106,6 @@ Run the test suite for a rather trivial pseudo-valuation::
 
 Run the test suite for an infinite valuation which extends the residue field::
 
-    sage: # needs sage.libs.ntl
     sage: R.<u> = Qq(4, 5)
     sage: S.<x> = R[]
     sage: v = GaussValuation(S)
@@ -121,7 +115,6 @@ Run the test suite for an infinite valuation which extends the residue field::
 Run the test suite for an infinite valuation which extends a valuation which
 extends the residue field::
 
-    sage: # needs sage.libs.ntl
     sage: R.<u> = Qq(4, 5)
     sage: S.<x> = R[]
     sage: v = GaussValuation(S)
@@ -242,10 +235,8 @@ class AugmentedValuationFactory(UniqueFactory):
         if mu is not infinity:
             if base_valuation.is_trivial():
                 return parent.__make_element_class__(FinalFiniteAugmentedValuation)(parent, base_valuation, phi, mu)
-            else:
-                return parent.__make_element_class__(NonFinalFiniteAugmentedValuation)(parent, base_valuation, phi, mu)
-        else:
-            return parent.__make_element_class__(InfiniteAugmentedValuation)(parent, base_valuation, phi, mu)
+            return parent.__make_element_class__(NonFinalFiniteAugmentedValuation)(parent, base_valuation, phi, mu)
+        return parent.__make_element_class__(InfiniteAugmentedValuation)(parent, base_valuation, phi, mu)
 
 
 AugmentedValuation = AugmentedValuationFactory("sage.rings.valuation.augmented_valuation.AugmentedValuation")
@@ -268,7 +259,6 @@ class AugmentedValuation_base(InductiveValuation):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.number_field
         sage: K.<u> = CyclotomicField(5)
         sage: R.<x> = K[]
         sage: v = GaussValuation(R, K.valuation(2))
@@ -279,7 +269,6 @@ class AugmentedValuation_base(InductiveValuation):
 
     TESTS::
 
-        sage: # needs sage.rings.number_field
         sage: TestSuite(w).run()    # long time
         sage: TestSuite(ww).run()   # long time
     """
@@ -287,7 +276,6 @@ class AugmentedValuation_base(InductiveValuation):
         r"""
         TESTS::
 
-            sage: # needs sage.libs.ntl
             sage: K.<u> = Qq(4, 5)
             sage: R.<x> = K[]
             sage: v = GaussValuation(R)
@@ -323,7 +311,6 @@ class AugmentedValuation_base(InductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -377,7 +364,6 @@ class AugmentedValuation_base(InductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -415,7 +401,6 @@ class AugmentedValuation_base(InductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -469,7 +454,6 @@ class AugmentedValuation_base(InductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -493,7 +477,6 @@ class AugmentedValuation_base(InductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -516,7 +499,6 @@ class AugmentedValuation_base(InductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -572,7 +554,6 @@ class AugmentedValuation_base(InductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: K = GaussianIntegers().fraction_field()
             sage: R.<x> = K[]
             sage: v = GaussValuation(R, K.valuation(2))
@@ -669,8 +650,7 @@ class AugmentedValuation_base(InductiveValuation):
         if isinstance(other, AugmentedValuation_base):
             if self(other._phi) >= other._mu:
                 return self >= other._base_valuation
-            else:
-                return False
+            return False
 
         return super()._ge_(other)
 
@@ -751,7 +731,6 @@ class AugmentedValuation_base(InductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<u> = QQ[]
             sage: K.<u> = QQ.extension(u^2 + u + 1)
             sage: S.<x> = K[]
@@ -789,7 +768,6 @@ class AugmentedValuation_base(InductiveValuation):
 
         We can change the domain of an augmented valuation even if there is no coercion between rings::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = GaussianIntegers()[]
             sage: v = GaussValuation(R, GaussianIntegers().valuation(2))
             sage: v = v.augmentation(x, 1)
@@ -865,7 +843,6 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
 
         We avoid clashes in generator names::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: v = K.valuation(x^2 + 2)
             sage: R.<y> = K[]
@@ -882,13 +859,12 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
         if self.psi().degree() > 1:
             generator = self._residue_ring_generator_name()
             return base.extension(self.psi(), names=generator)
-        else:
-            # Do not call extension() if self.psi().degree() == 1:
-            # In that case the resulting field appears to be the same as the original field,
-            # however, it is not == to the original field (for finite fields at
-            # least) but a distinct copy (this is a bug in finite field's
-            # extension() implementation.)
-            return base
+        # Do not call extension() if self.psi().degree() == 1:
+        # In that case the resulting field appears to be the same as the original field,
+        # however, it is not == to the original field (for finite fields at
+        # least) but a distinct copy (this is a bug in finite field's
+        # extension() implementation.)
+        return base
 
     def reduce(self, f, check=True, degree_bound=None, coefficients=None, valuations=None):
         r"""
@@ -935,7 +911,6 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
 
         Cases with non-trivial base valuation::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 10)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -957,7 +932,6 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
             x
             sage: w.reduce(f + x + 1)
             x + u1 + 1
-            sage: # needs sage.libs.ntl
             sage: ww = w.augmentation((x^2 + x + u)^2 + 2, 5/3)
             sage: g = ((x^2 + x + u)^2 + 2)^3 / 2^5
             sage: ww.reduce(g)
@@ -1007,7 +981,6 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
 
         A case with non-trivial base valuation::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 10)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1052,7 +1025,6 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
 
         A case with non-trivial base valuation::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 10)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1064,7 +1036,6 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
 
         Verify that :issue:`30305` has been resolved::
 
-            sage: # needs sage.rings.number_field
             sage: R.<T> = QQ[]
             sage: K.<zeta> = NumberField(T^2 + T + 1)
             sage: R.<x> = K[]
@@ -1213,7 +1184,6 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 10)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1309,7 +1279,6 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 10)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1352,7 +1321,6 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 10)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1381,7 +1349,6 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
 
         A more complicated example::
 
-            sage: # needs sage.libs.ntl
             sage: v = GaussValuation(S)
             sage: w = v.augmentation(x^2 + x + u, 1)
             sage: ww = w.augmentation((x^2 + x + u)^2 + 2*x*(x^2 + x + u) + 4*x, 3)
@@ -1459,7 +1426,6 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 10)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1472,7 +1438,6 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
 
         A more complicated example::
 
-            sage: # needs sage.libs.ntl
             sage: v = GaussValuation(S)
             sage: w = v.augmentation(x^2 + x + u, 1)
             sage: ww = w.augmentation((x^2 + x + u)^2 + 2*x*(x^2 + x + u) + 4*x, 3)
@@ -1578,7 +1543,6 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
 
     EXAMPLES::
 
-        sage: # needs sage.libs.ntl
         sage: R.<u> = Qq(4, 5)
         sage: S.<x> = R[]
         sage: v = GaussValuation(S)
@@ -1588,7 +1552,6 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
         r"""
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1607,7 +1570,6 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1626,7 +1588,6 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Zq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1664,7 +1625,6 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1730,7 +1690,6 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1741,7 +1700,6 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
         Check that :issue:`25607` has been resolved, i.e., the coefficients
         in the following example are small::
 
-            sage: # needs sage.libs.ntl sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(x^3 + 6)
             sage: R.<x> = K[]
@@ -1787,22 +1745,21 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
                     0 if valuations[i] > error
                     else self._base_valuation.simplify(c, error=error-i*self._mu, force=force, phiadic=True)
                     for (i, c) in enumerate(coefficients)])(self.phi())
-        else:
-            # We iterate through the coefficients of the polynomial (in the
-            # usual x-adic way) starting from the leading coefficient and try
-            # to replace the coefficient with a simpler one recursively.
-            # This is a quite expensive operation but small coefficients can
-            # speed up the surrounding calls drastically.
-            for i in range(f.degree(), -1, -1):
-                j = i // self.phi().degree()
+        # We iterate through the coefficients of the polynomial (in the
+        # usual x-adic way) starting from the leading coefficient and try
+        # to replace the coefficient with a simpler one recursively.
+        # This is a quite expensive operation but small coefficients can
+        # speed up the surrounding calls drastically.
+        for i in range(f.degree(), -1, -1):
+            j = i // self.phi().degree()
 
-                coefficients = list(islice(f.list(), int(j * self.phi().degree()),
-                                           int(i) + 1))
-                g = self.domain()(coefficients)
-                ng = self._base_valuation.simplify(g, error=error-j*self._mu, force=force, phiadic=False)
-                if g != ng:
-                    f -= (g - ng)*self.phi()**j
-            return f
+            coefficients = list(islice(f.list(), int(j * self.phi().degree()),
+                                       int(i) + 1))
+            g = self.domain()(coefficients)
+            ng = self._base_valuation.simplify(g, error=error-j*self._mu, force=force, phiadic=False)
+            if g != ng:
+                f -= (g - ng)*self.phi()**j
+        return f
 
     def lower_bound(self, f):
         r"""
@@ -1823,7 +1780,6 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1844,8 +1800,7 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
                 if ret is infinity or v < ret:
                     ret = v
             return ret
-        else:
-            return self._base_valuation.lower_bound(f)
+        return self._base_valuation.lower_bound(f)
 
     def upper_bound(self, f):
         r"""
@@ -1865,7 +1820,6 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1965,7 +1919,6 @@ class InfiniteAugmentedValuation(FinalAugmentedValuation, InfiniteInductiveValua
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1982,7 +1935,6 @@ class InfiniteAugmentedValuation(FinalAugmentedValuation, InfiniteInductiveValua
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Zq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -2017,7 +1969,6 @@ class InfiniteAugmentedValuation(FinalAugmentedValuation, InfiniteInductiveValua
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -2060,7 +2011,6 @@ class InfiniteAugmentedValuation(FinalAugmentedValuation, InfiniteInductiveValua
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -2087,7 +2037,6 @@ class InfiniteAugmentedValuation(FinalAugmentedValuation, InfiniteInductiveValua
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -2106,7 +2055,6 @@ class InfiniteAugmentedValuation(FinalAugmentedValuation, InfiniteInductiveValua
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)

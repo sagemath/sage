@@ -203,8 +203,7 @@ class FilteredSimplicialComplex(SageObject):
         """
         if s in self._filtration_dict:
             return self._filtration_dict[s]
-        else:
-            return None
+        return None
 
     __call__ = _get_value
     __getitem__ = _get_value
@@ -339,8 +338,7 @@ class FilteredSimplicialComplex(SageObject):
         s = Simplex(s)
         if filtration_value is None:
             return self._get_value(s)
-        else:
-            self._insert(s, filtration_value)
+        self._insert(s, filtration_value)
 
     def prune(self, threshold):
         r"""
@@ -650,8 +648,7 @@ class FilteredSimplicialComplex(SageObject):
         intervals = self._persistent_homology(field, strict, verbose=verbose)
         if dimension < len(intervals):
             return intervals[dimension][:]
-        else:
-            return []
+        return []
 
     def betti_number(self, k, a, b, field=2, strict=True, verbose=None):
         r"""

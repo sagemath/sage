@@ -156,7 +156,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             sage: len(M.bases())
             9
         """
-        contents = set([e for subset in sets for e in subset])
+        contents = {e for subset in sets for e in subset}
         if groundset is None:
             groundset = contents
         elif not contents.issubset(groundset):

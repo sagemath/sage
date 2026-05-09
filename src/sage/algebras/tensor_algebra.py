@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Tensor Algebras
 
@@ -528,8 +527,7 @@ class TensorAlgebra(CombinatorialFreeModule):
         R = self.base_ring()
         if len(m) % 2 == 1:
             return self.term(m, -R.one())
-        else:
-            return self.term(m, R.one())
+        return self.term(m, R.one())
 
     def coproduct_on_basis(self, m):
         r"""

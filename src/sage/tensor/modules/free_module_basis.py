@@ -19,7 +19,7 @@ REFERENCES:
 - Chap. 10 of R. Godement : *Algebra* [God1968]_
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
 """
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015, 2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
@@ -27,8 +27,8 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.rings.integer_ring import ZZ
@@ -408,8 +408,7 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
                 else:
                     latex_indices = indices
             elif len(latex_indices) != n:
-                raise ValueError(
-                            "latex_indices must contain {} elements".format(n))
+                raise ValueError(f"latex_indices must contain {n} elements")
             symbol0 = latex_symbol + pos
             latex_symbol = [symbol0 + "{" + i + "}" for i in latex_indices]
         # Setting the names
@@ -418,7 +417,7 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
         for i in range(n):
             self._vec[i].set_name(symbol[i], latex_name=latex_symbol[i])
 
-#******************************************************************************
+# ****************************************************************************
 
 
 class FreeModuleCoBasis(Basis_abstract):
@@ -549,7 +548,7 @@ class FreeModuleCoBasis(Basis_abstract):
         """
         return "Dual basis {} on the {}".format(self._name, self._fmodule)
 
-#******************************************************************************
+# ****************************************************************************
 
 
 class FreeModuleBasis(Basis_abstract):
@@ -695,11 +694,11 @@ class FreeModuleBasis(Basis_abstract):
         if isinstance(latex_symbol_dual, list):
             latex_symbol_dual = tuple(latex_symbol_dual)
         return super().__classcall__(cls, fmodule, symbol,
-                                           latex_symbol=latex_symbol,
-                                           indices=indices,
-                                           latex_indices=latex_indices,
-                                           symbol_dual=symbol_dual,
-                                           latex_symbol_dual=latex_symbol_dual)
+                                     latex_symbol=latex_symbol,
+                                     indices=indices,
+                                     latex_indices=latex_indices,
+                                     symbol_dual=symbol_dual,
+                                     latex_symbol_dual=latex_symbol_dual)
 
     def __init__(self, fmodule, symbol, latex_symbol=None, indices=None,
                  latex_indices=None, symbol_dual=None, latex_symbol_dual=None):
@@ -744,9 +743,10 @@ class FreeModuleBasis(Basis_abstract):
         if fmodule._general_linear_group is not None:
             from .comp import KroneckerDelta
             gl = fmodule._general_linear_group
-            gl.one()._components[self] = KroneckerDelta(fmodule._ring, self,
-                                    start_index=fmodule._sindex,
-                                    output_formatter=fmodule._output_formatter)
+            gl.one()._components[self] = KroneckerDelta(
+                fmodule._ring, self,
+                start_index=fmodule._sindex,
+                output_formatter=fmodule._output_formatter)
         # The dual basis:
         self._symbol_dual = symbol_dual
         self._latex_symbol_dual = latex_symbol_dual
@@ -759,12 +759,13 @@ class FreeModuleBasis(Basis_abstract):
             latex_symbol_dual = symbol_dual
         if latex_symbol_dual is None:
             latex_symbol_dual = latex_symbol
-        self._dual_basis = type(self)._cobasis_class(self, symbol_dual,
-                                                latex_symbol=latex_symbol_dual,
-                                                indices=indices,
-                                                latex_indices=latex_indices)
+        self._dual_basis = type(self)._cobasis_class(
+            self, symbol_dual,
+            latex_symbol=latex_symbol_dual,
+            indices=indices,
+            latex_indices=latex_indices)
 
-    ###### Methods to be redefined by derived classes of FreeModuleBasis ######
+    # ##### Methods to be redefined by derived classes of FreeModuleBasis #####
 
     def _repr_(self):
         r"""
@@ -835,7 +836,7 @@ class FreeModuleBasis(Basis_abstract):
                                symbol_dual=symbol_dual,
                                latex_symbol_dual=latex_symbol_dual)
 
-    ###### End of methods to be redefined by derived classes ######
+    # ##### End of methods to be redefined by derived classes #####
 
     def _init_from_family(self, family):
         r"""
@@ -1042,29 +1043,30 @@ class FreeModuleBasis(Basis_abstract):
         for i in fmodule.irange():
             for j in fmodule.irange():
                 the_new_basis._vec[i-si].add_comp(self)[[j]] = \
-                                                  transf.comp(self)[[j,i]]
+                    transf.comp(self)[[j, i]]
         # Components of the new dual-basis elements in the old dual basis:
         for i in fmodule.irange():
             for j in fmodule.irange():
                 the_new_basis._dual_basis._vec[i-si].add_comp(self)[[j]] = \
-                                              inv_transf.comp(self)[[i,j]]
+                    inv_transf.comp(self)[[i, j]]
         # The components of the transformation and its inverse are the same in
         # the two bases:
         for i in fmodule.irange():
             for j in fmodule.irange():
-                transf.add_comp(the_new_basis)[[i,j]] = transf.comp(self)[[i,j]]
-                inv_transf.add_comp(the_new_basis)[[i,j]] = \
-                                              inv_transf.comp(self)[[i,j]]
+                ij = [i, j]
+                transf.add_comp(the_new_basis)[ij] = transf.comp(self)[ij]
+                inv_transf.add_comp(the_new_basis)[ij] = \
+                    inv_transf.comp(self)[ij]
         # Components of the old basis vectors in the new basis:
         for i in fmodule.irange():
             for j in fmodule.irange():
                 self._vec[i-si].add_comp(the_new_basis)[[j]] = \
-                                                   inv_transf.comp(self)[[j,i]]
+                    inv_transf.comp(self)[[j, i]]
         # Components of the old dual-basis elements in the new cobasis:
         for i in fmodule.irange():
             for j in fmodule.irange():
                 self._dual_basis._vec[i-si].add_comp(the_new_basis)[[j]] = \
-                                                       transf.comp(self)[[i,j]]
+                    transf.comp(self)[[i, j]]
         # The automorphism and its inverse are added to the module's dictionary
         # of changes of bases:
         fmodule._basis_changes[(self, the_new_basis)] = transf

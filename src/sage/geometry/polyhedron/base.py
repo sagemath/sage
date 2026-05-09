@@ -208,7 +208,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         Irrational algebraic linear program over an embedded number field::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: p = polytopes.icosahedron()
             sage: lp, x = p.to_linear_program(return_variable=True)
             sage: lp.set_objective(x[0] + x[1] + x[2])
@@ -217,7 +216,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         Same example with floating point::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: lp, x = p.to_linear_program(return_variable=True, base_ring=RDF)
             sage: lp.set_objective(x[0] + x[1] + x[2])
             sage: lp.solve()                                               # tol 1e-5
@@ -225,7 +223,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         Same example with a specific floating point solver::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')
             sage: lp.set_objective(x[0] + x[1] + x[2])
             sage: lp.solve()                                               # tol 1e-8
@@ -233,7 +230,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         Irrational algebraic linear program over `AA`::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: p = polytopes.icosahedron(base_ring=AA)
             sage: lp, x = p.to_linear_program(return_variable=True)
             sage: lp.set_objective(x[0] + x[1] + x[2])
@@ -279,8 +275,7 @@ class Polyhedron_base(Polyhedron_base7):
 
         if return_variable:
             return p, x
-        else:
-            return p
+        return p
 
     def boundary_complex(self):
         """
@@ -295,7 +290,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         The boundary complex of the octahedron::
 
-            sage: # needs sage.graphs
             sage: oc = polytopes.octahedron()
             sage: sc_oc = oc.boundary_complex()
             sage: fl_oc = oc.face_lattice()                                             # needs sage.combinat
@@ -335,8 +329,7 @@ class Polyhedron_base(Polyhedron_base7):
                             for i in range(self.n_Hrepresentation())
                             if self.Hrepresentation()[i].is_inequality()]
             return SimplicialComplex(ineq_indices, maximality_check=False)
-        else:
-            raise NotImplementedError("this function is only implemented for simplicial polytopes")
+        raise NotImplementedError("this function is only implemented for simplicial polytopes")
 
     @cached_method
     def center(self):
@@ -362,12 +355,11 @@ class Polyhedron_base(Polyhedron_base7):
         """
         if self.dim() == 0:
             return self.vertices()[0].vector()
-        else:
-            vertex_sum = vector(self.base_ring(), [0] * self.ambient_dim())
-            for v in self.vertex_generator():
-                vertex_sum += v.vector()
-            vertex_sum.set_immutable()
-            return vertex_sum / self.n_vertices()
+        vertex_sum = vector(self.base_ring(), [0] * self.ambient_dim())
+        for v in self.vertex_generator():
+            vertex_sum += v.vector()
+        vertex_sum.set_immutable()
+        return vertex_sum / self.n_vertices()
 
     @cached_method
     def radius_square(self):
@@ -579,10 +571,8 @@ class Polyhedron_base(Polyhedron_base7):
         if certificate:
             if is_inscribed:
                 return (True, circumcenter)
-            else:
-                return (False, None)
-        else:
-            return is_inscribed
+            return (False, None)
+        return is_inscribed
 
     def hyperplane_arrangement(self):
         """
@@ -699,10 +689,9 @@ class Polyhedron_base(Polyhedron_base7):
             raise NotImplementedError('normal fan handles only polytopes over the rationals')
         if direction == 'inner':
             return NormalFan(self)
-        elif direction == 'outer':
+        if direction == 'outer':
             return NormalFan(-self)
-        else:
-            raise TypeError("the direction should be 'inner' or 'outer'")
+        raise TypeError("the direction should be 'inner' or 'outer'")
 
     @cached_method
     def face_fan(self):
@@ -964,7 +953,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         This example tests the functionality for additional elements::
 
-            sage: # needs sage.groups sage.rings.real_mpfr
             sage: C = polytopes.cross_polytope(2)
             sage: G = C.restricted_automorphism_group(output='permutation')
             sage: conj_reps = G.conjugacy_classes_representatives()
@@ -1132,7 +1120,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         Algebraic polyhedron::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron(); P
             A 3-dimensional polyhedron
              in (Number Field in sqrt5 with defining polynomial x^2 - 5

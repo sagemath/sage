@@ -109,22 +109,20 @@ class Histogram(GraphicPrimitive):
         if not hasattr(self.datalist[0], '__contains__'):
             ydata, xdata = numpy.histogram(self.datalist, **opt)
             return minmax_data(xdata, [0]+list(ydata), dict=True)
-        else:
-            m = {'xmax': 0, 'xmin': 0, 'ymax': 0, 'ymin': 0}
-            if not options.get('stacked'):
-                for d in self.datalist:
-                    ydata, xdata = numpy.histogram(d, **opt)
-                    m['xmax'] = max([m['xmax']] + list(xdata))
-                    m['xmin'] = min([m['xmin']] + list(xdata))
-                    m['ymax'] = max([m['ymax']] + list(ydata))
-                return m
-            else:
-                for d in self.datalist:
-                    ydata, xdata = numpy.histogram(d, **opt)
-                    m['xmax'] = max([m['xmax']] + list(xdata))
-                    m['xmin'] = min([m['xmin']] + list(xdata))
-                    m['ymax'] = m['ymax'] + max(list(ydata))
-                return m
+        m = {'xmax': 0, 'xmin': 0, 'ymax': 0, 'ymin': 0}
+        if not options.get('stacked'):
+            for d in self.datalist:
+                ydata, xdata = numpy.histogram(d, **opt)
+                m['xmax'] = max([m['xmax']] + list(xdata))
+                m['xmin'] = min([m['xmin']] + list(xdata))
+                m['ymax'] = max([m['ymax']] + list(ydata))
+            return m
+        for d in self.datalist:
+            ydata, xdata = numpy.histogram(d, **opt)
+            m['xmax'] = max([m['xmax']] + list(xdata))
+            m['xmin'] = min([m['xmin']] + list(xdata))
+            m['ymax'] = m['ymax'] + max(list(ydata))
+        return m
 
     def _allowed_options(self):
         """
@@ -179,8 +177,7 @@ class Histogram(GraphicPrimitive):
         L = len(self.datalist)
         if not hasattr(self.datalist[0], '__contains__'):
             return f"Histogram defined by a data list of size {L}"
-        else:
-            return f"Histogram defined by {L} data lists"
+        return f"Histogram defined by {L} data lists"
 
     def _render_on_subplot(self, subplot):
         """

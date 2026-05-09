@@ -289,6 +289,9 @@ def Q6(groundset='abcdef'):
     A = Matrix(F, [[1, 0, 0, 1, 0, 1], [0, 1, 0, 1, 1, x], [0, 0, 1, 0, 1, 1]])
     M = QuaternaryMatroid(A, groundset)
     M = _rename_and_relabel(M, "Q6")
+    pos = dict(zip(groundset, [(1, -1), (-1, 0), (1, 1),
+                               (0, -0.5), (0, 0.5), (1.5, 0)]))
+    M._fix_positions(pos_dict=pos)
     return M
 
 
@@ -322,6 +325,9 @@ def P6(groundset=None):
     CC = {2: ['abc'], 3: ['abcdef']}
     M = Matroid(circuit_closures=CC)
     M = _rename_and_relabel(M, "P6", groundset)
+    pos = dict(zip(groundset or 'abcdef',
+                   [(-1, 0), (0, 0), (1, 0), (-0.8, 0.7), (0, 1), (0.8, 0.7)]))
+    M._fix_positions(pos_dict=pos)
     return M
 
 
@@ -392,6 +398,9 @@ def R6(groundset='abcdef'):
     )
     M = TernaryMatroid(A, groundset)
     M = _rename_and_relabel(M, "R6")
+    pos = dict(zip(groundset, [(-1, 0), (1, 0), (1, 1),
+                               (-1, 1), (0, 0), (0, 1)]))
+    M._fix_positions(pos_dict=pos)
     return M
 
 
@@ -622,6 +631,9 @@ def P7(groundset='abcdefg'):
     )
     M = TernaryMatroid(A, groundset)
     M = _rename_and_relabel(M, "P7")
+    pos = dict(zip(groundset, [(0, 1), (-1, -1), (1, -1), (0, 0), (-0.5, 0),
+                               (0.5, 0), (0, -1)]))
+    M._fix_positions(pos_dict=pos)
     return M
 
 
@@ -5029,16 +5041,18 @@ def BetsyRoss(groundset=None):
            'cjk', 'dfk', 'dgh', 'dij', 'efj', 'egk', 'ehi']
     M = Matroid(rank=3, nonspanning_circuits=NSC)
     M = _rename_and_relabel(M, "BetsyRoss", groundset)
-    pos = {'a': (0, 1.61000000000000),
-           'c': (0.946334256190882, -1.30251736094367),
-           'b': (1.53120099123520, 0.497517360943665),
-           'e': (-1.53120099123520, 0.497517360943665),
-           'd': (-0.946334256190882, -1.30251736094367),
-           'g': (0.590718333102580, -0.191936021350899),
-           'f': (0.365084007635076, 0.502495027562079),
-           'i': (-0.590718333102580, -0.191936021350899),
-           'h': (0, -0.621118012422360),
-           'k': (0, 0), 'j': (-0.365084007635076, 0.502495027562079)}
+    pos = dict(zip(groundset or 'abcdefghijk',
+                   [(0, 1.61000000000000),
+                    (1.53120099123520, 0.497517360943665),
+                    (0.946334256190882, -1.30251736094367),
+                    (-0.946334256190882, -1.30251736094367),
+                    (-1.53120099123520, 0.497517360943665),
+                    (0.365084007635076, 0.502495027562079),
+                    (0.590718333102580, -0.191936021350899),
+                    (0, -0.621118012422360),
+                    (-0.590718333102580, -0.191936021350899),
+                    (-0.365084007635076, 0.502495027562079),
+                    (0, 0)]))
     M._fix_positions(pos_dict=pos)
     return M
 
@@ -5254,7 +5268,7 @@ def _rename_and_relabel(M, name=None, groundset=None):
                 "the groundset should be of size %s (%s given)" %
                 (len(M.groundset()), len(groundset))
             )
-        M = M.relabel(dict(zip(M.groundset(), groundset)))
+        M = M.relabel(dict(zip(sorted(M.groundset()), groundset)))
 
     if name is not None:
         M.rename(name + ": " + repr(M))

@@ -39,8 +39,7 @@ def coeff_repr(c, is_latex=False):
     if s.find("+") != -1 or s.find("-") != -1:
         if is_latex:
             return "\\left(%s\\right)" % s
-        else:
-            return "(%s)" % s
+        return "(%s)" % s
     return s
 
 
@@ -155,11 +154,11 @@ def repr_lincomb(terms, is_latex=False, scalar_mult='*', strip_one=False,
     if scalar_mult is None:
         scalar_mult = "" if is_latex else "*"
 
-    for (monomial, c) in terms:
+    for monomial, c in terms:
         if c != 0:
             coeff = coeff_repr(c)
             negative = False
-            if len(coeff) and coeff[0] == "-":
+            if coeff and coeff[0] == "-":
                 negative = True
             try:
                 if c < 0:
@@ -185,7 +184,7 @@ def repr_lincomb(terms, is_latex=False, scalar_mult='*', strip_one=False,
                     else:
                         sign = " + "
                 b = repr_monomial(monomial)
-                if len(b):
+                if b:
                     if coeff != "":
                         if b == "1" and strip_one:
                             b = ""
@@ -198,5 +197,4 @@ def repr_lincomb(terms, is_latex=False, scalar_mult='*', strip_one=False,
         # this can happen only if are only terms with coeff_repr(c) == "0"
     # elif s == "":
         # return "1"  # is empty string representation invalid?
-    else:
-        return s
+    return s

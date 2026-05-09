@@ -1,7 +1,7 @@
 lcalc = dependency(
   'lcalc',
   version: '>= 2.0.0',
-  required: not is_windows,
+  required: false,
   disabler: true,
 )
 

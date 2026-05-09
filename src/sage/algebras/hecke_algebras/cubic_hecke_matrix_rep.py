@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 r"""
 Cubic Hecke matrix representations
 
@@ -509,7 +508,7 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
         """
         if isinstance(item, AbsIrreducibeRep):
             return self._get_block(self._irr_to_ind(item))
-        elif isinstance(item, (Integer, int)):
+        if isinstance(item, (Integer, int)):
             return self._get_block(item)
 
         return super().__getitem__(item)

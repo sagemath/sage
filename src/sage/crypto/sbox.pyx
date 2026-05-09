@@ -414,7 +414,7 @@ cdef class SBox(SageObject):
             (1, 1, 0)
 
             sage: id = SBox(range(8))
-            sage: all([x == id(x) for x in k])
+            sage: all(x == id(x) for x in k)
             True
 
         Some examples for inputs that throw an :exc:`TypeError`::
@@ -526,7 +526,7 @@ cdef class SBox(SageObject):
         """
         return self.n
 
-    def is_permutation(self):
+    def is_permutation(self) -> bool:
         r"""
         Return ``True`` if this S-Box is a permutation.
 
@@ -544,8 +544,7 @@ cdef class SBox(SageObject):
         if self.m != self.n:
             return False
         cdef Py_ssize_t m = self.m
-        cdef Py_ssize_t i
-        return len(set([self._S_list[i] for i in range(1 << m)])) == 1 << m
+        return len(set(self._S_list)) == 1 << m
 
     def __iter__(self):
         """
@@ -590,7 +589,7 @@ cdef class SBox(SageObject):
             ...
             IndexError: list index out of range
             sage: from sage.crypto.sboxes import PRESENT
-            sage: PRESENT.derivative(1).max_degree() < PRESENT.max_degree()             # needs sage.rings.polynomial.pbori
+            sage: PRESENT.derivative(1).max_degree() < PRESENT.max_degree()             # needs brial
             True
         """
         from sage.structure.element import Vector
@@ -1319,11 +1318,11 @@ cdef class SBox(SageObject):
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox([7,6,0,4,2,5,1,3])
             sage: f3 = S.component_function(3)
-            sage: f3.algebraic_normal_form()                                            # needs sage.rings.polynomial.pbori
+            sage: f3.algebraic_normal_form()                                            # needs brial
             x0*x1 + x0*x2 + x0 + x2
 
             sage: f5 = S.component_function([1, 0, 1])
-            sage: f5.algebraic_normal_form()                                            # needs sage.rings.polynomial.pbori
+            sage: f5.algebraic_normal_form()                                            # needs brial
             x0*x2 + x0 + x1*x2
 
         TESTS::
@@ -1707,7 +1706,7 @@ cdef class SBox(SageObject):
 
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox([12,5,6,11,9,0,10,13,3,14,15,8,4,7,1,2])
-            sage: S.max_degree()                                                        # needs sage.rings.polynomial.pbori
+            sage: S.max_degree()                                                        # needs brial
             3
         """
         ret = ZZ.zero()
@@ -1727,7 +1726,7 @@ cdef class SBox(SageObject):
 
             sage: from sage.crypto.sbox import SBox
             sage: S = SBox([12,5,6,11,9,0,10,13,3,14,15,8,4,7,1,2])
-            sage: S.min_degree()                                                        # needs sage.rings.polynomial.pbori
+            sage: S.min_degree()                                                        # needs brial
             2
         """
         ret = ZZ(self.m)
@@ -1836,7 +1835,7 @@ cdef class SBox(SageObject):
             (a + 1)*x^6 + (a^2 + a + 1)*x^5 + (a^2 + a)*x^4
              + (a^2 + 1)*x^3 + a*x^2 + a*x
 
-            sage: all([S(x) == S_poly(x) for x in S_poly.base_ring()])
+            sage: all(S(x) == S_poly(x) for x in S_poly.base_ring())
             True
 
             sage: S = SBox(0,3,2,1)

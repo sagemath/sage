@@ -89,12 +89,11 @@ except Exception:
   if pari.found() and not meson.is_cross_build()
     # Verify PARI version
     pari_version_code = '''
-    #include <stdio.h>
     #include <pari/pari.h>
     int main(void) {
       pari_init(1000000, 2);
       GEN v = pari_version(), M = gel(v,1), m = gel(v,2), p = gel(v,3);
-      printf("%ld.%ld.%ld", itos(M), itos(m), itos(p));
+      pari_printf("%ld.%ld.%ld", itos(M), itos(m), itos(p));
       pari_close();
       return 0;
     }
@@ -203,7 +202,7 @@ ec = dependency(
   required: get_option('eclib'),
   disabler: true,
 )
-ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
+ecm = cc.find_library('ecm', required: false, disabler: true)
 gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
 fflas = dependency(
   'fflas-ffpack',

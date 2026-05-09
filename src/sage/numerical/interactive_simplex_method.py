@@ -410,14 +410,13 @@ def variable(R, v):
         if len(matches) > 1:
             raise ValueError("the given index is ambiguous")
         return matches[0]
-    else:
-        try:
-            v = R(v)
-            if v in R.gens():
-                return v
-        except TypeError:
-            pass
-        raise ValueError("cannot interpret given data as a variable")
+    try:
+        v = R(v)
+        if v in R.gens():
+            return v
+    except TypeError:
+        pass
+    raise ValueError("cannot interpret given data as a variable")
 
 
 available_styles = {
@@ -875,7 +874,7 @@ class InteractiveLPProblem(SageObject):
         A, b, c, x = self._Abcx
         if F.n_vertices() == 0:
             return (None, None)
-        elif c.is_zero():
+        if c.is_zero():
             M, S = 0, F.vertices()[0]
         elif self._problem_type == "max":
             if any(c * vector(R, ray) > 0 for ray in F.rays()) or \
@@ -2723,10 +2722,9 @@ class LPAbstractDictionary(SageObject):
         leaving = "Leaving: ${}$. ".format(latex(self.leaving()))
         if direction == "primal":
             return HtmlFragment(entering + leaving)
-        elif direction == "dual":
+        if direction == "dual":
             return HtmlFragment(leaving + entering)
-        else:
-            raise ValueError("direction must be either primal or dual")
+        raise ValueError("direction must be either primal or dual")
 
     def _repr_(self):
         r"""
@@ -4642,10 +4640,9 @@ class LPRevisedDictionary(LPAbstractDictionary):
         m, n = P.m(), P.n()
         if k == 0:
             return vector(R, [-1] * m)
-        elif k <= n:
+        if k <= n:
             return P.A().column(k - 1)
-        else:
-            return identity_matrix(R, m).column(k - n - 1)
+        return identity_matrix(R, m).column(k - n - 1)
 
     def A_N(self):
         r"""
@@ -4937,10 +4934,9 @@ class LPRevisedDictionary(LPAbstractDictionary):
             c_B = vector(R, P.m())
             c_B[BB.index(0)] = -1
             return c_B
-        else:
-            c_D = P.c()
-            n = P.n()
-            return vector(R, [c_D[k - 1] if k <= n else 0 for k in BB])
+        c_D = P.c()
+        n = P.n()
+        return vector(R, [c_D[k - 1] if k <= n else 0 for k in BB])
 
     def c_N(self):
         r"""
@@ -4963,10 +4959,9 @@ class LPRevisedDictionary(LPAbstractDictionary):
         R = P.base_ring()
         if 0 in self.basic_indices():
             return vector(R, n + 1)
-        else:
-            c_D = P.c()
-            return vector(R, (c_D[k - 1] if k <= n else 0
-                              for k in self.nonbasic_indices()))
+        c_D = P.c()
+        return vector(R, (c_D[k - 1] if k <= n else 0
+                          for k in self.nonbasic_indices()))
 
     def column_coefficients(self, v):
         r"""

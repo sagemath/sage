@@ -204,27 +204,27 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         //        block   2 : ordering C
 
     When ``Zmod`` is used, use a different Singular type
-    (note that the print is wrong, the field in fact doesn't have zero-divisors)::
+    (note that the print is wrong in older versions of singular, the field in fact doesn't have zero-divisors)::
 
         sage: R = PolynomialRing(Zmod(2), ("a", "b"), implementation="singular"); print(sing_print(R))
-        polynomial ring, over a ring (with zero-divisors), global ordering
-        // coefficients: ZZ/(2)...
+        polynomial ring, over a ..., global ordering
+        // coefficients: ZZ/...(2)...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
         sage: R = PolynomialRing(Zmod(3), ("a", "b"), implementation="singular"); print(sing_print(R))
-        polynomial ring, over a ring (with zero-divisors), global ordering
-        // coefficients: ZZ/(3)...
+        polynomial ring, over a ..., global ordering
+        // coefficients: ZZ/...(3)...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
 
-    Large prime (note that the print is wrong, the field in fact doesn't have zero-divisors)::
+    Large prime (note that the print is wrong in older versions of singular, the field in fact doesn't have zero-divisors)::
 
         sage: R = PolynomialRing(GF(2^128+51), ("a", "b"), implementation="singular"); print(sing_print(R))
-        polynomial ring, over a ring (with zero-divisors), global ordering
+        polynomial ring, over a ..., global ordering
         // coefficients: ZZ/bigint(340282366920938463463374607431768211507)...
         // number of vars : 2
         //        block   1 : ordering dp

@@ -551,9 +551,8 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         if name in self._screens:
             if list(screen) == self._screens[name]._screen and list(rad) == self._screens[name]._rad:
                 return self._screens[name]
-            else:
-                raise ValueError("a different screen distribution with the "
-                                 "same name had already been set")
+            raise ValueError("a different screen distribution with the "
+                             "same name had already been set")
         if len(screen)+len(rad) != self._dim:
             raise ValueError("total length screen+rad must be {}".format(self._dim))
         frame = self.default_frame()
@@ -1617,8 +1616,7 @@ class Screen(VectorFieldModule):
             xi = rad[0]
             xi.set_name(name='xi', latex_name=r'\xi')
             return xi
-        else:
-            return rad
+        return rad
 
     def rigging(self):
         r"""

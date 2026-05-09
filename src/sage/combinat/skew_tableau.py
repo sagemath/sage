@@ -26,29 +26,29 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import factorial
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.sets_cat import Sets
+from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat.partition import Partition
+from sage.combinat.skew_partition import SkewPartition, SkewPartitions
+from sage.combinat.tableau import (
+    SemistandardTableau,
+    StandardTableau,
+    Tableau,
+    Tableaux,
+)
+from sage.combinat.words.words import Words
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_import import lazy_import
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.sets_cat import Sets
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-
+from sage.rings.infinity import PlusInfinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.misc import factorial
-from sage.rings.infinity import PlusInfinity
-
 from sage.structure.list_clone import ClonableList
-from sage.combinat.partition import Partition
-from sage.combinat.tableau import (Tableau, Tableaux,
-                                   StandardTableau, SemistandardTableau)
-from sage.combinat.skew_partition import SkewPartition, SkewPartitions
-from sage.combinat.integer_vector import IntegerVectors
-from sage.combinat.words.words import Words
-
-from sage.misc.persist import register_unpickle_override
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.matrix.special', 'zero_matrix')
 lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
@@ -875,8 +875,7 @@ class SkewTableau(ClonableList,
         else:
             if not inner_corners:
                 return self
-            else:
-                corner = inner_corners[0]
+            corner = inner_corners[0]
 
         spotl, spotc = corner
         while (spotl, spotc) not in outer_corners:
@@ -1009,8 +1008,7 @@ class SkewTableau(ClonableList,
         else:
             if not outer_outisde_corners:
                 return self
-            else:
-                corner = outer_outisde_corners[0]
+            corner = outer_outisde_corners[0]
 
         i, j = corner
 
@@ -1231,11 +1229,10 @@ class SkewTableau(ClonableList,
         # attempt to return a skew tableau of the same type as self
         if tab in self.parent():
             return self.parent()(tab)
-        else:
-            try:
-                return self.parent().Element(tab)
-            except ValueError:
-                return SkewTableau(tab)
+        try:
+            return self.parent().Element(tab)
+        except ValueError:
+            return SkewTableau(tab)
 
     def anti_restrict(self, n):
         """
@@ -2188,12 +2185,11 @@ class StandardSkewTableaux(SkewTableaux):
         """
         if skp is None:
             return StandardSkewTableaux_all()
-        elif isinstance(skp, (int, Integer)):
+        if isinstance(skp, (int, Integer)):
             return StandardSkewTableaux_size(skp)
-        elif skp in SkewPartitions():
+        if skp in SkewPartitions():
             return StandardSkewTableaux_shape(skp)
-        else:
-            raise TypeError("invalid argument")
+        raise TypeError("invalid argument")
 
     def __contains__(self, x):
         """
@@ -2552,14 +2548,12 @@ class SemistandardSkewTableaux(SkewTableaux):
         if isinstance(p, (int, Integer)):
             if mu is None:
                 return SemistandardSkewTableaux_size(p, max_entry)
-            else:
-                return SemistandardSkewTableaux_size_weight(p, mu)
+            return SemistandardSkewTableaux_size_weight(p, mu)
 
         if p in SkewPartitions():
             if mu is None:
                 return SemistandardSkewTableaux_shape(p, max_entry)
-            else:
-                return SemistandardSkewTableaux_shape_weight(p, mu)
+            return SemistandardSkewTableaux_shape_weight(p, mu)
 
         raise ValueError("invalid input")
 
@@ -2948,36 +2942,3 @@ class SemistandardSkewTableaux_shape_weight(SemistandardSkewTableaux):
         from .ribbon_tableau import RibbonTableaux_shape_weight_length
         for x in RibbonTableaux_shape_weight_length(self.p, self.mu, 1):
             yield self.element_class(self, x)
-
-
-class SkewTableau_class(SkewTableau):
-    """
-    This exists solely for unpickling ``SkewTableau_class`` objects.
-    """
-
-    def __setstate__(self, state):
-        r"""
-        Unpickle old ``SkewTableau_class`` objects.
-
-        TESTS::
-
-            sage: loads(b'x\x9ck`J.NLO\xd5K\xce\xcfM\xca\xccK,\xd1+H,*\xc9,\xc9\xcc\xcf\xe3\n\x80\xb1\xe2\x93s\x12\x8b\x8b\xb9\n\x195\x1b\x0b\x99j\x0b\x995BY\xe33\x12\x8b3\nY\xfc\x80\xac\x9c\xcc\xe2\x92B\xd6\xd8B6\r\x88IE\x99y\xe9\xc5z\x99y%\xa9\xe9\xa9E\\\xb9\x89\xd9\xa9\xf10N!{(\xa3qkP!G\x06\x90a\x04dp\x82\x18\x86@\x06Wji\x92\x1e\x00x0.\xb5')
-            [3, 2, 1]
-            sage: loads(dumps( SkewTableau([[1,1], [3,2,1]]) ))  # indirect doctest
-            [[1, 1], [3, 2, 1]]
-        """
-        self.__class__ = SkewTableau
-        self.__init__(SkewTableaux(), state['_list'])
-
-
-# October 2012: fixing outdated pickles which use the classes being deprecated
-
-
-register_unpickle_override('sage.combinat.skew_tableau', 'StandardSkewTableaux_n', StandardSkewTableaux_size)
-register_unpickle_override('sage.combinat.skew_tableau', 'SemistandardSkewTableaux_n', SemistandardSkewTableaux_size)
-register_unpickle_override('sage.combinat.skew_tableau', 'SemistandardSkewTableaux_nmu', SemistandardSkewTableaux_size_weight)
-register_unpickle_override('sage.combinat.skew_tableau', 'SemistandardSkewTableaux_p', SemistandardSkewTableaux_shape)
-register_unpickle_override('sage.combinat.skew_tableau', 'SemistandardSkewTableaux_pmu', SemistandardSkewTableaux_shape_weight)
-# July 2013: But wait, there more!
-register_unpickle_override('sage.combinat.skew_tableau', 'StandardSkewTableaux_skewpartition', StandardSkewTableaux_shape)
-register_unpickle_override('sage.combinat.skew_tableau', 'SkewTableau_class', SkewTableau_class)
