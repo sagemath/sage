@@ -142,21 +142,19 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from sage.structure.global_options import GlobalOptions
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.combinat.combinat import CombinatorialElement
+from sage.combinat.composition import Compositions
+from sage.combinat.partition import Partitions, _Partitions
+from sage.combinat.tableau import Tableaux
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set
-from sage.misc.lazy_import import lazy_import
-
-from sage.combinat.combinat import CombinatorialElement
-from sage.combinat.partition import Partitions, _Partitions
-from sage.combinat.tableau import Tableaux
-from sage.combinat.composition import Compositions
+from sage.structure.global_options import GlobalOptions
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.graphs.digraph', 'DiGraph')
 lazy_import('sage.matrix.matrix_space', 'MatrixSpace')
@@ -357,23 +355,15 @@ class SkewPartition(CombinatorialElement):
 
     def __setstate__(self, state):
         r"""
-        In order to maintain backwards compatibility and be able to unpickle
-        a old pickle from ``SkewPartition_class`` we have to override the
-        default ``__setstate__``.
+        Set state from pickling.
 
         EXAMPLES::
 
-            sage: loads(b'x\x9c\x85P\xcbN\xc2@\x14\r\x08>\x06\xf1\xfd~\xbb+.\x9a\xa8\xdf\xe0\xc2McJ\xba4\x93i\xb9v&\xb4\x03w\x1e!,Ht!\xfe\xb6Sh1\xb0qw\xce}\x9c{\xee\xf9\xac\'\x9a\xa5\xe0\'\x83<\x16\x92\x19_\xf7aD\x87L\x19a\xc4@\x92\xae\xa3o\x15\xa3I\xc6\xb4&X\xeb|a}\x82k^\xd4\xa4\x9ci\x8e\x8d\xc0\xa1Lh\x83\xcdw\\\xf7\xe6\x92\xda(\x9b\x18\xab\xc0\xef\x8d%\xcbER\xae/3\xdc\xf0\xa2\x87\xc5\x05MY\x96\xd1\x910\x9c&\xcc@:Pc\x1f2\xc8A\x9a\xf9<n\xae\xf8\xfd\xb3\xba\x10!\xb8\x95P\x1a[\x91\x19!)%)\x18f\x8c"HV\x8dY)\xd0\x02U0T\xa0\xdd\r6[\xb7RA\xcf&@\xb0U\x1e\x9b[\x11\xa0}!?\x84\x14\x06(H\x9b\x83r\x8d\x1e\xd5`4y-\x1b/\x8bz\xb7(\xe3vg\xf2\x83\xed\x10w\xa2\xf6\xf2#\xbb\xd3\x10\xf7\xa6\xb8\x1f\x04\x81\t\xf1\xc0Ez\xc8[\xff?7K\x88\xe0Q!{\x1c\xe2\xc9\x04O=\xde\x08\xb8\x0b\xfe\xac\x0c^\t\x99\x16N\x9diP$g}\xa0\x15\xc1\xf3\xa8\xf6\xfc\x1d\xe2\x05w\xe0\xc9\x81\xcb\x02<:p\x05v\x1a\xf3\xc2\xc65w\xa27\x95\xe8\xadWM\xdcU\xe0\xbe\x18\x05\x1b\xfb\xbf\x8e\x7f\xcc\xbb')
-            [3, 2, 1] / [1, 1]
             sage: loads(dumps( SkewPartition([[3,2,1], [1,1]]) ))
             [3, 2, 1] / [1, 1]
         """
-        if isinstance(state, dict):   # for old pickles from SkewPartition_class
-            self._set_parent(SkewPartitions())
-            self.__dict__ = state
-        else:
-            self._set_parent(state[0])
-            self.__dict__ = state[1]
+        self._set_parent(state[0])
+        self.__dict__ = state[1]
 
     def ferrers_diagram(self):
         """
@@ -722,31 +712,30 @@ class SkewPartition(CombinatorialElement):
 
         if l_out == 0:
             return True
-        else:
-            # Find the least u for which lam[u]>mu[u], if it exists
-            # If it does not exist then u will equal l_out
-            u = 0
-            u_test = True
-            while u_test:
-                if u >= l_out or lam[u] > mu[u]:
-                    u_test = False
-                else:
-                    u += 1
+        # Find the least u for which lam[u]>mu[u], if it exists
+        # If it does not exist then u will equal l_out
+        u = 0
+        u_test = True
+        while u_test:
+            if u >= l_out or lam[u] > mu[u]:
+                u_test = False
+            else:
+                u += 1
 
-            # Find the least v strictly greater than u for which
-            # lam[v] != mu[v-1]+1
-            v = u + 1
-            v_test = True
-            while v_test:
-                if v >= l_out or lam[v] != mu[v-1] + 1:
-                    v_test = False
-                else:
-                    v += 1
+        # Find the least v strictly greater than u for which
+        # lam[v] != mu[v-1]+1
+        v = u + 1
+        v_test = True
+        while v_test:
+            if v >= l_out or lam[v] != mu[v-1] + 1:
+                v_test = False
+            else:
+                v += 1
 
-            # Check if lam[i]==mu[i] for all i >= v
-            for i in range(v, l_out):
-                if lam[i] != mu[i]:
-                    return False
+        # Check if lam[i]==mu[i] for all i >= v
+        for i in range(v, l_out):
+            if lam[i] != mu[i]:
+                return False
 
         return True
 
@@ -804,8 +793,7 @@ class SkewPartition(CombinatorialElement):
         if inner == []:
             if outer == []:
                 return []
-            else:
-                return [(0,0)]
+            return [(0,0)]
         icorners = [(0, inner[0])]
         nn = len(inner)
         for i in range(1,nn):
@@ -1127,8 +1115,7 @@ class SkewPartition(CombinatorialElement):
             rqinner = self.inner().quotient(k)
             rqouter = self.outer().quotient(k)
             return [ SkewPartitions()([rqouter[i],rqinner[i]]) for i in range(k) ]
-        else:
-            raise ValueError("quotient map is only defined for skew partitions with inner and outer partitions having the same core")
+        raise ValueError("quotient map is only defined for skew partitions with inner and outer partitions having the same core")
 
     def rows_intersection_set(self):
         r"""
@@ -1341,8 +1328,7 @@ def row_lengths_aux(skp):
     """
     if skp[0] == []:
         return []
-    else:
-        return [x[0] - x[1] for x in zip(skp[0], skp[1])]
+    return [x[0] - x[1] for x in zip(skp[0], skp[1])]
 
 
 class SkewPartitions(UniqueRepresentation, Parent):
@@ -1385,10 +1371,9 @@ class SkewPartitions(UniqueRepresentation, Parent):
             if row_lengths is not None:
                 raise ValueError("you can only specify one of n or row_lengths")
             return SkewPartitions_n(n, overlap)
-        elif row_lengths is not None:
+        if row_lengths is not None:
             return SkewPartitions_rowlengths(row_lengths, overlap)
-        else:
-            return SkewPartitions_all()
+        return SkewPartitions_all()
 
     def __init__(self, is_infinite=False):
         """
@@ -2043,7 +2028,3 @@ class SkewPartitions_rowlengths(SkewPartitions):
         for sskp in SkewPartitions(row_lengths=self.co[:-1], overlap=self.overlap):
             for sp in self._from_row_lengths_aux(sskp, self.co[-2], self.co[-1], self.overlap):
                 yield self.element_class(self, sp)
-
-
-from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.skew_partition', 'SkewPartition_class', SkewPartition)

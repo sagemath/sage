@@ -27,6 +27,7 @@ from itertools import product
 
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.composition import Composition
+from sage.combinat.integer_vector import IntegerVector
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutations
 from sage.combinat.skew_partition import SkewPartition
@@ -346,15 +347,14 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             if r == 0:
                 return "".join(r'\cline{%s-%s}' % (i+1, i+1)
                                for i, j in enumerate(array[0]) if j is not None)
-            elif r == len(array):
+            if r == len(array):
                 return r"\\" + "".join(r'\cline{%s-%s}' % (i+1, i+1)
                                        for i, j in enumerate(array[r-1]) if j is not None)
-            else:
-                out = r"\\" + "".join(r'\cline{%s-%s}' % (i+1, i+1)
-                                      for i, j in enumerate(array[r-1]) if j is not None)
-                out += "".join(r'\cline{%s-%s}' % (i+1, i+1)
-                               for i, j in enumerate(array[r]) if j is not None)
-                return out
+            out = r"\\" + "".join(r'\cline{%s-%s}' % (i+1, i+1)
+                                  for i, j in enumerate(array[r-1]) if j is not None)
+            out += "".join(r'\cline{%s-%s}' % (i+1, i+1)
+                           for i, j in enumerate(array[r]) if j is not None)
+            return out
 
         tex = r'\raisebox{-.6ex}{$\begin{array}[b]{*{%s}{p{0.6ex}}}' % (max(map(len, array)))
         tex += end_line(0)+'\n'
@@ -688,8 +688,7 @@ class Diagrams(UniqueRepresentation, Parent):
             O . .
             O O O
 
-            sage: from sage.combinat.composition import Composition
-            sage: a = Composition([4,2,0,2,4])
+            sage: a = IntegerVectors()([4,2,0,2,4])
             sage: Dgms(a).pp()
             O O O O
             O O . .
@@ -711,7 +710,7 @@ class Diagrams(UniqueRepresentation, Parent):
         """
         if isinstance(cells, Polyomino):
             return self.from_polyomino(cells)
-        if isinstance(cells, Composition):
+        if isinstance(cells, (Composition, IntegerVector)):
             return self.from_composition(cells)
         if isinstance(cells, Matrix):
             return self.from_zero_one_matrix(cells)
@@ -774,7 +773,7 @@ class Diagrams(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: alpha = Composition([3,0,2,1,4,4])
+            sage: alpha = IntegerVectors()([3,0,2,1,4,4])
             sage: from sage.combinat.diagram import Diagrams
             sage: Diagrams()(alpha).pp()
             O O O .

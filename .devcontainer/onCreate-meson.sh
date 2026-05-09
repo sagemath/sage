@@ -18,14 +18,5 @@ eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missin
 # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
 uv venv --clear
 . $UV_PROJECT_ENVIRONMENT/bin/activate # https://github.com/astral-sh/uv/issues/14022
-uv pip install \
-    meson-python \
-    "cypari2 == 2.2.4" \
-    "cysignals == 1.12.6" \
-    "cython == 3.2.3" \
-    "gmpy2 == 2.2.2" \
-    "memory_allocator == 0.1.4" \
-    "numpy == 2.4.0" \
-    "jinja2 == 3.1.6" \
-    "setuptools == 80.9.0"
+uv sync --frozen --inexact --no-install-project -v
 uv sync --frozen --inexact --no-build-isolation -v --config-settings=builddir=build/build-$SYSTEM-$devcontainerId

@@ -480,8 +480,7 @@ class OverconvergentModularFormsSpace(Module):
         """
         if ring.has_coerce_map_from(self.base_ring()):
             return self.change_ring(ring)
-        else:
-            raise TypeError("Base extension of self (over '%s') to ring '%s' not defined." % (self.base_ring(), ring))
+        raise TypeError("Base extension of self (over '%s') to ring '%s' not defined." % (self.base_ring(), ring))
 
     def _an_element_(self):
         r"""
@@ -567,8 +566,7 @@ class OverconvergentModularFormsSpace(Module):
         """
         if not isinstance(other, OverconvergentModularFormsSpace):
             return False
-        else:
-            return self._params() == other._params()
+        return self._params() == other._params()
 
     def __ne__(self, other):
         """
@@ -808,7 +806,7 @@ class OverconvergentModularFormsSpace(Module):
         if isinstance(input, OverconvergentModularFormElement):
             return self._coerce_from_ocmf(input)
 
-        elif isinstance(input, ModularFormElement):
+        if isinstance(input, ModularFormElement):
             if ((input.level() == 1 or input.level().prime_factors() == [self.prime()])
                     and input.weight() == self.weight().k()
                     and input.character().primitive_character() == self.weight().chi().primitive_character()):
@@ -967,11 +965,10 @@ class OverconvergentModularFormsSpace(Module):
 
         if f.parent() is self:
             return self(self.hecke_operator(f.q_expansion(), m))
-        elif isinstance(f, OverconvergentModularFormElement):
+        if isinstance(f, OverconvergentModularFormElement):
             if f.parent() is self.base_extend(f.parent().base_ring()):
                 return f.parent().hecke_operator(f, m)
-            else:
-                raise TypeError("Not an element of this space")
+            raise TypeError("Not an element of this space")
         else:
             return hecke_operator_on_qexp(f, m, self.weight().k(), eps=self.weight().chi())
 
@@ -1352,10 +1349,9 @@ class OverconvergentModularFormsSpace(Module):
                 for j in range(self.prime()):
                     r[i, j] = -smallI[i+1, j+1]
             return r
-        else:
-            # compute from U(f^j) for small j via Newton's identities
-            # to be implemented when I can remember Newton's identities!
-            raise NotImplementedError
+        # compute from U(f^j) for small j via Newton's identities
+        # to be implemented when I can remember Newton's identities!
+        raise NotImplementedError
 
     def cps_u(self, n, use_recurrence=False):
         r"""
@@ -1588,7 +1584,7 @@ class OverconvergentModularFormElement(ModuleElement):
         """
         if prec is None:
             return self._qexp
-        elif prec > self.prec():
+        if prec > self.prec():
             raise ValueError
         else:
             return self._qexp.add_bigoh(prec)
@@ -1838,8 +1834,7 @@ class OverconvergentModularFormElement(ModuleElement):
         from sage.rings.infinity import Infinity
         if self.is_zero():
             return ZZ(1)
-        else:
-            return Infinity
+        return Infinity
 
     def base_extend(self, R):
         r"""

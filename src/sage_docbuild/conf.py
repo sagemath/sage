@@ -359,7 +359,7 @@ def set_intersphinx_mappings(app, config):
             dst = os.path.join(invpath, directory, 'objects.inv')
             app.config.intersphinx_mapping[directory] = (src, dst)
 
-    intersphinx.normalize_intersphinx_mapping(app, config)
+    intersphinx.validate_intersphinx_mapping(app, config)
 
 
 # By default document is master.

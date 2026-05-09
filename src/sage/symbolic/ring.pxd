@@ -1,4 +1,4 @@
-cimport sage.rings.abc
+from sage.structure.parent cimport Parent
 
-cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
+cdef class SymbolicRing(Parent):
     cdef public dict symbols

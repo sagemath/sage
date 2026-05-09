@@ -43,8 +43,7 @@ class SingularFunctionFactory:
                 name = name[:-5]
                 lib(name + ".lib")
                 return SingularFunctionFactory()
-            else:
-                raise NameError("function or package '%s' unknown." % (name))
+            raise NameError("function or package '%s' unknown." % (name))
 
     def __dir__(self):
         """

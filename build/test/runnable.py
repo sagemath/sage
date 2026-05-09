@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-bootstrap-python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Utility to test running with different values for ``SAGE_BOOTSTRAP``

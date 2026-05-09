@@ -112,8 +112,27 @@ Using Conda
 - You can then start Sage from the command line with ``./sage``
   or run the tests with ``./sage -t``.
 
-Using system package manager
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. note::
+
+    If you edit Cython files, starting Sage will then recompile those
+    files and all their dependencies, which may take some time.  If
+    you want to see a message whenever this is happening, use
+
+    .. code-block:: console
+
+        $ pip install -Ceditable-verbose=true --no-build-isolation --editable .
+
+    instead.  Another convenient option is to skip building the
+    documentation.  To do so, use
+
+    .. code-block:: console
+
+        $ pip install -Ceditable-verbose=true  -Csetup-args="-Dbuild-docs=False" --no-build-isolation --editable .
+
+.. _system_package_manager:
+
+Using the system package manager
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also install the dependencies via your system package manager.
 Note, however, that not all dependencies may be available for your system,
@@ -127,7 +146,7 @@ Depending on your distribution, install the following packages:
 
 .. tab:: Debian/Ubuntu
 
-    Not yet supported.
+    Not yet (fully) supported.
 
 .. tab:: Fedora
 
@@ -151,6 +170,9 @@ Depending on your distribution, install the following packages:
    .. literalinclude:: void.txt
       :language: console
 
+.. tab:: Homebrew (macOS)
+
+    Not yet (fully) supported.
 
 In the case that you want to install some dependencies manually, set the
 correct environment variables to point to the installed libraries:
@@ -168,18 +190,7 @@ To compile and install Sage in editable install, then just use:
 
   .. code-block:: console
 
-    $ uv venv
-    $ uv pip install \
-        meson-python \
-        "cypari2 == 2.2.4" \
-        "cysignals == 1.12.6" \
-        "cython == 3.2.3" \
-        "gmpy2 == 2.2.2" \
-        "memory_allocator == 0.1.4" \
-        "numpy == 2.4.0" \
-        "ninja >= 1.8.2" \
-        "jinja2 == 3.1.6" \
-        "setuptools == 80.9.0"
+    $ uv sync --frozen --inexact --no-install-project
     $ uv sync --frozen --inexact --no-build-isolation
 
 You can then start Sage from the command line with ``./sage``
@@ -220,15 +231,6 @@ Remarks
 
   ``--verbose`` can be passed to ``pip install``, then the meson commands
   internally used by pip will be printed out.
-
-.. note::
-
-  To build the documentation, use:
-
-  .. code-block:: console
-
-    $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
-    $ sage --docbuild all html
 
 .. note::
 

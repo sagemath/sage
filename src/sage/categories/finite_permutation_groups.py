@@ -327,10 +327,9 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
             if using_polya:
                 return self.profile_polynomial()[n]
-            else:
-                from sage.libs.gap.libgap import libgap
-                subs_n = libgap.Combinations(list(self.domain()), n)
-                return len(libgap.Orbits(self, subs_n, libgap.OnSets))
+            from sage.libs.gap.libgap import libgap
+            subs_n = libgap.Combinations(list(self.domain()), n)
+            return len(libgap.Orbits(self, subs_n, libgap.OnSets))
 
     class ElementMethods:
         # TODO: put abstract_methods for

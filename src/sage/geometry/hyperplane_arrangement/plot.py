@@ -271,15 +271,14 @@ def plot(hyperplane_arrangement, **kwds):
         if hyperplane_legend: # there are more options than T/F
             p.legend(True)
         return p
-    elif dim == 2:
+    if dim == 2:
         if hyperplane_legend: # there are more options than T/F
             p.legend(True)
         return p
-    else: # dim==3
-        if hyperplane_legend: # there are more options than T/F
-            return p, legend3d
-        else:
-            return p
+    # dim==3
+    if hyperplane_legend: # there are more options than T/F
+        return p, legend3d
+    return p
 
 
 def plot_hyperplane(hyperplane, **kwds):
@@ -342,7 +341,6 @@ def plot_hyperplane(hyperplane, **kwds):
         sage: b.plot(**opts)                                                            # needs sage.plot
         Graphics object consisting of 2 graphics primitives
 
-        sage: # needs sage.plot
         sage: H3.<x,y,z> = HyperplaneArrangements(QQ)
         sage: c = 2*x + 3*y + 4*z + 5
         sage: c.plot()

@@ -224,8 +224,7 @@ class DisplayManager(SageObject):
         """
         if cls._instance is not None:
             return cls._instance
-        else:
-            return cls()
+        return cls()
 
     def _repr_(self):
         """

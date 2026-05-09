@@ -404,9 +404,8 @@ class ModuleMorphismByLinearity(ModuleMorphism):
             return self.codomain().linear_combination(
                 (self._on_basis(*(before + (index,) + after)), coeff)
                 for (index, coeff) in mc.items())
-        else:
-            return sum((coeff * self._on_basis(*(before + (index,) + after))
-                        for (index, coeff) in mc.items()), self._zero)
+        return sum((coeff * self._on_basis(*(before + (index,) + after))
+                    for (index, coeff) in mc.items()), self._zero)
 
     # As per the specs of Map, we should in fact implement _call_.
     # However we currently need to abuse Map.__call__ (which strict
@@ -805,7 +804,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         """
         if self._invertible is True:
             return self.section()
-        elif self._invertible is False:
+        if self._invertible is False:
             raise ValueError("Non invertible morphism")
         else:
             raise ValueError("Morphism not known to be invertible; see the invertible option of module_morphism")
@@ -857,10 +856,9 @@ class TriangularModuleMorphism(ModuleMorphism):
                 unitriangular=self._unitriangular, triangular=self._triangular,
                 inverse=self, inverse_on_support=retract_dom,
                 invertible=self._invertible, **self._key_kwds)
-        else:
-            return SetMorphism(Hom(self.codomain(), self.domain(),
-                                   SetsWithPartialMaps()),
-                               self.preimage)
+        return SetMorphism(Hom(self.codomain(), self.domain(),
+                               SetsWithPartialMaps()),
+                           self.preimage)
 
     # This should be removed and optimized as soon as triangular
     # morphisms not defined by linearity are available

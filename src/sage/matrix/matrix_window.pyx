@@ -2,12 +2,12 @@
 Matrix windows
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cpython.tuple cimport *
 
@@ -22,7 +22,7 @@ cdef class MatrixWindow:
 
     cpdef MatrixWindow new_matrix_window(MatrixWindow self, Matrix matrix,
                                          Py_ssize_t row, Py_ssize_t col,
-                                        Py_ssize_t n_rows, Py_ssize_t n_cols):
+                                         Py_ssize_t n_rows, Py_ssize_t n_cols):
         """
         This method is here only to provide a fast cdef way of
         constructing new matrix windows. The only implicit assumption
@@ -53,7 +53,7 @@ cdef class MatrixWindow:
         return self._cached_zero
 
     cpdef MatrixWindow matrix_window(MatrixWindow self, Py_ssize_t row, Py_ssize_t col,
-                                    Py_ssize_t n_rows, Py_ssize_t n_cols):
+                                     Py_ssize_t n_rows, Py_ssize_t n_cols):
         """
         Return a matrix window relative to this window of the
         underlying matrix.
@@ -233,7 +233,7 @@ cdef class MatrixWindow:
         Calculate the echelon form of this matrix, returning the list of pivot columns
         """
         echelon = self.to_matrix()
-        echelon.echelonize() # TODO: read only, only need to copy pointers
+        echelon.echelonize()  # TODO: read only, only need to copy pointers
         self.set_to(echelon.matrix_window())
         return echelon.pivots()
 

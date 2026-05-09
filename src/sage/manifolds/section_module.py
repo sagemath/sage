@@ -226,9 +226,8 @@ class SectionModule(UniqueRepresentation, Parent):
         if isinstance(comp, Section):
             if self._domain.is_subset(comp._domain):
                 return comp.restrict(self._domain)
-            else:
-                raise ValueError("cannot convert the {} ".format(comp) +
-                                 "to a local section in {}".format(self))
+            raise ValueError("cannot convert the {} ".format(comp) +
+                             "to a local section in {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -281,8 +280,7 @@ class SectionModule(UniqueRepresentation, Parent):
         """
         if isinstance(other, (SectionModule, SectionFreeModule)):
             return self._domain.is_subset(other._domain)
-        else:
-            return False
+        return False
 
     #### End of parent methods
 
@@ -636,9 +634,8 @@ class SectionFreeModule(FiniteRankFreeModule):
         if isinstance(comp, Section):
             if self._domain.is_subset(comp._domain):
                 return comp.restrict(self._domain)
-            else:
-                raise ValueError("cannot convert the {}".format(comp) +
-                                 "to a local section in {}".format(self))
+            raise ValueError("cannot convert the {}".format(comp) +
+                             "to a local section in {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -668,8 +665,7 @@ class SectionFreeModule(FiniteRankFreeModule):
         """
         if isinstance(other, (SectionModule, SectionFreeModule)):
             return self._domain.is_subset(other._domain)
-        else:
-            return False
+        return False
 
     #### End of parent methods
 

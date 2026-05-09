@@ -84,8 +84,7 @@ class TrivialClasscallMetaClass(type):
         """
         if hasattr(cls, '__classcall__'):
             return cls.__classcall__(cls, *args, **kwds)
-        else:
-            return type.__call__(cls, *args, **kwds)
+        return type.__call__(cls, *args, **kwds)
 
 
 _trivial_unique_representation_cache = dict()

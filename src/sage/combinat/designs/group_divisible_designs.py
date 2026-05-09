@@ -331,8 +331,7 @@ class GroupDivisibleDesign(IncidenceStructure):
         """
         if self._point_to_index is None:
             return [list(g) for g in self._groups]
-        else:
-            return [[self._points[i] for i in g] for g in self._groups]
+        return [[self._points[i] for i in g] for g in self._groups]
 
     def __repr__(self):
         r"""

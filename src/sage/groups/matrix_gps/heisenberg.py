@@ -221,8 +221,7 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
         if self._ring is ZZ:
             from sage.rings.infinity import Infinity
             return Infinity
-        else:
-            return ZZ(self._ring.cardinality() ** (2*self._n + 1))
+        return ZZ(self._ring.cardinality() ** (2*self._n + 1))
 
     cardinality = order
 

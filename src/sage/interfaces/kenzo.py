@@ -201,14 +201,13 @@ def EilenbergMacLaneSpace(G, n):
     if G == ZZ:
         kenzospace = __k_z__(n)
         return KenzoSimplicialGroup(kenzospace)
-    elif G == AdditiveAbelianGroup([2]):
+    if G == AdditiveAbelianGroup([2]):
         kenzospace = __k_z2__(n)
         return KenzoSimplicialGroup(kenzospace)
-    elif G in CommutativeAdditiveGroups() and G.is_cyclic():
+    if G in CommutativeAdditiveGroups() and G.is_cyclic():
         kenzospace = __k_zp__(G.cardinality(), n)
         return KenzoSimplicialGroup(kenzospace)
-    else:
-        raise NotImplementedError("Eilenberg-MacLane spaces are only supported over ZZ and ZZ_n")
+    raise NotImplementedError("Eilenberg-MacLane spaces are only supported over ZZ and ZZ_n")
 
 
 class KenzoObject(SageObject):
@@ -623,8 +622,7 @@ class KenzoChainComplex(KenzoObject):
         if dim is not None and comb is not None:
             cmbn_list = pairing(comb)
             return KenzoObject(__dffr_aux1__(self._kenzo, dim, cmbn_list))
-        else:
-            return KenzoChainComplexMorphism(__dffr_aux__(self._kenzo))
+        return KenzoChainComplexMorphism(__dffr_aux__(self._kenzo))
 
     def orgn(self):
         r"""
@@ -752,8 +750,7 @@ class KenzoSimplicialSet(KenzoChainComplex):
         if lgens is not None:
             trgens = [0 if i == 1 else i for i in sorted(lgens)]
             return AbelianGroup(trgens)
-        else:
-            return AbelianGroup([])
+        return AbelianGroup([])
 
     def em_spectral_sequence(self):
         r"""
@@ -1227,27 +1224,26 @@ def KFiniteSimplicialSet(sset):
         for f1 in sset.factors()[1:]:
             f0 = f0.cartesian_product(KFiniteSimplicialSet(f1))
         return f0
-    else:
-        allcells = sset.cells()
-        namecells = {c: 'cell_{}_{}'.format(d, allcells[d].index(c))
-                     for d in allcells for c in allcells[d]}
-        dim = sset.dimension()
-        list_rslt = [namecells[i] for i in sset.n_cells(0)]
-        if (dim > 0):
-            for k in range(1, dim + 1):
-                k_cells = sset.n_cells(k)
-                if k_cells:
-                    list_rslt.append(k)
-                    for x in k_cells:
-                        list_rslt.append(namecells[x])
-                        auxiliar_list = []
-                        for z in sset.faces(x):
-                            degen_z = z.degeneracies()
-                            name = namecells[z.nondegenerate()]
-                            degen_z.append(name)
-                            auxiliar_list.append(degen_z)
-                        list_rslt.append(auxiliar_list)
-        return KenzoSimplicialSet(__build_finite_ss2__(list_rslt))
+    allcells = sset.cells()
+    namecells = {c: 'cell_{}_{}'.format(d, allcells[d].index(c))
+                 for d in allcells for c in allcells[d]}
+    dim = sset.dimension()
+    list_rslt = [namecells[i] for i in sset.n_cells(0)]
+    if (dim > 0):
+        for k in range(1, dim + 1):
+            k_cells = sset.n_cells(k)
+            if k_cells:
+                list_rslt.append(k)
+                for x in k_cells:
+                    list_rslt.append(namecells[x])
+                    auxiliar_list = []
+                    for z in sset.faces(x):
+                        degen_z = z.degeneracies()
+                        name = namecells[z.nondegenerate()]
+                        degen_z.append(name)
+                        auxiliar_list.append(degen_z)
+                    list_rslt.append(auxiliar_list)
+    return KenzoSimplicialSet(__build_finite_ss2__(list_rslt))
 
 
 def SFiniteSimplicialSet(ksimpset, limit):
@@ -1494,8 +1490,7 @@ class KenzoChainComplexMorphism(KenzoObject):
             if isinstance(comb, list):
                 cmbn_list = pairing(comb)
                 return KenzoObject(__evaluation_aux1__(self._kenzo, dim, cmbn_list))
-            else:
-                raise ValueError("'comb' parameter must be a list")
+            raise ValueError("'comb' parameter must be a list")
         else:
             raise ValueError("'dim' parameter must be an integer number")
 
@@ -1581,9 +1576,9 @@ class KenzoChainComplexMorphism(KenzoObject):
             return self
         if isinstance(object, KenzoChainComplexMorphism):
             return KenzoChainComplexMorphism(__cmps__(self._kenzo, object._kenzo))
-        elif isinstance(object, KenzoChainComplex):
+        if isinstance(object, KenzoChainComplex):
             return KenzoChainComplexMorphism(__cmps__(self._kenzo, __dffr_aux__(object._kenzo)))
-        elif isinstance(object, tuple):
+        if isinstance(object, tuple):
             rslt = self._kenzo
             for mrph in object:
                 rslt = __cmps__(rslt, mrph._kenzo)
@@ -1649,7 +1644,7 @@ class KenzoChainComplexMorphism(KenzoObject):
             return self
         if isinstance(object, KenzoChainComplexMorphism):
             return KenzoChainComplexMorphism(__add__(self._kenzo, object._kenzo))
-        elif isinstance(object, tuple):
+        if isinstance(object, tuple):
             rslt = self._kenzo
             for mrph in object:
                 rslt = __add__(rslt, mrph._kenzo)
@@ -1716,7 +1711,7 @@ class KenzoChainComplexMorphism(KenzoObject):
             return self
         if isinstance(object, KenzoChainComplexMorphism):
             return KenzoChainComplexMorphism(__sbtr__(self._kenzo, object._kenzo))
-        elif isinstance(object, tuple):
+        if isinstance(object, tuple):
             rslt = self._kenzo
             for mrph in object:
                 rslt = __sbtr__(rslt, mrph._kenzo)

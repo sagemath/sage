@@ -18,6 +18,7 @@ Sage Packages
 import logging
 import os
 import re
+from pathlib import Path
 
 from sage_bootstrap.env import SAGE_ROOT
 
@@ -25,22 +26,21 @@ log = logging.getLogger()
 
 
 class Package(object):
-
     def __new__(cls, package_name):
         if package_name.startswith("pypi/") or package_name.startswith("generic/"):
             package_name = "pkg:" + package_name
         if package_name.startswith("pkg:"):
-            package_name = package_name.replace('_', '-').lower()
+            package_name = package_name.replace("_", "-").lower()
             if package_name.startswith("pkg:generic/"):  # fast path
                 try:
-                    pkg = cls(package_name[len("pkg:generic/"):].replace('-', '_'))
+                    pkg = cls(package_name[len("pkg:generic/") :].replace("-", "_"))
                     if pkg.purl == package_name:
                         return pkg  # assume unique
                 except Exception:
                     pass
             elif package_name.startswith("pkg:pypi/"):  # fast path
                 try:
-                    pkg = cls(package_name[len("pkg:pypi/"):].replace('-', '_'))
+                    pkg = cls(package_name[len("pkg:pypi/") :].replace("-", "_"))
                     if pkg.purl == package_name:
                         return pkg  # assume unique
                 except Exception:
@@ -48,7 +48,7 @@ class Package(object):
             for pkg in cls.all():
                 if pkg.purl == package_name:
                     return pkg  # assume unique
-            raise ValueError('no package for PURL {0}'.format(package_name))
+            raise ValueError("no package for PURL {0}".format(package_name))
         self = object.__new__(cls)
         self.__init__(package_name)
         return self
@@ -69,14 +69,21 @@ class Package(object):
         -- ``package_name`` -- string. Name of the package. The Sage
            convention is that all package names are lower case.
         """
-        if any(package_name.startswith(prefix)
-               for prefix in ["pkg:", "pypi/", "generic"]):
+        if any(
+            package_name.startswith(prefix) for prefix in ["pkg:", "pypi/", "generic"]
+        ):
             # Already initialized
             return
         if package_name != package_name.lower():
-            raise ValueError('package names should be lowercase, got {0}'.format(package_name))
-        if '-' in package_name:
-            raise ValueError('package names use underscores, not dashes, got {0}'.format(package_name))
+            raise ValueError(
+                "package names should be lowercase, got {0}".format(package_name)
+            )
+        if "-" in package_name:
+            raise ValueError(
+                "package names use underscores, not dashes, got {0}".format(
+                    package_name
+                )
+            )
 
         self.__name = package_name
         self.__tarball = None
@@ -89,7 +96,7 @@ class Package(object):
         self._init_trees()
 
     def __repr__(self):
-        return 'Package {0}'.format(self.name)
+        return "Package {0}".format(self.name)
 
     @property
     def name(self):
@@ -142,6 +149,7 @@ class Package(object):
         """
         if self.__tarball is None:
             from sage_bootstrap.tarball import Tarball
+
             self.__tarball = Tarball(self.tarball_filename, package=self)
         return self.__tarball
 
@@ -157,9 +165,9 @@ class Package(object):
         - the string with the substitution done or the original string
         - whether a substitution was done
         """
-        for var in ('VERSION_MAJOR', 'VERSION_MINOR', 'VERSION_MICRO', 'VERSION'):
+        for var in ("VERSION_MAJOR", "VERSION_MINOR", "VERSION_MICRO", "VERSION"):
             # As VERSION is a substring of the other three, it needs to be tested last.
-            dollar_brace_var = '${' + var + '}'
+            dollar_brace_var = "${" + var + "}"
             if dollar_brace_var in pattern:
                 value = getattr(self, var.lower())
                 return pattern.replace(dollar_brace_var, value, 1), True
@@ -242,6 +250,196 @@ class Package(object):
             return None
 
     @property
+    def tarballs_info(self):
+        """
+        Return information about all tarballs for this package.
+        
+        This supports packages with multiple platform-specific wheels.
+        
+        OUTPUT:
+        
+        List of dictionaries, each containing:
+        - 'tarball': tarball filename pattern
+        - 'sha256': SHA256 checksum
+        - 'sha1': SHA1 checksum (optional)
+        - 'upstream_url': upstream URL pattern
+        """
+        return self.__tarballs_info
+    
+    def find_tarball_for_platform(self):
+        """
+        Find the appropriate tarball for the current platform.
+        
+        For packages with multiple platform-specific wheels, this selects
+        the one matching the current platform and Python version using
+        the packaging.tags module to ensure compatibility.
+        
+        Properly handles wheel ABI tags:
+        - cp313-cp313 (CPython 3.13 specific)
+        - cp313-cp313t (CPython 3.13 free-threaded/nogil)
+        - cp313-abi3 (stable ABI, forward compatible)
+        - py3-none-any (universal pure Python wheel)
+        - pp39-pypy39_pp73 (PyPy wheels)
+        
+        INPUT:
+        
+        - ``python_version`` -- Python version string (e.g., '3.11'), or None to auto-detect
+        
+        OUTPUT:
+        
+        Dictionary with tarball info, or None if no suitable tarball found.
+        The dictionary contains the same fields as tarballs_info entries.
+        """
+        import json
+        import subprocess
+
+        from sage_bootstrap.env import SAGE_ROOT
+        
+        if not self.__tarballs_info:
+            return None
+
+        source_tarballs = [
+            tarball_info for tarball_info in self.__tarballs_info
+            if not tarball_info['tarball'].endswith('.whl')
+        ]
+
+        def fallback_to_source_tarball(reason):
+            if not source_tarballs:
+                return None
+            tarball_info = source_tarballs[0]
+            log.warning(
+                'Falling back to source tarball for %s: %s (%s)',
+                self.name,
+                tarball_info['tarball'],
+                reason,
+            )
+            return tarball_info
+        
+        # If only one tarball, return it
+        if len(self.__tarballs_info) == 1:
+            return self.__tarballs_info[0]
+        
+        # Get compatible tags from Sage's Python using packaging.tags
+        sage_script = os.path.join(SAGE_ROOT, 'sage')
+        if not os.path.exists(sage_script):
+            tarball_info = fallback_to_source_tarball(
+                'Sage script not found at: {0}'.format(sage_script)
+            )
+            if tarball_info is not None:
+                return tarball_info
+            raise RuntimeError('Sage script not found at: {0}'.format(sage_script))
+        
+        try:
+            # Get all compatible tags from Sage's Python
+            result = subprocess.run(
+                [sage_script, '-python', '-c', 
+                 'import packaging.tags; import json; tags = [str(t) for t in packaging.tags.sys_tags()]; print(json.dumps(tags))'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
+                timeout=10,
+                cwd=SAGE_ROOT
+            )
+            if result.returncode != 0:
+                tarball_info = fallback_to_source_tarball(
+                    'failed to get compatible tags from sage -python: {0}'.format(result.stderr)
+                )
+                if tarball_info is not None:
+                    return tarball_info
+                raise RuntimeError('Failed to get compatible tags from sage -python: {0}'.format(result.stderr))
+            
+            compatible_tags = json.loads(result.stdout.strip())
+            
+        except subprocess.TimeoutExpired:
+            tarball_info = fallback_to_source_tarball(
+                'timeout while querying compatible tags via ./sage -python'
+            )
+            if tarball_info is not None:
+                return tarball_info
+            raise RuntimeError('Timeout while querying compatible tags via ./sage -python')
+        except Exception as e:
+            tarball_info = fallback_to_source_tarball(
+                'error querying compatible tags via ./sage -python: {0}'.format(str(e))
+            )
+            if tarball_info is not None:
+                return tarball_info
+            raise RuntimeError('Error querying compatible tags via ./sage -python: {0}'.format(str(e)))
+        
+        # Convert tags list to a set for fast lookup with priority
+        # Lower index = higher priority
+        tag_priority = {tag: idx for idx, tag in enumerate(compatible_tags)}
+        
+        # Separate wheels from non-wheel tarballs
+        wheel_tarballs = []
+        for tarball_info in self.__tarballs_info:
+            if tarball_info['tarball'].endswith('.whl'):
+                wheel_tarballs.append(tarball_info)
+        
+        # Batch parse all wheel filenames in a single subprocess call.
+        # Use concrete filenames so patterns containing VERSION remain parseable.
+        wheel_tags_map = {}
+        if wheel_tarballs:
+            try:
+                wheel_filenames = [
+                    self._substitute_variables(info['tarball'])
+                    for info in wheel_tarballs
+                ]
+                python_code = 'import packaging.utils as pu,json,sys;d={};[exec(f"try: d[f]=[str(t)for t in pu.parse_wheel_filename(f)[3]]\\nexcept: d[f]=None",{"f":f,"d":d,"pu":pu})for f in sys.argv[1:]];print(json.dumps(d))'
+                result = subprocess.run(
+                    [sage_script, '-python', '-c', python_code] + wheel_filenames,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True,
+                    timeout=30,
+                    cwd=SAGE_ROOT
+                )
+                if result.returncode != 0:
+                    log.warning(f'Failed to parse wheel filenames: {result.stderr}')
+                else:
+                    wheel_tags_map = json.loads(result.stdout.strip())
+                    
+            except subprocess.TimeoutExpired:
+                log.warning('Timeout while parsing wheel filenames')
+            except Exception as e:
+                log.warning(f'Error parsing wheel filenames: {e}')
+        
+        # Find the best matching tarball
+        best_match = None
+        best_priority = float('inf')
+        
+        # Check wheel tarballs first (they have higher priority than source)
+        for tarball_info in wheel_tarballs:
+            tarball = self._substitute_variables(tarball_info['tarball'])
+            wheel_tags_str = wheel_tags_map.get(tarball)
+            
+            if wheel_tags_str is None:
+                log.debug(f'Could not parse wheel filename {tarball}')
+                continue
+            
+            # Check each tag in the wheel (multi-platform wheels have multiple tags)
+            for wheel_tag_str in wheel_tags_str:
+                if wheel_tag_str in tag_priority:
+                    priority = tag_priority[wheel_tag_str]
+                    if priority < best_priority:
+                        best_match = tarball_info
+                        best_priority = priority
+                        log.debug(f'Found compatible wheel: {tarball} with tag {wheel_tag_str} (priority: {priority})')
+                    break  # Found a match, no need to check other tags for this wheel
+        
+        # If no wheel matched, consider source distributions
+        if best_match is None and source_tarballs:
+            best_match = fallback_to_source_tarball('no compatible wheel found')
+            best_priority = len(compatible_tags) + 1000
+        
+        if best_match:
+            log.debug(f'Selected {best_match["tarball"]} with priority {best_priority}')
+            return best_match
+        
+        # If no match found, return the first one (backward compatibility)
+        log.warning(f'No exact platform match found for {self.name}, using first tarball')
+        return self.__tarballs_info[0]
+
+    @property
     def tarball_package(self):
         """
         Return the canonical package for the tarball
@@ -281,7 +479,7 @@ class Package(object):
 
         String. The package's major version.
         """
-        return self.version.split('.')[0]
+        return self.version.split(".")[0]
 
     @property
     def version_minor(self):
@@ -292,7 +490,7 @@ class Package(object):
 
         String. The package's minor version.
         """
-        return self.version.split('.')[1]
+        return self.version.split(".")[1]
 
     @property
     def version_micro(self):
@@ -303,7 +501,7 @@ class Package(object):
 
         String. The package's micro version.
         """
-        return self.version.split('.')[2]
+        return self.version.split(".")[2]
 
     @property
     def patchlevel(self):
@@ -347,14 +545,14 @@ class Package(object):
         Return the package source type
         """
         if self.__requirements is not None:
-            return 'pip'
+            return "pip"
         if self.tarball_filename:
-            if self.tarball_filename.endswith('.whl'):
-                return 'wheel'
-            return 'normal'
-        if self.has_file('spkg-install') or self.has_file('spkg-install.in'):
-            return 'script'
-        return 'none'
+            if self.tarball_filename.endswith(".whl"):
+                return "wheel"
+            return "normal"
+        if self.has_file("spkg-install") or self.has_file("spkg-install.in"):
+            return "script"
+        return "none"
 
     @property
     def trees(self):
@@ -368,10 +566,10 @@ class Package(object):
         if self.__trees is not None:
             return self.__trees
         if self.__version_requirements is not None:
-            return 'SAGE_VENV'
+            return "SAGE_VENV"
         if self.__requirements is not None:
-            return 'SAGE_VENV'
-        return 'SAGE_LOCAL'
+            return "SAGE_VENV"
+        return "SAGE_LOCAL"
 
     @property
     def purl(self):
@@ -387,8 +585,8 @@ class Package(object):
         """
         dist = self.distribution_name
         if dist:
-            return 'pkg:pypi/' + dist.lower().replace('_', '-')
-        return 'pkg:generic/' + self.name.replace('_', '-')
+            return "pkg:pypi/" + dist.lower().replace("_", "-")
+        return "pkg:generic/" + self.name.replace("_", "-")
 
     @property
     def distribution_name(self):
@@ -396,17 +594,17 @@ class Package(object):
         Return the Python distribution name or ``None`` for non-Python packages
         """
         if self.__requirements is not None:
-            for line in self.__requirements.split('\n'):
+            for line in self.__requirements.split("\n"):
                 line = line.strip()
-                if line.startswith('#'):
+                if line.startswith("#"):
                     continue
                 for part in line.split():
                     return part
         if self.__version_requirements is None:
             return None
-        for line in self.__version_requirements.split('\n'):
+        for line in self.__version_requirements.split("\n"):
             line = line.strip()
-            if line.startswith('#'):
+            if line.startswith("#"):
                 continue
             for part in line.split():
                 return part
@@ -418,14 +616,17 @@ class Package(object):
         Return a list of strings, the package names of the (ordinary) dependencies
         """
         # after a '|', we have order-only dependencies
-        return self.__dependencies.partition('|')[0].strip().split()
+        return self.__dependencies.partition("|")[0].strip().split()
 
     @property
     def dependencies_order_only(self):
         """
         Return a list of strings, the package names of the order-only dependencies
         """
-        return self.__dependencies.partition('|')[2].strip().split() + self.__dependencies_order_only.strip().split()
+        return (
+            self.__dependencies.partition("|")[2].strip().split()
+            + self.__dependencies_order_only.strip().split()
+        )
 
     @property
     def dependencies_optional(self):
@@ -440,7 +641,7 @@ class Package(object):
         Return a list of strings, the package names of the runtime dependencies
         """
         # after a '|', we have order-only build dependencies
-        return self.__dependencies.partition('|')[0].strip().split()
+        return self.__dependencies.partition("|")[0].strip().split()
 
     @property
     def dependencies_check(self):
@@ -457,16 +658,16 @@ class Package(object):
         """
         Return all packages
         """
-        base = os.path.join(SAGE_ROOT, 'build', 'pkgs')
+        base = os.path.join(SAGE_ROOT, "build", "pkgs")
         for subdir in os.listdir(base):
             path = os.path.join(base, subdir)
             if not os.path.isfile(os.path.join(path, "type")):
-                log.debug('%s has no type', subdir)
+                log.debug("%s has no type", subdir)
                 continue
             try:
                 yield cls(subdir)
             except Exception:
-                log.error('Failed to open %s', subdir)
+                log.error("Failed to open %s", subdir)
                 raise
 
     @property
@@ -474,7 +675,7 @@ class Package(object):
         """
         Return the package directory
         """
-        return os.path.join(SAGE_ROOT, 'build', 'pkgs', self.name)
+        return os.path.join(SAGE_ROOT, "build", "pkgs", self.name)
 
     def has_file(self, filename):
         """
@@ -496,8 +697,10 @@ class Package(object):
         if os.path.islink(path):
             return 1
         if os.path.isdir(path):
-            return sum(self.line_count_file(os.path.join(filename, entry))
-                       for entry in os.listdir(path))
+            return sum(
+                self.line_count_file(os.path.join(filename, entry))
+                for entry in os.listdir(path)
+            )
         try:
             with open(path, "rb") as f:
                 return len(list(f))
@@ -507,32 +710,69 @@ class Package(object):
     def _init_checksum(self):
         """
         Load the checksums from the appropriate ``checksums.ini`` file
+        
+        Supports multiple tarballs with format:
+        tarball=package-VERSION-cp311-cp311-manylinux_2_17_x86_64.whl
+        sha256=abc123...
+        upstream_url=https://...
+        tarball=package-VERSION-cp311-cp311-macosx_11_0_arm64.whl
+        sha256=def456...
+        upstream_url=https://...
         """
-        checksums_ini = os.path.join(self.path, 'checksums.ini')
-        assignment = re.compile('(?P<var>[a-zA-Z0-9_]*)=(?P<value>.*)')
-        result = dict()
+        checksums_ini = os.path.join(self.path, "checksums.ini")
+        assignment = re.compile("(?P<var>[a-zA-Z0-9_]*)=(?P<value>.*)")
+        
+        # Store all entries, supporting multiple values for tarball, sha256, upstream_url
+        tarballs = []
+        sha256s = []
+        sha1s = []
+        upstream_urls = []
+        
         try:
-            with open(checksums_ini, 'rt') as f:
+            with open(checksums_ini, "rt") as f:
                 for line in f.readlines():
                     match = assignment.match(line)
                     if match is None:
                         continue
                     var, value = match.groups()
-                    result[var] = value
+                    
+                    # Collect multiple entries
+                    if var == 'tarball':
+                        tarballs.append(value)
+                    elif var == 'sha256':
+                        sha256s.append(value)
+                    elif var == 'sha1':
+                        sha1s.append(value)
+                    elif var == 'upstream_url':
+                        upstream_urls.append(value)
         except IOError:
             pass
-        self.__sha1 = result.get('sha1', None)
-        self.__sha256 = result.get('sha256', None)
-        self.__tarball_pattern = result.get('tarball', None)
-        self.__tarball_upstream_url_pattern = result.get('upstream_url', None)
+        
+        # Store all tarballs info
+        self.__tarballs_info = []
+        for i, tarball in enumerate(tarballs):
+            info = {
+                'tarball': tarball,
+                'sha256': sha256s[i] if i < len(sha256s) else None,
+                'sha1': sha1s[i] if i < len(sha1s) else None,
+                'upstream_url': upstream_urls[i] if i < len(upstream_urls) else None,
+            }
+            self.__tarballs_info.append(info)
+        
+        # For backward compatibility, set the first tarball as primary
+        self.__sha1 = sha1s[0] if sha1s else None
+        self.__sha256 = sha256s[0] if sha256s else None
+        self.__tarball_pattern = tarballs[0] if tarballs else None
+        self.__tarball_upstream_url_pattern = upstream_urls[0] if upstream_urls else None
+        
         # Name of the directory containing the checksums.ini file
         self.__tarball_package_name = os.path.realpath(checksums_ini).split(os.sep)[-2]
 
-    VERSION_PATCHLEVEL = re.compile(r'(?P<version>.*)\.p(?P<patchlevel>[0-9]+)')
+    VERSION_PATCHLEVEL = re.compile(r"(?P<version>.*)\.p(?P<patchlevel>[0-9]+)")
 
     def _init_version(self):
         try:
-            with open(os.path.join(self.path, 'package-version.txt')) as f:
+            with open(os.path.join(self.path, "package-version.txt")) as f:
                 package_version = f.read().strip()
         except IOError:
             self.__version = None
@@ -543,56 +783,83 @@ class Package(object):
                 self.__version = package_version
                 self.__patchlevel = -1
             else:
-                self.__version = match.group('version')
-                self.__patchlevel = int(match.group('patchlevel'))
+                self.__version = match.group("version")
+                self.__patchlevel = int(match.group("patchlevel"))
 
     def _init_type(self):
-        with open(os.path.join(self.path, 'type')) as f:
+        with open(os.path.join(self.path, "type")) as f:
             package_type = f.read().strip()
-        assert package_type in [
-            'base', 'standard', 'optional', 'experimental'
-        ]
+        assert package_type in ["base", "standard", "optional", "experimental"]
         self.__type = package_type
 
     def _init_version_requirements(self):
         try:
-            with open(os.path.join(self.path, 'version_requirements.txt')) as f:
+            with open(os.path.join(self.path, "version_requirements.txt")) as f:
                 self.__version_requirements = f.read().strip()
         except IOError:
             self.__version_requirements = None
 
     def _init_requirements(self):
         try:
-            with open(os.path.join(self.path, 'requirements.txt')) as f:
+            with open(os.path.join(self.path, "requirements.txt")) as f:
                 self.__requirements = f.read().strip()
         except IOError:
             self.__requirements = None
 
     def _init_dependencies(self):
         try:
-            with open(os.path.join(self.path, 'dependencies')) as f:
-                self.__dependencies = f.readline().partition('#')[0].strip()
+            with open(os.path.join(self.path, "dependencies")) as f:
+                self.__dependencies = f.readline().partition("#")[0].strip()
         except IOError:
-            self.__dependencies = ''
+            self.__dependencies = ""
         try:
-            with open(os.path.join(self.path, 'dependencies_check')) as f:
-                self.__dependencies_check = f.readline().partition('#')[0].strip()
+            with open(os.path.join(self.path, "dependencies_check")) as f:
+                self.__dependencies_check = f.readline().partition("#")[0].strip()
         except IOError:
-            self.__dependencies_check = ''
+            self.__dependencies_check = ""
         try:
-            with open(os.path.join(self.path, 'dependencies_optional')) as f:
-                self.__dependencies_optional = f.readline().partition('#')[0].strip()
+            with open(os.path.join(self.path, "dependencies_optional")) as f:
+                self.__dependencies_optional = f.readline().partition("#")[0].strip()
         except IOError:
-            self.__dependencies_optional = ''
+            self.__dependencies_optional = ""
         try:
-            with open(os.path.join(self.path, 'dependencies_order_only')) as f:
-                self.__dependencies_order_only = f.readline().partition('#')[0].strip()
+            with open(os.path.join(self.path, "dependencies_order_only")) as f:
+                self.__dependencies_order_only = f.readline().partition("#")[0].strip()
         except IOError:
-            self.__dependencies_order_only = ''
+            self.__dependencies_order_only = ""
 
     def _init_trees(self):
         try:
-            with open(os.path.join(self.path, 'trees.txt')) as f:
-                self.__trees = f.readline().partition('#')[0].strip()
+            with open(os.path.join(self.path, "trees.txt")) as f:
+                self.__trees = f.readline().partition("#")[0].strip()
         except IOError:
             self.__trees = None
+
+    def read_system_packages(self, system: str) -> list[str]:
+        """Return the distro package names for ``pkg`` on ``system``."""
+
+        rel_path = f"distros/{system}.txt"
+        if not self.has_file(rel_path):
+            return []
+        python_minor = os.environ.get("PYTHON_MINOR", "")
+        packages: list[str] = []
+        path = Path(self.path) / rel_path
+        for raw_line in path.read_text().splitlines():
+            line = raw_line.split("#", 1)[0]
+            if "${PYTHON_MINOR}" in line:
+                line = line.replace("${PYTHON_MINOR}", python_minor)
+            stripped = line.strip()
+            if not stripped:
+                continue
+            packages.extend(stripped.split())
+        return packages
+
+    def is_python_package(self) -> bool:
+        """Return whether this is a Python package."""
+        if self.name == "meson":
+            # 'meson-python' is the actual Python package
+            return False
+
+        return (
+            self.__requirements is not None or self.__version_requirements is not None
+        )
