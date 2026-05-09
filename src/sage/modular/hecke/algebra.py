@@ -246,10 +246,9 @@ class HeckeAlgebra_base(CachedRepresentation, Parent):
             if x.parent() == self or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()):
                 if x.parent().module().basis_matrix() == self.module().basis_matrix():
                     return HeckeAlgebraElement_matrix(self, x.matrix())
-                else:
-                    A = matrix([self.module().coordinate_vector(x.parent().module().gen(i))
-                                for i in range(x.parent().module().rank())])
-                    return HeckeAlgebraElement_matrix(self, ~A * x.matrix() * A)
+                A = matrix([self.module().coordinate_vector(x.parent().module().gen(i))
+                            for i in range(x.parent().module().rank())])
+                return HeckeAlgebraElement_matrix(self, ~A * x.matrix() * A)
 
         try:
             A = self.matrix_space()(x)

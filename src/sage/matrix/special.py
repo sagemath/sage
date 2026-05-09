@@ -41,6 +41,7 @@ The following constructions are available:
     :meth:`~sage.matrix.special.random_subspaces_matrix`
     :meth:`~sage.matrix.special.random_unimodular_matrix`
     :meth:`~sage.matrix.special.random_unitary_matrix`
+    :meth:`~sage.matrix.special.random_bistochastic_matrix`
     :meth:`~sage.matrix.special.toeplitz`
     :meth:`~sage.matrix.special.vandermonde`
     :meth:`~sage.matrix.special.vector_on_axis_rotation_matrix`
@@ -119,8 +120,7 @@ def matrix_method(func=None, name=None):
         func.__doc__ = "%s\n\n%s" % (prefix, func.__doc__)
         setattr(matrix, name, func)
         return func
-    else:
-        return lambda func: matrix_method(func, name=name)
+    return lambda func: matrix_method(func, name=name)
 
 
 @matrix_method
@@ -244,6 +244,9 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
       - ``'unitary'`` -- creates a (square) unitary matrix over a
         subfield of the complex numbers
 
+      - ``'bistochastic'`` -- creates a (square) bistochastic matrix over a
+        subfield of the real numbers
+
       - ``'diagonalizable'`` -- creates a diagonalizable matrix. if the
         base ring is ``QQ`` creates a diagonalizable matrix whose eigenvectors,
         if computed by hand, will have only integer entries. See the
@@ -360,7 +363,6 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         ....:     A = random_matrix(*args, **kwds)
         ....:     density_sum += float(A.density())
 
-        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 5, x=-10, y=10, density=0.75)
@@ -370,14 +372,12 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: while abs(density_sum/total_count - expected_density) > 0.001:
         ....:     add_sample(ZZ, 5, x=-10, y=10, density=0.75)
 
-        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 5, x=20, y=30, density=0.75)
         sage: while abs(density_sum/total_count - expected_density) > 0.001:
         ....:     add_sample(ZZ, 5, x=20, y=30, density=0.75)
 
-        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 100, x=20, y=30, density=0.75)
@@ -400,7 +400,6 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     For algorithm testing you might want to control the number of bits,
     say 10,000 entries, each limited to 16 bits.  ::
 
-        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: A = random_matrix(ZZ, 100, 100, x=2^16); A
         100 x 100 dense matrix over Integer Ring (use the '.str()' method to see the entries)
 
@@ -658,20 +657,21 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         else:
             A.randomize(density=density, nonzero=True, *args, **kwds)
         return A
-    elif algorithm == 'echelon_form':
+    if algorithm == 'echelon_form':
         return random_rref_matrix(parent, *args, **kwds)
-    elif algorithm == 'echelonizable':
+    if algorithm == 'echelonizable':
         return random_echelonizable_matrix(parent, *args, **kwds)
-    elif algorithm == 'diagonalizable':
+    if algorithm == 'diagonalizable':
         return random_diagonalizable_matrix(parent, *args, **kwds)
-    elif algorithm == 'subspaces':
+    if algorithm == 'subspaces':
         return random_subspaces_matrix(parent, *args, **kwds)
-    elif algorithm == 'unimodular':
+    if algorithm == 'unimodular':
         return random_unimodular_matrix(parent, *args, **kwds)
-    elif algorithm == 'unitary':
+    if algorithm == 'unitary':
         return random_unitary_matrix(parent, *args, **kwds)
-    else:
-        raise ValueError('random matrix algorithm "%s" is not recognized' % algorithm)
+    if algorithm == 'bistochastic':
+        return random_bistochastic_matrix(parent, *args, **kwds)
+    raise ValueError('random matrix algorithm "%s" is not recognized' % algorithm)
 
 
 @matrix_method
@@ -902,8 +902,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     # Ship ring, matrix size, dictionary to matrix constructor
     if ring is None:
         return matrix(nrows, nrows, w, sparse=sparse)
-    else:
-        return matrix(ring, nrows, nrows, w, sparse=sparse)
+    return matrix(ring, nrows, nrows, w, sparse=sparse)
 
 
 @matrix_method
@@ -936,11 +935,19 @@ def identity_matrix(ring, n=0, sparse=False):
         Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
         sage: M.is_mutable()
         True
+
+    ::
+
+        sage: T = TropicalSemiring(QQ)
+        sage: identity_matrix(T, 3)
+        [        0 +infinity +infinity]
+        [+infinity         0 +infinity]
+        [+infinity +infinity         0]
     """
     if isinstance(ring, (Integer, int)):
         n = ring
         ring = ZZ
-    return matrix_space.MatrixSpace(ring, n, n, sparse)(1)
+    return matrix_space.MatrixSpace(ring, n, n, sparse)(ring.one())
 
 
 @matrix_method
@@ -1011,7 +1018,6 @@ def zero_matrix(ring, nrows=None, ncols=None, sparse=False):
 
     Check that :issue:`38221` is fixed::
 
-        sage: # needs sage.groups
         sage: G = CyclicPermutationGroup(7)
         sage: R = GF(2)
         sage: A = G.algebra(R)
@@ -1307,18 +1313,15 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Rational Field
 
-        sage: # needs sage.symbolic
         sage: E = elementary_matrix(4, row1=1, scale=I)
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over
          Number Field in I with defining polynomial x^2 + 1 with I = 1*I
 
-        sage: # needs sage.rings.complex_double sage.symbolic
         sage: E = elementary_matrix(4, row1=1, scale=CDF(I))
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Complex Double Field
 
-        sage: # needs sage.rings.number_field sage.symbolic
         sage: E = elementary_matrix(4, row1=1, scale=QQbar(I))
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Algebraic Field
@@ -1512,8 +1515,7 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         elem[row1, row1] = scale
     if rowop:
         return elem
-    else:
-        return elem.transpose()
+    return elem.transpose()
 
 
 @matrix_method
@@ -2026,8 +2028,7 @@ def block_matrix(*args, **kwds):
     if not args:
         if sparse is not None:
             return matrix_space.MatrixSpace(ZZ, 0, 0, sparse=sparse)([])
-        else:
-            return matrix_space.MatrixSpace(ZZ, 0, 0)([])
+        return matrix_space.MatrixSpace(ZZ, 0, 0)([])
 
     if len(args) >= 1 and args[0] in Rings():
         # A ring is specified
@@ -2379,7 +2380,6 @@ def companion_matrix(poly, format='right'):
         [ 1  0 -8]
         [ 0  1  4]
 
-        sage: # needs sage.symbolic
         sage: y = var('y')
         sage: q = y^3 - 2*y + 1
         sage: companion_matrix(q)
@@ -2747,7 +2747,6 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     Matrices can be generated over any exact ring. ::
 
-        sage: # needs sage.rings.finite_rings
         sage: F.<a> = GF(2^3)
         sage: B = random_matrix(F, 4, 5, algorithm='echelonizable', rank=4,
         ....:                   upper_bound=None)
@@ -3091,7 +3090,6 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     A matrix over the number Field in `y` with defining polynomial `y^2-2y-2`. ::
 
-        sage: # needs sage.rings.number_field
         sage: y = polygen(ZZ, 'y')
         sage: K = NumberField(y^2 - 2*y - 2, 'y')
         sage: C = random_matrix(K, 3, algorithm='unimodular')
@@ -3135,7 +3133,7 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
     if upper_bound is None:
         # random_echelonizable_matrix() always returns a determinant one matrix if given full rank.
         return random_matrix(ring, size, algorithm='echelonizable', rank=size)
-    elif upper_bound is not None and (ring == ZZ or ring == QQ):
+    if upper_bound is not None and (ring == ZZ or ring == QQ):
         return random_matrix(ring, size,algorithm='echelonizable',rank=size, upper_bound=upper_bound, max_tries=max_tries)
 
 
@@ -3303,6 +3301,108 @@ def random_unitary_matrix(parent):
 
     return U
 
+@matrix_method
+def random_bistochastic_matrix(parent):
+    """
+    Generate a random (square) bistochastic matrix of a given size with entries
+    in a subfield of the real numbers.
+
+    INPUT:
+
+    - ``parent`` -- :class:`sage.matrix.matrix_space.MatrixSpace`; a square
+      matrix space over a subfield of the real numbers having characteristic
+      zero.
+
+    OUTPUT:
+
+    A random bistochastic matrix in ``parent``. A :exc:`ValueError` is
+    raised if ``parent`` is not an appropriate matrix space (is not
+    square, or is not over a usable field).
+
+    ALGORITHM:
+
+    A unitary matrix over a subfield of the real numbers which entries are
+    squared will result in a bistochastic matrix. However, not all bistochastic
+    matrices arise in this way.
+
+    .. WARNING:
+
+        Inexact rings may violate your expectations; in particular,
+        the rings ``RR`` and ``RDF`` are accepted by this method but
+        the resulting matrix will usually fail the ``is_bistochastic()``
+        check due to floating point precision.
+
+    EXAMPLES:
+
+    Matrices with rational entries::
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(QQ, 4)
+        sage: B = random_bistochastic_matrix(MS)
+        sage: B.is_bistochastic()
+        True
+
+    Matrices over the real field may expose approximation errors::
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(RR, 4)
+        sage: B = random_bistochastic_matrix(MS)
+        sage: B.is_bistochastic()  # random
+        False
+
+    It only works over subfields of the real numbers and for square matrices::
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(CC, 4)
+        sage: B = random_bistochastic_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: base ring of parent must be a subfield of the real numbers
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(QQ, 4, 3)
+        sage: B = random_bistochastic_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: parent must be square
+
+    TESTS::
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(QQ, 4)
+        sage: B = random_bistochastic_matrix(MS)
+        sage: B.is_bistochastic()
+        True
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(QQ, 4, 3)
+        sage: B = random_bistochastic_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: parent must be square
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(GF(2), 4)
+        sage: B = random_bistochastic_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: base ring of parent must be a subfield of the real numbers
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(CC, 4)
+        sage: B = random_bistochastic_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: base ring of parent must be a subfield of the real numbers
+    """
+    from sage.rings.real_mpfr import RR
+    if not parent.base_ring().is_subring(RR):
+        raise ValueError("base ring of parent must be a subfield of the real "
+                         "numbers")
+
+    B = random_unitary_matrix(parent)
+    # Squaring every entry.
+    return B.elementwise_product(B)
 
 @matrix_method
 def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
@@ -3348,7 +3448,6 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5)
         sage: A = random_diagonalizable_matrix(matrix_space)
 
-        sage: # needs sage.rings.number_field
         sage: eigenvalues = A.eigenvalues()
         sage: S = A.right_eigenmatrix()[1]
         sage: eigenvalues2 = (S.inverse()*A*S).diagonal()
@@ -3369,7 +3468,6 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         sage: all(x in ZZ for x in (B-(6*identity_matrix(6))).rref().list())
         True
 
-        sage: # needs sage.rings.number_field
         sage: S = B.right_eigenmatrix()[1]
         sage: eigenvalues2 = (S.inverse()*B*S).diagonal()
         sage: all(e in eigenvalues for e in eigenvalues2)
@@ -3577,7 +3675,6 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
 
     ::
 
-        sage: # needs sage.symbolic
         sage: x,y = var('x,y')
         sage: v = vector((x,y))
         sage: vector_on_axis_rotation_matrix(v, 1)
@@ -3681,7 +3778,6 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
     On the symbolic ring::
 
-        sage: # needs sage.symbolic
         sage: x,y,z = var('x,y,z')
         sage: v = vector((x,y,z))
         sage: ith_to_zero_rotation_matrix(v, 2)

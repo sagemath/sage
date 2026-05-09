@@ -229,62 +229,58 @@ def mandelbrot_plot(f=None, **kwds):
         if interacts:
             return interact(**widgets).widget(fast_mandelbrot_plot)
 
-        else:
-            return fast_mandelbrot_plot(x_center, y_center, image_width,
-             max_iteration, pixel_count, level_sep, number_of_colors,
-             base_color)
+        return fast_mandelbrot_plot(x_center, y_center, image_width,
+         max_iteration, pixel_count, level_sep, number_of_colors,
+         base_color)
+
+    if parameter is None:
+        c = var('c')
+        parameter = c
+
+    P = f.parent()
+
+    if P.base_ring() is CC or P.base_ring() is CDF:
+        if isinstance(P, FractionField_generic):
+            raise NotImplementedError("coefficients must be polynomials in the parameter")
+        gen_list = list(P.gens())
+        parameter = gen_list.pop(gen_list.index(parameter))
+        variable = gen_list.pop()
+
+    elif P.base_ring().base_ring() is CC or P.base_ring().base_ring() is CDF:
+        if isinstance(P.base_ring(), FractionField_generic):
+            raise NotImplementedError("coefficients must be polynomials in the parameter")
+        phi = P.flattening_morphism()
+        f = phi(f)
+        gen_list = list(f.parent().gens())
+        parameter = gen_list.pop(gen_list.index(parameter))
+        variable = gen_list.pop()
+
+    elif P.base_ring() in FunctionFields():
+        raise NotImplementedError("coefficients must be polynomials in the parameter")
 
     else:
-        if parameter is None:
-            c = var('c')
-            parameter = c
+        raise ValueError("base ring must be a complex field")
 
-        P = f.parent()
+    if f == variable**2 + parameter:
+        # Quadratic map f = z^2 + c
+        if interacts:
+            return interact(**widgets).widget(fast_mandelbrot_plot)
 
-        if P.base_ring() is CC or P.base_ring() is CDF:
-            if isinstance(P, FractionField_generic):
-                raise NotImplementedError("coefficients must be polynomials in the parameter")
-            gen_list = list(P.gens())
-            parameter = gen_list.pop(gen_list.index(parameter))
-            variable = gen_list.pop()
+        return fast_mandelbrot_plot(x_center, y_center, image_width,
+         max_iteration, pixel_count, level_sep, number_of_colors,
+         base_color)
+    if interacts:
+        raise NotImplementedError("interact only implemented for z^2 + c")
+    else:
+        # Set default of max_iteration to 50 for general polynomial maps
+        # This prevents the function from being very slow by default
+        if not given_iterations:
+            max_iteration = 50
 
-        elif P.base_ring().base_ring() is CC or P.base_ring().base_ring() is CDF:
-            if isinstance(P.base_ring(), FractionField_generic):
-                raise NotImplementedError("coefficients must be polynomials in the parameter")
-            phi = P.flattening_morphism()
-            f = phi(f)
-            gen_list = list(f.parent().gens())
-            parameter = gen_list.pop(gen_list.index(parameter))
-            variable = gen_list.pop()
-
-        elif P.base_ring() in FunctionFields():
-            raise NotImplementedError("coefficients must be polynomials in the parameter")
-
-        else:
-            raise ValueError("base ring must be a complex field")
-
-        if f == variable**2 + parameter:
-            # Quadratic map f = z^2 + c
-            if interacts:
-                return interact(**widgets).widget(fast_mandelbrot_plot)
-
-            else:
-                return fast_mandelbrot_plot(x_center, y_center, image_width,
-                 max_iteration, pixel_count, level_sep, number_of_colors,
-                 base_color)
-        else:
-            if interacts:
-                raise NotImplementedError("interact only implemented for z^2 + c")
-            else:
-                # Set default of max_iteration to 50 for general polynomial maps
-                # This prevents the function from being very slow by default
-                if not given_iterations:
-                    max_iteration = 50
-
-                # Mandelbrot of General Polynomial Map
-                return polynomial_mandelbrot(f, parameter, x_center, y_center,
-                 image_width, max_iteration, pixel_count, level_sep,
-                 number_of_colors, base_color)
+        # Mandelbrot of General Polynomial Map
+        return polynomial_mandelbrot(f, parameter, x_center, y_center,
+         image_width, max_iteration, pixel_count, level_sep,
+         number_of_colors, base_color)
 
 
 def external_ray(theta, **kwds):
@@ -749,14 +745,13 @@ def julia_plot(f=None, **kwds):
                 widgets["point_color"] = ColorPicker(value=point_color.html_color(),
                                                      description="Point color")
                 return interact(**widgets).widget(julia_helper)
-            else:
-                return interact(**widgets).widget(fast_julia_plot)
-        elif mandelbrot:  # non-interactive with mandelbrot
+            return interact(**widgets).widget(fast_julia_plot)
+        if mandelbrot:  # non-interactive with mandelbrot
             return julia_helper(c_real, c_imag, x_center, y_center,
                                 image_width, max_iteration, pixel_count,
                                 level_sep, number_of_colors, base_color,
                                 point_color)
-        else:  # non-interactive without mandelbrot
-            return fast_julia_plot(c_real, c_imag, x_center, y_center,
-                                   image_width, max_iteration, pixel_count,
-                                   level_sep, number_of_colors, base_color)
+        # non-interactive without mandelbrot
+        return fast_julia_plot(c_real, c_imag, x_center, y_center,
+                               image_width, max_iteration, pixel_count,
+                               level_sep, number_of_colors, base_color)

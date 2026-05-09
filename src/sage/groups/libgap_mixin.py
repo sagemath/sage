@@ -17,7 +17,7 @@ from sage.libs.gap.element import GapElement
 from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
 from sage.misc.randstate import current_randstate
-from sage.groups.class_function import ClassFunction_libgap
+from sage.groups.class_function import ClassFunction
 from sage.groups.libgap_wrapper import ElementLibGAP
 
 
@@ -42,16 +42,15 @@ class GroupMixinLibGAP:
         """
         if parent(elt) is self:
             return True
-        elif isinstance(elt, GapElement):
+        if isinstance(elt, GapElement):
             return elt in self.gap()
-        elif isinstance(elt, ElementLibGAP):
+        if isinstance(elt, ElementLibGAP):
             return elt.gap() in self.gap()
-        else:
-            try:
-                elt2 = self(elt)
-            except Exception:
-                return False
-            return elt == elt2
+        try:
+            elt2 = self(elt)
+        except Exception:
+            return False
+        return elt == elt2
 
     def is_abelian(self) -> bool:
         r"""
@@ -340,8 +339,8 @@ class GroupMixinLibGAP:
             sage: list(chi)                                                             # needs sage.rings.number_field
             [0, 1, 2, 3, 4, 5, 6, 7]
         """
-        from sage.groups.class_function import ClassFunction_libgap
-        return ClassFunction_libgap(self, values)
+        from sage.groups.class_function import ClassFunction
+        return ClassFunction(self, values)
 
     @cached_method
     def center(self):
@@ -668,7 +667,7 @@ class GroupMixinLibGAP:
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
         Irr = self.gap().Irr()
-        L = [ClassFunction_libgap(self, irr) for irr in Irr]
+        L = [ClassFunction(self, irr) for irr in Irr]
         return tuple(L)
 
     def character(self, values):
@@ -699,7 +698,7 @@ class GroupMixinLibGAP:
         """
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
-        return ClassFunction_libgap(self, values)
+        return ClassFunction(self, values)
 
     def trivial_character(self):
         r"""

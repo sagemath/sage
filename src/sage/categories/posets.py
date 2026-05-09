@@ -120,8 +120,7 @@ class Posets(Category):
         from sage.categories.examples.posets import FiniteSetsOrderedByInclusion, PositiveIntegersOrderedByDivisibilityFacade
         if choice == "facade":
             return PositiveIntegersOrderedByDivisibilityFacade()
-        else:
-            return FiniteSetsOrderedByInclusion()
+        return FiniteSetsOrderedByInclusion()
 
     def __iter__(self):
         r"""
@@ -615,12 +614,11 @@ class Posets(Category):
             list_o = list(o)
             if ordered:
                 return all(self.lt(a, b) for a, b in zip(list_o, list_o[1:]))
-            else:
-                for (i, x) in enumerate(list_o):
-                    for y in list_o[:i]:
-                        if (not self.le(x, y)) and (not self.gt(x, y)):
-                            return False
-                return True
+            for (i, x) in enumerate(list_o):
+                for y in list_o[:i]:
+                    if (not self.le(x, y)) and (not self.gt(x, y)):
+                        return False
+            return True
 
         def is_antichain_of_poset(self, o):
             """

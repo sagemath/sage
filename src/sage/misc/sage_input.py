@@ -484,31 +484,28 @@ class SageInputBuilder:
             if self._preparse is True:
                 if x < 0:
                     return -SIE_literal_stringrep(self, str(-x) + 'r')
-                else:
-                    return SIE_literal_stringrep(self, str(x) + 'r')
-            elif self._preparse is False:
+                return SIE_literal_stringrep(self, str(x) + 'r')
+            if self._preparse is False:
                 return self.int(x)
-            elif x < 0:
+            if x < 0:
                 return -self.name('int')(self.int(-x))
-            else:
-                return self.name('int')(self.int(x))
+            return self.name('int')(self.int(x))
 
         if isinstance(x, float):
             # floats could often have prettier output,
             # but I think they're rare enough in Sage that it's not
             # worth the effort.
-            from math import inf
+            from math import inf, isnan
             if x == inf:
                 return self.name('float')(self.name('infinity'))
-            if x != x:
+            if isnan(x):
                 return self.name('float')(self.name('NaN'))
             if x == -inf:
                 return -self.name('float')(self.name('infinity'))
             if self._preparse is False and float(str(x)) == x:
                 if x < 0:
                     return -SIE_literal_stringrep(self, str(-x))
-                else:
-                    return SIE_literal_stringrep(self, str(x))
+                return SIE_literal_stringrep(self, str(x))
             from sage.rings.integer_ring import ZZ
             from sage.rings.real_mpfr import RR
             rrx = RR(x)
@@ -534,8 +531,7 @@ class SageInputBuilder:
             loc_name = '_sil%d' % loc
             self._locals[loc_name] = x
             return SIE_literal_stringrep(self, loc_name)
-        else:
-            raise ValueError("cannot convert {} to sage_input form".format(x))
+        raise ValueError("cannot convert {} to sage_input form".format(x))
 
     def preparse(self) -> bool | None:
         r"""
@@ -584,8 +580,7 @@ class SageInputBuilder:
         """
         if n < 0:
             return -SIE_literal_stringrep(self, -n)
-        else:
-            return SIE_literal_stringrep(self, n)
+        return SIE_literal_stringrep(self, n)
 
     def float_str(self, n) -> SIE_literal_stringrep:
         r"""
@@ -1100,7 +1095,7 @@ class SageInputBuilder:
                     factors[i:i + 1] = []
                 else:
                     i += 1
-            if len(factors) == 0:
+            if not factors:
                 factors.append(SIE_literal_stringrep(self, '1'))
 
         prod = factors[0]
@@ -1146,7 +1141,7 @@ class SageInputBuilder:
                     terms[i:i + 1] = []
                 else:
                     i += 1
-            if len(terms) == 0:
+            if not terms:
                 terms.append(SIE_literal_stringrep(self, '0'))
 
         sum = terms[0]
@@ -1186,18 +1181,16 @@ class SageInputBuilder:
 
         e._sie_prepare(sif)
 
-        s = sif.format(e, 0)
+        sif.format(e, 0)
 
         locals = self._locals
-        if len(locals):
+        if locals:
             return SageInputAnswer(sif._commands, sif.format(e, 0), locals)
-        else:
-            return SageInputAnswer(sif._commands, sif.format(e, 0))
+        return SageInputAnswer(sif._commands, sif.format(e, 0))
 
 
-# Python's precedence levels.  Hand-transcribed from section 5.14 of
-# the Python 2 reference manual.  In the Python 3 reference manual
-# this is section 6.16.
+# Python's precedence levels.  Hand-transcribed from section 6.16 of
+# the Python 3 reference manual.
 # See https://docs.python.org/3/reference/expressions.html
 _prec_lambda = 2
 _prec_or = 4
@@ -2257,10 +2250,9 @@ class SIE_tuple(SageInputExpression):
         values = [sif.format(val, 0) for val in self._sie_values]
         if self._sie_is_list:
             return '[%s]' % ', '.join(values), _prec_atomic
-        elif len(values) == 1:
+        if len(values) == 1:
             return '(%s,)' % values[0], _prec_atomic
-        else:
-            return '(%s)' % ', '.join(values), _prec_atomic
+        return '(%s)' % ', '.join(values), _prec_atomic
 
 
 class SIE_dict(SageInputExpression):
@@ -2496,8 +2488,7 @@ class SIE_binary(SageInputExpression):
             rhs = sif.format(self._sie_operands[1], _prec_exponent)
             if self._sie_builder.preparse():
                 return '%s^%s' % (lhs, rhs), _prec_exponent
-            else:
-                return '%s**%s' % (lhs, rhs), _prec_exponent
+            return '%s**%s' % (lhs, rhs), _prec_exponent
 
         if op == '*':
             prec = _prec_muldiv
@@ -3495,8 +3486,7 @@ class SageInputFormatter:
             next = self._dup_names[name] + 1
             self._dup_names[name] = next
             return name + str(next)
-        else:
-            return name
+        return name
 
 
 def verify_same(a, b) -> None:
@@ -3550,7 +3540,7 @@ def verify_same(a, b) -> None:
         # If this case occurs, then a and b do not compare equal to
         # itself. In that case, we compare the string representations of
         # a and b.
-        if not (a == a) and not (b == b):
+        if not (a == a) and not (b == b):  # noqa: PLR0124
             if repr(a) == repr(b):
                 return  # Good!
         raise AssertionError("Expected %r == %r" % (a, b))
@@ -3644,8 +3634,7 @@ class SageInputAnswer(tuple[str, str, dict[str, Any]]):
         """
         if locals:
             return tuple.__new__(cls, (cmds, expr, locals))
-        else:
-            return tuple.__new__(cls, (cmds, expr))
+        return tuple.__new__(cls, (cmds, expr))
 
     def __repr__(self) -> str:
         r"""

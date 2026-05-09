@@ -373,11 +373,10 @@ class LeviCivitaConnection(AffineConnection):
                                start_index=self._domain._sindex,
                                output_formatter=DiffScalarField.coord_function,
                                sym=(1,2))
-        else:
-            # a priori no symmetry in a generic frame:
-            return Components(frame._domain.scalar_field_algebra(), frame, 3,
-                              start_index=self._domain._sindex,
-                              output_formatter=DiffScalarField.coord_function)
+        # a priori no symmetry in a generic frame:
+        return Components(frame._domain.scalar_field_algebra(), frame, 3,
+                          start_index=self._domain._sindex,
+                          output_formatter=DiffScalarField.coord_function)
 
     def coef(self, frame=None):
         r"""

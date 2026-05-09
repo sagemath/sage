@@ -132,5 +132,4 @@ def CyclicCover(r, f, names=None, check_smooth=True):
 
     if isinstance(R, FiniteField):
         return CyclicCover_finite_field(A2, r, f, names=names)
-    else:
-        return CyclicCover_generic(A2, r, f, names=names)
+    return CyclicCover_generic(A2, r, f, names=names)

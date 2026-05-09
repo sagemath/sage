@@ -211,14 +211,13 @@ def random_integer_vector(n, length):
     """
     if length == 0:
         return []
-    elif length == 1:
+    if length == 1:
         return [n]
-    elif length == 2:
+    if length == 2:
         v = randint(0, n)
         return [v, n - v]
-    else:
-        v = randint(0, 2 * n // length)
-        return [v] + random_integer_vector(n - v, length - 1)
+    v = randint(0, 2 * n // length)
+    return [v] + random_integer_vector(n - v, length - 1)
 
 
 def random_expr_helper(n_nodes, internal, leaves, verbose):
@@ -253,18 +252,17 @@ def random_expr_helper(n_nodes, internal, leaves, verbose):
     """
     if n_nodes == 1:
         return choose_from_prob_list(leaves)[1]
-    else:
-        r = choose_from_prob_list(internal)
-        n_nodes -= 1
-        n_children = r[2]
-        n_spare_nodes = n_nodes - n_children
-        n_spare_nodes = max(0, n_spare_nodes)
-        nodes_per_child = random_integer_vector(n_spare_nodes, n_children)
-        children = [random_expr_helper(n + 1, internal, leaves, verbose)
-                    for n in nodes_per_child]
-        if verbose:
-            print("About to apply %r to %r" % (r[1], children))
-        return r[1](*children)
+    r = choose_from_prob_list(internal)
+    n_nodes -= 1
+    n_children = r[2]
+    n_spare_nodes = n_nodes - n_children
+    n_spare_nodes = max(0, n_spare_nodes)
+    nodes_per_child = random_integer_vector(n_spare_nodes, n_children)
+    children = [random_expr_helper(n + 1, internal, leaves, verbose)
+                for n in nodes_per_child]
+    if verbose:
+        print("About to apply %r to %r" % (r[1], children))
+    return r[1](*children)
 
 
 def random_expr(size, nvars=1, ncoeffs=None, var_frac=0.5,

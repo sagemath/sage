@@ -620,8 +620,7 @@ class PollackStevensModularSymbolspace(Module):
         """
         if self.coefficient_module().is_symk():
             return PollackStevensModularSymbols(self.group(), coefficients=self.coefficient_module().lift(p, M, new_base_ring), sign=self.sign())
-        else:
-            raise TypeError("Coefficient module must be a Symk")
+        raise TypeError("Coefficient module must be a Symk")
 
     def change_ring(self, new_base_ring):
         r"""

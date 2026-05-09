@@ -717,8 +717,7 @@ class WordGenerator:
             fracH += 1
         if 0 <= fracH < beta:
             return alphabet[1]
-        else:
-            return alphabet[0]
+        return alphabet[0]
 
     @rename_keyword(cf='slope')
     def CharacteristicSturmianWord(self, slope, alphabet=(0, 1), bits=None):
@@ -1487,17 +1486,16 @@ class WordGenerator:
         if n == 0:
             a = [] if q_0 is None else [q_0]
             return W(a)
-        elif n == 1:
+        if n == 1:
             b = [] if q_1 is None else [q_1]
             return W(b)
-        elif n % 3 == 2:
+        if n % 3 == 2:
             u = self._fibonacci_tile(n - 1, q_0, q_1)
             v = self._fibonacci_tile(n - 2, q_0, q_1)
             return u * v
-        else:
-            u = self._fibonacci_tile(n - 1, q_0, q_1)
-            v = bar(self._fibonacci_tile(n - 2, q_0, q_1))
-            return u * v
+        u = self._fibonacci_tile(n - 1, q_0, q_1)
+        v = bar(self._fibonacci_tile(n - 2, q_0, q_1))
+        return u * v
 
     def fibonacci_tile(self, n):
         r"""

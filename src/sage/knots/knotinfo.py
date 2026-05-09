@@ -128,6 +128,7 @@ types::
 
 Obtaining the HOMFLY-PT polynomial::
 
+    sage: # needs libhomfly
     sage: L.homfly_polynomial()
     -v^-1*z - v^-3*z - v^-3*z^-1 + v^-5*z^-1
     sage: _ == l.homfly_polynomial(normalization='vz')
@@ -200,6 +201,7 @@ will be reduced to proper links with 7 crossings.
 Finally there is a method :meth:`Link.get_knotinfo` of class :class:`Link` to find an instance
 in the KnotInfo database::
 
+    sage: # needs libhomfly
     sage: L = Link([[3,1,2,4], [8,9,1,7], [5,6,7,3], [4,18,6,5],
     ....:           [17,19,8,18], [9,10,11,14], [10,12,13,11],
     ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
@@ -263,7 +265,7 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
         '{3, {-2, -2, -1, 2, -1}}'
         sage: eval_knotinfo(_)
         (3, (-2, -2, -1, 2, -1))
-        sage: KnotInfo.K13a_1.kauffman_polynomial()  # optional - database_knotinfo # indirect doctest
+        sage: eval_knotinfo('')
         Traceback (most recent call last):
         ...
         NotImplementedError: this value is not provided by the database
@@ -332,7 +334,7 @@ def knotinfo_bool(string):
         raise NotImplementedError('this boolean is not provided by the database')
     if string == 'Y':
         return True
-    elif string == 'N':
+    if string == 'N':
         return False
     raise ValueError('%s is not a KnotInfo boolean')
 
@@ -388,11 +390,11 @@ class SymmetryMutant(Enum):
         """
         if self is SymmetryMutant.itself:
             return SymmetryMutant.reverse
-        elif self is SymmetryMutant.reverse:
+        if self is SymmetryMutant.reverse:
             return SymmetryMutant.itself
-        elif self is SymmetryMutant.mirror_image:
+        if self is SymmetryMutant.mirror_image:
             return SymmetryMutant.concordance_inverse
-        elif self is SymmetryMutant.concordance_inverse:
+        if self is SymmetryMutant.concordance_inverse:
             return SymmetryMutant.mirror_image
         return self
 
@@ -408,11 +410,11 @@ class SymmetryMutant(Enum):
         """
         if self is SymmetryMutant.itself:
             return SymmetryMutant.mirror_image
-        elif self is SymmetryMutant.reverse:
+        if self is SymmetryMutant.reverse:
             return SymmetryMutant.concordance_inverse
-        elif self is SymmetryMutant.mirror_image:
+        if self is SymmetryMutant.mirror_image:
             return SymmetryMutant.itself
-        elif self is SymmetryMutant.concordance_inverse:
+        if self is SymmetryMutant.concordance_inverse:
             return SymmetryMutant.reverse
         return self
 
@@ -604,8 +606,7 @@ class KnotInfoBase(Enum):
 
         if n == 1:
             return BraidGroup(2)
-        else:
-            return BraidGroup(n)
+        return BraidGroup(n)
 
     @cached_method
     def _homfly_pol_ring(self, var1, var2):
@@ -615,6 +616,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: L = KnotInfo.L4a1_1
             sage: L._homfly_pol_ring('u', 'v')
             Multivariate Laurent Polynomial Ring in u, v over Integer Ring
@@ -791,7 +793,7 @@ class KnotInfoBase(Enum):
             # in some cases there are a pair of braid representations
             # in the database. If this is the case we select the
             # corresponding to the braid index.
-            if type(braid_notation[0]) is tuple:
+            if type(braid_notation[0]) in (list, tuple):
                 i = self.braid_index()
                 for b in braid_notation:
                     if -i < min(b) and max(b) < i:
@@ -829,10 +831,9 @@ class KnotInfoBase(Enum):
         """
         if self.is_knot():
             return knotinfo_int(self[self.items.braid_index])
-        else:
-            braid_notation = self[self.items.braid_notation]
-            braid_notation = eval_knotinfo(braid_notation)
-            return knotinfo_int(braid_notation[0])
+        braid_notation = self[self.items.braid_notation]
+        braid_notation = eval_knotinfo(braid_notation)
+        return knotinfo_int(braid_notation[0])
 
     @cached_method
     def braid_length(self):
@@ -864,9 +865,9 @@ class KnotInfoBase(Enum):
             sage: K.braid()
             s^3
             sage: K.braid_notation()
-            (1, 1, 1)
+            [1, 1, 1]
             sage: KnotInfo.K13n_1448.braid()    # optional - database_knotinfo
-            s0^-1*s1*s2*s3*s4*s3^2*s2^-1*s1^-1*s0*s2^-1*s1*(s3*s2)^2*s4^-1*s3*s2*s1^-1*s3*s2^-1*s3
+            s0^-1*s1*s0^-1*s2*s1^2*s3^2*s2^-1*s3*s2*s1^3
         """
         return self._braid_group()(self.braid_notation())
 
@@ -1387,16 +1388,18 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: K3_1 = KnotInfo.K3_1
             sage: PK3_1 = K3_1.homfly_polynomial(); PK3_1
             -v^4 + v^2*z^2 + 2*v^2
             sage: K3_1.homfly_polynomial(original=True)
-            '(2*v^2-v^4)+v^2*z^2'
+            '(2*v^2-v^4)+ v^2*z^2'
             sage: PK3_1 == K3_1.link().homfly_polynomial(normalization='vz')
             True
 
         for proper links::
 
+            sage: # needs libhomfly
             sage: L4a1_1 = KnotInfo.L4a1_1
             sage: PL4a1_1 = L4a1_1.homfly_polynomial(var1='x', var2='y'); PL4a1_1
             -x^5*y + x^3*y^3 - x^5*y^-1 + 3*x^3*y + x^3*y^-1
@@ -1406,6 +1409,7 @@ class KnotInfoBase(Enum):
         check the skein-relation from the KnotInfo description page (applied to one
         of the positive crossings of the right-handed trefoil)::
 
+            sage: # needs libhomfly
             sage: R = PK3_1.parent()
             sage: PO = R.one()
             sage: L2a1_1 = KnotInfo.L2a1_1
@@ -1416,6 +1420,7 @@ class KnotInfoBase(Enum):
 
         TESTS::
 
+            sage: # needs libhomfly
             sage: H = KnotInfo.L11n459_1_1_1.homfly_polynomial()   # optional - database_knotinfo
             sage: all(L.homfly_polynomial() == L.link().homfly_polynomial(normalization='vz')\
             ....:     for L in KnotInfo if L.crossing_number() < 7)
@@ -1489,17 +1494,19 @@ class KnotInfoBase(Enum):
 
             sage: L.kauffman_polynomial()
             a^-1*z - a^-1*z^-1 + a^-2 + a^-3*z - a^-3*z^-1
-            sage: K.kauffman_polynomial()
+            sage: kp1 = K.kauffman_polynomial(); kp1
             a^2*z^2 + a*z^3 - a^2 - a*z + 2*z^2 + a^-1*z^3 - 1 - a^-1*z + a^-2*z^2 - a^-2
+            sage: kp2 = KnotInfo.K13a_1.kauffman_polynomial()            # optional database_knotinfo
+            sage: (kp2.degree(), len(kp2.coefficients()))                # optional database_knotinfo
+            (16, 69)
 
         Comparison with Jones polynomial::
 
             sage: # needs sage.symbolic
-            sage: k    = _
-            sage: a, z = k.variables()
+            sage: a, z = kp1.variables()
             sage: j    = K.jones_polynomial(skein_normalization=True)
             sage: t,   = j.variables()
-            sage: k.subs(a=-t^3, z=~t+t) == j.subs(t=t^4)
+            sage: kp1.subs(a=-t^3, z=~t+t) == j.subs(t=t^4)
             True
 
         Check the skein relation::
@@ -2066,11 +2073,9 @@ class KnotInfoBase(Enum):
         if not khovanov_polynomial and self.crossing_number() == 0:
             if reduced or odd:
                 return R.one()
-            else:
-                if integral:
-                    return R({(1, 0, 0): 1, (-1, 0, 0): 1})
-                else:
-                    return R({(1, 0): 1, (-1, 0): 1})
+            if integral:
+                return R({(1, 0, 0): 1, (-1, 0, 0): 1})
+            return R({(1, 0): 1, (-1, 0): 1})
 
         if not khovanov_polynomial:
             # given just for links with less than 12 crossings
@@ -2223,18 +2228,18 @@ class KnotInfoBase(Enum):
 
         if use_item == self.items.pd_notation:
             return Link(self.pd_notation())
-        elif use_item == self.items.braid_notation:
+        if use_item == self.items.braid_notation:
             return Link(self.braid())
-        elif use_item == self.items.name and snappy:
+        if use_item == self.items.name and snappy:
             if not self.is_knot():
                 use_item = self.items.name_unoriented
             return Link(self[use_item])
-        elif self.is_knot() and not snappy:
+        if self.is_knot() and not snappy:
             # Construction via Gauss and DT-Code only possible for knots
             from sage.knots.knot import Knots
             if use_item == self.items.dt_notation:
                 return Knots().from_dowker_code(self.dt_notation())
-            elif use_item == self.items.gauss_notation:
+            if use_item == self.items.gauss_notation:
                 return Knots().from_gauss_code(self.gauss_notation())
 
         raise ValueError('link construction using %s not possible' % use_item)
@@ -2248,6 +2253,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: KnotInfo.L4a1_0.is_unique()
             True
             sage: KnotInfo.L5a1_0.is_unique()
@@ -2301,6 +2307,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: KnotInfo.L4a1_0.inject()
             Defining L4a1_0
             sage: L4a1_0.is_recoverable()
@@ -2355,8 +2362,7 @@ class KnotInfoBase(Enum):
                 return False
             if unique:
                 return check_result(res)
-            else:
-                return any(check_result(r) for r in res)
+            return any(check_result(r) for r in res)
 
         from sage.misc.misc import some_tuples
         if SymmetryMutant.unknown.matches(self):
@@ -2451,8 +2457,7 @@ class KnotInfoBase(Enum):
 
         if single:
             return webbrowser.open(filename.diagram_url(self[self.items.diagram], single=single), new=new, autoraise=autoraise)
-        else:
-            return webbrowser.open(filename.diagram_url(self[self.items.name]), new=new, autoraise=autoraise)
+        return webbrowser.open(filename.diagram_url(self[self.items.name]), new=new, autoraise=autoraise)
 
     def knot_atlas_webpage(self, new=0, autoraise=True):
         r"""
@@ -2700,8 +2705,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         """
         if self._is_knot:
             return 'Series of knots %s' % (self._name())
-        else:
-            return 'Series of links %s' % (self._name())
+        return 'Series of links %s' % (self._name())
 
     def __getitem__(self, item):
         r"""
@@ -2817,6 +2821,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: KnotInfo.L4a1_0.series().inject()
             Defining L4a
             sage: L4a.is_recoverable()

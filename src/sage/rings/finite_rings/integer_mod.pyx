@@ -206,30 +206,6 @@ def IntegerMod(parent, value):
     return t(parent, value)
 
 
-def is_IntegerMod(x):
-    """
-    Return ``True`` if and only if x is an integer modulo
-    `n`.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.integer_mod import is_IntegerMod
-        sage: is_IntegerMod(5)
-        doctest:warning...
-        DeprecationWarning: The function is_IntegerMod is deprecated;
-        use 'isinstance(..., IntegerMod_abstract)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        False
-        sage: is_IntegerMod(Mod(5,10))
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_IntegerMod is deprecated; "
-                       "use 'isinstance(..., IntegerMod_abstract)' instead.")
-    return isinstance(x, IntegerMod_abstract)
-
-
 cdef inline inverse_or_None(x):
     try:
         return ~x
@@ -558,7 +534,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: a = Mod(2,19)
             sage: gap(a)
             Z(19)
@@ -587,30 +562,34 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         return '%s!%s' % (self.parent()._magma_init_(magma), self)
 
-    def _axiom_init_(self) -> str:
+    def _fricas_init_(self) -> str:
         """
-        Return a string representation of the corresponding to
-        (Pan)Axiom object.
+        Return a string representation of the corresponding
+        FriCAS object.
 
         EXAMPLES::
 
             sage: a = Integers(15)(4)
-            sage: a._axiom_init_()
-            '4 :: IntegerMod(15)'
-
-            sage: aa = axiom(a); aa             # optional - axiom
-            4
-            sage: aa.type()                     # optional - axiom
-            IntegerMod 15
+            sage: a._fricas_init_()
+            '4::IntegerMod(15)'
 
             sage: aa = fricas(a); aa            # optional - fricas
             4
             sage: aa.typeOf()                   # optional - fricas
             IntegerMod(15)
-        """
-        return '%s :: %s' % (self, self.parent()._axiom_init_())
 
-    _fricas_init_ = _axiom_init_
+            sage: a = GF(7)(4)
+            sage: a._fricas_init_()
+            '4::PrimeField(7)'
+
+            sage: aa = fricas(a); aa            # optional - fricas
+            4
+            sage: aa.typeOf()                   # optional - fricas
+            PrimeField(7)
+        """
+        return '%s::%s' % (self, self.parent()._fricas_init_())
+
+    _axiom_init_ = _fricas_init_
 
     def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
@@ -674,7 +653,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari sage.modules
             sage: r = Integers(125)
             sage: b = r.multiplicative_generator()^3
             sage: a = b^17
@@ -685,7 +663,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         A bigger example::
 
-            sage: # needs sage.rings.finite_rings
             sage: FF = FiniteField(2^32 + 61)
             sage: c = FF(4294967356)
             sage: x = FF(2)
@@ -723,7 +700,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         We test against a bug (side effect on PARI) fixed in :issue:`9438`::
 
-            sage: # needs sage.libs.pari
             sage: R.<a, b> = QQ[]
             sage: pari(b)
             b
@@ -1066,7 +1042,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: Mod(3, 17).is_square()
             False
 
-            sage: # needs sage.libs.pari
             sage: Mod(9, 17).is_square()
             True
             sage: Mod(9, 17*19^2).is_square()
@@ -1162,7 +1137,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: mod(7, 18).sqrt()
             5
 
-            sage: # needs sage.libs.pari
             sage: a = mod(14, 5^60).sqrt()
             sage: a*a
             14
@@ -1220,7 +1194,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         ::
 
-            sage: # needs sage.libs.pari
             sage: R = Integers(5*13^3*37); R
             Ring of integers modulo 406445
             sage: v = R(-1).sqrt(all=True); v
@@ -1234,7 +1207,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: t = FiniteField(next_prime(2^100))(4)
             sage: t.sqrt(extend=False, all=True)
             [2, 1267650600228229401496703205651]
@@ -1440,7 +1412,6 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: K(23).nth_root(3)
             29
 
-            sage: # needs sage.rings.padics
             sage: mod(225, 2^5*3^2).nth_root(4, all=True)
             [225, 129, 33, 63, 255, 159, 9, 201, 105, 279, 183, 87, 81,
              273, 177, 207, 111, 15, 153, 57, 249, 135, 39, 231]
@@ -1895,8 +1866,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         try:
             return sage.rings.integer.Integer(self.__pari__().znorder())
         except PariError:
-            raise ArithmeticError("multiplicative order of %s not defined since it is not a unit modulo %s" % (
-                self, self._modulus.sageInteger))
+            raise ArithmeticError(f"multiplicative order of {self} not defined since it is not a unit modulo {self._modulus.sageInteger}")
+
+        # fallback (for composite moduli): use generic-group algorithm
+        from sage.groups.generic import order_from_multiple
+        return order_from_multiple(self, self.parent().unit_group_exponent(), operation='*')
 
     def valuation(self, p):
         """
@@ -2965,7 +2939,6 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             sage: mod(7, 18).sqrt()
             5
 
-            sage: # needs sage.libs.pari
             sage: a = mod(14, 5^60).sqrt()
             sage: a*a
             14
@@ -3012,7 +2985,6 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
         ::
 
-            sage: # needs sage.libs.pari
             sage: R = Integers(5*13^3*37); R
             Ring of integers modulo 406445
             sage: v = R(-1).sqrt(all=True); v

@@ -100,7 +100,8 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             [     0 -x + y]
         """
         x = self.fetch('echelon_form_'+algorithm)
-        if x is not None: return x
+        if x is not None:
+            return x
 
         if algorithm == "frac":
             E = self.matrix_over_field()
@@ -276,7 +277,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             from sage.rings.integer_ring import ZZ
             l = [ZZ(e-1) for e in l]
 
-            self.cache('in_echelon_form_bareiss',True)
+            self.cache('in_echelon_form_bareiss', True)
             self.cache('rank', len(E))
             self.cache('pivots', tuple(range(len(E))))
             self.cache('swapped_columns', tuple(l))
@@ -286,24 +287,23 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             self.check_mutability()
             self.clear_cache()
 
-            E,l = self.T._singular_().bareiss()._sage_(self.base_ring())
+            E, l = self.T._singular_().bareiss()._sage_(self.base_ring())
 
             # clear matrix
             for r from 0 <= r < self._nrows:
                 for c from 0 <= c < self._ncols:
-                    self.set_unsafe(r,c,R._zero_element)
+                    self.set_unsafe(r, c, R._zero_element)
 
             for r from 0 <= r < E.nrows():
                 for c from 0 <= c < E.ncols():
-                    self.set_unsafe(c,r, E[r,c])
+                    self.set_unsafe(c, r, E[r, c])
 
-            self.cache('in_echelon_form_bareiss',True)
+            self.cache('in_echelon_form_bareiss', True)
             self.cache('rank', E.nrows())
             self.cache('pivots', tuple(range(E.nrows())))
             self.cache('swapped_columns', l)
 
         else:
-
             raise NotImplementedError("cannot apply Gauss-Bareiss algorithm over this base ring")
 
     def _echelonize_row_reduction(self):
@@ -384,7 +384,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         if x is not None:
             return  # already known to be in echelon form
 
-        nr,nc = self.nrows(),self.ncols()
+        nr, nc = self.nrows(), self.ncols()
         F = self.base_ring().base_ring()
         cdef Matrix d = matrix(F, nr, nc)
         start_row = 0
@@ -493,7 +493,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
                     N = self.__copy__()
                     for j in range(self.ncols()):
                         if j != ncoef:
-                            N.add_multiple_of_column(j, ncoef, -R(self[nrow,j] / coef))
+                            N.add_multiple_of_column(j, ncoef, -R(self[nrow, j] / coef))
                     return N.fitting_ideal(i)
         for (ncolumn, column) in enumerate(self.columns()):
             if not column:

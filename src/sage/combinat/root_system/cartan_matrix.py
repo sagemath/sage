@@ -376,9 +376,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
         if nrows == self.nrows() and ncols == self.ncols() and sparse:
             return self.parent()
-        else:
-            from sage.matrix.matrix_space import MatrixSpace
-            return MatrixSpace(ZZ, nrows, ncols, sparse is None or bool(sparse))
+        from sage.matrix.matrix_space import MatrixSpace
+        return MatrixSpace(ZZ, nrows, ncols, sparse is None or bool(sparse))
 
     def _CM_init(self, cartan_type, index_set, cartan_type_check):
         """
@@ -876,7 +875,7 @@ class CartanMatrix(Base, CartanType_abstract,
             subg = D.subgraph(vertices=l)
             if compact and not subg.is_finite():
                 return False
-            elif not subg.is_finite() and not subg.is_affine():
+            if not subg.is_finite() and not subg.is_affine():
                 return False
         return True
 
@@ -1086,9 +1085,9 @@ def is_borcherds_cartan_matrix(M):
         for j in range(i+1, n):
             if M[i,j] > 0 or M[j,i] > 0:
                 return False
-            elif M[i,j] == 0 and M[j,i] != 0:
+            if M[i,j] == 0 and M[j,i] != 0:
                 return False
-            elif M[j,i] == 0 and M[i,j] != 0:
+            if M[j,i] == 0 and M[i,j] != 0:
                 return False
     return True
 

@@ -375,27 +375,24 @@ def KashiwaraNakashimaTableaux(cartan_type, r, s):
     if ct.is_untwisted_affine():
         if ct.type() == 'A':
             return KR_type_A(ct, r, s)
-        elif ct.type() == 'D':
+        if ct.type() == 'D':
             if r < ct.rank()-2:
                 return KR_type_vertical(ct, r, s)
-            elif r in {ct.rank()-2, ct.rank()-1}:
+            if r in {ct.rank()-2, ct.rank()-1}:
                 return KR_type_spin(ct, r, s)
-            else:
-                raise ValueError("wrong range of parameters")
+            raise ValueError("wrong range of parameters")
         elif ct.type() == 'B':
             if r < ct.rank()-1:
                 return KR_type_vertical(ct, r, s)
-            elif r == ct.rank()-1:
+            if r == ct.rank()-1:
                 return KR_type_Bn(ct, r, s)
-            else:
-                raise ValueError("wrong range of parameters")
+            raise ValueError("wrong range of parameters")
         elif ct.type() == 'C':
             if r < ct.rank()-1:
                 return KR_type_C(ct, r, s)
-            elif r == ct.rank()-1:
+            if r == ct.rank()-1:
                 return KR_type_Cn(ct, r, s)
-            else:
-                raise ValueError("wrong range of parameters")
+            raise ValueError("wrong range of parameters")
         elif ct == CartanType(['E', 6, 1]) and r in [1, 6, 2]:
             return KR_type_E6(ct, r, s)
         elif ct == CartanType(['E', 7, 1]) and r in [7]:
@@ -405,17 +402,16 @@ def KashiwaraNakashimaTableaux(cartan_type, r, s):
     else:
         if ct.dual().type() == 'B':
             return KR_type_vertical(ct, r, s)
-        elif ct.type() == 'BC':
+        if ct.type() == 'BC':
             return KR_type_box(ct, r, s)
-        elif ct.dual().type() == 'BC':
+        if ct.dual().type() == 'BC':
             return KR_type_A2(ct, r, s)
-        elif ct.dual().type() == 'C':
+        if ct.dual().type() == 'C':
             if r < ct.rank()-1:
                 return KR_type_box(ct, r, s)
-            elif r == ct.rank()-1:
+            if r == ct.rank()-1:
                 return KR_type_Dn_twisted(ct, r, s)
-            else:
-                raise ValueError("wrong range of parameters")
+            raise ValueError("wrong range of parameters")
         elif ct.dual().type() == 'G':
             if r == 1:
                 return KR_type_D_tri1(ct, s)

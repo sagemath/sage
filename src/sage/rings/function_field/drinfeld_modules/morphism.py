@@ -256,11 +256,10 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         if self.is_identity():
             return f'Identity morphism of {self._domain}'
-        elif self.is_endomorphism():
+        if self.is_endomorphism():
             return f'Endomorphism of {self._domain}\n' \
                    f'  Defn: {self._ore_polynomial}'
-        else:
-            return f'Drinfeld Module morphism:\n' \
+        return f'Drinfeld Module morphism:\n' \
                    f'  From: {self._domain}\n'  \
                    f'  To:   {self._codomain}\n' \
                    f'  Defn: {self._ore_polynomial}'
@@ -283,7 +282,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return hash((self._domain, self._codomain, self._ore_polynomial))
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` whether the morphism is the zero morphism.
 
@@ -307,7 +306,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return self._ore_polynomial.is_zero()
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
         Return ``True`` whether the morphism is the identity morphism.
 
@@ -367,7 +366,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return not self.is_zero()
 
-    def is_isomorphism(self):
+    def is_isomorphism(self) -> bool:
         r"""
         Return ``True`` whether the morphism is an isomorphism.
 
@@ -776,10 +775,9 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         if ideal:
             nu = A([c.in_base() for c in nu.monic().list()])
             return A.ideal(nu)
-        elif self.domain() is self.codomain():
+        if self.domain() is self.codomain():
             return A([c.in_base() for c in nu.list()])
-        else:
-            raise ValueError("norm is defined as an actual element only for endomorphisms")
+        raise ValueError("norm is defined as an actual element only for endomorphisms")
 
     def dual_isogeny(self):
         r"""

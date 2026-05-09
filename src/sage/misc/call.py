@@ -14,13 +14,19 @@ Attribute and method calling
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from typing import Any
+
 #############################################
 # Operators
 #############################################
 
 
 class AttrCallObject:
-    def __init__(self, name, args, kwds):
+    name: str
+    args: tuple[Any, ...]
+    kwds: dict[str, Any]
+
+    def __init__(self, name: str, args: tuple[Any, ...], kwds: dict[str, Any]) -> None:
         """
         TESTS::
 
@@ -32,7 +38,7 @@ class AttrCallObject:
         self.args = args
         self.kwds = kwds
 
-    def __call__(self, x, *args):
+    def __call__(self, x: Any, *args: Any) -> Any:
         """
         Get the ``self.name`` method from ``x``, calls it with
         ``self.args`` and ``args`` as positional parameters and
@@ -50,7 +56,7 @@ class AttrCallObject:
         """
         return getattr(x, self.name)(*(self.args + args), **self.kwds)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of this object.
 
@@ -73,7 +79,7 @@ class AttrCallObject:
         s += ")"
         return s
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """
         Equality testing.
 
@@ -88,7 +94,7 @@ class AttrCallObject:
         """
         return self.__class__ == other.__class__ and self.__dict__ == other.__dict__
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         """
         Equality testing.
 
@@ -103,7 +109,7 @@ class AttrCallObject:
         """
         return not self == other
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Hash value.
 
@@ -142,7 +148,7 @@ class AttrCallObject:
         return hash((self.args, tuple(sorted(self.kwds.items()))))
 
 
-def attrcall(name, *args, **kwds):
+def attrcall(name: str, *args: Any, **kwds: Any) -> AttrCallObject:
     """
     Return a callable which takes in an object, gets the method named
     name from that object, and calls it with the specified arguments
@@ -166,7 +172,7 @@ def attrcall(name, *args, **kwds):
     return AttrCallObject(name, args, kwds)
 
 
-def call_method(obj, name, *args, **kwds):
+def call_method(obj: Any, name: str, *args: Any, **kwds: Any) -> Any:
     """
     Call the method ``name`` on ``obj``.
 

@@ -255,7 +255,6 @@ class VoronoiDiagram(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.plot
             sage: P = [[0.671, 0.650], [0.258, 0.767], [0.562, 0.406],
             ....:      [0.254, 0.709], [0.493, 0.879]]
             sage: V = VoronoiDiagram(P); S=V.plot()
