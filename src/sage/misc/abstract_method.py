@@ -190,9 +190,9 @@ class AbstractMethod:
             sage: g = abstract_method(version)
             sage: (src, lines) = sage_getsourcelines(g)
             sage: src[0]
-            'def version():\n'
+            'def version() -> str:\n'
             sage: lines
-            19
+            27
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self._f)

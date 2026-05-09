@@ -291,13 +291,13 @@ class Triangulation(Element):
         """
         return self._point_configuration
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         r"""
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         INPUT:
 
-        - ``right`` -- a triangulation
+        - ``other`` -- a triangulation
 
         TESTS::
 
@@ -312,7 +312,7 @@ class Triangulation(Element):
             sage: t1 != Triangulation(((0,1),(1,2)), pc, check=False)
             True
         """
-        return richcmp(self._triangulation, right._triangulation, op)
+        return richcmp(self._triangulation, other._triangulation, op)
 
     def __iter__(self):
         """

@@ -131,13 +131,13 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         N(1, 2, 3)
         sage: TestSuite(e).run()
     """
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Compare ``self`` and ``right`` according to the operator ``op``.
+        Compare ``self`` and ``other`` according to the operator ``op``.
 
         INPUT:
 
-        - ``right`` -- another ToricLatticeElement
+        - ``other`` -- another ToricLatticeElement
 
         OUTPUT: boolean
 
@@ -157,15 +157,15 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             sage: n is n2
             False
         """
-        if not isinstance(right, ToricLatticeElement):
+        if not isinstance(other, ToricLatticeElement):
             return NotImplemented
 
         PL_ambient = self.parent().ambient_module()
-        PR_ambient = right.parent().ambient_module()
+        PR_ambient = other.parent().ambient_module()
         if PL_ambient != PR_ambient:
             return richcmp_not_equal(PL_ambient, PR_ambient, op)
         # Now use the real comparison of vectors
-        return self._richcmp_(right, op)
+        return self._richcmp_(other, op)
 
     # For some reason, vectors work just fine without redefining this function
     # from the base class, but if it is not here, we get "unhashable type"...
