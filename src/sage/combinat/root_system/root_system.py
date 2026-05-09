@@ -375,8 +375,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         if self.dual_side:
             return "Dual of root system of type %s" % self.dual.cartan_type()
-        else:
-            return "Root system of type %s" % self.cartan_type()
+        return "Root system of type %s" % self.cartan_type()
 
     def cartan_type(self):
         """

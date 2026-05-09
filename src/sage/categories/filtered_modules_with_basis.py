@@ -187,8 +187,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             if d is None:
                 from sage.sets.family import Family
                 return Family(self._indices, self.monomial)
-            else:
-                return self.homogeneous_component_basis(d)
+            return self.homogeneous_component_basis(d)
 
         # TODO: Change `list(self._indices)` to `self._indices` and move
         #   this fallback to the category of finite-dimensional filtered

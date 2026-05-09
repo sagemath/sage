@@ -1,6 +1,5 @@
 from collections.abc import Callable
 from typing import Any, Union
-from sage.rings.abc import CallableSymbolicExpressionRing as CallableSymbolicExpressionRingABC
 from sage.symbolic.ring import SymbolicRing, SR
 from sage.categories.pushout import ConstructionFunctor
 from sage.structure.factory import UniqueFactory
@@ -24,7 +23,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
     def unify_arguments(self, x: 'CallableSymbolicExpressionFunctor') -> tuple:
         ...
 
-class CallableSymbolicExpressionRing_class(SymbolicRing, CallableSymbolicExpressionRingABC):
+class CallableSymbolicExpressionRing_class(SymbolicRing):
     def __init__(self, arguments: tuple):
         ...
 

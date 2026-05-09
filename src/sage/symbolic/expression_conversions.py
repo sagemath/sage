@@ -213,14 +213,13 @@ class Converter:
                 div = self.get_fake_div(ex)
                 return self.arithmetic(div, div.operator())
             return self.arithmetic(ex, operator)
-        elif operator in relation_operators:
+        if operator in relation_operators:
             return self.relation(ex, operator)
-        elif isinstance(operator, FDerivativeOperator):
+        if isinstance(operator, FDerivativeOperator):
             return self.derivative(ex, operator)
-        elif operator is tuple:
+        if operator is tuple:
             return self.tuple(ex)
-        else:
-            return self.composition(ex, operator)
+        return self.composition(ex, operator)
 
     def get_fake_div(self, ex):
         """
@@ -260,16 +259,15 @@ class Converter:
             if len(n) == 2 and "-1" in repr_n:
                 a = n[0] if repr_n[1] == "-1" else n[1]
                 return FakeExpression([a], neg)
-            else:
-                return ex
-        elif len_d == 1:
+            return ex
+        if len_d == 1:
             d = d[0]
         else:
             d = FakeExpression(d, mul)
 
         if len(n) == 0:
             return FakeExpression([SR.one(), d], truediv)
-        elif len(n) == 1:
+        if len(n) == 1:
             n = n[0]
         else:
             n = FakeExpression(n, mul)
@@ -655,8 +653,7 @@ class InterfaceInit(Converter):
         # FIXME: consider stripping pyobjects() in ops
         if hasattr(operator, self.name_init + "evaled_"):
             return getattr(operator, self.name_init + "evaled_")(*ops)
-        else:
-            ops = [self(_) for _ in ops]
+        ops = [self(_) for _ in ops]
         try:
             op = getattr(operator, self.name_init)()
         except (TypeError, AttributeError):
@@ -1027,7 +1024,7 @@ class PolynomialConverter(Converter):
         """
         if not any(repr(v) in self.varnames for v in ex.variables()):
             return self.base_ring(ex)
-        elif operator == pow:
+        if operator == pow:
             from sage.rings.integer import Integer
             base, exp = ex.operands()
             return self(base)**Integer(exp)
@@ -1266,10 +1263,10 @@ class FastCallableConverter(Converter):
             exponent = operands[1]
             if exponent == -1:
                 return self.etb.call(truediv, 1, operands[0])
-            elif exponent == 0.5:
+            if exponent == 0.5:
                 from sage.misc.functional import sqrt
                 return self.etb.call(sqrt, operands[0])
-            elif exponent == -0.5:
+            if exponent == -0.5:
                 from sage.misc.functional import sqrt
                 return self.etb.call(truediv, 1, self.etb.call(sqrt, operands[0]))
         elif operator is neg:
@@ -1552,8 +1549,7 @@ class ExpressionTreeWalker(Converter):
         from sage.symbolic.function import Function
         if isinstance(operator, Function):
             return operator(*map(self, ex.operands()), hold=True)
-        else:
-            return operator(*map(self, ex.operands()))
+        return operator(*map(self, ex.operands()))
 
     def derivative(self, ex, operator):
         """
@@ -1635,8 +1631,7 @@ class SubstituteFunction(ExpressionTreeWalker):
         new = self.substitutions.get(operator)
         if new is not None:
             return new(*[self(_) for _ in ex.operands()])
-        else:
-            return super().composition(ex, operator)
+        return super().composition(ex, operator)
 
     def derivative(self, ex, operator):
         """
@@ -1662,8 +1657,7 @@ class SubstituteFunction(ExpressionTreeWalker):
         new = self.substitutions.get(operator.function())
         if new is not None:
             return operator.change_function(new)(*[self(_) for _ in ex.operands()])
-        else:
-            return operator(*[self(_) for _ in ex.operands()])
+        return operator(*[self(_) for _ in ex.operands()])
 
 
 class Exponentialize(ExpressionTreeWalker):
@@ -1915,5 +1909,4 @@ class HoldRemover(ExpressionTreeWalker):
             return symbolic_product(*map(self, ex.operands()))
         if operator in self._exclude:
             return operator(*map(self, ex.operands()), hold=True)
-        else:
-            return operator(*map(self, ex.operands()))
+        return operator(*map(self, ex.operands()))

@@ -391,7 +391,7 @@ class p_iter_fork:
         sobj = os.path.join(dir, '%s.sobj' % os.getpid())
         try:
             save(value, sobj, compress=False)
-        except BaseException as e:
+        except BaseException:
             if value[0]:
                 save((True, (RuntimeError('cannot pickle exception object'), traceback.format_exc())), sobj, compress=False)
             else:

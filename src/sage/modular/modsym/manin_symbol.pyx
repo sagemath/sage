@@ -203,7 +203,7 @@ cdef class ManinSymbol(Element):
         """
         return self._repr_()
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         Comparison function for ManinSymbols.
 
@@ -224,17 +224,17 @@ cdef class ManinSymbol(Element):
             sage: slist[20] != slist[20]
             False
         """
-        cdef ManinSymbol other = <ManinSymbol>right
+        cdef ManinSymbol _other = <ManinSymbol>other
         # Compare tuples (i,u,v)
         lx = self.i
-        rx = other.i
+        rx = _other.i
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
         lx = self.u
-        rx = other.u
+        rx = _other.u
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
-        return richcmp(self.v, other.v, op)
+        return richcmp(self.v, _other.v, op)
 
     def __hash__(self):
         """
@@ -242,15 +242,15 @@ cdef class ManinSymbol(Element):
 
             sage: from sage.modular.modsym.manin_symbol import ManinSymbol
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma0
-            sage: m = ManinSymbolList_gamma0(5,2)
-            sage: s = ManinSymbol(m,(2,2,3))
+            sage: m = ManinSymbolList_gamma0(5, 2)
+            sage: s = ManinSymbol(m, (2, 2, 3))
             sage: hash(s)  # random
             7331463901
         """
-        cdef unsigned long h1 = hash(self.i)
-        cdef unsigned long h2 = hash(self.u)
-        cdef unsigned long h3 = hash(self.v)
-        return <Py_hash_t>(h1 + 1247963869*h2 + 1611845387*h3)
+        cdef Py_hash_t h1 = hash(self.i)
+        cdef Py_hash_t h2 = hash(self.u)
+        cdef Py_hash_t h3 = hash(self.v)
+        return h1 + 1247963869 * h2 + 1611845387 * h3
 
     def __mul__(self, matrix):
         """

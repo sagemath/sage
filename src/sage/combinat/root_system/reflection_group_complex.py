@@ -1110,11 +1110,9 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             if self.is_well_generated():
                 h = self.coxeter_number()
                 return tuple([h-d for d in self.degrees()])
-            else:
-                return tuple(sorted(self._gap_group.ReflectionCoDegrees().sage(),
-                                    reverse=True))
-        else:
-            return sum([comp.codegrees() for comp in self.irreducible_components()],tuple())
+            return tuple(sorted(self._gap_group.ReflectionCoDegrees().sage(),
+                                reverse=True))
+        return sum([comp.codegrees() for comp in self.irreducible_components()],tuple())
 
     @cached_method
     def reflection_eigenvalues_family(self):
@@ -1394,8 +1392,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         """
         if self.is_real():
             return super().braid_relations()
-        else:
-            return self._gap_group.BraidRelations().sage()
+        return self._gap_group.BraidRelations().sage()
 
     @cached_method
     def fundamental_invariants(self):
@@ -1721,8 +1718,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         def action_on_root(w, beta):
             if basis_is_Delta:
                 return w.action_on_root(beta)
-            else:
-                return beta * w.to_matrix()
+            return beta * w.to_matrix()
 
         @cached_function
         def invariant_value(i, j):
@@ -2026,14 +2022,12 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             if self in W.conjugacy_classes_representatives():
                 if in_unitary_group or W.is_real():
                     return W.rank() - self.reflection_eigenvalues(is_class_representative=True).count(0)
-                else:
-                    return len(self.reduced_word_in_reflections())
-            else:
-                w = self.conjugacy_class_representative()
-                # the following assert a possible implementation bug and
-                # is hopefully never needed
-                assert w in self.parent().conjugacy_classes_representatives()
-                return w.reflection_length(in_unitary_group=in_unitary_group)
+                return len(self.reduced_word_in_reflections())
+            w = self.conjugacy_class_representative()
+            # the following assert a possible implementation bug and
+            # is hopefully never needed
+            assert w in self.parent().conjugacy_classes_representatives()
+            return w.reflection_length(in_unitary_group=in_unitary_group)
 
 
 class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
@@ -2272,7 +2266,5 @@ def power(f, k):
     if sum(b) == 1:
         if b[1] == 1:
             return f**2
-        else:
-            return power(f,2**b.index(1)/2)**2
-    else:
-        return prod(power(f,2**i) for i,a in enumerate(b) if a)
+        return power(f,2**b.index(1)/2)**2
+    return prod(power(f,2**i) for i,a in enumerate(b) if a)

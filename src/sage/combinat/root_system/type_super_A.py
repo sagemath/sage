@@ -411,8 +411,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
                 s = -s
             if positive:
                 return s > 0
-            else:
-                return s < 0
+            return s < 0
 
         def is_dominant_weight(self) -> bool:
             """

@@ -632,5 +632,4 @@ class QuiverHomSpace(Homset):
                 basis_dict[v] = [self.element_class(self._domain, self._codomain, vec)
                                  for vec in spaces[v].gens()]
             return (QuiverRep(self._base, self._semigroup.reverse(), spaces, maps), basis_dict)
-        else:
-            return QuiverRep(self._base, self._semigroup.reverse(), spaces, maps)
+        return QuiverRep(self._base, self._semigroup.reverse(), spaces, maps)

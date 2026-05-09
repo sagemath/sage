@@ -1,5 +1,3 @@
-# distutils: libraries = cliquer
-
 cdef extern from "cliquer/graph.h":
     ctypedef struct graph_t
 

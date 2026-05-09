@@ -1015,7 +1015,7 @@ class ToricVariety_field(AmbientSpace):
         """
         if self.base_ring() == F:
             return self
-        elif F not in _Fields:
+        if F not in _Fields:
             raise TypeError("need a field to construct a toric variety; got %s"
                             % F)
         else:
@@ -1787,8 +1787,7 @@ class ToricVariety_field(AmbientSpace):
             AlgebraicScheme_subscheme_toric, AlgebraicScheme_subscheme_affine_toric
         if self.is_affine():
             return AlgebraicScheme_subscheme_affine_toric(self, polynomials)
-        else:
-            return AlgebraicScheme_subscheme_toric(self, polynomials)
+        return AlgebraicScheme_subscheme_toric(self, polynomials)
 
     def Stanley_Reisner_ideal(self):
         r"""
@@ -3341,8 +3340,7 @@ class CohomologyClass(QuotientRingElement):
         p = [x for x in self.lift() if x[1].total_degree() == d]
         if not p:
             return Q.zero()
-        else:
-            return Q.sum(x[0] * x[1] for x in p)
+        return Q.sum(x[0] * x[1] for x in p)
 
     def exp(self):
         r"""

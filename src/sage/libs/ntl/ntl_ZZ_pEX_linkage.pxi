@@ -5,18 +5,19 @@ This file provides the backend for \class{Polynomial_ZZ_pEX} via
 templating.
 
 AUTHOR:
-    -- Yann Laigle-Chapuy (2010-01): initial version
+
+- Yann Laigle-Chapuy (2010-01): initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Yann Laigle-Chapuy
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 

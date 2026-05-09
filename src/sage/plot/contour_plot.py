@@ -1382,12 +1382,11 @@ def implicit_plot(f, xrange, yrange, **options):
                            borderstyle=linestyles,
                            incol=incol, bordercol=bordercol,
                            **options)
-    elif options['fill'] is False:
+    if options['fill'] is False:
         options.pop('fillcolor', None)
         return contour_plot(f, xrange, yrange, linewidths=linewidths,
                             linestyles=linestyles, **options)
-    else:
-        raise ValueError("fill=%s is not supported" % options['fill'])
+    raise ValueError("fill=%s is not supported" % options['fill'])
 
 
 @options(plot_points=100, incol='blue', outcol=None, bordercol=None,

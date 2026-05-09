@@ -6,43 +6,6 @@ AUTHORS:
 
 - William Stein (2007-09-04): initial version
 """
-
-
-def is_NumberField(x):
-    """
-    Return ``True`` if ``x`` is of number field type.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field_base import is_NumberField
-        sage: x = polygen(ZZ)
-        sage: is_NumberField(NumberField(x^2 + 1, 'a'))
-        doctest:...: DeprecationWarning: the function is_NumberField is deprecated; use
-        isinstance(x, sage.rings.number_field.number_field_base.NumberField) instead
-        See https://github.com/sagemath/sage/issues/35283 for details.
-        True
-        sage: is_NumberField(QuadraticField(-97, 'theta'))
-        True
-        sage: is_NumberField(CyclotomicField(97))
-        True
-
-    Note that the rational numbers ``QQ`` are a number field.::
-
-        sage: is_NumberField(QQ)
-        True
-        sage: is_NumberField(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(35283,
-                "the function is_NumberField is deprecated; use "
-                "isinstance(x, sage.rings.number_field.number_field_base.NumberField) instead")
-
-    return isinstance(x, NumberField)
-
-
 from sage.rings.ring cimport Field
 
 
@@ -263,7 +226,6 @@ cdef class NumberField(Field):
         The Minkowski bound for `\QQ[i]` tells us that the class
         number is 1::
 
-            sage: # needs sage.symbolic
             sage: K = QQ[I]
             sage: B = K.minkowski_bound(); B
             4/pi
@@ -272,7 +234,6 @@ cdef class NumberField(Field):
 
         We compute the Minkowski bound for `\QQ[\sqrt[3]{2}]`::
 
-            sage: # needs sage.symbolic
             sage: K = QQ[2^(1/3)]
             sage: B = K.minkowski_bound(); B
             16/3*sqrt(3)/pi
@@ -284,7 +245,6 @@ cdef class NumberField(Field):
         We compute the Minkowski bound for `\QQ[\sqrt{10}]`, which has class
         number 2::
 
-            sage: # needs sage.symbolic
             sage: K = QQ[sqrt(10)]
             sage: B = K.minkowski_bound(); B
             sqrt(10)
@@ -295,7 +255,6 @@ cdef class NumberField(Field):
 
         We compute the Minkowski bound for `\QQ[\sqrt{2}+\sqrt{3}]`::
 
-            sage: # needs sage.symbolic
             sage: x = polygen(ZZ)
             sage: K.<y,z> = NumberField([x^2 - 2, x^2 - 3])
             sage: L.<w> = QQ[sqrt(2) + sqrt(3)]
@@ -341,7 +300,6 @@ cdef class NumberField(Field):
         We compute both the Minkowski and Bach bounds for a quadratic
         field, where the Minkowski bound is much better::
 
-            sage: # needs sage.symbolic
             sage: K = QQ[sqrt(5)]
             sage: K.minkowski_bound()
             1/2*sqrt(5)
@@ -355,7 +313,6 @@ cdef class NumberField(Field):
         We compute both the Minkowski and Bach bounds for a bigger
         degree field, where the Bach bound is much better::
 
-            sage: # needs sage.symbolic
             sage: K = CyclotomicField(37)
             sage: K.minkowski_bound().n()
             7.50857335698544e14

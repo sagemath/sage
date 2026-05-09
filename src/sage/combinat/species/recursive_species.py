@@ -159,8 +159,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         """
         if hasattr(self, "_reference"):
             return (self.__class__,) + self._reference._unique_info()
-        else:
-            return (self.__class__,)
+        return (self.__class__,)
 
     def __getstate__(self):
         """
@@ -300,11 +299,10 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
         if hasattr(self, "_weight_ring_been_called"):
             return QQ
-        else:
-            self._weight_ring_been_called = True
-            res = self._reference.weight_ring()
-            del self._weight_ring_been_called
-            return res
+        self._weight_ring_been_called = True
+        res = self._reference.weight_ring()
+        del self._weight_ring_been_called
+        return res
 
     def define(self, x):
         """
