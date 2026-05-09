@@ -123,7 +123,6 @@ from sage.structure.element cimport Element, Vector
 from sage.structure.element import canonical_coercion
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp, rich_to_bool
 
-import sage.rings.abc
 from sage.rings.infinity import Infinity, AnInfinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.abc import RealDoubleField, ComplexDoubleField
@@ -2878,7 +2877,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 [zero, -s[2], s[1]],
                 [s[2], zero, -s[0]],
                 [-s[1], s[0], zero]])
-        elif rank == 7:
+        if rank == 7:
             MS = MatrixSpace(R, rank, rank, sparse=self.is_sparse())
             s = self.list(copy=False)
             return MS([
@@ -2889,8 +2888,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 [ s[5], -s[2],  s[1],  s[6],  zero, -s[0], -s[3]],
                 [-s[4],  s[6], -s[3],  s[2],  s[0],  zero, -s[1]],
                 [-s[2], -s[5],  s[0], -s[4],  s[3],  s[1],  zero]])
-        else:
-            raise TypeError("Cross product only defined for vectors of length three or seven, not {}".format(rank))
+        raise TypeError(f"Cross product only defined for vectors of length three or seven, not {rank}")
 
     def pairwise_product(self, right):
         """

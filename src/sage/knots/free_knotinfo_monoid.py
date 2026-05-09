@@ -221,6 +221,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: from sage.knots.free_knotinfo_monoid import FreeKnotInfoMonoid
             sage: FKIM =  FreeKnotInfoMonoid()
             sage: K = KnotInfo.K5_1.link().mirror_image()
@@ -301,6 +302,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: from sage.knots.free_knotinfo_monoid import FreeKnotInfoMonoid
             sage: FKIM =  FreeKnotInfoMonoid()
             sage: FKIM.inject_variables(select=3)
@@ -368,6 +370,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: from sage.knots.free_knotinfo_monoid import FreeKnotInfoMonoid
             sage: FKIM =  FreeKnotInfoMonoid()
             sage: K = KnotInfo.K5_1.link().mirror_image()
@@ -396,6 +399,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: from sage.knots.free_knotinfo_monoid import FreeKnotInfoMonoid
             sage: FKIM =  FreeKnotInfoMonoid()
             sage: K = KnotInfo.K5_1.link().mirror_image()

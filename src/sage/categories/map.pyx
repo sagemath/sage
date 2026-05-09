@@ -25,10 +25,12 @@ from sage.categories import homset
 import weakref
 from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.arith.power cimport generic_power
-from sage.sets.pythonclass cimport Set_PythonType
-from sage.misc.constant_function import ConstantFunction
 from sage.structure.element cimport parent
 from cpython.object cimport PyObject_RichCompare
+from sage.misc.lazy_import import LazyImport
+
+# Lazy import to avoid circular dependency misc.constant_function > ... > categories.map > misc.constant_function
+ConstantFunction = LazyImport('sage.misc.constant_function', 'ConstantFunction', at_startup=True)
 
 
 def unpickle_map(_class, parent, _dict, _slots):
@@ -127,6 +129,8 @@ cdef class Map(Element):
         """
         if codomain is not None:
             if isinstance(parent, type):
+                # Local import to avoid circular import of the type category.map > sets.pythonclass > structure > category
+                from sage.sets.pythonclass import Set_PythonType
                 parent = Set_PythonType(parent)
             parent = homset.Hom(parent, codomain)
         elif not isinstance(parent, homset.Homset):

@@ -144,7 +144,6 @@ from sage import categories
 from sage.categories.morphism import IdentityMorphism
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.rings import Rings
-from sage.misc.superseded import deprecation
 from sage.rings import rational_field
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
@@ -1910,6 +1909,20 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         """
         from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
         return DifferentialWeylAlgebra(self)
+
+    def _fricas_init_(self) -> str:
+        """
+        Return a string that yields a representation of ``self`` in FriCAS.
+
+        EXAMPLES::
+
+            sage: F = GF(3, 2)
+            sage: P.<x> = F[]
+            sage: fricas(P)     # indirect doctest  # optional - fricas
+            UnivariatePolynomial(x,FiniteField(3,2))
+        """
+        v = self.variable_name()
+        return f'UnivariatePolynomial({v},{self.base_ring()._fricas_init_()})'
 
     def _roots_univariate_polynomial(self, p, ring=None, multiplicities=True, algorithm=None, degree_bound=None):
         """

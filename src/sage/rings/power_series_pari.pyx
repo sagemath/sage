@@ -388,7 +388,7 @@ cdef class PowerSeries_pari(PowerSeries):
         if len(kwds) >= 1:
             name = self._parent.variable_name()
             if name in kwds:  # the series variable is specified by a keyword
-                if len(x):
+                if x:
                     raise ValueError("must not specify %s keyword and positional argument" % name)
                 x = [kwds[name]]
                 del kwds[name]
