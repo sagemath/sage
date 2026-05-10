@@ -84,7 +84,8 @@ class COIN(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage_numerical_backends_coin',
                              [MIPBackend('coin')],
-                             spkg='sage_numerical_backends_coin')
+                             spkg='cbc',
+                             type='optional')
 
 
 class CVXOPT(JoinFeature):

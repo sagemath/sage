@@ -159,8 +159,8 @@ following code is equivalent to ``tau = findstat(397)``::
     sage: bij.set_statistics((lambda a: a.size(), lambda b: b.number_of_nodes()-1))
     sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
     sage: bij.set_constant_blocks(orbit_decomposition(A, theta))
-    sage: list(bij.solutions_iterator())
-    []
+    sage: len(list(bij.solutions_iterator()))
+    0
 
 Next we demonstrate how to search for a bijection.  To do so, we identify `s`
 and `S`::
