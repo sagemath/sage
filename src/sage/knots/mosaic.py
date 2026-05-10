@@ -3,9 +3,13 @@ r"""
 Knot mosaics
 
 A knot mosaic is a square array of elementary tiles whose endpoints
-match along shared edges.  Mosaics give a combinatorial way to encode
-knots and links, and can be converted to the planar diagram codes used
-by :class:`sage.knots.link.Link`.
+match along shared edges.  Mosaics were introduced by Lomonaco and
+Kauffman [LK2008]_ as a combinatorial model for quantum knot systems.
+They have since been used to study mosaic number [LHLO2014]_,
+tabulation [LLPP2018]_, virtual knots [GH2020]_, and surface-link
+variants [CK2024]_.  Mosaics give a combinatorial way to encode knots
+and links, and can be converted to the planar diagram codes used by
+:class:`sage.knots.link.Link`.
 
 EXAMPLES::
 
@@ -34,6 +38,29 @@ The matrix representation can be recovered as a Sage matrix::
     [ 2  9 10  1]
     [ 3 10 10  4]
     [ 0  3  4  0]
+
+REFERENCES:
+
+.. [LK2008] Samuel J. Lomonaco and Louis H. Kauffman,
+   *Quantum knots and mosaics*, Quantum Information Processing 7
+   (2008), 85-115. :doi:`10.1007/s11128-008-0076-7`
+
+.. [LHLO2014] Hwa Jeong Lee, Kyungpyo Hong, Ho Lee, and Seungsang Oh,
+   *Mosaic number of knots*, Journal of Knot Theory and its
+   Ramifications 23 (2014), no. 13, 1450069.
+   :doi:`10.1142/S0218216514500692`
+
+.. [LLPP2018] Hwa Jeong Lee, Lewis D. Ludwig, Joseph Paat, and
+   Amanda Peiffer, *Knot mosaic tabulation*, Involve 11 (2018),
+   no. 1, 13-26. :doi:`10.2140/involve.2018.11.13`
+
+.. [GH2020] Sandy Ganzell and Allison Henrich, *Virtual mosaic knot
+   theory*, Journal of Knot Theory and its Ramifications 29 (2020),
+   no. 14, 2050091. :doi:`10.1142/S0218216520500911`
+
+.. [CK2024] Seonmi Choi and Jieon Kim, *Mosaics for immersed
+   surface-links*, Topology and its Applications 353 (2024), 108961.
+   :doi:`10.1016/j.topol.2024.108961`
 
 AUTHORS:
 
