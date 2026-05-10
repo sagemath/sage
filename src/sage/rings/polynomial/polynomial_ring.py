@@ -624,37 +624,52 @@ class PolynomialRing_generic(Ring):
         Return the completion of ``self`` with respect to the irreducible
         polynomial ``p``.
 
-        Currently only implemented for ``p=self.gen()`` (the default), i.e. you
-        can only complete `R[x]` with respect to `x`, the result being a ring
-        of power series in `x`. The ``prec`` variable controls the precision
-        used in the power series ring. If ``prec`` is `\infty`, then this
-        returns a :class:`LazyPowerSeriesRing`.
+        INPUT:
+
+        - ``p`` -- a polynomial
+
+        - ``prec`` -- an integer or ``infinity`` (default: ``20``)
+
+        When ``prec`` is ``infinity``, computations are handled through
+        lazy power series.
 
         EXAMPLES::
 
             sage: P.<x> = PolynomialRing(QQ)
             sage: P
             Univariate Polynomial Ring in x over Rational Field
-            sage: PP = P.completion(x)
-            sage: PP
-            Power Series Ring in x over Rational Field
+            sage: Px = P.completion(x)
+            sage: Px
+            Completion of Univariate Polynomial Ring in x over Rational Field at x
             sage: f = 1 - x
-            sage: PP(f)
+            sage: Px(f)
             1 - x
             sage: 1 / f
             -1/(x - 1)
-            sage: g = 1 / PP(f); g
+            sage: g = 1 / Px(f); g
             1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + x^10 + x^11
              + x^12 + x^13 + x^14 + x^15 + x^16 + x^17 + x^18 + x^19 + O(x^20)
             sage: 1 / g
             1 - x + O(x^20)
 
-            sage: PP = P.completion(x, prec=oo); PP
-            Lazy Taylor Series Ring in x over Rational Field
-            sage: g = 1 / PP(f); g
-            1 + x + x^2 + O(x^3)
+        ::
+
+            sage: Px = P.completion(x, prec=oo)
+            sage: Px
+            Completion of Univariate Polynomial Ring in x over Rational Field at x
+            sage: g = 1 / Px(f); g
+            1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + ...
             sage: 1 / g == f
             True
+
+        ::
+
+            sage: p = x^2 + 1
+            sage: Pp = P.completion(p, prec=3)
+            sage: Pp
+            Completion of Univariate Polynomial Ring in x over Rational Field at x^2 + 1
+            sage: 1 / Pp(x)
+            -x - x*(x^2 + 1) - x*(x^2 + 1)^2 + O((x^2 + 1)^3)
         """
         if p is None or str(p) == self._names[0]:
             if prec == float('inf'):
