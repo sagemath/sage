@@ -81,6 +81,7 @@ requires-python = ">=3.12, <3.15"
 urls = { Homepage = "https://www.sagemath.org" }
 
 [project.optional-dependencies]
+R = ['rpy2 >=3.3']
 database_knotinfo = ['database_knotinfo']
 extra = [
   'igraph',
@@ -91,7 +92,6 @@ extra = [
   'sage_numerical_backends_coin',
   'symengine >= 0.6.1', # Only used in tests
 ]
-R = ['rpy2 >=3.3']
 regina = ['regina']
 snappy = ['snappy']
 #giac = ['sagemath_giac'] # Not yet available on PyPI (https://github.com/sagemath/sagemath-giac/issues/3)
