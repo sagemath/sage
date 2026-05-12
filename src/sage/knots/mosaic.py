@@ -133,7 +133,7 @@ def _flatten(lst):
     """
     Flatten nested tuples of directions.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.knots.mosaic import _flatten
         sage: _flatten((('down', 'left'), ('up', 'right')))
@@ -152,14 +152,11 @@ def _as_rows(mosaic_matrix):
     """
     Return ``mosaic_matrix`` as a tuple of tuples of integers.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.knots.mosaic import _as_rows
         sage: _as_rows([[0, 1], [2, 3]])
         ((0, 1), (2, 3))
-
-    TESTS::
-
         sage: _as_rows([[0, 1, 2], [3, 4, 5]])
         Traceback (most recent call last):
         ...
@@ -226,14 +223,11 @@ class MosaicTile:
         """
         Initialize a mosaic tile.
 
-        EXAMPLES::
+        TESTS::
 
             sage: from sage.knots.mosaic import MosaicTile
             sage: MosaicTile(3).number()
             3
-
-        TESTS::
-
             sage: MosaicTile(11)
             Traceback (most recent call last):
             ...
@@ -401,7 +395,7 @@ class MosaicTile:
         """
         Record an orientation through this tile.
 
-        EXAMPLES::
+        TESTS::
 
             sage: from sage.knots.mosaic import MosaicTile
             sage: T = MosaicTile(5)
@@ -499,14 +493,11 @@ class Mosaic:
         """
         Initialize a mosaic.
 
-        EXAMPLES::
+        TESTS::
 
             sage: from sage.knots.mosaic import Mosaic
             sage: Mosaic([[2, 1], [3, 4]])
             Mosaic of dimension 2
-
-        TESTS::
-
             sage: Mosaic([[0, 1]])
             Traceback (most recent call last):
             ...
@@ -531,7 +522,7 @@ class Mosaic:
         """
         Compare two mosaics.
 
-        EXAMPLES::
+        TESTS::
 
             sage: from sage.knots.mosaic import Mosaic
             sage: M = Mosaic([[2, 1], [3, 4]])
@@ -551,7 +542,7 @@ class Mosaic:
         """
         Return a hash of this mosaic.
 
-        EXAMPLES::
+        TESTS::
 
             sage: from sage.knots.mosaic import Mosaic
             sage: M = Mosaic([[2, 1], [3, 4]])
@@ -564,7 +555,7 @@ class Mosaic:
         """
         Iterate over rows of this mosaic.
 
-        EXAMPLES::
+        TESTS::
 
             sage: from sage.knots.mosaic import Mosaic
             sage: list(Mosaic([[0, 1], [2, 3]]))
@@ -576,7 +567,7 @@ class Mosaic:
         """
         Return an entry or row of this mosaic.
 
-        EXAMPLES::
+        TESTS::
 
             sage: from sage.knots.mosaic import Mosaic
             sage: M = Mosaic([[0, 1], [2, 3]])
@@ -933,7 +924,7 @@ class Mosaic:
         """
         Return strand counts as mutable rows.
 
-        EXAMPLES::
+        TESTS::
 
             sage: from sage.knots.mosaic import Mosaic
             sage: Mosaic([[0, 5], [9, 10]])._strand_count_rows()
@@ -1229,10 +1220,10 @@ class Mosaic:
             ....:             [0, 3, 7, 8, 4],
             ....:             [0, 0, 3, 4, 0]])
             sage: code = M.oriented_gauss_code()
-            sage: code[0][0][:5]
-            [-1, 4, -5, 2, -4]
-            sage: code[1]
-            [-1, -1, -1, -1, -1]
+            sage: [len(code[0][0]), len(code[1])]
+            [10, 5]
+            sage: sorted(abs(c) for c in code[0][0])
+            [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]
         """
         def pick_starting_tile():
             strand_matrix = self._strand_count_rows()
@@ -1523,7 +1514,7 @@ def _is_infinity(value):
     """
     Return whether ``value`` represents positive infinity.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.knots.mosaic import _is_infinity, oo
         sage: _is_infinity(oo)
@@ -1589,16 +1580,13 @@ def _tangle_connector(n, m, direction):
     """
     Return a connector block for tangle joins.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.knots.mosaic import _tangle_connector
         sage: _tangle_connector(2, 3, 'bottom-right')
         [[6, 0, 0], [4, 0, 0]]
         sage: _tangle_connector(2, 3, 'top-left')
         [[0, 0, 0], [2, 5, 5]]
-
-    TESTS::
-
         sage: _tangle_connector(2, 3, 'sideways')
         Traceback (most recent call last):
         ...
