@@ -132,6 +132,12 @@ OPPOSITE_DIRECTIONS = {
 def _flatten(lst):
     """
     Flatten nested tuples of directions.
+
+    EXAMPLES::
+
+        sage: from sage.knots.mosaic import _flatten
+        sage: _flatten((('down', 'left'), ('up', 'right')))
+        ['down', 'left', 'up', 'right']
     """
     result = []
     for item in lst:
@@ -145,6 +151,19 @@ def _flatten(lst):
 def _as_rows(mosaic_matrix):
     """
     Return ``mosaic_matrix`` as a tuple of tuples of integers.
+
+    EXAMPLES::
+
+        sage: from sage.knots.mosaic import _as_rows
+        sage: _as_rows([[0, 1], [2, 3]])
+        ((0, 1), (2, 3))
+
+    TESTS::
+
+        sage: _as_rows([[0, 1, 2], [3, 4, 5]])
+        Traceback (most recent call last):
+        ...
+        ValueError: a mosaic must be square
     """
     if isinstance(mosaic_matrix, Mosaic):
         return mosaic_matrix._matrix
@@ -204,6 +223,22 @@ class MosaicTile:
         'right'
     """
     def __init__(self, tile):
+        """
+        Initialize a mosaic tile.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import MosaicTile
+            sage: MosaicTile(3).number()
+            3
+
+        TESTS::
+
+            sage: MosaicTile(11)
+            Traceback (most recent call last):
+            ...
+            ValueError: mosaic tiles must be integers between 0 and 10
+        """
         tile = int(tile)
         if tile not in TILE_CONNECTIONS:
             raise ValueError("mosaic tiles must be integers between 0 and 10")
@@ -215,6 +250,12 @@ class MosaicTile:
     def __repr__(self):
         """
         Return a string representation of this tile.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import MosaicTile
+            sage: MosaicTile(4)
+            Mosaic tile 4
         """
         return "Mosaic tile {}".format(self._tile)
 
@@ -233,6 +274,13 @@ class MosaicTile:
     def number_of_connection_points(self):
         """
         Return the number of boundary connection points of this tile.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import MosaicTile
+            sage: [MosaicTile(i).number_of_connection_points()
+            ....:  for i in (0, 5, 9)]
+            [0, 2, 4]
         """
         if self._tile == 0:
             return 0
@@ -243,12 +291,24 @@ class MosaicTile:
     def number_of_strands(self):
         """
         Return the number of strands in this tile.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import MosaicTile
+            sage: [MosaicTile(i).number_of_strands() for i in (0, 5, 9)]
+            [0, 1, 2]
         """
         return self.number_of_connection_points() // 2
 
     def is_crossing(self):
         """
         Return whether this tile is a crossing.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import MosaicTile
+            sage: [MosaicTile(i).is_crossing() for i in (8, 9, 10)]
+            [False, True, True]
         """
         return self._tile in CROSSING_TILES
 
@@ -267,18 +327,45 @@ class MosaicTile:
     def directions(self):
         """
         Return the flattened connection directions of this tile.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import MosaicTile
+            sage: MosaicTile(7).directions()
+            ('down', 'left', 'up', 'right')
         """
         return tuple(_flatten(self._connections))
 
     def is_going(self, direction):
         """
         Return whether this tile has a connection in ``direction``.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import MosaicTile
+            sage: MosaicTile(4).is_going('up')
+            True
+            sage: MosaicTile(4).is_going('down')
+            False
         """
         return direction in self.directions()
 
     def exit_path(self, direction):
         """
         Return the exit direction for a strand entering from ``direction``.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import MosaicTile
+            sage: MosaicTile(1).exit_path('left')
+            'down'
+
+        TESTS::
+
+            sage: MosaicTile(1).exit_path('up')
+            Traceback (most recent call last):
+            ...
+            ValueError: direction is not a connection direction
         """
         if direction not in self.directions():
             raise ValueError("direction is not a connection direction")
@@ -297,6 +384,14 @@ class MosaicTile:
     def zoom(self, only_up_down=False):
         """
         Return the `3 \times 3` zoom replacement for this tile.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import MosaicTile
+            sage: MosaicTile(5).zoom()
+            ((0, 0, 0), (5, 5, 5), (0, 0, 0))
+            sage: MosaicTile(9).zoom(only_up_down=True)[1][1]
+            10
         """
         if self._tile == 9 and only_up_down:
             return TILE_9_UP_DOWN_ZOOM
@@ -305,6 +400,14 @@ class MosaicTile:
     def orient(self, direction):
         """
         Record an orientation through this tile.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import MosaicTile
+            sage: T = MosaicTile(5)
+            sage: T.orient('left')
+            sage: T._orientation
+            ['left']
         """
         if direction not in self.directions():
             raise ValueError("direction is not a connection direction")
@@ -319,6 +422,11 @@ class MosaicTile:
         - ``ax`` -- a matplotlib axes object (default: ``None``)
         - ``resolution`` -- positive number (default: `5`)
         - ``color`` -- string (default: ``'blue'``)
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import MosaicTile
+            sage: _ = MosaicTile(5).show()  # needs matplotlib
         """
         import matplotlib.pyplot as plt
         from matplotlib import patches
@@ -388,18 +496,49 @@ class Mosaic:
       whose entries are tile numbers from 0 to 10
     """
     def __init__(self, mosaic_matrix):
+        """
+        Initialize a mosaic.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: Mosaic([[2, 1], [3, 4]])
+            Mosaic of dimension 2
+
+        TESTS::
+
+            sage: Mosaic([[0, 1]])
+            Traceback (most recent call last):
+            ...
+            ValueError: a mosaic must be square
+        """
         self._matrix = _as_rows(mosaic_matrix)
         self._size = len(self._matrix)
 
     def __repr__(self):
         """
         Return a string representation of this mosaic.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: Mosaic([[0]])
+            Mosaic of dimension 1
         """
         return "Mosaic of dimension {}".format(self._size)
 
     def __eq__(self, other):
         """
         Compare two mosaics.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[2, 1], [3, 4]])
+            sage: M == [[2, 1], [3, 4]]
+            True
+            sage: M == [[0, 0], [0, 0]]
+            False
         """
         if not isinstance(other, Mosaic):
             try:
@@ -411,18 +550,40 @@ class Mosaic:
     def __hash__(self):
         """
         Return a hash of this mosaic.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[2, 1], [3, 4]])
+            sage: hash(M) == hash(Mosaic(M.rows()))
+            True
         """
         return hash(self._matrix)
 
     def __iter__(self):
         """
         Iterate over rows of this mosaic.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: list(Mosaic([[0, 1], [2, 3]]))
+            [(0, 1), (2, 3)]
         """
         return iter(self._matrix)
 
     def __getitem__(self, key):
         """
         Return an entry or row of this mosaic.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 1], [2, 3]])
+            sage: M[1, 0]
+            2
+            sage: M[1]
+            (2, 3)
         """
         if isinstance(key, tuple):
             i, j = key
@@ -432,18 +593,37 @@ class Mosaic:
     def size(self):
         """
         Return the dimension of this mosaic.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: Mosaic([[2, 1], [3, 4]]).size()
+            2
         """
         return self._size
 
     def rows(self):
         """
         Return the rows of this mosaic as tuples.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: Mosaic([[0, 1], [2, 3]]).rows()
+            ((0, 1), (2, 3))
         """
         return self._matrix
 
     def matrix(self):
         """
         Return the matrix representation of this mosaic.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: Mosaic([[0, 1], [2, 3]]).matrix()
+            [0 1]
+            [2 3]
         """
         from sage.matrix.constructor import matrix
         from sage.rings.integer_ring import ZZ
@@ -453,6 +633,11 @@ class Mosaic:
     def show(self, resolution=5, color="blue"):
         """
         Draw this mosaic using matplotlib.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: Mosaic([[0]]).show()  # needs matplotlib
         """
         import matplotlib.pyplot as plt
 
@@ -471,12 +656,27 @@ class Mosaic:
     def directions(self, i, j):
         """
         Return the connection directions of the tile in position ``(i, j)``.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 1], [2, 3]])
+            sage: M.directions(0, 1)
+            ('left', 'down')
         """
         return MosaicTile(self._matrix[i][j]).directions()
 
     def is_suitably_connected(self):
         """
         Return whether all adjacent tile edges match.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: Mosaic([[2, 1], [3, 4]]).is_suitably_connected()
+            True
+            sage: Mosaic([[5]]).is_suitably_connected()
+            False
         """
         for i in range(self._size):
             for j in range(self._size):
@@ -503,6 +703,15 @@ class Mosaic:
 
         If ``only_up_down`` is ``True``, every 9-tile is replaced by the
         zoom pattern whose central crossing is a 10-tile.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[9]])
+            sage: M.zoom().size()
+            3
+            sage: M.zoom(only_up_down=True)[1, 1]
+            10
         """
         rows = []
         for row in self._matrix:
@@ -517,6 +726,13 @@ class Mosaic:
     def find_crossings(self):
         """
         Return the coordinates of the crossing tiles.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[9, 0], [0, 10]])
+            sage: M.find_crossings()
+            [(0, 0), (1, 1)]
         """
         crossings = []
         for i, row in enumerate(self._matrix):
@@ -528,12 +744,25 @@ class Mosaic:
     def number_of_crossings(self):
         """
         Return the number of crossings in this mosaic.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: Mosaic([[9, 0], [0, 10]]).number_of_crossings()
+            2
         """
         return len(self.find_crossings())
 
     def exit_path(self, i, j, direction):
         """
         Return the next tile and exit direction after entering a tile.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[2, 1], [3, 4]])
+            sage: M.exit_path(0, 0, 'right')
+            ((1, 0), 'down')
         """
         exit_dir = MosaicTile(self._matrix[i][j]).exit_path(direction)
         next_positions = {
@@ -550,6 +779,15 @@ class Mosaic:
 
         If ``dictionary`` is ``True``, return a dictionary from directions
         to coordinates.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[2, 1], [3, 4]])
+            sage: M.shift(0, 0)
+            [(1, 0), (0, 1)]
+            sage: M.shift(0, 0, dictionary=True)
+            {'down': (1, 0), 'right': (0, 1)}
         """
         if not self.is_suitably_connected():
             raise ValueError("the mosaic must be suitably connected")
@@ -572,6 +810,18 @@ class Mosaic:
     def walk(self, crossing, direction, path_list=False, tangent=False):
         """
         Walk from a crossing in the given direction to the next crossing.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 2, 1, 0],
+            ....:             [2, 9, 10, 1],
+            ....:             [3, 10, 10, 4],
+            ....:             [0, 3, 4, 0]])
+            sage: M.walk((1, 1), 'right')
+            ((1, 2), 'left')
+            sage: M.walk((1, 1), 'right', path_list=True)
+            [(1, 1), (1, 2)]
         """
         all_crossings = self.find_crossings()
         if crossing not in all_crossings:
@@ -612,6 +862,20 @@ class Mosaic:
                   verbose=False):
         """
         Trace the complete strand through ``tile``.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 2, 1, 0],
+            ....:             [2, 9, 10, 1],
+            ....:             [3, 10, 10, 4],
+            ....:             [0, 3, 4, 0]])
+            sage: strand = M.strand_of((1, 1), direction='right')
+            sage: strand[:3], strand[-1]
+            ([(1, 2), (1, 3), (2, 3)], (1, 1))
+            sage: M.strand_of((1, 1), direction='right',
+            ....:             direction_tracking=True)[0]
+            ((1, 2), 'right')
         """
         tile_type = self._matrix[tile[0]][tile[1]]
         if tile_type == 0:
@@ -646,6 +910,19 @@ class Mosaic:
     def strand_matrix(self):
         """
         Return the matrix of the number of strands in each tile.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 2, 1, 0],
+            ....:             [2, 9, 10, 1],
+            ....:             [3, 10, 10, 4],
+            ....:             [0, 3, 4, 0]])
+            sage: M.strand_matrix()
+            [0 1 1 0]
+            [1 2 2 1]
+            [1 2 2 1]
+            [0 1 1 0]
         """
         rows = []
         for row in self._matrix:
@@ -655,6 +932,12 @@ class Mosaic:
     def _strand_count_rows(self):
         """
         Return strand counts as mutable rows.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: Mosaic([[0, 5], [9, 10]])._strand_count_rows()
+            [[0, 1], [2, 2]]
         """
         return [[MosaicTile(tile).number_of_strands() for tile in row]
                 for row in self._matrix]
@@ -662,6 +945,15 @@ class Mosaic:
     def strand_orientation_at(self, tile, previous_tile):
         """
         Return the induced orientation through a tile.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0]])
+            sage: M.strand_orientation_at((1, 1), (1, 0))
+            'right'
+            sage: M.strand_orientation_at((1, 1), (0, 1))
+            'down'
         """
         if previous_tile[0] < tile[0]:
             return "down"
@@ -674,6 +966,16 @@ class Mosaic:
     def strands(self):
         """
         Return the strands of this mosaic.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 2, 1, 0],
+            ....:             [2, 9, 10, 1],
+            ....:             [3, 10, 10, 4],
+            ....:             [0, 3, 4, 0]])
+            sage: sorted(len(strand) for strand in M.strands())
+            [8, 8]
         """
         strand_list = []
         nonvisited = self._strand_count_rows()
@@ -702,6 +1004,16 @@ class Mosaic:
     def number_of_components(self):
         """
         Return the number of connected components.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 2, 1, 0],
+            ....:             [2, 9, 10, 1],
+            ....:             [3, 10, 10, 4],
+            ....:             [0, 3, 4, 0]])
+            sage: M.number_of_components()
+            2
         """
         if not self.is_suitably_connected():
             raise ValueError("the mosaic must be suitably connected")
@@ -710,6 +1022,19 @@ class Mosaic:
     def is_unknot(self):
         """
         Return whether this one-component mosaic is detected as the unknot.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: Mosaic([[2, 1], [3, 4]]).is_unknot()
+            True
+
+        TESTS::
+
+            sage: Mosaic([[0]]).is_unknot()
+            Traceback (most recent call last):
+            ...
+            ValueError: is_unknot only works for knots
         """
         if not self.is_suitably_connected():
             raise ValueError("the mosaic must be suitably connected")
@@ -733,6 +1058,16 @@ class Mosaic:
     def local_frames(self):
         """
         Return the upward and rightward adjacent tiles at each crossing.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 2, 1, 0],
+            ....:             [2, 9, 10, 1],
+            ....:             [3, 10, 10, 4],
+            ....:             [0, 3, 4, 0]])
+            sage: M.local_frames()[0]
+            ((0, 1), (1, 2))
         """
         frames = []
         for crossing in self.find_crossings():
@@ -743,6 +1078,12 @@ class Mosaic:
     def flip(self):
         """
         Return this mosaic flipped upside-down.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: Mosaic([[1, 2], [3, 4]]).flip().rows()
+            ((2, 1), (4, 3))
         """
         flip_map = {1: 4, 4: 1, 2: 3, 3: 2, 7: 8, 8: 7}
         flipped = []
@@ -753,6 +1094,15 @@ class Mosaic:
     def potential_tiles(self, i, j):
         """
         Return the tile numbers compatible with neighboring connections.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 0], [0, 0]])
+            sage: M.potential_tiles(0, 0)
+            [0, 2]
+            sage: M.potential_tiles(1, 1)
+            [0]
         """
         necessary_connections = []
         top_boundary = False
@@ -817,6 +1167,16 @@ class Mosaic:
     def combine_components(self, tile=None, _depth=0):
         """
         Return a mosaic obtained by locally combining components.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 2, 1, 0],
+            ....:             [2, 9, 10, 1],
+            ....:             [3, 10, 10, 4],
+            ....:             [0, 3, 4, 0]])
+            sage: M.combine_components().number_of_components()
+            1
         """
         if _depth > 5000:
             raise ValueError("could not satisfy constraints after 5000 attempts")
@@ -859,6 +1219,20 @@ class Mosaic:
     def oriented_gauss_code(self):
         """
         Return an oriented Gauss code compatible with :class:`Link`.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 2, 1, 0, 0],
+            ....:             [2, 9, 10, 1, 0],
+            ....:             [3, 10, 9, 10, 1],
+            ....:             [0, 3, 7, 8, 4],
+            ....:             [0, 0, 3, 4, 0]])
+            sage: code = M.oriented_gauss_code()
+            sage: code[0][0][:5]
+            [-1, 4, -5, 2, -4]
+            sage: code[1]
+            [-1, -1, -1, -1, -1]
         """
         def pick_starting_tile():
             strand_matrix = self._strand_count_rows()
@@ -938,6 +1312,23 @@ class Mosaic:
     def pd_code(self):
         """
         Return the planar diagram code of this mosaic.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 2, 1, 0],
+            ....:             [2, 9, 10, 1],
+            ....:             [3, 10, 10, 4],
+            ....:             [0, 3, 4, 0]])
+            sage: M.pd_code()
+            [[3, 5, 4, 8], [5, 1, 6, 4], [7, 3, 8, 2], [6, 1, 7, 2]]
+
+        TESTS::
+
+            sage: Mosaic([[2, 1], [3, 4]]).pd_code()
+            Traceback (most recent call last):
+            ...
+            ValueError: a crossing-free mosaic has no PD code
         """
         if self.number_of_crossings() == 0:
             raise ValueError("a crossing-free mosaic has no PD code")
@@ -1043,6 +1434,16 @@ class Mosaic:
     def link(self):
         """
         Return the link represented by this mosaic.
+
+        EXAMPLES::
+
+            sage: from sage.knots.mosaic import Mosaic
+            sage: M = Mosaic([[0, 2, 1, 0],
+            ....:             [2, 9, 10, 1],
+            ....:             [3, 10, 10, 4],
+            ....:             [0, 3, 4, 0]])
+            sage: M.link()
+            Link with 2 components represented by 4 crossings
         """
         from sage.knots.link import Link
 
@@ -1061,6 +1462,22 @@ def random_mosaic(dimension, suitably_connected=True, number_of_crossings=None,
     - ``number_of_crossings`` -- integer or ``None`` (default: ``None``)
     - ``number_of_components`` -- integer or ``None`` (default: ``None``)
     - ``unknot`` -- boolean or ``None`` (default: ``None``)
+
+    EXAMPLES::
+
+        sage: from sage.knots.mosaic import random_mosaic
+        sage: M = random_mosaic(2, number_of_crossings=0)
+        sage: M.is_suitably_connected()
+        True
+        sage: M.number_of_crossings()
+        0
+
+    TESTS::
+
+        sage: random_mosaic(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: dimension must be positive
     """
     dimension = int(dimension)
     if dimension <= 0:
@@ -1105,6 +1522,14 @@ def random_mosaic(dimension, suitably_connected=True, number_of_crossings=None,
 def _is_infinity(value):
     """
     Return whether ``value`` represents positive infinity.
+
+    EXAMPLES::
+
+        sage: from sage.knots.mosaic import _is_infinity, oo
+        sage: _is_infinity(oo)
+        True
+        sage: _is_infinity(3)
+        False
     """
     if value == oo:
         return True
@@ -1119,6 +1544,20 @@ def rational_tangle(value, flip=False):
 
     - ``value`` -- infinity, zero, or an integer
     - ``flip`` -- boolean (default: ``False``)
+
+    EXAMPLES::
+
+        sage: from sage.knots.mosaic import rational_tangle, oo
+        sage: rational_tangle(oo).rows()
+        ((7,),)
+        sage: rational_tangle(0).rows()
+        ((8,),)
+        sage: rational_tangle(2).rows()
+        ((2, 10), (10, 4))
+        sage: rational_tangle(-2).rows()
+        ((2, 9), (9, 4))
+        sage: rational_tangle(2, flip=True).rows()
+        ((10, 1), (3, 10))
     """
     if _is_infinity(value):
         return Mosaic([[7]])
@@ -1149,6 +1588,21 @@ def rational_tangle(value, flip=False):
 def _tangle_connector(n, m, direction):
     """
     Return a connector block for tangle joins.
+
+    EXAMPLES::
+
+        sage: from sage.knots.mosaic import _tangle_connector
+        sage: _tangle_connector(2, 3, 'bottom-right')
+        [[6, 0, 0], [4, 0, 0]]
+        sage: _tangle_connector(2, 3, 'top-left')
+        [[0, 0, 0], [2, 5, 5]]
+
+    TESTS::
+
+        sage: _tangle_connector(2, 3, 'sideways')
+        Traceback (most recent call last):
+        ...
+        ValueError: unknown connector direction
     """
     if direction == "bottom-right":
         return [[6] + [0 for j in range(m - 1)] for i in range(n - 1)] + [
@@ -1164,6 +1618,19 @@ def _tangle_connector(n, m, direction):
 def tangle_join(tangle_list):
     """
     Join two rational tangles.
+
+    EXAMPLES::
+
+        sage: from sage.knots.mosaic import tangle_join
+        sage: tangle_join([1, -1]).rows()
+        ((2, 9), (10, 4))
+
+    TESTS::
+
+        sage: tangle_join([1, 2, 3])
+        Traceback (most recent call last):
+        ...
+        ValueError: tangle_join currently supports two tangles
     """
     if len(tangle_list) != 2:
         raise ValueError("tangle_join currently supports two tangles")
