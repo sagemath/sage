@@ -338,21 +338,18 @@ class Submodule_free_ambient(Module_free_ambient):
         except (TypeError, NotImplementedError, ValueError):
             pass
 
-        names = cover_ring.variable_names()
-        # Use a prefix unlikely to clash with user-chosen variable names.
-        # The loop is a safety net in the rare event of a collision.
-        module_names = tuple("sage_free_module_e{}".format(i) for i in range(n))
-        while set(names).intersection(module_names):
-            module_names = tuple("_{}".format(name) for name in module_names)
-
+        num_coeff_variables = cover_ring.ngens()
         poly_ring = PolynomialRing(cover_ring.base_ring(),
-                                   names=names + module_names)
-        module_variables = poly_ring.gens()[len(names):]
+                                   num_coeff_variables + n, 't')
+        # Map coefficients by position, so auxiliary variable names are private.
+        coeff_map = cover_ring.hom(poly_ring.gens()[:num_coeff_variables],
+                                   poly_ring)
+        module_variables = poly_ring.gens()[num_coeff_variables:]
 
         def lift_coefficient(c):
             if do_lift:
                 c = c.lift()
-            return poly_ring(c)
+            return coeff_map(c)
 
         def encode(row):
             row = list(row)
@@ -367,7 +364,7 @@ class Submodule_free_ambient(Module_free_ambient):
 
         gens = [encode(g) for g in self.gens()]
         for f in ideal_gens:
-            f = poly_ring(f)
+            f = coeff_map(f)
             gens.extend(f * e for e in module_variables)
 
         if not gens:
