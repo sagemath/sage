@@ -315,7 +315,6 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
             :class:`~sage.combinat.ordered_tree.OrderedTree`. We do not count
             the root here.
             """
-            accu = []
             for t in tree:
                 if not t:  # a bud
                     yield 1
