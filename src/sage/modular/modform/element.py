@@ -972,12 +972,12 @@ class ModularForm_abstract(ModuleElement):
                    for n in range(1, numterms + 1))
 
     def lseries(self, embedding=0, prec=53, max_imaginary_part=0,
-                max_asymp_coeffs=40):
+                max_asymp_coeffs=0):
         r"""
         Return the `L`-series of the weight k cusp form
         `f` on `\Gamma_0(N)`.
 
-        This actually returns an interface to Tim Dokchitser's program for
+        This actually returns an interface to PARI for
         computing with the `L`-series of the cusp form.
 
         INPUT:
@@ -991,10 +991,10 @@ class ModularForm_abstract(ModuleElement):
 
         - ``max_imaginary_part`` -- real number (default: 0)
 
-        - ``max_asymp_coeffs`` -- integer (default: 40)
+        - ``max_asymp_coeffs`` -- ignored
 
         For more information on the significance of the last three arguments,
-        see :mod:`~sage.lfunctions.dokchitser`.
+        see :mod:`~sage.lfunctions.pari`.
 
         .. NOTE::
 
@@ -1005,7 +1005,7 @@ class ModularForm_abstract(ModuleElement):
         OUTPUT:
 
         The `L`-series of the cusp form, as a
-        :class:`sage.lfunctions.dokchitser.Dokchitser` object.
+        :class:`sage.lfunctions.pari.LFunction` object.
 
         EXAMPLES::
 
@@ -1020,7 +1020,7 @@ class ModularForm_abstract(ModuleElement):
 
         As a consistency check, we verify that the functional equation holds::
 
-            sage: abs(L.check_functional_equation()) < 1.0e-20
+            sage: abs(L.check_functional_equation()) < 1.0e-18
             True
 
         For non-rational newforms we can specify an embedding of the coefficient field::
@@ -1049,7 +1049,8 @@ class ModularForm_abstract(ModuleElement):
         We compute with the `L`-series of the Eisenstein series `E_4`::
 
             sage: f = ModularForms(1,4).0
-            sage: L = f.lseries()
+            sage: L = f.lseries(); L
+            L-series associated to the modular form 1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6)
             sage: L(1)
             -0.0304484570583933
             sage: L = eisenstein_series_lseries(4)
@@ -1074,8 +1075,8 @@ class ModularForm_abstract(ModuleElement):
             sage: LE = E.lseries()
             sage: Lh(1), LE(1)
             (0.725681061936153, 0.725681061936153)
-            sage: CuspForms(1, 30).0.lseries().eps
-            -1.00000000000000
+            sage: CuspForms(1, 30).0.lseries().sign()
+            -1
 
         We check that :issue:`25369` is fixed::
 
@@ -1105,7 +1106,8 @@ class ModularForm_abstract(ModuleElement):
             sage: L(1)
             0.588879583428483
         """
-        from sage.lfunctions.all import Dokchitser
+        from sage.rings.integer import Integer
+        from sage.lfunctions.pari import lfun_generic, LFunction
 
         # compute the requested embedding
         C = ComplexField(prec)
@@ -1117,7 +1119,6 @@ class ModularForm_abstract(ModuleElement):
         else:
             emb = self.base_ring().embeddings(C)[embedding]
 
-        # key = (prec, max_imaginary_part, max_asymp_coeffs)
         l = self.weight()
         N = self.level()
 
@@ -1127,15 +1128,23 @@ class ModularForm_abstract(ModuleElement):
 
         if self.is_cuspidal():
             poles = []  # cuspidal
+            residues = []
         else:
-            poles = [l]  # non-cuspidal
+            poles = 0  # non-cuspidal, automatic
+            residues = [None]
 
-        L = Dokchitser(conductor=N, gammaV=[0, 1], weight=l, eps=e, poles=poles,
-                       prec=prec)
+        Lpari = lfun_generic(conductor=N,
+                             gammaV=[0, 1],
+                             weight=l,
+                             eps=e,
+                             poles=poles,
+                             residues=residues)
+        L = LFunction(Lpari, prec=prec, max_im=max_imaginary_part)
         # Find out how many coefficients of the Dirichlet series are needed
         # in order to compute to the required precision
-        n_coeffs = L.cost()
-        coeffs = self.q_expansion(n_coeffs + 1).padded_list()[1:]
+        nterms = Integer(L.cost())
+
+        coeffs = self.q_expansion(nterms + 1).padded_list()[1:]
 
         # renormalize so that coefficient of q is 1
         b = coeffs[0]
@@ -1144,16 +1153,18 @@ class ModularForm_abstract(ModuleElement):
             coeffs = (invb * c for c in coeffs)
 
         v = [emb(c) for c in coeffs]
-        w = [c.conjugate() for c in v]
-        L.init_coeffs(v=v, w=w,
-                      max_imaginary_part=max_imaginary_part,
-                      max_asymp_coeffs=max_asymp_coeffs)
-        L.check_functional_equation()
+
+        Lpari.init_coeffs(v, 1)  # 1 means conjugate coefficients
+        L = LFunction(Lpari, prec=prec, max_im=max_imaginary_part)
+        is_good = L.check_functional_equation()
+        assert is_good < 1e-10, is_good
+
+        mf = "cusp" if self.is_cuspidal() else "modular"
         if K == QQ:
-            L.rename('L-series associated to the cusp form %s' % self)
+            L.rename(f'L-series associated to the {mf} form {self}')
         else:
-            L.rename('L-series associated to the cusp form %s, %s=%s'
-                     % (self, K.variable_name(), emb(K.gen())))
+            g, emb = K.variable_name(), emb(K.gen())
+            L.rename(f'L-series associated to the {mf} form {self}, {g}={emb}')
         return L
 
     def symsquare_lseries(self, chi=None, embedding=0, prec=53):

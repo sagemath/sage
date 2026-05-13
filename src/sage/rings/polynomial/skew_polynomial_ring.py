@@ -823,7 +823,7 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
         if seed is None:
             seed = k.random_element()
         self._seed_retraction = seed
-        trace = [ ]
+        trace = []
         elt = seed
         for _ in range(k.degree()):
             x = elt

@@ -54,7 +54,8 @@ import sage.rings.infinity
 import sage.rings.rational
 import sage.rings.rational_field
 import sage.rings.ideal
-from sage.categories.basic import EuclideanDomains, DedekindDomains
+from sage.categories.dedekind_domains import DedekindDomains
+from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.noetherian_rings import NoetherianRings
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base

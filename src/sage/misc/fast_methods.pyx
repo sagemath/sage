@@ -28,7 +28,6 @@ AUTHOR:
 # ****************************************************************************
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
-from sage.misc.constant_function import ConstantFunction
 
 from cpython.object cimport Py_EQ, Py_NE
 
@@ -293,6 +292,9 @@ class Singleton(WithEqualityById, metaclass=ClasscallMetaclass):
             sage: loads(dumps(c)) is copy(c) is C()  # indirect doctest
             True
         """
+        # local import to avoid circular initialization issues in `CartesianProductFunctor`
+        from sage.misc.constant_function import ConstantFunction
+
         assert cls.mro()[1] == Singleton, "{} is not a direct subclass of {}".format(cls, Singleton)
         res = typecall(cls)
         cf = ConstantFunction(res)

@@ -295,7 +295,6 @@ src/sage/lfunctions/__init__.py
 src/sage/arith/__init__.py
 src/sage/ext/__init__.py
 src/sage/categories/examples/__init__.py
-src/sage/categories/__init__.py
 src/sage/modules/fg_pid/__init__.py
 src/sage/modules/__init__.py
 src/sage/modules/with_basis/__init__.py
@@ -309,7 +308,6 @@ src/sage/rings/function_field/__init__.py
 src/sage/rings/function_field/drinfeld_modules/__init__.py
 src/sage/rings/semirings/__init__.py
 src/sage/rings/number_field/__init__.py
-src/sage/rings/__init__.py
 src/sage/rings/padics/__init__.py
 src/sage/rings/valuation/__init__.py
 src/sage/rings/asymptotic/__init__.py
@@ -362,7 +360,6 @@ src/sage/databases/__init__.py
 src/sage/stats/hmm/__init__.py
 src/sage/stats/__init__.py
 src/sage/stats/distributions/__init__.py
-src/sage/libs/gap/__init__.py
 src/sage/libs/mpfi/__init__.py
 src/sage/libs/__init__.py
 src/sage/libs/polybori/__init__.py

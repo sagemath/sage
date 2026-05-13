@@ -253,9 +253,9 @@ cdef class ElementWrapper(Element):
         """
         return hash(self.value)
 
-    def __richcmp__(left, right, int op):
+    def __richcmp__(self, other, int op):
         """
-        Return ``True`` if ``left`` compares with ``right`` based on ``op``.
+        Return ``True`` if ``self`` compares with ``other`` based on ``op``.
 
         Default implementation of ``self == other``: two elements are
         equal if they have equal parents and equal values.
@@ -288,13 +288,13 @@ cdef class ElementWrapper(Element):
             sage: x == y
             True
         """
-        if isinstance(right, ElementWrapper) and left.parent() == right.parent():
-            return left._richcmp_(right, op)
-        return coercion_model.richcmp(left, right, op)
+        if isinstance(other, ElementWrapper) and self.parent() == other.parent():
+            return self._richcmp_(other, op)
+        return coercion_model.richcmp(self, other, op)
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
-        Return ``True`` if ``left`` compares with ``right`` based on ``op``.
+        Return ``True`` if ``self`` compares with ``other`` based on ``op``.
 
         TESTS:
 
@@ -349,11 +349,11 @@ cdef class ElementWrapper(Element):
             sage: sorted([y,x])
             [2, 1]
         """
-        cdef ElementWrapper self = left
+        cdef ElementWrapper _self = self
         if op == Py_EQ or op == Py_LE or op == Py_GE:
-            return self.value == (<ElementWrapper>right).value
+            return _self.value == (<ElementWrapper>other).value
         if op == Py_NE:
-            return self.value != (<ElementWrapper>right).value
+            return _self.value != (<ElementWrapper>other).value
         return False
 
     cpdef bint _lt_by_value(self, other) noexcept:
@@ -537,9 +537,9 @@ cdef class ElementWrapperCheckWrappedClass(ElementWrapper):
         """
         return hash(self.value)
 
-    def __richcmp__(self, right, int op):
+    def __richcmp__(self, other, int op):
         """
-        Return ``True`` if ``self`` compares with ``right`` based on ``op``.
+        Return ``True`` if ``self`` compares with ``other`` based on ``op``.
 
         EXAMPLES::
 
@@ -564,18 +564,18 @@ cdef class ElementWrapperCheckWrappedClass(ElementWrapper):
             sage: A((3,5)) == B((0,0))
             True
         """
-        if type(self) is type(right):
+        if type(self) is type(other):
             # Both are instances of ElementWrapperCheckWrappedClass:
             # compare using wrapped element if the parents are the same
-            other = <ElementWrapperCheckWrappedClass>right
-            if self._parent is other._parent:
-                return PyObject_RichCompare(self.value, other.value, op)
-        elif not isinstance(right, Element):
+            _other = <ElementWrapperCheckWrappedClass>other
+            if self._parent is _other._parent:
+                return PyObject_RichCompare(self.value, _other.value, op)
+        elif not isinstance(other, Element):
             # Right is not an Element: compare using wrapped element
-            return PyObject_RichCompare(self.value, right, op)
-        elif self._parent is (<Element>right)._parent:
+            return PyObject_RichCompare(self.value, other, op)
+        elif self._parent is (<Element>other)._parent:
             # Different types but same parent? This should not happen
-            raise TypeError(f"cannot compare {type(self).__name__} with {type(right).__name__} if parents are equal")
+            raise TypeError(f"cannot compare {type(self).__name__} with {type(other).__name__} if parents are equal")
 
         # Different parents => use coercion model
-        return coercion_model.richcmp(self, right, op)
+        return coercion_model.richcmp(self, other, op)

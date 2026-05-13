@@ -617,14 +617,14 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         (0 : 1 : 0)
         sage: P = E(2, 3163*t^2 + 7293*t + 5999)
         sage: phi(P)
-        (6085*t^2 + 855*t + 8720 : 8078*t^2 + 9889*t + 6030 : 1)
+        (6085*t^2 + 855*t + 8720 : 1931*t^2 + 120*t + 3979 : 1)
         sage: Q = E(6, 5575*t^2 + 6607*t + 9991)
         sage: phi(Q)
-        (626*t^2 + 9749*t + 1291 : 5931*t^2 + 8549*t + 3111 : 1)
+        (626*t^2 + 9749*t + 1291 : 4078*t^2 + 1460*t + 6898 : 1)
         sage: phi(P + Q)
-        (983*t^2 + 4894*t + 4072 : 5047*t^2 + 9325*t + 336 : 1)
+        (983*t^2 + 4894*t + 4072 : 4962*t^2 + 684*t + 9673 : 1)
         sage: phi(P) + phi(Q)
-        (983*t^2 + 4894*t + 4072 : 5047*t^2 + 9325*t + 336 : 1)
+        (983*t^2 + 4894*t + 4072 : 4962*t^2 + 684*t + 9673 : 1)
 
     TESTS:
 
@@ -1128,9 +1128,9 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
               To:   Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
             sage: phi.dual()
-            Isogeny of degree 11
-              from Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
-              to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+            Composite morphism of degree 11 = 1*11:
+              From: Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
             sage: phi.dual() * phi == phi.domain().scalar_multiplication(11)
             True
             sage: phi * phi.dual() == phi.codomain().scalar_multiplication(11)
@@ -1142,7 +1142,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: z2 = GF(71^2).gen()
             sage: E = EllipticCurve(j=57*z2+51)
             sage: E.isogeny(3*E.lift_x(0), algorithm='velusqrt').dual()
-            Composite morphism of degree 71 = 71*1^2:
+            Composite morphism of degree 71 = 71*1:
               From: Elliptic Curve defined by y^2 = x^3 + (8*z2+70)*x + (3*z2+49) over Finite Field in z2 of size 71^2
               To:   Elliptic Curve defined by y^2 = x^3 + (41*z2+56)*x + (18*z2+42) over Finite Field in z2 of size 71^2
             sage: E.isogeny(E.lift_x(0), algorithm='velusqrt').dual()

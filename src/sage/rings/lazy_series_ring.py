@@ -3999,7 +3999,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         elif base_ring in Rings().Commutative():
             category = category.Commutative()
         category = category.Infinite()
-        Parent.__init__(self, base=base_ring, names=names,
+        Parent.__init__(self, base=base_ring, names=names, normalize=False,
                         category=category)
 
     def _repr_(self):
