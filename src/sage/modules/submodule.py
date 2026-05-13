@@ -415,8 +415,8 @@ class Submodule_free_ambient(Module_free_ambient):
 
             sage: R.<x> = ZZ[]
             sage: F = FreeModule(R, 2)
-            sage: G = F.submodule([F.0])
-            sage: F.1 in G
+            sage: G = F.submodule([F.gen(0)])
+            sage: F.gen(1) in G
             False
         """
         try:
