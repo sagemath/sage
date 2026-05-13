@@ -120,7 +120,9 @@ class BarChart(GraphicPrimitive):
         import numpy
         ind = numpy.array(self.ind, dtype=float)
         datalist = numpy.array(self.datalist, dtype=float)
-        subplot.bar(ind, datalist, color=color, width=width, label=options['legend_label'])
+        subplot.bar(ind, datalist, color=color, width=width,
+                    label=options['legend_label'],
+                    zorder=options.get('zorder', None))
 
 
 @rename_keyword(color='rgbcolor')
@@ -135,6 +137,11 @@ def bar_chart(datalist, **options):
     A bar_chart with blue bars::
 
         sage: bar_chart([1,2,3,4])
+        Graphics object consisting of 1 graphics primitive
+
+    A bar_chart with a custom drawing order::
+
+        sage: bar_chart([1,2,3], zorder=10)
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::

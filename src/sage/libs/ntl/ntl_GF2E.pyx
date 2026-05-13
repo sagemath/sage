@@ -230,7 +230,7 @@ cdef class ntl_GF2E():
         """
         cdef ntl_GF2E r
         if not isinstance(other, ntl_GF2E):
-            other = ntl_GF2E(other,self.c)
+            other = ntl_GF2E(other, self.c)
         elif self.c is not (<ntl_GF2E>other).c:
             raise ValueError("You cannot perform arithmetic with elements in different fields.")
         r = self._new()
@@ -248,7 +248,7 @@ cdef class ntl_GF2E():
         """
         cdef ntl_GF2E r
         if not isinstance(other, ntl_GF2E):
-            other = ntl_GF2E(other,self.c)
+            other = ntl_GF2E(other, self.c)
         elif self.c is not (<ntl_GF2E>other).c:
             raise ValueError("You cannot perform arithmetic with elements in different fields.")
         r = self._new()
@@ -266,7 +266,7 @@ cdef class ntl_GF2E():
         """
         cdef ntl_GF2E r
         if not isinstance(other, ntl_GF2E):
-            other = ntl_GF2E(other,self.c)
+            other = ntl_GF2E(other, self.c)
         elif self.c is not (<ntl_GF2E>other).c:
             raise ValueError("You cannot perform arithmetic with elements in different fields.")
         r = self._new()
@@ -436,7 +436,7 @@ cdef class ntl_GF2E():
 
         for i from 0 <= i <= GF2X_deg(x):
             b = ntl_GF2.__new__(ntl_GF2)
-            b.x = GF2X_coeff(x,i)
+            b.x = GF2X_coeff(x, i)
             l.append(b)
         return l
 

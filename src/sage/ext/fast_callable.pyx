@@ -2493,11 +2493,11 @@ def op_list(args, metadata):
     """
     ops = []
     code = args['code']
-    while len(code):
+    while code:
         opcode = code[0]
         code = code[1:]
-        (opname, instr) = metadata.by_opcode[opcode]
-        if len(instr.parameters):
+        opname, instr = metadata.by_opcode[opcode]
+        if instr.parameters:
             op = [opname]
             for p in instr.parameters:
                 p_loc = code[0]

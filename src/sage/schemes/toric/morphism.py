@@ -857,13 +857,13 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             raise ValueError('the fan morphism codomain must be the fan of the codomain')
         self._fan_morphism = fan_morphism
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         r"""
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         INPUT:
 
-        - ``right`` -- another toric morphism
+        - ``other`` -- another toric morphism
 
         OUTPUT: boolean
 
@@ -883,20 +883,20 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             sage: phi == phi.factor()[0]
             False
         """
-        if not isinstance(right, SchemeMorphism_fan_toric_variety):
+        if not isinstance(other, SchemeMorphism_fan_toric_variety):
             return NotImplemented
 
         lx = self.domain()
-        rx = right.domain()
+        rx = other.domain()
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
 
         lx = self.codomain()
-        rx = right.codomain()
+        rx = other.codomain()
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
 
-        return richcmp(self.fan_morphism(), right.fan_morphism(), op)
+        return richcmp(self.fan_morphism(), other.fan_morphism(), op)
 
     def _composition_(self, right, homset):
         """

@@ -229,8 +229,8 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ.is_field()
             True
         """
-        from sage.categories.basic import QuotientFields
         from sage.categories.number_fields import NumberFields
+        from sage.categories.quotient_fields import QuotientFields
         Parent.__init__(self, base=self,
                         category=[QuotientFields().Metric(),
                                   NumberFields()])
@@ -1537,20 +1537,18 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return "QQ"
 
-    def _axiom_init_(self) -> str:
+    def _fricas_init_(self) -> str:
         r"""
-        Return the axiom/fricas representation of `\QQ`.
+        Return the FriCAS representation of `\QQ`.
 
         EXAMPLES::
 
-           sage: axiom(QQ)    #optional - axiom # indirect doctest
-           Fraction Integer
            sage: fricas(QQ)   #optional - fricas # indirect doctest
            Fraction(Integer)
         """
         return 'Fraction Integer'
 
-    _fricas_init_ = _axiom_init_
+    _axiom_init_ = _fricas_init_
 
     def _polymake_init_(self) -> str:
         r"""

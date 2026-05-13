@@ -2175,6 +2175,15 @@ class WordMorphism(SageObject):
              ...
              word: 1010010001,
              word: 1010010100]
+
+        A non-extendable D0L-language (Thue-Morse with cube axiom). We
+        check that factors from the axiom and early iterations are included::
+
+            sage: m = WordMorphism('0->01,1->10')
+            sage: Word('000') in m.language(3, Word('000'))
+            True
+            sage: Word('010101') in m.language(6, Word('000'))
+            True
         """
         W = self.domain()
         if self.codomain() != W:
@@ -2206,10 +2215,19 @@ class WordMorphism(SageObject):
         # of two letter words
         L2 = (w for w in self._language_naive(3, u) if len(w) == 2)
         L = set()
-        for u in L2:
-            v = im[u[0]] + im[u[1]]
+        for v in L2:
+            w = im[v[0]] + im[v[1]]
+            for k in range(len(w) - n + 1):
+                L.add(w[k:k + n])
+
+        # Also add factors from the axiom and early iterations
+        # to handle non-extendable elements in the D0L-language
+        v = u
+        for _ in range(p + 1):
             for k in range(len(v) - n + 1):
                 L.add(v[k:k + n])
+            v = self(v)
+
         return L
 
     def conjugate(self, pos):
@@ -3096,6 +3114,9 @@ class WordMorphism(SageObject):
             True
             sage: WordMorphism('0->01,1->1').is_growing('1')
             False
+            sage: m2 = WordMorphism({0:[0,1],1:[1]})
+            sage: m2.is_growing(0)
+            True
             sage: WordMorphism('0->01,1->10').is_growing()
             True
             sage: WordMorphism('0->1,1->2,2->01').is_growing()
@@ -3133,7 +3154,7 @@ class WordMorphism(SageObject):
             Combinatorics, automata and number theory, 163--247, Encyclopedia
             Math. Appl., 135, Cambridge Univ. Press, Cambridge, 2010.
         """
-        if not letter:
+        if letter is None:
             return self.domain().alphabet().cardinality() == len(self.growing_letters())
         return letter in self.growing_letters()
 
