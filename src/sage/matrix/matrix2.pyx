@@ -8397,7 +8397,7 @@ cdef class Matrix(Matrix1):
         by default. If ``transformation=True`` is specified, returns a
         transformation matrix ``T``.
 
-        If ``algorithm='full_pivoting'`` is specified, the matrix ``self`` is 
+        If ``algorithm='full_pivoting'`` is specified, the matrix ``self`` is
         put into a row-equivalent column permutation of an echelon matrix instead.
 
         EXAMPLES::
@@ -9180,7 +9180,7 @@ cdef class Matrix(Matrix1):
             [            O(5^11)   5^4 * 28 + O(5^8)   5^5 * 34 + O(5^9)          1 + O(5^4) 5^7 * 249 + O(5^11)]
             [         1 + O(5^5) 5^2 * 1624 + O(5^7)  5^2 * 439 + O(5^6)              O(5^5)    5 * 452 + O(5^6)]
             [             O(5^5)              O(5^3)              O(5^4)             O(5^-1)              O(5^6)]
-            sage: ed = m.echelon_form(algorithm='default', basis='computed'); ed # Scaled partial pivoting
+            sage: ed = m.echelon_form(algorithm='default', basis='computed'); ed # Default is scaled partial pivoting
             [         1 + O(5^5)              O(5^7)  5^2 * 579 + O(5^6) 5^-2 * 567 + O(5^2)   5 * 2327 + O(5^6)]
             [             O(5^6)          1 + O(5^5)   5 * 1028 + O(5^6)  5^-4 * 67 + O(5^0)  5^3 * 433 + O(5^7)]
             [             O(5^5)              O(5^3)              O(5^4)             O(5^-1)              O(5^6)]
