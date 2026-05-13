@@ -167,7 +167,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from itertools import combinations
 from sage.combinat.combination import Combinations
 import sage.geometry.abc
 from sage.geometry.polyhedron.constructor import Polyhedron
@@ -1275,6 +1274,13 @@ class ToricDivisor_generic(Divisor_generic):
 
         Helper for :meth:`cohomology`.
 
+        For each cone `\sigma` of the fan, let `V_\sigma` be the set of
+        ray indices `\rho \subset \sigma` with `m\cdot u_\rho + a_\rho < 0`
+        (strict inequality). The complex `K_{m,D}` is the union over `\sigma`
+        of the full simplex on `V_\sigma` (Exercise 9.1.10 in [CLS2011]_).
+        In particular, disconnected complexes occur whenever no cone contains
+        a joint negative set spanning different components.
+
         INPUT:
 
         - ``m`` -- a point in ``self.scheme().fan().dual_lattice()``
@@ -1291,21 +1297,72 @@ class ToricDivisor_generic(Divisor_generic):
             sage: M = dP6.fan().dual_lattice()
             sage: D._sheaf_complex( M(1,0) )
             Simplicial complex with vertex set (0, 1, 3) and facets {(3,), (0, 1)}
+
+        Empty complex when no chart has a negative ray at this weight::
+
+            sage: P2 = toric_varieties.P2()
+            sage: D0 = P2.divisor([0, 0, 0])
+            sage: M = P2.fan().dual_lattice()
+            sage: D0._sheaf_complex(M(0, 0)).dimension()
+            -1
+
+        On a non-simplicial cone, each chart still contributes a single
+        simplex on its negative rays; the union agrees with listing all
+        faces of those simplices (see :meth:`facets`)::
+
+            sage: F = Fan(cones=[(0,1,2,3), (0,1,4)],
+            ....:         rays=[(1,1,1), (1,-1,1), (1,-1,-1), (1,1,-1), (0,0,1)])
+            sage: X = ToricVariety(F)
+            sage: D = X.divisor([-2, -2, -2, -2, -2])
+            sage: M = X.fan().dual_lattice()
+            sage: K = D._sheaf_complex(M(0, 0))
+            sage: sorted(f.tuple() for f in K.facets())
+            [(0, 1, 2, 3), (0, 1, 4)]
+
+        TESTS:
+
+        Check that the implementation matches the face-saturated construction
+        on a small fan (regression guard for combinatorial equivalence)::
+
+            sage: dP6 = toric_varieties.dP6()
+            sage: D0 = dP6.divisor(0)
+            sage: D2 = dP6.divisor(2)
+            sage: D3 = dP6.divisor(3)
+            sage: D = -D0 + 2*D2 - D3
+            sage: M = dP6.fan().dual_lattice()
+            sage: m = M(1, 0)
+            sage: fan = dP6.fan()
+            sage: ray_neg = [m * fan.ray(i) + D.coefficient(i) < 0
+            ....:            for i in range(fan.nrays())]
+            sage: faces = set()
+            sage: from itertools import combinations
+            sage: for cone in flatten(fan.cones()):
+            ....:     if cone.is_trivial():
+            ....:         continue
+            ....:     neg = [i for i in cone.ambient_ray_indices() if ray_neg[i]]
+            ....:     for k in range(1, len(neg) + 1):
+            ....:         for face in combinations(neg, k):
+            ....:             faces.add(tuple(sorted(face)))
+            sage: K1 = D._sheaf_complex(m)
+            sage: K2 = SimplicialComplex(sorted(faces))
+            sage: K1 == K2
+            True
         """
         fan = self.parent().scheme().fan()
         ray_is_negative = [m * ray + self.coefficient(i) < 0
                            for i, ray in enumerate(fan.rays())]
 
-        simplicial_faces = set()
+        facets = set()
         for cone in flatten(fan.cones()):
             if cone.is_trivial():
                 continue
             negative_indices = [i for i in cone.ambient_ray_indices()
                                 if ray_is_negative[i]]
-            for k in range(1, len(negative_indices) + 1):
-                for face in combinations(negative_indices, k):
-                    simplicial_faces.add(tuple(sorted(face)))
-        return SimplicialComplex(sorted(simplicial_faces))
+            if negative_indices:
+                facets.add(tuple(sorted(negative_indices)))
+        if not facets:
+            return SimplicialComplex()
+        return SimplicialComplex(sorted(facets))
 
     def _sheaf_cohomology(self, cplx):
         """
