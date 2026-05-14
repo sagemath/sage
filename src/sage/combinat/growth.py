@@ -5181,8 +5181,11 @@ class RuleCylindricRS(Rule):
 
         EXAMPLES::
 
-            sage: CRS = GrowthDiagram.rules.CylindricRS(d=4, L=3)
-            sage: CRS._check_duality(5)
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: S = CylindricShapes(3, 2)
+            sage: CRS.is_P_edge(S([1, 1, -1]), S([1, 1, 0]))
+            True
         """
         if self.rank(w) != self.rank(v) + 1:
             return False

@@ -22,7 +22,6 @@ class CylindricShape(Element):
 
         sage: [s[i] for i in range(-2, 5)]
         [3, 2, 2, 1, 0, 0, -1]
-
     """
     def __init__(self, parent, values):
         """
