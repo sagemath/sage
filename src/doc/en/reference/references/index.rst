@@ -188,7 +188,7 @@ REFERENCES:
 .. [AHM2018] Edward Allen, Joshua Hallam, Sarah Mason, *Dual Immaculate
              Quasisymmetric Functions Expand Positively into Young Quasisymmetric
              Schur Functions*. :arxiv:`1606.03519`
-             
+
 .. [AHMP2008] \J.-P. Aumasson, L. Henzen, W. Meier, and R. C-W Phan,
               *Sha-3 proposal blake*; in Submission to NIST, (2008).
 
@@ -1042,7 +1042,7 @@ REFERENCES:
 .. [BKSTY06] \A. Buch, A. Kresch, M. Shimozono, H. Tamvakis, and A. Yong.
              *Stable Grothendieck polynomials and* `K`-*theoretic factor sequences*.
              Math. Ann. **340** Issue 2, (2008), pp. 359--382.
-             :arxiv:`math/0601514v1`.        
+             :arxiv:`math/0601514v1`.
 
 .. [BK2009] \J. Brundan and A. Kleshchev.
             *Graded decomposition numbers for cyclotomic Hecke algebras*.
@@ -1500,7 +1500,7 @@ REFERENCES:
               Volume 20, Springer (2007)
 
 .. [But2010] Peter Butkovič, *Max-linear systems. Theory and algorithms.*
-             Springer Monographs in Mathematics. London: Springer. xvii, 272 p. (2010). 
+             Springer Monographs in Mathematics. London: Springer. xvii, 272 p. (2010).
 
 .. [Buell89] Duncan A. Buell.
              *Binary Quadratic Forms: Classical Theory and Modern Computations.*
@@ -1907,7 +1907,7 @@ REFERENCES:
 
 .. [CM] Benoit Collins, Sho Matsumoto, *On some properties of
         orthogonal Weingarten functions*, :arxiv:`0903.5143`.
-        
+
 .. [CM2000] Paula A.A.B. Carvalho and Ian M. Musson. *Down-up algebras and
             their representation theory*. J. Algebra. **228** no. 1, (2000),
             pp. 286-310. :doi:`10.1006/jabr.1999.8263`
@@ -2654,7 +2654,7 @@ REFERENCES:
 .. [EG1987] Paul Edelman, Curtis Greene.
             *Balanced Tableaux*.
             Advances in Mathematics 63 (1987), pp. 42-99.
-            :doi:`10.1016/0001-8708(87)90063-6`             
+            :doi:`10.1016/0001-8708(87)90063-6`
 
 .. [EGNO2015] Pavel Etingof, Shlomo Gelaki, Dmitri Nikshych and Victor Ostrik,
                *Tensor Categories*, AMS Mathematical Surveys and Monographs 205 (2015).
@@ -2809,7 +2809,7 @@ REFERENCES:
              und Geometrie*, Dissertation, University of
              Bayreuth, 2013.
 
-.. [FFN2025] Wenjie Fang, Éric Fusy, Philippe Nadeau, 
+.. [FFN2025] Wenjie Fang, Éric Fusy, Philippe Nadeau,
              *Tamari intervals and blossoming trees*.
              Combinatorial Theory, Volume 5, Issue 1.
              :doi:`10.5070/C65165015`.
@@ -3089,7 +3089,7 @@ REFERENCES:
 .. [GHJV1994] \E. Gamma, R. Helm, R. Johnson, J. Vlissides, *Design
               Patterns: Elements of Reusable Object-Oriented
               Software*. Addison-Wesley (1994). ISBN 0-201-63361-2.
-              
+
 .. [GHM2008] \S. Galbraith, M. Harrison, D. Mireles Morales,
              *Efficient hyperelliptic arithmetic using balanced representation for divisors*,
              Algorithmic Number Theory: 8th International Symposium, ANTS-VIII Banff, Canada, May 17-22, 2008 Proceedings 8.
@@ -3318,7 +3318,7 @@ REFERENCES:
 .. [GR2018v5sol] Darij Grinberg, Victor Reiner.
                  *Hopf Algebras In Combinatorics*,
                  :arxiv:`1409.8356v5`, available with solutions at
-                 https://arxiv.org/src/1409.8356v5/anc/HopfComb-v73-with-solutions.pdf            
+                 https://arxiv.org/src/1409.8356v5/anc/HopfComb-v73-with-solutions.pdf
 
 .. [Gri2005] \G. Grigorov, Kato's Euler System and the Main Conjecture,
              Harvard Ph.D. Thesis (2005).
@@ -3608,6 +3608,11 @@ REFERENCES:
 .. [Hli2006] Petr Hlineny, *Equivalence-free exhaustive generation of
              matroid representations*, Discrete Applied Mathematics
              154 (2006), pp. 1210-1222.
+
+.. [HLMvW2011] James Haglund, Kurt Luoto, Sarah Mason, and Stephanie
+               van Willigenburg. *Quasisymmetric Schur functions.*
+               Journal of Combinatorial Theory, Series A 118, no. 2
+               (2011): 463-490. :arxiv:`0810.2489`
 
 .. [HLNT09] \F. Hivert, J.-G. Luque, J.-C. Novelli, J.-Y. Thibon,
             *The (1-E)-transform in combinatorial Hopf algebras*.
@@ -6049,7 +6054,7 @@ REFERENCES:
 .. [Read2011] \N. Reading, *Noncrossing partitions and the shard intersection
                order*, J. Algebraic Combin., 33 (2011), 483-530.
                :doi:`10.1007/s10801-010-0255-3`
-               
+
 .. [ReSt2020] Nathan Reading and Salvatore Stella, *An affine almost positive
               roots model*, J. Comb. Algebra Volume 4, Issue 1, 2020, pp. 1--59
 
@@ -7043,6 +7048,11 @@ REFERENCES:
 .. [TW1980] \A.D. Thomas and G.V. Wood, Group Tables (Exeter: Shiva
             Publishing, 1980)
 
+.. [TvW2018] Vasu Tewari and Stephanie van
+             Willigenburg. *Quasisymmetric and noncommutative skew
+             Pieri rules*.  Advances in Applied Mathematics 100
+             (2018): pp. 101-121. :arxiv:`1512.04614`
+
 .. [TY1984] Robert Endre Tarjan, Mihalis Yannakakis. *Simple linear-time
             algorithms to test chordality of graphs, test acyclicity of
             hypergraphs, and selectively reduce acyclic hypergraphs*.
@@ -7155,6 +7165,11 @@ REFERENCES:
        ribbon tableaux, and an action of affine permutations*.
        Europe J. Combinatorics. **20** (1999).
        http://wwwmathlabo.univ-poitiers.fr/~maavl/pdf/edgeseqs.pdf
+
+.. [vW2020] Stephanie van Willigenburg, *Dual graphs from
+            noncommutative and quasisymmetric Schur functions.*
+            Proceedings of the American Mathematical Society 148.3
+            (2020): 1063-1078. :arxiv:`1907.13094`
 
 .. _ref-W:
 
