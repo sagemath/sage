@@ -133,9 +133,9 @@ def resolvable_balanced_incomplete_block_design(v, k, existence=False):
                                           copy=False)
         B._classes = classes
         return B
-    elif k == 3:
+    if k == 3:
         return kirkman_triple_system(v, existence=existence)
-    elif k == 4:
+    if k == 4:
         return v_4_1_rbibd(v, existence=existence)
 
     if existence:
@@ -194,10 +194,10 @@ def kirkman_triple_system(v, existence=False):
     if existence:
         return False
 
-    elif v == 3:
+    if v == 3:
         return BalancedIncompleteBlockDesign(3, [[0, 1, 2]], k=3, lambd=1)
 
-    elif v == 9:
+    if v == 9:
         classes = [[[0, 1, 5], [2, 6, 7], [3, 4, 8]],
                    [[1, 6, 8], [3, 5, 7], [0, 2, 4]],
                    [[1, 4, 7], [0, 3, 6], [2, 5, 8]],
@@ -210,7 +210,7 @@ def kirkman_triple_system(v, existence=False):
     # Construction 1.1 from [Stinson91] (originally Theorem 6 from [RCW71])
     #
     # For all prime powers q=1 mod 6, there exists a KTS(2q+1)
-    elif ((v-1)//2) % 6 == 1 and is_prime_power((v-1)//2):
+    if ((v-1)//2) % 6 == 1 and is_prime_power((v-1)//2):
         from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
         q = (v-1)//2
         K = GF(q, 'x')
@@ -257,7 +257,7 @@ def kirkman_triple_system(v, existence=False):
     # Construction 1.2 from [Stinson91] (originally Theorem 5 from [RCW71])
     #
     # For all prime powers q=1 mod 6, there exists a KTS(3q)
-    elif (v//3) % 6 == 1 and is_prime_power(v//3):
+    if (v//3) % 6 == 1 and is_prime_power(v//3):
         from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
         q = v//3
         K = GF(q, 'x')
@@ -291,89 +291,88 @@ def kirkman_triple_system(v, existence=False):
         KTS._classes = classes
         return KTS
 
-    else:
-        # This is Lemma IX.6.4 from [BJL99].
-        #
-        # This construction takes a (v,{4,7})-PBD. All points are doubled (x has
-        # a copy x'), and an infinite point \infty is added.
-        #
-        # On all blocks of 2*4 points we "paste" a KTS(2*4+1) using the infinite
-        # point, in such a way that all {x,x',infty} are set of the design. We
-        # do the same for blocks with 2*7 points using a KTS(2*7+1).
-        #
-        # Note that the triples of points equal to {x,x',\infty} will be added
-        # several times.
-        #
-        # As all those subdesigns are resolvable, each class of the KTS(n) is
-        # obtained by considering a set {x,x',\infty} and all sets of all
-        # parallel classes of the subdesign which contain this set.
+    # This is Lemma IX.6.4 from [BJL99].
+    #
+    # This construction takes a (v,{4,7})-PBD. All points are doubled (x has
+    # a copy x'), and an infinite point \infty is added.
+    #
+    # On all blocks of 2*4 points we "paste" a KTS(2*4+1) using the infinite
+    # point, in such a way that all {x,x',infty} are set of the design. We
+    # do the same for blocks with 2*7 points using a KTS(2*7+1).
+    #
+    # Note that the triples of points equal to {x,x',\infty} will be added
+    # several times.
+    #
+    # As all those subdesigns are resolvable, each class of the KTS(n) is
+    # obtained by considering a set {x,x',\infty} and all sets of all
+    # parallel classes of the subdesign which contain this set.
 
-        # We create the small KTS(n') we need, and relabel them such that
-        # 01(n'-1),23(n'-1),... are blocks of the design.
-        gdd4 = kirkman_triple_system(9)
-        gdd7 = kirkman_triple_system(15)
+    # We create the small KTS(n') we need, and relabel them such that
+    # 01(n'-1),23(n'-1),... are blocks of the design.
+    gdd4 = kirkman_triple_system(9)
+    gdd7 = kirkman_triple_system(15)
 
-        X = [B for B in gdd4 if 8 in B]
-        for b in X:
-            b.remove(8)
-        X = sum(X, []) + [8]
-        gdd4.relabel({v: i for i, v in enumerate(X)})
-        gdd4 = gdd4.is_resolvable(True)[1]  # the relabeled classes
+    X = [B for B in gdd4 if 8 in B]
+    for b in X:
+        b.remove(8)
+    X = sum(X, []) + [8]
+    gdd4.relabel({v: i for i, v in enumerate(X)})
+    gdd4 = gdd4.is_resolvable(True)[1]  # the relabeled classes
 
-        X = [B for B in gdd7 if 14 in B]
-        for b in X:
-            b.remove(14)
-        X = sum(X, []) + [14]
-        gdd7.relabel({v: i for i, v in enumerate(X)})
-        gdd7 = gdd7.is_resolvable(True)[1]  # the relabeled classes
+    X = [B for B in gdd7 if 14 in B]
+    for b in X:
+        b.remove(14)
+    X = sum(X, []) + [14]
+    gdd7.relabel({v: i for i, v in enumerate(X)})
+    gdd7 = gdd7.is_resolvable(True)[1]  # the relabeled classes
 
-        # The first parallel class contains 01(n'-1), the second contains
-        # 23(n'-1), etc..
-        # Then remove the blocks containing (n'-1)
-        for B in gdd4:
-            for i, b in enumerate(B):
-                if 8 in b:
-                    j = min(b)
-                    del B[i]
-                    B.insert(0, j)
-                    break
-        gdd4.sort()
-        for B in gdd4:
-            B.pop(0)
+    # The first parallel class contains 01(n'-1), the second contains
+    # 23(n'-1), etc..
+    # Then remove the blocks containing (n'-1)
+    for B in gdd4:
+        for i, b in enumerate(B):
+            if 8 in b:
+                j = min(b)
+                del B[i]
+                B.insert(0, j)
+                break
+    gdd4.sort()
+    for B in gdd4:
+        B.pop(0)
 
-        for B in gdd7:
-            for i, b in enumerate(B):
-                if 14 in b:
-                    j = min(b)
-                    del B[i]
-                    B.insert(0, j)
-                    break
-        gdd7.sort()
-        for B in gdd7:
-            B.pop(0)
+    for B in gdd7:
+        for i, b in enumerate(B):
+            if 14 in b:
+                j = min(b)
+                del B[i]
+                B.insert(0, j)
+                break
+    gdd7.sort()
+    for B in gdd7:
+        B.pop(0)
 
-        # Pasting the KTS(n') without {x,x',\infty} blocks
-        classes = [[] for _ in repeat(None, (v - 1) // 2)]
-        gdd = {4: gdd4, 7: gdd7}
-        for B in PBD_4_7((v-1)//2, check=False):
-            for i, classs in enumerate(gdd[len(B)]):
-                classes[B[i]].extend([2*B[x//2]+x % 2 for x in BB]
-                                     for BB in classs)
+    # Pasting the KTS(n') without {x,x',\infty} blocks
+    classes = [[] for _ in repeat(None, (v - 1) // 2)]
+    gdd = {4: gdd4, 7: gdd7}
+    for B in PBD_4_7((v-1)//2, check=False):
+        for i, classs in enumerate(gdd[len(B)]):
+            classes[B[i]].extend([2*B[x//2]+x % 2 for x in BB]
+                                 for BB in classs)
 
-        # The {x,x',\infty} blocks
-        for i, classs in enumerate(classes):
-            classs.append([2*i, 2*i+1, v-1])
+    # The {x,x',\infty} blocks
+    for i, classs in enumerate(classes):
+        classs.append([2*i, 2*i+1, v-1])
 
-        KTS = BalancedIncompleteBlockDesign(v,
-                                            blocks=[tr for cl in classes for tr in cl],
-                                            k=3,
-                                            lambd=1,
-                                            check=True,
-                                            copy=False)
-        KTS._classes = classes
-        assert KTS.is_resolvable()
+    KTS = BalancedIncompleteBlockDesign(v,
+                                        blocks=[tr for cl in classes for tr in cl],
+                                        k=3,
+                                        lambd=1,
+                                        check=True,
+                                        copy=False)
+    KTS._classes = classes
+    assert KTS.is_resolvable()
 
-        return KTS
+    return KTS
 
 
 def v_4_1_rbibd(v, existence=False):

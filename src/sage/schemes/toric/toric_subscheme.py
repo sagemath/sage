@@ -886,10 +886,9 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
                 point_subs = dict(zip(R.gens(), point))
                 Jac = self.Jacobian().subs(point_subs)
                 return not Jac.is_zero()
-            else:
-                self._embedding_center = self.point(point)
-                affine = self.affine_algebraic_patch()
-                return affine.is_smooth(affine.embedding_center())
+            self._embedding_center = self.point(point)
+            affine = self.affine_algebraic_patch()
+            return affine.is_smooth(affine.embedding_center())
 
         # testing smoothness everywhere tends to be expensive
         if '_smooth' in self.__dict__:

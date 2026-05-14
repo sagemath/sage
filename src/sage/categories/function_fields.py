@@ -12,8 +12,8 @@ Function fields
 #******************************************************************************
 
 from sage.categories.category import Category
+from sage.categories.fields import Fields
 from sage.misc.cachefunc import cached_method
-from sage.categories.basic import Fields
 
 
 class FunctionFields(Category):

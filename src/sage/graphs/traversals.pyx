@@ -397,7 +397,6 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
     Different orderings for different traversals::
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000', algorithm='fast')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -572,7 +571,6 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -645,7 +643,6 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -718,7 +715,6 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -1031,7 +1027,7 @@ def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
 
             # We check if there is a chain u = w_1, w_2, ..., w_{p+1} = v with
             # w_j unnumbered and label(w_j) < label(v) for all j in {2, ..., p}
-            active = set([w for w in unnumbered_vertices if label[w] < label[v]])
+            active = {w for w in unnumbered_vertices if label[w] < label[v]}
             active.add(v)
             reach = set([u])
             while active and reach and v not in reach:

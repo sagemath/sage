@@ -1,5 +1,5 @@
 SAGE_SPKG_CONFIGURE([msolve], [
-    PKG_CHECK_MODULES([msolve], [msolve >= 0.6.5], [], [
+    PKG_CHECK_MODULES([msolve], [msolve >= 0.9.5], [], [
        AC_CACHE_CHECK([for msolve], [ac_cv_path_MSOLVE],
          [AC_PATH_PROGS_FEATURE_CHECK([MSOLVE], [msolve],
            [msolvin=$(mktemp)

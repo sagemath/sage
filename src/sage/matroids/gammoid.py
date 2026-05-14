@@ -457,8 +457,7 @@ class Gammoid(Matroid):
 
         if contractions:
             return MinorMatroid(N, contractions=contractions, deletions=frozenset())
-        else:
-            return N
+        return N
 
     def gammoid_extension(self, vertex, neighbors=[]):
         """

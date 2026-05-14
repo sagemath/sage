@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Weyl Algebras
 
@@ -56,12 +55,12 @@ def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
 
         sage: from sage.algebras.weyl_algebra import repr_from_monomials
         sage: R.<x,y,z> = QQ[]
-        sage: d = [(z, 4/7), (y, sqrt(2)), (x, -5)]                                     # needs sage.symbolic
-        sage: repr_from_monomials(d, lambda m: repr(m))                                 # needs sage.symbolic
+        sage: d = [(z, 4/7), (y, sqrt(2)), (x, -5)]
+        sage: repr_from_monomials(d, lambda m: repr(m))
         '4/7*z + sqrt(2)*y - 5*x'
-        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a                   # needs sage.symbolic
+        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a
         \frac{4}{7} z + \sqrt{2} y - 5 x
-        sage: type(a)                                                                   # needs sage.symbolic
+        sage: type(a)
         <class 'sage.misc.latex.LatexExpr'>
 
     The zero element::
@@ -93,7 +92,6 @@ def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
 
     Leading minus signs are dealt with appropriately::
 
-        sage: # needs sage.symbolic
         sage: d = [(z, -4/7), (y, -sqrt(2)), (x, -5)]
         sage: repr_from_monomials(d, lambda m: repr(m))
         '-4/7*z - sqrt(2)*y - 5*x'
@@ -121,8 +119,7 @@ def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
     if not monomials:
         if use_latex:
             return latex(0)
-        else:
-            return '0'
+        return '0'
 
     ret = ''
     for m, c in monomials:
@@ -374,10 +371,9 @@ class DifferentialWeylAlgebraElement(IndexedFreeModuleElement):
             d = half_term(m[1], False)
             if p == '1':  # No polynomial part
                 return d
-            elif d == '1':  # No differential part
+            if d == '1':  # No differential part
                 return p
-            else:
-                return p + ' ' + d
+            return p + ' ' + d
         return repr_from_monomials(self.list(), term, True)
 
     def _mul_(self, other):

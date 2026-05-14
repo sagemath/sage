@@ -112,10 +112,27 @@ Using Conda
 - You can then start Sage from the command line with ``./sage``
   or run the tests with ``./sage -t``.
 
+.. note::
+
+    If you edit Cython files, starting Sage will then recompile those
+    files and all their dependencies, which may take some time.  If
+    you want to see a message whenever this is happening, use
+
+    .. code-block:: console
+
+        $ pip install -Ceditable-verbose=true --no-build-isolation --editable .
+
+    instead.  Another convenient option is to skip building the
+    documentation.  To do so, use
+
+    .. code-block:: console
+
+        $ pip install -Ceditable-verbose=true  -Csetup-args="-Dbuild-docs=False" --no-build-isolation --editable .
+
 .. _system_package_manager:
 
-Using system package manager
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using the system package manager
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also install the dependencies via your system package manager.
 Note, however, that not all dependencies may be available for your system,
@@ -214,15 +231,6 @@ Remarks
 
   ``--verbose`` can be passed to ``pip install``, then the meson commands
   internally used by pip will be printed out.
-
-.. note::
-
-  To build the documentation, use:
-
-  .. code-block:: console
-
-    $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-docbuild
-    $ sage --docbuild all html
 
 .. note::
 

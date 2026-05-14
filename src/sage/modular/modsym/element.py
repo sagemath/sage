@@ -21,9 +21,9 @@ A single element of an ambient space of modular symbols
 
 import sage.modules.free_module_element
 from sage.misc.repr import repr_lincomb
-import sage.structure.formal_sum as formal_sum
+from sage.structure import formal_sum
 import sage.modular.hecke.all as hecke
-import sage.misc.latex as latex
+from sage.misc import latex
 
 
 _print_mode = "manin"
@@ -126,7 +126,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         """
         if _print_mode == "vector":
             return str(self.element())
-        elif _print_mode == "manin":
+        if _print_mode == "manin":
             m = self.manin_symbol_rep()
         elif _print_mode == "modular":
             m = self.modular_symbol_rep()
@@ -153,7 +153,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
         if _print_mode == "vector":
             return self.element()._latex_()
-        elif _print_mode == "manin":
+        if _print_mode == "manin":
             m = self.manin_symbol_rep()
         elif _print_mode == "modular":
             m = self.modular_symbol_rep()

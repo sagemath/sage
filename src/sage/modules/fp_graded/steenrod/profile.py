@@ -146,9 +146,8 @@ def enveloping_profile_elements(alist, char=2):
     profiles_Q = [x[1] for x in profiles]
     if not profiles_P and not profiles_Q:
         return ((0,), (0,))
-    else:
-        maxP = [max(*a) for a in zip_longest(*profiles_P, fillvalue=0)]
-        maxQ = [max(*a) for a in zip_longest(*profiles_Q, fillvalue=0)]
+    maxP = [max(*a) for a in zip_longest(*profiles_P, fillvalue=0)]
+    maxQ = [max(*a) for a in zip_longest(*profiles_Q, fillvalue=0)]
     return find_min_profile([maxP, maxQ], char=char)
 
 

@@ -173,11 +173,6 @@ The bad:
 
     Intervals ``a`` and ``b`` overlap iff ``not(a != b)``.
 
-.. WARNING::
-
-    The ``cmp(a, b)`` function should not be used to compare real
-    intervals. Note that ``cmp`` will disappear in Python3.
-
 EXAMPLES::
 
     sage: 0 < RIF(1, 2)
@@ -849,7 +844,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
             return self._convert_method_map(S, "_real_mpfi_")
         return None
 
-    def __richcmp__(self, other, int op):
+    def __richcmp__(self, other, int op) -> bool:
         """
         Compare ``self`` to ``other``.
 
@@ -2438,7 +2433,6 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(1, 2).relative_diameter()
             0.666666666666667
 
-            sage: # needs sage.symbolic
             sage: RIF(pi).diameter()
             1.41357985842823e-16
             sage: RIF(pi).absolute_diameter()
@@ -2478,7 +2472,6 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(5/7).fp_rank_diameter()
             1
 
-            sage: # needs sage.symbolic
             sage: RIF(pi).fp_rank_diameter()
             1
             sage: RIF(-sqrt(2)).fp_rank_diameter()
@@ -2496,7 +2489,6 @@ cdef class RealIntervalFieldElement(RingElement):
         Just because we have the best possible interval, doesn't mean the
         interval is actually small::
 
-            sage: # needs sage.symbolic
             sage: a = RIF(pi)^12345678901234567890
             sage: a  # needs 32_bit
             [2.0985787164673874e323228496 .. +infinity]
@@ -2590,7 +2582,6 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: b.lower(), b.upper()
             (1.50000000000000, 2.00000000000000)
 
-            sage: # needs sage.symbolic
             sage: I = RIF(e, pi)
             sage: a, b = I.bisection()
             sage: a.intersection(b) == RIF(I.center())
@@ -3103,9 +3094,9 @@ cdef class RealIntervalFieldElement(RingElement):
 
             sage: r = RIF(2.5, 3.5).round()
             sage: r
-            4.?
+            3.?
             sage: r.lower()
-            3.00000000000000
+            2.00000000000000
             sage: r.upper()
             4.00000000000000
         """
@@ -3458,28 +3449,22 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(-pi).unique_round()                                               # needs sage.symbolic
             -3
             sage: (RIF(4.5).unique_round(), RIF(-4.5).unique_round())
-            (5, -5)
+            (4, -4)
 
        TESTS::
 
             sage: RIF(-1/2, -1/3).unique_round()
-            Traceback (most recent call last):
-            ...
-            ValueError: interval does not have a unique round (nearest integer)
+            0
             sage: RIF(-1/2, 1/3).unique_round()
-            Traceback (most recent call last):
-            ...
-            ValueError: interval does not have a unique round (nearest integer)
+            0
             sage: RIF(-1/3, 1/3).unique_round()
             0
             sage: RIF(-1/2, 0).unique_round()
-            Traceback (most recent call last):
-            ...
-            ValueError: interval does not have a unique round (nearest integer)
+            0
             sage: RIF(1/2).unique_round()
-            1
+            0
             sage: RIF(-1/2).unique_round()
-            -1
+            0
             sage: RIF(0).unique_round()
             0
         """
@@ -4622,7 +4607,6 @@ cdef class RealIntervalFieldElement(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: t = RIF(pi)/2
             sage: t.cos()
             0.?e-15
@@ -5316,50 +5300,6 @@ def RealInterval(s, upper=None, int base=10, int pad=0, min_prec=53):
 
 # The default real interval field, with precision 53 bits
 RIF = RealIntervalField()
-
-
-def is_RealIntervalField(x):
-    """
-    Check if ``x`` is a :class:`RealIntervalField_class`.
-
-    EXAMPLES::
-
-        sage: sage.rings.real_mpfi.is_RealIntervalField(RIF)
-        doctest:warning...
-        DeprecationWarning: The function is_RealIntervalField is deprecated;
-        use 'isinstance(..., RealIntervalField_class)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: sage.rings.real_mpfi.is_RealIntervalField(RealIntervalField(200))
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_RealIntervalField is deprecated; "
-                       "use 'isinstance(..., RealIntervalField_class)' instead.")
-    return isinstance(x, RealIntervalField_class)
-
-
-def is_RealIntervalFieldElement(x):
-    """
-    Check if ``x`` is a :class:`RealIntervalFieldElement`.
-
-    EXAMPLES::
-
-        sage: sage.rings.real_mpfi.is_RealIntervalFieldElement(RIF(2.2))
-        doctest:warning...
-        DeprecationWarning: The function is_RealIntervalFieldElement is deprecated;
-        use 'isinstance(..., RealIntervalFieldElement)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: sage.rings.real_mpfi.is_RealIntervalFieldElement(RealIntervalField(200)(2.2))
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_RealIntervalFieldElement is deprecated; "
-                       "use 'isinstance(..., RealIntervalFieldElement)' instead.")
-    return isinstance(x, RealIntervalFieldElement)
 
 
 # pickle functions

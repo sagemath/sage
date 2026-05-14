@@ -82,7 +82,6 @@ def _symbol(val: str) -> SymbolNode:
 
 def update_python_sources(self: Rewriter, visitor: AstPython):
     for target in visitor.install_sources_calls:
-        ignored_files = {'cmdline.py'}
         # Generate the current source list
         src_list: list[str] = []
         for arg in arg_list_from_node(target):
@@ -91,13 +90,13 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
 
         folder = Path(target.filename).parent
         python_files = sorted(
-            list(folder.glob("*.py")) + list(folder.glob('*.pxd')) + list(folder.glob('*.pyx'))
+            list(folder.glob("*.py")) + list(folder.glob('*.pxd')) + list(folder.glob('*.pyx')) + list(folder.glob('*.pyi'))
         )  # + list(folder.glob('*.pxd')) + list(folder.glob('*.h')))
 
         to_append: list[StringNode] = []
         for file in python_files:
             file_name = file.name
-            if file_name in src_list or file_name in ignored_files:
+            if file_name in src_list:
                 continue
             token = Token("string", target.filename, 0, 0, 0, None, file_name)
             to_append += [StringNode(token)]
@@ -142,7 +141,7 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
         folder = Path(target.filename).parent
         src_list = ext_data[folder]
 
-        cython_files = sorted(list(folder.glob("*.pyx")))
+        cython_files = sorted(folder.glob("*.pyx"))
         # Some cython files are compiled in a special way, so we don't want to add them
         special_cython_files = {
             "bliss.pyx",

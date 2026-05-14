@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Ariki-Koike Algebras
 
@@ -239,7 +238,6 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
     We construct an Ariki-Koike algebra with `u = (1, \zeta_3, \zeta_3^2)`,
     where `\zeta_3` is a primitive third root of unity::
 
-        sage: # needs sage.rings.number_field
         sage: F = CyclotomicField(3)
         sage: zeta3 = F.gen()
         sage: R.<q> = LaurentPolynomialRing(F)
@@ -254,7 +252,6 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
     Next, we additionally take `q = 1` to obtain the group algebra
     of `G(r, 1, n)`::
 
-        sage: # needs sage.rings.number_field
         sage: F = CyclotomicField(3)
         sage: zeta3 = F.gen()
         sage: H = algebras.ArikiKoike(3, 4, q=1, u=[1, zeta3, zeta3^2], R=F)
@@ -1408,8 +1405,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             if i == 1:
                 if self._r == 1:
                     return self.from_base_ring(self._u[0])
-                else:
-                    return self.T(0)
+                return self.T(0)
             T = self.T()
             return self._q**-1 * T[i-1] * self.L(i-1) * T[i-1]
 

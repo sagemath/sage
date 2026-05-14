@@ -553,8 +553,7 @@ class SchemeHomset_points(SchemeHomset_generic):
                 if (isinstance(target.ambient_space(), AffineSpace)
                         and target.ambient_space().dimension_relative() == 1):
                     return target.base_ring().has_coerce_map_from(other)
-                else:
-                    return False
+                return False
             except AttributeError:  # no .ambient_space
                 return False
         elif isinstance(other, SchemeHomset_points):
@@ -583,16 +582,14 @@ class SchemeHomset_points(SchemeHomset_generic):
                         or (isinstance(ta, AffineSpace) and isinstance(sa, AffineSpace))):
                     if (ta.variable_names() == sa.variable_names()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
-                    else:
-                        return False
+                    return False
                 # for products of projective spaces, we check dimension of
                 # components and matching variable names
-                elif isinstance(ta, ProductProjectiveSpaces) and isinstance(sa, ProductProjectiveSpaces):
+                if isinstance(ta, ProductProjectiveSpaces) and isinstance(sa, ProductProjectiveSpaces):
                     if (ta.dimension_relative_components() == sa.dimension_relative_components()) \
                       and (ta.variable_names() == sa.variable_names()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
-                    else:
-                        return False
+                    return False
 
     def _element_constructor_(self, *v, **kwds):
         """

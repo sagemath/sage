@@ -680,11 +680,10 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
                     if x is None:
                         return None
                     return type(self)(self.parent(), (x, self.value[1], self.value[2]))
-                else:
-                    x = self.value[2].e(i)
-                    if x is None:
-                        return None
-                    return type(self)(self.parent(), (self.value[0], self.value[1], x))
+                x = self.value[2].e(i)
+                if x is None:
+                    return None
+                return type(self)(self.parent(), (self.value[0], self.value[1], x))
             # else i < 0
             M = self.parent()._cartan_type.m + 1
             if self.value[0].phi(i) < self.value[1].epsilon(M+i):
@@ -692,11 +691,10 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
                 if x is None:
                     return None
                 return type(self)(self.parent(), (self.value[0], x, self.value[2]))
-            else:
-                x = self.value[0].e(i)
-                if x is None:
-                    return None
-                return type(self)(self.parent(), (x, self.value[1], self.value[2]))
+            x = self.value[0].e(i)
+            if x is None:
+                return None
+            return type(self)(self.parent(), (x, self.value[1], self.value[2]))
 
         def f(self, i):
             r"""
@@ -730,11 +728,10 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
                     if x is None:
                         return None
                     return type(self)(self.parent(), (self.value[0], self.value[1], x))
-                else:
-                    x = self.value[0].f(i)
-                    if x is None:
-                        return None
-                    return type(self)(self.parent(), (x, self.value[1], self.value[2]))
+                x = self.value[0].f(i)
+                if x is None:
+                    return None
+                return type(self)(self.parent(), (x, self.value[1], self.value[2]))
             # else i < 0
             M = self.parent()._cartan_type.m + 1
             if self.value[0].phi(i) > self.value[1].epsilon(M+i):
@@ -742,11 +739,10 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
                 if x is None:
                     return None
                 return type(self)(self.parent(), (x, self.value[1], self.value[2]))
-            else:
-                x = self.value[1].f(M+i)
-                if x is None:
-                    return None
-                return type(self)(self.parent(), (self.value[0], x, self.value[2]))
+            x = self.value[1].f(M+i)
+            if x is None:
+                return None
+            return type(self)(self.parent(), (self.value[0], x, self.value[2]))
 
         def weight(self):
             r"""

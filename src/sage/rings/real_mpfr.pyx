@@ -152,8 +152,6 @@ from sage.structure.richcmp cimport rich_to_bool_sgn
 cdef bin_op
 from sage.structure.element import bin_op
 
-from sage.libs.mpmath.utils cimport mpfr_to_mpfval
-
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.rings.real_double cimport RealDoubleElement
@@ -1326,7 +1324,6 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
         TESTS::
 
-            sage: # needs sage.libs.pari
             sage: k = RealField(100)
             sage: R.<x> = k[]
             sage: k._factor_univariate_polynomial( x )
@@ -3048,7 +3045,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
     def round(self):
         """
          Round ``self`` to the nearest representable integer, rounding halfway
-         cases away from zero.
+         cases to even (banker's rounding).
+
+         This matches the behavior of Python's built-in ``round()`` function
+         for floats (Python 3+), and Sage's ``Rational.round()`` with default
+         mode.
 
          .. NOTE::
 
@@ -3059,14 +3060,35 @@ cdef class RealNumber(sage.structure.element.RingElement):
              sage: RR(0.49).round()
              0
              sage: RR(0.5).round()
-             1
+             0
              sage: RR(-0.49).round()
              0
              sage: RR(-0.5).round()
-             -1
+             0
+             sage: RR(1.5).round()
+             2
+             sage: RR(2.5).round()
+             2
+             sage: RR(-1.5).round()
+             -2
+             sage: RR(-2.5).round()
+             -2
+
+         This uses round-to-even (banker's rounding) for tie cases, matching
+         Python 3 behavior and IEEE 754 default rounding::
+
+             sage: [RR(n + 0.5).round() for n in range(-5, 6)]
+             [-4, -4, -2, -2, 0, 0, 2, 2, 4, 4, 6]
+
+         Compare with ``Rational.round()``::
+
+             sage: RR(5/2).round() == QQ(5/2).round()
+             True
+             sage: RR(-7/2).round() == QQ(-7/2).round()
+             True
          """
         cdef RealNumber x = self._new()
-        mpfr_round(x.value, self.value)
+        mpfr_roundeven(x.value, self.value)
         return x.integer_part()
 
     def floor(self):
@@ -3347,7 +3369,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: R = RealField(100)
             sage: R(pi)
             3.1415926535897932384626433833
@@ -3380,7 +3401,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
         Pari does maintain the same 250-bit number on both 32-bit and
         64-bit platforms::
 
-            sage: # needs sage.libs.pari
             sage: RealField(250).pi().__pari__()
             3.14159265358979
             sage: RR(0.0).__pari__()
@@ -3412,7 +3432,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
         Check that the largest and smallest exponents representable by
         PARI convert correctly::
 
-            sage: # needs sage.libs.pari
             sage: a = pari(0.5) << (sys.maxsize+1)/4
             sage: RR(a) >> (sys.maxsize+1)/4
             0.500000000000000
@@ -3800,7 +3819,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(3/4).nearby_rational(max_denominator=2)
             1
 
-            sage: # needs sage.symbolic
             sage: RR(pi).nearby_rational(max_denominator=120)
             355/113
             sage: RR(pi).nearby_rational(max_denominator=10000)
@@ -5959,34 +5977,6 @@ def create_RealNumber(s, int base=10, int pad=0, rnd='RNDN', int min_prec=53):
         R = RealField(prec=max(bits + pad, min_prec), rnd=rnd)
 
     return RealLiteral(R, s, base)
-
-
-def is_RealNumber(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`RealNumber`, meaning that it
-    is an element of the MPFR real field with some precision.
-
-    EXAMPLES::
-
-        sage: from sage.rings.real_mpfr import is_RealNumber
-        sage: is_RealNumber(2.5)
-        doctest:warning...
-        DeprecationWarning: The function is_RealNumber is deprecated;
-        use 'isinstance(..., RealNumber)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_RealNumber(float(2.3))
-        False
-        sage: is_RealNumber(RDF(2))
-        False
-        sage: is_RealNumber(pi)                                                         # needs sage.symbolic
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_RealNumber is deprecated; "
-                       "use 'isinstance(..., RealNumber)' instead.")
-    return isinstance(x, RealNumber)
 
 
 def __create__RealField_version0(prec, sci_not, rnd):

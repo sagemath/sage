@@ -175,7 +175,6 @@ def gen_html_code(G,
 
         sage: graphs.DodecahedralGraph().show(method='js')                      # optional - internet
 
-        sage: # needs sage.combinat
         sage: g = digraphs.DeBruijn(2, 2)
         sage: g.allow_multiple_edges(True)
         sage: g.add_edge("10", "10", "a")

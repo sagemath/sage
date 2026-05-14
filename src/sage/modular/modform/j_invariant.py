@@ -38,8 +38,7 @@ def j_invariant_qexp(prec=10, K=QQ):
     j = (g6*g6) * (~Delta) + 1728
     if K != QQ:
         return j.change_ring(K)
-    else:
-        return j
+    return j
 
 
 # NOTE: this needs to be sped up.  The pari code src/basemath/trans3.c is

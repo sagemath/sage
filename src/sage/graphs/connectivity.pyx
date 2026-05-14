@@ -279,6 +279,7 @@ def number_of_connected_components(G, forbidden_vertices=None):
     return len(connected_components(G, sort=False,
                                     forbidden_vertices=forbidden_vertices))
 
+
 connected_components_number = number_of_connected_components
 
 
@@ -1256,7 +1257,7 @@ def is_edge_cut(G, edges):
                     queue.append(w)
 
         # We now check if some vertices of comp have not been reached
-        if len(set(DS.find(v) for v in comp)) > 1:
+        if len({DS.find(v) for v in comp}) > 1:
             return True
 
     return False
@@ -1684,7 +1685,7 @@ def minimal_separators(G, forbidden_vertices=None):
         A, cliques = g.atoms_and_clique_separators()
         if cliques:
             # A clique separator may be repeated in cliques
-            cliques = set(frozenset(clique) for clique in cliques)
+            cliques = {frozenset(clique) for clique in cliques}
             yield from (set(clique) for clique in cliques)
             atoms.extend(g.subgraph(atom) for atom in A)
         else:
@@ -2489,7 +2490,7 @@ def strongly_connected_components_digraph(G, keep_labels=False):
 
     if keep_labels:
         g = DiGraph(len(scc), multiedges=True, loops=True)
-        g.add_edges(set((d[u], d[v], label) for u, v, label in G.edge_iterator()))
+        g.add_edges({(d[u], d[v], label) for u, v, label in G.edge_iterator()})
 
     else:
         g = DiGraph(len(scc), multiedges=False, loops=False)

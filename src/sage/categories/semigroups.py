@@ -84,8 +84,7 @@ class Semigroups(CategoryWithAxiom):
         import sage.categories.examples.semigroups as examples
         if choice == "leftzero":
             return examples.LeftZeroSemigroup(**kwds)
-        else:
-            return examples.FreeSemigroup(**kwds)
+        return examples.FreeSemigroup(**kwds)
 
     class ParentMethods:
 

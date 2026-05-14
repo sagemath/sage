@@ -80,24 +80,23 @@ processori/core del tuo sistema.
 Come posso far riconoscere la mia attuale installazione di Tcl/Tk all'interprete Python di Sage?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-Potresti avere la libreria Tcl/Tk installata e l'interprete Python del
-tuo sistema la riconosce ma l'interprete Python di Sage no. Ad oggi (2023)
-solitamente non c'è bisogno di compilare l'interprete Python di Sage, ma se ne
-hai bisogno, segui queste istruzioni. Controlla di aver installato la libreria
-di sviluppp Tcl/Tk. Su Ubuntu lancia, da riga di comando::
+Sage usa l'interprete Python selezionato in fase di compilazione. Per usare
+le librerie Tcl/Tk in Sage, assicurati che questa installazione di Python
+fornisca il modulo ``tkinter``. Su Ubuntu, questo di solito si ottiene
+installando::
 
-    sudo apt-get install tk8.5-dev
+    sudo apt-get install python3-tk
 
-o qualcosa di simile. Poi reinstalla l'interprete Python di Sage con::
+o un pacchetto con un nome simile, ad esempio ``python3-tkinter``.
 
-    make python3-clean python3-uninstall && make python3
+Se stai usando un Python esterno, controlla prima proprio quell'interprete::
 
-Questo aggancerà automaticamente la libreria Tcl/Tk.
-Dopo aver reinstallato correttamente l'interprete Python di Sage,
-lancia i seguenti comandi dall'interfaccia a riga di comando di Sage::
+    "$PYTHON3" -c "import tkinter"
 
-    import _tkinter
-    import Tkinter
+Dopo aver ricompilato o reinstallato Sage con quell'interprete, puoi anche
+controllare dalla riga di comando di Sage che Tcl/Tk sia disponibile::
+
+    import tkinter
 
 Se non ti viene segnalato alcun errore di :class:`ImportError`
 allora il problema è risolto.
@@ -108,16 +107,17 @@ Come faccio ad importare Sage in uno script Python?
 
 Puoi importare Sage in uno script Python come faresti con una libreria.
 La cosa a cui fare attenzione è che devi lanciare quello script Python
-usando l'interprete Python interno a Sage
-(versione 3.7.x per Sage 9.2).
+all'interno dell'ambiente Python di Sage. In una build da sorgente,
+Sage crea questo ambiente a partire dall'interprete Python esterno
+selezionato in fase di compilazione.
 Per importare Sage metti la seguente istruzione in
 cima al tuo script Python::
 
     from sage.all import *
 
 Quando poi esegui il tuo script devi lanciare Sage con l'opzione
-``-python`` che farà sì che venga eseguito dalla versione
-dell'interprete interna a Sage. Ad esempio, se Sage è nella tua
+``-python`` che farà sì che venga eseguito in questo ambiente
+Python. Ad esempio, se Sage è nella tua
 variabile d'ambiente ``PATH``, puoi scrivere::
 
     sage -python /path/to/my/script.py
