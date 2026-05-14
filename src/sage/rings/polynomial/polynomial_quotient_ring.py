@@ -449,19 +449,48 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: Q3.has_coerce_map_from(Q1)
             False
 
+        Such a conversion is not a coercion and need not define a ring
+        homomorphism::
+
+            sage: R.<x> = GF(7)[]
+            sage: S.<u> = R.quotient(x^4 + x^3)
+            sage: T.<v> = R.quotient(x^3 + x^2)
+            sage: S.has_coerce_map_from(T)
+            False
+            sage: S(v)
+            u
+            sage: S(v^3 + v^2)
+            0
+            sage: S(v)^3 + S(v)^2
+            u^3 + u^2
+
         String conversion takes into account both the generators of the quotient
         ring and its base ring::
 
             sage: Q3('x*ybar^2')
             -x
+
+        If direct conversion to the cover polynomial ring fails, conversion of
+        a quotient element falls back to its representative lift
+        (:issue:`42027`)::
+
+            sage: R.<x> = GF(7)[]
+            sage: S.<u> = R.quotient(x^2 + x)
+            sage: T.<v> = R.quotient(x)
+            sage: T.has_coerce_map_from(S)
+            True
+            sage: T(u)
+            0
         """
         if not isinstance(x, str):
             try:
-                return self.element_class(self, self.__ring(x), check=True)
+                polynomial = self.__ring(x)
             except (TypeError, ValueError):
                 xlift = getattr(x, 'lift', None)
                 if xlift is not None: # duck typing for quotient ring elements
                     return self.element_class(self, self.__ring(x.lift()), check=False)
+            else:
+                return self.element_class(self, polynomial, check=True)
         # The problem with the string representation is that it could in principle
         # mix elements of self with elements of self's cover ring. We therefore
         # resort to sage_eval.
