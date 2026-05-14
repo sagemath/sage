@@ -261,12 +261,12 @@ class LLT_class(UniqueRepresentation):
         elif isinstance(skp, list) and skp[0] in _Partitions:
             #skp is a list of partitions
             skp = Partition(core=[], quotient=skp)
-            mu = Partitions( ZZ(sum(skp) / self.level()) )
+            mu = Partitions(ZZ(sum(skp) / self.level()))
         else:
             raise ValueError("LLT polynomials not defined for %s" % skp)
 
         BR = self.base_ring()
-        return sum([ BR(stat(skp,nu,self.level()).subs(t=self.t))*self._m(nu) for nu in mu])
+        return sum([BR(stat(skp, nu, self.level()).subs(t=self.t)) * self._m(nu) for nu in mu])
 
     def spin_square(self, skp):
         r"""

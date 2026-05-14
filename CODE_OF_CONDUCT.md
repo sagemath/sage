@@ -128,6 +128,36 @@ themselves from considering your report. Alternatively, if, for any
 reason, you feel uncomfortable making a report to the whole committee,
 then you can also contact individual committee members.
 
+## Committee Composition and Elections ##
+
+The Sage Code of Conduct Committee (CoCC) consists of six members. In the event
+of a vacancy, the remaining members continue to act notwithstanding the
+vacancy; the position may remain unfilled until the next election.
+
+Committee members serve staggered two-year terms. Elections are held annually
+to select three members, ensuring continuity of experience within the
+committee.
+
+Elections are administered by those current committee members who are not
+standing for reelection. If there are not enough such members available, the
+outgoing CoCC will appoint a trusted group of community members to oversee the
+election.
+
+Any member of the sage-devel mailing list may nominate any other member, including
+themselves. Additionally, any member of sage-devel may confidentially inform
+the election committee that they believe somebody should not serve. After the
+nomination period, the election committee will inform each nominee of the
+number of such objections received. Nominees who agree to stand will appear on
+the ballot. The final candidate list, including the number of objections (if
+any) per candidate, will be published.
+
+Voting is conducted using the method of equal shares.
+
+In the event of resignations or other mid-term vacancies, the committee may
+either call an off-cycle election or leave the position vacant until the next
+regular election. Someone who is elected in an off-cycle election will only serve
+for the remainder of the term of the committee member they replaced.
+
 ## Incident reporting resolution & Code of Conduct enforcement ##
 
 This section summarizes the most important points; more details can be

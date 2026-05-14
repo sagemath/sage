@@ -803,6 +803,20 @@ cdef class MPolynomialRing_base(CommutativeRing):
                                           self.term_order().magma_str())
         return magma._with_names(s, self.variable_names())
 
+    def _fricas_init_(self) -> str:
+        """
+        Return a string that yields a representation of ``self`` in FriCAS.
+
+        EXAMPLES::
+
+            sage: F = GF(3, 2)
+            sage: P.<x,y> = F[]
+            sage: fricas(P)     # indirect doctest  # optional - fricas
+            MultivariatePolynomial([x, y],FiniteField(3,2))
+        """
+        L = ",".join(f'"{v}"' for v in self.variable_names())
+        return f'MultivariatePolynomial([{L}], {self.base_ring()._fricas_init_()})'
+
     def _gap_init_(self) -> str:
         """
         Return a string that yields a representation of ``self`` in GAP.

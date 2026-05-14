@@ -202,6 +202,11 @@ jobs:
             pytest -qq --doctest --collect-only
           fi
 
+      - name: Check for cyclic imports
+        shell: bash -l {0}
+        run: |
+          python tools/find_cyclic_imports.py --check --verbose
+
       - name: Upload log
         uses: actions/upload-artifact@v4.5.0
         if: failure()

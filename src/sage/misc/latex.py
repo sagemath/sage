@@ -1923,7 +1923,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     # the viewer has closed. This function is synchronous and waits
     # for the process to complete...
     def run_viewer():
-        run([*viewer.split(), output_file], capture_output=True)
+        run([*viewer.split(), output_file], capture_output=True, check=False)
         tmp.cleanup()
 
     # ...but we execute it asynchronously so that view() completes
