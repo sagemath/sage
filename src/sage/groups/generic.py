@@ -121,7 +121,7 @@ import operator
 from sage.arith.misc import integer_ceil, integer_floor, xlcm
 from sage.arith.srange import xsrange
 from sage.misc.misc_c import prod
-import sage.rings.integer_ring as integer_ring
+from sage.rings import integer_ring
 import sage.rings.integer
 from sage.structure.element import parent
 

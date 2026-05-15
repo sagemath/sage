@@ -14,6 +14,7 @@ Functions and Methods
 
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
+from math import isnan
 
 
 def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=False):
@@ -141,11 +142,10 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
     # Note - this could be used in all cases, but it requires some more
     # computation
 
-    if (left != left) or (right != right):
+    if isnan(left) or isnan(right):
         minval, s_1 = find_local_minimum(f, a, b)
         maxval, s_2 = find_local_maximum(f, a, b)
-        if ((minval > 0) or (maxval < 0) or
-           (minval != minval) or (maxval != maxval)):
+        if minval > 0 or maxval < 0 or isnan(minval) or isnan(maxval):
             raise RuntimeError("f appears to have no zero on the interval")
         a = min(s_1, s_2)
         b = max(s_1, s_2)

@@ -434,7 +434,7 @@ def _extract_source(lines, lineno):
 
     if isinstance(lines, str):
         lines = lines.splitlines(True)  # true keeps the '\n'
-    if len(lines):
+    if lines:
         # Fixes an issue with getblock
         lines[-1] += '\n'
 
@@ -1422,8 +1422,8 @@ def sage_getargspec(obj):
         sage: sage_getargspec(bernstein_polynomial_factory_ratlist.coeffs_bitsize)                  # needs sage.modules
         FullArgSpec(args=['self'], varargs=None, varkw=None, defaults=None,
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
-        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs sage.rings.polynomial.pbori
-        sage: sage_getargspec(BooleanMonomialMonoid.gen)                                # needs sage.rings.polynomial.pbori
+        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs brial
+        sage: sage_getargspec(BooleanMonomialMonoid.gen)                                # needs brial
         FullArgSpec(args=['self', 'i'], varargs=None, varkw=None, defaults=(0,),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: I = P*[x,y]
@@ -1775,8 +1775,8 @@ def sage_signature(obj):
         sage: from sage.rings.polynomial.real_roots import bernstein_polynomial_factory_ratlist     # needs sage.modules
         sage: sage_signature(bernstein_polynomial_factory_ratlist.coeffs_bitsize)                  # needs sage.modules
         <Signature (self)>
-        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs sage.rings.polynomial.pbori
-        sage: sage_signature(BooleanMonomialMonoid.gen)                                # needs sage.rings.polynomial.pbori
+        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs brial
+        sage: sage_signature(BooleanMonomialMonoid.gen)                                # needs brial
         <Signature (self, i=0)>
         sage: I = P*[x,y]
         sage: sage_signature(I.groebner_basis)                                         # needs sage.libs.singular
@@ -2507,7 +2507,7 @@ def sage_getsourcelines(obj):
                             B = None
                         if B is not None and B is not obj:
                             return sage_getsourcelines(B)
-                    if obj.__class__ != type:
+                    if obj.__class__ is not type:
                         return sage_getsourcelines(obj.__class__)
                     raise err
 
@@ -2594,11 +2594,8 @@ def sage_getvariablename(self, omit_underscore_names=True):
     # This is a modified version of code taken from
     # https://web.archive.org/web/20100416095847/http://pythonic.pocoo.org/2009/5/30/finding-objects-names
     # written by Georg Brandl.
-    result = []
-    for frame in inspect.stack():
-        for name, obj in frame[0].f_globals.items():
-            if obj is self:
-                result.append(name)
+    result = [name for frame in inspect.stack()
+              for name, obj in frame[0].f_globals.items() if obj is self]
     if len(result) == 1:
         return result[0]
     return sorted(result)

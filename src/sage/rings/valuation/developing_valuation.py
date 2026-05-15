@@ -186,9 +186,8 @@ class DevelopingValuation(DiscretePseudoValuation):
         if e % 2 == 0:
             return self._pow(self.simplify(f*f, error=error*2/e, effective_degree=effective_degree*2/e),
                              e//2, error=error, effective_degree=effective_degree)
-        else:
-            return self.simplify(f*self._pow(f, e-1, error=error*(e-1)/e, effective_degree=effective_degree*(e-1)/e),
-                                 error=error, effective_degree=effective_degree)
+        return self.simplify(f*self._pow(f, e-1, error=error*(e-1)/e, effective_degree=effective_degree*(e-1)/e),
+                             error=error, effective_degree=effective_degree)
 
     def coefficients(self, f):
         r"""

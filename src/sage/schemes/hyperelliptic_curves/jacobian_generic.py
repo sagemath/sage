@@ -114,9 +114,25 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         5. Polynomials `(u, v)` such that `v^2 + hv - f \equiv 0 \pmod u`;
            return `[(u(x), y - v(x))]`.
 
+        EXAMPLES::
+
+            sage: x = polygen(GF(101))
+            sage: C = HyperellipticCurve(x^5 + x)
+            sage: J = C.jacobian()
+            sage: J.point(0)
+            (1, 0)
+            sage: J.point(C(-5, 1))
+            (x + 5, 1)
+            sage: J.point(C(-5, 1), C(0, 0))
+            (x^2 + 5*x, 20*x)
+            sage: J.point(C(-5, 1), C(0, 0)) - J.point(C(0, 0))
+            (x + 5, 1)
+            sage: J.point(x, 0)
+            (x, 0)
+
         .. SEEALSO::
 
-            :mod:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic`.
+            :class:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.HyperellipticJacobianHomset`.
         """
         try:
             return self.point_homset()(*mumford, check=check)
@@ -166,6 +182,19 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
     def count_points(self, *args, **kwds):
         r"""
+        Compute the number of points on this Jacobian, possibly also over extension fields.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(3663031)[]
+            sage: J = HyperellipticCurve(x^5 + 1758294*x^4 + 1908793*x^3 + 3033920*x^2 + 3445698*x + 3020661).jacobian()
+            sage: J.count_points() == J.order()
+            True
+            sage: J.count_points(3)
+            [13403849798842,
+             180037321758127724648694244,
+             2415703144684957707144219559418205805522]
+
         .. SEEALSO::
 
             :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.count_points`.
@@ -186,6 +215,15 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         r"""
         Return a random element of the Jacobian.
 
+        EXAMPLES::
+
+            sage: x = polygen(GF(11))
+            sage: J = HyperellipticCurve(x^5 + x + 1).jacobian()
+            sage: elt = J.random_element(); elt  # random
+            (x^2 + 3*x + 10, 1)
+            sage: elt in J
+            True
+
         .. SEEALSO::
 
             :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.random_element`.
@@ -193,11 +231,36 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         return self.point_homset().random_element(*args, **kwds)
 
     def some_elements(self) -> list[jacobian_morphism.MumfordDivisorClassField]:
+        r"""
+        Return some rational points on the Jacobian.
+
+        EXAMPLES::
+
+            sage: x = polygen(GF(11))
+            sage: J = HyperellipticCurve(x^5 + x + 1).jacobian()
+            sage: elts = J.some_elements(); elts  # random
+            [(1, 0), (x^2 + 7*x + 3, 10*x + 7), (x^2 + 10*x, 5*x + 1), (x^2 + 8*x + 10, 1)]
+            sage: all(elt in J for elt in elts)
+            True
+        """
         return [self.zero()] + [self.random_element(), self.random_element(), self.random_element()]
 
     def points(self, *args, **kwds):
         r"""
-        Return all points on the Jacobian.
+        Return all rational points on the Jacobian.
+
+        EXAMPLES::
+
+            sage: x = polygen(GF(11))
+            sage: C = HyperellipticCurve(x^5 + x + 1)
+            sage: J = C.jacobian()
+            sage: pts = J.points()
+            sage: sorted(pts)
+            [(1, 0), (x, 1), (x, 10), (x + 2, 0), (x + 8, 4),
+             ..., (x^2 + 10*x + 6, 3*x), (x^2 + 10*x + 6, 8*x),
+             (x^2 + 10*x + 7, 5*x + 6), (x^2 + 10*x + 7, 6*x + 5)]
+            sage: len(pts) == J.order()
+            True
 
         .. SEEALSO::
 
@@ -206,16 +269,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
         return self.point_homset().points(*args, **kwds)
 
-    def list(self):
-        r"""
-        Return all rational elements of the Jacobian.
-
-        .. SEEALSO::
-
-            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.points`.
-        """
-
-        return self.point_homset().points()
+    list = points
 
     def __iter__(self):
         r"""
@@ -224,6 +278,28 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         yield from self.point_homset().points()
 
     rational_points = points
+
+    def abelian_group(self, *args, **kwds):
+        r"""
+        Return the group of rational points on this Jacobian as an
+        :class:`~sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper`
+        object.
+
+        EXAMPLES::
+
+            sage: x = polygen(GF(11^4))
+            sage: C = HyperellipticCurve(x^5 + x + 1)
+            sage: J = C.jacobian()
+            sage: J.abelian_group()
+            Additive abelian group isomorphic to Z/1677896 + Z/8 + Z/4 + Z/4
+              embedded in Abelian group of points over Finite Field in z4 of size 11^4
+                on Jacobian of Hyperelliptic Curve over Finite Field in z4 of size 11^4 defined by y^2 = x^5 + x + 1
+
+        .. SEEALSO::
+
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.abelian_group`.
+        """
+        return self.point_homset().abelian_group(*args, **kwds)
 
     ####################################################################
     # Some properties of geometric Endomorphism ring and algebra

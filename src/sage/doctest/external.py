@@ -319,20 +319,6 @@ def has_dvipng() -> bool:
     return dvipng().is_present()
 
 
-def has_pdf2svg() -> bool:
-    """
-    Test if pdf2svg is available.
-
-    EXAMPLES::
-
-        sage: from sage.doctest.external import has_pdf2svg
-        sage: has_pdf2svg() # optional -- pdf2svg
-        FeatureTestResult('pdf2svg', True)
-    """
-    from sage.features.pdf2svg import pdf2svg
-    return pdf2svg().is_present()
-
-
 def has_rubiks() -> bool:
     """
     Test if the rubiks package (``cu2``, ``cubex``, ``dikcube``,

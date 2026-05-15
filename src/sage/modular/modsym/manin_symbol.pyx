@@ -203,7 +203,7 @@ cdef class ManinSymbol(Element):
         """
         return self._repr_()
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         Comparison function for ManinSymbols.
 
@@ -224,17 +224,17 @@ cdef class ManinSymbol(Element):
             sage: slist[20] != slist[20]
             False
         """
-        cdef ManinSymbol other = <ManinSymbol>right
+        cdef ManinSymbol _other = <ManinSymbol>other
         # Compare tuples (i,u,v)
         lx = self.i
-        rx = other.i
+        rx = _other.i
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
         lx = self.u
-        rx = other.u
+        rx = _other.u
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
-        return richcmp(self.v, other.v, op)
+        return richcmp(self.v, _other.v, op)
 
     def __hash__(self):
         """

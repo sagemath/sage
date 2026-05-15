@@ -345,18 +345,17 @@ def _crt_non_coprime(running, a):
     g = running.modulus().gcd(a.modulus())
     if g == 1:
         return running.crt(a)
-    else:
-        assert running % g == a % g
-        running_modulus = running.modulus()
-        a_modulus = a.modulus()
-        for qq in g.prime_divisors():
-            a_val_unit = a_modulus.val_unit(qq)
-            running_val_unit = running_modulus.val_unit(qq)
-            if a_val_unit[0] > running_val_unit[0]:
-                running_modulus = running_val_unit[1]
-            else:
-                a_modulus = a_val_unit[1]
-        return (running % running_modulus).crt(a % a_modulus)
+    assert running % g == a % g
+    running_modulus = running.modulus()
+    a_modulus = a.modulus()
+    for qq in g.prime_divisors():
+        a_val_unit = a_modulus.val_unit(qq)
+        running_val_unit = running_modulus.val_unit(qq)
+        if a_val_unit[0] > running_val_unit[0]:
+            running_modulus = running_val_unit[1]
+        else:
+            a_modulus = a_val_unit[1]
+    return (running % running_modulus).crt(a % a_modulus)
 
 
 def _frobenius_shift(K, generators, check_only=False):
@@ -465,7 +464,7 @@ def _frobenius_shift(K, generators, check_only=False):
             if crt[(i,j)][qindex][1] >= level:
                 if xleveled[j]:
                     return [j]
-                elif j not in searched:
+                if j not in searched:
                     crt_possibles.append(j)
         for j in crt_possibles:
             path = find_leveller(qindex, level, x, xleveled, searched, j)

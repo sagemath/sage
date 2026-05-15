@@ -1237,7 +1237,7 @@ class TermOrder(SageObject):
 
             if sf > sg:
                 return f
-            elif sf < sg:
+            if sf < sg:
                 return g
         return g
 
@@ -1589,8 +1589,7 @@ class TermOrder(SageObject):
             if f_key != g_key:
                 if f_key < g_key:
                     return g
-                else:
-                    return f
+                return f
             n += len(block)
         return f
 
@@ -1769,8 +1768,7 @@ class TermOrder(SageObject):
                 singular_str_blocks.insert(self._singular_ringorder_column // 2,
                        "C" if self._singular_ringorder_column % 2 == 0 else "c")
             return "(" + ",".join(singular_str_blocks) + ")"
-        else:
-            return self._singular_str
+        return self._singular_str
 
     def singular_moreblocks(self):
         """
@@ -1874,8 +1872,7 @@ class TermOrder(SageObject):
         """
         if self._blocks:  # self is a block order
             return self._blocks
-        else:
-            return [self]
+        return [self]
 
     def matrix(self):
         """
@@ -2094,10 +2091,9 @@ class TermOrder(SageObject):
         if self.name() in ('lex', 'degrevlex', 'deglex', 'degneglex',
                            'wdegrevlex', 'wdeglex', 'invlex'):
             return True
-        elif self.name() == 'block':
+        if self.name() == 'block':
             return all(t.is_global() for t in self.blocks())
-        else:
-            return False
+        return False
 
     def is_local(self) -> bool:
         r"""

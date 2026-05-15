@@ -154,11 +154,11 @@ def repr_lincomb(terms, is_latex=False, scalar_mult='*', strip_one=False,
     if scalar_mult is None:
         scalar_mult = "" if is_latex else "*"
 
-    for (monomial, c) in terms:
+    for monomial, c in terms:
         if c != 0:
             coeff = coeff_repr(c)
             negative = False
-            if len(coeff) and coeff[0] == "-":
+            if coeff and coeff[0] == "-":
                 negative = True
             try:
                 if c < 0:
@@ -184,7 +184,7 @@ def repr_lincomb(terms, is_latex=False, scalar_mult='*', strip_one=False,
                     else:
                         sign = " + "
                 b = repr_monomial(monomial)
-                if len(b):
+                if b:
                     if coeff != "":
                         if b == "1" and strip_one:
                             b = ""

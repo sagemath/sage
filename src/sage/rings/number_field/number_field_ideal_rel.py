@@ -38,8 +38,8 @@ from sage.structure.factorization import Factorization
 from sage.structure.proof.proof import get_flag
 from sage.structure.richcmp import richcmp
 
-import sage.rings.rational_field as rational_field
-import sage.rings.integer_ring as integer_ring
+from sage.rings import rational_field
+from sage.rings import integer_ring
 QQ = rational_field.RationalField()
 ZZ = integer_ring.IntegerRing()
 

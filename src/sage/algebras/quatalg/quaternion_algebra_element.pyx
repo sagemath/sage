@@ -384,7 +384,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         return self._do_print(self[0], self[1], self[2], self[3])
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         r"""
         Comparing elements.
 
@@ -407,7 +407,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         cdef int i
         for i in range(4):
-            res = richcmp_item(self[i], right[i], op)
+            res = richcmp_item(self[i], other[i], op)
             if res is not NotImplemented:
                 return res
         return rich_to_bool(op, 0)
@@ -986,7 +986,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         """
         return bool(mpz_sgn(self.x) or mpz_sgn(self.y) or mpz_sgn(self.z) or mpz_sgn(self.w))
 
-    cpdef _richcmp_(self, _right, int op):
+    cpdef _richcmp_(self, other, int op):
         r"""
         Compare two quaternions.
 
@@ -1006,7 +1006,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
             sage: Q.one() != -Q.one()
             True
         """
-        cdef QuaternionAlgebraElement_rational_field right = _right
+        cdef QuaternionAlgebraElement_rational_field right = other
         cdef int i
         i = mpz_cmp(self.d, right.d)
         if i:
@@ -1675,8 +1675,8 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         EXAMPLES::
 
-            sage: K.<a> = QQ[2^(1/5)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a*17/3)       # needs sage.symbolic
-            sage: Q([a,-2/3,a^2-1/2,a*2])           # implicit doctest                  # needs sage.symbolic
+            sage: K.<a> = QQ[2^(1/5)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a*17/3)
+            sage: Q([a,-2/3,a^2-1/2,a*2])           # implicit doctest
             a + (-2/3)*i + (a^2 - 1/2)*j + 2*a*k
         """
         fmpz_poly_init(self.x)
@@ -1705,8 +1705,8 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         r"""
         EXAMPLES::
 
-            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a+1)          # needs sage.symbolic
-            sage: Q([a,-2/3,a^2-1/2,a*2])           # implicit doctest                  # needs sage.symbolic
+            sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a+1)
+            sage: Q([a,-2/3,a^2-1/2,a*2])           # implicit doctest
             a + (-2/3)*i + (a^2 - 1/2)*j + 2*a*k
         """
         self._parent = parent
@@ -1749,7 +1749,6 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         r"""
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a+1)
             sage: Q([a,-2/3,a^2-1/2,a*2])
             a + (-2/3)*i + (a^2 - 1/2)*j + 2*a*k
@@ -1791,7 +1790,6 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         r"""
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)
             sage: z = (i+j+k+a)^2; z
             a^2 + 4*a - 3 + 2*a*i + 2*a*j + 2*a*k
@@ -1810,7 +1808,6 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)
             sage: z = a + i + (2/3)*a^3*j + (1+a)*k
             sage: w = a - i - (2/3)*a^3*j + (1/3+a)*k
@@ -1884,7 +1881,6 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)
             sage: z = a + i + (2/3)*a^3*j + (1+a)*k
             sage: w = a - i - (2/3)*a^3*j + (1/3+a)*k
@@ -1935,7 +1931,6 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a)
             sage: z = a + i + (2/3)*a^3*j + (1+a)*k
             sage: w = a - i - (2/3)*a^3*j + (1/3+a)*k
@@ -2085,7 +2080,6 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
         TESTS::
 
-            sage: # needs sage.symbolic
             sage: F = QQ[3^(1/3)]
             sage: a = F.gen()
             sage: K.<i,j,k> = QuaternionAlgebra(F, -10 + a, -7 - a)
@@ -2164,7 +2158,6 @@ def unpickle_QuaternionAlgebraElement_number_field_v0(*args):
     r"""
     EXAMPLES::
 
-        sage: # needs sage.symbolic
         sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K, -3, a); z = i + j
         sage: f, t = z.__reduce__()
         sage: sage.algebras.quatalg.quaternion_algebra_element.unpickle_QuaternionAlgebraElement_number_field_v0(*t)

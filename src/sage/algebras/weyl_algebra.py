@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Weyl Algebras
 
@@ -56,12 +55,12 @@ def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
 
         sage: from sage.algebras.weyl_algebra import repr_from_monomials
         sage: R.<x,y,z> = QQ[]
-        sage: d = [(z, 4/7), (y, sqrt(2)), (x, -5)]                                     # needs sage.symbolic
-        sage: repr_from_monomials(d, lambda m: repr(m))                                 # needs sage.symbolic
+        sage: d = [(z, 4/7), (y, sqrt(2)), (x, -5)]
+        sage: repr_from_monomials(d, lambda m: repr(m))
         '4/7*z + sqrt(2)*y - 5*x'
-        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a                   # needs sage.symbolic
+        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a
         \frac{4}{7} z + \sqrt{2} y - 5 x
-        sage: type(a)                                                                   # needs sage.symbolic
+        sage: type(a)
         <class 'sage.misc.latex.LatexExpr'>
 
     The zero element::
@@ -93,7 +92,6 @@ def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
 
     Leading minus signs are dealt with appropriately::
 
-        sage: # needs sage.symbolic
         sage: d = [(z, -4/7), (y, -sqrt(2)), (x, -5)]
         sage: repr_from_monomials(d, lambda m: repr(m))
         '-4/7*z - sqrt(2)*y - 5*x'

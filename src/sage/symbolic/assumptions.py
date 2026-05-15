@@ -212,7 +212,6 @@ class GenericDeclaration(UniqueRepresentation):
             ValueError: bougie not a valid assumption, must be one of ['analytic', ... 'symmetric']
         """
         from sage.calculus.calculus import maxima
-        global _valid_feature_strings
         if self._assumption in _valid_feature_strings:
             return
         # We get the list here because features may be added with time.

@@ -1,4 +1,4 @@
-packaging pathspec | $(PYTHON_TOOLCHAIN) cmake $(PYTHON)
+packaging pathspec | $(PYTHON_TOOLCHAIN) cmake $(PYTHON) hatch_vcs
 
 ----------
 All lines of this file are ignored except the first.

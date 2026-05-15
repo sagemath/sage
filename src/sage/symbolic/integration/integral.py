@@ -19,7 +19,7 @@ from sage.symbolic.function import BuiltinFunction
 #  Table of available integration routines
 ##################################################################
 
-import sage.symbolic.integration.external as external
+from sage.symbolic.integration import external
 
 # Add new integration routines to the dictionary below. This will make them
 # accessible with the 'algorithm' keyword parameter of top level integrate().

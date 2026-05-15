@@ -149,12 +149,14 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: J.order()
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            NotImplementedError: order computation is only implemented for Jacobians over finite fields
         """
         if isinstance(self.base_ring(), FiniteField_generic):
             return sum(self.extended_curve().frobenius_polynomial())
 
-        raise NotImplementedError
+        raise NotImplementedError(
+            "order computation is only implemented for Jacobians over finite fields"
+        )
 
     @cached_method
     def _curve_frobenius_roots(self):
@@ -758,14 +760,25 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: JK = H.jacobian()(K)
             sage: JK._random_element_cover() # random
             (x + 1, 1)
+
+        The case "inert & odd genus" is not implemented (see :issue:`41985`)::
+
+            sage: K = GF(101)
+            sage: x = polygen(K)
+            sage: f = 7*x^8 + 74*x^7 + 55*x^6 + 3*x^5 + 74*x^4 + 48*x^3 + 15*x^2 + 26*x + 97
+            sage: HyperellipticCurve(f).jacobian()(K)._random_element_cover()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: unable to perform arithmetic for inert models of odd genus; consider extending the base field to adjoin the points at infinity
         """
         H = self.extended_curve()
         R = H.polynomial_ring()
         g = H.genus()
 
         # For the inert case, the genus must be even
-        if H.is_inert():
-            assert not (g % 2)
+        if H.is_inert() and g % 2:
+            raise NotImplementedError('unable to perform arithmetic for inert models of odd genus; '
+                                      'consider extending the base field to adjoin the points at infinity')
 
         if degree is None:
             degree = (-1, g)
@@ -801,6 +814,18 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: JH = J.point_homset()
             sage: len(set(JH._random_element_rational() for _ in range(300)))
             8
+
+        TESTS:
+
+        The case "inert & odd genus" is not implemented (see :issue:`41985`)::
+
+            sage: K = GF(101)
+            sage: x = polygen(K)
+            sage: f = 7*x^8 + 74*x^7 + 55*x^6 + 3*x^5 + 74*x^4 + 48*x^3 + 15*x^2 + 26*x + 97
+            sage: HyperellipticCurve(f).jacobian()(K)._random_element_rational()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: unable to perform arithmetic for inert models of odd genus; consider extending the base field to adjoin the points at infinity
         """
         H = self.extended_curve()
         g = H.genus()
@@ -923,3 +948,91 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return ss
 
     rational_points = points
+
+    @cached_method
+    def abelian_group(self):
+        r"""
+        Return the group of rational points on this Jacobian as an
+        :class:`~sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper`
+        object.
+
+        EXAMPLES::
+
+            sage: x = polygen(GF(419^2))
+            sage: C = HyperellipticCurve(x^4 + x - 1)
+            sage: C.is_split()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/25193 + Z/7
+              embedded in Abelian group of points over Finite Field in z2 of size 419^2
+                on Jacobian of Hyperelliptic Curve over Finite Field in z2 of size 419^2 defined by y^2 = x^4 + x + 418
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(x^5 + x)
+            sage: C.is_ramified()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/29346 + Z/6
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = x^5 + x
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(-x^6 + x - 3)
+            sage: C.is_inert()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/174078
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = 418*x^6 + x + 416
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(11*x^6 + x)
+            sage: C.is_inert()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/420 + Z/420
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = 11*x^6 + x
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(x^7 - x)
+            sage: C.is_ramified()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/420 + Z/420 + Z/210 + Z/2
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = x^7 + 418*x
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(x^8 + x)
+            sage: C.is_split()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/420 + Z/420 + Z/420
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = x^8 + x
+        """
+        n = self.order()
+        g = self.curve().genus()
+        from sage.groups.additive_abelian.additive_abelian_wrapper import expand_basis, AdditiveAbelianGroupWrapper
+        gens, ords = [], []
+        for fast in (True, False):
+            for _ in range(99 * g):
+                assert len(ords) <= 2 * g
+                order = product(ords)
+                assert order.divides(n)
+                if order == n:
+                    return AdditiveAbelianGroupWrapper(self, gens, ords)
+                D = self.random_element(fast=fast)
+                gens, ords = expand_basis(gens, D, ords)
+        raise RuntimeError('very unlikely event, or (more likely) bug in HyperellipticJacobianHomset.abelian_group()')
