@@ -361,8 +361,9 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
             sage: J._repr_short_()
             'ZZ*I'
         """
-        from sage.rings.asymptotic.misc import parent_to_repr_short, repr_op
-        return repr_op(parent_to_repr_short(self.base()), '*', 'I')
+        from sage.rings.asymptotic.misc import repr_op
+        from sage.misc.repr_short import repr_short
+        return repr_op(repr_short(self.base()), '*', 'I')
 
     def _element_constructor_(self, data, imag=None):
         r"""

@@ -1842,11 +1842,11 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
             sage: GenericGrowthGroup(QQ, ('a', 'b'))
             Growth Group Generic(QQ, a, b)
         """
-        from .misc import parent_to_repr_short
+        from sage.misc.repr_short import repr_short
         vars = ', '.join(self._var_.variable_names())
         if vars:
             vars = ', ' + vars
-        return 'Generic(%s%s)' % (parent_to_repr_short(self.base()), vars)
+        return 'Generic(%s%s)' % (repr_short(self.base()), vars)
 
     def _repr_(self, condense=False):
         r"""
@@ -3349,8 +3349,9 @@ class MonomialGrowthGroup(GenericGrowthGroup):
             sage: MonomialGrowthGroup(PolynomialRing(QQ, 'x'), 'a')._repr_short_()
             'a^QQ[x]'
         """
-        from .misc import parent_to_repr_short, repr_op
-        return repr_op(self._var_, '^', parent_to_repr_short(self.base()))
+        from .misc import repr_op
+        from sage.misc.repr_short import repr_short
+        return repr_op(self._var_, '^', repr_short(self.base()))
 
     def _convert_(self, data):
         r"""
@@ -4243,8 +4244,9 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             sage: ExponentialGrowthGroup(PolynomialRing(QQ, 'x'), 'a')._repr_short_()
             'QQ[x]^a'
         """
-        from .misc import parent_to_repr_short, repr_op
-        return repr_op(parent_to_repr_short(self.base()), '^', self._var_)
+        from .misc import repr_op
+        from sage.misc.repr_short import repr_short
+        return repr_op(repr_short(self.base()), '^', self._var_)
 
     def _convert_(self, data):
         r"""
