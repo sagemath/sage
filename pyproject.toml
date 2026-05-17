@@ -82,7 +82,7 @@ urls = { Homepage = "https://www.sagemath.org" }
 
 [project.optional-dependencies]
 R = ['rpy2 >=3.3']
-database_knotinfo = ['database_knotinfo']
+database_knotinfo = ['database-knotinfo']
 extra = [
   'igraph',
   'lrcalc ~=2.1; sys_platform != "win32"',
