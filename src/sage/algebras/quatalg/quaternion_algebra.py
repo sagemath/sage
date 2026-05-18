@@ -3936,7 +3936,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             if self.__theta_series.prec() >= B:
                 if var == self.__theta_series.variable():
                     return self.__theta_series.add_bigoh(B)
-                p_ring = self._theta_series.parent().change_var(var)
+                p_ring = self._theta_series.parent().change_variable_name(var)
                 p_ring(self.__theta_series.list()[:B+1])
         except AttributeError:
             pass

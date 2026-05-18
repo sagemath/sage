@@ -111,7 +111,6 @@ as this base class still provides a few more methods than a general parent::
      '__xor__',
      '_coerce_c',
      '_coerce_impl',
-     '_default_category',
      '_gens',
      '_latex_names',
      '_list',

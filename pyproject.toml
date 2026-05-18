@@ -136,6 +136,7 @@ host-requires = [
   "pkg:generic/glpk",
   "pkg:generic/gmp",
   "pkg:generic/gsl",
+  "pkg:generic/highs",
   "pkg:generic/iml",
   "pkg:generic/lcalc",
   "pkg:generic/libbraiding",
@@ -260,6 +261,9 @@ exclude = [
   # and some parts allow Python versions as old as 2.6, so we don't both linting.
   "build/",
 ]
+
+[tool.ruff.format]
+quote-style = "preserve"
 
 [tool.ruff.lint]
 

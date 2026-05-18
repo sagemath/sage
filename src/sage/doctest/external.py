@@ -498,9 +498,20 @@ class AvailableSoftware:
         """
         Return the list of names of those features for which testing their presence is allowed.
         """
+        # Exclude build features that aren't runtime detectable from
+        # the list. Note that when defer_feature_checks is not set,
+        # *no* BuildFeatures are runtime-detectable.
+        from sage.features.build_feature import BuildFeature
+        def build_time_only(f):
+            return ( isinstance(f, BuildFeature)
+                     and
+                     not f.is_runtime_detectable() )
+
         return [feature.name
                 for feature, seen in zip(self._features, self._seen)
-                if seen >= 0 and (self._allow_external or feature not in self._external_features)]
+                if seen >= 0
+                and (self._allow_external or feature not in self._external_features)
+                and not build_time_only(feature)]
 
     def seen(self):
         """
@@ -512,9 +523,18 @@ class AvailableSoftware:
             sage: available_software.seen() # random
             ['internet', 'latex', 'magma']
         """
+        # Exclude build features that aren't runtime detectable from
+        # the list. Note that when defer_feature_checks is not set,
+        # *no* BuildFeatures are runtime-detectable.
+        from sage.features.build_feature import BuildFeature
+        def build_time_only(f):
+            return ( isinstance(f, BuildFeature)
+                     and
+                     not f.is_runtime_detectable() )
         return [feature.name
                 for feature, seen in zip(self._features, self._seen)
-                if seen > 0]
+                if seen > 0
+                and not build_time_only(feature)]
 
     def hidden(self):
         """

@@ -112,7 +112,7 @@ class SageDoctestModule(DoctestModule):
                     root=self.config.rootpath,
                     consider_namespace_packages=True,
                 )
-            except ImportError as exception:
+            except ImportError:
                 if self.config.getvalue("doctest_ignore_import_errors"):
                     pytest.skip("unable to import module %r" % self.path)
                 else:
