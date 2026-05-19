@@ -98,6 +98,7 @@ py.install_sources(
   'all_cmdline.py',
   'all_test.py',
   'config_test.py',
+  'conftest.py',
   'env.py',
   'version.py',
   subdir: 'sage',
