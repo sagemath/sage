@@ -54,7 +54,7 @@ class OreModules(Category_over_base_ring):
             True
         """
         if isinstance(twist, OrePolynomialRing):
-            ore = twist.change_var('x')
+            ore = twist.change_variable_name('x')
             if ore.base_ring() is not ring:
                 raise ValueError("base rings do not match")
         else:
@@ -147,7 +147,7 @@ class OreModules(Category_over_base_ring):
             sage: cat.ore_ring('y')
             Ore Polynomial Ring in y over Finite Field in a of size 5^3 twisted by a |--> a^5
         """
-        return self._ore.change_var(var)
+        return self._ore.change_variable_name(var)
 
     def twisting_morphism(self):
         r"""

@@ -10,20 +10,20 @@ cdef class Ring(ParentWithGens):
 cdef class CommutativeRing(Ring):
     pass
 
-cdef class IntegralDomain(CommutativeRing):
+cdef class IntegralDomain(Ring):
     pass
 
-cdef class DedekindDomain(CommutativeRing):
+cdef class DedekindDomain(Ring):
     pass
 
-cdef class PrincipalIdealDomain(CommutativeRing):
+cdef class PrincipalIdealDomain(Ring):
     pass
 
-cdef class Field(CommutativeRing):
+cdef class Field(Ring):
     pass
 
 cdef class Algebra(Ring):
     pass
 
-cdef class CommutativeAlgebra(CommutativeRing):
+cdef class CommutativeAlgebra(Ring):
     pass

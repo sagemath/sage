@@ -8,13 +8,13 @@ AUTHORS:
 - Christian Stump (2010): :issue:`9648` module_morphism's to a wider class
   of codomains
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2014 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.lazy_import import LazyImport, lazy_import
 from sage.misc.lazy_attribute import lazy_attribute
@@ -1443,7 +1443,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                           self.base_ring().random_element())
                 for _ in range(n)
             )
-
 
     class ElementMethods:
         # TODO: Define the appropriate element methods here (instead of in
