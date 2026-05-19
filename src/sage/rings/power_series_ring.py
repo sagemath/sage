@@ -1043,7 +1043,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return PowerSeriesRing(R, name=self.variable_name(), default_prec=self.default_prec())
 
-    def change_var(self, var):
+    def change_variable_name(self, var):
         """
         Return the power series ring in variable ``var`` over the same base ring.
 
@@ -1051,10 +1051,12 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
 
             sage: R.<T> = QQ[[]]; R
             Power Series Ring in T over Rational Field
-            sage: R.change_var('D')
+            sage: R.change_variable_name('D')
             Power Series Ring in D over Rational Field
         """
         return PowerSeriesRing(self.base_ring(), names=var, sparse=self.is_sparse())
+
+    change_var = change_variable_name
 
     def is_exact(self):
         """

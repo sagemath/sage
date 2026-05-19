@@ -31,6 +31,7 @@ Features
    sage/features
    sage/features/join_feature
    sage/features/all
+   sage/features/build_feature
    sage/features/sagemath
    sage/features/pkg_systems
    sage/features/bliss

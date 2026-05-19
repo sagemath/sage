@@ -1212,6 +1212,17 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: M({a: 1 for a in A.subset(3)})
             E_3(X)*C_3(X)*E_3(Y)*C_3(Y)
 
+        Note that the action of the group on the set of structures is
+        transitive, which is not the same as transitivity of the
+        permutation group::
+
+            sage: M = MolecularSpecies("X")
+            sage: G = PermutationGroup([[(1,2),(3,4)]])
+            sage: G.is_transitive()
+            False
+            sage: M(G)
+            E_2(X^2)
+
         TESTS::
 
             sage: M = MolecularSpecies(["X", "Y"])
@@ -1266,7 +1277,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             ...
             ValueError: 0 must be a permutation group or a pair (X, a)
              specifying a group action of the symmetric group on pi=None
-
         """
         if parent(G) is self:
             # pi cannot be None because of framework
@@ -1525,9 +1535,9 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         @cached_method
         def permutation_group(self):
             r"""
-            Return the (transitive) permutation group
-            corresponding to ``self``, together with the partition of
-            the domain into sorts.
+            Return the permutation group corresponding to
+            ``self``, together with the partition of the domain into
+            sorts.
 
             EXAMPLES::
 
