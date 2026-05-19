@@ -3042,6 +3042,9 @@ REFERENCES:
 
 .. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
              algebra, 1(141):187-203, 1991.
+             
+.. [Gek2001] \E.-U. Gekeler. Invariants of some algebraic curves related to 
+              Drinfeld modular curves. Journal of Number Theory 90, No. 1, 166-183, 2001.
 
 .. [Gek2008] \E.-U. Gekeler. Frobenius Distributions of Drinfeld Modules over
              Finite Fields. Transactions of the American Mathematical Society,
@@ -3050,6 +3053,10 @@ REFERENCES:
 .. [Gek2017] \E.-U. Gekeler. On Drinfeld modular forms of higher rank.
              Journal de théorie des nombres de Bordeaux,
              Volume 29 (2017) no. 3, pp. 875-902. :doi:`10.5802/jtnb.1005`
+
+.. [Ges2016] \I. M. Gessel. Lagrange inversion.
+             Journal of Combinatorial Theory, Series A,
+             Volume 144 (2016), pp. 212–249. :doi:`10.1016/j.jcta.2016.06.018`
 
 .. [GG2012] Jim Geelen and Bert Gerards, Characterizing graphic
             matroids by a system of linear equations,
@@ -4024,6 +4031,10 @@ REFERENCES:
              and link polynomials.  Ann. of Math. (2) 126 (1987),
              no. 2, 335--388. :doi:`10.2307/1971403`
              :mathscinet:`MR0908150`
+
+.. [Joh2013] \F. Johansson. A fast algorithm for reversion of power series.
+             arXiv:1108.4772 [cs.SC] (2013).
+             https://arxiv.org/abs/1108.4772
 
 .. [Jon2005] \V. Jones, The Jones Polynomial, 2005.
              https://math.berkeley.edu/~vfr/jones.pdf
@@ -5031,6 +5042,12 @@ REFERENCES:
 
 .. [LW2015] \T. Lawson and C. Wuthrich, Vanishing of some Galois
             cohomology groups for elliptic curves, :arxiv:`1505.02940`
+
+.. [LW2026] Felix Lazebnik and Ye Wang, *Some Families of Graphs,
+            Hypergraphs and Digraphs Defined by Triangular Systems
+            of Polynomial Equations*, The Electronic Journal of
+            Combinatorics, Dynamic Surveys, #DS28 (2026).
+            :doi:`10.37236/14054`
 
 .. [LY2001] \K. Lauter and T. Yang, *Computing genus 2 curves from
             invariants on the Hilbert moduli space*,

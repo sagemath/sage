@@ -29,7 +29,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import (PolynomialRing,
 from sage.rings.polynomial.polydict cimport ETuple
 
 
-cdef class MPolynomialRing_base(CommutativeRing):
+cdef class MPolynomialRing_base(Ring):
     def __init__(self, base_ring, n, names, order):
         """
         Create a polynomial ring in several variables over a commutative ring.
