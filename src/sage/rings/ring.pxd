@@ -8,22 +8,22 @@ cdef class Ring(ParentWithGens):
 
 
 cdef class CommutativeRing(Ring):
-    cdef public object __fraction_field
-
-cdef class IntegralDomain(CommutativeRing):
     pass
 
-cdef class DedekindDomain(CommutativeRing):
+cdef class IntegralDomain(Ring):
     pass
 
-cdef class PrincipalIdealDomain(CommutativeRing):
+cdef class DedekindDomain(Ring):
     pass
 
-cdef class Field(CommutativeRing):
+cdef class PrincipalIdealDomain(Ring):
+    pass
+
+cdef class Field(Ring):
     pass
 
 cdef class Algebra(Ring):
     pass
 
-cdef class CommutativeAlgebra(CommutativeRing):
+cdef class CommutativeAlgebra(Ring):
     pass

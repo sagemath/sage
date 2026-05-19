@@ -133,7 +133,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2]
         """
         return self.element_class(self, convert_remove_zeroes(lrcalc.mult(left, right),
-                                                            self.base_ring()))
+                                                              self.base_ring()))
 
     def coproduct_on_basis(self, mu):
         r"""
@@ -167,7 +167,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
         """
         T = self.tensor_square()
         return T.element_class(T, convert_remove_zeroes(lrcalc.coprod(mu, all=1),
-                                                      self.base_ring()))
+                                                        self.base_ring()))
 
     def _element_constructor_(self, x):
         """
@@ -217,12 +217,12 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             s[]
         """
         r = len(nu) + len(la)
-        ga = [a-b for (a,b) in zip(nu+la.to_list(), range(-r,0))]
+        ga = [a - b for a, b in zip(nu + la.to_list(), range(-r, 0))]
         if r == len(set(ga)) and min(ga) > 0:
             m = sum(1 for i in range(len(ga)) for j in range(i, len(ga))
                     if ga[i] < ga[j])
             ga.sort(reverse=True)
-            return (-1)**m * self([a+b for (a,b) in zip(ga, range(-r,0))])
+            return (-1)**m * self([a + b for a, b in zip(ga, range(-r, 0))])
         return self.zero()
 
     def _magma_init_(self, magma):
@@ -409,7 +409,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 x = s(x)
                 return s._apply_multi_module_morphism(self, x, f, orthogonal=True)
             p = self.parent().realization_of().power()
-            return p(self).scalar( x, zee=zee )
+            return p(self).scalar(x, zee=zee)
 
         def verschiebung(self, n):
             r"""
@@ -557,7 +557,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                         minus_sign = False
                     else:
                         minus_sign = True
-                    if (n * s * (n-1) * (s-1)) % 8 == 4:
+                    if (n * s * (n - 1) * (s - 1)) % 8 == 4:
                         minus_sign = not minus_sign
                     if minus_sign:
                         result -= coeff * quotient_prod
@@ -733,7 +733,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                         # computation with universal coefficients instead:
                         quotient = ZZq((prod(1-q_lim**(n+j-i)
                                              for (i, j) in partition.cells()))
-                                    / prod(1-q_lim**h for h in partition.hooks()))
+                                       / prod(1-q_lim**h for h in partition.hooks()))
                         return power * quotient.subs({q_lim: q})
 
             return self.parent()._apply_module_morphism(self, f, q.parent())

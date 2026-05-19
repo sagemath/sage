@@ -446,10 +446,8 @@ def _setup_r_to_sage_converter():
 
     def _list_vector(vec):
         # we have a R list (vector of arbitrary elements)
-        attrs = vec.list_attrs()
         names = vec.do_slot('names')
         values = [rpy2py(val) for val in vec]
-        rclass = list(vec.do_slot('class')) if 'class' in attrs else vec.rclass
         data = zip(names, values)
         return {
             'DATA': dict(data),
@@ -550,14 +548,6 @@ class R(ExtraTabCompletion, Interface):
             # Set this to True *before* the call to start, since that will call eval() which will in turn call this function.
             # Setting this to True early prevents infinite recursion.
             self._initialized = True
-            # Workaround for rpy2 calling super().__del__() which does not
-            # exist in Python 3.13+ (object has no __del__).
-            # https://github.com/rpy2/rpy2/pull/1234
-            import rpy2.robjects.help
-            if not hasattr(object, '__del__'):
-                def _Package__del__(self):
-                    self._dbcon.close()
-                rpy2.robjects.help.Package.__del__ = _Package__del__
             self._r_to_sage_converter = _setup_r_to_sage_converter()
             self._start()
 
@@ -1823,7 +1813,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         self._check_valid()
         P = self.parent()
 
-        with localconverter(P._r_to_sage_converter) as cv:
+        with localconverter(P._r_to_sage_converter):
             return robjects.r(self.name())
 
     def _latex_(self):

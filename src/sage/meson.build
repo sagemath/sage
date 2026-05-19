@@ -35,23 +35,9 @@ if openmp.found()
   conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')
 endif
 gap_exe = find_program('gap', required: not is_windows, disabler: true)
-if gap_exe.found()
-  gaprun = run_command(
-    gap_exe,
-    '-r',
-    '-q',
-    '--bare',
-    '--nointeract',
-    '-c',
-    'Display(JoinStringsWithSeparator(GAPInfo.RootPaths,";"));',
-    check: true,
-  )
-  gap_root_paths = gaprun.stdout().strip()
-  conf_data.set('GAP_ROOT_PATHS', gap_root_paths)
-endif
 ecm_bin = find_program(
   ['ecm', 'gmp-ecm'],
-  required: not is_windows,
+  required: false,
   disabler: true,
 )
 conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
@@ -172,6 +158,12 @@ configure_file(
   install: true,
   configuration: kernel_data,
 )
+
+# Record what build-time features (e.g. external package support) were
+# enabled or disabled, and whether or not we should defer detection to
+# runtime.
+conf_data.set10('DEFER_FEATURE_CHECKS', get_option('defer_feature_checks'))
+conf_data.set10('ECLIB_ENABLED', ec.found())
 
 # Write config file
 # Should be last so that subdir calls can modify the config data

@@ -341,6 +341,138 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
         cpython.Py_XINCREF(g.edge_labels)
 
 
+cdef int init_short_digraph_from_data(short_digraph g, vertices, edges,
+                                      bint isdigraph,
+                                      edge_labelled=False) except -1:
+    r"""
+    Initialize ``short_digraph g`` from raw vertices and edges.
+
+    INPUT:
+
+    - ``g`` -- a ``short_digraph``
+
+    - ``vertices`` -- iterable listing the vertices in the desired order
+
+    - ``edges`` -- iterable containing edges/arcs as ``(u, v)`` or
+      ``(u, v, label)``
+
+    - ``isdigraph`` -- boolean; whether the input should be considered directed
+
+    - ``edge_labelled`` -- boolean (default: ``False``); whether to store edge
+      labels
+
+    The edges must only use vertices contained in ``vertices``.
+
+    TESTS:
+
+    Indirect doctests for sorted output and labels (directed case)::
+
+        sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
+        sage: B = StaticSparseBackend(vertex_list=['b', 'a', 'd', 'c'],
+        ....:                        edges=[('b', 'a', 'ba'),
+        ....:                               ('d', 'a', 'da'),
+        ....:                               ('c', 'a', 'ca')],
+        ....:                        directed=True, edge_labelled=True, sort=False)
+        sage: list(B.iterator_in_edges(['a'], True))
+        [('b', 'a', 'ba'), ('d', 'a', 'da'), ('c', 'a', 'ca')]
+
+    Same with undirected edges and a loop::
+
+        sage: B = StaticSparseBackend(vertex_list=['b', 'a'],
+        ....:                        edges=[('b', 'a', 'x'), ('a', 'a', 'loop')],
+        ....:                        directed=False, edge_labelled=True, sort=False)
+        sage: set(B.iterator_edges(['b', 'a'], True)) == {('a', 'a', 'loop'), ('b', 'a', 'x')}
+        True
+    """
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef list vertex_list = list(vertices)
+    cdef object e, u, v, l
+    cdef list edge_data = []
+    cdef uint32_t *degrees
+    cdef int u_id, v_id
+    cdef int i
+    cdef int number_of_loops = 0
+    cdef int n_edges
+    cdef uint32_t *starts
+    cdef uint32_t *next_pos
+    cdef list by_target
+    cdef int source, target, idx
+    cdef list edge_labels
+
+    if len(vertex_list) >= INT_MAX:
+        raise ValueError(f"short_digraph can handle at most {INT_MAX} vertices")
+
+    cdef dict v_to_id = {v: i for i, v in enumerate(vertex_list)}
+    if len(v_to_id) != len(vertex_list):
+        raise ValueError("vertex_list has duplicates")
+
+    g.edge_labels = NULL
+    g.n = len(vertex_list)
+    degrees = <uint32_t *> mem.calloc(g.n, sizeof(uint32_t))
+
+    for e in edges:
+        if len(e) == 3:
+            u, v, l = e
+        else:
+            u, v = e
+            l = None
+        try:
+            u_id = v_to_id[u]
+            v_id = v_to_id[v]
+        except KeyError:
+            raise ValueError("edge contains a vertex not in vertex_list")
+        edge_data.append((u_id, v_id, l))
+
+        if isdigraph:
+            degrees[u_id] += 1
+        elif u_id == v_id:
+            degrees[u_id] += 1
+            number_of_loops += 1
+        else:
+            degrees[u_id] += 1
+            degrees[v_id] += 1
+
+    g.m = len(edge_data)
+    n_edges = g.m if isdigraph else 2 * g.m - number_of_loops
+
+    g.edges = <uint32_t *>check_allocarray(n_edges, sizeof(uint32_t))
+    g.neighbors = <uint32_t **>check_allocarray(1 + g.n, sizeof(uint32_t *))
+
+    starts = <uint32_t *> mem.calloc(g.n + 1, sizeof(uint32_t))
+    for i in range(g.n):
+        starts[i + 1] = starts[i] + degrees[i]
+        g.neighbors[i] = g.edges + starts[i]
+    g.neighbors[g.n] = g.edges + starts[g.n]
+    next_pos = starts
+
+    if edge_labelled:
+        edge_labels = [None] * n_edges
+
+    # Grouping by target lets us fill each source adjacency segment in
+    # increasing target order, matching the sorted-neighbor invariant.
+    by_target = [[] for _ in range(g.n)]
+    if isdigraph:
+        for source, target, l in edge_data:
+            by_target[target].append((source, l))
+    else:
+        for source, target, l in edge_data:
+            by_target[source].append((target, l))
+            if source != target:
+                by_target[target].append((source, l))
+
+    for target in range(g.n):
+        for source, l in by_target[target]:
+            idx = next_pos[source]
+            g.edges[idx] = <uint32_t>target
+            if edge_labelled:
+                edge_labels[idx] = l
+            next_pos[source] = idx + 1
+
+    if edge_labelled:
+        g.edge_labels = <PyObject *> <void *> edge_labels
+        cpython.Py_XINCREF(g.edge_labels)
+
+
 cdef inline int n_edges(short_digraph g) noexcept:
     """
     Return the number of edges in ``g``.

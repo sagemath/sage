@@ -471,6 +471,12 @@ REFERENCES:
              Part III: :arxiv:`1805.12339`,
              2018.
 
+.. [BSPRS2014] David Bremner, Mathieu Dutour Sikirić, Dmitrii V.
+               Pasechnik, Thomas Rehn and Achill Schürmann.
+               *Computing symmetry groups of polyhedra*.
+               LMS Journal of Computation and Mathematics. 17(1):565-581,
+               2014. :doi:`10.1112/S1461157014000400`.
+
 .. [Ba1994] Kaushik Basu. *The Traveler's Dilemma: Paradoxes of
             Rationality in Game Theory*. The American Economic Review
             (1994): 391-395.
@@ -3036,6 +3042,9 @@ REFERENCES:
 
 .. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
              algebra, 1(141):187-203, 1991.
+             
+.. [Gek2001] \E.-U. Gekeler. Invariants of some algebraic curves related to 
+              Drinfeld modular curves. Journal of Number Theory 90, No. 1, 166-183, 2001.
 
 .. [Gek2008] \E.-U. Gekeler. Frobenius Distributions of Drinfeld Modules over
              Finite Fields. Transactions of the American Mathematical Society,
@@ -3044,6 +3053,10 @@ REFERENCES:
 .. [Gek2017] \E.-U. Gekeler. On Drinfeld modular forms of higher rank.
              Journal de théorie des nombres de Bordeaux,
              Volume 29 (2017) no. 3, pp. 875-902. :doi:`10.5802/jtnb.1005`
+
+.. [Ges2016] \I. M. Gessel. Lagrange inversion.
+             Journal of Combinatorial Theory, Series A,
+             Volume 144 (2016), pp. 212–249. :doi:`10.1016/j.jcta.2016.06.018`
 
 .. [GG2012] Jim Geelen and Bert Gerards, Characterizing graphic
             matroids by a system of linear equations,
@@ -3491,6 +3504,12 @@ REFERENCES:
 .. [Harv2007] David Harvey. *Kedlaya's algorithm in larger characteristic*,
               :arxiv:`math/0610973`.
 
+.. [HausGul2002] Raphael A. Hauser and Osman Güler.
+                 *Self-Scaled Barrier Functions on Symmetric Cones
+                 and Their Classification*.
+                 Foundations of Computational Mathematics 2(2):121-143,
+                 2002. :doi:`10.1007/s102080010022`.
+
 .. [Haz2004] Michiel Hazewinkel, *Explicit polynomial generators for the
              ring of quasisymmetric functions over the integers*.
              :arxiv:`math/0410366v1`
@@ -3528,6 +3547,11 @@ REFERENCES:
 .. [Hes2002b] Florian Hess, *An algorithm for computing Weierstrass points*,
               International Algorithmic Number Theory Symposium (pp. 357-371).
               Springer Berlin Heidelberg, 2002.
+
+.. [HFP1976] Emilie Haynsworth, Miroslav Fiedler, and Vlastimil Pták.
+             *Extreme Operators on Polyhedral Cones*.
+             Linear Algebra and its Applications, 13(1-2):163-172, 1976.
+             :doi:`10.1016/0024-3795(76)90055-0`.
 
 .. [HH2012] Victoria Horan and Glenn Hurlbert,
             *Overlap Cycles for Steiner Quadruple Systems*,
@@ -3941,6 +3965,12 @@ REFERENCES:
                Spectral sets and functions on Euclidean Jordan algebras.
                University of Maryland, Baltimore County, Ph.D. thesis, 2017.
 
+.. [JG2018] Juyoung Jeong and M. Seetharama Gowda.
+            *Permutation invariant proper polyhedral cones and their
+            Lyapunov rank*.
+            Journal of Mathematical Analysis and Applications
+            463(1):377-385, 2018. :doi:`10.1016/j.jmaa.2018.03.024`.
+
 .. [JK1981] Gordon James, Adalbert Kerber,
             *The Representation Theory of the Symmetric Group*,
             Encyclopedia of Mathematics and its Applications, vol. 16,
@@ -4001,6 +4031,10 @@ REFERENCES:
              and link polynomials.  Ann. of Math. (2) 126 (1987),
              no. 2, 335--388. :doi:`10.2307/1971403`
              :mathscinet:`MR0908150`
+
+.. [Joh2013] \F. Johansson. A fast algorithm for reversion of power series.
+             arXiv:1108.4772 [cs.SC] (2013).
+             https://arxiv.org/abs/1108.4772
 
 .. [Jon2005] \V. Jones, The Jones Polynomial, 2005.
              https://math.berkeley.edu/~vfr/jones.pdf
@@ -5008,6 +5042,12 @@ REFERENCES:
 
 .. [LW2015] \T. Lawson and C. Wuthrich, Vanishing of some Galois
             cohomology groups for elliptic curves, :arxiv:`1505.02940`
+
+.. [LW2026] Felix Lazebnik and Ye Wang, *Some Families of Graphs,
+            Hypergraphs and Digraphs Defined by Triangular Systems
+            of Polynomial Equations*, The Electronic Journal of
+            Combinatorics, Dynamic Surveys, #DS28 (2026).
+            :doi:`10.37236/14054`
 
 .. [LY2001] \K. Lauter and T. Yang, *Computing genus 2 curves from
             invariants on the Hilbert moduli space*,
@@ -7114,8 +7154,9 @@ REFERENCES:
 .. [Voi2012] \J. Voight. Identifying the matrix ring: algorithms for
              quaternion algebras and quadratic forms, to appear.
 
-.. [Voi2021] \J. Voight. Quaternion Algebras. Graduate Texts in
-             Mathematics 288. Springer Cham, 2021.
+.. [Voi2021] \J. Voight: *Quaternion Algebras*.
+             Graduate Texts in Mathematics 288. Springer, Cham, 2021.
+             https://jvoight.github.io/quat-book.pdf
 
 .. [VS06]   \G.D. Villa Salvador. Topics in the Theory of Algebraic Function
             Fields. Birkh\"auser, 2006.

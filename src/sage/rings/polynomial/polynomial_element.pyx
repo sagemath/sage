@@ -128,7 +128,6 @@ from sage.misc.cachefunc import cached_function
 from sage.categories.map cimport Map
 from sage.categories.morphism cimport Morphism
 
-from sage.misc.superseded import deprecation_cython as deprecation
 from sage.misc.cachefunc import cached_method
 
 
@@ -2470,11 +2469,6 @@ cdef class Polynomial(CommutativePolynomial):
           are assumed to have degree ``degree``. Note that ``degree``
           must be set.
 
-        .. WARNING::
-
-            Negative degree input will be deprecated. Instead use
-            ``assume_equal_deg``.
-
         .. NOTE::
 
             For finite fields, ``any_root()`` is non-deterministic when
@@ -2647,14 +2641,9 @@ cdef class Polynomial(CommutativePolynomial):
             #       this will be the most performant
             return f.roots(ring, multiplicities=False)[0]
 
-        # The old version of `any_root()` allowed degree < 0 to indicate that the input polynomial
-        # had a distinct degree factorisation, we pass this to any_irreducible_factor as a bool and
-        # ensure that the degree is positive.
         degree = ZZ(degree)
         if degree < 0:
-            deprecation(37170, "negative ``degree`` will be disallowed. Instead use the bool `assume_equal_deg`.")
-            degree = -degree
-            assume_equal_deg = True
+            raise ValueError('degree must be positive')
 
         # If a certain degree is requested, then we find an irreducible factor of degree `degree`
         # use this to compute a field extension and return the generator as root of this polynomial
@@ -7108,6 +7097,54 @@ cdef class Polynomial(CommutativePolynomial):
         v = ','.join(a._magma_init_(magma) for a in self.list())
         return '%s![%s]' % (R.name(), v)
 
+    def _fricas_init_(self):
+        """
+        Return this polynomial in FriCAS.
+
+        EXAMPLES::
+
+            sage: # optional - fricas
+            sage: R.<y> = ZZ[]
+            sage: f = y^3 - 17*y + 5
+            sage: g = fricas(f); g   # indirect doctest
+             3
+            y  - 17 y + 5
+            sage: f._fricas_init_()
+            '[[[0,5],[1,-17],[3,1]]$...]$UnivariatePolynomial(y,Integer)'
+
+        Coefficients in a finite field::
+
+            sage: # optional - fricas
+            sage: R.<y> = GF(7)[]
+            sage: f = y^3 - 17*y + 5
+            sage: g = fricas(f); g
+             3
+            y  + 4 y + 5
+            sage: f._fricas_init_()
+            '[[[0,5::PrimeField(7)],[1,4::PrimeField(7)],[3,1::PrimeField(7)]]$...]$UnivariatePolynomial(y,PrimeField(7))'
+
+        TESTS::
+
+            sage: # optional - fricas
+            sage: R.<y> = GF(7)[]
+            sage: fricas(17*y)
+            3 y
+            sage: (17*y)._fricas_init_()
+            'monomial(3::PrimeField(7),1)$UnivariatePolynomial(y,PrimeField(7))'
+        """
+        R = self.parent()._fricas_init_()
+        B = self.base_ring()._fricas_init_()
+        v = self.variable_name()
+
+        d = list(self.dict().items())
+        if len(d) == 1:
+            k, e = list(d)[0]
+            return f"monomial({e._fricas_init_()},{k})${R}"
+
+        c = ",".join(f"[{k},{e._fricas_init_()}]"
+                     for k, e in self.dict().items())
+        return f"[[{c}]$List(Record(k:NonNegativeInteger,c:{B}))]${R}"
+
     def _gap_(self, gap):
         """
         Return this polynomial in GAP.
@@ -8412,9 +8449,9 @@ cdef class Polynomial(CommutativePolynomial):
         complex ball fields::
 
             sage: Pol.<x> = CBF[]
-            sage: set((x^2 + 2).roots(multiplicities=False))
-            {[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
-             [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I}
+            sage: sorted((x^2 + 2).roots(multiplicities=False), key=imag)
+            [[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
+             [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I]
             sage: (x^3 - 1/2).roots(RBF, multiplicities=False)
             [[0.7937005259840997 +/- ...e-17]]
             sage: ((x - 1)^2).roots(multiplicities=False, proof=False)

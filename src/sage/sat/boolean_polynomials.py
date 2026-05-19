@@ -1,4 +1,4 @@
-# sage.doctest: optional - pycryptosat, needs sage.modules brial
+# sage.doctest: optional - pycryptosat, needs brial
 """
 SAT Functions for Boolean Polynomials
 

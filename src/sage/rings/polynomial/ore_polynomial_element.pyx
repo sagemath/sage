@@ -1845,7 +1845,7 @@ cdef class OrePolynomial(AlgebraElement):
             Ore Polynomial Ring in y over Univariate Polynomial Ring in t over Integer Ring
              twisted by t |--> t + 1
         """
-        R = self._parent.change_var(var)
+        R = self._parent.change_variable_name(var)
         return R(self.list())
 
     def is_term(self):
