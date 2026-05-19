@@ -17187,8 +17187,8 @@ cdef class Matrix(Matrix1):
         EXAMPLES::
 
             sage: x = polygen(ZZ, 'x')
-            sage: L.<a> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: OL = L.ring_of_integers()                                             # needs sage.rings.number_field
+            sage: L.<a> = NumberField(x^3 - 2)
+            sage: OL = L.ring_of_integers()
 
         We check some degenerate cases::
 
@@ -17210,13 +17210,13 @@ cdef class Matrix(Matrix1):
 
         A 2x2 matrix::
 
-            sage: m = matrix(OL, 2, 2, [1, 0, a, 2])                                    # needs sage.rings.number_field
-            sage: r,s,p = m._echelon_form_PID(); (r,s,p)                                # needs sage.rings.number_field
+            sage: m = matrix(OL, 2, 2, [1, 0, a, 2])
+            sage: r,s,p = m._echelon_form_PID(); (r,s,p)
             (
             [ 1  0]  [1 0]
             [-a  1], [0 2], [0, 1]
             )
-            sage: r * m == s and r.det() == 1                                           # needs sage.rings.number_field
+            sage: r * m == s and r.det() == 1
             True
 
         A larger example::
@@ -18344,8 +18344,8 @@ cdef class Matrix(Matrix1):
         the underlying ring symbolic (the usual case is tested by
         the ``positive_operators_gens`` method)::
 
-            sage: K1 = random_cone(max_ambient_dim=5)
-            sage: K2 = random_cone(max_ambient_dim=5)
+            sage: K1 = random_cone(max_ambient_dim=5, max_rays=15)
+            sage: K2 = random_cone(max_ambient_dim=5, max_rays=15)
             sage: results = ( L.change_ring(SR).is_positive_operator_on(K1, K2)
             ....:             for L in K1.positive_operators_gens(K2) )
             sage: all(results)                  # long time
@@ -18494,7 +18494,7 @@ cdef class Matrix(Matrix1):
         symbolic (the usual case is tested by the
         ``cross_positive_operators_gens`` method)::
 
-            sage: K = random_cone(max_ambient_dim=5)
+            sage: K = random_cone(max_ambient_dim=5, max_rays=15)
             sage: results = ( L.change_ring(SR).is_cross_positive_on(K)
             ....:             for L in K.cross_positive_operators_gens() )
             sage: all(results)                  # long time
@@ -18631,7 +18631,7 @@ cdef class Matrix(Matrix1):
         ``K``, , even if we make the underlying ring symbolic (the usual
         case is tested by the ``Z_operators_gens`` method)::
 
-            sage: K = random_cone(max_ambient_dim=5)                                    # needs sage.geometry.polyhedron
+            sage: K = random_cone(max_ambient_dim=5, max_rays=15)                       # needs sage.geometry.polyhedron
             sage: all(L.change_ring(SR).is_Z_operator_on(K)     # long time             # needs sage.geometry.polyhedron sage.symbolic
             ....:     for L in K.Z_operators_gens())
             True
@@ -18748,7 +18748,7 @@ cdef class Matrix(Matrix1):
         symbolic (the usual case is tested by the
         ``lyapunov_like_basis`` method)::
 
-            sage: K = random_cone(max_ambient_dim=5)                                    # needs sage.geometry.polyhedron
+            sage: K = random_cone(max_ambient_dim=5, max_rays=15)                       # needs sage.geometry.polyhedron
             sage: all(L.change_ring(SR).is_lyapunov_like_on(K)  # long time             # needs sage.geometry.polyhedron sage.symbolic
             ....:     for L in K.lyapunov_like_basis())
             True
@@ -18785,7 +18785,7 @@ cdef class Matrix(Matrix1):
         A matrix is Lyapunov-like on a cone if and only if both the
         matrix and its negation are cross-positive on the cone::
 
-            sage: K = random_cone(max_ambient_dim=5)
+            sage: K = random_cone(max_ambient_dim=5, max_rays=15)
             sage: R = K.lattice().vector_space().base_ring()
             sage: L = random_matrix(R, K.lattice_dim())
             sage: actual = L.is_lyapunov_like_on(K)             # long time

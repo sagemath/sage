@@ -1161,7 +1161,7 @@ class GrowthDiagram(SageObject):
              [0, 0, 0, 0, 0, 1],
              [0, 0, 0, 1, 0, 0]]
         """
-        return ([None]*self._mu[r] + [self._filling.get((self._mu[r]+j,r), 0)
+        return ([None]*self._mu[r] + [self._filling.get((self._mu[r]+j, r), 0)
                                       for j in range(self._lambda[r]-self._mu[r])]
                 for r in range(len(self._lambda)))
 
@@ -1184,7 +1184,7 @@ class GrowthDiagram(SageObject):
             1
         """
         S = SkewTableau(expr=[self._mu,
-                              [[self._filling.get((self._mu[r]+j,r), 0)
+                              [[self._filling.get((self._mu[r]+j, r), 0)
                                 for j in range(self._lambda[r]-self._mu[r])]
                                for r in range(len(self._lambda))][::-1]])
 
@@ -1869,13 +1869,13 @@ class GrowthDiagram(SageObject):
                     i = c - h + j
                     fill_val = self._filling.get((i, j), 0)
                     if rule.has_multiple_edges:
-                        NW, mW, SW, mS, SE = labels[2*c-2 : 2*c+3]
-                        labels[2*c-1 : 2*c+2] = forward(NW, mW, SW, mS, SE, fill_val)
-                        mN, NE, mE = labels[2*c-1 : 2*c+2]
+                        NW, mW, SW, mS, SE = labels[2*c-2: 2*c+3]
+                        labels[2*c-1: 2*c+2] = forward(NW, mW, SW, mS, SE, fill_val)
+                        mN, NE, mE = labels[2*c-1: 2*c+2]
 
                         E[i, j+0.5], E[i+1, j+0.5], E[i+0.5, j], E[i+0.5, j+1] = mW, mE, mS, mN
                     else:
-                        NW, SW, SE = labels[c-1 : c+2]
+                        NW, SW, SE = labels[c-1: c+2]
                         labels[c] = forward(NW, SW, SE, fill_val)
                         NE = labels[c]
 
@@ -1889,13 +1889,13 @@ class GrowthDiagram(SageObject):
                 for c in range(self._lambda[j] + r, self._mu[j] + r, -1):
                     i = c - r - 1
                     if rule.has_multiple_edges:
-                        NW, mN, NE, mE, SE = labels[2*c-2 : 2*c+3]
+                        NW, mN, NE, mE, SE = labels[2*c-2: 2*c+3]
                         labels[2*c-1], labels[2*c], labels[2*c+1], _ = rule.backward_rule(NW, mN, NE, mE, SE)
-                        mW, SW, mS = labels[2*c-1 : 2*c+2]
+                        mW, SW, mS = labels[2*c-1: 2*c+2]
 
                         E[i, j+0.5], E[i+1, j+0.5], E[i+0.5, j], E[i+0.5, j+1] = mW, mE, mS, mN
                     else:
-                        NW, NE, SE = labels[c-1 : c+2]
+                        NW, NE, SE = labels[c-1: c+2]
                         labels[c] = rule.backward_rule(NW, NE, SE)[0]
                         SW = labels[c]
 
@@ -1903,7 +1903,6 @@ class GrowthDiagram(SageObject):
 
         # Target size inside a 1x1 cell (in ems, consistent with x=..., y=...):
         target_em = 0.80
-        default_scale = 0.33  # fallback if measurement degenerates
 
         tikz = []
         tikz.append("\\begingroup")
@@ -2371,7 +2370,7 @@ class RuleShiftedShapes(Rule):
 
         if l[0][1] == 0:
             return [1]   # black
-        return [2,3] # blue, red
+        return [2, 3]  # blue, red
 
     def is_P_edge(self, v, w):
         r"""
@@ -2562,9 +2561,9 @@ class RuleShiftedShapes(Rule):
                 g, z = 0, x
             elif content == 1:
                 if not x:
-                    g, z = 1, _Partitions(x).add_cell(0) # black
+                    g, z = 1, _Partitions(x).add_cell(0)  # black
                 else:
-                    g, z = 2, _make_partition(x).add_cell(0) # blue
+                    g, z = 2, _make_partition(x).add_cell(0)  # blue
             else:
                 raise NotImplementedError
         elif content != 0:
@@ -2580,13 +2579,13 @@ class RuleShiftedShapes(Rule):
             if x != y:
                 row = SkewPartition([x, t]).cells()[0][0]
                 g, z = f, _make_partition(y).add_cell(row)
-            elif x == y != t and f == 2: # blue
+            elif x == y != t and f == 2:  # blue
                 row = 1+SkewPartition([x, t]).cells()[0][0]
                 if row == len(y):
-                    g, z = 1, _make_partition(y).add_cell(row) # black
+                    g, z = 1, _make_partition(y).add_cell(row)  # black
                 else:
-                    g, z = 2, _make_partition(y).add_cell(row) # blue
-            elif x == y != t and f in [1, 3]:  # black or red
+                    g, z = 2, _make_partition(y).add_cell(row)  # blue
+            elif x == y != t and f in [1, 3]:   # black or red
                 c = SkewPartition([x, t]).cells()[0]
                 col = c[0] + c[1] + 1
                 for i in range(len(y)):
@@ -2669,9 +2668,9 @@ class RuleShiftedShapes(Rule):
             return (0, _make_partition(y).remove_cell(row), g, 0)
 
         row, col = SkewPartition([z, x]).cells()[0]
-        if row > 0 and g in [1, 2]: # black or blue
+        if row > 0 and g in [1, 2]:  # black or blue
             return (0, _make_partition(y).remove_cell(row-1), 2, 0)
-        if row == 0 and g in [1, 2]: # black or blue
+        if row == 0 and g in [1, 2]:  # black or blue
             return (0, y, 0, 1)
         # find last cell in column col-1
         for i in range(len(y)-1,-1,-1):
@@ -4357,7 +4356,7 @@ class RuleBurge(RulePartitions):
             sage: GrowthDiagram(Burge, labels=G._out_labels).to_word() == w  # indirect doctest
             True
         """
-        t = [0]*len(z) # z must be the longest partition
+        t = [0]*len(z)  # z must be the longest partition
         mu = [0]*(len(z)-len(x)) + x[::-1]
         nu = [0]*(len(z)-len(y)) + y[::-1]
         la = z[::-1]
@@ -4507,7 +4506,7 @@ class RuleDomino(Rule):
         """
         if v > 0:
             return latex(v)
-        return latex(r"\bar{"+ latex(-v) + "}")
+        return latex(r"\bar{" + latex(-v) + "}")
 
     def vertices(self, n):
         r"""
@@ -4723,7 +4722,7 @@ class RuleDomino(Rule):
         return z
 
 #####################################################################
-## Set the rules available from GrowthDiagram.rules.<tab>
+#  Set the rules available from GrowthDiagram.rules.<tab>
 #####################################################################
 
 
