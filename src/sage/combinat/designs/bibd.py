@@ -1090,7 +1090,6 @@ def _get_t_u(v):
     """
     # Table 7.1
     v = int(v)
-    global table_7_1
     d = table_7_1[v % 48]
     s = v//48
     if s < d['s']:

@@ -38,11 +38,14 @@ from ipywidgets.widgets.interaction import _get_min_max_value
 from collections.abc import Iterable, Sequence
 from numbers import Integral, Rational, Real
 
-from sage.structure.element import parent
 from sage.arith.srange import srange
-import sage.rings.abc
+from sage.misc.lazy_import import lazy_import
+from sage.structure.element import parent
 
 from .widgets import HTMLText as text_control
+
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
+
 
 Color = None
 
@@ -284,7 +287,7 @@ def slider(vmin, vmax=None, step_size=None, default=None, label=None, display_va
     p = parent(sum(x for x in (vmin, vmax, step_size) if x is not None))
 
     # Change SR to RR
-    if isinstance(p, sage.rings.abc.SymbolicRing):
+    if isinstance(p, SymbolicRing):
         from sage.rings.real_mpfr import RR
         p = RR
 

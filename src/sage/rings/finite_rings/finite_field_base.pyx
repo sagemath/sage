@@ -73,7 +73,7 @@ cdef class FiniteField(Field):
         """
         if category is None:
             category = FiniteFields()
-        Field.__init__(self, base, names, normalize, category)
+        Field.__init__(self, base, names, normalize, category=category)
 
     # The methods __hash__ and __richcmp__ below were copied from
     # sage.misc.fast_methods.WithEqualityById; we cannot inherit from
@@ -268,6 +268,23 @@ cdef class FiniteField(Field):
             return "ZZ/%s" % self.order()
         return "GF(%s,Variable=>symbol %s)" % (self.order(),
                                                self.variable_name())
+
+    def _fricas_init_(self):
+        """
+        Return a string representation of this finite field that FriCAS
+        can understand.
+
+        EXAMPLES::
+
+            sage: # optional - fricas
+            sage: fricas(GF(5))
+            PrimeField(5)
+            sage: fricas(GF(5,3))
+            FiniteField(5,3)
+        """
+        if self.degree() == 1:
+            return f'PrimeField({self.characteristic()})'
+        return f'FiniteField({self.characteristic()},{self.degree()})'
 
     def _sage_input_(self, sib, coerced):
         r"""

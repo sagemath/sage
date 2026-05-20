@@ -300,8 +300,8 @@ class HasseDiagram(DiGraph):
 
         .. NOTE::
 
-            If the :meth:`lequal_matrix` has been computed, then this method is
-            redefined to use the cached data (see :meth:`_alternate_is_lequal`).
+            If the :meth:`lequal_matrix` has been computed, then this
+            method uses the cached data.
 
         EXAMPLES::
 
@@ -319,6 +319,8 @@ class HasseDiagram(DiGraph):
             sage: H.is_lequal(z,z)
             True
         """
+        if "_leq_storage" in self.__dict__:  # hopefully very fast
+            return j in self._leq_storage[i]
         return i == j or (i < j and j in self.breadth_first_search(i))
 
     def is_less_than(self, x, y) -> bool:
@@ -342,9 +344,7 @@ class HasseDiagram(DiGraph):
             sage: H.is_less_than(z,z)
             False
         """
-        if x == y:
-            return False
-        return self.is_lequal(x, y)
+        return x != y and self.is_lequal(x, y)
 
     def is_gequal(self, x, y) -> bool:
         r"""
@@ -394,7 +394,7 @@ class HasseDiagram(DiGraph):
             sage: Q.is_greater_than(z,z)
             False
         """
-        return self.is_less_than(y, x)
+        return x != y and self.is_lequal(y, x)
 
     def minimal_elements(self) -> list[int]:
         """
@@ -653,7 +653,7 @@ class HasseDiagram(DiGraph):
         except AttributeError:
             return list(self.interval_iterator(x, y))
 
-    def interval_iterator(self, x, y) -> Iterator[int]:
+    def interval_iterator(self, x: int, y: int) -> Iterator[int]:
         r"""
         Return an iterator of the elements `z` of ``self`` such that
         `x \leq z \leq y`.
@@ -687,7 +687,7 @@ class HasseDiagram(DiGraph):
 
     closed_interval = interval
 
-    def open_interval(self, x, y) -> list[int]:
+    def open_interval(self, x: int, y: int) -> list[int]:
         """
         Return a list of the elements `z` of ``self`` such that `x < z < y`.
 
@@ -1304,9 +1304,6 @@ class HasseDiagram(DiGraph):
                 gt = gt.union(greater_than[j])
             greater_than[i] = gt
 
-        # Redefine self.is_lequal
-        self.is_lequal = self._alternate_is_lequal
-
         return greater_than
 
     @lazy_attribute
@@ -1416,40 +1413,6 @@ class HasseDiagram(DiGraph):
         if boolean:
             return self._leq_matrix_boolean
         return self._leq_matrix
-
-    def _alternate_is_lequal(self, i, j) -> bool:
-        r"""
-        Return ``True`` if ``i`` is less than or equal to ``j`` in
-        ``self``, and ``False`` otherwise.
-
-        .. NOTE::
-
-            If the dictionary :meth:`_leq_storage` has been computed, then
-            :meth:`is_lequal` is redefined to use the cached data.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: H = HasseDiagram({0:[2], 1:[2], 2:[3], 3:[4], 4:[]})
-            sage: H.lequal_matrix()                                                     # needs sage.modules
-            [1 0 1 1 1]
-            [0 1 1 1 1]
-            [0 0 1 1 1]
-            [0 0 0 1 1]
-            [0 0 0 0 1]
-            sage: x,y,z = 0, 1, 4
-            sage: H._alternate_is_lequal(x,y)
-            False
-            sage: H._alternate_is_lequal(y,x)
-            False
-            sage: H._alternate_is_lequal(x,z)
-            True
-            sage: H._alternate_is_lequal(y,z)
-            True
-            sage: H._alternate_is_lequal(z,z)
-            True
-        """
-        return j in self._leq_storage[i]
 
     def prime_elements(self) -> tuple[list[int], list[int]]:
         r"""
@@ -2166,7 +2129,7 @@ class HasseDiagram(DiGraph):
 
         yield from recursive_fit(start, start_unbinded)
 
-    def find_nonsemimodular_pair(self, upper) -> tuple[int, int]:
+    def find_nonsemimodular_pair(self, upper) -> tuple[int, int] | None:
         """
         Return pair of elements showing the lattice is not modular.
 
@@ -2961,7 +2924,7 @@ class HasseDiagram(DiGraph):
             ({0, 2, 3, 4}, 4)
         """
         n = self.cardinality()
-        spine_over: dict[tuple[set, int]] = dict()
+        spine_over: dict[int, tuple[set, int]] = dict()
         for x in range(n):
             ups = self.neighbors_in(x)
             if not ups:
@@ -3448,7 +3411,7 @@ class HasseDiagram(DiGraph):
             tried.append(pair)
         return None
 
-    def principal_congruences_poset(self):
+    def principal_congruences_poset(self) -> tuple:
         r"""
         Return the poset of join-irreducibles of the congruence lattice.
 
@@ -3598,7 +3561,7 @@ class HasseDiagram(DiGraph):
         return True
 
     @staticmethod
-    def _glue_spectra(a_spec, b_spec, orientation):
+    def _glue_spectra(a_spec, b_spec, orientation) -> list:
         r"""
         Return the `a`-spectrum of a poset by merging ``a_spec`` and ``b_spec``.
 
@@ -3657,7 +3620,7 @@ class HasseDiagram(DiGraph):
 
         return new_a_spec
 
-    def _split(self, a, b):
+    def _split(self, a, b) -> list:
         r"""
         Return the two connected components obtained by deleting the covering
         relation `a < b` from a Hasse diagram that is a tree.
@@ -3711,7 +3674,7 @@ class HasseDiagram(DiGraph):
 
         return [c1, c2]
 
-    def _spectrum_of_tree(self, a):
+    def _spectrum_of_tree(self, a) -> list:
         r"""
         Return the `a`-spectrum of a poset whose underlying graph is a tree.
 

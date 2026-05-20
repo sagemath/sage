@@ -246,9 +246,9 @@ for function field of characteristic 2.")
         coeff = new_conic.coefficients()
         if coeff[0] == 0:
             return (True, transformation([1, 0, 0])) if point else True
-        elif coeff[3] == 0:
+        if coeff[3] == 0:
             return (True, transformation([0, 1, 0])) if point else True
-        elif coeff[5] == 0:
+        if coeff[5] == 0:
             return (True, transformation([0, 0, 1])) if point else True
 
         # We save the coefficients of the reduced form in coeff
@@ -323,8 +323,7 @@ for function field of characteristic 2.")
                 else:
                     pt = True
                 return (True, transformation(pt)) if point else True
-            else:
-                return (False, None) if point else False
+            return (False, None) if point else False
         # case == 1:
         if point:
             pt = new_conic.find_point(supp, roots, case)

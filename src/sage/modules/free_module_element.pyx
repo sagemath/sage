@@ -116,19 +116,23 @@ cimport cython
 from cpython.slice cimport PySlice_GetIndicesEx
 
 from sage.categories.rings import Rings
+from sage.misc.lazy_import import LazyImport
 from sage.misc.superseded import deprecated_function_alias
 from sage.structure.sequence import Sequence
 from sage.structure.element cimport Element, Vector
 from sage.structure.element import canonical_coercion
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp, rich_to_bool
 
-import sage.rings.abc
 from sage.rings.infinity import Infinity, AnInfinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.abc import RealDoubleField, ComplexDoubleField
 
 from sage.rings.integer cimport Integer, smallInteger
 from sage.arith.numerical_approx cimport digits_to_bits
+
+
+CallableSymbolicExpressionRing_class = LazyImport(
+    'sage.symbolic.callable', 'CallableSymbolicExpressionRing_class')
 
 # For the norm function, we cache Sage integers 1 and 2
 __one__ = smallInteger(1)
@@ -914,7 +918,7 @@ def random_vector(ring, degree=None, *args, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: degree of a random vector must be nonnegative, not -9
-    
+
     We may also use vector.random(...) in place of random_vector(...). ::
 
         sage: vector.random(10).parent()
@@ -2873,7 +2877,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 [zero, -s[2], s[1]],
                 [s[2], zero, -s[0]],
                 [-s[1], s[0], zero]])
-        elif rank == 7:
+        if rank == 7:
             MS = MatrixSpace(R, rank, rank, sparse=self.is_sparse())
             s = self.list(copy=False)
             return MS([
@@ -2884,8 +2888,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 [ s[5], -s[2],  s[1],  s[6],  zero, -s[0], -s[3]],
                 [-s[4],  s[6], -s[3],  s[2],  s[0],  zero, -s[1]],
                 [-s[2], -s[5],  s[0], -s[4],  s[3],  s[1],  zero]])
-        else:
-            raise TypeError("Cross product only defined for vectors of length three or seven, not {}".format(rank))
+        raise TypeError(f"Cross product only defined for vectors of length three or seven, not {rank}")
 
     def pairwise_product(self, right):
         """
@@ -4076,7 +4079,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             (r, theta) |--> r*cos(theta)^2 + r*sin(theta)^2
         """
         if var is None:
-            if isinstance(self.coordinate_ring(), sage.rings.abc.CallableSymbolicExpressionRing):
+            if isinstance(self.coordinate_ring(), CallableSymbolicExpressionRing_class):
                 from sage.calculus.functions import jacobian
                 return jacobian(self, self.coordinate_ring().arguments())
             else:
@@ -4289,8 +4292,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             ...
             ValueError: base ring must be a symbolic expression ring
         """
-        from sage.rings.abc import CallableSymbolicExpressionRing
-        if not isinstance(self.base_ring(), CallableSymbolicExpressionRing):
+        if not isinstance(self.base_ring(), CallableSymbolicExpressionRing_class):
             raise ValueError("base ring must be a symbolic expression ring")
         from sage.symbolic.ring import SR
         tmp_vars = [SR.symbol() for _ in range(self.parent().dimension())]
@@ -4332,15 +4334,15 @@ def make_FreeModuleElement_generic_dense(parent, entries, degree):
     return v
 
 
-def make_FreeModuleElement_generic_dense_v1(parent, entries, degree, is_mutable):
+def make_FreeModuleElement_generic_dense_v1(parent, entries, degree, immutable):
     """
     EXAMPLES::
 
-        sage: v = sage.modules.free_module_element.make_FreeModuleElement_generic_dense_v1(QQ^3, [1,2,-3/7], 3, True); v
+        sage: v = sage.modules.free_module_element.make_FreeModuleElement_generic_dense_v1(QQ^3, [1,2,-3/7], 3, False); v
         (1, 2, -3/7)
         sage: v[0] = 10; v
         (10, 2, -3/7)
-        sage: v = sage.modules.free_module_element.make_FreeModuleElement_generic_dense_v1(QQ^3, [1,2,-3/7], 3, False); v
+        sage: v = sage.modules.free_module_element.make_FreeModuleElement_generic_dense_v1(QQ^3, [1,2,-3/7], 3, True); v
         (1, 2, -3/7)
         sage: v[0] = 10
         Traceback (most recent call last):
@@ -4356,7 +4358,7 @@ def make_FreeModuleElement_generic_dense_v1(parent, entries, degree, is_mutable)
     v._entries = entries
     v._parent = parent
     v._degree = degree
-    v._is_immutable = not is_mutable
+    v._is_immutable = immutable
     return v
 
 
@@ -4608,7 +4610,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: M = span([[x, x^2+1], [1/x, x^3]], R)
             sage: M.basis()[0] * x
             (1, x^4)
-        
+
         Check :issue:`40611` is fixed::
 
             sage: R = cartesian_product([ZZ, ZZ])
@@ -4649,10 +4651,10 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: v = vector([-1,0,3,pi])                                               # needs sage.symbolic
             sage: v.__reduce__()                                                        # needs sage.symbolic
             (<cyfunction make_FreeModuleElement_generic_dense_v1 at ...>,
-             (Vector space of dimension 4 over Symbolic Ring, [-1, 0, 3, pi], 4, True))
+             (Vector space of dimension 4 over Symbolic Ring, [-1, 0, 3, pi], 4, False))
         """
         return (make_FreeModuleElement_generic_dense_v1, (self._parent, self._entries,
-                                                          self._degree, not self._is_immutable))
+                                                          self._degree, self._is_immutable))
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -4815,11 +4817,12 @@ def make_FreeModuleElement_generic_sparse(parent, entries, degree):
     return v
 
 
-def make_FreeModuleElement_generic_sparse_v1(parent, entries, degree, is_mutable):
+def make_FreeModuleElement_generic_sparse_v1(parent, entries, degree, immutable):
     """
     EXAMPLES::
 
-        sage: v = sage.modules.free_module_element.make_FreeModuleElement_generic_sparse_v1(QQ^3, {2:5/2}, 3, False); v
+        sage: from sage.modules.free_module_element import make_FreeModuleElement_generic_sparse_v1
+        sage: v = make_FreeModuleElement_generic_sparse_v1(QQ^3, {2:5/2}, 3, immutable=True); v
         (0, 0, 5/2)
         sage: v.is_mutable()
         False
@@ -4829,7 +4832,7 @@ def make_FreeModuleElement_generic_sparse_v1(parent, entries, degree, is_mutable
     v._entries = entries
     v._parent = parent
     v._degree = degree
-    v._is_immutable = not is_mutable
+    v._is_immutable = immutable
     return v
 
 
@@ -5216,10 +5219,10 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: v = vector([1,2/3,pi], sparse=True)                                   # needs sage.symbolic
             sage: v.__reduce__()                                                        # needs sage.symbolic
             (<cyfunction make_FreeModuleElement_generic_sparse_v1 at ...>,
-             (Sparse vector space of dimension 3 over Symbolic Ring, {0: 1, 1: 2/3, 2: pi}, 3, True))
+             (Sparse vector space of dimension 3 over Symbolic Ring, {0: 1, 1: 2/3, 2: pi}, 3, False))
         """
         return (make_FreeModuleElement_generic_sparse_v1, (self._parent, self._entries,
-                                                           self._degree, not self._is_immutable))
+                                                           self._degree, self._is_immutable))
 
     @cython.cdivision(True)
     def __getitem__(self, i):

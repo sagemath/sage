@@ -109,7 +109,7 @@ easily::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sage.interfaces.abc
-import sage.misc.latex as latex
+from sage.misc import latex
 import sage.structure.parent_gens
 
 from sage.structure.parent import Parent
@@ -313,7 +313,7 @@ def QuotientRing(R, I, names=None, **kwds):
         return R
     try:
         if I.is_principal():
-            return R.quotient_by_principal_ideal(I.gen(), names)
+            return R.quotient_by_principal_ideal(I.gen(), names, **kwds)
     except (AttributeError, NotImplementedError):
         pass
     if not is_commutative:
@@ -375,7 +375,7 @@ class QuotientRing_nc(Parent):
         sage: j^3
         -j*k*i - j*k*j - j*k*k
 
-    For rings that *do* inherit from :class:`~sage.rings.ring.CommutativeRing`,
+    For rings that *do* inherit from :class:`~sage.rings.ring.Ring`,
     we provide a subclass :class:`QuotientRing_generic`, for backwards
     compatibility.
 
@@ -511,9 +511,8 @@ class QuotientRing_nc(Parent):
             return QuotientFunctor(self.__I, names=names, domain=_CommRings,
                                    codomain=_CommRings,
                                    as_field=isinstance(self, Field)), self.__R
-        else:
-            return QuotientFunctor(self.__I, names=names,
-                                   as_field=isinstance(self, Field)), self.__R
+        return QuotientFunctor(self.__I, names=names,
+                               as_field=isinstance(self, Field)), self.__R
 
     def _repr_(self):
         """
@@ -1332,7 +1331,7 @@ class QuotientRing_nc(Parent):
         return self.retract(self.cover_ring().random_element())
 
 
-class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
+class QuotientRing_generic(QuotientRing_nc, ring.Ring):
     r"""
     Create a quotient ring of a *commutative* ring `R` by the ideal `I`.
 
@@ -1351,7 +1350,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
 
         INPUT:
 
-        - ``R`` -- a ring that is a :class:`~sage.rings.ring.CommutativeRing`
+        - ``R`` -- a ring that is a :class:`~sage.rings.ring.Ring`
 
         - ``I`` -- an ideal of `R`
 

@@ -14,11 +14,11 @@ Introduction
 
 The Robinson-Schensted-Knuth (RSK) correspondence is most naturally
 stated as a bijection between generalized permutations (also known
-as two-line arrays, biwords, ...) and pairs of semi-standard Young
+as two-line arrays, biwords, ...) and pairs of semistandard Young
 tableaux `(P, Q)` of identical shape.
 
 The basic operation in the RSK correspondence is a row insertion
-`P \leftarrow k` (where `P` is a given semi-standard Young tableau,
+`P \leftarrow k` (where `P` is a given semistandard Young tableau,
 and `k` is an integer). Different insertion algorithms have been
 implemented for the RSK correspondence and can be specified as
 an argument in the function call.
@@ -53,7 +53,7 @@ available:
 - Edelman-Greene insertion (:class:`~sage.combinat.rsk.RuleEG`), an algorithm
   defined in [EG1987]_ Definition 6.20 (where it is referred to as
   Coxeter-Knuth insertion).
-- Hecke RSK algorithm (:class:`~sage.combinat.rsk.RuleHecke`) , defined
+- Hecke RSK algorithm (:class:`~sage.combinat.rsk.RuleHecke`), defined
   using the Hecke insertion studied in [BKSTY06]_ (but using rows instead
   of columns).
 - Dual RSK insertion (:class:`~sage.combinat.rsk.RuleDualRSK`).
@@ -176,7 +176,7 @@ class Rule(UniqueRepresentation):
     `[a_1, a_2, \ldots, a_n]` and `[b_1, b_2, \ldots, b_n]`
     satisfying `(a_1, b_1) \leq (a_2, b_2) \leq \cdots
     \leq (a_n, b_n)` in lexicographic order).
-    Finally, it :meth:`forward_rule` and :meth:`backward_rule`
+    Finally, :meth:`forward_rule` and :meth:`backward_rule`
     have to be overridden if the overall structure of the
     RSK correspondence differs from that of classical RSK (see,
     e.g., the case of Hecke insertion, in which a letter bumped
@@ -326,7 +326,7 @@ class Rule(UniqueRepresentation):
 
         - ``p``, ``q`` -- two tableaux of the same shape
 
-        - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
+        - ``output`` -- (default: ``'array'``) if ``q`` is semistandard:
 
           - ``'array'`` -- as a two-line array (i.e. generalized permutation
             or biword)
@@ -787,7 +787,7 @@ class RuleHecke(Rule):
     Rule for Hecke insertion.
 
     The Hecke RSK algorithm is similar to the classical RSK algorithm,
-    but is defined using the Hecke insertion introduced in in
+    but is defined using the Hecke insertion introduced in
     [BKSTY06]_ (but using rows instead of columns).
     It is not clear in what generality it works; thus, following
     [BKSTY06]_, we shall assume that our biword `p` has top row
@@ -929,7 +929,7 @@ class RuleHecke(Rule):
 
         - ``p``, ``q`` -- two tableaux of the same shape
 
-        - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
+        - ``output`` -- (default: ``'array'``) if ``q`` is semistandard:
 
           - ``'array'`` -- as a two-line array (i.e. generalized permutation
             or biword)
@@ -1943,7 +1943,7 @@ class RuleSuperRSK(RuleRSK):
         [[1, 2, 2, 2], [2, 1, 2, 3]]
 
     When applied to two tableaux with only even parity elements, reverse super
-    RSK insertion behaves identically to the usual reversel RSK insertion::
+    RSK insertion behaves identically to the usual reverse RSK insertion::
 
         sage: t1 = Tableau([[1, 2, 5], [3], [4]])
         sage: t2 = Tableau([[1, 2, 3], [4], [5]])
@@ -2755,7 +2755,7 @@ class RuleStar(Rule):
           conjugate of a semistandard tableau, whose reading word is fully
           commutative and ``q`` is a semistandard tableau.
 
-        - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
+        - ``output`` -- (default: ``'array'``) if ``q`` is semistandard:
 
           - ``'array'`` -- as a two-line array (i.e. generalized permutation
             or biword) that is an increasing Hecke biword
@@ -2964,12 +2964,12 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
     The Robinson-Schensted-Knuth (RSK) correspondence (also known
     as the RSK algorithm) is most naturally stated as a bijection
     between generalized permutations (also known as two-line arrays,
-    biwords, ...) and pairs of semi-standard Young tableaux `(P, Q)`
+    biwords, ...) and pairs of semistandard Young tableaux `(P, Q)`
     of identical shape. The tableau `P` is known as the insertion
     tableau, and `Q` is known as the recording tableau.
 
     The basic operation is known as row insertion `P \leftarrow k`
-    (where `P` is a given semi-standard Young tableau, and `k` is an
+    (where `P` is a given semistandard Young tableau, and `k` is an
     integer). Row insertion is a recursive algorithm which starts by
     setting `k_0 = k`, and in its `i`-th step inserts the number `k_i`
     into the `i`-th row of `P` (we start counting the rows at `0`) by
@@ -2992,7 +2992,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
     Now the RSK algorithm, applied to a generalized permutation
     `p = ((j_0, k_0), (j_1, k_1), \ldots, (j_{\ell-1}, k_{\ell-1}))`
     (encoded as a lexicographically sorted list of pairs) starts by
-    initializing two semi-standard tableaux `P_0` and `Q_0` as empty
+    initializing two semistandard tableaux `P_0` and `Q_0` as empty
     tableaux. For each nonnegative integer `t` starting at `0`, take
     the pair `(j_t, k_t)` from `p` and set
     `P_{t+1} = P_t \leftarrow k_t`, and define `Q_{t+1}` by adding a
@@ -3043,7 +3043,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
       - ``RSK.rules.EG`` (or ``'EG'``) -- Edelman-Greene insertion
         (only for reduced words of permutations/elements of a type `A`
         Coxeter group) (:class:`~sage.combinat.rsk.RuleEG`)
-      - ``RSK.rules.Hecke`` -- (or ``'hecke'``) Hecke insertion (only
+      - ``RSK.rules.Hecke`` (or ``'hecke'``) -- Hecke insertion (only
         guaranteed for generalized permutations whose top row is strictly
         increasing) (:class:`~sage.combinat.rsk.RuleHecke`)
       - ``RSK.rules.dualRSK`` (or ``'dualRSK'``) -- Dual RSK insertion
@@ -3175,12 +3175,12 @@ def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
 
     INPUT:
 
-    - ``p``, ``q`` -- two semi-standard tableaux of the same shape, or
+    - ``p``, ``q`` -- two semistandard tableaux of the same shape, or
       (in the case when Hecke insertion is used) an increasing tableau and
       a set-valued tableau of the same shape (see the note below for the
       format of the set-valued tableau)
 
-    - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
+    - ``output`` -- (default: ``'array'``) if ``q`` is semistandard:
 
       - ``'array'`` -- as a two-line array (i.e. generalized permutation or
         biword)

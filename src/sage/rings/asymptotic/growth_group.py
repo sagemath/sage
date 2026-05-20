@@ -243,6 +243,8 @@ from sage.structure.richcmp import richcmp_by_eq_and_lt
 import sage.rings.abc
 from .misc import WithLocals
 
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
+
 
 class Variable(CachedRepresentation, SageObject):
     r"""
@@ -1520,8 +1522,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         """
         if self.is_one():
             return tuple()
-        else:
-            return self.parent().variable_names()
+        return self.parent().variable_names()
 
     def _singularity_analysis_(self, var, zeta, precision):
         r"""
@@ -1750,8 +1751,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
                 isinstance(base, PolynomialRing_generic) and \
                 (base.base_ring() is ZZ or base.base_ring() is QQ):
             return Posets()
-        else:
-            return None
+        return None
 
     def __init__(self, base, var, category):
         r"""
@@ -2802,16 +2802,15 @@ class MonomialGrowthElement(GenericGrowthElement):
         var = f(self.parent()._var_)
         if self.exponent.is_zero():
             return '1'
-        elif self.exponent == 1:
+        if self.exponent == 1:
             return var
-        elif latex:
+        if latex:
             return repr_op(var, '^', latex=True) + \
                 '{' + latex_repr(self.exponent)._latex_() + '}'
-        elif self.exponent in ZZ and self.exponent > 0 \
+        if self.exponent in ZZ and self.exponent > 0 \
                 or isidentifier(str(self.exponent)):
             return repr_op(var, '^') + str(self.exponent)
-        else:
-            return repr_op(var, '^') + '(' + str(self.exponent) + ')'
+        return repr_op(var, '^') + '(' + str(self.exponent) + ')'
 
     def _latex_(self):
         r"""
@@ -3072,11 +3071,10 @@ class MonomialGrowthElement(GenericGrowthElement):
             from sage.rings.integer_ring import ZZ
             M = MonomialGrowthGroup(ZZ, new_var)
             return M(raw_element=ZZ(1))
-        else:
-            log = self.parent().locals(locals)['log']
-            new_exponent = log(base)
-            M = MonomialGrowthGroup(new_exponent.parent(), new_var)
-            return M(raw_element=new_exponent)
+        log = self.parent().locals(locals)['log']
+        new_exponent = log(base)
+        M = MonomialGrowthGroup(new_exponent.parent(), new_var)
+        return M(raw_element=new_exponent)
 
     def _lt_(self, other):
         r"""
@@ -3198,7 +3196,7 @@ class MonomialGrowthElement(GenericGrowthElement):
             return asymptotic_expansions.SingularityAnalysis(
                 var=var, zeta=zeta, alpha=self.exponent, beta=0, delta=0,
                 precision=precision)
-        elif self.parent().gens_logarithmic():
+        if self.parent().gens_logarithmic():
             if self.exponent not in ZZ:
                 raise NotImplementedError(
                     'singularity analysis of {} not implemented '
@@ -3209,9 +3207,8 @@ class MonomialGrowthElement(GenericGrowthElement):
             return asymptotic_expansions.SingularityAnalysis(
                 var=var, zeta=zeta, alpha=0, beta=ZZ(self.exponent), delta=0,
                 precision=precision, normalized=False)
-        else:
-            raise NotImplementedError(
-                'singularity analysis of {} not implemented'.format(self))
+        raise NotImplementedError(
+            'singularity analysis of {} not implemented'.format(self))
 
     def _find_minimum_(self, valid_from):
         r"""
@@ -3468,7 +3465,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
             MPolynomialRing_base
         from sage.rings.power_series_ring import PowerSeriesRing_generic
         import operator
-        if isinstance(P, sage.rings.abc.SymbolicRing):
+        if isinstance(P, SymbolicRing):
             if data.operator() == operator.pow:
                 base, exponent = data.operands()
                 if str(base) == var:
@@ -3572,8 +3569,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
         """
         if str(self.gen()) == "log({})".format(self.variable_name()):
             return (self(raw_element=self.base().one()),)
-        else:
-            return tuple()
+        return tuple()
 
     def construction(self):
         r"""
@@ -3650,8 +3646,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
 
         if return_factors:
             return tuple(groups)
-        else:
-            return cartesian_product(groups)
+        return cartesian_product(groups)
 
     def non_growth_group(self):
         r"""
@@ -3866,8 +3861,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
         if latex:
             return repr_op(latex_repr(self.base)._latex_(), '^', latex=True) + \
                 '{' + latex_repr(var)._latex_() + '}'
-        else:
-            return repr_op(str(self.base), '^', var)
+        return repr_op(str(self.base), '^', var)
 
     def _latex_(self):
         r"""
@@ -4221,7 +4215,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         from warnings import warn
 
         super().__init__(base, *args, **kwds)
-        if isinstance(base, sage.rings.abc.SymbolicRing) and not self._an_element_base_() > 0:
+        if isinstance(base, SymbolicRing) and not self._an_element_base_() > 0:
             warn("When using the Exponential {}, make "
                  "assumptions on the used symbolic elements.\n"
                  "In particular, use something like "
@@ -4336,23 +4330,22 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             if var not in s:
                 return  # this has to end here
 
-            elif s.endswith('^' + var):
+            if s.endswith('^' + var):
                 return self.base()(s.replace('^' + var, '')
                                    .replace('(', '').replace(')', ''))
-            else:
-                return  # end of parsing
+            return  # end of parsing
 
         import operator
         from sage.functions.log import Function_exp
         from sage.symbolic.operators import mul_vararg
 
-        if isinstance(P, sage.rings.abc.SymbolicRing):
+        if isinstance(P, SymbolicRing):
             op = data.operator()
             if op == operator.pow:
                 base, exponent = data.operands()
                 if str(exponent) == var:
                     return base
-                elif exponent.operator() == mul_vararg:
+                if exponent.operator() == mul_vararg:
                     return base ** (exponent / P(var))
             elif isinstance(op, Function_exp):
                 from sage.functions.log import exp
@@ -4360,7 +4353,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
                 exponent = data.operands()[0]
                 if str(exponent) == var:
                     return base
-                elif exponent.operator() == mul_vararg:
+                if exponent.operator() == mul_vararg:
                     return base ** (exponent / P(var))
 
         elif data == 1:  # can be expensive, so let's put it at the end
@@ -4450,7 +4443,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         from sage.structure.element import parent
 
         P = base.parent()
-        if isinstance(P, sage.rings.abc.SymbolicRing):
+        if isinstance(P, SymbolicRing):
             try:
                 base = base.pyobject()
             except TypeError:
@@ -4458,7 +4451,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             else:
                 P = base.parent()
 
-        if P in (ZZ, QQ, AA) or isinstance(P, (sage.rings.abc.SymbolicRing,
+        if P in (ZZ, QQ, AA) or isinstance(P, (SymbolicRing,
                                                sage.rings.abc.RealField,
                                                sage.rings.abc.RealIntervalField,
                                                sage.rings.abc.RealBallField)):
@@ -4642,8 +4635,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
 
         if return_factors:
             return tuple(groups)
-        else:
-            return cartesian_product(groups)
+        return cartesian_product(groups)
 
     def non_growth_group(self):
         r"""

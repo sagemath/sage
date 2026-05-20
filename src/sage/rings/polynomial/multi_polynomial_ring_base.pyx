@@ -29,7 +29,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import (PolynomialRing,
 from sage.rings.polynomial.polydict cimport ETuple
 
 
-cdef class MPolynomialRing_base(CommutativeRing):
+cdef class MPolynomialRing_base(Ring):
     def __init__(self, base_ring, n, names, order):
         """
         Create a polynomial ring in several variables over a commutative ring.
@@ -802,6 +802,20 @@ cdef class MPolynomialRing_base(CommutativeRing):
         s = 'PolynomialRing(%s,%s,%s)' % (Bref, self.ngens(),
                                           self.term_order().magma_str())
         return magma._with_names(s, self.variable_names())
+
+    def _fricas_init_(self) -> str:
+        """
+        Return a string that yields a representation of ``self`` in FriCAS.
+
+        EXAMPLES::
+
+            sage: F = GF(3, 2)
+            sage: P.<x,y> = F[]
+            sage: fricas(P)     # indirect doctest  # optional - fricas
+            MultivariatePolynomial([x, y],FiniteField(3,2))
+        """
+        L = ",".join(f'"{v}"' for v in self.variable_names())
+        return f'MultivariatePolynomial([{L}], {self.base_ring()._fricas_init_()})'
 
     def _gap_init_(self) -> str:
         """
@@ -1860,8 +1874,8 @@ cdef class BooleanPolynomialRing_base(MPolynomialRing_base):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
-        sage: R.<x, y, z> = BooleanPolynomialRing()                                     # needs sage.rings.polynomial.pbori
-        sage: isinstance(R, BooleanPolynomialRing_base)                                 # needs sage.rings.polynomial.pbori
+        sage: R.<x, y, z> = BooleanPolynomialRing()                                     # needs brial
+        sage: isinstance(R, BooleanPolynomialRing_base)                                 # needs brial
         True
 
     By design, there is only one direct implementation subclass::

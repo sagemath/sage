@@ -54,7 +54,8 @@ import sage.rings.infinity
 import sage.rings.rational
 import sage.rings.rational_field
 import sage.rings.ideal
-from sage.categories.basic import EuclideanDomains, DedekindDomains
+from sage.categories.dedekind_domains import DedekindDomains
+from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.noetherian_rings import NoetherianRings
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
@@ -86,7 +87,7 @@ cdef int number_of_integer_rings = 0
 _prev_discrete_gaussian_integer_sampler = (None, None)
 
 
-cdef class IntegerRing_class(CommutativeRing):
+cdef class IntegerRing_class(Ring):
     r"""
     The ring of integers.
 
@@ -404,7 +405,7 @@ cdef class IntegerRing_class(CommutativeRing):
             K, _ = parent(x).subfield(x)
             return K.order(K.gen())
 
-        return CommutativeRing.__getitem__(self, x)
+        return Ring.__getitem__(self, x)
 
     def range(self, start, end=None, step=None):
         """

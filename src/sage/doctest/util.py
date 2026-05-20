@@ -163,20 +163,20 @@ class Timer:
             sage: from tempfile import NamedTemporaryFile
             sage: from os import unlink
             sage: from sage.doctest.util import Timer
-            sage: with NamedTemporaryFile(delete=False, mode="w") as f:
+            sage: with NamedTemporaryFile(mode="w", delete_on_close=False) as f:
             ....:     _ = f.write("1 2 3 4 5")
-            sage: cputime = Timer()._proc_stat_cpu_seconds(f.name)
+            ....:     f.close()
+            ....:     cputime = Timer()._proc_stat_cpu_seconds(f.name)
             Traceback (most recent call last):
             ...
             OSError: unable to parse ...
-            sage: os.unlink(f.name)
-            sage: with NamedTemporaryFile(delete=False, mode="w") as f:
+            sage: with NamedTemporaryFile(mode="w", delete_on_close=False) as f:
             ....:     _ = f.write("1 2 3 4 5 6 7 8 9 10 11 12 w x y z 17")
-            sage: cputime = Timer()._proc_stat_cpu_seconds(f.name)
+            ....:     f.close()
+            ....:     cputime = Timer()._proc_stat_cpu_seconds(f.name)
             Traceback (most recent call last):
             ...
             OSError: unable to parse ...
-            sage: os.unlink(f.name)
 
         """
         try:
@@ -887,7 +887,6 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         e.__traceback__ = None  # workaround for https://github.com/python/cpython/pull/129276
         alarm_raised = True
     finally:
-        before_cancel_alarm_elapsed = walltime() - start_time
         cancel_alarm()
         elapsed = walltime() - start_time
         data["elapsed"] = elapsed

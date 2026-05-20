@@ -254,15 +254,15 @@ class BipartiteGraph(Graph):
     #. From an alist file::
 
          sage: import tempfile
-         sage: with tempfile.NamedTemporaryFile(mode='w+t') as f:
+         sage: with tempfile.NamedTemporaryFile(mode='w+t', delete_on_close=False) as f:
          ....:     _ = f.write("7 4 \n 3 4 \n 3 3 1 3 1 1 1 \n\
          ....:                  3 3 3 4 \n 1 2 4 \n 1 3 4 \n 1 0 0 \n\
          ....:                  2 3 4 \n 2 0 0 \n 3 0 0 \n 4 0 0 \n\
          ....:                  1 2 3 0 \n 1 4 5 0 \n 2 4 6 0 \n\
          ....:                  1 2 4 7 \n")
-         ....:     f.flush()
+         ....:     f.close()
          ....:     B = BipartiteGraph(f.name)
-         sage: B.is_isomorphic(H)                                                       # needs sage.modules
+         sage: B.is_isomorphic(H)
          True
 
     #. From a ``graph6`` string::
@@ -1455,9 +1455,15 @@ class BipartiteGraph(Graph):
         """
         return (self.left, self.right)
 
-    def project_left(self):
+    def project_left(self, immutable=None):
         r"""
         Project ``self`` onto left vertices. Edges are 2-paths in the original.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          bipartite graph and its projection will behave the same way.
 
         EXAMPLES::
 
@@ -1465,17 +1471,41 @@ class BipartiteGraph(Graph):
             sage: G = B.project_left()
             sage: G.order(), G.size()
             (10, 10)
-        """
-        G = Graph()
-        G.add_vertices(self.left)
-        for v in G:
-            for u in self.neighbor_iterator(v):
-                G.add_edges(((v, w) for w in self.neighbor_iterator(u)), loops=False)
-        return G
 
-    def project_right(self):
+        TESTS:
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: B = BipartiteGraph(graphs.CycleGraph(4))
+            sage: B.project_left().is_immutable()
+            False
+            sage: B.project_left(immutable=True).is_immutable()
+            True
+            sage: B = BipartiteGraph(graphs.CycleGraph(4), immutable=True)
+            sage: B.project_left().is_immutable()
+            True
+            sage: B.project_left(immutable=False).is_immutable()
+            False
+        """
+        if immutable is None:
+            immutable = self.is_immutable()
+        edges = ((v, w)
+                 for v in self.left
+                 for u in self.neighbor_iterator(v)
+                 for w in self.neighbor_iterator(u)
+                 if v != w)
+        return Graph([self.left, edges], format="vertices_and_edges",
+                     immutable=immutable)
+
+    def project_right(self, immutable=None):
         r"""
         Project ``self`` onto right vertices. Edges are 2-paths in the original.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          bipartite graph and its projection will behave the same way.
 
         EXAMPLES::
 
@@ -1493,13 +1523,29 @@ class BipartiteGraph(Graph):
             [0, 2, 4]
             sage: B.project_right().vertices(sort=True)
             [1, 3, 5]
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: B = BipartiteGraph(graphs.CycleGraph(4))
+            sage: B.project_right().is_immutable()
+            False
+            sage: B.project_right(immutable=True).is_immutable()
+            True
+            sage: B = BipartiteGraph(graphs.CycleGraph(4), immutable=True)
+            sage: B.project_right().is_immutable()
+            True
+            sage: B.project_right(immutable=False).is_immutable()
+            False
         """
-        G = Graph()
-        G.add_vertices(self.right)
-        for v in G:
-            for u in self.neighbor_iterator(v):
-                G.add_edges(((v, w) for w in self.neighbor_iterator(u)), loops=False)
-        return G
+        if immutable is None:
+            immutable = self.is_immutable()
+        edges = ((v, w)
+                 for v in self.right
+                 for u in self.neighbor_iterator(v)
+                 for w in self.neighbor_iterator(u)
+                 if v != w)
+        return Graph([self.right, edges], format="vertices_and_edges",
+                     immutable=immutable)
 
     def plot(self, *args, **kwds):
         r"""
@@ -1770,13 +1816,13 @@ class BipartiteGraph(Graph):
         EXAMPLES::
 
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(mode='w+t') as f:
+            sage: with tempfile.NamedTemporaryFile(mode='w+t', delete_on_close=False) as f:
             ....:     _ = f.write("7 4 \n 3 4 \n 3 3 1 3 1 1 1 \n\
             ....:                 3 3 3 4 \n 1 2 4 \n 1 3 4 \n\
             ....:                 1 0 0 \n 2 3 4 \n 2 0 0 \n 3 0 0 \n\
             ....:                 4 0 0 \n 1 2 3 0 \n 1 4 5 0 \n\
             ....:                 2 4 6 0 \n 1 2 4 7 \n")
-            ....:     f.flush()
+            ....:     f.close()
             ....:     B = BipartiteGraph()
             ....:     B2 = BipartiteGraph(f.name)
             ....:     B.load_afile(f.name)
@@ -1881,7 +1927,7 @@ class BipartiteGraph(Graph):
             [1 1 0 1 0 0 1]
             sage: b = BipartiteGraph(M)
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile() as f:
+            sage: with tempfile.NamedTemporaryFile(delete_on_close=False) as f:
             ....:     b.save_afile(f.name)
             ....:     b2 = BipartiteGraph(f.name)
             sage: b.is_isomorphic(b2)
@@ -1890,27 +1936,27 @@ class BipartiteGraph(Graph):
         TESTS::
 
             sage: import tempfile
-            sage: f = tempfile.NamedTemporaryFile()
-            sage: for order in range(3, 13, 3):                                         # needs sage.combinat
-            ....:     num_chks = int(order / 3)
-            ....:     num_vars = order - num_chks
-            ....:     partition = (list(range(num_vars)), list(range(num_vars, num_vars+num_chks)))
-            ....:     for idx in range(100):
-            ....:         g = graphs.RandomGNP(order, 0.5)
-            ....:         try:
-            ....:             b = BipartiteGraph(g, partition, check=False)
-            ....:             b.save_afile(f.name)
-            ....:             b2 = BipartiteGraph(f.name)
-            ....:             if not b.is_isomorphic(b2):
-            ....:                 print("Load/save failed for code with edges:")
-            ....:                 print(b.edges(sort=True))
-            ....:                 break
-            ....:         except Exception:
-            ....:             print("Exception encountered for graph of order "+ str(order))
-            ....:             print("with edges: ")
-            ....:             g.edges(sort=True)
-            ....:             raise
-            sage: f.close()  # this removes the file
+            sage: with tempfile.NamedTemporaryFile(delete_on_close=False) as f:
+            ....:     for order in range(3, 13, 3):
+            ....:         num_chks = int(order / 3)
+            ....:         num_vars = order - num_chks
+            ....:         partition = (list(range(num_vars)), list(range(num_vars, num_vars+num_chks)))
+            ....:         for idx in range(100):
+            ....:             g = graphs.RandomGNP(order, 0.5)
+            ....:             try:
+            ....:                 b = BipartiteGraph(g, partition, check=False)
+            ....:                 b.save_afile(f.name)
+            ....:                 b2 = BipartiteGraph(f.name)
+            ....:                 if not b.is_isomorphic(b2):
+            ....:                     print("Load/save failed for code with edges:")
+            ....:                     print(b.edges(sort=True))
+            ....:                     break
+            ....:             except Exception:
+            ....:                 print("Exception encountered for graph of order "+ str(order))
+            ....:                 print("with edges: ")
+            ....:                 g.edges(sort=True)
+            ....:                 raise
+
         """
         # open the file
         try:

@@ -1,5 +1,5 @@
-Drinfeld modules
-====================================
+Drinfeld modules and Drinfeld modular forms
+===========================================
 
 SageMath include facilities to manipulate Drinfeld modules and their morphisms. The
 main entry point is the class
@@ -39,5 +39,18 @@ The category of Drinfeld modules
    :maxdepth: 2
 
    sage/categories/drinfeld_modules
+
+Drinfeld Modular Forms
+----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/modular/drinfeld_modform/tutorial
+   sage/modular/drinfeld_modform/ring
+   sage/modular/drinfeld_modform/element
+
+   sage/modular/drinfeld_modform/congroup_gamma0
+
 
 .. include:: ../footer.txt

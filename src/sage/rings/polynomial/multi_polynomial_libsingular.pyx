@@ -660,7 +660,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         Coercion from boolean polynomials, also by index::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: B.<x,y,z> = BooleanPolynomialRing(3)
             sage: P.<x,y,z> = QQ[]
             sage: P(B.gen(0))
@@ -2308,12 +2308,12 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: x/P(3)
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
 
             sage: x/3
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
 
         TESTS::
 

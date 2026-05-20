@@ -512,11 +512,10 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             def build(check):
                 if a.is_zero():
                     return P.zero()
-                else:
-                    return C(self, [a], check=check, construct=construct)
+                return C(self, [a], check=check, construct=construct)
             if P is self:
                 return a
-            elif P is self.base_ring():
+            if P is self.base_ring():
                 build(False)
             elif P == self.base_ring() or self.base_ring().has_coerce_map_from(P):
                 build(True)
@@ -644,8 +643,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             s += self._derivation._repr_()
         if s == "":
             return "untwisted"
-        else:
-            return "twisted by " + s
+        return "twisted by " + s
 
     def _latex_twist(self):
         r"""
@@ -724,7 +722,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             s += ";" + twist
         return s + "\\right]"
 
-    def change_var(self, var):
+    def change_variable_name(self, var):
         r"""
         Return the Ore polynomial ring in variable ``var`` with the same base
         ring, twisting morphism and twisting derivation as ``self``.
@@ -739,9 +737,9 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             sage: Frob = k.frobenius_endomorphism()
             sage: R.<x> = OrePolynomialRing(k,Frob); R
             Ore Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
-            sage: Ry = R.change_var('y'); Ry
+            sage: Ry = R.change_variable_name('y'); Ry
             Ore Polynomial Ring in y over Finite Field in t of size 5^3 twisted by t |--> t^5
-            sage: Ry is R.change_var('y')
+            sage: Ry is R.change_variable_name('y')
             True
         """
         if self._derivation is None:
@@ -750,6 +748,8 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             twist = self._derivation
         return OrePolynomialRing(self.base_ring(), twist, names=var,
                                  sparse=self.__is_sparse, polcast=False)
+
+    change_var = change_variable_name
 
     def characteristic(self):
         r"""
@@ -1109,8 +1109,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         coeffs = [R.random_element(*args, **kwds) for _ in range(degree)]
         if monic:
             return self(coeffs + [R.one()])
-        else:
-            return self(coeffs + [R._random_nonzero_element()])
+        return self(coeffs + [R._random_nonzero_element()])
 
     def random_irreducible(self, degree=2, monic=True, *args, **kwds):
         r"""
