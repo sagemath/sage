@@ -145,6 +145,7 @@ Comprehensive module list
     sage/combinat/q_bernoulli
     sage/combinat/q_analogues
     sage/combinat/sine_gordon
+    sage/combinat/cylindric_shapes
 
 ``sage.combinat.chas``
 ----------------------

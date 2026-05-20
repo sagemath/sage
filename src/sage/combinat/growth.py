@@ -520,12 +520,15 @@ from sage.combinat.words.word import Word
 from sage.combinat.words.words import Words
 from sage.combinat.binary_tree import BinaryTree, BinaryTrees, LabelledBinaryTree
 from sage.combinat.composition import Compositions
+from sage.combinat.cylindric_shapes import CylindricShape, CylindricShapes
 from sage.combinat.partition import _Partitions, Partitions
+from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.skew_partition import SkewPartition
 from sage.combinat.skew_tableau import SkewTableau
 from sage.combinat.core import Core, Cores
 from sage.combinat.k_tableau import WeakTableau, StrongTableau
 from sage.combinat.shifted_primed_tableau import ShiftedPrimedTableau
+from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.misc.latex import latex
 
@@ -2168,12 +2171,22 @@ class Rule(UniqueRepresentation):
             D U = [[2]]
             U D + 1 I = [[1, 1], [2], [2]]
         """
+        # compare multisets of possibly non-hashable, non-sortable objects
+        def equal(s, t):
+            t = list(t)
+            try:
+                for elem in s:
+                    t.remove(elem)
+            except ValueError:
+                return False
+            return not t
+
         if self.has_multiple_edges:
             def check_vertex(w, P, Q):
                 DUw = [v[0] for uw in P.outgoing_edges(w) for v in Q.incoming_edges(uw[1])]
                 UDw = [v[1] for lw in Q.incoming_edges(w) for v in P.outgoing_edges(lw[0])]
                 UDw.extend([w]*self.r)
-                if sorted(DUw) != sorted(UDw):
+                if not equal(DUw, UDw):
                     raise ValueError("D U - U D differs from %s I for vertex %s:\n"
                                      "D U = %s\n"
                                      "U D + %s I = %s"
@@ -2183,7 +2196,7 @@ class Rule(UniqueRepresentation):
                 DUw = [v for uw in P.upper_covers(w) for v in Q.lower_covers(uw)]
                 UDw = [v for lw in Q.lower_covers(w) for v in P.upper_covers(lw)]
                 UDw.extend([w]*self.r)
-                if sorted(DUw) != sorted(UDw):
+                if not equal(DUw, UDw):
                     raise ValueError("D U - U D differs from %s I for vertex %s:\n"
                                      "D U = %s\n"
                                      "U D + %s I = %s"
@@ -4124,7 +4137,6 @@ class RuleRSK(RulePartitions):
         sage: all([G.P_symbol(), G.Q_symbol()] == RSK(pi) for pi, G in l)
         True
     """
-
     def forward_rule(self, y, t, x, content):
         r"""
         Return the output shape given three shapes and the content.
@@ -4721,6 +4733,333 @@ class RuleDomino(Rule):
 
         return z
 
+
+class RuleCylindricRS(Rule):
+    r"""
+    The local growth rule for the cylindric Robinson-Schensted correspondence.
+
+    This rule was introduced by Sergi Elizalde in [Elizalde2025]_.
+    The parameter `r` of the differential poset is 0, therefore the
+    filling is always empty.
+
+    EXAMPLES::
+
+        sage: l_o = [[3,3,1], [3,3,2], [4,3,2], [4,3,3], [5,3,3], [4,3,3], [4,3,2], [3,3,2], [3,2,2], [2,2,2]]
+        sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+        sage: l_i = CRS(labels=l_o).in_labels()
+        sage: l_i
+        [[3, 3, 1],
+         [3, 2, 1],
+         [3, 1, 1],
+         [2, 1, 1],
+         [2, 1, 0],
+         [1, 1, 0],
+         [1, 1, 1],
+         [2, 1, 1],
+         [2, 2, 1],
+         [2, 2, 2]]
+
+        sage: from sage.combinat.cylindric_shapes import CylindricShapes
+        sage: S = CylindricShapes(3, 2)
+        sage: CRS(filling={}, labels=l_i).out_labels() == [S(mu) for mu in l_o]
+        True
+
+    Check Figure 15::
+
+        sage: l = [[-1,-1,-2],[0,-1,-2],[0,-1,-1],[1,-1,-1],[1,0,-1],[1,1,-1],[2,1,-1],[2,2,-1],[2,2,0]]
+        sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=3)
+        sage: view(CRS(filling={}, labels=l[::-1] + l[1:]))  # not tested
+    """
+    def __init__(self, d, L):
+        """
+        Initialize the rule.
+
+        EXAMPLES::
+
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: TestSuite(CRS).run()
+        """
+        self._d = d
+        self._L = L
+        self._P = CylindricShapes(d, L)
+        self.zero = self._P.zero()
+        self.r = 0
+
+    def normalize_vertex(self, v):
+        """
+        Convert a list or tuple into a ``CylindricShape``.
+
+        EXAMPLES::
+
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: CRS.normalize_vertex([1, 1, 0])
+            [1, 1, 0]
+        """
+        if isinstance(v, CylindricShape):
+            return v
+        return self._P(v)
+
+    def vertices(self, n):
+        r"""
+        Return the vertices of the dual graded graph on level ``n``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: CRS.vertices(1)
+            [[1, 1, -1], [1, 0, 0]]
+        """
+        d = self._d
+        L = self._L
+        v = []
+        for la_d in range((n - L*(d-1)) // d, (n // d) + 1):
+            for la in Partitions(n - d * la_d, max_length=d - 1, max_part=L):
+                la0 = [e + la_d for e in la] + [la_d]*(d-len(la))
+                v.append(self._P(la0))
+        return v
+
+    def is_P_edge(self, v, w):
+        r"""
+        Return whether ``(v, w)`` is a `P`-edge of ``self``.
+
+        ``(v, w)`` is an edge if ``w`` is obtained from ``v`` by
+        adding a cell.
+
+        EXAMPLES::
+
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=4, L=3)
+            sage: CRS._check_duality(5)
+        """
+        if self.rank(w) != self.rank(v) + 1:
+            return False
+        return v <= w
+
+    is_Q_edge = is_P_edge
+
+    def forward_rule(self, y, t, x, content=None):
+        """
+        Return the output shape given three shapes and the content.
+
+        INPUT:
+
+        - ``y``, ``t``, ``x`` -- three partitions from a cell in a
+          growth diagram, labelled as::
+
+              t x
+              y
+
+        - ``content`` -- ignored
+
+        See rules (F1) and (F2) in [Elizalde2025]_.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: S = CylindricShapes(3, 2)
+            sage: CRS.forward_rule(S([2, 1, 0]), S([1, 1, 0]), S([1, 1, 1]))
+            [2, 1, 1]
+
+            sage: CRS.forward_rule(S([2, 1, 1]), S([1, 1, 1]), S([2, 1, 1]))
+            [2, 2, 1]
+        """
+        if x != y:
+            return x.union(y)
+
+        i = next(i for i in range(self._P._d) if x._values[i] > t._values[i])
+        return x.add_cell(i + 1)
+
+    def backward_rule(self, y, z, x):
+        r"""
+        Return the output shape given three shapes and the content.
+
+        See rules (B1) and (B2) in [Elizalde2025]_.
+
+        INPUT:
+
+        - ``y``, ``z``, ``x`` -- three cylindric shapes from a cell
+          in a growth diagram, labelled as::
+
+                x
+              y z
+
+        OUTPUT:
+
+        A pair ``(t, 0)``, where `t` is the shape of the fourth shape.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: S = CylindricShapes(3, 2)
+            sage: CRS.backward_rule(S([4, 3, 3]), S([5, 3, 3]), S([4, 3, 3]))
+            ([4, 3, 2], 0)
+
+            sage: CRS.backward_rule(S([3, 2, 2]), S([4, 2, 2]), S([3, 2, 2]))
+            ([3, 2, 1], 0)
+        """
+        if x != y:
+            return x.intersection(y), 0
+
+        i = next(i for i in range(self._P._d) if z._values[i] > x._values[i])
+        return x.remove_cell(i - 1), 0
+
+    def rank(self, rho):
+        """
+        Return the rank of the shape (total number of cells).
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: CRS.rank(CylindricShapes(3, 2)([3,2,1]))
+            6
+        """
+        return sum(rho._values)
+
+
+class RuleBPD(Rule):
+    """
+
+    EXAMPLES:
+
+    Recall that `(j, i)` refers to column `j` and row `i`::
+
+        sage: BPD = GrowthDiagram.rules.BPD()
+        sage: def biword_to_filling(w):
+        ....:     m = max(i for i, _ in w)
+        ....:     return {(j, i): (v if m-i == k else -v) for i in range(m) for j, (k, v) in enumerate(w)}
+
+        sage: w = [(1,3), (3,3), (1,2), (2,2), (1,1)]
+        sage: BPD(biword_to_filling(w)).out_labels()
+        [[],
+         [1, 2, 4, 3],
+         [1, 2, 5, 3, 4],
+         [1, 3, 5, 2, 4],
+         [1, 5, 3, 2, 4],
+         [2, 5, 3, 1, 4],
+         [1, 3, 4, 2],
+         [1, 2, 4, 3],
+         []]
+
+        sage: w = [(1,3), (3,3), (1,3), (2,3), (1,3)]
+        sage: [pi.to_lehmer_cocode() for pi in BPD(biword_to_filling(w)).out_labels()]
+        [[],
+         [0, 0, 0, 1],
+         [0, 0, 0, 1, 1],
+         [0, 0, 0, 2, 1],
+         [0, 0, 0, 2, 1, 1],
+         [0, 0, 0, 3, 1, 1],
+         [0, 0, 0, 2],
+         [0, 0, 0, 1],
+         []]
+    """
+    def __init__(self):
+        r"""
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: BPD = GrowthDiagram.rules.BPD()
+        """
+        self._P = Permutations()
+        self.zero = Permutation([])
+
+    def normalize_vertex(self, v):
+        r"""
+        Convert ``v`` to a `Permutation`.
+        """
+        return self._P(v)
+
+    def latex_vertex(self, v):
+        if v > 0:
+            return latex(v)
+        return latex('')
+
+    def forward_rule(self, mu, pi, sigma, content):
+        r"""
+        Return the output shape given three shapes and the content.
+
+        See Theorem 2.9 of [HuangSon2023]_.
+
+        INPUT:
+
+        - ``mu``, ``pi``, ``sigma`` -- three permutations from a cell in a
+          growth diagram, labelled as::
+
+              pi sigma
+              mu
+
+        - ``content`` -- non-zero integer
+
+        The content of a cell is interpreted as follows:
+
+        - if ``content=k > 0``, it corresponds to `\times_k`,
+        - otherwise, if ``content=-k < 0`` it corresponds to `k`.
+
+        Thus, in every column there is exactly one positive
+        letter, and the absolute values of all letters in a
+        column are the same.
+
+        OUTPUT:
+
+        The fourth permutation according to forward rule.
+
+        EXAMPLES::
+
+            sage: RuleBPD = GrowthDiagram.rules.BPD()
+            sage: P = Permutations()
+            sage: RuleBPD.forward_rule(P([1,3,5,2,4]), P([1,2,4,3,5]), P([1,3,4,2,5]), -2)
+            [1, 5, 3, 2, 4]
+
+            sage: RuleBPD.forward_rule(P([1,5,3,2,4]), P([1,3,4,2,5]), P([1,3,4,2,5]), 1)
+            [2, 5, 3, 1, 4]
+        """
+        k = abs(content)
+        has_cross = (content > 0)
+
+        # Theorem 2.9: I is the set of indices for the horizontal edge pi -> mu
+        # (pi^-1 * mu) represents the transformation; its reduced word contains the indices.
+        mu_inv = mu.inverse()
+        I = set((mu_inv * pi).reduced_word())
+        if not has_cross:
+            if pi == sigma:
+                return mu
+            if pi == mu:
+                return sigma
+
+            # Rule 1c: sigma = pi * t_{alpha, beta} (swap values at positions alpha, beta)
+            t = pi.inverse() * sigma
+            alpha, beta = next(p for p in t.cycle_tuples() if len(p) == 2)
+            # x = min (I^c intersect [alpha, beta))
+            x = next((v for v in range(alpha, beta) if v not in I), None)
+            # A = {j1 < j2 < ...} = {x} union (I^c intersect [beta, infinity))
+            # A will be gradually enlarged
+            A = [] if x is None else [x]
+            curr = beta
+        else:
+            # Case 2: Square has cross x_k
+            # A = I^c = {j1 < j2 < ...}
+            A = []
+            curr = 1
+        # find j_l, j_{l+1} in A with mu^-1(j_l) <= k < mu^-1(j_{l+1})
+        def get_mu_inv(v):
+            return mu_inv[v-1] if v <= len(mu) else v
+        while True:
+            if curr not in I:
+                A.append(curr)
+                if len(A) >= 2:
+                    l, r = A[-2:]
+                    if get_mu_inv(l) <= k < get_mu_inv(r):
+                        jl, jl1 = l, r
+                        break
+            curr += 1
+
+        # rho = mu * t_{jl, jl1}
+        return mu * Permutation((jl, jl1))
+
+
 #####################################################################
 #  Set the rules available from GrowthDiagram.rules.<tab>
 #####################################################################
@@ -4738,6 +5077,8 @@ class Rules:
     RSK = RuleRSK
     Burge = RuleBurge
     Domino = RuleDomino
+    CylindricRS = RuleCylindricRS
+    BPD = RuleBPD
 
 
 GrowthDiagram.rules = Rules

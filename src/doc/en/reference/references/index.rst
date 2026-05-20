@@ -2676,6 +2676,10 @@ REFERENCES:
 .. [EL2002] Ekedahl, Torsten & Laksov, Dan. (2002). *Splitting algebras, Symmetric functions and
             Galois Theory*. J. Algebra Appl. 4, :doi:`10.1142/S0219498805001034`
 
+.. [Elizalde2025] Sergi Elizalde. *Cylindric growth diagrams, walks
+                  in simplices, and exclusion
+                  processes*. :arxiv:`2507.01097`.
+
 .. [EM2001] Pavel Etingof and Xiaoguang Ma.
             *Lecture notes on Cherednik algebras*.
             http://www-math.mit.edu/~etingof/73509.pdf :arxiv:`1001.0432`.
