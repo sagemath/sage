@@ -534,7 +534,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
 
         from sage.structure.category_object import normalize_names
         if nn == 2*ng_gens:
-            names = tuple(list(normalize_names(nn, names)))
+            names = tuple(normalize_names(nn, names))
         elif nn not in (1, ng_gens):
             raise ValueError('there must be %s names' % ng_gens)
         else:
