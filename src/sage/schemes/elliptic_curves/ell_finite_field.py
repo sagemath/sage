@@ -3161,7 +3161,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
     Also try it when `q` is given and ``maximal_order`` is requested::
 
         sage: while True:
-        ....:     q = ZZ(randrange(1, min(50, p)))
+        ....:     q = ZZ(randrange(1, min(50, ceil(p/4))))
         ....:     if QuaternionAlgebra(-q, -p).discriminant() != p:
         ....:         continue
         ....:     E = special_supersingular_curve(F, q)
@@ -3294,8 +3294,10 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
 
             while l.divides(Quat.quaternion_order(lgens).discriminant()):
                 mat = matrix(matrix_of_quat(gen, tors).list() for gen in lgens)
+                ker = mat.left_kernel_matrix()
+                assert ker
 
-                for vec in mat.left_kernel_matrix().change_ring(ZZ):
+                for vec in ker.change_ring(ZZ):
                     gen = sum(c * g for c, g in zip(vec, lgens)) / l
                     lgens.append(gen)
 
