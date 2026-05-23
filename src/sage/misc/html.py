@@ -62,8 +62,7 @@ class HtmlFragment(str, SageObject):
         OutputHtml = display_manager.types.OutputHtml
         if OutputHtml in display_manager.supported_output():
             return OutputHtml(self)
-        else:
-            return display_manager.types.OutputPlainText(self)
+        return display_manager.types.OutputPlainText(self)
 
 
 def math_parse(s):
@@ -103,7 +102,7 @@ def math_parse(s):
         if i == -1:
             # No dollar signs -- definitely done.
             return HtmlFragment(t + s)
-        elif i > 0 and s[i-1] == '\\':
+        if i > 0 and s[i-1] == '\\':
             # A dollar sign with a backslash right before it, so this is a
             # normal dollar sign. If processEscapes is enabled in MathJax, "\$"
             # will do the job. But as we do not assume that, we use the span

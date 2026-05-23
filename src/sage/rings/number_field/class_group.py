@@ -480,11 +480,10 @@ class ClassGroup(AbelianGroupWithValues_class):
         """
         if isinstance(args[0], FractionalIdealClass):
             return self.element_class(self, None, self._number_field.ideal(args[0].ideal()))
-        else:
-            I = self._number_field.ideal(*args, **kwds)
-            if I.is_zero():
-                raise TypeError("The zero ideal is not a fractional ideal")
-            return self.element_class(self, None, I)
+        I = self._number_field.ideal(*args, **kwds)
+        if I.is_zero():
+            raise TypeError("The zero ideal is not a fractional ideal")
+        return self.element_class(self, None, I)
 
     def _ideal_log(self, ideal):
         """
@@ -736,11 +735,10 @@ class SClassGroup(ClassGroup):
         """
         if isinstance(args[0], FractionalIdealClass):
             return self.element_class(self, None, args[0].ideal())
-        else:
-            I = self.number_field().ideal(*args, **kwds)
-            if I.is_zero():
-                raise TypeError("The zero ideal is not a fractional ideal")
-            return self.element_class(self, None, I)
+        I = self.number_field().ideal(*args, **kwds)
+        if I.is_zero():
+            raise TypeError("The zero ideal is not a fractional ideal")
+        return self.element_class(self, None, I)
 
     def _repr_(self):
         r"""

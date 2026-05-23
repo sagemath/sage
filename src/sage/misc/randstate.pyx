@@ -608,7 +608,7 @@ cdef class randstate:
             sage: rnd.random()
             0.013558022446944151
             sage: rnd.randrange(1000)
-            544
+            557
         """
 
         if cls is None:

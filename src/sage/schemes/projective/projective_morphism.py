@@ -1230,9 +1230,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             if ind == (n, n):
                 self.__dehomogenization[ind] = H(F)
                 return self.__dehomogenization[ind]
-            else:
-                self.__dehomogenization[n] = H(F)
-                return self.__dehomogenization[n]
+            self.__dehomogenization[n] = H(F)
+            return self.__dehomogenization[n]
 
     @cached_method
     def is_morphism(self):
@@ -1494,8 +1493,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             raise TypeError("must be over a number field or a number field order")
         if K == QQ:
             return max([K(c).local_height_arch(prec=prec) for f in self for c in f.coefficients()])
-        else:
-            return max([K(c).local_height_arch(i, prec=prec) for f in self for c in f.coefficients()])
+        return max([K(c).local_height_arch(i, prec=prec) for f in self for c in f.coefficients()])
 
     def wronskian_ideal(self):
         r"""
@@ -2161,7 +2159,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                 new_codomain = ProjectiveSpace(L, self.codomain().dimension_relative(), self.codomain().variable_names())
                 H = Hom(new_domain, new_codomain)
             return H(new_f)
-        elif isinstance(K, AlgebraicClosureFiniteField_generic):
+        if isinstance(K, AlgebraicClosureFiniteField_generic):
             self.domain().coordinate_ring()
             # find the degree of the extension containing the coefficients
             c = [v for g in self for v in g.coefficients()]

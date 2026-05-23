@@ -404,8 +404,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         """
         if self._k is None:
             return "The Weyl Character Ring of Type {} with {} coefficients".format(self._cartan_type._repr_(compact=True), self._base_ring)
-        else:
-            return "The Fusion Ring of Type {} and level {} with {} coefficients".format(self._cartan_type._repr_(compact=True), self._k, self._base_ring)
+        return "The Fusion Ring of Type {} and level {} with {} coefficients".format(self._cartan_type._repr_(compact=True), self._k, self._base_ring)
 
     def __call__(self, *args):
         """
@@ -574,7 +573,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 c = ret.inner_product(alphacheck[i])
                 if c == -1:
                     return [0, self._space.zero()]
-                elif c < -1:
+                if c < -1:
                     epsilon = -epsilon
                     ret -= (1 + c) * alpha[i]
                     done = False
@@ -585,10 +584,9 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 if l > k:
                     if l == k + 1:
                         return [0, self._space.zero()]
-                    else:
-                        epsilon = -epsilon
-                        ret = self.affine_reflect(ret, k + 1)
-                        done = False
+                    epsilon = -epsilon
+                    ret = self.affine_reflect(ret, k + 1)
+                    done = False
         return [epsilon, ret]
 
     def affine_reflect(self, wt, k=0):
@@ -661,8 +659,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         """
         if self._style == "coroots":
             return self._demazure_weights(hwv)
-        else:
-            return irreducible_character_freudenthal(hwv)
+        return irreducible_character_freudenthal(hwv)
 
     def _demazure_weights(self, hwv, word='long', debug=False):
         """
@@ -897,8 +894,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         if self._fusion_labels is not None:
             t = tuple([t.inner_product(x) for x in self.simple_coroots()])
             return self._fusion_labels[t]
-        else:
-            return self.irr_repr(t)
+        return self.irr_repr(t)
 
     def cartan_type(self):
         """
@@ -2223,15 +2219,13 @@ class WeightRing(CombinatorialFreeModule):
                 rho = self.parent().space().from_vector_notation(self.parent().space().rho(), style='coroots')
                 inv = self.scale(-1)
                 return (-inv.shift(-rho).demazure([i]).shift(rho) + v * inv.demazure([i])).scale(-1)
-            elif isinstance(i, list):
+            if isinstance(i, list):
                 if not i:
                     return self
-                elif len(i) == 1:
+                if len(i) == 1:
                     return self.demazure_lusztig(i[0], v)
-                else:
-                    return self.demazure_lusztig(i[1:], v).demazure_lusztig(i[:1], v)
-            else:
-                try:
-                    return self.demazure_lusztig(i.reduced_word(), v)
-                except Exception:
-                    raise ValueError("unknown index {}".format(i))
+                return self.demazure_lusztig(i[1:], v).demazure_lusztig(i[:1], v)
+            try:
+                return self.demazure_lusztig(i.reduced_word(), v)
+            except Exception:
+                raise ValueError("unknown index {}".format(i))

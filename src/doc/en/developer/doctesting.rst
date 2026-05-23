@@ -1147,7 +1147,7 @@ under the control of gdb, use the ``--gdb`` flag
 
     $ ./sage -t --gdb \
         src/sage/schemes/elliptic_curves/constructor.py
-    exec gdb --eval-commands="run" --args /home/roed/sage/local/var/lib/sage/venv-python3.9/bin/python3 sage-runtests --serial --timeout=0 --stats-path=/home/roed/.sage/timings2.json --optional=pip,sage,sage_spkg src/sage/schemes/elliptic_curves/constructor.py
+    exec gdb --eval-commands="run" --args /home/roed/sage/venv/bin/python3 sage-runtests --serial --timeout=0 --stats-path=/home/roed/.sage/timings2.json --optional=pip,sage,sage_spkg src/sage/schemes/elliptic_curves/constructor.py
     GNU gdb 6.8-debian
     Copyright (C) 2008 Free Software Foundation, Inc.
     License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -1461,10 +1461,9 @@ new failures, then ``sage -t`` will exit with status code 0 (success).
 Options for testing in virtual environments
 -------------------------------------------
 
-The distribution packages of the modularized Sage library can be tested in virtual environments.
-Sage has infrastructure to create such virtual environments using ``tox``, which is explained
-in detail in :ref:`section-modularized-doctesting`.  Our examples in this section
-refer to this setting, but it applies the same to any user-created virtual environments.
+Sage has infrastructure to test virtual environments using
+``tox``. These examples should apply to any user-created virtual
+environments.
 
 The virtual environments, set up in directories such as
 ``pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi-norequirements``
@@ -1766,22 +1765,3 @@ will be tested in sequence.  Using ``--distribution all`` is equivalent
 to a preset list of ``--distribution`` switches.  With the switch
 ``--fixed-point``, the doctest fixer runs the given distributions until
 no more changes are made.
-
-
-Updating baseline files
------------------------
-
-The modularized distribution packages ``pkgs/sagemath-categories`` and
-``pkgs/sagemath-repl`` contain files ``known-test-failures*.json`` for use
-with the option ``--baseline-stats-path``, see section
-:ref:`section-doctest-auxiliary-files`.
-
-After running the doctesters of the distributions, for example, via
-``sage --fixdoctests``, you can use the test results stored in
-``timings2.json`` files to update the ``known-test-failures*.json`` files.
-This update can be done using the command
-
-.. code-block:: console
-
-    $ ./sage --fixdoctests --no-test                        \
-        --update-known-test-failures --distribution all

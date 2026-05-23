@@ -395,7 +395,6 @@ class DiGraphGenerators:
         A Strongly Regular digraph satisfies the condition `AJ = JA = kJ` where
         `A` is the adjacency matrix::
 
-            sage: # needs sage.combinat sage.modules
             sage: g = digraphs.StronglyRegular(7); g
             Strongly regular digraph: Digraph on 7 vertices
             sage: A = g.adjacency_matrix()*ones_matrix(7)
@@ -1043,16 +1042,15 @@ class DiGraphGenerators:
 
         de Bruijn digraph of degree 2 and diameter 2::
 
-            sage: db = digraphs.DeBruijn(2, 2); db                                      # needs sage.combinat
+            sage: db = digraphs.DeBruijn(2, 2); db
             De Bruijn digraph (k=2, n=2): Looped digraph on 4 vertices
-            sage: db.order(), db.size()                                                 # needs sage.combinat
+            sage: db.order(), db.size()
             (4, 8)
-            sage: db.diameter()                                                         # needs sage.combinat
+            sage: db.diameter()
             2
 
         Building a de Bruijn digraph on a different alphabet::
 
-            sage: # needs sage.combinat
             sage: g = digraphs.DeBruijn(['a', 'b'], 2)
             sage: g.vertices(sort=True)
             ['aa', 'ab', 'ba', 'bb']
@@ -1068,20 +1066,20 @@ class DiGraphGenerators:
 
         Alphabet of null size or words of length zero::
 
-            sage: digraphs.DeBruijn(5, 0)                                               # needs sage.combinat
+            sage: digraphs.DeBruijn(5, 0)
             De Bruijn digraph (k=5, n=0): Looped multi-digraph on 1 vertex
-            sage: digraphs.DeBruijn(0, 0)                                               # needs sage.combinat
+            sage: digraphs.DeBruijn(0, 0)
             De Bruijn digraph (k=0, n=0): Looped multi-digraph on 0 vertices
 
         :issue:`22355`::
 
-            sage: db = digraphs.DeBruijn(2, 2, vertices='strings')                      # needs sage.combinat
-            sage: db.vertices(sort=True)                                                # needs sage.combinat
+            sage: db = digraphs.DeBruijn(2, 2, vertices='strings')
+            sage: db.vertices(sort=True)
             ['00', '01', '10', '11']
             sage: h = digraphs.DeBruijn(2, 2, vertices='integers')
             sage: h.vertices(sort=True)
             [0, 1, 2, 3]
-            sage: db.is_isomorphic(h)                                                   # needs sage.combinat
+            sage: db.is_isomorphic(h)
             True
             sage: digraphs.DeBruijn(0, 0, vertices='integers')
             De Bruijn digraph (k=0, n=0): Looped multi-digraph on 0 vertices
@@ -1121,7 +1119,7 @@ class DiGraphGenerators:
                            loops=True, multiedges=multiedges,
                            immutable=immutable)
 
-        elif vertices == 'integers':
+        if vertices == 'integers':
             d = k if isinstance(k, Integer) else len(list(k))
             if not d:
                 return DiGraph(loops=True, multiedges=True, name=name,
@@ -1130,8 +1128,7 @@ class DiGraphGenerators:
             return digraphs.GeneralizedDeBruijn(d ** n, d, immutable=immutable,
                                                 name=name)
 
-        else:
-            raise ValueError('unknown type for vertices')
+        raise ValueError('unknown type for vertices')
 
     def GeneralizedDeBruijn(self, n, d, immutable=False, name=None):
         r"""
@@ -1311,7 +1308,6 @@ class DiGraphGenerators:
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: K = digraphs.Kautz(2, 3)
             sage: b, D = K.is_isomorphic(digraphs.ImaseItoh(12, 2), certificate=True)
             sage: b
@@ -1411,15 +1407,14 @@ class DiGraphGenerators:
             return DiGraph(edges(), format='list_of_edges',
                            name=name, immutable=immutable)
 
-        elif vertices == 'integers':
+        if vertices == 'integers':
             d = k if isinstance(k, Integer) else (len(list(k)) - 1)
             if d < 1:
                 raise ValueError("degree must be greater than or equal to one")
             return digraphs.ImaseItoh((d + 1) * (d ** (D - 1)), d,
                                       name=name, immutable=immutable)
 
-        else:
-            raise ValueError('unknown type for vertices')
+        raise ValueError('unknown type for vertices')
 
     def RandomDirectedAcyclicGraph(self, n, p, weight_max=None, immutable=False):
         r"""

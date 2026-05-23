@@ -247,7 +247,6 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             ...
             NormalizError: Some error in the normaliz input data detected: Unknown ConeProperty...
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 3, embedding=AA(3)**(1/3))
             sage: p = Polyhedron(vertices=[(0, 0), (1, 1), (a, 3), (-1, a**2)],
@@ -588,7 +587,6 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         Check that :issue:`30248` is fixed, that maps as input works::
 
-            sage: # needs sage.rings.number_field
             sage: q = Polyhedron(backend='normaliz', base_ring=AA,
             ....:                rays=[(0, 0, 1), (0, 1, -1), (1, 0, -1)])
             sage: def make_new_Hrep(h):
@@ -684,6 +682,9 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             ....:     P.vertices(), P.rays(), P.lines(),
             ....:     P.inequalities(), P.equations())
             sage: import PyNormaliz
+            sage: PyNormaliz.NmzCompute(cone, ["VerticesOfPolyhedron", "ExtremeRays",
+            ....:                               "MaximalSubspace", "SupportHyperplanes"])
+            True
             sage: PyNormaliz.NmzIsComputed(cone, "VerticesOfPolyhedron")
             True
             sage: PyNormaliz.NmzIsComputed(cone, "ExtremeRays")
@@ -1253,7 +1254,6 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             sage: P2 == P
             True
 
-            sage: # needs sage.rings.number_field
             sage: P = polytopes.dodecahedron(backend='normaliz')
             sage: P1 = loads(dumps(P))
             sage: P2 = Polyhedron_normaliz(P1.parent(), None, None, P1._normaliz_cone,
@@ -2208,7 +2208,6 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         is equal to 1 = `\chi_{trivial}` (Prop 6.1 [Stap2011]_).
         Here is the computation for the 3-dimensional standard simplex::
 
-            sage: # needs sage.groups
             sage: S = polytopes.simplex(3, backend='normaliz'); S
             A 3-dimensional polyhedron in ZZ^4 defined as the convex hull of 4 vertices
             sage: G = S.restricted_automorphism_group(output='permutation')
@@ -2230,7 +2229,6 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         `\pm(0,0,1),\pm(1,0,1), \pm(0,1,1), \pm(1,1,1)` and let
         G = `\Zmod{2}` act on P as follows::
 
-            sage: # needs sage.groups
             sage: P = Polyhedron(vertices=[[0,0,1], [0,0,-1], [1,0,1], [-1,0,-1],
             ....:                          [0,1,1], [0,-1,-1], [1,1,1], [-1,-1,-1]],
             ....:                backend='normaliz')
@@ -2444,7 +2442,6 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         The `H^*` series of the two-dimensional permutahedron under the action
         of the symmetric group is effective::
 
-            sage: # needs sage.groups
             sage: p3 = polytopes.permutahedron(3, backend='normaliz')
             sage: G = p3.restricted_automorphism_group(output='permutation')
             sage: reflection12 = G([(0,2),(1,4),(3,5)])
@@ -2459,7 +2456,6 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         If the `H^*`-series is not polynomial, then it is not effective::
 
-            sage: # needs sage.groups
             sage: P = Polyhedron(vertices=[[0,0,1], [0,0,-1], [1,0,1], [-1,0,-1],
             ....:                          [0,1,1], [0,-1,-1], [1,1,1], [-1,-1,-1]],
             ....:                backend='normaliz')

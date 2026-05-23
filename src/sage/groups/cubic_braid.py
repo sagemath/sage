@@ -142,8 +142,7 @@ def _reduce_tietze(tietze_list):
         end = tietze_list[i+1:l]
         if first == second:
             return [-first] + middle + end
-        else:
-            return middle + end
+        return middle + end
 
     tietze_list = list(tietze_list)
     l = len(tietze_list)
@@ -1711,7 +1710,7 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             # generators
             # ----------------------------------------------------------------------------------------
             return self._classical_embedding
-        elif self._classical_group is not None:
+        if self._classical_group is not None:
             return self._classical_group
 
         raise ValueError("no classical embedding defined")
@@ -1942,8 +1941,7 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         else:
             if embedded or self._centralizing_element is None:
                 return self._centralizing_matrix
-            else:
-                return self._centralizing_element
+            return self._centralizing_element
 
     # ----------------------------------------------------------------------------------
     # calculating the order by formula

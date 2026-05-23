@@ -192,11 +192,10 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
 
     if res > 0:
         if verbose:
-            print("Found factor in step %d: %d" % (res,sage_int_f))
+            print("Found factor in step %d: %d" % (res, sage_int_f))
         return (True, sage_int_f, sage_int_sigma)
-    elif res == ECM_NO_FACTOR_FOUND:
+    if res == ECM_NO_FACTOR_FOUND:
         if verbose:
             print("Found no factor.")
         return (False, None)
-    else:
-        raise RuntimeError( "ECM lib error" )
+    raise RuntimeError("ECM lib error")

@@ -191,15 +191,14 @@ class Associahedron_class_base:
             # Called from element constructor in ``Associahedron_base``.
             # Alternatively called from ``loads`` in ``loads(dumps(...))``.
             return super().__new__(typ, parent, Vrep, Hrep, **kwds)
-        else:
-            # Not called from element constructor in ``Associahedron_base``.
-            # Return a polyhedron with proper backend (not an associahedron).
-            # Thus e.g. a face of an Associahedron can be initialized as a polyhedron.
-            mro = typ.mro()
-            for typ1 in mro:
-                if typ1 in ancestors_of_associahedron:
-                    return typ1(parent, Vrep, Hrep, **kwds)
-            raise ValueError("could not determine a parent class")
+        # Not called from element constructor in ``Associahedron_base``.
+        # Return a polyhedron with proper backend (not an associahedron).
+        # Thus e.g. a face of an Associahedron can be initialized as a polyhedron.
+        mro = typ.mro()
+        for typ1 in mro:
+            if typ1 in ancestors_of_associahedron:
+                return typ1(parent, Vrep, Hrep, **kwds)
+        raise ValueError("could not determine a parent class")
 
     def __init__(self, parent, Vrep, Hrep, cartan_type=None, **kwds):
         r"""
@@ -309,16 +308,15 @@ def Associahedra(base_ring, ambient_dim, backend='ppl'):
         raise NotImplementedError("base ring must be QQ")
     if backend == 'ppl':
         return Associahedra_ppl(base_ring, ambient_dim, backend)
-    elif backend == 'normaliz':
+    if backend == 'normaliz':
         return Associahedra_normaliz(base_ring, ambient_dim, backend)
-    elif backend == 'cdd':
+    if backend == 'cdd':
         return Associahedra_cdd(QQ, ambient_dim, backend)
-    elif backend == 'polymake':
+    if backend == 'polymake':
         return Associahedra_polymake(base_ring.fraction_field(), ambient_dim, backend)
-    elif backend == 'field':
+    if backend == 'field':
         return Associahedra_field(base_ring, ambient_dim, backend)
-    else:
-        raise ValueError("unknown backend")
+    raise ValueError("unknown backend")
 
 
 class Associahedra_base:

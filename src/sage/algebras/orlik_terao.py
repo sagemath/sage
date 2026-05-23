@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 r"""
 Orlik-Terao Algebras
 """
@@ -131,12 +130,10 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
             sage: OT = M.orlik_terao_algebra(QQ)
             sage: TestSuite(OT).run(elements=OT.basis())
 
-            sage: # needs sage.graphs
             sage: M = matroids.CompleteGraphic(4).ternary_matroid()
             sage: OT = M.orlik_terao_algebra(GF(3)['t'])
             sage: TestSuite(OT).run(elements=OT.basis())
 
-            sage: # needs sage.geometry.polyhedron
             sage: H = hyperplane_arrangements.Catalan(4).cone()
             sage: M = H.matroid()
             sage: OT = M.orlik_terao_algebra()
@@ -147,7 +144,6 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         We check on the matroid associated to the graph with 3 vertices and
         2 edges between each vertex::
 
-            sage: # needs sage.graphs
             sage: G = Graph([[1,2],[1,2],[2,3],[2,3],[1,3],[1,3]], multiedges=True)
             sage: M = Matroid(G).regular_matroid()
             sage: OT = M.orlik_terao_algebra(QQ)
@@ -325,7 +321,6 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         Let us check that `e_{s_1} e_{s_2} \cdots e_{s_k} = e_S` for any
         subset `S = \{ s_1 < s_2 < \cdots < s_k \}` of the groundset::
 
-            sage: # needs sage.graphs
             sage: G = Graph([[1,2],[1,2],[2,3],[3,4],[4,2]], multiedges=True)
             sage: M = Matroid(G).regular_matroid()
             sage: E = M.groundset_list()
@@ -375,7 +370,6 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
             ([2, 5], -OT{0, 2} + OT{0, 5})
             ([4, 5], -OT{3, 4} - OT{3, 5})
 
-            sage: # needs sage.graphs
             sage: M4 = matroids.CompleteGraphic(4).ternary_matroid()
             sage: OT = M4.orlik_terao_algebra()
             sage: OT.subset_image(frozenset({2,3,4}))
@@ -383,7 +377,6 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
 
         An example of a custom ordering::
 
-            sage: # needs sage.graphs
             sage: G = Graph([[3, 4], [4, 1], [1, 2], [2, 3], [3, 5], [5, 6], [6, 3]])
             sage: M = Matroid(G).regular_matroid()
             sage: s = [(5, 6), (1, 2), (3, 5), (2, 3), (1, 4), (3, 6), (3, 4)]
@@ -411,7 +404,6 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: # needs sage.graphs
             sage: G = Graph([[1,2],[1,2],[2,3],[2,3],[1,3],[1,3]], multiedges=True)
             sage: M = Matroid(G).regular_matroid()
             sage: sorted([sorted(c) for c in M.circuits()])
@@ -432,7 +424,6 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
             sage: OT.subset_image(frozenset([1, 5]))
             OT{0, 4}
 
-            sage: # needs sage.graphs
             sage: G = Graph([[1,2],[1,2],[2,3],[3,4],[4,2]], multiedges=True)
             sage: M = Matroid(G).regular_matroid()
             sage: sorted([sorted(c) for c in M.circuits()])
@@ -507,7 +498,6 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: # needs sage.geometry.polyhedron
             sage: H = hyperplane_arrangements.Catalan(2).cone()
             sage: M = H.matroid()
             sage: OT = M.orlik_terao_algebra()
@@ -551,7 +541,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
         sage: M = Matroid(A)
         sage: M.groundset()
         frozenset({0, 1, 2})
-        sage: G = SymmetricGroup(3)                                                     # needs sage.groups
+        sage: G = SymmetricGroup(3)
 
     Calling elements ``g`` of ``G`` on an element `i` of `\{1,2,3\}`
     defines the action we want, but since the groundset is `\{0,1,2\}`
@@ -563,7 +553,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
     Now that we have defined an action we can create the invariant, and
     get its basis::
 
-        sage: # needs sage.groups
         sage: OTG = M.orlik_terao_algebra(QQ, invariant=(G, on_groundset))
         sage: OTG.basis()
         Finite family {0: B[0], 1: B[1]}
@@ -572,7 +561,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
 
     Since it is invariant, the action of any ``g`` in ``G`` is trivial::
 
-        sage: # needs sage.groups
         sage: x = OTG.an_element(); x
         2*B[0] + 2*B[1]
         sage: g = G.an_element(); g
@@ -580,7 +568,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
         sage: g*x
         2*B[0] + 2*B[1]
 
-        sage: # needs sage.groups
         sage: x = OTG.random_element()
         sage: g = G.random_element()
         sage: g*x == x
@@ -589,12 +576,11 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
     The underlying ambient module is the Orlik-Terao algebra,
     which is accessible via :meth:`ambient()`::
 
-        sage: M.orlik_terao_algebra(QQ) is OTG.ambient()                                # needs sage.groups
+        sage: M.orlik_terao_algebra(QQ) is OTG.ambient()
         True
 
     For a bigger example, here we will look at the rank-`3` braid matroid::
 
-        sage: # needs sage.groups
         sage: A = matrix([[1,1,1,0,0,0],[-1,0,0,1,1,0],
         ....:             [0,-1,0,-1,0,1],[0,0,-1,0,-1,-1]]); A
         [ 1  1  1  0  0  0]
@@ -620,7 +606,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: A = matrix([[1,1,1,0,0,0],[-1,0,0,1,1,0],[0,-1,0,-1,0,1],
             ....:             [0,0,-1,0,-1,-1]])
             sage: M = Matroid(A);
@@ -683,7 +668,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         TESTS::
 
-            sage: # needs sage.groups
             sage: A = matrix([[1,1,0],[-1,0,1],[0,-1,-1]])
             sage: M = Matroid(A)
             sage: G = SymmetricGroup(3)
@@ -712,7 +696,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: A = matrix([[1,1,0],[-1,0,1],[0,-1,-1]])
             sage: M = Matroid(A)
             sage: M.groundset()
@@ -735,7 +718,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         We also check that the ordering is respected::
 
-            sage: # needs sage.groups
             sage: fset = frozenset({1,2})
             sage: OT1 = M.orlik_terao_algebra(QQ)
             sage: OT1.subset_image(fset)
@@ -744,7 +726,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
             sage: OT2.subset_image(fset)
             OT{1, 2}
 
-            sage: # needs sage.groups
             sage: OTG2 = M.orlik_terao_algebra(QQ,
             ....:                              invariant=(G,on_groundset),
             ....:                              ordering=range(2,-1,-1))
@@ -753,7 +734,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         This choice of ``g`` fixes these elements::
 
-            sage: # needs sage.groups
             sage: OTG._basis_action(g, fset)
             -OT{0, 1} + OT{0, 2}
             sage: OTG2._basis_action(g, fset)
@@ -761,7 +741,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         TESTS::
 
-            sage: # needs sage.groups
             sage: [on_groundset(g, e) for e in M.groundset()]
             [0, 2, 1]
             sage: [OTG._groundset_action(g,e) for e in M.groundset()]

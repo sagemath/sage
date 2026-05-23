@@ -288,8 +288,7 @@ class FSymBases(Category_realization_of_parent):
             from sage.sets.family import Family
             if degree is None:
                 return Family(self._indices, self.monomial)
-            else:
-                return Family(StandardTableaux(degree), self.monomial)
+            return Family(StandardTableaux(degree), self.monomial)
 
         @cached_method
         def one_basis(self):

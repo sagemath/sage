@@ -543,7 +543,7 @@ def is_distance_regular(G, parameters=False):
 
         sage: graphs.PathGraph(2).is_distance_regular(parameters=True)
         ([1, None], [None, 1])
-        sage: graphs.Tutte12Cage().is_distance_regular(parameters=True)                 # needs networkx
+        sage: graphs.Tutte12Cage().is_distance_regular(parameters=True)
         ([3, 2, 2, 2, 2, 2, None], [None, 1, 1, 1, 1, 1, 3])
     """
     cdef int i, u, v, d, b, c, k
@@ -2016,7 +2016,8 @@ def radius_DHV(G):
         # vertex visited in simple_BFS), and compute its BFS distances.
         # By definition of antipode, we have ecc_antipode >= ecc_source.
         antipode = waiting_list[n-1]
-        ecc_antipode = simple_BFS(sd, antipode, distances, NULL, waiting_list, seen)
+        ecc_antipode = simple_BFS(sd, antipode, distances,
+                                  NULL, waiting_list, seen)
 
         # 3) Use distances from antipode to improve eccentricity lower bounds.
         # We also determine the next source

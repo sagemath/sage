@@ -325,14 +325,13 @@ class HyperbolicPoint(Element):
         """
         if isinstance(other, HyperbolicIsometry):
             return other(self)
-        elif isinstance(other, Matrix):
+        if isinstance(other, Matrix):
             # TODO: Currently the __mul__ from the matrices gets called first
             #    and returns an error instead of calling this method
             A = self.parent().get_isometry(other)
             return A(self)
-        else:
-            raise TypeError("unsupported operand type(s) for *:"
-                            "{0} and {1}".format(self, other))
+        raise TypeError("unsupported operand type(s) for *:"
+                        "{0} and {1}".format(self, other))
 
     #######################
     # Setters and Getters #

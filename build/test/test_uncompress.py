@@ -15,7 +15,9 @@ Test sage extraction of tarball / zip files
 
 from __future__ import print_function, absolute_import
 
+import io
 import os
+import tarfile
 import unittest
 import shutil
 import tempfile
@@ -50,6 +52,15 @@ class UncompressTarFileTestCase(unittest.TestCase):
             'tar', 'czf', self.filename, 'content', 'foo'
         ], cwd=src)
 
+    def make_malicious_tarfile(self, member_name):
+        filename = os.path.join(self.tmp, 'unsafe.tar')
+        data = b'unsafe content'
+        with tarfile.open(filename, mode='w') as archive:
+            info = tarfile.TarInfo(member_name)
+            info.size = len(data)
+            archive.addfile(info, io.BytesIO(data))
+        return filename
+
     def test_can_read(self):
         self.assertTrue(SageTarFile.can_read(self.filename))
         self.assertFalse(SageZipFile.can_read(self.filename))
@@ -63,6 +74,23 @@ class UncompressTarFileTestCase(unittest.TestCase):
         subprocess.check_call([
             'diff', '-r', 'src', 'dst'
         ], cwd=self.tmp)
+
+    def test_tarball_skips_parent_traversal(self):
+        filename = self.make_malicious_tarfile('../escape')
+        dst = os.path.join(self.tmp, 'dst')
+        os.mkdir(dst)
+        with open_archive(filename) as archive:
+            archive.extractall(path=dst, members=archive.names)
+        self.assertFalse(os.path.exists(os.path.join(self.tmp, 'escape')))
+
+    def test_tarball_skips_absolute_paths(self):
+        outside = os.path.join(self.tmp, 'escape')
+        filename = self.make_malicious_tarfile(outside)
+        dst = os.path.join(self.tmp, 'dst')
+        os.mkdir(dst)
+        with open_archive(filename) as archive:
+            archive.extractall(path=dst, members=archive.names)
+        self.assertFalse(os.path.exists(outside))
 
 
 class UncompressZipFileTestCase(unittest.TestCase):

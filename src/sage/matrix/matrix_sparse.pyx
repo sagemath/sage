@@ -104,7 +104,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cdef long _hash_(self) except -1:
+    cdef Py_hash_t _hash_(self) except -1:
         """
         Return the hash of this matrix.
 
@@ -155,7 +155,8 @@ cdef class Matrix_sparse(matrix.Matrix):
         cdef long C[5]
         self.get_hash_constants(C)
 
-        cdef long h = 0, k, l
+        cdef Py_hash_t h = 0
+        cdef long k, l
         cdef Py_ssize_t i, j
         for ij, x in D.items():
             sig_check()
@@ -368,7 +369,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         Rich comparison.
 
@@ -383,17 +384,17 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: M != Mp
             True
         """
-        other = <Matrix_sparse>right
+        _other = <Matrix_sparse>other
         if op == Py_EQ:
-            return self._dict() == other._dict()
+            return self._dict() == _other._dict()
         if op == Py_NE:
-            return self._dict() != other._dict()
+            return self._dict() != _other._dict()
         cdef Py_ssize_t i, j
         # Parents are equal, so dimensions of self and other are equal
         for i in range(self._nrows):
             for j in range(self._ncols):
                 lij = self.get_unsafe(i, j)
-                rij = other.get_unsafe(i, j)
+                rij = _other.get_unsafe(i, j)
                 r = richcmp_item(lij, rij, op)
                 if r is not NotImplemented:
                     return bool(r)
@@ -669,7 +670,6 @@ cdef class Matrix_sparse(matrix.Matrix):
 
             sage: m = matrix(ZZ, 10000, {(1,2): 17}, sparse=True)
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: f = lambda x: k(x)
             sage: n = m.apply_map(f)
@@ -1186,7 +1186,6 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         Check that the bug in :issue:`13854` has been fixed::
 
-            sage: # needs sage.combinat sage.libs.singular
             sage: A.<x,y> = FreeAlgebra(QQ, 2)
             sage: P.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')
             sage: M = Matrix([[x]], sparse=True)

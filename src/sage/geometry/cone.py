@@ -128,7 +128,6 @@ You can also perform these checks::
 
 You can work with subcones that form faces of other cones::
 
-    sage: # needs sage.graphs
     sage: face = four_rays.faces(dim=2)[0]
     sage: face
     2-d face of 3-d cone in 3-d lattice N
@@ -145,7 +144,6 @@ You can work with subcones that form faces of other cones::
 
 If you need to know inclusion relations between faces, you can use ::
 
-    sage: # needs sage.graphs
     sage: L = four_rays.face_lattice()
     sage: [len(s) for s in L.level_sets()]
     [1, 4, 4, 1]
@@ -494,18 +492,17 @@ def _Cone_from_PPL(cone, lattice, original_rays=None):
     if (original_rays is not None and not lines and
         len(rays) == len(original_rays)):
         return ConvexRationalPolyhedralCone(original_rays, lattice, PPL=cone)
-    else:
-        rays = [ray.coefficients() for ray in rays]
-        for line in lines:
-            rays.append(line.coefficients())
-            rays.append(-vector(ZZ, rays[-1]))
-        try:
-            for i, ray in enumerate(rays):
-                rays[i] = lattice(ray)
-                rays[i].set_immutable()
-        except TypeError:
-            rays = normalize_rays(rays, lattice)
-        return ConvexRationalPolyhedralCone(rays, lattice, PPL=cone)
+    rays = [ray.coefficients() for ray in rays]
+    for line in lines:
+        rays.append(line.coefficients())
+        rays.append(-vector(ZZ, rays[-1]))
+    try:
+        for i, ray in enumerate(rays):
+            rays[i] = lattice(ray)
+            rays[i].set_immutable()
+    except TypeError:
+        rays = normalize_rays(rays, lattice)
+    return ConvexRationalPolyhedralCone(rays, lattice, PPL=cone)
 
 
 def _ambient_space_point(body, data):
@@ -794,17 +791,17 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         self._rays = PointCollection(rays, lattice)
         self._lattice = lattice
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         INPUT:
 
-        - ``right`` -- anything
+        - ``other`` -- anything
 
         OUTPUT: boolean
 
-        There is equality if ``right`` is of the same type as
+        There is equality if ``other`` is of the same type as
         ``self``, they have the same ambient lattices, and their
         rays are the same and listed in the same order.
 
@@ -822,14 +819,14 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
             sage: c2 is c3
             False
         """
-        if type(self) is not type(right):
+        if type(self) is not type(other):
             return NotImplemented
 
         # We probably do need to have explicit comparison of lattices here
         # since if one of the collections does not live in a toric lattice,
         # comparison of rays may miss the difference.
         return richcmp((self.lattice(), self.rays()),
-                       (right.lattice(), right.rays()), op)
+                       (other.lattice(), other.rays()), op)
 
     def __hash__(self):
         r"""
@@ -1280,6 +1277,27 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
 
         return L.span(self, base_ring)
 
+    def _macaulay2_init_(self, macaulay2=None):
+        """
+        Conversion to Macaulay2.
+
+        EXAMPLES::
+
+            sage: # optional - macaulay2
+            sage: m2 = macaulay2
+            sage: c = Cone([(3,4), (0,1)])
+            sage: m2(c).rays()  # indirect doctest
+            | 0 3 |
+            | 1 4 |
+            sage: m2(c) == c._macaulay2_init_()
+            True
+        """
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2 as m2_default
+            macaulay2 = m2_default
+
+        return macaulay2(matrix([tuple(v) for v in self._rays]).transpose())
+
 
 def classify_cone_2d(ray0, ray1, check=True):
     r"""
@@ -1530,6 +1548,30 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                 gs.insert( PPL_ray(Linear_Expression(r,0)) )
             self._PPL_C_Polyhedron = C_Polyhedron(gs)
         return self._PPL_C_Polyhedron
+
+    def _macaulay2_init_(self, macaulay2=None):
+        """
+        Conversion to Macaulay2.
+
+        EXAMPLES::
+
+            sage: # optional - macaulay2
+            sage: C = Cone([[1,1],[1,2]])
+            sage: m2 = macaulay2
+            sage: c = m2(C); c.rays()  # indirect doctest
+            | 1 1 |
+            | 1 2 |
+            sage: c.dualCone().rays()  # random
+            | 2  -1 |
+            | -1 1  |
+            sage: c == C._macaulay2_init_()
+            True
+        """
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2 as m2_default
+            macaulay2 = m2_default
+
+        return super()._macaulay2_init_(macaulay2).coneFromVData()
 
     def __contains__(self, point) -> bool:
         r"""
@@ -1881,17 +1923,17 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         rc = super().__neg__()
         return ConvexRationalPolyhedralCone(rc.rays(), rc.lattice())
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         INPUT:
 
-        - ``right`` -- anything
+        - ``other`` -- anything
 
         OUTPUT: boolean
 
-        There is equality if ``self`` and ``right`` are cones of any
+        There is equality if ``self`` and ``other`` are cones of any
         kind in the same lattice with the same rays listed in the
         same order.
 
@@ -1909,12 +1951,11 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: c2 is c3
             False
         """
-        if isinstance(right, sage.geometry.abc.ConvexRationalPolyhedralCone):
-            # We don't care about particular type of right in this case
+        if isinstance(other, sage.geometry.abc.ConvexRationalPolyhedralCone):
+            # We don't care about particular type of other in this case
             return richcmp((self.lattice(), self.rays()),
-                           (right.lattice(), right.rays()), op)
-        else:
-            return NotImplemented
+                           (other.lattice(), other.rays()), op)
+        return NotImplemented
 
     def _latex_(self):
         r"""
@@ -1932,9 +1973,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         if self.ambient() is self:
             return r"\sigma^{%d}" % self.dim()
-        else:
-            return r"\sigma^{%d} \subset %s" % (self.dim(),
-                                                latex(self.ambient()))
+        return r"\sigma^{%d} \subset %s" % (self.dim(),
+                                            latex(self.ambient()))
 
     def _repr_(self):
         r"""
@@ -2045,7 +2085,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: octant = Cone([(1,0,0), (0,1,0), (0,0,1)])
             sage: octant.adjacent()
             ()
@@ -2102,15 +2141,14 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             if adjacent:
                 adjacent.remove(L(self))
             return self._sort_faces(adjacent)
-        elif self.dim() == self._ambient.dim():
+        if self.dim() == self._ambient.dim():
             # Special treatment relevant for fans
             for facet in facets:
                 adjacent.update(facet.facet_of())
             if adjacent:
                 adjacent.remove(self)
             return self._sort_faces(adjacent)
-        else:
-            return ()
+        return ()
 
     def ambient(self):
         r"""
@@ -2126,7 +2164,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: cone.ambient() is cone
             True
 
-            sage: # needs sage.graphs
             sage: face = cone.faces(1)[0]
             sage: face
             1-d face of 3-d cone in 3-d lattice N
@@ -2324,7 +2361,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         If we want to operate with this ray as a face of the cone, we need to
         embed it first::
 
-            sage: # needs sage.graphs
             sage: e_ray = c.embed(ray)
             sage: e_ray
             1-d face of 3-d cone in 3-d lattice N
@@ -2440,7 +2476,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         However, you can achieve some of this functionality using
         :meth:`facets`, :meth:`facet_of`, and :meth:`adjacent` methods::
 
-            sage: # needs sage.graphs
             sage: face = quadrant.faces(1)[0]
             sage: face
             1-d face of 2-d cone in 2-d lattice N
@@ -2460,7 +2495,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         Note that if ``cone`` is a face of ``supercone``, then the face
         lattice of ``cone`` consists of (appropriate) faces of ``supercone``::
 
-            sage: # needs sage.combinat sage.graphs
             sage: supercone = Cone([(1,2,3,4), (5,6,7,8),
             ....:                   (1,2,4,8), (1,3,9,7)])
             sage: supercone.face_lattice()
@@ -2539,8 +2573,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                         # thought of as faces of a single cone, not of a fan.
                         face._containing_cone_facets = facets
                         return face
-                    else:
-                        return self
+                    return self
 
                 # Obtain a modified version of the incidence matrix,
                 # with rows corresponding to rays in subspace removed.
@@ -2665,7 +2698,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         In the case of non-strictly convex cones even faces of small
         nonnegative dimension may be missing::
 
-            sage: # needs sage.graphs
             sage: halfplane = Cone([(1,0), (0,1), (-1,0)])
             sage: halfplane.faces(0)
             ()
@@ -2722,9 +2754,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                                     self.face_lattice().level_sets()))
         if dim is None:
             return self._faces
-        else:
-            lsd = self.linear_subspace().dimension()
-            return self._faces[dim - lsd] if lsd <= dim <= self.dim() else ()
+        lsd = self.linear_subspace().dimension()
+        return self._faces[dim - lsd] if lsd <= dim <= self.dim() else ()
 
     @cached_method
     def facet_normals(self):
@@ -2849,7 +2880,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: octant = Cone([(1,0,0), (0,1,0), (0,0,1)])
             sage: octant.facet_of()
             ()
@@ -3196,7 +3226,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         We check that :issue:`18613` is fixed::
 
-            sage: # needs sage.graphs sage.groups
             sage: K = cones.trivial(0)
             sage: K.is_isomorphic(K)
             True
@@ -3309,6 +3338,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
     is_compact = is_trivial
 
+    @cached_method
     def is_strictly_convex(self) -> bool:
         r"""
         Check if ``self`` is strictly convex.
@@ -3316,6 +3346,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         A cone is called **strictly convex** if it does not contain any lines.
 
         OUTPUT: ``True`` if ``self`` is strictly convex, ``False`` otherwise
+
+        .. SEEALSO::
+
+            :meth:`is_pointed`
 
         EXAMPLES::
 
@@ -3326,14 +3360,60 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: cone2.is_strictly_convex()
             False
         """
-        if "_is_strictly_convex" not in self.__dict__:
-            convex = True
-            for gs in self._PPL_cone().minimized_generators():
-                if gs.is_line():
-                    convex = False
-                    break
-            self._is_strictly_convex = convex
-        return self._is_strictly_convex
+        return all(not gs.is_line()
+                   for gs in self._PPL_cone().minimized_generators())
+
+    def is_pointed(self) -> bool:
+        r"""
+        Check if ``self`` is pointed.
+
+        A convex cone is said to be *pointed* if (and only if) it
+        contains no lines. For a closed convex cone, this is
+        equivalent to saying that the origin is the only point
+        contained in both the cone and its negation.
+
+        This is an alias for :meth:`is_strictly_convex`. The "pointed"
+        terminology is however standard in many settings, and for
+        example is consistent with the ``isPointed()`` function in
+        Macaulay2.
+
+        OUTPUT:
+
+        ``True`` if :meth:`lineality` is zero, and ``False`` otherwise.
+
+        .. SEEALSO::
+
+            :meth:`is_strictly_convex`,
+            :meth:`is_solid`,
+            :meth:`is_proper`
+
+        EXAMPLES:
+
+        The Barker-Foran cone must be pointed, because it is self-dual
+        under the canonical dual space identification::
+
+            sage: cones.barker_foran().is_pointed()
+            True
+
+        The nonnegative orthant and trivial cone are always pointed::
+
+            sage: n = ZZ.random_element(10)
+            sage: L = ToricLattice(n)
+            sage: cones.nonnegative_orthant(n, lattice=L).is_pointed()
+            True
+            sage: cones.trivial(lattice=L).is_pointed()
+            True
+
+        TESTS:
+
+        Random test for the claim made in the ``OUTPUT`` block::
+
+            sage: K = random_cone(max_ambient_dim = 8)
+            sage: K.is_pointed() == K.lineality().is_zero()
+            True
+
+        """
+        return self.is_strictly_convex()
 
     @cached_method
     def linear_subspace(self):
@@ -3373,8 +3453,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         - :class:`tuple` of primitive vectors in the lattice of ``self``
           giving directions of lines that span the linear subspace of
-          ``self``. These lines are arbitrary, but fixed. If you do not care
-          about the order, see also :meth:`line_set`.
+          ``self``. These lines are arbitrary, but fixed and orthogonal
+          to one another.
 
         EXAMPLES::
 
@@ -3387,6 +3467,49 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N(0, 1),
             N(1, 0)
             in 2-d lattice N
+
+        TESTS:
+
+        Ensure that the returned generators are mutually
+        orthogonal. This is not promised by the PPL documentation, but
+        it seems to hold in practice. (There is February 2026 thread
+        about it on the ppl-devel mailing list that received no
+        responses.) By testing it here, we "guarantee" that it is a
+        safe assumption to make in user code::
+
+            sage: K = random_cone(max_ambient_dim=12, max_rays=10)
+            sage: V = K.lattice().vector_space()
+            sage: L = [V(l) for l in K.lines()]
+            sage: all( L[i].inner_product(L[j]).is_zero()
+            ....:      for i in range(len(L))
+            ....:      for j in range(len(L))
+            ....:      if i != j )
+            True
+
+            sage: K = random_cone(strictly_convex=False,
+            ....:                 min_ambient_dim=4,
+            ....:                 max_ambient_dim=12,
+            ....:                 max_rays=15)
+            sage: V = K.lattice().vector_space()
+            sage: L = [V(l) for l in K.lines()]
+            sage: all( L[i].inner_product(L[j]).is_zero()
+            ....:      for i in range(len(L))
+            ....:      for j in range(len(L))
+            ....:      if i != j )
+            True
+
+            sage: K = random_cone(strictly_convex=False,
+            ....:                 min_ambient_dim=8,
+            ....:                 max_ambient_dim=12,
+            ....:                 min_rays=4, max_rays=15)
+            sage: V = K.lattice().vector_space()
+            sage: L = [V(l) for l in K.lines()]
+            sage: all( L[i].inner_product(L[j]).is_zero()
+            ....:      for i in range(len(L))
+            ....:      for j in range(len(L))
+            ....:      if i != j )
+            True
+
         """
         lines = []
         for g in self._PPL_cone().minimized_generators():
@@ -3818,8 +3941,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             self._split_ambient_lattice()
         if args or kwds:
             return self._sublattice(*args, **kwds)
-        else:
-            return self._sublattice
+        return self._sublattice
 
     def sublattice_quotient(self, *args, **kwds):
         r"""
@@ -3839,7 +3961,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: C2_Z2 = Cone([(1,0), (1,2)])     # C^2/Z_2
             sage: c1, c2 = C2_Z2.facets()
             sage: c2.sublattice_quotient()
@@ -3857,8 +3978,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             self._sublattice_quotient = self.lattice() / self.sublattice()
         if args or kwds:
             return self._sublattice_quotient(*args, **kwds)
-        else:
-            return self._sublattice_quotient
+        return self._sublattice_quotient
 
     def sublattice_complement(self, *args, **kwds):
         r"""
@@ -3918,8 +4038,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             self._split_ambient_lattice()
         if args or kwds:
             return self._sublattice_complement(*args, **kwds)
-        else:
-            return self._sublattice_complement
+        return self._sublattice_complement
 
     def orthogonal_sublattice(self, *args, **kwds):
         r"""
@@ -3983,8 +4102,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                     U.rows()[len(basis):])
         if args or kwds:
             return self._orthogonal_sublattice(*args, **kwds)
-        else:
-            return self._orthogonal_sublattice
+        return self._orthogonal_sublattice
 
     def relative_quotient(self, subcone):
         r"""
@@ -4122,7 +4240,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: rho = Cone([(1,1,1,3), (1,-1,1,3), (-1,-1,1,3), (-1,1,1,3)])
             sage: rho.orthogonal_sublattice()
             Sublattice <M(0, 0, 3, -1)>
@@ -4140,7 +4257,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         Different codimension::
 
-            sage: # needs sage.graphs
             sage: rho = Cone([[1,-1,1,3],[-1,-1,1,3]])
             sage: sigma = rho.facets()[0]
             sage: sigma.orthogonal_sublattice()
@@ -4622,7 +4738,9 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         .. SEEALSO::
 
-            :meth:`is_strictly_convex`, :meth:`is_solid`
+            :meth:`is_strictly_convex`,
+            :meth:`is_pointed`,
+            :meth:`is_solid`
 
         EXAMPLES:
 
@@ -5663,7 +5781,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The positive operators on a permuted cone can be obtained by
         conjugation::
 
-            sage: # needs sage.groups
             sage: K = random_cone(max_ambient_dim=3)
             sage: L = ToricLattice(K.lattice_dim()**2)
             sage: p = SymmetricGroup(K.lattice_dim()).random_element().matrix()
@@ -5793,6 +5910,68 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         # And finally convert its rays back to matrix representations.
         M = MatrixSpace(F, m, n)
         return [ M(v.list()) for v in pi_cone ]
+
+    def _cross_positive_operators_dual(self):
+        r"""
+        Return the dual cone of the cross-positive operators on
+        ``self`` under the matrix <-> long-vector isometry.
+
+        In :meth:`cross_positive_operators_gens` we compute the cone
+        of cross positive operators on ``self`` by taking the dual of
+        its dual. This method computes that dual. Matrices cannot
+        generate cones in Sage, so long vectors are used as proxies in
+        this step. The matrix <-> long-vector map is an isometry, so
+        everything works out the same in the end.
+
+        The intermediate dual cone of long vectors turns out to be
+        useful in one of the tests for :meth:`is_reducible`, so it has
+        been factored out for convenience.
+
+        REFERENCES:
+
+        - [Or2018b]_
+
+        EXAMPLES:
+
+        For the nonnegative orthant generated by the standard basis
+        vectors `e_{i}`, we should return the cone generated by the
+        long-vector counterparts of all `e_{i}e_{j}^{T}` such that
+        `e_{i}` and `e_{j}` are orthogonal. There are `n^{2} - n` such
+        pairs::
+
+            sage: K = cones.nonnegative_orthant(3)
+            sage: K._cross_positive_operators_dual().rays()
+            N(0, 0, 0, 1, 0, 0, 0, 0, 0),
+            N(0, 0, 0, 0, 0, 0, 1, 0, 0),
+            N(0, 1, 0, 0, 0, 0, 0, 0, 0),
+            N(0, 0, 0, 0, 0, 0, 0, 1, 0),
+            N(0, 0, 1, 0, 0, 0, 0, 0, 0),
+            N(0, 0, 0, 0, 0, 1, 0, 0, 0)
+            in 9-d lattice N
+        """
+        # These tensor products contain generators for the dual cone of
+        # the cross-positive operators.
+        tensor_products = ( s.tensor_product(x)
+                            for (x,s) in self.discrete_complementarity_set() )
+
+        # Turn our matrices into long vectors (lists of coordinates).
+        vectors = ( m.list() for m in tensor_products )
+
+        check = True
+        if self.is_proper():
+            # All of the generators involved are extreme vectors and
+            # therefore minimal. If this cone is neither solid nor
+            # strictly convex, then the tensor product of ``s`` and
+            # ``x`` is the same as that of ``-s`` and ``-x``. However,
+            # as a /set/, ``tensor_products`` may still be minimal.
+            check = False
+
+        # Create the dual cone of the cross-positive operators,
+        # expressed as long vectors. Specify a lattice in case
+        # I'm the trivial cone.
+        return Cone(vectors,
+                    lattice=ToricLattice(self.lattice_dim()**2),
+                    check=check)
 
     def cross_positive_operators_gens(self):
         r"""
@@ -5987,7 +6166,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The cross-positive operators of a permuted cone can be obtained by
         conjugation::
 
-            sage: # needs sage.groups
             sage: K = random_cone(max_ambient_dim=3)
             sage: L = ToricLattice(K.lattice_dim()**2)
             sage: p = SymmetricGroup(K.lattice_dim()).random_element().matrix()
@@ -6027,42 +6205,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: cp_cone.contains(W(L.transpose().list()))
             True
         """
-        # Matrices are not vectors in Sage, so we have to convert them
-        # to vectors explicitly before we can find a basis. We need these
-        # two values to construct the appropriate "long vector" space.
-        F = self.lattice().base_field()
-        n = self.lattice_dim()
+        # Compute the desired cone from its dual...
+        cp_cone = self._cross_positive_operators_dual().dual()
 
-        # These tensor products contain generators for the dual cone of
-        # the cross-positive operators.
-        tensor_products = ( s.tensor_product(x)
-                            for (x,s) in self.discrete_complementarity_set() )
-
-        # Turn our matrices into long vectors...
-        W = VectorSpace(F, n**2)
-        vectors = ( W(m.list()) for m in tensor_products )
-
-        check = True
-        if self.is_proper():
-            # All of the generators involved are extreme vectors and
-            # therefore minimal. If this cone is neither solid nor
-            # strictly convex, then the tensor product of ``s`` and
-            # ``x`` is the same as that of ``-s`` and ``-x``. However,
-            # as a /set/, ``tensor_products`` may still be minimal.
-            check = False
-
-        # Create the dual cone of the cross-positive operators,
-        # expressed as long vectors.
-        cp_dual = Cone(vectors,
-                       lattice=ToricLattice(W.dimension()),
-                       check=check)
-
-        # Now compute the desired cone from its dual...
-        cp_cone = cp_dual.dual()
-
-        # And finally convert its rays back to matrix representations.
-        M = MatrixSpace(F, n)
-        return [ M(v.list()) for v in cp_cone ]
+        # Convert its rays from long vectors back to matrices.
+        MS = MatrixSpace(self.lattice().base_field(), self.lattice_dim())
+        return [MS(v.list()) for v in cp_cone]
 
     def Z_operators_gens(self):
         r"""
@@ -6305,6 +6453,309 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         from sage.geometry.cone_critical_angles import max_angle
         return max_angle(self, other, exact, epsilon)
 
+    def irreducible_factors(self):
+        r"""
+        Decompose a strictly convex (AKA pointed) convex cone
+        into nontrivial irreducible factors.
+
+        A convex cone is said to be *reducible* if it can be expressed as
+        the direct sum of two subcones. An *irreducible* cone is a cone
+        that is not reducible. Every cone that :meth:`is_proper` can be
+        uniquely decomposed -- up to isomorphism and the order of the
+        factors -- as a direct sum of irreducible, pointed, nontrivial
+        factors (subcones).
+
+        In the literature, "reducible" and "decomposable" are
+        interchangeable.
+
+        The cone being strictly convex / pointed is essential to the
+        uniqueness of the decomposition: the plane is a cone, and it can
+        be decomposed into the direct sum of the x-axis and y-axis, but
+        any other pair of (unequal) lines through the origin would work
+        just as well.
+
+        Being solid is less essential. The definition of "direct sum"
+        requires that the ambient space be fully decomposed into a set of
+        subspaces, and if the cone is not solid, we must (to satisfy the
+        definition) manufacture trivial cones to use as the factors in the
+        subspaces orthogonal to the given cone. This destroys the
+        uniqueness of the direct sum decomposition in the sense that the
+        vector subspaces corresponding to the trivial factors are
+        arbitrary. If the given cone is one-dimensional and the ambient
+        space three-dimensional, then a full decomposition would include
+        two trivial cones in any two one-dimensional subspaces of the
+        plane. As in the preceding paragraph, those one-dimensional
+        subspaces can be chosen arbitrarily.
+
+        Considering that this method does not return the ambient vector
+        space decomposition, adding trivial cones to the list of
+        irreducible factors is not helpful: any cone is equal to the sum
+        of itself with a trivial cone, or two trivial cones, etc. This is
+        all to say: this method will accept non-solid cones, but it will
+        not return any trivial factors. The result does not technically
+        correspond to a direct sum, but by omitting the trivial factors,
+        we recover uniqueness of the factors in the non-solid case.
+
+        OUTPUT:
+
+        A set of ``sage.geometry.cone.ConvexRationalPolyhedralCone``,
+        each of which is nontrivial, strictly convex (pointed), and
+        irreducible. Each factor lives in the same ambient space as
+        ``K`` to avoid confusing isomorphic factors that live in
+        different subspaces. As a consequence, factors of solid cones
+        will not in general be solid.
+
+        ALGORITHM:
+
+        If a strictly convex / pointed cone ``K`` is reducible to ``K1 +
+        K2`` in the vector space ``V = V1 + V2``, then the generators
+        (extreme rays) of ``K`` can be split into subsets ``G1`` and
+        ``G2`` of ``V1`` and ``V2`` that generate ``K1`` and ``K2``,
+        respectively. Following [BSPRS2014]_, we find a basis for the
+        span of ``K`` consisting of extreme rays of ``K``, and then
+        express each extreme ray in terms of that basis. By looking for
+        groups of rays that require a common subset of basis elements, we
+        determine which, if any, generators can be split accordingly.
+
+        REFERENCES:
+
+        - [HausGul2002]_
+        - [BSPRS2014]_
+
+        .. SEEALSO::
+
+            :meth:`is_reducible`
+
+        EXAMPLES:
+
+        The nonnegative orthant is a direct sum of its extreme rays::
+
+            sage: K = cones.nonnegative_orthant(3)
+            sage: expected = {Cone([r]) for r in K.rays()}
+            sage: K.irreducible_factors() == expected
+            True
+
+        An irreducible example (the l1-norm cone)::
+
+            sage: K = Cone([(1,0,1), (0,1,1), (-1,0,1), (0,-1,1)])
+            sage: K.irreducible_factors() == {K}
+            True
+
+        We can decompose reducible cones that are not solid::
+
+            sage: K = Cone([(1,0,0), (0,1,0)])
+            sage: expected = {Cone([r]) for r in K.rays()}
+            sage: K.irreducible_factors() == expected
+            True
+
+        And nothing bad happens with irreducible ones::
+
+            sage: K = Cone([(1,0,1,0), (0,1,1,0), (-1,0,1,0), (0,-1,1,0)])
+            sage: K.irreducible_factors() == {K}
+            True
+
+        The rays of the Schur cone are linearly-independent::
+
+            sage: K = cones.schur(5)
+            sage: expected = {Cone([r]) for r in K.rays()}
+            sage: K.irreducible_factors() == expected
+            True
+
+        The Cartesian product can be used to construct larger
+        examples. Here, two of the factors are irreducible, but the
+        nonnegative orthant should reduce to two rays::
+
+            sage: J1 = Cone([(1,0,1,0), (0,1,1,0), (-1,0,1,0), (0,-1,1,0)])
+            sage: J2 = cones.nonnegative_orthant(2)
+            sage: J3 = cones.rearrangement(2, 5)
+            sage: J1
+            3-d cone in 4-d lattice N
+            sage: J3
+            5-d cone in 5-d lattice N
+            sage: K = J1.cartesian_product(J2).cartesian_product(J3)
+            sage: sorted(K.irreducible_factors())
+            [5-d cone in 11-d lattice N+N+N,
+             1-d cone in 11-d lattice N+N+N,
+             1-d cone in 11-d lattice N+N+N,
+             3-d cone in 11-d lattice N+N+N]
+
+        All proper cones in two dimensions are isomorphic to the
+        nonnegative orthant and should decompose::
+
+            sage: K = Cone([(1,2), (-3,4)])
+            sage: sorted(K.irreducible_factors())
+            [1-d cone in 2-d lattice N, 1-d cone in 2-d lattice N]
+
+        In three dimensions, we can hit the nonnegative orthant with an
+        invertible map, and it will still decompose::
+
+            sage: A = matrix(QQ, [[1, -1/2, 0], [1, 1, -2], [-2, 0, -1]])
+            sage: K = cones.nonnegative_orthant(3)
+            sage: AK = Cone([ r*A for r in K.rays() ])
+            sage: expected = {Cone([r]) for r in AK.rays()}
+            sage: AK.irreducible_factors() == expected
+            True
+
+        This example decomposes into a ray and a cone with four
+        generators in a three-dimensional subspace that trivially
+        intersects the span of the ray::
+
+            sage: K = Cone([ (-1, -1, 0, -1),
+            ....:            (-1,  0, 1,  0),
+            ....:            ( 0,  1, 4, -2),
+            ....:            ( 1,  0, 0, -1),
+            ....:            ( 1,  1, 0, -1) ])
+            sage: K1, K2 = sorted(K.irreducible_factors())
+            sage: K1
+            3-d cone in 4-d lattice N
+            sage: K1.rays()
+            N(-1, -1, 0, -1),
+            N( 1,  0, 0, -1),
+            N( 0,  1, 4, -2),
+            N(-1,  0, 1,  0)
+            in 4-d lattice N
+            sage: K2
+            1-d cone in 4-d lattice N
+            sage: K2.rays()
+            N(1, 1, 0, -1)
+            in 4-d lattice N
+            sage: K1.span().intersection(K2.span())
+            Sublattice <>
+
+        TESTS:
+
+        The error message looks right::
+
+            sage: K = Cone([(1,0),(-1,0)])
+            sage: K.irreducible_factors()
+            Traceback (most recent call last):
+            ...
+            ValueError: cone must be strictly convex (AKA pointed) for its
+            irreducible factors to be well-defined
+
+        Trivial cones are handled correctly::
+
+            sage: K = cones.trivial(0)
+            sage: K.irreducible_factors() == {K}
+            True
+            sage: K = cones.trivial(4)
+            sage: K.irreducible_factors() == {K}
+            True
+        """
+        if not self.is_strictly_convex():
+            raise ValueError("cone must be strictly convex (AKA pointed) for"
+                             " its irreducible factors to be well-defined")
+
+        if self.is_trivial():
+            # Trivial cones are valid inputs, but they have no generators
+            # so a special case is required.
+            return {self}
+
+        V = self.ambient_vector_space()
+
+        # Create a column matrix from the generators of K, and then
+        # perform Gaussian elimination so that the resulting pivots
+        # specify a linearly-independent subset of the original columns.
+        M = self.rays().column_matrix().change_ring(V.base_ring())
+        pivots = M.echelon_form(algorithm="classical").pivots()
+        M = M.matrix_from_columns(pivots)
+
+        # A basis for span(self)
+        B = M.columns(copy=False)
+
+        # The span of self, but now with a basis of extreme rays. If
+        # self is not solid, B will not be a basis of the entire space
+        # V, only of a subspace.
+        W = V.subspace_with_basis(B)
+
+        # Make a graph with ray -> ray edges where the coefficients in
+        # the W-representation nonzero. Beware: while they ultimately
+        # represent rays of self, the W-coordinates have been
+        # renumbered by pivots().
+        vertices = list(range(self.nrays()))
+        edges = [(i, pivots[j])
+                 for i in vertices
+                 for j in W.coordinate_vector(self.ray(i)).nonzero_positions()
+                 if pivots[j] != i]
+        from sage.graphs.graph import Graph
+        G = Graph([vertices, edges], format='vertices_and_edges')
+
+        from sage.geometry.cone import Cone
+        if G.connected_components_number() == 1:
+            # Special case where we don't want to pointlessly return an
+            # equivalent but unequal copy of the input cone.
+            return {self}
+        return {Cone(self.rays(c)) for c in G.connected_components()}
+
+    def is_reducible(self) -> bool:
+        r"""
+        Return whether or not this cone is reducible.
+
+        A pointed convex cone is reducible if some other cone appears
+        in its :meth:`irreducible_factors`.
+
+        .. SEEALSO::
+
+            :meth:`irreducible_factors`
+
+        EXAMPLES:
+
+        The nonnegative orthant is always reducible in dimension two or
+        more::
+
+            sage: cones.nonnegative_orthant(1).is_reducible()
+            False
+            sage: cones.nonnegative_orthant(2).is_reducible()
+            True
+            sage: cones.nonnegative_orthant(3).is_reducible()
+            True
+
+        Theorem 4.1 in [JG2018]_ says that the Lyapunov rank of a
+        permutation-invariant cone is either ``n`` or ``1``, depending
+        on whether or not it is reducible. Corollary 5.2.4 of
+        [Jeong2017]_ then implies that the ``(p,n)`` rearrangement
+        cone is reducible if and only if ``p`` is either ``1`` or
+        ``n-1``. We exclude the possibility of ``p == n`` since that
+        returns a (not pointed) half-space::
+
+            sage: n = ZZ.random_element(10) + 2
+            sage: p = ZZ.random_element(1, n)
+            sage: K = cones.rearrangement(p, n)
+            sage: K.is_reducible() == (p in [1, n-1])
+            True
+
+        TESTS:
+
+        Reducibility is preserved under linear isomorphisms::
+
+            sage: # long time
+            sage: K = random_cone(strictly_convex=True,
+            ....:                 max_ambient_dim=6)
+            sage: n = K.ambient_dim()
+            sage: q = QQ._random_nonzero_element()
+            sage: A = q*matrix.random(QQ, n, algorithm='unimodular')
+            sage: AK = Cone([ r*A for r in K.rays() ], lattice=K.lattice())
+            sage: K.is_reducible() == AK.is_reducible()
+            True
+
+        In [GT2014]_ it is shown that a (nontrivial) proper polyhedral
+        cone is irreducible if and only if its Lyapunov rank is one.
+        A related test combines Theorem 4.7 of [HFP1976]_ with the
+        Z-operator algorithm in [Or2018b]_::
+
+            sage: # long time
+            sage: K = random_cone(strictly_convex=True,
+            ....:                 solid=True,
+            ....:                 max_ambient_dim=6,
+            ....:                 min_rays=1)
+            sage: K.is_reducible() == (K.lyapunov_rank() != 1)
+            True
+            sage: d = K._cross_positive_operators_dual().dim()
+            sage: K.is_reducible() == (d < K.dim()**2 - 1)
+            True
+        """
+        return len(self.irreducible_factors()) > 1
+
 
 def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 min_rays=0, max_rays=None, strictly_convex=None, solid=None):
@@ -6474,6 +6925,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     Or one that isn't strictly convex::
 
         sage: K = random_cone(min_ambient_dim=5, min_rays=2,
+        ....:                 max_ambient_dim=8, max_rays=10,
         ....:                 strictly_convex=False)
         sage: K.is_strictly_convex()
         False
@@ -6802,13 +7254,12 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
             # The upper bound is unspecified; return a random integer
             # in [l,infinity).
             return l + ZZ.random_element().abs()
-        else:
-            # We have an upper bound, and it's greater than or equal
-            # to our lower bound. So we generate a random integer in
-            # [0,u-l], and then add it to l to get something in
-            # [l,u]. To understand the "+1", check the
-            # ZZ.random_element() docs.
-            return l + ZZ.random_element(u - l + 1)
+        # We have an upper bound, and it's greater than or equal
+        # to our lower bound. So we generate a random integer in
+        # [0,u-l], and then add it to l to get something in
+        # [l,u]. To understand the "+1", check the
+        # ZZ.random_element() docs.
+        return l + ZZ.random_element(u - l + 1)
 
     def is_valid(K):
         r"""

@@ -784,8 +784,7 @@ def higher_level_UpGj(p, N, klist, m, modformsring, bound, extra_data=False):
 
     if extra_data:
         return Alist, e, elldash, mdash
-    else:
-        return Alist
+    return Alist
 
 
 #  *** LEVEL 1 CODE ***
@@ -1041,8 +1040,7 @@ def level1_UpGj(p, klist, m, extra_data=False):
 
     if extra_data:
         return Alist, e, ell, mdash
-    else:
-        return Alist
+    return Alist
 
 # *** CODE FOR GENERAL LEVEL ***
 
@@ -1165,8 +1163,7 @@ def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
     if klist[0] % 2 == 1:
         if oneweight:
             return 1
-        else:
-            return [1 for i in range(len(klist))]
+        return [1 for i in range(len(klist))]
 
     if N == 1:
         Alist = level1_UpGj(p, klist, m)
@@ -1180,5 +1177,4 @@ def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
 
     if oneweight:
         return Plist[0]
-    else:
-        return Plist
+    return Plist

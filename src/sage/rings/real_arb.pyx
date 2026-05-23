@@ -293,9 +293,22 @@ cdef int arb_to_mpfi(mpfi_t target, arb_t source, const long precision) except -
 
     EXAMPLES::
 
-        sage: RIF(RBF(2)**(2**100))
-        [5.8756537891115869e1388255822130839282 .. +infinity] # 64-bit
-        [2.098... .. +infinity]                               # 32-bit
+        sage: from sage.rings.real_arb import RealBall
+        sage: from sage.rings.real_mpfi import RealIntervalFieldElement
+        sage: arb = RBF(2)
+        sage: isinstance(arb, RealBall)
+        True
+        sage: mpfi = RIF(arb)
+        sage: isinstance(mpfi, RealIntervalFieldElement)
+        True
+
+    TESTS::
+
+        sage: RIF(RBF(2)**(2**100))  # needs 32_bit
+        [2.098... .. +infinity]
+        sage: RIF(RBF(2)**(2**100))  # needs !32_bit
+        [5.8756537891115869e1388255822130839282 .. +infinity]
+
     """
     cdef mpfr_t left
     cdef mpfr_t right
@@ -420,9 +433,8 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         """
         if precision < 2:
             raise ValueError("precision must be at least 2")
-        Field.__init__(self,
-                base_ring=self,
-                category=sage.categories.fields.Fields().Infinite())
+        Field.__init__(self, self,
+                       category=sage.categories.fields.Fields().Infinite())
         self._prec = precision
         from sage.rings.real_lazy import RLF
         self._populate_coercion_lists_(coerce_list=[ZZ, QQ], convert_method_name='_arb_')
@@ -658,7 +670,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             sage: RealBallField().characteristic()
             0
         """
-        return 0
+        return ZZ.zero()
 
     def some_elements(self):
         """
@@ -1634,7 +1646,6 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: mypi = RBF(pi)
             sage: RR(mypi)
             3.14159265358979
@@ -2862,7 +2873,6 @@ cdef class RealBall(RingElement):
         """
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: RBF(e)^17
             [24154952.7535753 +/- ...e-8]
             sage: RBF(e)^(-1)
@@ -3976,7 +3986,6 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: RBF(pi).chebyshev_T(0)
             1.000000000000000
             sage: RBF(pi).chebyshev_T(1)
@@ -4009,7 +4018,6 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: RBF(pi).chebyshev_U(0)
             1.000000000000000
             sage: RBF(pi).chebyshev_U(1)
