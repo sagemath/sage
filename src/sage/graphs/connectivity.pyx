@@ -3197,16 +3197,16 @@ def spqr_tree(G, algorithm='Hopcroft_Tarjan', solver=None, verbose=0,
         sage: sorted(Counter(u[0] for u in T).items())
         [('P', 15), ('R', 1), ('S', 15)]
         sage: T = G.spqr_tree(algorithm='cleave')                                       # needs sage.numerical.mip
-        sage: sorted(Counter(u[0] for u in T).items())                                  # needs sage.numerical.mip
-        [('P', 15), ('R', 1), ('S', 15)]
+        sage: G.is_isomorphic(spqr_tree_to_graph(T))                                    # needs sage.numerical.mip
+        True
         sage: for u,v in list(G.edges(labels=False, sort=False)):
         ....:     G.add_path([u, G.add_vertex(), G.add_vertex(), v])
         sage: T = G.spqr_tree(algorithm='Hopcroft_Tarjan')
         sage: sorted(Counter(u[0] for u in T).items())
         [('P', 60), ('R', 1), ('S', 75)]
         sage: T = G.spqr_tree(algorithm='cleave')       # long time                     # needs sage.numerical.mip
-        sage: sorted(Counter(u[0] for u in T).items())  # long time                     # needs sage.numerical.mip
-        [('P', 60), ('R', 1), ('S', 75)]
+        sage: G.is_isomorphic(spqr_tree_to_graph(T))    # long time                     # needs sage.numerical.mip
+        True
 
     TESTS::
 
