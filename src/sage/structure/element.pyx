@@ -3946,6 +3946,32 @@ cdef class Matrix(ModuleElement):
         except TypeError:
             return NotImplemented
 
+    cpdef _mul_(self, other):
+        """
+        Multiplication of matrices with the same parent.
+
+        Matrices implement multiplication through :meth:`__mul__` (and
+        :meth:`_matrix_times_matrix_`) rather than through the ``_mul_``
+        protocol, since the latter is only meant for elements of a
+        multiplicative magma. However, a matrix may itself be an entry of
+        another matrix, in which case the generic matrix multiplication
+        code (e.g. :meth:`~sage.matrix.matrix_generic_dense.Matrix_generic_dense._multiply_classical`)
+        calls ``_mul_`` directly on the entries. This method dispatches
+        such calls to :meth:`__mul__` so that matrices over a matrix ring
+        multiply correctly (:issue:`42134`).
+
+        EXAMPLES::
+
+            sage: # needs sage.modules
+            sage: A = matrix(ZZ, 2, [1, 2, 3, 4])
+            sage: A._mul_(A)
+            [ 7 10]
+            [15 22]
+            sage: A._mul_(A) == A * A
+            True
+        """
+        return self * other
+
     def __truediv__(left, right):
         """
         Division of the matrix ``left`` by the matrix or scalar

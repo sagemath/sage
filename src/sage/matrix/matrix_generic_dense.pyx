@@ -338,6 +338,19 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             [0 0 0 0]
             [0 0 0 0]
             [0 0 0 0]
+
+        We can multiply matrices whose entries are themselves matrices,
+        i.e. matrices over a (noncommutative) matrix ring (:issue:`42134`)::
+
+            sage: MS = MatrixSpace(MatrixSpace(ZZ, 2, 2), 2, 2)
+            sage: A = MS([matrix(ZZ, 2, [n, 0, 0, n]) for n in range(1, 5)])
+            sage: B = A * A
+            sage: B[0, 0]
+            [7 0]
+            [0 7]
+            sage: B[1, 1]
+            [22  0]
+            [ 0 22]
         """
         cdef Py_ssize_t i, j, k, m, nr, nc, snc, p
         cdef Matrix_generic_dense right = _right
