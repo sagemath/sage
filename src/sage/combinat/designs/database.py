@@ -33,27 +33,10 @@ This module implements:
 {LIST_OF_DM}
 
 - `(n,k;\lambda,\mu;u)`-quasi-difference matrices:
-    {LIST_OF_QDM}
+{LIST_OF_QDM}
 
 - `(q,k)` evenly distributed sets
 {LIST_OF_EDS}
-
-REFERENCES:
-
-.. [DesignHandbook] Handbook of Combinatorial Designs (2ed)
-  Charles Colbourn, Jeffrey Dinitz
-  Chapman & Hall/CRC
-  2012
-
-.. [Aschbacher71] \M. Aschbacher,
-  On collineation groups of symmetric block designs.
-  J. Combinatorial Theory Ser. A 11 (1971), pp. 272–281.
-
-.. [Hall71] \M. Hall, Jr.,
-  Combinatorial designs and groups.
-  Actes du Congrès International des Mathématiciens (Nice, 1970),
-  v.3, pp. 217–222. Gauthier-Villars, Paris, 1971.
-
 Functions
 ---------
 """
@@ -3974,17 +3957,7 @@ def DM_57_8_1():
 def DM_60_6_1():
     r"""
     Return a `(60,6,1)`-difference matrix.
-
-    As explained in [JulianAbel13]_.
-
-    REFERENCES:
-
-    .. [JulianAbel13] Existence of Five MOLS of Orders 18 and 60
-      R. Julian R. Abel
-      Journal of Combinatorial Designs
-      2013
-
-    http://onlinelibrary.wiley.com/doi/10.1002/jcd.21384/abstract
+    This construction is described in [JulianAbel13]_ (`link <http://onlinelibrary.wiley.com/doi/10.1002/jcd.21384/abstract>`_).
 
     EXAMPLES::
 

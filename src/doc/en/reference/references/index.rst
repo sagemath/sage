@@ -87,6 +87,11 @@ REFERENCES:
             Some new MOLS of order 2np for p a prime power,
             The Australasian Journal of Combinatorics, vol 10 (1994)
 
+.. [AC07] \R. Julian R. Abel and Nicholas Cavenagh,
+          *Concerning eight mutually orthogonal latin squares*,
+          J. Combin. Des. 15 (2007), no. 3, 255-261,
+          :doi:`10.1002/jcd.20121`
+
 .. [ACFLSS04] \F. N. Abu-Khzam, R. L. Collins, M. R. Fellows, M. A.  Langston,
               \W. H. Suters, and C. T. Symons: Kernelization Algorithm for the
               Vertex Cover Problem: Theory and Experiments. *SIAM
@@ -288,6 +293,11 @@ REFERENCES:
             varieties and e-positivity of chromatic symmetric functions*.
             Preprint (2023). :arxiv:`2304.10644`.
 
+.. [AndHonk97] A short course in Combinatorial Designs,
+               Ian Anderson, Iiro Honkala,
+               Internet Editions, Spring 1997,
+               http://www.utu.fi/~honkala/designs.ps
+
 .. [Ang1997] \B. Anglès. 1997. *On some characteristic polynomials attached to
              finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
              369-379. :doi:`10.1007/BF02677478`
@@ -376,6 +386,10 @@ REFERENCES:
             graphs*. FPSAC 2008, 141-152, Discrete
             Math. Theor. Comput. Sci. Proc., AJ, Assoc. Discrete
             Math. Theor. Comput. Sci., (2008). :arxiv:`0804.1587v1`
+
+.. [Aschbacher71] \M. Aschbacher,
+                  On collineation groups of symmetric block designs.
+                  J. Combinatorial Theory Ser. A 11 (1971), pp. 272–281.
 
 .. [AO2018] Sami Assaf and Ezgi Kantarci Oguz. *A local characterization
             of crystals for the quantum queer superalgebra*.
@@ -1017,6 +1031,19 @@ REFERENCES:
                    *The SKINNY family of block ciphers and its low-latency
                    variant MANTIS*; in CRYPTO, (2016), pp. 123-153.
 
+.. [BJL99] \T. Beth, D. Jungnickel, H. Lenz,
+           Design Theory 2ed.
+           Cambridge University Press
+           1999
+
+.. [BJL99-1] \T. Beth, D. Jungnickel, H. Lenz "Design theory Vol. I."
+             Second edition. Encyclopedia of Mathematics and its Applications, 69. Cambridge
+             University Press, (1999).
+
+.. [BLJ99-2] \T. Beth, D. Jungnickel, H. Lenz "Design theory Vol. II."
+             Second edition. Encyclopedia of Mathematics and its Applications, 78. Cambridge
+             University Press, (1999).
+
 .. [BK1973] Coen Bron and Joep Kerbosch. *Algorithm 457:
             Finding All Cliques of an Undirected Graph*. Commun. ACM. v
             16. n 9. 1973,  pages 575-577. ACM Press. [Online] Available:
@@ -1244,6 +1271,9 @@ REFERENCES:
             optimization, statistics*, volume 452 of *Contemp. Math.*,
             pages 35--66. Amer. Math. Soc., Providence,
             RI, 2008. :arxiv:`math/0703456v2`.
+
+.. [Bo39] \R. C. Bose, "On the construction of balanced incomplete block
+          designs", Ann. Eugenics, 9 (1939), 353--399.
 
 .. [Bob2013] \J.W. Bober. *Conditionally bounding analytic ranks of
              elliptic curves*. ANTS
@@ -1498,6 +1528,9 @@ REFERENCES:
 .. [BUVO2007] Johannes Buchmann, Ullrich Vollmer: Binary Quadratic Forms,
               An Algorithmic Approach, Algorithms and Computation in Mathematics,
               Volume 20, Springer (2007)
+
+.. [Bu95] \M. Buratti "On simple radical difference families", J.
+          Combinatorial Designs, 3 (1995) 161--168.
 
 .. [But2010] Peter Butkovič, *Max-linear systems. Theory and algorithms.*
              Springer Monographs in Mathematics. London: Springer. xvii, 272 p. (2010). 
@@ -1876,6 +1909,10 @@ REFERENCES:
 .. [CL2023] Xavier Caruso and Antoine Leudière.
             *Algorithms for computing norms and characteristic polynomials on general Drinfeld modules*, (2023) :arxiv:`2307.02879`.
 
+.. [ClaytonSmith] On the existence of `(v,5,1)`-BIBD.
+                  http://www.argilo.net/files/bibd.pdf
+                  Clayton Smith
+
 .. [Cle1872] Alfred Clebsch, *Theorie der binären algebraischen Formen*,
              Teubner, 1872.
 
@@ -2011,6 +2048,12 @@ REFERENCES:
 .. [Col2013] Julia Collins. *An algorithm for computing the Seifert
              matrix of a link from a braid
              representation*. (2013). https://ensaios.sbm.org.br/wp-content/uploads/sites/8/sites/8/2021/11/EM_30_Collins-1.pdf
+
+.. [ColDin01] Charles Colbourn, Jeffrey Dinitz,
+              *Mutually orthogonal latin squares: a brief survey of constructions*,
+              Volume 95, Issues 1-2, Pages 9-48,
+              Journal of Statistical Planning and Inference,
+              Springer, 1 May 2001.
 
 .. [Com2019] Camille Combe, *Réalisation cubique du poset des
              intervalles de Tamari*, preprint :arxiv:`1904.00658`
@@ -2185,6 +2228,9 @@ REFERENCES:
              and Intersection Algorithms. SIAM Journal on Computing
              1986 15:4, 948-957.
 
+.. [CvL] P. Cameron, J. H. van Lint, Designs, graphs, codes and
+         their links, London Math. Soc., 1991.
+
 .. [CVV2019] Xavier Caruso, Tristan Vaccon and Thibaut Verron,
              *Gröbner bases over Tate algebras*, :arxiv:`1901.09574` (2019)
 
@@ -2301,6 +2347,11 @@ REFERENCES:
 .. [Den2012] Tom Denton. Canonical Decompositions of Affine Permutations,
              Affine Codes, and Split `k`-Schur Functions.  Electronic Journal of
              Combinatorics, 2012.
+
+.. [Denniston69] \R. H. F. Denniston,
+                 Some maximal arcs in finite projective planes.
+                 Journal of Combinatorial Theory 6, no. 3 (1969): 317-319.
+                 :doi:`10.1016/S0021-9800(69)80095-5`
 
 .. [Deo1987a] \V. Deodhar, A splitting criterion for the Bruhat
               orderings on Coxeter groups. Comm. Algebra,
@@ -3464,6 +3515,11 @@ REFERENCES:
 .. [Haj2000] \M. Hajiaghayi, *Consecutive Ones Property*, 2000.
              https://web.archive.org/web/20040401033532/http://www-math.mit.edu/~hajiagha/pp11.ps
 
+.. [Hall71] \M. Hall, Jr.,
+            Combinatorial designs and groups.
+            Actes du Congrès International des Mathématiciens (Nice, 1970),
+            v.3, pp. 217–222. Gauthier-Villars, Paris, 1971.
+
 .. [HAM1985] Hoffman, Alan J., Anthonius Wilhelmus Johannes Kolen, and Michel Sakarovitch.
              *Totally-balanced and greedy matrices*.
              SIAM Journal on Algebraic Discrete Methods 6.4 (1985): 721-730.
@@ -3477,6 +3533,11 @@ REFERENCES:
              Canadian Journal of Mathematics,
              1960
              https://web.archive.org/web/20141206163905/http://cms.math.ca/cjm/v12/cjm1960v12.0145-0157.pdf
+
+.. [Hanani75] Haim Hanani,
+              Balanced incomplete block designs and related designs,
+              :doi:`10.1016/0012-365X(75)90040-0`,
+              Discrete Mathematics, Volume 11, Issue 3, 1975, Pages 255-369.
 
 .. [Hanke2004] Jonathan Hanke. *Local densities and explicit bounds
                for representability by a quadratic form.*
@@ -3832,6 +3893,9 @@ REFERENCES:
                  Algebras in the BGG Category* `\mathcal{O}`.
                  Graduate Studies in Mathematics. Amer. Math. Soc., 2008.
 
+.. [Hu57] Daniel R. Hughes, "A class of non-Desarguesian projective planes",
+          The Canadian Journal of Mathematics (1957), http://cms.math.ca/cjm/v9/p378
+
 .. [Hutz2007] \B. Hutz. Arithmetic *Dynamics on Varieties of dimension greater
               than one*. Ph.D. Thesis, Brown University 2007
 
@@ -4079,6 +4143,12 @@ REFERENCES:
 .. [JS2021] \D. Jahn, C. Stump.
             *Bruhat intervals, subword complexes and brick polyhedra for
             finite Coxeter groups*, 2021, :arxiv:`2103.03715`.
+
+.. [JulianAbel13] Existence of Five MOLS of Orders 18 and 60
+                  R. Julian R. Abel
+                  Journal of Combinatorial Designs
+                  2013
+                  :doi:`10.1002/jcd.21384`.
 
 .. [JV2000] \J. Justin, L. Vuillon, *Return words in Sturmian and
             episturmian words*, Theor. Inform. Appl. 34 (2000)
@@ -5241,6 +5311,11 @@ REFERENCES:
 .. [McE1987] Robert J. McEliece. *Finite Fields for Computer
              Scientists and Engineers*. Kluwer Academic Publishers, 1987.
 
+.. [McF1973] Robert L. McFarland
+             "A family of difference sets in non-cyclic groups"
+             J. Combinatorial Theory (A) 15 (1973) 1--10.
+             :doi:`10.1016/0097-3165(73)90031-9`
+
 .. [McK1998] Brendan D. McKay, *Isomorph-Free Exhaustive generation*.
              Journal of Algorithms, 26(2): 306-324, February 1998.
 
@@ -6048,6 +6123,11 @@ REFERENCES:
               Congressus numerantium, 1994.
               Pages 97--110
 
+.. [RCW71] \D. K. Ray-Chaudhuri, R. M. Wilson,
+           Solution of Kirkman's schoolgirl problem,
+           Volume 19, Pages 187-203,
+           Proceedings of Symposia in Pure Mathematics
+
 .. [Rea1968] Ronald C. Read,
              An improved method for computing the chromatic polynomials of sparse graphs,
              Research Report CORR 87-20, C & O Dept. Univ. of Waterloo, 1987.
@@ -6728,6 +6808,16 @@ REFERENCES:
 .. [Sti2006] Douglas R. Stinson. *Cryptography: Theory and
              Practice*. 3rd edition, Chapman \& Hall/CRC, 2006.
 
+.. [Stinson91] \D.R. Stinson,
+               A survey of Kirkman triple systems and related designs,
+               Volume 92, Issues 1-3, 17 November 1991, Pages 371-393,
+               Discrete Mathematics,
+               :doi:`10.1016/0012-365X(91)90294-C`
+
+.. [Stinson2004] Douglas R. Stinson,
+                 *Combinatorial designs: construction and analysis*,
+                 Springer, 2004.
+
 .. [Stokes1990] Timothy Stokes. *Gröbner bases in exterior algebra*.
                 J. Automat. Reason. **6** (1990) 233-250.
 
@@ -7039,6 +7129,12 @@ REFERENCES:
 .. [TTWL2009] Trebst, Troyer, Wang and Ludwig, A short introduction to
               Fibonacci anyon models, :arxiv:`0902.3275`.
 
+.. [Tu1965] \R. J. Turyn "Character sum and difference sets"
+            Pacific J. Math. 15 (1965) 319--346.
+
+.. [Tu1984] \R. J. Turyn "A special class of Williamson matrices and
+            difference sets" J. Combinatorial Theory (A) 36 (1984) 111--115.
+
 .. [Tut1947] W.T. Tutte. *The factorization of linear graphs.* Journal of the
              London Mathematical Society, vol. s1-22, issue 2, pages 107--111,
              April 1947. :doi:`10.1112/jlms/s1-22.2.107`.
@@ -7233,6 +7329,9 @@ REFERENCES:
              Constructions and Existence*. J. Math. Crypt. 1 (2007),
              pp.125-150
 
+.. [We07] Charles Weibel, "Survey of Non-Desarguesian planes" (2007), notices of
+          the AMS, vol. 54 num. 10, pages 1294--1303
+
 .. [Web2007] James Webb. *Game theory: decisions, interaction and
              Evolution*. Springer Science & Business Media, 2007.
 
@@ -7286,6 +7385,8 @@ REFERENCES:
                J. Combin. Algebra, **2** no. 3 (2018). pp. 259-300.
                :arxiv:`1511.04740`.
 
+.. [Wi72] \R. M. Wilson "Cyclotomy and difference families in elementary Abelian
+          groups", J. Number Theory, 4 (1972) 17--47.
 .. [Wich1997] Tim Wichmann. Der FGLM Algorithmus - verallgemeinert und implementiert in Singular
               Diploma Thesis (University of Kaiserslautern), 1997.
 
