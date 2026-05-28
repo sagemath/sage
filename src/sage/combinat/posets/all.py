@@ -24,6 +24,7 @@ Poset-related classes:
 - :ref:`sage.combinat.tamari_lattices`
 - :ref:`sage.combinat.interval_posets`
 - :ref:`sage.combinat.shard_order`
+- :ref:`sage.combinat.independence_posets`
 
 If you are looking for Poset-related :mod:`categories
 <sage.categories.category>`, see
