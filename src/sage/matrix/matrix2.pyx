@@ -103,6 +103,7 @@ from sage.arith.numerical_approx cimport digits_to_bits
 
 import sage.modules.free_module
 from sage.matrix import berlekamp_massey
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 from sage.modules.free_module_element import FreeModuleElement
 from sage.matrix.matrix_misc import permanental_minor_polynomial
 
@@ -9421,8 +9422,7 @@ cdef class Matrix(Matrix1):
             [248 286 324 362]
             [344 398 452 506]
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("Number of columns of self must equal number of rows of right.")
+        check_matrix_multiplication_sizes(self, right)
         if self._base_ring is not right.base_ring():
             raise TypeError("Base rings must be the same.")
 

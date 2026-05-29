@@ -91,6 +91,7 @@ extra = [
   'sage_numerical_backends_coin',
   'symengine >= 0.6.1', # Only used in tests
 ]
+test = ["pytest-xdist"]
 #giac = ['sagemath_giac'] # Not yet available on PyPI (https://github.com/sagemath/sagemath-giac/issues/3)
 
 [project.readme]
@@ -106,13 +107,17 @@ platforms = ['linux-64', 'linux-aarch64', 'osx-64', 'osx-arm64']
 [tool.pytest.ini_options]
 # sage.libs.giac is a stub to keep the old imports working; all
 # it does is try to import sagemath_giac.
-norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage/libs/giac tools subprojects"
+norecursedirs = "local prefix venv build builddir pkgs .git .github src/doc src/bin src/sage/libs/giac tools subprojects"
 python_files = "*_test.py"
 # The "no:warnings" is to stop pytest from capturing warnings so that they are printed to the output of the doctest
-addopts = "--import-mode importlib -p no:warnings"
+addopts = "--import-mode importlib -p no:warnings --strict-markers"
 doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
 # https://docs.pytest.org/en/stable/reference/reference.html#confval-consider_namespace_packages
 consider_namespace_packages = true
+markers = [
+  "long: long-running tests",
+  "longlong: extremely long-running tests",
+]
 
 # External dependencies in the format proposed by https://peps.python.org/pep-0725
 [external]
@@ -244,7 +249,7 @@ docs = [
   "sphinx-inline-tabs",
 ]
 lint = ["flake8-rst-docstrings", "pycodestyle", "relint", "ruff"]
-test = ["coverage", "pytest", "pytest-xdist"]
+test = ["coverage", "pytest"]
 
 [tool.ruff]
 # https://docs.astral.sh/ruff/configuration
@@ -434,6 +439,9 @@ select = [
   "PLW2101",
   "PLW2901",
   "PLW3301",
+
+  # flake8-return - https://docs.astral.sh/ruff/rules/#flake8-return-ret
+  "RET505",
 ]
 
 [tool.ruff.lint.per-file-ignores]

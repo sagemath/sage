@@ -1,11 +1,12 @@
-from sage.structure.parent_gens cimport ParentWithGens
+from sage.structure.parent cimport Parent
 
 cpdef bint _is_Field(x) except -2
 
-cdef class Ring(ParentWithGens):
+cdef class Ring(Parent):
     cdef public object _zero_element
     cdef public object _one_element
-
+    cdef public object _gens
+    cdef public object _latex_names
 
 cdef class CommutativeRing(Ring):
     pass
