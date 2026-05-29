@@ -153,8 +153,7 @@ following code is equivalent to ``tau = findstat(397)``::
     ....:         m = max(l)
     ....:         if l.count(m) == 1:
     ....:             return m
-    ....:         else:
-    ....:             return m+1
+    ....:         return m+1
     sage: bij = Bijectionist(A, B, tau)
     sage: bij.set_statistics((lambda a: a.size(), lambda b: b.number_of_nodes()-1))
     sage: from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition

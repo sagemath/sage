@@ -407,26 +407,34 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
     if structure is None:
         if enumeration is None:
             enumeration = 'breadth'
-        return RecursivelyEnumeratedSet_generic(seeds, successors,
-                enumeration, max_depth, facade=facade, category=category)
+        return RecursivelyEnumeratedSet_generic(
+            seeds, successors,
+            enumeration, max_depth, facade=facade, category=category
+        )
     if structure == 'symmetric':
         if enumeration is None:
             enumeration = 'breadth'
-        return RecursivelyEnumeratedSet_symmetric(seeds, successors,
-                enumeration, max_depth, facade=facade, category=category)
+        return RecursivelyEnumeratedSet_symmetric(
+            seeds, successors,
+            enumeration, max_depth, facade=facade, category=category
+        )
     if structure == 'forest':
         if enumeration is None:
             enumeration = 'depth'
-        return RecursivelyEnumeratedSet_forest(roots=seeds, children=successors,
-                algorithm=enumeration, post_process=post_process,
-                facade=facade, category=category)
+        return RecursivelyEnumeratedSet_forest(
+            roots=seeds, children=successors,
+            algorithm=enumeration, post_process=post_process,
+            facade=facade, category=category
+        )
     if structure == 'graded':
         if enumeration is None:
             enumeration = 'breadth'
-        return RecursivelyEnumeratedSet_graded(seeds, successors, enumeration,
-                max_depth, facade=facade, category=category)
+        return RecursivelyEnumeratedSet_graded(
+            seeds, successors, enumeration,
+            max_depth, facade=facade, category=category
+        )
 
-    raise ValueError("Unknown value for structure (={})".format(structure))
+    raise ValueError(f"Unknown value for structure (={structure})")
 
 
 cdef class RecursivelyEnumeratedSet_generic(Parent):

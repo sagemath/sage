@@ -4666,7 +4666,6 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
             return self.element_class(self, sum([[[[1]]]], [[] for _ in range(self.level() - 1)]))
         if self.size() == 2:
             return self.element_class(self, sum([[[[1], [2]]]], [[] for _ in range(self.level() - 1)]))
-
         return self.element_class(self, sum([[[[1]]],
             [[list(range(2, self.size())),
               [self.size()]]]], [[] for _ in range(self.level() - 2)]))

@@ -418,7 +418,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
                 inv_arch_pari = [arg2[i-1] for i in perm]
 
                 # Compute the correct quaternion algebra over L in PARI
-                A = L.__pari__().alginit([2, [fin_places_pari, [QQ((1,2))] * len(fin_places_pari)], inv_arch_pari], flag=0)
+                A = L.__pari__().alginit([2, [fin_places_pari, [QQ((1, 2))] * len(fin_places_pari)], inv_arch_pari], flag=0)
 
                 # Obtain representation of A in terms of invariants in L
                 a_L = L(A.algsplittingfield().disc()[1])
@@ -1177,7 +1177,10 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         #     # we do not know why magma does the following, so we do not do it.
         #     for p in self.ramified_primes():
         #         if not (level % p**2):
-        #             raise NotImplementedError("currently sage can only compute orders whose level is divisible by at most one power of any prime that ramifies in the quaternion algebra")
+        #             raise NotImplementedError("currently sage can
+        #             only compute orders whose level is divisible by
+        #             at most one power of any prime that ramifies in
+        #             the quaternion algebra")
 
         #     P = O._left_ideal_basis([N1] + [x * y - y * x
         #                                     for x in self.basis()
@@ -1300,7 +1303,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         return self._gens
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Print representation.
 
@@ -1683,7 +1686,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         except ValueError:
             raise NotImplementedError("base field must be rational numbers or a number field")
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return Magma version of this quaternion algebra.
 
@@ -2236,7 +2239,7 @@ class QuaternionOrder(Parent):
         """
         return self.__quaternion_algebra
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of this order.
 
@@ -3569,7 +3572,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             self.__right_order = self._compute_order(side='right')
         return self.__right_order
 
-    def gens_two(self):
+    def gens_two(self) -> tuple:
         r"""
         Return a pair of elements `N,\alpha` of this quaternion fractional ideal
         such that the ideal equals `O_L N + O_L\alpha` and `N O_R + \alpha O_R`,
@@ -3616,6 +3619,17 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: assert I == O1*N + O1*a
             sage: assert I == N*O2 + a*O2
 
+        The second generator is nonzero even when the ideal has norm one::
+
+            sage: I = O1.unit_ideal()
+            sage: N,a = I.gens_two()
+            sage: N
+            1
+            sage: a.is_zero()
+            False
+            sage: assert I == O1*N + O1*a
+            sage: assert I == N*O1 + a*O1
+
         ::
 
             sage: s = choice((-1,+1)) * ZZ(randrange(1,100)) / randrange(1,100)
@@ -3630,9 +3644,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         I = denom * self
         N = ZZ(I.norm())
         Q = I.quadratic_form()
-        for v in ZZ**4:
-            if -v < v:  # enumerate up to sign  #TODO this should be a method of free modules
-                continue
+        from itertools import islice
+        for v in islice((ZZ**4).iter_up_to_sign(), 1, None):
             if N.gcd(Q(v)) == 1:
                 break
         else:
@@ -3681,7 +3694,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         return self.gens()
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         Compare this fractional quaternion ideal to ``other``.
 
@@ -4567,8 +4580,12 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             False
             sage: J.right_order().isomorphism_to(I.right_order())
             Ring morphism:
-              From: Order of Quaternion Algebra (-23, -900001) with base ring Rational Field with basis (1/2 + 1/8*j + 461/8*k, 1/4646*i + 131/808*j + 2342737/18584*k, 1/4*j + 461/4*k, 404*k)
-              To:   Order of Quaternion Algebra (-23, -900001) with base ring Rational Field with basis (1/2 + 1/35777778754*i + 286703630/777777799*j + 6908838277026128463/17888889377*k, 1/17888889377*i + 369036721/1555555598*j + 4377163512488215059/35777778754*k, 1/2*j + 1300147209/2*k, 777777799*k)
+              From: Order of Quaternion Algebra (-23, -900001)
+              with base ring Rational Field with basis
+              (1/2 + 1/8*j + 461/8*k, 1/4646*i + 131/808*j + 2342737/18584*k, 1/4*j + 461/4*k, 404*k)
+              To:   Order of Quaternion Algebra (-23, -900001)
+              with base ring Rational Field with basis
+              (1/2 + 1/35777778754*i + 286703630/777777799*j + 6908838277026128463/17888889377*k, 1/17888889377*i + 369036721/1555555598*j + 4377163512488215059/35777778754*k, 1/2*j + 1300147209/2*k, 777777799*k)
               Defn: i |--> -1555944509277/1806777827077*i - 63443295/157111115398*j + 1912127635/3613555654154*k
                     j |--> -1488349653720/78555557699*i - 593494326683/628444461592*j - 41222551815/628444461592*k
                     k |--> 855677048751220/1806777827077*i - 961404429945/628444461592*j + 11644714791909/14454222616616*k
@@ -4581,8 +4598,12 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             False
             sage: K.left_order().isomorphism_to(I.left_order())
             Ring morphism:
-              From: Order of Quaternion Algebra (-23, -900001) with base ring Rational Field with basis (1/2 + 1/3613555654154*i + 46626963583/628444461592*j + 4431632142858537833956781/14454222616616*k, 1/1806777827077*i + 14698369467/628444461592*j + 4268487353014308385342305/14454222616616*k, 1/8*j + 29300147973/8*k, 314222230796*k)
-              To:   Order of Quaternion Algebra (-23, -900001) with base ring Rational Field with basis (1/2 + 1/46*i + 9/23*k, 1/23*i + 18/23*k, 1/2*j + 1/2*k, k)
+              From: Order of Quaternion Algebra (-23, -900001)
+              with base ring Rational Field with basis
+              (1/2 + 1/3613555654154*i + 46626963583/628444461592*j + 4431632142858537833956781/14454222616616*k, 1/1806777827077*i + 14698369467/628444461592*j + 4268487353014308385342305/14454222616616*k, 1/8*j + 29300147973/8*k, 314222230796*k)
+              To:   Order of Quaternion Algebra (-23, -900001)
+              with base ring Rational Field with basis
+              (1/2 + 1/46*i + 9/23*k, 1/23*i + 18/23*k, 1/2*j + 1/2*k, k)
               Defn: i |--> -1555944509277/1806777827077*i - 38035560/78555557699*j + 950751220/1806777827077*k
                     j |--> -57099028943295/3613555654154*i - 593494326683/628444461592*j - 961404429945/14454222616616*k
                     k |--> 1720916783627635/3613555654154*i - 948118691745/628444461592*j + 11644714791909/14454222616616*k

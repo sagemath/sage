@@ -922,8 +922,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
 #        s=self.parent().lattice().rho().scalar(self.action(self.parent().lattice().simple_root(i)))
 #        if positive:
 #            return s > 0
-#        else:
-#            return s < 0
+#        return s < 0
         L = self.domain()
         # Choose the method depending on the side and the availability of rho and is_positive_root
         if not hasattr(L.element_class, "is_positive_root"):

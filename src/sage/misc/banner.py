@@ -243,9 +243,8 @@ def require_version(major: int, minor: int = 0, tiny: float = 0,
         or (vers['major'] == major and vers['minor'] == minor
             and vers['tiny'] == tiny and prerelease_checked)):
         return True
-    else:
-        if print_message:
-            txt = "This code requires at least version {} of SageMath to run correctly."
-            print(txt.format(major + 0.1 * minor + 0.01 * tiny))
-            print("You are running version {}.".format(SAGE_VERSION))
-        return False
+    if print_message:
+        txt = "This code requires at least version {} of SageMath to run correctly."
+        print(txt.format(major + 0.1 * minor + 0.01 * tiny))
+        print("You are running version {}.".format(SAGE_VERSION))
+    return False
