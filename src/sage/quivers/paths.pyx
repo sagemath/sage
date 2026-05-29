@@ -17,7 +17,6 @@ Quiver Paths
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-cimport cython
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.data_structures.bounded_integer_sequences cimport *

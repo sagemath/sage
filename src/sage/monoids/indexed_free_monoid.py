@@ -29,7 +29,7 @@ from sage.categories.sets_cat import Sets
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
-from sage.sets.family import Family
+from sage.sets.family import Family, AbstractFamily
 
 
 class IndexedMonoidElement(MonoidElement):
@@ -845,7 +845,7 @@ class IndexedMonoid(Parent, IndexedGenerators, UniqueRepresentation):
         return infinity
 
     @cached_method
-    def monoid_generators(self) -> Family:
+    def monoid_generators(self) -> AbstractFamily:
         """
         Return the monoid generators of ``self``.
 

@@ -12,6 +12,7 @@ from sage.matrix import matrix_dense
 from sage.matrix.args cimport MatrixArgs_init
 
 cimport sage.matrix.matrix as matrix
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 
 cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
@@ -295,9 +296,9 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.overflowcheck(False)
-    def _multiply_classical(left, matrix.Matrix _right):
+    def _multiply_classical(self, matrix.Matrix _right):
         """
-        Multiply the matrices left and right using the classical
+        Multiply the matrices self and right using the classical
         `O(n^3)` algorithm.
 
         EXAMPLES:
@@ -342,15 +343,14 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         cdef Py_ssize_t i, j, k, m, nr, nc, snc, p
         cdef Matrix_generic_dense right = _right
 
-        if left._ncols != right._nrows:
-            raise IndexError("Number of columns of left must equal number of rows of other.")
+        check_matrix_multiplication_sizes(self, right)
 
-        nr = left._nrows
+        nr = self._nrows
         nc = right._ncols
-        snc = left._ncols
+        snc = self._ncols
 
-        R = left.base_ring()
-        cdef list v = [None] * (left._nrows * right._ncols)
+        R = self.base_ring()
+        cdef list v = [None] * (self._nrows * right._ncols)
         zero = R.zero()
         p = 0
         for i in range(nr):
@@ -358,11 +358,11 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
                 z = zero
                 m = i*snc
                 for k in range(snc):
-                    z += left._entries[m+k]._mul_(right._entries[k*nc+j])
+                    z += self._entries[m+k]._mul_(right._entries[k*nc+j])
                 v[p] = z
                 p += 1
 
-        cdef Matrix_generic_dense A = left._new(nr, nc)
+        cdef Matrix_generic_dense A = self._new(nr, nc)
         A._entries = v
         return A
 

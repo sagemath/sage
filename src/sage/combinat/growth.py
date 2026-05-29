@@ -480,8 +480,7 @@ follows::
     ....:             return (None, y, g, 0)
     ....:         if g == 0:
     ....:             return (None, y, None, 1)
-    ....:         else:
-    ....:             return (0, x-1, g-1, 0)
+    ....:         return (0, x - 1, g - 1, 0)
 
 The labels are now alternating between vertices and edge-colors::
 
@@ -2715,7 +2714,7 @@ class RuleShiftedShapes(Rule):
             return []
 
         if l[0][1] == 0:
-            return [1]   # black
+            return [1]  # black
         return [2, 3]  # blue, red
 
     def is_P_edge(self, v, w):
@@ -3024,7 +3023,6 @@ class RuleShiftedShapes(Rule):
                 if y[i] == 1:
                     t = y[:i]
                     return (0, t, 1, 0)
-
                 t = y[:i] + [y[i]-1] + y[i+1:]
                 return (0, t, 3, 0)
         raise ValueError("this should not happen")
@@ -4332,7 +4330,6 @@ class RuleYoungFibonacci(Rule):
             return (y, 0)
         if x != z == y:
             return (x, 0)
-
         if z[0] == 1:
             return (z[1:], 1)
         if z[0] == 2:

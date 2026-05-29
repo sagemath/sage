@@ -35,7 +35,6 @@ from sage.libs.singular.decl cimport omAlloc0, omStrDup, omFree
 from sage.libs.singular.decl cimport p_GetComp
 from sage.libs.singular.decl cimport pSubst
 from sage.libs.singular.decl cimport p_Normalize
-from sage.libs.singular.decl cimport ndCopyMap, maMapPoly
 
 from sage.libs.singular.singular cimport sa2si, si2sa, overflow_check
 
@@ -222,7 +221,9 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
         id_Delete(&from_id, r)
         id_Delete(&res_id, r)
     else:
-        ret[0] = maMapPoly(p, r, to_id, r, ndCopyMap)
+        ret[0] = p_Copy(p, r)
+        for i from 0 <= i < l:
+            ret[0] = pSubst(ret[0], i + 1, to_id.m[i])
 
     # Unsure why we have to normalize here. See #16958
     p_Normalize(ret[0], r)

@@ -1692,6 +1692,11 @@ REFERENCES:
             *Gröbner and diagonal bases in Orlik-Solomon type algebras*
             Cubo **7** (2), (2005). pp. 1-20.
 
+.. [CF2026]  Xavier Caruso, Florian Fürnsinn,
+             *Algorithms for Algebraic and Arithmetic Attributes
+             of Hypergeometric Functions*,
+             https://arxiv.org/abs/2601.16105
+
 .. [CFHM2013] Wei Chen, Wenjie Fang, Guangda Hu, Michael W. Mahoney,
               *On the Hyperbolicity of Small-World and Treelike Random Graphs*,
               Internet Mathematics 9:4 (2013), 434-491.
@@ -1719,6 +1724,10 @@ REFERENCES:
 .. [CFL1958] \K.-T. Chen, R.H. Fox, R.C. Lyndon, Free differential calculus,
              IV. The quotient groups of the lower central series, Ann. of Math.
              68 (1958) 81--95.
+
+.. [CFV2025] Xavier Caruso, Florian Fürnsinn, Daniel Vargas-Montoya,
+           *Galois groups of reductions modulo p of D-finite series*,
+           :arxiv:`2504.09429`, 2025.
 
 .. [CFZ2000] \J. Cassaigne, S. Ferenczi, L.Q. Zamboni, *Imbalances in
              Arnoux-Rauzy sequences*, Ann. Inst. Fourier (Grenoble)
@@ -1797,6 +1806,9 @@ REFERENCES:
 
 .. [ChenDB] Eric Chen, Online database of two-weight codes,
             http://moodle.tec.hkr.se/~chen/research/2-weight-codes/search.php
+
+.. [Chr1986] Gilles Christol, *Fonctions hypergéométriques bornées*.
+             Groupe de travail d’analyse ultramétrique 14 (1986-87), exp. no 8, p. 1-16
 
 .. [CHK2001] Keith D. Cooper, Timothy J. Harvey and Ken Kennedy. *A
              Simple, Fast Dominance Algorithm*, Software practice and
@@ -2979,6 +2991,11 @@ REFERENCES:
             toric varieties defined by atomic lattices*. Inventiones
             Mathematicae. **155** (2004), no. 3, pp. 515-536.
 
+.. [FY2024] Florian Fürnsinn, Sergey Yurkevich.
+            *Algebraicity of hypergeometric functions with arbitrary parameters*,
+            Bulletin of the London Mathematical Society. **56** (2024),
+            pp. 2824-2846. :doi:`10.1112/blms.13103`, :arxiv:`2308.12855` (2023).
+
 .. [FZ2001] \S. Fomin and A. Zelevinsky. *Cluster algebras I. Foundations*,
             \J. Amer. Math. Soc. **15** (2002), no. 2, pp. 497-529.
             :arxiv:`math/0104151` (2001).
@@ -3046,8 +3063,9 @@ REFERENCES:
 
 .. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
              algebra, 1(141):187-203, 1991.
-             
-.. [Gek2001] \E.-U. Gekeler. Invariants of some algebraic curves related to 
+
+
+.. [Gek2001] \E.-U. Gekeler. Invariants of some algebraic curves related to
               Drinfeld modular curves. Journal of Number Theory 90, No. 1, 166-183, 2001.
 
 .. [Gek2008] \E.-U. Gekeler. Frobenius Distributions of Drinfeld Modules over
@@ -3467,6 +3485,11 @@ REFERENCES:
 
 .. [Haj2000] \M. Hajiaghayi, *Consecutive Ones Property*, 2000.
              https://web.archive.org/web/20040401033532/http://www-math.mit.edu/~hajiagha/pp11.ps
+
+.. [HJ2020]  U. Hartl and A.-K. Juschka, 
+             *Pink’s theory of Hodge structures and the Hodge conjecture over function fields*,
+             in *`t`-motives: Hodge structures, transcendence and other motivic aspects*
+             EMS Ser. Congr. Rep. (2020), 31-182
 
 .. [HAM1985] Hoffman, Alan J., Anthonius Wilhelmus Johannes Kolen, and Michel Sakarovitch.
              *Totally-balanced and greedy matrices*.
