@@ -272,6 +272,8 @@ max_minus = EclObject("$MINUS")
 max_use_grobner = EclObject("$USE_GROBNER")
 max_to_poly_solve = EclObject("$TO_POLY_SOLVE")
 max_at = EclObject("%AT")
+max_lsum = EclObject("%LSUM")
+max_rootsof = EclObject("$ROOTSOF")
 
 
 def stdout_to_string(s):
@@ -1494,6 +1496,61 @@ def max_pochhammer_to_sage(expr):
     return gamma(x + y) / gamma(x)
 
 
+def max_lsum_to_sage(expr):
+    r"""
+    Special conversion rule for Maxima's ``%LSUM`` (list-sum) operator
+    when its list argument is a ``$ROOTSOF`` wrapper -- i.e. the RootSum
+    representation Maxima emits when ``integrate_use_rootsof:true`` is
+    set.
+
+    INPUT:
+
+    - ``expr`` -- ECL object; a Maxima expression of the form
+      ``((%LSUM SIMP) <body> <dummy> (($ROOTSOF) <poly> <dummy>))``
+
+    OUTPUT:
+
+    A Sage ``root_sum(body, dummy, poly)`` symbolic expression, where
+    ``root_sum`` is :class:`sage.symbolic.rootsum.Function_root_sum`.
+
+    Falls back to a generic translation when the inner list argument
+    is not a ``$ROOTSOF`` wrapper (e.g. an ordinary ``lsum`` over an
+    explicit list).  See :issue:`40356`.
+
+    EXAMPLES::
+
+        sage: from sage.interfaces.maxima_lib import maxima_lib, max_to_sr
+        sage: _ = maxima_lib.eval("integrate_use_rootsof:true")
+        sage: result = maxima_lib("integrate(1/(x^3+a*x+1), x)")
+        sage: _ = maxima_lib.eval("integrate_use_rootsof:false")
+        sage: max_to_sr(result.ecl()).operator().__class__.__name__
+        'Function_root_sum'
+    """
+    args = list(cdr(expr))
+    if len(args) == 3:
+        body_ecl, dummy_ecl, listexpr_ecl = args
+        if (listexpr_ecl.consp()
+                and caar(listexpr_ecl) == max_rootsof):
+            rootsof_args = list(cdr(listexpr_ecl))
+            if len(rootsof_args) == 2:
+                from sage.symbolic.rootsum import root_sum
+                body = max_to_sr(body_ecl)
+                dummy = max_to_sr(dummy_ecl)
+                poly = max_to_sr(rootsof_args[0])
+                return root_sum(body, dummy, poly)
+    # Fallback: generic lsum (e.g. lsum over an explicit list).
+    # Try to expand if the list is concrete, otherwise leave unevaluated
+    # as a symbolic sum.
+    if len(args) == 3:
+        body = max_to_sr(args[0])
+        dummy = max_to_sr(args[1])
+        listexpr = max_to_sr(args[2])
+        if isinstance(listexpr, list):
+            return sum(body.subs({dummy: v}) for v in listexpr)
+    # Last-resort: round-trip the whole expression through SR.
+    return SR(maxima(expr))
+
+
 # The dictionaries
 special_max_to_sage = {
     mrat: mrat_to_sage,
@@ -1503,7 +1560,8 @@ special_max_to_sage = {
     max_at: max_at_to_sage,
     mlist: mlist_to_sage,
     max_harmo: max_harmonic_to_sage,
-    max_pochhammer: max_pochhammer_to_sage
+    max_pochhammer: max_pochhammer_to_sage,
+    max_lsum: max_lsum_to_sage,
 }
 
 special_sage_to_max = {
