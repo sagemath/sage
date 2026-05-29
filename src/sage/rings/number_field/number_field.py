@@ -8672,7 +8672,7 @@ class NumberField_absolute(NumberField_generic):
         return K, from_K
 
     @cached_method
-    def _polred(self, names=None, algorithm='polredbest', isomorphism_map=False):
+    def _polred(self, names=None, algorithm='polredbest', map=False):
         r"""
         Return ``self`` as an absolute number field defined by a monic polynomial
         with reasonably small coefficients, computed by PARI's ``polredbest`` or
@@ -8683,25 +8683,25 @@ class NumberField_absolute(NumberField_generic):
         - ``names`` -- string (default: ``self._names``); name of generator of the absolute field
         - ``algorithm`` -- one of ``'polredbest'`` (default) or ``'polredabs'``;
           the PARI function to use
-        - ``isomorphism_map`` -- boolean (default: ``False``); whether to also
+        - ``map`` -- boolean (default: ``False``); whether to also
           return the isomorphism from ``self`` to the new field
 
         OUTPUT:
 
         An absolute number field isomorphic to ``self`` defined by a reduced
-        polynomial. If ``isomorphism_map`` is ``True``, a tuple of this field
+        polynomial. If ``map`` is ``True``, a tuple of this field
         and the isomorphism from ``self`` to it is returned instead.
 
         EXAMPLES::
 
             sage: f = ZZ['x']('x^3 - 12*x^2 + 2*x - 3')
-            sage: NumberField(f, 'a')._polred(algorithm='polredabs', isomorphism_map=True)
+            sage: NumberField(f, 'a')._polred(algorithm='polredabs', map=True)
             (Number Field in a with defining polynomial x^3 - x^2 + 35*x - 26,
              Ring morphism:
                From: Number Field in a with defining polynomial x^3 - 12*x^2 + 2*x - 3
                To:   Number Field in a with defining polynomial x^3 - x^2 + 35*x - 26
                Defn: a |--> 1/3*a^2 + 35/3)
-            sage: NumberField(f, 'a')._polred(algorithm='polredbest', isomorphism_map=True)
+            sage: NumberField(f, 'a')._polred(algorithm='polredbest', map=True)
             (Number Field in a with defining polynomial x^3 - 46*x - 123,
              Ring morphism:
                From: Number Field in a with defining polynomial x^3 - 12*x^2 + 2*x - 3
@@ -8716,11 +8716,11 @@ class NumberField_absolute(NumberField_generic):
         t = f.polredabs(flag=1) if algorithm == 'polredabs' else f.polredbest(flag=1)
         R = self.polynomial_ring()
         K = NumberField(R(t[0]), names)
-        if not isomorphism_map:
+        if not map:
             return K
         return K, self.hom([K(t[1])], check=False)
 
-    def polredbest(self, names=None, isomorphism_map=False):
+    def polredbest(self, names=None, map=False):
         r"""
         Return ``self`` as an absolute number field defined by a monic polynomial
         with reasonably small coefficients, computed by PARI's ``polredbest``,
@@ -8729,13 +8729,13 @@ class NumberField_absolute(NumberField_generic):
         INPUT:
 
         - ``names`` -- string (default: ``self._names``); name of generator of the absolute field
-        - ``isomorphism_map`` -- boolean (default: ``False``); whether to also
+        - ``map`` -- boolean (default: ``False``); whether to also
           return the isomorphism from ``self`` to the new field
 
         OUTPUT:
 
         An absolute number field isomorphic to ``self`` with reduced defining
-        polynomial. If ``isomorphism_map`` is ``True``, a tuple of this field
+        polynomial. If ``map`` is ``True``, a tuple of this field
         and the isomorphism from ``self`` to it is returned instead.
 
         .. SEEALSO::
@@ -8747,16 +8747,16 @@ class NumberField_absolute(NumberField_generic):
             sage: f = ZZ['x']('x^3 - 12*x^2 + 2*x - 3')
             sage: NumberField(f, 'a').polredbest()
             Number Field in a with defining polynomial x^3 - 46*x - 123
-            sage: NumberField(f, 'a').polredbest(isomorphism_map=True)
+            sage: NumberField(f, 'a').polredbest(map=True)
             (Number Field in a with defining polynomial x^3 - 46*x - 123,
              Ring morphism:
                From: Number Field in a with defining polynomial x^3 - 12*x^2 + 2*x - 3
                To:   Number Field in a with defining polynomial x^3 - 46*x - 123
                Defn: a |--> a + 4)
         """
-        return self._polred(names=names, algorithm='polredbest', isomorphism_map=isomorphism_map)
+        return self._polred(names=names, algorithm='polredbest', map=map)
 
-    def polredabs(self, names=None, isomorphism_map=False):
+    def polredabs(self, names=None, map=False):
         r"""
         Return ``self`` as an absolute number field defined by the canonical
         monic polynomial minimizing the sum of squares of the roots, computed
@@ -8765,13 +8765,13 @@ class NumberField_absolute(NumberField_generic):
         INPUT:
 
         - ``names`` -- string (default: ``self._names``); name of generator of the absolute field
-        - ``isomorphism_map`` -- boolean (default: ``False``); whether to also
+        - ``map`` -- boolean (default: ``False``); whether to also
           return the isomorphism from ``self`` to the new field
 
         OUTPUT:
 
         An absolute number field isomorphic to ``self`` defined by the
-        canonical reduced polynomial. If ``isomorphism_map`` is ``True``,
+        canonical reduced polynomial. If ``map`` is ``True``,
         a tuple of this field and the isomorphism from ``self`` to it is
         returned instead.
 
@@ -8784,7 +8784,7 @@ class NumberField_absolute(NumberField_generic):
             sage: f = ZZ['x']('x^3 - 12*x^2 + 2*x - 3')
             sage: NumberField(f, 'a').polredabs()
             Number Field in a with defining polynomial x^3 - x^2 + 35*x - 26
-            sage: NumberField(f, 'a').polredabs(isomorphism_map=True)
+            sage: NumberField(f, 'a').polredabs(map=True)
             (Number Field in a with defining polynomial x^3 - x^2 + 35*x - 26,
              Ring morphism:
                From: Number Field in a with defining polynomial x^3 - 12*x^2 + 2*x - 3
@@ -8800,10 +8800,10 @@ class NumberField_absolute(NumberField_generic):
             sage: f = ZZ['x']('x^3 - 12*x^2 + 2*x - 3')
             sage: K.<a> = NumberField(f)
             sage: for alg in ('polredbest', 'polredabs'):
-            ....:     L, phi = K._polred(algorithm=alg, isomorphism_map=True)
+            ....:     L, phi = K._polred(algorithm=alg, map=True)
             ....:     assert K.defining_polynomial()(phi(a)) == 0
         """
-        return self._polred(names=names, algorithm='polredabs', isomorphism_map=isomorphism_map)
+        return self._polred(names=names, algorithm='polredabs', map=map)
 
     def optimized_subfields(self, degree=0, name=None, both_maps=True):
         """
