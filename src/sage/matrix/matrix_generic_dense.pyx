@@ -10,6 +10,7 @@ from cpython.ref cimport *
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.matrix import matrix_dense
 from sage.matrix.args cimport MatrixArgs_init
+from sage.structure.element cimport Element
 
 cimport sage.matrix.matrix as matrix
 
@@ -338,19 +339,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             [0 0 0 0]
             [0 0 0 0]
             [0 0 0 0]
-
-        We can multiply matrices whose entries are themselves matrices,
-        i.e. matrices over a (noncommutative) matrix ring (:issue:`42134`)::
-
-            sage: MS = MatrixSpace(MatrixSpace(ZZ, 2, 2), 2, 2)
-            sage: A = MS([matrix(ZZ, 2, [n, 0, 0, n]) for n in range(1, 5)])
-            sage: B = A * A
-            sage: B[0, 0]
-            [7 0]
-            [0 7]
-            sage: B[1, 1]
-            [22  0]
-            [ 0 22]
         """
         cdef Py_ssize_t i, j, k, m, nr, nc, snc, p
         cdef Matrix_generic_dense right = _right
@@ -363,15 +351,20 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         snc = left._ncols
 
         R = left.base_ring()
+        cdef list left_entries = left._entries
+        cdef list right_entries = right._entries
         cdef list v = [None] * (left._nrows * right._ncols)
         zero = R.zero()
         p = 0
         for i in range(nr):
+            m = i*snc
             for j in range(nc):
-                z = zero
-                m = i*snc
-                for k in range(snc):
-                    z += left._entries[m+k]._mul_(right._entries[k*nc+j])
+                if snc:
+                    z = (<Element>left_entries[m])._mul_(right_entries[j])
+                    for k in range(1, snc):
+                        z = (<Element>z)._add_((<Element>left_entries[m+k])._mul_(right_entries[k*nc+j]))
+                else:
+                    z = zero
                 v[p] = z
                 p += 1
 

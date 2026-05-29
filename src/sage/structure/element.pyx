@@ -3946,7 +3946,7 @@ cdef class Matrix(ModuleElement):
         except TypeError:
             return NotImplemented
 
-    cpdef _mul_(self, other):
+    cdef _mul_(self, other):
         """
         Multiplication of matrices with the same parent.
 
@@ -3960,15 +3960,21 @@ cdef class Matrix(ModuleElement):
         such calls to :meth:`__mul__` so that matrices over a matrix ring
         multiply correctly (:issue:`42134`).
 
-        EXAMPLES::
+        EXAMPLES:
+
+        We can multiply matrices whose entries are themselves matrices,
+        i.e. matrices over a (noncommutative) matrix ring::
 
             sage: # needs sage.modules
-            sage: A = matrix(ZZ, 2, [1, 2, 3, 4])
-            sage: A._mul_(A)
-            [ 7 10]
-            [15 22]
-            sage: A._mul_(A) == A * A
-            True
+            sage: MS = MatrixSpace(MatrixSpace(ZZ, 2, 2), 2, 2)
+            sage: A = MS([matrix(ZZ, 2, [n, 0, 0, n]) for n in range(1, 5)])
+            sage: B = A * A
+            sage: B[0, 0]
+            [7 0]
+            [0 7]
+            sage: B[1, 1]
+            [22  0]
+            [ 0 22]
         """
         return self * other
 
