@@ -128,7 +128,6 @@ from sage.misc.cachefunc import cached_function
 from sage.categories.map cimport Map
 from sage.categories.morphism cimport Morphism
 
-from sage.misc.superseded import deprecation_cython as deprecation
 from sage.misc.cachefunc import cached_method
 
 
@@ -2455,6 +2454,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = x^2 - 2*x + 1
             sage: f.perfect_power()
             (-x + 1, 2)
+            sage: (f^2).perfect_power()
+            (-x + 1, 4)
 
         ::
 
@@ -2467,16 +2468,19 @@ cdef class Polynomial(CommutativePolynomial):
             sage: (P*Q).perfect_power()
             (x^3 + 4*x^2 + 5*x + 2, 50)
         """
-        f = self
+        f = self.monic()
         n = Integer(1)
         for e, m in self.degree().factor():
+            exponent = e**m
             for _ in range(m):
                 try:
-                    f = f.nth_root(e)
-                    n *= e
+                    _ = self.nth_root(exponent)
                 except ValueError:
-                    break
-        return f, n
+                    exponent //= e
+                    continue
+                n *= exponent
+                break
+        return self.nth_root(n), n
 
     def any_root(self, ring=None, degree=None, assume_squarefree=False, assume_equal_deg=False):
         """
@@ -2502,11 +2506,6 @@ cdef class Polynomial(CommutativePolynomial):
           finite fields.  If ``True``, all factors of this polynomial
           are assumed to have degree ``degree``. Note that ``degree``
           must be set.
-
-        .. WARNING::
-
-            Negative degree input will be deprecated. Instead use
-            ``assume_equal_deg``.
 
         .. NOTE::
 
@@ -2680,14 +2679,9 @@ cdef class Polynomial(CommutativePolynomial):
             #       this will be the most performant
             return f.roots(ring, multiplicities=False)[0]
 
-        # The old version of `any_root()` allowed degree < 0 to indicate that the input polynomial
-        # had a distinct degree factorisation, we pass this to any_irreducible_factor as a bool and
-        # ensure that the degree is positive.
         degree = ZZ(degree)
         if degree < 0:
-            deprecation(37170, "negative ``degree`` will be disallowed. Instead use the bool `assume_equal_deg`.")
-            degree = -degree
-            assume_equal_deg = True
+            raise ValueError('degree must be positive')
 
         # If a certain degree is requested, then we find an irreducible factor of degree `degree`
         # use this to compute a field extension and return the generator as root of this polynomial

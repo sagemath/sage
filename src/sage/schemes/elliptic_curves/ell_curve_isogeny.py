@@ -1045,9 +1045,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             if degree is None:
                 raise ValueError("degree must be given when specifying isogeny by domain and codomain")
 
-            # save the codomain: really used now (trac #7096)
-            old_codomain = codomain
-
             pre_isom, _, _, _, kernel = compute_sequence_of_maps(E, codomain, degree)
             kernel = kernel(self.__poly_ring(pre_isom.x_rational_map()))
 

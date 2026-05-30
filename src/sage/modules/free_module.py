@@ -2601,6 +2601,58 @@ class FreeModule_generic(Module_free_ambient):
                 v[n] = zero
                 n += 1
 
+    def iter_up_to_sign(self):
+        r"""
+        Return an iterator over the elements of ``self`` up to sign.
+
+        This yields one representative from each pair `\{v, -v\}`,
+        choosing the smaller one with respect to the module element ordering.
+        The order of the representatives is inherited from the usual iterator
+        for ``self``; in particular, the zero element is returned first.
+
+        EXAMPLES::
+
+            sage: it = (ZZ^2).iter_up_to_sign()
+            sage: [next(it) for _ in range(10)]
+            [(0, 0), (-1, 0), (0, -1), (-1, 1), (-1, -1),
+             (-2, 0), (0, -2), (-2, 1), (-2, -1), (-1, 2)]
+
+        To skip the zero element, skip the first element of the iterator::
+
+            sage: from itertools import islice
+            sage: it = islice((ZZ^2).iter_up_to_sign(), 1, None)
+            sage: [next(it) for _ in range(5)]
+            [(-1, 0), (0, -1), (-1, 1), (-1, -1), (-2, 0)]
+
+        In characteristic two, negation acts trivially, so all elements are
+        returned::
+
+            sage: list(VectorSpace(GF(2), 2).iter_up_to_sign())                         # needs sage.rings.finite_rings
+            [(0, 0), (1, 0), (0, 1), (1, 1)]
+
+        TESTS::
+
+            sage: V = ZZ^3
+            sage: next(V.iter_up_to_sign()) == V.zero()
+            True
+            sage: it = V.iter_up_to_sign()
+            sage: vs = [next(it) for _ in range(1000)]
+            sage: _ = [v.set_immutable() for v in vs]
+            sage: len(set(vs)) == 1000
+            True
+            sage: all(-v not in vs or v.is_zero() for v in vs)
+            True
+
+            sage: list((ZZ^0).iter_up_to_sign())
+            [()]
+            sage: list(islice((ZZ^0).iter_up_to_sign(), 1, None))
+            []
+        """
+        for v in self:
+            if -v < v:
+                continue
+            yield v
+
     def cardinality(self):
         r"""
         Return the cardinality of the free module.

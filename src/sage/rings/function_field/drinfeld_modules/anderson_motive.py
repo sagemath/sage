@@ -251,13 +251,13 @@ from sage.misc.latex import latex
 
 from sage.categories.map import Map
 from sage.categories.homset import Homset
+from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.anderson_motives import AndersonMotives
 from sage.structure.factorization import Factorization
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import Infinity
-from sage.rings.ring import CommutativeRing
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.morphism import RingHomomorphism
 
@@ -1185,14 +1185,14 @@ def AndersonMotive(arg1, arg2=None, names=None):
         # (3a-i) arg2 is the morphism of the form A -> K
         K = arg2.codomain()
         gamma = arg2
-    elif isinstance(arg2, CommutativeRing):
+    elif arg2 in CommutativeRings():
         # (3a-ii) arg2 is the A-field K
         K = arg2
         if K.has_coerce_map_from(A):
             gamma = K.coerce_map_from(A)
         else:
             gamma = A.hom([K.gen()])
-    elif hasattr(arg2, 'parent') and isinstance(arg2.parent(), CommutativeRing):
+    elif hasattr(arg2, 'parent') and arg2.parent() in CommutativeRings():
         # (3a-iii) arg2 is an element in K
         K = arg2.parent()
         gamma = A.hom([arg2])

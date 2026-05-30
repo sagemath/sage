@@ -17,6 +17,16 @@ option(
   description: 'Build the HTML / PDF documentation'
 )
 
+# Useful on binary distros, for example, to allow features to flip on as soon
+# as the package that provides it is installed. If this is disabled, a rebuild
+# of sagelib is required to toggle features on or off.
+option(
+  'defer_feature_checks',
+  type: 'boolean',
+  value: false,
+  description: 'Defer feature checks to runtime'
+)
+
 #
 # Features
 #

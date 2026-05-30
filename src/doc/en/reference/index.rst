@@ -138,7 +138,7 @@ Drinfeld modules and related topics
 -----------------------------------
 
 * :doc:`Drinfeld Modules <drinfeld_modules/index>`
-* :doc:`Anderson Motives <anderson_morives/index>`
+* :doc:`Anderson Motives <anderson_motives/index>`
 * :doc:`Drinfeld Modular Forms <drinfeld_modular/index>`
 
 Miscellaneous

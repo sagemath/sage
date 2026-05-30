@@ -150,7 +150,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.rational_field import QQ
-from sage.rings.ring import CommutativeRing, Ring
+from sage.rings.ring import Ring
 from sage.structure.category_object import check_default_category
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Element, RingElement
@@ -624,37 +624,52 @@ class PolynomialRing_generic(Ring):
         Return the completion of ``self`` with respect to the irreducible
         polynomial ``p``.
 
-        Currently only implemented for ``p=self.gen()`` (the default), i.e. you
-        can only complete `R[x]` with respect to `x`, the result being a ring
-        of power series in `x`. The ``prec`` variable controls the precision
-        used in the power series ring. If ``prec`` is `\infty`, then this
-        returns a :class:`LazyPowerSeriesRing`.
+        INPUT:
+
+        - ``p`` -- a polynomial
+
+        - ``prec`` -- an integer or ``infinity`` (default: ``20``)
+
+        When ``prec`` is ``infinity``, computations are handled through
+        lazy power series.
 
         EXAMPLES::
 
             sage: P.<x> = PolynomialRing(QQ)
             sage: P
             Univariate Polynomial Ring in x over Rational Field
-            sage: PP = P.completion(x)
-            sage: PP
-            Power Series Ring in x over Rational Field
+            sage: Px = P.completion(x)
+            sage: Px
+            Completion of Univariate Polynomial Ring in x over Rational Field at x
             sage: f = 1 - x
-            sage: PP(f)
+            sage: Px(f)
             1 - x
             sage: 1 / f
             -1/(x - 1)
-            sage: g = 1 / PP(f); g
+            sage: g = 1 / Px(f); g
             1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + x^10 + x^11
              + x^12 + x^13 + x^14 + x^15 + x^16 + x^17 + x^18 + x^19 + O(x^20)
             sage: 1 / g
             1 - x + O(x^20)
 
-            sage: PP = P.completion(x, prec=oo); PP
-            Lazy Taylor Series Ring in x over Rational Field
-            sage: g = 1 / PP(f); g
-            1 + x + x^2 + O(x^3)
+        ::
+
+            sage: Px = P.completion(x, prec=oo)
+            sage: Px
+            Completion of Univariate Polynomial Ring in x over Rational Field at x
+            sage: g = 1 / Px(f); g
+            1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + ...
             sage: 1 / g == f
             True
+
+        ::
+
+            sage: p = x^2 + 1
+            sage: Pp = P.completion(p, prec=3)
+            sage: Pp
+            Completion of Univariate Polynomial Ring in x over Rational Field at x^2 + 1
+            sage: 1 / Pp(x)
+            -x - x*(x^2 + 1) - x*(x^2 + 1)^2 + O((x^2 + 1)^3)
         """
         if p is None or str(p) == self._names[0]:
             if prec == float('inf'):
@@ -1054,7 +1069,7 @@ class PolynomialRing_generic(Ring):
 
         return PolynomialRing(R, names=self.variable_name(), sparse=self.is_sparse())
 
-    def change_var(self, var):
+    def change_variable_name(self, var):
         r"""
         Return the polynomial ring in variable ``var`` over the same base
         ring.
@@ -1063,12 +1078,14 @@ class PolynomialRing_generic(Ring):
 
             sage: R.<x> = ZZ[]; R
             Univariate Polynomial Ring in x over Integer Ring
-            sage: R.change_var('y')
+            sage: R.change_variable_name('y')
             Univariate Polynomial Ring in y over Integer Ring
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
         return PolynomialRing(self.base_ring(), names=var, sparse=self.is_sparse())
+
+    change_var = change_variable_name
 
     def extend_variables(self, added_names, order='degrevlex'):
         r"""
@@ -1974,9 +1991,9 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         return roots
 
 
-class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr, CommutativeRing):
+class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr, Ring):
     def __init__(self, base_ring, name='x', sparse=False, implementation=None,
-            element_class=None, category=None):
+                 element_class=None, category=None):
         """
         TESTS::
 

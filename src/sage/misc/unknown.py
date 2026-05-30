@@ -30,10 +30,9 @@ EXAMPLES::
     sage: def func(n):
     ....:     if n > 0:
     ....:         return True
-    ....:     elif n < 0:
+    ....:     if n < 0:
     ....:         return False
-    ....:     else:
-    ....:         return Unknown
+    ....:     return Unknown
 
 Using direct identification::
 

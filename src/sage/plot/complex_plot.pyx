@@ -146,7 +146,7 @@ cdef inline double cyclic_logarithmic_mag_to_lightness(double r, double base=2) 
     """
     if r < 1e-10:
         return 0.0
-    rem  = (log(r) / log(base)) % 1
+    rem = (log(r) / log(base)) % 1
     if rem < 0:  # Choose positive mod representative
         rem += 1
     return .15 - rem/2.
@@ -267,7 +267,7 @@ cdef inline double mag_and_arg_to_lightness(double r, double arg,
     if r < 1e-10:
         return 0.0
     cdef double r_rem, arg_rem
-    r_rem  = (log(r) / log(base)) % 1
+    r_rem = (log(r) / log(base)) % 1
     arg_rem = (nphases * arg / (2*PI)) % 1
     if r_rem < 0:  # Choose positive mod representatives
         r_rem += 1
@@ -403,7 +403,7 @@ def complex_to_rgb(z_values, contoured=False, tiled=False,
             x = GSL_REAL(z._complex)
             y = GSL_IMAG(z._complex)
             mag = hypot(x, y)
-            arg = atan2(y, x) # math module arctan has range from -pi to pi, so cut along negative x-axis
+            arg = atan2(y, x)  # math module arctan has range from -pi to pi, so cut along negative x-axis
 
             if tiled:
                 lightness = mag_and_arg_to_lightness(
@@ -417,10 +417,10 @@ def complex_to_rgb(z_values, contoured=False, tiled=False,
             else:
                 lightness = mag_to_lightness(mag, rate=dark_rate)
 
-            if lightness < 0: # in hsv, variable value, full saturation (s=1, v=1+lightness)
+            if lightness < 0:  # in hsv, variable value, full saturation (s=1, v=1+lightness)
                 bot = 0
                 top = (1+lightness)
-            else: # in hsv, variable saturation, full value (v=1, s=1-lightness)
+            else:  # in hsv, variable saturation, full value (v=1, s=1-lightness)
                 bot = lightness
                 top = 1
 
@@ -597,7 +597,7 @@ def complex_to_cmap_rgb(z_values, cmap='turbo', contoured=False, tiled=False,
             x = GSL_REAL(z._complex)
             y = GSL_IMAG(z._complex)
             mag = hypot(x, y)
-            arg = atan2(y, x) # math module arctan has range from -pi to pi, so cut along negative x-axis
+            arg = atan2(y, x)  # math module arctan has range from -pi to pi, so cut along negative x-axis
             if tiled:
                 lightness_delta = mag_and_arg_to_lightness(
                     mag, arg, base=contour_base, nphases=nphases
@@ -613,11 +613,11 @@ def complex_to_cmap_rgb(z_values, cmap='turbo', contoured=False, tiled=False,
             als[i, j, 1] = lightness_delta
     sig_off()
 
-    args = als[:,:,0]
-    nan_indices = np.isnan(als).any(-1)            # Mask for undefined points
-    normalized_colors = cmap((args + PI) / (2 * PI)) # break on negative reals
-    normalized_colors = normalized_colors[:,:,:3]  # discard alpha channel
-    lightdeltas = als[:,:,1]
+    args = als[:, :, 0]
+    nan_indices = np.isnan(als).any(-1)              # Mask for undefined points
+    normalized_colors = cmap((args + PI) / (2 * PI))  # break on negative reals
+    normalized_colors = normalized_colors[:, :, :3]  # discard alpha channel
+    lightdeltas = als[:, :, 1]
 
     if tiled or contoured:
         rgbs = add_contours_to_rgb(normalized_colors, lightdeltas, dark_rate=dark_rate)
@@ -680,11 +680,10 @@ def add_lightness_smoothing_to_rgb(rgb, delta):
         array([[[0.75  , 0.8125, 0.875 ]]])
     """
     import numpy as np
-    delta = delta[:,:,np.newaxis]
+    delta = delta[:, :, np.newaxis]
     delta_pos = delta > 0.0
-    rgb = (1.0 - np.abs(delta))*(rgb - delta_pos) + delta_pos
-    rgb = np.clip(rgb, 0.0, 1.0)
-    return rgb
+    rgb = (1.0 - np.abs(delta)) * (rgb - delta_pos) + delta_pos
+    return np.clip(rgb, 0.0, 1.0)
 
 
 def add_contours_to_rgb(rgb, delta, dark_rate=0.5):
@@ -816,8 +815,8 @@ class ComplexPlot(GraphicPrimitive):
             sage: isinstance(complex_plot(lambda z: z, (-1,1), (-1,1))[0]._allowed_options(), dict)
             True
         """
-        return {'plot_points':'How many points to use for plotting precision',
-                'interpolation':'What interpolation method to use'}
+        return {'plot_points': 'How many points to use for plotting precision',
+                'interpolation': 'What interpolation method to use'}
 
     def _repr_(self):
         """
@@ -835,11 +834,11 @@ class ComplexPlot(GraphicPrimitive):
             sage: complex_plot(lambda x: x^2, (-5, 5), (-5, 5))
             Graphics object consisting of 1 graphics primitive
         """
-        options = self.options()
+        interpol = self.options()['interpolation']
         x0, x1 = float(self.x_range[0]), float(self.x_range[1])
         y0, y1 = float(self.y_range[0]), float(self.y_range[1])
         subplot.imshow(self.rgb_data, origin='lower', extent=(x0, x1, y0, y1),
-                       interpolation=options['interpolation'])
+                       interpolation=interpol)
 
 
 @options(plot_points=100, interpolation='catrom')
